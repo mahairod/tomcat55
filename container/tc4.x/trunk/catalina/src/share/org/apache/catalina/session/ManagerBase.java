@@ -579,18 +579,18 @@ public abstract class ManagerBase implements Manager {
         session.setCreationTime(System.currentTimeMillis());
         session.setMaxInactiveInterval(this.maxInactiveInterval);
         String sessionId = generateSessionId();
+
+        synchronized (sessions) {
+            while (sessions.get(sessionId) != null)        // Guarantee uniqueness
+                sessionId = generateSessionId();
+        }
+
         String jvmRoute = getJvmRoute();
         // @todo Move appending of jvmRoute generateSessionId()???
         if (jvmRoute != null) {
             sessionId += '.' + jvmRoute;
             session.setId(sessionId);
         }
-        /*
-        synchronized (sessions) {
-            while (sessions.get(sessionId) != null)        // Guarantee uniqueness
-                sessionId = generateSessionId();
-        }
-        */
         session.setId(sessionId);
 
         return (session);
