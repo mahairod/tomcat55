@@ -149,7 +149,7 @@ public final class SaveRemoteHostValveAction extends Action {
         RemoteHostValveForm vform = (RemoteHostValveForm) form;
         String adminAction = vform.getAdminAction();
         String vObjectName = vform.getObjectName();
-        String parent = vform.getObjectName();
+        String parent = vform.getParentObjectName();
         String valveType = vform.getValveType();
                
         // Perform a "Create Valve" transaction (if requested)

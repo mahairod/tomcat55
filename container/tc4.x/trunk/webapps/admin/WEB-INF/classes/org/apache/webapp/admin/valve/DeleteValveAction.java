@@ -91,7 +91,7 @@ import org.apache.struts.util.MessageResources;
 
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TomcatTreeBuilder;
-import org.apache.webapp.admin.logger.DeleteLoggerAction;
+import org.apache.webapp.admin.Lists;
 
 /**
  * The <code>Action</code> that sets up <em>Delete Valves</em> transactions.
@@ -170,24 +170,9 @@ public class DeleteValveAction extends Action {
         // Accumulate a list of all available valves
         ArrayList list = new ArrayList();
         String parent = request.getParameter("parent");
-        
-        if (parent != null) {
-            try {
-                pattern = DeleteLoggerAction.getObjectName(
-                             parent,TomcatTreeBuilder.REALM_TYPE);
-            } catch (Exception e) {
-                getServlet().log
-                (resources.getMessage(locale, "users.error.select"));
-                response.sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                resources.getMessage(locale, "users.error.select"));
-                return (null);
-            }
-        }
-        
+
         try {
-            Iterator items =
-            mBServer.queryNames(new ObjectName(pattern), null).iterator();
+            Iterator items = (Lists.getValves(mBServer, parent)).iterator();
             while (items.hasNext()) {
                 list.add(items.next().toString());
             }

@@ -168,7 +168,6 @@ public final class ValveUtil {
                 String message =
                     resources.getMessage("error.valveName.exists", sb.toString());
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);                
-                //saveErrors(request, errors);
                 return (new ActionForward(mapping.getInput()));
             }
             
@@ -180,6 +179,8 @@ public final class ValveUtil {
             values = new String[1];
             values[0] = parent;
             operation = "create" + valveType;
+            if ("AccessLogValve".equalsIgnoreCase(valveType))
+                operation = "createAccessLoggerValve";
             String vObjectName = (String)
                         mBServer.invoke(fname, operation, values, createStandardValveTypes);
             
