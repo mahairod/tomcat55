@@ -3385,7 +3385,6 @@ public class StandardContext
                 namingContextListener.setDebug(getDebug());
                 namingContextListener.setName(getNamingContextName());
                 addLifecycleListener(namingContextListener);
-                addContainerListener(namingContextListener);
             }
         }
 
