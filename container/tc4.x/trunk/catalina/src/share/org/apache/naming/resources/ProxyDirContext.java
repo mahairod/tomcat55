@@ -165,6 +165,12 @@ public class ProxyDirContext implements DirContext {
     protected int cacheTTL = 5000; // 5s
 
 
+    /**
+     * Caching allowed flag.
+     */
+    protected boolean cachingAllowed = true;
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -192,6 +198,22 @@ public class ProxyDirContext implements DirContext {
      */
     public String getContextName() {
         return this.contextName;
+    }
+
+
+    /**
+     * Is caching allowed ?
+     */
+    public boolean isCachingAllowed() {
+        return cachingAllowed;
+    }
+
+
+    /**
+     * Set caching allowed flag.
+     */
+    public void setCachingAllowed(boolean cachingAllowed) {
+        this.cachingAllowed = cachingAllowed;
     }
 
 
@@ -1321,7 +1343,7 @@ public class ProxyDirContext implements DirContext {
      * Lookup in cache.
      */
     protected CacheEntry cacheLookup(String name) {
-        if (cache == null)
+        if (!cachingAllowed || (cache == null))
             return (null);
         CacheEntry cacheEntry = (CacheEntry) cache.get(name);
         if (cacheEntry == null) {
