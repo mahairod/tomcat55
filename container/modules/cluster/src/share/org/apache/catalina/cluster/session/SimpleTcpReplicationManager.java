@@ -200,23 +200,8 @@ implements org.apache.catalina.cluster.ClusterManager
         if (jvmRoute != null) {
             sessionId += '.' + jvmRoute;
         }
-        /*
-        synchronized (sessions) {
-        while (sessions.get(sessionId) != null)        // Guarantee uniqueness
-        sessionId = generateSessionId();
-        }
-        */
         if ( setId ) session.setId(sessionId);
-
-        if ( notify && (cluster!=null) )
-        {
-            //notify javagroups
-
-            //SessionMessage msg = new SessionMessage(this.name,
-            //                                        SessionMessage.EVT_SESSION_CREATED,
-            //                                        writeSession(session),
-            //                                        session.getId());
-            //cluster.send(msg);
+        if ( notify && (cluster!=null) ) {
             ((ReplicatedSession)session).setIsDirty(true);
         }
         return (session);
