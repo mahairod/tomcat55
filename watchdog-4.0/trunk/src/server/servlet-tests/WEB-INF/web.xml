@@ -2106,6 +2106,10 @@
     <servlet-name>HttpServletRequestWrapperGetServletPathTest</servlet-name>
     <display-name>HttpServletRequestWrapperGetServletPathTest</display-name>
     <servlet-class>tests.javax_servlet_http.HttpServletRequestWrapper.HttpServletRequestWrapperGetServletPathTestServlet</servlet-class>
+    <init-param>
+      <param-name>expectedResult</param-name>
+      <param-value>/hsreqw/HttpServletRequestWrapperGetServletPathTest</param-value>
+    </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
 

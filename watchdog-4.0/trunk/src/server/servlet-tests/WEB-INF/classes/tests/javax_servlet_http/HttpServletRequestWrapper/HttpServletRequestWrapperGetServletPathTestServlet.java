@@ -81,7 +81,7 @@ public class HttpServletRequestWrapperGetServletPathTestServlet extends HttpServ
         sl.resetLog();
 
         String result = request.getServletPath();
-        String expectedResult = "/hsreqw/HttpServletRequestWrapperGetServletPathTest";
+        String expectedResult = getServletConfig().getInitParameter("expectedResult");
 
         if ( result != null ) {
             if ( result.equals( expectedResult ) ) {
