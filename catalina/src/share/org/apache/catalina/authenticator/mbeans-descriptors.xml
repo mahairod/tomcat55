@@ -93,10 +93,6 @@
                type="java.lang.String"
                writeable="false"/>
 
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-
     <attribute name="entropy"
                description="A String initialization parameter used to increase the entropy of the initialization of our random number generator"
                type="java.lang.String"/>
