@@ -523,6 +523,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK  lpEcb)
         jk_pool_atom_t buf[SMALL_POOL_SIZE];
         char *worker_name;
 
+        jk_init_ws_service(&s);
         jk_open_pool(&private_data.p, buf, sizeof(buf));
 
         private_data.request_started = JK_FALSE;

@@ -351,6 +351,8 @@ NSAPI_PUBLIC int jk_service(pblock *pb,
         private_data.sn = sn;
         private_data.rq = rq;
 
+        jk_init_ws_service(&s);
+
         s.ws_private = &private_data;
         s.pool = &private_data.p;
 
