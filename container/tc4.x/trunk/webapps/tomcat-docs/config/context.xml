@@ -115,6 +115,11 @@
         in the DefaultContext element will be used.</p>
       </attribute>
 
+      <attribute name="privileged" required="false">
+        <p>Set to <code>true</code> to allow this context to use container
+        servlets, like the manager servlet.</p>
+      </attribute>
+
       <attribute name="path" required="true">
         <p>The <em>context path</em> of this web application, which is
         matched against the beginning of each request URI to select the
