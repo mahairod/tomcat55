@@ -135,7 +135,7 @@ public class ErrorReportValve
         try {
             report(request, response, throwable);
         } catch (Throwable tt) {
-            tt.printStackTrace();
+            ;
         }
 
     }
@@ -173,18 +173,9 @@ public class ErrorReportValve
         int statusCode = response.getStatus();
 
         // Do nothing on a 1xx, 2xx and 3xx status
-        if (statusCode < 400)
+        // Do nothing if anything has been written already
+        if ((statusCode < 400) || (response.getContentCount() > 0))
             return;
-
-        // FIXME: Reset part of the request
-/*
-        try {
-            if (hresponse.isError())
-                hresponse.reset(statusCode, message);
-        } catch (IllegalStateException e) {
-            ;
-        }
-*/
 
         Throwable rootCause = null;
 
@@ -198,7 +189,7 @@ public class ErrorReportValve
         String message = RequestUtil.filter(response.getMessage());
         if (message == null)
             message = "";
-    
+
         // Do nothing if there is no report for the specified status code
         String report = null;
         try {
@@ -281,34 +272,25 @@ public class ErrorReportValve
         sb.append("</body></html>");
 
         try {
-
-          try {
-
-            response.setContentType("text/html");
-            response.setCharacterEncoding("utf-8");
-
-          } catch (Throwable t) {
-
-             if (container.getLogger().isDebugEnabled())
-               container.getLogger().debug("status.setContentType", t);
-
-          }
-
-          Writer writer = response.getReporter();
-
-          if (writer != null) {
-            // If writer is null, it's an indication that the response has
-            // been hard committed already, which should never happen
-            writer.write(sb.toString());
-          }
-
+            try {
+                response.setContentType("text/html");
+                response.setCharacterEncoding("utf-8");
+            } catch (Throwable t) {
+                if (container.getLogger().isDebugEnabled())
+                    container.getLogger().debug("status.setContentType", t);
+            }
+            Writer writer = response.getReporter();
+            if (writer != null) {
+                // If writer is null, it's an indication that the response has
+                // been hard committed already, which should never happen
+                writer.write(sb.toString());
+            }
         } catch (IOException e) {
             ;
-
         } catch (IllegalStateException e) {
             ;
         }
-
+        
     }
 
 
