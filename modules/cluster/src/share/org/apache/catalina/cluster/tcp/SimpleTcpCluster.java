@@ -167,6 +167,9 @@ public class SimpleTcpCluster
     private long nrOfMsgsReceived = 0;
     private long msgSendTime = 0;
     private long lastChecked = System.currentTimeMillis();
+    
+    //sort members by alive time
+    protected MemberComparator memberComparator = new MemberComparator();
 
     private String managerClassName = "org.apache.catalina.cluster.session.DeltaManager";
 
@@ -281,7 +284,10 @@ public class SimpleTcpCluster
     }
 
     public Member[] getMembers() {
-        return membershipService.getMembers();
+        Member[] members = membershipService.getMembers();
+        //sort by alive time
+        java.util.Arrays.sort(members,memberComparator);
+        return members;
     }
     
 
@@ -643,6 +649,25 @@ public class SimpleTcpCluster
     
     public void addValve(Valve valve) {
         this.valve = valve;
+    }
+    
+    private class MemberComparator implements java.util.Comparator {
+        
+        public int compare(Object o1, Object o2) { 
+            try {
+                return compare((Member)o1,(Member)o2);
+            } catch (ClassCastException x) {
+                return 0;
+            }
+        }
+        
+        public int compare(Member m1, Member m2) {
+            //longer alive time, means sort first
+            long result = m2.getMemberAliveTime() - m1.getMemberAliveTime();
+            if ( result < 0 ) return -1;
+            else if ( result == 0 ) return 0;
+            else return 1;
+        }
     }
     
     
