@@ -63,6 +63,9 @@
       <update>
         Removed hard-coded admin context path. (yoavs)
       </update>
+      <fix>
+        <bug>31732</bug>: Fix Japanese localization of Manager's list command. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 </section>
