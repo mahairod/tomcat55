@@ -606,7 +606,7 @@ public class JDBCRealm
     /**
      * Release our use of this connection so that it can be recycled.
      *
-     * @param dbConnnection The connection to be released
+     * @param dbConnection The connection to be released
      */
     protected void release(Connection dbConnection) {
 

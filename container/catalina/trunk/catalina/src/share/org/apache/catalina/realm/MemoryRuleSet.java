@@ -104,8 +104,6 @@ final class MemoryUserRule extends Rule {
 
     /**
      * Construct a new instance of this <code>Rule</code>.
-     *
-     * @param digester The <code>Digester</code> we are associated with.
      */
     public MemoryUserRule() {
     }

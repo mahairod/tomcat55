@@ -185,7 +185,7 @@ public class LoggerBase
      * Set the verbosity level of this logger.  Messages logged with a
      * higher verbosity than this level will be silently ignored.
      *
-     * @param verbosityLevel The new verbosity level, as a string
+     * @param verbosity The new verbosity level, as a string
      */
     public void setVerbosityLevel(String verbosity) {
 
@@ -223,7 +223,7 @@ public class LoggerBase
      * log.  The name and type of the servlet log is specific to the
      * servlet container.  This message will be logged unconditionally.
      *
-     * @param message A <code>String</code> specifying the message to be
+     * @param msg A <code>String</code> specifying the message to be
      *  written to the log file
      */
     public void log(String msg) {
