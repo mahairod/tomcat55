@@ -101,8 +101,9 @@ public final class Bootstrap {
     public static void main(String args[]) {
 
         // Construct the class loaders we will need
-        ClassLoader catalinaLoader = createCatalinaLoader();
-        ClassLoader sharedLoader = createSharedLoader();
+        ClassLoader systemLoader = createSystemLoader();
+        ClassLoader catalinaLoader = createCatalinaLoader(systemLoader);
+        ClassLoader sharedLoader = createSharedLoader(systemLoader);
 
 	// Load our startup class and call its process() method
 	try {
@@ -145,9 +146,52 @@ public final class Bootstrap {
 
     /**
      * Construct and return the class loader to be used for loading
+     * of the shared system classes.
+     */
+    private static ClassLoader createSystemLoader() {
+
+        // Construct the "class path" for this class loader
+        ArrayList list = new ArrayList();
+
+        File directory = new File(System.getProperty("catalina.home"),
+                                  "bin");
+        if (!directory.exists() || !directory.canRead() ||
+            !directory.isDirectory()) {
+            System.out.println("Directory " + directory.getAbsolutePath()
+                               + " does not exist");
+            System.exit(1);
+        }
+	String filenames[] = directory.list();
+	for (int i = 0; i < filenames.length; i++) {
+            String filename = filenames[i].toLowerCase();
+	    if ((!filename.endsWith(".jar")) || 
+                (filename.indexOf("bootstrap.jar") != -1))
+		continue;
+            File file = new File(directory, filenames[i]);
+            try {
+                URL url = new URL("file", null, file.getAbsolutePath());
+                list.add(url.toString());
+            } catch (MalformedURLException e) {
+                System.out.println("Cannot create URL for " +
+                                   filenames[i]);
+                System.exit(1);
+            }
+	}
+
+        // Construct the class loader itself
+        String array[] = (String[]) list.toArray(new String[list.size()]);
+        StandardClassLoader loader = new StandardClassLoader(array);
+
+        return (loader);
+
+    }
+
+
+    /**
+     * Construct and return the class loader to be used for loading
      * Catalina internal classes.
      */
-    private static ClassLoader createCatalinaLoader() {
+    private static ClassLoader createCatalinaLoader(ClassLoader parent) {
 
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
@@ -192,7 +236,7 @@ public final class Bootstrap {
 
         // Construct the class loader itself
         String array[] = (String[]) list.toArray(new String[list.size()]);
-        StandardClassLoader loader = new StandardClassLoader(array);
+        StandardClassLoader loader = new StandardClassLoader(array, parent);
 
         return (loader);
 
@@ -203,7 +247,7 @@ public final class Bootstrap {
      * Construct and return the class loader to be used for shared
      * extensions by web applications loaded with Catalina.
      */
-    private static ClassLoader createSharedLoader() {
+    private static ClassLoader createSharedLoader(ClassLoader parent) {
 
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
@@ -233,7 +277,7 @@ public final class Bootstrap {
 
         // Construct the class loader itself
         String array[] = (String[]) list.toArray(new String[list.size()]);
-        StandardClassLoader loader = new StandardClassLoader(array);
+        StandardClassLoader loader = new StandardClassLoader(array, parent);
 
         /*
         System.out.println("AVAILABLE OPTIONAL PACKAGES:");
