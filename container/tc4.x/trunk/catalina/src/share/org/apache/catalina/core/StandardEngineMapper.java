@@ -181,8 +181,11 @@ public final class StandardEngineMapper
 
 	// Extract the requested server name
 	String server = request.getRequest().getServerName();
-	if (server == null)
+	if (server == null) {
 	    server = engine.getDefaultHost();
+            if (update)
+                request.setServerName(server);
+	}
 	if (server == null)
 	    return (null);
         server = server.toLowerCase();
