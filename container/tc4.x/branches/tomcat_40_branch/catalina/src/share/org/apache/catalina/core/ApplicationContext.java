@@ -717,7 +717,7 @@ public class ApplicationContext
         try {
             listCollectionPaths(set, resources, path);
         } catch (NamingException e) {
-            ; // Ignore
+            return (null);
         }
         set.setLocked(true);
         return (set);
