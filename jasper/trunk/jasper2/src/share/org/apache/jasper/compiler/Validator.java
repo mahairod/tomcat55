@@ -729,6 +729,13 @@ public class Validator {
                                     tldAttrs[j].getTypeName() );
                             }
 			} else {
+			    // Attribute does not accept any expressions.
+			    // Make sure its value does not contain any.
+			    if (isExpression(n, attrs.getValue(i))) {
+                                err.jspError(n,
+				        "jsp.error.attribute.non_rt_with_expr",
+					     tldAttrs[j].getName());
+			    }
 			    jspAttrs[i]
 				= new Node.JspAttribute(attrs.getQName(i),
 							attrs.getURI(i),
@@ -934,6 +941,19 @@ public class Validator {
 
             return result;
         }
+
+	/*
+	 * Checks to see if the given attribute value represents a runtime or
+	 * EL expression.
+	 */
+	private boolean isExpression(Node.CustomTag n, String value) {
+	    if ((n.isXmlSyntax() && value.startsWith("%="))
+		    || (!n.isXmlSyntax() && value.startsWith("<%="))
+   		    || (value.indexOf("${") != -1 && pageInfo.isELEnabled()))
+		return true;
+	    else
+		return false;
+	}
 
 	public void visit(Node.InvokeAction n) throws JasperException {
 
