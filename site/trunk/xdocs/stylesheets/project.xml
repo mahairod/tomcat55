@@ -11,14 +11,14 @@
 	<item name="News &amp; Status"    href="/news.html"/>
 	<item name="Bug Database"         href="/bugreport.html"/>
 	<item name="Resources"            href="/resources.html"/>
-        <item name="IRC"                   href="/irc.html"/>
+        <item name="IRC"                  href="/irc.html"/>
     </menu>
 
     <menu name="Documentation">
         <item name="Tomcat 3.2"           href="/tomcat-3.2-doc/index.html"/> 
         <item name="Tomcat 3.3"           href="/tomcat-3.3-doc/index.html"/> 
         <item name="Tomcat 4.0"           href="/tomcat-4.0-doc/index.html"/> 
-        <item name="Tomcat 4.next"        href="/tomcat-4.1-doc/index.html"/> 
+        <item name="Tomcat 4.1"           href="/tomcat-4.1-doc/index.html"/> 
     </menu>
 
     <menu name="Download">
