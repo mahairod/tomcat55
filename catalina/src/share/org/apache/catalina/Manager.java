@@ -152,20 +152,20 @@ public interface Manager {
 
 
     /**
-     * Gets the maximum number of sessions that may be active at the same time.
+     * Gets the maximum number of sessions that have been active at the same
+     * time.
      *
-     * <p>If this number has been reached, any requests for creating new
-     * sessions will be rejected.
-     *
-     * @return Maximum number of sessions that may be active at the same time
+     * @return Maximum number of sessions that have been active at the same
+     * time
      */
     public int getMaxActive();
 
 
     /**
-     * Sets the maximum number of sessions that may be active at the same time.
+     * (Re)sets the maximum number of sessions that have been active at the
+     * same time.
      *
-     * @param maxActive Maximum number of sessions that may be active at
+     * @param maxActive Maximum number of sessions that have been active at
      * the same time.
      */
     public void setMaxActive(int maxActive);
