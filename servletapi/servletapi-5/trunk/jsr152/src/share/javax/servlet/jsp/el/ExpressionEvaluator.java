@@ -60,9 +60,9 @@ import javax.servlet.jsp.tagext.*;
 import java.util.Map;
 
 /**
- * <p>The interface for an expression-language evaluator.
+ * <p>The abstract base class for an expression-language evaluator.
  * Classes that implement an expression language expose their functionality
- * via this interface.</p>
+ * via this abstract class.</p>
  *
  * <p>An instance of the ExpressionEvaluator can be obtained via the 
  * JspContext / PageContext</p>
@@ -88,7 +88,7 @@ import java.util.Map;
  *
  * @since 2.0
  */
-public interface ExpressionEvaluator {
+public abstract class ExpressionEvaluator {
 
     /**
      * Prepare an expression for later evaluation.  This method should perform
@@ -109,7 +109,7 @@ public interface ExpressionEvaluator {
      *
      * @exception ELException Thrown if parsing errors were found.
      */ 
-    public Expression parseExpression( String expression, 
+    public abstract Expression parseExpression( String expression, 
 				       Class expectedType, 
 				       FunctionMapper fMapper,
 				       String defaultPrefix ) 
@@ -138,7 +138,7 @@ public interface ExpressionEvaluator {
      *
      * @exception ELException Thrown if the expression evaluation failed.
      */ 
-    public Object evaluate( String expression, 
+    public abstract Object evaluate( String expression, 
 			    Class expectedType, 
 			    VariableResolver vResolver,
 			    FunctionMapper fMapper,

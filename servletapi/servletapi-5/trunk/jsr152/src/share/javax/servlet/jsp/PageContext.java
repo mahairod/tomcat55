@@ -76,7 +76,7 @@ import javax.servlet.jsp.tagext.BodyContent;
  * A PageContext instance provides access to all the namespaces associated
  * with a JSP page, provides access to several page attributes, as well as
  * a layer above the implementation details.  Implicit objects are added
- * the pageContext automatically.
+ * to the pageContext automatically.
  *
  * <p> The <code> PageContext </code> class is an abstract class, designed to be
  * extended to provide implementation dependent implementations thereof, by
@@ -116,20 +116,8 @@ import javax.servlet.jsp.tagext.BodyContent;
  *
  * <p><B>Methods Intended for JSP authors</B>
  * <p>
- * Some methods provide <B>uniform access</B> to the diverse objects
- * representing scopes.
- * The implementation must use the underlying Servlet machinery
- * corresponding to that scope, so information can be passed back and
- * forth between Servlets and JSP pages.  The methods are:
- * <code>setAttribute()</code>,  <code>getAttribute()</code>,
- * <code>findAttribute()</code>,  <code>removeAttribute()</code>,
- * <code>getAttributesScope()</code> and 
- * <code>getAttributeNamesInScope()</code>.
- * 
- * <p>
  * The following methods provide <B>convenient access</B> to implicit objects:
- * <ul>
- * <code>getOut()</code>,  <code>getException()</code>,  <code>getPage()</code>
+ * <code>getException()</code>,  <code>getPage()</code>
  * <code>getRequest()</code>,  <code>getResponse()</code>,
  * <code>getSession()</code>,  <code>getServletConfig()</code>
  * and <code>getServletContext()</code>.
@@ -456,10 +444,17 @@ abstract public class PageContext
 
     /**
      * <p>
-     * This method is intended to process an unhandled "page" level exception
-     * by redirecting the exception to either the specified error page for this
-     * JSP, or if none was specified, to perform some implementation dependent
-     * action.
+     * This method is intended to process an unhandled 'page' level
+     * exception by forwarding the exception to the specified
+     * error page for this JSP.  If forwarding is not possible (for
+     * example because the response has already been committed), an
+     * implementation dependent mechanism should be used to invoke
+     * the error page (e.g. "including" the error page instead).
+     *
+     * <p>
+     * If no error page is defined in the page, the exception should
+     * be rethrown so that the standard servlet error handling
+     * takes over.
      *
      * <p>
      * A JSP implementation class shall typically clean up any local state
@@ -486,10 +481,17 @@ abstract public class PageContext
 
     /**
      * <p>
-     * This method is identical to the handlePageException(Exception),
-     * except that it accepts a Throwable.  This is the preferred method
-     * to use as it allows proper implementation of the errorpage
-     * semantics.
+     * This method is intended to process an unhandled 'page' level
+     * exception by forwarding the exception to the specified
+     * error page for this JSP.  If forwarding is not possible (for
+     * example because the response has already been committed), an
+     * implementation dependent mechanism should be used to invoke
+     * the error page (e.g. "including" the error page instead).
+     *
+     * <p>
+     * If no error page is defined in the page, the exception should
+     * be rethrown so that the standard servlet error handling
+     * takes over.
      *
      * <p>
      * This method is intended to process an unhandled "page" level exception

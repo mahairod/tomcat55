@@ -65,7 +65,7 @@ import javax.servlet.jsp.JspContext;
  * <code>doTag()</code> method, which is called once and only once for any 
  * given tag invocation.  All tag logic, iteration, body evaluations, etc. 
  * are to be performed in this single method.  Thus, simple tag handlers 
- * have the equivalent power of <code>IterationTag</code>, but with a much 
+ * have the equivalent power of <code>BodyTag</code>, but with a much 
  * simpler lifecycle and interface.</p>
  *
  * <p>To support body content, the <code>setJspBody()</code> 

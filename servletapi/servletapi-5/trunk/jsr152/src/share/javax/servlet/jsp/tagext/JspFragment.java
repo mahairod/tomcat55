@@ -64,7 +64,7 @@ package javax.servlet.jsp.tagext;
  * or to be of type JspFragment in the TLD.
  * <p>
  * The definition of the JSP fragment must only contain template 
- * text and JSP action elements.  It must not contain, for example, 
+ * text and JSP action elements.  In other words, it must not contain
  * scriptlets or scriptlet expressions.  At translation time, the 
  * container generates an implementation of the JspFragment interface
  * capable of executing the defined fragment.

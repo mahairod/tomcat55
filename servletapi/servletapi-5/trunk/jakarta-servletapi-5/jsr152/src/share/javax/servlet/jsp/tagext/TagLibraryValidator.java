@@ -59,7 +59,7 @@ import java.util.Map;
 
 /**
  * Translation-time validator class for a JSP page. 
- * A validator operates on the XML document associated with the JSP page.
+ * A validator operates on the XML view associated with the JSP page.
  *
  * <p>
  * The TLD file associates a TagLibraryValidator class and some init

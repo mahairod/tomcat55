@@ -92,11 +92,12 @@ import javax.servlet.jsp.*;
  * or not.
  * <li> [2] This transition happens if and only if the tag ends normally
  * without raising an exception
- * <li> [3] Note that since there are no guarantees on the state of the
- * properties, a tag handler that had some optional properties set can only be
- * reused if those properties are set to a new (known) value.  This means
- * that tag handlers can only be reused within the same "AttSet" (set of
- * attributes that have been set).
+ * <li> [3] Some setters may be called again before a tag handler is 
+ * reused.  For instance, <code>setParent()</code> is called if it's 
+ * reused within the same page but at a different level, 
+ * <code>setPageContext()</code> is called if it's used in another page, 
+ * and attribute setters are called if the values differ or are expressed 
+ * as request-time attribute values.
  * <li> Check the TryCatchFinally interface for additional details related
  * to exception handling and resource management.
  * </ul></p>
