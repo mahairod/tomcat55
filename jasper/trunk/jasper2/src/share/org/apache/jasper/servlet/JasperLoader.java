@@ -57,9 +57,6 @@
 
 package org.apache.jasper.servlet;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -92,13 +89,12 @@ public class JasperLoader extends URLClassLoader {
     private SecurityManager securityManager;
     private PrivilegedLoadClass privLoadClass;
 
-    public JasperLoader(URL[] urls, String className, ClassLoader parent,
+    public JasperLoader(URL[] urls, ClassLoader parent,
 			PermissionCollection permissionCollection,
 			CodeSource codeSource) {
 	super(urls, parent);
 	this.permissionCollection = permissionCollection;
 	this.codeSource = codeSource;
-	this.className = className;
 	this.parent = parent;
         this.privLoadClass = new PrivilegedLoadClass();
 	this.securityManager = System.getSecurityManager();
@@ -197,33 +193,7 @@ public class JasperLoader extends URLClassLoader {
 	    return clazz;
 	}
 
-	// Only load classes for this JSP page (including any tag handlers
-	// generated from tag files)
-	if (name.startsWith(className)) {
-	    String classFile
-		= name.substring(Constants.JSP_PACKAGE_NAME.length() + 1)
-		+ ".class";
-	    byte[] cdata = loadClassDataFromFile(classFile);
-	    if (cdata == null) {
-		throw new ClassNotFoundException(name);
-	    }
-	    if (securityManager != null) {
-		ProtectionDomain pd
-		    = new ProtectionDomain(codeSource, permissionCollection);
-		clazz = defineClass(name, cdata, 0, cdata.length, pd);
-	    } else {
-		clazz = defineClass(name, cdata, 0, cdata.length);
-	    }
-	    if (clazz != null) {
-		if (resolve)                
-		    resolveClass(clazz);
-		return clazz;
-	    }
-	} else if (name.startsWith(Constants.TAG_FILE_PACKAGE_NAME)) {
-	    return findClass(name);
-	}
-
-	throw new ClassNotFoundException(name);
+	return findClass(name);
     }
 
     /**
@@ -238,42 +208,6 @@ public class JasperLoader extends URLClassLoader {
      */
     public final PermissionCollection getPermissions(CodeSource codeSource) {
         return permissionCollection;
-    }
-
-    /*
-     * Load JSP class data from file.
-     */
-    private byte[] loadClassDataFromFile(final String fileName) {
-        byte[] classBytes = null;
-        try {
-            InputStream in = null;
-            
-            if (System.getSecurityManager() != null){
-                in = (InputStream)AccessController.doPrivileged(new PrivilegedAction(){
-                    public Object run(){
-                        return getResourceAsStream(fileName);
-                    }
-                });
-            } else {
-                in = getResourceAsStream(fileName);
-            }
-            
-            if (in == null) {
-		return null;
-	    }
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte buf[] = new byte[1024];
-            for (int i = 0; (i = in.read(buf)) != -1; ) {
-                baos.write(buf, 0, i);
-	    }
-            in.close();     
-            baos.close();    
-            classBytes = baos.toByteArray();
-        } catch(Exception ex) {
-	    ex.printStackTrace();
-            return null;     
-        }                    
-        return classBytes;
     }
 
     private class PrivilegedLoadClass implements PrivilegedAction {

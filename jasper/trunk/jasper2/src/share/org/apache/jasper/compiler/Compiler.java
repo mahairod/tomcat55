@@ -378,8 +378,8 @@ public class Compiler {
         // Build includes path
         PatternSet.NameEntry includes = javac.createInclude();
 
-        includes.setName(ctxt.getJspPath());
-        info.append("    include="+ ctxt.getJspPath() + "\n" );
+        includes.setName(ctxt.getJavaPath());
+        info.append("    include="+ ctxt.getJavaPath() + "\n" );
 
         try {
             if (ctxt.getOptions().getFork()) {

@@ -140,7 +140,6 @@ public class JspServletWrapper {
         ctxt = new JspCompilationContext(jspUri, isErrorPage, options,
 					 config.getServletContext(),
 					 this, rctxt);
-        ctxt.createOutdir(jspUri);
     }
 
     /*
@@ -162,8 +161,6 @@ public class JspServletWrapper {
         ctxt = new JspCompilationContext(jspUri, tagInfo, options,
 					 servletContext, this, rctxt,
 					 tagFileJar);
-        ctxt.createOutdir("/tags/"
-			  + tagInfo.getTagClassName().replace('.', '/'));
     }
 
     public JspCompilationContext getJspEngineContext() {

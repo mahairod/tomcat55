@@ -122,7 +122,6 @@ public class JspC implements Options {
     private static final String SWITCH_VERBOSE = "-v";
     private static final String SWITCH_QUIET = "-q";
     private static final String SWITCH_OUTPUT_DIR = "-d";
-    private static final String SWITCH_OUTPUT_SIMPLE_DIR = "-dd";
     private static final String SWITCH_IE_CLASS_ID = "-ieplugin";
     private static final String SWITCH_PACKAGE_NAME = "-p";
     private static final String SWITCH_CLASS_NAME = "-c";
@@ -143,20 +142,7 @@ public class JspC implements Options {
     private static final int DEFAULT_DIE_LEVEL = 1;
     private static final int NO_DIE_LEVEL = 0;
 
-    private static final String javaKeywords[] = {
-	"abstract", "boolean", "break", "byte", "case",
-	"catch", "char", "class", "const", "continue",
-	"default", "do", "double", "else", "extends",
-	"final", "finally", "float", "for", "goto",
-	"if", "implements", "import", "instanceof", "int",
-	"interface", "long", "native", "new", "package",
-	"private", "protected", "public", "return", "short",
-	"static", "strictfp", "super", "switch", "synchronized",
-	"this", "throws", "transient", "try", "void",
-	"volatile", "while" };
-
     private static int die; 
-
     private String classPath = null;
     private URLClassLoader loader = null;
     private boolean largeFile = false;
@@ -172,7 +158,6 @@ public class JspC implements Options {
 
     private boolean compile = false;
     private String compiler = null;
-    private boolean dirset;
     private boolean classDebugInfo = true;
     private Vector extensions;
     private Vector pages = new Vector();
@@ -239,18 +224,6 @@ public class JspC implements Options {
             } else if (tok.equals(SWITCH_OUTPUT_DIR)) {
                 tok = nextArg();
                 setOutputDir( tok );
-            } else if (tok.equals(SWITCH_OUTPUT_SIMPLE_DIR)) {
-                tok = nextArg();
-                if (tok != null) {
-                    scratchDir = new File(new File(tok).getAbsolutePath());
-                    dirset = false;
-                } else {
-                    // either an in-java call with an explicit null
-                    // or a "-d --" sequence should cause this,
-                    // which would mean default handling
-                    /* no-op */
-                    scratchDir = null;
-                }
             } else if (tok.equals(SWITCH_PACKAGE_NAME)) {
                 targetPackage = nextArg();
             } else if (tok.equals(SWITCH_COMPILE)) {
@@ -457,8 +430,7 @@ public class JspC implements Options {
 
     public void setOutputDir( String s ) {
         if( s!= null ) {
-            scratchDir=new File(new File(s).getAbsolutePath());
-            dirset=true;
+            scratchDir = new File(s).getAbsoluteFile();
         } else {
             scratchDir=null;
         }
@@ -540,9 +512,6 @@ public class JspC implements Options {
             }
 
             String jspUri=file.replace('\\','/');
-            String baseDir = scratchDir.getCanonicalPath();
-            this.setOutputDir(baseDir
-			      + jspUri.substring(0, jspUri.lastIndexOf('/')));
             JspCompilationContext clctxt = new JspCompilationContext
                 ( jspUri, false,  this, context, null, rctxt );
 
@@ -552,18 +521,8 @@ public class JspC implements Options {
                 targetClassName = null;
             }
             if (targetPackage != null) {
-                String jspPackage = toPackageName(jspUri);
-                if (jspPackage.equals("")) {
-                    clctxt.setServletPackageName(targetPackage);
-                } else {
-                    clctxt.setServletPackageName(targetPackage + "." 
-                                                 + jspPackage);
-                }
-            } else {
-                clctxt.setServletPackageName( toPackageName(jspUri));
+                clctxt.setServletPackageName(targetPackage);
             }
-
-            setupContext(clctxt);
 
             if( loader==null )
                 initClassLoader( clctxt );
@@ -572,7 +531,6 @@ public class JspC implements Options {
             clctxt.setClassPath(classPath);
 
             Compiler clc = clctxt.createCompiler();
-            this.setOutputDir( baseDir );
 
             // If compile is set, generate both .java and .class, if
             // .jsp file is newer than .class file;
@@ -730,42 +688,6 @@ public class JspC implements Options {
         }
     }
 
-    /**
-     * Converts the JSP file path into a valid package name with a
-     * structure that mirrors the directory structure. If the JSP file
-     * path doesn't contain a directory structure (top-level file),
-     * an empty package name is returned.
-     *
-     * @param jspUri the context-relative path for the JSP file, starting
-     *  with a slash
-     */
-    private String toPackageName(String jspUri) {
-        StringBuffer modifiedPackageName = new StringBuffer();
-        int iSep = jspUri.lastIndexOf('/');
-	// Start after the first slash
-        int nameStart = 1;
-	for (int i = 1; i < iSep; i++) {
-	    char ch = jspUri.charAt(i);
-	    if (Character.isJavaIdentifierPart(ch)) {
-		modifiedPackageName.append(ch);
-	    }
-	    else if (ch == '/') {
-                if (isJavaKeyword(jspUri.substring(nameStart, i))) {
-                    modifiedPackageName.append('_');
-                }
-                nameStart = i+1;
-		modifiedPackageName.append('.');
-	    } else {
-		modifiedPackageName.append(mangleChar(ch));
-	    }
-	}
-        if (nameStart < iSep
-	        && isJavaKeyword(jspUri.substring(nameStart, iSep))) {
-            modifiedPackageName.append('_');
-        }
-        return modifiedPackageName.toString();
-    }
-
     private void initWebXml() {
         try {
             if (webxmlLevel >= INC_WEBXML) {
@@ -822,49 +744,6 @@ public class JspC implements Options {
         rctxt = new JspRuntimeContext(context, this);
         jspConfig = new JspConfig(context);
         tagPluginManager = new TagPluginManager(context);
-    }
-
-    /**
-     * Mangle the specified character to create a legal Java class name.
-     * FIX: This is a copy of the method from JspCompilationContext. It
-     * would be better to make that method public, or put it in a utility
-     * class.
-     */
-    private String mangleChar(char ch) {
-
-	String s = Integer.toHexString(ch);
-	int nzeros = 5 - s.length();
-	char[] result = new char[6];
-	result[0] = '_';
-	for (int i = 1; i <= nzeros; i++) {
-	    result[i] = '0';
-        }
-	for (int i = nzeros+1, j = 0; i < 6; i++, j++) {
-	    result[i] = s.charAt(j);
-        }
-	return new String(result);
-    }
-
-    /**
-     * Resolve relative path, and create output directories.
-     */
-    private void setupContext(JspCompilationContext clctxt) {
-        String outputDir = scratchDir.getAbsolutePath();
-
-        if (dirset) {
-            int indexOfSlash = clctxt.getJspFile().lastIndexOf('/');
-
-            /* String pathName = "";
-            if (indexOfSlash != -1) {
-                pathName = clctxt.getJspFile().substring(0, indexOfSlash);
-            } */
-            String tmpDir = outputDir + File.separatorChar; // + pathName;
-            File f = new File(tmpDir);
-            if (!f.exists()) {
-                f.mkdirs();
-            }
-        }
-        clctxt.setOutputDir( outputDir );
     }
 
     private void initClassLoader(JspCompilationContext clctxt)
@@ -1013,24 +892,6 @@ public class JspC implements Options {
             // for uriRoot has a non-error meaning, we can just
             // pass straight through
         }
-    }
-
-    private static boolean isJavaKeyword(String key) {
-	int i = 0;
-	int j = javaKeywords.length;
-	while (i < j) {
-	    int k = (i+j)/2;
-	    int result = javaKeywords[k].compareTo(key);
-	    if (result == 0) {
-		return true;
-	    }
-	    if (result < 0) {
-		i = k+1;
-	    } else {
-		j = k;
-	    }
-	}
-	return false;
     }
 }
 
