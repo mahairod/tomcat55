@@ -96,10 +96,6 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
-// FIXME : Define a new "servlet context" interface to void directly referncing
-// the ApplicationContext
-import org.apache.catalina.core.ApplicationContext;
-// End FIXME
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
@@ -1014,7 +1010,6 @@ public class WebappLoader
                     }
 
                     JarFile jarFile = new JarFile(destFile);
-
                     classLoader.addJar(filename, jarFile, destFile);
 
                 }
