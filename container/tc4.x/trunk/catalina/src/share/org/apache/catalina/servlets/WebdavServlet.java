@@ -1509,6 +1509,9 @@ public class WebdavServlet
             return false;
         }
 
+        destinationPath = 
+            normalize(RequestUtil.URLDecode(destinationPath, "UTF8"));
+
         int protocolIndex = destinationPath.indexOf("://");
         if (protocolIndex >= 0) {
             // if the Destination URL contains the protocol, we can safely
@@ -1557,9 +1560,6 @@ public class WebdavServlet
                     .substring(servletPath.length());
             }
         }
-
-        destinationPath = 
-            RequestUtil.URLDecode(normalize(destinationPath), "UTF8");
 
         if (debug > 0)
             System.out.println("Dest path :" + destinationPath);
