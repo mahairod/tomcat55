@@ -187,6 +187,9 @@
       <fileset dir="${tomcat.build}/webapps" />
     </copy>
 
+    <!-- Copy temp file -->
+    <copy todir="${tomcat.dist}/temp" file="${basedir}/resources/DONOTREMOVE"/>
+
     <!-- Correct permissions and line endings on "bin" scripts -->
     <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.sh"  eol="lf"/>
     <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.bat" eol="crlf"/>
