@@ -14,18 +14,20 @@ acceptable to delay their resolution.
                    is 0 with Apache WebApp module
 5040    webaap     EOFException when talking from applet to servlet 
                    via mod_webapp
+5229    catalina   Session cannot unbind if using DistributedManager
 5402    webapp     WarpConnection raise IOException in a Clustered 
                    Solaris environment
+5507    catalina   Swapping sessions causes exceptions and it doesn't work 
+                   with FileStore
 5704    servlets   CgiServlet corrupting images?
 5735    catalina   HTTP connector running out of processors under heavy load
 5759    servlets   CGI servlet mapping by extension *.cgi does not work
 5795    catalina   Catalina Shutdown relies on localhost causing problems 
 5827    catalina   DataInputStream.readInt returns wrong values
 5899    servlets   HTTP POST parameters ignored in CGIServlet.java
-5976    catalina   Spaces should be allowed in Servlet Context paths
+5976    catalina   Tomcat 4.0.2B2 + Security Manager + JSSE don't work together
 6036    webapp     Problems with URI mapping
 6068    jk         AJP13 "bad read", IOException
-6219    jk         FORM authentication does not work when using AJP connector
 6331    catalina   Cannot add more than one cookie
 6376    jasper     Improper import statement is generated when JSP page 
                    extends a custom class without package prefix
@@ -36,6 +38,7 @@ acceptable to delay their resolution.
                    in JSP.B of the JSP 1.2 specification
 6443    jasper     Jasper doesn't follow the spec in regards to the xml-view 
                    of a JSP page and whitespace handling semantics
+6457    jk         mod_jk causes segmentation fault with JkLogLevel != debug
 6464    jasper     Jspc generates bad package names on Windows NT
 
 

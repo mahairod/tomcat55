@@ -92,6 +92,8 @@ Docs:  Fix typos in the web application development guide.
 Bugzilla Bugs Resolved:
 ----------------------
 
+3770  HttpSessionListener.sessionCreated() called twice for each session
+5647  AJP13 connector will not pass authentication requests
 6374  Class not found for: org/w3c/dom/range/Range
 6396  LoggerBase class is package not public
 6406  All classes in $CATALINA_HOME/classes become invisible 
