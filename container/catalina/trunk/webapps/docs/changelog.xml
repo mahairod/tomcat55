@@ -36,6 +36,9 @@
       <docs>
         Add JULI documentation to the logging page (remm)
       </docs>
+      <add>
+        Add host manager webapp (remm)
+      </add>
     </changelog>
    </subsection>
 
@@ -59,6 +62,9 @@
       </fix>
       <fix>
         <bug>22041</bug>: Support dynamic proxies as session objects. (markt)
+      </fix>
+      <fix>
+        Fix logger names for wrappers (remm)
       </fix>
     </changelog>
    </subsection>
