@@ -2196,7 +2196,15 @@ public class Request
               (sm.getString("coyoteRequest.sessionCreateCommitted"));
         }
 
-        session = manager.createSession();
+        // Attempt to reuse session id if one was submitted in a cookie
+        // Do not reuse the session id if it is from a URL, to prevent possible
+        // phishing attacks
+        if (connector.getEmptySessionPath() 
+                && isRequestedSessionIdFromCookie()) {
+            session = manager.createSession(getRequestedSessionId());
+        } else {
+            session = manager.createSession(null);
+        }
 
         // Creating a new session cookie based on that session
         if ((session != null) && (getContext() != null)

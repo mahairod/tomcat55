@@ -257,6 +257,7 @@ public interface Manager {
      */
     public void addPropertyChangeListener(PropertyChangeListener listener);
 
+
     /**
      * Get a session from the recycled ones or create a new empty one.
      * The PersistentManager manager does not need to create session data
@@ -264,17 +265,36 @@ public interface Manager {
      */                                                                         
     public Session createEmptySession();
 
+
     /**
      * Construct and return a new session object, based on the default
      * settings specified by this Manager's properties.  The session
      * id will be assigned by this method, and available via the getId()
      * method of the returned session.  If a new session cannot be created
      * for any reason, return <code>null</code>.
-     *
+     * 
+     * @exception IllegalStateException if a new session cannot be
+     *  instantiated for any reason
+     * @deprecated
+     */
+    public Session createSession();
+
+
+    /**
+     * Construct and return a new session object, based on the default
+     * settings specified by this Manager's properties.  The session
+     * id specified will be used as the session id.
+     * If a new session cannot be created for any reason, return 
+     * <code>null</code>.
+     * 
+     * @param sessionId The session id which should be used to create the
+     *  new session; if <code>null</code>, the session
+     *  id will be assigned by this method, and available via the getId()
+     *  method of the returned session.
      * @exception IllegalStateException if a new session cannot be
      *  instantiated for any reason
      */
-    public Session createSession();
+    public Session createSession(String sessionId);
 
 
     /**
