@@ -1597,9 +1597,10 @@
       <param name="destfile" value="${xml-apis.jar}"/>
     </antcall>
 
-    <antcall target="downloadgz">
+    <antcall target="downloadzip">
       <param name="sourcefile" value="${jmx.loc}"/>
       <param name="destfile" value="${jmx.jar}"/>
+      <param name="destdir" value="${jmx.home}"/>
     </antcall>
 
     <antcall target="downloadzip">
