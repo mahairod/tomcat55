@@ -338,7 +338,7 @@ public class FileUtil {
 
     public static String getExtension( String path ) {
         int i = path.lastIndexOf(".");
-	int j = path.lastIndexOf("/");
+	int j = path.lastIndexOf(File.separator);
 
 	if ((i > 0) && (i > j))
 	    return path.substring(i);
@@ -350,7 +350,7 @@ public class FileUtil {
      */
     public static String getBase( String path ) {
         int i = path.lastIndexOf(".");
-	int j = path.lastIndexOf("/");
+	int j = path.lastIndexOf(File.separator);
 
 	if( j < 0 ) {// no /
 	    if( i<0 )
@@ -362,7 +362,7 @@ public class FileUtil {
 		// . in a dir, before last component, or no "."
 		return path.substring( j );
 	    } else {
-		return path.substring( j, i );
+		return path.substring( j+1, i );
 	    }
 	}
     }
