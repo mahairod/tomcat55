@@ -219,10 +219,6 @@
           description="The IP address on which to bind"
                  type="java.lang.String"/>
 
-    <attribute   name="allowChunking"
-          description="Is HTTP/1.1 chunking allowed?"
-                 type="boolean"/>
-
     <attribute   name="bufferSize"
           description="The input buffer size we should create on input streams"
                  type="int"/>
@@ -261,10 +257,6 @@
     <attribute   name="port"
           description="The port number on which we listen for ajp13 requests"
                  type="int"/>
-
-    <attribute   name="processorClassName"
-          description="Fully qualified class name of Coyote processor class"
-                 type="java.lang.String"/>
 
     <attribute   name="proxyName"
           description="The server name to which we should pretend requests to

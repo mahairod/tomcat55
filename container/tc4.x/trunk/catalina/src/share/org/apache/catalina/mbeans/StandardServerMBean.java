@@ -68,6 +68,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
@@ -258,14 +259,17 @@ public class StandardServerMBean extends BaseModelMBean {
             if ("managedResource".equals(aname)) {
                 continue; // KLUDGE - these should be removed
             }
-            if (!ainfo[i].isReadable() || !ainfo[i].isWritable()) {
-                continue; // We cannot configure this attribute
+            if (!ainfo[i].isReadable()) {
+                continue; // We cannot read the current value
+            }
+            if (!"className".equals(aname) && !ainfo[i].isWritable()) {
+                continue; // We will not be able to configure this attribute
             }
 
             // Acquire the value of this attribute
             Object value = mserver.getAttribute(oname, aname);
             if (value == null) {
-                value = "";
+                continue; // No need to explicitly record this
             }
             if (!(value instanceof String)) {
                 value = value.toString();
@@ -280,6 +284,358 @@ public class StandardServerMBean extends BaseModelMBean {
 
         }
 
+
+    }
+
+
+    /**
+     * Store the specified Connector properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param oname ObjectName of the MBean for the object we are storing
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeConnector(PrintWriter writer, int indent,
+                                ObjectName oname) throws Exception {
+
+        // Store the beginning of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<Connector");
+        storeAttributes(writer, oname);
+        writer.println(">");
+
+        // Store nested <Listener> elements
+        ; // FIXME
+
+        // Store nested <Factory> element
+        ; // FIXME
+
+        // Store the ending of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.println("</Connector>");
+
+    }
+
+
+    /**
+     * Store the specified Context properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param oname ObjectName of the MBean for the object we are storing
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeContext(PrintWriter writer, int indent,
+                              ObjectName oname) throws Exception {
+
+        // Store the beginning of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<Context");
+        storeAttributes(writer, oname);
+        writer.println(">");
+
+        // Store nested <InstanceListener> elements
+        ; // FIXME
+
+        // Store nested <Listener> elements
+        ; // FIXME
+
+        // Store nested <Loader> element
+        ; // FIXME
+
+        // Store nested <Logger> element
+        StringBuffer loggerSearch =
+            new StringBuffer("Catalina:type=Logger,path=");
+        loggerSearch.append(oname.getKeyProperty("path"));
+        loggerSearch.append(",host=");
+        loggerSearch.append(oname.getKeyProperty("host"));
+        loggerSearch.append(",service=");
+        loggerSearch.append(oname.getKeyProperty("service"));
+        ObjectName loggerQuery = new ObjectName(loggerSearch.toString());
+        Iterator loggerNames =
+            mserver.queryNames(loggerQuery, null).iterator();
+        while (loggerNames.hasNext()) {
+            storeLogger(writer, indent + 2,
+                        (ObjectName) loggerNames.next());
+        }
+
+        // Store nested <Manager> element
+        ; // FIXME
+
+        // Store nested <Parameter> elements
+        ; // FIXME
+
+        // Store nested <Realm> element
+        StringBuffer realmSearch =
+            new StringBuffer("Catalina:type=Realm,path=");
+        realmSearch.append(oname.getKeyProperty("path"));
+        realmSearch.append(",host=");
+        realmSearch.append(oname.getKeyProperty("host"));
+        realmSearch.append(",service=");
+        realmSearch.append(oname.getKeyProperty("service"));
+        ObjectName realmQuery = new ObjectName(realmSearch.toString());
+        Iterator realmNames =
+            mserver.queryNames(realmQuery, null).iterator();
+        while (realmNames.hasNext()) {
+            storeRealm(writer, indent + 2,
+                        (ObjectName) realmNames.next());
+        }
+
+        // Store nested <ResourceLink> elements
+        ; // FIXME
+
+        // Store nested <Resources> element
+        ; // FIXME
+
+        // Store nested <Valve> elements
+        ; // FIXME
+
+        // Store nested <WrapperLifecycle> elements
+        ; // FIXME
+
+        // Store nested <WrapperListener> elements
+        ; // FIXME
+
+        // Store the ending of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.println("</Context>");
+
+    }
+
+
+    /**
+     * Store the specified Engine properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param oname ObjectName of the MBean for the object we are storing
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeEngine(PrintWriter writer, int indent,
+                             ObjectName oname) throws Exception {
+
+        // Store the beginning of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<Engine");
+        storeAttributes(writer, oname);
+        writer.println(">");
+
+        // Store nested <Default> element
+        ; // FIXME
+
+        // Store nested <DefaultContext> element
+        ; // FIXME
+
+        // Store nested <Host> elements
+        StringBuffer hostSearch =
+            new StringBuffer("Catalina:type=Host,service=");
+        hostSearch.append(oname.getKeyProperty("service"));
+        hostSearch.append(",*");
+        ObjectName hostQuery = new ObjectName(hostSearch.toString());
+        Iterator hostNames =
+            mserver.queryNames(hostQuery, null).iterator();
+        while (hostNames.hasNext()) {
+            storeHost(writer, indent + 2,
+                      (ObjectName) hostNames.next());
+        }
+
+        // Store nested <Listener> elements
+        ; // FIXME
+
+        // Store nested <Logger> element
+        StringBuffer loggerSearch =
+            new StringBuffer("Catalina:type=Logger,service=");
+        loggerSearch.append(oname.getKeyProperty("service"));
+        ObjectName loggerQuery = new ObjectName(loggerSearch.toString());
+        Iterator loggerNames =
+            mserver.queryNames(loggerQuery, null).iterator();
+        while (loggerNames.hasNext()) {
+            storeLogger(writer, indent + 2,
+                        (ObjectName) loggerNames.next());
+        }
+
+        // Store nested <Realm> element
+        StringBuffer realmSearch =
+            new StringBuffer("Catalina:type=Realm,service=");
+        realmSearch.append(oname.getKeyProperty("service"));
+        ObjectName realmQuery = new ObjectName(realmSearch.toString());
+        Iterator realmNames =
+            mserver.queryNames(realmQuery, null).iterator();
+        while (realmNames.hasNext()) {
+            storeRealm(writer, indent + 2,
+                        (ObjectName) realmNames.next());
+        }
+
+        // Store nested <Valve> elements
+        ; // FIXME
+
+        // Store the ending of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.println("</Engine>");
+
+    }
+
+
+    /**
+     * Store the specified Host properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param oname ObjectName of the MBean for the object we are storing
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeHost(PrintWriter writer, int indent,
+                           ObjectName oname) throws Exception {
+
+        // Store the beginning of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<Host");
+        storeAttributes(writer, oname);
+        writer.println(">");
+
+        // Store nested <Alias> elements
+        ; // FIXME
+
+        // Store nested <Context> elements
+        StringBuffer contextSearch =
+            new StringBuffer("Catalina:type=Context,host=");
+        contextSearch.append(oname.getKeyProperty("host"));
+        contextSearch.append(",service=");
+        contextSearch.append(oname.getKeyProperty("service"));
+        contextSearch.append(",*");
+        ObjectName contextQuery = new ObjectName(contextSearch.toString());
+        Iterator contextNames =
+            mserver.queryNames(contextQuery, null).iterator();
+        while (contextNames.hasNext()) {
+            storeContext(writer, indent + 2,
+                         (ObjectName) contextNames.next());
+        }
+
+        // Store nested <Cluster> elements
+        ; // FIXME
+
+        // Store nested <Default> element
+        ; // FIXME
+
+        // Store nested <DefaultContext> element
+        ; // FIXME
+
+        // Store nested <Listener> elements
+        ; // FIXME
+
+        // Store nested <Logger> element
+        StringBuffer loggerSearch =
+            new StringBuffer("Catalina:type=Logger,host=");
+        loggerSearch.append(oname.getKeyProperty("host"));
+        loggerSearch.append(",service=");
+        loggerSearch.append(oname.getKeyProperty("service"));
+        ObjectName loggerQuery = new ObjectName(loggerSearch.toString());
+        Iterator loggerNames =
+            mserver.queryNames(loggerQuery, null).iterator();
+        while (loggerNames.hasNext()) {
+            storeLogger(writer, indent + 2,
+                        (ObjectName) loggerNames.next());
+        }
+
+        // Store nested <Realm> element
+        StringBuffer realmSearch =
+            new StringBuffer("Catalina:type=Realm,host=");
+        realmSearch.append(oname.getKeyProperty("host"));
+        realmSearch.append(",service=");
+        realmSearch.append(oname.getKeyProperty("service"));
+        ObjectName realmQuery = new ObjectName(realmSearch.toString());
+        Iterator realmNames =
+            mserver.queryNames(realmQuery, null).iterator();
+        while (realmNames.hasNext()) {
+            storeRealm(writer, indent + 2,
+                        (ObjectName) realmNames.next());
+        }
+
+        // Store nested <Valve> elements
+        ; // FIXME
+
+        // Store the ending of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.println("</Host>");
+
+    }
+
+
+    /**
+     * Store the specified Logger properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param oname ObjectName of the MBean for the object we are storing
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeLogger(PrintWriter writer, int indent,
+                             ObjectName oname) throws Exception {
+
+        // Store the beginning of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<Logger");
+        storeAttributes(writer, oname);
+        writer.println(">");
+
+        // Store the ending of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.println("</Logger>");
+
+    }
+
+
+    /**
+     * Store the specified Realm properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param oname ObjectName of the MBean for the object we are storing
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeRealm(PrintWriter writer, int indent,
+                            ObjectName oname) throws Exception {
+
+        // Store the beginning of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<Realm");
+        storeAttributes(writer, oname);
+        writer.println(">");
+
+        // Store the ending of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.println("</Realm>");
 
     }
 
@@ -304,10 +660,22 @@ public class StandardServerMBean extends BaseModelMBean {
         storeAttributes(writer, oname);
         writer.println(">");
 
-        // Store all nested elements
-        ; // FIXME - <Listener>s
-        ; // FIXME - <GlobalNamingResources>
-        ; // FIXME - <Service>s
+        // Store nested <GlobalNamingResources> element
+        ; // FIXME
+
+        // Store nested <Listener> elements
+        ; // FIXME
+
+        // Store nested <Service> elements
+        StringBuffer serviceSearch =
+            new StringBuffer("Catalina:type=Service,*");
+        ObjectName serviceQuery = new ObjectName(serviceSearch.toString());
+        Iterator serviceNames =
+            mserver.queryNames(serviceQuery, null).iterator();
+        while (serviceNames.hasNext()) {
+            storeService(writer, indent + 2,
+                         (ObjectName) serviceNames.next());
+        }
 
         // Store the ending of this element
         for (int i = 0; i < indent; i++) {
@@ -338,9 +706,34 @@ public class StandardServerMBean extends BaseModelMBean {
         storeAttributes(writer, oname);
         writer.println(">");
 
-        // Store all nested elements
-        ; // FIXME - <Connector>s
-        ; // FIXME - <Engine>
+        // Store nested <Connector> elements
+        StringBuffer connectorSearch =
+            new StringBuffer("Catalina:type=Connector,service=");
+        connectorSearch.append(oname.getKeyProperty("name"));
+        connectorSearch.append(",*");
+        ObjectName connectorQuery = new ObjectName(connectorSearch.toString());
+        Iterator connectorNames =
+            mserver.queryNames(connectorQuery, null).iterator();
+        while (connectorNames.hasNext()) {
+            storeConnector(writer, indent + 2,
+                           (ObjectName) connectorNames.next());
+        }
+
+        // Store nested <Engine> element
+        StringBuffer engineSearch =
+            new StringBuffer("Catalina:type=Engine,service=");
+        engineSearch.append(oname.getKeyProperty("name"));
+        engineSearch.append(",*");
+        ObjectName engineQuery = new ObjectName(engineSearch.toString());
+        Iterator engineNames =
+            mserver.queryNames(engineQuery, null).iterator();
+        while (engineNames.hasNext()) {
+            storeEngine(writer, indent + 2,
+                        (ObjectName) engineNames.next());
+        }
+
+        // Store nested <Listener> elements
+        ; // FIXME
 
         // Store the ending of this element
         for (int i = 0; i < indent; i++) {
