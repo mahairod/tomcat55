@@ -62,6 +62,7 @@ package org.apache.jasper.compiler;
 
 import java.util.*;
 import java.io.*;
+import java.net.URL;
 import javax.servlet.jsp.tagext.TagInfo;
 
 import org.xml.sax.Attributes;
@@ -76,9 +77,12 @@ import org.apache.tools.ant.types.Path;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
+import org.apache.jasper.JspEngineContext;
 import org.apache.jasper.Options;
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.util.SystemLogHandler;
+import org.apache.jasper.runtime.HttpJspBase;
+import org.apache.jasper.servlet.JspServletWrapper;
 
 /**
  * Main JSP compiler class. This class uses Ant for compiling.
@@ -110,6 +114,7 @@ public class Compiler {
 
     private ErrorDispatcher errDispatcher;
     private PageInfo pageInfo;
+    private JspServletWrapper jsw;
 
     protected Project project;
 
@@ -120,6 +125,12 @@ public class Compiler {
 
 
     public Compiler(JspCompilationContext ctxt) {
+        this(ctxt, null);
+    }
+
+
+    public Compiler(JspCompilationContext ctxt, JspServletWrapper jsw) {
+        this.jsw = jsw;
         this.ctxt = ctxt;
 	this.errDispatcher = new ErrorDispatcher();
         this.options = ctxt.getOptions();
@@ -214,6 +225,8 @@ public class Compiler {
         javac.setSrcdir(srcPath);
 
         // Build includes path
+        javac.setIncludes(((JspEngineContext) ctxt).getJspPath());
+        /*
         String dirName = ctxt.getJspFile();
         int pos = dirName.lastIndexOf('/');
         if (pos > 0) {
@@ -225,7 +238,7 @@ public class Compiler {
         if (includePath.startsWith("/")) {
             includePath = includePath.substring(1);
         }
-        javac.setIncludes(includePath);
+        */
 
         // Start capturing the System.err output for this thread
         SystemLogHandler.setThread();
@@ -257,7 +270,60 @@ public class Compiler {
      * to do all the compilation. 
      */
     public boolean isOutDated() {
-	return true;
+
+        String jsp = ctxt.getJspFile();
+
+        long jspRealLastModified = 0;
+        try {
+            URL jspUrl = ctxt.getResource(jsp);
+            if (jspUrl == null) {
+                ((JspEngineContext)ctxt).incrementRemoved();
+                return false;
+            }
+            jspRealLastModified = jspUrl.openConnection().getLastModified();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return true;
+        }
+
+        File classFile = new File(((JspEngineContext) ctxt).getClassFileName());
+        if (!classFile.exists()) {
+            return true;
+        }
+        long classLastModified = classFile.lastModified();
+        if (classLastModified < jspRealLastModified) {
+            return true;
+        }
+
+        // Determine if compile time includes have been changed
+        HttpJspBase servlet = jsw.getServlet();
+        if (servlet == null) {
+             return false;
+        }
+        List includes = servlet.getIncludes();
+        if (includes == null) {
+            return false;
+        }
+
+        Iterator it = includes.iterator();
+        while (it.hasNext()) {
+            String include = (String)it.next();
+            try {
+                URL includeUrl = ctxt.getResource(include);
+                if (includeUrl == null) {
+                    return true;
+                }
+                if (includeUrl.openConnection().getLastModified() >
+                    classLastModified) {
+                    return true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return true;
+            }
+        }
+        return false;
+
     }
 
     
@@ -272,8 +338,8 @@ public class Compiler {
      * Set Mangler which will be used as part of compile().
      */
     public void setMangler(Mangler mangler) {
-        this.mangler = mangler;
-        ctxt.setServletJavaFileName(mangler.getJavaFileName());
+        //this.mangler = mangler;
+        //ctxt.setServletJavaFileName(mangler.getJavaFileName());
     }
 
 
@@ -347,7 +413,7 @@ public class Compiler {
                 classFile.delete();
             }
         } catch (Exception e) {
-            //Remove as much as possible, ignore possible exceptions
+            // Remove as much as possible, ignore possible exceptions
         }
         try {
             String javaFileName = mangler.getJavaFileName();
@@ -356,7 +422,7 @@ public class Compiler {
                 javaFile.delete();
             }
         } catch (Exception e) {
-            //Remove as much as possible, ignore possible exceptions
+            // Remove as much as possible, ignore possible exceptions
         }
     }
 

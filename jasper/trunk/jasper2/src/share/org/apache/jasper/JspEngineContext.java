@@ -87,8 +87,6 @@ import org.apache.jasper.compiler.JspReader;
 import org.apache.jasper.compiler.JspRuntimeContext;
 import org.apache.jasper.compiler.ServletWriter;
 import org.apache.jasper.compiler.Compiler;
-import org.apache.jasper.compiler.JspCompiler;
-import org.apache.jasper.compiler.SunJavaCompiler;
 import org.apache.jasper.compiler.JavaCompiler;
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.servlet.JasperLoader;
@@ -102,6 +100,7 @@ import org.apache.jasper.servlet.JspServletWrapper;
  * @author Harish Prabandham
  * @author Pierre Delisle
  * @author Glenn Nielsen
+ * @author Remy Maucherat
  */
 public class JspEngineContext implements JspCompilationContext {
     private JspReader reader;
@@ -111,11 +110,13 @@ public class JspEngineContext implements JspCompilationContext {
     private Compiler jspCompiler;
     private boolean isErrPage;
     private String jspUri;
+    private String jspPath;
     private String baseURI;
     private String outDir;
     private URL [] outUrls = new URL[1];
     private Class servletClass;
     private String servletClassName;
+    private String classFileName;
     private String servletPackageName = Constants.JSP_PACKAGE_NAME;
     private String servletJavaFileName;
     private String contentType;
@@ -208,7 +209,8 @@ public class JspEngineContext implements JspCompilationContext {
     public boolean isErrorPage() {
         return isErrPage;
     }
-    
+
+
     /**
      * What is the scratch directory we are generating code into?
      * FIXME: In some places this is called scratchDir and in some
@@ -217,6 +219,7 @@ public class JspEngineContext implements JspCompilationContext {
     public String getOutputDir() {
         return outDir;
     }
+
 
     /**
      * Get the scratch directory to place generated code for javac.
@@ -228,6 +231,7 @@ public class JspEngineContext implements JspCompilationContext {
         return null;
     }
 
+
     /**
      * Path of the JSP URI. Note that this is not a file name. This is
      * the context rooted URI of the JSP file. 
@@ -235,15 +239,62 @@ public class JspEngineContext implements JspCompilationContext {
     public String getJspFile() {
         return jspUri;
     }
-    
+
+
+    /**
+     * Path of the JSP relative to the work directory.
+     */
+    public String getJspPath() {
+        if (jspPath != null) {
+            return jspPath;
+        }
+        String dirName = getJspFile();
+        int pos = dirName.lastIndexOf('/');
+        if (pos > 0) {
+            dirName = dirName.substring(0, pos + 1);
+        } else {
+            dirName = "";
+        }
+        jspPath = dirName + getServletClassName() + ".java";
+        if (jspPath.startsWith("/")) {
+            jspPath = jspPath.substring(1);
+        }
+        return jspPath;
+    }
+
+
     /**
      * Just the class name (does not include package name) of the
      * generated class. 
      */
     public String getServletClassName() {
+        if (servletClassName != null) {
+            return servletClassName;
+        }
+        int iSep = jspUri.lastIndexOf('/') + 1;
+        int iEnd = jspUri.length();
+        StringBuffer modifiedClassName = 
+            new StringBuffer(jspUri.length() - iSep);
+	if (!Character.isJavaIdentifierStart(jspUri.charAt(iSep))) {
+	    // If the first char is not a legal Java letter or digit,
+	    // prepend a '$'.
+	    modifiedClassName.append('$');
+	}
+        for (int i = iSep; i < iEnd; i++) {
+            char ch = jspUri.charAt(i);
+            if (Character.isLetterOrDigit(ch)) {
+                modifiedClassName.append(ch);
+            } else if (ch == '.') {
+                modifiedClassName.append('$');
+            } else {
+                modifiedClassName.append(mangleChar(ch));
+            }
+        }
+        servletClassName = modifiedClassName.toString();
         return servletClassName;
     }
-    
+
+
     /**
      * Package name for the generated class.
      */
@@ -251,13 +302,26 @@ public class JspEngineContext implements JspCompilationContext {
         return servletPackageName;
     }
 
+
     /**
      * Full path name of the Java file into which the servlet is being
      * generated. 
      */
     public String getServletJavaFileName() {
-        return servletJavaFileName;
+
+        if (servletJavaFileName != null) {
+            return servletJavaFileName;
+        }
+
+        String outputDir = getOutputDir();
+        servletJavaFileName = getServletClassName() + ".java";
+ 	if (outputDir != null && !outputDir.equals("")) {
+	    servletJavaFileName = outputDir + servletJavaFileName;
+        }
+	return servletJavaFileName;
+
     }
+
 
     /**
      * Are we keeping generated code around?
@@ -322,6 +386,7 @@ public class JspEngineContext implements JspCompilationContext {
             return jspCompiler;
         }
 
+        /*
 	String compilerPath = options.getJspCompilerPath();
 	Class jspCompilerPlugin = options.getJspCompilerPlugin();
         JavaCompiler javac;
@@ -345,7 +410,10 @@ public class JspEngineContext implements JspCompilationContext {
 
         jspCompiler = new JspCompiler(this,jsw);
 	jspCompiler.setJavaCompiler(javac);
-         
+        */
+
+        jspCompiler = new Compiler(this, jsw);
+
         return jspCompiler;
     }
 
@@ -516,5 +584,41 @@ public class JspEngineContext implements JspCompilationContext {
         return (normalized);
 
     }
+
+
+    public final String getClassFileName() {
+
+        if (classFileName != null) {
+            return classFileName;
+        }
+
+        String outputDir = getOutputDir();
+        classFileName = getServletClassName() + ".class";
+	if (outputDir != null && !outputDir.equals("")) {
+	    classFileName = outputDir + File.separatorChar + classFileName;
+        }
+	return classFileName;
+
+    }
+
+
+    /**
+     * Mangle the specified character to create a legal Java class name.
+     */
+    private static final String mangleChar(char ch) {
+
+	String s = Integer.toHexString(ch);
+	int nzeros = 5 - s.length();
+	char[] result = new char[6];
+	result[0] = '_';
+	for (int i = 1; i <= nzeros; i++) {
+	    result[i] = '0';
+        }
+	for (int i = nzeros+1, j = 0; i < 6; i++, j++) {
+	    result[i] = s.charAt(j);
+        }
+	return new String(result);
+    }
+
 
 }
