@@ -76,7 +76,7 @@ import org.apache.jasper.logging.Logger;
  *
  * @author Pierre Delisle
  */
-public class ParserController {
+class ParserController {
 
     private JspCompilationContext ctxt;
     private Compiler compiler;
@@ -238,15 +238,14 @@ public class ParserController {
 	return parsedPage;
     }
 
-    /** *******************************************************************
+    /**
      * Discover the properties of the page by scanning it.
      * Properties to find out are:
-     *   * Is it in XML syntax?
-     *   * What is the the page encoding
+     *   - Is it in XML syntax?
+     *   - What is the the page encoding
      * If these properties are already specified in the jsp-config element
      * in web.xml, then they are used.
      */
-
     private void figureOutJspDocument(String file, 
 				      String encoding,
 				      InputStreamReader reader)
@@ -329,9 +328,6 @@ public class ParserController {
 	}
     }
     
-    //*********************************************************************
-    // Utility methods
-
     /*
      * Resolve the name of the file and update
      * baseDirStack() to keep track ot the current

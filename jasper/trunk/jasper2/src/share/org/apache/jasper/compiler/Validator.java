@@ -543,16 +543,7 @@ class Validator {
 	    if (className == null)
 		className = type;
 
-	    if (scope == null || scope.equals("page")) {
-		beanInfo.addPageBean(name, className);
-	    } else if (scope.equals("request")) {
-		beanInfo.addRequestBean(name, className);
-	    } else if (scope.equals("session")) {
-		beanInfo.addSessionBean(name,className);
-	    } else if (scope.equals("application")) {
-		beanInfo.addApplicationBean(name,className);
-	    } else 
-		err.jspError(n, "jsp.error.useBean.badScope");
+	    beanInfo.addBean(n, name, className, scope);
 
 	    visitBody(n);
 	}

@@ -199,7 +199,8 @@ public class Compiler {
     {
         long t1=System.currentTimeMillis();
 	// Setup page info area
-	pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader()));
+	pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader(),
+						   errDispatcher));
 	JspConfig jspConfig = options.getJspConfig();
 	JspConfig.JspProperty jspProperty =
 			jspConfig.findJspProperty(ctxt.getJspFile());

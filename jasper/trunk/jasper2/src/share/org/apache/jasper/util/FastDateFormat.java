@@ -77,12 +77,13 @@ import java.text.SimpleDateFormat;
  *
  * @author Stan Bailes
  * @author Alex Chaffee
- **/
+ */
 public class FastDateFormat extends DateFormat {
-    DateFormat    df;
-    long          lastSec = -1;
-    StringBuffer  sb      = new StringBuffer();
-    FieldPosition fp      = new FieldPosition(DateFormat.MILLISECOND_FIELD);
+
+    private DateFormat df;
+    private long lastSec = -1;
+    private StringBuffer sb = new StringBuffer();
+    private FieldPosition fp = new FieldPosition(DateFormat.MILLISECOND_FIELD);
     
     public FastDateFormat(DateFormat df) {
         this.df = df;
@@ -96,7 +97,7 @@ public class FastDateFormat extends DateFormat {
      * Note: breaks functionality of fieldPosition param. Also:
      * there's a bug in SimpleDateFormat with "S" and "SS", use "SSS"
      * instead if you want a msec field.
-     **/
+     */
     public StringBuffer format(Date date, StringBuffer toAppendTo,
 			       FieldPosition fieldPosition) {
         long dt = date.getTime();
@@ -133,15 +134,24 @@ public class FastDateFormat extends DateFormat {
         FastDateFormat fdf = new FastDateFormat(sdf);
         Date d = new Date();
 
-	d.setTime(1); System.out.println(fdf.format(d) + "\t" + sdf.format(d));
-	d.setTime(20); System.out.println(fdf.format(d) + "\t" + sdf.format(d));
-	d.setTime(500); System.out.println(fdf.format(d) + "\t" + sdf.format(d));
-	d.setTime(543); System.out.println(fdf.format(d) + "\t" + sdf.format(d));
-	d.setTime(999); System.out.println(fdf.format(d) + "\t" + sdf.format(d));
-	d.setTime(1050); System.out.println(fdf.format(d) + "\t" + sdf.format(d));
-	d.setTime(2543); System.out.println(fdf.format(d) + "\t" + sdf.format(d));
-	d.setTime(12345); System.out.println(fdf.format(d) + "\t" + sdf.format(d));
-	d.setTime(12340); System.out.println(fdf.format(d) + "\t" + sdf.format(d));
+	d.setTime(1);
+	System.out.println(fdf.format(d) + "\t" + sdf.format(d));
+	d.setTime(20);
+	System.out.println(fdf.format(d) + "\t" + sdf.format(d));
+	d.setTime(500);
+	System.out.println(fdf.format(d) + "\t" + sdf.format(d));
+	d.setTime(543);
+	System.out.println(fdf.format(d) + "\t" + sdf.format(d));
+	d.setTime(999);
+	System.out.println(fdf.format(d) + "\t" + sdf.format(d));
+	d.setTime(1050);
+	System.out.println(fdf.format(d) + "\t" + sdf.format(d));
+	d.setTime(2543);
+	System.out.println(fdf.format(d) + "\t" + sdf.format(d));
+	d.setTime(12345);
+	System.out.println(fdf.format(d) + "\t" + sdf.format(d));
+	d.setTime(12340);
+	System.out.println(fdf.format(d) + "\t" + sdf.format(d));
 	
         final int reps = 100000;
         {

@@ -73,161 +73,91 @@ import javax.servlet.ServletException;
 import org.apache.jasper.JasperException;
 
 /**
- * Holds instances of {session, application, page}-scoped beans 
+ * Repository of {page, request, session, application}-scoped beans 
  *
  * @author Mandar Raje
  */
-public class BeanRepository {
+class BeanRepository {
 
-    Vector sessionBeans;
-    Vector pageBeans;
-    Vector appBeans;
-    Vector requestBeans;
-    Hashtable beanTypes;
-    ClassLoader loader;
-    
-    public BeanRepository (ClassLoader loader) {
-	sessionBeans = new Vector(11);
-	pageBeans    = new Vector(11);
-	appBeans = new Vector(11);
-	requestBeans    = new Vector(11);
-	beanTypes    = new Hashtable ();
+    private Vector sessionBeans;
+    private Vector pageBeans;
+    private Vector appBeans;
+    private Vector requestBeans;
+    private Hashtable beanTypes;
+    private ClassLoader loader;
+    private ErrorDispatcher errDispatcher;
+
+    /*
+     * Constructor.
+     */    
+    public BeanRepository(ClassLoader loader, ErrorDispatcher err) {
+
         this.loader = loader;
-    }
-    
-    public boolean checkSessionBean (String s) {
-	return sessionBeans.contains (s);
-    }
-    
-    public void addSessionBean (String s, String type) throws JasperException {
-	sessionBeans.addElement (s);
-	putBeanType (s, type);
-    }
-    
-    public boolean hasSessionBeans () {
-	return !sessionBeans.isEmpty ();
-    }
-    
-    public Enumeration getSessionBeans () {
-	return sessionBeans.elements ();
-    }
-    
-    public boolean checkApplicationBean (String s) {
-	return appBeans.contains (s);
-    }
-    
-    public void addApplicationBean (String s, String type) throws JasperException 
-    {
-	appBeans.addElement (s);
-	putBeanType (s, type);
-    }
-    
-    public boolean hasApplicationBeans () {
-	return !appBeans.isEmpty ();
-    }
-    
-    public Enumeration getApplicationBeans () {
-	return appBeans.elements ();
-    }
-    
-    public boolean checkRequestBean (String s) {
-	return requestBeans.contains (s);
-    }
-    
-    public void addRequestBean (String s, String type) throws JasperException {
-	requestBeans.addElement (s);
-	putBeanType (s, type);
-    }
-    
-    public boolean hasRequestBeans () {
-	return !requestBeans.isEmpty ();
-    }
-    
-    public Enumeration getRequestBeans () {
-	return requestBeans.elements ();
-    }
-    
-    public boolean checkPageBean (String s) {
-	return pageBeans.contains (s);
-    }
-    
-    public void addPageBean (String s, String type) throws JasperException {
-	pageBeans.addElement (s);
-	putBeanType (s, type);
-    }
-    
-    public boolean hasPageBeans () {
-	return !pageBeans.isEmpty ();
-    }
-    
-    public Enumeration getPageBeans () {
-	return pageBeans.elements ();
-    }
+	this.errDispatcher = err;
 
-    public boolean ClassFound (String clsname)
-    throws ClassNotFoundException {
-	Class cls = null;
-	//try {
-	    cls = loader.loadClass (clsname);
-	    //} catch (ClassNotFoundException ex) {
-	    //return false;
-	    //}
-	return !(cls == null);	
+	sessionBeans = new Vector(11);
+	pageBeans = new Vector(11);
+	appBeans = new Vector(11);
+	requestBeans = new Vector(11);
+	beanTypes = new Hashtable();
     }
-    
-    public Class getBeanType (String bean) throws JasperException {
-	Class cls = null;
+        
+    public void addBean(Node.UseBean n, String s, String type, String scope)
+	    throws JasperException {
+
+	if (scope == null || scope.equals("page")) {
+	    pageBeans.addElement(s);	
+	} else if (scope.equals("request")) {
+	    requestBeans.addElement(s);
+	} else if (scope.equals("session")) {
+	    sessionBeans.addElement(s);
+	} else if (scope.equals("application")) {
+	    appBeans.addElement(s);
+	} else {
+	    errDispatcher.jspError(n, "jsp.error.useBean.badScope");
+	}
+	
+	putBeanType(s, type);
+    }
+            
+    public Class getBeanType(String bean) throws JasperException {
+	Class clazz = null;
 	try {
-	    cls = loader.loadClass ((String)beanTypes.get(bean));
+	    clazz = loader.loadClass ((String)beanTypes.get(bean));
 	} catch (ClassNotFoundException ex) {
 	    throw new JasperException (ex);
 	}
-	return cls;
+	return clazz;
     }
-  
-    public void putBeanType (String bean, String type) throws JasperException {
-	try {
-	    beanTypes.put (bean, type);
-	} catch (Exception ex) {
-	    throw new JasperException (ex);
-	}
-    }
-    
-    //public void putBeanType (String bean, Class type) {
-    //beanTypes.put (bean, type);
-    //}
-    
-    public void removeBeanType (String bean) {
-	beanTypes.remove (bean);
-    }
-    
-    // Not sure if this is the correct way.
-    // After pageContext is finalised this will change.
+      
     public boolean checkVariable (String bean) {
+	// XXX Not sure if this is the correct way.
+	// After pageContext is finalised this will change.
 	return (checkPageBean(bean) || checkSessionBean(bean) ||
 		checkRequestBean(bean) || checkApplicationBean(bean));
     }
 
-    // Ideally this method should belong to the utils.
-    public Class getClass (String clsname)
-	throws ClassNotFoundException {
-	    Class cls = null;
-	    if (clsname != null) {
-		cls = loader.loadClass (clsname);
-	    }
-	    return cls;
+
+    private void putBeanType(String bean, String type) {
+	beanTypes.put (bean, type);
     }
 
-    public boolean beanFound (String beanName)
-	throws ClassNotFoundException {
-	    try {
-		Beans.instantiate(Thread.currentThread().getContextClassLoader(), beanName);
-		return true;
-	    } catch (java.io.IOException ex) {
-		// Ignore it for the time being.
-		return false;
-	    }
+    private boolean checkPageBean (String s) {
+	return pageBeans.contains (s);
     }
+
+    private boolean checkRequestBean (String s) {
+	return requestBeans.contains (s);
+    }
+
+    private boolean checkSessionBean (String s) {
+	return sessionBeans.contains (s);
+    }
+
+    private boolean checkApplicationBean (String s) {
+	return appBeans.contains (s);
+    }
+
 }
 
 

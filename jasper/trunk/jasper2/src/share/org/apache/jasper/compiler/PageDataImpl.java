@@ -90,8 +90,7 @@ import org.apache.jasper.JasperException;
  *
  * @author Jan Luehe
  */
-
-public class PageDataImpl extends PageData implements TagConstants {
+class PageDataImpl extends PageData implements TagConstants {
 
     private static final String JSP_NAMESPACE = "http://java.sun.com/JSP/Page";
     private static final String JSP_VERSION = "2.0";

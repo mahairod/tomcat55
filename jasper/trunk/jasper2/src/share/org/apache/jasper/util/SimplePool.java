@@ -72,6 +72,9 @@ package org.apache.jasper.util;
  * @author Costin
  */
 public final class SimplePool  {
+
+    private static final int DEFAULT_SIZE=16;
+
     /*
      * Where the threads are held.
      */
@@ -80,28 +83,24 @@ public final class SimplePool  {
     private int max;
     private int current=-1;
 
-    Object lock;
-    public static final int DEFAULT_SIZE=16;
+    private Object lock;
     
     public SimplePool() {
 	this.max=DEFAULT_SIZE;
-	pool=new Object[max];
-	lock=new Object();
+	this.pool=new Object[max];
+	this.lock=new Object();
     }
     
     public SimplePool(int max) {
 	this.max=max;
-	pool=new Object[max];
-	lock=new Object();
+	this.pool=new Object[max];
+	this.lock=new Object();
     }
 
-    public  void set(Object o) {
-	put(o);
-    }
     /**
-     * Add the object to the pool, silent nothing if the pool is full
+     * Adds the given object to the pool, and does nothing if the pool is full
      */
-    public  void put(Object o) {
+    public void put(Object o) {
 	synchronized( lock ) {
 	    if( current < (max-1) ) {
 		current += 1;
@@ -113,7 +112,7 @@ public final class SimplePool  {
     /**
      * Get an object from the pool, null if the pool is empty.
      */
-    public  Object get() {
+    public Object get() {
 	Object item = null;
 	synchronized( lock ) {
 	    if( current >= 0 ) {
