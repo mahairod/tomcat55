@@ -77,7 +77,7 @@ public class ExpressionGenerator
     }
     
     public void generate(ServletWriter writer, Class phase) {
-	writer.println("out.print("+new String(JspUtil.removeQuotes(chars))+");");
+	writer.println("out.print("+new String(JspUtil.escapeQuotes(chars))+");");
     }
 }
 

@@ -120,6 +120,16 @@ public class JspUtil {
 	return caw.toCharArray();
     }
 
+    public static char[] escapeQuotes (char []chars) {
+        CharArrayWriter caw = new CharArrayWriter();
+        for (int i = 0; i < chars.length; i++) {
+            // escape out the escape character
+            if (chars[i] == '\\') caw.write('\\');
+            caw.write(chars[i]);
+        }
+        return caw.toCharArray();
+    }
+
     /**
      * Checks if the token is a runtime expression.
      * In standard JSP syntax, a runtime expression starts with '<%' and
