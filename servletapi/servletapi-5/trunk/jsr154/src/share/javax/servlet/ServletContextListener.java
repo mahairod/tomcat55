@@ -81,7 +81,7 @@ public interface ServletContextListener extends EventListener {
     public void contextInitialized ( ServletContextEvent sce );
 
 	/** Notification that the servlet context is about to be shut down. All servlets
-	have been dstroy()ed before any ServletContextListeners are notified of context
+	have been destroy()ed before any ServletContextListeners are notified of context
 	destruction. */
     public void contextDestroyed ( ServletContextEvent sce );
 }

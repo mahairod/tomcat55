@@ -90,7 +90,7 @@ public class ServletContextAttributeEvent extends ServletContextEvent {
 	}
 	
 	/**
-	* Returns the value of the attribute that has been added removed or replaced.
+	* Returns the value of the attribute that has been added, removed, or replaced.
 	* If the attribute was added, this is the value of the attribute. If the attrubute was
 	* removed, this is the value of the removed attribute. If the attribute was replaced, this
 	* is the old value of the attribute.
