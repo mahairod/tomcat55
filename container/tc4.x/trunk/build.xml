@@ -32,6 +32,8 @@
 
 
   <!-- Source dependencies -->
+  <property name="jasper.home"
+            value="${basedir}/../jakarta-tomcat-jasper/jasper2"/>
   <property name="jtc.home"
            value="${basedir}/../jakarta-tomcat-connectors"/>
 
@@ -62,7 +64,9 @@
     <echo>Target: Catalina - Deploy ...</echo>
     <ant dir="./catalina" target="deploy"/>
     <echo>Target: Jasper - Deploy ...</echo>
-    <ant dir="./jasper"   target="deploy"/>
+    <ant dir="${jasper.home}"   target="deploy">
+      <property name="catalina.home" value="${tomcat.build}"/>
+    </ant>
     <echo>Target: Webapps - Deploy ...</echo>
     <ant dir="./webapps"  target="deploy"/>
   </target>
@@ -75,7 +79,9 @@
     <echo>Target: Catalina - Clean ...</echo>
     <ant dir="./catalina" target="clean"/>
     <echo>Target: Jasper - Clean ...</echo>
-    <ant dir="./jasper"   target="clean"/>
+    <ant dir="${jasper.home}"   target="clean">
+      <property name="catalina.home" value="${tomcat.build}"/>
+    </ant>
     <echo>Target: Webapps - Clean ...</echo>
     <ant dir="./webapps"  target="clean"/>
     <delete dir="${tomcat.dist}"/>
@@ -88,7 +94,9 @@
     <echo>Target: Catalina - All ...</echo>
     <ant dir="./catalina" target="all"/>
     <echo>Target: Jasper - All ...</echo>
-    <ant dir="./jasper"   target="all"/>
+    <ant dir="${jasper.home}"   target="all">
+      <property name="catalina.home" value="${tomcat.build}"/>
+    </ant>
     <echo>Target: Webapps - All ...</echo>
     <ant dir="./webapps"  target="all"/>
   </target>
@@ -100,7 +108,9 @@
     <echo>Target: Catalina - Test ...</echo>
     <ant dir="./catalina" target="test"/>
     <echo>Target: Jasper - Test ...</echo>
-    <ant dir="./jasper"   target="test"/>
+    <ant dir="${jasper.home}"   target="test">
+      <property name="catalina.home" value="${tomcat.build}"/>
+    </ant>
     <echo>Target: Webapps - Test ...</echo>
     <ant dir="./webapps"  target="test"/>
   </target>
