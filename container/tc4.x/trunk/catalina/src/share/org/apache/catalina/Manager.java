@@ -154,6 +154,14 @@ public interface Manager {
 
 
     /**
+     * Add this Session to the set of active Sessions for this Manager.
+     *
+     * @param session Session to be added
+     */
+    public void add(Session session);
+
+
+    /**
      * Add a property change listener to this component.
      *
      * @param listener The listener to add
@@ -205,6 +213,14 @@ public interface Manager {
      * @exception IOException if an input/output error occurs
      */
     public void load() throws ClassNotFoundException, IOException;
+
+
+    /**
+     * Remove this Session from the active Sessions for this Manager.
+     *
+     * @param session Session to be removed
+     */
+    public void remove(Session session);
 
 
     /**
