@@ -613,19 +613,21 @@ public abstract class AuthenticatorBase
         }
 
         // Check each role included in this constraint
-        Realm realm = context.getRealm();
+        if (constraint.getAllRoles())
+            return (true);
+        
         String roles[] = constraint.findAuthRoles();
         if (roles == null)
             roles = new String[0];
 
-        if (constraint.getAllRoles())
-            return (true);
         if ((roles.length == 0) && (constraint.getAuthConstraint())) {
             ((HttpServletResponse) response.getResponse()).sendError
                 (HttpServletResponse.SC_FORBIDDEN,
                  sm.getString("authenticator.forbidden"));
             return (false); // No listed roles means no access at all
         }
+        
+        Realm realm = context.getRealm();
         for (int i = 0; i < roles.length; i++) {
             if (realm.hasRole(principal, roles[i]))
                 return (true);
