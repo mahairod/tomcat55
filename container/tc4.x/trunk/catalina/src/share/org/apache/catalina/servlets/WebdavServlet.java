@@ -669,8 +669,7 @@ public class WebdavServlet
             return;
         }
 
-
-
+        resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 
     }
 
