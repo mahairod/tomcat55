@@ -121,8 +121,6 @@ public class JNIConnectionHandler {
     	    }
 
     	    contextM.service( reqA, resA );
-
-    	    resA.finish();
     	} catch(Exception ex) {
     	    ex.printStackTrace();
     	}
