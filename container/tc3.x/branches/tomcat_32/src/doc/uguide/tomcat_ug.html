@@ -11,10 +11,10 @@
   </head>
   <body link="#0000ff" vlink="#800080">
     <!-- Banner element, all hail the Project! -->
-    <table border="0">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0">
       <tr>
-        <td>
-          <p>
+        <td width="50%">
+          <p align="left">
             <a href="http://jakarta.apache.org/index.html">
               <img src=images/banner.gif 
                    width="350" 
@@ -23,6 +23,9 @@
                    border="0">
             </a>
           </p>
+        </td>
+        <td width="50%">
+          <p align="right"><img border="0" src="images/tomcat.gif" width="100" height="71" alt="The mighty Tomcat - Meow!"></p>
         </td>
       </tr>
     </table>
@@ -42,7 +45,7 @@
     </ol>
 
     Hopefully this should be enough for any new user to get started
-    with Tomcat. If something is missing then try (in this order):</p>
+    with Tomcat. <a name="where_help">If something is missing then try (in this order):</a></p>
     <ol>
       <li>Search the Tomcat <a href="http://jakarta.apache.org/jyve-faq/Turbine/screen/MainMenu/faq_id/12/project_id/2/screen/DisplayTopics/action/SetAll">faq</a>.</li>      
       <li>Search the Tomcat list <a href="http://www.metronet.com/~wjm/tomcat/">archive</a>. </li>
@@ -57,7 +60,7 @@
       <a href="http://jakarta.apache.org/getinvolved/mail.html">mailing lists</a>.
     </p>
     
-    <h2>Getting Started</h2>
+    <h2><a name="container_types">Getting Started</a></h2>
     <p>  
         Tomcat is a servlet container with a JSP environment.
         A servlet container is a runtime shell that manages and invokes 
@@ -65,7 +68,7 @@
     
     <p>You can roughly partition servlet containers into:</p>
     <ol>
-      <li><strong><u>Stand-alone servlet containers</u></strong><br>
+      <li><a name="type_1"><strong><u>Stand-alone servlet containers</u></strong></a><br>
         These are an integral part of the web server. This
         is the case when using a Java-based web server, for example the
         servlet container that is part of the JavaWebServer. Stand-alone
@@ -386,7 +389,7 @@
     cover the content of server.xml and discuss the usage of web.xml in the context of Tomcat.
   </p>
 
-    <h3> server.xml </h3>
+    <h3><a name="server_xml"> server.xml </a></h3>
     <p> server.xml is Tomcat's main configuration file. It serves two goals:
     <ol>
       <li> Providing initial configuration for the Tomcat components. </li>
@@ -509,7 +512,7 @@
     <p>If the ContextManager.home property in server.xml is relative, it
        will be relative to the current working directory.</p>
 
-    <h3> web.xml </h3>
+    <h3><a name="web_xml"> web.xml </a></h3>
     <p>
       A detailed description of web.xml and the web application structure
       (including directory structure and configuration) is available in
@@ -758,7 +761,7 @@ ApJServMount /examples /root
       system (don't panic, it is not that hard!).
     </p>
     <p>
-      Building mod_jserv on <b>UNIX</b> involves the following:
+      <a name="jserv_build">Building mod_jserv</a> on <b>UNIX</b> involves the following:
     <ol>
       <li> Download the source distribution of Tomcat from
     <a href="http://jakarta.apache.org/downloads/sourceindex.html"> here</a>. </li>
