@@ -398,6 +398,16 @@ public final class HttpConnector
 
 
     /**
+     * Get the allow chunking flag.
+     */
+    public boolean getAllowChunking() {
+
+        return isChunkingAllowed();
+
+    }
+
+
+    /**
      * Set the allow chunking flag.
      *
      * @param allowChunking Allow chunking flag
