@@ -83,6 +83,10 @@ public final class Globals {
     public static final String CERTIFICATES_ATTR =
         "javax.servlet.request.X509Certificate";
 
+    /**
+     * SSL Certificate Request Attributite.
+     */
+    public static final String SSL_CERTIFICATE_ATTR = "org.apache.coyote.request.X509Certificate";
 
     /**
      * The request attribute under which we store the name of the cipher suite
