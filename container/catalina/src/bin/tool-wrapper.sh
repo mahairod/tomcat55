@@ -61,7 +61,7 @@ else
 fi
 
 # Add on extra jar files to CLASSPATH
-CLASSPATH="$CLASSPATH":"$CATALINA_HOME"/bin/bootstrap.jar:"$BASEDIR"/common/lib/jmx.jar
+CLASSPATH="$CLASSPATH":"$CATALINA_HOME"/bin/bootstrap.jar:"$BASEDIR"/common/lib/jmx.jar:"$BASEDIR"/common/lib/servlet-api.jar
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
