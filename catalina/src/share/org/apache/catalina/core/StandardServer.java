@@ -803,6 +803,63 @@ public final class StandardServer
     }
 
 
+    /**
+     * Write the configuration information for <code>Context</code>
+     * out to the specified configuration file.
+     *
+     * @exception InstanceNotFoundException if the managed resource object
+     *  cannot be found
+     * @exception MBeanException if the initializer of the object throws
+     *  an exception, or persistence is not supported
+     * @exception RuntimeOperationsException if an exception is reported
+     *  by the persistence mechanism
+     */
+    public synchronized void storeContext(Context context) throws Exception {
+
+        String configFile = context.getConfigFile();
+
+        if (configFile != null) {
+            File config = new File(configFile);
+            if (!config.isAbsolute()) {
+                config = new File(System.getProperty("catalina.base"),
+                                        configFile);
+            }
+
+            // Open an output writer for the new configuration file
+            PrintWriter writer = null;
+            try {
+                writer = new PrintWriter(new FileWriter(config));
+            } catch (IOException e) {
+                if (writer != null) {
+                    try {
+                        writer.close();
+                    } catch (Throwable t) {
+                        ;
+                    }
+                }
+                throw (e);
+            }
+
+            writer.print("<Context");
+            storeAttributes(writer, context);
+            writer.println("</Context>");
+
+            // Flush and close the output file
+            try {
+                writer.flush();
+            } catch (Exception e) {
+                throw (e);
+            }
+            try {
+                writer.close();
+            } catch (Exception e) {
+                throw (e);
+            }
+        }
+
+    }
+
+
     // -------------------------------------------------------- Private Methods
 
 

@@ -75,10 +75,12 @@ import java.util.Enumeration;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
+import org.apache.catalina.Engine;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.startup.ContextRuleSet;
 import org.apache.catalina.startup.NamingRuleSet;
 import org.apache.catalina.util.StringManager;
@@ -344,6 +346,11 @@ public class StandardHostDeployer implements Deployer {
             host.fireContainerEvent(PRE_INSTALL_EVENT, context);
             host.addChild(context);
             host.fireContainerEvent(INSTALL_EVENT, context);
+
+            // save context info into configFile
+            Engine engine = (Engine)host.getParent();
+            StandardServer server = (StandardServer) engine.getService().getServer();
+            server.storeContext(context);
         } catch (Exception e) {
             host.log(sm.getString("standardHost.installError", contextPath),
                      e);
