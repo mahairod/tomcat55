@@ -459,7 +459,17 @@ public class RequestImpl  implements Request {
     public HttpSession getSession(boolean create) {
 	if( serverSession!=null ) {
 	    // if not null, it is validated by the session module
-	    return serverSession;
+            // when initially requested, but an invalidated session
+            // must be rechecked
+            // NOTE:  The only way to check validity is to access
+            // a property that returns IllegalStateException if not
+            try {
+                serverSession.getCreationTime();
+            } catch (IllegalStateException e) {
+                serverSession = null;
+            }
+            if (serverSession != null)
+                return serverSession;
 	}
 
 	if( ! create ) return null;
