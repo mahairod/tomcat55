@@ -3482,6 +3482,28 @@ public class StandardContext
     }
 
 
+    /**
+     * Gets the cumulative processing times of all servlets in this
+     * StandardContext.
+     *
+     * @return Cumulative processing times of all servlets in this
+     * StandardContext
+     */
+    public long getProcessingTime() {
+        
+        long result = 0;
+
+        Container[] children = findChildren();
+        if (children != null) {
+            for( int i=0; i< children.length; i++ ) {
+                result += ((StandardWrapper)children[i]).getProcessingTime();
+            }
+        }
+
+        return result;
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
