@@ -178,7 +178,7 @@ public class JspServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, 
                                    Constants.getString("jsp.error.file.not.found", 
                                                        new Object[] {
-                                                           ex.getMessage()
+                                                           jspUri
                                                        }));
                 
                 return;

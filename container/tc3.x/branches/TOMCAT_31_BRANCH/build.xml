@@ -91,11 +91,13 @@
            classpath="${tomcat.build}/classes"/>
 
     <!-- admin context -->
+<!-- Commented out by default because of limited ability to protect usage
     <mkdir dir="${tomcat.build}/webapps/admin"/>
     <copydir src="src/admin" dest="${tomcat.build}/webapps/admin"/>
     <javac srcdir="src/admin/WEB-INF/classes"
            destdir="${tomcat.build}/webapps/admin/WEB-INF/classes"
            classpath="${tomcat.build}/classes"/>
+-->
 
     <!-- Test application -->
     <mkdir dir="${tomcat.build}/webapps/test"/>
@@ -126,6 +128,7 @@
          includes="org/apache/jasper/**"/>
 
     <!-- Add Tomcat internal javadoc -->
+<!-- Commented out to avoid incompatibilities with current Ant and Java2
     <mkdir dir="${tomcat.home}/webapps/ROOT/javadoc" />
     <javadoc packagenames="org.apache.tomcat.core"
              sourcepath="src/share"
@@ -137,6 +140,7 @@
              doctitle="Tomcat internal"
              bottom="Copyright &#169; 2000 Apache Software Foundation. All Rights Reserved."
     />
+-->
 
     <deltree dir="${tomcat.home}/classes"/>
 
@@ -147,10 +151,12 @@
            includes="**" /> 
     <deltree dir="${tomcat.home}/webapps/examples"/>
 
+<!--
     <jar   jarfile="${tomcat.home}/webapps/admin.war"
            basedir="${tomcat.home}/webapps/admin"
            includes="**" /> 
     <deltree dir="${tomcat.home}/webapps/admin"/>
+-->
 
     <jar   jarfile="${tomcat.home}/webapps/ROOT.war"
            basedir="${tomcat.home}/webapps/ROOT"

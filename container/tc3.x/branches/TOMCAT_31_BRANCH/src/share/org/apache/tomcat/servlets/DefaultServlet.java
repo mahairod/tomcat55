@@ -82,6 +82,7 @@ public class DefaultServlet extends HttpServlet {
     private Context context;
     String docBase;
     int debug=0;
+    boolean caseSensitive = true;
 
     public void init() throws ServletException {
 	contextF = getServletContext();
@@ -100,6 +101,18 @@ public class DefaultServlet extends HttpServlet {
 	// debug
 	String dbg=getServletConfig().getInitParameter("debug");
 	if( dbg!=null) debug=1;
+
+        // case sensitivity on Windows
+        String value = getServletConfig().getInitParameter("caseSensitive");
+        if (value != null) {
+            if ("true".equalsIgnoreCase(value) ||
+                "yes".equalsIgnoreCase(value) ||
+                "on".equalsIgnoreCase(value))
+                caseSensitive = true;
+            else
+                caseSensitive = false;
+        }
+
     }
 
     public String getServletInfo() {
@@ -273,11 +286,16 @@ public class DefaultServlet extends HttpServlet {
 	// So, a check for File.separatorChar='\\' ..... It hopefully
 	// happens on flavors of Windows.
 	if (File.separatorChar  == '\\') {
-		// On Windows check ignore case....
-		if(!absPath.equalsIgnoreCase(canPath)) {
+            // On Windows check case if requested ....
+            boolean result;
+            if (caseSensitive)
+                result = !absPath.equals(canPath);
+            else
+                result = !absPath.equalsIgnoreCase(canPath);
+            if (result) {
 	    	response.sendError(response.SC_NOT_FOUND);
 	    	return;
-		}
+            }
 	} else {
 		// The following code on Non Windows disallows ../
 		// in the path but also disallows symlinks....

@@ -27,6 +27,7 @@
           servletToJsp
       </servlet-class>
     </servlet>
+<!--
     <servlet-mapping>
         <servlet-name>
             snoop
@@ -43,6 +44,7 @@
             *.snp
         </url-pattern>
     </servlet-mapping>
+-->
     <servlet-mapping>
         <servlet-name>
             servletToJsp

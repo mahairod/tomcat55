@@ -12,6 +12,18 @@
         <servlet-class>
             org.apache.tomcat.servlets.DefaultServlet
         </servlet-class>
+        <init-param>
+            <param-name>
+                caseSensitive
+            </param-name>
+            <param-value>
+                true
+            </param-value>
+            <description>
+                Set to true for case-sensitive filename comparisons,
+                even on non-case-sensitive platforms such as Windows.
+            </description>
+        </init-param>
 	<load-on-startup>
             -2147483646
 	</load-on-startup>

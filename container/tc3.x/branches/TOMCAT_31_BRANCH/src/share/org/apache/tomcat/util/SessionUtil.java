@@ -81,15 +81,6 @@ import org.apache.tomcat.core.Constants;
 public final class SessionUtil {
 
 
-    // ------------------------------------------------------- Static Variables
-
-
-    /**
-     * Private counter used in generating session identifiers.
-     */
-    private static int counter = 1010;
-
-
     // --------------------------------------------------------- Public Methods
 
 
@@ -183,17 +174,7 @@ public final class SessionUtil {
      */
     public static String generateSessionId() {
 
-	Integer i = new Integer(counter++);
-	StringBuffer buf = new StringBuffer();
-	String dString = Double.toString(Math.abs(Math.random()));
-
-	buf.append("To");
-	buf.append(i);
-	buf.append("mC");
-	buf.append(dString.substring(2));	// Skip "0." at the start
-	buf.append("At");
-
-	return (buf.toString());
+        return (SessionIdGenerator.generateId(null));
 
     }
 
