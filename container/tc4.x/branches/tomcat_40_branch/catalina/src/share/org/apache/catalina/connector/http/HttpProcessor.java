@@ -1043,6 +1043,8 @@ final class HttpProcessor
                 }
             } catch (IOException e) {
                 ok = false;
+            } catch (Exception e) {
+                log("process.finish", e);
             }
 
             // We have to check if the connection closure has been requested
@@ -1104,7 +1106,11 @@ final class HttpProcessor
                 continue;
 
             // Process the request from this socket
-            process(socket);
+            try {
+                process(socket);
+            } catch (Throwable t) {
+                log("process", t);
+            }
 
             // Finish up this request
             connector.recycle(this);
