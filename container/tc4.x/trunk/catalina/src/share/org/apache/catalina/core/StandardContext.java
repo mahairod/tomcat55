@@ -3332,9 +3332,6 @@ public class StandardContext
             setManager(new StandardManager());
         }
 
-        if (ok)
-            DirContextURLStreamHandler.bind(getResources());
-
         // Initialize character set mapper
         getCharsetMapper();
 
@@ -3358,11 +3355,20 @@ public class StandardContext
             }
         }
 
+        // Binding thread
+        ClassLoader oldCCL = bindThread();
+
         // Standard container startup
         if (debug >= 1)
             log("Processing standard container startup");
-        if (ok)
-            super.start();
+        if (ok) {
+            try {
+                super.start();
+            } finally {
+                // Unbinding thread
+                unbindThread(oldCCL);
+            }
+        }
         if (!getConfigured())
             ok = false;
 
@@ -3372,7 +3378,7 @@ public class StandardContext
                 (Globals.RESOURCES_ATTR, getResources());
 
         // Binding thread
-        ClassLoader oldCCL = bindThread();
+        oldCCL = bindThread();
 
         // Configure and call application event listeners and filters
         if (ok) {
