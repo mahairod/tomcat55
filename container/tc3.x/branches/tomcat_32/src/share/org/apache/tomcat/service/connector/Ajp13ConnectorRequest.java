@@ -250,24 +250,43 @@ public class Ajp13ConnectorRequest extends RequestImpl
     public int doRead() throws IOException 
     {
         if(pos >= blen) {
-            refeelReadBuffer();
-        }
+	    if( ! refillReadBuffer()) {
+		return -1;
+	    }
+	}
         return bodyBuff[pos++];
     }
     
     public int doRead(byte[] b, int off, int len) throws IOException 
     {
-        // XXXXXX Stupid, but the whole thing must be rewriten ( see super()! )
-        for(int i = off ; i < (len + off) ; i++) {
-            int a = doRead();
-            if(-1 == a) {
-                System.out.println("Y");
-                return i-off;
-            }
-            b[i] = (byte)a;
-        }
-        
-        return len;
+	if(pos >= blen) {
+	    if( ! refillReadBuffer()) {
+		return -1;
+	    }
+	}
+	
+	int toCopy = len;
+	while(toCopy > 0) {
+	    int bytesRemaining = blen - pos;
+	    if(bytesRemaining < 0) 
+		bytesRemaining = 0;
+	    int c = bytesRemaining < toCopy ? bytesRemaining : toCopy;
+
+	    System.arraycopy(bodyBuff, pos, b, off, c);
+
+	    toCopy    -= c;
+
+	    off       += c;
+	    pos       += c; // In case we exactly consume the buffer
+
+	    if(toCopy > 0) {
+		if( ! refillReadBuffer()) { // Resets blen and pos
+		    break;
+		}
+	    }
+	}
+
+	return len - toCopy;
     }
     
     public void recycle() 
@@ -283,7 +302,7 @@ public class Ajp13ConnectorRequest extends RequestImpl
         this.in = new BufferedServletInputStream(this);
     }   
     
-    public void refeelReadBuffer() throws IOException 
+    public boolean refillReadBuffer() throws IOException 
     {
 		MsgBuffer msg = con.getMsgBuffer();
 		msg.appendByte(JK_AJP13_GET_BODY_CHUNK);
@@ -298,5 +317,7 @@ public class Ajp13ConnectorRequest extends RequestImpl
     	blen = msg.peekInt();
     	pos = 0;
     	msg.getBytes(bodyBuff);
+
+	return (blen > 0);
     }    
 }
