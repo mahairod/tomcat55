@@ -665,7 +665,7 @@
 
       <attribute name="global" required="true">
         <p>The name of the linked global resource in the 
-        gobal JNDI context.</p>
+        global JNDI context.</p>
       </attribute>
 
       <attribute name="name" required="true">
