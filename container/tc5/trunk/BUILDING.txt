@@ -15,7 +15,7 @@ do the following:
 
 * If the JDK is already installed, skip to (1).
 
-* Download a Java Development Kit (JDK) release (version 1.4 or later) from:
+* Download a Java Development Kit (JDK) release (version 1.4.x or later) from:
 
     http://java.sun.com/j2se/
 
@@ -25,51 +25,26 @@ do the following:
   into which you installed the JDK release.
 
 
-(1) Install Apache Ant 1.5.1 on your computer
+(1) Install Apache Ant 1.5.x on your computer
 
-* If Apache Ant 1.5.1 is already installed on your computer, skip to (2).
+* If Apache Ant 1.5.x is already installed on your computer, skip to (2).
 
-(1.1) Download and Install the Ant Binary Distribution
+* Download a binary distribution of Ant 1.5.x from:
 
-* Download a binary distribution of Ant 1.5.1 from:
-
-    http://jakarta.apache.org/builds/jakarta-ant/release/v1.5.1/bin/
-
-  On a Windows platform, you will need:
-    jakarta-ant-1.5.1-bin.zip
-
-  On a Unix platform, you will need:
-    jakarta-ant-1.5.1-bin.tar.gz
+    http://ant.apache.org/bindownload.cgi
 
 * Unpack the binary distribution into a convenient location so that the
   Ant release resides in its own directory (conventionally named
-  "jakarta-ant-1.5.1").  For the purposes of the remainder of this document,
+  "jakarta-ant-1.5.x").  For the purposes of the remainder of this document,
   the symbolic name "${ant.home}" is used to refer to the full pathname of
   the release directory.
+
+* Create an ANT_HOME environment variable to point the directory
+  ${ant.home}.
 
 * Modify the PATH environment variable to include the directory
   ${ant.home}/bin in its list.  This makes the "ant" command line script
   available, which will be used to actually perform the build.
-
-
-(1.2) Download and Install the Xalan 2 Distribution
-
-* Download a binary distribution of Xalan version 2.x from:
-
-  http://xml.apache.org/dist/xalan-j/
-
-  On a Windows platform, you probably want:
-    Xerces-J-bin.2.x.y.zip
-
-  On a Unix platform, you probably want:
-    Xerces-J-bin.2.x.y.tar.gz
-
-* Unpack the binary distribution into a convenient location so that the
-  distribution resides in its own directory (conventionally named
-  "xalan-2_x_y").
-
-* Copy the xalan.jar file from that distribution to the ${ant.home}/lib	
-  directory.
 
 
 (2) Building Tomcat 5
@@ -77,7 +52,7 @@ do the following:
 (2.1) Download main build script and build binary distribution
 
 * Download the main build.xml script from:
-  http://jakarta.apache.org/builds/jakarta-tomcat/build-5/build.xml
+  http://jakarta.apache.org/tomcat/tomcat-5.0-doc/build.xml
 
 * Create a new directory, and copy the newly download build.xml to it. This
   directory will be referred to as the ${tomcat.source} directory in the rest
@@ -94,9 +69,9 @@ do the following:
   file to indicate to Ant the proxy configuration. Read below.
 
 * WARNING: Running this command will checkout the Tomcat 5 sources from CVS, as
-  well as download binaries to the /usr/local directory. Make sure this is
+  well as download binaries to the /usr/share/java directory. Make sure this is
   appropriate to do on your computer. On Windows, this usually corresponds
-  to the "C:\usr\local" directory, unless Cygwin is used. Read below to 
+  to the "C:\usr\share\java" directory, unless Cygwin is used. Read below to 
   customize the directory used to download the binaries.
 
 * The build can be controlled by creating a ${tomcat.source}/build.properties
@@ -111,7 +86,7 @@ do the following:
     # ----- Default Base Path for Dependent Packages -----
     # Replace this path with the directory path where dependencies binaries
     # should be downloaded
-    base.path=/usr/local
+    base.path=/usr/share/java
 
 
 (3) Updating sources
