@@ -429,6 +429,12 @@
       <parameter name="parent"
           description="MBean Name of the associated parent component"
                  type="java.lang.String"/>
+      <parameter name="address"
+          description="The IP address on which to bind"
+                 type="java.lang.String"/>
+      <parameter name="port"
+          description="TCP port number to listen on"
+                 type="int"/>
     </operation>
 
     <operation   name="createHttp11Connector"
@@ -438,6 +444,12 @@
       <parameter name="parent"
           description="MBean Name of the associated parent component"
                  type="java.lang.String"/>
+      <parameter name="address"
+          description="The IP address on which to bind"
+                 type="java.lang.String"/>
+      <parameter name="port"
+          description="TCP port number to listen on"
+                 type="int"/>
     </operation>
 
     <operation   name="createJDBCRealm"
@@ -510,6 +522,9 @@
       <parameter name="parent"
           description="MBean Name of the associated parent component"
                  type="java.lang.String"/>
+      <parameter name="path"
+          description="path The context path for this Context"
+                 type="java.lang.String"/>
     </operation>
 
     <operation   name="createStandardEngine"
@@ -525,6 +540,9 @@
           description="Create a new StandardHost"
                impact="ACTION"
            returnType="java.lang.String">
+      <parameter name="name"
+          description="Unique name of this Host"
+                 type="java.lang.String"/>
       <parameter name="parent"
           description="MBean Name of the associated parent component"
                  type="java.lang.String"/>
@@ -545,6 +563,9 @@
            returnType="java.lang.String">
       <parameter name="parent"
           description="MBean Name of the associated parent component"
+                 type="java.lang.String"/>
+      <parameter name="name"
+          description="Unique name of this Service"
                  type="java.lang.String"/>
     </operation>
 

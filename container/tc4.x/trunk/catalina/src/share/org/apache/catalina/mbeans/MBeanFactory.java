@@ -256,11 +256,12 @@ public class MBeanFactory extends BaseModelMBean {
      * Create a new HTTP/1.0 Connector.
      *
      * @param parent MBean Name of the associated parent component
-     * ? @param address The IP address on which to bind ?
-     * ? @param port TCP port number to listen on ?
+     * @param address The IP address on which to bind
+     * @param port TCP port number to listen on
+     *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createHttp10Connector(String parent)
+    public String createHttp10Connector(String parent, String address, int port)
         throws Exception {
 
         ManagedBean managed = registry.findManagedBean(parent);
@@ -280,9 +281,8 @@ public class MBeanFactory extends BaseModelMBean {
         org.apache.catalina.connector.http10.HttpConnector connector =
             new org.apache.catalina.connector.http10.HttpConnector();
 
-        //connector.setAddress(address);
-        //connector.setPort(port);
-        //service.addConnector(connector);
+        connector.setAddress(address);
+        connector.setPort(port);
         connector.setService(service);
 
         ObjectName oname = MBeanUtils.createObjectName(domain, connector);
@@ -298,11 +298,12 @@ public class MBeanFactory extends BaseModelMBean {
      * Create a new HTTP/1.1 Connector.
      *
      * @param parent MBean Name of the associated parent component
-     * ? @param address The IP address on which to bind ?
-     * ? @param port TCP port number to listen on ?
+     * @param address The IP address on which to bind
+     * @param port TCP port number to listen on
+     *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createHttp11Connector(String parent)
+    public String createHttp11Connector(String parent, String address, int port))
         throws Exception {
 
         ManagedBean managed = registry.findManagedBean(parent);
@@ -322,9 +323,8 @@ public class MBeanFactory extends BaseModelMBean {
         org.apache.catalina.connector.http.HttpConnector connector =
             new org.apache.catalina.connector.http.HttpConnector();
 
-        //connector.setAddress(address);
-        //connector.setPort(port);
-        //service.addConnector(connector);
+        connector.setAddress(address);
+        connector.setPort(port);
         connector.setService(service);
 
         ObjectName oname = MBeanUtils.createObjectName(domain, connector);
@@ -592,10 +592,11 @@ public class MBeanFactory extends BaseModelMBean {
      * Create a new StandardContext.
      *
      * @param parent MBean Name of the associated parent component
+     * @param path The context path for this Context
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createStandardContext(String parent)
+    public String createStandardContext(String parent, String path)
         throws Exception {
 
         ManagedBean managed = registry.findManagedBean(parent);
@@ -613,8 +614,7 @@ public class MBeanFactory extends BaseModelMBean {
         Host host = null;
         StandardContext context = new StandardContext();
 
-        //context.setDocBase(docBase);
-        //context.setPath(path);
+        context.setPath(path);
         context.setParent(host);
 
         ObjectName oname = MBeanUtils.createObjectName(domain, context);
@@ -667,10 +667,11 @@ public class MBeanFactory extends BaseModelMBean {
      * Create a new StandardHost.
      *
      * @param parent MBean Name of the associated parent component
+     * @param name Unique name of this Host
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createStandardHost(String parent)
+    public String createStandardHost(String parent, String name)
         throws Exception {
 
         ManagedBean managed = registry.findManagedBean(parent);
@@ -688,7 +689,7 @@ public class MBeanFactory extends BaseModelMBean {
         Engine engine = null;
         StandardHost host = new StandardHost();
 
-        //host.setName(name);
+        host.setName(name);
         host.setParent(engine);
 
         ObjectName oname = MBeanUtils.createObjectName(domain, host);
@@ -740,10 +741,11 @@ public class MBeanFactory extends BaseModelMBean {
      * Create a new StandardService.
      *
      * @param parent MBean Name of the associated parent component
+     * @param name Unique name of this Service
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createStandardService(String parent)
+    public String createStandardService(String parent, String name)
         throws Exception {
 
         ManagedBean managed = registry.findManagedBean(parent);
@@ -761,7 +763,7 @@ public class MBeanFactory extends BaseModelMBean {
         Server server = null;
         StandardService service = new StandardService();
 
-        //service.setName(name);
+        service.setName(name);
         service.setServer(server);
 
         ObjectName oname = MBeanUtils.createObjectName(domain, service);
