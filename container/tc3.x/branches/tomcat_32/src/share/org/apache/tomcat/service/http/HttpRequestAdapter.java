@@ -247,21 +247,23 @@ public class HttpRequestAdapter extends RequestImpl {
     }
 
     public int getServerPort() {
-        if(serverPort == -1) {
-            //XXX Which is the default in case we can not get the port
-            //from the request??
-            serverPort=socket.getLocalPort();
-            String hostHeader = this.getHeader("host");
-            if (hostHeader != null) {
-                int i = hostHeader.indexOf(':');
-                if (i > -1) {
-                    hostHeader = hostHeader.substring(i+1);
-                    try{
-                        serverPort=Integer.parseInt(hostHeader);
-                    }catch(NumberFormatException pex){
-                    }
-                }else serverPort=80;
-            }
+        if (serverPort != -1)
+            return serverPort;
+        String hostHeader = this.getHeader("host");
+        if (hostHeader == null)
+            serverPort = socket.getLocalPort();
+        else {
+            int i = hostHeader.indexOf(':');
+            if (i > -1) {
+                hostHeader = hostHeader.substring(i+1);
+                try {
+                    serverPort = Integer.parseInt(hostHeader);
+                } catch (NumberFormatException pex) {
+                }
+            } else if (isSecure())
+                serverPort = 443;
+            else
+                serverPort = 80;
         }
         return serverPort;
     }
