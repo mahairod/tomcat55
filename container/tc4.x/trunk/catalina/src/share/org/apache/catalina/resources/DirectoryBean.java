@@ -271,6 +271,8 @@ public final class DirectoryBean extends ResourceBean {
 	    writer.print(rewriteUrl(contextPath));
             if (parent.equals(""))
                 parent = "/";
+            if (contextPath.endsWith("/"))
+                parent = parent.substring(1);
 	    writer.print(parent);
 	    writer.print("\">");
 	    writer.print(sm.getString("directory.parent", parent));
@@ -310,7 +312,10 @@ public final class DirectoryBean extends ResourceBean {
 	    writer.print("<td align=\"left\">&nbsp;&nbsp;\r\n");
 	    writer.print("<a href=\"");
 	    writer.print(rewriteUrl(contextPath));
-	    writer.print(rewriteUrl(resources[i].getName()));
+            String resourceName = rewriteUrl(resources[i].getName());
+            if ((contextPath.endsWith("/")) && (resourceName.length() > 0))
+                resourceName = resourceName.substring(1);
+	    writer.print(resourceName);
 	    writer.print("\"><tt>");
 	    writer.print(trimmed);
 	    if (resources[i] instanceof DirectoryBean)
