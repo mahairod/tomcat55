@@ -57,16 +57,7 @@ public class EditValveAction extends Action {
      * The MBeanServer we will be interacting with.
      */
     private MBeanServer mBServer = null;
-    
-
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-    
-    private HttpSession session = null;
-    private Locale locale = null;
-    private String parent = null;
+        
     
     // --------------------------------------------------------- Public Methods
     
@@ -85,18 +76,16 @@ public class EditValveAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws IOException, ServletException {
         
         // Acquire the resources that we need
-        session = request.getSession();
-        locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        MessageResources resources = getResources(request);
+        HttpSession session = request.getSession();
+        Locale locale = getLocale(request);
         
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
@@ -120,7 +109,7 @@ public class EditValveAction extends Action {
             return (null);
         }
         
-       parent = request.getParameter("parent");
+        String parent = request.getParameter("parent");
        String valveType = null;
        String attribute = null;
        
@@ -145,15 +134,15 @@ public class EditValveAction extends Action {
 
         // Forward to the appropriate valve display page        
         if ("AccessLogValve".equalsIgnoreCase(valveType)) {
-               setUpAccessLogValve(vname, response);
+               setUpAccessLogValve(vname, request, response);
         } else if ("RemoteAddrValve".equalsIgnoreCase(valveType)) {
-               setUpRemoteAddrValve(vname, response);
+               setUpRemoteAddrValve(vname, request, response);
         } else if ("RemoteHostValve".equalsIgnoreCase(valveType)) {
-                setUpRemoteHostValve(vname, response);
+                setUpRemoteHostValve(vname, request, response);
         } else if ("RequestDumperValve".equalsIgnoreCase(valveType)) {
-               setUpRequestDumperValve(vname, response);
+               setUpRequestDumperValve(vname, request, response);
         } else if ("SingleSignOn".equalsIgnoreCase(valveType)) {
-               setUpSingleSignOnValve(vname, response);
+               setUpSingleSignOnValve(vname, request, response);
         }
        
         
@@ -161,9 +150,14 @@ public class EditValveAction extends Action {
                 
     }
 
-    private void setUpAccessLogValve(ObjectName vname,
-                                        HttpServletResponse response) 
+    private void setUpAccessLogValve(ObjectName vname, HttpServletRequest request,
+                                     HttpServletResponse response) 
     throws IOException {
+        MessageResources resources = getResources(request);
+        HttpSession session = request.getSession();
+        Locale locale = getLocale(request);
+        String parent = request.getParameter("parent");
+
         // Fill in the form values for display and editing
         AccessLogValveForm valveFm = new AccessLogValveForm();
         session.setAttribute("accessLogValveForm", valveFm);
@@ -222,9 +216,14 @@ public class EditValveAction extends Action {
         }     
     }
 
-    private void setUpRequestDumperValve(ObjectName vname,
-                                        HttpServletResponse response) 
+    private void setUpRequestDumperValve(ObjectName vname, HttpServletRequest request,
+                                         HttpServletResponse response) 
     throws IOException {
+        MessageResources resources = getResources(request);
+        HttpSession session = request.getSession();
+        Locale locale = getLocale(request);
+        String parent = request.getParameter("parent");
+
         // Fill in the form values for display and editing
         RequestDumperValveForm valveFm = new RequestDumperValveForm();
         session.setAttribute("requestDumperValveForm", valveFm);
@@ -256,9 +255,14 @@ public class EditValveAction extends Action {
         }     
     }
 
-    private void setUpSingleSignOnValve(ObjectName vname,
+    private void setUpSingleSignOnValve(ObjectName vname, HttpServletRequest request,
                                         HttpServletResponse response) 
     throws IOException {
+        MessageResources resources = getResources(request);
+        HttpSession session = request.getSession();
+        Locale locale = getLocale(request);
+        String parent = request.getParameter("parent");
+
         // Fill in the form values for display and editing
         SingleSignOnValveForm valveFm = new SingleSignOnValveForm();
         session.setAttribute("singleSignOnValveForm", valveFm);
@@ -291,9 +295,14 @@ public class EditValveAction extends Action {
     }
 
 
-    private void setUpRemoteAddrValve(ObjectName vname,
-                                        HttpServletResponse response) 
+    private void setUpRemoteAddrValve(ObjectName vname, HttpServletRequest request,
+                                      HttpServletResponse response) 
     throws IOException {
+        MessageResources resources = getResources(request);
+        HttpSession session = request.getSession();
+        Locale locale = getLocale(request);
+        String parent = request.getParameter("parent");
+
         // Fill in the form values for display and editing
         RemoteAddrValveForm valveFm = new RemoteAddrValveForm();
         session.setAttribute("remoteAddrValveForm", valveFm);
@@ -328,9 +337,14 @@ public class EditValveAction extends Action {
         }     
     }
 
-    private void setUpRemoteHostValve(ObjectName vname,
-                                        HttpServletResponse response) 
+    private void setUpRemoteHostValve(ObjectName vname, HttpServletRequest request,
+                                      HttpServletResponse response) 
     throws IOException {
+        MessageResources resources = getResources(request);
+        HttpSession session = request.getSession();
+        Locale locale = getLocale(request);
+        String parent = request.getParameter("parent");
+
         // Fill in the form values for display and editing
         RemoteHostValveForm valveFm = new RemoteHostValveForm();
         session.setAttribute("remoteHostValveForm", valveFm);

@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
+import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
@@ -75,11 +76,11 @@ public final class ValveUtil {
     ActionMapping mapping, ApplicationServlet servlet)
     throws IOException, ServletException {
         
-        MessageResources resources = servlet.getResources();
+        MessageResources resources = (MessageResources) servlet.getServletContext().getAttribute(Globals.MESSAGES_KEY);
         HttpSession session = request.getSession();
         
         MBeanServer mBServer = null;
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
             mBServer = servlet.getServer();

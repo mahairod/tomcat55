@@ -76,7 +76,7 @@ public final class CommitChangesAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -92,10 +92,8 @@ public final class CommitChangesAction extends Action {
 
        // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        Locale locale = getLocale(request);
+        MessageResources resources = getResources(request);
         
        ObjectName sname = null;    
         try {
@@ -122,7 +120,6 @@ public final class CommitChangesAction extends Action {
             return (null);            
         }
  
-        //FIX ME-- just a message for debugging
         System.out.println("Debugging -- changes saved to conf/server.xml");
         // Forward control back to the banner
         return (mapping.findForward("Banner"));

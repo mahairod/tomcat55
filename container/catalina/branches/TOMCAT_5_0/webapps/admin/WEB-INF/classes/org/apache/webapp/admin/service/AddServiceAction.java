@@ -40,13 +40,6 @@ import org.apache.webapp.admin.Lists;
  */
 
 public class AddServiceAction extends Action {
-        
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-    
-
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -64,18 +57,16 @@ public class AddServiceAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws IOException, ServletException {
 
         // Acquire the resources that we need
+        MessageResources resources = getResources(request);
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        Locale locale = getLocale(request);
         
         String serverName = request.getParameter("select");
         

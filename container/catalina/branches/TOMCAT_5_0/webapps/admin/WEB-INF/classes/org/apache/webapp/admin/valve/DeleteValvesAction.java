@@ -68,12 +68,6 @@ public class DeleteValvesAction extends Action {
     private MBeanServer mBServer = null;
     
 
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-
-
     // --------------------------------------------------------- Public Methods
     
     
@@ -92,7 +86,7 @@ public class DeleteValvesAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -100,11 +94,9 @@ public class DeleteValvesAction extends Action {
         
         
         // Look up the components we will be using as needed
+        MessageResources resources = getResources(request);
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        Locale locale = getLocale(request);
 
         // Acquire a reference to the MBeanServer containing our MBeans
         try {

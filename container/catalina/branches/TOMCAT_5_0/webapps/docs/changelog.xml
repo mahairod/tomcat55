@@ -69,6 +69,9 @@
       <fix>
         <bug>31732</bug>: Fix Japanese localization of Manager's list command. (yoavs)
       </fix>
+      <update>
+        <bug>31656</bug>: Make admin webapp build on Struts 1.2. (yoavs)
+      </update>
     </changelog>
   </subsection>
 </section>

@@ -62,13 +62,6 @@ public class ListUsersAction extends Action {
      */
     private MBeanServer mserver = null;
 
-
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-
-
     // --------------------------------------------------------- Public Methods
 
 
@@ -87,7 +80,7 @@ public class ListUsersAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -98,11 +91,10 @@ public class ListUsersAction extends Action {
         if (mserver == null) {
             mserver = ((ApplicationServlet) getServlet()).getServer();
         }
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+
+        MessageResources resources = getResources(request);
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        Locale locale = getLocale(request);
 
 
         // Create a form bean containing the requested MBean Names

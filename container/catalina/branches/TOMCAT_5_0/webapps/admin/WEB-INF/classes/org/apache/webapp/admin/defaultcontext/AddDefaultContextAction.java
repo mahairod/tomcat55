@@ -40,13 +40,6 @@ import org.apache.webapp.admin.TomcatTreeBuilder;
  */
 
 public class AddDefaultContextAction extends Action {
-    
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-    
-    
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -64,17 +57,15 @@ public class AddDefaultContextAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping, ActionForm form,
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
                                 HttpServletRequest request,
                                 HttpServletResponse response)
         throws IOException, ServletException {
         
         // Acquire the resources that we need
+        MessageResources resources = getResources(request);
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        Locale locale = getLocale(request);
         
         // Fill in the form values for display and editing
         DefaultContextForm defaultContextFm = new DefaultContextForm();

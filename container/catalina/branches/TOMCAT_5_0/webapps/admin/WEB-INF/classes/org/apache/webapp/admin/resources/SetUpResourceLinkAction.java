@@ -65,12 +65,6 @@ public final class SetUpResourceLinkAction extends Action {
      */
     private MBeanServer mserver = null;
 
-
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-    
     // --------------------------------------------------------- Public Methods
 
 
@@ -89,7 +83,7 @@ public final class SetUpResourceLinkAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -99,11 +93,10 @@ public final class SetUpResourceLinkAction extends Action {
         if (mserver == null) {
             mserver = ((ApplicationServlet) getServlet()).getServer();
         }
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+
+        MessageResources resources = getResources(request);
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        Locale locale = getLocale(request);
         
         // Set up the form bean based on the creating or editing state
         String objectName = request.getParameter("objectName");
