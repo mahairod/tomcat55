@@ -92,7 +92,7 @@ import org.apache.jasper.JasperException;
  */
 class PageDataImpl extends PageData implements TagConstants {
 
-    private static final String JSP_NAMESPACE = "http://java.sun.com/JSP/Page";
+    private static final String JSP_URI = "http://java.sun.com/JSP/Page";
     private static final String JSP_VERSION = "2.0";
     private static final String CDATA_START_SECTION = "<![CDATA[\n";
     private static final String CDATA_END_SECTION = "]]>\n";
@@ -158,17 +158,23 @@ class PageDataImpl extends PageData implements TagConstants {
 	    this.rootAttrs = new AttributesImpl();
 	    this.rootAttrs.addAttribute("", "", "version", "CDATA",
 					JSP_VERSION);
-	    if (!root.isXmlSyntax()) {
-		this.rootAttrs.addAttribute("", "", "xmlns:jsp", "CDATA",
-					    JSP_NAMESPACE);
-	    } 
 	}
 
 	public void visit(Node.Root n) throws JasperException {
 	    visitBody(n);
-	    if (n == this.root) {
-		// top-level page
-		this.root.setAttributes(rootAttrs);
+	    if (n == root) {
+		/*
+		 * Top-level page.
+		 *
+		 * Add
+		 *   xmlns:jsp="http://java.sun.com/JSP/Page"
+		 * attribute only if not already present.
+		 */
+		if (!JSP_URI.equals(rootAttrs.getValue("xmlns:jsp"))) {
+		    rootAttrs.addAttribute("", "", "xmlns:jsp", "CDATA",
+					   JSP_URI);
+		}
+		root.setAttributes(rootAttrs);
 	    }
 	}
 
