@@ -17,13 +17,17 @@ set WATCHDOG_HOME=..
 :gotWatchdogHome
 
 if not "%TOMCAT_HOME%" == "" goto gotTomcatHome
-set TOMCAT_HOME=%WATCHDOG_HOME%\..\tomcat
+if exist %WATCHDOG_HOME%\..\tomcat set TOMCAT_HOME=%WATCHDOG_HOME%\..\tomcat
+if exist %WATCHDOG_HOME%\..\jakartatomcat set TOMCAT_HOME=%WATCHDOG_HOME%\..\jakartatomcat
 :gotTomcatHome
 
 set TOM_PREV_CLASSPATH=%CLASSPATH%
 
-SET CLASSPATH=%TOMCAT_HOME%\classes;%CLASSPATH%
-SET CLASSPATH=%TOMCAT_HOME%\lib\servlet.jar;%CLASSPATH%
+if exist %TOMCAT_HOME%\classes SET CLASSPATH=%TOMCAT_HOME%\classes;%CLASSPATH%
+if exist %TOMCAT_HOME%\lib\servlet.jar SET CLASSPATH=%TOMCAT_HOME%\lib\servlet.jar;%CLASSPATH%
+if exist %TOMCAT_HOME%\lib\jasper.jar SET CLASSPATH=%TOMCAT_HOME%\lib\jasper.jar;%CLASSPATH%
+SET CLASSPATH=%TOMCAT_HOME%\lib\webserver.jar;%CLASSPATH%
+
 SET CLASSPATH=%WATCHDOG_HOME%\lib\moo.jar;%CLASSPATH%
 SET CLASSPATH=%WATCHDOG_HOME%\lib\testdriver.jar;%CLASSPATH%
 SET CLASSPATH=%WATCHDOG_HOME%\lib\client.jar;%CLASSPATH%
@@ -53,6 +57,6 @@ set HOST=
 goto end
 
 :exit
-echo usage: %0 {all/jsp/servlet} [serverhost] [serverport] 
+echo usage: %0 {all/jsp/servlet} [serverhost] [serverport]
 
 :end
