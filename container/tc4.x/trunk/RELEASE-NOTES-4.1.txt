@@ -937,7 +937,11 @@ Jasper Bug Fixes:
 [4.1.17] Compiler:
          Make exception reports more detailed.
 
-
+[4.1.19] Background Thread Recompile:
+         Fixed a thread synchronization bug which could cause the thread which
+         does background JSP recompiles (development=false) to die.
+        
+         
 ============================
 KNOWN ISSUES IN THIS RELEASE:
 ============================
