@@ -90,6 +90,11 @@ TyrexDataSourceFactory:  Always return a ServerDataSource, which is transaction
 
 TyrexTransactionFactory:  Add error logging.
 
+ApplicationContext:  Fix security problem which could allow a servlet to serve
+  resources from outside the Catalina home directory, using the request
+  dispatcher. This also implements the specification requirement that the 
+  request dispatcher cannot extend outside the current servlet context.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -137,6 +142,7 @@ Bugzilla Bugs Resolved:
       returns false
 6609  SendMailServlet.java is not compiled  even if javamail is installed 
       correctly
+6641  Download of MS Office docs from protected areas fail with IE
 6644  Whitespace after Content-type header value leads to POST method failure
 
 
