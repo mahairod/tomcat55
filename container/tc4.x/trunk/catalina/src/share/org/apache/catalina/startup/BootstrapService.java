@@ -71,8 +71,8 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import org.apache.service.Service;
-import org.apache.service.ServiceController;
+import org.apache.commons.daemon.Daemon;
+import org.apache.commons.daemon.DaemonContext;
 import org.apache.catalina.loader.Extension;
 import org.apache.catalina.loader.StandardClassLoader;
 
@@ -90,7 +90,7 @@ import org.apache.catalina.loader.StandardClassLoader;
  */
 
 public final class BootstrapService 
-    implements Service {
+    implements Daemon {
 
 
     // ------------------------------------------------------- Static Variables
@@ -99,7 +99,7 @@ public final class BootstrapService
     /**
      * Service object used by main.
      */
-    private static Service service = null;
+    private static Daemon service = null;
 
 
     /**
@@ -120,8 +120,8 @@ public final class BootstrapService
     /**
      * Load the Catalina Service.
      */
-    public void load(ServiceController controller, String arguments[])
-        throws Throwable {
+    public void init(DaemonContext context)
+        throws Exception {
 
         log("Create Catalina server");
 
@@ -211,7 +211,7 @@ public final class BootstrapService
      * Start the Catalina Service.
      */
     public void start()
-        throws Throwable {
+        throws Exception {
 
         log("Starting service");
         String methodName = "start";
@@ -226,13 +226,23 @@ public final class BootstrapService
      * Stop the Catalina Service.
      */
     public void stop()
-        throws Throwable {
+        throws Exception {
 
         log("Stopping service");
         String methodName = "stop";
         Method method = catalinaService.getClass().getMethod(methodName, null);
         method.invoke(catalinaService, null);
         log("Service stopped");
+
+    }
+
+
+    /**
+     * Destroy the Catalina Service.
+     */
+    public void destroy() {
+
+        // FIXME
 
     }
 
@@ -256,7 +266,7 @@ public final class BootstrapService
         if (service == null) {
             service = new BootstrapService();
             try {
-                service.load(null, args);
+                service.init(null);
             } catch (Throwable t) {
                 t.printStackTrace();
                 return;

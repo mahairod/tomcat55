@@ -51,6 +51,12 @@ commons-collections.lib=${commons-collections.home}
 commons-collections.jar=${commons-collections.lib}/commons-collections.jar
 
 
+# ----- Commons Daemon, version 20020219 or later -----
+commons-daemon.home=${base.path}/commons-daemon
+commons-daemon.lib=${commons-daemon.home}
+commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
+
+
 # ----- Commons Digester, version 1.1.1 or later -----
 commons-digester.home=${base.path}/commons-digester-1.1.1
 commons-digester.lib=${commons-digester.home}

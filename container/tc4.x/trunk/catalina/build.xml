@@ -45,6 +45,7 @@
     <pathelement location="${activation.jar}"/>
     <pathelement location="${commons-beanutils.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
+    <pathelement location="${commons-daemon.jar}"/>
     <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
@@ -76,6 +77,7 @@
     <pathelement location="${activation.jar}"/>
     <pathelement location="${commons-beanutils.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
+    <pathelement location="${commons-daemon.jar}"/>
     <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
@@ -135,6 +137,9 @@
     <available property="collections.present"
      classname="org.apache.commons.collections.FastHashMap"
      classpath="${commons-collections.jar}"/>
+    <available property="daemon.present"
+     classname="org.apache.commons.daemon.Daemon"
+     classpath="${commons-daemon.jar}"/>
     <available property="dbcp.present"
      classname="org.apache.commons.dbcp.ConnectionFactory"
      classpath="${commons-dbcp.jar}"/>
@@ -213,6 +218,7 @@
      classpath="${xerces.jar}:${xercesImpl.jar}" />
 
     <!-- JAR files availability flags -->
+    <available property="daemon.jar.present" file="${commons-daemon.jar}" />
     <available property="dbcp.jar.present" file="${commons-dbcp.jar}" />
     <available property="jaas.jar.present" file="${jaas.jar}" />
     <condition property="javamail.jar.present">
@@ -248,6 +254,12 @@
     </condition>
 
     <!-- Conditional compilation flags (determined from the flags above) -->
+    <condition property="compile.daemon">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${daemon.present}" arg2="true" />
+      </or>
+    </condition>
     <condition property="compile.dbcp">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
@@ -321,6 +333,12 @@
 
 
     <!-- Conditional copy flags (determined from the flags above) -->
+    <condition property="copy.daemon.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${daemon.jar.present}" arg2="true" />
+      </or>
+    </condition>
     <condition property="copy.dbcp.jar">
       <and>
         <not>
@@ -557,6 +575,7 @@
     <echo message="servlet.present=${servlet.present}" />
 
     <echo message="--- Optional Libraries ---" />
+    <echo message="daemon.present=${daemon.present}" />
     <echo message="dbcp.present=${dbcp.present}" />
     <echo message="jaas.present=${jaas.present}" />
     <echo message="javamail.present=${javamail.present}" />
@@ -577,6 +596,7 @@
     <echo message="xerces2.jars.present(except JDK 1.4+ or xerces1)=${xerces2.jars.present}" />
 
     <echo message="--- Optional JARs ---" />
+    <echo message="daemon.jar.present=${daemon.jar.present}" />
     <echo message="dbcp.jar.present=${dbcp.jar.present}" />
     <echo message="jaas.jar.present=${jaas.jar.present}" />
     <echo message="javamail.jar.present=${javamail.jar.present}" />
@@ -590,6 +610,7 @@
     <echo message="tyrex.jar.present=${tyrex.jar.present}" />
 
     <echo message="--- Conditional compilation flags ---" />
+    <echo message="compile.daemon=${compile.daemon}" />
     <echo message="compile.dbcp=${compile.dbcp}" />
     <echo message="compile.jaas=${compile.jaas}" />
     <echo message="compile.javamail=${compile.javamail}" />
@@ -603,6 +624,7 @@
     <echo message="compile.tyrex=${compile.tyrex}" />
 
     <echo message="--- Distribution flags ---" />
+    <echo message="copy.daemon.jar=${copy.daemon.jar}" />
     <echo message="copy.dbcp.jar=${copy.dbcp.jar}" />
     <echo message="copy.jaas.jar=${copy.jaas.jar}" />
     <echo message="copy.jdbc20ext.jar=${copy.jdbc20ext.jar}" />
@@ -643,6 +665,9 @@
   <target name="copy-activation.jar" if="copy.javamail.jar">
     <copy todir="${catalina.build}/common/lib" file="${activation.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${mail.jar}"/>
+  </target>
+  <target name="copy-daemon.jar" if="copy.daemon.jar">
+    <copy todir="${catalina.build}/bin" file="${commons-daemon.jar}"/>
   </target>
   <target name="copy-dbcp.jar" if="copy.dbcp.jar">
     <copy todir="${catalina.build}/common/lib" file="${commons-dbcp.jar}"/>
@@ -698,7 +723,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-dbcp.jar,copy-jaas.jar,copy-jdbc20ext.jar,copy-jmx.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tyrex.jar,copy-xerces.jar,copy-xerces2.jars">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-daemon.jar,copy-dbcp.jar,copy-jaas.jar,copy-jdbc20ext.jar,copy-jmx.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tyrex.jar,copy-xerces.jar,copy-xerces2.jars">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
@@ -750,12 +775,6 @@
   <!-- ================ BUILD: Compile Catalina Components ================ -->
   <target name="build-catalina">
 
-    <!-- Compile Service API -->
-    <javac srcdir="../service/java" destdir="${catalina.build}/server/classes"
-           debug="${compile.debug}" deprecation="${compile.deprecation}"
-           optimize="${compile.optimize}"
-           excludes="**/CVS/**" />
-
     <!-- Compile internal server components -->
     <javac srcdir="src/share" destdir="${catalina.build}/server/classes"
            debug="${compile.debug}" deprecation="${compile.deprecation}"
@@ -780,6 +799,8 @@
        unless="compile.jsse"/>
       <exclude name="org/apache/catalina/realm/JAAS**"
        unless="compile.jaas"/>
+      <exclude name="org/apache/catalina/startup/BootstrapService.java"
+       unless="compile.daemon"/>
       <exclude name="org/apache/catalina/servlets/SsiInvokerServlet.java"
        unless="compile.ssi"/>
       <exclude name="org/apache/catalina/util/ssi/**"
@@ -1028,8 +1049,6 @@
     <jar jarfile="${catalina.deploy}/bin/bootstrap.jar" 
          manifest="etc/bootstrap.MF">
       <fileset dir="${catalina.build}/server/classes">
-        <include name="org/apache/service/Service.class" />
-        <include name="org/apache/service/ServiceController.class" />
         <include name="org/apache/catalina/startup/Bootstrap.class" />
         <include name="org/apache/catalina/startup/BootstrapService.class" />
         <include name="org/apache/catalina/startup/ClassLoaderFactory.class" />
