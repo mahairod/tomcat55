@@ -452,6 +452,12 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
                     if( log.isDebugEnabled() )
                         log.debug( "Opening " + devRandomSource );
                 } catch( IOException ex ) {
+                    try {
+			randomIS.close();
+		    } catch (Exception e) {
+                        log.warn("Failed to close randomIS.");
+		    }
+
                     randomIS=null;
                 }
             }
@@ -728,6 +734,13 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
             } catch( Exception ex ) {
             }
             devRandomSource=null;
+ 
+            try {
+		randomIS.close();
+	    } catch (Exception e) {
+                log.warn("Failed to close randomIS.");
+	    }
+
             randomIS=null;
         }
         Random random = getRandom();
