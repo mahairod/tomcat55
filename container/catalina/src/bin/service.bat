@@ -63,6 +63,10 @@ goto end
 
 :doInstall
 rem Install the service
+echo Installing the service '%SERVICE_NAME%' ...
+echo Using CATALINA_HOME:    %CATALINA_HOME%
+echo Using JAVA_HOME:        %JAVA_HOME%
+
 rem Use the environment variables as an exaple
 rem Each command line option is prefixed with PR_
 
@@ -71,20 +75,24 @@ set PR_DESCRIPTION=Apache Tomcat Server - http://jakarta.apache.org/tomcat
 set PR_INSTALL=%EXECUTABLE%
 set PR_LOGPATH=%CATALINA_HOME%\logs
 set PR_CLASSPATH=%JAVA_HOME%\lib\tools.jar;%CATALINA_HOME%\bin\bootstrap.jar
-"%EXECUTABLE%" //IS//%SERVICE_NAME% --Jvm auto --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop
+rem Set the server jvm frrom JAVA_HOME
+set PR_JVM=%JAVA_HOME%\jre\bin\server\jvm.dll
+rem You can use the 'set PR_JVM=auto' for default JVM
+"%EXECUTABLE%" //IS//%SERVICE_NAME% --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop
 rem Clear the environment variables. They are not needed any more.
 set PR_DISPLAYNAME=
 set PR_DESCRIPTION=
 set PR_INSTALL=
 set PR_LOGPATH=
 set PR_CLASSPATH=
+set PR_JVM=
 rem Set extra parameters
 "%EXECUTABLE%" //US//%SERVICE_NAME% --JvmOptions "-Dcatalina.base=%CATALINA_BASE%;-Dcatalina.home=%CATALINA_HOME%;-Djava.endorsed.dirs=%CATALINA_HOME%\common\endorsed" --StartMode jvm --StopMode jvm
 rem More extra parameters
 set PR_STDOUTPUT=%CATALINA_HOME%\logs\stdout.log
 set PR_STDERROR=%CATALINA_HOME%\logs\stderr.log
-"%EXECUTABLE%" //US//%SERVICE_NAME% ++JvmOptions "-Djava.io.tmpdir=%CATALINA_BASE%\temp"
-echo The service '%SERVICE_NAME%' has been installed
+"%EXECUTABLE%" //US//%SERVICE_NAME% ++JvmOptions "-Djava.io.tmpdir=%CATALINA_BASE%\temp" --JvmMs 128 --JvmMx 256
+echo The service '%SERVICE_NAME%' has been installed.
 
 :end
 cd %CURRENT_DIR%
