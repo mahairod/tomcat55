@@ -176,6 +176,20 @@ public class Javac extends Task {
     }
 
     /**
+     * Set the optimize flag. Valid strings are "on", "off", "true", and
+     * "false".
+     */
+
+     public void setOptimize(String optimizeString) {
+	 if (optimizeString.equalsIgnoreCase("on") ||
+	     optimizeString.equalsIgnoreCase("true")) {
+	     optimize = true;
+	 } else {
+	     optimize = false;
+	 }
+     }
+
+    /**
      * Sets the target VM that the classes will be compiled for. Valid
      * strings are "1.1", "1.2", and "1.3".
      */
