@@ -544,6 +544,8 @@ public class HttpResponseBase
             String file = url.getFile();
             if ((file == null) || !file.startsWith(contextPath))
                 return (false);
+	    if( file.indexOf(";jsessionid=" + session.getId()) >= 0 )
+		return (false);
         }
 
         // This URL belongs to our web application, so it is encodeable
