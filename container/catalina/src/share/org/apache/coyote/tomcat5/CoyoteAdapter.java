@@ -195,8 +195,13 @@ final class CoyoteAdapter
             // Parse and set Catalina and configuration specific 
             // request parameters
             postParseRequest(req, request, res, response);
-            // Calling the container
-            connector.getContainer().invoke(request, response);
+            if (!request.getMappingData().redirectPath.isNull()) {
+                response.sendRedirect
+                    (request.getMappingData().redirectPath.toString());
+            } else {
+                // Calling the container
+                connector.getContainer().invoke(request, response);
+            }
             response.finishResponse();
 
             req.action( ActionCode.ACTION_POST_REQUEST , null);
