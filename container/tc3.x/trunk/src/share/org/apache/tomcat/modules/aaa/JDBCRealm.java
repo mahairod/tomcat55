@@ -277,14 +277,15 @@ public final class JDBCRealm extends BaseInterceptor {
             preparedAuthenticate.setString(1, username);
             ResultSet rs1 = preparedAuthenticate.executeQuery();
             if (rs1.next()) {
-                if (digest.equalsIgnoreCase("No")) {
-                    if (credentials.equals(rs1.getString(1).trim())) {
+                String dbCredentials=rs1.getString(1).trim();
+                if( digest.equals("") || digest.equalsIgnoreCase("No")){
+                    if (credentials.equals(dbCredentials)) {
                         if (debug >= 2)
                             log(sm.getString("jdbcRealm.authenticateSuccess", username));
                         return true;
                     }
                 } else {
-                    if (credentials.equals(digest(rs1.getString(1), digest))) {
+                    if (digest(credentials,digest).equals(dbCredentials)) {
                         if (debug >= 2)
                             log(sm.getString("jdbcRealm.authenticateSuccess", username));
                         return true;
