@@ -338,11 +338,8 @@ public class WebdavServlet
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {
 
-        String path = getRelativePath(req);
-
         resp.addHeader("DAV", "1,2");
-        String methodsAllowed = null;
-
+        
         // Retrieve the resources
         DirContext resources = getResources();
 
@@ -351,28 +348,10 @@ public class WebdavServlet
             return;
         }
 
-        boolean exists = true;
-        Object object = null;
-        try {
-            object = resources.lookup(path);
-        } catch (NamingException e) {
-            exists = false;
-        }
+        StringBuffer methodsAllowed = determineMethodsAllowed(resources,
+                                                              req);
 
-        if (!exists) {
-            methodsAllowed = "OPTIONS, MKCOL, PUT, LOCK";
-            resp.addHeader("Allow", methodsAllowed);
-            return;
-        }
-
-        methodsAllowed = "OPTIONS, GET, HEAD, POST, DELETE, TRACE, "
-            + "PROPFIND, PROPPATCH, COPY, MOVE, LOCK, UNLOCK";
-        if (!(object instanceof DirContext)) {
-            methodsAllowed += ", PUT";
-        }
-
-        resp.addHeader("Allow", methodsAllowed);
-
+        resp.addHeader("Allow", methodsAllowed.toString());
         resp.addHeader("MS-Author-Via", "DAV");
 
     }
@@ -385,6 +364,19 @@ public class WebdavServlet
         throws ServletException, IOException {
 
         if (!listings) {
+            // Retrieve the resources
+            DirContext resources = getResources();
+
+            if (resources == null) {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            }
+
+            // Get allowed methods
+            StringBuffer methodsAllowed = determineMethodsAllowed(resources,
+                                                                  req);
+            
+            resp.addHeader("Allow", methodsAllowed.toString());
             resp.sendError(WebdavStatus.SC_METHOD_NOT_ALLOWED);
             return;
         }
@@ -649,7 +641,7 @@ public class WebdavServlet
             return;
         }
 
-        resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
 
     }
 
@@ -697,6 +689,12 @@ public class WebdavServlet
         // Can't create a collection if a resource already exists at the given
         // path
         if (exists) {
+            // Get allowed methods
+            StringBuffer methodsAllowed = determineMethodsAllowed(resources,
+                                                                  req);
+            
+            resp.addHeader("Allow", methodsAllowed.toString());
+
             resp.sendError(WebdavStatus.SC_METHOD_NOT_ALLOWED);
             return;
         }
@@ -2566,6 +2564,42 @@ public class WebdavServlet
         return creationDateValue.toString();
     }
 
+    /**
+     * Determines the methods normally allowed for the resource.
+     *  
+     */
+    private StringBuffer determineMethodsAllowed(DirContext resources,
+                                                 HttpServletRequest req) {
+        
+        StringBuffer methodsAllowed = new StringBuffer();
+        boolean exists = true;
+        Object object = null;
+        try {
+            String path = getRelativePath(req);
+
+            object = resources.lookup(path);
+        } catch (NamingException e) {
+            exists = false;
+        }
+
+        if (!exists) {
+            methodsAllowed.append("OPTIONS, MKCOL, PUT, LOCK");
+            return methodsAllowed;
+        }
+
+        methodsAllowed.append("OPTIONS, GET, HEAD, POST, DELETE, TRACE, ");
+        methodsAllowed.append("PROPPATCH, COPY, MOVE, LOCK, UNLOCK");
+        
+        if (listings) {
+            methodsAllowed.append("PROPFIND, ");
+        }
+        
+        if (!(object instanceof DirContext)) {
+            methodsAllowed.append(", PUT");
+        }
+        
+        return methodsAllowed;
+    }
 
     // --------------------------------------------------  LockInfo Inner Class
 
@@ -3041,7 +3075,6 @@ class WebdavStatus {
     private static void addStatusCodeMap(int nKey, String strVal) {
         mapStatusCodes.put(new Integer(nKey), strVal);
     }
-
 
 };
 
