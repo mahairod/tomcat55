@@ -834,20 +834,16 @@ public class Parser {
 
 	    
 	    
-	    if (reader.matches(CLOSE_1)
-		|| bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_EMPTY)) {
-		if (reader.matches(CLOSE_1))
-		    reader.advance(CLOSE_1.length());
-		else
-		    throw new ParseException(start, "Body is supposed to be empty for "+tag);
-
-		listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);		
+	    if (reader.matches(CLOSE_1)) {
+		reader.advance(CLOSE_1.length());
+		listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);
 		listener.handleTagBegin(start, reader.mark(), attrs, prefix,
 					shortTagName, tli, ti, true);
 		listener.handleTagEnd(start, reader.mark(), prefix, 
 				      shortTagName, attrs, tli, ti, true);
 	    } else { 
 		// Body can be either
+		//     - empty
 		//     - JSP tags
 		//     - tag dependent stuff
 		if (reader.matches(CLOSE)) {
@@ -861,12 +857,16 @@ public class Parser {
                     if (bodyStop != null) {
                         String bodyString = new String(reader.getChars(bodyStart, bodyStop));
                         hasBody = (bodyString.length() > 0);
+			if (hasBody && bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_EMPTY)) 
+			    throw new ParseException(start,
+				"Body is supposed to be empty for "+tag);
                     }
                     reader.reset(bodyStart);
 
 		    listener.handleTagBegin(start, bodyStart, attrs, prefix, 
 					    shortTagName, tli, ti, hasBody);
                     if (bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_TAG_DEPENDENT) ||
+			bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_EMPTY) ||
                         bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_JSP)) 
                         {
                             // Parse until the end of the tag body. 
