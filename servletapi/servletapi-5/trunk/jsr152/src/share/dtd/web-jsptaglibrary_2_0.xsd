@@ -10,7 +10,7 @@
 
 <xsd:annotation>
 <xsd:documentation>
-@(#)web-jsptaglibrary_2_0.xsds	1.10 07/29/02
+@(#)web-jsptaglibrary_2_0.xsds	1.14 08/14/02
 </xsd:documentation>
 </xsd:annotation>
 <xsd:annotation>
@@ -93,6 +93,45 @@ by the taglibType.
 
 </xsd:documentation>
 </xsd:annotation>
+    <xsd:unique name="tag-name-uniqueness">
+    <xsd:annotation>
+    <xsd:documentation>
+
+    The taglib element contains tag elements.
+    The name subelements of these elements must each be unique.
+
+    </xsd:documentation>
+    </xsd:annotation>
+      <xsd:selector xpath="j2ee:tag"/>
+      <xsd:field    xpath="j2ee:name"/>
+    </xsd:unique>
+
+    <xsd:unique name="tag-file-name-uniqueness">
+    <xsd:annotation>
+    <xsd:documentation>
+
+    The taglib element contains tag-file elements.
+    The name subelements of these elements must each be unique.
+
+    </xsd:documentation>
+    </xsd:annotation>
+      <xsd:selector xpath="j2ee:tag-file"/>
+      <xsd:field    xpath="j2ee:name"/>
+    </xsd:unique>
+
+    <xsd:unique name="function-name-uniqueness">
+    <xsd:annotation>
+    <xsd:documentation>
+
+    The taglib element contains function elements.
+    The name subelements of these elements must each be unique.
+
+    </xsd:documentation>
+    </xsd:annotation>
+      <xsd:selector xpath="j2ee:function"/>
+      <xsd:field    xpath="j2ee:name"/>
+    </xsd:unique>
+
 </xsd:element>
 
 
@@ -135,42 +174,6 @@ scriptless      The body accepts only template text, EL
     </xsd:restriction>
 
 </xsd:simpleType>
-
-<!-- **************************************************** -->
-
-<xsd:complexType name="fragmentInputType">
-<xsd:annotation>
-<xsd:documentation>
-
-Describes the details of a single parameter that may be
-passed from a tag handler to a fragment, when the
-fragment is invoked.
-
-This allows the page author to know what variables to expect from the tag when passing in a fragment.
-
-A fragment-input element can have the following subelements:
-
-description     Describes the purpose of this fragment-input
-
-name            The name of the parameter to the fragment
-                (required)
-
-type            The type of parameter being passed
-                (defaults to java.lang.String)
-
-</xsd:documentation>
-</xsd:annotation>
-    <xsd:sequence>
-        <xsd:element name="description"
-                     type="j2ee:descriptionType"
-                     minOccurs="0" maxOccurs="unbounded"/>
-        <xsd:element name="name"
-                     type="j2ee:java-identifierType"/>
-        <xsd:element name="type"
-                     type="j2ee:fully-qualified-classType"
-                     minOccurs="0"/>
-    </xsd:sequence>
-</xsd:complexType>
 
 <!-- **************************************************** -->
 
@@ -316,7 +319,9 @@ The tag-file element has two required subelements:
 name    The unique action name
 
 path    Where to find the .tag file implementing this
-        action, relative to the location of the TLD file.
+        action, relative to the root of the web application or
+	the root of the JAR file for a tag library packaged in
+	a JAR.
 
 </xsd:documentation>
 </xsd:annotation>
@@ -363,11 +368,6 @@ variable          Optional scripting variable information
 attribute         All attributes of this action that are
                   evaluated prior to invocation.
 
-fragment-attribute All attributes of this action that
-                   implement javax.servlet.jsp.tagext.JspFragment
-                   and can be evaluated zero or more times
-                   by the tag handler.
-
 dynamic-attributes Whether this tag supports additional
                    attributes with dynamic names.  If
                    true, the tag-class must implement the
@@ -376,6 +376,10 @@ dynamic-attributes Whether this tag supports additional
 
 example           Optional informal description of an
                   example of a use of this tag
+
+tag-extension     Zero or more extensions that provide extra
+		  information about this tag, for tool
+		  consumption
 
 </xsd:documentation>
 </xsd:annotation>
@@ -437,9 +441,6 @@ example           Optional informal description of an
         <xsd:element name="attribute"
                      type="j2ee:tld-attributeType"
                      minOccurs="0" maxOccurs="unbounded"/>
-        <xsd:element name="fragment-attribute"
-                     type="j2ee:tld-fragmentAttributeType"
-                     minOccurs="0" maxOccurs="unbounded"/>
         <xsd:element name="dynamic-attributes"
                      type="j2ee:generic-booleanType"
                      minOccurs="0"/>
@@ -456,6 +457,23 @@ example           Optional informal description of an
         </xsd:annotation>
 
         </xsd:element>
+	<xsd:element name="tag-extension"
+		     type="j2ee:deployment-extensionType"
+		     minOccurs="0"
+		     maxOccurs="unbounded">
+	<xsd:annotation>
+	<xsd:documentation>
+
+        Tag extensions are for tool use only and must not affect
+	the behavior of a container.  The TLD extension mechanism
+	only allows ignorable extensions (i.e. those without a
+	mustUnderstand attribute).  A Tag Library is considered
+	invalid if it requires an extension that must be
+	understood by setting mustUnderstand="true".
+
+	</xsd:documentation>
+	</xsd:annotation>
+	</xsd:element>
     </xsd:sequence>
 </xsd:complexType>
 
@@ -497,9 +515,12 @@ tag-file        one or more tag files in the tag library
 function        zero or more EL functions defined in this
                 tag library
 
+taglib-extension zero or more extensions that provide extra
+		information about this taglib, for tool
+		consumption
+
 </xsd:documentation>
 </xsd:annotation>
-
     <xsd:sequence>
         <xsd:element name="description"
                      type="j2ee:descriptionType"
@@ -574,6 +595,23 @@ function        zero or more EL functions defined in this
                      type="j2ee:functionType"
                      minOccurs="0"
                      maxOccurs="unbounded"/>
+	<xsd:element name="taglib-extension"
+		     type="j2ee:deployment-extensionType"
+		     minOccurs="0"
+		     maxOccurs="unbounded">
+	<xsd:annotation>
+	<xsd:documentation>
+
+        Taglib extensions are for tool use only and must not affect
+	the behavior of a container.  The TLD extension mechanism
+	only allows ignorable extensions (i.e. those without a
+	mustUnderstand attribute).  A Tag Library is considered
+	invalid if it requires an extension that must be
+	understood by setting mustUnderstand="true".
+
+	</xsd:documentation>
+	</xsd:annotation>
+	</xsd:element>
     </xsd:sequence>
     <xsd:attribute name="version"
                    type="j2ee:dewey-versionType"
@@ -615,6 +653,8 @@ rtexprvalue     whether the attribute is a runtime attribute
 
 type            the type of the attributes
 
+fragment	whether this attribute is a fragment
+
 </xsd:documentation>
 </xsd:annotation>
     <xsd:sequence>
@@ -638,39 +678,58 @@ type            the type of the attributes
         </xsd:documentation>
         </xsd:annotation>
         </xsd:element>
-        <xsd:element name="rtexprvalue"
-                     type="j2ee:generic-booleanType"
-                     minOccurs="0">
-        <xsd:annotation>
-        <xsd:documentation>
 
-        Defines if the nesting attribute can have scriptlet
-        expressions as a value, i.e the value of the
-        attribute may be dynamically calculated at request
-        time, as opposed to a static value determined at
-        translation time.
+	<xsd:choice>
+	    <xsd:sequence>
+		<xsd:element name="rtexprvalue"
+			     type="j2ee:generic-booleanType"
+			     minOccurs="0">
+		<xsd:annotation>
+		<xsd:documentation>
 
-        If not present then the default is "false", i.e the
-        attribute has a static value
+		Defines if the nesting attribute can have scriptlet
+		expressions as a value, i.e the value of the
+		attribute may be dynamically calculated at request
+		time, as opposed to a static value determined at
+		translation time.
 
-        </xsd:documentation>
-        </xsd:annotation>
+		If not present then the default is "false", i.e the
+		attribute has a static value
 
-        </xsd:element>
-        <xsd:element name="type"
-                     type="j2ee:fully-qualified-classType"
-                     minOccurs="0">
-        <xsd:annotation>
-        <xsd:documentation>
+		</xsd:documentation>
+		</xsd:annotation>
 
-        Defines the Java type of the attributes value.  For
-        static values (those determined at translation time)
-        the type is always java.lang.String.
+		</xsd:element>
+		<xsd:element name="type"
+			     type="j2ee:fully-qualified-classType"
+			     minOccurs="0">
+		<xsd:annotation>
+		<xsd:documentation>
 
-        </xsd:documentation>
-        </xsd:annotation>
-        </xsd:element>
+		Defines the Java type of the attributes value.  For
+		static values (those determined at translation time)
+		the type is always java.lang.String.
 
+		</xsd:documentation>
+		</xsd:annotation>
+		</xsd:element>
+            </xsd:sequence>
+	    <xsd:element name="fragment"
+			 type="j2ee:generic-booleanType"
+			 minOccurs="0">
+		<xsd:annotation>
+		<xsd:documentation>
+
+		"true" if this attribute is of type
+		javax.jsp.tagext.JspFragment, representing dynamic
+		content that can be re-evaluated as many times
+		as needed by the tag handler.  If omitted or "false",
+		the default is still type="java.lang.String"
+
+		</xsd:documentation>
+		</xsd:annotation>
+	    </xsd:element>
+	</xsd:choice>
     </xsd:sequence>
 </xsd:complexType>
 
@@ -692,63 +751,6 @@ The name must conform to the lexical rules for an NMTOKEN.
     <xsd:restriction base="xsd:NMTOKEN"/>
 
 </xsd:simpleType>
-
-<!-- **************************************************** -->
-
-<xsd:complexType name="tld-fragmentAttributeType">
-<xsd:annotation>
-<xsd:documentation>
-
-Defines the details of an attribute of type
-javax.servlet.jsp.tagext.JspFragment.
-
-Attributes defined of this type can be evaluated zero
-or more times by a tag handler.
-
-A fragment-attribute element can have the following
-subelements:
-
-description     Describes the purpose of this
-                fragment-attribute.
-
-name            The name of the fragment attribute.
-
-required        True if this fragment is required, or false
-                if optional.  Defaults to false.
-
-fragment-input  The types of inputs that may be passed to
-                this fragment by the tag handler.
-
-</xsd:documentation>
-</xsd:annotation>
-    <xsd:sequence>
-        <xsd:element name="description"
-                     type="j2ee:descriptionType"
-                     minOccurs="0" maxOccurs="unbounded"/>
-        <xsd:element name="name"
-                     type="j2ee:java-identifierType"/>
-        <xsd:element name="required"
-                     type="j2ee:generic-booleanType"
-                     minOccurs="0">
-        <xsd:annotation>
-        <xsd:documentation>
-
-        Defines if the nesting fragment attribute is
-        required or optional.
-
-        If not present then the default is "false", i.e the
-        fragment attribute is optional.
-
-        </xsd:documentation>
-        </xsd:annotation>
-        </xsd:element>
-        <xsd:element name="fragment-input"
-                     type="j2ee:fragmentInputType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
-
-    </xsd:sequence>
-</xsd:complexType>
 
 <!-- **************************************************** -->
 
@@ -851,6 +853,10 @@ declare                  Whether the variable is declared
 scope                    The scope of the scripting varaible
                          defined.  NESTED is default.
 
+fragment		 The fragment to which the variable
+			 is scoped. (incompatible with scope
+			 attribute)
+
 </xsd:documentation>
 </xsd:annotation>
 
@@ -896,31 +902,52 @@ scope                    The scope of the scripting varaible
         </xsd:annotation>
 
         </xsd:element>
-        <xsd:element name="declare"
-                     type="j2ee:generic-booleanType"
-                     minOccurs="0">
 
-        <xsd:annotation>
-        <xsd:documentation>
+	<xsd:choice>
+	    <xsd:sequence>
+		<xsd:element name="declare"
+			     type="j2ee:generic-booleanType"
+			     minOccurs="0">
 
-        Whether the scripting variable is to be defined
-        or not.  See TagExtraInfo for details.  This
-        element is optional and "true" is the default.
+		<xsd:annotation>
+		<xsd:documentation>
 
-        </xsd:documentation>
-        </xsd:annotation>
-        </xsd:element>
-        <xsd:element name="scope"
-                     type="j2ee:variable-scopeType"
-                     minOccurs="0">
-        <xsd:annotation>
-        <xsd:documentation>
+		Whether the scripting variable is to be defined
+		or not.  See TagExtraInfo for details.  This
+		element is optional and "true" is the default.
 
-        The element is optional and "NESTED" is the default.
+		</xsd:documentation>
+		</xsd:annotation>
+		</xsd:element>
+		<xsd:element name="scope"
+			     type="j2ee:variable-scopeType"
+			     minOccurs="0">
+		<xsd:annotation>
+		<xsd:documentation>
 
-        </xsd:documentation>
-        </xsd:annotation>
-        </xsd:element>
+		The element is optional and "NESTED" is the default.
+
+		</xsd:documentation>
+		</xsd:annotation>
+		</xsd:element>
+	    </xsd:sequence>
+	    <xsd:element name="fragment"
+			 type="j2ee:java-identifierType"
+			 minOccurs="0">
+		<xsd:annotation>
+		<xsd:documentation>
+
+		Must match the value of a name attribute in an
+		attribute element whose fragment attribute is
+		set to "true".  If so specified, this variable's
+		scope is restricted to that fragment invocation.
+		If not specified, the default is declare="true"
+		and scope="NESTED"
+
+		</xsd:documentation>
+		</xsd:annotation>
+	    </xsd:element>
+        </xsd:choice>
     </xsd:sequence>
 
 </xsd:complexType>

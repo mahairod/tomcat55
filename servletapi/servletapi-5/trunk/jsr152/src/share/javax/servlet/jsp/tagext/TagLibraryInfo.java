@@ -100,6 +100,7 @@ abstract public class TagLibraryInfo {
      *     if this directive is specifying the directory of an implicit 
      *     tag library composed of tag files.  Either uri or tagdir 
      *     must be null.
+     * @since JSP2.0
      */
     protected TagLibraryInfo(String prefix, String uri, String tagdir) {
 	this.prefix = prefix;
@@ -111,7 +112,8 @@ abstract public class TagLibraryInfo {
     // ==== methods accessing taglib information =======
 
     /**
-     * The value of the uri attribute from the <%@ taglib directive for this library.
+     * The value of the uri attribute from the taglib directive for 
+     * this library.
      *
      * @return the value of the uri attribute
      */
@@ -125,15 +127,16 @@ abstract public class TagLibraryInfo {
      * this tag library.
      *
      * @return the value of the tagdir attribute
+     * @since JSP2.0
      */
     public String getTagdir() {
 	return tagdir;
     }
 
     /**
-     * The prefix assigned to this taglib from the <%taglib directive
+     * The prefix assigned to this taglib from the taglib directive
      *
-     * @return the prefix assigned to this taglib from the <%taglib directive
+     * @return the prefix assigned to this taglib from the taglib directive
      */
 
     public String getPrefixString() {
@@ -202,6 +205,7 @@ abstract public class TagLibraryInfo {
      * An array describing the tag files that are defined in this tag library.
      *
      * @return the tag files defined in this tag lib
+     * @since JSP2.0
      */
     public TagFileInfo[] getTagFiles() {
         return tagFiles;
@@ -238,8 +242,8 @@ abstract public class TagLibraryInfo {
      *
      * @param shortname The short name (no prefix) of the tag
      * @return the TagFileInfo for that tag file. 
+     * @since JSP2.0
      */
-
     public TagFileInfo getTagFile(String shortname) {
         TagFileInfo tagFiles[] = getTagFiles();
 
@@ -260,8 +264,8 @@ abstract public class TagLibraryInfo {
      * An array describing the functions that are defined in this tag library.
      *
      * @return the functions defined in this tag lib
+     * @since JSP2.0
      */
-   
     public FunctionInfo[] getFunctions() {
         return functions;
     }
@@ -273,8 +277,8 @@ abstract public class TagLibraryInfo {
      *
      * @param name The name (no prefix) of the function
      * @return the FunctionInfo for that function. 
+     * @since JSP2.0
      */
-
     public FunctionInfo getFunction(String name) {
 
         if (functions == null || functions.length == 0) {
@@ -293,18 +297,68 @@ abstract public class TagLibraryInfo {
 
     // Protected fields
 
+    /**
+     * The prefix assigned to this taglib from the taglib directive
+     */
     protected String        prefix;
+    
+    /**
+     * The value of the uri attribute from the taglib directive for 
+     * this library.
+     */
     protected String        uri;
+    
+    /**
+     * The value of the tagdir attribute from the &lt;%@ taglib directive for
+     * this tag library.
+     *
+     * @since JSP2.0
+     */
     protected String        tagdir;
 
+    /**
+     * An array describing the tags that are defined in this tag library.
+     */
     protected TagInfo[]     tags;
+    
+    /**
+     * An array describing the tag files that are defined in this tag library.
+     *
+     * @since JSP2.0
+     */
     protected TagFileInfo[] tagFiles;
+    
+    /**
+     * An array describing the functions that are defined in this tag library.
+     *
+     * @since JSP2.0
+     */
     protected FunctionInfo[] functions;
 
     // Tag Library Data
+    
+    /**
+     * The version of the tag library
+     */
     protected String tlibversion; // required
+    
+    /**
+     * The version of the JSP specification this tag library is written to
+     */
     protected String jspversion;  // required
+    
+    /**
+     * The preferred short name (prefix) as indicated in the TLD.
+     */
     protected String shortname;   // required
+    
+    /**
+     * The "reliable" URN indicated in the TLD.
+     */
     protected String urn;         // required
+    
+    /**
+     * Information (documentation) for this TLD.
+     */
     protected String info;        // optional
 }

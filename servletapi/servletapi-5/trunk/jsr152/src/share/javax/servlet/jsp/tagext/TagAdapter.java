@@ -59,7 +59,7 @@ import javax.servlet.jsp.*;
 
 
 /**
- * Wraps any JspTag and exposes it using a Tag interface.  This is used
+ * Wraps any SimpleTag and exposes it using a Tag interface.  This is used
  * to allow collaboration between classic Tag handlers and SimpleTag
  * handlers.
  * <p>
@@ -69,30 +69,30 @@ import javax.servlet.jsp.*;
  * this, a TagAdapter is created to wrap the SimpleTag parent, and the
  * adapter is passed to setParent() instead.  A classic Tag Handler can
  * call getAdaptee() to retrieve the encapsulated SimpleTag instance.
+ *
+ * @since JSP2.0
  */
-
 public class TagAdapter 
     implements Tag
 {
-    /** The tag that encloses this Tag */
-    private Tag parentTag;
-    
-    /** The tag that's being adapted */
-    private JspTag adaptee;
+    /** The simple tag that's being adapted */
+    private SimpleTag simpleTagAdaptee;
     
     /**
-     * Creates a new TagAdapter that wraps the given tag and 
-     * returns the given parent tag when getParent() is called.
+     * Creates a new TagAdapter that wraps the given SimeplTag and 
+     * returns the parent tag when getParent() is called.
+     *
+     * @param adaptee The SimpleTag being adapted as a Tag.
      */
-    public TagAdapter( JspTag adaptee, Tag parentTag ) {
-        this.adaptee = adaptee;
-        this.parentTag = parentTag;
+    public TagAdapter( SimpleTag adaptee ) {
+        this.simpleTagAdaptee = simpleTagAdaptee;
     }
     
     /**
      * Must not be called.
      *
-     * @throws UnsupportedOperationException
+     * @param pc ignored.
+     * @throws UnsupportedOperationException Must not be called
      */
     public void setPageContext(PageContext pc) {
         throw new UnsupportedOperationException( 
@@ -101,12 +101,15 @@ public class TagAdapter
 
 
     /**
-     * Sets the value to be returned by getParent()
+     * Must not be called.  The parent of this tag is always 
+     * getAdaptee().getParent().
      *
-     * @param t The parent tag, or null.
+     * @param parentTag ignored.
+     * @throws UnsupportedOperationException Must not be called.
      */
     public void setParent( Tag parentTag ) {
-        this.parentTag = parentTag;
+        throw new UnsupportedOperationException( 
+            "Illegal to invoke setParent() on TagAdapter wrapper" );
     }
 
 
@@ -115,33 +118,32 @@ public class TagAdapter
      * This will either be the enclosing Tag (if parent implements Tag),
      * or an adapter to the enclosing Tag (if parent does
      * not implement Tag).
+     *
+     * @return The parent of the tag being adapted.
      */
     public Tag getParent() {
-        return this.parentTag;
-    }
-    
-    /**
-     * Sets the tag that is being adapted to the Tag interface.  
-     * This should be an instance of SimpleTag in JSP 2.0, but room
-     * is left for other kinds of tags in future spec versions.
-     */
-    public void setAdaptee( JspTag adaptee ) {
-        this.adaptee = adaptee;
+	// Note the parent tag must be an instance of Tag (either a 
+	// direct instance or a wrapped instance).
+	return (Tag)simpleTagAdaptee.getParent();
     }
     
     /**
      * Gets the tag that is being adapted to the Tag interface.
      * This should be an instance of SimpleTag in JSP 2.0, but room
      * is left for other kinds of tags in future spec versions.
+     *
+     * @return the tag that is being adapted
      */
     public JspTag getAdaptee() {
-        return this.adaptee;
+        return this.simpleTagAdaptee;
     }
 
     /**
      * Must not be called.
      *
-     * @throws UnsupportedOperationException
+     * @return always throws UnsupportedOperationException
+     * @throws UnsupportedOperationException Must not be called
+     * @throws JspException never thrown
      */
     public int doStartTag() throws JspException {
         throw new UnsupportedOperationException( 
@@ -151,7 +153,9 @@ public class TagAdapter
     /**
      * Must not be called.
      *
-     * @throws UnsupportedOperationException
+     * @return always throws UnsupportedOperationException
+     * @throws UnsupportedOperationException Must not be called
+     * @throws JspException never thrown
      */
     public int doEndTag() throws JspException {
         throw new UnsupportedOperationException( 
@@ -161,7 +165,7 @@ public class TagAdapter
     /**
      * Must not be called.
      *
-     * @throws UnsupportedOperationException
+     * @throws UnsupportedOperationException Must not be called
      */
     public void release() {
         throw new UnsupportedOperationException( 

@@ -66,6 +66,7 @@ package javax.servlet.jsp;
  * @see javax.servlet.jsp.tagext.SimpleTag#doTag
  * @see javax.servlet.jsp.tagext.JspFragment#invoke
  * @see javax.servlet.jsp.tagext.Tag#doEndTag
+ * @since JSP2.0
  */
 public class SkipPageException
     extends JspException
@@ -79,6 +80,8 @@ public class SkipPageException
     
     /**
      * Creates a SkipPageException with the provided message.
+     *
+     * @param message the detail message
      */
     public SkipPageException( String message ) {
         super( message );
@@ -86,6 +89,9 @@ public class SkipPageException
 
     /**
      * Creates a SkipPageException with the provided message and root cause.
+     *
+     * @param message the detail message
+     * @param rootCause the originating cause of this exception
      */
     public SkipPageException( String message, Throwable rootCause ) {
 	super( message, rootCause );
@@ -93,6 +99,8 @@ public class SkipPageException
 
     /**
      * Creates a SkipPageException with the provided root cause.
+     *
+     * @param rootCause the originating cause of this exception
      */
     public SkipPageException( Throwable rootCause ) {
 	super( rootCause );

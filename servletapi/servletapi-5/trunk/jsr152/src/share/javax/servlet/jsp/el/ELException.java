@@ -50,7 +50,6 @@
  * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
- *
  */ 
 
 package javax.servlet.jsp.el;
@@ -60,8 +59,9 @@ import java.text.MessageFormat;
 /**
  * Represents any of the exception conditions that arise during the
  * operation evaluation of the evaluator.
+ *
+ * @since JSP2.0
  */
-
 public class ELException
   extends Exception
 {
@@ -73,8 +73,7 @@ public class ELException
 
   //-------------------------------------
   /**
-   *
-   * Constructor
+   * Creates an ELException with no detail message.
    **/
   public ELException ()
   {
@@ -83,8 +82,9 @@ public class ELException
 
   //-------------------------------------
   /**
+   * Creates an ELException with the provided detail message.
    *
-   * Constructor
+   * @param pMessage the detail message
    **/
   public ELException (String pMessage)
   {
@@ -93,8 +93,9 @@ public class ELException
 
   //-------------------------------------
   /**
+   * Creates an ELException with the given root cause
    *
-   * Constructor
+   * @param pRootCause the originating cause of this exception
    **/
   public ELException (Throwable pRootCause)
   {
@@ -103,8 +104,10 @@ public class ELException
 
   //-------------------------------------
   /**
+   * Creates an ELException with the given detail message and root cause.
    *
-   * Constructor
+   * @param pMessage the detail message
+   * @param pRootCause the originating cause of this exception
    **/
   public ELException (String pMessage,
 		      Throwable pRootCause)
@@ -115,8 +118,9 @@ public class ELException
 
   //-------------------------------------
   /**
-   *
    * Returns the root cause
+   *
+   * @return the root cause of this exception
    **/
   public Throwable getRootCause ()
   {
@@ -125,8 +129,9 @@ public class ELException
 
   //-------------------------------------
   /**
-   *
    * String representation
+   *
+   * @return a String representation of this ELException
    **/
   public String toString ()
   {

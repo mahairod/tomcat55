@@ -59,33 +59,32 @@ import javax.servlet.jsp.*;
 
 
 /**
- * The interface of a simple tag handler that does not want to manipulate its body.
- * The Tag interface defines the basic protocol between a Tag handler and
- * JSP page implementation class.  It defines the life cycle and the
- * methods to be invoked at start and end tag.
+ * The interface of a classic tag handler that does not want to manipulate 
+ * its body.  The Tag interface defines the basic protocol between a Tag 
+ * handler and JSP page implementation class.  It defines the life cycle 
+ * and the methods to be invoked at start and end tag.
  *
- * <p><B>Properties</B>
+ * <p><B>Properties</B></p>
  *
- * <p>
- * The  Tag interface specifies the setter and getter methods for the core
- * pageContext and parent properties.
+ * <p>The Tag interface specifies the setter and getter methods for the core
+ * pageContext and parent properties.</p>
  *
- * <p> The JSP page implementation object invokes setPageContext and
- * setParent, in that order, before invoking doStartTag() or doEndTag().
+ * <p>The JSP page implementation object invokes setPageContext and
+ * setParent, in that order, before invoking doStartTag() or doEndTag().</p>
  *
- * <p><B>Methods</B>
+ * <p><B>Methods</B></p>
  *
- * <p>
- * There are two main actions: doStartTag and doEndTag.  Once all
+ * <p>There are two main actions: doStartTag and doEndTag.  Once all
  * appropriate properties have been initialized, the doStartTag and
  * doEndTag methods can be invoked on the tag handler.  Between these
  * invocations, the tag handler is assumed to hold a state that must
  * be preserved.  After the doEndTag invocation, the tag handler is
  * available for further invocations (and it is expected to have
- * retained its properties).
+ * retained its properties).</p>
  *
- * <p><B>Lifecycle</B>
- * <p> Lifecycle details are described by the transition diagram below,
+ * <p><B>Lifecycle</B></p>
+ *
+ * <p>Lifecycle details are described by the transition diagram below,
  * with the following comments:
  * <ul>
  * <li> [1] This transition is intended to be for releasing long-term data.
@@ -100,31 +99,29 @@ import javax.servlet.jsp.*;
  * attributes that have been set).
  * <li> Check the TryCatchFinally interface for additional details related
  * to exception handling and resource management.
- * </ul>
+ * </ul></p>
  *
  * <IMG src="doc-files/TagProtocol.gif"/>
  * 
- * <p> Once all invocations on the tag handler
+ * <p>Once all invocations on the tag handler
  * are completed, the release method is invoked on it.  Once a release
  * method is invoked <em>all</em> properties, including parent and
  * pageContext, are assumed to have been reset to an unspecified value.
  * The page compiler guarantees that release() will be invoked on the Tag
- * handler before the handler is released to the GC.
+ * handler before the handler is released to the GC.</p>
  *
- * <p><B>Empty and Non-Empty Action</B>
- * <p> If the TagLibraryDescriptor file indicates that the action must
+ * <p><B>Empty and Non-Empty Action</B></p>
+ * <p>If the TagLibraryDescriptor file indicates that the action must
  * always have an empty action, by an &lt;body-content&gt; entry of "empty",
- * then the doStartTag() method must return SKIP_BODY.
+ * then the doStartTag() method must return SKIP_BODY.</p>
  *
- * Otherwise, the doStartTag() method may return SKIP_BODY or
- * EVAL_BODY_INCLUDE.
+ * <p>Otherwise, the doStartTag() method may return SKIP_BODY or
+ * EVAL_BODY_INCLUDE.</p>
  *
- * <p>
- * If SKIP_BODY is returned the body, if present, is not evaluated.
+ * <p>If SKIP_BODY is returned the body, if present, is not evaluated.</p>
  * 
- * <p>
- * If EVAL_BODY_INCLUDE is returned, the body is evaluated and
- * "passed through" to the current out.
+ * <p>If EVAL_BODY_INCLUDE is returned, the body is evaluated and
+ * "passed through" to the current out.</p>
 */
 
 public interface Tag extends JspTag {
@@ -250,9 +247,9 @@ public interface Tag extends JspTag {
      * any variable values that are indicated as so in TagExtraInfo after the
      * invocation of doStartTag().
      *
-     * @return EVAL_BODY_INCLUDE if the tag wants to process body, SKIP_BODY if it
-     * does not want to process it.
-     * @throws JspException.
+     * @return EVAL_BODY_INCLUDE if the tag wants to process body, SKIP_BODY 
+     *     if it does not want to process it.
+     * @throws JspException if an error occurred while processing this tag
      * @see BodyTag
      */
  
@@ -283,7 +280,7 @@ public interface Tag extends JspTag {
      * invocation of doEndTag().
      *
      * @return indication of whether to continue evaluating the JSP page.
-     * @throws JspException.
+     * @throws JspException if an error occurred while processing this tag
      */
 
     int doEndTag() throws JspException;

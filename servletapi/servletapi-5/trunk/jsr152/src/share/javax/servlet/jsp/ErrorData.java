@@ -55,42 +55,74 @@
  
 package javax.servlet.jsp;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.io.IOException;
-
 /**
- * The HttpJspPage interface describes the interaction that a JSP Page
- * Implementation Class must satisfy when using the HTTP protocol.
+ * Contains information about an error, for error pages.
+ * The information contained in this instance is meaningless if not used
+ * in the context of an error page.  To indicate a JSP is an error page,
+ * the page author must set the isErrorPage attribute of the page directive
+ * to "true".
  *
- * <p>
- * The behaviour is identical to that of the JspPage, except for the signature
- * of the _jspService method, which is now expressible in the Java type
- * system and included explicitly in the interface.
- * 
- * @see JspPage
+ * @see PageContext#getErrorData
+ * @since JSP2.0
  */
 
-public interface HttpJspPage extends JspPage {
+public final class ErrorData {
 
-    /** The _jspService()method corresponds to the body of the JSP page. This
-     * method is defined automatically by the JSP container and should never
-     * be defined by the JSP page author.
-     * <p>
-     * If a superclass is specified using the extends attribute, that
-     * superclass may choose to perform some actions in its service() method
-     * before or after calling the _jspService() method.  See using the extends
-     * attribute in the JSP_Engine chapter of the JSP specification.
+    private Throwable throwable;
+    private int statusCode;
+    private String uri;
+    private String servletName;
+
+    /**
+     * Creates a new ErrorData object
      *
-     * @param request Provides client request information to the JSP.
-     * @param response Assists the JSP in sending a response to the client.
-     * @throws ServletException Thrown if an error occurred during the 
-     *     processing of the JSP and that the container should take 
-     *     appropriate action to clean up the request.
-     * @throws IOException Thrown if an error occurred while writing the
-     *     response for this page.
+     * @param throwable The Throwable that is the cause of the error
+     * @param statusCode The status code of the error
+     * @param uri The request URI
+     * @param servletName The name of the servlet invoked
      */
-    public void _jspService(HttpServletRequest request,
-                            HttpServletResponse response)
-       throws ServletException, IOException;
+    public ErrorData( Throwable throwable, int statusCode, String uri, 
+	String servletName )
+    {
+	this.throwable = throwable;
+	this.statusCode = statusCode;
+	this.uri = uri;
+	this.servletName = servletName;
+    }
+
+    /**
+     * Returns the Throwable that caused the error
+     *
+     * @return The Throwable that caused the error
+     */
+    public Throwable getThrowable() {
+	return this.throwable;
+    }
+
+    /**
+     * Returns the status code of the error
+     *
+     * @return The status code of the error
+     */
+    public int getStatusCode() {
+	return this.statusCode;
+    }
+
+    /**
+     * Returns the request URI
+     *
+     * @return The request URI
+     */
+    public String getRequestURI() {
+	return this.uri;
+    }
+
+    /**
+     * Returns the name of the servlet invoked
+     *
+     * @return The name of the servlet invoked
+     */
+    public String getServletName() {
+	return this.servletName;
+    }
 }

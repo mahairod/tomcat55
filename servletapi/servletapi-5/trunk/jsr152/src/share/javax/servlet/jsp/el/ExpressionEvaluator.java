@@ -50,7 +50,6 @@
  * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
- *
  */ 
 
 package javax.servlet.jsp.el;
@@ -61,95 +60,69 @@ import javax.servlet.jsp.tagext.*;
 import java.util.Map;
 
 /**
- * <p>The interface for an expression-language validator and evaluator.
+ * <p>The interface for an expression-language evaluator.
  * Classes that implement an expression language expose their functionality
  * via this interface.</p>
  *
  * <p>An instance of the ExpressionEvaluator can be obtained via the 
  * JspContext / PageContext</p>
  *
- * <p>The validate() and evaluate() methods must be thread-safe.  That is,
+ * <p>The parseExpression() and evaluate() methods must be thread-safe.  That is,
  * multiple threads may call these methods on the same ExpressionEvaluator
  * object simultaneously.  Implementations should synchronize access if
  * they depend on transient state.  Implementations should not, however,
  * assume that only one object of each ExpressionEvaluator type will be
  * instantiated; global caching should therefore be static.</p>
  *
- * <p>There are two variants of the evaluation method.  The most general one
- * uses a VariableResolver instance to resolve names into objects.  Most invocations
- * will likely use the variant that uses a jspContext object and uses the default
- * resolution rules.</p>
+ * @since JSP2.0
  */
 public interface ExpressionEvaluator {
 
-    /** 
-     * Translation time validation of an expression. 
-     *
-     * @param expression The expression to be validated
-     * @return null String if the expression 
-     *     is valid; otherwise an error message. 
-     */ 
-    public String validate( String expression ); 
-
-
     /**
-     * Evaluates the expression at request time.   This variant uses a JspContext object
-     * that (implicitly) uses the default VariableResolver defined in the JSP 2.0 specification.
-     * 
-     * if the jspContext parameter is not a PageContext, the only implicit object available
-     * is pageScope.
-     * 
-     * If the jspContext parameter is a PageContext, all the implicit objects described in
-     * the specification are available.
+     * Prepare an expression for later evaluation.  This method should perform
+     * syntactic validation of the expression; if in doing so it detects errors, it
+     * should raise an ELParseException.
      *
      * @param expression The expression to be evaluated
      * @param expectedType The expected type of the result of the evaluation
-     * @param jspContext The context of the current evaluation, providing
-     *      the source of data for implicit objects.
-     * @param prefixMap A Map with keys containing prefixes and values being
-     *     the URI corresponding to that prefix in the taglib machinery.
-     * @param functionMap A Map with keys containing function names of
-     *      the form "namespaceURI:function" and values as instances of
-     *      java.lang.reflect.Method objects indicating the method to
-     *      be invoked.  Can be null, in which case functions are not
-     *      supported for this invocation.
-     * @param defaultURI The default URI to use when a function is
-     *      encountered with no namespace.
-     * @exception JspException Thrown if the expression evaluation failed.
+     * @param fMapper A FuntionMapper to resolve functions found in the expression.
+     *   It can be null, in which case no functions are supported for this invocation.
+     * @param defaultPrefix The default prefix to use when a function is
+     *   encountered with no prefix.
+     * @return The Expression object encapsulating the arguments, or null if errors
+     *   were encountered.
+     *
+     * @exception ELException Thrown if parsing errors were found.
      */ 
-    public Object evaluate( String expression, 
-                            Class expectedType, 
-                            JspContext jspContext,
-                            Map prefixMap,
-			    Map functionMap,
-                            String defaultURI ) 
-       throws JspException; 
+    public Expression parseExpression( String expression, 
+				       Class expectedType, 
+				       FunctionMapper fMapper,
+				       String defaultPrefix ) 
+      throws ELException; 
 
 
     /** 
-     * Evaluates the expression at request time.  This is the most general version that
-     * uses a VariableResolver object.
+     * Evaluates an expression.  This method may perform some syntactic validation
+     * and, if so, it should raise an ELParseException error if it encounters syntactic
+     * errors.  EL evaluation errors should cause an ELException to be raised.
      *
      * @param expression The expression to be evaluated
      * @param expectedType The expected type of the result of the evaluation
-     * @param resolver The variableResolver object to use, providing
-     *      the source of data for implicit objects.
-     * @param prefixMap A Map with keys containing prefixes and values being
-     *     the URI corresponding to that prefix in the taglib machinery.
-     * @param functionMap A Map with keys containing function names of
-     *      the form "namespaceURI:function" and values as instances of
-     *      java.lang.reflect.Method objects indicating the method to
-     *      be invoked.  Can be null, in which case functions are not
-     *      supported for this invocation.
-     * @param defaultURI  default URI to use when a function is
-     *      encountered with no namespace.
-     * @exception JspException Thrown if the expression evaluation failed.
+     * @param vResolver A VariableResolver instance that can be used at runtime to
+     *   resolve the name of implicit objects into Objects.
+     * @param fMapper A FuntionMapper to resolve functions found in the expression.
+     *   It can be null, in which case no functions are supported for this invocation.
+     * @param defaultPrefix The default prefix to use when a function is
+     *      encountered with no prefix.
+     * @return The result of the expression evaluation or null if errors were encountered.
+     *
+     * @exception ELException Thrown if the expression evaluation failed.
      */ 
     public Object evaluate( String expression, 
-                            Class expectedType, 
-                            VariableResolver resolver,
-                            Map prefixMap,
-			    Map functionMap,
-                            String defaultURI )
-       throws JspException; 
-} 
+			    Class expectedType, 
+			    VariableResolver vResolver,
+			    FunctionMapper fMapper,
+			    String defaultPrefix ) 
+      throws ELException; 
+}
+

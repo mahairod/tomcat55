@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 
 import javax.servlet.jsp.el.ExpressionEvaluator;
+import javax.servlet.jsp.el.VariableResolver;
 
 /**
  * <p>
@@ -82,6 +83,8 @@ import javax.servlet.jsp.el.ExpressionEvaluator;
  * The following methods provide <B>convenient access</B> to implicit objects:
  * <ul>
  * <code>getOut()</code>
+ *
+ * @since JSP2.0
  */
 
 public abstract class JspContext {
@@ -117,12 +120,10 @@ public abstract class JspContext {
 
     public static final int APPLICATION_SCOPE	= 4;
 
-    /**
-     * Register the name and object specified with page scope semantics.
+    /** Register the name and object specified with page scope semantics.
      *
      * @param name the name of the attribute to set
-     * @param attribute  the object to associate with the name
-     * 
+     * @param attribute the object to associate with the name
      * @throws NullPointerException if the name or object is null
      */
 
@@ -143,10 +144,12 @@ public abstract class JspContext {
     abstract public void setAttribute(String name, Object o, int scope);
 
     /**
-     * Return the object associated with the name in the page scope or null
+     * Returns the object associated with the name in the page scope or null
      * if not found.
      *
      * @param name the name of the attribute to get
+     * @return the object associated with the name in the page scope 
+     *     or null if not found.
      * 
      * @throws NullPointerException if the name is null
      * @throws IllegalArgumentException if the scope is invalid
@@ -160,9 +163,12 @@ public abstract class JspContext {
      *
      * @param name the name of the attribute to set
      * @param scope the scope with which to associate the name/object
+     * @return the object associated with the name in the specified
+     *     scope or null if not found.
      * 
      * @throws NullPointerException if the name is null
-     * @throws IllegalArgumentException if the scope is invalid */
+     * @throws IllegalArgumentException if the scope is invalid 
+     */
 
     abstract public Object getAttribute(String name, int scope);
 
@@ -171,6 +177,7 @@ public abstract class JspContext {
      * and application scope(s) in order and returns the value associated or
      * null.
      *
+     * @param name the name of the attribute to search for
      * @return the value associated or null
      */
 
@@ -198,6 +205,7 @@ public abstract class JspContext {
     /**
      * Get the scope where a given attribute is defined.
      *
+     * @param name the name of the attribute to return the scope for
      * @return the scope of the object associated with the name specified or 0
      */
 
@@ -206,9 +214,10 @@ public abstract class JspContext {
     /**
      * Enumerate all the attributes in a given scope
      *
-     * @return an enumeration of names (java.lang.String) of all the attributes the specified scope
+     * @param scope the scope to enumerate all the attributes for
+     * @return an enumeration of names (java.lang.String) of all the 
+     *     attributes the specified scope
      */
-
 
     abstract public Enumeration getAttributeNamesInScope(int scope);
 
@@ -217,14 +226,25 @@ public abstract class JspContext {
      *
      * @return the current JspWriter stream being used for client response
      */
-
     abstract public JspWriter getOut();
-
+    
     /**
      * Provides programmatic access to the ExpressionEvaluator.
      * The JSP Container must return a valid instance of an 
      * ExpressionEvaluator that can parse EL expressions.
+     *
+     * @return A valid instance of an ExpressionEvaluator.
+     * @since JSP2.0
      */
     public abstract ExpressionEvaluator getExpressionEvaluator();
     
+    /**
+     * Returns an instance of a VariableResolver that provides access to the
+     * implicit objects specified in the JSP specification using this JspContext
+     * as the context object
+     *
+     * @return A valid instance of a VariableResolver.
+     * @since JSP2.0
+     */
+    public abstract VariableResolver getVariableResolver();
 }
