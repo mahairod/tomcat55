@@ -184,7 +184,7 @@ public class JspUtil {
 	try {
 	    return parseXMLDocJaxp(in, dtdResource, dtdId );
 	} catch (Throwable pcfe) {
-	    System.out.println("JspUtil: error in jaxp " + pcfe);
+	    //	    System.out.println("JspUtil: error in jaxp " + pcfe);
 	}
 
 	return parseXMLDocOld( in, dtdResource, dtdId);

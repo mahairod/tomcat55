@@ -552,16 +552,25 @@ public class ServletWrapper {
 	    for( int i=cI.length-1; i>=0; i-- ) {
 		cI[i].postService( req , res ); // ignore the error - like in the original code
 	    }
-	} catch( Throwable t ) {
-	    if( null!=req.getAttribute("tomcat.servlet.error.defaultHandler") ) {
+	}  catch( Throwable t ) {
+	    if( t instanceof IOException ) {
+		if( ((IOException)t).getMessage().equals("Broken pipe"))
+		    return;
+		System.out.println("XXX XXX " + t.getMessage());
+	    }
+	    
+	    if( null!=req.getAttribute("tomcat.servlet.error.defaultHandler")) {
 		// we are in handleRequest for the "default" error handler
-		System.out.println("ERROR: can't find default error handler or error in default error page");
+		System.out.println("ERROR: can't find default error handler "+
+				   "or error in default error page");
 		t.printStackTrace();
 	    } else {
 		String msg=t.getMessage();
-		context.log( "Error in " + getServletName() + " service() : " + msg, t);
-		// XXX XXX Security - we should log the message, but nothing should show up
-		// to the user - it gives up information about the internal system !
+		context.log( "Error in " + getServletName() +
+			     " service() : " + msg, t);
+		// XXX XXX Security - we should log the message, but nothing
+		// should show up  to the user - it gives up information
+		// about the internal system !
 		// Developers can/should use the logs !!!
 		contextM.handleError( req, res, t );
 	    }
@@ -592,6 +601,10 @@ public class ServletWrapper {
 	return origin;
     }
 
+    public void setDescription( String d ) {
+	description=d;
+    }
+    
     // -------------------- Accounting --------------------
 
     /** ServletWrapper counts. The accounting desing is not

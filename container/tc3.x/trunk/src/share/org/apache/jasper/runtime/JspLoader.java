@@ -152,8 +152,6 @@ public class JspLoader extends ClassLoader {
     }
     public InputStream getResourceAsStream(String name) {
 	if( debug>0) log("getResourcesAsStream()" + name );
-	if( parent != null && parent instanceof org.apache.tomcat.loader.AdaptiveClassLoader )
-	    return ((org.apache.tomcat.loader.AdaptiveClassLoader)parent).getResourceAsStream(name);
 	URL url = getResource(name);
 	try {
 	    return url != null ? url.openStream() : null;

@@ -439,7 +439,12 @@ public class PageContextImpl extends PageContext {
 	else {
 	    // Set the exception as the root cause in the ServletException
 	    // to get a stack trace for the real problem
-	    //	    e.printStackTrace();
+	    if( e instanceof IOException )
+		throw (IOException)e;
+	    if( e instanceof ServletException )
+		throw (ServletException) e;
+
+	    e.printStackTrace();
 	    throw new ServletException(e);
 	}
 
