@@ -85,6 +85,7 @@ public abstract class Node {
     protected int beginJavaLine;
     protected int endJavaLine;
     protected Node parent;
+    protected Nodes namedAttributeNodes; // cached for performance
 
     /**
      * Constructor.
@@ -133,6 +134,47 @@ public abstract class Node {
     }
 
     /**
+     * Get the attribute that is non requrest time expression, either
+     * from the attribute of the node, or from a jsp:attrbute 
+     */
+    public String getTextAttribute(String name) {
+	class AttributeVisitor extends Visitor {
+	    String attrValue = null;
+	    public void visit(TemplateText txt) {
+		attrValue = new String(txt.getText());
+	    }
+
+	    public String getAttrValue() {
+		return attrValue;
+	    }
+	}
+
+	String attr = getAttributeValue(name);
+	if (attr != null) {
+	    return attr;
+	}
+
+	NamedAttribute namedAttribute = getNamedAttributeNode(name);
+	if (namedAttribute == null) {
+	    return null;
+	}
+
+	// Get the attribute value from named attribute (jsp:attribute)
+	// Since this method is only for attributes that are not rtexpr,
+	// we can assume the body of the jsp:attribute is a template text
+	if (namedAttribute.getBody() != null) {
+	    AttributeVisitor attributeVisitor = new AttributeVisitor();
+	    try {
+		namedAttribute.getBody().visit(attributeVisitor);
+	    } catch (JasperException e) {
+	    }
+	    attr = attributeVisitor.getAttrValue();
+	}
+
+	return attr;
+    }
+
+    /**
      * Searches all subnodes of this node for jsp:attribute standard
      * actions with the given name, and returns the NamedAttribute node
      * of the matching named attribute, nor null if no such node is found.
@@ -162,6 +204,11 @@ public abstract class Node {
      * actions, and returns that set of nodes as a Node.Nodes object.
      */
     public Node.Nodes getNamedAttributeNodes() {
+
+	if (namedAttributeNodes != null) {
+	    return namedAttributeNodes;
+	}
+
         Node.Nodes result = new Node.Nodes();
         
         // Look for the attribute in NamedAttribute children
@@ -181,6 +228,7 @@ public abstract class Node {
             }
         }
 
+	namedAttributeNodes = result;
         return result;
     }
     
@@ -1578,6 +1626,7 @@ public abstract class Node {
 
 	public void visit(GetProperty n) throws JasperException {
 	    doVisit(n);
+	    visitBody(n);
 	}
 
 	public void visit(SetProperty n) throws JasperException {

@@ -443,9 +443,9 @@ public class Validator {
 	public void visit(Node.SetProperty n) throws JasperException {
             JspUtil.checkAttributes("SetProperty", n,
                                     setPropertyAttrs, err);
-	    String name = n.getAttributeValue("name");
-	    String property = n.getAttributeValue("property");
-	    String param = n.getAttributeValue("param");
+	    String name = n.getTextAttribute("name");
+	    String property = n.getTextAttribute("property");
+	    String param = n.getTextAttribute("param");
 	    String value = n.getAttributeValue("value");
 
             n.setValue(getJspAttribute("value", null, null, value, 
@@ -468,10 +468,10 @@ public class Validator {
             JspUtil.checkAttributes("UseBean", n,
                                     useBeanAttrs, err);
 
-	    String name = n.getAttributeValue ("id");
-	    String scope = n.getAttributeValue ("scope");
-	    String className = n.getAttributeValue ("class");
-	    String type = n.getAttributeValue ("type");
+	    String name = n.getTextAttribute ("id");
+	    String scope = n.getTextAttribute ("scope");
+	    String className = n.getTextAttribute ("class");
+	    String type = n.getTextAttribute ("type");
 	    BeanRepository beanInfo = pageInfo.getBeanRepository();
 
 	    if (className == null && type == null)
@@ -511,12 +511,12 @@ public class Validator {
 	public void visit(Node.PlugIn n) throws JasperException {
             JspUtil.checkAttributes("Plugin", n, plugInAttrs, err);
 
-	    String type = n.getAttributeValue("type");
+	    String type = n.getTextAttribute("type");
 	    if (type == null)
 		err.jspError(n, "jsp.error.plugin.notype");
 	    if (!type.equals("bean") && !type.equals("applet"))
 		err.jspError(n, "jsp.error.plugin.badtype");
-	    if (n.getAttributeValue("code") == null)
+	    if (n.getTextAttribute("code") == null)
 		err.jspError(n, "jsp.error.plugin.nocode");
             
 	    Node.JspAttribute width
@@ -608,16 +608,24 @@ public class Validator {
 	    /*
 	     * Make sure all required attributes are present, either as
              * attributes or named attributes (<jsp:attribute>).
+ 	     * Also Make sure that the same attribute is not specified in
+	     * both attributes or named attributes.
 	     */
 	    TagAttributeInfo[] tldAttrs = tagInfo.getAttributes();
 	    Attributes attrs = n.getAttributes();
 	    for (int i=0; i<tldAttrs.length; i++) {
+		String attr = attrs.getValue(tldAttrs[i].getName());
+		Node.NamedAttribute jspAttr =
+			n.getNamedAttributeNode(tldAttrs[i].getName());
+		
 		if (tldAttrs[i].isRequired() &&
-		    (attrs.getValue(tldAttrs[i].getName()) == null) &&
-                    (n.getNamedAttributeNode(tldAttrs[i].getName()) == null) )
-                {
+			attr == null && jspAttr == null) {
 		    err.jspError(n, "jsp.error.missing_attribute",
 				 tldAttrs[i].getName(), n.getShortName());
+		}
+		if (attr != null && jspAttr != null) {
+		    err.jspError(n, "jsp.error.duplicate.name.jspattribute",
+			tldAttrs[i].getName());
 		}
 	    }
 
@@ -706,32 +714,26 @@ public class Validator {
 		boolean found = false;
 		for (int j=0; j<tldAttrs.length; j++) {
 		    if (na.getName().equals(tldAttrs[j].getName())) {
-			if (tldAttrs[j].canBeRequestTime()) {
-                            Class expectedType = String.class;
-                            try {
-                                String typeStr = tldAttrs[j].getTypeName();
-                                if( tldAttrs[j].isFragment() ) {
-                                    expectedType = JspFragment.class;
-                                }
-                                else if( typeStr != null ) {
-                                    expectedType = Class.forName( typeStr );
-                                }
-                                jspAttrs[attrs.getLength() + i]
+                        Class expectedType = String.class;
+                        try {
+                            String typeStr = tldAttrs[j].getTypeName();
+                            if( tldAttrs[j].isFragment() ) {
+                                expectedType = JspFragment.class;
+                            }
+                            else if( typeStr != null ) {
+                                expectedType = Class.forName( typeStr );
+                            }
+                            jspAttrs[attrs.getLength() + i]
                                     = getJspAttribute(na.getName(), null, null,
                                                       null, expectedType, 
                                                       n.getPrefix(), n, false);
-                            }
-                            catch( ClassNotFoundException e ) {
-                                err.jspError(n, 
+                        }
+                        catch( ClassNotFoundException e ) {
+                            err.jspError(n, 
                                     "jsp.error.unknown_attribute_type",
                                     tldAttrs[j].getName(), 
                                     tldAttrs[j].getTypeName() );
-                            }
-			} else {
-                            err.jspError( n, 
-                                "jsp.error.named.attribute.not.rt",
-                                na.getName() );
-			}
+                        }
                         tagDataAttrs.put(na.getName(),
                                          TagData.REQUEST_TIME_VALUE);
 			found = true;
@@ -973,7 +975,7 @@ public class Validator {
 	     * NESTED.
 	     */
 	    TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
-	    if (tagVars != null) {
+	    if (tagVars != null && subelements != null) {
 		for (int i=0; i<tagVars.length; i++) {
 		    if (tagVars[i].getScope() == VariableInfo.AT_END)
 			continue;

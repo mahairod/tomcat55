@@ -292,8 +292,7 @@ public class JspUtil {
      * Checks if all mandatory attributes are present and if all attributes
      * present have valid names.  Checks attributes specified as XML-style
      * attributes as well as attributes specified using the jsp:attribute
-     * standard action.  Also verifies that any attributes specified
-     * via jsp:attribute are rtexprvalue attributes.
+     * standard action. 
      */
     public static void checkAttributes(String typeOfTag,
 				       Node n,
@@ -313,8 +312,7 @@ public class JspUtil {
                 temp.addElement(qName);
         }
 
-        // Add names of attributes specified using jsp:attribute and
-        // check that they are rtexprvalues while we're at it.
+        // Add names of attributes specified using jsp:attribute
         Node.Nodes tagBody = n.getBody();
         if( tagBody != null ) {
             int numSubElements = tagBody.size();
@@ -322,22 +320,12 @@ public class JspUtil {
                 Node node = tagBody.getNode( i );
                 if( node instanceof Node.NamedAttribute ) {
                     String attrName = node.getAttributeValue( "name" );
-                    // Verify that this node is an rtexprvalue.
-                    for( int j = 0; j < validAttributes.length; j++ ) {
-                        if( validAttributes[j].name.equals( attrName ) &&
-                            !validAttributes[j].rtexprvalue )
-                        {
-                            valid = false;
-                            err.jspError(start,
-                                         "jsp.error.named.attribute.not.rt",
-                                         attrName );
-                            break;
-                        }
-                    }
-                    if( valid ) {
-                        temp.addElement( attrName );
-                    }
-                    valid = true;
+                    temp.addElement( attrName );
+		    // Check if this value appear in the attribute of the node
+		    if (n.getAttributeValue(attrName) != null) {
+			err.jspError(n, "jsp.error.duplicate.name.jspattribute",
+					attrName);
+		    }
                 }
                 else {
                     // Nothing can come before jsp:attribute, and only
@@ -470,7 +458,7 @@ public class JspUtil {
     public static class ValidAttribute {
    	String name;
 	boolean mandatory;
-	boolean rtexprvalue;
+	boolean rtexprvalue;	// not used now
 
 	public ValidAttribute (String name, boolean mandatory,
             boolean rtexprvalue )

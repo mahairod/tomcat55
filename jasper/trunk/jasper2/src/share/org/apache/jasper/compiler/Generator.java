@@ -775,7 +775,7 @@ public class Generator {
 		    out.print(" + ");
 		    out.print(separator);
 		    out.print(" + \"");
-		    out.print(n.getAttributeValue("name"));
+		    out.print(n.getTextAttribute("name"));
 		    out.print("=\" + ");
 		    out.print(attributeValue(n.getValue(), true, String.class,
                         "null" ));
@@ -828,7 +828,7 @@ public class Generator {
 
 	public void visit(Node.IncludeAction n) throws JasperException {
 
-	    String flush = n.getAttributeValue("flush");
+	    String flush = n.getTextAttribute("flush");
 	    Node.JspAttribute page = n.getPage();
 
 	    boolean isFlush = false;	// default to false;
@@ -966,8 +966,8 @@ public class Generator {
 	}
 
 	public void visit(Node.GetProperty n) throws JasperException {
-	    String name = n.getAttributeValue("name");
-	    String property = n.getAttributeValue("property");
+	    String name = n.getTextAttribute("name");
+	    String property = n.getTextAttribute("property");
 
 	    n.setBeginJavaLine(out.getJavaLine());
 
@@ -995,9 +995,9 @@ public class Generator {
         }
 
         public void visit(Node.SetProperty n) throws JasperException {
-	    String name = n.getAttributeValue("name");
-	    String property = n.getAttributeValue("property");
-	    String param = n.getAttributeValue("param");
+	    String name = n.getTextAttribute("name");
+	    String property = n.getTextAttribute("property");
+	    String param = n.getTextAttribute("param");
 	    Node.JspAttribute value = n.getValue();
 
 	    n.setBeginJavaLine(out.getJavaLine());
@@ -1059,10 +1059,10 @@ public class Generator {
 
         public void visit(Node.UseBean n) throws JasperException {
 
-	    String name = n.getAttributeValue ("id");
-	    String scope = n.getAttributeValue ("scope");
-	    String klass = n.getAttributeValue ("class");
-	    String type = n.getAttributeValue ("type");
+	    String name = n.getTextAttribute ("id");
+	    String scope = n.getTextAttribute ("scope");
+	    String klass = n.getTextAttribute ("class");
+	    String type = n.getTextAttribute ("type");
 	    Node.JspAttribute beanName = n.getBeanName();
 
 	    if (type == null)	// if unspecified, use class as type of bean 
@@ -1219,7 +1219,7 @@ public class Generator {
 
                 public void visit(Node.ParamAction n) throws JasperException {
 
-		    String name = n.getAttributeValue("name");
+		    String name = n.getTextAttribute("name");
 		    if (name.equalsIgnoreCase("object"))
 			name = "java_object";
 		    else if (name.equalsIgnoreCase ("type"))
@@ -1254,19 +1254,19 @@ public class Generator {
 		}
 	    }
 
-	    String type = n.getAttributeValue("type");
-	    String code = n.getAttributeValue("code");
-	    String name = n.getAttributeValue("name");
+	    String type = n.getTextAttribute("type");
+	    String code = n.getTextAttribute("code");
+	    String name = n.getTextAttribute("name");
 	    Node.JspAttribute height = n.getHeight();
 	    Node.JspAttribute width = n.getWidth();
-	    String hspace = n.getAttributeValue("hspace");
-	    String vspace = n.getAttributeValue("vspace");
-	    String align = n.getAttributeValue("align");
-	    String iepluginurl = n.getAttributeValue("iepluginurl");
-	    String nspluginurl = n.getAttributeValue("nspluginurl");
-	    String codebase = n.getAttributeValue("codebase");
-	    String archive = n.getAttributeValue("archive");
-	    String jreversion = n.getAttributeValue("jreversion");
+	    String hspace = n.getTextAttribute("hspace");
+	    String vspace = n.getTextAttribute("vspace");
+	    String align = n.getTextAttribute("align");
+	    String iepluginurl = n.getTextAttribute("iepluginurl");
+	    String nspluginurl = n.getTextAttribute("nspluginurl");
+	    String codebase = n.getTextAttribute("codebase");
+	    String archive = n.getTextAttribute("archive");
+	    String jreversion = n.getTextAttribute("jreversion");
             
             String widthStr = null;
             if( width != null ) {
@@ -1821,7 +1821,7 @@ public class Generator {
 
                 public void visit(Node.ParamAction n) throws JasperException {
 		    out.printin("_jspx_params.put(");
-		    out.print(quote(n.getAttributeValue("name")));
+		    out.print(quote(n.getTextAttribute("name")));
 		    out.print(", ");
 		    out.print(attributeValue(n.getValue(), false,
 					     String.class, "null"));
@@ -1837,20 +1837,20 @@ public class Generator {
 	    }
 	    
 	    // Invoke fragment with parameter map
-	    String varReaderAttr = n.getAttributeValue("varReader");
-	    String varAttr = n.getAttributeValue("var");
+	    String varReaderAttr = n.getTextAttribute("varReader");
+	    String varAttr = n.getTextAttribute("var");
 	    if (varReaderAttr != null || varAttr != null) {
 		out.printil("_jspx_sout = new java.io.StringWriter();");
-		out.print(toGetterMethod(n.getAttributeValue("fragment")));
+		out.print(toGetterMethod(n.getTextAttribute("fragment")));
 		out.println(".invoke(_jspx_sout, _jspx_params);");
 	    } else {
-		out.print(toGetterMethod(n.getAttributeValue("fragment")));
+		out.print(toGetterMethod(n.getTextAttribute("fragment")));
 		out.println(".invoke(null, _jspx_params);");
 	    }
 
 	    // Store varReader in appropriate scope
 	    if (varReaderAttr != null || varAttr != null) {
-		String scopeName = n.getAttributeValue("scope");
+		String scopeName = n.getTextAttribute("scope");
 		out.printin("pageContext.setAttribute(");
 		if (varReaderAttr != null) {
 		    out.print(quote(varReaderAttr));
@@ -1876,7 +1876,7 @@ public class Generator {
 
                 public void visit(Node.ParamAction n) throws JasperException {
 		    out.printin("_jspx_params.put(");
-		    out.print(quote(n.getAttributeValue("name")));
+		    out.print(quote(n.getTextAttribute("name")));
 		    out.print(", ");
 		    out.print(attributeValue(n.getValue(), false,
 					     String.class, "null"));
@@ -1918,8 +1918,8 @@ public class Generator {
 	    }
 
 	    // Invoke body with parameter map
-	    String varReaderAttr = n.getAttributeValue("varReader");
-	    String varAttr = n.getAttributeValue("var");
+	    String varReaderAttr = n.getTextAttribute("varReader");
+	    String varAttr = n.getTextAttribute("var");
 	    if (varReaderAttr != null || varAttr != null) {
 		out.printil("_jspx_sout = new java.io.StringWriter();");
 		out.printil("getJspBody().invoke(_jspx_sout, _jspx_params);");
@@ -1929,7 +1929,7 @@ public class Generator {
 
 	    // Store varReader in appropriate scope
 	    if (varReaderAttr != null || varAttr != null) {
-		String scopeName = n.getAttributeValue("scope");
+		String scopeName = n.getTextAttribute("scope");
 		out.printin("pageContext.setAttribute(");
 		if (varReaderAttr != null) {
 		    out.print(quote(varReaderAttr));

@@ -68,6 +68,7 @@ import java.util.Iterator;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagFileInfo;
+import javax.servlet.jsp.tagext.TagAttributeInfo;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 import org.apache.jasper.Constants;
@@ -103,6 +104,8 @@ public class Parser {
         "JAVAX_BODY_CONTENT_PARAM";
     private static final String JAVAX_BODY_CONTENT_PLUGIN = 
         "JAVAX_BODY_CONTENT_PLUGIN";
+    private static final String JAVAX_BODY_CONTENT_TEMPLATE_TEXT = 
+        "JAVAX_BODY_CONTENT_TEMPLATE_TEXT";
 
     /**
      * The constructor
@@ -685,7 +688,8 @@ public class Parser {
 
         Node getPropertyNode = new Node.GetProperty( attrs, start, parent );
         
-        parseEmptyBody( getPropertyNode, "jsp:getProperty" );
+        parseOptionalBody(getPropertyNode, "jsp:getProperty",
+			  TagInfo.BODY_CONTENT_EMPTY);
     }
 
     /*
@@ -698,7 +702,8 @@ public class Parser {
 
         Node setPropertyNode = new Node.SetProperty( attrs, start, parent );
         
-        parseEmptyBody( setPropertyNode, "jsp:setProperty" );
+        parseOptionalBody(setPropertyNode, "jsp:setProperty",
+			  TagInfo.BODY_CONTENT_EMPTY);
     }
 
     /*
@@ -1157,7 +1162,7 @@ public class Parser {
 
     /*
      * ScriptlessBody ::=   ( '<%--' JSPCommentBody )
-     *			  | ( '<%@' <TRANSLATION_ERROR> )
+     *			  | ( '<%@' DirectiveBody )
      *			  | ( '<%!' <TRANSLATION_ERROR> )
      *			  | ( '<%=' <TRANSLATION_ERROR> )
      *			  | ( '<%' <TRANSLATION_ERROR> )
@@ -1196,9 +1201,43 @@ public class Parser {
     }
     
     /*
-     *
+     * TemplateTextBody ::=   ( '<%--' JSPCommentBody )
+     *                      | ( '<%@' DirectiveBody )
+     *                      | ( '<%!' <TRANSLATION_ERROR> )
+     *                      | ( '<%=' <TRANSLATION_ERROR> )
+     *                      | ( '<%' <TRANSLATION_ERROR> )
+     *                      | ( '${' <TRANSLATION_ERROR> )
+     *                      | ( '<jsp:' <TRANSLATION_ERROR> )
+     *                      | TemplateText
      */
-    private void parseBodyText(Node parent, String tag) throws JasperException{
+    private void parseElementsTemplateText(Node parent)
+        throws JasperException
+    {
+        start = reader.mark();
+        if (reader.matches("<%--")) {
+            parseComment(parent);
+        } else if (reader.matches("<%@")) {
+            parseDirective(parent);
+        } else if (reader.matches("<%!")) {
+            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+        } else if (reader.matches("<%=")) {
+            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+        } else if (reader.matches("<%")) {
+            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+        } else if (reader.matches("${")) {
+            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+        } else if (reader.matches("<jsp:")) {
+            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+	} else {
+            parseTemplateText(parent);
+	}
+    }
+
+    /**
+     * TagDependentBody := 
+     */
+    private void parseTagDependentBody(Node parent, String tag)
+		throws JasperException{
 	Mark bodyStart = reader.mark();
 	Mark bodyEnd = reader.skipUntilETag(tag);
 	if (bodyEnd == null) {
@@ -1265,7 +1304,7 @@ public class Parser {
         throws JasperException 
     {
         if( bodyType.equalsIgnoreCase( TagInfo.BODY_CONTENT_TAG_DEPENDENT ) ) {
-            parseBodyText( parent, tag );
+            parseTagDependentBody( parent, tag );
         }
         else if( bodyType.equalsIgnoreCase( TagInfo.BODY_CONTENT_EMPTY ) ) {
             if( !reader.matchesETag( tag ) ) {
@@ -1283,7 +1322,8 @@ public class Parser {
         }
         else if( bodyType.equalsIgnoreCase( TagInfo.BODY_CONTENT_JSP ) ||
             bodyType.equalsIgnoreCase( TagInfo.BODY_CONTENT_SCRIPTLESS ) ||
-            (bodyType == JAVAX_BODY_CONTENT_PARAM) )
+            (bodyType == JAVAX_BODY_CONTENT_PARAM) ||
+            (bodyType == JAVAX_BODY_CONTENT_TEMPLATE_TEXT) )
         {
             while (reader.hasMoreInput()) {
                 if (reader.matchesETag(tag)) {
@@ -1304,6 +1344,9 @@ public class Parser {
                     reader.skipSpaces();
                     parseParam( parent );
                 }
+		else if (bodyType == JAVAX_BODY_CONTENT_TEMPLATE_TEXT) {
+		    parseElementsTemplateText(parent);
+		}
             }
             err.jspError(start, "jsp.error.unterminated", "&lt;"+tag );
         }
@@ -1349,7 +1392,7 @@ public class Parser {
                     reader.skipSpaces();
                 }
                 parseBody( namedAttributeNode, "jsp:attribute", 
-                    TagInfo.BODY_CONTENT_SCRIPTLESS );
+		    getAttributeBodyType(parent, attrs.getValue("name")));
                 if( namedAttributeNode.isTrim() ) {
                     Node.Nodes subelements = namedAttributeNode.getBody();
                     Node lastNode = subelements.getNode(
@@ -1363,5 +1406,47 @@ public class Parser {
         } while( reader.matches( "<jsp:attribute" ) );
     }
 
+    /**
+     * Determine the body type of <jsp:attribute> from the enclosing node
+     */
+    private String getAttributeBodyType(Node n, String name) {
+
+	if (n instanceof Node.CustomTag) {
+	    TagAttributeInfo[] tldAttrs =
+			((Node.CustomTag)n).getTagInfo().getAttributes();
+	    for (int i=0; i<tldAttrs.length; i++) {
+		if (name.equals(tldAttrs[i].getName())) {
+		    if (tldAttrs[i].isFragment()) {
+		        return TagInfo.BODY_CONTENT_SCRIPTLESS;
+		    }
+		    if (tldAttrs[i].canBeRequestTime()) {
+		        return TagInfo.BODY_CONTENT_JSP;
+		    }
+		}
+	    }
+	} else if (n instanceof Node.IncludeAction) {
+	    if ("page".equals(name)) {
+		return TagInfo.BODY_CONTENT_JSP;
+	    }
+	} else if (n instanceof Node.ForwardAction) {
+	    if ("page".equals(name)) {
+		return TagInfo.BODY_CONTENT_JSP;
+	    }
+	} else if (n instanceof Node.SetProperty) {
+	    if ("value".equals(name)) {
+		return TagInfo.BODY_CONTENT_JSP;
+	    }
+	} else if (n instanceof Node.UseBean) {
+	    if ("beanName".equals(name)) {
+		return TagInfo.BODY_CONTENT_JSP;
+	    }
+	} else if (n instanceof Node.PlugIn) {
+	    if ("width".equals(name) || "height".equals(name)) {
+		return TagInfo.BODY_CONTENT_JSP;
+	    }
+	}
+
+	return JAVAX_BODY_CONTENT_TEMPLATE_TEXT;
+    }
 }
 
