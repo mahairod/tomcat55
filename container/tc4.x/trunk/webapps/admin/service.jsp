@@ -85,6 +85,7 @@
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="service.name"/>:</controls:label>
             <controls:data>
+              <html:hidden property="serviceName"/>
               <bean:write name="serviceForm" property="serviceName" 
                           scope="session"/> 
             </controls:data>

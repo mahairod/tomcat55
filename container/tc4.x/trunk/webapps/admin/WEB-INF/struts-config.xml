@@ -21,7 +21,7 @@
 
     <!-- Service form bean -->
     <form-bean      name="serviceForm"
-                    type="org.apache.webapp.admin.ServiceForm"/>
+                    type="org.apache.webapp.admin.service.ServiceForm"/>
                     
     <!-- Service form bean -->
     <form-bean      name="deleteServiceForm"
@@ -169,7 +169,7 @@
 
    <!-- Set up Service datastructure -->
     <action    path="/setUpService"
-               type="org.apache.webapp.admin.SetUpServiceAction"
+               type="org.apache.webapp.admin.service.SetUpServiceAction"
                name="serviceForm"
                scope="session">
       <forward        name="SetUpService"
@@ -245,7 +245,7 @@
 
    <!-- Process a user server change -->
     <action    path="/service"
-               type="org.apache.webapp.admin.ServiceAction"
+               type="org.apache.webapp.admin.service.ServiceAction"
                name="serviceForm"
               scope="session"
               input="/service.jsp">

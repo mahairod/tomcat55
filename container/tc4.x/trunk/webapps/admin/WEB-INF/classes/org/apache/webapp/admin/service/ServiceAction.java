@@ -59,8 +59,7 @@
  *
  */
 
-
-package org.apache.webapp.admin;
+package org.apache.webapp.admin.service;
 
 import java.util.Iterator;
 import java.io.IOException;
@@ -80,10 +79,10 @@ import javax.management.Query;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
 import org.apache.struts.util.MessageResources;
+
+import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
  * Implementation of <strong>Action</strong> that validates

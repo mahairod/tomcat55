@@ -59,9 +59,7 @@
  *
  */
 
-
-package org.apache.webapp.admin;
-
+package org.apache.webapp.admin.service;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -84,6 +82,10 @@ import javax.management.ObjectName;
 import javax.management.JMException;
 
 import org.apache.struts.util.MessageResources;
+
+import org.apache.webapp.admin.LabelValueBean;
+import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
  * Test <code>Action</code> that handles events from the tree control test
