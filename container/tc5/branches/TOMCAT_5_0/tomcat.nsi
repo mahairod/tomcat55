@@ -553,12 +553,10 @@ Section Uninstall
   RMDir "$INSTDIR\logs"
   RMDir /r "$INSTDIR\server"
   RMDir /r "$INSTDIR\webapps\balancer"
-  RMDir /r "$INSTDIR\webapps\ROOT"
   RMDir /r "$INSTDIR\webapps\tomcat-docs"
   RMDir /r "$INSTDIR\webapps\servlets-examples"
   RMDir /r "$INSTDIR\webapps\jsp-examples"
   RMDir /r "$INSTDIR\webapps\webdav"
-  RMDir "$INSTDIR\webapps"
   RMDir /r "$INSTDIR\work"
   RMDir /r "$INSTDIR\temp"
   RMDir /r "$INSTDIR\src"
@@ -567,9 +565,11 @@ Section Uninstall
   ; if $INSTDIR was removed, skip these next ones
   IfFileExists "$INSTDIR" 0 Removed 
     MessageBox MB_YESNO|MB_ICONQUESTION \
-      "Remove all files in your Tomcat 5.0 directory? (If you have anything\
+      "Remove all files in your Tomcat 5.0 directory? (If you have anything \
  you created that you want to keep, click No)" IDNO Removed
-    Delete "$INSTDIR\*.*" ; this would be skipped if the user hits no
+    RMDir /r "$INSTDIR\webapps\ROOT" ; this would be skipped if the user hits no
+    RMDir "$INSTDIR\webapps"
+    Delete "$INSTDIR\*.*" 
     RMDir /r "$INSTDIR"
     Sleep 500
     IfFileExists "$INSTDIR" 0 Removed 
