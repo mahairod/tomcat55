@@ -802,26 +802,26 @@ public class PageContextImpl extends PageContext implements VariableResolver {
             ((HttpServletRequest) request).getRequestURI());
             request.setAttribute("javax.servlet.error.servlet_name",
                      config.getServletName());
-                try {
-                    forward(errorPageURL);
-                } catch (IllegalStateException ise) {
-                    include(errorPageURL);
-                }
+            try {
+                forward(errorPageURL);
+            } catch (IllegalStateException ise) {
+                include(errorPageURL);
+            }
 
-                // The error page could be inside an include.
+            // The error page could be inside an include.
 
-                Object newException = request.getAttribute("javax.servlet.error.exception");
+            Object newException = request.getAttribute("javax.servlet.error.exception");
 
-                // t==null means the attribute was not set.
-                if( (newException!= null) && (newException==t) ) {
-                    request.removeAttribute("javax.servlet.error.exception");
-                }
+            // t==null means the attribute was not set.
+            if( (newException!= null) && (newException==t) ) {
+                request.removeAttribute("javax.servlet.error.exception");
+            }
 
-                // now clear the error code - to prevent double handling.
-                request.removeAttribute("javax.servlet.error.status_code");
-                request.removeAttribute("javax.servlet.error.request_uri");
-                request.removeAttribute("javax.servlet.error.status_code");
-                request.removeAttribute("javax.servlet.jsp.jspException");
+            // now clear the error code - to prevent double handling.
+            request.removeAttribute("javax.servlet.error.status_code");
+            request.removeAttribute("javax.servlet.error.request_uri");
+            request.removeAttribute("javax.servlet.error.status_code");
+            request.removeAttribute("javax.servlet.jsp.jspException");
 
         } else {
             // Otherwise throw the exception wrapped inside a ServletException.
