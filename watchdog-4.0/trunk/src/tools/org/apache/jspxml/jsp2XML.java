@@ -32,7 +32,7 @@ xml_prolog+="PUBLIC \"-//Sun Microsystems Inc.//DTD JavaServer Pages Version 1.2
 xml_prolog+="\"http://java.sun.com/products/jsp/dtd/jspcore_1_2.dtd\" > " ;
 
 author_comments = new_line + "<!-- This File is generated automatically by jsp2XML converter tool --> " + new_line ;
-author_comments+= "<!-- Written By Santosh Singh/Ramesh Mandava -->" ;
+author_comments+= "<!-- Written By Ramesh Mandava/Santosh Singh -->" ;
 
 jsp_root_tag = new_line + "<jsp:root" + new_line ;
 //note that we haven't yet closed the jsp:root since taglib directives will also be added here
@@ -276,7 +276,7 @@ if  ( ch == ' ' ) // Ramesh: first letter left to":" should not be a whitespace
 	xml+=new_line+ "<jsp:cdata><![CDATA[" ;
       if ( action_index > last_index )
       {
-            xml+=jsp.substring(last_index , action_index-1);
+            xml+=jsp.substring(last_index , action_index); // Include even newline 
       }
 	//xml+=new_line+"]]></jsp:cdata>" +new_line ; //end of CDATA
 	xml+= "]]></jsp:cdata>" +new_line ; //end of CDATA
@@ -286,7 +286,7 @@ if  ( ch == ' ' ) // Ramesh: first letter left to":" should not be a whitespace
       */
       end_index=jsp.indexOf( ">" , action_index);
       // Ramesh: need to have < included 
-      xml+=jsp.substring(action_index -1 , end_index+1);
+      xml+=jsp.substring(action_index  , end_index+1);
       //xml+=jsp.substring(action_index , end_index+1);
       last_index=end_index+1;
       continue;
@@ -317,7 +317,7 @@ action_name = action_name.trim();
 	xml+=new_line+ "<jsp:cdata><![CDATA[" ;
       if ( action_index > last_index )
       {
-            xml+=jsp.substring(last_index , action_index-1);
+            xml+=jsp.substring(last_index , action_index); // including new_line
       }
 	//xml+=new_line+"]]></jsp:cdata>" +new_line ; //end of CDATA
 	xml+= "]]></jsp:cdata>" +new_line ; //end of CDATA
