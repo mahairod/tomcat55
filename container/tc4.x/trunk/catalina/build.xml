@@ -805,9 +805,7 @@
        unless="compile.jmx"/>
       <exclude name="org/apache/naming/factory/DbcpDataSourceFactory.java" 
        unless="compile.dbcp"/>
-      <exclude name="org/apache/naming/factory/TyrexDataSourceFactory.java" 
-       unless="compile.tyrex"/>
-      <exclude name="org/apache/naming/factory/TyrexTransactionFactory.java" 
+      <exclude name="org/apache/naming/factory/Tyrex*.java" 
        unless="compile.tyrex"/>
       <exclude name="org/apache/catalina/mbeans/**"
        unless="compile.jmx"/>
