@@ -78,19 +78,22 @@ public class SetBufferSize_1TestServlet extends GenericServlet {
 	public void service (ServletRequest request, ServletResponse response) throws ServletException, IOException {
 
 		PrintWriter out = response.getWriter();
-		ServletOutputStream sos = null;
 		try {
-			sos = response.getOutputStream();
-			sos.println("Good Luck");
+			out.println("Good Luck");
 			try {
 				//should IllegalStateException
 				response.setBufferSize(20);
+		                response.resetBuffer();
 				out.println("SetBufferSize_1Test test FAILED");
+				out.println("Did not throw IllegalStateException");
 			}catch(IllegalStateException ise) {
+			        response.resetBuffer();
 				out.println("SetBufferSize_1Test test PASSED");
 			                                  }
 		}catch(Exception e) {
+		                response.resetBuffer();
 				out.println("SetBufferSize_1Test test FAILED");
+				out.println("Threw exception " + e);
 				 }
 		
 	}	
