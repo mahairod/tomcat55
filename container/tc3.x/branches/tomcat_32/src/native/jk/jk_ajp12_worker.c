@@ -465,6 +465,11 @@ static int ajpv12_handle_request(ajp12_endpoint_t *p,
                     return JK_FALSE;
                 }
                 jk_log(l, JK_LOG_DEBUG, "ajpv12_handle_request, sent %d bytes\n", this_time);
+            } else if (this_time == 0) {
+             jk_log(l, JK_LOG_ERROR,
+                     "In ajpv12_handle_request, Error: short read. content length is %d, read %d\n",
+                     s->content_length, so_far);
+             return JK_FALSE;
             }
         }
     }
