@@ -63,6 +63,8 @@ Bug No.  Description
 	 be restored by setting the secureCookie="false" attribute on the
 	 SessionId element in server.xml.
 
+	 Fix the handling of response.encodeURL("") to conform to the w3 spec.
+
 Jasper:
 
 Bug No.  Description
