@@ -1825,9 +1825,6 @@ class Generator {
                 out.print((String)map.get(attrName));
             }
 
-            // Smap should not include the body
-            n.setEndJavaLine(out.getJavaLine());
-
             // Does the <jsp:element> have nested tags other than
             // <jsp:attribute>
             boolean hasBody = false;
@@ -1844,6 +1841,9 @@ class Generator {
             if (hasBody) {
                 out.println(" + \">\");");
 
+                // Smap should not include the body
+                n.setEndJavaLine(out.getJavaLine());
+
                 // Visit tag body
                 visitBody(n);
 
@@ -1853,6 +1853,7 @@ class Generator {
                 out.println(" + \">\");");
             } else {
                 out.println(" + \"/>\");");
+                n.setEndJavaLine(out.getJavaLine());
             }
         }
 
