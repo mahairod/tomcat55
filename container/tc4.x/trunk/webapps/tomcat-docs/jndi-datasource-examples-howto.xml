@@ -613,7 +613,7 @@ Now, you must configure the resource (under the &lt;Context&gt; element of your 
 &lt;ResourceParams name="my-datasource"&gt;
   &lt;parameter&gt;
     &lt;name&gt;name&lt;/name&gt;
-    &lt;value&gt;myDataSource&lt;/name&gt;
+    &lt;value&gt;myDataSource&lt;/value&gt;
   &lt;/parameter&gt;
 &lt;/ResourceParams&gt;
 </source>
