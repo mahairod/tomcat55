@@ -321,12 +321,19 @@ public final class SsiInvokerServlet extends HttpServlet {
                     try {
                         strCmd = parseCmd(command);
                     } catch (IndexOutOfBoundsException ex) {
+                        log( "Error parsing directive name." );
                         out.print(ssiEnv.getConfiguration("errmsg"));
                         continue;
                     }
 
                     strParamType = parseParamType(command, strCmd.length());
-                    strParam = parseParam(command, strCmd.length());
+                    strParam = parseParam(command, strCmd.length(),
+                                          strParamType.length);
+                    if (strParam == null) {
+                        log( "Error parsing directive parameters." );
+                        out.print(ssiEnv.getConfiguration("errmsg"));
+                        continue;
+                    }
 
                     if(debug > 0)
                         log("Serving SSI resource: " + strCmd);
@@ -334,9 +341,10 @@ public final class SsiInvokerServlet extends HttpServlet {
                     // Run the command for the SSI directive
                     ssiDispatcher.runCommand( strCmd, strParamType,
                                               strParam, ssiEnv, out );
-                    
+
                     // Check to see if the output has been disabled
                     disableOutput = ssiEnv.isOutputDisabled();
+
                     continue;
                 }
                 command.append((char)unparsed[bIdx]);
@@ -359,7 +367,10 @@ public final class SsiInvokerServlet extends HttpServlet {
         throws IndexOutOfBoundsException {
 
         String modString = ((cmd.toString()).trim()).toLowerCase();
-        return modString.substring(0, modString.indexOf(' '));
+        int end = modString.indexOf(' ');
+        if( end < 0 )
+            return modString;
+        return modString.substring(0, end);
     }
 
     /**
@@ -390,20 +401,29 @@ public final class SsiInvokerServlet extends HttpServlet {
                     bIdx++;
                 }
 
-                retBuf.append('"');
+                retBuf.append('=');
                 inside=!inside;
                 quotes=0;
 
-                while(bIdx < cmd.length()&&quotes!=2) {
-                    if(cmd.charAt(bIdx)=='"')
-                            quotes++;
+                boolean escaped=false;
+                for ( ; bIdx < cmd.length() && quotes != 2; bIdx++ ) {
+                    char c = cmd.charAt(bIdx);
 
-                    bIdx++;
+                    // Need to skip escaped characters
+                    if (c=='\\' && !escaped) {
+                        escaped = true;
+                        bIdx++;
+                        continue;
+                    }
+                    escaped = false;
+
+                    if (c=='"')
+                        quotes++;
                 }
             }
         }
 
-        StringTokenizer str = new StringTokenizer(retBuf.toString(), "\"");
+        StringTokenizer str = new StringTokenizer(retBuf.toString(), "=");
         String[] retString = new String[str.countTokens()];
 
         while(str.hasMoreTokens()) {
@@ -417,17 +437,18 @@ public final class SsiInvokerServlet extends HttpServlet {
      * Parse a StringBuffer and take out the param token.
      * Called from <code>requestHandler</code>
      * @param cmd a value of type 'StringBuffer'
+     * @param start the index from which to start
+     * @param count the number of param values expected.
      * @return a value of type 'String[]'
      */
-    private String[] parseParam(StringBuffer cmd, int start) {
-        int bIdx = start;
-        int i = 0;
-        int quotes = 0;
+    private String[] parseParam(StringBuffer cmd, int start, int count) {
+        int valIndex = 0;
         boolean inside = false;
-        StringBuffer retBuf = new StringBuffer();
+        String[] vals = new String[count];
+        StringBuffer sb = new StringBuffer();
 
-        while(bIdx < cmd.length()) {
-            if(!inside) {
+        for (int bIdx = start; bIdx < cmd.length(); bIdx++ ) {
+            if (!inside) {
                 while(bIdx < cmd.length()&&
                       cmd.charAt(bIdx)!='"')
                     bIdx++;
@@ -437,26 +458,43 @@ public final class SsiInvokerServlet extends HttpServlet {
 
                 inside=!inside;
             } else {
-                while(bIdx < cmd.length() && cmd.charAt(bIdx)!='"') {
-                    retBuf.append(cmd.charAt(bIdx));
-                    bIdx++;
+                boolean escaped=false;
+                for ( ; bIdx < cmd.length(); bIdx++) {
+
+                    char c = cmd.charAt(bIdx);
+
+                    // Check for escapes
+                    if (c=='\\' && !escaped) {
+                        escaped = true;
+                        continue;
+                    }
+
+                    // If we reach the other " then stop
+                    if (c=='"' && !escaped)
+                        break;
+
+                    // Since parsing of attributes and var
+                    // substitution is done in separate places,
+                    // we need to leave escape in the string
+                    if (c=='$' && escaped)
+                        sb.append( '\\' );
+
+                    escaped = false;
+                    sb.append(c);
                 }
 
-                retBuf.append('"');
+                // If we hit the end without seeing a quote
+                // the signal an error
+                if (bIdx == cmd.length())
+                    return null;
+
+                vals[valIndex++] = sb.toString();
+                sb.delete( 0, sb.length() ); // clear the buffer
                 inside=!inside;
             }
-
-            bIdx++;
         }
 
-        StringTokenizer str = new StringTokenizer(retBuf.toString(), "\"");
-        String[] retString = new String[str.countTokens()];
-
-        while(str.hasMoreTokens()) {
-            retString[i++] = str.nextToken();
-        }
-
-        return retString;
+        return vals;
     }
 
     /**
