@@ -204,6 +204,13 @@ public class TagPluginManager {
 	    return attr.isLiteral();
 	}
 
+	public String getConstantAttribute(String attribute) {
+	    Node.JspAttribute attr = getAttribute(attribute);
+            if (attr == null)
+		return null;
+	    return attr.getValue();
+	}
+
 	public boolean isAttributeSpecified(String attribute) {
 	    return getAttribute(attribute) != null;
 	}

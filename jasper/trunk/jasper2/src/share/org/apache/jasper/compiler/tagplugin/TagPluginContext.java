@@ -116,6 +116,13 @@ public interface TagPluginContext {
     boolean isConstantAttribute(String attribute);
 
     /**
+     * @return A string that is the value of a constant attribute.  Undefined
+     *         if the attribute is not a (translation-time) constant.
+     *         null if the attribute is not specified.
+     */
+    String getConstantAttribute(String attribute);
+
+    /**
      * Generate codesto evaluate value of a attribute in the custom tag
      * The codes is a Java expression.
      * NOTE: Currently cannot handle attributes that are fragments.
