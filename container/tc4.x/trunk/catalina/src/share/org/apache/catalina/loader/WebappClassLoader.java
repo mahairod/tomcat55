@@ -205,10 +205,9 @@ public class WebappClassLoader
      * Construct a new ClassLoader with no defined repositories and no
      * parent ClassLoader.
      */
-    public WebappClassLoader(DirContext resources) {
+    public WebappClassLoader() {
 
         super(new URL[0]);
-        this.resources = resources;
         this.parent = getParent();
         system = getSystemClassLoader();
         securityManager = System.getSecurityManager();
@@ -224,10 +223,9 @@ public class WebappClassLoader
      * Construct a new ClassLoader with no defined repositories and no
      * parent ClassLoader.
      */
-    public WebappClassLoader(ClassLoader parent, DirContext resources) {
+    public WebappClassLoader(ClassLoader parent) {
 
         super(new URL[0], parent);
-        this.resources = resources;
         this.parent = getParent();
         system = getSystemClassLoader();
         securityManager = System.getSecurityManager();
@@ -404,6 +402,26 @@ public class WebappClassLoader
 
 
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Get associated resources.
+     */
+    public DirContext getResources() {
+
+        return this.resources;
+
+    }
+
+
+    /**
+     * Set associated resources.
+     */
+    public void setResources(DirContext resources) {
+
+        this.resources = resources;
+
+    }
 
 
     /**

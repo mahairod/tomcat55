@@ -74,6 +74,7 @@ import java.io.InputStream;
 import java.io.FileOutputStream;
 import java.io.FilePermission;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -203,8 +204,8 @@ public class WebappLoader
 
     /**
      * The Java class name of the ClassLoader implementation to be used.
-     * To be useful, this ClassLoader should also implement the
-     * <code>Reloader</code> interface.
+     * This class should extend WebappClassLoader, otherwise, a different 
+     * loader implementation must be used.
      */
     private String loaderClass =
         "org.apache.catalina.loader.WebappClassLoader";
@@ -620,12 +621,8 @@ public class WebappLoader
         // Construct a class loader based on our current repositories list
         try {
 
-            if (parentClassLoader == null) {
-                classLoader = new WebappClassLoader(container.getResources());
-            } else {
-                classLoader = new WebappClassLoader
-                    (parentClassLoader, container.getResources());
-            }
+            classLoader = createClassLoader();
+            classLoader.setResources(container.getResources());
             classLoader.setDebug(this.debug);
             classLoader.setDelegate(this.delegate);
 
@@ -732,6 +729,31 @@ public class WebappLoader
 
 
     // ------------------------------------------------------- Private Methods
+
+
+    /**
+     * Create associated classLoader.
+     */
+    private WebappClassLoader createClassLoader()
+        throws Exception {
+
+        Class clazz = Class.forName(loaderClass);
+        WebappClassLoader classLoader = null;
+
+        if (parentClassLoader == null) {
+            // Will cause a ClassCast is the class does not extend WCL, but
+            // this is on purpose (the exception will be caught and rethrown)
+            classLoader = (WebappClassLoader) clazz.newInstance();
+        } else {
+            Class[] argTypes = { ClassLoader.class };
+            Object[] args = { parentClassLoader };
+            Constructor constr = clazz.getConstructor(argTypes);
+            classLoader = (WebappClassLoader) constr.newInstance(args);
+        }
+
+        return classLoader;
+
+    }
 
 
     /**
