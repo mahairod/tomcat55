@@ -94,11 +94,19 @@ public class JspCompiler extends Compiler implements Mangler {
         this.outDated = false;
         setMangler(this);
 
-	// If the .class file exists and is outdated, compute a new
-	// class name
-	if( isOutDated() ) {
-	    generateNewClassName();
-	}
+        ctxt.setServletPackageName(getPackageName());
+    }
+
+    public boolean compile() throws FileNotFoundException, JasperException, Exception 
+
+    {
+        // If the .class file exists and is outdated, compute a new class name
+        if( isOutDated() ) {
+            generateNewClassName();
+            return super.compile();
+        }
+
+        return false;
     }
 
     private void generateNewClassName() {
@@ -195,6 +203,15 @@ public class JspCompiler extends Compiler implements Mangler {
         "try", "void", "volatile", "while" 
     };
 
+    public static String[] fsKeywords = null;
+    static{
+        fsKeywords = new String[keywords.length];
+        char fs = File.separatorChar;
+        for(int i=0;i<keywords.length;i++){
+            fsKeywords[i] = new String(fs + keywords[i]);
+        }
+    }
+
     public final String getPackageName() {
         if( pkgName!=null) return pkgName;
 
@@ -206,18 +223,18 @@ public class JspCompiler extends Compiler implements Mangler {
 	if (indexOfSepChar == -1 || indexOfSepChar == 0)
 	    pkgName = null;
 	else {
-	    for (int i = 0; i < keywords.length; i++) {
-		char fs = File.separatorChar;
-		int index1 = pathName.indexOf(fs + keywords[i]);
-		int index2 = pathName.indexOf(keywords[i]);
-		if (index1 == -1 && index2 == -1) continue;
-		int index = (index2 == -1) ? index1 : index2;
-		while (index != -1) {
-		    String tmpathName = pathName.substring (0,index+1) + '%';
-		    pathName = tmpathName + pathName.substring (index+2);
-		    index = pathName.indexOf(fs + keywords[i]);
-		}
-	    }
+        char fs = File.separatorChar;
+        for (int i = 0; i < keywords.length; i++) {
+            int index1 = pathName.indexOf(fsKeywords[i]);
+            int index2 = pathName.indexOf(keywords[i]);
+            if (index1 == -1 && index2 == -1) continue;
+            int index = (index2 == -1) ? index1 : index2;
+            while (index != -1) {
+                String tmpathName = pathName.substring (0,index+1) + '%';
+                pathName = tmpathName + pathName.substring (index+2);
+                index = pathName.indexOf(fs + keywords[i]);
+            }
+        }
 	    
 	    // XXX fix for paths containing '.'.
 	    // Need to be more elegant here.

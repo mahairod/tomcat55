@@ -116,9 +116,6 @@ public class Compiler {
                           new Object[] { classFileName },
                           Logger.DEBUG);
 
-	if (!isOutDated())
-            return false;
-
 	// Hack to avoid readign the class file every time -
 	// getClassName() is an _expensive_ operation, and it's needed only
 	// if isOutDated() return true. 
