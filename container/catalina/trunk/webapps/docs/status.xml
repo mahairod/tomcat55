@@ -43,11 +43,8 @@
   <section name="TODO List">
 
     <status>
-      <item priority="High" owner="remm">
+      <item priority="High" owner="remm, funkman, yoavs">
         Documentation updates for new user guide book.
-      </item>
-      <item priority="Medium" owner="remm">
-        Split main catalina.jar.
       </item>
       <item priority="Medium" owner="---">
         Tag plugins for JSTL.
