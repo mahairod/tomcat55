@@ -21,28 +21,84 @@ import org.apache.commons.latka.LatkaProperties;
 import org.apache.commons.latka.Suite;
 import org.apache.commons.latka.XMLReporter;
 
+import org.jdom.DocType;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.EntityRef;
+import org.jdom.output.XMLOutputter;
+
 public class Watchdog {
 
     public static void main(String args[]) throws Exception {
 
         Watchdog watchdog = new Watchdog();
-        watchdog.runTests();
+        if (args.length == 1) {
+            watchdog.runTests(args[0]);
+        } else {
+            watchdog.runTests();
+        }
 
     }
 
-    protected void runTests() throws LatkaException {
-        Latka latka = new Latka();
+    protected Properties getWatchdogProps() throws IOException {
+        Properties watchdogProps = loadPropsFromClasspath("watchdog.properties");
+        return watchdogProps;
+    }
 
+    protected void runTests(String entityName) throws LatkaException {
         try {
-            Properties watchdogProps = loadPropsFromClasspath("watchdog.properties");
-            // add them to the Latka session
-            LatkaProperties.getProperties().putAll(watchdogProps);
+            Properties watchdogProps = getWatchdogProps();
+            String dtdLocation = 
+                watchdogProps.getProperty("org.apache.watchdog.dtdURL");
+            
+            Element suiteElement = new Element("suite");
+            suiteElement.setAttribute("defaultHost","${host}");
+            suiteElement.setAttribute("defaultPort","${port}");
+            EntityRef ref = new EntityRef(entityName);
+            suiteElement.addContent(ref);
+
+            DocType type = new DocType("suite",dtdLocation);
+
+            Document doc = new Document(suiteElement,type);
+                        
+            XMLOutputter outputter = new XMLOutputter("  ", true);
+            String xmlDoc = outputter.outputString(doc);
+
+            System.out.println(xmlDoc);
+
+            StringReader reader = new StringReader(xmlDoc);
+            Suite suite = new Suite(reader);
+            runTests(suite,watchdogProps);
+
+        } catch (IOException e) {
+            throw new LatkaException(e.toString());
+        }
+    }
+
+    protected void runTests() throws LatkaException {
+        Properties watchdogProps = null;
+        try {
+            watchdogProps = getWatchdogProps();
 
             String suiteLocation = 
                 watchdogProps.getProperty("org.apache.watchdog.mainSuiteURL");
 
             URL url = new URL(suiteLocation);
             Suite suite = new Suite(url);
+
+            runTests(suite, watchdogProps);
+        } catch (IOException e) {
+            throw new LatkaException(e.toString());
+        }
+    }
+
+    protected void runTests(Suite suite, Properties watchdogProps) throws LatkaException {
+        Latka latka = new Latka();
+
+        try {
+            // add props to the Latka session
+            LatkaProperties.getProperties().putAll(watchdogProps);
+
             XMLReporter listener = new XMLReporter();
             latka.runTests(suite,listener);
 
