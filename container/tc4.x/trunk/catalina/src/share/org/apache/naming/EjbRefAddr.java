@@ -149,7 +149,7 @@ public class EjbRefAddr
      * Returns the contents of the address.
      */
     public Object getContent() {
-        return this;
+        return this.home;
     }
 
 
