@@ -13,10 +13,11 @@
 <Server port="8005" shutdown="SHUTDOWN" debug="0">
 
 
+  <!-- Uncomment these entries to enable JMX MBeans support -->
   <Listener className="org.apache.catalina.mbeans.ServerLifecycleListener"
-                debug="0"/>
+            debug="0"/>
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"
-                debug="0"/>
+            debug="0"/>
 
   <!-- Global JNDI resources -->
   <GlobalNamingResources>
@@ -81,5 +82,5 @@
          IP address of the remote client.
     -->
 
-    <!-- Define a non-SSL HTTP/1.1 Connector on port 8080 -->
-    <Connector className="org.apache.catalina.connector.http.HttpConnector"
+    <!-- Define a non-SSL Coyote HTTP/1.1 Connector on port 8081 -->
+    <Connector className="org.apache.coyote.tomcat4.CoyoteConnector"
