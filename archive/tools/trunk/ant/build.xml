@@ -4,7 +4,7 @@
 
   <property name="src.dir" value="src/main"/>
   <property name="build.dir" value="build"/>
-  <property name="dist.dir" value="build"/>
+  <property name="dist.dir" value="${user.home}/opt"/>
   
   <property name="classpath" value="lib/projectx-tr2.jar"/>
   <property name="manifest" value="src/etc/manifest"/>
@@ -21,26 +21,27 @@
      <jar jarfile="../ant.jar" basedir="${build.dir}" items="org" manifest="${manifest}"/>
   </target>
 
-  <target name="dist" depends="jar">
-     <mkdir dir="${dist.dir}"/>
-     <mkdir dir="${dist.dir}/lib"/>
-     <mkdir dir="${dist.dir}/bin"/>
-     <mkdir dir="${dist.dir}/docs"/>
-     <copyfile src="../projectx-tr2.jar" dest="${dist.dir}/lib/xml.jar"/>
-     <copyfile src="build.xml" dest="${dist.dir}/lib/build.xml"/>
-     <copydir src="src/bin" dest="${dist.dir}/bin"/>
-     <copydir src="docs" dest="${dist.dir}/docs"/>
-     <jar jarfile="${dist.dir}/src.zip" basedir="src" items="bin,etc,main"/>
-     <chmod perm="+x" src="${dist.dir}/bin/ant"/>
+  <target name="dist" depends="main">
+     <mkdir dir="${dist.dir}/ant"/>
+     <mkdir dir="${dist.dir}/ant/lib"/>
+     <mkdir dir="${dist.dir}/ant/bin"/>
+     <mkdir dir="${dist.dir}/ant/docs"/>
+     <jar jarfile="${dist.dir}/ant/lib/ant.jar" basedir="${build.dir}" items="org" manifest="${manifest}"/>
+     <copyfile src="../projectx-tr2.jar" dest="${dist.dir}/ant/lib/xml.jar"/>
+     <copyfile src="build.xml" dest="${dist.dir}/ant/lib/build.xml"/>
+     <copydir src="src/bin" dest="${dist.dir}/ant/bin"/>
+     <copydir src="docs" dest="${dist.dir}/ant/docs"/>
+     <chmod perm="+x" src="${dist.dir}/ant/bin/ant"/>
+     <chmod perm="+x" src="${dist.dir}/ant/bin/cvsget"/>
   </target>
 
   <target name="package" depends="dist">
-     <jar jarfile="ant.zip" basedir="${dist.dir}" items="bin,lib,docs,src.zip"/>
+     <zip zipfile="ant.zip" basedir="${dist.dir}" items="ant"/>
   </target>
 
   <target name="clean">
     <deltree dir="${build.dir}"/>
-    <deltree dir="${dist.dir}"/>
+    <deltree dir="${dist.dir}/ant"/>
   </target>
   
 </project>

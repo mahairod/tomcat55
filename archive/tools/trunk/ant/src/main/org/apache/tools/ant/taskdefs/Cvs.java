@@ -76,18 +76,20 @@ public class Cvs extends Task {
 	// execution so that we don't rely on having native CVS stuff around (SM)
 	
 	try {
-	    String command="cvs -d " + cvsRoot + " co " + pack;
-	    System.out.println(command);
+	    String ant=project.getProperty("ant.home");
+	    if(ant==null) throw new BuildException("Needs ant.home");
 
-        // exec command on system runtime
-	    Process proc = Runtime.getRuntime().exec(command);
+	    String command=ant + "/bin/cvsget " + cvsRoot + " " + pack + " " +dest;
+	    System.out.println( command);
+
+	    // exec command on system runtime
+	    Process proc = Runtime.getRuntime().exec( command);
 	    
 	    // ignore response
-        BufferedReader din = new BufferedReader(
-           new InputStreamReader(proc.getInputStream())
-        );
+	    InputStreamReader isr=new InputStreamReader(proc.getInputStream());
+	    BufferedReader din = new BufferedReader(isr);
 
-        // pipe CVS output to STDOUT
+	    // pipe CVS output to STDOUT
 	    String line;
 	    while((line = din.readLine()) != null) {
     		System.out.println(line);
