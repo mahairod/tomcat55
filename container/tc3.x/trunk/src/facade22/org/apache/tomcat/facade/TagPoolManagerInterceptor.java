@@ -1,4 +1,6 @@
 /*
+ * $Header$
+ *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -71,7 +73,7 @@ import org.apache.jasper.runtime.TagPoolManagerImpl;
  * dont include this interceptor.
  *
  * @author Casey Lucas <clucas@armassolutions.com>
- * @see TagPoolManager
+ * @see org.apache.jasper.runtime.TagPoolManager
  */
 public class TagPoolManagerInterceptor extends BaseInterceptor {
 
