@@ -86,12 +86,11 @@ commons-digester.jar=${commons-digester.lib}/commons-digester.jar
 commons-digester.loc=http://www.apache.org/dist/jakarta/commons/digester/binaries/commons-digester-1.5.tar.gz
 
 
-# ----- Commons Expression Language (EL) -----
-commons-el.home=${base.path}/commons-el
+# ----- Commons Expression Language (EL), version 1.0 or later -----
+commons-el.home=${base.path}/commons-el-1.0
 commons-el.lib=${commons-el.home}
 commons-el.jar=${commons-el.lib}/commons-el.jar
-commons-el.loc=jakarta-commons/el
-commons-el.cvs.loc=jakarta-commons/el
+commons-el.loc=http://www.apache.org/dist/jakarta/commons/el/binaries/commons-el-1.0.tar.gz
 
 
 # ----- Commons Logging, version 1.0.1 or later -----

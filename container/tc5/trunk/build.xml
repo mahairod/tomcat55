@@ -122,10 +122,12 @@
       <srcfiles dir="${cvs.base}/jakarta-commons/modeler/src/java" includes="**" />
     </uptodate>
 
+<!--
     <uptodate property="commons-el.build.notrequired"
               targetfile="${commons-el.jar}">
       <srcfiles dir="${cvs.base}/jakarta-commons/el/src/java" includes="**" />
     </uptodate>
+-->
 
     <uptodate property="commons-daemon.build.notrequired"
               targetfile="${commons-daemon.jar}">
@@ -488,7 +490,7 @@
     </ant>
   </target>
 
-
+<!--
   <target name="build-commons-el" unless="commons-el.build.notrequired" description="build commons-el" >
     <echo>========== Building: commons-el </echo>
 
@@ -499,6 +501,7 @@
         <property name="dist.home" value="${commons-el.home}" />
     </ant>
   </target>
+-->
 
   <target name="build-commons-daemon" unless="commons-daemon.build.notrequired" description="build commons-daemon" >
     <echo>========== Building: commons-daemon </echo>
@@ -518,7 +521,7 @@
     <antcall target="build-servletapi"/>
     <antcall target="build-jspapi"/>
 
-    <antcall target="build-commons-el" />
+    <!-- <antcall target="build-commons-el" /> -->
     <antcall target="build-commons-modeler" />
     <antcall target="build-commons-daemon" />
 
@@ -1468,6 +1471,11 @@
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-collections.loc}"/>
       <param name="destfile" value="${commons-collections.jar}"/>
+    </antcall>
+
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-el.loc}"/>
+      <param name="destfile" value="${commons-el.jar}"/>
     </antcall>
 
     <antcall target="downloadgz">
