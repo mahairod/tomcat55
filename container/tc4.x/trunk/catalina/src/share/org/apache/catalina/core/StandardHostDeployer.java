@@ -271,9 +271,11 @@ public class StandardHostDeployer implements Deployer {
             if (isWAR) {
                 filename = filename.substring(0,filename.length()-4);
             }
-            if (contextPath.length() == 0 && !filename.equals("ROOT")) {
-                throw new IllegalArgumentException
-                    (sm.getString("standardHost.pathMatch", "/", "ROOT"));
+            if (contextPath.length() == 0) {
+                if (!filename.equals("ROOT")) {
+                    throw new IllegalArgumentException
+                        (sm.getString("standardHost.pathMatch", "/", "ROOT"));
+                }
             } else if (!filename.equals(contextPath.substring(1))) {
                 throw new IllegalArgumentException
                     (sm.getString("standardHost.pathMatch", contextPath, filename));
