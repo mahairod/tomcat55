@@ -37,8 +37,7 @@
     <chmod perm="+x" file="${jasper.build}/bin/jspc.sh"/>
 
     <!-- Shared Extensions -->
-    <!--   Jasper needs the servlet API classes -->
-    <copy file="${servlet.jar}" tofile="${jasper.build}/bin/servlet.jar"/>
+    <!--   Jasper uses the shared servlet.jar provided by Tomcat -->
     <!--   Jasper needs JAXP1.1/SAX2.0 compliant parser -->
     <copy file="${parser.jar}"
      tofile="${jasper.build}/lib/${jasper.jaxp.parser.jar}"/>
