@@ -205,7 +205,7 @@ public final class MemoryRealm
         GenericPrincipal principal =
             (GenericPrincipal) principals.get(username);
         if ((principal != null) &&
-            (digest(credentials).equals(principal.getPassword()))) {
+            (digest(credentials).equalsIgnoreCase(principal.getPassword()))) {
             if (debug >= 2)
                 log(sm.getString("memoryRealm.authenticateSuccess", username));
             return (principal);

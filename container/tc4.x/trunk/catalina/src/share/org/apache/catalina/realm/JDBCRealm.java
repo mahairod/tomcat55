@@ -384,7 +384,7 @@ public class JDBCRealm
         }
 
         // Validate the user's credentials
-        if (digest(credentials).equals(dbCredentials)) {
+        if (digest(credentials).equalsIgnoreCase(dbCredentials)) {
             if (debug >= 2)
                 log(sm.getString("jdbcRealm.authenticateSuccess",
                                  username));

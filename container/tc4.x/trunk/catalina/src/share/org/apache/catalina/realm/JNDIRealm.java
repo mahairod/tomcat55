@@ -750,7 +750,7 @@ public class JNDIRealm extends RealmBase {
         // Validate the credentials specified by the user
         if (debug >= 3)
             log("  validating credentials");
-        if (digest(credentials).equals(valueString)) {
+        if (digest(credentials).equalsIgnoreCase(valueString)) {
             if (debug >= 2)
                 log(sm.getString("jndiRealm.authenticateSuccess",
                                  username));
