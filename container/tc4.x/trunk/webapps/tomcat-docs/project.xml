@@ -23,15 +23,18 @@
     </menu>
 
     <menu name="Administrators">
+        <item name="CGI HOW-TO"            href="cgi-howto.html"/>
         <item name="Config. Reference"     href="config/index.html"/>
         <item name="Class Loader HOW-TO"   href="class-loader-howto.html"/>
         <item name="JNDI DataSource HOW-TO" 
               href="jndi-datasource-examples-howto.html"/>
         <item name="JNDI Resources HOW-TO" href="jndi-resources-howto.html"/>
+        <item name="JSP Engine Config HOW-TO" href="jasper-howto.html"/>
         <item name="Manager App HOW-TO"    href="manager-howto.html"/>
         <item name="Proxy Support HOW-TO"  href="proxy-howto.html"/>
         <item name="Realm HOW-TO"          href="realm-howto.html"/>
         <item name="Security Mgr. HOW-TO"  href="security-manager-howto.html"/>
+        <item name="SSI Config HOW-TO"     href="ssi-howto.html"/>
         <item name="SSL Config HOW-TO"     href="ssl-howto.html"/>
     </menu>
 
