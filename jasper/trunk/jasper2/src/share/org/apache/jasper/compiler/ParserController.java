@@ -551,13 +551,13 @@ class ParserController implements TagConstants {
 	}
 	index += xmlnsDecl.length();
 	while (index < root.length()
-	           && Character.isSpace(root.charAt(index))) {
+	           && Character.isWhitespace(root.charAt(index))) {
 	    index++;
 	}
 	if (index < root.length() && root.charAt(index) == '=') {
 	    index++;
 	    while (index < root.length()
-		       && Character.isSpace(root.charAt(index))) {
+		       && Character.isWhitespace(root.charAt(index))) {
 		index++;
 	    }
 	    if (index < root.length() && root.charAt(index++) == '"'
