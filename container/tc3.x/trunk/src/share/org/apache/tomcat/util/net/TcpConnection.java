@@ -101,6 +101,48 @@ public class TcpConnection  { // implements Endpoint {
         endpoint = null;
         socket = null;
     }
+
+    // Another frequent repetition
+    public static int readLine(InputStream in, byte[] b, int off, int len)
+	throws IOException
+    {
+	if (len <= 0) {
+	    return 0;
+	}
+	int count = 0, c;
+
+	while ((c = in.read()) != -1) {
+	    b[off++] = (byte)c;
+	    count++;
+	    if (c == '\n' || count == len) {
+		break;
+	    }
+	}
+	return count > 0 ? count : -1;
+    }
+
+    
+    // Usefull stuff - avoid having it replicated everywhere
+    public static void shutdownInput(Socket socket)
+	throws IOException
+    {
+	try {
+	    InputStream is = socket.getInputStream();
+	    int available = is.available ();
+	    
+	    // XXX on JDK 1.3 just socket.shutdownInput () which
+	    // was added just to deal with such issues.
+	    
+	    // skip any unread (bogus) bytes
+	    if (available > 1) {
+		is.skip (available);
+	    }
+	}catch(NullPointerException npe) {
+	    // do nothing - we are just cleaning up, this is
+	    // a workaround for Netscape \n\r in POST - it is supposed
+	    // to be ignored
+	}
+    }
 }
 
 
