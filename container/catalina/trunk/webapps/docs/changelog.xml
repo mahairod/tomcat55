@@ -115,6 +115,10 @@
       <fix>
         Improve logging of filters and listeners startup errors (remm)
       </fix>
+      <fix>
+        <bug>33774</bug>: Retry once in JNDI realm authenticate failure regardless of the 
+        exception message (remm)
+      </fix>
     </changelog>
    </subsection>
    
