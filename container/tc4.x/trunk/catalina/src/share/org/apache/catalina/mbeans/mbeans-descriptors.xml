@@ -752,6 +752,12 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation   name="save"
+          description="Save current users and groups to persistent storage"
+               impact="ACTION"
+           returnType="void">
+    </operation>
+
   </mbean>
 
 
