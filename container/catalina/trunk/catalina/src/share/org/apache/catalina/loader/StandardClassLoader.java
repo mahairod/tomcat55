@@ -42,7 +42,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 import org.apache.naming.JndiPermission;
-
+import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
  * Subclass implementation of <b>java.net.URLClassLoader</b> that knows how
@@ -196,6 +196,15 @@ public class StandardClassLoader
         }
 
     }
+
+
+    // ----------------------------------------------------- Class Variables
+
+
+    /**
+     * JDK compatibility support
+     */
+    private static final JdkCompat jdkCompat = JdkCompat.getJdkCompat();
 
 
     // ----------------------------------------------------- Instance Variables
@@ -372,7 +381,7 @@ public class StandardClassLoader
         } catch (MalformedURLException e) {
             IllegalArgumentException iae = new IllegalArgumentException
                 ("Invalid repository: " + repository);
-            iae.initCause(e);
+            jdkCompat.chainException(iae, e);
             throw iae;
         }
 
@@ -947,7 +956,7 @@ public class StandardClassLoader
             } catch (Throwable t) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     ("addRepositoryInternal");
-                iae.initCause(t);
+                jdkCompat.chainException(iae, t);
                 throw iae;
             } finally {
                 if (jarFile != null) {

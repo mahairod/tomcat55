@@ -31,7 +31,7 @@ import org.apache.catalina.UserDatabase;
 import org.apache.commons.modeler.BaseModelMBean;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
-
+import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
  * <p>A <strong>ModelMBean</strong> implementation for the
@@ -62,6 +62,15 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         super();
 
     }
+
+
+    // ----------------------------------------------------- Class Variables
+
+
+    /**
+     * JDK compatibility support
+     */
+    private static final JdkCompat jdkCompat = JdkCompat.getJdkCompat();
 
 
     // ----------------------------------------------------- Instance Variables
@@ -179,7 +188,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         } catch (Exception e) {
             IllegalArgumentException iae = new IllegalArgumentException
                 ("Exception creating group " + group + " MBean");
-            iae.initCause(e);
+            jdkCompat.chainException(iae, e);
             throw iae;
         }
         return (findGroup(groupname));
@@ -202,7 +211,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         } catch (Exception e) {
             IllegalArgumentException iae = new IllegalArgumentException
                 ("Exception creating role " + role + " MBean");
-            iae.initCause(e);
+            jdkCompat.chainException(iae, e);
             throw iae;
         }
         return (findRole(rolename));
@@ -227,7 +236,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         } catch (Exception e) {
             IllegalArgumentException iae = new IllegalArgumentException
                 ("Exception creating user " + user + " MBean");
-            iae.initCause(e);
+            jdkCompat.chainException(iae, e);
             throw iae;
         }
         return (findUser(username));
@@ -255,7 +264,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         } catch (MalformedObjectNameException e) {
             IllegalArgumentException iae = new IllegalArgumentException
                 ("Cannot create object name for group " + group);
-            iae.initCause(e);
+            jdkCompat.chainException(iae, e);
             throw iae;
         }
 
@@ -282,7 +291,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         } catch (MalformedObjectNameException e) {
             IllegalArgumentException iae = new IllegalArgumentException
                 ("Cannot create object name for role " + role);
-            iae.initCause(e);
+            jdkCompat.chainException(iae, e);
             throw iae;
         }
 
@@ -309,7 +318,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         } catch (MalformedObjectNameException e) {
             IllegalArgumentException iae = new IllegalArgumentException
                 ("Cannot create object name for user " + user);
-            iae.initCause(e);
+            jdkCompat.chainException(iae, e);
             throw iae;
         }
 
@@ -334,7 +343,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         } catch (Exception e) {
             IllegalArgumentException iae = new IllegalArgumentException
                 ("Exception destroying group " + group + " MBean");
-            iae.initCause(e);
+            jdkCompat.chainException(iae, e);
             throw iae;
         }
 
@@ -359,7 +368,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         } catch (Exception e) {
             IllegalArgumentException iae = new IllegalArgumentException
                 ("Exception destroying role " + role + " MBean");
-            iae.initCause(e);
+            jdkCompat.chainException(iae, e);
             throw iae;
         }
 
@@ -384,7 +393,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         } catch (Exception e) {
             IllegalArgumentException iae = new IllegalArgumentException
                 ("Exception destroying user " + user + " MBean");
-            iae.initCause(e);
+            jdkCompat.chainException(iae, e);
             throw iae;
         }
 

@@ -31,7 +31,7 @@ import org.apache.catalina.deploy.NamingResources;
 import org.apache.commons.modeler.BaseModelMBean;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
-
+import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
  * <p>A <strong>ModelMBean</strong> implementation for the
@@ -62,6 +62,15 @@ public class NamingResourcesMBean extends BaseModelMBean {
         super();
 
     }
+
+
+    // ----------------------------------------------------- Class Variables
+
+
+    /**
+     * JDK compatibility support
+     */
+    private static final JdkCompat jdkCompat = JdkCompat.getJdkCompat();
 
 
     // ----------------------------------------------------- Instance Variables
@@ -97,7 +106,7 @@ public class NamingResourcesMBean extends BaseModelMBean {
             } catch (MalformedObjectNameException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for environment " + envs[i]);
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
         }
@@ -123,7 +132,7 @@ public class NamingResourcesMBean extends BaseModelMBean {
             } catch (MalformedObjectNameException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for resource " + resources[i]);
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
         }
@@ -149,7 +158,7 @@ public class NamingResourcesMBean extends BaseModelMBean {
             } catch (MalformedObjectNameException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for resource " + resourceLinks[i]);
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
         }

@@ -136,10 +136,10 @@ public class WebappClassLoader
         "javax.servlet.Servlet"                     // Servlet API
     };
 
-     /** 
-      * Jdk Compatibility Support.
-      */
-     private static JdkCompat jdkCompat = JdkCompat.getJdkCompat();
+    /** 
+     * Jdk Compatibility Support.
+     */
+    private static JdkCompat jdkCompat = JdkCompat.getJdkCompat();
 
     /**
      * Set of package names which are not allowed to be loaded from a webapp
@@ -546,8 +546,8 @@ public class WebappClassLoader
             repositoryURLs = null;
         } catch (MalformedURLException e) {
             IllegalArgumentException iae = new IllegalArgumentException
-                ("Invalid repository: " + repository);
-            iae.initCause(e);
+                ("Invalid repository: " + repository); 
+            jdkCompat.chainException(iae, e);
             throw iae;
         }
 
