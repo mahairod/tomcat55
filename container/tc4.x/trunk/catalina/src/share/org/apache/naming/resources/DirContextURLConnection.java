@@ -179,11 +179,12 @@ public class DirContextURLConnection
                     String hostName = proxyDirContext.getHostName();
                     String contextName = proxyDirContext.getContextName();
                     if (hostName != null) {
-                        if (!url.getHost().equalsIgnoreCase(hostName))
+                        if (!path.startsWith("/" + hostName + "/"))
                             return;
+                        path = path.substring(hostName.length()+ 1);
                     }
                     if (contextName != null) {
-                        if (!path.startsWith(contextName)) {
+                        if (!path.startsWith(contextName + "/")) {
                             return;
                         } else {
                             path = path.substring(contextName.length());

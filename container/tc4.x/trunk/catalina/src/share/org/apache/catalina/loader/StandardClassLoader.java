@@ -296,18 +296,17 @@ public class StandardClassLoader
 
 
     /**
-     * The context directory path read FilePermission if this loader
-     * is for a web application context, and this web application is running
-     * from an unpacked directory.
+     * A list of read FilePermission's required if this loader
+     * is for a web application context.
      */
-    private FilePermission rootPermission = null;
+    private ArrayList filePermissionList = new ArrayList();
 
 
     /**
-     * The context directory URL read FilePermission if this loader
-     * is for a web application context.
+     * The PermissionCollection for each CodeSource for a web
+     * application context.
      */
-    private FilePermission urlPermission = null;
+    private HashMap loaderPC = new HashMap();
 
 
     /**
@@ -315,6 +314,11 @@ public class StandardClassLoader
      */
     private SecurityManager securityManager = null;
 
+
+    /**
+     * Flag that the security policy has been refreshed from file.
+     */
+    private boolean policy_refresh = false;
 
     /**
      * The parent class loader.
@@ -382,47 +386,26 @@ public class StandardClassLoader
 
 
     /**
-     * If there is a Java SecurityManager, refresh the security
-     * policies from file and set the context security permisions
-     * for the specified context root directory path
+     * If there is a Java SecurityManager create a read FilePermission
+     * for the file directory path.
      *
-     * @param path Context directory root directory path
+     * @param path file directory path
      */
     public void setPermissions(String path) {
 	if( securityManager != null ) {
-            // System.out.println("setPermissionsPath: " + path);
-	    String contextDir = path;
-	    if( contextDir.endsWith(File.separator) )
-		contextDir = contextDir + "-";
-	    else
-		contextDir = contextDir + File.separator + "-";
-	    // Refresh the security policies
-	    Policy policy = Policy.getPolicy();
-	    policy.refresh();
-            rootPermission = new FilePermission(contextDir,"read");
+            filePermissionList.add(new FilePermission(path + "-","read"));
 	}
     }
 
 
     /**
-     * If there is a Java SecurityManager, refresh the security
-     * policies from file and set the context security permissions.
+     * If there is a Java SecurityManager add a read FilePermission
+     * for URL.
      *
-     * @param String context directory file url string
+     * @param url URL for a file or directory on local system
      */
     public void setPermissions(URL url) {
-	if( securityManager != null ) {
-            // System.out.println("setPermissionsURL: " + url.toString());
-	    String contextDir = url.toString();
-	    if( contextDir.endsWith(File.separator) )
-		contextDir = contextDir + "-";
-	    else
-		contextDir = contextDir + File.separator + "-";
-	    // Refresh the security policies
-	    Policy policy = Policy.getPolicy();
-	    policy.refresh();
-            urlPermission = new FilePermission(contextDir,"read");
-	}
+        setPermissions(url.toString());
     }
 
 
@@ -1086,21 +1069,34 @@ public class StandardClassLoader
     /**
      * Get the Permissions for a CodeSource.  If this instance
      * of StandardClassLoader is for a web application context,
-     * add FilePermissions for the base directory (if unpacked)
-     * and the context URL.
+     * add read FilePermissions for the base directory (if unpacked),
+     * the context URL, and jar file resources.
      *
      * @param CodeSource where the code was loaded from
      * @return PermissionCollection for CodeSource
      */
     protected final PermissionCollection getPermissions(CodeSource codeSource) {
-	PermissionCollection pc = super.getPermissions(codeSource);
-        if (pc != null) {
-            if (rootPermission != null)
-                pc.add(rootPermission);
-            if (urlPermission != null)
-                pc.add(urlPermission);
+        if (!policy_refresh) {
+            // Refresh the security policies
+            Policy policy = Policy.getPolicy();
+            policy.refresh();
+            policy_refresh = true;
+        }
+        String codeUrl = codeSource.getLocation().toString();
+        PermissionCollection pc;
+        if ((pc = (PermissionCollection)loaderPC.get(codeUrl)) == null) {
+            pc = super.getPermissions(codeSource);
+            if (pc != null) {
+                Iterator perms = filePermissionList.iterator();
+                while (perms.hasNext()) {
+                    FilePermission fp = (FilePermission)perms.next();
+                    pc.add(fp);
+                }
+	        loaderPC.put(codeUrl,pc);
+            }
         }
 	return (pc);
+
     }
 
 

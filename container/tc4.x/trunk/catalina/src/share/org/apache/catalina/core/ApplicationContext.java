@@ -170,7 +170,7 @@ public final class ApplicationContext
         }
         
         public Object run() throws Exception {
-            return new URL("jndi", host, 0, path,
+            return new URL("jndi", null, 0, "/" + host + path,
                    new DirContextURLStreamHandler(resources));
         }
         
@@ -536,7 +536,7 @@ public final class ApplicationContext
 	                throw pe.getException();
 	            }
 	        } else {
-                    return new URL("jndi", hostName, 0, fullPath, 
+                    return new URL("jndi", null, 0, "/" + hostName + fullPath, 
                                    new DirContextURLStreamHandler(resources));
 		}
             } catch (Exception e) {

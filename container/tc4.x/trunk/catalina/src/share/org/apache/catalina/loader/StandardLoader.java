@@ -621,13 +621,21 @@ public final class StandardLoader
                     ((Context) container).getServletContext();
 		try {
 		    URL contextURL = servletContext.getResource("/");
-		    if( contextURL != null )
+		    if( contextURL != null ) {
 			((StandardClassLoader)classLoader).setPermissions
                             (contextURL);
+                        String jarUrl = "jar:" + contextURL.toString() + "WEB-INF/lib/";
+                        ((StandardClassLoader)classLoader).setPermissions
+                            (jarUrl);                  
+                    }
                     String contextRoot = servletContext.getRealPath("/");
-                    if (contextRoot != null)
+                    if (contextRoot != null) {
                         ((StandardClassLoader)classLoader).setPermissions
                             (contextRoot);
+                        String rootUrl = "file:" + contextRoot;
+                        ((StandardClassLoader)classLoader).setPermissions
+                            (rootUrl);
+		    }
 		} catch (MalformedURLException e) {
 		}
 	    }

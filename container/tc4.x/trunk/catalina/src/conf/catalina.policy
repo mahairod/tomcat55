@@ -113,13 +113,8 @@ grant {
 	permission java.util.PropertyPermission "java.vm.vendor", "read";
 	permission java.util.PropertyPermission "java.vm.name", "read";
 
-        // Required for reading resources using JNDI lookup
-        permission java.io.FilePermission "jndi:/-", "read";
-        permission java.io.FilePermission "jar:jndi:/WEB-INF/lib/-", "read";
         // Required for getting BeanInfo
         permission java.lang.RuntimePermission "accessClassInPackage.sun.beans.*";
-        // Requried for sending email
-        permission java.io.FilePermission "${java.home}${/}lib${/}ext${/}mail.jar", "read";
 
 	// Allow read of JAXP compliant XML parser debug
 	permission java.util.PropertyPermission "jaxp.debug", "read";
@@ -128,12 +123,34 @@ grant {
 
 // You can assign additional permissions to particular web applications by
 // adding additional "grant" entries here, based on the code base for that
-// application.  For instance, assume that the standard "examples" application
-// included a JDBC driver that needed to establish a network connection to the
-// corresponding database.  You might create a "grant" entry like this:
+// application, /WEB-INF/classes/, or /WEB-INF/lib/ jar files.
 //
-// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/-" {
+// Different permissions can be granted to JSP pages, classes loaded from
+// the /WEB-INF/classes/ directory, all jar files in the /WEB-INF/lib/
+// directory, or even to individual jar files in the /WEB-INF/lib/ directory.
+//
+// For instance, assume that the standard "examples" application
+// included a JDBC driver that needed to establish a network connection to the
+// corresponding database and used the scrape taglib to get the weather from
+// the NOAA web server.  You might create a "grant" entries like this:
+//
+// The permissions granted to the context root directory apply to JSP pages.
+// grant codeBase "file:${catalina.home}/webapps/examples/-" {
 //      permission java.net.SocketPermission "dbhost.mycompany.com:5432", "connect";
-// }
-
+//      permission java.net.SocketPermission "*.noaa.gov:80", "connect";
+//
+// };
+//
+// The permissions granted to the context WEB-INF/classes directory
+// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/classes/-" {
+// };
+//
+// The permission granted to your JDBC driver
+// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/lib/driver.jar" {
+//      permission java.net.SocketPermission "dbhost.mycompany.com:5432", "connect";
+// };
+// The permission granted to the scrape taglib
+// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/lib/scrape.jar" {
+//      permission java.net.SocketPermission "*.noaa.gov:80", "connect";
+// };
 

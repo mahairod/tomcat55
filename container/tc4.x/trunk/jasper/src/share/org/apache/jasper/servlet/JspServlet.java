@@ -288,20 +288,42 @@ public class JspServlet extends HttpServlet {
 	if( policy != null ) {
             try {          
 		// Get the permissions for the web app context
-		URL url = options.getScratchDir().toURL();
+                String contextDir = context.getRealPath("/");
+                if( contextDir == null )
+                    contextDir = options.getScratchDir().toString();
+		URL url = new URL("file:" + contextDir);
 		codeSource = new CodeSource(url,null);
 		permissionCollection = policy.getPermissions(codeSource);
 		// Create a file read permission for web app context directory
-		String contextDir = url.getFile();
-		if( contextDir.endsWith(File.separator) )
+		if (contextDir.endsWith(File.separator))
 		    contextDir = contextDir + "-";
 		else
 		    contextDir = contextDir + File.separator + "-";
 		permissionCollection.add( new FilePermission(contextDir,"read") );
 		// Allow the JSP to access org.apache.jasper.runtime.HttpJspBase
 		permissionCollection.add( new RuntimePermission(
-		    "accessClassInPackage.org.apache.jasper.runtime"
-		    ) );
+		    "accessClassInPackage.org.apache.jasper.runtime") );
+                if (parentClassLoader instanceof URLClassLoader) {
+                    URL [] urls = parentClassLoader.getURLs();
+                    String jarUrl = null;
+                    String jndiUrl = null;
+                    for (int i=0; i<urls.length; i++) {
+                        if (jndiUrl == null && urls[i].toString().startsWith("jndi:") ) {
+                            jndiUrl = urls[i].toString() + "-";
+                        }
+                        if (jarUrl == null && urls[i].toString().startsWith("jar:jndi:") ) {
+                            jarUrl = urls[i].toString();
+                            jarUrl = jarUrl.substring(0,jarUrl.length() - 2);
+                            jarUrl = jarUrl.substring(0,jarUrl.lastIndexOf('/')) + "/-";
+                        }
+                    }
+                    if (jarUrl != null) {
+                        permissionCollection.add( new FilePermission(jarUrl,"read") );
+                        permissionCollection.add( new FilePermission(jarUrl.substring(4),"read") );
+                    }
+                    if (jndiUrl != null)
+                        permissionCollection.add( new FilePermission(jndiUrl,"read") );
+                }
 	    } catch(MalformedURLException mfe) {
 	    }
 	}
