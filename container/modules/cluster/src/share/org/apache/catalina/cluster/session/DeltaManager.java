@@ -711,17 +711,20 @@ public class DeltaManager
         started = false;
 
         // Expire all active sessions
-        Session sessions[] = findSessions();
-        for (int i = 0; i < sessions.length; i++) {
-            DeltaSession session = (DeltaSession) sessions[i];
-            if (!session.isValid())
-                continue;
-            try {
-                session.expire();
-            } catch (Throwable t) {
-                ;
-            }
-        }
+        if ( this.getExpireSessionsOnShutdown() ) {
+            Session sessions[] = findSessions();
+            for (int i = 0; i < sessions.length; i++) {
+                DeltaSession session = (DeltaSession) sessions[i];
+                if (!session.isValid())
+                    continue;
+                try {
+                    session.expire();
+                }
+                catch (Throwable t) {
+                    ;
+                } //catch
+            } //for
+        }//end if
 
         // Require a new random number generator if we are restarted
         this.random = null;
