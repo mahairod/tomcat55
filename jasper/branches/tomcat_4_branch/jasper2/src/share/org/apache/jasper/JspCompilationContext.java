@@ -266,15 +266,15 @@ public class JspCompilationContext {
             new StringBuffer(jspUri.length() - iSep);
 	if (!Character.isJavaIdentifierStart(jspUri.charAt(iSep))) {
 	    // If the first char is not a legal Java letter or digit,
-	    // prepend a '$'.
-	    modifiedClassName.append('$');
+	    // prepend a '_'.
+	    modifiedClassName.append('_');
 	}
         for (int i = iSep; i < iEnd; i++) {
             char ch = jspUri.charAt(i);
             if (Character.isLetterOrDigit(ch)) {
                 modifiedClassName.append(ch);
             } else if (ch == '.') {
-                modifiedClassName.append('$');
+                modifiedClassName.append('_');
             } else {
                 modifiedClassName.append(mangleChar(ch));
             }
