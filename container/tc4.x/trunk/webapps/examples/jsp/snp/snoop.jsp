@@ -7,7 +7,7 @@
 <body bgcolor="white">
 <h1> Request Information </h1>
 <font size="4">
-JSP Request Method: <%= util.HTMLFilter.filter(request.getMethod()) %>
+JSP Request Method: <% out.print(util.HTMLFilter.filter(request.getMethod())); %>
 <br>
 Request URI: <%= request.getRequestURI() %>
 <br>
