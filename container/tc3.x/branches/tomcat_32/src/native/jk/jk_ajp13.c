@@ -243,7 +243,7 @@ int sc_for_req_header(const char *header_name,
                     return JK_FALSE;
                 }
             } else if(!strcmp(header_name, "authorization")) {
-                *sc = SC_ACCEPT_LANGUAGE;
+                *sc = SC_AUTHORIZATION;
             } else {
                 return JK_FALSE;
             }
