@@ -606,7 +606,11 @@ public class DefaultServlet
         try {
             Resource newResource = new Resource(req.getInputStream());
             // FIXME: Add attributes
-            resources.bind(path, newResource);
+            if (exists) {
+                resources.rebind(path, newResource);
+            } else {
+                resources.bind(path, newResource);
+            }
         } catch(NamingException e) {
             result = false;
         }
