@@ -62,7 +62,7 @@ package javax.servlet.jsp;
  * the case with tag files).  The effect is similar to that of a 
  * Classic Tag Handler returning Tag.SKIP_PAGE from doEndTag().
  * Jsp Fragments may also throw this exception.  This exception
- * should not be thrown manually in a JSP page - the behavior is
+ * should not be thrown manually in a JSP page or tag file - the behavior is
  * undefined.  The exception is intended to be thrown inside 
  * SimpleTag handlers and in JSP fragments.
  * 
