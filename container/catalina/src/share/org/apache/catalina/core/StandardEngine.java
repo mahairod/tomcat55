@@ -65,23 +65,17 @@
 package org.apache.catalina.core;
 
 
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.management.ObjectName;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.Service;
 import org.apache.catalina.Realm;
+import org.apache.catalina.Service;
 import org.apache.catalina.realm.JAASRealm;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.logging.Log;
@@ -385,6 +379,7 @@ public class StandardEngine
                 domain=getName();
                 log.info( "Register " + domain );
                 oname=new ObjectName(domain + ":type=Engine");
+                controller=oname;
                 Registry.getRegistry().registerComponent(this, oname, null);
             } catch( Throwable t ) {
                 log.info("Error registering ", t );
@@ -422,10 +417,16 @@ public class StandardEngine
         
     }
     
-    public void destroy() {
+    public void destroy() throws LifecycleException {
         if( ! initialized ) return;
         initialized=false;
         
+        // if we created it, make sure it's also destroyed
+        ((StandardService)service).destroy();
+        // force all metadata to be reloaded.
+        // That doesn't affect existing beans. We should make it per
+        // registry - and stop using the static.
+        Registry.getRegistry().resetMetadata();        
     }
     
     /**
@@ -505,3 +506,4 @@ public class StandardEngine
     }
 
 }
+                                                          
