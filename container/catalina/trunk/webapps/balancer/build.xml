@@ -5,123 +5,110 @@ This is the build script for the balancer webapp.
 @author Yoav Shapira
 -->
 
-<project name="balancer" default="compile" basedir=".">
-  <!-- The balancer version -->
-  <property name="version" value="1.0" />
+<project name="balancer" default="build-main" basedir=".">
 
-  <!-- Source directory -->
-  <property name="src" value="src" />
 
-  <!-- The build directory -->
-  <property name="build" value="build" />
+  <!-- ===================== Initialize Property Values =================== -->
 
-  <!-- Classes directory -->
-  <property name="classes" value="build/classes" />
+  <!-- See "build.properties.sample" in the top level directory for all     -->
+  <!-- property values you must customize for successful building!!!        -->
+  <property file="build.properties"/>
+  <property file="../build.properties"/>
+  <property file="../../build.properties"/>
+  <property file="${user.home}/build.properties"/>
 
-  <!-- Docs directory -->
-  <property name="docs" value="docs" />
+  <property name="build.compiler"  value="classic"/>
+  <property name="webapps.build"   value="../build"/>
+  <property name="webapps.dist"    value="../dist"/>
+  <property name="webapp.name"     value="balancer"/>
 
-  <!-- Library directory contains libraries for compilation -->
-  <property name="lib" value="lib" />
-
-  <!-- Location for JavaDoc files -->
-  <property name="javadocDir" value="${docs}/javadoc" />
-
-  <!-- ProjectViewer jar file name -->
-  <property name="jarFileName" value="balancer.jar" />
- 
-  <!-- ProjectViewer war file name -->
-  <property name="warFileName" value="balancer.war" />
-
-  <!-- Debug property for compiling -->
-  <property name="debug" value="true" />
-
-  <!-- Deprecation property for compiling -->
-  <property name="deprecation" value="false" />
-
-  <!-- clean target: removes build directory and files. -->
-  <target name="clean">
-    <delete dir="${build}" />
-  </target>
+  <!-- Dependent JARs and files -->
+  <property name="servlet-api.jar" value="${api.home}/jsr154/dist/lib/servlet-api.jar"/>
+  <property name="jsp-api.jar"     value="${api.home}/jsr152/dist/lib/jsp-api.jar"/>
 
   <!-- Compilation classpath -->
-  <path id="compilePath">
-    <pathelement location="${lib}/servlet.jar" />
-
+  <path id="balancer.classpath">
     <!-- Required by Digester -->
-    <pathelement location="${lib}/commons-beanutils.jar" />
-    <pathelement location="${lib}/commons-collections.jar" />
-    <pathelement location="${lib}/commons-digester.jar" />
-    <pathelement location="${lib}/commons-logging-api.jar" />
+    <pathelement location="${commons-beanutils.jar}"/>
+    <pathelement location="${commons-collections.jar}"/>
+    <pathelement location="${commons-digester.jar}"/>
+    <pathelement location="${servlet-api.jar}"/>
+    <pathelement location="${commons-logging-api.jar}" />
   </path>
 
-  <!-- Ignore environment CLASSPATH -->
-  <property name="build.sysclasspath" value="ignore" />
 
-  <!-- compile target: compiles MDD files. -->
-  <target name="compile">
-    <mkdir dir="${build}" />
-    <mkdir dir="${classes}" />
-
-    <javac srcdir="${src}"
-      destdir="${classes}"
-      classpathref="compilePath"
-      includes="**/*.java"
-      debug="${debug}"
-      deprecation="${deprecation}" />
+  <!-- =================== BUILD: Create Directories ====================== -->
+  <target name="build-prepare">
+    <mkdir dir="${webapps.build}"/>
+    <mkdir dir="${webapps.build}/${webapp.name}"/>
+    <mkdir dir="${webapps.build}/${webapp.name}/images"/>
+    <mkdir dir="${webapps.build}/${webapp.name}/WEB-INF"/>
+    <mkdir dir="${webapps.build}/${webapp.name}/WEB-INF/classes"/>
   </target>
 
-  <!-- Create the jar file. -->
-  <target name="createJar" depends="compile">
-    <jar destfile="${build}/${jarFileName}">
-      <fileset dir="${classes}">
-        <include name="**/*.class"/>
+
+  <!-- ================ BUILD: Copy Static Files ========================== -->
+  <target name="build-static" depends="build-prepare">
+    <copy todir="${webapps.build}/${webapp.name}">
+      <fileset dir=".">
+        <exclude name="build.*"/>
       </fileset>
-    </jar>
+    </copy>
   </target>
 
-  <!-- Create the WAR file. -->
-  <target name="createWar" depends="createJar">
-    <war destfile="${build}/${warFileName}"
-         webxml="${basedir}/WEB-INF/web.xml">
-      <!-- Our jar -->
-      <lib dir="${build}">
-        <include name="${jarFileName}" />
-      </lib>
-      
-      <!-- Other jars -->
-      <lib dir="${lib}">
-        <exclude name="servlet.jar" />
-      </lib>
 
-      <!-- Include the rules configuration file -->
-      <zipfileset dir="${basedir}/WEB-INF/config"
-                  prefix="WEB-INF/config">
-        <include name="rules.xml" />
-      </zipfileset>
-    </war>
+  <!-- ================= BUILD: Compile Server Components ================= -->
+  <target name="build-main" depends="build-static">
+
+    <javac   srcdir="WEB-INF/classes" 
+             destdir="${webapps.build}/${webapp.name}/WEB-INF/classes"
+             debug="${compile.debug}" deprecation="${compile.deprecation}"
+             optimize="${compile.optimize}"
+             excludes="**/CVS/**">
+      <classpath refid="balancer.classpath" />
+    </javac>
+
   </target>
 
-  <!-- dist target: creates the WAR distribution. -->
-  <target name="dist" depends="createWar,javadoc">
-    <delete file="${ant.project.name}-${version}.zip" />
-    <zip destfile="${ant.project.name}-${version}.zip"
-         basedir="${basedir}" />
+
+  <!-- ==================== BUILD: Rebuild Everything ===================== -->
+  <target name="all" depends="build-clean,build-main"
+   description="Clean and build balancer webapp"/>
+
+
+  <!-- ======================= BUILD: Clean Directory ===================== -->
+  <target name="build-clean">
+    <delete dir="${webapps.build}/${webapp.name}"/>
   </target>
 
-  <!-- Creates and publishes JavaDocs for MDD Project Viewer -->
-  <target name="javadoc">
-    <javadoc sourcepath="${src}"
-             classpathref="compilePath" 
-             packagenames="*"
-     	     destdir="${javadocDir}"
-	     author="true"
-	     version="true"
-	     use="true"
-	     overview="${src}/org/apache/webapp/balancer/overview.html"
-	     windowtitle="Balancer Webapp Documentation"
-	     additionalparam="-breakiterator -linksource" />
+
+  <!-- ======================= DIST: Create Directories =================== -->
+  <target name="dist-prepare">
+    <mkdir dir="${webapps.dist}"/>
   </target>
+
+
+  <!-- ======================= DIST: Create Distribution Files ============ -->
+  <target name="dist" depends="build-main,dist-prepare"
+   description="Create balancer webapp binary distribution">
+      <jar   jarfile="${webapps.dist}/${webapp.name}.war"
+             basedir="${webapps.build}/${webapp.name}" includes="**"/>
+  </target>
+
+
+  <!-- ======================= DIST: Clean Directory ====================== -->
+  <target name="dist-clean">
+    <deltree dir="${dist.dir}/${webapp.name}"/>
+  </target>
+
+
+  <!-- ====================== Convenient Synonyms ========================= -->
+  <target name="clean" depends="build-clean,dist-clean"
+   description="Clean build and dist directories"/>
+
+
+
+
 </project>
 <!-- End build.xml -->
 
