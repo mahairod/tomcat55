@@ -86,7 +86,7 @@ import javax.naming.directory.SearchResult;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Realm;
 import org.apache.catalina.util.StringManager;
-
+import org.apache.catalina.util.Base64;
 
 /**
  * <p>Implementation of <strong>Realm</strong> that works with a directory
@@ -182,6 +182,13 @@ import org.apache.catalina.util.StringManager;
  * <p><strong>TODO</strong> - Support connection pooling (including message
  * format objects) so that <code>authenticate()</code> does not have to be
  * synchronized.</p>
+ *
+ * <p><strong>WARNING</strong> - There is a reported bug against the Netscape
+ * provider code (com.netscape.jndi.ldap.LdapContextFactory) with respect to
+ * successfully authenticated a non-existing user. The
+ * report is here: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=11210 .
+ * With luck, Netscape has updated their provider code and this is not an
+ * issue. </p>
  *
  * @author John Holman
  * @author Craig R. McClanahan
@@ -1144,8 +1151,22 @@ public class JNDIRealm extends RealmBase {
 
         boolean validated = false;
         if (hasMessageDigest()) {
-            // Hex hashes should be compared case-insensitive
-            validated = (digest(credentials).equalsIgnoreCase(password));
+            // iPlanet support if the values starts with {SHA1}
+            // The string is in a format compatible with Base64.encode not
+            // the Hex encoding of the parent class.
+            if (password.startsWith("{SHA}")) {
+                /* sync since super.digest() does this same thing */
+                synchronized (this) {
+                    password = password.substring(5);
+                    md.reset();
+                    md.update(credentials.getBytes());
+                    String digestedPassword = new String(Base64.encode(md.digest()));
+                    validated = password.equals(digestedPassword);
+                }
+            } else {
+                // Hex hashes should be compared case-insensitive
+                validated = (digest(credentials).equalsIgnoreCase(password));
+            }
         } else
             validated = (digest(credentials).equals(password));
         return (validated);
