@@ -9,37 +9,9 @@
 
      <property name="watchdog.build" value="../build/watchdog"/>
      <property name="watchdog.dist" value="../dist/watchdog"/>
-     <property name="watchdog-classpath" value="../jakarta-tools/moo.jar:../build/tomcat/classes" />
-     <property name="tomcat.build" value="../build/tomcat"/>
-     <property name="tomcat.home" value="../dist/tomcat"/>
+     <property name="watchdog-classpath" value="../jakarta-tools/moo.jar:" />
    </target>
 
-   <target name="install" depends="dist">
-      <copyfile src="${watchdog.dist}/webapps/jsp-tests.war" 
-                dest="${tomcat.build}/webapps/jsp-tests.war" />
-      <copyfile src="${watchdog.dist}/webapps/servlet-tests.war" 
-                dest="${tomcat.build}/webapps/servlet-tests.war" />
-      <copyfile src="${watchdog.dist}/conf/watchdog.xml" 
-                dest="${tomcat.build}/conf/watchdog.xml" />
-      <copyfile src="${watchdog.dist}/lib/moo.jar" 
-                dest="${tomcat.build}/lib/moo.jar" />
-      <copyfile src="${watchdog.dist}/lib/client.jar" 
-                dest="${tomcat.build}/lib/client.jar" />
-   </target>
-
-   <target name="install.dist" depends="dist">
-      <copyfile src="${watchdog.dist}/webapps/jsp-tests.war" 
-                dest="${tomcat.home}/webapps/jsp-tests.war" />
-      <copyfile src="${watchdog.dist}/webapps/servlet-tests.war" 
-                dest="${tomcat.home}/webapps/servlet-tests.war" />
-      <copyfile src="${watchdog.dist}/conf/watchdog.xml" 
-                dest="${tomcat.home}/conf/watchdog.xml" />
-      <copyfile src="${watchdog.dist}/lib/moo.jar" 
-                dest="${tomcat.home}/lib/moo.jar" />
-      <copyfile src="${watchdog.dist}/lib/client.jar" 
-                dest="${tomcat.home}/lib/client.jar" />
-      
-   </target>
 
    <target name="prepare">
 
@@ -47,6 +19,7 @@
       <mkdir dir="${watchdog.build}/clients"/>
       <mkdir dir="${watchdog.build}/conf" />
       <mkdir dir="${watchdog.build}/lib" />
+      <mkdir dir="${watchdog.build}/bin" />
       <mkdir dir="${watchdog.build}/lib/jsp-golden"/>
 
       <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
@@ -58,23 +31,27 @@
       <copydir src="src/server/servlet-tests" dest="${watchdog.build}/webapps/servlet-tests"/>
       <copyfile src="../jakarta-tools/moo.jar" dest="${watchdog.build}/lib/moo.jar"/>
 
+      <copyfile src="../jakarta-ant/lib/ant.jar"
+                dest="${watchdog.build}/lib/ant.jar"/>
+
+      <copyfile src="../jakarta-tools/testdriver.jar"
+                dest="${watchdog.build}/lib/testdriver.jar"/>
+
       <copyfile src="../jakarta-ant/lib/xml.jar"
                 dest="${watchdog.build}/lib/xml.jar"/>
 
       <copydir src="src/clients/org/apache/jcheck/jsp/client" 
                dest="${watchdog.build}/lib/jsp-golden"/>
 
-      <copydir src="src/bin" dest="${watchdog.build}"/>
+      <copydir src="src/bin" dest="${watchdog.build}/bin"/>
       <copydir src="src/conf" dest="${watchdog.build}/conf" />
-      <copyfile src="${tomcat.build}/conf/web.xml" dest="${watchdog.build}/conf/web.xml" />
 
       <copyfile src="../jakarta-tools/moo.jar" 
                 dest="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib/moo.jar"/>
       <copyfile src="../jakarta-tools/moo.jar" 
                 dest="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/moo.jar"/>
 
-      <chmod src="${watchdog.build}/runclient.sh" perm="+x"/>
-      <chmod src="${watchdog.build}/runtest.sh" perm="+x"/> 
+      <chmod src="${watchdog.build}/watchdog.sh" perm="+x"/> 
    </target>       
 
    <target name="main" depends="prepare">
@@ -107,19 +84,10 @@
            basedir="${watchdog.build}/clients" 
            includes="org/**" />
 
-      <copydir src="${watchdog.build}/webapps/servlet-tests" 
-               dest="${tomcat.build}/webapps/servlet-tests" />
-      <copydir src="${watchdog.build}/webapps/jsp-tests" 
-               dest="${tomcat.build}/webapps/jsp-tests" />
-
-
    </target>
 
    <target name="dist" depends="main">
-    <!-- cut & paste of "prepare", with tomcat.home instead of tomcat_build 
-         XXX create "parametrized" targets
-         XXX do we need all the files in tomcat_build ??
-      -->
+
       <mkdir dir="${watchdog.dist}"/>
       <mkdir dir="${watchdog.dist}/conf" />
       <mkdir dir="${watchdog.dist}/lib" />
@@ -129,19 +97,22 @@
       <copyfile src="../jakarta-tools/moo.jar"
                 dest="${watchdog.dist}/lib/moo.jar"/>
 
+      <copyfile src="../jakarta-ant/lib/ant.jar"
+                dest="${watchdog.dist}/lib/ant.jar"/>
+
+      <copyfile src="../jakarta-tools/testdriver.jar"
+                dest="${watchdog.dist}/lib/testdriver.jar"/>
+
       <copyfile src="../jakarta-ant/lib/xml.jar"
                 dest="${watchdog.dist}/lib/xml.jar"/>
       
       <copydir src="src/clients/org/apache/jcheck/jsp/client" 
                dest="${watchdog.dist}/lib/jsp-golden"/>
 
-      <copydir src="src/bin" dest="${watchdog.dist}"/>
+      <copydir src="src/bin" dest="${watchdog.dist}/bin"/>
       <copydir src="src/conf" dest="${watchdog.dist}/conf" />
-      <copyfile src="src/conf/dist-test.xml" dest="${watchdog.dist}/conf/server-test.xml" />
-      <copyfile src="${tomcat.build}/conf/web.xml" dest="${watchdog.dist}/conf/web.xml" />
     
-      <chmod src="${watchdog.dist}/runClient.sh" perm="+x"/>
-      <chmod src="${watchdog.dist}/runTest.sh" perm="+x"/> 
+      <chmod src="${watchdog.dist}/watchdog.sh" perm="+x"/>
 
       <jar jarfile="${watchdog.dist}/lib/client.jar"
         basedir="${watchdog.build}/clients" 
