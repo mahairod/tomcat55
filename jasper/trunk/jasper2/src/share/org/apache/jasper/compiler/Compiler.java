@@ -63,44 +63,93 @@ package org.apache.jasper.compiler;
 import java.util.*;
 import java.io.*;
 import javax.servlet.jsp.tagext.TagInfo;
+
 import org.xml.sax.Attributes;
+
+import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.BuildListener;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Javac;
+import org.apache.tools.ant.types.Path;
+
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.logging.Logger;
+import org.apache.jasper.util.SystemLogHandler;
 
 /**
- * If you want to customize JSP compilation aspects, this class is
- * something you should take a look at. 
- * 
- * Hope is that people can just extend Compiler and override things
- * like isOutDated() but inherit things like compile(). This might
- * change. 
+ * Main JSP compiler class. This class uses Ant for compiling.
  *
  * @author Anil K. Vijendran
  * @author Mandar Raje
  * @author Pierre Delisle
  * @author Kin-man Chung
+ * @author Remy Maucherat
  */
 public class Compiler {
 
-    protected JavaCompiler javac;
+
+    // ----------------------------------------------------------------- Static
+
+
+    protected static Project project;
+    protected static Javac javac;
+    protected static Path path;
+    protected static Path srcPath;
+
+    protected static CompilerBuildListener listener;
+
+    static {
+
+        System.setErr(new SystemLogHandler(System.err));
+
+        // Initializing project
+        project = new Project();
+        project.init();
+
+        // Initializing javac task
+        javac = (Javac) project.createTask("javac");
+
+        // Initializing paths
+        path = new Path(project);
+        srcPath = new Path(project);
+
+        // Initializing listener
+        listener = new CompilerBuildListener();
+        project.addBuildListener(listener);
+
+    }
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
     protected Mangler mangler;
     protected JspCompilationContext ctxt;
 
     private ErrorDispatcher errDispatcher;
     private PageInfo pageInfo;
 
+
+    // ------------------------------------------------------------ Constructor
+
+
     public Compiler(JspCompilationContext ctxt) {
         this.ctxt = ctxt;
 	this.errDispatcher = new ErrorDispatcher();
     }
-    
+
+
+    // --------------------------------------------------------- Public Methods
+
+
     /** 
      * Compile the jsp file from the current engine context
      */
     public void compile()
-	    throws FileNotFoundException, JasperException, Exception {
+        throws FileNotFoundException, JasperException, Exception {
 
 	// Setup page info area
 	pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader()));
@@ -158,57 +207,42 @@ public class Compiler {
 
         String classpath = ctxt.getClassPath(); 
 
-        // I'm nuking
-        //          System.getProperty("jsp.class.path", ".") 
-        // business. If anyone badly needs this we can talk. -akv
-
         String sep = System.getProperty("path.separator");
-        String[] argv = new String[] {
-            "-encoding",
-            javaEncoding,
-            "-classpath",
-            System.getProperty("java.class.path") + sep + classpath,
-            "-d",
-            ctxt.getOutputDir(),
-            javaFileName
-        };
 
-        StringBuffer b = new StringBuffer();
-        for(int i = 0; i < argv.length; i++) {
-            b.append(argv[i]);
-            b.append(" ");
+        String errorReport = null;
+        boolean success = true;
+
+        // Call the actual Java compiler
+        synchronized (project) {
+
+            path.setPath(System.getProperty("java.class.path") + sep
+                         + classpath);
+            srcPath.setPath(ctxt.getOutputDir());
+
+            /*
+             * Configure the compiler object
+             */
+            javac.setEncoding(javaEncoding);
+            javac.setClasspath(path);
+            if (ctxt.getJavacOutputDir() != null) {
+                javac.setDestdir(new File(ctxt.getJavacOutputDir()));
+            }
+            javac.setDebug(ctxt.getOptions().getClassDebugInfo());
+            javac.setSrcdir(srcPath);
+
+            listener.clear();
+
+            SystemLogHandler.setThread();
+
+            try {
+                javac.execute();
+            } catch (BuildException e) {
+                success = false;
+            }
+
+            errorReport = SystemLogHandler.unsetThread();
+
         }
-
-
-        Constants.message("jsp.message.compiling_with",
-                          new Object[] { b.toString() },
-                          Logger.DEBUG);
-
-        /*
-         * 256 chosen randomly. The default is 32 if you don't pass
-         * anything to the constructor which will be less. 
-         */
-        ByteArrayOutputStream out = new ByteArrayOutputStream (256);
-
-        // if no compiler was set we can kick out now
-        if (javac == null) {
-            return;
-        }
-
-        /*
-         * Configure the compiler object
-         */
-        javac.setEncoding(javaEncoding);
-        javac.setClasspath(System.getProperty("java.class.path") + sep
-			   + classpath);
-        javac.setOutputDir(ctxt.getJavacOutputDir());
-        javac.setMsgOutput(out);
-        javac.setClassDebugInfo(ctxt.getOptions().getClassDebugInfo());
-
-        /*
-         * Execute the compiler
-         */
-        boolean success = javac.compile(javaFileName);
 
         if (!ctxt.keepGenerated()) {
             File javaFile = new File(javaFileName);
@@ -216,9 +250,11 @@ public class Compiler {
         }
     
         if (!success) {
-            errDispatcher.javacError(out.toString(), javaFileName, pageNodes);
+            errDispatcher.javacError(errorReport, javaFileName, pageNodes);
         }
+
     }
+
 
     /**
      * This is a protected method intended to be overridden by 
@@ -228,13 +264,14 @@ public class Compiler {
     public boolean isOutDated() {
 	return true;
     }
+
     
     /**
      * Set java compiler info
      */
     public void setJavaCompiler(JavaCompiler javac) {
-        this.javac = javac;
     }
+
 
     /**
      * Set Mangler which will be used as part of compile().
@@ -244,12 +281,14 @@ public class Compiler {
         ctxt.setServletJavaFileName(mangler.getJavaFileName());
     }
 
+
     /**
      * Gets the error dispatcher.
      */
     public ErrorDispatcher getErrorDispatcher() {
 	return errDispatcher;
     }
+
 
     /**
      * Gets the info about the page under compilation
@@ -258,9 +297,11 @@ public class Compiler {
 	return pageInfo;
     }
 
+
     public JspCompilationContext getCompilationContext() {
 	return ctxt;
     }
+
 
     /**
      * Change the encoding for the reader if specified.
@@ -299,6 +340,7 @@ public class Compiler {
 	return null;
     }
 
+
     /**
      * Remove generated files
      */
@@ -322,4 +364,49 @@ public class Compiler {
             //Remove as much as possible, ignore possible exceptions
         }
     }
+
+
+    // -------------------------------------- CompilerBuildListener Inner Class
+
+
+    protected static class CompilerBuildListener
+        implements BuildListener {
+
+        protected StringBuffer report = null;
+
+        public String getReport() {
+            return report.toString();
+        }
+
+        public void clear() {
+            report = new StringBuffer();
+        }
+
+        public void buildStarted(BuildEvent event) {
+        }
+
+        public void buildFinished(BuildEvent event) {
+        }
+
+        public void targetStarted(BuildEvent event) {
+        }
+
+        public void targetFinished(BuildEvent event) {
+        }
+
+        public void taskStarted(BuildEvent event) {
+        }
+
+        public void taskFinished(BuildEvent event) {
+        }
+
+        public void messageLogged(BuildEvent event) {
+            String line = event.getMessage();
+            report.append(line);
+            report.append("\n");
+        }
+
+    }
+
+
 }
