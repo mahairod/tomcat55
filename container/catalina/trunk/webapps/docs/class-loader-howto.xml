@@ -111,19 +111,29 @@ loaders as it is initialized:</p>
     are made visible through this
     class loader.  By default, that includes the following:
     <ul>
-    <li><em>jndi.jar</em> - The Java Naming and Directory Interface API
-        classes (loaded <strong>ONLY</strong> on a JDK 1.2 system, because they
-        are included automatically on JDK 1.3 and later).</li>
+    <li><em>ant.jar</em> - Apache Ant.</li>
+    <li><em>commons-collection.jar</em> - Jakarta commons collection.</li>
+    <li><em>commons-dbcp.jar</em> - Jakarta commons DBCP, providing a
+        JDBC connection pool to web applications.</li>
+    <li><em>commons-el.jar</em> - Jakarta commons el, implementing the 
+        expression language used by Jasper.</li>
+    <li><em>commons-logging-api.jar</em> - Jakarta commons logging API.</li>
+    <li><em>commons-pool.jar</em> - Jakarta commons pool.</li>
+    <li><em>jasper-compiler.jar</em> - The JSP 2.0 compiler.</li>
+    <li><em>jasper-runtime.jar</em> - The JSP 2.0 runtime.</li>
+    <li><em>jmx.jar</em> - The JMX 1.2 implementation.</li>
+    <li><em>jsp-api.jar</em> - The JSP 2.0 API.</li>
     <li><em>naming-common.jar</em> - The JNDI implementation used by Tomcat 5
         to represent in-memory naming contexts.</li>
+    <li><em>naming-factory.jar</em> - The JNDI implementation used by Tomcat 5
+        to resolve references to enterprise resources (EJB, connection 
+        pools).</li>
     <li><em>naming-resources.jar</em> - The specialized JNDI naming context
         implementation used to represent the static resources of a web
         application.</li>
-    <li><em>servlet.jar</em> - The Servlet and JSP API classes.</li>
+    <li><em>servlet-api.jar</em> - The Servlet and JSP API classes.</li>
     <li><em>xerces.jar</em> - The XML parser that is visible by default to
-        Tomcat internal classes and to web applications.  This can be
-        overridden, for a particular web application, by including your
-        desired parser in <code>/WEB-INF/lib</code>.</li>
+        Tomcat internal classes and to web applications.</li>
     </ul></li>
 <li><strong>Catalina</strong> - This class loader is initialized to include
     all classes and resources required to implement Tomcat 5 itself.  These
@@ -148,18 +158,11 @@ loaders as it is initialized:</p>
     <li><em>tomcat-coyote.jar</em> - Coyote connector for Tomcat 5.</li>
     <li><em>tomcat-http11.jar</em> - Standalone Java HTTP/1.1 
         connector.</li>
-    <li><em>tomcat-jk.jar</em> - Classes for the Java portion of the
-        <code>JK</code> web server connector, which allows Tomcat to
-        run behind web servers such as Apache and iPlanet iAS and iWS.</li>
     <li><em>tomcat-jk2.jar</em> - Classes for the Java portion of the
         <code>JK 2</code> web server connector, which allows Tomcat to
         run behind web servers such as Apache and iPlanet iAS and iWS.</li>
     <li><em>tomcat-util.jar</em> - Utility classes required by some
         Tomcat connectors.</li>
-    <li><em>tomcat-warp.jar</em> - Classes for the Java portion of the
-        <code>Webapp</code> web server connector, using the WARP protocol
-        which allows Tomcat to run behind the Apache HTTPD web server
-        (1.3 and 2.0).</li>
     </ul></li>
 <li><strong>Shared</strong> - This class loader is the place to put classes
     and resources that you wish to share across <strong>ALL</strong>
@@ -167,20 +170,11 @@ loaders as it is initialized:</p>
     in which case you should put them in the <strong>Common</strong>
     class loader instead).  All unpacked classes and resources in
     <code>$CATALINA_HOME/shared/classes</code>, as well as classes and
-    resources in JAR files under <code>$CATALINA_HOME/lib</code>, are
-    made visible through this class loader.  By default, that includes
-    the following:
-    <ul>
-    <li><em>jasper-compiler.jar</em> - The page compiler classes required
-        to convert JSP source pages into executable servlets and compile
-        them.</li>
-    <li><em>jasper-runtime.jar</em> - The runtime support classes required
-        to execute JSP pages that have already been translated into Java
-        servlets and then compiled.</li>
-    <li><em>naming-factory.jar</em> - JNDI object factories for resources
-        supported by the default JNDI naming context provided to web
-        applications.</li>
-    </ul></li>
+    resources in JAR files under <code>$CATALINA_HOME/shared/lib</code>, are
+    made visible through this class loader. If multiple Tomcat instances are
+    run from the same binary using the $CATALINA_BASE environment variable,
+    then this classloader repositories are relative to $CATALINA_BASE rather
+    than $CATALINA_HOME.</li>
 <li><strong>WebappX</strong> - A class loader is created for each web
     application that is deployed in a single Tomcat 5 instance.  All unpacked
     classes and resources in the <code>/WEB-INF/classes</code> directory of
@@ -195,8 +189,24 @@ default Java 2 delegation model (in accordance with the recommendations in the
 Servlet Specification, version 2.3, section 9.6).  When a request to load a
 class from the web application's <em>WebappX</em> class loader is processed,
 this class loader will look in the local repositories <strong>first</strong>,
-instead of delegating before looking.  All other class loaders in Tomcat 5
-follow the usual delegation pattern.</p>
+instead of delegating before looking.  There are exceptions. Classes which are
+part of the JRE base classes cannot be overriden. For some classes (such as
+the XML parser components in JDK 1.4+), the JDK 1.4 endorsed feature can be 
+used used 
+(see the common classloader definition above). In addition, for the following
+class patterns, the classloader will always delegate first 
+(and load the class itself if no parent classloader loads it):
+<ul>
+<li><em>javax.*</em></li>
+<li><em>org.xml.sax.*</em></li>
+<li><em>org.w3c.dom.*</em></li>
+<li><em>org.apache.commons.logging.*</em></li>
+<li><em>org.apache.xerces.*</em></li>
+<li><em>org.apache.xalan.*</em></li>
+</ul>
+Last, any JAR containing servlet API classes will be ignored by the 
+classloader.
+All other class loaders in Tomcat 5 follow the usual delegation pattern.</p>
 
 <p>Therefore, from the perspective of a web application, class or resource
 loading looks in the following repositories, in this order:</p>
