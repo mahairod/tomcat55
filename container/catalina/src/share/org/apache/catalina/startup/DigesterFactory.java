@@ -18,13 +18,10 @@
 package org.apache.catalina.startup;
 
 import java.net.URL;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.catalina.util.SchemaResolver;
 import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomcat.util.digester.RuleSet;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 
 /**
  * Wrapper class around the Digester that hide Digester's initialization details
