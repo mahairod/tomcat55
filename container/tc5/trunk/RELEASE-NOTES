@@ -86,6 +86,8 @@ to parse web.xml files and the server.xml configuration file.  If you wish,
 you may replace the "xercesImpl.jar" file in "common/endorsed" with another
 XML parser, as long as it is compatible with the JAXP 1.2 APIs.
 
+Xerces 2.5.0 is included.
+
 
 ---------------------------------------------------------------
 Web application reloading and static fields in shared libraries:
