@@ -34,11 +34,16 @@ import java.util.Iterator;
 import java.util.Stack;
 import java.util.TreeMap;
 
+import javax.management.ListenerNotFoundException;
+import javax.management.MBeanNotificationInfo;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
+import javax.management.NotificationEmitter;
+import javax.management.NotificationFilter;
+import javax.management.NotificationListener;
 import javax.management.ObjectName;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
@@ -104,7 +109,7 @@ import org.apache.tomcat.util.compat.JdkCompat;
 
 public class StandardContext
     extends ContainerBase
-    implements Context, Serializable
+    implements Context, Serializable, NotificationEmitter
 {
     private static transient Log log = LogFactory.getLog(StandardContext.class);
 
@@ -5120,6 +5125,85 @@ public class StandardContext
         init();
     }
 
+    /* Remove a JMX notficationListener 
+     * @see javax.management.NotificationEmitter#removeNotificationListener(javax.management.NotificationListener, javax.management.NotificationFilter, java.lang.Object)
+     */
+    public void removeNotificationListener(NotificationListener listener, 
+            NotificationFilter filter, Object object) throws ListenerNotFoundException {
+    	broadcaster.removeNotificationListener(listener,filter,object);
+    	
+    }
+    
+    private MBeanNotificationInfo[] notificationInfo;
+    
+    /* Get JMX Broadcaster Info
+     * @TODO use StringManager for international support!
+     * @TODO This two events we not send j2ee.state.failed and j2ee.attribute.changed!
+     * @see javax.management.NotificationBroadcaster#getNotificationInfo()
+     */
+    public MBeanNotificationInfo[] getNotificationInfo() {
+    	// FIXME: i18n
+    	if(notificationInfo == null) {
+    		notificationInfo = new MBeanNotificationInfo[]{
+    				new MBeanNotificationInfo(new String[] {
+    				"j2ee.object.created"},
+					Notification.class.getName(),
+					"web application is created"
+    				), 
+					new MBeanNotificationInfo(new String[] {
+					"j2ee.state.starting"},
+					Notification.class.getName(),
+					"change web application is starting"
+					),
+					new MBeanNotificationInfo(new String[] {
+					"j2ee.state.running"},
+					Notification.class.getName(),
+					"web application is running"
+					),
+					new MBeanNotificationInfo(new String[] {
+					"j2ee.state.stopped"},
+					Notification.class.getName(),
+					"web application start to stopped"
+					),
+					new MBeanNotificationInfo(new String[] {
+					"j2ee.object.stopped"},
+					Notification.class.getName(),
+					"web application is stopped"
+					),
+					new MBeanNotificationInfo(new String[] {
+					"j2ee.object.deleted"},
+					Notification.class.getName(),
+					"web application is deleted"
+					)
+    		};
+    		
+    	}
+    	
+    	return notificationInfo;
+    }
+    
+    
+    /* Add a JMX-NotificationListener
+     * @see javax.management.NotificationBroadcaster#addNotificationListener(javax.management.NotificationListener, javax.management.NotificationFilter, java.lang.Object)
+     */
+    public void addNotificationListener(NotificationListener listener, 
+            NotificationFilter filter, Object object) throws IllegalArgumentException {
+    	broadcaster.addNotificationListener(listener,filter,object);
+    	
+    }
+    
+    
+    /**
+     * Remove a JMX-NotificationListener 
+     * @see javax.management.NotificationBroadcaster#removeNotificationListener(javax.management.NotificationListener)
+     */
+    public void removeNotificationListener(NotificationListener listener) 
+    throws ListenerNotFoundException {
+    	broadcaster.removeNotificationListener(listener);
+    	
+    }
+    
+    
     // ------------------------------------------------------------- Attributes
 
 
