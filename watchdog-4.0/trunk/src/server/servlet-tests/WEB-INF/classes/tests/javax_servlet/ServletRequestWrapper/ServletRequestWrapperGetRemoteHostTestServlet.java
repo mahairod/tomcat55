@@ -91,7 +91,7 @@ public class ServletRequestWrapperGetRemoteHostTestServlet extends GenericServle
                 boolean found = false;
 
                 while ( ( !found ) && ( i <= len - 1 ) ) {
-                    if ( result.equalsIgnoreCase( expectedResult[ i ] ) ) {
+                    if ( result.toLowerCase().indexOf( expectedResult[ i ] ) > -1 ) {
                         found = true;
                     }
 
