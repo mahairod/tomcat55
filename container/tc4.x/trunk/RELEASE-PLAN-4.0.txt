@@ -52,8 +52,6 @@ Catalina    2883    Error page for 401 error code is not populated
 
 Catalina    3292    Class reloading fails (awaiting test case)
 
-Catalina    3443    Class reloading fails for servlets that use JNI
-
 Connectors  1788    mod_webapp errors on Win2k
 
 Connectors  2997    Webapp connector should recover when Tomcat is restarted
