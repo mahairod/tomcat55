@@ -430,6 +430,7 @@ implements org.apache.catalina.cluster.ClusterManager
                 log.error("Starting... no cluster associated with this context:"+getName());
                 return;
             }
+            cluster.addManager(getName(),this);
 
             if (cluster.getMembers().length > 0) {
                 Member mbr = cluster.getMembers()[0];
@@ -484,6 +485,7 @@ implements org.apache.catalina.cluster.ClusterManager
         //stop the javagroup channel
         try
         {
+            this.sessions.clear();
             cluster.removeManager(getName());
 //            mReplicationListener.stopListening();
 //            mReplicationTransmitter.stop();
