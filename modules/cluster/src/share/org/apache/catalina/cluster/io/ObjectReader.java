@@ -32,7 +32,6 @@ package org.apache.catalina.cluster.io;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.Selector;
 import java.nio.ByteBuffer;
-import java.io.IOException;
 import org.apache.catalina.cluster.io.XByteBuffer;
 public class ObjectReader
 {

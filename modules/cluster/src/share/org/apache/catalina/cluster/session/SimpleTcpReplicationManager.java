@@ -15,23 +15,15 @@
  */
 package org.apache.catalina.cluster.session;
 
-import java.io.*;
-import org.apache.catalina.Session;
-import org.apache.catalina.realm.GenericPrincipal;
+import java.io.IOException;
+
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.util.CustomObjectInputStream;
-import org.apache.catalina.cluster.io.ListenCallback;
-import org.apache.catalina.cluster.tcp.ReplicationListener;
-import org.apache.catalina.cluster.tcp.ReplicationTransmitter;
-import org.apache.catalina.cluster.tcp.IDataSender;
-import org.apache.catalina.cluster.tcp.SocketSender;
-import org.apache.catalina.cluster.Member;
+import org.apache.catalina.Session;
 import org.apache.catalina.cluster.CatalinaCluster;
+import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.SessionMessage;
+import org.apache.catalina.realm.GenericPrincipal;
 
-
-
-import java.net.InetAddress;
 /**
  * Title:        Tomcat Session Replication for Tomcat 4.0 <BR>
  * Description:  A very simple straight forward implementation of
@@ -135,7 +127,7 @@ implements org.apache.catalina.cluster.ClusterManager
     }
 
     public void setCluster(CatalinaCluster cluster) {
-        this.log.debug("Cluster associated with SimpleTcpReplicationManager");
+        log.debug("Cluster associated with SimpleTcpReplicationManager");
         this.cluster = cluster;
     }
 
@@ -448,7 +440,7 @@ implements org.apache.catalina.cluster.ClusterManager
                 boolean isTimeout=false;
                 do {
                     try {
-                        Thread.currentThread().sleep(100);
+                        Thread.sleep(100);
                     }catch ( Exception sleep) {}
                     reqNow = System.currentTimeMillis();
                     isTimeout=((reqNow-reqStart)>(1000*60));
