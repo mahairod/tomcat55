@@ -10,6 +10,21 @@
 
 <section name="News &amp; Status">
 
+<h3>25 January 2003 - Security update: Tomcat 3.3.1a Released</h3>
+<p>
+Tomcat 3.3.1a is available to address security vulnerabilities 
+present in Tomcat 3.3.1.  Refer to the Tomcat 3.3.1a download
+site for details on the vulnerabilities.  You may download new
+distribution files or replacement jars
+<a href="http://jakarta.apache.org/builds/jakarta-tomcat/release/v3.3.1a/">here</a>.
+</p>
+<p>
+The following Tomcat 4 versions have been verified to not have
+these vulnerabilities:  4.0.4, 4.0.6, 4.1.12, 4.1.18, and 4.1.19.
+</p>
+
+<hr size="1" noshade="noshade" />
+
 <h3>11 May 2002 - Tomcat 4.0.4 Beta 3 Released</h3>
 <p>
   The Tomcat Team is proud to announce the release of Tomcat 4.0.4 Beta 3.
