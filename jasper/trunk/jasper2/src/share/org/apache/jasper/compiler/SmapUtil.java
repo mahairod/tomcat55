@@ -591,9 +591,9 @@ public class SmapUtil {
             }
 
             String unqualifiedName = unqualify(mark.getFile());
-            smap.addFile(unqualifiedName);
+            smap.addFile(unqualifiedName, mark.getFile());
             smap.addLineData(mark.getLineNumber(),
-                          unqualifiedName,
+                          mark.getFile(),
                           inLineCount,
                           n.getBeginJavaLine(),
                           outIncrement);

@@ -185,7 +185,7 @@ public class SmapStratum {
      * @param fileName the filename to add, unqualified by path.
      */
     public void addFile(String filename) {
-	addFile(filename, null);
+	addFile(filename, filename);
     }
 
     /**
@@ -197,9 +197,8 @@ public class SmapStratum {
      *                 to a source compilation path
      */
     public synchronized void addFile(String filename, String filePath) {
-      // fix this to check if duplicate name exists.
-      int fileIndex = fileNameList.indexOf(filename);
-      if (fileIndex == -1) {
+      int pathIndex = filePathList.indexOf(filePath);
+      if (pathIndex == -1) {
         fileNameList.add(filename);
         filePathList.add(filePath);
       }
@@ -234,10 +233,7 @@ public class SmapStratum {
 				    int outputStartLine,
 				    int outputLineIncrement) {
 	// check the input - what are you doing here??
-//	int fileIndex = filePathList.indexOf(inputFileName);
-//	if (fileIndex == -1)
-//        fileNameList.indexOf(inputFileName);
-	int fileIndex = fileNameList.indexOf(inputFileName);
+	int fileIndex = filePathList.indexOf(inputFileName);
 	if (fileIndex == -1)					// still
 	    throw new IllegalArgumentException(
 		"inputFileName: " + inputFileName);
