@@ -72,7 +72,7 @@ package org.apache.catalina.logger;
  * @version $Revision$ $Date$
  */
 
-public final class SystemErrLogger
+public class SystemErrLogger
     extends LoggerBase {
 
 

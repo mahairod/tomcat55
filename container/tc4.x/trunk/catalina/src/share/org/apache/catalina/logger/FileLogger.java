@@ -87,7 +87,7 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision$ $Date$
  */
 
-public final class FileLogger
+public class FileLogger
     extends LoggerBase
     implements Lifecycle {
 

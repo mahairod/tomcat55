@@ -74,7 +74,7 @@ package org.apache.catalina.logger;
  * @version $Revision$ $Date$
  */
 
-public final class SystemOutLogger
+public class SystemOutLogger
     extends LoggerBase {
 
 
