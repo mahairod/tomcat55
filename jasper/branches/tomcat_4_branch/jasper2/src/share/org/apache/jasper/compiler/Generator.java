@@ -312,7 +312,10 @@ public class Generator {
      * release() method on every tag handler in any of the tag handler pools.
      */
     private void generateDestroy() {
-	out.printil("public void jspDestroy() {");
+	if (tagHandlerPoolNames.size() <= 0)
+            return;
+
+	out.printil("public void _jspDestroy() {");
 	out.pushIndent();
 	for (int i=0; i<tagHandlerPoolNames.size(); i++) {
 	    out.printin((String) tagHandlerPoolNames.elementAt(i));
