@@ -532,17 +532,15 @@
                                                            prepare-watchdog" >
  
     <parallel>
-        <java classname="LauncherBootstrap" fork="yes">
+       <java classname="LauncherBootstrap" fork="yes">
             <arg value="-launchfile"/>
             <arg value="catalina.xml"/>
             <arg value="-verbose"/>
             <arg value="catalina"/>
-            <arg value="-Dcatalina.base=${catalina.base}"/>
             <arg value="start"/>
-            <arg value="-security "/>
             <classpath>
                 <pathelement path="${java.class.path}"/>
-                <pathelement path="${tomcat.build}/bin"/>
+                <pathelement path="${catalina.build}/bin"/>
             </classpath>
         </java>
 
@@ -550,18 +548,17 @@
             <!-- Let tomcat starts before starting Watchdog -->
             <sleep seconds="60"/>
 
-            <ant dir="${watchdog.home}/dist" target="all"/>
+            <ant dir="${watchdog.home}/dist" target="${watchdog.target}"/>
 
             <java classname="LauncherBootstrap" fork="yes">
                 <arg value="-launchfile"/>
                 <arg value="catalina.xml"/>
                 <arg value="-verbose"/>
                 <arg value="catalina"/>
-                <arg value="-Dcatalina.base=${catalina.base}"/>
                 <arg value="stop"/>
                 <classpath>
                     <pathelement path="${java.class.path}"/>
-                    <pathelement path="${tomcat.build}/bin"/>
+                    <pathelement path="${catalina.build}/bin"/>
                 </classpath>
             </java>
         </sequential>
