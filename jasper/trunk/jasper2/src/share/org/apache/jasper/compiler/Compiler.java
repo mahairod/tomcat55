@@ -420,12 +420,13 @@ public class Compiler {
         if( checkClass ) {
             targetFile = new File(ctxt.getClassFileName());
         } else {
-            targetFile = new File( ctxt.getServletJavaFileName());
+            targetFile = new File(ctxt.getServletJavaFileName());
         }
         
         if (!targetFile.exists()) {
             return true;
         }
+
         targetLastModified = targetFile.lastModified();
         if (targetLastModified < jspRealLastModified) {
             if( log.isDebugEnabled() )
@@ -433,36 +434,18 @@ public class Compiler {
             return true;
         }
 
-/* XXX turn off derived dependencies for now
-        // determine if compile time includes have been changed
+        // determine if source dependent files (e.g. includes using include
+	// directives) have been changed.
         if( jsw==null ) {
             return false;
         }
-        Servlet servlet=null;
-        try {
-            servlet = jsw.getServlet();
-        } catch( ServletException ex1 ) {
-        } catch( IOException ex2 ) {
-        }
-        if (servlet == null) {
-            // System.out.println("Compiler: outdated, no servlet " + targetFile );
-            return true;
-        }
 
-        List includes = null;
-        // If the page contains a page directive with "extends" attribute
-        // it may not be an instance of HttpJspBase.
-        // For now only track dependencies on included files if this is not
-        // the case.  A more complete solution is to generate the servlet
-        // to implement (say) JspInlcudes which contains getIncludes method.
-        if (servlet instanceof HttpJspBase) {
-            includes = ((HttpJspBase)servlet).getIncludes();
-        }
-        if (includes == null) {
+        List depends = jsw.getDependants();
+        if (depends == null) {
             return false;
         }
 
-        Iterator it = includes.iterator();
+        Iterator it = depends.iterator();
         while (it.hasNext()) {
             String include = (String)it.next();
             try {
@@ -481,7 +464,6 @@ public class Compiler {
                 return true;
             }
         }
-*/
         return false;
 
     }

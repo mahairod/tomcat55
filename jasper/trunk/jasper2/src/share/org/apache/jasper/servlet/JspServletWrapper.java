@@ -83,7 +83,7 @@ import org.apache.jasper.Constants;
 import org.apache.jasper.Options;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.compiler.JspRuntimeContext;
-import org.apache.jasper.runtime.HttpJspBase;
+import org.apache.jasper.runtime.JspSourceDependent;
 import org.apache.jasper.logging.Logger;
 
 /**
@@ -113,6 +113,7 @@ public class JspServletWrapper {
     private long available = 0L;
     private ServletConfig config;
     private Options options;
+    private boolean isTagFile;
 
     /*
      * JspServletWrapper for JSP pages.
@@ -121,6 +122,7 @@ public class JspServletWrapper {
                       boolean isErrorPage, JspRuntimeContext rctxt)
             throws JasperException {
 
+	this.isTagFile = false;
         this.config = config;
         this.options = options;
         this.jspUri = jspUri;
@@ -139,6 +141,7 @@ public class JspServletWrapper {
 			     Hashtable tagFileJars)
             throws JasperException {
 
+	this.isTagFile = true;
         this.config = null;	// not used
         this.options = options;
 	this.jspUri = tagFilePath;
@@ -217,6 +220,28 @@ public class JspServletWrapper {
 	}
 
 	return tagHandlerClass;
+    }
+
+    /**
+     * Get a list of files that the current page has source dependency on.
+     */
+    public java.util.List getDependants() {
+	try {
+	    Object target;
+	    if (isTagFile) {
+                if (ctxt.isReload()) {
+                    tagHandlerClass = ctxt.load();
+                }
+		target = tagHandlerClass.newInstance();
+	    } else {
+		target = getServlet();
+	    }
+	    if (target != null && target instanceof JspSourceDependent) {
+		return ((JspSourceDependent) target).getDependants();
+	    }
+	} catch (Throwable ex) {
+	}
+	return null;
     }
 
     public void service(HttpServletRequest request, 

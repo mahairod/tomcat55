@@ -193,6 +193,11 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    }
 	    // Now parse the tld.
 	    parseTLD(ctxt, location[0], in, null);
+	    // Add the TLD to dependency list
+	    PageInfo pageInfo = ctxt.createCompiler().getPageInfo();
+	    if (pageInfo != null) {
+		pageInfo.addDependant(location[0]);
+	    }
 	} else {
 	    // Location points to a jar file
 	    // tag library in jar file

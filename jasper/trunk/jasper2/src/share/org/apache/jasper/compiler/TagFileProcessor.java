@@ -312,7 +312,7 @@ public class TagFileProcessor {
 
         Node.Nodes page = null;
 	try {
-	    page = pc.parse(tagfile);
+	    page = pc.parse(tagfile, null, true);
 	} catch (FileNotFoundException e) {
 	    pc.getCompiler().getErrorDispatcher().jspError(
                                         "jsp.error.file.not.found", tagfile);
@@ -364,15 +364,18 @@ public class TagFileProcessor {
     static class TagFileLoaderVisitor extends Node.Visitor {
 
 	private JspCompilationContext ctxt;
+	private PageInfo pageInfo;
 
-	TagFileLoaderVisitor(JspCompilationContext ctxt) {
+	TagFileLoaderVisitor(JspCompilationContext ctxt, PageInfo pageInfo) {
 	    this.ctxt = ctxt;
+	    this.pageInfo = pageInfo;
 	}
 
         public void visit(Node.CustomTag n) throws JasperException {
 	    TagFileInfo tagFileInfo = n.getTagFileInfo();
 	    if (tagFileInfo != null) {
 		String tagFilePath = tagFileInfo.getPath();
+		pageInfo.addDependant(tagFilePath);
 		Class c = loadTagFile(ctxt, tagFilePath, n.getTagInfo(),
 				      n.getTagData());
 		n.setTagHandlerClass(c);
@@ -384,7 +387,8 @@ public class TagFileProcessor {
 		throws JasperException {
 
 	JspCompilationContext ctxt = compiler.getCompilationContext();
-	page.visit(new TagFileLoaderVisitor(ctxt));
+	PageInfo pageInfo = compiler.getPageInfo();
+	page.visit(new TagFileLoaderVisitor(ctxt, pageInfo));
     }
 	
 }

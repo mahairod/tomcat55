@@ -142,16 +142,6 @@ public abstract class HttpJspBase
     public void jspDestroy() {
     }
 
-    /**
-     * Get the list of compile time included files used
-     * by the JSP file.
-     *
-     * Overridden by generated JSP java source files.
-     *
-     * @return List compile time includes
-     */
-    public abstract List getIncludes();
-
     public abstract void _jspService(HttpServletRequest request, 
 				     HttpServletResponse response) 
 	throws ServletException, IOException;

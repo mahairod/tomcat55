@@ -170,7 +170,6 @@ public class Generator {
 
 	out.println();
 	page.visit(new DeclarationVisitor());
-	out.println();
     }
 
     /**
@@ -360,25 +359,25 @@ public class Generator {
 
     /**
      * Generation of static initializers in preamble.
-     * For example, include list, el function map, prefix map.
+     * For example, dependant list, el function map, prefix map.
      * (shared by servlet and tag handler preamble generation)
      */
     private void genPreambleStaticInitializers() 
         throws JasperException
     {
-        // Static data for getIncludes()
-        out.printil("private static java.util.Vector _jspx_includes;");
+        // Static data for getDependants()
+        out.printil("private static java.util.Vector _jspx_dependants;");
         out.println();
-        List includes = pageInfo.getIncludes();
-        Iterator iter = includes.iterator();
-        if( !includes.isEmpty() ) {
+        List dependants = pageInfo.getDependants();
+        Iterator iter = dependants.iterator();
+        if( !dependants.isEmpty() ) {
             out.printil("static {");
             out.pushIndent();
-            out.printin("_jspx_includes = new java.util.Vector(");
-            out.print(""+includes.size());
+            out.printin("_jspx_dependants = new java.util.Vector(");
+            out.print(""+dependants.size());
             out.println(");");
             while (iter.hasNext()) {
-                out.printin("_jspx_includes.add(\"");
+                out.printin("_jspx_dependants.add(\"");
                 out.print((String)iter.next());
                 out.println("\");");
             }
@@ -423,10 +422,10 @@ public class Generator {
     private void genPreambleMethods() 
         throws JasperException
     {
-	// Method used to get compile time include file dependencies
-        out.printil("public java.util.List getIncludes() {");
+	// Method used to get compile time file dependencies
+        out.printil("public java.util.List getDependants() {");
         out.pushIndent();
-        out.printil("return _jspx_includes;");
+        out.printil("return _jspx_dependants;");
         out.popIndent();
         out.printil("}");
         out.println();
@@ -456,10 +455,12 @@ public class Generator {
 	out.printin("public class ");
 	out.print  (servletClassName);
 	out.print  (" extends ");
-	out.print  (pageInfo.getExtends());
+	out.println(pageInfo.getExtends());
+	out.printil("    implements javax.servlet.jsp.el.FunctionMapper, ");
+	out.printin("               org.apache.jasper.runtime.JspSourceDependent");
 	if (!pageInfo.isThreadSafe()) {
-	    out.print("implements SingleThreadModel, " +
-                "javax.servlet.jsp.el.FunctionMapper");
+	    out.println(",");
+	    out.printin("                 SingleThreadModel");
 	}
 	out.println(" {");
 	out.pushIndent();
@@ -628,6 +629,7 @@ public class Generator {
         out.printil( "    prefix + \":\" + localName );" );
         out.popIndent();
         out.printil( "}" );
+        out.println();
     }
 
 
@@ -2892,10 +2894,13 @@ public class Generator {
 	// Generate class declaration
 	out.printin("public class ");
 	out.print(tagInfo.getTagName());
-	out.print(" extends javax.servlet.jsp.tagext.SimpleTagSupport");
-	if (tagInfo.hasDynamicAttributes())
-	    out.print(" implements javax.servlet.jsp.tagext.DynamicAttributes, " +
-                "javax.servlet.jsp.el.FunctionMapper" );
+	out.println(" extends javax.servlet.jsp.tagext.SimpleTagSupport");
+	out.printil("    implements javax.servlet.jsp.el.FunctionMapper, ");
+	out.printin("               org.apache.jasper.runtime.JspSourceDependent");
+	if (tagInfo.hasDynamicAttributes()) {
+	    out.println(",");
+	    out.printin("                 javax.servlet.jsp.tagext.DynamicAttributes");
+	}
 	out.println(" {");
 	out.println();
 	out.pushIndent();

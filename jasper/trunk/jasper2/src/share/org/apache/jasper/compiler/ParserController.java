@@ -157,7 +157,7 @@ public class ParserController {
      */
     public Node.Nodes parse(String inFileName)
 	        throws FileNotFoundException, JasperException, IOException {
-	return parse(inFileName, null);
+	return parse(inFileName, null, false);
     }
 
     /**
@@ -167,13 +167,17 @@ public class ParserController {
      * @param inFileName The name of the jsp file to be parsed.
      * @param parent The node for the 'include' directive.
      */
-    public Node.Nodes parse(String inFileName, Node parent)
+    public Node.Nodes parse(String inFileName, Node parent, boolean isTagFile)
 	        throws FileNotFoundException, JasperException, IOException {
 
+	this.isTagFile = isTagFile;
 	Node.Nodes parsedPage = null;
 	String encoding = topFileEncoding;
         InputStreamReader reader = null;
 	String absFileName = resolveFileName(inFileName);
+	if (isTagFile) {
+	    isTopFile = true;
+	}
 
 	JarFile jarFile = (JarFile) ctxt.getTagFileJars().get(inFileName);
 
@@ -189,7 +193,7 @@ public class ParserController {
 		topFileEncoding = encoding;
 		isTopFile = false;
 	    } else {
-                compiler.getPageInfo().addInclude(absFileName);
+                compiler.getPageInfo().addDependant(absFileName);
             }
 	    try {
 		reader.close();
@@ -237,15 +241,7 @@ public class ParserController {
 	 throws JasperException
     {
 	newEncoding = null;
-
-	// FIXME: Actually we should know that we are compiling a tag file
-	// if we begin the compilation from either the tag file
-	// element in a tld OR tagdir attribute in a tag directive.
-        isTagFile = file.startsWith( "/WEB-INF/tags" ) ||
-                    file.startsWith( "/META-INF/tags" );
-
 	PageInfo pageInfo = compiler.getPageInfo();
-
 	boolean isXmlFound = false;
 	if (pageInfo.isXmlSpecified()) {
 	    // If <is-xml> is specified in a <jsp-property-group>, it is used.
