@@ -282,7 +282,7 @@ public class StandardHostDeployer implements Deployer {
 
         // Make sure contextPath and directory/war names match when
         // installing from the host appBase
-        if (isAppBase && (host.getAutoDeploy() || host.getLiveDeploy())) {
+        if (isAppBase && host.getAutoDeploy()) {
             String filename = contextFile.getName();
             if (isWAR) {
                 filename = filename.substring(0,filename.length()-4);
@@ -666,8 +666,9 @@ public class StandardHostDeployer implements Deployer {
                                        host.getAppBase());
                 File contextFile = new File(context.getDocBase());
                 File baseDir = contextFile.getParentFile();
-                if (appBase.getCanonicalPath().equals
-                    (baseDir.getCanonicalPath())) {
+                if ((baseDir == null) 
+                    || (appBase.getCanonicalPath().equals
+                        (baseDir.getCanonicalPath()))) {
                     isAppBase = true;
                 }
 
@@ -676,9 +677,8 @@ public class StandardHostDeployer implements Deployer {
                     isWAR = true;
                 }
                 // Only remove directory and/or war if they are located in the
-                // Host's appBase and autoDeploy or liveDeploy are true
-                if (isAppBase && 
-                    (host.getAutoDeploy() || host.getLiveDeploy())) {
+                // Host's appBase autoDeploy is true
+                if (isAppBase && host.getAutoDeploy()) {
                     String filename = contextFile.getName();
                     if (isWAR) {
                         filename = filename.substring(0,filename.length()-4);
