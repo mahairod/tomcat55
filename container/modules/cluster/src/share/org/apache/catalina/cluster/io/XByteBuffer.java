@@ -381,7 +381,7 @@ public class XByteBuffer
        log.info("Nr of packages="+s);
        while ( s > 0 ) {
            d = b.extractPackage(true);
-           System.out.print("Package d1=");
+           log.info("Package d1=");
            printBuf(d);
            s--;
        }//while
