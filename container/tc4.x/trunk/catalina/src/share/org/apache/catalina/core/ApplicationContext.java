@@ -172,8 +172,8 @@ public class ApplicationContext
         }
 
         public Object run() throws Exception {
-            return new URL("jndi", null, 0, "/" + host + "/" + path,
-                   new DirContextURLStreamHandler(resources));
+            return new URL("jndi", null, 0, getJNDIUri(host, path),
+                           new DirContextURLStreamHandler(resources));
         }
     }
 
@@ -640,9 +640,9 @@ public class ApplicationContext
                         throw pe.getException();
                     }
                 } else {
-                    return new URL("jndi", null, 0,
-                                   "/" + hostName + "/" + fullPath,
-                                   new DirContextURLStreamHandler(resources));
+                    return new URL
+                        ("jndi", null, 0, getJNDIUri(hostName, fullPath),
+                         new DirContextURLStreamHandler(resources));
                 }
             } catch (Exception e) {
                 //e.printStackTrace();
@@ -1073,6 +1073,17 @@ public class ApplicationContext
             set.add(childPath.toString());
         }
 
+    }
+
+
+    /**
+     * Get full path, based on the host name and the context path.
+     */
+    public static String getJNDIUri(String hostName, String path) {
+        if (!path.startsWith("/"))
+            return "/" + hostName + "/" + path;
+        else
+            return "/" + hostName + path;
     }
 
 
