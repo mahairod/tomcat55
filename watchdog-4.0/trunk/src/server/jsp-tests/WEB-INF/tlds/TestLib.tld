@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE taglib
         PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
-        "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_2.dtd">
+        "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
 
 <!-- a tab library descriptor -->
 
 <taglib>
   <!-- after this the default space is
-	"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_2.dtd"
+	"http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd"
    -->
 
   <tlib-version>1.0</tlib-version>
@@ -96,67 +96,6 @@
     </attribute>
   </tag>
 
-  <!-- define an object -->
-  <tag>
-    <name>define</name>
-    <tag-class>tags.Define</tag-class>
-    <tei-class>tags.DefineExtraInfo</tei-class>
-    <description>
-      required arguments:
-	the id of the Integer that will be defined.
-	the scope where it will be recorded
-	the life of the scripting variable that will be introduced
-      optional arguments:
-        whether to declare the variable
-	value after start tag
-	value after end tag
-	value before first BODY evaluation
-	increment value after each BODY evaluation
-	count of how many iterations to do
-    </description>
-
-    <!-- mandatory attributes -->
-    <attribute>
-      <name>id</name>
-      <required>true</required>
-    </attribute>
-    <attribute>
-      <name>scope</name>
-      <required>true</required>
-    </attribute>
-    <attribute>
-      <name>life</name>
-      <required>true</required>
-    </attribute>
-
-    <!-- optional attributes -->
-    <attribute>
-      <name>declare</name>
-      <required>false</required>
-    </attribute>
-    <attribute>
-      <name>startValue</name>
-      <required>false</required>
-    </attribute>
-    <attribute>
-      <name>endValue</name>
-      <required>false</required>
-    </attribute>
-    <attribute>
-      <name>initBodyValue</name>
-      <required>false</required>
-    </attribute>
-    <attribute>
-      <name>afterBodyIncrement</name>
-      <required>false</required>
-    </attribute>
-    <attribute>
-      <name>iterationCount</name>
-      <required>false</required>
-    </attribute>
-  </tag>
-
-
   <!-- aTag is a simple Tag that does not extend TagSupport -->
   <tag>
     <name>aTag</name>
@@ -223,7 +162,7 @@
 
 <tag>
     <name>default</name>
-    <tag-class>tags.TagSupport.defaultReturnValues</tag-class>
+    <tag-class>tags.TagSupport.DefaultReturnValues</tag-class>
     <description>
         A simple tag that prints te default return values 
         as returned from TagSupport class
@@ -269,7 +208,7 @@
 
 <tag>
     <name>firstWinner</name>
-    <tag-class>tags.TagSupport.firstPrizeTag</tag-class>
+    <tag-class>tags.TagSupport.FirstPrizeTag</tag-class>
     <description>
     A tag that sets the First prize winner and also returns it to a 
     nested tag  
@@ -282,7 +221,7 @@
 
 <tag>
     <name>secondWinner</name>
-    <tag-class>tags.TagSupport.secondPrizeTag</tag-class>
+    <tag-class>tags.TagSupport.SecondPrizeTag</tag-class>
     <description>
     A tag that sets the second prize winner and also returns it to a   
     nested tag
@@ -292,5 +231,9 @@
       <required>true</required>
     </attribute>
 </tag>
+
+
+
+
 
 </taglib>
