@@ -64,9 +64,6 @@ set _LIBJARS=
 for %%i in (%CATALINA_HOME%\lib\*.jar) do call %CATALINA_HOME%\bin\cpappend.bat %%i
 if not "%_LIBJARS%" == "" goto gotLibJars
 echo Unable to set CLASSPATH dynamically.
-if "%OS%" == "Windows_NT" goto staticClasspath
-echo NOTE: To set CLASSPATH dynamically on Win9x systems
-echo       only DOS 8.3 names may be used in CATALINA_HOME!
 goto staticClasspath
 
 :gotLibJars
