@@ -117,6 +117,11 @@ public interface Options {
     public String getCompiler();
 
     /**
+     * The compiler target VM, e.g. 1.1, 1.2, 1.3, or 1.4.
+     */
+    public String getCompilerTargetVM();
+
+    /**
      * The cache for the location of the TLD's
      * for the various tag libraries 'exposed'
      * by the web application.

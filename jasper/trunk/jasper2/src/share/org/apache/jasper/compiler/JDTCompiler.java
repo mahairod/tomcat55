@@ -275,10 +275,35 @@ public class JDTCompiler extends org.apache.jasper.compiler.Compiler {
             settings.put(CompilerOptions.OPTION_Source,
                          CompilerOptions.VERSION_1_4);
         }
+
+        /* Use target attribute from Options instead
         if (target14) {
             settings.put(CompilerOptions.OPTION_TargetPlatform,
                          CompilerOptions.VERSION_1_4);
         }
+        */
+        if(ctxt.getOptions().getCompilerTargetVM() != null) {
+            String opt = ctxt.getOptions().getCompilerTargetVM();
+            if(opt.equals("1.1")) {
+                settings.put(CompilerOptions.OPTION_TargetPlatform,
+                             CompilerOptions.VERSION_1_1);
+            } else if(opt.equals("1.2")) {
+                settings.put(CompilerOptions.OPTION_TargetPlatform,
+                             CompilerOptions.VERSION_1_2);
+            } else if(opt.equals("1.3")) { 
+                settings.put(CompilerOptions.OPTION_TargetPlatform,
+                             CompilerOptions.VERSION_1_3);
+            } else if(opt.equals("1.4")) {
+                settings.put(CompilerOptions.OPTION_TargetPlatform,
+                             CompilerOptions.VERSION_1_4);
+            } else if(opt.equals("1.5")) {
+                settings.put(CompilerOptions.OPTION_TargetPlatform,
+                             CompilerOptions.VERSION_1_5);
+            } else {
+                log.warn("Unknown target VM " + opt + " ignored.");
+            }
+        }
+
         final IProblemFactory problemFactory = 
             new DefaultProblemFactory(Locale.getDefault());
         
