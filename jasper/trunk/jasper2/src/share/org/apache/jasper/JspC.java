@@ -513,6 +513,21 @@ public class JspC implements Options {
         }
     }
 
+    /*
+     * Parses comma-separated list of JSP files to be processed.
+     *
+     * <p>Each file is interpreted relative to uriroot, unless it is absolute,
+     * in which case it must start with uriroot.
+     *
+     * @param jspFiles Comma-separated list of JSP files to be processed
+     */
+    public void setJspFiles(String jspFiles) {
+        StringTokenizer tok = new StringTokenizer(jspFiles, " ,");
+        while (tok.hasMoreTokens()) {
+            pages.addElement(tok.nextToken());
+        }
+    }
+
     public void setCompile( boolean b ) {
         compile=b;
     }
@@ -843,18 +858,20 @@ public class JspC implements Options {
                 locateUriRoot( firstJspF );
             }
 
-            if( context==null )
-                initServletContext();
-
-            // No explicit page, we'll process all .jsp in the webapp
-            if (pages.size() == 0) {
-                scanFiles( new File( uriRoot ));
-            }
-
             if (uriRoot == null) {
                 throw new JasperException(
                     Localizer.getMessage("jsp.error.jspc.no_uriroot"));
             }
+
+            if( context==null ) {
+                initServletContext();
+            }
+
+            // No explicit pages, we'll process all .jsp in the webapp
+            if (pages.size() == 0) {
+                scanFiles( new File( uriRoot ));
+            }
+
             File uriRootF = new File(uriRoot);
             if (!uriRootF.exists() || !uriRootF.isDirectory()) {
                 throw new JasperException(
@@ -867,6 +884,9 @@ public class JspC implements Options {
             while (e.hasMoreElements()) {
                 String nextjsp = e.nextElement().toString();
                 File fjsp = new File(nextjsp);
+                if (!fjsp.isAbsolute()) {
+                    fjsp = new File(uriRootF, nextjsp);
+                }
                 if (!fjsp.exists()) {
                     if (log.isWarnEnabled()) {
                         log.warn
@@ -1116,4 +1136,5 @@ public class JspC implements Options {
             // pass straight through
         }
     }
+
 }
