@@ -855,7 +855,7 @@ public class GTest extends Task {
                 if ( debug > 0 ) {
                     System.out.println( " REQUEST HEADER: Content-Length: " + length );
                 }
-                pw.println( "Content-Length: " + content.length() );
+                pw.println( "Content-Length: " + length );
             }
 
             if ( request.indexOf( "HTTP/1." ) > -1 )
