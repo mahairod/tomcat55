@@ -106,8 +106,9 @@ public class TagFileProcessor {
 
         private static final JspUtil.ValidAttribute[] tagDirectiveAttrs = {
             new JspUtil.ValidAttribute("name"),
-            new JspUtil.ValidAttribute("dispaly-name"),
+            new JspUtil.ValidAttribute("display-name"),
             new JspUtil.ValidAttribute("body-content"),
+            new JspUtil.ValidAttribute("dynamic-attributes"),
             new JspUtil.ValidAttribute("small-icon"),
             new JspUtil.ValidAttribute("large-icon"),
             new JspUtil.ValidAttribute("description"),
