@@ -307,14 +307,15 @@
                  ignored in both cases.
                maxActiveSessions: If 0 or greater, having too many active 
                  sessions will result in some being swapped out. minIdleSwap
-                 limits this. -1 means unlimited sessions are allowed.
-                 0 means sessions will almost always be swapped out after
-                 use - this will be noticeably slow for your users.
+                 limits this. -1 or 0 means unlimited sessions are allowed.
+                 If it is not possible to swap sessions new sessions will
+                 be rejected.
+                 This avoids thrashing when the site is highly active.
                minIdleSwap: Sessions must be idle for at least this long
                  (in seconds) before they will be swapped out due to 
-               maxActiveSessions. This avoids thrashing when the site is 
-                 highly active. -1 or 0 means there is no minimum - sessions
-                 can be swapped out at any time.
+                 activity.
+                 0 means sessions will almost always be swapped out after
+                 use - this will be noticeably slow for your users.
                maxIdleSwap: Sessions will be swapped out if idle for this
                  long (in seconds). If minIdleSwap is higher, then it will
                  override this. This isn't exact: it is checked periodically.
