@@ -104,11 +104,11 @@ regexp.loc=http://jakarta.apache.org/builds/jakarta-regexp/release/v1.2/jakarta-
 
 
 # ----- Xerces XML Parser, version 2.1.0 or later -----
-xerces.home=${base.path}/xerces-2_1_0
+xerces.home=${base.path}/xerces-2_2_0
 xerces.lib=${xerces.home}
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
-xerces.loc=http://xml.apache.org/dist/xerces-j/Xerces-J-bin.2.1.0.tar.gz
+xerces.loc=http://xml.apache.org/dist/xerces-j/Xerces-J-bin.2.2.0.tar.gz
 
 
 # --------------------------------------------------
