@@ -549,7 +549,7 @@ public class HostConfig
     protected void deployDescriptor(String contextPath, File contextXml, String file) {
         DeployedApplication deployedApp = new DeployedApplication(contextPath);
         
-        if (deployed.containsKey(contextPath))
+        if (deploymentExists(contextPath))
             return;
 
         // Assume this is a configuration descriptor and deploy it
@@ -680,9 +680,11 @@ public class HostConfig
      * @param file
      */
     protected void deployWAR(String contextPath, File dir, String file) {
-        if (deployed.containsKey(contextPath))
+        
+        if (deploymentExists(contextPath))
             return;
-       // Checking for a nested /META-INF/context.xml
+        
+        // Checking for a nested /META-INF/context.xml
         JarFile jar = null;
         JarEntry entry = null;
         InputStream istream = null;
@@ -857,7 +859,7 @@ public class HostConfig
     protected void deployDirectory(String contextPath, File dir, String file) {
         DeployedApplication deployedApp = new DeployedApplication(contextPath);
         
-        if (deployed.containsKey(contextPath))
+        if (deploymentExists(contextPath))
             return;
 
         // Deploy the application in this directory
@@ -888,6 +890,16 @@ public class HostConfig
         deployed.put(contextPath, deployedApp);
     }
 
+    
+    /**
+     * Check if a webapp is already deployed in this host.
+     * 
+     * @param contextPath of the context which will be checked
+     */
+    protected boolean deploymentExists(String contextPath) {
+        return (deployed.containsKey(contextPath) || (host.findChild(contextPath) != null));
+    }
+    
 
     /**
      * Add watched resources to the specified Context.
