@@ -75,6 +75,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Server;
+import org.apache.catalina.core.StandardServer;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
 import org.apache.tomcat.util.log.SystemLogHandler;
