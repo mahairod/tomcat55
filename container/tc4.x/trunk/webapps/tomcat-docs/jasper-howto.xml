@@ -169,7 +169,9 @@ Jikes</a> to compile JSP pages:
 <li>Download and install jikes.</li>
 <li>Set the init parameter <code>compiler</code> to <code>jikes</code>.</li>
 <li>Define the property <code>-Dbuild.compiler.emacs=true</code> when starting
-Tomcat.</li>
+Tomcat by adding it to your <code>CATALINA_OPTS</code> environment variable.
+This changes how jikes outputs error messages so that it is compatible with
+Jasper.</li>
 <li>If you get an error reporting that jikes can't use UTF8 encoding, try
 setting the init parameter <code>javaEncoding</code> to
 <code>ISO-8859-1</code>.</li>
