@@ -384,8 +384,9 @@ as "secure". To create a CSR follow these steps:</p>
 	-keystore &lt;your_keystore_filename&gt;</source>
 </li>
 </ul>
-<p>Now you have a file called <code>certreq.csr</code> that you can submit to the Certificate Authority (look at the
-documenation of the Certificate Authority website on how to do this). In return you get a Certificate.</p>
+<p>Now you have a file called <code>certreq.csr</code>. The file is encoded in PEM format.
+You can submit it to the Certificate Authority (look at the
+documentation of the Certificate Authority website on how to do this). In return you get a Certificate.</p>
 </subsection>
 
 <subsection name="Importing the Certificate">
@@ -403,7 +404,7 @@ After that you can procede with importing your Certificate.</p>
     <source>keytool -import -alias root -keystore &lt;your_keystore_filename&gt; \
 	-trustcacerts -file &lt;filename_of_the_chain_certificate&gt;</source>
 </li>
-<li>And finally import your new Certificate
+<li>And finally import your new Certificate (It must be in X509 format):
 	<source>keytool -import -alias tomcat -keystore &lt;your_keystore_filename&gt; \
 	-trustcacerts -file &lt;your_certificate_filename&gt;</source>
 </li>
