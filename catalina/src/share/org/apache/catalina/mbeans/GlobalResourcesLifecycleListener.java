@@ -65,25 +65,22 @@ package org.apache.catalina.mbeans;
 
 
 import java.util.Iterator;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.OperationNotSupportedException;
 import org.apache.catalina.Group;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Role;
-import org.apache.catalina.Server;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
-import org.apache.catalina.core.StandardServer;
-import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -98,7 +95,7 @@ import org.apache.commons.modeler.Registry;
 
 public class GlobalResourcesLifecycleListener
     implements LifecycleListener {
-
+    private static Log log = LogFactory.getLog(GlobalResourcesLifecycleListener.class);
 
     // ----------------------------------------------------- Instance Variables
 
@@ -166,7 +163,7 @@ public class GlobalResourcesLifecycleListener
         try {
             context = (Context) (new InitialContext()).lookup("java:/");
         } catch (NamingException e) {
-            log("No global naming context defined for server");
+            log.error("No global naming context defined for server");
             return;
         }
 
@@ -174,7 +171,7 @@ public class GlobalResourcesLifecycleListener
         try {
             createMBeans("", context);
         } catch (NamingException e) {
-            log("Exception processing Global JNDI Resources", e);
+            log.error("Exception processing Global JNDI Resources", e);
         }
 
     }
@@ -193,28 +190,34 @@ public class GlobalResourcesLifecycleListener
         throws NamingException {
 
         if (debug >= 1) {
-            log("Creating MBeans for Global JNDI Resources in Context '" +
+            log.debug("Creating MBeans for Global JNDI Resources in Context '" +
                 prefix + "'");
         }
 
-        NamingEnumeration bindings = context.listBindings("");
-        while (bindings.hasMore()) {
-            Binding binding = (Binding) bindings.next();
-            String name = prefix + binding.getName();
-            Object value = context.lookup(binding.getName());
-            if (debug >= 2) {
-                log("Checking resource " + name);
-            }
-            if (value instanceof Context) {
-                createMBeans(name + "/", (Context) value);
-            } else if (value instanceof UserDatabase) {
-                try {
-                    createMBeans(name, (UserDatabase) value);
-                } catch (Exception e) {
-                    log("Exception creating UserDatabase MBeans for " + name,
-                        e);
+        try {
+            NamingEnumeration bindings = context.listBindings("");
+            while (bindings.hasMore()) {
+                Binding binding = (Binding) bindings.next();
+                String name = prefix + binding.getName();
+                Object value = context.lookup(binding.getName());
+                if (debug >= 2) {
+                    log.debug("Checking resource " + name);
+                }
+                if (value instanceof Context) {
+                    createMBeans(name + "/", (Context) value);
+                } else if (value instanceof UserDatabase) {
+                    try {
+                        createMBeans(name, (UserDatabase) value);
+                    } catch (Exception e) {
+                        log.error("Exception creating UserDatabase MBeans for " + name,
+                                e);
+                    }
                 }
             }
+        } catch( RuntimeException ex) {
+            log.error("RuntimeException " + ex);
+        } catch( OperationNotSupportedException ex) {
+            log.error("Operation not supported " + ex);
         }
 
     }
@@ -233,8 +236,8 @@ public class GlobalResourcesLifecycleListener
 
         // Create the MBean for the UserDatabase itself
         if (debug >= 2) {
-            log("Creating UserDatabase MBeans for resource " + name);
-            log("Database=" + database);
+            log.debug("Creating UserDatabase MBeans for resource " + name);
+            log.debug("Database=" + database);
         }
         if (MBeanUtils.createMBean(database) == null) {
             throw new IllegalArgumentException
@@ -246,7 +249,7 @@ public class GlobalResourcesLifecycleListener
         while (roles.hasNext()) {
             Role role = (Role) roles.next();
             if (debug >= 3) {
-                log("  Creating Role MBean for role " + role);
+                log.error("  Creating Role MBean for role " + role);
             }
             if (MBeanUtils.createMBean(role) == null) {
                 throw new IllegalArgumentException
@@ -259,7 +262,7 @@ public class GlobalResourcesLifecycleListener
         while (groups.hasNext()) {
             Group group = (Group) groups.next();
             if (debug >= 3) {
-                log("  Creating Group MBean for group " + group);
+                log.debug("  Creating Group MBean for group " + group);
             }
             if (MBeanUtils.createMBean(group) == null) {
                 throw new IllegalArgumentException
@@ -272,7 +275,7 @@ public class GlobalResourcesLifecycleListener
         while (users.hasNext()) {
             User user = (User) users.next();
             if (debug >= 3) {
-                log("  Creating User MBean for user " + user);
+                log.debug("  Creating User MBean for user " + user);
             }
             if (MBeanUtils.createMBean(user) == null) {
                 throw new IllegalArgumentException
@@ -289,18 +292,10 @@ public class GlobalResourcesLifecycleListener
     protected void destroyMBeans() {
 
         if (debug >= 1) {
-            log("Destroying MBeans for Global JNDI Resources");
+            log.debug("Destroying MBeans for Global JNDI Resources");
         }
 
     }
-
-
-
-    /**
-     * The destination for log messages.
-     */
-    protected java.io.PrintStream  stream = System.out;
-
 
     /**
      * Log a message.
@@ -308,21 +303,7 @@ public class GlobalResourcesLifecycleListener
      * @param message The message to be logged
      */
     protected void log(String message) {
-
-        /*
-        if (stream == System.out) {
-            try {
-                stream = new java.io.PrintStream
-                             (new java.io.FileOutputStream("grll.log"));
-            } catch (Throwable t) {
-                ;
-            }
-        }
-        */
-
-        stream.print("GlobalResourcesLifecycleListener: ");
-        stream.println(message);
-
+        log.info(message);
     }
 
 
@@ -333,10 +314,7 @@ public class GlobalResourcesLifecycleListener
      * @param throwable The exception to be logged
      */
     protected void log(String message, Throwable throwable) {
-
-        log(message);
-        throwable.printStackTrace(stream);
-
+        log.info(message, throwable);
     }
 
 
