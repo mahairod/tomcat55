@@ -640,12 +640,13 @@ class JspDocumentParser
             tagDependentNesting--;
         }
 
+        if (scriptlessBodyNode != null
+                && current.equals(scriptlessBodyNode)) {
+            scriptlessBodyNode = null;
+        }
+
         if (current.getParent() != null) {
             current = current.getParent();
-            if (scriptlessBodyNode != null
-                    && current.equals(scriptlessBodyNode)) {
-                scriptlessBodyNode = null;
-            }
         }
     }
 
