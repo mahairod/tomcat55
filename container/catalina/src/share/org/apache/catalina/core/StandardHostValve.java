@@ -66,16 +66,28 @@ package org.apache.catalina.core;
 
 
 import java.io.IOException;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
+import org.apache.catalina.HttpRequest;
+import org.apache.catalina.HttpResponse;
+import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Session;
 import org.apache.catalina.ValveContext;
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.ClientAbortException;
+import org.apache.catalina.deploy.ErrorPage;
+import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 
@@ -176,6 +188,307 @@ final class StandardHostValve
         // Ask this Context to process this request
         context.getPipeline().invoke(request, response);
 
+        // Error page processing
+        response.setSuspended(false);
+
+        Throwable t = (Throwable) hreq.getAttribute(Globals.EXCEPTION_ATTR);
+
+        if (t != null) {
+            throwable(request, response, t);
+        } else {
+            status(request, response);
+        }
+
     }
+
+
+    // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Handle the specified Throwable encountered while processing
+     * the specified Request to produce the specified Response.  Any
+     * exceptions that occur during generation of the exception report are
+     * logged and swallowed.
+     *
+     * @param request The request being processed
+     * @param response The response being generated
+     * @param exception The exception that occurred (which possibly wraps
+     *  a root cause exception
+     */
+    protected void throwable(Request request, Response response,
+                             Throwable throwable) {
+        Context context = request.getContext();
+        if (context == null)
+            return;
+        
+        Throwable realError = throwable;
+        
+        if (realError instanceof ServletException) {
+            realError = ((ServletException) realError).getRootCause();
+            if (realError == null) {
+                realError = throwable;
+            }
+        } 
+
+        // If this is an aborted request from a client just log it and return
+        if (realError instanceof ClientAbortException ) {
+            log(sm.getString(
+                "errorDispatcherValve.clientAbort",
+                ((ClientAbortException)realError).getThrowable().getMessage()));
+            return;
+        }
+
+        ErrorPage errorPage = findErrorPage(context, realError);
+
+        if (errorPage != null) {
+            response.setAppCommitted(false);
+            ServletRequest sreq = request.getRequest();
+            ServletResponse sresp = response.getResponse();
+            sreq.setAttribute
+                (ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR,
+                 errorPage.getLocation());
+            sreq.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
+                              new Integer(ApplicationFilterFactory.ERROR));
+            sreq.setAttribute
+                (Globals.STATUS_CODE_ATTR,
+                 new Integer(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
+            sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
+                              throwable.getMessage());
+            sreq.setAttribute(Globals.EXCEPTION_ATTR,
+                              realError);
+            Wrapper wrapper = request.getWrapper();
+            if (wrapper != null)
+                sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
+                                  wrapper.getName());
+            if (sreq instanceof HttpServletRequest)
+                sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
+                                  ((HttpServletRequest) sreq).getRequestURI());
+            sreq.setAttribute(Globals.EXCEPTION_TYPE_ATTR,
+                              realError.getClass());
+            if (custom(request, response, errorPage)) {
+                try {
+                    sresp.flushBuffer();
+                } catch (IOException e) {
+                    log("Exception Processing " + errorPage, e);
+                }
+            }
+        } else {
+            // A custom error-page has not been defined for the exception
+            // that was thrown during request processing. Check if an
+            // error-page for error code 500 was specified and if so, 
+            // send that page back as the response.
+            ServletResponse sresp = (ServletResponse) response;
+            if (sresp instanceof HttpServletResponse) {
+                ((HttpServletResponse) sresp).setStatus(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                // The response is an error
+                response.setError();
+
+                status(request, response);
+            }
+        }
+            
+
+    }
+
+
+    /**
+     * Handle the HTTP status code (and corresponding message) generated
+     * while processing the specified Request to produce the specified
+     * Response.  Any exceptions that occur during generation of the error
+     * report are logged and swallowed.
+     *
+     * @param request The request being processed
+     * @param response The response being generated
+     */
+    protected void status(Request request, Response response) {
+
+        // Do nothing on non-HTTP responses
+        if (!(response instanceof HttpResponse))
+            return;
+        HttpResponse hresponse = (HttpResponse) response;
+        if (!(response.getResponse() instanceof HttpServletResponse))
+            return;
+        int statusCode = hresponse.getStatus();
+        String message = RequestUtil.filter(hresponse.getMessage());
+        if (message == null)
+            message = "";
+
+        // Handle a custom error page for this status code
+        Context context = request.getContext();
+        if (context == null)
+            return;
+
+        ErrorPage errorPage = context.findErrorPage(statusCode);
+        if (errorPage != null) {
+            response.setAppCommitted(false);
+            ServletRequest sreq = request.getRequest();
+            ServletResponse sresp = response.getResponse();
+            sreq.setAttribute(Globals.STATUS_CODE_ATTR,
+                              new Integer(statusCode));
+            sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR, message);
+            sreq.setAttribute
+                (ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR,
+                 errorPage.getLocation());
+            sreq.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
+                              new Integer(ApplicationFilterFactory.ERROR));
+            
+             
+            Wrapper wrapper = request.getWrapper();
+            if (wrapper != null)
+                sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
+                                  wrapper.getName());
+            if (sreq instanceof HttpServletRequest)
+                sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
+                                  ((HttpServletRequest) sreq).getRequestURI());
+            if (custom(request, response, errorPage)) {
+                try {
+                    sresp.flushBuffer();
+                } catch (IOException e) {
+                    log("Exception Processing " + errorPage, e);
+                }
+            }
+        }
+
+    }
+
+
+    /**
+     * Find and return the ErrorPage instance for the specified exception's
+     * class, or an ErrorPage instance for the closest superclass for which
+     * there is such a definition.  If no associated ErrorPage instance is
+     * found, return <code>null</code>.
+     *
+     * @param context The Context in which to search
+     * @param exception The exception for which to find an ErrorPage
+     */
+    protected static ErrorPage findErrorPage
+        (Context context, Throwable exception) {
+
+        if (exception == null)
+            return (null);
+        Class clazz = exception.getClass();
+        String name = clazz.getName();
+        while (!"java.lang.Object".equals(clazz)) {
+            ErrorPage errorPage = context.findErrorPage(name);
+            if (errorPage != null)
+                return (errorPage);
+            clazz = clazz.getSuperclass();
+            if (clazz == null)
+                break;
+            name = clazz.getName();
+        }
+        return (null);
+
+    }
+
+
+    /**
+     * Handle an HTTP status code or Java exception by forwarding control
+     * to the location included in the specified errorPage object.  It is
+     * assumed that the caller has already recorded any request attributes
+     * that are to be forwarded to this page.  Return <code>true</code> if
+     * we successfully utilized the specified error page location, or
+     * <code>false</code> if the default error report should be rendered.
+     *
+     * @param request The request being processed
+     * @param response The response being generated
+     * @param errorPage The errorPage directive we are obeying
+     */
+    protected boolean custom(Request request, Response response,
+                             ErrorPage errorPage) {
+
+        if (debug >= 1)
+            log("Processing " + errorPage);
+
+        // Validate our current environment
+        if (!(request instanceof HttpRequest)) {
+            if (debug >= 1)
+                log(" Not processing an HTTP request --> default handling");
+            return (false);     // NOTE - Nothing we can do generically
+        }
+        HttpServletRequest hreq =
+            (HttpServletRequest) request.getRequest();
+        if (!(response instanceof HttpResponse)) {
+            if (debug >= 1)
+                log("Not processing an HTTP response --> default handling");
+            return (false);     // NOTE - Nothing we can do generically
+        }
+        HttpServletResponse hres =
+            (HttpServletResponse) response.getResponse();
+        
+        ((HttpRequest) request).setPathInfo(errorPage.getLocation());
+
+        try {
+
+            // Reset the response if possible (else IllegalStateException)
+            //hres.reset();
+            // Reset the response (keeping the real error code and message)
+            Integer statusCodeObj =
+                (Integer) hreq.getAttribute(Globals.STATUS_CODE_ATTR);
+            int statusCode = statusCodeObj.intValue();
+            String message = 
+                (String) hreq.getAttribute(Globals.ERROR_MESSAGE_ATTR);
+            ((HttpResponse) response).reset(statusCode, message);
+
+            // Forward control to the specified location
+            ServletContext servletContext =
+                request.getContext().getServletContext();
+            RequestDispatcher rd =
+                servletContext.getRequestDispatcher(errorPage.getLocation());
+            rd.forward(hreq, hres);
+
+            // If we forward, the response is suspended again
+            response.setSuspended(false);
+
+            // Indicate that we have successfully processed this custom page
+            return (true);
+
+        } catch (Throwable t) {
+
+            // Report our failure to process this custom page
+            log("Exception Processing " + errorPage, t);
+            return (false);
+
+        }
+
+    }
+
+
+    /**
+     * Log a message on the Logger associated with our Container (if any).
+     *
+     * @param message Message to be logged
+     */
+    protected void log(String message) {
+
+        Logger logger = container.getLogger();
+        if (logger != null)
+            logger.log(this.toString() + ": " + message);
+        else
+            System.out.println(this.toString() + ": " + message);
+
+    }
+
+
+    /**
+     * Log a message on the Logger associated with our Container (if any).
+     *
+     * @param message Message to be logged
+     * @param throwable Associated exception
+     */
+    protected void log(String message, Throwable throwable) {
+
+        Logger logger = container.getLogger();
+        if (logger != null)
+            logger.log(this.toString() + ": " + message, throwable);
+        else {
+            System.out.println(this.toString() + ": " + message);
+            throwable.printStackTrace(System.out);
+        }
+
+    }
+
 
 }
