@@ -127,12 +127,16 @@ Specification. The changes introduced in this new revision are relatively
 limited, and shouldn't cause any major architectural changes in Catalina.
 Catalina 2.0 will also inherit from all the refactorings done in Catalina 1.1.
 
+Servlet 2.4 Specification Draft:
+http://jcp.org/aboutJava/communityprocess/review/jsr154/index.html
+
 E) Implementation of the JSP 2.0 Specification
 
 Jasper 2 will be modified to support the new JSP Specification. More important
 changes will be required than for supporting the new Servlet Specification.
 
-
+JSP 2.0 Specification Draft:
+http://jcp.org/aboutJava/communityprocess/review/jsr152/index.html 
 
 Resources needed:
 ----------------
