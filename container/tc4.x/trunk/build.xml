@@ -464,25 +464,11 @@
       <param name="destfile" value="${commons-digester.jar}"/>
     </antcall>
 
-    <!-- we need the release to happend, in the meantime use cvs...
+    <!-- Commons Logging    -->
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-logging.loc}"/>
       <param name="destfile" value="${commons-logging.jar}"/>
     </antcall>
-    -->
-    <antcall target="cvsbuild">
-      <param name="location" value="${commons-logging.loc}"/>
-      <param name="subdir" value="${commons-logging.home}"/>
-      <param name="destfile" value="${commons-logging.jar}"/>
-    </antcall>
-    <copy
-      file="${commons-logging.home}/dist/commons-logging.jar"
-      tofile="${commons-logging.jar}"
-    />
-    <copy
-      file="${commons-logging.home}/dist/commons-logging-api.jar"
-      tofile="${commons-logging-api.jar}"
-    />
 
     <antcall target="downloadgz">
       <param name="sourcefile" value="${regexp.loc}"/>
@@ -502,7 +488,6 @@
       <param name="destfile" value="${xmlParserAPIs.jar}"/>
     </antcall>
     <!-- commons- daemons/dbcp/pool need something different. -->
-
     <antcall target="cvsbuild">
       <param name="location" value="${commons-daemon.loc}"/>
       <param name="subdir" value="${commons-daemon.home}"/>
@@ -514,21 +499,11 @@
       <param name="destfile" value="${commons-pool.jar}"/>
     </antcall>
 
-    <!-- commons-dbcp needs pool and ../LICENSE -->
-    <!-- That is ugly XXX needs a review -->
-    <copy file="LICENSE" tofile="../LICENSE"/>
-    <antcall target="cvsbuild">
-      <param name="location" value="${commons-dbcp.loc}"/>
-      <param name="subdir" value="${commons-dbcp.home}"/>
-      <param name="destfile" value="${commons-dbcp.jar}"/>
-      <param name="name" value="commons-dbcp"/>
+    <antcall target="downloadzip">
+      <param name="sourcefile" value="${commons-dbcp.loc}" />
+      <param name="destfile" value="${commons-dbcp.jar}" />
+      <param name="destdir" value="${commons-dbcp.home}" />
     </antcall>
-    <!-- Dbcp does not put commons-dbcp.jar in ${commons-dbcp.home} -->
-    <copy
-      file="${commons-dbcp.home}/dist/commons-dbcp.jar"
-      tofile="${commons-dbcp.jar}"
-    />
-
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-modeler.loc}"/>
       <param name="destfile" value="${commons-modeler.jar}"/>
