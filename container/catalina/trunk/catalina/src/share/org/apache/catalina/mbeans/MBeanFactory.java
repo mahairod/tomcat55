@@ -117,8 +117,6 @@ public class MBeanFactory extends BaseModelMBean {
 
         if (type.equals("org.apache.catalina.core.StandardContext")) {
             return "StandardContext";
-        } else if (type.equals("org.apache.catalina.core.StandardDefaultContext")) {
-            return "DefaultContext";
         } else if (type.equals("org.apache.catalina.core.StandardEngine")) {
             return "Engine";
         } else if (type.equals("org.apache.catalina.core.StandardHost")) {
@@ -277,10 +275,10 @@ public class MBeanFactory extends BaseModelMBean {
 
         // Create a new DataSourceRealm instance
         DataSourceRealm realm = new DataSourceRealm();
-	realm.setDataSourceName(dataSourceName);
-	realm.setRoleNameCol(roleNameCol);
-	realm.setUserCredCol(userCredCol);
-	realm.setUserNameCol(userNameCol);
+        realm.setDataSourceName(dataSourceName);
+        realm.setRoleNameCol(roleNameCol);
+        realm.setUserCredCol(userCredCol);
+        realm.setUserNameCol(userNameCol);
         realm.setUserRoleTable(userRoleTable);
         realm.setUserTable(userTable);
 
@@ -377,10 +375,10 @@ public class MBeanFactory extends BaseModelMBean {
 
         // Create a new JDBCRealm instance
         JDBCRealm realm = new JDBCRealm();
-	realm.setDriverName(driverName);
-	realm.setConnectionName(connectionName);
-	realm.setConnectionPassword(connectionPassword);
-	realm.setConnectionURL(connectionURL);
+        realm.setDriverName(driverName);
+        realm.setConnectionName(connectionName);
+        realm.setConnectionPassword(connectionPassword);
+        realm.setConnectionURL(connectionURL);
 
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
