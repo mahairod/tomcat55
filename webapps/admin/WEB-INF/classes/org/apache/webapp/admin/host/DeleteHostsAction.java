@@ -105,11 +105,13 @@ public class DeleteHostsAction extends Action {
             throw new ServletException
             ("Cannot acquire MBeanServer reference", t);
         }
-        
+               
         // Delete the specified Hosts
         String hosts[]  = ((HostsForm) form).getHosts();
         String values[] = new String[1];
         String operation = "removeHost";
+        
+        getServlet().log("enter DeleteHosts " + hosts);
 
         try {
 
@@ -120,6 +122,7 @@ public class DeleteHostsAction extends Action {
             // Remove the specified hosts
             for (int i = 0; i < hosts.length; i++) {
                 values[0] = hosts[i];
+                getServlet().log("remove host " + hosts[i]);
                 if (control != null) {
                     control.selectNode(null);
                     TreeControlNode node = control.findNode(hosts[i]);
