@@ -1046,15 +1046,29 @@ final class HttpProcessor
             }
 
             // Finish up the handling of the request
-            try {
-                if (finishResponse) {
+            if (finishResponse) {
+                try {
                     response.finishResponse();
+                } catch (IOException e) {
+                    ok = false;
+                } catch (Throwable e) {
+                    log("process.invoke", e);
+                    ok = false;
+                }
+                try {
                     request.finishRequest();
+                } catch (IOException e) {
+                    ok = false;
+                } catch (Throwable e) {
+                    log("process.invoke", e);
+                    ok = false;
+                }
+                try {
                     if (output != null)
                         output.flush();
+                } catch (IOException e) {
+                    ok = false;
                 }
-            } catch (IOException e) {
-                ok = false;
             }
 
             // We have to check if the connection closure has been requested
@@ -1078,21 +1092,22 @@ final class HttpProcessor
             socket.close();
         } catch (IOException e) {
             ;
+        } catch (Throwable e) {
+            log("process.invoke", e);
         }
         socket = null;
 
     }
 
 
-    protected void shutdownInput(InputStream input)
-        throws IOException {
+    protected void shutdownInput(InputStream input) {
         try {
             int available = input.available();
             // skip any unread (bogus) bytes
             if (available > 0) {
                 input.skip(available);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ;
         }
     }
