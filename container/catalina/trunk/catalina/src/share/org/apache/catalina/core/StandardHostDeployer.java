@@ -649,7 +649,7 @@ public class StandardHostDeployer implements Deployer {
                             long contextLastModified = 
                                 contextFile.lastModified();
                             if (contextFile.isDirectory()) {
-                                deleteDir(contextFile);
+                                ExpandWar.deleteDir(contextFile);
                             }
                             if (host.isUnpackWARs()) {
                                 File contextWAR = 
@@ -678,7 +678,7 @@ public class StandardHostDeployer implements Deployer {
                     workDir = new File(((StandardContext)context).getWorkPath());
                 }
                 if (workDir != null && workDir.exists()) {
-                    deleteDir(workDir);
+                    ExpandWar.deleteDir(workDir);
                 }
             }
 
@@ -828,29 +828,5 @@ public class StandardHostDeployer implements Deployer {
 
     }
 
-
-    /**
-     * Delete the specified directory, including all of its contents and
-     * subdirectories recursively.
-     *
-     * @param dir File object representing the directory to be deleted
-     */
-    protected void deleteDir(File dir) {
-
-        String files[] = dir.list();
-        if (files == null) {
-            files = new String[0];
-        }
-        for (int i = 0; i < files.length; i++) {
-            File file = new File(dir, files[i]);
-            if (file.isDirectory()) {
-                deleteDir(file);
-            } else {
-                file.delete();
-            }
-        }
-        dir.delete();
-
-    }
 
 }
