@@ -35,7 +35,6 @@ import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
@@ -85,12 +84,6 @@ public final class ContextConfig
     private Context context = null;
 
 
-    /**
-     * The debugging detail level for this component.
-     */
-    private int debug = 0;
-
-    
     /**
      * The default web application's deployment descriptor location.
      */
@@ -143,28 +136,6 @@ public final class ContextConfig
     // ------------------------------------------------------------- Properties
 
 
-    /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        this.debug = debug;
-
-    }
-    
-    
     /**
      * Return the location of the default deployment descriptor
      */
@@ -541,44 +512,6 @@ public final class ContextConfig
         long t2=System.currentTimeMillis();
         if( (t2-t1) > 200 )
             log.debug("Processed default web.xml " + file + " "  + ( t2-t1));
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Context (if any)
-     *
-     * @param message Message to be logged
-     */
-    private void log(String message) {
-
-        Logger logger = null;
-        if (context != null)
-            logger = context.getLogger();
-        if (logger != null)
-            logger.log("ContextConfig[" + context.getName() + "]: " + message);
-        else
-            log.info( message );
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Context (if any)
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    private void log(String message, Throwable throwable) {
-
-        Logger logger = null;
-        if (context != null)
-            logger = context.getLogger();
-        if (logger != null)
-            logger.log("ContextConfig[" + context.getName() + "] "
-                       + message, throwable);
-        else {
-            log.error( message, throwable );
-        }
-
     }
 
 

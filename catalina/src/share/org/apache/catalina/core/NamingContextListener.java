@@ -36,7 +36,6 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Server;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
@@ -72,21 +71,12 @@ public class NamingContextListener
     private static Log log = LogFactory.getLog(NamingContextListener.class);
 
 
-    // ----------------------------------------------------------- Constructors
-
-
-    /**
-     * Create a new naming context listener.
-     */
-    public NamingContextListener() {
-        if( log.isDebugEnabled() )
-            log.debug( "new NamingContextListener");
-    }
-
-
     // ----------------------------------------------------- Instance Variables
 
 
+    protected Log logger = log;
+    
+    
     /**
      * Name of the associated naming context.
      */
@@ -97,12 +87,6 @@ public class NamingContextListener
      * Associated container.
      */
     protected Object container = null;
-
-
-    /**
-     * Debugging level.
-     */
-    protected int debug = 0;
 
 
     /**
@@ -143,28 +127,6 @@ public class NamingContextListener
 
 
     // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the "debug" property.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the "debug" property.
-     *
-     * @param debug The new debug level
-     */
-    public void setDebug(int debug) {
-
-        this.debug = debug;
-
-    }
 
 
     /**
@@ -214,6 +176,7 @@ public class NamingContextListener
 
         if (container instanceof Context) {
             namingResources = ((Context) container).getNamingResources();
+            logger = log;
         } else if (container instanceof Server) {
             namingResources = ((Server) container).getGlobalNamingResources();
         } else {
@@ -243,7 +206,8 @@ public class NamingContextListener
             try {
                 createNamingContext();
             } catch (NamingException e) {
-                log(sm.getString("naming.namingContextCreationFailed", e));
+                logger.error
+                    (sm.getString("naming.namingContextCreationFailed", e));
             }
 
             // Binding the naming context to the class loader
@@ -255,7 +219,7 @@ public class NamingContextListener
                         (container, container, 
                          ((Container) container).getLoader().getClassLoader());
                 } catch (NamingException e) {
-                    log(sm.getString("naming.bindFailed", e));
+                    logger.error(sm.getString("naming.bindFailed", e));
                 }
             }
 
@@ -268,7 +232,7 @@ public class NamingContextListener
                         (container, container, 
                          this.getClass().getClassLoader());
                 } catch (NamingException e) {
-                    log(sm.getString("naming.bindFailed", e));
+                    logger.error(sm.getString("naming.bindFailed", e));
                 }
                 if (container instanceof StandardServer) {
                     ((StandardServer) container).setGlobalNamingContext
@@ -706,7 +670,7 @@ public class NamingContextListener
                 // Ignore because UserTransaction was obviously 
                 // added via ResourceLink
             } catch (NamingException e) {
-                log(sm.getString("naming.bindFailed", e));
+                logger.error(sm.getString("naming.bindFailed", e));
             }
         }
 
@@ -716,7 +680,7 @@ public class NamingContextListener
                 compCtx.bind("Resources", 
                              ((Container) container).getResources());
             } catch (NamingException e) {
-                log(sm.getString("naming.bindFailed", e));
+                logger.error(sm.getString("naming.bindFailed", e));
             }
         }
 
@@ -737,7 +701,7 @@ public class NamingContextListener
             createSubcontexts(envCtx, ejb.getName());
             envCtx.bind(ejb.getName(), ref);
         } catch (NamingException e) {
-            log(sm.getString("naming.bindFailed", e));
+            logger.error(sm.getString("naming.bindFailed", e));
         }
 
     }
@@ -804,23 +768,23 @@ public class NamingContextListener
                     }
                 }
             } else {
-                log(sm.getString("naming.invalidEnvEntryType", env.getName()));
+                logger.error(sm.getString("naming.invalidEnvEntryType", env.getName()));
             }
         } catch (NumberFormatException e) {
-            log(sm.getString("naming.invalidEnvEntryValue", env.getName()));
+            logger.error(sm.getString("naming.invalidEnvEntryValue", env.getName()));
         } catch (IllegalArgumentException e) {
-            log(sm.getString("naming.invalidEnvEntryValue", env.getName()));
+            logger.error(sm.getString("naming.invalidEnvEntryValue", env.getName()));
         }
 
         // Binding the object to the appropriate name
         if (value != null) {
             try {
-                if (debug >= 2)
-                    log("  Adding environment entry " + env.getName());
+                if (logger.isDebugEnabled())
+                    logger.debug("  Adding environment entry " + env.getName());
                 createSubcontexts(envCtx, env.getName());
                 envCtx.bind(env.getName(), value);
             } catch (NamingException e) {
-                log(sm.getString("naming.invalidEnvEntryValue", e));
+                logger.error(sm.getString("naming.invalidEnvEntryValue", e));
             }
         }
 
@@ -850,14 +814,14 @@ public class NamingContextListener
         addAdditionalParameters(resource.getNamingResources(), ref, 
                                 resource.getName());
         try {
-            if (debug >= 2) {
-                log("  Adding resource ref " + resource.getName());
-                log("  " + ref);
+            if (logger.isDebugEnabled()) {
+                logger.debug("  Adding resource ref " 
+                             + resource.getName() + "  " + ref);
             }
             createSubcontexts(envCtx, resource.getName());
             envCtx.bind(resource.getName(), ref);
         } catch (NamingException e) {
-            log(sm.getString("naming.bindFailed", e));
+            logger.error(sm.getString("naming.bindFailed", e));
         }
 
     }
@@ -873,12 +837,12 @@ public class NamingContextListener
         // Adding the additional parameters, if any
         addAdditionalParameters(null, ref, name);
         try {
-            if (debug >= 2)
-                log("  Adding resource env ref " + name);
+            if (logger.isDebugEnabled())
+                log.debug("  Adding resource env ref " + name);
             createSubcontexts(envCtx, name);
             envCtx.bind(name, ref);
         } catch (NamingException e) {
-            log(sm.getString("naming.bindFailed", e));
+            logger.error(sm.getString("naming.bindFailed", e));
         }
 
     }
@@ -899,12 +863,12 @@ public class NamingContextListener
             "UserTransaction".equals(resourceLink.getName()) 
             ? compCtx : envCtx;
         try {
-            if (debug >= 2)
-                log("  Adding resource link " + resourceLink.getName());
+            if (logger.isDebugEnabled())
+                log.debug("  Adding resource link " + resourceLink.getName());
             createSubcontexts(envCtx, resourceLink.getName());
             ctx.bind(resourceLink.getName(), ref);
         } catch (NamingException e) {
-            log(sm.getString("naming.bindFailed", e));
+            logger.error(sm.getString("naming.bindFailed", e));
         }
 
     }
@@ -918,7 +882,7 @@ public class NamingContextListener
         try {
             envCtx.unbind(name);
         } catch (NamingException e) {
-            log(sm.getString("naming.unbindFailed", e));
+            logger.error(sm.getString("naming.unbindFailed", e));
         }
 
     }
@@ -932,7 +896,7 @@ public class NamingContextListener
         try {
             envCtx.unbind(name);
         } catch (NamingException e) {
-            log(sm.getString("naming.unbindFailed", e));
+            logger.error(sm.getString("naming.unbindFailed", e));
         }
 
     }
@@ -946,7 +910,7 @@ public class NamingContextListener
         try {
             envCtx.unbind(name);
         } catch (NamingException e) {
-            log(sm.getString("naming.unbindFailed", e));
+            logger.error(sm.getString("naming.unbindFailed", e));
         }
 
     }
@@ -960,7 +924,7 @@ public class NamingContextListener
         try {
             envCtx.unbind(name);
         } catch (NamingException e) {
-            log(sm.getString("naming.unbindFailed", e));
+            logger.error(sm.getString("naming.unbindFailed", e));
         }
 
     }
@@ -974,7 +938,7 @@ public class NamingContextListener
         try {
             envCtx.unbind(name);
         } catch (NamingException e) {
-            log(sm.getString("naming.unbindFailed", e));
+            logger.error(sm.getString("naming.unbindFailed", e));
         }
 
     }
@@ -988,7 +952,7 @@ public class NamingContextListener
         try {
             envCtx.unbind(name);
         } catch (NamingException e) {
-            log(sm.getString("naming.unbindFailed", e));
+            logger.error(sm.getString("naming.unbindFailed", e));
         }
 
     }
@@ -1026,8 +990,8 @@ public class NamingContextListener
             resources = namingResources;
         }
         ResourceParams resourceParameters = resources.findResourceParams(name);
-        if (debug >= 2)
-            log("  Resource parameters for " + name + " = " +
+        if (logger.isDebugEnabled())
+            logger.debug("  Resource parameters for " + name + " = " +
                 resourceParameters);
         if (resourceParameters == null)
             return;
@@ -1039,67 +1003,6 @@ public class NamingContextListener
             StringRefAddr refAddr = new StringRefAddr(paramName, paramValue);
             ref.add(refAddr);
         }
-    }
-
-
-    /**
-     * Log the specified message to our current Logger (if any).
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message) {
-
-        if (!(container instanceof Container)) {
-            System.out.println(logName() + ": " + message);
-            return;
-        }
-
-        Logger logger = ((Container) container).getLogger();
-        if (logger != null)
-            logger.log(logName() + ": " + message);
-        else
-            System.out.println(logName() + ": " + message);
-
-    }
-
-
-    /**
-     * Log the specified message and exception to our current Logger
-     * (if any).
-     *
-     * @param message Message to be logged
-     * @param throwable Related exception
-     */
-    protected void log(String message, Throwable throwable) {
-
-        if (!(container instanceof Container)) {
-            System.out.println(logName() + ": " + message + ": " + throwable);
-            throwable.printStackTrace(System.out);
-            return;
-        }
-
-        Logger logger = ((Container) container).getLogger();
-        if (logger != null)
-            logger.log(logName() + ": " + message, throwable);
-        else {
-            System.out.println(logName() + ": " + message + ": " + throwable);
-            throwable.printStackTrace(System.out);
-        }
-
-    }
-
-
-    /**
-     * Return the abbreviated name of this container for logging messsages
-     */
-    protected String logName() {
-
-        String className = this.getClass().getName();
-        int period = className.lastIndexOf(".");
-        if (period >= 0)
-            className = className.substring(period + 1);
-        return (className + "[" + getName() + "]");
-
     }
 
 

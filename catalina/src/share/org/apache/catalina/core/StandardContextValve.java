@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
@@ -141,7 +140,7 @@ final class StandardContextValve
             } finally {
                 String log = SystemLogHandler.stopCapture();
                 if (log != null && log.length() > 0) {
-                    container.getLogger().log(log);
+                    container.getLogger().info(log);
                 }
             }
         } else {
@@ -182,7 +181,7 @@ final class StandardContextValve
                 try {
                     listener.requestInitialized(event);
                 } catch (Throwable t) {
-                    log(sm.getString("requestListenerValve.requestInit",
+                    container.getLogger().error(sm.getString("requestListenerValve.requestInit",
                                      instances[i].getClass().getName()), t);
                     ServletRequest sreq = request.getRequest();
                     sreq.setAttribute(Globals.EXCEPTION_ATTR,t);
@@ -206,7 +205,7 @@ final class StandardContextValve
                 try {
                     listener.requestDestroyed(event);
                 } catch (Throwable t) {
-                    log(sm.getString("requestListenerValve.requestDestroy",
+                    container.getLogger().error(sm.getString("requestListenerValve.requestDestroy",
                                      instances[i].getClass().getName()), t);
                     ServletRequest sreq = request.getRequest();
                     sreq.setAttribute(Globals.EXCEPTION_ATTR,t);
@@ -275,57 +274,6 @@ final class StandardContextValve
             ;
         } catch (IOException e) {
             ;
-        }
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     */
-    private void log(String message) {
-
-        Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log("StandardContextValve[" + container.getName() + "]: "
-                       + message);
-        else {
-            String containerName = null;
-            if (container != null)
-                containerName = container.getName();
-            System.out.println("StandardContextValve[" + containerName
-                               + "]: " + message);
-        }
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    private void log(String message, Throwable throwable) {
-
-        Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log("StandardContextValve[" + container.getName() + "]: "
-                       + message, throwable);
-        else {
-            String containerName = null;
-            if (container != null)
-                containerName = container.getName();
-            System.out.println("StandardContextValve[" + containerName
-                               + "]: " + message);
-            System.out.println("" + throwable);
-            throwable.printStackTrace(System.out);
         }
 
     }

@@ -39,7 +39,6 @@ import javax.servlet.ServletContextAttributeListener;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Host;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.util.Enumerator;
@@ -385,7 +384,7 @@ public class ApplicationContext
         // Retrieve the thread local URI
         MessageBytes uriMB = (MessageBytes) localUriMB.get();
         if (uriMB == null) {
-            uriMB = new MessageBytes();
+            uriMB = MessageBytes.newInstance();
             CharChunk uriCC = uriMB.getCharChunk();
             uriCC.setLimit(-1);
             localUriMB.set(uriMB);
@@ -631,9 +630,7 @@ public class ApplicationContext
      */
     public void log(String message) {
 
-        Logger logger = context.getLogger();
-        if (logger != null)
-            logger.log(context.logName() + message);
+        context.getLogger().info(message);
 
     }
 
@@ -649,9 +646,7 @@ public class ApplicationContext
      */
     public void log(Exception exception, String message) {
         
-        Logger logger = context.getLogger();
-        if (logger != null)
-            logger.log(exception, context.logName() + message);
+        context.getLogger().error(message, exception);
 
     }
 
@@ -664,9 +659,7 @@ public class ApplicationContext
      */
     public void log(String message, Throwable throwable) {
         
-        Logger logger = context.getLogger();
-        if (logger != null)
-            logger.log(context.logName() + message, throwable);
+        context.getLogger().error(message, throwable);
 
     }
 

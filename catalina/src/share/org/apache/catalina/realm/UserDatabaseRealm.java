@@ -157,16 +157,16 @@ public class UserDatabaseRealm
                 (digest(credentials).equals(user.getPassword()));
         }
         if (!validated) {
-            if (debug >= 2) {
-                log(sm.getString("userDatabaseRealm.authenticateFailure",
+            if (container.getLogger().isTraceEnabled()) {
+                container.getLogger().trace(sm.getString("userDatabaseRealm.authenticateFailure",
                                  username));
             }
             return (null);
         }
 
         // Construct a GenericPrincipal that represents this user
-        if (debug >= 2) {
-            log(sm.getString("userDatabaseRealm.authenticateSuccess",
+        if (container.getLogger().isTraceEnabled()) {
+            container.getLogger().trace(sm.getString("userDatabaseRealm.authenticateSuccess",
                              username));
         }
         ArrayList combined = new ArrayList();
@@ -251,8 +251,7 @@ public class UserDatabaseRealm
             Context context = server.getGlobalNamingContext();
             database = (UserDatabase) context.lookup(resourceName);
         } catch (Throwable e) {
-            e.printStackTrace();
-            log(sm.getString("userDatabaseRealm.lookup", resourceName), e);
+            container.getLogger().error(sm.getString("userDatabaseRealm.lookup", resourceName), e);
             database = null;
         }
         if (database == null) {

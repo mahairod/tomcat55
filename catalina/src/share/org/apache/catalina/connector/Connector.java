@@ -30,7 +30,6 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Service;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.util.LifecycleSupport;
@@ -1211,46 +1210,6 @@ public class Connector
         Response response = new Response();
         response.setConnector(this);
         return (response);
-
-    }
-
-
-    // -------------------------------------------------------- Private Methods
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     */
-    private void log(String message) {
-
-        Logger logger = container.getLogger();
-        String localName = "CoyoteConnector";
-        if (logger != null)
-            logger.log(localName + " " + message);
-        else
-            System.out.println(localName + " " + message);
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    private void log(String message, Throwable throwable) {
-
-        Logger logger = container.getLogger();
-        String localName = "CoyoteConnector";
-        if (logger != null)
-            logger.log(localName + " " + message, throwable);
-        else {
-            System.out.println(localName + " " + message);
-            throwable.printStackTrace(System.out);
-        }
 
     }
 

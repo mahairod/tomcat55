@@ -19,8 +19,6 @@ package org.apache.catalina.cluster;
 import org.apache.catalina.Cluster;
 import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Valve;
 import org.apache.commons.logging.Log;
 import org.apache.catalina.Manager;

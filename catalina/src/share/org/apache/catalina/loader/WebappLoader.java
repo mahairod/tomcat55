@@ -55,7 +55,6 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
-import org.apache.catalina.Logger;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
@@ -816,57 +815,6 @@ public class WebappLoader
         classLoader = (WebappClassLoader) constr.newInstance(args);
 
         return classLoader;
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     */
-    private void log(String message) {
-
-        Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log("WebappLoader[" + container.getName() + "]: "
-                       + message);
-        else {
-            String containerName = null;
-            if (container != null)
-                containerName = container.getName();
-            System.out.println("WebappLoader[" + containerName
-                               + "]: " + message);
-        }
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    private void log(String message, Throwable throwable) {
-
-        Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null) {
-            logger.log("WebappLoader[" + container.getName() + "] "
-                       + message, throwable);
-        } else {
-            String containerName = null;
-            if (container != null)
-                containerName = container.getName();
-            System.out.println("WebappLoader[" + containerName
-                               + "]: " + message);
-            System.out.println("" + throwable);
-            throwable.printStackTrace(System.out);
-        }
 
     }
 

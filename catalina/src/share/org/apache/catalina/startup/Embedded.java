@@ -30,7 +30,6 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
@@ -38,7 +37,6 @@ import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardService;
 import org.apache.catalina.loader.WebappLoader;
-import org.apache.catalina.logger.FileLogger;
 import org.apache.catalina.security.SecurityConfig;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
@@ -115,7 +113,7 @@ public class Embedded  extends StandardService implements Lifecycle {
      */
     public Embedded() {
 
-        this(null, null);
+        this(null);
 
     }
 
@@ -128,10 +126,9 @@ public class Embedded  extends StandardService implements Lifecycle {
      * @param realm Realm implementation to be inherited by all components
      *  (unless overridden further down the container hierarchy)
      */
-    public Embedded(Logger logger, Realm realm) {
+    public Embedded(Realm realm) {
 
         super();
-        setLogger(logger);
         setRealm(realm);
         setSecurityProtection();
         
@@ -165,13 +162,6 @@ public class Embedded  extends StandardService implements Lifecycle {
      * The lifecycle event support for this component.
      */
     protected LifecycleSupport lifecycle = new LifecycleSupport(this);
-
-
-    /**
-     * The default logger to be used by this component itself.  Unless this
-     * is overridden, log messages will be writted to standard output.
-     */
-    protected Logger logger = null;
 
 
     /**
@@ -233,30 +223,6 @@ public class Embedded  extends StandardService implements Lifecycle {
         this.useNaming = useNaming;
         support.firePropertyChange("useNaming", new Boolean(oldUseNaming),
                                    new Boolean(this.useNaming));
-
-    }
-
-
-    /**
-     * Return the Logger for this component.
-     */
-    public Logger getLogger() {
-
-        return (this.logger);
-
-    }
-
-
-    /**
-     * Set the Logger for this component.
-     *
-     * @param logger The new logger
-     */
-    public void setLogger(Logger logger) {
-
-        Logger oldLogger = this.logger;
-        this.logger = logger;
-        support.firePropertyChange("logger", oldLogger, this.logger);
 
     }
 
@@ -517,7 +483,6 @@ public class Embedded  extends StandardService implements Lifecycle {
         context.setPath(path);
 
         ContextConfig config = new ContextConfig();
-        config.setDebug(debug);
         ((Lifecycle) context).addLifecycleListener(config);
 
         return (context);
@@ -539,7 +504,6 @@ public class Embedded  extends StandardService implements Lifecycle {
 
         engine.setDebug(debug);
         // Default host will be set to the first host added
-        engine.setLogger(logger);       // Inherited by all children
         engine.setRealm(realm);         // Inherited by all children
 
         return (engine);
@@ -973,33 +937,6 @@ public class Embedded  extends StandardService implements Lifecycle {
 
 
     // -------------------------------------------------------- Private Methods
-
-    /**
-     * Customize the specified context to have its own log file instead of
-     * inheriting the default one.  This is just an example of what you can
-     * do; pretty much anything (such as installing special Valves) can
-     * be done prior to calling <code>start()</code>.
-     *
-     * @param context Context to receive a specialized logger
-     */
-    private static void customize(Context context) {
-
-        // Create a customized file logger for this context
-        String basename = context.getPath();
-        if (basename.length() < 1)
-            basename = "ROOT";
-        else
-            basename = basename.substring(1);
-
-        FileLogger special = new FileLogger();
-        special.setPrefix(basename + "_log.");
-        special.setSuffix(".txt");
-        special.setTimestamp(true);
-
-        // Override the default logger for this context
-        context.setLogger(special);
-
-    }
 
     /**
      * Set the security package access/protection.

@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.Context;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
 import org.apache.catalina.Store;
@@ -125,12 +124,13 @@ public class PersistentValve
                     try {
                         session = store.load(sessionId);
                     } catch (Exception e) {
-                        log("deserializeError");
+                        container.getLogger().error("deserializeError");
                     }
                     if (session != null) {
                         if (!session.isValid() ||
                             isSessionStale(session, System.currentTimeMillis())) {
-                            log("session swapped in is invalid or expired");
+                            if (container.getLogger().isDebugEnabled())
+                                container.getLogger().debug("session swapped in is invalid or expired");
                             session.expire();
                             store.remove(sessionId);
                         } else {
@@ -144,7 +144,8 @@ public class PersistentValve
                 }
             }
         }
-        log("sessionId: " + sessionId);
+        if (container.getLogger().isDebugEnabled())
+            container.getLogger().debug("sessionId: " + sessionId);
 
         // Ask the next valve to process the request.
         getNext().invoke(request, response);
@@ -161,7 +162,8 @@ public class PersistentValve
         if (hsess!=null)
             newsessionId = hsess.getId();
 
-        log("newsessionId: " + newsessionId);
+        if (container.getLogger().isDebugEnabled())
+            container.getLogger().debug("newsessionId: " + newsessionId);
         if (newsessionId!=null) {
             /* store the session in the store and remove it from the manager */
             if (manager instanceof PersistentManager) {
@@ -175,31 +177,18 @@ public class PersistentValve
                     ((PersistentManager) manager).removeSuper(session);
                     session.recycle();
                 } else {
-                    log("newsessionId store: " + store + " session: " +
-                        session + " valid: " + session.isValid() +
-                        " Staled: " +
-                        isSessionStale(session, System.currentTimeMillis()));
+                    if (container.getLogger().isDebugEnabled())
+                        container.getLogger().debug("newsessionId store: " + store + " session: " +
+                                session + " valid: " + session.isValid() +
+                                " Staled: " +
+                                isSessionStale(session, System.currentTimeMillis()));
 
                 }
             } else {
-                log("newsessionId Manager: " + manager);
+                if (container.getLogger().isDebugEnabled())
+                    container.getLogger().debug("newsessionId Manager: " + manager);
             }
         }
-    }
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message) {
- 
-        Logger logger = container.getLogger();
-        if (logger != null)
-            logger.log(this.toString() + ": " + message);
-        else
-            System.out.println(this.toString() + ": " + message);
- 
     }
 
     /**

@@ -19,7 +19,6 @@ package org.apache.catalina.authenticator;
 
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
@@ -40,7 +39,6 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Realm;
@@ -121,12 +119,6 @@ public abstract class AuthenticatorBase
      * The Context to which this Valve is attached.
      */
     protected Context context = null;
-
-
-    /**
-     * The debugging detail level for this component.
-     */
-    protected int debug = 0;
 
 
     /**
@@ -272,28 +264,6 @@ public abstract class AuthenticatorBase
 
         super.setContainer(container);
         this.context = (Context) container;
-
-    }
-
-
-    /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        this.debug = debug;
 
     }
 
@@ -687,45 +657,6 @@ public abstract class AuthenticatorBase
 
 
     /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message) {
-
-        Logger logger = context.getLogger();
-        if (logger != null)
-            logger.log("Authenticator[" + context.getPath() + "]: " +
-                       message);
-        else
-            System.out.println("Authenticator[" + context.getPath() +
-                               "]: " + message);
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    protected void log(String message, Throwable throwable) {
-
-        Logger logger = context.getLogger();
-        if (logger != null)
-            logger.log("Authenticator[" + context.getPath() + "]: " +
-                       message, throwable);
-        else {
-            System.out.println("Authenticator[" + context.getPath() +
-                               "]: " + message);
-            throwable.printStackTrace(System.out);
-        }
-
-    }
-
-
-    /**
      * Attempts reauthentication to the <code>Realm</code> using
      * the credentials included in argument <code>entry</code>.
      *
@@ -899,20 +830,6 @@ public abstract class AuthenticatorBase
             throw new LifecycleException
                 (sm.getString("authenticator.alreadyStarted"));
         lifecycle.fireLifecycleEvent(START_EVENT, null);
-        if ("org.apache.catalina.core.StandardContext".equals
-            (context.getClass().getName())) {
-            try {
-                // XXX What is this ???
-                Class paramTypes[] = new Class[0];
-                Object paramValues[] = new Object[0];
-                Method method =
-                    context.getClass().getMethod("getDebug", paramTypes);
-                Integer result = (Integer) method.invoke(context, paramValues);
-                setDebug(result.intValue());
-            } catch (Exception e) {
-                log.error("Exception getting debug value", e);
-            }
-        }
         started = true;
 
         // Look up the SingleSignOn implementation in our request processing

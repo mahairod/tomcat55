@@ -140,14 +140,6 @@ public class ContextRuleSet extends RuleSetBase {
                             "setLoader",
                             "org.apache.catalina.Loader");
 
-        digester.addObjectCreate(prefix + "Context/Logger",
-                                 null, // MUST be specified in the element
-                                 "className");
-        digester.addSetProperties(prefix + "Context/Logger");
-        digester.addSetNext(prefix + "Context/Logger",
-                            "setLogger",
-                            "org.apache.catalina.Logger");
-
         digester.addObjectCreate(prefix + "Context/Manager",
                                  "org.apache.catalina.session.StandardManager",
                                  "className");
