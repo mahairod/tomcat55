@@ -979,6 +979,10 @@ Coyote Bug Fixes:
 [4.1.25] Http11Processor:
          Catch exceptions which could occur in prepareRequest.
 
+[4.1.26] Http11Processor:
+         Fix regression where connection is always dropped at the end of 
+         processing.
+
 
 ----------------
 Jasper Bug Fixes:
