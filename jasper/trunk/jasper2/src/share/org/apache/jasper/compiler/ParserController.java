@@ -192,9 +192,6 @@ class ParserController {
 
 	    if (isTopFile) {
 		pageInfo.setIsXml(isXml);
-		if (isXml) {
-		    pageInfo.setXmlEncoding(encoding);
-		}
 		isTopFile = false;
 	    } else {
 		compiler.getPageInfo().addDependant(absFileName);
@@ -274,12 +271,19 @@ class ParserController {
 							   ctxt, err);
 	    sourceEnc = (String) ret[0];
 	    boolean isEncodingSetInProlog = ((Boolean) ret[1]).booleanValue();
-	    if (isTopFile) {
-		pageInfo.setHasEncodingProlog(isEncodingSetInProlog);
-	    }
 	    if (isEncodingSetInProlog) {
 		// Prolog present only in XML syntax
 		isXml = true;
+		if (isTopFile) {
+		    String jspConfigPageEnc = pageInfo.getPageEncoding();
+		    if (jspConfigPageEnc != null
+			    && !jspConfigPageEnc.equals(sourceEnc)) {
+			err.jspError(
+			    "jsp.error.page.prolog_config_encoding_conflict",
+			    sourceEnc, jspConfigPageEnc);
+		    }
+		    pageInfo.setXmlPrologEncoding(sourceEnc);
+		}
 	    } else if (sourceEnc.equals("UTF-8")) {
 		/*
 		 * We don't know if we're dealing with an XML document

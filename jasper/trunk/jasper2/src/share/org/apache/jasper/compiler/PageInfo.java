@@ -94,10 +94,7 @@ class PageInfo {
      * (declaration).
      * Only meaningful for XML documents.
      */
-    private String xmlEncoding = null;
-
-    // Indicates whether page has XML declaration with encoding attribute
-    private boolean hasEncodingProlog = false;
+    private String xmlPrologEncoding = null;
 
     private int maxTagNesting = 0;
     private boolean scriptless = false;
@@ -235,22 +232,14 @@ class PageInfo {
 	return pageEncoding;
     }
 
-    public void setXmlEncoding(String xmlEncoding) {
-	this.xmlEncoding = xmlEncoding;
+    public void setXmlPrologEncoding(String xmlPrologEncoding) {
+	this.xmlPrologEncoding = xmlPrologEncoding;
     }
 
-    public String getXmlEncoding() {
-	return xmlEncoding;
+    public String getXmlPrologEncoding() {
+	return xmlPrologEncoding;
     }
     
-    public void setHasEncodingProlog(boolean hasEncodingProlog) {
-	this.hasEncodingProlog = hasEncodingProlog;
-    }
-
-    public boolean hasEncodingProlog() {
-	return hasEncodingProlog;
-    }
-
     public int getMaxTagNesting() {
         return maxTagNesting;
     }

@@ -255,17 +255,34 @@ class Validator {
 		    if (pageEncodingSeen) 
 			err.jspError(n, "jsp.error.page.multiple.pageencoding");
 		    pageEncodingSeen = true;
-		    // Make sure the page-encoding specified in a 
-		    // jsp-property-group (if present) matches that of the page
-		    // directive
+		    /*
+		     * It is a translation-time error to name different page
+		     * character encodings in two or more of the following:
+		     * the XML prolog of a JSP page, the pageEncoding
+		     * attribute of the page directive of the JSP page, and in
+		     * a JSP configuration element (whose URL pattern matches
+		     * the page).
+		     * At this point, we've already verified (in 
+		     * ParserController.figureOutJspDocument()) that the page
+		     * character encodings specified in a JSP config element
+		     * and XML prolog match.
+		     */
+		    String compareEnc = null;
 		    if (jspProperty != null) {
-			String jspConfigPageEnc = jspProperty.getPageEncoding();
-			if (jspConfigPageEnc != null
-			            && !jspConfigPageEnc.equals(value)) {
-			    err.jspError(n,
-					 "jsp.error.page.pageencoding.conflict",
-					 jspConfigPageEnc, value);
+			compareEnc = jspProperty.getPageEncoding();
+			if (compareEnc != null && !compareEnc.equals(value)) {
+			    err.jspError(
+                                n, "jsp.error.page.config_pagedir_encoding_conflict",
+				compareEnc, value);
 			}
+		    }
+		    if (compareEnc == null) {
+			compareEnc = pageInfo.getXmlPrologEncoding();
+			if (compareEnc != null && !compareEnc.equals(value)) {
+			    err.jspError(
+			        n, "jsp.error.page.prolog_pagedir_encoding_conflict",
+				compareEnc, value);
+			}			
 		    }
 		    pageInfo.setPageEncoding(value);
 		}
