@@ -1233,13 +1233,13 @@ public class StandardWrapper
         // (possibly more than once if non-STM)
         if (countAllocated > 0) {
             int nRetries = 0;
-            while (nRetries < 10) {
-                if (nRetries == 0) {
-                    log.info("Waiting for " + countAllocated +
-                        " instance(s) to be deallocated");
+            while ((nRetries < 21) && (countAllocated > 0)) {
+                if ((nRetries % 10) == 0) {
+                    log.info(sm.getString("standardWrapper.waiting",
+                                          new Integer(countAllocated)));
                 }
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     ;
                 }
