@@ -1095,7 +1095,6 @@ public class JspC implements Options {
      * compilation context.
      *
      * @param clctxt The compilation context
-     * @return The original classloader before modifying
      * @throws IOException If an error occurs
      */
     private void initClassLoader(JspCompilationContext clctxt)
