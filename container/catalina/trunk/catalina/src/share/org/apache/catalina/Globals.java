@@ -332,6 +332,13 @@ public final class Globals {
 
 
     /**
+     * The subject under which the AccessControlContext is running.
+     */
+    public static final String SUBJECT_ATTR =
+        "javax.security.auth.subject";
+
+    
+    /**
      * The servlet context attribute under which we record the set of
      * welcome files (as an object of type String[]) for this application.
      */
