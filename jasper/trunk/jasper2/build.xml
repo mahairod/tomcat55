@@ -254,7 +254,7 @@
 
     <!-- Executable commands -->
     <mkdir dir="${jasper.dist}/bin"/>
-    <copy dest="${jasper.dist}/bin">
+    <copy todir="${jasper.dist}/bin">
       <fileset dir="${jasper.build}/bin" />
     </copy>
     <fixcrlf srcdir="${jasper.dist}/bin" includes="*.sh" eol="lf"/>
