@@ -19,9 +19,8 @@
   <path id="catalina.classpath">
     <pathelement location="${cluster.lib}/server/lib/catalina.jar"/>
     <pathelement location="${cluster.lib}/server/lib/commons-logging.jar"/>
-    <pathelement location="${cluster.lib}/server/lib/mx4j-jmx.jar"/>
+    <pathelement location="${cluster.lib}/common/lib/mx4j-jmx.jar"/>
     <pathelement location="${cluster.lib}/common/lib/servlet-api.jar"/>
-    
   </path>
 
     <!-- Source path -->
@@ -120,6 +119,7 @@
 
   <!-- ================ DIST: Create Distribution ========================= -->
   <target name="dist" depends="build-catalina-cluster">
+    
     <jar destfile="${cluster.dist}/tomcat-replication.jar"
          basedir="${cluster.build}/classes"/>
   </target>
