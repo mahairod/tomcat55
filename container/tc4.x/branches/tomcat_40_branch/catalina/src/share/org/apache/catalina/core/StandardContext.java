@@ -3307,15 +3307,21 @@ public class StandardContext
             }
         }
         if (getLoader() == null) {      // (2) Required by Manager
-            if (getPrivileged()) {
-                if (debug >= 1)
-                    log("Configuring privileged default Loader");
-                setLoader(new WebappLoader(this.getClass().getClassLoader()));
+            // FIXME: All webapps require Jasper, but Jasper isn't available in
+            // the Catalina CL.
+            /*
+              if (getPrivileged()) {
+              if (debug >= 1)
+              log("Configuring privileged default Loader");
+              setLoader(new WebappLoader(this.getClass().getClassLoader()));
             } else {
-                if (debug >= 1)
-                    log("Configuring non-privileged default Loader");
-                setLoader(new WebappLoader(getParentClassLoader()));
+            */
+            if (debug >= 1)
+                log("Configuring non-privileged default Loader");
+            setLoader(new WebappLoader(getParentClassLoader()));
+            /*
             }
+            */
         }
         if (getManager() == null) {     // (3) After prerequisites
             if (debug >= 1)
