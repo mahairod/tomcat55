@@ -361,6 +361,7 @@ class Validator {
 	private ErrorDispatcher err;
 	private TagInfo tagInfo;
         private ClassLoader loader;
+	private Hashtable taglibs;
 
 	// A FunctionMapper, used to validate EL expressions.
         private FunctionMapper functionMapper;
@@ -442,6 +443,7 @@ class Validator {
 	 */
 	ValidateVisitor(Compiler compiler) {
 	    this.pageInfo = compiler.getPageInfo();
+	    this.taglibs = pageInfo.getTagLibraries();
 	    this.err = compiler.getErrorDispatcher();
 	    this.tagInfo = compiler.getCompilationContext().getTagInfo();
 	    this.loader = compiler.getCompilationContext().getClassLoader();
@@ -679,10 +681,32 @@ class Validator {
 		= new Node.JspAttribute[attrs.getLength()
 				       + namedAttributeNodes.size()];
 	    Hashtable tagDataAttrs = new Hashtable(attrs.getLength());
+	    TagLibraryInfo tagLibInfo =
+		(TagLibraryInfo) taglibs.get(n.getPrefix());
+	    String uri = tagLibInfo.getURI();
 	    for (int i=0; i<attrs.getLength(); i++) {
 		boolean found = false;
 		for (int j=0; tldAttrs != null && j<tldAttrs.length; j++) {
-		    if (attrs.getQName(i).equals(tldAttrs[j].getName())) {
+		    /*
+		     * A custom action and its declared attributes always
+		     * belong to the same namespace, which is identified by
+		     * the prefix name of the custom tag invocation.
+		     * For example, in this invocation:
+		     *     <my:test a="1" b="2" c="3"/>, the action
+		     * "test" and its attributes "a", "b", and "c" all belong
+		     * to the namespace identified by the prefix "my".
+		     * The above invocation would be equivalent to:
+		     *     <my:test my:a="1" my:b="2" my:c="3"/>
+		     * An action attribute may have a prefix different from
+		     * that of the action invocation only if the underlying
+		     * tag handler supports dynamic attributes, in which case
+		     * the attribute with the different prefix is considered a
+		     * dynamic attribute.
+		     */
+		    if (attrs.getLocalName(i).equals(tldAttrs[j].getName())
+			    && (attrs.getURI(i) == null
+				|| attrs.getURI(i).length() == 0
+				|| attrs.getURI(i) == uri)) {
 			if (tldAttrs[j].canBeRequestTime()) {
                             Class expectedType = String.class;
                             try {
