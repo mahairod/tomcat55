@@ -233,12 +233,8 @@ class ExceptionHandler extends ServletWrapper {
 
 	buf.append("<b>")
 	    .append(sm.getString("defaulterrorpage.internalservleterror"))
-	    .append("</b>")
-	    .append(e.getMessage())
-	    .append("<br>\r\n");
-	    //.append("</b><br>");
+	    .append("</b><br>");
 
-/* Disable stack trace for security reasons
 	buf.append("<pre>");
 
 	StringWriter sw = new StringWriter();
@@ -248,18 +244,13 @@ class ExceptionHandler extends ServletWrapper {
 	buf.append(sw.toString());
 
 	buf.append("</pre>\r\n");
-*/
 
         if (e instanceof ServletException) {
 	    Throwable cause = ((ServletException)e).getRootCause();
 	    if (cause != null) {
 		buf.append("<b>")
 		    .append(sm.getString("defaulterrorpage.rootcause"))
-		    .append("</b>")
-		    .append(cause.getMessage())
-		    .append("\r\n");
-		    //.append("</b>\r\n");
-/*
+		    .append("</b>\r\n");
 	    buf.append("<pre>");
 
 	    sw=new StringWriter();
@@ -268,7 +259,6 @@ class ExceptionHandler extends ServletWrapper {
 	    buf.append( sw.toString());
 
 	    buf.append("</pre>\r\n");
-*/
 	    }
 	}
 	
