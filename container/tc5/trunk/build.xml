@@ -204,6 +204,7 @@
 
       <property name="jk.build" value="${tomcat.build}"/>
 
+      <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
         <!--
       <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
       <property name="tomcat-jk2.jar" value="${tomcat.build}/server/lib/tomcat-ajp.jar" />
