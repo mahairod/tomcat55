@@ -124,5 +124,19 @@ public final class Constants {
         "jsp_2_0.xsd";;
     public static final String JspSchemaResourcePath_20 =
         "/javax/servlet/resources/jsp_2_0.xsd";
+    
+    public static final String J2eeWebServiceSchemaPublicId_11 =
+            "j2ee_web_services_1_1.xsd";
+    public static final String J2eeWebServiceSchemaResourcePath_11 =
+            "/javax/servlet/resources/j2ee_web_services_1_1.xsd";
+    
+    public static final String J2eeWebServiceClientSchemaPublicId_11 =
+            "j2ee_web_services_client_1_1.xsd";
+    public static final String J2eeWebServiceClientSchemaResourcePath_11 =
+            "/javax/servlet/resources/j2ee_web_services_client_1_1.xsd";
+    
+    
+    
+    
 
 }
