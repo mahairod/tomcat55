@@ -1,7 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
  *
  * ====================================================================
  *
@@ -68,8 +65,6 @@ package org.apache.catalina.startup;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.InetAddress;
-import java.util.Enumeration;
-import java.util.Properties;
 
 import org.apache.tomcat.util.IntrospectionUtils;
 
@@ -79,18 +74,18 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
+import org.apache.catalina.Service;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
+import org.apache.catalina.core.StandardService;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.logger.FileLogger;
-import org.apache.catalina.logger.SystemOutLogger;
 import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.realm.MemoryRealm;
 import org.apache.catalina.security.SecurityConfig;
@@ -98,6 +93,10 @@ import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+
+import javax.management.ObjectName;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 
 /**
@@ -157,7 +156,7 @@ import org.apache.commons.logging.Log;
  * @version $Revision$ $Date$
  */
 
-public class Embedded implements Lifecycle {
+public class Embedded  extends StandardService implements Lifecycle {
     private static Log log = LogFactory.getLog(Embedded.class);
 
     // ----------------------------------------------------------- Constructors
@@ -410,7 +409,6 @@ public class Embedded implements Lifecycle {
     }
 
     public void setCatalinaHome( String s ) {
-        System.out.println("Setting home "+ s);
         System.setProperty( "catalina.home", s);
     }
 
@@ -418,10 +416,16 @@ public class Embedded implements Lifecycle {
         System.setProperty( "catalina.base", s);
     }
 
+    public String getCatalinaHome() {
+        return System.getProperty("catalina.home");
+    }
+
+    public String getCatalinaBase() {
+        return System.getProperty("catalina.base");
+    }
 
 
     // --------------------------------------------------------- Public Methods
-
 
     /**
      * Add a new Connector to the set of defined Connectors.  The newly
@@ -582,7 +586,6 @@ public class Embedded implements Lifecycle {
         return (connector);
 
     }
-
 
     /**
      * Create, configure, and return a Context that will process all
@@ -974,11 +977,14 @@ public class Embedded implements Lifecycle {
      */
     public void start() throws LifecycleException {
 
-        if( log.isDebugEnabled() )
-            log.debug("Starting embedded server");
+        if( log.isInfoEnabled() )
+            log.info("Starting tomcat server");
 
         // Validate the setup of our required system properties
         initDirs();
+
+        // Initialize some naming specific properties
+        initNaming();
 
         // Validate and update our current component state
         if (started)
@@ -987,21 +993,6 @@ public class Embedded implements Lifecycle {
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
 
-        // Initialize some naming specific properties
-        if (!useNaming) {
-            System.setProperty("catalina.useNaming", "false");
-        } else {
-            System.setProperty("catalina.useNaming", "true");
-            String value = "org.apache.naming";
-            String oldValue =
-                System.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
-            if (oldValue != null) {
-                value = oldValue + ":" + value;
-            }
-            System.setProperty(javax.naming.Context.URL_PKG_PREFIXES, value);
-            System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY,
-                               "org.apache.naming.java.javaURLContextFactory");
-        }
 
         // Start our defined Engines first
         for (int i = 0; i < engines.length; i++) {
@@ -1070,6 +1061,7 @@ public class Embedded implements Lifecycle {
     protected void initNaming() {
         // Setting additional variables
         if (!useNaming) {
+            log.info( "Catalina naming disabled");
             System.setProperty("catalina.useNaming", "false");
         } else {
             System.setProperty("catalina.useNaming", "true");
@@ -1080,12 +1072,16 @@ public class Embedded implements Lifecycle {
                 value = value + ":" + oldValue;
             }
             System.setProperty(javax.naming.Context.URL_PKG_PREFIXES, value);
+            if( log.isDebugEnabled() )
+                log.debug("Setting naming prefix=" + value);
             value = System.getProperty
                 (javax.naming.Context.INITIAL_CONTEXT_FACTORY);
             if (value == null) {
                 System.setProperty
                     (javax.naming.Context.INITIAL_CONTEXT_FACTORY,
                      "org.apache.naming.java.javaURLContextFactory");
+            } else {
+                log.debug( "INITIAL_CONTEXT_FACTORY alread set " + value );
             }
         }
     }
@@ -1124,94 +1120,6 @@ public class Embedded implements Lifecycle {
 
 
     // -------------------------------------------------------- Private Methods
-
-
-    // ----------------------------------------------------------- Main Program
-
-
-    /**
-     * This main program is a unit test to exercize the various methods of
-     * the Embedded class.  It can be used as an example of the type of code
-     * that would be used in a real environment.
-     *
-     * @param args The command line arguments
-     */
-    public static void main(String args[]) {
-
-        Embedded embedded = new Embedded(new SystemOutLogger(),
-                                         new MemoryRealm());
-        embedded.setDebug(5);
-        embedded.setLogger(new SystemOutLogger());
-
-        // Start up this embedded server (to prove we can dynamically
-        // add and remove containers and connectors later)
-        try {
-            embedded.start();
-        } catch (LifecycleException e) {
-            System.err.println("start: " + e.toString());
-            e.printStackTrace();
-        }
-
-        String home = System.getProperty("catalina.home");
-        String base = System.getProperty("catalina.base");
-
-        // Assemble and install a very basic container hierarchy
-        // that simulates a portion of the one configured in server.xml
-        // by default
-        Engine engine = embedded.createEngine();
-        engine.setDefaultHost("localhost");
-
-        Host host = embedded.createHost("localhost", home + "/webapps");
-        engine.addChild(host);
-
-        Context root = embedded.createContext("", home + "/webapps/ROOT");
-        host.addChild(root);
-
-        Context examples = embedded.createContext("/examples",
-                                                  home + "/webapps/examples");
-        customize(examples);    // Special customization for this web-app
-        host.addChild(examples);
-
-        // As an alternative to the three lines above, there is also a very
-        // simple method to deploy a new application that has default values
-        // for all context properties:
-        //   String contextPath = ... context path for this app ...
-        //   URL docRoot = ... URL of WAR file or unpacked directory ...
-        //   ((Deployer) host).deploy(contextPath, docRoot);
-
-        // Install the assembled container hierarchy
-        embedded.addEngine(engine);
-
-        // Assemble and install a non-secure connector for port 8080
-        Connector connector =
-            embedded.createConnector(null, 8080, "http");
-        embedded.addConnector(connector);
-
-        // Pause for a while to allow brief testing
-        // (In reality this would last until the enclosing application
-        // needs to be shut down)
-        try {
-            Thread.sleep(2 * 60 * 1000L);       // Two minutes
-        } catch (InterruptedException e) {
-            ;
-        }
-
-        // Remove the examples context dynamically
-        embedded.removeContext(examples);
-
-        // Remove the engine (which should trigger removing the connector)
-        embedded.removeEngine(engine);
-
-        // Shut down this embedded server (should have nothing left to do)
-        try {
-            embedded.stop();
-        } catch (LifecycleException e) {
-            System.err.println("stop: " + e.toString());
-            e.printStackTrace();
-        }
-
-    }
-
 
     /**
      * Customize the specified context to have its own log file instead of
