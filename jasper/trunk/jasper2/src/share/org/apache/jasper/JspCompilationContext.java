@@ -327,6 +327,10 @@ public class JspCompilationContext {
         return tagInfo;
     }
 
+    public void setTagInfo(TagInfo tagi) {
+        tagInfo = tagi;
+    }
+
     /**
      * True if we are compiling a tag file in prototype mode.
      * ie we only generate codes with class for the tag handler with empty

@@ -483,6 +483,13 @@ class TagFileProcessor {
 				(URLClassLoader) ctxt.getClassLoader());
 		wrapper.getJspEngineContext().setClassPath(ctxt.getClassPath());
             }
+            else {
+                // Make sure that JspCompilationContext gets the latest TagInfo
+                // for the tag file.  TagInfo instance was created the last
+                // time the tag file was scanned for directives, and the tag
+                // file may have been modified since then.
+                wrapper.getJspEngineContext().setTagInfo(tagInfo);
+            }
 
             Class tagClazz;
             int tripCount = wrapper.incTripCount();

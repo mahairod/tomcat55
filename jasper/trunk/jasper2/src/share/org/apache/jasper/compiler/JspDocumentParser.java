@@ -331,6 +331,7 @@ class JspDocumentParser
 
         if (tagDependentPending && JSP_URI.equals(uri) &&
                      localName.equals(BODY_ACTION)) {
+            tagDependentPending = false;
             tagDependentNesting++;
             current =
                 parseStandardAction(
@@ -341,7 +342,6 @@ class JspDocumentParser
                     taglibAttrs,
                     startMark,
                     current);
-            tagDependentPending = false;
             return;
         }
 
@@ -407,7 +407,7 @@ class JspDocumentParser
                         current);
             } else {
                 // custom action
-	        String bodyType = getBodyType((Node.CustomTag) node);
+                String bodyType = getBodyType((Node.CustomTag) node);
 
                 if (scriptlessBodyNode == null
                         && bodyType.equalsIgnoreCase(TagInfo.BODY_CONTENT_SCRIPTLESS)) {
