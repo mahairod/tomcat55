@@ -10,6 +10,49 @@
 
 <section name="News &amp; Status">
 
+<h3>27 March 2002 - Jakarta Tomcat 3.3.1 Final Released</h3>
+
+<p>The Tomcat 3.3.1 Final relase is now available.  This release contains a
+number of bug fixes and small feature additions over the Tomcat 3.3(a) Release.
+You can find everything, including a list of the changes,
+<a href="http://www.apache.org/dist/jakarta/jakarta-tomcat/release/v3.3.1/">here</a>.</p>
+
+<p>The online <a href="http://jakarta.apache.org/tomcat/tomcat-3.3-doc/index.html">
+Tomcat 3.3 Documentation</a> includes information on this release.
+New features are noted as specific to Tomcat 3.3.1. For the most up to
+date Tomcat 3.3 documentation, please refer to this site.
+</p>
+
+<hr noshade="noshade" size="1"/>
+
+<h3>26 March 2002 - Tomcat 4.0.4 Beta 2 Released</h3>
+<p>
+  The Tomcat Team is proud to announce the release of Tomcat 4.0.4 Beta 2.
+  Binary and source distributions are available <a href="http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.0.4-b2/">here</a>.
+</p>
+
+<hr size="1" noshade="noshade" />
+
+<h3>22 March 2002 - Tomcat Coyote 1.0 Beta 4 Released</h3>
+
+<p>
+Coyote is a connector API designed to be used with Tomcat.
+</p>
+<p>
+Coyote includes:
+<ul>
+<li>A high performance HTTP/1.1 processor</li>
+<li>An adapter for Tomcat 3.3.x</li>
+<li>An adapter for Tomcat 4.0.x</li>
+</ul>
+</p>
+
+<p>
+Download it <a href="http://jakarta.apache.org/builds/jakarta-tomcat-connectors/coyote/release/v1.0-b4/">here</a>.
+</p>
+
+<hr noshade="noshade" size="1"/>
+
 <h3>18 March 2002 - Tomcat IRC channel</h3>
 
 <p>
