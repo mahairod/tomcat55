@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# build.properties.sample
+# build.properties.default
 #
 # This is an example "build.properties" file, used to customize building Tomcat
 # for your local environment.  It defines the location of all external
@@ -284,11 +284,3 @@ servlet-api.jar=${servlet-api.lib}/servlet-api.jar
 jsp-api.home=${base.path}/jsp-api-2.0
 jsp-api.lib=${jsp-api.home}/lib
 jsp-api.jar=${jsp-api.lib}/jsp-api.jar
-
-
-# ----- Watchdog, version 20020801 or later -----
-watchdog.home=${base.path}/jakarta-watchdog-4.0
-watchdog.webapps=${watchdog.home}/dist/webapps
-watchdog.war=${watchdog.webapps}/servlet-tests.war
-watchdog.loc=jakarta-watchdog-4.0
-watchdog.target=all
