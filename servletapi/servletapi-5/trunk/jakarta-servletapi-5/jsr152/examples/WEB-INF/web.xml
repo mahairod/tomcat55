@@ -5,6 +5,11 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee web-app_2_4.xsd"
     version="2.4">
 
+    <display-name>JSP 2.0 Examples</display-name>
+    <description>
+      JSP 2.0 Examples.
+    </description>
+
     <!-- Define servlet-mapped and path-mapped example filters -->
     <filter>
         <filter-name>Servlet Mapped Filter</filter-name>
