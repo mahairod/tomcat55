@@ -117,7 +117,7 @@ public class CommandLineCompiler extends Compiler implements Mangler {
      * Always outDated.  (Of course we are, this is an explicit invocation
      *@returns true
      */
-    protected boolean isOutDated() {
+    public boolean isOutDated() {
         return true;
     };
 
