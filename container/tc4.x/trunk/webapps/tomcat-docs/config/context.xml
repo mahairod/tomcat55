@@ -59,7 +59,7 @@
 
   <subsection name="Common Attributes">
 
-    <p>All implementations of <strong>Host</strong>
+    <p>All implementations of <strong>Context</strong>
     support the following attributes:</p>
 
     <attributes>

@@ -36,9 +36,8 @@
         <item name="Default Context"       href="defaultcontext.html"/>
         <item name="Loader"                href="loader.html"/>
         <item name="Logger"                href="logger.html"/>
-        <item name="Manager"               href="manager.html"/>
-        <item name="Realm"                 href="realm.htlm"/>
-        <item name="Resources"             href="resources.html"/>
+        <item name="Manager"               href="manager.html"/> 
+        <item name="Realm"                 href="realm.html"/>
         <item name="Valve"                 href="valve.html"/>
     </menu>
 

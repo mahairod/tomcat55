@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document>
+
+  &project;
+
+  <properties>
+    <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+    <title>The DefaultContext Component</title>
+  </properties>
+
+<body>
+
+
+<section name="Introduction">
+
+  <p>The <strong>DefaultContext</strong> element represents a subset of
+  the configuration settings for a <a href="context.html">Context</a>,
+  and can be nested inside an <a href="engine.html">Engine</a> or
+  <a href="host.html">Host</a> element to represent <em>default
+  configuration properties</em> for Contexts that are automatically
+  created.</p>
+
+  <p>See <a href="host.html#Automatic Application Deployment">Automatic
+  Application Deployment</a> and
+  <a href="host.html#User Web Applications">User Web Applications</a>
+  for more information about the circumstances in which Catalina will
+  automatically create Contexts for you, based on the configuration
+  properties that are stored here.</p>
+
+</section>
+
+
+<section name="Attributes">
+
+  <subsection name="Common Attributes">
+
+    <p>All implementations of <strong>Host</strong>
+    support the following attributes:</p>
+
+    <attributes>
+
+      <attribute name="cookies" required="false">
+        <p>Set to <code>true</code> if you want cookies to be used for
+        session identifier communication if supported by the client (this
+        is the default).  Set to <code>false</code> if you want to disable
+        the use of cookies for session identifier communication, and rely
+        only on URL rewriting by the application.</p>
+      </attribute>
+
+      <attribute name="crossContext" required="false">
+        <p>Set to <code>true</code> if you want calls within this application
+        to <code>ServletContext.getContext()</code> to successfully return a
+        request dispatcher for other web applications running on this virtual
+        host.  Set to <code>false</code> (the default) in security
+        conscious environments, to make <code>getContext()</code> always
+        return <code>null</code>.</p>
+      </attribute>
+
+      <attribute name="reloadable" required="false">
+        <p>Set to <code>true</code> if you want Catalina to monitor classes in
+        <code>/WEB-INF/classes/</code> and <code>/WEB-INF/lib</code> for
+        changes, and automatically reload the web application if a change
+        is detected.  This feature is very useful during application
+        development, but it requires significant runtime overhead and is
+        not recommended for use on deployed production applications.  You
+        can use the <a href="../manager-howto.html">Manager</a> web
+        application, however, to trigger reloads of deployed applications
+        on demand.</p>
+      </attribute>
+
+      <attribute name="useNaming" required="false">
+        <p>Set to <code>true</code> (the default) to have Catalina enable a
+        JNDI <code>InitialContext</code> for this web application that is
+        compatible with Java2 Enterprise Edition (J2EE) platform
+        conventions.</p>
+      </attribute>
+
+      <attribute name="wrapperClass" required="false">
+        <p>Java class name of the <code>org.apache.catalina.Wrapper</code>
+        implementation class that will be used for servlets managed by this
+        Context.  If not specified, a standard default value will be used.</p>
+      </attribute>
+
+    </attributes>
+
+  </subsection>
+
+
+  <subsection name="Standard Implementation">
+
+    <p>The standard implementation of <strong>DefaultContext</strong> is
+    <strong>org.apache.catalina.core.DefaultContext</strong>.
+    It supports the following additional attributes (in addition to the
+    common attributes listed above):</p>
+
+    <attributes>
+    </attributes>
+
+  </subsection>
+
+
+</section>
+
+
+<section name="Nested Components">
+
+<!--
+  <p>You can nest at most one instance of the following utility components
+  by nesting a corresponding element inside your
+  <strong>DefaultContext</strong> element:</p>
+  <ul>
+  <li><a href="loader.html"><strong>Loader</strong></a> -
+      Configure the web application class loader that will be used to load
+      servlet and bean classes for each web application.  Normally, the
+      default configuration of the class loader will be sufficient.</li>
+  <li><a href="logger.html"><strong>Logger</strong></a> -
+      Configure a logger that will receive
+      and process all log messages for each <strong>Context</strong>.  This
+      includes application messages logged via calls to
+      <code>ServletContext.log()</code>.</li>
+  <li><a href="manager.html"><strong>Manager</strong></a> -
+      Configure the session manager that will be used to create, destroy,
+      and persist HTTP sessions for each web application.  Normally, the
+      default configuration of the session manager will be sufficient.</li>
+  <li><a href="realm.html"><strong>Realm</strong></a> -
+      Configure a realm that will allow its
+      database of users, and their associated roles, to be utilized solely
+      for each particular web application.  If not specified, this web
+      application will utilize the Realm associated with the owning
+      <a href="host.html">Host</a> or <a href="engine.html">Engine</a>.</li>
+  <li><a href="resources.html"><strong>Resources</strong></a> -
+      Configure the resource manager that will be used to access the static
+      resources associated with each web application.  Normally, the
+      default configuration of the resource manager will be sufficient.</li>
+  </ul>
+-->
+
+</section>
+
+
+<section name="Special Features">
+
+
+  <subsection name="Lifecycle Listeners">
+
+    <p>If you have implemented a Java object that needs to know when this
+    <strong>Context</strong> is started or stopped, you can declare it by
+    nesting a <strong>Listener</strong> element inside this element.  The
+    class name you specify must implement the
+    <code>org.apache.catalina.LifecycleListener</code> interface, and
+    it will be notified about the occurrence of the coresponding
+    lifecycle events.  Configuration of such a listener looks like this:</p>
+
+<source>
+&lt;DefaultContext  ...&gt;
+  ...
+  &lt;Listener className="com.mycompany.mypackage.MyListener" ... &gt;
+  ...
+&lt;/DefaultContext&gt;
+</source>
+
+    <p>Note that a Listener can have any number of additional properties
+    that may be configured from this element.  Attribute names are matched
+    to corresponding JavaBean property names using the standard property
+    method naming patterns.</p>
+
+  </subsection>
+
+
+</section>
+
+
+</body>
+
+
+</document>
