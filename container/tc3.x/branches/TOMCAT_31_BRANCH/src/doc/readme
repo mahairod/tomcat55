@@ -1,9 +1,9 @@
 $Id$
         
-                           Release Notes for:
-                           ==================
-                           TOMCAT Version 3.1
-                           ==================
+                            Release Notes for:
+                           ====================
+                           TOMCAT Version 3.1.1
+                           ====================
 
 
 0.  TABLE OF CONTENTS:
@@ -13,6 +13,7 @@ $Id$
     3.  Application Development Using Tomcat
     4.  New Features In This Release
     5.  Known Bugs and Issues
+    6.  Security Vulnerabilities Fixed in 3.1.1
 
 
 =============================================================================
@@ -27,6 +28,16 @@ be used stand alone, or in conjunction with several popular web servers:
 
 You should read the License Agreement (in the LICENSE file of the top level
 directory), which applies to all software included in this release.
+
+Tomcat Version 3.1.1 is a security related update only!  See Section 6, below,
+for details on the changes that have been made.  All other existing issues with
+Tomcat 3.1 will remain in 3.1.1 -- users are *strongly* urged to upgrade to
+Tomcat 3.2, which includes fixes for these issues.
+
+No changes to the native code components of Tomcat 3.1 have been made.
+Therefore, you should *not* need to recompile components such as mod_jserv
+in order to take advantage of this release.  You only need to replace the
+Java based modules in the "jakarta-tomcat.*" distribution.
 
 
 =============================================================================
@@ -168,3 +179,100 @@ Reloading is enabled by including a reloadable="true" attribute on the
 reload support is not recommended for production applications because of
 its experimental nature, and the extra overhead required to perform the
 necessary checks on every request.
+
+
+===============================================================================
+6.  SECURITY VULNERABILITIES FIXED IN TOMCAT 3.1.1
+
+
+6.1 Administrative Application Enabled By Default
+
+The administrative application (at context path "/admin") was enabled by
+default in Tomcat 3.1, which allowed unauthenticated remote users to add and
+remove appliations from a running Tomcat 3.1 installation if it was left
+installed.
+
+To avoid such problems, the administrative application has been removed from
+the binary distribution of Tomcat 3.1.1.  It can be installed if desired by:
+- Downloading the source distribution of Tomcat 3.1.1.
+- Modifying the "build.xml" file to remove the commenting around the
+  logic that creates the adminstrative application.
+- Running the build.sh or build.bat script.
+
+
+6.2 Case Sensitive Matches on Static Resources
+
+In Tomcat 3.1, matches against the filenames of static resources was done in a
+case insensitive manner on case insensitive platforms (such as Microsoft
+Windows).  This can cause sensitive information to be exposed to remote users
+who experiment with differently cased request URIs.
+
+To avoid such problems, Tomcat 3.1.1 performs filename comparisons for static
+resources in a case sensitive manner, even on Windows.  This means that your
+hyperlinks must specify the correct case, or a 404 error will be returned.
+
+Because this can cause significant conversion problems for existing
+applications deployed on Tomcat 3.1, a configuration option is provided to
+temporarily turn off case sensitive matching.  Edit the file "conf/web.xml"
+and modify the value for the "caseSensitive" initialization parameter to the
+default file-serving servlet.
+
+WARNING:  CHANGING THIS SETTING WILL RE-INTRODUCE THE SECURITY VULNERABILITY
+PRESENT IN TOMCAT 3.1 -- IT IS *STRONGLY* RECOMMENDED THAT YOU CORRECT YOUR
+URLS TO MATCH CORRECTLY INSTEAD OF USING THIS OPTION.  Note:  All later
+versions of Tomcat perform filename matches in a case sensitive manner.
+
+
+6.3 Snoop Servlet Mappings in Example Application
+
+In the deployment descriptor for the example application delivered with
+Tomcat 3.1, a "snoop" servlet was mapped to URL patterns "/snoop" and
+"*.snp".  Theses mappings (in particular the second one) could cause exposure
+of sensitive information on the internal organization of your web application
+(for example, when a non-existent page "foo.snp" is requested).
+
+To avoid these problems, the offending mappings have been commented out.
+
+
+6.4 Show Source Vulnerability
+
+The example application delivered with Tomcat 3.1 included a mechanism to
+display the source code for the JSP page examples.  This mechanism could
+be used to bypass the restrictions on displaying sensitive information in
+the WEB-INF and META-INF directories.  This vulnerability has been removed.
+
+
+6.5 Requesting Unknown JSP Pages
+
+In Tomcat 3.1, the error message in response to a request for an unknown JSP
+page would include the absolute disk file pathname of the corresponding file
+which could not be found, which exposes sensitive information about how your
+application is deployed.  The error message has been adjusted to include only
+the context-relative path of the JSP page which could not be found.
+
+
+6.6 Session ID Vulnerability
+
+The algorithm used to calculate session identifiers for new sessions was
+subject to attack by attempting to guess what the next session identifier will
+be, and therefore hijack the session.  In addition, the generated identifier
+exposed sensitive information (the number of sessions that have been created
+since this web application was started.
+
+To avoid these problems, the session identifier generation algorithm has been
+replaced by the algorithm used in Tomcat 3.2, which is not subject to these
+attacks, and does not expose session count information.
+
+
+6.7 Server Shutdown Vulnerability
+
+In Tomcat 3.1, it was possible to establish a remote network connection to the
+AJP12 connector and cause Tomcat to shut itself down.  Now, this network
+connection must be created from the same server that Tomcat is running on.
+
+NOTE:  While this is more secure than Tomcat 3.1 (and mirrors the protection
+provided by Tomcat 3.2), it is still vulnerable to attack by users who can
+create socket connections from the server.  Suitable use of firewalls and
+"TCP Wrappers" applications are suggested around the APJ12 port.
+
+
