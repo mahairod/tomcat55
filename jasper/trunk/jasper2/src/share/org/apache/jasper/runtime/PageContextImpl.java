@@ -63,6 +63,7 @@ package org.apache.jasper.runtime;
 
 import java.io.*;
 import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
 import java.util.EmptyStackException;
@@ -541,13 +542,29 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 	    response = ((ServletResponseWrapperInclude)response).getResponse();
         }
 
-        String path = getAbsolutePathRelativeToContext(relativeUrlPath);
+        final String path = getAbsolutePathRelativeToContext(relativeUrlPath);
         String includeUri
             = (String) request.getAttribute(Constants.INC_SERVLET_PATH);
+        
+        final ServletResponse fresponse = response;
+        final ServletRequest frequest = request;
+        
         if (includeUri != null)
             request.removeAttribute(Constants.INC_SERVLET_PATH);
         try {
-            context.getRequestDispatcher(path).forward(request, response);
+            if (System.getSecurityManager() != null){
+                AccessController.doPrivileged(new PrivilegedExceptionAction(){                    
+                    public Object run() throws ServletException, IOException{
+                        context.getRequestDispatcher(path).forward(frequest, 
+                                                                   fresponse);
+                        return (null);
+                    }                    
+                });
+            } else {
+                context.getRequestDispatcher(path).forward(request, response);
+            } 
+        } catch(PrivilegedActionException e){
+            ;                    
         } finally {
             if (includeUri != null)
                 request.setAttribute(Constants.INC_SERVLET_PATH, includeUri);
