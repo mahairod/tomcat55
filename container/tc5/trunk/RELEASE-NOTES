@@ -56,12 +56,10 @@ for use by web applications (by placing them in "common/lib" or "shared/lib"):
 * commons-collections.jar (Commons Collections 2.1)
 * commons-dbcp.jar (Commons DBCP 1.0)
 * commons-el.jar (Commons Expression Language 1.0)
-* commons-logging-api.jar (Commons Logging 1.0.3)
 * commons-pool.jar (Commons Pool 1.0)
 * jasper-compiler.jar (Jasper 2 Compiler)
 * jasper-runtime.jar (Jasper 2 Runtime)
-* jmx.jar (From mx4j-1.1.1)
-* jmx-tools.jar (From mx4j-1.1.1)
+* jmx.jar (Sun JMX RI 1.2)
 * jsp-api.jar (JSP 2.0 API)
 * commons-el.jar (JSP 2.0 Expression Language)
 * naming-common.jar (JNDI Context implementation)
@@ -73,7 +71,8 @@ You can make additional APIs available to all of your web applications by
 putting unpacked classes into a "classes" directory (not created by default),
 or by placing them in JAR files in the "lib" directory.
 
-Tomcat 5.0 also makes Xerces 2 available to web applications.
+Tomcat 5.0 also makes Xerces 2 and the Commons Logging API (release 1.0.3)  
+available to web applications.
 
 
 --------------------------
