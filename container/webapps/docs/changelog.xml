@@ -60,6 +60,10 @@
       <add>
         <bug>33325</bug>: Added top-level clean target to Netbuild build.xml file. (yoavs)
       </add>
+      <update>
+        <bug>33755</bug>: Clarified Postgresql JNDI datasource example. [patch submitted by
+          Tom Witmer] (yoavs)
+      </update>
     </changelog>
    </subsection>
 
