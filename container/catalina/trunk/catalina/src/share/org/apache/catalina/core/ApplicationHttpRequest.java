@@ -34,6 +34,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Session;
+import org.apache.catalina.Manager;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
@@ -518,6 +519,43 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
             return super.getSession(create);
         }
 
+    }
+
+
+    /**
+     * Returns true if the request specifies a JSESSIONID that is valid within
+     * the context of this ApplicationHttpRequest, false otherwise.
+     *
+     * @return true if the request specifies a JSESSIONID that is valid within
+     * the context of this ApplicationHttpRequest, false otherwise.
+     */
+    public boolean isRequestedSessionIdValid() {
+
+        if (crossContext) {
+
+            String requestedSessionId = getRequestedSessionId();
+            if (requestedSessionId == null)
+                return (false);
+            if (context == null)
+                return (false);
+            Manager manager = context.getManager();
+            if (manager == null)
+                return (false);
+            Session session = null;
+            try {
+                session = manager.findSession(requestedSessionId);
+            } catch (IOException e) {
+                session = null;
+            }
+            if ((session != null) && session.isValid()) {
+                return (true);
+            } else {
+                return (false);
+            }
+
+        } else {
+            return super.isRequestedSessionIdValid();
+        }
     }
 
 
