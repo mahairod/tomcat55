@@ -224,6 +224,20 @@ public interface Connector {
     public void setSecure(boolean secure);
 
 
+    /**
+     * Return the <code>Service</code> with which we are associated (if any).
+     */
+    public Service getService();
+
+
+    /**
+     * Set the <code>Service</code> with which we are associated (if any).
+     *
+     * @param service The service that owns this Engine
+     */
+    public void setService(Service service);
+
+
     // --------------------------------------------------------- Public Methods
 
 

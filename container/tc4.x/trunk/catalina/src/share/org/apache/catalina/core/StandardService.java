@@ -67,6 +67,7 @@ package org.apache.catalina.core;
 
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
+import org.apache.catalina.Engine;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
@@ -166,7 +167,11 @@ public final class StandardService
     public void setContainer(Container container) {
 
         Container oldContainer = this.container;
+        if ((oldContainer != null) && (oldContainer instanceof Engine))
+            ((Engine) oldContainer).setService(null);
         this.container = container;
+        if ((this.container != null) && (this.container instanceof Engine))
+            ((Engine) this.container).setService(this);
         if (started && (this.container != null) &&
             (this.container instanceof Lifecycle)) {
             try {
@@ -238,6 +243,7 @@ public final class StandardService
 
         synchronized (connectors) {
             connector.setContainer(this.container);
+            connector.setService(this);
             Connector results[] = new Connector[connectors.length + 1];
             System.arraycopy(connectors, 0, results, 0, connectors.length);
             results[connectors.length] = connector;
@@ -300,6 +306,7 @@ public final class StandardService
                 }
             }
             connectors[j].setContainer(null);
+            connector.setService(null);
             int k = 0;
             Connector results[] = new Connector[connectors.length - 1];
             for (int i = 0; i < connectors.length; i++) {

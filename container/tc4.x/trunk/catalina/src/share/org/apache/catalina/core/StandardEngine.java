@@ -77,6 +77,7 @@ import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.Service;
 import org.apache.catalina.core.DefaultContext;
 
 /**
@@ -129,6 +130,12 @@ public class StandardEngine
      */
     private String mapperClass =
         "org.apache.catalina.core.StandardEngineMapper";
+
+
+    /**
+     * The <code>Service</code> that owns this Engine, if any.
+     */
+    private Service service = null;
 
 
     /**
@@ -202,6 +209,28 @@ public class StandardEngine
         this.mapperClass = mapperClass;
         support.firePropertyChange("mapperClass",
                                    oldMapperClass, this.mapperClass);
+
+    }
+
+
+    /**
+     * Return the <code>Service</code> with which we are associated (if any).
+     */
+    public Service getService() {
+
+        return (this.service);
+
+    }
+
+
+    /**
+     * Set the <code>Service</code> with which we are associated (if any).
+     *
+     * @param service The service that owns this Engine
+     */
+    public void setService(Service service) {
+
+        this.service = service;
 
     }
 

@@ -84,6 +84,7 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.Service;
 import org.apache.catalina.net.DefaultServerSocketFactory;
 import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.util.LifecycleSupport;
@@ -248,6 +249,12 @@ public final class HttpConnector
      * The server socket through which we listen for incoming TCP connections.
      */
     private ServerSocket serverSocket = null;
+
+
+    /**
+     * The <code>Service</code> we are associated with (if any).
+     */
+    private Service service = null;
 
 
     /**
@@ -721,6 +728,28 @@ public final class HttpConnector
     public void setSecure(boolean secure) {
 
         this.secure = secure;
+
+    }
+
+
+    /**
+     * Return the <code>Service</code> with which we are associated (if any).
+     */
+    public Service getService() {
+
+        return (this.service);
+
+    }
+
+
+    /**
+     * Set the <code>Service</code> with which we are associated (if any).
+     *
+     * @param service The service that owns this Engine
+     */
+    public void setService(Service service) {
+
+        this.service = service;
 
     }
 
