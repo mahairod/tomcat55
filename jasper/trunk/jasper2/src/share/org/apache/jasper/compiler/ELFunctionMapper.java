@@ -104,27 +104,33 @@ public class ELFunctionMapper {
 
 	public void visit(Node.ParamAction n) throws JasperException {
 	    doMap(n.getValue());
+	    visitBody(n);
 	}
 
 	public void visit(Node.IncludeAction n) throws JasperException {
 	    doMap(n.getPage());
+	    visitBody(n);
 	}
 
 	public void visit(Node.ForwardAction n) throws JasperException {
 	    doMap(n.getPage());
+	    visitBody(n);
 	}
 
         public void visit(Node.SetProperty n) throws JasperException {
 	    doMap(n.getValue());
+	    visitBody(n);
 	}
 
         public void visit(Node.UseBean n) throws JasperException {
 	    doMap(n.getBeanName());
+	    visitBody(n);
 	}
 
         public void visit(Node.PlugIn n) throws JasperException {
 	    doMap(n.getHeight());
 	    doMap(n.getWidth());
+	    visitBody(n);
 	}
 
         public void visit(Node.JspElement n) throws JasperException {
@@ -134,6 +140,7 @@ public class ELFunctionMapper {
 		doMap(attrs[i]);
 	    }
 	    doMap(n.getNameAttribute());
+	    visitBody(n);
 	}
 
         public void visit(Node.CustomTag n) throws JasperException {
@@ -141,6 +148,7 @@ public class ELFunctionMapper {
 	    for (int i = 0; i < attrs.length; i++) {
 		doMap(attrs[i]);
 	    }
+	    visitBody(n);
 	}
 
         public void visit(Node.ELExpression n) throws JasperException {
@@ -159,8 +167,13 @@ public class ELFunctionMapper {
 
 	    class Fvisitor extends ELNode.Visitor {
 		ArrayList funcs = new ArrayList();
+		HashMap keyMap = new HashMap();
 		public void visit(ELNode.Function n) throws JasperException {
-		    funcs.add(n);
+		    String key = n.getPrefix() + ":" + n.getName();
+		    if (! keyMap.containsKey(key)) {
+			keyMap.put(key,"");
+			funcs.add(n);
+		    }
 		}
 	    }
 
@@ -241,15 +254,12 @@ public class ELFunctionMapper {
 		ELNode.Function f = (ELNode.Function)functions.get(i);
 		String temName = (String) gMap.get(f.getPrefix() + ':' +
 					f.getName() + ':' + f.getUri());
-		if (temName != null) {
-		    if (mapName == null) {
-			mapName = temName;
-		    }
-		    else if (! temName.equals(mapName)) {
-			// If not all in the previous match, then no match.
-			return null;
-		    }
-		} else if (mapName != null) {
+		if (temName == null) {
+		    return null;
+		}
+		if (mapName == null) {
+		    mapName = temName;
+		} else if (!temName.equals(mapName)) {
 		    // If not all in the previous match, then no match.
 		    return null;
 		}
