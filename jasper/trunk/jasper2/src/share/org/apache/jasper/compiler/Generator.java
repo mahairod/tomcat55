@@ -96,6 +96,7 @@ class Generator {
     private ErrorDispatcher err;
     private BeanRepository beanInfo;
     private JspCompilationContext ctxt;
+    private boolean isPoolingEnabled;
     private boolean breakAtLF;
     private PageInfo pageInfo;
     private int maxTagNesting;
@@ -446,8 +447,7 @@ class Generator {
     private void genPreambleClassVariableDeclarations( String className ) 
         throws JasperException
     {
-	if (ctxt.getOptions().isPoolingEnabled()
-	        && !tagHandlerPoolNames.isEmpty()) {
+	if (isPoolingEnabled && !tagHandlerPoolNames.isEmpty()) {
 	    for (int i=0; i<tagHandlerPoolNames.size(); i++) {
 		out.printil("private org.apache.jasper.runtime.TagHandlerPool "
 			    + tagHandlerPoolNames.elementAt(i) + ";");
@@ -471,8 +471,7 @@ class Generator {
         out.printil("}");
         out.println();
 
-	if (ctxt.getOptions().isPoolingEnabled()
-	        && !tagHandlerPoolNames.isEmpty()) {
+	if (isPoolingEnabled && !tagHandlerPoolNames.isEmpty()) {
 	    generateInit();
 	    generateDestroy();
 	}
@@ -1927,7 +1926,7 @@ class Generator {
 	    out.print(" ");
 	    out.print(tagHandlerVar);
 	    out.print(" = ");
-	    if (ctxt.getOptions().isPoolingEnabled()) {
+	    if (isPoolingEnabled) {
 		out.print("(");
 		out.print(tagHandlerClass.getName());
 		out.print(") ");
@@ -2091,7 +2090,7 @@ class Generator {
 		out.println(".doFinally();");
 	    }
 
-	    if (ctxt.getOptions().isPoolingEnabled()) {
+	    if (isPoolingEnabled) {
                 out.printin(n.getTagHandlerPoolName());
                 out.print(".reuse(");
 		out.print(tagHandlerVar);
@@ -2916,9 +2915,25 @@ class Generator {
 	fragmentHelperClass = new FragmentHelperClass( 
             ctxt.getServletClassName() + "Helper" );
         pageInfo = compiler.getPageInfo();
+
+        /*
+         * Temporary hack. If a JSP page uses the "extends" attribute of the
+         * page directive, the _jspInit() method of the generated servlet class
+         * will not be called (it is only called for those generated servlets
+         * that extend HttpJspBase, the default), causing the tag handler pools
+         * not to be initialized and resulting in a NPE.
+         * The JSP spec needs to clarify whether containers can override
+         * init() and destroy(). For now, we just disable tag pooling for pages
+         * that use "extends".
+         */
+        if (pageInfo.getExtends(false) == null) {
+            isPoolingEnabled = ctxt.getOptions().isPoolingEnabled();
+        } else {
+            isPoolingEnabled = false;
+        }
 	beanInfo = pageInfo.getBeanRepository();
 	breakAtLF = ctxt.getOptions().getMappedFile();
-	if (ctxt.getOptions().isPoolingEnabled()) {
+	if (isPoolingEnabled) {
 	    tagHandlerPoolNames = new Vector();
 	}
     }
@@ -2934,7 +2949,7 @@ class Generator {
 
 	Generator gen = new Generator(out, compiler);
 
-        if (gen.ctxt.getOptions().isPoolingEnabled()) {
+        if (gen.isPoolingEnabled) {
             gen.compileTagHandlerPoolList(page);
         }
 	if (gen.ctxt.isTagFile()) {
@@ -3062,8 +3077,7 @@ class Generator {
 	out.printil("javax.servlet.ServletConfig config = " +
             "pageContext.getServletConfig();");
 	out.printil("javax.servlet.jsp.JspWriter out = jspContext.getOut();");
-	if (ctxt.getOptions().isPoolingEnabled()
-                && !tagHandlerPoolNames.isEmpty()) {
+	if (isPoolingEnabled && !tagHandlerPoolNames.isEmpty()) {
 	    out.printil("_jspInit(config);");
 	}
 	generatePageScopedVariables(tagInfo);
@@ -3099,8 +3113,7 @@ class Generator {
         out.printil( "} finally {" );
         out.pushIndent();
 	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).syncEndTagFile();");
-	if (ctxt.getOptions().isPoolingEnabled()
-                && !tagHandlerPoolNames.isEmpty()) {
+	if (isPoolingEnabled && !tagHandlerPoolNames.isEmpty()) {
 	    out.printil("_jspDestroy();");
 	}
         out.popIndent();
