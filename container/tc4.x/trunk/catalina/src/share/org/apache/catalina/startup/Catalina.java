@@ -178,11 +178,6 @@ public class Catalina {
         } catch (Exception e) {
             e.printStackTrace(System.out);
         }
-        // FIX ME ???, something changed recently causes the catalina java
-        // process to hang at this point on shutdown unless there is an
-        // explicit System.exit().  Could this have something to do with
-        // the STM changes?
-        System.exit(1);
     }
 
 
