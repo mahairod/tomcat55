@@ -61,6 +61,7 @@
 package org.apache.jasper.compiler;
 
 import java.util.*;
+import javax.servlet.jsp.tagext.FunctionInfo;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagFileInfo;
