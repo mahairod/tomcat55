@@ -467,6 +467,8 @@ public class JDBCStore
                         }
                     }
                     keys = (String[]) tmpkeys.toArray(new String[tmpkeys.size()]);
+                    // Break out after the finally block
+                    numberOfTries = 0;
                 } catch (SQLException e) {
                     manager.getContainer().getLogger().error(sm.getString(getStoreName() + ".SQLException", e));
                     keys = new String[0];
@@ -524,6 +526,8 @@ public class JDBCStore
                     if (rst.next()) {
                         size = rst.getInt(1);
                     }
+                    // Break out after the finally block
+                    numberOfTries = 0;
                 } catch (SQLException e) {
                     manager.getContainer().getLogger().error(sm.getString(getStoreName() + ".SQLException", e));
                     if (dbConnection != null)
@@ -610,6 +614,8 @@ public class JDBCStore
                       } else if (manager.getContainer().getLogger().isDebugEnabled()) {
                         manager.getContainer().getLogger().debug(getStoreName() + ": No persisted data object found");
                     }
+                    // Break out after the finally block
+                    numberOfTries = 0;
                 } catch (SQLException e) {
                     manager.getContainer().getLogger().error(sm.getString(getStoreName() + ".SQLException", e));
                     if (dbConnection != null)
@@ -669,6 +675,8 @@ public class JDBCStore
                     preparedRemoveSql.setString(1, id);
                     preparedRemoveSql.setString(2, getName());
                     preparedRemoveSql.execute();
+                    // Break out after the finally block
+                    numberOfTries = 0;
                 } catch (SQLException e) {
                     manager.getContainer().getLogger().error(sm.getString(getStoreName() + ".SQLException", e));
                     if (dbConnection != null)
@@ -709,6 +717,8 @@ public class JDBCStore
 
                     preparedClearSql.setString(1, getName());
                     preparedClearSql.execute();
+                    // Break out after the finally block
+                    numberOfTries = 0;
                 } catch (SQLException e) {
                     manager.getContainer().getLogger().error(sm.getString(getStoreName() + ".SQLException", e));
                     if (dbConnection != null)
@@ -775,6 +785,8 @@ public class JDBCStore
                     preparedSaveSql.setInt(5, session.getMaxInactiveInterval());
                     preparedSaveSql.setLong(6, session.getLastAccessedTime());
                     preparedSaveSql.execute();
+                    // Break out after the finally block
+                    numberOfTries = 0;
                 } catch (SQLException e) {
                     manager.getContainer().getLogger().error(sm.getString(getStoreName() + ".SQLException", e));
                     if (dbConnection != null)
