@@ -94,7 +94,7 @@ loaders as it is initialized:</p>
     of the <code>CLASSPATH</code> environment variable itself, and instead
     build the System class loader from the following repositories:
     <ul>
-    <li><em>$CATALINA_HOME/lib/bootstrap.jar</em> - Contains the main() method
+    <li><em>$CATALINA_HOME/bin/bootstrap.jar</em> - Contains the main() method
         that is used to initialize the Tomcat 4 server, and the class loader
         implementation classes it depends on.</li>
     <li><em>$JAVA_HOME/lib/tools.jar</em> - Contains the "javac" compiler used
@@ -197,7 +197,7 @@ loading looks in the following repositories, in this order:</p>
 <li>Bootstrap classes of your JVM</li>
 <li>System class loader classses (described above)</li>
 <li><em>$CATALINA_HOME/common/classes</em></li>
-<li><em>$CATALINA_HOME/common/*.jar</em></li>
+<li><em>$CATALINA_HOME/common/lib/*.jar</em></li>
 <li><em>$CATALINA_HOME/shared/classes</em></li>
 <li><em>$CATALINA_HOME/shared/lib/*.jar</em></li>
 </ul>
