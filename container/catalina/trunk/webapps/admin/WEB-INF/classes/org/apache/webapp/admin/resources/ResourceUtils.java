@@ -203,9 +203,22 @@ public class ResourceUtils {
             try {
                 // only add resource mbean if definition exists
                 mserver.getAttribute(oname, "driverClassName");
-                results.add(instance.getObjectName().toString());
+                results.add(oname.toString());
             } catch (AttributeNotFoundException ex) {
-                // full resource definition doesn't exist
+                // if context resource definition doesn't exist
+                // get the global resource definition
+                if (resourcetype.equals("Context")) {
+                    rname = new ObjectName( domain + RESOURCE_TYPE + 
+                        GLOBAL_TYPE + ",class=" + DATASOURCE_CLASS + ",*");
+                    Iterator globalIter = (mserver.queryMBeans(rname, null).iterator());
+                    while (globalIter.hasNext()) {
+                        ObjectInstance globalInstance = 
+                            (ObjectInstance) globalIter.next();
+                        ObjectName globalOname = globalInstance.getObjectName();
+                        mserver.getAttribute(globalOname, "driverClassName");
+                        results.add(globalOname.toString());
+                    }
+                }
             }
         }
 
