@@ -134,12 +134,16 @@
            />
     <jar   jarfile="${catalina.build}/common/lib/naming.jar"
            basedir="${catalina.build}/classes"
-           includes="**/org/apache/naming/**" 
-           excludes="**/org/apache/naming/factory/**"
+           includes="**/org/apache/naming/*,**/org/apache/naming/factory/Constants.class,**/org/apache/naming/java/*" 
+           />
+    <jar   jarfile="${catalina.build}/common/lib/resources.jar"
+           basedir="${catalina.build}/classes"
+           includes="**/org/apache/naming/resources/*" 
            />
     <jar   jarfile="${catalina.build}/lib/namingfactory.jar"
            basedir="${catalina.build}/classes"
            includes="**/org/apache/naming/factory/**"
+           excludes="**/org/apache/naming/factory/Constants.class"
            />
 
   </target>
