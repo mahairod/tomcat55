@@ -104,7 +104,7 @@ public abstract class ExpressionEvaluator {
      *     evaluating it, and must return a consistent value each time
      *     it is invoked.
      * @param defaultPrefix The default prefix to use when a function is
-     *     encountered with no prefix.
+     *     encountered with no prefix, or "" if the default is no prefix.
      * @return The Expression object encapsulating the arguments.
      *
      * @exception ELException Thrown if parsing errors were found.
@@ -133,7 +133,7 @@ public abstract class ExpressionEvaluator {
      *     evaluating it, and must return a consistent value each time
      *     it is invoked.
      * @param defaultPrefix The default prefix to use when a function is
-     *     encountered with no prefix.
+     *     encountered with no prefix, or "" if the default is no prefix.
      * @return The result of the expression evaluation.
      *
      * @exception ELException Thrown if the expression evaluation failed.

@@ -10,7 +10,7 @@
 
 <xsd:annotation>
 <xsd:documentation>
-@(#)web-jsptaglibrary_2_0.xsds	1.24 11/01/02
+@(#)web-jsptaglibrary_2_0.xsds	1.26 01/24/03
 </xsd:documentation>
 </xsd:annotation>
 <xsd:annotation>
@@ -52,8 +52,8 @@ Subject to Standard License Terms and Conditions.
 <xsd:documentation>
 <![CDATA[
 
-This is the XML Schema for the JSP Taglibrary deployment
-descriptor.  All Taglibrary deployment descriptors must
+This is the XML Schema for the JSP Taglibrary
+descriptor.  All Taglibrary descriptors must
 indicate the tag library schema by using the Taglibrary
 namespace:
 
@@ -243,9 +243,30 @@ example             Optional informal description of an
         <xsd:annotation>
         <xsd:documentation>
 
-        Provides the signature, as in the Java Language
-        Specification, of the static Java method that is
-        to be used to implement the function.
+        Provides the signature, of the static Java method that is
+        to be used to implement the function.  The syntax of the
+	function-signature element is as follows:
+
+	    FunctionSignature ::= ReturnType S MethodName S?
+				  '(' S? Parameters? S? ')'
+
+            ReturnType        ::= ClassName
+
+	    MethodName        ::= Identifier
+
+	    Parameters        ::=   Parameter
+				  | ( Parameter S? ',' S? Parameters )
+
+            Parameter         ::= ClassName
+
+	    Where:
+
+		* ClassName is a fully qualified Java class name
+		  (including package name), as per the Java Language
+		  Specification.
+
+                * Identifier is a Java identifier as per the Java
+		  Language Specification.
 
         Example:
 

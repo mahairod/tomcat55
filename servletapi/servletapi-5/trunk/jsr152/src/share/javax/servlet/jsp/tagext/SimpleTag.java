@@ -93,8 +93,9 @@ import javax.servlet.jsp.JspContext;
  *   <li>The setters for each attribute defined for this tag are called
  *       by the container, in the order in which they appear in the JSP
  *       page or Tag File.</li>
- *   <li>The <code>setJspBody()</code> method is called by the container 
- *       to set the body of this tag, as a <code>JspFragment</code>.</li>
+ *   <li>If a body exists, the <code>setJspBody()</code> method is called 
+ *       by the container to set the body of this tag, as a 
+ *       <code>JspFragment</code>.</li>
  *   <li>The <code>doTag()</code> method is called by the container.  All
  *       tag logic, iteration, body evaluations, etc. occur in this 
  *       method.</li>
@@ -162,8 +163,7 @@ public interface SimpleTag extends JspTag {
      * This method is invoked by the JSP page implementation 
      * object prior to <code>doTag()</code>. 
      * 
-     * @param jspBody The fragment encapsulating the body of this tag, or
-     *     null if this tag as a body content type of empty.
+     * @param jspBody The fragment encapsulating the body of this tag.
      */ 
     public void setJspBody( JspFragment jspBody );
 
