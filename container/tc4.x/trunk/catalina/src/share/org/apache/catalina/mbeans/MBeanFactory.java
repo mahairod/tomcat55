@@ -102,6 +102,7 @@ import org.apache.catalina.realm.JNDIRealm;
 import org.apache.catalina.realm.MemoryRealm;
 import org.apache.catalina.realm.UserDatabaseRealm;
 import org.apache.catalina.session.StandardManager;
+import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.valves.AccessLogValve;
 import org.apache.catalina.valves.RemoteAddrValve;
 import org.apache.catalina.valves.RemoteHostValve;
@@ -825,6 +826,8 @@ public class MBeanFactory extends BaseModelMBean {
         path = getPathStr(path);
         context.setPath(path);
         context.setDocBase(docBase);
+        ContextConfig contextConfig = new ContextConfig();
+        context.addLifecycleListener(contextConfig);
 
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
@@ -832,6 +835,8 @@ public class MBeanFactory extends BaseModelMBean {
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
         Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+
+        // Add context to the host
         host.addChild(context);
 
         // Return the corresponding MBean name
