@@ -169,7 +169,7 @@ public interface HttpServletRequest extends ServletRequest {
      *				since January 1, 1970 GMT,
      *				or -1 if the named header
      *				was not included with the
-     *				reqest
+     *				request
      *
      * @exception	IllegalArgumentException	If the header value
      *							can't be converted
