@@ -489,7 +489,7 @@
   </target>
 -->
 
-  <target name="build-all" depends="init,deploy-static,build,build-webapps,embed,compat,deployer" 
+  <target name="build-all" depends="init,deploy-static,build,build-webapps,compat,deployer" 
           description="build tomcat, webapps, embed, compat, deployer" />
 
 
@@ -700,7 +700,10 @@
 
     <mkdir dir="embed/webapps"/>
     <copy todir="embed/webapps" >
-       <fileset dir="build/webapps" includes="ROOT/**"/>
+       <fileset dir="dist/webapps" includes="ROOT/**"/>
+    </copy>
+    <copy todir="embed/webapps" >
+       <fileset dir="dist/server/webapps" includes="manager/**"/>
     </copy>
     
   </target>
@@ -1257,7 +1260,7 @@
 
 
   <!-- ====================== DIST: Create Archives ======================= -->
-  <target name="dist" depends="deploy,dist-static,dist-javadoc"
+  <target name="dist" depends="deploy,dist-static,dist-javadoc,embed"
    description="Create binary distribution">
   </target>
 
