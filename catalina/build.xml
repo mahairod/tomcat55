@@ -700,6 +700,7 @@
   <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-dbcp.jar,copy-jaas.jar,copy-jdbc20ext.jar,copy-jmx.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tyrex.jar,copy-xerces2.jars">
 
     <!-- Copy the launcher classes -->
+    <copy todir="${catalina.build}/common/lib" file="${ant.jar}"/>
     <copy todir="${catalina.build}/bin" file="${commons-daemon.jar}"/>
     <copy todir="${catalina.build}/bin" file="${commons-daemon-launcher.jar}"/>
     <copy todir="${catalina.build}/bin" file="${commons-daemon-launcher-bootstrap.class}"/>
@@ -710,7 +711,6 @@
     </copy>
     <fixcrlf srcdir="${catalina.build}/bin" includes="*.sh" eol="lf"/>
     <fixcrlf srcdir="${catalina.build}/bin" includes="*.bat" eol="crlf"/>
-    <chmod perm="+x" file="${catalina.build}/bin/catalina.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/startup.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/shutdown.sh"/>
@@ -999,7 +999,6 @@
     </copy>
     <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.sh"  eol="lf"/>
     <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.bat" eol="crlf"/>
-    <chmod perm="+x" file="${catalina.deploy}/bin/catalina.sh"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/startup.sh"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/shutdown.sh"/>
@@ -1041,6 +1040,7 @@
       <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/catalina/startup/Bootstrap.class" />
         <include name="org/apache/catalina/startup/BootstrapService.class" />
+        <include name="org/apache/catalina/startup/CatalinaLaunchFilter.class" />
         <include name="org/apache/catalina/startup/ClassLoaderFactory.class" />
         <include name="org/apache/catalina/startup/Tool.class" />
         <include name="org/apache/catalina/loader/StandardClassLoader*.class" />
@@ -1058,6 +1058,7 @@
         <exclude name="org/apache/naming/**" />
         <exclude name="org/apache/catalina/startup/Bootstrap.class" />
         <exclude name="org/apache/catalina/startup/BootstrapService.class" />
+        <exclude name="org/apache/catalina/startup/CatalinaLaunchFilter.class" />
         <exclude name="org/apache/catalina/startup/ClassLoaderFactory.class" />
         <exclude name="org/apache/catalina/startup/Tool.class" />
         <exclude name="org/apache/catalina/loader/StandardClassLoader*.class" />
@@ -1174,7 +1175,6 @@
     </copy>
     <fixcrlf srcdir="${catalina.dist}/bin" includes="*.sh" eol="lf"/>
     <fixcrlf srcdir="${catalina.dist}/bin" includes="*.bat" eol="crlf"/>
-    <chmod perm="+x" file="${catalina.dist}/bin/catalina.sh"/>
     <chmod perm="+x" file="${catalina.dist}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.dist}/bin/startup.sh"/>
     <chmod perm="+x" file="${catalina.dist}/bin/shutdown.sh"/>
