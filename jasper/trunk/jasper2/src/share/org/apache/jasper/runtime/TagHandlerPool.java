@@ -187,8 +187,13 @@ public class TagHandlerPool {
     }
 
     protected static String getOption( Servlet servlet, String name, String defaultV) {
+        if( servlet==null ) return defaultV;
+        if( servlet.getServletConfig() == null ) return defaultV;
+
         String value=servlet.getServletConfig().getInitParameter(name);
         if( value != null ) return value;
+        if( servlet.getServletConfig().getServletContext() ==null )
+            return defaultV;
         value=servlet.getServletConfig().getServletContext().getInitParameter(name);
         if( value!=null ) return value;
         return defaultV;
