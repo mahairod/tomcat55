@@ -85,7 +85,7 @@
                 <html:hidden property="username"/>
               </logic:present>
               <logic:notPresent name="userForm" property="objectName">
-                <html:text property="username" size="24" maxlength="32" styleId="username"/>
+                <html:text property="username" size="24" styleId="username"/>
               </logic:notPresent>
             </controls:data>
           </controls:row>
@@ -96,7 +96,7 @@
               <bean:message key="users.prompt.password"/>
             </controls:label>
             <controls:data>
-              <html:password property="password" size="24" maxlength="32" styleId="password"/>
+              <html:password property="password" size="24" styleId="password"/>
             </controls:data>
           </controls:row>
 
