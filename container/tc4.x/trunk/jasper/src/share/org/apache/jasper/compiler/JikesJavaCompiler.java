@@ -66,6 +66,7 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.io.File;
 import java.io.ByteArrayOutputStream;
+import java.util.StringTokenizer;
 
 /**
   * A Plug-in class for specifying a 'jikes' compile.
@@ -110,7 +111,30 @@ public class JikesJavaCompiler implements JavaCompiler {
      * Set the class path for the compiler
      */ 
     public void setClasspath(String classpath) {
-      this.classpath = classpath;
+        //
+        // normalize the paths in the classpath.  this
+        // is really only an issue with jikes on windows.
+        //
+        // sometimes a path the looks like this:
+        //    /c:/tomcat/webapps/WEB-INF/classes
+        // will show up in the classpath.  in fact, this
+        // *always* happens with tomcat4.  jikes on windows
+        // will barf on this.  the following code will normalize
+        // paths like this (all paths, actually) so that jikes
+        // is happy :)
+        //
+        
+        StringBuffer buf = new StringBuffer(classpath.length());
+        StringTokenizer tok = new StringTokenizer(classpath,
+                                                  File.pathSeparator);
+        while (tok.hasMoreTokens()) {
+            String token = tok.nextToken();
+            File file = new File(token);
+            buf.append(file.toString());
+            buf.append(File.pathSeparator);
+        }
+        
+        this.classpath = buf.toString();
     }
 
     /**
@@ -162,6 +186,7 @@ public class JikesJavaCompiler implements JavaCompiler {
         	"-classpath", quote + classpath + MicrosoftClasspath + quote,
         	"-d", quote + outdir + quote,
         	"-nowarn",
+                "+E",
         	quote + source + quote
             };
 	} else {
@@ -170,6 +195,7 @@ public class JikesJavaCompiler implements JavaCompiler {
                 //XXX - add encoding once Jikes supports it
                 "-classpath", quote + classpath + MicrosoftClasspath + quote,
                 "-nowarn",                
+                "+E",
                 quote + source + quote    
             };
 	}
