@@ -313,12 +313,12 @@
 
     <Connector className="org.apache.catalina.connector.warp.WarpConnector"
      port="8008" minProcessors="5" maxProcessors="75"
-     enableLookups="true"
+     enableLookups="true" appBase="webapps"
      acceptCount="10" debug="0"/>
 
     <!-- Replace "localhost" with what your Apache "ServerName" is set to -->
     <Engine className="org.apache.catalina.connector.warp.WarpEngine"
-     name="Apache" debug="0" appBase="webapps">
+     name="Apache" debug="0">
 
       <!-- Global logger unless overridden at lower levels -->
       <Logger className="org.apache.catalina.logger.FileLogger"
