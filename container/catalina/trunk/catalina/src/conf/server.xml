@@ -351,6 +351,22 @@
                  directory="logs"  prefix="localhost_access_log." suffix=".txt"
                  pattern="common" resolveHosts="false"/>
         -->
+        <!-- Access log processes all requests for this virtual host.  By
+             default, log files are created in the "logs" directory relative to
+             $CATALINA_HOME.  If you wish, you can specify a different
+             directory with the "directory" attribute.  Specify either a relative
+             (to $CATALINA_HOME) or absolute path to the desired directory.
+             This access log implementation is optimized for maximum performance,
+             but is hardcoded to support only the "common" and "combined" patterns.
+
+             This valve use NIO direct Byte Buffer to asynchornously store the
+             log.
+        -->
+        <!--
+        <Valve className="org.apache.catalina.valves.ByteBufferAccessLogValve"
+                 directory="logs"  prefix="localhost_access_log." suffix=".txt"
+                 pattern="common" resolveHosts="false"/>
+        -->
 
       </Host>
 

@@ -51,6 +51,67 @@
                type="java.lang.String"/>
   </mbean>
 
+  <mbean name="ByteBufferAccessLogValve"
+           description="Valve that generates asynchronously web server access log"
+           domain="Catalina"
+           group="Valve"
+           type="org.apache.catalina.valves.ByteBufferAccessLogValve">
+  
+      <attribute name="className"
+                 description="Fully qualified class name of the managed object"
+                 type="java.lang.String"
+                 writeable="false"/>
+  
+      <attribute name="containerName"
+                 description="Object name of the container"
+                 type="javax.management.ObjectName"/>
+  
+      <attribute name="directory"
+                 description="The directory in which log files are created"
+                 type="java.lang.String"/>
+  
+      <attribute   name="pattern"
+                 description="The pattern used to format our access log lines, which must be either common or combined"
+                 type="java.lang.String"/>
+  
+      <attribute name="prefix"
+                 description="The prefix that is added to log file filenames"
+                 type="java.lang.String"/>
+  
+      <attribute name="resolveHosts"
+                 description="Resolve hosts"
+                 is="true"
+                 type="boolean"/>
+  
+      <attribute name="rotatable"
+                 description="Flag to indicate automatic log rotation."
+                 is="true"
+                 type="boolean"/>
+  
+      <attribute name="suffix"
+                 description="The suffix that is added to log file filenames"
+                 type="java.lang.String"/>
+  
+      <attribute name="condition"
+                 description="The value to look for conditional logging."
+                 type="java.lang.String"/>
+  
+      <attribute name="fileDateFormat"
+                 description="The format for the date date based log rotation."
+                 type="java.lang.String"/>
+                 
+      <attribute name="directByteBufferSize"
+                 description="The size of the byte buffer used to store the log."
+                 type="java.lang.String"/>
+   
+      <attribute name="writeInterval"
+               description="The interval (in seconds) between writting the log."
+               type="int"/>
+      
+    </mbean>
+  
+  
+  
   <mbean name="ErrorReportValve"
          description="Implementation of a Valve that outputs HTML error pages"
          domain="Catalina"
