@@ -104,7 +104,7 @@ class JspDocumentParser extends DefaultHandler
     // Document locator
     private Locator locator;
 
-    private Hashtable taglibs;
+    private HashMap taglibs;
 
     // Flag indicating whether we are inside DTD declarations
     private boolean inDTD;
@@ -773,16 +773,23 @@ class JspDocumentParser extends DefaultHandler
 						tagdir, err);
 	} else {
 	    // uri references TLD file
+	    boolean isPlainUri = false;
 	    if (uri.startsWith(URN_JSPTLD)) {
 		// uri is of the form "urn:jsptld:path"
 		uri = uri.substring(URN_JSPTLD.length());
+	    } else {
+		isPlainUri = true;
 	    }
 
 	    TldLocationsCache cache = ctxt.getOptions().getTldLocationsCache();
-	    result = cache.getTagLibraryInfo(uri);
-	    if (result == null) {
-		// get the location
-		String[] location = ctxt.getTldLocation(uri);
+	    String[] location = cache.getLocation(uri);
+	    if (location != null || !isPlainUri) {
+		/*
+		 * If the uri value is a plain uri, a translation error must
+		 * not be generated if the uri is not found in the taglib map.
+		 * Instead, any actions in the namespace defined by the uri
+		 * value must be treated as uninterpreted.
+		 */
 		result = new TagLibraryInfoImpl(ctxt, parserController, prefix,
 						uri, location, err);
 	    }

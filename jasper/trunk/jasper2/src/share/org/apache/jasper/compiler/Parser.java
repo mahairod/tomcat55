@@ -63,6 +63,7 @@ package org.apache.jasper.compiler;
 import java.io.FileNotFoundException;
 import java.io.CharArrayWriter;
 import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
 import java.util.jar.JarFile;
@@ -94,7 +95,7 @@ class Parser implements TagConstants {
     private JspReader reader;
     private String currentFile;
     private Mark start;
-    private Hashtable taglibs;
+    private HashMap taglibs;
     private Hashtable prefixMapper;
     private ErrorDispatcher err;
     private int scriptlessCount;

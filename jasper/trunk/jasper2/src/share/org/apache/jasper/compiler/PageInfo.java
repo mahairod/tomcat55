@@ -76,7 +76,7 @@ class PageInfo {
     private Vector dependants;
 
     private BeanRepository beanRepository;
-    private Hashtable tagLibraries;
+    private HashMap taglibsMap;
     private Hashtable prefixMapper;
 
     private String language = "java";
@@ -113,7 +113,7 @@ class PageInfo {
 
     PageInfo(BeanRepository beanRepository) {
 	this.beanRepository = beanRepository;
-	this.tagLibraries = new Hashtable();
+	this.taglibsMap = new HashMap();
 	this.prefixMapper = new Hashtable();
 	this.imports = new Vector();
         this.dependants = new Vector();
@@ -163,8 +163,8 @@ class PageInfo {
 	return beanRepository;
     }
 
-    public Hashtable getTagLibraries() {
-	return tagLibraries;
+    public HashMap getTagLibraries() {
+	return taglibsMap;
     }
 
     /*

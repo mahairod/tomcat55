@@ -375,7 +375,7 @@ class Validator {
 	private ErrorDispatcher err;
 	private TagInfo tagInfo;
         private ClassLoader loader;
-	private Hashtable taglibs;
+	private HashMap taglibs;
 
 	private static final JspUtil.ValidAttribute[] jspRootAttrs = {
 	    new JspUtil.ValidAttribute("version", true) };
@@ -1492,14 +1492,16 @@ class Validator {
 	StringBuffer errMsg = null;
 	ErrorDispatcher errDisp = compiler.getErrorDispatcher();
 
-        Enumeration enum = compiler.getPageInfo().getTagLibraries().elements();
-        while (enum.hasMoreElements()) {
-            TagLibraryInfo tli = (TagLibraryInfo) enum.nextElement();
-	    if (!(tli instanceof TagLibraryInfoImpl))
-		continue;
+	Object[] objs
+	    = compiler.getPageInfo().getTagLibraries().values().toArray();
 
-	    ValidationMessage[] errors
-		= ((TagLibraryInfoImpl) tli).validate(xmlView);
+	for (int i=0; i<objs.length; i++) {
+
+	    if (!(objs[i] instanceof TagLibraryInfoImpl))
+		continue;
+	    TagLibraryInfoImpl tli = (TagLibraryInfoImpl) objs[i];
+
+	    ValidationMessage[] errors = tli.validate(xmlView);
             if ((errors != null) && (errors.length != 0)) {
                 if (errMsg == null) {
 		    errMsg = new StringBuffer();
@@ -1508,12 +1510,12 @@ class Validator {
                 errMsg.append(Localizer.getMessage("jsp.error.tlv.invalid.page",
 						   tli.getShortName()));
                 errMsg.append("</h3>");
-                for (int i=0; i<errors.length; i++) {
-		    if (errors[i] != null) {
+                for (int j=0; j<errors.length; j++) {
+		    if (errors[j] != null) {
 			errMsg.append("<p>");
-			errMsg.append(errors[i].getId());
+			errMsg.append(errors[j].getId());
 			errMsg.append(": ");
-			errMsg.append(errors[i].getMessage());
+			errMsg.append(errors[j].getMessage());
 			errMsg.append("</p>");
 		    }
                 }
