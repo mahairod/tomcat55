@@ -125,8 +125,7 @@ public final class ConnectorAction extends Action {
     HttpServletRequest request,
     HttpServletResponse response)
     throws IOException, ServletException {
-        
-        
+                
         if (resources == null) {
             resources = getServlet().getResources();
         }

@@ -104,7 +104,8 @@ import org.apache.struts.util.MessageResources;
 public class SetUpServerAction extends Action {
     
     private static MBeanServer mBServer = null;
-    
+    private MessageResources resources = null;
+
     public final static String PORT_PROP_NAME = "port";
     public final static String SHUTDOWN_PROP_NAME = "shutdown";
     public final static String DEBUG_PROP_NAME = "debug";
@@ -135,8 +136,11 @@ public class SetUpServerAction extends Action {
     throws IOException, ServletException {
         
         HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         
-        // Do I have to do this part ??
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }        
         if (form == null) {
             getServlet().log(" Creating new ServerForm bean under key "
             + mapping.getAttribute());
@@ -151,8 +155,6 @@ public class SetUpServerAction extends Action {
         
         // label of the node that was clicked on.
         String nodeLabel = request.getParameter("nodeLabel");
-        
-        // Do transaction stuff before this
         
         ServerForm serverFm = (ServerForm) form;
         
@@ -174,59 +176,60 @@ public class SetUpServerAction extends Action {
         Integer portNumb = null;
         Integer debug = null;
         String shutdown = null;
-        try{
-            
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
-            }
-            
-            Iterator serverItr =
-            mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
-            TomcatTreeBuilder. WILDCARD),
-            null).iterator();
-            
-            ObjectName serverObjName =
-            ((ObjectInstance)serverItr.next()).getObjectName();
-            
-            /*
-            ModelMBeanInfo info = (ModelMBeanInfo) mBServer.getMBeanInfo(serverObjName);
-            MBeanAttributeInfo attrs[] = info.getAttributes();
-            for (int i = 0; i < attrs.length; i++)
-                System.out.println("  AttributeInfo=" + attrs[i]);
-             
-            MBeanOperationInfo opers[] = info.getOperations();
-            for (int i = 0; i < opers.length; i++)
-                System.out.println("  Operation=" + opers[i]);
-             */
-            
-            portNumb = (Integer)mBServer.getAttribute(serverObjName,
-            PORT_PROP_NAME);
-            
-            debug = (Integer)mBServer.getAttribute(serverObjName,
-            DEBUG_PROP_NAME);
-            
-            shutdown = (String)mBServer.getAttribute(serverObjName,
-            SHUTDOWN_PROP_NAME);
-            
-            request.setAttribute("debugLvlVals", debugLvlList);
-            
-        }catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+        
+        // Acquire a reference to the MBeanServer containing our MBeans
+        try {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBeanServer reference", t);
         }
         
+        ObjectName serverObjName = null;
+        try{
+            Iterator serverItr =
+            mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
+            TomcatTreeBuilder.WILDCARD),
+            null).iterator();
+            
+            serverObjName =
+            ((ObjectInstance)serverItr.next()).getObjectName();            
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire Server MBean reference ", t);
+        }
+        
+        String attribute = null;
+        try {
+            portNumb = (Integer)mBServer.getAttribute(serverObjName,
+            attribute=PORT_PROP_NAME);
+            
+            debug = (Integer)mBServer.getAttribute(serverObjName,
+            attribute=DEBUG_PROP_NAME);
+            
+            shutdown = (String)mBServer.getAttribute(serverObjName,
+            attribute=SHUTDOWN_PROP_NAME);
+            
+        } catch(Exception e){
+            getServlet().log
+            (resources.getMessage(locale, "users.error.attribute.get",
+            attribute), e);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.attribute.get",
+            attribute));
+            return (null);
+        }
+        
+        //setting values obtained from the mBean to be displayed in the form.
         serverFm.setNodeLabel(nodeLabel);        
         serverFm.setPortNumberText(portNumb.toString());
-        // Hardcode debuglvl for now
         serverFm.setDebugLvl(debug.toString());
         serverFm.setShutdownText(shutdown);
         serverFm.setDebugLvlVals(debugLvlList);
         
-        // Forward back to the test page
-        return (mapping.findForward("Server"));
-        
+        //forward to the server jsp.
+        return (mapping.findForward("Server"));        
     }
-    
-    
+        
 }

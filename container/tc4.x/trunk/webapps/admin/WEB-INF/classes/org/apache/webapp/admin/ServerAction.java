@@ -63,6 +63,7 @@
 package org.apache.webapp.admin;
 
 import java.util.Iterator;
+import java.util.Locale;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -79,14 +80,10 @@ import javax.management.QueryExp;
 import javax.management.Query;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
 import org.apache.struts.util.MessageResources;
 
 /**
- * Implementation of <strong>Action</strong> that validates a user logon.
+ * Implementation of <strong>Action</strong> that saves server properties.
  *
  * @author Jazmin Jonson
  * @author Manveen Kaur
@@ -96,6 +93,7 @@ import org.apache.struts.util.MessageResources;
 public final class ServerAction extends Action {
     
     private static MBeanServer mBServer = null;
+    private MessageResources resources = null;
     
     // --------------------------------------------------------- Public Methods
     
@@ -121,33 +119,45 @@ public final class ServerAction extends Action {
     HttpServletResponse response)
     throws IOException, ServletException {
         
-        try{
-            
-            // front end validation and checking.
-            // ===================================================
-            MessageResources messages = getResources();
-            
-            // Validate the request parameters specified by the user
-            ActionErrors errors = new ActionErrors();
-            
-            // Report any errors we have discovered back to the original form
-            if (!errors.empty()) {
-                saveErrors(request, errors);
-                return (new ActionForward(mapping.getInput()));
-            }
-            
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
-            }
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
+        Locale locale = (Locale)request.getSession().getAttribute(Action.LOCALE_KEY);
+        
+        ActionErrors errors = new ActionErrors();
+        
+        // Report any errors we have discovered back to the original form
+        if (!errors.empty()) {
+            saveErrors(request, errors);
+            return (new ActionForward(mapping.getInput()));
+        }
+        
+        // Acquire a reference to the MBeanServer containing our MBeans
+        try {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBeanServer reference", t);
+        }
+        
+        // Acquire a reference to the Server MBean
+        ObjectName serverObjName = null;
+        try {
             Iterator serverItr =
             mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
-            TomcatTreeBuilder. WILDCARD),
+            TomcatTreeBuilder.WILDCARD),
             null).iterator();
             
-            ObjectName serverObjName =
+            serverObjName =
             ((ObjectInstance)serverItr.next()).getObjectName();
-            
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire Server MBean reference ", t);
+        }
+        
+        String attribute = null;
+        // read properties from the mBean
+        try{
             String shutdownText = request.getParameter("shutdownText");
             String portNumberText = request.getParameter("portNumberText");
             String debugLvlText = request.getParameter("debugLvl");
@@ -155,7 +165,7 @@ public final class ServerAction extends Action {
             if(shutdownText != null) {
                 
                 mBServer.setAttribute(serverObjName,
-                new Attribute(SetUpServerAction.SHUTDOWN_PROP_NAME,
+                new Attribute(attribute=SetUpServerAction.SHUTDOWN_PROP_NAME,
                 shutdownText));
             }
             
@@ -163,24 +173,30 @@ public final class ServerAction extends Action {
                 
                 Integer port = new Integer(portNumberText);
                 mBServer.setAttribute(serverObjName,
-                new Attribute(SetUpServerAction.PORT_PROP_NAME,
+                new Attribute(attribute=SetUpServerAction.PORT_PROP_NAME,
                 port));
             }
             
             if(debugLvlText != null) {
                 Integer debugLvl = new Integer(debugLvlText);
                 mBServer.setAttribute(serverObjName,
-                new Attribute(SetUpServerAction.DEBUG_PROP_NAME,
+                new Attribute(attribute=SetUpServerAction.DEBUG_PROP_NAME,
                 debugLvl));
             }
-            
-        }catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+        } catch(Exception e){
+            getServlet().log
+            (resources.getMessage(locale, "users.error.attribute.set",
+            attribute), e);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.attribute.set",
+            attribute));
+            return (null);
         }
+        
         if (servlet.getDebug() >= 1)
             servlet.log(" Forwarding to success page");
-        // Forward back to the test page
+        // Forward back to the success page
         return (mapping.findForward("Save Successful"));
         
     }
