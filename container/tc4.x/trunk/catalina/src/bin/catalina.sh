@@ -205,7 +205,7 @@ elif [ "$1" = "start" ] ; then
       org.apache.catalina.startup.Bootstrap "$@" start \
       >> "$CATALINA_BASE"/logs/catalina.out 2>&1 &
 
-      if [ ! -z "$CATALINA_PID"]; then
+      if [ ! -z "$CATALINA_PID" ]; then
         echo $! > $CATALINA_PID
       fi      
   else
@@ -217,7 +217,7 @@ elif [ "$1" = "start" ] ; then
       org.apache.catalina.startup.Bootstrap "$@" start \
       >> "$CATALINA_BASE"/logs/catalina.out 2>&1 &
 
-      if [ ! -z "$CATALINA_PID"]; then
+      if [ ! -z "$CATALINA_PID" ]; then
         echo $! > $CATALINA_PID
       fi      
   fi
