@@ -76,6 +76,11 @@ WebappClassLoader:  Clean up of the triggers.
 
 WebappClassLoader:  Do not allow a a webapp to override classes from J2SE.
 
+HttpResponseStream:  Fix rare NPE which could occur when processing an invalid
+  HTTP request.
+
+HttpProcessor:  Improve robustness of the main processing loop.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -112,6 +117,7 @@ Bugzilla Bugs Resolved:
       on repeated actions
 6550  Old WebappClassLoaders can't be GC'd
 6558  NPE in RequestDumperValve.toString if debug in catalina/XmlMapper
+6569  setLocale() doesn't set the Content-Type charset attribute
 
 
 ============================
