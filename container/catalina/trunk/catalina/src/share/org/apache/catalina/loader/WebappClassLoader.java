@@ -945,7 +945,7 @@ public class WebappClassLoader
                 // Note : Not getting an exception here means the resource was
                 // found
                 try {
-                    result.addElement(getURL(new File(files[i], name)));
+                    result.addElement(getURI(new File(files[i], name)));
                 } catch (MalformedURLException e) {
                     // Ignore
                 }
@@ -958,7 +958,7 @@ public class WebappClassLoader
             JarEntry jarEntry = jarFiles[i].getJarEntry(name);
             if (jarEntry != null) {
                 try {
-                    String jarFakeUrl = getURL(jarRealFiles[i]).toString();
+                    String jarFakeUrl = getURI(jarRealFiles[i]).toString();
                     jarFakeUrl = "jar:" + jarFakeUrl + "!/" + name;
                     result.addElement(new URL(jarFakeUrl));
                 } catch (MalformedURLException e) {
@@ -1563,7 +1563,7 @@ public class WebappClassLoader
     private ResourceEntry findResourceInternal(File file, String path){
         ResourceEntry entry = new ResourceEntry();
         try {
-            entry.source = getURL(new File(file, path));
+            entry.source = getURI(new File(file, path));
             entry.codeBase = entry.source;
         } catch (MalformedURLException e) {
             return null;
@@ -1676,7 +1676,7 @@ public class WebappClassLoader
 
                 entry = new ResourceEntry();
                 try {
-                    entry.codeBase = getURL(jarRealFiles[i]);
+                    entry.codeBase = getURI(jarRealFiles[i]);
                     String jarFakeUrl = entry.codeBase.toString();
                     jarFakeUrl = "jar:" + jarFakeUrl + "!/" + path;
                     entry.source = new URL(jarFakeUrl);
@@ -1939,6 +1939,23 @@ public class WebappClassLoader
             // Ignore
         }
         return realFile.toURL();
+
+    }
+
+
+    /**
+     * Get URL.
+     */
+    protected URL getURI(File file)
+        throws MalformedURLException {
+
+        File realFile = file;
+        try {
+            realFile = realFile.getCanonicalFile();
+        } catch (IOException e) {
+            // Ignore
+        }
+        return realFile.toURI().toURL();
 
     }
 
