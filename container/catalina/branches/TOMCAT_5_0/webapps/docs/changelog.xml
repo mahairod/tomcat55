@@ -23,6 +23,9 @@
       <fix>
         <bug>32373</bug>: outdated installation.xml page. (yoavs)
       </fix>
+      <fix>
+        <bug>32377</bug>: Update MX4J dependency. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
