@@ -87,7 +87,7 @@ public class Jndi02 extends HttpServlet {
     // Names of the known <env-entry> elements
     String names[] =
     { "booleanEntry", "byteEntry", "doubleEntry", "floatEntry",
-      "integerEntry", "longEntry", "stringEntry" };
+      "integerEntry", "longEntry", "stringEntry", "nested" };
 
 
     // Reference some application classes for the first time in destroy()
@@ -307,6 +307,28 @@ public class Jndi02 extends HttpServlet {
                 value = envContext.lookup("stringEntry");
                 String stringValue = (String) value;
                 if (!"String Value".equals(stringValue)) {
+                    sb.append("  stringValue is ");
+                    sb.append(stringValue);
+                    sb.append(".");
+                }
+            }
+        } catch (ClassCastException e) {
+            sb.append("  stringValue class is ");
+            sb.append(value.getClass().getName());
+            sb.append(".");                      
+        } catch (NullPointerException e) {
+            sb.append("  stringValue is missing.");
+        } catch (NamingException e) {
+            log("Get stringValue", e);
+            sb.append("  Cannot get stringValue.");
+        }
+
+        // Validate the nestedEntry environment entry
+        try {
+            if (ok) {
+                value = envContext.lookup("nested/nestedEntry");
+                String stringValue = (String) value;
+                if (!"Nested Value".equals(stringValue)) {
                     sb.append("  stringValue is ");
                     sb.append(stringValue);
                     sb.append(".");
