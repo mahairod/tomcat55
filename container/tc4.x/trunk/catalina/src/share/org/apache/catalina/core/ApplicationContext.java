@@ -158,10 +158,10 @@ public final class ApplicationContext
 
     protected class PrivilegedGetResource 
         implements PrivilegedExceptionAction {
-        
-	private String path;
+                                      
+        private String path;          
         private String host;
-	private DirContext resources;
+        private DirContext resources;
 
         PrivilegedGetResource(String host, String path, DirContext resources) {
             this.host = host;
@@ -174,6 +174,58 @@ public final class ApplicationContext
                    new DirContextURLStreamHandler(resources));
         }
         
+    }
+
+    protected class PrivilegedLogMessage
+        implements PrivilegedAction {
+                                              
+        private String message;                  
+                                     
+        PrivilegedLogMessage(String message) {
+            this.message = message;
+        }                              
+                                       
+        public Object run() {
+            internalLog(message);
+            return null;
+        }
+                                                              
+    }
+
+    protected class PrivilegedLogException
+        implements PrivilegedAction {
+                                              
+        private String message;
+        private Exception exception;
+                                     
+        PrivilegedLogException(Exception exception,String message) {
+            this.message = message;
+            this.exception = exception;
+        }                              
+                                       
+        public Object run() {
+            internalLog(exception,message);
+            return null;
+        }                    
+                                                              
+    }
+
+    protected class PrivilegedLogThrowable
+        implements PrivilegedAction {
+
+        private String message;
+        private Throwable throwable;
+                                    
+        PrivilegedLogThrowable(String message,Throwable throwable) {
+            this.message = message;               
+            this.throwable = throwable;
+        }                             
+                                      
+        public Object run() {         
+            internalLog(message,throwable);
+            return null;              
+        }                   
+                                      
     }
 
 
@@ -682,6 +734,16 @@ public final class ApplicationContext
      * @param message Message to be written
      */
     public void log(String message) {
+        if( System.getSecurityManager() != null ) {
+            PrivilegedLogMessage dp =
+                new PrivilegedLogMessage(message);
+            AccessController.doPrivileged(dp);
+        } else {
+            internalLog(message);
+        }
+    }
+
+    private void internalLog(String message) {
 
 	Logger logger = context.getLogger();
 	if (logger != null)
@@ -700,7 +762,16 @@ public final class ApplicationContext
      *  <code>log(String, Throwable)</code> instead
      */
     public void log(Exception exception, String message) {
+        if( System.getSecurityManager() != null ) {
+            PrivilegedLogException dp =
+                new PrivilegedLogException(exception,message);
+            AccessController.doPrivileged(dp);
+        } else {
+            internalLog(exception,message);
+        }
+    }
 
+    private void internalLog(Exception exception, String message) {
 	Logger logger = context.getLogger();
 	if (logger != null)
 	    logger.log(exception, message);
@@ -715,6 +786,16 @@ public final class ApplicationContext
      * @param throwable Exception to be reported
      */
     public void log(String message, Throwable throwable) {
+        if( System.getSecurityManager() != null ) {
+            PrivilegedLogThrowable dp =
+                new PrivilegedLogThrowable(message,throwable);
+            AccessController.doPrivileged(dp);
+        } else {   
+            internalLog(message,throwable);
+        }
+    }
+
+    private void internalLog(String message, Throwable throwable) {
 
 	Logger logger = context.getLogger();
 	if (logger != null)

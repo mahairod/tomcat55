@@ -135,6 +135,15 @@ public final class Bootstrap {
                     (basePackage +
                      "core.ApplicationContext$PrivilegedGetRequestDispatcher");
                 catalinaLoader.loadClass
+                    (basePackage +      
+                     "core.ApplicationContext$PrivilegedLogMessage");
+                catalinaLoader.loadClass
+                    (basePackage +      
+                     "core.ApplicationContext$PrivilegedLogException");
+                catalinaLoader.loadClass
+                    (basePackage +      
+                     "core.ApplicationContext$PrivilegedLogThrowable");
+                catalinaLoader.loadClass
                     (basePackage +
                      "core.ApplicationDispatcher$PrivilegedForward");
                 catalinaLoader.loadClass
