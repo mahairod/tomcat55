@@ -1,12 +1,12 @@
 /*
  * Copyright 1999,2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,8 @@ package org.apache.catalina.servlets;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -34,6 +36,7 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
@@ -41,6 +44,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.catalina.util.DOMWriter;
+import org.apache.catalina.util.MD5Encoder;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.XMLWriter;
 import org.apache.naming.resources.CacheEntry;
@@ -53,6 +57,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
 
 
 /**
@@ -68,7 +73,7 @@ public class WebdavServlet
 
 
     // -------------------------------------------------------------- Constants
-    
+
 
     private static final String METHOD_HEAD = "HEAD";
     private static final String METHOD_PROPFIND = "PROPFIND";
@@ -141,6 +146,19 @@ public class WebdavServlet
         new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 
+     /**
+     * MD5 message digest provider.
+     */
+    protected static MessageDigest md5Helper;
+
+
+    /**
+     * The MD5 helper object for this class.
+     */
+    protected static final MD5Encoder md5Encoder = new MD5Encoder();
+
+
+
     static {
         creationDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
@@ -202,6 +220,14 @@ public class WebdavServlet
                 secret = value;
         } catch (Throwable t) {
             ;
+        }
+
+
+        // Load the MD5 helper used to calculate signatures.
+        try {
+            md5Helper = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new UnavailableException("No MD5");
         }
 
     }
@@ -301,7 +327,7 @@ public class WebdavServlet
         throws ServletException, IOException {
 
         resp.addHeader("DAV", "1,2");
-        
+
         StringBuffer methodsAllowed = determineMethodsAllowed(resources,
                                                               req);
 
@@ -321,7 +347,7 @@ public class WebdavServlet
             // Get allowed methods
             StringBuffer methodsAllowed = determineMethodsAllowed(resources,
                                                                   req);
-            
+
             resp.addHeader("Allow", methodsAllowed.toString());
             resp.sendError(WebdavStatus.SC_METHOD_NOT_ALLOWED);
             return;
@@ -441,7 +467,7 @@ public class WebdavServlet
                             resp.setStatus(WebdavStatus.SC_MULTI_STATUS);
                             resp.setContentType("text/xml; charset=UTF-8");
                             // Create multistatus object
-                            XMLWriter generatedXML = 
+                            XMLWriter generatedXML =
                                 new XMLWriter(resp.getWriter());
                             generatedXML.writeXMLHeader();
                             generatedXML.writeElement
@@ -525,7 +551,7 @@ public class WebdavServlet
                     // collection
                     String lockPath = currentPath;
                     if (lockPath.endsWith("/"))
-                        lockPath = 
+                        lockPath =
                             lockPath.substring(0, lockPath.length() - 1);
                     Vector currentLockNullResources =
                         (Vector) lockNullResources.get(lockPath);
@@ -622,7 +648,7 @@ public class WebdavServlet
             // Get allowed methods
             StringBuffer methodsAllowed = determineMethodsAllowed(resources,
                                                                   req);
-            
+
             resp.addHeader("Allow", methodsAllowed.toString());
 
             resp.sendError(WebdavStatus.SC_METHOD_NOT_ALLOWED);
@@ -634,7 +660,7 @@ public class WebdavServlet
             try {
                 Document document = documentBuilder.parse
                     (new InputSource(req.getInputStream()));
-                // TODO : Process this request body    
+                // TODO : Process this request body
                 resp.sendError(WebdavStatus.SC_NOT_IMPLEMENTED);
                 return;
 
@@ -798,7 +824,7 @@ public class WebdavServlet
             // If multiple timeouts, just use the first
             if (commaPos != -1) {
                 lockDurationStr = lockDurationStr.substring(0,commaPos);
-            }    
+            }
             if (lockDurationStr.startsWith("Second-")) {
                 lockDuration =
                     (new Integer(lockDurationStr.substring(7))).intValue();
@@ -1309,6 +1335,70 @@ public class WebdavServlet
 
     }
 
+    /**
+     * Return a context-relative path, beginning with a "/", that represents
+     * the canonical version of the specified path after ".." and "." elements
+     * are resolved out.  If the specified path attempts to go outside the
+     * boundaries of the current context (i.e. too many ".." path elements
+     * are present), return <code>null</code> instead.
+     *
+     * @param path Path to be normalized
+     */
+    protected String normalize(String path) {
+
+        if (path == null)
+            return null;
+
+        // Create a place for the normalized path
+        String normalized = path;
+
+        if (normalized == null)
+            return (null);
+
+        if (normalized.equals("/."))
+            return "/";
+
+        // Normalize the slashes and add leading slash if necessary
+        if (normalized.indexOf('\\') >= 0)
+            normalized = normalized.replace('\\', '/');
+        if (!normalized.startsWith("/"))
+            normalized = "/" + normalized;
+
+        // Resolve occurrences of "//" in the normalized path
+        while (true) {
+            int index = normalized.indexOf("//");
+            if (index < 0)
+                break;
+            normalized = normalized.substring(0, index) +
+                normalized.substring(index + 1);
+        }
+
+        // Resolve occurrences of "/./" in the normalized path
+        while (true) {
+            int index = normalized.indexOf("/./");
+            if (index < 0)
+                break;
+            normalized = normalized.substring(0, index) +
+                normalized.substring(index + 2);
+        }
+
+        // Resolve occurrences of "/../" in the normalized path
+        while (true) {
+            int index = normalized.indexOf("/../");
+            if (index < 0)
+                break;
+            if (index == 0)
+                return (null);  // Trying to go outside our context
+            int index2 = normalized.lastIndexOf('/', index - 1);
+            normalized = normalized.substring(0, index2) +
+                normalized.substring(index + 3);
+        }
+
+        // Return the normalized path that we have completed
+        return (normalized);
+
+    }
+
 
     // -------------------------------------------------------- Private Methods
 
@@ -1457,7 +1547,7 @@ public class WebdavServlet
                 if (firstSeparator < 0) {
                     destinationPath = "/";
                 } else {
-                    destinationPath = 
+                    destinationPath =
                         destinationPath.substring(firstSeparator);
                 }
             }
@@ -1776,7 +1866,7 @@ public class WebdavServlet
 
         Enumeration enumeration = null;
         try {
-        	enumeration = resources.list(path);
+            enumeration = resources.list(path);
         } catch (NamingException e) {
             errorList.put(path, new Integer
                 (WebdavStatus.SC_INTERNAL_SERVER_ERROR));
@@ -1952,7 +2042,7 @@ public class WebdavServlet
                     (null, "getcontentlength",
                      String.valueOf(cacheEntry.attributes.getContentLength()));
                 String contentType = getServletContext().getMimeType
-                    (cacheEntry.name); 
+                    (cacheEntry.name);
                 if (contentType != null) {
                     generatedXML.writeProperty(null, "getcontenttype",
                                                contentType);
@@ -2495,11 +2585,11 @@ public class WebdavServlet
 
     /**
      * Determines the methods normally allowed for the resource.
-     *  
+     *
      */
     private StringBuffer determineMethodsAllowed(DirContext resources,
                                                  HttpServletRequest req) {
-        
+
         StringBuffer methodsAllowed = new StringBuffer();
         boolean exists = true;
         Object object = null;
@@ -2518,15 +2608,15 @@ public class WebdavServlet
 
         methodsAllowed.append("OPTIONS, GET, HEAD, POST, DELETE, TRACE");
         methodsAllowed.append(", PROPPATCH, COPY, MOVE, LOCK, UNLOCK");
-        
+
         if (listings) {
             methodsAllowed.append(", PROPFIND");
         }
-        
+
         if (!(object instanceof DirContext)) {
             methodsAllowed.append(", PUT");
         }
-        
+
         return methodsAllowed;
     }
 
@@ -2575,7 +2665,7 @@ public class WebdavServlet
             result += "Scope:" + scope + "\n";
             result += "Depth:" + depth + "\n";
             result += "Owner:" + owner + "\n";
-            result += "Expiration:" 
+            result += "Expiration:"
                 + FastHttpDateFormat.formatDate(expiresAt, null) + "\n";
             Enumeration tokensList = tokens.elements();
             while (tokensList.hasMoreElements()) {
