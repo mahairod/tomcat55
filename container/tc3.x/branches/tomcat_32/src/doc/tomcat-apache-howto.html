@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
     <!-- $Id$ -->
@@ -141,19 +142,22 @@
     <h4><a name="work_together">How will they work together?</a></h4>
 
       <blockquote>
-    <p> In a nutshell a web server is waiting for requests.&nbsp; When these requests arrive the server does whatever is needed to 
+    <p> In a nutshell a web server is waiting for requests.&nbsp; When
+    these requests arrive the server does whatever is needed to 
         serve the requests by providing the necessary content.&nbsp; Adding
     Tomcat to the mix may somewhat change this behavior.&nbsp; Now the web 
         server needs to perform the following:
     <ul>
       <li> Before the first request can be served, Apache needs to load a web
-        server adapter (how Tomcat will communicate w/Apache) library and initialize it. </li>
-      <li> When a request arrives, Apache needs to check and see if it belongs to a servlet, if so it needs to let the adapter
+           server adapter library (so Tomcat can communicate with Apache)
+           and initialize it. </li>
+      <li> When a request arrives, Apache needs to check and see if it
+           belongs to a servlet; if so it needs to let the adapter
            take the request and handle it.</li>
     </ul>
 
     <p>We'd like Apache to handle our static content, such as
-    images and html documents, and to forward all requests for
+    images and HTML documents, and forward all requests for
     dynamic content to Tomcat.&nbsp; More specifically, we need answers to the following questions:</p>
 
         <blockquote>
@@ -227,14 +231,18 @@
       </p>
 
     <blockquote>
-      <p class="code">    &lt;servlet><br>
-      &nbsp;&nbsp;&nbsp; &lt;servlet-name&gt;SlifkaWorld&lt;/servlet-name><br>
-      &nbsp;&nbsp;&nbsp; &lt;servlet-class&gt;foo.bar.baz.SomeClass&lt;/servlet-class><br>
-      &nbsp;&nbsp;&nbsp; &lt;init-param><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;param-name&gt;someParameter&lt;/param-name&gt;<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;param-value&gt;A value&lt;/param-value&gt;<br>
-      &nbsp;&nbsp;&nbsp; &lt;/init-param><br>
-    &lt;/servlet>
+      <p class="code">    &lt;servlet&gt;<br>
+      &nbsp;&nbsp;&nbsp;
+          &lt;servlet-name&gt;SlifkaWorld&lt;/servlet-name&gt;<br>
+      &nbsp;&nbsp;&nbsp;
+          &lt;servlet-class&gt;foo.bar.baz.SomeClass&lt;/servlet-class&gt;<br>
+      &nbsp;&nbsp;&nbsp; &lt;init-param&gt;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          &lt;param-name&gt;someParameter&lt;/param-name&gt;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          &lt;param-value&gt;A value&lt;/param-value&gt;<br>
+      &nbsp;&nbsp;&nbsp; &lt;/init-param&gt;<br>
+    &lt;/servlet&gt;
       </p>
 
     </blockquote>
@@ -327,13 +335,15 @@
 
         <blockquote>
           <p class="code">&lt;!-- Apache AJP12 support. This is also used to shut down tomcat.
-          --><br>
-        &lt;Connector className="org.apache.tomcat.service.PoolTcpConnector"><br>
+          --&gt;<br>
+        &lt;Connector
+            className="org.apache.tomcat.service.PoolTcpConnector"&gt;<br>
           &nbsp;&nbsp;&nbsp; &lt;Parameter name="handler"<br>
-          &nbsp;&nbsp;&nbsp;&nbsp; value="org.apache.tomcat.service.connector.Ajp12ConnectionHandler"/><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;
+              value="org.apache.tomcat.service.connector.Ajp12ConnectionHandler"/&gt;<br>
           &nbsp;&nbsp;&nbsp; &lt;Parameter name="port"<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value="8007"/><br>
-        &lt;/Connector></p>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value="8007"/&gt;<br>
+        &lt;/Connector&gt;</p>
 
         </blockquote>
         <p>To ensure that it is indeed listening on that port, Telnet to it or
@@ -541,7 +551,6 @@ menu. </p>
       <blockquote>
         <p>For now, refer to the comments in the mod_jk.conf-auto file and
         <a href="mod_jk-howto.html">mod_jk HOWTO</a> for details.</p>
-    </p>
 
       </blockquote>
       <h4><a name="httpd_jserv">tomcat-apache.conf</a>
@@ -786,15 +795,15 @@ ApJServMount /subdirExample/servlet /slifkaExample</pre>
         following snippet from server.xml in our AJP section:</p>
         <blockquote>
           <p class="code">&lt;!-- Apache AJP12 support. This is also used to shut down tomcat.
-          --><br>
+          --&lt;<br>
         &lt;Connector className=&quot;org.apache.tomcat.service.PoolTcpConnector&quot;&gt;<br>
           &nbsp;&nbsp;&nbsp; &lt;Parameter name="handler"&nbsp;<br>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          value="org.apache.tomcat.service.connector.Ajp12ConnectionHandler"/><br>
+          value="org.apache.tomcat.service.connector.Ajp12ConnectionHandler"/&gt;<br>
           &nbsp;&nbsp;&nbsp; &lt;Parameter name="port"<br>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          value="8007"/><br>
-        &lt;/Connector></p>
+          value="8007"/&gt;<br>
+        &lt;/Connector&gt;</p>
         </blockquote>
         <p>The key here is that each port parameter's &quot;value&quot;
         attribute must have a different value.&nbsp; To keep in sync, let's
@@ -1094,13 +1103,13 @@ Deny from all
       8080.&nbsp; If you examine the supplied server.xml file, you'll see the
       following element:</p>
       <blockquote>
-      <p class="code">        &lt;!-- Normal HTTP --><br>
+      <p class="code">        &lt;!-- Normal HTTP --&gt;<br>
         &lt;Connector className=&quot;org.apache.tomcat.service.PoolTcpConnector&quot;&gt;<br>
       &nbsp;&nbsp;&nbsp; &lt;Parameter name="handler"&nbsp;<br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; value=&quot;org.apache.tomcat.service.http.HttpConnectionHandler&quot;/&gt;<br>
       &nbsp;&nbsp;&nbsp; &lt;Parameter name="port"&nbsp;<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; value="8080"/><br>
-        &lt;/Connector></p>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; value="8080"/&gt;<br>
+        &lt;/Connector&gt;</p>
       </blockquote>
       <p>To disable this, just comment out the entire &lt;Connector&gt;
       element.&nbsp; Otherwise, just change it to a port that doesn't conflict
@@ -1201,28 +1210,25 @@ ApJServMount / ajpv12://myTomcatHost:1234/blah</pre>
       to Apache/Tomcat</a>
         </h4>
       <blockquote>
-      <p>Tomcat doesn't support JSSI Until someone writes an Interceptor to
+      <p>Tomcat doesn't support JSSI. Until someone writes an Interceptor to
       handle them, the easiest way is to convert your .jhtml files to .jsp
       files.&nbsp; Just replace:
         </p>
-        <font SIZE="2">
         <blockquote>
-          <p class="code">&lt;servlet name=myServlet&gt;<br>
+          <p class="code"><font SIZE="2">&lt;servlet name=myServlet&gt;<br>
           &nbsp;&nbsp;&nbsp; &lt;param name=aParam value=aValue&gt;<br>
-          &lt;/servlet&gt;</p>
+          &lt;/servlet&gt;</font></p>
         </blockquote>
-        </font>
       <p>with
         </p>
-        <font SIZE="2">
         <blockquote>
-          <p class="code">&lt;jsp:include page=&quot;/servlet/myServlet&quot;
+          <p class="code"><font
+          SIZE="2">&lt;jsp:include page=&quot;/servlet/myServlet&quot;
           flush=&quot;true&quot; &gt;<br>
-          &nbsp;&nbsp;&nbsp;</font> <font SIZE="2">&lt;jsp:param name=&quot;aParam&quot;
+          &nbsp;&nbsp;&nbsp; &lt;jsp:param name=&quot;aParam&quot;
           value=&quot;aValue&quot; /&gt;<br>
-          &lt;/jsp:include&gt;</p>
+          &lt;/jsp:include&gt;</font></p>
         </blockquote>
-        </font>
       </blockquote>
       <h4><a name="error_rewrite_usedto">mod_rewrite - Used to work fine with
       Apache/JServ, what gives?</a>
@@ -1306,14 +1312,14 @@ ApJServMount / ajpv12://myTomcatHost:1234/blah</pre>
       off into a separate document and revised by Rob Slifka and Mike Bremford.&nbsp;
     Contributors, listed in alphabetical order:
     <ul>
-     Jonathan Bnayahu<br>
-     Mike Bremford<br>
-     Alex Chaffee<br>
-     Fiona Czuczman<br>
-     Costin Manolache<br>
-     Craig R. McClanahan<br>
-     Rob Slifka<br>
-     ...the countless many on the tomcat-dev and tomcat-user lists!
+     <li>Jonathan Bnayahu<br>
+     <li>Mike Bremford<br>
+     <li>Alex Chaffee<br>
+     <li>Fiona Czuczman<br>
+     <li>Costin Manolache<br>
+     <li>Chris Pepper<br>
+     <li>Rob Slifka<br>
+     <li>...the countless many on the tomcat-dev and tomcat-user lists!
     </ul>
 
     <table width="100%" border="0" cellpadding="10" cellspacing="0">
