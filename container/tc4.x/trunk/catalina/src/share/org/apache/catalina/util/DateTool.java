@@ -17,8 +17,6 @@
 
 package org.apache.catalina.util;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.*;
 import java.text.*;
 
