@@ -192,6 +192,18 @@ final class StandardWrapperValve
             if (!unavailable) {
                 servlet = wrapper.allocate();
             }
+        } catch (UnavailableException e) {
+            long available = wrapper.getAvailable();
+            if ((available > 0L) && (available < Long.MAX_VALUE)) {
+                hres.setDateHeader("Retry-After", available);
+                hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                           sm.getString("standardWrapper.isUnavailable",
+                                        wrapper.getName()));
+            } else if (available == Long.MAX_VALUE) {
+                hres.sendError(HttpServletResponse.SC_NOT_FOUND,
+                           sm.getString("standardWrapper.notFound",
+                                        wrapper.getName()));
+            }
         } catch (ServletException e) {
             log.error(sm.getString("standardWrapper.allocateException",
                              wrapper.getName()), e);
