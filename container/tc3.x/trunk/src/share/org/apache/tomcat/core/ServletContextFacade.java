@@ -338,7 +338,7 @@ implements ServletContext {
         // Can't get this anymore - Harish. A stop-gap arrangement.
 	// context.getLogModule().log(msg);
 	
-	//	System.err.println(msg);
+	System.err.println(msg);
     }
 
     public String getInitParameter(String name) {
