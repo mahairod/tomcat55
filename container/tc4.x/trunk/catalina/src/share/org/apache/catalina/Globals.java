@@ -185,9 +185,16 @@ public final class Globals {
 
 
     /**
-     * The request attribute under which the Invoker servlet will store
-     * the invoking servlet path, if it was used to execute a servlet
-     * indirectly instead of through a servlet mapping.
+     * The servlet context attribute under which the managed bean Registry
+     * will be stored for privileged contexts (if enabled).
+     */
+    public static final String MBEAN_REGISTRY_ATTR =
+        "org.apache.catalina.Registry";
+
+
+    /**
+     * The servlet context attribute under which the MBeanServer will be stored
+     * for privileged contexts (if enabled).
      */
     public static final String MBEAN_SERVER_ATTR =
         "org.apache.catalina.MBeanServer";

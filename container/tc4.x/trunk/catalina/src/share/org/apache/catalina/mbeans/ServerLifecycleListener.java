@@ -69,6 +69,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import javax.management.MBeanException;
+import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import com.sun.jdmk.comm.AuthInfo;
 import com.sun.jdmk.comm.HtmlAdaptorServer;
@@ -315,6 +316,9 @@ public class ServerLifecycleListener
                         // in a servlet context attribute
                         if (context.getPrivileged()) {
                             context.getServletContext().setAttribute
+                                (Globals.MBEAN_REGISTRY_ATTR,
+                                 MBeanUtils.createRegistry());
+                            context.getServletContext().setAttribute
                                 (Globals.MBEAN_SERVER_ATTR, 
                                  MBeanUtils.createServer());
                         }
@@ -394,15 +398,25 @@ public class ServerLifecycleListener
 
         try {
             if (child instanceof Context) {
+                Context context = (Context) child;
+                if (context.getPrivileged()) {
+                    context.getServletContext().setAttribute
+                        (Globals.MBEAN_REGISTRY_ATTR, 
+                         MBeanUtils.createRegistry());
+                    context.getServletContext().setAttribute
+                        (Globals.MBEAN_SERVER_ATTR, 
+                         MBeanUtils.createServer());
+                }
                 if (debug >= 4)
-                    log("  Creating MBean for Context " + child);
-                MBeanUtils.createMBean((Context) child);
-                // child.addContainerListener(this);
+                    log("  Creating MBean for Context " + context);
+                MBeanUtils.createMBean(context);
+                // context.addContainerListener(this);
             } else if (child instanceof Host) {
+                Host host = (Host) child;
                 if (debug >= 3)
-                    log("  Creating MBean for Host " + child);
-                MBeanUtils.createMBean((Host) child);
-                child.addContainerListener(this);
+                    log("  Creating MBean for Host " + host);
+                MBeanUtils.createMBean(host);
+                host.addContainerListener(this);
             }
         } catch (MBeanException t) {
             Exception e = t.getTargetException();
@@ -447,7 +461,38 @@ public class ServerLifecycleListener
             log("Process removeChild[parent=" + parent + ",child=" +
                 child + "]");
 
-        ; // FIXME - processContainerRemoveChild()
+        try {
+            if (child instanceof Context) {
+                Context context = (Context) child;
+                if (context.getPrivileged()) {
+                    context.getServletContext().removeAttribute
+                        (Globals.MBEAN_REGISTRY_ATTR);
+                    context.getServletContext().removeAttribute
+                        (Globals.MBEAN_SERVER_ATTR);
+                }
+                if (debug >= 4)
+                    log("  Removing MBean for Context " + context);
+                MBeanServer mserver = MBeanUtils.createServer();
+                mserver.unregisterMBean
+                    (MBeanUtils.createObjectName(mserver.getDefaultDomain(),
+                                                 context));
+                ; // FIXME - child component MBeans?
+            } else if (child instanceof Host) {
+                Host host = (Host) child;
+                MBeanServer mserver = MBeanUtils.createServer();
+                mserver.unregisterMBean
+                    (MBeanUtils.createObjectName(mserver.getDefaultDomain(),
+                                                 host));
+                ; // FIXME - child component MBeans?
+            }
+        } catch (MBeanException t) {
+            Exception e = t.getTargetException();
+            if (e == null)
+                e = t;
+            log("processContainerRemoveChild: MBeanException", e);
+        } catch (Throwable t) {
+            log("processContainerRemoveChild: Throwable", t);
+        }
 
     }
 
