@@ -573,6 +573,14 @@ Coyote Bug Fixes:
          Fix possible loop scenarios which could happen if an invalid 0 length
          read was made.
 
+[4.1.15] Coyote Response:
+         Improve special header handling to allow protocol handler to enforce
+         the protocol.
+
+[4.1.15] #14281
+         Tomcat 4 Adapter OutputBuffer:
+         Properly compute the total size of the content written.
+
 
 ----------------
 Jasper Bug Fixes:
