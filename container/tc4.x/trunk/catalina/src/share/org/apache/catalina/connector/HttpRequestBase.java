@@ -87,6 +87,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
+import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Session;
@@ -663,6 +664,24 @@ public class HttpRequestBase
                 }
                 is.close();
                 if (len < max) {
+                    // FIX ME, mod_jk when sending an HTTP POST will sometimes
+                    // have an actual content length received < content length.
+                    // Checking for a read of -1 above prevents this code from
+                    // going into an infinite loop.  But the bug must be in mod_jk.
+                    // Log additional data when this occurs to help debug mod_jk
+                    StringBuffer msg = new StringBuffer();
+                    msg.append("HttpRequestBase.parseParameters content length mismatch\n");
+                    msg.append("  URL: ");
+                    msg.append(getRequestURL());
+                    msg.append(" Content Length: ");
+                    msg.append(max);
+                    msg.append(" Read: ");
+                    msg.append(len);
+                    msg.append("\n  Bytes Read: ");
+                    if ( len > 0 ) {
+                        msg.append(new String(buf,0,len));
+                    }
+                    log(msg.toString());
                     throw new RuntimeException
                         (sm.getString("httpRequestBase.contentLengthMismatch"));
                 }
@@ -1284,5 +1303,16 @@ public class HttpRequestBase
 
     }
 
+
+    private void log(String message) {
+        Logger logger = context.getLogger();
+        logger.log(message);
+    }
+     
+     
+    private void log(String message, Throwable throwable) {
+        Logger logger = context.getLogger();
+        logger.log(message, throwable);
+    }
 
 }
