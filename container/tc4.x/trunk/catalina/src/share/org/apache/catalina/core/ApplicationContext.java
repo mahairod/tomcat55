@@ -109,6 +109,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
+
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Response;
@@ -175,6 +176,7 @@ public class ApplicationContext
         }
 
     }
+
 
 
     protected class PrivilegedGetResource
@@ -251,6 +253,7 @@ public class ApplicationContext
 
     protected class PrivilegedLogThrowable
         implements PrivilegedAction {
+
 
         private String message;
         private Throwable throwable;
@@ -442,6 +445,7 @@ public class ApplicationContext
         String contextPath = context.getPath();
         if (!contextPath.endsWith("/"))
             contextPath = contextPath + "/";
+
         if ((contextPath.length() > 1) && (uri.startsWith(contextPath))) {
             return (this);
         }
@@ -691,6 +695,7 @@ public class ApplicationContext
      * return <code>null</code>.
      *
      * @param path The path to the desired resource.
+
      */
     public InputStream getResourceAsStream(String path) {
 
@@ -1157,3 +1162,4 @@ public class ApplicationContext
 
 
 }
+
