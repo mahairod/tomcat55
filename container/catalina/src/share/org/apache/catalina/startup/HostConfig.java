@@ -638,15 +638,15 @@ public class HostConfig
                             deployedApp.redeployResources.put(warDocBase.getAbsolutePath(),
                                     new Long(warDocBase.lastModified()));
                         }
-                        // Add the context XML to the list of files which should trigger a redeployment
-                        deployedApp.redeployResources.put
-                            (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
                         if (expandedDocBase.exists()) {
                             deployedApp.redeployResources.put(expandedDocBase.getAbsolutePath(),
                                     new Long(expandedDocBase.lastModified()));
                             addWatchedResources(deployedApp, 
                                     expandedDocBase.getAbsolutePath(), context);
                         }
+                        // Add the context XML to the list of files which should trigger a redeployment
+                        deployedApp.redeployResources.put
+                            (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
                     }
                 } else {
                     // Add the context XML to the list of files which should trigger a redeployment
