@@ -13,7 +13,7 @@
 **/ %>			 			 
 
 <%! int i=10; %>
-<%@ taglib  uri="/Testlib.tld"  prefix="request" %>
+<%@ taglib  uri="/TestLib.tld"  prefix="request" %>
 <request:ReqTime attr1="<%= i %>" />
 <request:ReqTime attr1='<%= i++ %>' />
 <request:ReqTime attr1="<%= i++ %>" attr2="<%= i++ %>"  />
