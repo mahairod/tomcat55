@@ -100,14 +100,14 @@ public class WebappClassLoader
     implements Reloader, Lifecycle
  {
 
-    private static org.apache.commons.logging.Log log=
+    protected static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( WebappClassLoader.class );
 
     protected class PrivilegedFindResource
         implements PrivilegedAction {
 
-        private File file;
-        private String path;
+        protected File file;
+        protected String path;
 
         PrivilegedFindResource(File file, String path) {
             this.file = file;
@@ -132,20 +132,20 @@ public class WebappClassLoader
      * but where the corresponding JAR files are required to run on
      * earlier versions.
      */
-    private static final String[] triggers = {
+    protected static final String[] triggers = {
         "javax.servlet.Servlet"                     // Servlet API
     };
 
     /** 
      * Jdk Compatibility Support.
      */
-    private static JdkCompat jdkCompat = JdkCompat.getJdkCompat();
+    protected static JdkCompat jdkCompat = JdkCompat.getJdkCompat();
 
     /**
      * Set of package names which are not allowed to be loaded from a webapp
      * class loader without delegating first.
      */
-    private static final String[] packageTriggers = {
+    protected static final String[] packageTriggers = {
     };
 
 
@@ -309,38 +309,38 @@ public class WebappClassLoader
      * A list of read File and Jndi Permission's required if this loader
      * is for a web application context.
      */
-    private ArrayList permissionList = new ArrayList();
+    protected ArrayList permissionList = new ArrayList();
 
 
     /**
      * Path where resources loaded from JARs will be extracted.
      */
-    private File loaderDir = null;
+    protected File loaderDir = null;
 
 
     /**
      * The PermissionCollection for each CodeSource for a web
      * application context.
      */
-    private HashMap loaderPC = new HashMap();
+    protected HashMap loaderPC = new HashMap();
 
 
     /**
      * Instance of the SecurityManager installed.
      */
-    private SecurityManager securityManager = null;
+    protected SecurityManager securityManager = null;
 
 
     /**
      * The parent class loader.
      */
-    private ClassLoader parent = null;
+    protected ClassLoader parent = null;
 
 
     /**
      * The system class loader.
      */
-    private ClassLoader system = null;
+    protected ClassLoader system = null;
 
 
     /**
@@ -358,7 +358,7 @@ public class WebappClassLoader
     /**
      * All permission.
      */
-    private Permission allPermission = new java.security.AllPermission();
+    protected Permission allPermission = new java.security.AllPermission();
 
 
     // ------------------------------------------------------------- Properties
@@ -1650,7 +1650,7 @@ public class WebappClassLoader
      *
      * @return the loaded resource, or null if the resource isn't found
      */
-    private ResourceEntry findResourceInternal(File file, String path){
+    protected ResourceEntry findResourceInternal(File file, String path){
         ResourceEntry entry = new ResourceEntry();
         try {
             entry.source = getURI(new File(file, path));
@@ -2038,7 +2038,7 @@ public class WebappClassLoader
      *
      * @exception IOException if an input/output error occurs
      */
-    private boolean validateJarFile(File jarfile)
+    protected boolean validateJarFile(File jarfile)
         throws IOException {
 
         if (triggers == null)
