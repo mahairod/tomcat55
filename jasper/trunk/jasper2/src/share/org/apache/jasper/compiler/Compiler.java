@@ -258,14 +258,22 @@ public class Compiler {
             }
 
         } catch (Exception e) {
+            if (writer != null) {
+                try {
+                    writer.close();
+                    writer = null;
+                } catch (Exception e1) {
+                    // do nothing
+                }
+            }
             // Remove the generated .java file
-            new File(javaFileName).delete();            
+            new File(javaFileName).delete();
             throw e;
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
-                } catch (Exception e) {
+                } catch (Exception e2) {
                     // do nothing
                 }
             }
