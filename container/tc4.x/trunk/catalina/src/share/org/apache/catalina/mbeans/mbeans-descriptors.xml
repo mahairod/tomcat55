@@ -15,7 +15,7 @@
   <mbean         name="AccessLogValve"
           description="Valve that generates a web server access log"
                domain="Catalina"
-                group="VALVE"
+                group="Valve"
                  type="org.apache.catalina.valves.AccessLogValve">
 
     <attribute   name="container"
@@ -51,7 +51,7 @@
   <mbean         name="DefaultContext"
           description="Used to store the default configuration a Host will use when creating a Context"
                domain="Catalina"
-                group="DEFAULT-CONTEXT"
+                group="Default-Context"
                  type="org.apache.catalina.core.StandardDefaultContext">
 
     <attribute   name="cookies"
@@ -87,7 +87,7 @@
   <mbean         name="FileLogger"
           description="Implementation of Logger that appends log messages to a file"
                domain="Catalina"
-                group="LOGGER"
+                group="Logger"
                  type="org.apache.catalina.logger.FileLogger">
 
     <attribute   name="container"
@@ -122,7 +122,7 @@
   <mbean         name="Http10Connector"
           description="HTTP/1.0 Connector for Tomcat Standalone"
                domain="Catalina"
-                group="CONNECTOR"
+                group="Connector"
                  type="org.apache.catalina.connector.http10.HttpConnector">
 
     <attribute   name="acceptCount"
@@ -198,7 +198,7 @@
   <mbean         name="Http11Connector"
           description="HTTP/1.1 Connector for Tomcat Standalone"
                domain="Catalina"
-                group="CONNECTOR"
+                group="Connector"
                  type="org.apache.catalina.connector.http.HttpConnector">
 
     <attribute   name="acceptCount"
@@ -278,7 +278,7 @@
   <mbean         name="JDBCRealm"
           description="Implmentation of Realm that works with any JDBC supported database"
                domain="Catalina"
-                group="REALM"
+                group="Realm"
                  type="org.apache.catalina.realm.JDBCRealm">
 
     <attribute   name="connectionName"
@@ -337,7 +337,7 @@
   <mbean         name="JNDIRealm"
           description="Implementation of Realm that works with a directory server accessed via the Java Naming and Directory Interface (JNDI) APIs"
                domain="Catalina"
-                group="REALM"
+                group="Realm"
                  type="org.apache.catalina.realm.JNDIRealm">
 
     <attribute   name="connectionName"
@@ -388,7 +388,7 @@
   <mbean         name="MemoryRealm"
           description="Simple implementation of Realm that reads an XML file to configure the valid users, passwords, and roles"
                domain="Catalina"
-                group="REALM"
+                group="Realm"
                  type="org.apache.catalina.realm.MemoryRealm">
 
     <attribute   name="container"
@@ -411,7 +411,7 @@
   <mbean         name="RemoteAddrValve"
           description="Concrete implementation of RequestFilterValve that filters based on the string representation of the remote client's IP address"
                domain="Catalina"
-                group="VALVE"
+                group="Valve"
                  type="org.apache.catalina.valves.RemoteAddrValve">
 
     <attribute   name="allow"
@@ -434,7 +434,7 @@
   <mbean         name="RemoteHostValve"
           description="Concrete implementation of RequestFilterValve that filters based on the string representation of the remote client's host name"
                domain="Catalina"
-                group="VALVE"
+                group="Valve"
                  type="org.apache.catalina.valves.RemoteHostValve">
 
     <attribute   name="allow"
@@ -457,7 +457,7 @@
   <mbean         name="RequestDumperValve"
           description="Implementation of a Valve that logs interesting contents from the specified Request and the corresponding Response"
                domain="Catalina"
-                group="VALVE"
+                group="Valve"
                  type="org.apache.catalina.valves.RequestDumperValve">
 
     <attribute   name="container"
@@ -476,7 +476,7 @@
   <mbean         name="SingleSignOn"
           description="A Valve that supports a 'single signon' user experience"
                domain="Catalina"
-                group="VALVE"
+                group="Valve"
                  type="org.apache.catalina.authenticator.SingleSignOn">
 
     <attribute   name="container"
@@ -491,7 +491,7 @@
   <mbean         name="StandardContext"
           description="Standard Context Component"
                domain="Catalina"
-                group="CONTEXT"
+                group="Context"
                  type="org.apache.catalina.core.StandardContext">
 
     <attribute   name="cookies"
@@ -571,7 +571,7 @@
             className="org.apache.catalina.mbeans.StandardEngineMBean"
           description="Standard Engine Component"
                domain="Catalina"
-                group="ENGINE"
+                group="Engine"
                  type="org.apache.catalina.core.StandardEngine">
 
     <attribute   name="debug"
@@ -653,7 +653,7 @@
   <mbean         name="StandardHost"
           description="Standard Host Component"
                domain="Catalina"
-                group="HOST"
+                group="Host"
                  type="org.apache.catalina.core.StandardHost">
 
     <attribute   name="appBase"
@@ -754,7 +754,7 @@
   <mbean         name="StandardManager"
           description="Standard implementation of the Manager interface"
                domain="Catalina"
-                group="MANAGER"
+                group="Manager"
                  type="org.apache.catalina.session.StandardManager">
 
     <attribute   name="algorithm"
@@ -806,7 +806,7 @@
   <mbean         name="StandardResources"
           description="Filesystem Directory Context implementation helper class"
                domain="Catalina"
-                group="RESOURCES"
+                group="Resources"
                  type="org.apache.naming.resources.FileDirContext">
 
     <attribute   name="absoluteBase"
@@ -847,7 +847,7 @@
   <mbean         name="StandardServer"
           description="Standard Server Component"
                domain="Catalina"
-                group="SERVER"
+                group="Server"
                  type="org.apache.catalina.core.StandardServer">
 
     <attribute   name="port"
@@ -889,7 +889,7 @@
   <mbean         name="StandardService"
           description="Standard Service Component"
                domain="Catalina"
-                group="SERVICE"
+                group="Service"
                  type="org.apache.catalina.core.StandardService">
 
     <attribute   name="container"
@@ -936,7 +936,7 @@
   <mbean         name="SystemErrLogger"
           description="Simple implementation of Logger that writes to System.err"
                domain="Catalina"
-                group="LOGGER"
+                group="Logger"
                  type="org.apache.catalina.logger.SystemErrLogger">
 
     <attribute   name="container"
@@ -955,7 +955,7 @@
   <mbean         name="SystemOutLogger"
           description="Simple implementation of Logger that writes to System.out"
                domain="Catalina"
-                group="LOGGER"
+                group="Logger"
                  type="org.apache.catalina.logger.SystemOutLogger">
 
     <attribute   name="container"
@@ -974,7 +974,7 @@
   <mbean         name="WarpConnector"
           description="WARP Connector Component"
                domain="Catalina"
-                group="CONNECTOR"
+                group="Connector"
                  type="org.apache.catalina.connector.http.HttpConnector">
 
     <attribute   name="acceptCount"
@@ -1050,7 +1050,7 @@
   <mbean         name="WarpEngine"
           description="Engine Component for WARP Connector"
                domain="Catalina"
-                group="ENGINE"
+                group="Engine"
                  type="org.apache.catalina.connector.warp.WarpEngine">
 
     <attribute   name="debug"
@@ -1127,7 +1127,7 @@
   <mbean         name="WebappLoader"
           description="Classloader implementation which is specialized for handling web applications"
                domain="Catalina"
-                group="LOADER"
+                group="Loader"
                  type="org.apache.catalina.loader.WebappLoader">
 
     <attribute   name="checkInterval"
