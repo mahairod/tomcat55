@@ -1715,8 +1715,8 @@ public class Parser {
     private String getAttributeBodyType(Node n, String name) {
 
 	if (n instanceof Node.CustomTag) {
-	    TagAttributeInfo[] tldAttrs =
-			((Node.CustomTag)n).getTagInfo().getAttributes();
+	    TagInfo tagInfo = ((Node.CustomTag)n).getTagInfo();
+	    TagAttributeInfo[] tldAttrs = tagInfo.getAttributes();
 	    for (int i=0; i<tldAttrs.length; i++) {
 		if (name.equals(tldAttrs[i].getName())) {
 		    if (tldAttrs[i].isFragment()) {
@@ -1726,6 +1726,9 @@ public class Parser {
 		        return TagInfo.BODY_CONTENT_JSP;
 		    }
 		}
+	    }
+	    if (tagInfo.hasDynamicAttributes()) {
+		return TagInfo.BODY_CONTENT_JSP;
 	    }
 	} else if (n instanceof Node.IncludeAction) {
 	    if ("page".equals(name)) {
