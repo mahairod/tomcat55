@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<jsp:root xmlns="http://java.sun.com/JSP/Page"
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
   version="1.2">
 <jsp:directive.page contentType="text/html"/>
 <jsp:directive.page import="java.util.Date, java.util.Locale"/>
