@@ -22,6 +22,7 @@
     <mkdir dir="${tester.build}"/>
     <mkdir dir="${tester.build}/bin"/>
     <mkdir dir="${tester.build}/classes"/>
+    <mkdir dir="${tester.build}/conf"/>
     <mkdir dir="${tester.build}/lib"/>
   </target>
 
@@ -37,6 +38,9 @@
     <fixcrlf srcdir="${tester.build}/bin" includes="*.sh"  eol="lf"/>
     <fixcrlf srcdir="${tester.build}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${tester.build}/bin/tester.sh"/>
+    <copy todir="${tester.build}/conf">
+      <fileset dir="src/conf" />
+    </copy>
 
     <!-- Compiled Classes -->
     <mkdir  dir="${tester.build}/classes"/>
@@ -133,6 +137,7 @@
   <target name="deploy-prepare">
     <mkdir dir="${tester.deploy}"/>
     <mkdir dir="${tester.deploy}/bin"/>
+    <mkdir dir="${tester.deploy}/conf"/>
   </target>
 
 
@@ -146,6 +151,9 @@
     <fixcrlf srcdir="${tester.deploy}/bin" includes="*.sh"  eol="lf"/>
     <fixcrlf srcdir="${tester.deploy}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${tester.deploy}/bin/tester.sh"/>
+    <copy todir="${tester.deploy}/conf" overwrite="true">
+      <fileset dir="${tester.build}/conf" />
+    </copy>
 
     <!-- Unpacked Shared Classes -->
     <mkdir   dir="${tester.deploy}/shared/classes"/>
