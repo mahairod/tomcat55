@@ -80,7 +80,7 @@ problem you are having before reporting a bug.</p>
       or <a href="mailto:tomcat-dev@jakarta.apache.org">tomcat-dev</a>
       discussion lists you can ask about the problem on those lists.
       If you are not subscribed, you can learn about the lists and subscribe
-      <a herf="http://jakarta.apache.org/site/mail.html">here</a>.
+      <a href="http://jakarta.apache.org/site/mail.html">here</a>.
     </p>
   </subsection>
 
@@ -119,8 +119,9 @@ reproduce it.  Here is a listing of information which should be included:
   <li><b>Example</b> - Example configuration files or web applications which
     demonstrate the bug.  When submitting an example which reproduces the bug,
     please try to make it as simple as possible.</li>
-  <li><b>Bug Fix Patch</b> - A patch created using diff -u which fixes the bug.
-    (If you have found a bug fixwhich can be applied to the Tomcat code)</li>
+  <li><b>Bug Fix Patch</b> - A patch created using <code>diff -u</code> which 
+    fixes the bug.
+    (If you have found a bug fix which can be applied to the Tomcat code)</li>
   <li><b>Miscellaneous</b> - Any other information you feel will help track
     down the problem.  For example other Java API's and versions being used
     with Tomcat.</li>
