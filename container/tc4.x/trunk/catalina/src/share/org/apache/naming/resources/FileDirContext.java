@@ -848,7 +848,10 @@ public class FileDirContext extends BaseDirContext {
         if (file.exists() && file.canRead()) {
             // Windows only check
             if ((caseSensitive) && (File.separatorChar  == '\\')) {
-                String absPath = normalize(file.getAbsolutePath());
+                String fileAbsPath = file.getAbsolutePath();
+                if (fileAbsPath.endsWith("."))
+                    fileAbsPath = fileAbsPath + "/";
+                String absPath = normalize(fileAbsPath);
                 String canPath = null;
                 try {
                     canPath = file.getCanonicalPath();
@@ -856,16 +859,19 @@ public class FileDirContext extends BaseDirContext {
                         canPath = normalize(canPath);
                 } catch (IOException e) {
                 }
-                absPath = absPath.substring(absoluteBase.length());
-                if ((canPath == null) || (absPath == null))
-                    return null;
-                if (absPath.equals(""))
-                    absPath = "/";
-                canPath = canPath.substring(absoluteBase.length());
-                if (canPath.equals(""))
-                    canPath = "/";
-                if (!canPath.equals(absPath))
-                    return null;
+                if ((absoluteBase.length() < absPath.length()) 
+                    && (absoluteBase.length() < canPath.length())) {
+                    absPath = absPath.substring(absoluteBase.length());
+                    if ((canPath == null) || (absPath == null))
+                        return null;
+                    if (absPath.equals(""))
+                        absPath = "/";
+                    canPath = canPath.substring(absoluteBase.length());
+                    if (canPath.equals(""))
+                        canPath = "/";
+                    if (!canPath.equals(absPath))
+                        return null;
+                }
             }
         } else {
             return null;
