@@ -487,7 +487,7 @@ public class DefaultServlet
         if ((result == null) || (result.equals(""))) {
             result = "/";
         }
-        return normalize(result);
+        return (result);
 
     }
 
