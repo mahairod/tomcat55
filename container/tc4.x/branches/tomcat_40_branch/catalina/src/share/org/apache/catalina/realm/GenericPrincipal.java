@@ -73,15 +73,13 @@ import org.apache.catalina.Realm;
 
 /**
  * Generic implementation of <strong>java.security.Principal</strong> that
- * is available for use by <code>Realm</code> implementations.  The class
- * and all of its methods (except for <code>getName()</code>) are package
- * private to avoid interference from applications.
+ * is available for use by <code>Realm</code> implementations.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-class GenericPrincipal implements Principal {
+public class GenericPrincipal implements Principal {
 
 
     // ----------------------------------------------------------- Constructors
@@ -95,7 +93,7 @@ class GenericPrincipal implements Principal {
      * @param name The username of the user represented by this Principal
      * @param password Credentials used to authenticate this user
      */
-    GenericPrincipal(Realm realm, String name, String password) {
+    public GenericPrincipal(Realm realm, String name, String password) {
 
         this(realm, name, password, null);
 
@@ -112,7 +110,8 @@ class GenericPrincipal implements Principal {
      * @param password Credentials used to authenticate this user
      * @param roles List of roles (must be Strings) possessed by this user
      */
-    GenericPrincipal(Realm realm, String name, String password, List roles) {
+    public GenericPrincipal(Realm realm, String name, String password,
+                            List roles) {
 
         super();
         this.realm = realm;
@@ -147,7 +146,7 @@ class GenericPrincipal implements Principal {
      */
     protected String password = null;
 
-    String getPassword() {
+    public String getPassword() {
         return (this.password);
     }
 
@@ -157,7 +156,7 @@ class GenericPrincipal implements Principal {
      */
     protected Realm realm = null;
 
-    Realm getRealm() {
+    public Realm getRealm() {
         return (this.realm);
     }
 
@@ -167,12 +166,26 @@ class GenericPrincipal implements Principal {
      */
     protected String roles[] = new String[0];
 
-    String[] getRoles() {
+    public String[] getRoles() {
         return (this.roles);
     }
 
 
     // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Does the user represented by this Principal possess the specified role?
+     *
+     * @param role Role to be tested
+     */
+    public boolean hasRole(String role) {
+
+        if (role == null)
+            return (false);
+        return (Arrays.binarySearch(roles, role) >= 0);
+
+    }
 
 
     /**
@@ -185,23 +198,6 @@ class GenericPrincipal implements Principal {
         sb.append(this.name);
         sb.append("]");
         return (sb.toString());
-
-    }
-
-
-    // -------------------------------------------------------- Package Methods
-
-
-    /**
-     * Does the user represented by this Principal possess the specified role?
-     *
-     * @param role Role to be tested
-     */
-    boolean hasRole(String role) {
-
-        if (role == null)
-            return (false);
-        return (Arrays.binarySearch(roles, role) >= 0);
 
     }
 
