@@ -328,7 +328,7 @@ public class Catalina {
         digester.addSetProperties("Server/Service/Connector/Factory");
         digester.addSetNext("Server/Service/Connector/Factory",
                             "setFactory",
-                            "org.apache.catalina.net.ServerSocketFactory");
+                            "org.apache.catalina.ServerSocketFactory");
 
         digester.addObjectCreate("Server/Service/Connector/Listener",
                                  null, // MUST be specified in the element

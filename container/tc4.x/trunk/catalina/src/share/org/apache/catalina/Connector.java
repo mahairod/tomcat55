@@ -65,9 +65,6 @@
 package org.apache.catalina;
 
 
-import org.apache.catalina.net.ServerSocketFactory;
-
-
 /**
  * A <b>Connector</b> is a component responsible receiving requests from,
  * and returning responses to, a client application.  A Connector performs

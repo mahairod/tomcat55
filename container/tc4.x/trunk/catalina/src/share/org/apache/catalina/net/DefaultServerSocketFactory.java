@@ -73,6 +73,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.KeyManagementException;
 import java.security.cert.CertificateException;
+import org.apache.catalina.ServerSocketFactory;
+
 
 /**
  * Default server socket factory, which returns unadorned server sockts.

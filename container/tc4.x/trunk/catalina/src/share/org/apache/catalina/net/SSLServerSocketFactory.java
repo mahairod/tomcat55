@@ -110,7 +110,7 @@ import com.sun.net.ssl.TrustManagerFactory;
  */
 
 public class SSLServerSocketFactory
-    implements org.apache.catalina.net.ServerSocketFactory {
+    implements org.apache.catalina.ServerSocketFactory {
 
 
     // ----------------------------------------------------- Instance Variables
