@@ -36,11 +36,6 @@
                        entropy of the initialization of our random number
                        generator"
                  type="java.lang.String"/>
- 
-    <!-- What is that ??? -->
-    <attribute   name="managedResource"
-          description="The managed resource this MBean is associated with"
-                 type="java.lang.Object"/>
 
     <attribute   name="maxActiveSessions"
           description="The maximum number of active Sessions allowed, or -1
