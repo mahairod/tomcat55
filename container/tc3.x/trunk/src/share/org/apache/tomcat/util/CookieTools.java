@@ -192,6 +192,8 @@ public class CookieTools {
 	    String pattern = "EEE, dd-MMM-yyyyy HH:mm:ss z";
 	    Locale loc = Locale.US;
 	    SimpleDateFormat df = new SimpleDateFormat(pattern, loc);
+	    TimeZone zone = TimeZone.getTimeZone("GMT");
+	    df.setTimeZone(zone);
 	    String str = df.format(calendar.getTime());
 	    buf.append(str);
 	}
