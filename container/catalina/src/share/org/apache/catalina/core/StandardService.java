@@ -554,19 +554,25 @@ public class StandardService
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, null);
 
+        // Stop our defined Connectors first
+        synchronized (connectors) {
+            for (int i = 0; i < connectors.length; i++) {
+                connectors[i].pause();
+            }
+        }
+
+        // Heuristic: Sleep for a while to ensure pause of the connector
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // Ignore
+        }
+
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
 
         log.info
             (sm.getString("standardService.stop.name", this.name));
         started = false;
-
-        // Stop our defined Connectors first
-        synchronized (connectors) {
-            for (int i = 0; i < connectors.length; i++) {
-                if (connectors[i] instanceof Lifecycle)
-                    ((Lifecycle) connectors[i]).stop();
-            }
-        }
 
         // Stop our defined Container second
         if (container != null) {
@@ -574,6 +580,14 @@ public class StandardService
                 if (container instanceof Lifecycle) {
                     ((Lifecycle) container).stop();
                 }
+            }
+        }
+
+        // Stop our defined Connectors first
+        synchronized (connectors) {
+            for (int i = 0; i < connectors.length; i++) {
+                if (connectors[i] instanceof Lifecycle)
+                    ((Lifecycle) connectors[i]).stop();
             }
         }
 
