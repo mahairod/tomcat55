@@ -163,29 +163,16 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	this.err = err;
         ZipInputStream zin;
         InputStream in = null;
-        URL url = null;
         boolean relativeURL = false;
         JarFile jarFile = null;
 
 	if (location == null) {
-	    // The URI points to the TLD itself or to a jar file where the TLD
-	    // is stored
-	    int uriType = TldLocationsCache.uriType(uri);
-	    if (uriType == TldLocationsCache.ABS_URI) {
-		err.jspError("jsp.error.taglibDirective.absUriCannotBeResolved",
-			     uri);
-	    } else if (uriType == TldLocationsCache.NOROOT_REL_URI) {
-		uri = ctxt.resolveRelativeUri(uri);
-	    }
-	    location = new String[2];
-	    location[0] = uri;
-	    if (uri.endsWith("jar")) {
-		location[1] = "META-INF/taglib.tld";
-	    }
+	    // The URI points to the TLD itself or to a JAR file in which the
+	    // TLD is stored
+	    location = generateTLDLocation(uri, ctxt);
 	}
 
         try {
-
             if (!location[0].endsWith("jar")) {
                 // Location points to TLD file
                 try {
@@ -196,9 +183,8 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
                 } catch (FileNotFoundException ex) {
                     err.jspError("jsp.error.file.not.found", location[0]);
                 }
-                // Now parse the tld.
                 parseTLD(ctxt, location[0], in, null);
-                // Add the TLD to dependency list
+                // Add TLD to dependency list
                 PageInfo pageInfo = ctxt.createCompiler().getPageInfo();
                 if (pageInfo != null) {
                     pageInfo.addDependant(location[0]);
@@ -208,9 +194,8 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
                 ZipEntry jarEntry = null;
                 JarURLConnection conn = null;
                 try {
-                    url = new URL("jar:" + location[0] + "!/");
-                    conn = (JarURLConnection)
-                        url.openConnection();
+                    URL url = new URL("jar:" + location[0] + "!/");
+                    conn = (JarURLConnection) url.openConnection();
                     conn.connect(); //@@@ necessary???
                     jarFile = conn.getJarFile();
                     jarEntry = jarFile.getEntry(location[1]);
@@ -226,7 +211,6 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
                                  location[1], ex.toString());
                 }
             }
-
         } finally {
             if (in != null) {
                 try {
@@ -333,6 +317,47 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	while (enum.hasMoreElements()) {
 	    this.functions[i++] = (FunctionInfo) enum.nextElement();
 	}
+    }
+    
+    /*
+     * @param uri The uri of the TLD
+     * @param ctxt The compilation context
+     *
+     * @return String array whose first element denotes the path to the TLD.
+     * If the path to the TLD points to a jar file, then the second element
+     * denotes the name of the TLD entry in the jar file, which is hardcoded
+     * to META-INF/taglib.tld.
+     */
+    private String[] generateTLDLocation(String uri,
+					 JspCompilationContext ctxt)
+                throws JasperException {
+
+	int uriType = TldLocationsCache.uriType(uri);
+	if (uriType == TldLocationsCache.ABS_URI) {
+	    err.jspError("jsp.error.taglibDirective.absUriCannotBeResolved",
+			 uri);
+	} else if (uriType == TldLocationsCache.NOROOT_REL_URI) {
+	    uri = ctxt.resolveRelativeUri(uri);
+	}
+
+	String[] location = new String[2];
+	location[0] = uri;
+	if (location[0].endsWith("jar")) {
+	    URL url = null;
+	    try {
+		url = ctxt.getResource(location[0]);
+	    } catch (Exception ex) {
+		err.jspError("jsp.error.tld.unable_to_get_jar", location[0],
+			     ex.toString());
+	    }
+	    if (url == null) {
+		err.jspError("jsp.error.tld.missing_jar", location[0]);
+	    }
+	    location[0] = url.toString();
+	    location[1] = "META-INF/taglib.tld";
+	}
+
+	return location;
     }
 
     private TagInfo createTagInfo(TreeNode elem) throws JasperException {
