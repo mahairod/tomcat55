@@ -926,6 +926,7 @@ public class Context {
 	    try {
 	        result.getWrapper().loadServlet(); 
 	    } catch (Exception ee) {
+		ee.printStackTrace();
 	        String msg = sm.getString("context.loadServlet.e",
 		    servletName);
 
