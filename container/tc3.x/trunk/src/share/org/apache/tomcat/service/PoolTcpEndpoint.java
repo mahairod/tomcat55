@@ -332,7 +332,10 @@ class TcpWorkerThread implements Runnable {
     }
 
     public void run() {
-	    while(endpoint.running) {
+	// Create per-thread cache
+	Object perThrData[]=endpoint.getConnectionHandler().init();
+	while(endpoint.running) {
+		
 		//		System.out.println("XXX accept socket");
 	        Socket s = endpoint.acceptSocket();
 		//		System.out.print("Ac");
@@ -356,7 +359,7 @@ class TcpWorkerThread implements Runnable {
 
                 	con.setEndpoint(endpoint);
                 	con.setSocket(s);
-                	endpoint.getConnectionHandler().processConnection(con, null);
+                	endpoint.getConnectionHandler().processConnection(con, perThrData);
                 } finally {
                     con.recycle();
                     connectionCache.addElement(con);

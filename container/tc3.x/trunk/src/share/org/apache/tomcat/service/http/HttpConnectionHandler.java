@@ -93,7 +93,14 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
     }
 
     public Object[] init( ) {
-	return null;
+	Object thData[]=new Object[2];
+	HttpRequestAdapter reqA=new HttpRequestAdapter();
+	HttpResponseAdapter resA=new HttpResponseAdapter();
+	
+	thData[0]=reqA;
+	thData[1]=resA;
+	
+	return  thData;
     }
 
     // XXX
@@ -117,11 +124,18 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	    //	    System.out.print("2");
 	    InputStream in=socket.getInputStream();
 	    OutputStream out=socket.getOutputStream();
+	    HttpRequestAdapter reqA=null;
+	    HttpResponseAdapter resA=null;
+	    if( thData != null ) {
+		reqA=(HttpRequestAdapter)thData[0];
+		resA=(HttpResponseAdapter)thData[1];
+		if( reqA!=null ) reqA.recycle();
+		if( resA!=null ) resA.recycle();
+	    }
+	    if( reqA==null) reqA=new HttpRequestAdapter();
+	    if( resA==null) resA=new HttpResponseAdapter();
 
-	    HttpRequestAdapter reqA=new HttpRequestAdapter();
 	    reqA.setContextManager( contextM );
-
-	    HttpResponseAdapter resA=new HttpResponseAdapter();
 	    
 	    resA.setRequest(reqA);
 	    reqA.setResponse( resA );
