@@ -137,7 +137,17 @@ public class Lists {
             booleanValues.add(new LabelValueBean("True", "true"));
             booleanValues.add(new LabelValueBean("False", "false"));
     }
-    
+
+    /**
+     * Precomputed list of clientAuth lables and values.
+     */
+    private static List clientAuthValues = new ArrayList();
+
+    static {
+            clientAuthValues.add(new LabelValueBean("True","true"));
+            clientAuthValues.add(new LabelValueBean("False","false"));
+            clientAuthValues.add(new LabelValueBean("Want","want"));
+    }
 
     // --------------------------------------------------------- Public Methods
 
@@ -169,6 +179,15 @@ public class Lists {
     public static List getBooleanValues() {
 
         return (booleanValues);
+
+    }
+    /**
+     * Return a <code>List</code> of {@link LabelValueBean}s for the legal
+     * settings for <code>clientAuth</code> properties.
+     */
+    public static List getClientAuthValues() {
+
+        return (clientAuthValues);
 
     }
 
