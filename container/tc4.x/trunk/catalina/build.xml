@@ -1017,6 +1017,8 @@
     <mkdir dir="${catalina.deploy}/common/lib"/>
     <mkdir dir="${catalina.deploy}/server/classes"/>
     <mkdir dir="${catalina.deploy}/server/lib"/>
+    <mkdir dir="${catalina.deploy}/shared/classes"/>
+    <mkdir dir="${catalina.deploy}/shared/lib"/>
     <mkdir dir="${catalina.deploy}/work"/>
     <mkdir dir="${catalina.deploy}/temp"/>
   </target>
