@@ -228,7 +228,8 @@ final class StandardContextValve
 
         ServletRequestEvent event = null;
 
-        if (instances.length > 0) {
+        if ((instances != null) 
+                && (instances.length > 0)) {
             event = new ServletRequestEvent
                 (((StandardContext) container).getServletContext(), 
                  request.getRequest());
