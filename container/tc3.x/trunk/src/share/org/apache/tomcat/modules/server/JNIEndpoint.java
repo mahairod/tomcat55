@@ -121,6 +121,21 @@ public class JNIEndpoint {
 	return ep;
     }
 
+    public static final int DEFAULT_TIMEOUT=60*1000;
+    
+    public static int getTimeout() {
+	// # 3086
+	String to=System.getProperty("JNIEndpoint.timeout");
+	if( to!=null ) {
+	    try {
+		int i=new Integer( to ).intValue();
+		return i;
+	    } catch( Exception ex ){
+		System.out.println("Invalid timeout " + to );
+	    }
+	}
+	return DEFAULT_TIMEOUT;
+    }
 
     // -------------------- JNI Entry points
 
@@ -154,7 +169,7 @@ public class JNIEndpoint {
 	    System.err.println("Starting up StartupThread");
             startup.start();
             synchronized (this) {
-                wait(60*1000);
+                wait(getTimeout());
             }
 	    System.err.println("End waiting");
         } catch(Throwable t) {
