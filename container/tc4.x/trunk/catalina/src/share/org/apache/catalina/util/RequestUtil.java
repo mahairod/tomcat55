@@ -65,6 +65,7 @@
 package org.apache.catalina.util;
 
 
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -207,6 +208,12 @@ public final class RequestUtil {
      * Append request parameters from the specified String to the specified
      * Map.  It is presumed that the specified Map is not accessed from any
      * other thread, so no synchronization is performed.
+     * <p>
+     * <strong>IMPLEMENTATION NOTE</strong>:  URL decoding is performed
+     * individually on the parsed name and value elements, rather than on
+     * the entire query string ahead of time, to properly deal with the case
+     * where the name or value includes an encoded "=" or "&" character
+     * that would otherwise be interpreted as a delimiter.
      *
      * @param map Map that accumulates the resulting parameters
      * @param data Input string containing request parameters
@@ -249,6 +256,22 @@ public final class RequestUtil {
 	    // A zero-length name means we are done
 	    if (name.length() < 1)
 	        break;
+
+            // Decode the name and value if required
+            if ((name.indexOf('%') >= 0) || (name.indexOf('+') >= 0)) {
+                try {
+                    name = URLDecoder.decode(name);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(e.toString());
+                }
+            }
+            if ((value.indexOf('%') >= 0) || (value.indexOf('+') >= 0)) {
+                try {
+                    value = URLDecoder.decode(value);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(e.toString());
+                }
+            }
 
 	    // Create or update the array of values for this name
 	    oldValues = (String[]) map.get(name);
