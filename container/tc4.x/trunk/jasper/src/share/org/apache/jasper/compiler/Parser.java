@@ -838,9 +838,9 @@ public class Parser {
 		reader.advance(CLOSE_1.length());
 		listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);
 		listener.handleTagBegin(start, reader.mark(), attrs, prefix,
-					shortTagName, tli, ti, true);
+					shortTagName, tli, ti, false);
 		listener.handleTagEnd(start, reader.mark(), prefix, 
-				      shortTagName, attrs, tli, ti, true);
+				      shortTagName, attrs, tli, ti, false);
 	    } else { 
 		// Body can be either
 		//     - empty
