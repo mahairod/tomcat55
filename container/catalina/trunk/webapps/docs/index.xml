@@ -100,11 +100,14 @@ Tomcat 5, and using many of the Tomcat features.</p>
 are responsible for installing, configuring, and operating a Tomcat 5 server.
 </p>
 <ul>
-<li><a href="config/index.html"><strong>Server Configuration Reference</strong></a>
+<li><a href="RELEASE-NOTES.txt"><strong>Release notes</strong></a>
+    - Known issues in this Tomcat release.
+    </li>
+<li><a href="config/index.html"><strong>Tomcat Server Configuration Reference</strong></a>
     - Reference manual that documents all available elements and attributes
       that may be placed into a Tomcat 5 <code>conf/server.xml</code> file.
     </li>
-<li><a href="jk2/index.html"><strong>JK Documenation</strong></a>
+<li><a href="http://jakarta.apache.org/builds/jakarta-tomcat-connectors/jk2/doc/"><strong>JK Documenation</strong></a>
     - Complete documentation and HOWTOs on the JK native webserver connector,
       used to interface Tomcat with servers like Apache HTTPd, IIS
       and others.</li>
@@ -126,19 +129,22 @@ the development of the <em>Tomcat</em> project.</p>
     steps necessary to download Tomcat 5 source code (and the other packages
     that it depends on), and build a binary distribution from those sources.
     </li>
+<li><a href="changelog.html"><strong>Changelog</strong></a> - Details the
+    changes made to Tomcat.
+    </li>
+<li><a href="status.html"><strong>Status</strong></a> - Tomcat development 
+    status.
+    </li>
+<li><a href="developers.html"><strong>Developers</strong></a> - List of active
+    Tomcat contributors.
+    </li>
 <li><a href="catalina/funcspecs/index.html"><strong>Functional Specifications</strong></a>
     - Requirements specifications for features of the <em>Catalina</em> servlet
     container portion of Tomcat 5.</li>
 <li><a href="catalina/docs/api/index.html"><strong>Catalina Javadocs</strong></a>
-    - Javadoc API documentation for the <em>Catalina</em> servlet container
-    portion of Tomcat 5.</li>
-<li><a href="coyote/api/org/apache/coyote/package-summary.html"><strong>Coyote API Javadocs</strong></a>
-    - Javadoc API documentation for the <em>Coyote</em> API.</li>
-<li><a href="coyote/http11/api/index.html"><strong>Coyote HTTP/1.1 Javadocs</strong></a>
-    - Javadoc API documentation for the <em>Coyote HTTP/1.1</em> connector.</li>
-<li><a href="coyote/util/index.html"><strong>Util API Javadocs</strong></a>
-    - Javadoc API documentation for the <em>Coyote Utilties</em> API.</li>
-<li><a href="jasper/docs/api/index.html"><strong>Javadocs</strong></a>
+    - Javadoc API documentation for the <em>Catalina</em> servlet
+    container and its dependencies.</li>
+<li><a href="jasper/docs/api/index.html"><strong>Jasper Javadocs</strong></a>
     - Javadoc API documentation for the <em>Jasper</em> JSP container
     portion of Tomcat 5.</li>
 </ul>
