@@ -585,10 +585,17 @@ public class ManagerServlet
                 return;
             }
             deployer.start(path);
-            writer.println(sm.getString("managerServlet.started", displayPath));
+            if (context.getAvailable())
+                writer.println
+                    (sm.getString("managerServlet.started", displayPath));
+            else
+                writer.println
+                    (sm.getString("managerServlet.startFailed", displayPath));
         } catch (Throwable t) {
-            getServletContext().log("ManagerServlet.start[" + displayPath + "]",
-                                    t);
+            getServletContext().log
+                (sm.getString("managerServlet.startFailed", displayPath), t);
+            writer.println
+                (sm.getString("managerServlet.startFailed", displayPath));
             writer.println(sm.getString("managerServlet.exception",
                                         t.toString()));
         }

@@ -3404,12 +3404,18 @@ public class StandardContext
         // Unbinding thread
         unbindThread(oldCCL);
 
+        // Set available status depending upon startup success
         if (ok) {
             if (debug >= 1)
                 log("Starting completed");
             setAvailable(true);
         } else {
             log(sm.getString("standardContext.startFailed"));
+            try {
+                stop();
+            } catch (Throwable t) {
+                log(sm.getString("standardContext.startCleanup"), t);
+            }
             setAvailable(false);
         }
 
