@@ -113,10 +113,6 @@ public class BufferedServletOutputStream extends ServletOutputStream {
 	setResponse(resA);
     }
 
-//     public void setResponseAdapter( Response resA ) {
-// 	this.resA=resA;
-//     }
-    
     protected void doWrite( byte buffer[], int pos, int count) throws IOException {
 	resA.doWrite( buffer, pos, count);
     }
