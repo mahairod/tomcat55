@@ -94,12 +94,12 @@ public class DefaultCMSetter extends BaseInterceptor {
 
 	// Default status handlers. If already set ( error-page in web.xml )
 	// do nothing
+        ctx.addServlet( new RedirectHandler());
 	if( null==ctx.getErrorPage( "302" )) {
-	    ctx.addServlet( new RedirectHandler());
 	    ctx.addErrorPage( "302", "tomcat.redirectHandler");
 	}
+        ctx.addServlet( new NotFoundHandler());
 	if( null==ctx.getErrorPage( "404" )) {
-	    ctx.addServlet( new NotFoundHandler());
 	    ctx.addErrorPage( "404", "tomcat.notFoundHandler");
 	}
     }
