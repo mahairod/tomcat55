@@ -490,11 +490,15 @@ public class Catalina {
                 definition + "java.,org.apache.catalina.,org.apache.jasper.");
         }
 
+        Thread shutdownHook = new CatalinaShutdownHook();
+
         // Start the new server
         if (server instanceof Lifecycle) {
             try {
                 server.initialize();
                 ((Lifecycle) server).start();
+                // Register shutdown hook
+                Runtime.getRuntime().addShutdownHook(shutdownHook);
                 // Wait for the server to be told to shut down
                 server.await();
             } catch (LifecycleException e) {
@@ -511,6 +515,7 @@ public class Catalina {
         if (server instanceof Lifecycle) {
             try {
                 ((Lifecycle) server).stop();
+                Runtime.getRuntime().removeShutdownHook(shutdownHook);
             } catch (LifecycleException e) {
                 System.out.println("Catalina.stop: " + e);
                 e.printStackTrace(System.out);
@@ -574,6 +579,34 @@ public class Catalina {
     }
 
 
+    // --------------------------------------- CatalinaShutdownHook Inner Class
+
+
+    /**
+     * Shutdown hook which will perform a clean shutdown of Catalina if needed.
+     */
+    protected class CatalinaShutdownHook extends Thread {
+
+        public void run() {
+
+            if (server != null) {
+                try {
+                    ((Lifecycle) server).stop();
+                } catch (LifecycleException e) {
+                    System.out.println("Catalina.stop: " + e);
+                    e.printStackTrace(System.out);
+                    if (e.getThrowable() != null) {
+                        System.out.println("----- Root Cause -----");
+                        e.getThrowable().printStackTrace(System.out);
+                    }
+                }
+            }
+            
+        }
+
+    }
+
+
 }
 
 
@@ -609,4 +642,3 @@ final class SetParentClassLoaderRule extends Rule {
 
 
 }
-
