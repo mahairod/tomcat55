@@ -75,6 +75,8 @@ import org.apache.tomcat.util.buf.CharChunk;
 
 import org.apache.coyote.Response;
 
+import org.apache.catalina.connector.ClientAbortException;
+
 
 /**
  * The buffer used by Tomcat response. This is a derivative of the Tomcat 3.3
@@ -386,7 +388,14 @@ public class OutputBuffer extends Writer
         if (cnt > 0) {
             // real write to the adapter
             outputChunk.setBytes(buf, off, cnt);
-            coyoteResponse.doWrite(outputChunk);
+            try {
+                coyoteResponse.doWrite(outputChunk);
+            } catch (IOException e) {
+                // An IOException on a write is almost always due to
+                // the remote client aborting the request.  Wrap this
+                // so that it can be handled better by the error dispatcher.
+                throw new ClientAbortException(e);
+            }
         }
 
     }
