@@ -69,7 +69,7 @@ You can make additional APIs available to all of your web applications by
 putting unpacked classes into a "classes" directory (not created by default),
 or by placing them in JAR files in the "lib" directory.
 
-Tomcat 5.0 also makes available Xerces 2 to web applications.
+Tomcat 5.0 also makes Xerces 2 available to web applications.
 
 
 --------------------------
@@ -90,11 +90,11 @@ Web application reloading and static fields in shared libraries:
 Some shared libraries (many are part of the JDK) keep references to objects
 instantiated by the web application. To avoid class loading related problems
 (ClassCastExceptions, messages indicating that the classloader 
-is stopped, ...), the shared libraries state should be reinitialized.
+is stopped, etc.), the shared libraries state should be reinitialized.
 
-Something which could help is to avoid putting classes which would be 
+Something which might help is to avoid putting classes which would be 
 referenced by a shared static field in the web application classloader, 
-and put them in the shared classloader instead (the JARs should be put in the 
+and putting them in the shared classloader instead (JARs should be put in the 
 "lib" folder, and classes should be put in the "classes" folder).
 
 
@@ -114,13 +114,13 @@ The JSP command line compiler (JSPC) can also be used to precompile the JSPs.
 Linux and Sun JDK 1.2.x - 1.3.x:
 -------------------------------
 
-Virtual machine crashes can be experienced when using certain combinations of
+Virtual machine crashes may be experienced when using certain combinations of
 kernel / glibc under Linux with Sun Hotspot 1.2 to 1.3. The crashes were 
 reported to occur mostly on startup. Sun JDK 1.4 does not exhibit the problems,
 and neither does IBM JDK for Linux.
 
-The problems can be fixed by reducing the default stack size. At bash shell, 
-do "ulimit -s 2048"; use "limit stacksize 2048" for tcsh.
+The problems can be fixed by reducing the default stack size. From a bash shell, 
+use "ulimit -s 2048"; use "limit stacksize 2048" for tcsh.
 
 GLIBC 2.2 / Linux 2.4 users should also define an environment variable:
 export LD_ASSUME_KERNEL=2.2.5
@@ -136,24 +136,24 @@ sidestep the security manager access control). In Tomcat 5.0, they have been
 disabled by default, as our goal is to provide a fully secure default 
 configuration. However, CGI and SSI remain available.
 
-On Windows:
+To enable CGI and SSI on Windows:
 * rename the file %CATALINA_HOME%\server\lib\servlets-cgi.renametojar to
   %CATALINA_HOME%\server\lib\servlets-cgi.jar.
 * rename the file %CATALINA_HOME%\server\lib\servlets-ssi.renametojar to
   %CATALINA_HOME%\server\lib\servlets-ssi.jar.
 * in %CATALINA_HOME%\conf\web.xml, uncomment the servlet declarations starting
-  line 165 and 213, as well as the associated servlet mappings 
-  line 265 and 274. Alternately, these servlet declarations and mappings can
+  on lines 165 and 213, as well as the associated servlet mappings 
+  on lines 265 and 274. Alternately, these servlet declarations and mappings can
   be added to your web application deployment descriptor.
 
-On Unix:
+To enable CGI and SSI on Unix:
 * rename the file $CATALINA_HOME/server/lib/servlets-cgi.renametojar to
   $CATALINA_HOME/server/lib/servlets-cgi.jar.
 * rename the file $CATALINA_HOME/server/lib/servlets-ssi.renametojar to
   $CATALINA_HOME/server/lib/servlets-ssi.jar.
 * in $CATALINA_HOME/conf/web.xml, uncomment the servlet declarations starting
-  line 165 and 213, as well as the associated servlet mappings 
-  line 265 and 274. Alternately, these servlet declarations and mappings can
+  on lines 165 and 213, as well as the associated servlet mappings 
+  on lines 265 and 274. Alternately, these servlet declarations and mappings can
   be added to your web application deployment descriptor.
 
 
@@ -162,7 +162,7 @@ Security manager URLs:
 ---------------------
 
 The URLs to be used in the policy file to grant permissions to JARs located
-inside the web application repositories have changed in Tomcat 5.0.
+inside the web application repositories have changed as of Tomcat 4.1.
 
 In Tomcat 4.0, codeBase URLs for JARs loaded from web application 
 repositories were:
@@ -176,7 +176,7 @@ file:${catalina.home}/webapps/examples/WEB-INF/lib/driver.jar
 Symlinking static resources:
 ---------------------------
 
-Unix symlinks will not work when used in a web application to link resources 
+By default, Unix symlinks will not work when used in a web application to link resources 
 located outside the web application root directory.
 
 This behavior is optional, and the "allowLinking" flag may be used to disable
@@ -188,7 +188,7 @@ Enabling invoker servlet:
 ------------------------
 
 Starting with Tomcat 4.1.12, the invoker servlet is no longer available by 
-default in all webapp. Enabling it for all webapps is possible by editing
+default in all webapps. Enabling it for all webapps is possible by editing
 $CATALINA_HOME/conf/web.xml to uncomment the "/servlet/*" servlet-mapping
 definition.
 
