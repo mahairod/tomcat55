@@ -85,6 +85,8 @@ import org.apache.catalina.Host;
 import org.apache.catalina.Context;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -100,7 +102,7 @@ import org.apache.catalina.util.StringManager;
 
 public abstract class ValveBase
     implements Contained, Valve, MBeanRegistration {
-
+    private static Log log = LogFactory.getLog(ValveBase.class);
 
     //------------------------------------------------------ Instance Variables
 
@@ -214,6 +216,7 @@ public abstract class ValveBase
     protected String domain;
     protected ObjectName oname;
     protected MBeanServer mserver;
+    protected ObjectName controller;
 
     public ObjectName getObjectName() {
         return oname;
@@ -242,6 +245,14 @@ public abstract class ValveBase
     public void postDeregister() {
     }
 
+    public ObjectName getController() {
+        return controller;
+    }
+
+    public void setController(ObjectName controller) {
+        this.controller = controller;
+    }
+
     /** From the name, extract the parent object name
      *
      * @param valveName
@@ -265,22 +276,18 @@ public abstract class ValveBase
         /* Compute the "parent name" part */
         String parentName="";
         if (container instanceof Engine) {
-            Service service = ((Engine)container).getService();
-            parentName=",service=" + service.getName();
         } else if (container instanceof Host) {
-            Service service = ((Engine)container.getParent()).getService();
-            parentName=",host=" +container.getName() + ",service=" +
-                    service.getName();
+            parentName=",host=" +container.getName();
         } else if (container instanceof Context) {
             String path = ((Context)container).getPath();
             if (path.length() < 1) {
                 path = "/";
             }
             Host host = (Host) container.getParent();
-            Service service = ((Engine) host.getParent()).getService();
             parentName=",path=" + path + ",host=" +
-                    host.getName() + ",service=" + service.getName();
+                    host.getName();
         }
+        log.info("valve parent=" + parentName + " " + parent);
 
         String className=this.getClass().getName();
         int period = className.lastIndexOf('.');
@@ -293,6 +300,7 @@ public abstract class ValveBase
             if( valves[i]!=null &&
                     valves[i].getClass() == this.getClass() &&
                     valves[i] != this ) {
+                log.info("Duplicate " + valves[i] + " " + this + " " + container);
                 seq++;
             }
         }
@@ -301,8 +309,13 @@ public abstract class ValveBase
             ext=",seq=" + seq;
         }
 
-        return new ObjectName( domain + ":type=Valve,name=" + className + ext);
+        return new ObjectName( domain + ":type=Valve,name=" + className + ext + parentName);
     }
 
+    // -------------------- JMX data  --------------------
 
+    public ObjectName getContainerName() {
+        if( container== null) return null;
+        return ((ContainerBase)container).getObjectName();
+    }
 }
