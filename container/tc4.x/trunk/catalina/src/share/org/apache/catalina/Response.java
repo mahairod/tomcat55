@@ -124,6 +124,20 @@ public interface Response {
 
 
     /**
+     * Set the application commit flag.
+     * 
+     * @param appCommitted The new application committed flag value
+     */
+    public void setAppCommitted(boolean appCommitted);
+
+
+    /**
+     * Application commit flag accessor.
+     */
+    public boolean isAppCommitted();
+
+
+    /**
      * Return the "processing inside an include" flag.
      */
     public boolean getIncluded();
@@ -179,6 +193,20 @@ public interface Response {
      * @param stream The new output stream
      */
     public void setStream(OutputStream stream);
+
+
+    /**
+     * Set the suspended flag.
+     * 
+     * @param suspended The new suspended flag value
+     */
+    public void setSuspended(boolean suspended);
+
+
+    /**
+     * Suspended flag accessor.
+     */
+    public boolean isSuspended();
 
 
     /**
@@ -245,12 +273,6 @@ public interface Response {
      * preparation for reuse of this object.
      */
     public void recycle();
-
-
-    /**
-     * Recycle facade object.
-     */
-    public void recycleFacade();
 
 
     /**

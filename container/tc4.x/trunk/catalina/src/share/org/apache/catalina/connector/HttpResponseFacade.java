@@ -145,7 +145,7 @@ public final class HttpResponseFacade
             throw new IllegalStateException
                 (/*sm.getString("responseBase.reset.ise")*/);
 
-        committed = true;
+        resp.setAppCommitted(true);
 
         ((HttpServletResponse) response).sendError(sc, msg);
 
@@ -159,7 +159,7 @@ public final class HttpResponseFacade
             throw new IllegalStateException
                 (/*sm.getString("responseBase.reset.ise")*/);
 
-        committed = true;
+        resp.setAppCommitted(true);
 
         ((HttpServletResponse) response).sendError(sc);
 
@@ -173,7 +173,7 @@ public final class HttpResponseFacade
             throw new IllegalStateException
                 (/*sm.getString("responseBase.reset.ise")*/);
 
-        committed = true;
+        resp.setAppCommitted(true);
 
         ((HttpServletResponse) response).sendRedirect(location);
 

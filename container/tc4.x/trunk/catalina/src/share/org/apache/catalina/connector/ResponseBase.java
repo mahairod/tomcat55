@@ -88,6 +88,7 @@ import org.apache.catalina.util.StringManager;
  * the connector-specific methods need to be implemented.
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
@@ -96,6 +97,12 @@ public abstract class ResponseBase
 
 
     // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * Has this response been committed by the application yet?
+     */
+    protected boolean appCommitted = false;
 
 
     /**
@@ -204,6 +211,12 @@ public abstract class ResponseBase
 
 
     /**
+     * Has this response output been suspended?
+     */
+    protected boolean suspended = false;
+
+
+    /**
      * The PrintWriter that has been returned by
      * <code>getWriter()</code>, if any.
      */
@@ -217,6 +230,26 @@ public abstract class ResponseBase
 
 
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Set the application commit flag.
+     */
+    public void setAppCommitted(boolean appCommitted) {
+
+        this.appCommitted = appCommitted;
+
+    }
+
+
+    /**
+     * Application commit flag accessor.
+     */
+    public boolean isAppCommitted() {
+
+        return (this.appCommitted || this.committed);
+
+    }
 
 
     /**
@@ -365,6 +398,26 @@ public abstract class ResponseBase
 
 
     /**
+     * Set the suspended flag.
+     */
+    public void setSuspended(boolean suspended) {
+
+        this.suspended = suspended;
+
+    }
+
+
+    /**
+     * Suspended flag accessor.
+     */
+    public boolean isSuspended() {
+
+        return (this.suspended);
+
+    }
+
+
+    /**
      * Set the error flag.
      */
     public void setError() {
@@ -496,14 +549,6 @@ public abstract class ResponseBase
 
 
     /**
-     * Recycle the facade object.
-     */
-    public void recycleFacade() {
-        facade = new ResponseFacade(this);
-    }
-
-
-    /**
      * Release all object references, and initialize instance variables, in
      * preparation for reuse of this object.
      */
@@ -512,6 +557,8 @@ public abstract class ResponseBase
         // buffer is NOT reset when recycling
         bufferCount = 0;
         committed = false;
+        appCommitted = false;
+        suspended = false;
         // connector is NOT reset when recycling
         contentCount = 0;
         contentLength = -1;
@@ -525,7 +572,6 @@ public abstract class ResponseBase
         stream = null;
         writer = null;
         error = false;
-        recycleFacade();
 
     }
 
@@ -541,6 +587,10 @@ public abstract class ResponseBase
      * @exception IOException if an input/output error occurs
      */
     public void write(int b) throws IOException {
+
+        if (suspended)
+            throw new IOException
+                (sm.getString("responseBase.write.suspended"));
 
         if (bufferCount >= buffer.length)
             flushBuffer();
@@ -560,6 +610,10 @@ public abstract class ResponseBase
      */
     public void write(byte b[]) throws IOException {
 
+        if (suspended)
+            throw new IOException
+                (sm.getString("responseBase.write.suspended"));
+
         write(b, 0, b.length);
 
     }
@@ -577,6 +631,10 @@ public abstract class ResponseBase
      * @exception IOException if an input/output error occurs
      */
     public void write(byte b[], int off, int len) throws IOException {
+
+        if (suspended)
+            throw new IOException
+                (sm.getString("responseBase.write.suspended"));
 
         // If the whole thing fits in the buffer, just put it there
         if (len == 0)

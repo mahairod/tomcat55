@@ -95,8 +95,8 @@ public class ResponseFacade implements ServletResponse {
      * @param response The response to be wrapped
      */
     public ResponseFacade(Response response) {
+        this.resp = response;
         this.response = (ServletResponse) response;
-        committed = false;
     }
 
 
@@ -110,9 +110,26 @@ public class ResponseFacade implements ServletResponse {
 
 
     /**
-     * Application level commit.
+     * The wrapped response.
      */
-    protected boolean committed = false;
+    protected Response resp = null;
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    public void finish() {
+
+        resp.setSuspended(true);
+
+    }
+
+
+    public boolean isFinished() {
+
+        return resp.isSuspended();
+
+    }
 
 
     // ------------------------------------------------ ServletResponse Methods
@@ -125,13 +142,25 @@ public class ResponseFacade implements ServletResponse {
 
     public ServletOutputStream getOutputStream()
         throws IOException {
+
+        if (isFinished())
+            throw new IllegalStateException
+                (/*sm.getString("responseFacade.finished")*/);
+
         return response.getOutputStream();
+
     }
 
 
     public PrintWriter getWriter()
         throws IOException {
+
+        if (isFinished())
+            throw new IllegalStateException
+                (/*sm.getString("responseFacade.finished")*/);
+
         return response.getWriter();
+
     }
 
 
@@ -174,7 +203,11 @@ public class ResponseFacade implements ServletResponse {
     public void flushBuffer()
         throws IOException {
 
-        committed = true;
+        if (isFinished())
+            throw new IllegalStateException
+                (/*sm.getString("responseFacade.finished")*/);
+
+        resp.setAppCommitted(true);
 
         response.flushBuffer();
 
@@ -193,7 +226,7 @@ public class ResponseFacade implements ServletResponse {
 
 
     public boolean isCommitted() {
-        return (committed || response.isCommitted());
+        return (resp.isAppCommitted());
     }
 
 
