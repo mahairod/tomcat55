@@ -52,6 +52,9 @@
       <fix>
         <bug>31851</bug>: UserTransaction in DefaultContext broken. (yoavs)
       </fix>
+      <fix>
+        <bug>32130</bug>: Check for null or empty file listing in FileStore#keys. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
