@@ -154,6 +154,9 @@
     <copy todir="${tomcat.dist}/server/lib">
       <fileset dir="${tomcat.build}/server/lib" />
     </copy>
+    <copy todir="${tomcat.dist}/server/webapps">
+      <fileset dir="${tomcat.build}/server/webapps" />
+    </copy>
     <copy todir="${tomcat.dist}/shared/classes">
       <fileset dir="${tomcat.build}/shared/classes" />
     </copy>
