@@ -147,6 +147,7 @@
         description="Start tomcat as an mbean, no server.xml">
 
     <modelerRegistry resource="org/apache/catalina/mbeans/mbeans-descriptors.xml" />
+    <modelerRegistry resource="org/apache/catalina/loader/mbeans-descriptors.xml" />
     <mkdir dir="${tomcat.home}/work/${domain}/" />
 
     <jmx-service>
