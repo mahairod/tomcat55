@@ -90,7 +90,6 @@ import javax.servlet.ServletException;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.util.SchemaResolver;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
 import org.xml.sax.InputSource;

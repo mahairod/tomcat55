@@ -64,7 +64,6 @@ package org.apache.catalina.valves;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Driver;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;

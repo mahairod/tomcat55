@@ -65,10 +65,8 @@ import java.net.URL;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.catalina.util.SchemaResolver;
-import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.RuleSet;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 

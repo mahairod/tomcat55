@@ -68,7 +68,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.DigesterFactory;
 import org.apache.commons.digester.Digester;
