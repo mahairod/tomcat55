@@ -597,9 +597,14 @@ public class HttpRequestBase
 	if ("POST".equals(getMethod()) && (getContentLength() > 0) &&
 	    "application/x-www-form-urlencoded".equals(contentType)) {
 	    try {
+                int max = getContentLength();
+                int len = 0;
 	        byte buf[] = new byte[getContentLength()];
 		ServletInputStream is = getInputStream();
-		is.read(buf);
+                while (len < max) {
+                    int next = is.read(buf, len, max - len);
+                    len += next;
+                }
 		is.close();
 		String data = null;
 		String encoding = getCharacterEncoding();

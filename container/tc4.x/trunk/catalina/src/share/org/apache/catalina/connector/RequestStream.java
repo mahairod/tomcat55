@@ -451,17 +451,16 @@ public class RequestStream
      */
     protected void fill() throws IOException {
 
+        bufferPosition = 0;
+        bufferCount = 0;
         int len = buffer.length;
 	if (length > 0)
 	    len = Math.min(len, (length - count));
-	if (length > 0) {
+	if (len > 0) {
 	    len = stream.read(buffer, 0, len);
-	    if (len > 0) {
-	        bufferPosition = 0;
+	    if (len > 0)
 		bufferCount = len;
-	    }
 	}
-
 
     }
 
