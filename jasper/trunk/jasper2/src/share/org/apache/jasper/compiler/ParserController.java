@@ -85,8 +85,7 @@ class ParserController {
     private ErrorDispatcher err;
 
     /*
-     * Document information which tells us what
-     * kind of document we are dealing with.
+     * Indicates the syntax (XML or standard) of the file being processed
      */
     private boolean isXml;
 
@@ -101,12 +100,6 @@ class ParserController {
      * the kind of document we're dealing with.
      */
     private static final String JSP_ROOT_TAG = "<jsp:root";
-
-    /*
-     * Tells if the file being processed is the "top" file in the translation
-     * unit.
-     */
-    private boolean isTopFile = true;
 
     private boolean isEncodingSpecifiedInProlog;
 
@@ -167,7 +160,6 @@ class ParserController {
      */
     public Node.Nodes parseTagFileDirectives(String inFileName)
 	        throws FileNotFoundException, JasperException, IOException {
-	isTopFile = true;
 	return parse(inFileName, null, true, true,
 		     (JarFile) ctxt.getTagFileJars().get(inFileName));
     }
@@ -200,7 +192,13 @@ class ParserController {
 
 	// Figure out what type of JSP document and encoding type we are
 	// dealing with
-	determineSyntaxAndEncoding(absFileName, jarFile, jspConfigPageEnc);
+	determineSyntaxAndEncoding(absFileName, jarFile, jspConfigPageEnc,
+				   parent);
+
+	if (parent != null) {
+	    // Included resource, add to dependent list
+	    compiler.getPageInfo().addDependant(absFileName);
+	}
 
 	if (isXml && isEncodingSpecifiedInProlog) {
 	    /*
@@ -215,12 +213,6 @@ class ParserController {
 		err.jspError("jsp.error.prolog_config_encoding_mismatch",
 			     sourceEnc, jspConfigPageEnc);
 	    }
-	}
-
-	if (isTopFile) {
-	    isTopFile = false;
-	} else {
-	    compiler.getPageInfo().addDependant(absFileName);
 	}
 
 	// Dispatch to the appropriate parser
@@ -291,31 +283,28 @@ class ParserController {
     }
 
     /**
-     * Determines the properties of the given page or tag file.
-     * The properties to be determined are:
+     * Determines the syntax (standard or XML) and page encoding properties
+     * for the given file, and stores them in the 'isXml' and 'sourceEnc'
+     * instance variables, respectively.
      *
-     *   - Syntax (JSP or XML).
-     *     This information is supplied by setting the 'isXml' instance
-     *     variable.
-     *
-     *   - Source Encoding.
-     *     This information is supplied by setting the 'sourceEnc' instance
-     *     variable.
-     *
-     * If these properties are already specified in the jsp-config element
-     * in web.xml, then they are used.
+     * The properties may already be specified in a JSP property group: notice
+     * that while the 'isXml' property applies to an entire translation unit
+     * (and therefore needs to be checked only for the top-level file), the
+     * 'page-encoding' property must be checked separately for the top-level
+     * and each of its included files, unless they're in XML syntax.
      */
     private void determineSyntaxAndEncoding(String absFileName,
 					    JarFile jarFile,
-					    String jspConfigPageEnc)
+					    String jspConfigPageEnc,
+					    Node parent)
 	        throws JasperException, IOException {
 
 	isXml = false;
 
 	/*
-	 * 'true' if the syntax of the page (XML or standard) is identified by
-	 * external information: either via a JSP configuration element or
-	 * the ".jspx" suffix
+	 * 'true' if the syntax (XML or standard) of the file is given
+	 * from external information: either via a JSP configuration element,
+	 * the ".jspx" suffix, or the enclosing file (for included resources)
 	 */
 	boolean isExternal = false;
 
@@ -325,13 +314,24 @@ class ParserController {
 	 */
 	boolean revert = false;
 
-	if (pageInfo.isXmlConfigSpecified()) {
-	    // If <is-xml> is specified in a <jsp-property-group>, it is used.
-	    isXml = pageInfo.isXmlConfig();
-	    isExternal = true;
-	} else if (absFileName.endsWith(".jspx")
+	if (parent == null) {
+	    // top-level file
+	    if (pageInfo.isXmlConfigSpecified()) {
+		// If <is-xml> is specified in a <jsp-property-group>, it is
+		// used.
+		isXml = pageInfo.isXmlConfig();
+		isExternal = true;
+	    } else if (absFileName.endsWith(".jspx")
 		       || absFileName.endsWith(".tagx")) {
-	    isXml = true;
+		isXml = true;
+		isExternal = true;
+	    }
+	} else {
+	    /*
+	     * We're an included resource and, therefore, assumed to use the
+	     * same syntax as the including file.
+	     */
+	    isXml = parent.getRoot().isXmlSyntax();
 	    isExternal = true;
 	}
 	
@@ -356,7 +356,7 @@ class ParserController {
 	    if (!isXml && sourceEnc.equals("UTF-8")) {
 		/*
 		 * We don't know if we're dealing with XML or standard syntax.
-		 * Therefore, we need to check and see if the page contains
+		 * Therefore, we need to check to see if the page contains
 		 * a <jsp:root> element.
 		 *
 		 * We need to be careful, because the page may be encoded in
@@ -405,8 +405,7 @@ class ParserController {
 	    Mark mark = jspReader.skipUntil(JSP_ROOT_TAG);
 	    if (mark != null) {
 	        isXml = true;
-		if (revert) 
-		    sourceEnc = "UTF-8";
+		if (revert) sourceEnc = "UTF-8";
 		return;
 	    } else {
 	        isXml = false;
