@@ -76,6 +76,9 @@ General New Features:
 [4.1.31] License
          Upgrade to Apache License 2.0
 
+[4.1.31] JAF
+         Upgrade to JAF 1.0.2
+
 
 ---------------------
 Catalina New Features:

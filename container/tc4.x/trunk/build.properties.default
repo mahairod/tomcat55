@@ -147,7 +147,7 @@ xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
 
 
 # ----- Java Activation Framework (JAF), version 1.0.1 or later -----
-activation.home=${base.path}/jaf-1.0.1
+activation.home=${base.path}/jaf-1.0.2
 activation.lib=${activation.home}
 activation.jar=${activation.lib}/activation.jar
 
