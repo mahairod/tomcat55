@@ -1432,6 +1432,8 @@ class Parser implements TagConstants {
 		    break;
 		}
 		ttext.write('$');
+		reader.pushChar();
+		continue;
 	    }
 	    else if (ch == '\\') {
 		if (!reader.hasMoreInput()) {
@@ -1501,7 +1503,7 @@ class Parser implements TagConstants {
                     ch = reader.nextChar();
                     if (ch != '{') {
                         ttext.write('$');
-                        ttext.write(ch);
+                        reader.pushChar();
                         continue;
                     }
                     // Create a template text node
