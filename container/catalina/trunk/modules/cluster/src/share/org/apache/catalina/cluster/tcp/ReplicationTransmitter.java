@@ -34,6 +34,8 @@ public class ReplicationTransmitter implements ClusterSender
     private static long nrOfRequests = 0;
     private static long totalBytes = 0;
     private String replicationMode;
+    private long ackTimeout = 15000; //15 seconds by default
+    
     private static synchronized void addStats(int length) {
         nrOfRequests++;
         totalBytes+=length;
@@ -144,6 +146,8 @@ public class ReplicationTransmitter implements ClusterSender
         {
 
             IDataSender sender = senders[i];
+            //set the timeout, will be ignored by async senders
+            sender.setAckTimeout(getAckTimeout());
             try
             {
                 sendMessageData(sessionId,data,sender);
@@ -162,6 +166,12 @@ public class ReplicationTransmitter implements ClusterSender
     public boolean getIsSenderSynchronized() {
         return IDataSenderFactory.SYNC_MODE.equals(replicationMode) ||
             IDataSenderFactory.POOLED_SYNC_MODE.equals(replicationMode);
+    }
+    public long getAckTimeout() {
+        return ackTimeout;
+    }
+    public void setAckTimeout(long ackTimeout) {
+        this.ackTimeout = ackTimeout;
     }
 
 

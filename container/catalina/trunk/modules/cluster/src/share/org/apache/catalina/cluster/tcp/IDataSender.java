@@ -35,4 +35,5 @@ public interface IDataSender
     public boolean isConnected();
     public void setSuspect(boolean suspect);
     public boolean getSuspect();
+    public void setAckTimeout(long timeout);
 }
