@@ -670,6 +670,7 @@ class Validator {
         }
 
 	public void visit(Node.CustomTag n) throws JasperException {
+
 	    TagInfo tagInfo = n.getTagInfo();
 	    if (tagInfo == null) {
 		err.jspError(n, "jsp.error.missing.tagInfo", n.getQName());
@@ -701,171 +702,26 @@ class Validator {
 		    attr = attrs.getValue(customActionUri,
 					  tldAttrs[i].getName());
 		}
-		Node.NamedAttribute jspAttr =
+		Node.NamedAttribute na =
 			n.getNamedAttributeNode(tldAttrs[i].getName());
 		
-		if (tldAttrs[i].isRequired() &&
-			attr == null && jspAttr == null) {
+		if (tldAttrs[i].isRequired() && attr == null && na == null) {
 		    err.jspError(n, "jsp.error.missing_attribute",
 				 tldAttrs[i].getName(), n.getLocalName());
 		}
-		if (attr != null && jspAttr != null) {
+		if (attr != null && na != null) {
 		    err.jspError(n, "jsp.error.duplicate.name.jspattribute",
 			tldAttrs[i].getName());
 		}
 	    }
 
-	    /*
-	     * Make sure there are no invalid attributes
-	     */
-            Node.Nodes namedAttributeNodes = n.getNamedAttributeNodes();
+            Node.Nodes naNodes = n.getNamedAttributeNodes();
 	    Node.JspAttribute[] jspAttrs
-		= new Node.JspAttribute[attrs.getLength()
-				       + namedAttributeNodes.size()];
+		= new Node.JspAttribute[attrs.getLength() + naNodes.size()];
 	    Hashtable tagDataAttrs = new Hashtable(attrs.getLength());
-	    for (int i=0; i<attrs.getLength(); i++) {
-		boolean found = false;
-		for (int j=0; tldAttrs != null && j<tldAttrs.length; j++) {
-		    /*
-		     * A custom action and its declared attributes always
-		     * belong to the same namespace, which is identified by
-		     * the prefix name of the custom tag invocation.
-		     * For example, in this invocation:
-		     *     <my:test a="1" b="2" c="3"/>, the action
-		     * "test" and its attributes "a", "b", and "c" all belong
-		     * to the namespace identified by the prefix "my".
-		     * The above invocation would be equivalent to:
-		     *     <my:test my:a="1" my:b="2" my:c="3"/>
-		     * An action attribute may have a prefix different from
-		     * that of the action invocation only if the underlying
-		     * tag handler supports dynamic attributes, in which case
-		     * the attribute with the different prefix is considered a
-		     * dynamic attribute.
-		     */
-		    if (attrs.getLocalName(i).equals(tldAttrs[j].getName())
-			    && (attrs.getURI(i) == null
-				|| attrs.getURI(i).length() == 0
-				|| attrs.getURI(i) == customActionUri)) {
-			if (tldAttrs[j].canBeRequestTime()) {
-                            Class expectedType = String.class;
-                            try {
-                                String typeStr = tldAttrs[j].getTypeName();
-                                if( tldAttrs[j].isFragment() ) {
-                                    expectedType = JspFragment.class;
-                                }
-                                else if( typeStr != null ) {
-                                    expectedType = JspUtil.toClass(typeStr,
-								   loader);
-                                }
-                                jspAttrs[i]
-                                    = getJspAttribute(attrs.getQName(i),
-                                                      attrs.getURI(i),
-                                                      attrs.getLocalName(i),
-                                                      attrs.getValue(i),
-                                                      expectedType,
-                                                      n.getPrefix(),
-                                                      n,
-                                                      false);
-                            }
-                            catch( ClassNotFoundException e ) {
-                                err.jspError(n, 
-                                    "jsp.error.unknown_attribute_type",
-                                    tldAttrs[j].getName(), 
-                                    tldAttrs[j].getTypeName() );
-                            }
-			} else {
-			    // Attribute does not accept any expressions.
-			    // Make sure its value does not contain any.
-			    if (isExpression(n, attrs.getValue(i))) {
-                                err.jspError(n,
-				        "jsp.error.attribute.custom.non_rt_with_expr",
-					     tldAttrs[j].getName());
-			    }
-			    jspAttrs[i]
-				= new Node.JspAttribute(attrs.getQName(i),
-							attrs.getURI(i),
-							attrs.getLocalName(i),
-							attrs.getValue(i),
-							false,
-							false,
-							false);
-			}
-			if (jspAttrs[i].isExpression()) {
-			    tagDataAttrs.put(attrs.getQName(i),
-					     TagData.REQUEST_TIME_VALUE);
-			} else {
-			    tagDataAttrs.put(attrs.getQName(i),
-					     attrs.getValue(i));
-			}
-			found = true;
-			break;
-		    }
-		}
-		if (!found) {
-		    if (tagInfo.hasDynamicAttributes()) {
-			jspAttrs[i] = getJspAttribute(attrs.getQName(i),
-						      attrs.getURI(i),
-						      attrs.getLocalName(i),
-						      attrs.getValue(i),
-						      java.lang.Object.class,
-                                                      n.getPrefix(),
-                                                      n,
-						      true);
-		    } else {
-			err.jspError(n, "jsp.error.bad_attribute",
-				     attrs.getQName(i), n.getLocalName());
-		    }
-		}
-	    }
-            
-	    /*
-	     * Make sure there are no invalid named attributes
-	     */
-	    for (int i=0; i<namedAttributeNodes.size(); i++) {
-                Node.NamedAttribute na = 
-                    (Node.NamedAttribute)namedAttributeNodes.getNode( i );
-		boolean found = false;
-		for (int j=0; j<tldAttrs.length; j++) {
-		    /*
-		     * See above comment about namespace matches. For named
-		     * attributes, we use the prefix instead of URI as the
-		     * match criterion, because in the case of a JSP document,
-		     * we'd have to keep track of which namespaces are in scope
-		     * when parsing a named attribute, in order to determine
-		     * the URI that the prefix of the named attribute's name
-		     * matches to.
-		     */
-		    String attrPrefix = na.getPrefix();
-		    if (na.getLocalName().equals(tldAttrs[j].getName())
-			    && (attrPrefix == null || attrPrefix.length() == 0
-				|| attrPrefix == n.getPrefix())) {
-			jspAttrs[attrs.getLength() + i]
-			    = new Node.JspAttribute(na, false);
-			NamedAttributeVisitor nav = null;
-			if (na.getBody() != null) {
-			    nav = new NamedAttributeVisitor();
-			    na.getBody().visit(nav);
-			}
-			if (nav != null && nav.hasDynamicContent()) {
-			    tagDataAttrs.put(na.getName(),
-					     TagData.REQUEST_TIME_VALUE);
-			} else {
-			    tagDataAttrs.put(na.getName(), na.getText());    
-			}
-			found = true;
-			break;
-		    }
-		}
-		if (!found) {
-		    if (tagInfo.hasDynamicAttributes()) {
-			jspAttrs[attrs.getLength() + i]
-			    = new Node.JspAttribute(na, true);
-		    } else {
-			err.jspError(n, "jsp.error.bad_attribute",
-				     na.getName(), n.getLocalName());
-		    }
-		}
-	    }
+
+	    checkXmlAttributes(n, jspAttrs, tagDataAttrs);
+            checkNamedAttributes(n, jspAttrs, attrs.getLength(), tagDataAttrs);
 
 	    TagData tagData = new TagData(tagDataAttrs);
 
@@ -989,6 +845,180 @@ class Validator {
 	    }
 	    if (var != null && varReader != null) {
 		err.jspError(n, "jsp.error.var_and_varReader");
+	    }
+	}
+
+	/*
+	 * Make sure the given custom action does not have any invalid
+	 * attributes.
+	 *
+	 * A custom action and its declared attributes always belong to the
+	 * same namespace, which is identified by the prefix name of the
+	 * custom tag invocation. For example, in this invocation:
+	 *
+	 *     <my:test a="1" b="2" c="3"/>, the action
+	 *
+	 * "test" and its attributes "a", "b", and "c" all belong to the
+	 * namespace identified by the prefix "my". The above invocation would
+	 * be equivalent to:
+	 *
+	 *     <my:test my:a="1" my:b="2" my:c="3"/>
+	 *
+	 * An action attribute may have a prefix different from that of the
+	 * action invocation only if the underlying tag handler supports
+	 * dynamic attributes, in which case the attribute with the different
+	 * prefix is considered a dynamic attribute.
+	 */
+	private void checkXmlAttributes(Node.CustomTag n,
+					Node.JspAttribute[] jspAttrs,
+					Hashtable tagDataAttrs)
+	        throws JasperException {
+
+	    TagInfo tagInfo = n.getTagInfo();
+	    if (tagInfo == null) {
+		err.jspError(n, "jsp.error.missing.tagInfo", n.getQName());
+	    }
+	    TagAttributeInfo[] tldAttrs = tagInfo.getAttributes();
+	    Attributes attrs = n.getAttributes();
+
+	    for (int i=0; i<attrs.getLength(); i++) {
+		boolean found = false;
+		for (int j=0; tldAttrs != null && j<tldAttrs.length; j++) {
+		    if (attrs.getLocalName(i).equals(tldAttrs[j].getName())
+			    && (attrs.getURI(i) == null
+				|| attrs.getURI(i).length() == 0
+				|| attrs.getURI(i) == n.getURI())) {
+			if (tldAttrs[j].canBeRequestTime()) {
+                            Class expectedType = String.class;
+                            try {
+                                String typeStr = tldAttrs[j].getTypeName();
+                                if( tldAttrs[j].isFragment() ) {
+                                    expectedType = JspFragment.class;
+                                }
+                                else if( typeStr != null ) {
+                                    expectedType = JspUtil.toClass(typeStr,
+								   loader);
+                                }
+                                jspAttrs[i]
+                                    = getJspAttribute(attrs.getQName(i),
+                                                      attrs.getURI(i),
+                                                      attrs.getLocalName(i),
+                                                      attrs.getValue(i),
+                                                      expectedType,
+                                                      n.getPrefix(),
+                                                      n,
+                                                      false);
+                            } catch (ClassNotFoundException e) {
+                                err.jspError(n, 
+                                    "jsp.error.unknown_attribute_type",
+                                    tldAttrs[j].getName(), 
+                                    tldAttrs[j].getTypeName() );
+                            }
+			} else {
+			    // Attribute does not accept any expressions.
+			    // Make sure its value does not contain any.
+			    if (isExpression(n, attrs.getValue(i))) {
+                                err.jspError(n,
+				        "jsp.error.attribute.custom.non_rt_with_expr",
+					     tldAttrs[j].getName());
+			    }
+			    jspAttrs[i]
+				= new Node.JspAttribute(attrs.getQName(i),
+							attrs.getURI(i),
+							attrs.getLocalName(i),
+							attrs.getValue(i),
+							false,
+							false,
+							false);
+			}
+			if (jspAttrs[i].isExpression()) {
+			    tagDataAttrs.put(attrs.getQName(i),
+					     TagData.REQUEST_TIME_VALUE);
+			} else {
+			    tagDataAttrs.put(attrs.getQName(i),
+					     attrs.getValue(i));
+			}
+			found = true;
+			break;
+		    }
+		}
+		if (!found) {
+		    if (tagInfo.hasDynamicAttributes()) {
+			jspAttrs[i] = getJspAttribute(attrs.getQName(i),
+						      attrs.getURI(i),
+						      attrs.getLocalName(i),
+						      attrs.getValue(i),
+						      java.lang.Object.class,
+                                                      n.getPrefix(),
+                                                      n,
+						      true);
+		    } else {
+			err.jspError(n, "jsp.error.bad_attribute",
+				     attrs.getQName(i), n.getLocalName());
+		    }
+		}
+	    }
+	}
+
+	/*
+	 * Make sure the given custom action does not have any invalid named
+	 * attributes
+	 */
+	private void checkNamedAttributes(Node.CustomTag n,
+					  Node.JspAttribute[] jspAttrs,
+					  int start,
+					  Hashtable tagDataAttrs)
+	        throws JasperException {
+
+	    TagInfo tagInfo = n.getTagInfo();
+	    if (tagInfo == null) {
+		err.jspError(n, "jsp.error.missing.tagInfo", n.getQName());
+	    }
+	    TagAttributeInfo[] tldAttrs = tagInfo.getAttributes();
+            Node.Nodes naNodes = n.getNamedAttributeNodes();
+
+	    for (int i=0; i<naNodes.size(); i++) {
+                Node.NamedAttribute na = (Node.NamedAttribute)
+		    naNodes.getNode(i);
+		boolean found = false;
+		for (int j=0; j<tldAttrs.length; j++) {
+		    /*
+		     * See above comment about namespace matches. For named
+		     * attributes, we use the prefix instead of URI as the
+		     * match criterion, because in the case of a JSP document,
+		     * we'd have to keep track of which namespaces are in scope
+		     * when parsing a named attribute, in order to determine
+		     * the URI that the prefix of the named attribute's name
+		     * matches to.
+		     */
+		    String attrPrefix = na.getPrefix();
+		    if (na.getLocalName().equals(tldAttrs[j].getName())
+			    && (attrPrefix == null || attrPrefix.length() == 0
+				|| attrPrefix == n.getPrefix())) {
+			jspAttrs[start + i] = new Node.JspAttribute(na, false);
+			NamedAttributeVisitor nav = null;
+			if (na.getBody() != null) {
+			    nav = new NamedAttributeVisitor();
+			    na.getBody().visit(nav);
+			}
+			if (nav != null && nav.hasDynamicContent()) {
+			    tagDataAttrs.put(na.getName(),
+					     TagData.REQUEST_TIME_VALUE);
+			} else {
+			    tagDataAttrs.put(na.getName(), na.getText());    
+			}
+			found = true;
+			break;
+		    }
+		}
+		if (!found) {
+		    if (tagInfo.hasDynamicAttributes()) {
+			jspAttrs[start + i] = new Node.JspAttribute(na, true);
+		    } else {
+			err.jspError(n, "jsp.error.bad_attribute",
+				     na.getName(), n.getLocalName());
+		    }
+		}
 	    }
 	}
 
