@@ -381,6 +381,32 @@
        inContent="FilterRequest01 Wrapped Stream PASSED"
       outContent="FILTERREQUEST01 WRAPPED STREAM PASSED"/>
 
+    <!-- ========== Servlet Sees Application Wrapper ===================== -->
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0" debug="${debug}"
+         request="${context.path}/FilterRequest02?wrap=false"
+      outContent="FilterRequest02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0" debug="${debug}"
+         request="${context.path}/WrappedFilterRequest02?wrap=true"
+      outContent="FilterRequest02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0" debug="${debug}"
+         request="${context.path}/FilterRequest02?wrap=false&amp;dispatch=F"
+      outContent="FilterRequest02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0" debug="${debug}"
+         request="${context.path}/WrappedFilterRequest02?wrap=true&amp;dispatch=F"
+      outContent="FilterRequest02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0" debug="${debug}"
+         request="${context.path}/FilterRequest02?wrap=false&amp;dispatch=I"
+      outContent="FilterRequest02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0" debug="${debug}"
+         request="${context.path}/WrappedFilterRequest02?wrap=true&amp;dispatch=I"
+      outContent="FilterRequest02 PASSED"/>
+
   </target>
 
 
@@ -426,6 +452,32 @@
            debug="${debug}"
           status="200"
       outContent="FILTERRESPONSE03 PASSED"/>
+
+    <!-- ========== Servlet Sees Application Wrapper ===================== -->
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/FilterResponse04?wrap=false" debug="${debug}"
+      outContent="FilterResponse04 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0" debug="${debug}"
+         request="${context.path}/WrappedFilterResponse04?wrap=true"
+      outContent="FilterResponse04 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0" debug="${debug}"
+         request="${context.path}/FilterResponse04?wrap=false&amp;dispatch=F"
+      outContent="FilterResponse04 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0" debug="${debug}"
+         request="${context.path}/WrappedFilterResponse04?wrap=true&amp;dispatch=F"
+      outContent="FilterResponse04 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0" debug="${debug}"
+         request="${context.path}/FilterResponse04?wrap=false&amp;dispatch=I"
+      outContent="FilterResponse04 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0" debug="${debug}"
+         request="${context.path}/WrappedFilterResponse04?wrap=true&amp;dispatch=I"
+      outContent="FilterResponse04 PASSED"/>
 
   </target>
 
