@@ -211,11 +211,7 @@ implements org.apache.catalina.cluster.ClusterManager
             super.unload();
         }
     }
-    public void load() throws ClassNotFoundException, IOException {
-        if ( !getDistributable() ) {
-            super.load();
-        }
-    }
+
     public int getDebug()
     {
         return this.debug;
@@ -334,7 +330,7 @@ implements org.apache.catalina.cluster.ClusterManager
                 synchronized ( invalidatedSessions ) {
                     invalidatedSessions.remove(sessionId);
                     SessionMessage msg = new SessionMessage(name,
-                    SessionMessage.EVT_SESSION_EXPIRED_WNOTIFY,
+                    SessionMessage.EVT_SESSION_EXPIRED,
                     null,
                     sessionId);
                 return msg;
@@ -568,11 +564,6 @@ implements org.apache.catalina.cluster.ClusterManager
         try  {
             log("Received SessionMessage of type="+msg.getEventTypeString(),3);
             log("Received SessionMessage sender="+sender,3);
-            if (  !this.getDistributable() ) {
-                log.warn("Received replication message, although this context["+
-                         getName()+"] is not distributable. Ignoring message");
-                return;
-            }
             switch ( msg.getEventType() ) {
                 case SessionMessage.EVT_GET_ALL_SESSIONS: {
                     //get a list of all the session from this manager
@@ -620,8 +611,7 @@ implements org.apache.catalina.cluster.ClusterManager
                     if ( getDebug()  > 5 ) log("Received replicated session="+session);
                     break;
                 }
-                case SessionMessage.EVT_SESSION_EXPIRED_WNOTIFY:
-                case SessionMessage.EVT_SESSION_EXPIRED_WONOTIFY: {
+                case SessionMessage.EVT_SESSION_EXPIRED: {
                     Session session = findSession(msg.getSessionID());
                     if ( session != null ) {
                         session.expire();

@@ -91,6 +91,7 @@ import org.apache.catalina.valves.*;
 import org.apache.catalina.cluster.session.SimpleTcpReplicationManager;
 import org.apache.catalina.cluster.SessionMessage;
 import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
+import org.apache.catalina.cluster.ClusterSession;
 
 /**
  * <p>Implementation of a Valve that logs interesting contents from the
@@ -235,9 +236,17 @@ public class ReplicationValve
 
             if ( debug > 4 ) log("Invoking replication request on "+uri,4);
 
+            ClusterSession cs = (ClusterSession)session;
             SessionMessage msg = manager.requestCompleted(id);
-            if ( msg == null ) return;
+            if ( (msg == null) && (!cs.isPrimarySession()) ) {
+                msg = new SessionMessage(manager.getName(),
+                                         SessionMessage.EVT_SESSION_ACCESSED,
+                                         null,
+                                         id);
+            }
+            cs.setPrimarySession(true);
 
+            if ( msg == null ) return;
 
             cluster.send(msg);
             long stop = System.currentTimeMillis();
@@ -255,7 +264,7 @@ public class ReplicationValve
      */
     public String toString() {
 
-        StringBuffer sb = new StringBuffer("RequestDumperValve[");
+        StringBuffer sb = new StringBuffer("ReplicationValve[");
         if (container != null)
             sb.append(container.getName());
         sb.append("]");

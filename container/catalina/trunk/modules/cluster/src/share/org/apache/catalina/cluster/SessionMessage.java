@@ -113,15 +113,10 @@ public class SessionMessage
      */
     public static final int EVT_SESSION_CREATED = 1;
     /**
-     * Event type used when a session has expired, but we don't
-     * want to notify the session listeners
+     * Event type used when a session has expired
      */
-    public static final int EVT_SESSION_EXPIRED_WONOTIFY = 2;
-    /**
-     * Event type used when a session has expired, and we do
-     * want to notify the session listeners
-     */
-    public static final int EVT_SESSION_EXPIRED_WNOTIFY = 7;
+    public static final int EVT_SESSION_EXPIRED = 2;
+
     /**
      * Event type used when a session has been accessed (ie, last access time
      * has been updated. This is used so that the replicated sessions will not expire
@@ -153,9 +148,6 @@ public class SessionMessage
     private int mEvtType = -1;
     private byte[] mSession;
     private String mSessionID;
-//    private String mAttributeName;
-//    private Object mAttributeValue;
-//    private SerializablePrincipal mPrincipal;
     private Member mSrc;
     private String mContextName;
     private long serializationTimestamp;
@@ -235,11 +227,10 @@ public class SessionMessage
         switch (mEvtType)
         {
             case EVT_SESSION_CREATED : return "SESSION-MODIFIED";
-            case EVT_SESSION_EXPIRED_WNOTIFY : return "SESSION-EXPIRED-WITH-NOTIFY";
-            case EVT_SESSION_EXPIRED_WONOTIFY : return "SESSION-EXPIRED-WITHOUT-NOTIFY";
+            case EVT_SESSION_EXPIRED : return "SESSION-EXPIRED";
             case EVT_SESSION_ACCESSED : return "SESSION-ACCESSED";
             case EVT_GET_ALL_SESSIONS : return "SESSION-GET-ALL";
-            //case EVT_SET_USER_PRINCIPAL : return "SET-USER-PRINCIPAL";
+            case EVT_SESSION_DELTA : return "SESSION-DELTA";
             case EVT_ALL_SESSION_DATA : return "ALL-SESSION-DATA";
             default : return "UNKNOWN-EVENT-TYPE";
         }
