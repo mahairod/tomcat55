@@ -85,11 +85,11 @@ commons-fileupload.loc=http://www.apache.org/dist/jakarta/commons/fileupload/com
 
 
 # ----- Commons Logging, version 1.0.1 or later -----
-commons-logging.home=${base.path}/commons-logging-1.0.2
+commons-logging.home=${base.path}/commons-logging-1.0.3
 commons-logging.lib=${commons-logging.home}
 commons-logging-api.jar=${commons-logging.lib}/commons-logging-api.jar
 commons-logging.jar=${commons-logging.lib}/commons-logging.jar
-commons-logging.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-logging/v1.0.2/commons-logging-1.0.2.tar.gz
+commons-logging.loc=http://www.apache.org/dist/jakarta/commons/logging/binaries/commons-logging-1.0.3.tar.gz
 
 
 # ----- Java Naming and Directory Interface (JNDI), version 1.2 or later -----
@@ -109,7 +109,7 @@ regexp.loc=http://jakarta.apache.org/builds/jakarta-regexp/release/v1.2/jakarta-
 
 
 # ----- Jakarta Servlet API Classes (Servlet 2.3 / JSP 1.2) -----
-servlet.home=${base.path}/jakarta-servletapi-4
+servlet.home=${base.path}/jakarta-servletapi-4/dist
 servlet.lib=${servlet.home}/lib
 servlet.jar=${servlet.lib}/servlet.jar
 servlet.loc=jakarta-servletapi-4
@@ -126,7 +126,7 @@ servlet.loc=jakarta-servletapi-4
 # Note: Optional with JDK 1.4+, or if Xerces 1.x is present
 xerces.home=${base.path}/xerces-2_3_0
 xerces.lib=${xerces.home}
-xerces.loc=http://xml.apache.org/dist/xerces-j/Xerces-J-bin.2.3.0.tar.gz
+xerces.loc=http://xml.apache.org/dist/xerces-j/old_xerces2/Xerces-J-bin.2.3.0.tar.gz
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
 
@@ -157,10 +157,10 @@ commons-dbcp.loc=http://jakarta.apache.org/builds/jakarta-commons/release/common
 
 
 # ----- Commons Modeler, version 1.0 or later -----
-commons-modeler.home=${base.path}/commons-modeler-1.0
+commons-modeler.home=${base.path}/commons-modeler-1.1dev
 commons-modeler.lib=${commons-modeler.home}
 commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
-commons-modeler.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-modeler/v1.0/commons-modeler-1.0.tar.gz
+commons-modeler.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-modeler/v1.1M1/commons-modeler-1.1M1.tar.gz
 
 
 # ----- Commons Pool, version 1.0 or later -----
@@ -189,7 +189,7 @@ jmx.loc=http://telia.dl.sourceforge.net/sourceforge/mx4j/mx4j-1.1.1.tar.gz
 
 
 # ----- Java Secure Sockets Extension (JSSE), version 1.0.2 or later -----
-jsse.home=${base.path}/jsse-1.0.2
+jsse.home=${base.path}/jsse-1.0.3
 jsse.lib=${jsse.home}/lib
 jcert.jar=${jsse.lib}/jcert.jar
 jnet.jar=${jsse.lib}/jnet.jar
