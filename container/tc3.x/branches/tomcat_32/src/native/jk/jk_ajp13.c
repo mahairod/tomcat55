@@ -547,11 +547,12 @@ int ajp13_unmarshal_response(jk_msg_buf_t *msg,
                 if((name & 0XFF00) == 0XA000) {
                     jk_b_get_int(msg);
                     name = name & 0X00FF;
-                    if(name < SC_RES_HEADERS_NUM) {
+                    if(name <= SC_RES_HEADERS_NUM) {
                         d->header_names[i] = (char *)long_res_header_for_sc(name);
                     } else {
                         jk_log(l, JK_LOG_ERROR, 
-                               "Error ajp13_unmarshal_response - No such sc\n");
+                               "Error ajp13_unmarshal_response - No such sc (%d)\n",
+			       name);
 
                         return JK_FALSE;
                     }
