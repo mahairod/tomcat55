@@ -76,13 +76,13 @@
   
   <target name="build-catalina-cluster" depends="build-prepare">
     <!-- Compile internal server components -->
-    <javac srcdir="src/share" destdir="${catalina.build}/classes"
+    <javac srcdir="${basedir}/src/share" destdir="${catalina.build}/classes"
            debug="${compile.debug}" deprecation="${compile.deprecation}"
            optimize="${compile.optimize}"
            excludes="**/CVS/**">
       <classpath refid="cluster.classpath" />
     </javac>
-    <copy file="src/share/org/apache/catalina/cluster/LocalStrings.properties"
+    <copy file="${basedir}/src/share/org/apache/catalina/cluster/LocalStrings.properties"
     	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/LocalStrings.properties"/>
   </target>
 
