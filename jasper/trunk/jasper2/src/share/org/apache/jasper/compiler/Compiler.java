@@ -498,6 +498,7 @@ public class Compiler {
      */
     public boolean isOutDated(boolean checkClass) {
 
+        boolean outDated = false;
         String jsp = ctxt.getJspFile();
 
         long jspRealLastModified = 0;
@@ -513,7 +514,7 @@ public class Compiler {
             return true;
         }
 
-        long targetLastModified;
+        long targetLastModified = 0;
         File targetFile;
         
         if( checkClass ) {
@@ -523,29 +524,30 @@ public class Compiler {
         }
         
         if (!targetFile.exists()) {
-            return true;
-        }
-
-        targetLastModified = targetFile.lastModified();
-        if (targetLastModified < jspRealLastModified) {
-            if( log.isDebugEnabled() )
-                log.debug("Compiler: outdated: " + targetFile + " " + targetLastModified );
-            return true;
+            outDated = true;
+        } else {
+            targetLastModified = targetFile.lastModified();
+            if (targetLastModified < jspRealLastModified) {
+                if( log.isDebugEnabled() ) {
+                    log.debug("Compiler: outdated: " + targetFile + " " +
+                        targetLastModified );
+                }
+                outDated = true;
+            }
         }
 
         // determine if source dependent files (e.g. includes using include
-	// directives) have been changed.
+        // directives) have been changed.
         if( jsw==null ) {
-            return false;
+            return outDated;
         }
 
         List depends = jsw.getDependants();
         if (depends == null) {
-            return false;
+            return outDated;
         }
 
         Iterator it = depends.iterator();
-        boolean outDated = false;
         while (it.hasNext()) {
             String include = (String)it.next();
             try {
@@ -554,18 +556,19 @@ public class Compiler {
                     //System.out.println("Compiler: outdated, no includeUri " + include );
                     outDated = true;
                 }
-                if (includeUrl.openConnection().getLastModified() >
+                if (!outDated && includeUrl.openConnection().getLastModified() >
                     targetLastModified) {
                     //System.out.println("Compiler: outdated, include old " + include );
                     outDated = true;
-                    // Remove any potential Wrappers for tag files
-                    ctxt.getRuntimeContext().removeWrapper(include);
                 }
+                // Remove any potential Wrappers for tag files
+                ctxt.getRuntimeContext().removeWrapper(include);
             } catch (Exception e) {
                 e.printStackTrace();
                 outDated = true;
             }
         }
+
         return outDated;
 
     }
