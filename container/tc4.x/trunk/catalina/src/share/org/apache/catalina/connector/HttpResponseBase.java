@@ -915,9 +915,11 @@ public class HttpResponseBase
 	resetBuffer();
 
 	// Cause the response to be committed
+        /* Per spec clarification, no default content type is set
 	String contentType = getContentType();
 	if ((contentType == null) || "text/plain".equals(contentType))
 	    setContentType("text/html");
+        */
 	try {
 	    flushBuffer();
 	} catch (IOException e) {
