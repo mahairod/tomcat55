@@ -1611,7 +1611,8 @@ public class Parser {
         }
         else if( bodyType.equalsIgnoreCase( TagInfo.BODY_CONTENT_EMPTY ) ) {
             if( !reader.matchesETag( tag ) ) {
-		err.jspError(start, "jasper.error.emptybodycontent.nonempty");
+		err.jspError(start, "jasper.error.emptybodycontent.nonempty",
+			     tag);
             }
         }
         else if( bodyType == JAVAX_BODY_CONTENT_PLUGIN ) {
