@@ -104,6 +104,7 @@ import org.apache.naming.resources.FileDirContext;
 import org.apache.naming.resources.ProxyDirContext;
 import org.apache.naming.resources.WARDirContext;
 import org.apache.naming.resources.DirContextURLStreamHandler;
+import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
@@ -3640,7 +3641,11 @@ public class StandardContext
         if (getManager() == null) {     // (3) After prerequisites
             if (debug >= 1)
                 log("Configuring default Manager");
-            setManager(new StandardManager());
+            if (getCluster() != null) {
+                setManager(getCluster().createManager(getName()));
+            } else {
+                setManager(new StandardManager());
+            }
         }
 
         // Initialize character set mapper
