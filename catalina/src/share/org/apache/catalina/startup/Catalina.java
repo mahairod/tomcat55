@@ -345,7 +345,7 @@ public class Catalina extends Embedded {
                             "org.apache.catalina.Connector");
 
         digester.addObjectCreate("Server/Service/Connector/Factory",
-                                 "org.apache.catalina.net.DefaultServerSocketFactory",
+                                 "org.apache.coyote.tomcat5.CoyoteServerSocketFactory",
                                  "className");
         digester.addSetProperties("Server/Service/Connector/Factory");
         digester.addSetNext("Server/Service/Connector/Factory",
