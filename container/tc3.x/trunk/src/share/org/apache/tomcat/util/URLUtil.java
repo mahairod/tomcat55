@@ -122,8 +122,7 @@ public class URLUtil {
 	    resolve = new URL("file", "", path);
 	}
 
-        if (! resolve.getProtocol().equalsIgnoreCase(
-                org.apache.tomcat.core.Constants.Request.WAR) &&
+        if (! resolve.getProtocol().equalsIgnoreCase("war") &&
             resolve.getFile().toLowerCase().endsWith(
                 "." + Constants.MIME.WAR)) {
             URL u = new URL(Constants.MIME.WAR + ":" +
