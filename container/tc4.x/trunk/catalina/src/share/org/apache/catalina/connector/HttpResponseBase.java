@@ -880,12 +880,10 @@ public class HttpResponseBase
 	this.status = status;
 	this.message = message;
 
-	// Cause the response to be committed but generate no output
-	try {
-	    resetBuffer();
-	} catch (Throwable t) {
-	    ;
-	}
+	// Clear any data content that has been buffered
+	resetBuffer();
+
+	// Cause the response to be committed
 	String contentType = getContentType();
 	if ((contentType == null) || "text/plain".equals(contentType))
 	    setContentType("text/html");
@@ -916,7 +914,10 @@ public class HttpResponseBase
 	if (included)
 	    return;	// Ignore any call from an included servlet
 
-	reset();
+	// Clear any data content that has been buffered
+	resetBuffer();
+
+	// Generate a temporary redirect to the specified location
 	String absolute = toAbsolute(location);
 	setStatus(SC_MOVED_TEMPORARILY, absolute);
 	setHeader("Location", absolute);
