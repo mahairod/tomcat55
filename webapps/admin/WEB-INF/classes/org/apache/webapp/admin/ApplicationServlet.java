@@ -82,7 +82,7 @@ import org.apache.struts.util.MessageResources;
  * @version $Revision$ $Date$
  */
 
-public class ApplicationServlet extends ActionServlet {
+public class ApplicationServlet extends ActionServlet implements Runnable {
 
 
     // ----------------------------------------------------- Manifest Constants
@@ -147,13 +147,19 @@ public class ApplicationServlet extends ActionServlet {
      * @exception ServletException if an initialization error occurs.
      */
     public void init() throws javax.servlet.ServletException {
+        new Thread(this).start();
+    }
 
-        // Perform normal superclass initialization
-        super.init();
-
-        // Perform initialization specific to this application
-        initApplicationLocales();
-
+    public void run() {
+        try {
+            // Perform normal superclass initialization
+            super.init();
+            
+            // Perform initialization specific to this application
+            initApplicationLocales();
+        } catch( Exception ex ) {
+            ex.printStackTrace();
+        }
     }
 
 
