@@ -347,6 +347,12 @@ public class WebappClassLoader
     protected boolean hasExternalRepositories = false;
 
 
+    /**
+     * All permission.
+     */
+    private Permission allPermission = new java.security.AllPermission();
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -366,6 +372,9 @@ public class WebappClassLoader
      * @param debug The new debugging detail level
      */
     public void setDebug(int debug) {
+
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
 
         this.debug = debug;
 
@@ -389,6 +398,9 @@ public class WebappClassLoader
      */
     public void setDelegate(boolean delegate) {
 
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
+
         this.delegate = delegate;
 
     }
@@ -400,15 +412,15 @@ public class WebappClassLoader
      *
      * @param path file directory path
      */
-    public void setPermissions(String path) {
-        if( securityManager != null ) {
+    public void addPermission(String path) {
+        if (securityManager != null) {
             Permission permission = null;
             if( path.startsWith("jndi:") || path.startsWith("jar:jndi:") ) {
                 permission = new JndiPermission(path + "*");
             } else {
                 permission = new FilePermission(path + "-","read");
             }
-            permissionList.add(permission);
+            addPermission(permission);
         }
     }
 
@@ -419,8 +431,21 @@ public class WebappClassLoader
      *
      * @param url URL for a file or directory on local system
      */
-    public void setPermissions(URL url) {
-        setPermissions(url.toString());
+    public void addPermission(URL url) {
+        addPermission(url.toString());
+    }
+
+
+    /**
+     * If there is a Java SecurityManager create a Permission.
+     *
+     * @param url URL for a file or directory on local system
+     */
+    public void addPermission(Permission permission) {
+        if ((securityManager != null) && (permission != null)) {
+            securityManager.checkPermission(allPermission);
+            permissionList.add(permission);
+        }
     }
 
 
@@ -438,6 +463,9 @@ public class WebappClassLoader
      * Change the Jar path.
      */
     public void setJarPath(String jarPath) {
+
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
 
         this.jarPath = jarPath;
 
@@ -458,6 +486,9 @@ public class WebappClassLoader
      *  invalid or does not exist
      */
     public void addRepository(String repository) {
+
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
 
         // Ignore any of the standard repositories, as they are set up using
         // either addJar or addRepository
@@ -488,6 +519,9 @@ public class WebappClassLoader
      *  invalid or does not exist
      */
     synchronized void addRepository(String repository, File file) {
+
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
 
         // Note : There should be only one (of course), but I think we should
         // keep this a bit generic
@@ -521,6 +555,9 @@ public class WebappClassLoader
 
     synchronized void addJar(String jar, JarFile jarFile, File file)
         throws IOException {
+
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
 
         if (jar == null)
             return;
@@ -1426,6 +1463,9 @@ public class WebappClassLoader
      */
     public void start() throws LifecycleException {
 
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
+
         started = true;
 
     }
@@ -1437,6 +1477,9 @@ public class WebappClassLoader
      * @exception LifecycleException if a lifecycle error occurs
      */
     public void stop() throws LifecycleException {
+
+        if (securityManager != null)
+            securityManager.checkPermission(allPermission);
 
         started = false;
 

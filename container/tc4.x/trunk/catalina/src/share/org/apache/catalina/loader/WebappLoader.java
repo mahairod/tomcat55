@@ -798,6 +798,11 @@ public class WebappLoader
         if (!(container instanceof Context))
             return;
 
+        if (((Context) container).getPrivileged()) {
+            classLoader.addPermission(new java.security.AllPermission());
+            return;
+        }
+
         // Tell the class loader the root of the context
         ServletContext servletContext =
             ((Context) container).getServletContext();
@@ -805,7 +810,7 @@ public class WebappLoader
         try {
 
             URL rootURL = servletContext.getResource("/");
-            classLoader.setPermissions(rootURL);
+            classLoader.addPermission(rootURL);
 
             String contextRoot = servletContext.getRealPath("/");
             if (contextRoot != null) {
@@ -813,7 +818,7 @@ public class WebappLoader
                     contextRoot = 
                         (new File(contextRoot)).getCanonicalPath() 
                         + File.separator;
-                    classLoader.setPermissions(contextRoot);
+                    classLoader.addPermission(contextRoot);
                 } catch (IOException e) {
                     // Ignore
                 }
@@ -822,11 +827,11 @@ public class WebappLoader
             URL classesURL =
                 servletContext.getResource("/WEB-INF/classes/");
             if (classesURL != null)
-                classLoader.setPermissions(classesURL);
+                classLoader.addPermission(classesURL);
 
             URL libURL = servletContext.getResource("/WEB-INF/lib/");
             if (libURL != null) {
-                classLoader.setPermissions(libURL);
+                classLoader.addPermission(libURL);
             }
 
             if (contextRoot != null) {
@@ -840,7 +845,7 @@ public class WebappLoader
                     } catch (IOException e) {
                     }
                     if (path != null)
-                        classLoader.setPermissions(path);
+                        classLoader.addPermission(path);
                 }
 
             } else {
@@ -856,7 +861,7 @@ public class WebappLoader
                             path = libDir.getCanonicalPath() + File.separator;
                         } catch (IOException e) {
                         }
-                        classLoader.setPermissions(path);
+                        classLoader.addPermission(path);
                     }
                     if (classesURL != null) {
                         File classesDir =
@@ -867,7 +872,7 @@ public class WebappLoader
                                 + File.separator;
                         } catch (IOException e) {
                         }
-                        classLoader.setPermissions(path);
+                        classLoader.addPermission(path);
                     }
                 }
 
