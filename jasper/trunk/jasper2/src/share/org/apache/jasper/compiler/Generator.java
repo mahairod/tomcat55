@@ -688,6 +688,7 @@ class Generator {
 
 	private Hashtable tagVarNumbers;
 	private String parent;
+	private boolean isSimpleTagParent;      // Is parent a SimpleTag?
 	private String pushBodyCountVar;
 	private String simpleTagHandlerVar;
 	private boolean isSimpleTagHandler;
@@ -1558,6 +1559,8 @@ class Generator {
 		// visit body
 		String tmpParent = parent;
 		parent = tagHandlerVar;
+		boolean isSimpleTagParentSave = isSimpleTagParent;
+		isSimpleTagParent = false;
 		String tmpPushBodyCountVar = null;
 		if (n.implementsTryCatchFinally()) {
 		    tmpPushBodyCountVar = pushBodyCountVar;
@@ -1569,6 +1572,7 @@ class Generator {
 		visitBody(n);
 
 		parent = tmpParent;
+		isSimpleTagParent = isSimpleTagParentSave;
 		if (n.implementsTryCatchFinally()) {
 		    pushBodyCountVar = tmpPushBodyCountVar;
 		}
@@ -2540,30 +2544,21 @@ class Generator {
 
 	    // Set parent
 	    if (!simpleTag) {
+		out.printin(tagHandlerVar);
+		out.print(".setParent(");
 		if (parent != null) {
-		    out.printin("if (");
-		    out.print(parent);
-		    out.println(" instanceof javax.servlet.jsp.tagext.SimpleTag)");
-		    out.pushIndent();
-		    out.printin(tagHandlerVar);
-		    out.print(".setParent(");
-		    out.print("new javax.servlet.jsp.tagext.TagAdapter(");
-		    out.print("(javax.servlet.jsp.tagext.SimpleTag) ");
-		    out.print(parent);
-		    out.println("));");
-		    out.popIndent();
-		    out.printil("else");
-		    out.pushIndent();
-		    out.printin(tagHandlerVar);
-		    out.print(".setParent((javax.servlet.jsp.tagext.Tag) ");
-		    out.print(parent);
-		    out.println(");");
-		    out.popIndent();
+		    if (isSimpleTagParent) {
+			out.print("new javax.servlet.jsp.tagext.TagAdapter(");
+			out.print("(javax.servlet.jsp.tagext.SimpleTag) ");
+			out.print(parent);
+			out.println("));");
+		    } else {
+			out.print("(javax.servlet.jsp.tagext.Tag) ");
+			out.print(parent);
+			out.println(");");
+		    }
 		} else {
-		    out.printin(tagHandlerVar);
-		    out.print(".setParent(");
-		    out.print(parent);
-		    out.println(");");
+		    out.println("null);");
 		}
 	    } else {
 		// The setParent() method need not be called if the value being
@@ -2718,12 +2713,15 @@ class Generator {
             ServletWriter outSave = out;
 	    out = fragment.getGenBuffer().getOut();
 	    String tmpParent = parent;
-	    parent = tagHandlerVar;
+	    parent = "_jspx_parent";
+	    boolean isSimpleTagParentSave = isSimpleTagParent;
+	    isSimpleTagParent = true;
 	    boolean tmpIsFragment = isFragment;
 	    isFragment = true;
             visitBody( n );
             out = outSave;
 	    parent = tmpParent;
+	    isSimpleTagParent = isSimpleTagParentSave;
 	    isFragment = tmpIsFragment;
 	    fragmentHelperClass.closeFragment(fragment, methodNesting);
             // XXX - Need to change pageContext to jspContext if
@@ -3534,14 +3532,14 @@ class Generator {
                 "org.apache.jasper.runtime.JspFragmentHelper" );
             out.printil( "{" );
             out.pushIndent();
-	    out.printil("private javax.servlet.jsp.tagext.JspTag parentTag;");
+	    out.printil("private javax.servlet.jsp.tagext.JspTag _jspx_parent;");
 	    out.println();
             out.printil( "public " + className + 
                 "( int discriminator, JspContext jspContext, " +
-                "javax.servlet.jsp.tagext.JspTag parentTag ) {" );
+                "javax.servlet.jsp.tagext.JspTag _jspx_parent ) {" );
             out.pushIndent();
-            out.printil( "super( discriminator, jspContext, parentTag );" );
-            out.printil( "this.parentTag = parentTag;" );
+            out.printil( "super( discriminator, jspContext, _jspx_parent );" );
+            out.printil( "this._jspx_parent = _jspx_parent;" );
             out.popIndent();
             out.printil( "}" );
         }
@@ -3577,9 +3575,6 @@ class Generator {
             out.printil( "{" );
             out.pushIndent();
             generateLocalVariables( out, parent );
-	    out.printin("javax.servlet.jsp.tagext.JspTag ");
-	    out.print(tagHandlerVar);
-	    out.println(" = parentTag;");
             
             return result;
         }
