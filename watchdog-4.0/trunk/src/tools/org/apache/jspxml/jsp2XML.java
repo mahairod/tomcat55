@@ -208,13 +208,15 @@ String next_token=st.nextToken();
        prefix=st.nextToken();
 
   }
-//update XML Name Space
-xml_ns+="xmlns:" + prefix +"=" ;
-xml_ns+="\"" + uri +"\"" + new_line  ;
-//put the prefix in the hashtable
+//put the prefix in the hashtable if it doesn't exist
+//this will be used to update the xml Namespace
 
-tag_prefix.put(prefix , prefix);
-
+ if(!tag_prefix.containsKey(prefix) )
+ {
+  tag_prefix.put(prefix , prefix);
+//add to the xml NameSpace
+  xml_ns+="xmlns:" +prefix +"=\"" + uri + "\"" + new_line;
+ }
 
 //update xml output
 out_file += "uri=\"" + uri + "\"" + " " ;
@@ -521,7 +523,6 @@ String output_xml =convert( input_jsp);
 //The final file is
 //xml_prolog + xml_ns + jsp_root_tag +xml+ jsp_end_tag
 
-xml_ns=xml_ns.trim() ;
 xml_ns+=">" + new_line ; //close the XML Name Space
 output_xml=xml_prolog+ author_comments + jsp_root_tag +xml_ns+ output_xml + jsp_end_tag ;
 return output_xml;
@@ -536,7 +537,6 @@ String output_xml=convert( input_jsp);
 //The final file is
 //xml_prolog + xml_ns + jsp_root_tag +xml+ jsp_end_tag
 
-xml_ns=xml_ns.trim() ;
 xml_ns+=">" + new_line ; //close the XML Name Space
 output_xml=xml_prolog+ author_comments + jsp_root_tag +xml_ns+ output_xml + jsp_end_tag ;
 //write it to the file
