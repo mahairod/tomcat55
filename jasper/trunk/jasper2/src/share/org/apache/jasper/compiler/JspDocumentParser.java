@@ -237,12 +237,12 @@ class JspDocumentParser extends DefaultHandler
 	// is valid from that point forward.  Redefinitions cause an
 	// error.  This isn't quite consistent with how xmlns: normally
 	// works.
-	AttributesImpl attrsCopy = null;
-	Attributes xmlnsAttrs = null;
+	Attributes taglibAttrs = null;
+	Attributes nonTaglibAttrs = null;
 	if (attrs != null) {
-	    attrsCopy = new AttributesImpl(attrs);
 	    try {
-		xmlnsAttrs = addTagLibraries(attrsCopy);
+		taglibAttrs = addTagLibraries(attrs);
+		nonTaglibAttrs = filterTaglibAttributes(attrs, taglibAttrs);
 	    } catch (JasperException je) {
 		    throw new SAXParseException(Localizer.getMessage(
                                     "jsp.error.could.not.add.taglibraries"),
@@ -253,14 +253,15 @@ class JspDocumentParser extends DefaultHandler
 	Node node = null;
 
 	if ("http://java.sun.com/JSP/Page".equals(uri)) {
-	    node = parseStandardAction(qName, localName, attrsCopy, xmlnsAttrs,
-				       start, current);
+	    node = parseStandardAction(qName, localName, nonTaglibAttrs,
+				       taglibAttrs, start, current);
 	} else {
-	    node = parseCustomAction(qName, localName, uri, attrsCopy,
-				     xmlnsAttrs, start, current);
+	    node = parseCustomAction(qName, localName, uri, nonTaglibAttrs,
+				     taglibAttrs, start, current);
 	    if (node == null) {
-		node = new Node.UninterpretedTag(qName, localName, attrsCopy,
-						 xmlnsAttrs, start, current);
+		node = new Node.UninterpretedTag(qName, localName,
+						 nonTaglibAttrs, taglibAttrs,
+						 start, current);
 	    }
 	}
 
@@ -635,6 +636,40 @@ class JspDocumentParser extends DefaultHandler
     }
 
     /*
+     * Filters, from the given attrs, all the attributes that are not
+     * contained in taglibAttrs, and returns them.
+     *
+     * @param attrs The total set of attributes
+     * @param taglibAttrs The set of attributes in attrs that represent a tag
+     * library
+     *
+     * @param The set of attributes in attrs that do not represent a tag
+     * library
+     */
+    private Attributes filterTaglibAttributes(Attributes attrs,
+					      Attributes taglibAttrs) {
+	AttributesImpl ret = null;
+
+	if (taglibAttrs == null) {
+	    ret = new AttributesImpl(attrs);
+	} else {
+	    for (int i=attrs.getLength()-1; i>=0; i--) {
+		if (taglibAttrs.getValue(attrs.getURI(i),
+					 attrs.getLocalName(i)) == null) {
+		    if (ret == null) {
+			ret = new AttributesImpl();
+		    }
+		    ret.addAttribute(attrs.getURI(i), attrs.getLocalName(i),
+				     attrs.getQName(i), attrs.getType(i),
+				     attrs.getValue(i));
+		}
+	    }
+	}
+
+	return ret;
+    }
+
+    /*
      * Checks if the XML element with the given tag name is a custom action,
      * and returns the corresponding Node object.
      */
@@ -703,7 +738,7 @@ class JspDocumentParser extends DefaultHandler
      * @return The set of xmlns attributes (extracted from the given attrs)
      * representing standard or custom tag libraries, or null
      */
-    private Attributes addTagLibraries(AttributesImpl attrs)
+    private Attributes addTagLibraries(Attributes attrs)
 	    throws JasperException 
     {
 	AttributesImpl result = null;
@@ -739,7 +774,6 @@ class JspDocumentParser extends DefaultHandler
 		    result.addAttribute(attrs.getURI(i), attrs.getLocalName(i),
 					attrs.getQName(i), attrs.getType(i),
 					attrs.getValue(i));
-		    attrs.removeAttribute(i);
 		}
 	    }
 	}
