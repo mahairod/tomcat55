@@ -108,6 +108,9 @@ public class ServletWrapper {
     protected int serviceCount = 0;
 
     int loadOnStartup=0;
+
+    Hashtable initArgs=null;
+    Hashtable securityRoleRefs=new Hashtable();
     
     public ServletWrapper() {
         config = new ServletConfigImpl();
@@ -177,9 +180,18 @@ public class ServletWrapper {
 	config.setServletClassName(servletClassName);
     }
 
+    /** Security Role Ref represent a mapping between servlet role names and
+     *  server roles
+     */
+    public void addSecurityMapping( String name, String role, String description ) {
+	securityRoleRefs.put( name, role );
+    }
 
-    Hashtable initArgs=null;
+    public String getSecurityRole( String name ) {
+	return (String)securityRoleRefs.get( name );
+    }
     
+
     public void addInitParam( String name, String value ) {
 	if( initArgs==null) {
 	    initArgs=new Hashtable();
