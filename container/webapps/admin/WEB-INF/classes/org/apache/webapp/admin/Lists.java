@@ -184,9 +184,7 @@ public class Lists {
         throws Exception {
 
         StringBuffer sb = new StringBuffer(service.getDomain());
-        sb.append(":type=Connector,service=");
-        sb.append(service.getKeyProperty("name"));
-        sb.append(",*");
+        sb.append(":type=Connector,*");
         ObjectName search = new ObjectName(sb.toString());
         ArrayList connectors = new ArrayList();
         Iterator names = mbserver.queryNames(search, null).iterator();
@@ -231,8 +229,6 @@ public class Lists {
         StringBuffer sb = new StringBuffer(host.getDomain());
         sb.append(":type=Context,host=");
         sb.append(host.getKeyProperty("host"));
-        sb.append(",service=");
-        sb.append(host.getKeyProperty("service"));
         sb.append(",*");
         ObjectName search = new ObjectName(sb.toString());
         ArrayList contexts = new ArrayList();
@@ -296,10 +292,6 @@ public class Lists {
         if ("Service".equals(type)) {
             service = container.getKeyProperty("name");
         }
-        if (service != null) {
-            sb.append(",service=");
-            sb.append(service);
-        }
         ObjectName search = new ObjectName(sb.toString());
         ArrayList defaultContexts = new ArrayList();
         Iterator names = mbserver.queryNames(search, null).iterator();
@@ -342,9 +334,7 @@ public class Lists {
         throws Exception {
 
         StringBuffer sb = new StringBuffer(service.getDomain());
-        sb.append(":type=Host,service=");
-        sb.append(service.getKeyProperty("name"));
-        sb.append(",*");
+        sb.append(":type=Host,*");
         ObjectName search = new ObjectName(sb.toString());
         ArrayList hosts = new ArrayList();
         Iterator names = mbserver.queryNames(search, null).iterator();
@@ -406,10 +396,6 @@ public class Lists {
         String service = container.getKeyProperty("service");
         if ("Service".equals(type)) {
             service = container.getKeyProperty("name");
-        }
-        if (service != null) {
-            sb.append(",service=");
-            sb.append(service);
         }
         ObjectName search = new ObjectName(sb.toString());
         ArrayList loggers = new ArrayList();
@@ -474,10 +460,6 @@ public class Lists {
         if ("Service".equals(type)) {
             service = container.getKeyProperty("name");
         }
-        if (service != null) {
-            sb.append(",service=");
-            sb.append(service);
-        }
         ObjectName search = new ObjectName(sb.toString());
         ArrayList realms = new ArrayList();
         Iterator names = mbserver.queryNames(search, null).iterator();
@@ -531,10 +513,6 @@ public class Lists {
         
         if ("Service".equals(type)) {
             service = container.getKeyProperty("name");
-        }
-        if (service != null) {
-            sb.append(",service=");
-            sb.append(service);
         }
         
         ObjectName search = new ObjectName(sb.toString());        

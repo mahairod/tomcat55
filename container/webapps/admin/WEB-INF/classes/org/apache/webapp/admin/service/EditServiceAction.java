@@ -163,8 +163,7 @@ public class EditServiceAction extends Action {
         }
         try {
             sb = new StringBuffer(sname.getDomain());
-            sb.append(":type=Engine,service=");
-            sb.append(sname.getKeyProperty("name"));
+            sb.append(":type=Engine");
             ename = new ObjectName(sb.toString());
         } catch (Exception e) {
             String message =

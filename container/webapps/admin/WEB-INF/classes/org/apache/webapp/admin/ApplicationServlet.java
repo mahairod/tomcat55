@@ -188,8 +188,9 @@ public class ApplicationServlet extends ActionServlet implements Runnable {
      */
     protected void initRegistry() throws ServletException {
 
-        registry = (Registry) getServletContext().getAttribute
-            ("org.apache.catalina.Registry");
+        registry = Registry.getRegistry();
+        //(Registry) getServletContext().getAttribute
+        //    ("org.apache.catalina.Registry");
         if (registry == null)
             throw new UnavailableException("Registry is not available");
 
@@ -206,8 +207,9 @@ public class ApplicationServlet extends ActionServlet implements Runnable {
      */
     protected void initServer() throws ServletException {
 
-        server = (MBeanServer) getServletContext().getAttribute
-            ("org.apache.catalina.MBeanServer");
+        server = Registry.getRegistry().getMBeanServer();
+        //(MBeanServer) getServletContext().getAttribute
+        //    ("org.apache.catalina.MBeanServer");
         if (server == null)
             throw new UnavailableException("MBeanServer is not available");
 

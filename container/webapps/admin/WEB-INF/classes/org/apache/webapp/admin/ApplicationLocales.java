@@ -102,14 +102,19 @@ public final class ApplicationLocales {
             return;
 
         for (int i = 0; i < list.length; i++) {
-            ResourceBundle bundle =
-                ResourceBundle.getBundle(config, list[i]);
-            if (bundle == null)
+            try {
+                ResourceBundle bundle =
+                    ResourceBundle.getBundle(config, list[i]);
+                if (bundle == null)
+                    continue;
+                if (list[i].equals(bundle.getLocale())) {
+                    localeLabels.add(list[i].getDisplayName());
+                    localeValues.add(list[i].toString());
+                    supportedLocales.add(list[i]);
+                }
+            } catch( Exception ex ) {
+                servlet.log("Missing locale " + list[i] );
                 continue;
-            if (list[i].equals(bundle.getLocale())) {
-                localeLabels.add(list[i].getDisplayName());
-                localeValues.add(list[i].toString());
-                supportedLocales.add(list[i]);
             }
         }
 
