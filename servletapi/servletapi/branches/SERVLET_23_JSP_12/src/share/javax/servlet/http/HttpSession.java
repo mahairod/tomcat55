@@ -386,7 +386,7 @@ public interface HttpSession {
     /**
      *
      * @deprecated 	As of Version 2.2, this method is
-     * 			replaced by {@link #setAttribute}
+     * 			replaced by {@link #removeAttribute}
      *
      * @param name				the name of the object to
      *						remove from this session
