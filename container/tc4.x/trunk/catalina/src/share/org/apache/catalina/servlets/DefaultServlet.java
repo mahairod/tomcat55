@@ -657,24 +657,13 @@ public class DefaultServlet
         // Copy the input stream to the output stream
         exception = copyRange(istream, ostream);
         
-        // Clean up the input and output streams
+        // Clean up the input stream
         try {
             istream.close();
         } catch (Throwable t) {
             ;
         }
         
-	try {
-	    ostream.flush();
-	} catch (Throwable t) {
-	    ;
-	}
-	try {
-	    ostream.close();
-	} catch (Throwable t) {
-	    ;
-	}
-
 	// Rethrow any exception that has occurred
 	if (exception != null)
 	    throw exception;
@@ -705,24 +694,13 @@ public class DefaultServlet
         // Copy the input stream to the output stream
         exception = copyRange(reader, writer);
         
-        // Clean up the input and output streams
+        // Clean up the reader
         try {
             reader.close();
         } catch (Throwable t) {
             ;
         }
         
-	try {
-	    writer.flush();
-	} catch (Throwable t) {
-	    ;
-	}
-	try {
-	    writer.close();
-	} catch (Throwable t) {
-	    ;
-	}
-
 	// Rethrow any exception that has occurred
 	if (exception != null)
 	    throw exception;
@@ -752,19 +730,9 @@ public class DefaultServlet
             new BufferedInputStream(resourceInputStream, input);
         exception = copyRange(istream, ostream, range.start, range.end);
         
-	// Clean up the input and output streams
+	// Clean up the input stream
 	try {
 	    istream.close();
-	} catch (Throwable t) {
-	    ;
-	}
-	try {
-	    ostream.flush();
-	} catch (Throwable t) {
-	    ;
-	}
-	try {
-	    ostream.close();
 	} catch (Throwable t) {
 	    ;
 	}
@@ -797,19 +765,9 @@ public class DefaultServlet
         Reader reader = new InputStreamReader(resourceInputStream);
         exception = copyRange(reader, writer, range.start, range.end);
         
-	// Clean up the input and output streams
+	// Clean up the input stream
 	try {
 	    reader.close();
-	} catch (Throwable t) {
-	    ;
-	}
-	try {
-	    writer.flush();
-	} catch (Throwable t) {
-	    ;
-	}
-	try {
-	    writer.close();
 	} catch (Throwable t) {
 	    ;
 	}
@@ -870,19 +828,7 @@ public class DefaultServlet
         
         ostream.print("--" + mimeSeparation + "--");
         
-	// Clean up the output streams
-	try {
-	    ostream.flush();
-	} catch (Throwable t) {
-	    ;
-	}
-	try {
-	    ostream.close();
-	} catch (Throwable t) {
-	    ;
-	}
-
-	// Rethrow any exception that has occurred
+        // Rethrow any exception that has occurred
 	if (exception != null)
 	    throw exception;
         
@@ -937,18 +883,6 @@ public class DefaultServlet
         
         writer.print("--" + mimeSeparation + "--");
         
-	// Clean up the output streams
-	try {
-	    writer.flush();
-	} catch (Throwable t) {
-	    ;
-	}
-	try {
-	    writer.close();
-	} catch (Throwable t) {
-	    ;
-	}
-
 	// Rethrow any exception that has occurred
 	if (exception != null)
 	    throw exception;

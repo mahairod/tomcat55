@@ -1378,7 +1378,9 @@ public class WebdavServlet
                     .substring(servletPath.length());
             }
         }
-        System.out.println("Dest path :" + destinationPath);
+        
+        if (debug > 0)
+            System.out.println("Dest path :" + destinationPath);
         
         String path = getRelativePath(req);
         
