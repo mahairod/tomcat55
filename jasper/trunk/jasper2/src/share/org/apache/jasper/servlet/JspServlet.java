@@ -181,67 +181,63 @@ public class JspServlet extends HttpServlet {
 
     public void service (HttpServletRequest request, 
     			 HttpServletResponse response)
-	throws ServletException, IOException {
+                throws ServletException, IOException {
 
-        try {
-            String includeUri 
-                = (String) request.getAttribute(Constants.INC_SERVLET_PATH);
-            String requestUri 
-                = (String) request.getAttribute(Constants.INC_REQUEST_URI);
-            
-            String jspUri;
-            
-            // When jsp-property-group/url-matching is used, and when the 
-            // jsp is not defined with <servlet-name>, the url
-            // as to be passed as it is to the JSP container (since 
-            // Catalina doesn't know anything about the requested JSP 
-            
-            // The first scenario occurs when the jsp is not directly under /
-            // example: /utf16/foo.jsp
-            if (requestUri != null){
-                String currentIncludedUri 
-                    = requestUri.substring(requestUri.indexOf(includeUri));
+        String jspUri = null;
 
-                if ( !includeUri.equals(currentIncludedUri) ) {
-                    includeUri = currentIncludedUri;
-                }
-            }
-
-            // The second scenario is when the includeUri is null but it 
-            // is still possible to recreate the request.
-            if (includeUri == null) {
-                jspUri = request.getServletPath();
-                if (request.getPathInfo() != null) {
-                    jspUri = request.getServletPath() + request.getPathInfo();
+        String jspFile = (String) request.getAttribute(Constants.JSP_FILE);
+        if (jspFile != null) {
+            // JSP is specified via <jsp-file> in <servlet> declaration
+            jspUri = jspFile;
+        } else {
+            /*
+             * Check to see if the requested JSP has been the target of a
+             * RequestDispatcher.include()
+             */
+            jspUri = (String) request.getAttribute(Constants.INC_SERVLET_PATH);
+            if (jspUri != null) {
+                /*
+		 * Requested JSP has been target of
+                 * RequestDispatcher.include(). Its path is assembled from the
+                 * relevant javax.servlet.include.* request attributes
+                 */
+                String pathInfo = (String) request.getAttribute(
+                                    "javax.servlet.include.path_info");
+                if (pathInfo != null) {
+                    jspUri += pathInfo;
                 }
             } else {
-                jspUri = includeUri;
-            }
-                                
-            String jspFile = (String) request.getAttribute(Constants.JSP_FILE);
-            if (jspFile != null) {
-                jspUri = jspFile;
-            }
-
-            boolean precompile = preCompile(request);
-
-            if (log.isDebugEnabled()) {	    
-                log.debug("JspEngine --> " + jspUri);
-                log.debug("\t     ServletPath: " + request.getServletPath());
-                log.debug("\t        PathInfo: " + request.getPathInfo());
-                log.debug("\t        RealPath: " + context.getRealPath(jspUri));
-                log.debug("\t      RequestURI: " + request.getRequestURI());
-                log.debug("\t     QueryString: " + request.getQueryString());
-                log.debug("\t  Request Params: ");
-                Enumeration e = request.getParameterNames();
-
-                while (e.hasMoreElements()) {
-                    String name = (String) e.nextElement();
-                    log.debug("\t\t " + name + " = " 
-                              + request.getParameter(name));
+                /*
+                 * Requested JSP has not been the target of a 
+                 * RequestDispatcher.include(). Reconstruct its path from the
+                 * request's getServletPath() and getPathInfo()
+                 */
+                jspUri = request.getServletPath();
+                String pathInfo = request.getPathInfo();
+                if (pathInfo != null) {
+                    jspUri += pathInfo;
                 }
             }
+        }
 
+        if (log.isDebugEnabled()) {	    
+            log.debug("JspEngine --> " + jspUri);
+            log.debug("\t     ServletPath: " + request.getServletPath());
+            log.debug("\t        PathInfo: " + request.getPathInfo());
+            log.debug("\t        RealPath: " + context.getRealPath(jspUri));
+            log.debug("\t      RequestURI: " + request.getRequestURI());
+            log.debug("\t     QueryString: " + request.getQueryString());
+            log.debug("\t  Request Params: ");
+            Enumeration e = request.getParameterNames();
+            while (e.hasMoreElements()) {
+                String name = (String) e.nextElement();
+                log.debug("\t\t " + name + " = " 
+                          + request.getParameter(name));
+            }
+        }
+
+        try {
+            boolean precompile = preCompile(request);
             serviceJspFile(request, response, jspUri, null, precompile);
         } catch (RuntimeException e) {
             throw e;
