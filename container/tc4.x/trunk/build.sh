@@ -132,6 +132,9 @@ echo classpath is $CP
 
 if [ "$CLASSPATH" != "" ] ; then
   CP=$CLASSPATH:$CP
+  if [ "$OSTYPE" = "cygwin32" ] || [ "$OSTYPE" = "cygwin" ] ; then
+     CP=`cygpath --path --windows "$CP"`
+  fi
 fi
 
 # ----- Execute The Requested Build -------------------------------------------
