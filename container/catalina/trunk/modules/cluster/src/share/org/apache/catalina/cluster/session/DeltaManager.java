@@ -869,6 +869,7 @@ public class DeltaManager
                        if (session != null) {
                            session.access();
                            session.setPrimarySession(false);
+                           session.endAccess();
                        }
                        break;
                    }
@@ -879,7 +880,6 @@ public class DeltaManager
                            DeltaRequest dreq = loadDeltaRequest(session, delta);
                            dreq.execute(session);
                            session.setPrimarySession(false);
-                           session.access();
                        }
                        
                        break;
