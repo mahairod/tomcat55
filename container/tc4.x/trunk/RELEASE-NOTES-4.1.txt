@@ -278,6 +278,12 @@ Generic Bug Fixes:
          Administration Webapp:
          Don't set JDBCRealm digest when it's an empty string.
 
+[4.1.23] Startup scripts:
+         Fix bugs in the Unix startup scripts.
+
+[4.1.27] Administration Webapp:
+         Fix typo in the default context action declaraion.
+
 
 ------------------
 Catalina Bug Fixes:
@@ -768,6 +774,13 @@ Catalina Bug Fixes:
          Don't set the no-caching headers on protected POSTed pages, so that
          the browser's "back" button works as expected.
 
+[4.1.27] AccessLogValve:
+         Add leading + to timezone offset.
+
+[4.1.27] ExtendedAccessLogValve:
+         If bytes are requested, then print bytes not the date.
+
+
 ----------------
 Coyote Bug Fixes:
 ----------------
@@ -986,10 +999,17 @@ Coyote Bug Fixes:
          Fix regression where connection is always dropped at the end of 
          processing.
 
+[4.1.27] CoyoteAdapter:
+         Fix "//" URL normalization code.
+
+[4.1.27] JSSESocketFactory:
+         Fix dependency on Sun VMs, so that IBM VM users can use the integrated
+         JSSE.
+
 [4.1.27] #21984
          HandlerReqest:
          Fix potential Dos condition when given a mal-formed URI.
-         
+
 
 ----------------
 Jasper Bug Fixes:
