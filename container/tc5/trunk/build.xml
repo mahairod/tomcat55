@@ -343,7 +343,7 @@
     </javac>
 
     <copy todir="${jsp-examples.base}/WEB-INF/classes">
-      <fileset dir="${jsp-examples.base}/WEB-INF/src/tags">
+      <fileset dir="${jsp-examples.base}/WEB-INF/src">
         <include name="**/*.class" />
       </fileset>
     </copy>
