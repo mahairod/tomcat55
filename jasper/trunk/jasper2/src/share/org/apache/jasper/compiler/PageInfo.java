@@ -86,6 +86,7 @@ class PageInfo {
     private boolean threadSafe = true;
     private boolean isErrorPage = false;
     private String errorPage = null;
+    private String pageEncoding = null;
 
     PageInfo(BeanRepository beanRepository) {
 	this.beanRepository = beanRepository;
@@ -183,5 +184,13 @@ class PageInfo {
 
     public void setIsErrorPage(boolean isErrorPage) {
 	this.isErrorPage = isErrorPage;
+    }
+
+    public void setPageEncoding(String pageEncoding) {
+	this.pageEncoding = pageEncoding;
+    }
+
+    public String getPageEncoding() {
+	return pageEncoding;
     }
 }

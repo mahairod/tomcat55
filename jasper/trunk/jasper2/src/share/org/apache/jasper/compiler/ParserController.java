@@ -262,6 +262,8 @@ public class ParserController {
 				return;
 			    }
 			}
+			if (newEncoding == null)
+			    newEncoding = "ISO-8859-1";
 		    } else {
 			return;
 		    }

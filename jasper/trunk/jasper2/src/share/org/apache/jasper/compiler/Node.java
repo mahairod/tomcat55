@@ -740,7 +740,7 @@ public abstract class Node {
      */
 
     /**
-     * Represents attributes that can be runtime expressions.
+     * Represents attributes that can be request time expressions.
      */
 
     public static class JspAttribute {

@@ -160,7 +160,6 @@ public class Generator {
 	String servletPackageName = ctxt.getServletPackageName();
 	String servletClassName = ctxt.getServletClassName();
 	String serviceMethodName = Constants.SERVICE_METHOD_NAME;
-	String servletContentType = Constants.SERVLET_CONTENT_TYPE;
 
 	// First the package name:
 
@@ -229,17 +228,9 @@ public class Generator {
 
 	out.printil("_jspxFactory = JspFactory.getDefaultFactory();");
 
-	if (pageInfo.getContentType() != null) {
-	    servletContentType = pageInfo.getContentType();
-	    out.printin("response.setContentType(");
-	    out.print  (quote(servletContentType));
-	    out.println(");");
-	}
-	else {
-	    out.printin("response.setContentType(\"");
-	    out.print  (servletContentType);
-	    out.println(";charset=ISO-8859-1\");");
-	}
+	out.printin("response.setContentType(");
+	out.print  (quote(pageInfo.getContentType()));
+	out.println(");");
 
 	out.printil("pageContext = _jspxFactory.getPageContext(" +
 		    "this, request, response,");
