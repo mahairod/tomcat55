@@ -10,6 +10,24 @@
 
 <section name="News &amp; Status">
 
+<h3>11 May 2002 - Tomcat 4.0.4 Beta 3 Released</h3>
+<p>
+  The Tomcat Team is proud to announce the release of Tomcat 4.0.4 Beta 3.
+  Binary and source distributions are available <a href="http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.0.4-b3/">here</a>.
+</p>
+
+<hr size="1" noshade="noshade" />
+
+<h3>11 May 2002 - Tomcat Coyote 1.0 Beta 9 Released</h3>
+
+<p>
+This release includes minor bugfixes over Beta 8, and is included in 
+Tomcat 4.0.4 Beta 3.
+Download it <a href="http://jakarta.apache.org/builds/jakarta-tomcat-connectors/coyote/release/v1.0-b7/">here</a>.
+</p>
+
+<hr size="1" noshade="noshade" />
+
 <h3>13 Avril 2002 - Tomcat Coyote 1.0 Beta 7 Released</h3>
 
 <p>
