@@ -72,8 +72,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.io.IOException;
-import java.net.URL;
-import java.net.MalformedURLException;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -669,9 +667,15 @@ public abstract class RealmBase
         }
 
         // Redirect to the corresponding SSL port
+        StringBuffer file = new StringBuffer();
         String protocol = "https";
         String host = hrequest.getServerName();
-        StringBuffer file = new StringBuffer(hrequest.getRequestURI());
+        // Protocol
+        file.append(protocol).append("://");
+        // Host with port
+        file.append(host).append(":").append(redirectPort);
+        // URI
+        file.append(hrequest.getRequestURI());
         String requestedSessionId = hrequest.getRequestedSessionId();
         if ((requestedSessionId != null) &&
             hrequest.isRequestedSessionIdFromURL()) {
@@ -683,21 +687,10 @@ public abstract class RealmBase
             file.append('?');
             file.append(queryString);
         }
-        URL url = null;
-        try {
-            url = new URL(protocol, host, redirectPort, file.toString());
-            if (log.isDebugEnabled())
-                log.debug("  Redirecting to " + url.toString());
-            hresponse.sendRedirect(url.toString());
-            return (false);
-        } catch (MalformedURLException e) {
-            if (log.isDebugEnabled())
-                log.debug("  Cannot create new URL", e);
-            hresponse.sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                 hrequest.getRequestURI());
-            return (false);
-        }
+        if (log.isDebugEnabled())
+            log.debug("  Redirecting to " + file.toString());
+        hresponse.sendRedirect(file.toString());
+        return (false);
 
     }
     
