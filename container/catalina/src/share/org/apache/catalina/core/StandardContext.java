@@ -615,6 +615,12 @@ public class StandardContext
      private boolean tldNamespaceAware = false;
 
 
+    /**
+     * Should we save the configuration.
+     */
+    private boolean saveConfig = true;
+
+
     // ----------------------------------------------------- Context Properties
 
     public void setName( String name ) {
@@ -1673,6 +1679,22 @@ public class StandardContext
         if (started)
             postWorkDirectory();
 
+    }
+
+
+    /**
+     * Save config ?
+     */
+    public boolean isSaveConfig() {
+        return saveConfig;
+    }
+
+
+    /**
+     * Set save config flag.
+     */
+    public void setSaveConfig(boolean saveConfig) {
+        this.saveConfig = saveConfig;
     }
 
 
@@ -4047,7 +4069,7 @@ public class StandardContext
 
         // Set config file name
         File configBase = getConfigBase();
-        if (configBase != null) {
+        if ((configBase != null) && saveConfig) {
             if (getConfigFile() == null) {
                 File file = new File(configBase, getDefaultConfigFile());
                 setConfigFile(file.getPath());
