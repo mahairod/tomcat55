@@ -235,7 +235,6 @@ context and the <code>&lt;/Host&gt;</code> tag closing the localhost definition.
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
 http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
     version="2.4"&gt;
-&lt;web-app&gt;
   &lt;description&gt;MySQL Test App&lt;/description&gt;
   &lt;resource-ref&gt;
       &lt;description&gt;DB Connection&lt;/description&gt;
