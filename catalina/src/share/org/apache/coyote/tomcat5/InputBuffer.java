@@ -63,6 +63,9 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 import java.util.HashMap;
 
 import org.apache.tomcat.util.buf.B2CConverter;
@@ -471,7 +474,17 @@ public class InputBuffer extends Reader
     }
 
 
-    protected void setConverter() {
+    public void checkConverter() 
+        throws IOException {
+
+        if (!gotEnc)
+            setConverter();
+
+    }
+
+
+    protected void setConverter()
+        throws IOException {
 
         if (coyoteRequest != null)
             enc = coyoteRequest.getCharacterEncoding();
@@ -484,20 +497,29 @@ public class InputBuffer extends Reader
             enc = DEFAULT_ENCODING;
         conv = (B2CConverter) encoders.get(enc);
         if (conv == null) {
-            try {
-                conv = new B2CConverter(enc);
-                encoders.put(enc, conv);
-            } catch (IOException e) {
-                conv = (B2CConverter) encoders.get(DEFAULT_ENCODING);
-                if (conv == null) {
-                    try {
-                        conv = new B2CConverter(DEFAULT_ENCODING);
-                        encoders.put(DEFAULT_ENCODING, conv);
-                    } catch (IOException ex) {
-                        // Ignore
-                    }
+            if (System.getSecurityManager() != null){
+                try{
+                    conv = (B2CConverter)AccessController.doPrivileged(
+                            new PrivilegedExceptionAction(){
+
+                                public Object run() throws IOException{
+                                    return new B2CConverter(enc);
+                                }
+
+                            }
+                    );              
+                }catch(PrivilegedActionException ex){
+                    Exception e = ex.getException();
+                    if (e instanceof IOException)
+                        throw (IOException)e; 
+                    
+                    if (debug > 0)
+                        log("setConverter: " + ex.getMessage());
                 }
+            } else {
+                conv = new B2CConverter(enc);
             }
+            encoders.put(enc, conv);
         }
 
     }
