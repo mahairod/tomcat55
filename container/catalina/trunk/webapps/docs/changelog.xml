@@ -69,15 +69,35 @@
       <fix>
         Fix logger names for wrappers (remm)
       </fix>
+      <fix>
+        <bug>34006</bug>: If antiResourceLocking was used, HostConfig considered the path as external,
+        and web application resources were not correctly removed or tacked; also simplify the code a lot
+        (remm)
+      </fix>
+      <fix>
+        <bug>34016</bug>: Save and restore docBase when using antiResourceLocking, for compatibility with
+        the admin webapp (remm)
+      </fix>
     </changelog>
    </subsection>
+   
    <subsection name="Coyote">
      <changelog>
       <fix>
         <bug>33971</bug>: Set remoteHost to null when Apache doesn't send one. (billbarker)
       </fix>
+      <fix>
+        Fix calculation of threadRatio for the ms thread pool, and fix setting the updated
+        timeout value (remm)
+      </fix>
+      <update>
+        Update the ms thread pool so that we allocate a worker before accepting a new socket,
+        and wait a little if the pool is exhausted; this should make low maxThreads values work a 
+        lot better (remm)
+      </update>
      </changelog>
    </subsection>
+   
    <subsection name="Cluster">
     <changelog>
        <fix>
@@ -91,6 +111,7 @@
           no queue thread lock contention under high replication load,
           submitted by Rainer Jung (pero)
        </add>
+    </changelog>
    </subsection>
    <subsection name="Webapps">
      <changelog>
