@@ -82,7 +82,7 @@ public class BodyContentImpl extends BodyContent {
     protected int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
     private int nextChar;
     static String lineSeparator = System.getProperty("line.separator");
-
+    private boolean closed = false;
 
     public BodyContentImpl (JspWriter writer) {
         super(writer);
@@ -90,11 +90,17 @@ public class BodyContentImpl extends BodyContent {
 	nextChar = 0;
     }
 
+    private void ensureOpen() throws IOException {
+	if (closed)
+	    throw new IOException("Stream closed");
+    }
+
     /**
      * Write a single character.
      *
      */
     public void write(int c) throws IOException {
+	ensureOpen();
         synchronized (lock) {
             if (nextChar >= bufferSize) {
 	        reAllocBuff (0);
@@ -141,6 +147,7 @@ public class BodyContentImpl extends BodyContent {
     public void write(char cbuf[], int off, int len) 
         throws IOException 
     {
+	ensureOpen();
         synchronized (lock) {
 
             if ((off < 0) || (off > cbuf.length) || (len < 0) ||
@@ -175,6 +182,7 @@ public class BodyContentImpl extends BodyContent {
      *
      */
     public void write(String s, int off, int len) throws IOException {
+	ensureOpen();
         synchronized (lock) {
 	    if (len >= bufferSize - nextChar)
 	        reAllocBuff(len);
@@ -202,9 +210,7 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void newLine() throws IOException {
-	synchronized (lock) {
-	    write(lineSeparator);
-	}
+	write(lineSeparator);
     }
 
     /**
@@ -520,9 +526,8 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void close() throws IOException {
-        synchronized (lock) {
-	    cb = null;	
-	}
+	cb = null;	
+	closed = true;
     }
 
     /**

@@ -88,7 +88,6 @@ import org.apache.jasper.Constants;
  */
 public class JspWriterImpl extends JspWriter {
 
-    
     protected Writer out;
 
     protected ServletResponse response;
@@ -99,7 +98,8 @@ public class JspWriterImpl extends JspWriter {
     protected static int defaultCharBufferSize = Constants.DEFAULT_BUFFER_SIZE;
 
     protected boolean flushed = false;
-
+    protected boolean closed = false;
+    
     public JspWriterImpl() {
 	super( defaultCharBufferSize, true );
     }
@@ -155,7 +155,7 @@ public class JspWriterImpl extends JspWriter {
 	    ensureOpen();
 	    if (nextChar == 0)
 		return;
-            initOut();
+	    initOut();
             out.write(cb, 0, nextChar);
 	    nextChar = 0;
 	}
@@ -217,12 +217,14 @@ public class JspWriterImpl extends JspWriter {
      */
     public void close() throws IOException {
         synchronized (lock) {
-            if (response == null)
+            if (response == null || closed)
+		// multiple calls to close is OK
                 return;
             flush();
             if (out != null)
                 out.close();
             out = null;
+	    closed = true;
 	    //            cb = null;
         }
     }
@@ -236,7 +238,7 @@ public class JspWriterImpl extends JspWriter {
 
     /** check to make sure that the stream has not been closed */
     protected void ensureOpen() throws IOException {
-	if (response == null)
+	if (response == null || closed)
 	    throw new IOException("Stream closed");
     }
 
