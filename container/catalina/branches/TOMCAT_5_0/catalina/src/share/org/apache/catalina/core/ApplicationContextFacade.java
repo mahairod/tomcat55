@@ -52,13 +52,8 @@ public final class ApplicationContextFacade
     /**
      * Cache Class object used for reflection.
      */
-    private static HashMap classCache = new HashMap();
+    private HashMap classCache;
     
-    static {
-        if (System.getSecurityManager() != null) {
-            initClassCache();
-        }
-    }
     
     /**
      * Cache method object.
@@ -69,13 +64,7 @@ public final class ApplicationContextFacade
     private static org.apache.commons.logging.Log sysLog=
         org.apache.commons.logging.LogFactory.getLog( ApplicationContextFacade.class );
 
-    
-    /**
-     * Object repository used when the SecurityManager is turned on and
-     * Filter.doFilter is invoked.
-     */    
-    private Object[] objectArg = new Object[1];
-    private Object[] objectArgs = new Object[2];        
+        
     // ----------------------------------------------------------- Constructors
 
 
@@ -89,12 +78,13 @@ public final class ApplicationContextFacade
         super();
         this.context = context;
         
+        classCache = new HashMap();
         objectCache = new HashMap();
-
+        initClassCache();
     }
     
     
-    private static void initClassCache(){
+    private void initClassCache(){
         Class[] clazz = new Class[]{String.class};
         classCache.put("getContext", clazz);
         classCache.put("getMimeType", clazz);
@@ -129,8 +119,8 @@ public final class ApplicationContextFacade
     public ServletContext getContext(String uripath) {
         ServletContext theContext = null;
         if (System.getSecurityManager() != null) {
-            objectArg[0] = uripath; 
-            theContext = (ServletContext)doPrivileged("getContext", objectArg);
+            theContext = (ServletContext)
+                doPrivileged("getContext", new Object[]{uripath});
         } else {
             theContext = context.getContext(uripath);
         }
@@ -154,8 +144,7 @@ public final class ApplicationContextFacade
 
     public String getMimeType(String file) {
         if (System.getSecurityManager() != null) {
-            objectArg[0] = file;
-            return (String)doPrivileged("getMimeType", objectArg);
+            return (String)doPrivileged("getMimeType", new Object[]{file});
         } else {
             return context.getMimeType(file);
         }
@@ -164,8 +153,7 @@ public final class ApplicationContextFacade
 
     public Set getResourcePaths(String path) {
         if (System.getSecurityManager() != null){
-            objectArg[0] = path;
-            return (Set)doPrivileged("getResourcePaths", objectArg);
+            return (Set)doPrivileged("getResourcePaths", new Object[]{path});
         } else {
             return context.getResourcePaths(path);
         }
@@ -176,9 +164,8 @@ public final class ApplicationContextFacade
         throws MalformedURLException {
         if (System.getSecurityManager() != null) {
             try {
-                objectArg[0] = path;
                 return (URL) invokeMethod(context, "getResource", 
-                                          objectArg);
+                                          new Object[]{path});
             } catch(Throwable t) {
                 if (t instanceof MalformedURLException){
                     throw (MalformedURLException)t;
@@ -193,9 +180,8 @@ public final class ApplicationContextFacade
 
     public InputStream getResourceAsStream(String path) {
         if (System.getSecurityManager() != null) {
-            objectArg[0] = path;
             return (InputStream) doPrivileged("getResourceAsStream", 
-                                              objectArg);
+                                              new Object[]{path});
         } else {
             return context.getResourceAsStream(path);
         }
@@ -204,9 +190,8 @@ public final class ApplicationContextFacade
 
     public RequestDispatcher getRequestDispatcher(final String path) {
         if (System.getSecurityManager() != null) {
-            objectArg[0] = path;
             return (RequestDispatcher) doPrivileged("getRequestDispatcher", 
-                                                    objectArg);
+                                                    new Object[]{path});
         } else {
             return context.getRequestDispatcher(path);
         }
@@ -215,9 +200,8 @@ public final class ApplicationContextFacade
 
     public RequestDispatcher getNamedDispatcher(String name) {
         if (System.getSecurityManager() != null) {
-            objectArg[0] = name;
             return (RequestDispatcher) doPrivileged("getNamedDispatcher", 
-                                                    objectArg);
+                                                    new Object[]{name});
         } else {
             return context.getNamedDispatcher(name);
         }
@@ -228,9 +212,8 @@ public final class ApplicationContextFacade
         throws ServletException {
         if (System.getSecurityManager() != null) {
             try {
-                objectArg[0] = name;
                 return (Servlet) invokeMethod(context, "getServlet", 
-                                              objectArg);
+                                              new Object[]{name});
             } catch (Throwable t) {
                 if (t instanceof ServletException) {
                     throw (ServletException) t;
@@ -263,8 +246,7 @@ public final class ApplicationContextFacade
 
     public void log(String msg) {
         if (System.getSecurityManager() != null) {
-            objectArg[0] = msg;
-            doPrivileged("log", objectArg );
+            doPrivileged("log", new Object[]{msg} );
         } else {
             context.log(msg);
         }
@@ -283,10 +265,8 @@ public final class ApplicationContextFacade
 
     public void log(String message, Throwable throwable) {
         if (System.getSecurityManager() != null) {
-            objectArgs[0] = message;
-            objectArgs[1] = throwable;
             doPrivileged("log", new Class[]{String.class, Throwable.class}, 
-                         objectArgs);
+                         new Object[]{message, throwable});
         } else {
             context.log(message, throwable);
         }
@@ -295,8 +275,7 @@ public final class ApplicationContextFacade
 
     public String getRealPath(String path) {
         if (System.getSecurityManager() != null) {
-            objectArg[0] = path;
-            return (String) doPrivileged("getRealPath", objectArg);
+            return (String) doPrivileged("getRealPath", new Object[]{path});
         } else {
             return context.getRealPath(path);
         }
@@ -314,9 +293,8 @@ public final class ApplicationContextFacade
 
     public String getInitParameter(String name) {
         if (System.getSecurityManager() != null) {
-            objectArg[0] = name;
             return (String) doPrivileged("getInitParameter", 
-                                         objectArg);
+                                         new Object[]{name});
         } else {
             return context.getInitParameter(name);
         }
@@ -334,8 +312,7 @@ public final class ApplicationContextFacade
 
     public Object getAttribute(String name) {
         if (System.getSecurityManager() != null) {
-            objectArg[0] = name;
-            return doPrivileged("getAttribute", objectArg);
+            return doPrivileged("getAttribute", new Object[]{name});
         } else {
             return context.getAttribute(name);
         }
@@ -343,7 +320,7 @@ public final class ApplicationContextFacade
 
 
     public Enumeration getAttributeNames() {
-        if (System.getSecurityManager() != null) {           
+        if (System.getSecurityManager() != null) {
             return (Enumeration) doPrivileged("getAttributeNames", null);
         } else {
             return context.getAttributeNames();
@@ -353,9 +330,7 @@ public final class ApplicationContextFacade
 
     public void setAttribute(String name, Object object) {
         if (System.getSecurityManager() != null) {
-            objectArgs[0] = name;
-            objectArgs[1] = object;
-            doPrivileged("setAttribute", objectArgs);
+            doPrivileged("setAttribute", new Object[]{name,object});
         } else {
             context.setAttribute(name, object);
         }
@@ -364,8 +339,7 @@ public final class ApplicationContextFacade
 
     public void removeAttribute(String name) {
         if (System.getSecurityManager() != null) {
-            objectArg[0] = name;
-            doPrivileged("removeAttribute", objectArg);
+            doPrivileged("removeAttribute", new Object[]{name});
         } else {
             context.removeAttribute(name);
         }
@@ -395,7 +369,7 @@ public final class ApplicationContextFacade
         try{
             return invokeMethod(appContext, methodName, params );
         } catch (Throwable t){
-            throw new RuntimeException(t);
+            throw new RuntimeException(t.getMessage());
         }
 
     }
@@ -412,7 +386,7 @@ public final class ApplicationContextFacade
         try{
             return invokeMethod(context, methodName, params);
         }catch(Throwable t){
-            throw new RuntimeException(t);
+            throw new RuntimeException(t.getMessage());
         }
     }
 
@@ -448,9 +422,8 @@ public final class ApplicationContextFacade
     /**
      * Use reflection to invoke the requested method. Cache the method object 
      * to speed up the process
-     * @param appContext The AppliationContext object on which the method
-     *                   will be invoked
-     * @param methodName The method to call.
+     * @param methodName The method to invoke.
+     * @param clazz The class where the method is.
      * @param params The arguments passed to the called method.
      */    
     private Object doPrivileged(final String methodName, 
@@ -465,7 +438,7 @@ public final class ApplicationContextFacade
             try{
                 handleException(ex, methodName);
             }catch (Throwable t){
-                throw new RuntimeException(t);
+                throw new RuntimeException(t.getMessage());
             }
             return null;
         }

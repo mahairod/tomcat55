@@ -111,35 +111,6 @@ final class ApplicationFilterChain implements FilterChain {
      */
     private InstanceSupport support = null;
 
-    
-    /**
-     * Static class array used when the SecurityManager is turned on and 
-     * <code>doFilter</code is invoked.
-     */
-    private static Class[] classType = new Class[]{ServletRequest.class, 
-                                                   ServletResponse.class,
-                                                   FilterChain.class};
-                                                   
-    /**
-     * Static class array used when the SecurityManager is turned on and 
-     * <code>service</code is invoked.
-     */                                                 
-    private static Class[] classTypeUsedInService = new Class[]{
-                                                         ServletRequest.class,
-                                                         ServletResponse.class};
-                                                   
-    /**
-     * Object repository used when the SecurityManager is turned on and
-     * Filter.doFilter is invoked.
-     */
-    private Object[] filterType = new Object[3];
-    
-
-    /**
-     * Object repository used when the SecurityManager is turned on and
-     * Filter.doFilter is invoked.
-     */
-    private Object[] serviceType = new Object[2];
 
     // ---------------------------------------------------- FilterChain Methods
 
@@ -205,12 +176,12 @@ final class ApplicationFilterChain implements FilterChain {
                     final ServletResponse res = response;
                     Principal principal = 
                         ((HttpServletRequest) req).getUserPrincipal();
-
-                    filterType[0] = req;
-                    filterType[1] = res;
-                    filterType[2] = this;
+                    Class[] classType = new Class[]{ServletRequest.class, 
+                                                    ServletResponse.class,
+                                                    FilterChain.class};
+                    Object[] args = new Object[]{req, res, this};
                     SecurityUtil.doAsPrivilege
-                        ("doFilter", filter, classType, filterType);
+                        ("doFilter", filter, classType, args);
                 } else {  
                     filter.doFilter(request, response, this);
                 }
@@ -254,15 +225,14 @@ final class ApplicationFilterChain implements FilterChain {
                     final ServletResponse res = response;
                     Principal principal = 
                         ((HttpServletRequest) req).getUserPrincipal();
-
-                    serviceType[0] = req;
-                    serviceType[1] = res;
-                    
+                    Class[] classType = new Class[]{ServletRequest.class, 
+                                                     ServletResponse.class};
+                    Object[] args = new Object[]{req, res};
                     SecurityUtil.doAsPrivilege("service",
                                                servlet,
-                                               classTypeUsedInService, 
-                                               serviceType,
-                                               principal);                                                          
+                                               classType, 
+                                               args,
+                                               principal);                                                   
                 } else {  
                     servlet.service((HttpServletRequest) request,
                                     (HttpServletResponse) response);
