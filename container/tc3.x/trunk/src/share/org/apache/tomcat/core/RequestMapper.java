@@ -198,8 +198,15 @@ public class RequestMapper {
 	    } else {
 	        int i = s.lastIndexOf("/");
 
-		s = s.substring(0, ((i > -1) ? i : 0));
-	    }
+                if (i > 0) {
+		    s = s.substring(0, i);
+                } else if (i == 0 &&
+                    ! s.equals("/")) {
+                    s = "/";
+                } else {
+                    s = "";
+                }
+            }
 	}
 
 	return wrapper;
