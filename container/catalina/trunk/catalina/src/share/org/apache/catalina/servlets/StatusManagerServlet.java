@@ -238,13 +238,12 @@ public class StatusManagerServlet
 
         PrintWriter writer = response.getWriter();
 
-        // Display virtual machine statistics
-        // FIXME
-
-        Enumeration enum = threadPools.elements();
-
         try {
 
+            // Display virtual machine statistics
+            writeVMState(writer);
+
+            Enumeration enum = threadPools.elements();
             while (enum.hasMoreElements()) {
                 ObjectName objectName = (ObjectName) enum.nextElement();
                 String name = objectName.getKeyProperty("name");
@@ -254,6 +253,27 @@ public class StatusManagerServlet
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+
+    /**
+     * Write virtual machine state.
+     */
+    protected void writeVMState(PrintWriter writer)
+        throws Exception {
+
+        writer.print("<h1>JVM</h1>");
+        writer.print("<br/>");
+
+        writer.print(" Free memory: ");
+        writer.print(Runtime.getRuntime().freeMemory());
+        writer.print(" Total memory: ");
+        writer.print(Runtime.getRuntime().totalMemory());
+        writer.print(" Max memory: ");
+        writer.print(Runtime.getRuntime().maxMemory());
+
+        writer.print("<br/>");
 
     }
 
@@ -389,17 +409,17 @@ public class StatusManagerServlet
                          (pName, "requestBytesReceived"));
             writer.write("</td>");
             writer.write("<td>");
-            writer.print(mBeanServer.getAttribute(pName, "remoteAddr"));
+            writer.print("" + mBeanServer.getAttribute(pName, "remoteAddr"));
             writer.write("</td>");
             writer.write("<td nowrap>");
-            writer.write(filter(mBeanServer.getAttribute
-                                (pName, "virtualHost").toString()));
+            writer.write("" + filter(mBeanServer.getAttribute
+                                     (pName, "virtualHost").toString()));
             writer.write("</td>");
             writer.write("<td nowrap>");
-            writer.write(filter(mBeanServer.getAttribute
-                                (pName, "method").toString()));
-            writer.write(filter(mBeanServer.getAttribute
-                                (pName, "currentUri").toString()));
+            writer.write("" + filter(mBeanServer.getAttribute
+                                     (pName, "method").toString()));
+            writer.write("" + filter(mBeanServer.getAttribute
+                                     (pName, "currentUri").toString()));
             String queryString = (String) mBeanServer.getAttribute
                 (pName, "currentQueryString");
             if ((queryString != null) && (!queryString.equals(""))) {
