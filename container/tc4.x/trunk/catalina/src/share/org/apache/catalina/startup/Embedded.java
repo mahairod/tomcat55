@@ -90,6 +90,7 @@ import org.apache.catalina.loader.StandardLoader;
 import org.apache.catalina.logger.FileLogger;
 import org.apache.catalina.logger.SystemOutLogger;
 import org.apache.catalina.net.SSLServerSocketFactory;
+import org.apache.catalina.realm.MemoryRealm;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
@@ -999,7 +1000,8 @@ public class Embedded implements Lifecycle {
      */
     public static void main(String args[]) {
 
-	Embedded embedded = new Embedded();
+	Embedded embedded = new Embedded(new SystemOutLogger(),
+					 new MemoryRealm());
 	embedded.setDebug(5);
 	embedded.setLogger(new SystemOutLogger());
 	String home = System.getProperty("catalina.home");
@@ -1017,6 +1019,7 @@ public class Embedded implements Lifecycle {
 	// that simulates a portion of the one configured in server.xml
 	// by default
 	Engine engine = embedded.createEngine();
+	engine.setDefaultHost("localhost");
 
 	Host host = embedded.createHost("localhost", home + "/webapps");
 	engine.addChild(host);
