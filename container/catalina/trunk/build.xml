@@ -166,10 +166,6 @@
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api">
       <fileset dir="${catalina.build}/javadoc" />
     </copy>
-    <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/servletapi"/>
-    <copy todir="${tomcat.dist}/webapps/tomcat-docs/servletapi">
-      <fileset dir="${servlet.home}/docs/api" />
-    </copy>
   </target>
 
 
