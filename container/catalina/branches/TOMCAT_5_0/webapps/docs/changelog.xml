@@ -83,7 +83,10 @@
         <bug>28631</bug>: JAASRealm enhancements to support custom user, role class names, use Commons-Logging. (yoavs)
       </fix>
       <fix>
-       <bug>31364</bug>: Missing resource in org.apache.catalina.core.LocalString.properties. (yoavs)
+        <bug>31364</bug>: Missing resource in org.apache.catalina.core.LocalString.properties. (yoavs)
+      </fix>
+      <fix>
+        <bug>31362</bug>: Missing -Xdebug in catalina.bat when using JPDA and Security. (yoavs)
       </fix>
     </changelog>
   </subsection>
