@@ -145,12 +145,6 @@ public class Embedded  extends StandardService implements Lifecycle {
 
 
     /**
-     * The set of Connectors that have been deployed in this server.
-     */
-    protected Connector connectors[] = new Connector[0];
-
-
-    /**
      * The debugging detail level for this component.
      */
     protected int debug = 0;
@@ -397,28 +391,11 @@ public class Embedded  extends StandardService implements Lifecycle {
             throw new IllegalStateException
                 (sm.getString("embedded.noEngines"));
 
-        // Configure this Connector as needed
-        connector.setContainer(engines[engines.length - 1]);
-
-        // Add this Connector to our set of defined Connectors
-        Connector results[] = new Connector[connectors.length + 1];
-        for (int i = 0; i < connectors.length; i++)
-            results[i] = connectors[i];
-        results[connectors.length] = connector;
-        connectors = results;
-
-        // Start this Connector if necessary
-        if (started) {
-            try {
-                connector.initialize();
-                if (connector instanceof Lifecycle) {
-                    ((Lifecycle) connector).start();
-                }
-            } catch (LifecycleException e) {
-                log.error("Connector.start", e);
-            }
-        }
-
+        /*
+         * Add the connector. This will set the connector's container to the
+         * most recently added Engine
+         */
+        super.addConnector(connector);
     }
 
 
@@ -448,6 +425,7 @@ public class Embedded  extends StandardService implements Lifecycle {
             }
         }
 
+        this.container = engine;
     }
 
 
@@ -704,53 +682,6 @@ public class Embedded  extends StandardService implements Lifecycle {
 
 
     /**
-     * Remove the specified Connector from the set of defined Connectors.
-     *
-     * @param connector The Connector to be removed
-     */
-    public synchronized void removeConnector(Connector connector) {
-
-        if( log.isDebugEnabled() ) {
-            log.debug("Removing connector (" + connector.getInfo() + ")");
-        }
-
-        // Is the specified Connector actually defined?
-        int j = -1;
-        for (int i = 0; i < connectors.length; i++) {
-            if (connector == connectors[i]) {
-                j = i;
-                break;
-            }
-        }
-        if (j < 0)
-            return;
-
-        // Stop this Connector if necessary
-        if (connector instanceof Lifecycle) {
-            if( log.isDebugEnabled() )
-                log.debug(" Stopping this Connector");
-            try {
-                ((Lifecycle) connector).stop();
-            } catch (LifecycleException e) {
-                log.error("Connector.stop", e);
-            }
-        }
-
-        // Remove this Connector from our set of defined Connectors
-        if( log.isDebugEnabled() )
-            log.debug(" Removing this Connector");
-        int k = 0;
-        Connector results[] = new Connector[connectors.length - 1];
-        for (int i = 0; i < connectors.length; i++) {
-            if (i != j)
-                results[k++] = connectors[i];
-        }
-        connectors = results;
-
-    }
-
-
-    /**
      * Remove the specified Context from the set of defined Contexts for its
      * associated Host.  If this is the last Context for this Host, the Host
      * will also be removed.
@@ -968,7 +899,7 @@ public class Embedded  extends StandardService implements Lifecycle {
                 (sm.getString("embedded.alreadyStarted"));
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
-
+        initialized = true;
 
         // Start our defined Engines first
         for (int i = 0; i < engines.length; i++) {
