@@ -14,7 +14,7 @@ $Id$
     4.  Tomcat: Past, Present, and Future
     5.  New Features In This Release
     6.  Known Bugs and Issues
-    7.  Security Vulnerabilities Fixed in 3.2.1
+    7.  Fixes and Enhancements in Updates
 
 
 =============================================================================
@@ -30,16 +30,9 @@ be used stand alone, or in conjunction with several popular web servers:
 You should read the License Agreement (in the LICENSE file of the top level
 directory), which applies to all software included in this release.
 
-Tomcat Version 3.2.1 is a security related update!  See Section 7, below,
-for details on the changes that have been made.  All other existing issues with
-Tomcat 3.2 will remain in 3.2.1 -- they will be addressed in subsequent
-maintenance updates (3.2.2, and so on).
-
-No changes to the native code components of Tomcat 3.2 have been made.
-Therefore, you should *not* need to recompile components such as mod_jserv
-in order to take advantage of this release.  You only need to replace the
-Java based modules in the "jakarta-tomcat-3.2.*" distribution.
-
+Tomcat Version 3.2.2 is a bug fix release.  No new features have been
+added in this release.  The bugs known to be fixed in Version 3.2.2
+are described in section 7.1 below.
 
 =============================================================================
 2.  INSTALLING AND RUNNING TOMCAT
@@ -89,15 +82,7 @@ for the Servlet 2.3 and JSP 1.2 specifications.
 =============================================================================
 5.  NEW FEATURES IN THIS RELEASE
 
-Tomcat 3.2.1 is a maintenance and bug fix release, based on the Tomcat 3.2
-(final) code base.  The following changes are included:
-
-- Disallowed requesting JSP pages under the WEB-INF directory
-  (/WEB-INF/dummy.jsp).  Previously, only requests for static files
-  were being disallowed.
-
-- The JDBCRealm request interceptor will now log the description of any
-  JDBC exception that occurs, to aid in debugging.
+Tomcat Version 3.2.2 is a bug release only.  No new features were added.
 
 
 =============================================================================
@@ -318,6 +303,8 @@ Servlet
   -  Better initialization of psuedo-random number generator improves
      response time for first request that generates a session.
   -  Fix session tracking through forward().  (#504)
+  -  Fix problem with getSession() overwritting the requested session ID
+     and related URL rewritting problems.  (#160)
 
 Jasper
   -  Fix for UnsupportedEncodingException due to UTF8 instead of UTF-8.  (#269)
@@ -330,7 +317,6 @@ Jasper
   -  Better error reporting if compile fails due to missing tag library.
   -  Fix thread synchronization problem that can cause page compilation to 
      fail (#44).
-  
 
 Connectors
   -  Fix infinite loop on invalid content-length for ajp12.  (#264)
