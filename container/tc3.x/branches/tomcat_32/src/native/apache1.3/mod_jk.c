@@ -358,7 +358,13 @@ static int init_ws_service(apache_private_data_t *private_data,
     s->method       = (char *)r->method;
     s->content_length = get_content_length(r);
     s->query_string = r->args;
-    s->req_uri      = r->uri;
+    s->req_uri      = r->unparsed_uri;
+    if (s->req_uri != NULL) {
+	char *query_str = strchr(s->req_uri, '?');
+	if (query_str != NULL) {
+	    *query_str = 0;
+	}
+    }
 
     s->is_ssl       = JK_FALSE;
     s->ssl_cert     = NULL;
