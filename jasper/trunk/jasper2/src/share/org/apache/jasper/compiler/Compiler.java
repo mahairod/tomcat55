@@ -291,8 +291,8 @@ public class Compiler {
 
         long t4=System.currentTimeMillis();
         if( t4-t1 > 500 ) {
-            log.info("Generated "+ javaFileName + " total=" +
-                     (t4-t1) + " generate=" + ( t4-t3 ) + " validate=" + ( t2-t1 ));
+            log.debug("Generated "+ javaFileName + " total=" +
+                      (t4-t1) + " generate=" + ( t4-t3 ) + " validate=" + ( t2-t1 ));
         }
         
         //JSR45 Support - note this needs to be checked by a JSR45 guru
@@ -389,7 +389,7 @@ public class Compiler {
 
         long t2=System.currentTimeMillis();
         if( t2-t1 > 500 ) {
-            log.info( "Compiled " + javaFileName + " " + (t2-t1));
+            log.debug( "Compiled " + javaFileName + " " + (t2-t1));
         }
 
 	if (ctxt.isPrototypeMode()) {
