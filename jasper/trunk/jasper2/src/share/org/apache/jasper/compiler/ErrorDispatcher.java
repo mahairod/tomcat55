@@ -479,9 +479,11 @@ public class ErrorDispatcher {
 		ErrorVisitor errVisitor = new ErrorVisitor(lineNum);
 		page.visit(errVisitor);
 		errNode = errVisitor.getJspSourceNode();
+                /* XXX Supress map exception to display the original error
 		if (errNode == null) {
 		    jspError("jsp.error.source.map", lineNumStr);
 		}
+                */
             }
 	    partialErrMsg.append(line);
 	    partialErrMsg.append('\n');
@@ -490,10 +492,16 @@ public class ErrorDispatcher {
         reader.close();
 
 	// add last error to error vector
+	String pageFile = null;
+	int pageLine = -1;
+	if (errNode != null) {
+	    pageFile = errNode.getStart().getFile();
+	    pageLine = errNode.getStart().getLineNumber();
+	}
 	errVec.add(new JavacErrorDetail(fname,
 					lineNum,
-					errNode.getStart().getFile(),
-					errNode.getStart().getLineNumber(),
+					pageFile,
+					pageLine,
 					partialErrMsg.toString()));
 
 	JavacErrorDetail[] errDetails = null;

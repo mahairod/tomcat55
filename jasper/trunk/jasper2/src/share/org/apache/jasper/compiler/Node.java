@@ -606,12 +606,31 @@ public abstract class Node {
      */
     public static class PlugIn extends Node {
 
+	JspAttribute height;
+	JspAttribute width;
+
 	public PlugIn(Attributes attrs, Mark start, Node parent) {
 	    super(attrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
+	}
+
+	public void setHeight(JspAttribute height) {
+	    this.height = height;
+	}
+
+	public void setWidth(JspAttribute width) {
+	    this.width = width;
+	}
+
+	public JspAttribute getHeight() {
+	    return height;
+	}
+
+	public JspAttribute getWidth() {
+	    return width;
 	}
     }
 

@@ -668,8 +668,8 @@ public class Generator {
 	    String type = n.getAttributeValue("type");
 	    String code = n.getAttributeValue("code");
 	    String name = n.getAttributeValue("name");
-	    String width = n.getAttributeValue("width");
-	    String height = n.getAttributeValue("height");
+	    Node.JspAttribute height = n.getHeight();
+	    Node.JspAttribute width = n.getWidth();
 	    String hspace = n.getAttributeValue("hspace");
 	    String vspace = n.getAttributeValue("vspace");
 	    String align = n.getAttributeValue("align");
@@ -689,17 +689,28 @@ public class Generator {
 	    // IE style plugin
 	    // <OBJECT ...>
 	    // First compose the runtime output string 
-	    String s0 = "<OBJECT classid=" + ctxt.getOptions().getIeClassId() +
-			makeAttr("name", name) +
-			makeAttr("width", width) +
-			makeAttr("height", height) +
-			makeAttr("hspace", hspace) +
-			makeAttr("vspace", vspace) +
-			makeAttr("align", align) +
-			makeAttr("codebase", iepluginurl) +
-			'>';
+	    String s0 = "<OBJECT classid=\"" + ctxt.getOptions().getIeClassId()+
+			"\"" + makeAttr("name", name);
+	    String s1, s2;
+	    if (width.isExpression()) {
+		s1 = quote(s0 + " width=\"") + " + " + width.getValue() +
+			" + " + quote("\"");
+	    } else {
+		s1 = quote(s0 + makeAttr("width", width.getValue()));
+	    }
+	    if (height.isExpression()) {
+		s2 = quote(" height=\"") + " + " + height.getValue() +
+			" + " + quote("\"");
+	    } else {
+		s2 = quote(makeAttr("height", height.getValue()));
+	    }
+	    String s3 = quote(makeAttr("hspace", hspace) +
+				makeAttr("vspace", vspace) +
+				makeAttr("align", align) +
+				makeAttr("codebase", iepluginurl) +
+				'>');
 	    // Then print the output string to the java file
-	    out.printil("out.println(" + quote(s0) + ");");
+	    out.printil("out.println(" + s1 + " + " + s2 + " + " + s3 + ");");
 
 	    // <PARAM > for java_code
 	    s0 = "<PARAM name=\"java_code\"" + makeAttr("value", code) + '>';
@@ -741,16 +752,27 @@ public class Generator {
 	    s0 = "<EMBED" +
 		 makeAttr("type", "application/x-java-" + type + ";" +
 			  ((jreversion==null)? "": "version=" + jreversion)) +
-		 makeAttr("name", name) +
-		 makeAttr("width", width) +
-		 makeAttr("height", height) +
-		 makeAttr("hspace", hspace) +
-		 makeAttr("vspace", vspace) +
-		 makeAttr("align", align) +
-		 makeAttr("pluginspage", nspluginurl) +
-		 makeAttr("java_codebase", codebase) +
-		 makeAttr("java_archive", archive);
-	    out.printil("out.println(" + quote(s0) + ");");
+		 makeAttr("name", name);
+	    if (width.isExpression()) {
+		s1 = quote(s0 + " width=\"") + " + " + width.getValue() +
+			" + " + quote("\"");
+	    } else {
+		s1 = quote(s0 + makeAttr("width", width.getValue()));
+	    }
+	    if (height.isExpression()) {
+		s2 = quote(" height=\"") + " + " + height.getValue() +
+			" + " + quote("\"");
+	    } else {
+		s2 = quote(makeAttr("height", height.getValue()));
+	    }
+	    s3 = quote(makeAttr("hspace", hspace) +
+			 makeAttr("vspace", vspace) +
+			 makeAttr("align", align) +
+			 makeAttr("pluginspage", nspluginurl) +
+			 makeAttr("java_code", code) +
+			 makeAttr("java_codebase", codebase) +
+			 makeAttr("java_archive", archive));
+	    out.printil("out.println(" + s1 + " + " + s2 + " + " + s3 + ");");
 		 
 	    /*
 	     * Generate a 'attr = "value"' for each <jsp:param> in plugin body

@@ -444,6 +444,10 @@ public class Validator {
 	    if (n.getAttributeValue("code") == null)
 		err.jspError(n, "jsp.error.plugin.nocode");
 
+	    n.setHeight(getJspAttribute("height", n.getAttributeValue("height"),
+				      n.isXmlSyntax()));
+	    n.setWidth(getJspAttribute("width", n.getAttributeValue("width"),
+				      n.isXmlSyntax()));
 	    visitBody(n);
 	}
 
