@@ -62,6 +62,20 @@
       </fix>
     </changelog>
    </subsection>
+   <subsection name="Coyote">
+     <changelog>
+      <fix>
+        <bug>33971</bug>: Set remoteHost to null when Apache doesn't send one. (billbarker)
+      </fix>
+     </changelog>
+   </subsection>
+   <subsection name="Webapps">
+     <changelog>
+       <update>
+         Use the standard struts taglib URIs in admin JSPs. (billbarker)
+       </update>
+     </changelog>
+   </subsection>
 </section>
 
 <section name="Tomcat 5.5.8 (yoavs)">
