@@ -41,7 +41,6 @@ Bug No.  Description
 	 Moved the setting of the default "*.jsp" mapping so that it is now 
 	 possible to entirely disable support for jsp files.
 
-	 Fixed problem with jsp_precompile parameter to JSP files.
 
 Server:
 
@@ -81,6 +80,11 @@ Bug No.  Description
 
 5005     If requested JSP file doesn't exist, avoid creating work directories
          and version file.
+
+	 Fixed problem with jsp_precompile parameter to JSP files.
+
+         Eliminated some hard coded '\n' line separators used by Jasper in the
+         translated Java file.
 
 
 Configuration:
