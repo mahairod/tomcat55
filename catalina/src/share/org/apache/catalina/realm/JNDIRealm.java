@@ -809,16 +809,8 @@ public class JNDIRealm extends RealmBase {
 
             } catch (CommunicationException e) {
 
-
-                // If contains the work closed. Then assume socket is closed.
-                // If message is null, assume the worst and allow the
-                // connection to be closed.
-                if (e.getMessage()!=null &&
-                    e.getMessage().indexOf("closed") < 0)
-                    throw(e);
-
                 // log the exception so we know it's there.
-                containerLog.error(sm.getString("jndiRealm.exception"), e);
+                containerLog.warn(sm.getString("jndiRealm.exception"), e);
 
                 // close the connection so we know it will be reopened.
                 if (context != null)
