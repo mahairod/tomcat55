@@ -681,16 +681,6 @@ public final class StandardContext
 
 
     /**
-     * Return the login configuration descriptor for this web application.
-     */
-    public LoginConfig getLoginConfig() {
-
-	return (this.loginConfig);
-
-    }
-
-
-    /**
      * Set the Loader with which this Context is associated.
      *
      * @param loader The newly associated loader
@@ -703,12 +693,52 @@ public final class StandardContext
 
 
     /**
+     * Return the login configuration descriptor for this web application.
+     */
+    public LoginConfig getLoginConfig() {
+
+	return (this.loginConfig);
+
+    }
+
+
+    /**
      * Set the login configuration descriptor for this web application.
      *
      * @param config The new login configuration
      */
     public void setLoginConfig(LoginConfig config) {
 
+        // Validate the incoming property value
+        if (config == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardContext.loginConfig.required"));
+        String loginPage = config.getLoginPage();
+        if ((loginPage != null) && !loginPage.startsWith("/")) {
+            if (isServlet22()) {
+                log(sm.getString("standardContext.loginConfig.loginWarning",
+                                 loginPage));
+                config.setLoginPage("/" + loginPage);
+            } else {
+                throw new IllegalArgumentException
+                    (sm.getString("standardContext.loginConfig.loginPage",
+                                  loginPage));
+            }
+        }
+        String errorPage = config.getErrorPage();
+        if ((errorPage != null) && !errorPage.startsWith("/")) {
+            if (isServlet22()) {
+                log(sm.getString("standardContext.loginConfig.errorWarning",
+                                 errorPage));
+                config.setErrorPage("/" + errorPage);
+            } else {
+                throw new IllegalArgumentException
+                    (sm.getString("standardContext.loginConfig.errorPage",
+                                  errorPage));
+            }
+        }
+
+        // Process the property setting change
 	LoginConfig oldLoginConfig = this.loginConfig;
 	this.loginConfig = config;
 	support.firePropertyChange("loginConfig",
@@ -760,6 +790,10 @@ public final class StandardContext
      * @param publicId The public identifier
      */
     public void setPublicId(String publicId) {
+
+        if (debug >= 1)
+            log("Setting deployment descriptor public ID to '" +
+                publicId + "'");
 
 	String oldPublicId = this.publicId;
         this.publicId = publicId;
@@ -971,6 +1005,17 @@ public final class StandardContext
 	if (!(child instanceof Wrapper))
 	    throw new IllegalArgumentException
 		(sm.getString("standardContext.notWrapper"));
+        Wrapper wrapper = (Wrapper) child;
+        String jspFile = wrapper.getJspFile();
+        if ((jspFile != null) && !jspFile.startsWith("/")) {
+            if (isServlet22()) {
+                log(sm.getString("standardContext.wrapper.warning", jspFile));
+                wrapper.setJspFile("/" + jspFile);
+            } else {
+                throw new IllegalArgumentException
+                    (sm.getString("standardContext.wrapper.error", jspFile));
+            }
+        }
 	super.addChild(child);
 
     }
@@ -1045,6 +1090,24 @@ public final class StandardContext
      */
     public void addErrorPage(ErrorPage errorPage) {
 
+        // Validate the input parameters
+        if (errorPage == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardContext.errorPage.required"));
+        String location = errorPage.getLocation();
+        if ((location != null) && !location.startsWith("/")) {
+            if (isServlet22()) {
+                log(sm.getString("standardContext.errorPage.warning",
+                                 location));
+                errorPage.setLocation("/" + location);
+            } else {
+                throw new IllegalArgumentException
+                    (sm.getString("standardContext.errorPage.error",
+                                  location));
+            }
+        }
+
+        // Add the specified error page to our internal collections
 	String exceptionType = errorPage.getExceptionType();
 	if (exceptionType != null) {
 	    synchronized (exceptionPages) {
@@ -2967,6 +3030,22 @@ public final class StandardContext
     protected void addDefaultMapper(String mapperClass) {
 
 	super.addDefaultMapper(this.mapperClass);
+
+    }
+
+
+    /**
+     * Are we processing a version 2.2 deployment descriptor?
+     */
+    protected boolean isServlet22() {
+
+        if (this.publicId == null)
+            return (false);
+        if (this.publicId.equals
+            (org.apache.catalina.startup.Constants.WebDtdPublicId_22))
+            return (true);
+        else
+            return (false);
 
     }
 

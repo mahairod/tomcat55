@@ -181,9 +181,9 @@ public final class ErrorPage {
      */
     public void setLocation(String location) {
 
-        if ((location == null) || !location.startsWith("/"))
-            throw new IllegalArgumentException
-                ("Error Page Location must start with a '/'");
+        //        if ((location == null) || !location.startsWith("/"))
+        //            throw new IllegalArgumentException
+        //                ("Error Page Location must start with a '/'");
 	this.location = RequestUtil.URLDecode(location);
 
     }

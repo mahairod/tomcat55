@@ -108,9 +108,9 @@ public final class LoginConfig {
     }
 
     public void setErrorPage(String errorPage) {
-        if ((errorPage == null) || !errorPage.startsWith("/"))
-            throw new IllegalArgumentException
-                ("Error Page resource path must start with a '/'");
+        //        if ((errorPage == null) || !errorPage.startsWith("/"))
+        //            throw new IllegalArgumentException
+        //                ("Error Page resource path must start with a '/'");
 	this.errorPage = RequestUtil.URLDecode(errorPage);
     }
 
@@ -125,9 +125,9 @@ public final class LoginConfig {
     }
 
     public void setLoginPage(String loginPage) {
-        if ((loginPage == null) || !loginPage.startsWith("/"))
-            throw new IllegalArgumentException
-                ("Login Page resource path must start with a '/'");
+        //        if ((loginPage == null) || !loginPage.startsWith("/"))
+        //            throw new IllegalArgumentException
+        //                ("Login Page resource path must start with a '/'");
 	this.loginPage = RequestUtil.URLDecode(loginPage);
     }
 

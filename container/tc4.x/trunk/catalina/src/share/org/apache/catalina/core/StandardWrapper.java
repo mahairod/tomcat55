@@ -307,9 +307,9 @@ public final class StandardWrapper
      */
     public void setJspFile(String jspFile) {
 
-        if ((jspFile != null) && !jspFile.startsWith("/"))
-            throw new IllegalArgumentException
-                (sm.getString("standardWrapper.jspFile.format", jspFile));
+        //        if ((jspFile != null) && !jspFile.startsWith("/"))
+        //        throw new IllegalArgumentException
+        //                (sm.getString("standardWrapper.jspFile.format", jspFile));
 
 	String oldJspFile = this.jspFile;
 	this.jspFile = jspFile;
