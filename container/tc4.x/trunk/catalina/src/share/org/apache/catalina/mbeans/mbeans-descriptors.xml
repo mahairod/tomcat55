@@ -14,6 +14,7 @@
 
   <mbean         name="AccessLogValve"
           description="Valve that generates a web server access log"
+               domain="Catalina"
                 group="VALVE"
                  type="org.apache.catalina.valves.AccessLogValve">
 
@@ -49,6 +50,7 @@
 
   <mbean         name="DefaultContext"
           description="Used to store the default configuration a Host will use when creating a Context"
+               domain="Catalina"
                 group="DEFAULT-CONTEXT"
                  type="org.apache.catalina.core.StandardDefaultContext">
 
@@ -84,6 +86,7 @@
 
   <mbean         name="FileLogger"
           description="Implementation of Logger that appends log messages to a file"
+               domain="Catalina"
                 group="LOGGER"
                  type="org.apache.catalina.logger.FileLogger">
 
@@ -118,6 +121,7 @@
 
   <mbean         name="Http10Connector"
           description="HTTP/1.0 Connector for Tomcat Standalone"
+               domain="Catalina"
                 group="CONNECTOR"
                  type="org.apache.catalina.connector.http10.HttpConnector">
 
@@ -193,6 +197,7 @@
 
   <mbean         name="Http11Connector"
           description="HTTP/1.1 Connector for Tomcat Standalone"
+               domain="Catalina"
                 group="CONNECTOR"
                  type="org.apache.catalina.connector.http.HttpConnector">
 
@@ -272,6 +277,7 @@
 
   <mbean         name="JDBCRealm"
           description="Implmentation of Realm that works with any JDBC supported database"
+               domain="Catalina"
                 group="REALM"
                  type="org.apache.catalina.realm.JDBCRealm">
 
@@ -330,6 +336,7 @@
 
   <mbean         name="JNDIRealm"
           description="Implementation of Realm that works with a directory server accessed via the Java Naming and Directory Interface (JNDI) APIs"
+               domain="Catalina"
                 group="REALM"
                  type="org.apache.catalina.realm.JNDIRealm">
 
@@ -380,6 +387,7 @@
 
   <mbean         name="MemoryRealm"
           description="Simple implementation of Realm that reads an XML file to configure the valid users, passwords, and roles"
+               domain="Catalina"
                 group="REALM"
                  type="org.apache.catalina.realm.MemoryRealm">
 
@@ -402,6 +410,7 @@
 
   <mbean         name="RemoteAddrValve"
           description="Concrete implementation of RequestFilterValve that filters based on the string representation of the remote client's IP address"
+               domain="Catalina"
                 group="VALVE"
                  type="org.apache.catalina.valves.RemoteAddrValve">
 
@@ -424,6 +433,7 @@
 
   <mbean         name="RemoteHostValve"
           description="Concrete implementation of RequestFilterValve that filters based on the string representation of the remote client's host name"
+               domain="Catalina"
                 group="VALVE"
                  type="org.apache.catalina.valves.RemoteHostValve">
 
@@ -446,6 +456,7 @@
 
   <mbean         name="RequestDumperValve"
           description="Implementation of a Valve that logs interesting contents from the specified Request and the corresponding Response"
+               domain="Catalina"
                 group="VALVE"
                  type="org.apache.catalina.valves.RequestDumperValve">
 
@@ -464,6 +475,7 @@
 
   <mbean         name="SingleSignOn"
           description="A Valve that supports a 'single signon' user experience"
+               domain="Catalina"
                 group="VALVE"
                  type="org.apache.catalina.authenticator.SingleSignOn">
 
@@ -478,6 +490,7 @@
 
   <mbean         name="StandardContext"
           description="Standard Context Component"
+               domain="Catalina"
                 group="CONTEXT"
                  type="org.apache.catalina.core.StandardContext">
 
@@ -556,6 +569,7 @@
 
   <mbean         name="StandardEngine"
           description="Standard Engine Component"
+               domain="Catalina"
                 group="ENGINE"
                  type="org.apache.catalina.core.StandardEngine">
 
@@ -632,6 +646,7 @@
 
   <mbean         name="StandardHost"
           description="Standard Host Component"
+               domain="Catalina"
                 group="HOST"
                  type="org.apache.catalina.core.StandardHost">
 
@@ -732,6 +747,7 @@
 
   <mbean         name="StandardManager"
           description="Standard implementation of the Manager interface"
+               domain="Catalina"
                 group="MANAGER"
                  type="org.apache.catalina.session.StandardManager">
 
@@ -783,6 +799,7 @@
 
   <mbean         name="StandardResources"
           description="Filesystem Directory Context implementation helper class"
+               domain="Catalina"
                 group="RESOURCES"
                  type="org.apache.naming.resources.FileDirContext">
 
@@ -823,6 +840,7 @@
 
   <mbean         name="StandardServer"
           description="Standard Server Component"
+               domain="Catalina"
                 group="SERVER"
                  type="org.apache.catalina.core.StandardServer">
 
@@ -864,6 +882,7 @@
 
   <mbean         name="StandardService"
           description="Standard Service Component"
+               domain="Catalina"
                 group="SERVICE"
                  type="org.apache.catalina.core.StandardService">
 
@@ -910,6 +929,7 @@
 
   <mbean         name="SystemErrLogger"
           description="Simple implementation of Logger that writes to System.err"
+               domain="Catalina"
                 group="LOGGER"
                  type="org.apache.catalina.logger.SystemErrLogger">
 
@@ -928,6 +948,7 @@
 
   <mbean         name="SystemOutLogger"
           description="Simple implementation of Logger that writes to System.out"
+               domain="Catalina"
                 group="LOGGER"
                  type="org.apache.catalina.logger.SystemOutLogger">
 
@@ -946,6 +967,7 @@
 
   <mbean         name="WarpConnector"
           description="WARP Connector Component"
+               domain="Catalina"
                 group="CONNECTOR"
                  type="org.apache.catalina.connector.http.HttpConnector">
 
@@ -1021,6 +1043,7 @@
 
   <mbean         name="WarpEngine"
           description="Engine Component for WARP Connector"
+               domain="Catalina"
                 group="ENGINE"
                  type="org.apache.catalina.connector.warp.WarpEngine">
 
@@ -1097,6 +1120,7 @@
 
   <mbean         name="WebappLoader"
           description="Classloader implementation which is specialized for handling web applications"
+               domain="Catalina"
                 group="LOADER"
                  type="org.apache.catalina.loader.WebappLoader">
 

@@ -171,9 +171,11 @@ public class MBeanUtils {
 
         String mname = createManagedName(connector);
         ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
         ModelMBean mbean = managed.createMBean(connector);
-        ObjectName oname =
-            createObjectName(mserver.getDefaultDomain(), connector);
+        ObjectName oname = createObjectName(domain, connector);
         mserver.registerMBean(mbean, oname);
         return (mbean);
 
@@ -193,9 +195,11 @@ public class MBeanUtils {
 
         String mname = createManagedName(context);
         ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
         ModelMBean mbean = managed.createMBean(context);
-        ObjectName oname =
-            createObjectName(mserver.getDefaultDomain(), context);
+        ObjectName oname = createObjectName(domain, context);
         mserver.registerMBean(mbean, oname);
         return (mbean);
 
@@ -215,9 +219,11 @@ public class MBeanUtils {
 
         String mname = createManagedName(engine);
         ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
         ModelMBean mbean = managed.createMBean(engine);
-        ObjectName oname =
-            createObjectName(mserver.getDefaultDomain(), engine);
+        ObjectName oname = createObjectName(domain, engine);
         mserver.registerMBean(mbean, oname);
         return (mbean);
 
@@ -237,9 +243,11 @@ public class MBeanUtils {
 
         String mname = createManagedName(host);
         ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
         ModelMBean mbean = managed.createMBean(host);
-        ObjectName oname =
-            createObjectName(mserver.getDefaultDomain(), host);
+        ObjectName oname = createObjectName(domain, host);
         mserver.registerMBean(mbean, oname);
         return (mbean);
 
@@ -259,9 +267,11 @@ public class MBeanUtils {
 
         String mname = createManagedName(server);
         ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
         ModelMBean mbean = managed.createMBean(server);
-        ObjectName oname =
-            createObjectName(mserver.getDefaultDomain(), server);
+        ObjectName oname = createObjectName(domain, server);
         mserver.registerMBean(mbean, oname);
         return (mbean);
 
@@ -281,9 +291,11 @@ public class MBeanUtils {
 
         String mname = createManagedName(service);
         ManagedBean managed = registry.findManagedBean(mname);
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
         ModelMBean mbean = managed.createMBean(service);
-        ObjectName oname =
-            createObjectName(mserver.getDefaultDomain(), service);
+        ObjectName oname = createObjectName(domain, service);
         mserver.registerMBean(mbean, oname);
         return (mbean);
 
