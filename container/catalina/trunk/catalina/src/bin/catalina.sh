@@ -18,6 +18,10 @@
 #                   $CATALINA_BASE/temp.
 #
 #   JAVA_HOME       Must point at your Java Development Kit installation.
+#                   Required to run the with the "debug" or "javac" argument.
+#
+#   JRE_HOME        Must point at your Java Development Kit installation.
+#                   Defaults to JAVA_HOME if empty.
 #
 #   JAVA_OPTS       (Optional) Java runtime options used when the "start",
 #                   "stop", or "run" command is executed.
@@ -72,6 +76,7 @@ fi
 # For Cygwin, ensure paths are in UNIX format before anything is touched
 if $cygwin; then
   [ -n "$JAVA_HOME" ] && JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
+  [ -n "$JRE_HOME" ] && JRE_HOME=`cygpath --unix "$JRE_HOME"`
   [ -n "$CATALINA_HOME" ] && CATALINA_HOME=`cygpath --unix "$CATALINA_HOME"`
   [ -n "$CATALINA_BASE" ] && CATALINA_BASE=`cygpath --unix "$CATALINA_BASE"`
   [ -n "$CLASSPATH" ] && CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
@@ -127,6 +132,7 @@ fi
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
   JAVA_HOME=`cygpath --absolute --windows "$JAVA_HOME"`
+  JRE_HOME=`cygpath --absolute --windows "$JRE_HOME"`
   CATALINA_HOME=`cygpath --absolute --windows "$CATALINA_HOME"`
   CATALINA_BASE=`cygpath --absolute --windows "$CATALINA_BASE"`
   CATALINA_TMPDIR=`cygpath --absolute --windows "$CATALINA_TMPDIR"`
@@ -140,7 +146,11 @@ fi
 echo "Using CATALINA_BASE:   $CATALINA_BASE"
 echo "Using CATALINA_HOME:   $CATALINA_HOME"
 echo "Using CATALINA_TMPDIR: $CATALINA_TMPDIR"
-echo "Using JAVA_HOME:       $JAVA_HOME"
+if [ "$1" = "debug" -o "$1" = "javac" ] ; then
+  echo "Using JAVA_HOME:       $JAVA_HOME"
+else
+  echo "Using JRE_HOME:       $JRE_HOME"
+fi
 
 if [ "$1" = "jpda" ] ; then
   if [ -z "$JPDA_TRANSPORT" ]; then
@@ -157,7 +167,6 @@ if [ "$1" = "jpda" ] ; then
 fi
 
 if [ "$1" = "debug" ] ; then
-
   if $os400; then
     echo "Debug command not available on OS400"
     exit 1
