@@ -377,6 +377,7 @@ final class HttpProcessor
 	    // Set the corresponding request headers
 	    if (match.equals("authorization")) {
 		request.setAuthorization(value);
+		request.addHeader(name, value);
 	    } else if (match.equals("accept-language")) {
           request.addHeader(name, value);
           //

@@ -586,8 +586,7 @@ final class HttpProcessor
                         (sm.getString
                          ("httpProcessor.parseHeaders.unknownExpectation"));
 	    }
-	    if (!match.equals("authorization"))
-		request.addHeader(name, value);
+	    request.addHeader(name, value);
 	}
 
     }
