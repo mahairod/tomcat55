@@ -1,0 +1,929 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+     targetNamespace="http://java.sun.com/xml/ns/j2ee"
+     xmlns:j2ee="http://java.sun.com/xml/ns/j2ee"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     elementFormDefault="qualified"
+     attributeFormDefault="unqualified"
+     version="2.0">
+
+<xsd:annotation>
+<xsd:documentation>
+@(#)web-jsptaglibrary_2_0.xsds	1.10 07/29/02
+</xsd:documentation>
+</xsd:annotation>
+<xsd:annotation>
+<xsd:documentation>
+
+Copyright 2002 Sun Microsystems, Inc., 901 San Antonio
+Road, Palo Alto, California 94303, U.S.A. All rights
+reserved.
+
+Sun Microsystems, Inc. has intellectual property rights
+relating to technology described in this document. In
+particular, and without limitation, these intellectual
+property rights may include one or more of the U.S. patents
+listed at http://www.sun.com/patents and one or more
+additional patents or pending patent applications in the
+U.S. and other countries.
+
+This document and the technology which it describes are
+distributed under licenses restricting their use, copying,
+distribution, and decompilation. No part of this document
+may be reproduced in any form by any means without prior
+written authorization of Sun and its licensors, if any.
+
+Third-party software, including font technology, is
+copyrighted and licensed from Sun suppliers.
+
+Sun, Sun Microsystems, the Sun logo, Solaris, Java, J2EE,
+JavaServer Pages, Enterprise JavaBeans and the Java Coffee
+Cup logo are trademarks or registered trademarks of Sun
+Microsystems, Inc. in the U.S. and other countries.
+
+Federal Acquisitions: Commercial Software - Government Users
+Subject to Standard License Terms and Conditions.
+
+</xsd:documentation>
+</xsd:annotation>
+
+<xsd:annotation>
+<xsd:documentation>
+
+This is the XML Schema for the JSP Taglibrary deployment
+descriptor.  All Taglibrary deployment descriptors must
+indicate the tag library schema by using the Taglibrary
+namespace:
+
+http://java.sun.com/xml/ns/j2ee
+
+and by indicating the version of the schema by
+using the version element as shown below:
+
+    <taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="..."
+     version="2.0">
+    ...
+    </taglib>
+
+The instance documents may indicate the published
+version of the schema using xsi:schemaLocation attribute
+for J2EE namespace with the following location:
+
+http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd
+
+</xsd:documentation>
+</xsd:annotation>
+
+<xsd:include schemaLocation="j2ee_1_4.xsd"/>
+
+
+<!-- **************************************************** -->
+
+
+<xsd:element name="taglib" type="j2ee:taglibType">
+<xsd:annotation>
+<xsd:documentation>
+
+The taglib tag is the document root.
+The definition of taglib is provided
+by the taglibType.
+
+</xsd:documentation>
+</xsd:annotation>
+</xsd:element>
+
+
+<!-- **************************************************** -->
+
+<xsd:simpleType name="body-contentType">
+<xsd:annotation>
+<xsd:documentation>
+
+Provides a hint as to the content of the body of this tag.
+Primarily intended for use by page composition tools.
+
+There are currently four values specified:
+
+tagdependent    The body of the tag is interpreted by the tag
+                implementation itself, and is most likely
+                in a different "langage", e.g embedded SQL
+                statements.
+
+JSP             The body of the tag contains nested JSP
+                syntax.
+
+empty           The body must be empty
+
+scriptless      The body accepts only template text, EL
+                Expressions, and JSP action elements.  No
+                scripting elements are allowed.
+
+</xsd:documentation>
+</xsd:annotation>
+
+    <xsd:restriction base="j2ee:string">
+        <xsd:enumeration value="tagdependent"/>
+        <xsd:enumeration value="TAGDEPENDENT"/>
+        <xsd:enumeration value="JSP"/>
+        <xsd:enumeration value="empty"/>
+        <xsd:enumeration value="EMPTY"/>
+        <xsd:enumeration value="scriptless"/>
+        <xsd:enumeration value="SCRIPTLESS"/>
+    </xsd:restriction>
+
+</xsd:simpleType>
+
+<!-- **************************************************** -->
+
+<xsd:complexType name="fragmentInputType">
+<xsd:annotation>
+<xsd:documentation>
+
+Describes the details of a single parameter that may be
+passed from a tag handler to a fragment, when the
+fragment is invoked.
+
+This allows the page author to know what variables to expect from the tag when passing in a fragment.
+
+A fragment-input element can have the following subelements:
+
+description     Describes the purpose of this fragment-input
+
+name            The name of the parameter to the fragment
+                (required)
+
+type            The type of parameter being passed
+                (defaults to java.lang.String)
+
+</xsd:documentation>
+</xsd:annotation>
+    <xsd:sequence>
+        <xsd:element name="description"
+                     type="j2ee:descriptionType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="name"
+                     type="j2ee:java-identifierType"/>
+        <xsd:element name="type"
+                     type="j2ee:fully-qualified-classType"
+                     minOccurs="0"/>
+    </xsd:sequence>
+</xsd:complexType>
+
+<!-- **************************************************** -->
+
+<xsd:complexType name="functionType">
+<xsd:annotation>
+<xsd:documentation>
+
+The function element is used to provide information on each
+function in the tag library that is to be exposed to the EL.
+
+The function element may have several subelements defining:
+
+description         Optional tag-specific information
+
+display-name        A short name that is intended to be
+                    displayed by tools
+
+icon                Optional icon element that can be used
+                    by tools
+
+name                A unique name for this function
+
+function-class      Provides the name of the Java class that
+                    implements the function
+
+function-signature  Provides the signature, as in the Java
+                    Language Specification, of the Java
+                    method that is to be used to implement
+                    the function.
+
+example             Optional informal description of an
+                    example of a use of this function
+
+</xsd:documentation>
+</xsd:annotation>
+
+    <xsd:sequence>
+        <xsd:element name="description"
+                     type="j2ee:descriptionType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="display-name"
+                     type="j2ee:display-nameType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="icon"
+                     type="j2ee:iconType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="name"
+                     type="j2ee:tld-canonical-nameType">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        A unique name for this function.
+
+        </xsd:documentation>
+        </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="function-class"
+                     type="j2ee:fully-qualified-classType">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        Provides the fully-qualified class name of the Java
+        class containing the static method that implements
+        the function.
+
+        </xsd:documentation>
+        </xsd:annotation>
+
+        </xsd:element>
+        <xsd:element name="function-signature"
+                     type="xsd:string">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        Provides the signature, as in the Java Language
+        Specification, of the static Java method that is
+        to be used to implement the function.
+
+        Example:
+
+        java.lang.String nickName( java.lang.String, int )
+
+        </xsd:documentation>
+        </xsd:annotation>
+
+        </xsd:element>
+        <xsd:element name="example"
+                     type="xsd:string"
+                     minOccurs="0">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        The example element contains an informal description
+        of an example of the use of this function.
+
+        </xsd:documentation>
+        </xsd:annotation>
+
+        </xsd:element>
+    </xsd:sequence>
+</xsd:complexType>
+
+<!-- **************************************************** -->
+
+<xsd:complexType name="listenerType">
+<xsd:annotation>
+<xsd:documentation>
+
+Defines an event listener object to be instantiated and
+registered automatically.
+
+</xsd:documentation>
+</xsd:annotation>
+
+    <xsd:sequence>
+        <xsd:element name="listener-class"
+                     type="j2ee:fully-qualified-classType">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        The listener-class element declares a class in the
+        application that must be registered as a web
+        application listener bean.  See the Servlet 2.3
+        specification for details.
+
+        </xsd:documentation>
+        </xsd:annotation>
+        </xsd:element>
+    </xsd:sequence>
+</xsd:complexType>
+
+<!-- **************************************************** -->
+
+<xsd:complexType name="tagFileType">
+<xsd:annotation>
+<xsd:documentation>
+
+Defines an action in this tag library that is implemented
+as a .tag file.
+
+The tag-file element has two required subelements:
+
+name    The unique action name
+
+path    Where to find the .tag file implementing this
+        action, relative to the location of the TLD file.
+
+</xsd:documentation>
+</xsd:annotation>
+
+    <xsd:sequence>
+        <xsd:element name="name"
+                     type="j2ee:tld-canonical-nameType"/>
+        <xsd:element name="path"
+                     type="j2ee:pathType"/>
+    </xsd:sequence>
+</xsd:complexType>
+
+<!-- **************************************************** -->
+
+<xsd:complexType name="tagType">
+<xsd:annotation>
+<xsd:documentation>
+
+The tag defines a unique tag in this tag library.  It has one
+attribute, id.
+
+The tag element may have several subelements defining:
+
+description       Optional tag-specific information
+
+display-name      A short name that is intended to be
+                  displayed by tools
+
+icon              Optional icon element that can be used
+                  by tools
+
+name              The unique action name
+
+tag-class         The tag handler class implementing
+                  javax.servlet.jsp.tagext.JspTag
+
+tei-class         An optional subclass of
+                  javax.servlet.jsp.tagext.TagExtraInfo
+
+body-content      The body content type
+
+variable          Optional scripting variable information
+
+attribute         All attributes of this action that are
+                  evaluated prior to invocation.
+
+fragment-attribute All attributes of this action that
+                   implement javax.servlet.jsp.tagext.JspFragment
+                   and can be evaluated zero or more times
+                   by the tag handler.
+
+dynamic-attributes Whether this tag supports additional
+                   attributes with dynamic names.  If
+                   true, the tag-class must implement the
+                   javax.servlet.jsp.tagext.DynamicAttributes
+                   interface.  Defaults to false.
+
+example           Optional informal description of an
+                  example of a use of this tag
+
+</xsd:documentation>
+</xsd:annotation>
+
+    <xsd:sequence>
+        <xsd:element name="description"
+                     type="j2ee:descriptionType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="display-name"
+                     type="j2ee:display-nameType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="icon"
+                     type="j2ee:iconType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="name"
+                     type="j2ee:tld-canonical-nameType"/>
+        <xsd:element name="tag-class"
+                     type="j2ee:fully-qualified-classType">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        Defines the subclass of javax.serlvet.jsp.tagext.JspTag
+        that implements the request time semantics for
+        this tag. (required)
+
+        </xsd:documentation>
+        </xsd:annotation>
+
+        </xsd:element>
+        <xsd:element name="tei-class"
+                     type="j2ee:fully-qualified-classType"
+                     minOccurs="0">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        Defines the subclass of javax.servlet.jsp.tagext.TagExtraInfo
+        for this tag. (optional)
+
+        If this is not given, the class is not consulted at
+        translation time.
+
+        </xsd:documentation>
+        </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="body-content"
+                     type="j2ee:body-contentType"
+                     minOccurs="0">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        The default (if not defined) is JSP
+
+        </xsd:documentation>
+        </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="variable"
+                     type="j2ee:variableType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="attribute"
+                     type="j2ee:tld-attributeType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="fragment-attribute"
+                     type="j2ee:tld-fragmentAttributeType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="dynamic-attributes"
+                     type="j2ee:generic-booleanType"
+                     minOccurs="0"/>
+        <xsd:element name="example"
+                     type="xsd:string"
+                     minOccurs="0">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        The example element contains an informal description
+        of an example of the use of a tag.
+
+        </xsd:documentation>
+        </xsd:annotation>
+
+        </xsd:element>
+    </xsd:sequence>
+</xsd:complexType>
+
+<!-- **************************************************** -->
+
+<xsd:complexType name="taglibType">
+<xsd:annotation>
+<xsd:documentation>
+
+The taglib tag is the document root, it defines:
+
+description     a simple string describing the "use" of this taglib,
+                should be user discernable
+
+display-name    the display-name element contains a
+                short name that is intended to be displayed
+                by tools
+
+icon            optional icon that can be used by tools
+
+tlib-version    the version of the tag library implementation
+
+short-name      a simple default short name that could be
+                used by a JSP authoring tool to create
+                names with a mnemonic value; for example,
+                the it may be used as the prefered prefix
+                value in taglib directives
+
+uri             a uri uniquely identifying this taglib
+
+validator       optional TagLibraryValidator information
+
+listener        optional event listener specification
+
+tag             one or more tags in the tag library
+
+tag-file        one or more tag files in the tag library
+
+function        zero or more EL functions defined in this
+                tag library
+
+</xsd:documentation>
+</xsd:annotation>
+
+    <xsd:sequence>
+        <xsd:element name="description"
+                     type="j2ee:descriptionType"
+                     minOccurs="0"
+                     maxOccurs="unbounded"/>
+        <xsd:element name="display-name"
+                     type="j2ee:display-nameType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="icon"
+                     type="j2ee:iconType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="tlib-version"
+                     type="j2ee:dewey-versionType">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        Describes this version (number) of the taglibrary.
+        It is described as a dewey decimal.
+
+        </xsd:documentation>
+        </xsd:annotation>
+
+        </xsd:element>
+
+        <xsd:element name="short-name"
+                     type="j2ee:tld-canonical-nameType">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        Defines a simple default name that could be used by
+        a JSP authoring tool to create names with a
+        mnemonicvalue; for example, it may be used as the
+        preferred prefix value in taglib directives.  Do
+        not use white space, and do not start with digits
+        or underscore.
+
+        </xsd:documentation>
+        </xsd:annotation>
+
+        </xsd:element>
+        <xsd:element name="uri"
+                     type="xsd:anyURI"
+                     minOccurs="0">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        Defines a public URI that uniquely identifies this
+        version of the taglibrary.  Leave it empty if it
+        does not apply.
+
+        </xsd:documentation>
+        </xsd:annotation>
+
+        </xsd:element>
+        <xsd:element name="validator"
+                     type="j2ee:validatorType"
+                     minOccurs="0">
+        </xsd:element>
+        <xsd:element name="listener"
+                     type="j2ee:listenerType"
+                     minOccurs="0" maxOccurs="unbounded">
+        </xsd:element>
+        <xsd:element name="tag"
+                     type="j2ee:tagType"
+                     minOccurs="0"
+                     maxOccurs="unbounded"/>
+        <xsd:element name="tag-file"
+                     type="j2ee:tagFileType"
+                     minOccurs="0"
+                     maxOccurs="unbounded"/>
+        <xsd:element name="function"
+                     type="j2ee:functionType"
+                     minOccurs="0"
+                     maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="version"
+                   type="j2ee:dewey-versionType"
+                   fixed="2.0"
+                   use="required">
+    <xsd:annotation>
+    <xsd:documentation>
+
+    Describes the JSP version (number) this taglibrary
+    requires in order to function (dewey decimal)
+
+    The default is 2.0
+
+    </xsd:documentation>
+    </xsd:annotation>
+
+    </xsd:attribute>
+
+</xsd:complexType>
+
+<!-- **************************************************** -->
+
+<xsd:complexType name="tld-attributeType">
+<xsd:annotation>
+<xsd:documentation>
+
+The attribute element defines an attribute for the nesting
+tag.  The attributre element may have several subelements
+defining:
+
+description     a description of the attribute
+
+name            the name of the attribute
+
+required        whether the attribute is required or
+                optional
+
+rtexprvalue     whether the attribute is a runtime attribute
+
+type            the type of the attributes
+
+</xsd:documentation>
+</xsd:annotation>
+    <xsd:sequence>
+        <xsd:element name="description"
+                     type="j2ee:descriptionType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="name"
+                     type="j2ee:java-identifierType"/>
+        <xsd:element name="required"
+                     type="j2ee:generic-booleanType"
+                     minOccurs="0">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        Defines if the nesting attribute is required or
+        optional.
+
+        If not present then the default is "false", i.e
+        the attribute is optional.
+
+        </xsd:documentation>
+        </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="rtexprvalue"
+                     type="j2ee:generic-booleanType"
+                     minOccurs="0">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        Defines if the nesting attribute can have scriptlet
+        expressions as a value, i.e the value of the
+        attribute may be dynamically calculated at request
+        time, as opposed to a static value determined at
+        translation time.
+
+        If not present then the default is "false", i.e the
+        attribute has a static value
+
+        </xsd:documentation>
+        </xsd:annotation>
+
+        </xsd:element>
+        <xsd:element name="type"
+                     type="j2ee:fully-qualified-classType"
+                     minOccurs="0">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        Defines the Java type of the attributes value.  For
+        static values (those determined at translation time)
+        the type is always java.lang.String.
+
+        </xsd:documentation>
+        </xsd:annotation>
+        </xsd:element>
+
+    </xsd:sequence>
+</xsd:complexType>
+
+<!-- **************************************************** -->
+
+<xsd:simpleType name="tld-canonical-nameType">
+
+<xsd:annotation>
+<xsd:documentation>
+
+Defines the canonical name of a tag or attribute being
+defined.
+
+The name must conform to the lexical rules for an NMTOKEN.
+
+</xsd:documentation>
+</xsd:annotation>
+
+    <xsd:restriction base="xsd:NMTOKEN"/>
+
+</xsd:simpleType>
+
+<!-- **************************************************** -->
+
+<xsd:complexType name="tld-fragmentAttributeType">
+<xsd:annotation>
+<xsd:documentation>
+
+Defines the details of an attribute of type
+javax.servlet.jsp.tagext.JspFragment.
+
+Attributes defined of this type can be evaluated zero
+or more times by a tag handler.
+
+A fragment-attribute element can have the following
+subelements:
+
+description     Describes the purpose of this
+                fragment-attribute.
+
+name            The name of the fragment attribute.
+
+required        True if this fragment is required, or false
+                if optional.  Defaults to false.
+
+fragment-input  The types of inputs that may be passed to
+                this fragment by the tag handler.
+
+</xsd:documentation>
+</xsd:annotation>
+    <xsd:sequence>
+        <xsd:element name="description"
+                     type="j2ee:descriptionType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="name"
+                     type="j2ee:java-identifierType"/>
+        <xsd:element name="required"
+                     type="j2ee:generic-booleanType"
+                     minOccurs="0">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        Defines if the nesting fragment attribute is
+        required or optional.
+
+        If not present then the default is "false", i.e the
+        fragment attribute is optional.
+
+        </xsd:documentation>
+        </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="fragment-input"
+                     type="j2ee:fragmentInputType"
+                     minOccurs="0"
+                     maxOccurs="unbounded"/>
+
+    </xsd:sequence>
+</xsd:complexType>
+
+<!-- **************************************************** -->
+
+<xsd:complexType name="validatorType">
+<xsd:annotation>
+<xsd:documentation>
+
+A validator that can be used to validate
+the conformance of a JSP page to using this tag library is
+defined by a validatorType.
+
+</xsd:documentation>
+</xsd:annotation>
+
+<xsd:sequence>
+    <xsd:element name="description"
+                 type="j2ee:descriptionType"
+                 minOccurs="0"
+                 maxOccurs="unbounded"/>
+    <xsd:element name="validator-class"
+                 type="j2ee:fully-qualified-classType">
+    <xsd:annotation>
+    <xsd:documentation>
+
+    Defines the TagLibraryValidator class that can be used
+    to validate the conformance of a JSP page to using this
+    tag library.
+
+    </xsd:documentation>
+    </xsd:annotation>
+    </xsd:element>
+    <xsd:element name="init-param"
+                 type="j2ee:param-valueType"
+                 minOccurs="0" maxOccurs="unbounded">
+    <xsd:annotation>
+    <xsd:documentation>
+
+    The init-param element contains a name/value pair as an
+    initialization param.
+
+    </xsd:documentation>
+    </xsd:annotation>
+
+    </xsd:element>
+
+</xsd:sequence>
+</xsd:complexType>
+
+<!-- **************************************************** -->
+
+<xsd:simpleType name="variable-scopeType">
+<xsd:annotation>
+<xsd:documentation>
+
+This type defines scope of the scripting variable.  See
+TagExtraInfo for details.  The allowed values are,
+"NESTED", "AT_BEGIN" and "AT_END".
+
+</xsd:documentation>
+</xsd:annotation>
+
+    <xsd:restriction base="j2ee:string">
+        <xsd:enumeration value="NESTED"/>
+        <xsd:enumeration value="AT_BEGIN"/>
+        <xsd:enumeration value="AT_END"/>
+    </xsd:restriction>
+</xsd:simpleType>
+
+<!-- **************************************************** -->
+
+<xsd:complexType name="variableType">
+<xsd:annotation>
+<xsd:documentation>
+
+The variableType provides information on the scripting
+variables defined by using this tag.  It is a (translation
+time) error for a tag that has one or more variable
+subelements to have a TagExtraInfo class that returns a
+non-null object.
+
+The subelements of variableType are of the form:
+
+description              Optional description of this
+                         variable
+
+name-given               The variable name as a constant
+
+name-from-attribute      The name of an attribute whose
+                         (translation time) value will
+                         give the name of the
+                         variable.  One of name-given or
+                         name-from-attribute is required.
+
+variable-class           Name of the class of the variable.
+                         java.lang.String is default.
+
+declare                  Whether the variable is declared
+                         or not.  True is the default.
+
+scope                    The scope of the scripting varaible
+                         defined.  NESTED is default.
+
+</xsd:documentation>
+</xsd:annotation>
+
+    <xsd:sequence>
+        <xsd:element name="description"
+                     type="j2ee:descriptionType"
+                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:choice>
+            <xsd:element name="name-given"
+                         type="j2ee:java-identifierType">
+            <xsd:annotation>
+            <xsd:documentation>
+
+            The name for the scripting variable.
+
+            </xsd:documentation>
+            </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="name-from-attribute"
+                         type="j2ee:java-identifierType">
+            <xsd:annotation>
+            <xsd:documentation>
+
+            The name of an attribute whose
+            (translation-time) value will give the name of
+            the variable.
+
+            </xsd:documentation>
+            </xsd:annotation>
+            </xsd:element>
+        </xsd:choice>
+        <xsd:element name="variable-class"
+                     type="j2ee:fully-qualified-classType"
+                     minOccurs="0">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        The optional name of the class for the scripting
+        variable.  The default is java.lang.String.
+
+        </xsd:documentation>
+        </xsd:annotation>
+
+        </xsd:element>
+        <xsd:element name="declare"
+                     type="j2ee:generic-booleanType"
+                     minOccurs="0">
+
+        <xsd:annotation>
+        <xsd:documentation>
+
+        Whether the scripting variable is to be defined
+        or not.  See TagExtraInfo for details.  This
+        element is optional and "true" is the default.
+
+        </xsd:documentation>
+        </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="scope"
+                     type="j2ee:variable-scopeType"
+                     minOccurs="0">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        The element is optional and "NESTED" is the default.
+
+        </xsd:documentation>
+        </xsd:annotation>
+        </xsd:element>
+    </xsd:sequence>
+
+</xsd:complexType>
+
+</xsd:schema>
+
