@@ -201,6 +201,10 @@ public final class SecurityClassLoad {
         loader.loadClass
             (basePackage +
              "CoyoteResponseFacade$SetContentTypePrivilegedAction");
+        loader.loadClass
+            (basePackage +
+             "OutputBuffer$1");
+        
     }
 
 }
