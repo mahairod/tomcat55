@@ -110,27 +110,7 @@ process. The 1.4 release is now required.
   pathname of the release directory.
 
 
-(5) Download and Install the Regular Expressions Binary Distribution
-
-NOTE:  Alternatively, you can download the sources of the
-"jakarta-regexp" subproject, and build a binary distribution yourself.
-
-* Download a binary distribution from:
-
-    http://jakarta.apache.org/builds/jakarta-regexp/release/v1.2/
-
-  On a Windows platform, you will need:
-    jakarta-regexp-1.2.zip
-
-  On a Unix platform, you will need:
-    jakarta-regexp-1.2.tar.gz
-
-* Unpack the binary distribution into a convenient location so that the
-  distribution resides in its own directory (conventionally named
-  "jakarta-regexp-x.y").
-
-
-(6) Download and Install the Servlet API Binary Distribution
+(5) Download and Install the Servlet API Binary Distribution
 
 NOTE:  Alternatively, you can download the sources of the
 "jakarta-servletapi-4" subproject, and build a binary distribution yourself,
@@ -151,14 +131,14 @@ of Tomcat 4.0.
   distribution resides in its own directory.
 
 
-(7) Steps (8) - (18) are optional, but are necessary to build a complete binary
+(6) Steps (7) - (17) are optional, but are necessary to build a complete binary
     distribution of Tomcat 4.0. Set the "full.dist" property to "on" in the
-    build.properties file (see step (18)) to build a complete distribution.
+    build.properties file (see step (17)) to build a complete distribution.
     Regular contributors to Tomcat are encouraged to use the complete build 
     option.
 
 
-(8) Download and Install JDBC Optional Package API Binary Distribution
+(7) Download and Install JDBC Optional Package API Binary Distribution
 
 * Download the JDBC Optional Pacakge API package (version 2.0) from:
 
@@ -167,7 +147,7 @@ of Tomcat 4.0.
 * Place the jar in a convenient location.
 
 
-(9) Download and Install the JMX 1.0 Reference Implementation
+(8) Download and Install the JMX 1.0 Reference Implementation
 
 * Download the JMX Instrumentation and Agent Reference Implementation
   (version 1.0 or later) from
@@ -178,7 +158,7 @@ of Tomcat 4.0.
   it resides in its own subdirectory.
 
 
-(10) Download and Install the JNDI 1.2.1 Reference Implementation
+(9) Download and Install the JNDI 1.2.1 Reference Implementation
 
 * Download the Java Naming and Directory Interface (JNDI) package,
   (version 1.2.1 or later) from
@@ -192,7 +172,7 @@ of Tomcat 4.0.
   same download page.  Be sure that you unpack "ldap.jar" into the "lib"
   subdirectory of the JNDI directory, parallel to "jndi.jar".
 
-(11) Download and Install the Java Activation Framework 1.0.1
+(10) Download and Install the Java Activation Framework 1.0.1
 
 * Download the Java Activation Framework package (version 1.0.1 or later) from
 
@@ -202,7 +182,7 @@ of Tomcat 4.0.
   resised in its own subdirectory.
 
 
-(12) Download and Install JavaMail 1.2
+(11) Download and Install JavaMail 1.2
 
 * Download the JavaMail package (version 1.2 or later) from
 
@@ -212,7 +192,7 @@ of Tomcat 4.0.
   it resides in its own subdirectory.
 
 
-(13) Download and Install the JSSE 1.0.2 Reference Implementation
+(12) Download and Install the JSSE 1.0.2 Reference Implementation
 
 * Download the Java Secure Sockets Extension (JSSE) package,
   (version 1.0.2 or later) from
@@ -223,7 +203,7 @@ of Tomcat 4.0.
   it resides in its own subdirectory.
 
 
-(14) Download and Install the Java Transaction APIs
+(13) Download and Install the Java Transaction APIs
 
 * Download the Java Transaction API (JTA) package (version 1.0.1) from:
 
@@ -233,7 +213,7 @@ of Tomcat 4.0.
   own subdirectory.
 
 
-(15) Download and Install the Tyrex Data Source Package
+(14) Download and Install the Tyrex Data Source Package
 
 NOTE:  This step is only required if you wish to build the Tyrex connection
 pool implementation for JNDI-accessed data sources.
@@ -246,7 +226,7 @@ pool implementation for JNDI-accessed data sources.
   own subdirectory.
 
 
-(16) Download and Install the JUnit Testing Package (OPTIONAL)
+(15) Download and Install the JUnit Testing Package (OPTIONAL)
 
 NOTE:  This step is only required if you wish to build and execute the unit
 tests that are part of the Tomcat 4.0 source base.
@@ -259,14 +239,7 @@ tests that are part of the Tomcat 4.0 source base.
   own subdirectory.
 
 
-(17) Check out the jakarta-tomcat-connectors repository, using the "TOMCAT_4_1"
-     tag.
-
-
-(18) Compile the "util" module, and the "jk" module.
-
-
-(19) Customize Build Properties For This Subproject
+(16) Customize Build Properties For This Subproject
 
 Most Jakarta subprojects allow you to customize Ant properties (with default
 values defined in the "build.xml" file.  This is done by creating a text file
@@ -290,7 +263,7 @@ repository.  This file is local to your own development environment, and
 each developer will have their own version.
 
 
-(20) Build A Binary Distribution
+(17) Build A Binary Distribution
 
 Open a command line shell, and issue the following commands:
 
