@@ -85,6 +85,7 @@ import org.apache.jasper.runtime.*;
 import org.apache.jasper.compiler.Compiler;
 
 import org.apache.jasper.logging.Logger;
+import org.apache.jasper.logging.JasperLogger;
 
 /**
  * The JSP engine (a.k.a Jasper)! 
@@ -94,7 +95,7 @@ import org.apache.jasper.logging.Logger;
  */
 public class JspServlet extends HttpServlet {
 
-    Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "JspServlet");
+    Logger.Helper loghelper;
 
     class JspServletWrapper {
         Servlet theServlet;
@@ -234,6 +235,14 @@ public class JspServlet extends HttpServlet {
 	this.context = config.getServletContext();
         this.serverInfo = context.getServerInfo();
         
+	// Setup logging 
+        Constants.jasperLog = new JasperLogger(this.context);
+	Constants.jasperLog.setName("JASPER_LOG");
+	Constants.jasperLog.setTimestamp("false");
+	Constants.jasperLog.setVerbosityLevel(
+		   config.getInitParameter("logVerbosityLevel"));
+	loghelper = new Logger.Helper("JASPER_LOG", "JspServlet");
+
 	options = new EmbededServletOptions(config, context);
 
 	parentClassLoader = (ClassLoader) context.getAttribute(Constants.SERVLET_CLASS_LOADER);
