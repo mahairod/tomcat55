@@ -68,82 +68,60 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.MalformedURLException;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
 
 /**
  * Return the size of a given file, subject of formatting.
  *
  * @author Bip Thelin
+ * @author Paul Speed
  * @version $Revision$, $Date$
  */
-public final class SsiFsize
-    extends SsiMediator implements SsiCommand {
+public final class SsiFsize implements SsiCommand {
 
     /**
-     * Figure out the length/size of a given file.
+     *  Runs this command using the specified parameters.
      *
-     * @param strParamType The parameter type
-     * @param strParam The value, only "var" accepted
-     * @return The result
+     *  @param cmdName  The name that was used to lookup this
+     *                  command instance.
+     *  @param argNames String array containing the parameter
+     *                  names for the command.
+     *  @param argVals  String array containing the paramater
+     *                  values for the command.
+     *  @param ssiEnv   The environment to use for command
+     *                  execution.
+     *  @param out      A convenient place for commands to
+     *                  write their output.
      */
-    public final String getStream(String[] strParamType,
-                                  String[] strParam) {
-        String length = "";
-        String retLength = "";
-        String path = "";
-        URL url = null;
-        long lLength = -1;
+    public void execute( String cmdName, String[] argNames,
+                         String[] argVals, SsiEnvironment ssiEnv,
+                         ServletOutputStream out )
+                                    throws IOException,
+                                           SsiCommandException {
+        FileReference ref = null;
 
-        if(strParamType[0].equals("file")) {
-            path = super.getFilePath(strParam[0]);
-        } else if(strParamType[0].equals("virtual")) {
-            path = super.getVirtualPath(strParam[0]);
-        }
+        String value = ssiEnv.substituteVariables( argVals[0] );
+
+        if (argNames[0].equals("file"))
+            ref = ssiEnv.getFileReference( value, false );
+        else if (argNames[0].equals("virtual"))
+            ref = ssiEnv.getFileReference( value, true );
+
+        if (ref == null)
+            throw new SsiCommandException( "Path not found:" + value );
+
+        long fileSize;
 
         try {
-            url = super.servletContext.getResource(path);
-            lLength = url.openConnection().getContentLength();
-            length = (new Long(lLength)).toString();
-        } catch (MalformedURLException e){
-            length = null;
-        } catch (IOException e) {
-            length = null;
-        } catch (NullPointerException e) {
-            length = null;
+            URL u = ref.getResource();
+            fileSize = u.openConnection().getContentLength();
+        } catch (Exception e) {
+            throw new SsiCommandException( e.toString() );
         }
 
-        if(length == null)
-            retLength = (new String(super.getError()));
-        else
-            retLength =
-                formatSize(length,
-                           ((SsiConfig)super.getCommand("config")).getSizefmt());
-
-        return retLength;
+        out.print( formatSize(String.valueOf(fileSize),
+                              ssiEnv.getConfiguration("sizefmt")) );
     }
-
-    /**
-     * Not used since this SsiCommand return a stream, use
-     * <code>getStream()</code> instead.
-     *
-     * @param strParamType a value of type 'String[]'
-     * @param strParam a value of type 'String[]'
-     */
-    public final void process(String[] strParamType, String[] strParam) {}
-
-    /**
-     * Returns <code>true</code> this SsiCommand is always prnitable
-     * and should therefore be accsessed through <code>getStream()</code>
-     *
-     * @return a value of type 'boolean'
-     */
-    public final boolean isPrintable() { return true; }
-
-    /**
-     * Returns <code>false</code>, this SsiCommands is never buffered.
-     *
-     * @return a value of type 'boolean'
-     */
-    public final boolean isModified() { return false; }
 
     //----------------- Private methods
 

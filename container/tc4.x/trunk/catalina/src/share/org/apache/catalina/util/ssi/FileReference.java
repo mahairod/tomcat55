@@ -1,5 +1,4 @@
 /*
- * SsiInclude.java
  * $Header$
  * $Revision$
  * $Date$
@@ -64,60 +63,55 @@
 
 package org.apache.catalina.util.ssi;
 
-import java.io.IOException;
-import javax.servlet.ServletException;
+import java.net.URL;
+import java.net.MalformedURLException;
+
 import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.RequestDispatcher;
 
+
 /**
- * SsiCommand to include a file, implemented using
- * <code>RequestDispatcher.include().</code>
+ *  Contains the path and servlet context for a file.  This
+ *  information can be used to retrieve the file as a resource
+ *  or to retrieve a request dispatcher, etc..
  *
- * @author Bip Thelin
- * @author Paul Speed
- * @version $Revision$, $Date$
+ *  @version   $Revision$, $Date$
+ *  @author    Paul Speed
  */
-public final class SsiInclude implements SsiCommand {
+public class FileReference {
 
     /**
-     *  Runs this command using the specified parameters.
-     *
-     *  @param cmdName  The name that was used to lookup this
-     *                  command instance.
-     *  @param argNames String array containing the parameter
-     *                  names for the command.
-     *  @param argVals  String array containing the paramater
-     *                  values for the command.
-     *  @param ssiEnv   The environment to use for command
-     *                  execution.
-     *  @param out      A convenient place for commands to
-     *                  write their output.
+     *  The normalized path of the file.
      */
-    public void execute( String cmdName, String[] argNames,
-                         String[] argVals, SsiEnvironment ssiEnv,
-                         ServletOutputStream out )
-                                    throws IOException,
-                                           SsiCommandException {
-        FileReference ref = null;
+    private String path;
 
-        String value = ssiEnv.substituteVariables( argVals[0] );
+    /**
+     *  The servlet context to which the file is relative.
+     */
+    private ServletContext context;
 
-        if (argNames[0].equals("file"))
-            ref = ssiEnv.getFileReference( value, false );
-        else if (argNames[0].equals("virtual"))
-            ref = ssiEnv.getFileReference( value, true );
-
-        if (ref == null)
-            throw new SsiCommandException( "Path not found:" + value );
-
-        try {
-            RequestDispatcher rd = ref.getRequestDispatcher();
-            rd.include( ssiEnv.getRequest(),
-                        new ResponseIncludeWrapper( ssiEnv.getResponse(),
-                                                    out ) );
-        } catch (Exception e) {
-            throw new SsiCommandException( e.toString() );
-        }
+    /**
+     *  Creates a new file reference object containing the
+     *  specified normalized path and context.
+     */
+    public FileReference( String path, ServletContext context ) {
+        this.path = path;
+        this.context = context;
     }
+
+    /**
+     *  Returns the URL object for this file reference.
+     */
+    public URL getResource() throws MalformedURLException {
+        return context.getResource(path);
+    }
+
+    /**
+     *  Returns a RequestDispatcher suitable for processing
+     *  the referenced file.
+     */
+    public RequestDispatcher getRequestDispatcher() {
+        return context.getRequestDispatcher(path);
+    }
+
 }

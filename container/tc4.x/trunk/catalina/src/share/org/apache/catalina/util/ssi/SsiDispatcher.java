@@ -1,5 +1,4 @@
 /*
- * SsiInclude.java
  * $Header$
  * $Revision$
  * $Date$
@@ -65,26 +64,69 @@
 package org.apache.catalina.util.ssi;
 
 import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
+import java.util.Hashtable;
+
 import javax.servlet.ServletOutputStream;
-import javax.servlet.RequestDispatcher;
 
 /**
- * SsiCommand to include a file, implemented using
- * <code>RequestDispatcher.include().</code>
+ *  Dispatcher class used to run SSI commands.  The idea is that
+ *  each SsiInokerServlet instance will have its own SsiDispatcher
+ *  and can therefore configure certain context-global settings.
  *
- * @author Bip Thelin
- * @author Paul Speed
- * @version $Revision$, $Date$
+ *  @version   $Revision$, $Date$
+ *  @author    Paul Speed
  */
-public final class SsiInclude implements SsiCommand {
+public class SsiDispatcher {
 
     /**
-     *  Runs this command using the specified parameters.
+     *  Determines how to treate unknown command references.
+     */
+    private boolean ignoreUnsupportedDirective = true;
+
+    /**
+     *  Contains the SSI command instances.  This is shared
+     *  across all dispatcher instances.
+     */
+    private static Hashtable ssiCommands;
+
+    /**
+     *  Initialize the pool of SsiCommands.
+     */
+    static {
+        ssiCommands = new Hashtable(6);
+        ssiCommands.put("config", new SsiConfig());
+        ssiCommands.put("include", new SsiInclude());
+        ssiCommands.put("echo", new SsiEcho());
+        ssiCommands.put("fsize", new SsiFsize());
+        ssiCommands.put("flastmod", new SsiFlastmod());
+        ssiCommands.put("exec", new SsiExec());
+        ssiCommands.put("set", new SsiSet());
+    }
+
+    /**
+     *  Set to true to ignore unknown commands.
+     */
+    public void setIgnoreUnsupportedDirective(boolean flag) {
+        this.ignoreUnsupportedDirective = flag;
+    }
+
+    /**
+     * Set to true to consider the webapp as root.
+    public void setIsVirtualWebappRelative(boolean flag) {
+        this.isVirtualWebappRelative = flag;
+    }
+
+    /**
+     *  Returns true if the dispatcher ignores unknown commands.
+     */
+    public boolean ignoreUnsupportedDirective() {
+        return ignoreUnsupportedDirective;
+    }
+
+    /**
+     *  Runs the specified command using the specified arguments.
      *
-     *  @param cmdName  The name that was used to lookup this
-     *                  command instance.
+     *  @param cmdName  The name of the command to run.
      *  @param argNames String array containing the parameter
      *                  names for the command.
      *  @param argVals  String array containing the paramater
@@ -94,30 +136,26 @@ public final class SsiInclude implements SsiCommand {
      *  @param out      A convenient place for commands to
      *                  write their output.
      */
-    public void execute( String cmdName, String[] argNames,
-                         String[] argVals, SsiEnvironment ssiEnv,
-                         ServletOutputStream out )
-                                    throws IOException,
-                                           SsiCommandException {
-        FileReference ref = null;
-
-        String value = ssiEnv.substituteVariables( argVals[0] );
-
-        if (argNames[0].equals("file"))
-            ref = ssiEnv.getFileReference( value, false );
-        else if (argNames[0].equals("virtual"))
-            ref = ssiEnv.getFileReference( value, true );
-
-        if (ref == null)
-            throw new SsiCommandException( "Path not found:" + value );
+    public void runCommand( String cmdName,
+                            String[] argNames,
+                            String[] argVals,
+                            SsiEnvironment ssiEnv,
+                            ServletOutputStream out )
+                                    throws IOException {
+        // Lookup the command
+        SsiCommand cmd = (SsiCommand)ssiCommands.get(cmdName);
+        if (cmd == null) {
+            if (!ignoreUnsupportedDirective)
+                out.print( ssiEnv.getConfiguration("errmsg") );
+            return;
+        }
 
         try {
-            RequestDispatcher rd = ref.getRequestDispatcher();
-            rd.include( ssiEnv.getRequest(),
-                        new ResponseIncludeWrapper( ssiEnv.getResponse(),
-                                                    out ) );
-        } catch (Exception e) {
-            throw new SsiCommandException( e.toString() );
+            // Run the command
+            cmd.execute( cmdName, argNames, argVals, ssiEnv, out );
+        } catch (SsiCommandException e) {
+            // Write the error
+            out.print( ssiEnv.getConfiguration("errmsg") );
         }
     }
 }

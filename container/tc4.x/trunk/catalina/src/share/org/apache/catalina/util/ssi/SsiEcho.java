@@ -64,55 +64,42 @@
 
 package org.apache.catalina.util.ssi;
 
+import java.io.IOException;
+import javax.servlet.ServletOutputStream;
+
 /**
- * Return the result associated with the supplied Server Variable.
+ * Writes the variable value to the servlet stream.
  *
  * @author Bip Thelin
+ * @author Paul Speed
  * @version $Revision$, $Date$
  */
-public final class SsiEcho
-    extends SsiMediator implements SsiCommand {
+public final class SsiEcho implements SsiCommand {
 
     /**
-     * Get the value associated with this parameter
+     *  Runs this command using the specified parameters.
      *
-     * @param strParamType The parameter type
-     * @param strParam The value, only "var" accepted
-     * @return a value The computed result
+     *  @param cmdName  The name that was used to lookup this
+     *                  command instance.
+     *  @param argNames String array containing the parameter
+     *                  names for the command.
+     *  @param argVals  String array containing the paramater
+     *                  values for the command.
+     *  @param ssiEnv   The environment to use for command
+     *                  execution.
+     *  @param out      A convenient place for commands to
+     *                  write their output.
      */
-    public final String getStream(String[] strParamType,
-                                  String[] strParam) {
-        String retString;
+    public void execute( String cmdName, String[] argNames,
+                         String[] argVals, SsiEnvironment ssiEnv,
+                         ServletOutputStream out )
+                                    throws IOException,
+                                           SsiCommandException {
+        if (!"var".equals(argNames[0]))
+            throw new SsiCommandException( "Unknown parameter:" + argNames[0] );
 
-        if(strParamType[0].equals("var"))
-            retString = super.getServerVariable(strParam[0]);
-        else
-            retString = new String(super.getError());
+        String val = ssiEnv.getVariable(argVals[0]);
 
-        return retString;
+        out.print( (val==null)?"(none)":val );
     }
-
-    /**
-     * Not used since this SsiCommand return a stream, use
-     * <code>getStream()</code> instead.
-     *
-     * @param strParamType a value of type 'String[]'
-     * @param strParam a value of type 'String[]'
-     */
-    public final void process(String[] strParamType, String[] strParam) {}
-
-    /**
-     * Returns <code>true</code> this SsiCommand is always prnitable
-     * and should therefore be accsessed through <code>getStream()</code>
-     *
-     * @return a value of type 'boolean'
-     */
-    public final boolean isPrintable() { return true; }
-
-    /**
-     * Returns <code>false</code>, this SsiCommands is never buffered.
-     *
-     * @return a value of type 'boolean'
-     */
-    public final boolean isModified() { return false; }
 }

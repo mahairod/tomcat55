@@ -1,5 +1,4 @@
 /*
- * SsiInclude.java
  * $Header$
  * $Revision$
  * $Date$
@@ -64,60 +63,20 @@
 
 package org.apache.catalina.util.ssi;
 
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.RequestDispatcher;
-
 /**
- * SsiCommand to include a file, implemented using
- * <code>RequestDispatcher.include().</code>
+ *  Exception thrown by SsiCommands if they have problems during
+ *  execution.
  *
- * @author Bip Thelin
- * @author Paul Speed
- * @version $Revision$, $Date$
+ *  @version   $Revision$, $Date$
+ *  @author    Paul Speed
  */
-public final class SsiInclude implements SsiCommand {
+public class SsiCommandException extends Exception {
 
-    /**
-     *  Runs this command using the specified parameters.
-     *
-     *  @param cmdName  The name that was used to lookup this
-     *                  command instance.
-     *  @param argNames String array containing the parameter
-     *                  names for the command.
-     *  @param argVals  String array containing the paramater
-     *                  values for the command.
-     *  @param ssiEnv   The environment to use for command
-     *                  execution.
-     *  @param out      A convenient place for commands to
-     *                  write their output.
-     */
-    public void execute( String cmdName, String[] argNames,
-                         String[] argVals, SsiEnvironment ssiEnv,
-                         ServletOutputStream out )
-                                    throws IOException,
-                                           SsiCommandException {
-        FileReference ref = null;
-
-        String value = ssiEnv.substituteVariables( argVals[0] );
-
-        if (argNames[0].equals("file"))
-            ref = ssiEnv.getFileReference( value, false );
-        else if (argNames[0].equals("virtual"))
-            ref = ssiEnv.getFileReference( value, true );
-
-        if (ref == null)
-            throw new SsiCommandException( "Path not found:" + value );
-
-        try {
-            RequestDispatcher rd = ref.getRequestDispatcher();
-            rd.include( ssiEnv.getRequest(),
-                        new ResponseIncludeWrapper( ssiEnv.getResponse(),
-                                                    out ) );
-        } catch (Exception e) {
-            throw new SsiCommandException( e.toString() );
-        }
+    public SsiCommandException( String message ) {
+        super( message );
     }
+
+    public SsiCommandException() {
+    }
+
 }

@@ -74,95 +74,119 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.RequestDispatcher;
 
 /**
  * @author Bip Thelin
  * @author Amy Roh
+ * @author Paul Speed
  * @version $Revision$, $Date$
  *
  */
-public final class SsiExec
-    extends SsiMediator implements SsiCommand {
+public final class SsiExec implements SsiCommand {
 
-    public SsiExec() {}
+    /**
+     *  Runs this command using the specified parameters.
+     *
+     *  @param cmdName  The name that was used to lookup this
+     *                  command instance.
+     *  @param argNames String array containing the parameter
+     *                  names for the command.
+     *  @param argVals  String array containing the paramater
+     *                  values for the command.
+     *  @param ssiEnv   The environment to use for command
+     *                  execution.
+     *  @param out      A convenient place for commands to
+     *                  write their output.
+     */
+    public void execute( String cmdName, String[] argNames,
+                         String[] argVals, SsiEnvironment ssiEnv,
+                         ServletOutputStream out )
+                                    throws IOException,
+                                           SsiCommandException {
 
-    public final String getStream(String[] strParamType,
-                                  String[] strParam) {
+        if ("cgi".equals(argNames[0])) {
+            String path = getCGIPath(argVals[0], ssiEnv.getContextPath());
+            if (path == null)
+                throw new SsiCommandException( "Invalid path:" + argVals[0] );
 
-        String retString = "";
-        String path = "";
-
-        if(strParamType[0].equals("cgi")) {
-            path = super.getCGIPath(strParam[0]);
-            if (path != null) {
-                try {
-                    URL url = new URL(path);
-                    InputStream istream = url.openStream();
-                    int i = istream.read();
-                    while (i != -1) {
-                        super.out.write(i);
-                        i = istream.read();
-                    }
-                } catch (IOException e) {
-                    retString = new String(super.getError());
-                }
-            } else {
-                retString = new String(super.getError());
+            // Stream the CGI output back to the client
+            URL u = new URL(path);
+            InputStream istream = u.openStream();
+            int i;
+            while ((i = istream.read()) != -1) {
+                out.write(i);
             }
-        } else if(strParamType[0].equals("cmd"))
+        } else if ("cmd".equals(argNames[0])) {
+            String path = getCommandPath(argVals[0]);
+            if (path == null)
+                throw new SsiCommandException( "Invalid path:" + argVals[0] );
 
-            path = super.getCommandPath(strParam[0]);
+            BufferedReader commandsStdOut = null;
+            BufferedReader commandsStdErr = null;
+            BufferedOutputStream commandsStdIn = null;
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
+            //byte[] bBuf = new byte[1024];
+            char[] cBuf = new char[1024];
+            int bufRead = -1;
 
-            if (path!=null) {
-                    BufferedReader commandsStdOut = null;
-                    BufferedReader commandsStdErr = null;
-                    BufferedOutputStream commandsStdIn = null;
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(super.out));
-                    //byte[] bBuf = new byte[1024];
-                    char[] cBuf = new char[1024];
-                    int bufRead = -1;
+            Runtime rt = null;
+            Process proc = null;
 
-                Runtime rt = null;
-                Process proc = null;
-
-                try {
-                    rt = Runtime.getRuntime();
-                    proc = rt.exec(path);
+            try {
+                rt = Runtime.getRuntime();
+                proc = rt.exec(path);
 
                 commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
-                    //boolean isRunning = true;
-                    commandsStdOut = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-                    commandsStdErr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-                    BufferedWriter servletContainerStdout = null;
+                //boolean isRunning = true;
+                commandsStdOut = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+                commandsStdErr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+                BufferedWriter servletContainerStdout = null;
 
-                        while ((bufRead = commandsStdErr.read(cBuf)) != -1) {
-                                out.write(cBuf, 0, bufRead);
-                            }
-
-                    cBuf = new char[1024];
-                    while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
-                                out.write(cBuf, 0, bufRead);
-                            }
-
-                        super.out.flush();
-
-                        proc.exitValue();
-                } catch (IOException ex) {
+                while ((bufRead = commandsStdErr.read(cBuf)) != -1) {
+                    writer.write(cBuf, 0, bufRead);
                 }
-        } else {
-            retString = new String(super.getError());
-        }
 
-        return retString;
+                cBuf = new char[1024];
+                while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
+                    writer.write(cBuf, 0, bufRead);
+                }
+
+                out.flush();
+
+                proc.exitValue();
+            } catch (IOException ex) {
+            }
+        }
     }
 
-    public final void process(String[] strParamType, String[] strParam) {}
+    protected String getCGIPath( String path, String contextPath ) {
 
-    public final boolean isPrintable() { return true; }
+        String cgibinStr = "/cgi-bin/";
 
-    public final boolean isModified() { return false; }
+        if (path == null)
+            return null;
+
+        if (!path.startsWith(cgibinStr)) {
+            return null;
+        } else {
+            //normalized = normalized.substring(1, cgibinStr.length());
+            //normalized = cgiPathPrefix + File.separator + normalized;
+            path = "http://localhost:8080" + contextPath + path;
+        }
+        return (path);
+    }
+
+    protected String getCommandPath(String path) {
+
+        String commandShellStr = "/bin/sh";
+
+        if (path == null)
+            return null;
+
+        if (!path.startsWith("/"))
+            path = "/" + path;
+        path = commandShellStr + path;
+        return (path);
+    }
 }

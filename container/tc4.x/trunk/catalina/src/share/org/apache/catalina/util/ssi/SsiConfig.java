@@ -66,35 +66,17 @@ package org.apache.catalina.util.ssi;
 
 import java.util.Properties;
 
+import javax.servlet.ServletOutputStream;
+
 /**
  * Implementation of the SsiCommand config, example of usage:
  * &lt;!--#config sizefmt="abbrev" errmsg="An error occured!"--&gt;
  *
  * @author Bip Thelin
+ * @author Paul Speed
  * @version $Revision$, $Date$
  */
-public final class SsiConfig
-    extends SsiMediator implements SsiCommand {
-
-    /**
-     * Variable to hold if this SsiCommand modified or not
-     */
-    private boolean modified = false;
-
-    /**
-     * Variable to hold the errmsg to return
-     */
-    private byte[] errmsg;
-
-    /**
-     * Variable to hold which sizefmt to use
-     */
-    private String sizefmt;
-
-    /**
-     * Variable to hold which timefmt to use
-     */
-    private String timefmt;
+public final class SsiConfig implements SsiCommand {
 
     /**
      * Variable to hold the patterns for translation
@@ -132,92 +114,40 @@ public final class SsiConfig
     }
 
     /**
-     * Initialize this SsiCommand
+     *  Runs this command using the specified parameters.
      *
+     *  @param cmdName  The name that was used to lookup this
+     *                  command instance.
+     *  @param argNames String array containing the parameter
+     *                  names for the command.
+     *  @param argVals  String array containing the paramater
+     *                  values for the command.
+     *  @param ssiEnv   The environment to use for command
+     *                  execution.
+     *  @param out      A convenient place for commands to
+     *                  write their output.
      */
-    public SsiConfig() {
-        init();
-    }
+    public void execute( String cmdName, String[] argNames,
+                         String[] argVals, SsiEnvironment ssiEnv,
+                         ServletOutputStream out )
+                                    throws SsiCommandException {
 
-    /**
-     * <code>process()</code> should be used since this SsiCommand
-     * does not return anything.
-     *
-     * @param strParamType a value of type 'String[]'
-     * @param strParam a value of type 'String[]'
-     * @return a value of type 'String'
-     */
-    public String getStream(String[] strParamType, String[] strParam) {
-        return "";
-    }
-
-    /**
-     * Process request.
-     *
-     * @param strParamType a value of type 'String[]'
-     * @param strParam a value of type 'String[]'
-     */
-    public final void process(String[] strParamType, String[] strParam) {
-        modified = true;
-
-        for(int i=0;i<strParamType.length;i++) {
-            if(strParamType[i].equals("errmsg"))
-                errmsg = strParam[i].getBytes();
-            else if(strParamType[i].equals("sizefmt"))
-                sizefmt = strParam[i];
-            else if(strParamType[i].equals("timefmt"))
-                timefmt = convertFormat(strParam[i]);
+        // Set the configuration variables that we understand
+        for (int i = 0; i < argNames.length; i++) {
+            String name = argNames[i];
+            String value = argVals[i];
+            if ("errmsg".equals(name)) {
+                ssiEnv.setConfiguration( name,
+                                         ssiEnv.substituteVariables(value) );
+            } else if ("sizefmt".equals(name)) {
+                ssiEnv.setConfiguration( name,
+                                         ssiEnv.substituteVariables(value) );
+            } else if ("timefmt".equals(name)) {
+                value = convertFormat( ssiEnv.substituteVariables(value) );
+                ssiEnv.setConfiguration( name, value );
+            }
         }
     }
-
-    /**
-     * Return the current error message.
-     *
-     * @return a value of type 'byte[]'
-     */
-    public final byte[] getError() {
-        return errmsg;
-    }
-
-    /**
-     * Return the current Size format.
-     *
-     * @return a value of type 'String'
-     */
-    public final String getSizefmt() {
-        return sizefmt;
-    }
-
-    /**
-     * Return the current Time format.
-     *
-     * @return a value of type 'String'
-     */
-    public final String getTimefmt() {
-        return timefmt;
-    }
-
-    /**
-     * Initialize, run once per page being parsed.
-     *
-     */
-    public final void flush() {
-        init();
-    }
-
-    /**
-     * Returns true if SSI Command does any output.
-     *
-     * @return a value of type 'boolean'
-     */
-    public final boolean isPrintable() { return false;}
-
-    /**
-     * Return true if we're modified.
-     *
-     * @return a value of type 'boolean'
-     */
-    public final boolean isModified() { return modified; }
 
     /**
      * Search the provided pattern and get the C standard
@@ -281,17 +211,5 @@ public final class SsiConfig
         String retCommand = translate.getProperty("".valueOf(c));
 
         return retCommand==null?"":retCommand;
-    }
-
-    /**
-     * Called from <code>flush</code> Initialize internal parameters
-     * in their default setting.
-     *
-     */
-    private void init() {
-        errmsg =
-            "[an error occurred while processing this directive]".getBytes();
-        sizefmt = "abbrev";
-        timefmt = "EEE, dd MMM yyyyy HH:mm:ss z";
     }
 }

@@ -69,109 +69,54 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.MalformedURLException;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
 
 /**
  * Get the last modified date for a file, the date is subject
  * of formatting.
  *
  * @author Bip Thelin
+ * @author Paul Speed
  * @version $Revision$, $Date$
  */
-public final class SsiFlastmod
-    extends SsiMediator implements SsiCommand {
+public final class SsiFlastmod implements SsiCommand {
 
     /**
-     * Get the date of a file and format it correctly
+     *  Runs this command using the specified parameters.
      *
-     * @param strParamType The type of parameter
-     * @param strParam The value of the parameter
-     * @return The date of the file
+     *  @param cmdName  The name that was used to lookup this
+     *                  command instance.
+     *  @param argNames String array containing the parameter
+     *                  names for the command.
+     *  @param argVals  String array containing the paramater
+     *                  values for the command.
+     *  @param ssiEnv   The environment to use for command
+     *                  execution.
+     *  @param out      A convenient place for commands to
+     *                  write their output.
      */
-    public final String getStream(String[] strParamType,
-                                  String[] strParam) {
-        String path = new String();
-        long lastModified;
-        String sLastModified = null;
-        URL url = null;
+    public void execute( String cmdName, String[] argNames,
+                         String[] argVals, SsiEnvironment ssiEnv,
+                         ServletOutputStream out )
+                                    throws IOException,
+                                           SsiCommandException {
+        FileReference ref = null;
 
-        if(strParamType[0].equals("file")) {
-            path = super.getFilePath(strParam[0]);
-        } else if(strParamType[0].equals("virtual")) {
-            path = super.getVirtualPath(strParam[0]);
-        }
+        String value = ssiEnv.substituteVariables( argVals[0] );
 
-        try {
-            url = super.servletContext.getResource(path);
-            lastModified = url.openConnection().getLastModified();
-        } catch (MalformedURLException e){
-            lastModified = 0;
-        } catch (IOException e) {
-            lastModified = 0;
-        } catch (NullPointerException e) {
-            lastModified = 0;
-        }
+        if (argNames[0].equals("file"))
+            ref = ssiEnv.getFileReference( value, false );
+        else if (argNames[0].equals("virtual"))
+            ref = ssiEnv.getFileReference( value, true );
 
-        if(lastModified==0)
-            sLastModified = (new String(super.getError()));
-        else
-            sLastModified = super.timefmt(new Date(lastModified));
+        if (ref == null)
+            throw new SsiCommandException( "Path not found:" + value );
 
-        return sLastModified;
+        String lastMod = ssiEnv.getLastModified( ref );
+        if (lastMod == null)
+            throw new SsiCommandException( "Error retrieving mod time." );
+
+        out.print( lastMod );
     }
 
-    /**
-     * Get the date of a file and format it correctly
-     *
-     * @param path The path to the file
-     * @return The Date to return
-     */
-    protected String getDate(String path) {
-        long lastModified;
-        String sLastModified = null;
-        URL url = null;
-
-        path = super.getVirtualPath(path);
-
-        try {
-            url = super.servletContext.getResource(path);
-            lastModified = url.openConnection().getLastModified();
-        } catch (MalformedURLException e){
-            lastModified = 0;
-        } catch (IOException e) {
-            lastModified = 0;
-        } catch (NullPointerException e) {
-            lastModified = 0;
-        }
-
-        if(lastModified==0)
-            sLastModified = (new String(super.getError()));
-        else
-            sLastModified = super.timefmt(new Date(lastModified));
-
-        return sLastModified;
-    }
-
-    /**
-     * Not used since this SsiCommand return a stream, use
-     * <code>getStream()</code> instead.
-     *
-     * @param strParamType a value of type 'String[]'
-     * @param strParam a value of type 'String[]'
-     */
-    public final void process(String[] strParamType, String[] strParam) {}
-
-    /**
-     * Returns <code>true</code> this SsiCommand is always prnitable
-     * and should therefore be accsessed through <code>getStream()</code>
-     *
-     * @return a value of type 'boolean'
-     */
-    public final boolean isPrintable() { return true; }
-
-    /**
-     * Returns <code>false</code>, this SsiCommands is never buffered.
-     *
-     * @return a value of type 'boolean'
-     */
-    public final boolean isModified() { return false; }
 }

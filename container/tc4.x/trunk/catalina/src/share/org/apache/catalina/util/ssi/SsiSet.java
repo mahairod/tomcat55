@@ -1,5 +1,4 @@
 /*
- * SsiInclude.java
  * $Header$
  * $Revision$
  * $Date$
@@ -64,21 +63,15 @@
 
 package org.apache.catalina.util.ssi;
 
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.RequestDispatcher;
 
 /**
- * SsiCommand to include a file, implemented using
- * <code>RequestDispatcher.include().</code>
+ *  SSI command to set a server variable in the SsiEnvironment.
  *
- * @author Bip Thelin
- * @author Paul Speed
- * @version $Revision$, $Date$
+ *  @version   $Revision$, $Date$
+ *  @author    Paul Speed
  */
-public final class SsiInclude implements SsiCommand {
+public final class SsiSet implements SsiCommand {
 
     /**
      *  Runs this command using the specified parameters.
@@ -97,27 +90,27 @@ public final class SsiInclude implements SsiCommand {
     public void execute( String cmdName, String[] argNames,
                          String[] argVals, SsiEnvironment ssiEnv,
                          ServletOutputStream out )
-                                    throws IOException,
-                                           SsiCommandException {
-        FileReference ref = null;
+                                    throws SsiCommandException {
 
-        String value = ssiEnv.substituteVariables( argVals[0] );
+        String varName = null;
+        String value = null;
 
-        if (argNames[0].equals("file"))
-            ref = ssiEnv.getFileReference( value, false );
-        else if (argNames[0].equals("virtual"))
-            ref = ssiEnv.getFileReference( value, true );
-
-        if (ref == null)
-            throw new SsiCommandException( "Path not found:" + value );
-
-        try {
-            RequestDispatcher rd = ref.getRequestDispatcher();
-            rd.include( ssiEnv.getRequest(),
-                        new ResponseIncludeWrapper( ssiEnv.getResponse(),
-                                                    out ) );
-        } catch (Exception e) {
-            throw new SsiCommandException( e.toString() );
+        for (int i = 0; i < argNames.length; i++) {
+            String name = argNames[i];
+            if ("var".equals( name ))
+                varName = argVals[i];
+            else if ("value".equals( name ))
+                value = argVals[i];
         }
+
+        if (varName == null)
+            throw new SsiCommandException( "No variable specified." );
+
+        // Resolve any variable references in the value
+        value = ssiEnv.substituteVariables( value );
+
+        // Set the server variable value
+        ssiEnv.setVariable( varName, value );
     }
+
 }
