@@ -88,7 +88,8 @@ the following functions:</p>
 <code>Context</code>:
 <ul>
 <li>Install the <code>manager.xml</code> context configuration file
-    in the <code>appBase</code> for your <code>Host</code>.</li>
+    in the <code>$CATALINA_HOME/conf/[enginename]/[hostname]</code> folder.
+</li>
 <li>Configure the Manager <code>Context</code> within the
     <code>Host</code> configuration in your Tomcat <code>server.xml</code>
     configuration. Here is an example:
