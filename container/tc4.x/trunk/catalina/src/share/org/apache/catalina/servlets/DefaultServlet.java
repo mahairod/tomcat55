@@ -111,9 +111,10 @@ import javax.naming.directory.Attributes;
 import org.apache.naming.resources.Resource;
 import org.apache.naming.resources.ResourceAttributes;
 import org.apache.catalina.Globals;
+import org.apache.catalina.util.FastHttpDateFormat;
 import org.apache.catalina.util.MD5Encoder;
-import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.RequestUtil;
+import org.apache.catalina.util.StringManager;
 
 
 /**
@@ -1128,7 +1129,7 @@ public class DefaultServlet
             if (debug > 0)
                 log("DefaultServlet.serveFile:  lastModified='" +
                     (new Timestamp(resourceInfo.date)).toString() + "'");
-            response.setDateHeader("Last-Modified", resourceInfo.date);
+            response.setHeader("Last-Modified", resourceInfo.httpDate);
 
         }
 
@@ -1568,7 +1569,7 @@ public class DefaultServlet
                 sb.append("</tt></td>\r\n");
 
                 sb.append("<td align=\"right\"><tt>");
-                sb.append(renderLastModified(childResourceInfo.date));
+                sb.append(childResourceInfo.httpDate);
                 sb.append("</tt></td>\r\n");
 
                 sb.append("</tr>\r\n");
@@ -1591,19 +1592,6 @@ public class DefaultServlet
         writer.write(sb.toString());
         writer.flush();
         return (new ByteArrayInputStream(stream.toByteArray()));
-
-    }
-
-
-    /**
-     * Render the last modified date and time for the specified timestamp.
-     *
-     * @param lastModified Last modified date and time, in milliseconds since
-     *  the epoch
-     */
-    protected String renderLastModified(long lastModified) {
-
-        return (formats[0].format(new Date(lastModified)));
 
     }
 
@@ -2190,10 +2178,10 @@ public class DefaultServlet
                             creationDate = tempDate.getTime();
                         tempDate = tempAttrs.getLastModifiedDate();
                         if (tempDate != null) {
+                            httpDate = FastHttpDateFormat.getDate(tempDate);
                             date = tempDate.getTime();
-                            httpDate = formats[0].format(tempDate);
                         } else {
-                            httpDate = formats[0].format(new Date());
+                            httpDate = FastHttpDateFormat.getCurrentDate();
                         }
                         length = tempAttrs.getContentLength();
                     }

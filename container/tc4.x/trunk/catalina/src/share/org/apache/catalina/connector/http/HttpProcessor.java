@@ -91,8 +91,9 @@ import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
-import org.apache.catalina.util.RequestUtil;
+import org.apache.catalina.util.FastHttpDateFormat;
 import org.apache.catalina.util.LifecycleSupport;
+import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.StringParser;
 
@@ -1006,8 +1007,8 @@ final class HttpProcessor
 
             // Ask our Container to process this request
             try {
-                ((HttpServletResponse) response).addDateHeader
-                    ("Date", System.currentTimeMillis());
+                ((HttpServletResponse) response).setHeader
+                    ("Date", FastHttpDateFormat.getCurrentDate());
                 if (ok) {
                     connector.getContainer().invoke(request, response);
                 }
