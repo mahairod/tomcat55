@@ -585,15 +585,14 @@ public abstract class AuthenticatorBase
         String roles[] = constraint.findAuthRoles();
         if (roles == null)
             roles = new String[0];
-        if (roles.length == 0) {
-            if (constraint.getAuthConstraint() &&
-                !constraint.getAllRoles()) {
-                ((HttpServletResponse) response.getResponse()).sendError
-                    (HttpServletResponse.SC_FORBIDDEN,
-                     sm.getString("authenticator.forbidden"));
-                return (false); // No listed roles means no access at all
-            } else
-                return (true);  // Authenticated user is sufficient
+
+        if (constraint.getAllRoles())
+            return (true);
+        if ((roles.length == 0) && (constraint.getAuthConstraint())) {
+            ((HttpServletResponse) response.getResponse()).sendError
+                (HttpServletResponse.SC_FORBIDDEN,
+                 sm.getString("authenticator.forbidden"));
+            return (false); // No listed roles means no access at all
         }
         for (int i = 0; i < roles.length; i++) {
             if (realm.hasRole(principal, roles[i]))
