@@ -11,6 +11,7 @@ $Id$
 KNOWN ISSUES IN THIS RELEASE:
 ============================
 
+* JMX required
 * Tomcat 5.0 and JNI Based Applications
 * Tomcat 5.0 Standard APIs Available
 * Tomcat 5.0 and XML Parsers
@@ -22,6 +23,20 @@ KNOWN ISSUES IN THIS RELEASE:
 * Symlinking static resources
 * Enabling invoker servlet
 * When all else fails
+
+
+------------
+JMX required
+------------
+
+Due to new licensing guidelines mandated by the Apache Software
+Foundation Board of Directors, a JMX implementation can no longer
+be distributed with the Apache Tomcat binaries. As a result, you
+must download a JMX 1.2 implementation (such as the Sun Reference
+Implementation) and copy the JAR containing the API and
+implementation of the JMX specification to: ${catalina.home}/bin/jmx.jar
+
+For similar reasons, a Windows installer for Tomcat is no longer available.
 
 
 -------------------------------------
@@ -52,7 +67,7 @@ Tomcat 5.0 Standard APIs Available:
 
 A standard installation of Tomcat 5 makes all of the following APIs available
 for use by web applications (by placing them in "common/lib" or "shared/lib"):
-* ant.jar (Apache Ant)
+* ant.jar (Apache Ant 1.6)
 * commons-collections.jar (Commons Collections 2.1)
 * commons-dbcp.jar (Commons DBCP 1.1)
 * commons-el.jar (Commons Expression Language 1.0)
@@ -60,7 +75,6 @@ for use by web applications (by placing them in "common/lib" or "shared/lib"):
 * commons-pool.jar (Commons Pool 1.1)
 * jasper-compiler.jar (Jasper 2 Compiler)
 * jasper-runtime.jar (Jasper 2 Runtime)
-* jmx.jar (Sun JMX RI 1.2)
 * jsp-api.jar (JSP 2.0 API)
 * commons-el.jar (JSP 2.0 Expression Language)
 * naming-common.jar (JNDI Context implementation)
