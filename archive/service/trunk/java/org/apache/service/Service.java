@@ -66,9 +66,38 @@ package org.apache.service;
 public interface Service {
 
     /**
+     * Initialize this <code>Service</code> instance.
+     * <p>
+     *   This method gets called once the JVM process is created and the
+     *   <code>Service</code> instance is created thru its empty public
+     *   constructor.
+     * </p>
+     * <p>
+     *   Under certain operating systems (typically Unix based operating
+     *   systems) and if the native invocation framework is configured to do
+     *   so, this method might be called with <i>super-user</i> privileges.
+     * </p>
+     * <p>
+     *   For example, it might be wise to create <code>ServerSocket</code>
+     *   instances within the scope of this method, and perform all operations
+     *   requiring <i>super-user</i> privileges in the underlying operating
+     *   system.
+     * </p>
+     * <p>
+     *   Apart from set up and allocation of native resources, this method
+     *   must not start the actual operation of the <code>Service</code> (such
+     *   as starting threads calling the <code>ServerSocket.accept()</code>
+     *   method) as this would impose some serious security hazards. The
+     *   start of operation must be performed in the <code>start()</code>
+     *   method.
+     * </p>
      *
+     * @param context The <code>ServiceContext</code> instance associated with
+     *                service <code>Service</code> instance.
+     * @exception Exception Any exception preventing a successful
+     *                      initialization.
      */
-    public void load(ServiceContext context)
+    public void init(ServiceContext context)
     throws Exception;
 
     /**
@@ -82,5 +111,10 @@ public interface Service {
      */
     public void stop()
     throws Exception;
+
+    /**
+     * 
+     */
+    public void destroy();
 
 }
