@@ -338,6 +338,7 @@
 
 
   <mbean         name="MBeanFactory"
+            className="org.apache.catalina.mbeans.MBeanFactory"
           description="Factory for MBeans and corresponding components"
                domain="Catalina">
 
@@ -687,7 +688,7 @@
           description="Associate the specified Loader with this Context"
                impact="ACTION"
            returnType="void">
-      <parameter name="valve"
+      <parameter name="loader"
           description="MBean Name of the Loader to be associated"
                  type="java.lang.String"/>
     </operation>
@@ -696,7 +697,7 @@
           description="Associate the specified Logger with this Context"
                impact="ACTION"
            returnType="void">
-      <parameter name="valve"
+      <parameter name="logger"
           description="MBean Name of the Logger to be associated"
                  type="java.lang.String"/>
     </operation>
@@ -705,7 +706,7 @@
           description="Associate the specified Manager with this Context"
                impact="ACTION"
            returnType="void">
-      <parameter name="valve"
+      <parameter name="manager"
           description="MBean Name of the Manager to be associated"
                  type="java.lang.String"/>
     </operation>
@@ -714,7 +715,7 @@
           description="Associate the specified Realm with this Context"
                impact="ACTION"
            returnType="void">
-      <parameter name="valve"
+      <parameter name="realm"
           description="MBean Name of the Realm to be associated"
                  type="java.lang.String"/>
     </operation>
@@ -781,7 +782,7 @@
           description="Associate the specified Logger with this Engine"
                impact="ACTION"
            returnType="void">
-      <parameter name="valve"
+      <parameter name="logger"
           description="MBean Name of the Logger to be associated"
                  type="java.lang.String"/>
     </operation>
@@ -790,7 +791,7 @@
           description="Associate the specified Realm with this Engine"
                impact="ACTION"
            returnType="void">
-      <parameter name="valve"
+      <parameter name="realm"
           description="MBean Name of the Realm to be associated"
                  type="java.lang.String"/>
     </operation>
@@ -890,7 +891,7 @@
           description="Associate the specified Logger with this Host"
                impact="ACTION"
            returnType="void">
-      <parameter name="valve"
+      <parameter name="logger"
           description="MBean Name of the Logger to be associated"
                  type="java.lang.String"/>
     </operation>
@@ -899,7 +900,7 @@
           description="Associate the specified Realm with this Host"
                impact="ACTION"
            returnType="void">
-      <parameter name="valve"
+      <parameter name="realm"
           description="MBean Name of the Realm to be associated"
                  type="java.lang.String"/>
     </operation>
