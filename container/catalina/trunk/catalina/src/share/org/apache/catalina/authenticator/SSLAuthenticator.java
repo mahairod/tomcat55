@@ -148,6 +148,14 @@ public class SSLAuthenticator
             (HttpServletResponse) response.getResponse();
         if (debug >= 1)
             log(" Looking up certificates");
+
+        if ("POST".equalsIgnoreCase(request.getMethod())) {
+            // Causes POST of  application/x-www-form-urlencoded to be read,
+            // removing data from socket so that a cert exchange can happen if needed.
+            // A more general solution for all POSTs is coming 01-Nov-2002 bobh
+            ((HttpServletRequest) request.getRequest()).getParameterMap();
+        }
+
         X509Certificate certs[] = (X509Certificate[])
             request.getRequest().getAttribute(Globals.CERTIFICATES_ATTR);
         if ((certs == null) || (certs.length < 1)) {
