@@ -164,14 +164,14 @@ commons-daemon.loc=http://www.apache.org/dist/jakarta/commons/daemon/binaries/co
 commons-dbcp.home=${base.path}/commons-dbcp-1.1
 commons-dbcp.lib=${commons-dbcp.home}
 commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp-1.1.jar
-commons-dbcp.loc=http://archive.apache.org/dist/jakarta/commons/dbcp/binaries/commons-dbcp-1.1.tar.gz
+commons-dbcp.loc=${base-jakarta.loc}/commons/dbcp/binaries/commons-dbcp-1.1.tar.gz
 
 
 # ----- Commons Pool, version 1.0 or later -----
 commons-pool.home=${base.path}/commons-pool-1.1
 commons-pool.lib=${commons-pool.home}
 commons-pool.jar=${commons-pool.lib}/commons-pool-1.1.jar
-commons-pool.loc=http://archive.apache.org/dist/jakarta/commons/pool/binaries/commons-pool-1.1.tar.gz
+commons-pool.loc=${base-jakarta.loc}/commons/pool/binaries/commons-pool-1.1.tar.gz
 
 
 # ----- JavaService, version 1.2.0 or later -----
