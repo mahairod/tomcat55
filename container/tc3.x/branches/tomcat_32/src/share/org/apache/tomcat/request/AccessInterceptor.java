@@ -252,6 +252,11 @@ public class AccessInterceptor extends  BaseInterceptor  {
 	if( ctxSec.patterns==0 ) return 0; // fast exit
 	
 	String reqURI = req.getRequestURI();
+	// Servlet spec would allow it to pass. A better fix is to "normalize"
+	// the URL
+	if( reqURI.indexOf( "//" ) >= 0 )
+	    return 403;
+
 	String ctxPath= ctx.getPath();
 	String path=reqURI.substring( ctxPath.length());
 	String method=req.getMethod();

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <Server>
-    <!-- Debug low-level events in XmlMapper startup -->
+    <!-- Debug low-level events in XmlMapper startup 
     <xmlmapper:debug level="0" />
-
+    -->
+    
     <!-- 
 
     Logging:
