@@ -105,6 +105,7 @@ public class RulesParser {
      */
     protected Digester createDigester() {
         Digester digester = new Digester();
+        digester.setUseContextClassLoader(true);
 
         String rules = "rules";
         String rule = "/rule";
