@@ -66,8 +66,8 @@
          entry.  SSL support requires the following steps (see the SSL Config
          HOWTO in the Tomcat 5 documentation bundle for more detailed
          instructions):
-         * Download and install JSSE 1.0.2 or later, and put the JAR files
-           into "$JAVA_HOME/jre/lib/ext".
+         * If your JDK version 1.3 or prior, download and install JSSE 1.0.2 or
+           later, and put the JAR files into "$JAVA_HOME/jre/lib/ext".
          * Execute:
              %JAVA_HOME%\bin\keytool -genkey -alias tomcat -keyalg RSA (Windows)
              $JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA  (Unix)
