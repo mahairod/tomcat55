@@ -534,8 +534,9 @@ final class HttpProcessor
             }
             
 	    String value = new String(header.value, 0, header.valueEnd);
-	    //if (debug >= 1)
-	    //    log(" Header " + name + " = " + value);
+	    if (debug >= 1)
+	        log(" Header " + new String(header.name, 0, header.nameEnd)
+                    + " = " + value);
             
 	    // Set the corresponding request headers
             if (header.equals(DefaultHeaders.AUTHORIZATION_NAME)) {
