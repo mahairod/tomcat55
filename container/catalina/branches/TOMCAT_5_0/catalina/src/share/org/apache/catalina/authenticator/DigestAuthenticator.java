@@ -55,25 +55,6 @@ public class DigestAuthenticator
 
     // -------------------------------------------------------------- Constants
 
-
-    /**
-     * Indicates that no once tokens are used only once.
-     */
-    protected static final int USE_ONCE = 1;
-
-
-    /**
-     * Indicates that no once tokens are used only once.
-     */
-    protected static final int USE_NEVER_EXPIRES = Integer.MAX_VALUE;
-
-
-    /**
-     * Indicates that no once tokens are used only once.
-     */
-    protected static final int TIMEOUT_INFINITE = Integer.MAX_VALUE;
-
-
     /**
      * The MD5 helper object for this class.
      */
