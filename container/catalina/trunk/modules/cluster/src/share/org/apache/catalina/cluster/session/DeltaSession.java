@@ -229,7 +229,7 @@ public class DeltaSession
     /**
      * Descriptive information describing this Session implementation.
      */
-    private static final String info = "StandardSession/1.0";
+    private static final String info = "DeltaSession/1.0";
 
 
     /**
@@ -958,7 +958,7 @@ public class DeltaSession
      */
     public long getCreationTime() {
 
-        if (!isValid())
+       if (!expiring && !isValid)
             throw new IllegalStateException
                 (sm.getString("standardSession.getCreationTime.ise"));
 
