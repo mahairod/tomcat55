@@ -65,16 +65,13 @@
 package org.apache.catalina.session;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -470,6 +467,7 @@ public class JDBCStore
                 keys = (String[]) tmpkeys.toArray(new String[tmpkeys.size()]);
             } catch(SQLException e) {
                 log(sm.getString(getStoreName()+".SQLException", e));
+                keys = new String[0];
             } finally {
                 try {
                     if(rst != null) {
@@ -482,7 +480,7 @@ public class JDBCStore
                 release(_conn);
             }
         }
-
+        
         return(keys);
     }
 
