@@ -158,6 +158,8 @@ public final class SnoopAllServlet
 	writer.println("<li><b>contextPath</b> = " +
 		       request.getContextPath());
 	Cookie cookies[] = request.getCookies();
+        if (cookies == null)
+            cookies = new Cookie[0];
 	for (int i = 0; i < cookies.length; i++)
 	    writer.println("<li><b>cookie</b> " + cookies[i].getName() +
 			   " = " + cookies[i].getValue());
