@@ -90,9 +90,14 @@ class DefaultErrorHandler implements ErrorHandler {
      * @param exception Parse exception
      */
     public void jspError(String fname, int line, int column, String errMsg,
-			 Exception exception) throws JasperException {
-	throw new JasperException(fname + "(" + line + "," + column + ")"
-				  + " " + errMsg);
+			 Exception ex) throws JasperException {
+	if (errMsg != null) {
+	    throw new JasperException(fname + "(" + line + "," + column + ")"
+				      + " " + errMsg);
+	} else {
+	    throw new JasperException(fname + "(" + line + "," + column + ")"
+				      + " " + ex.getMessage());
+	}
     }
 
     /*

@@ -391,11 +391,15 @@ public class ErrorDispatcher {
     private void dispatch(Mark where, String errCode, Object[] args,
 			  Exception e) throws JasperException {
 	String file = null;
+	String errMsg = null;
 	int line = -1;
 	int column = -1;
 
 	// Localize
-	String errMsg = getString(errCode, args);
+	
+	if (errCode != null) {
+	    errMsg = getString(errCode, args);
+	}
 
 	// Get error location
 	if (where != null) {
@@ -410,7 +414,8 @@ public class ErrorDispatcher {
 
 	// Get nested exception
 	Exception nestedEx = e;
-	if (e instanceof SAXException) {
+	if ((e instanceof SAXException)
+	        && (((SAXException) e).getException() != null)) {
 	    nestedEx = ((SAXException) e).getException();
 	}
 

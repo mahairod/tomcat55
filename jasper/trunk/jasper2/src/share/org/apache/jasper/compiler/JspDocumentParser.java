@@ -314,7 +314,7 @@ public class JspDocumentParser extends DefaultHandler
 	}
 
 	if (current instanceof Node.ScriptingElement) {
-	    checkScriptingBody(current.getBody());
+	    checkScriptingBody((Node.ScriptingElement) current);
 	}
 
 	if (current.getParent() != null) {
@@ -495,18 +495,26 @@ public class JspDocumentParser extends DefaultHandler
      * Ensures that the given body only contains nodes that are instances of
      * TemplateText.
      *
-     * This check is performed only for the body of a scripting (that is, a
+     * This check is performed only for the body of a scripting (that is:
      * declaration, scriptlet, or expression) element, after the end tag of a
      * scripting element has been reached.
      */
-    private void checkScriptingBody(Node.Nodes body) throws SAXException {
+    private void checkScriptingBody(Node.ScriptingElement scriptingElem)
+	                    throws SAXException {
+	Node.Nodes body = scriptingElem.getBody();
 	if (body != null) {
 	    int size = body.size();
 	    for (int i=0; i<size; i++) {
 		Node n = body.getNode(i);
 		if (!(n instanceof Node.TemplateText)) {
+		    String elemType = TagConstants.JSP_SCRIPTLET;
+		    if (scriptingElem instanceof Node.Declaration)
+			elemType = TagConstants.JSP_DECLARATION;
+		    if (scriptingElem instanceof Node.Expression)
+			elemType = TagConstants.JSP_EXPRESSION;
 		    String msg = err.getString(
-                        "jsp.error.parse.xml.scripting.invalid.body");
+                        "jsp.error.parse.xml.scripting.invalid.body",
+			elemType);
 		    throw new SAXException(msg);
 		}
 	    }
