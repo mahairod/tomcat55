@@ -666,6 +666,15 @@ public abstract class PersistentManagerBase
 
     }
 
+    /**
+     * Remove this Session from the active Sessions for this Manager,
+     * but not from the Store. (Used by the PersistentValve)
+     *
+     * @param session Session to be removed
+     */
+    public void removeSuper(Session session) {
+        super.remove (session);
+    }
 
     /**
      * Load all sessions found in the persistence mechanism, assuming
@@ -844,6 +853,7 @@ public abstract class PersistentManagerBase
             log(sm.getString("persistentManager.swapIn", id));
 
         session.setManager(this);
+        session.setId(id); // To make sure the listener knows about it.
         add(session);
         ((StandardSession)session).activate();
 
