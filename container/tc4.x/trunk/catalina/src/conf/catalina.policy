@@ -83,10 +83,13 @@ grant codeBase "file:${catalina.home}/classes/-" {
 // In addition, a web application will be given a read FilePermission
 // for all files and directories in its document root.
 grant { 
-	permission java.util.PropertyPermission "java.version", "read";
-	permission java.util.PropertyPermission "java.vendor", "read";
-	permission java.util.PropertyPermission "java.vendor.url", "read";
-	permission java.util.PropertyPermission "java.class.version", "read";
+        // Required for JNDI lookup of named JDBC DataSource's and
+        // javamail named MimePart DataSource used to send mail
+        permission java.utim.PropertyPermission "java.home", "read";
+        permission java.util.PropertyPermission "java.naming.*", "read";
+        permission java.util.PropertyPermission "javax.sql.*", "read";
+
+        // OS Specific properties to allow read access
 	permission java.util.PropertyPermission "os.name", "read";
 	permission java.util.PropertyPermission "os.version", "read";
 	permission java.util.PropertyPermission "os.arch", "read";
@@ -94,6 +97,11 @@ grant {
 	permission java.util.PropertyPermission "path.separator", "read";
 	permission java.util.PropertyPermission "line.separator", "read";
 
+        // JVM properties to allow read access
+        permission java.util.PropertyPermission "java.version", "read";
+        permission java.util.PropertyPermission "java.vendor", "read";
+        permission java.util.PropertyPermission "java.vendor.url", "read";
+        permission java.util.PropertyPermission "java.class.version", "read";
 	permission java.util.PropertyPermission "java.specification.version", "read";
 	permission java.util.PropertyPermission "java.specification.vendor", "read";
 	permission java.util.PropertyPermission "java.specification.name", "read";
@@ -104,6 +112,16 @@ grant {
 	permission java.util.PropertyPermission "java.vm.version", "read";
 	permission java.util.PropertyPermission "java.vm.vendor", "read";
 	permission java.util.PropertyPermission "java.vm.name", "read";
+
+        // Required for reading resources using JNDI lookup
+        permission java.io.FilePermission "jndi:/-", "read";
+        permission java.io.FilePermission "jar:jndi:/WEB-INF/lib/-", "read";
+        // Required for getting BeanInfo
+        permission java.lang.RuntimePermission "accessClassInPackage.sun.beans.*";
+        // Requried for sending email
+        permission java.io.FilePermission "${java.home}${/}lib${/}ext${/}mail.jar", "read";
+
+	// Allow read of JAXP compliant XML parser debug
 	permission java.util.PropertyPermission "jaxp.debug", "read";
 };
 
