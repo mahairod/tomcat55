@@ -158,7 +158,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public abstract class ContainerBase
-    implements Container, Lifecycle {
+    implements Container, Lifecycle, Pipeline {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -1223,6 +1223,17 @@ public abstract class ContainerBase
 
 
     /**
+     * <p>Return the Valve instance that has been distinguished as the basic
+     * Valve for this Pipeline (if any).
+     */
+    public Valve getBasic() {
+
+        return (pipeline.getBasic());
+
+    }
+
+
+    /**
      * Return the set of Valves in the pipeline associated with this
      * Container, including the basic Valve (if any).  If there are no
      * such Valves, a zero-length array is returned.
@@ -1246,6 +1257,26 @@ public abstract class ContainerBase
         fireContainerEvent(REMOVE_VALVE_EVENT, valve);
 
     }
+
+
+    /**
+     * <p>Set the Valve instance that has been distinguished as the basic
+     * Valve for this Pipeline (if any).  Prioer to setting the basic Valve,
+     * the Valve's <code>setContainer()</code> will be called, if it
+     * implements <code>Contained</code>, with the owning Container as an
+     * argument.  The method may throw an <code>IllegalArgumentException</code>
+     * if this Valve chooses not to be associated with this Container, or
+     * <code>IllegalStateException</code> if it is already associated with
+     * a different Container.</p>
+     *
+     * @param valve Valve to be distinguished as the basic Valve
+     */
+    public void setBasic(Valve valve) {
+
+        pipeline.setBasic(valve);
+
+    }
+
 
 
     // ------------------------------------------------------ Protected Methods

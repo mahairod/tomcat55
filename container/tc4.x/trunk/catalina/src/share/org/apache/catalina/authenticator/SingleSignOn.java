@@ -71,14 +71,23 @@ import java.util.HashMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.Session;
+import org.apache.catalina.SessionEvent;
+import org.apache.catalina.SessionListener;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.valves.ValveBase;
+import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
 
@@ -104,7 +113,8 @@ import org.apache.catalina.util.StringManager;
  */
 
 public class SingleSignOn
-    extends ValveBase {
+    extends ValveBase
+    implements Lifecycle, SessionListener {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -131,10 +141,29 @@ public class SingleSignOn
 
 
     /**
+     * The lifecycle event support for this component.
+     */
+    protected LifecycleSupport lifecycle = new LifecycleSupport(this);
+
+
+    /**
+     * The cache of single sign on identifiers, keyed by the Session that is
+     * associated with them.
+     */
+    protected HashMap reverse = new HashMap();
+
+
+    /**
      * The string manager for this package.
      */
     protected final static StringManager sm =
         StringManager.getManager(Constants.Package);
+
+
+    /**
+     * Component started flag.
+     */
+    protected boolean started = false;
 
 
     // ------------------------------------------------------------- Properties
@@ -158,6 +187,113 @@ public class SingleSignOn
     public void setDebug(int debug) {
 
         this.debug = debug;
+
+    }
+
+
+    // ------------------------------------------------------ Lifecycle Methods
+
+
+    /**
+     * Add a lifecycle event listener to this component.
+     *
+     * @param listener The listener to add
+     */
+    public void addLifecycleListener(LifecycleListener listener) {
+
+        lifecycle.addLifecycleListener(listener);
+
+    }
+
+
+    /**
+     * Remove a lifecycle event listener from this component.
+     *
+     * @param listener The listener to remove
+     */
+    public void removeLifecycleListener(LifecycleListener listener) {
+
+        lifecycle.removeLifecycleListener(listener);
+
+    }
+
+
+    /**
+     * Prepare for the beginning of active use of the public methods of this
+     * component.  This method should be called after <code>configure()</code>,
+     * and before any of the public methods of the component are utilized.
+     *
+     * @exception IllegalStateException if this component has already been
+     *  started
+     * @exception LifecycleException if this component detects a fatal error
+     *  that prevents this component from being used
+     */
+    public void start() throws LifecycleException {
+
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("authenticator.alreadyStarted"));
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
+
+        if (debug >= 1)
+            log("Started");
+
+    }
+
+
+    /**
+     * Gracefully terminate the active use of the public methods of this
+     * component.  This method should be the last one called on a given
+     * instance of this component.
+     *
+     * @exception IllegalStateException if this component has not been started
+     * @exception LifecycleException if this component detects a fatal error
+     *  that needs to be reported
+     */
+    public void stop() throws LifecycleException {
+
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("authenticator.notStarted"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
+
+        if (debug >= 1)
+            log("Stopped");
+
+    }
+
+
+    // ------------------------------------------------ SessionListener Methods
+
+
+    /**
+     * Acknowledge the occurrence of the specified event.
+     *
+     * @param event SessionEvent that has occurred
+     */
+    public void sessionEvent(SessionEvent event) {
+
+        // We only care about session destroyed events
+        if (!Session.SESSION_DESTROYED_EVENT.equals(event.getType()))
+            return;
+
+        // Look up the single session id associated with this session (if any)
+        Session session = event.getSession();
+        if (debug >= 1)
+            log("Process session destroyed on " + session);
+        String ssoId = null;
+        synchronized (reverse) {
+            ssoId = (String) reverse.get(session);
+        }
+        if (ssoId == null)
+            return;
+
+        // Deregister this single session id, invalidating associated sessions
+        deregister(ssoId);
 
     }
 
@@ -196,10 +332,13 @@ public class SingleSignOn
             context.invokeNext(request, response);
             return;
         }
-
-        // Has a valid user already been authenticated?
         HttpServletRequest hreq =
             (HttpServletRequest) request.getRequest();
+        HttpServletResponse hres =
+            (HttpServletResponse) response.getResponse();
+        ((HttpRequest) request).setSsoId(null);
+
+        // Has a valid user already been authenticated?
         if (debug >= 1)
             log("Process request for '" + hreq.getRequestURI() + "'");
         if (hreq.getUserPrincipal() != null) {
@@ -232,18 +371,21 @@ public class SingleSignOn
 
         // Look up the cached Principal associated with this cookie value
         if (debug >= 1)
-            log(" Checking for cached principal");
+            log(" Checking for cached principal for " + cookie.getValue());
         SingleSignOnEntry entry = lookup(cookie.getValue());
         if (entry != null) {
             if (debug >= 1)
                 log(" Found cached principal '" +
                     entry.principal.getName() + "' with auth type '" +
                     entry.authType + "'");
+            ((HttpRequest) request).setSsoId(cookie.getValue());
             ((HttpRequest) request).setAuthType(entry.authType);
             ((HttpRequest) request).setUserPrincipal(entry.principal);
         } else {
             if (debug >= 1)
-                log(" No cached principal found");
+                log(" No cached principal found, erasing SSO cookie");
+            cookie.setMaxAge(0);
+            hres.addCookie(cookie);
         }
 
         // Invoke the next Valve in our pipeline
@@ -256,44 +398,6 @@ public class SingleSignOn
 
 
     /**
-     * Deregister the specified cookie value for the single sign on cookie.
-     *
-     * @param cookie Cookie value for the single sign on cookie to deregister
-     */
-    public void deregister(String cookie) {
-
-        log("Deregistering cookie value '" + cookie + "'");
-
-        synchronized (cache) {
-            cache.remove(cookie);
-        }
-
-    }
-
-
-    /**
-     * Register the specified Principal as being associated with the specified
-     * value for the single sign on cookie.
-     *
-     * @param cookie Cookie value for the single sign on cookie
-     * @param principal Associated user principal that is identified
-     * @param authType Authentication type used to authenticate this
-     *  user principal
-     */
-    public void register(String cookie, Principal principal, String authType) {
-
-        if (debug >= 1)
-            log("Registering cookie value '" + cookie + "' for user '" +
-                principal.getName() + "' with auth type '" + authType + "'");
-
-        synchronized (cache) {
-            cache.put(cookie, new SingleSignOnEntry(principal, authType));
-        }
-
-    }
-
-
-    /**
      * Return a String rendering of this object.
      */
     public String toString() {
@@ -302,6 +406,92 @@ public class SingleSignOn
         sb.append(container.getName());
         sb.append("]");
         return (sb.toString());
+
+    }
+
+
+    // -------------------------------------------------------- Package Methods
+
+
+    /**
+     * Associate the specified single sign on identifier with the
+     * specified Session.
+     *
+     * @param ssoId Single sign on identifier
+     * @param session Session to be associated
+     */
+    void associate(String ssoId, Session session) {
+
+        if (debug >= 1)
+            log("Associate sso id " + ssoId + " with session " + session);
+
+        SingleSignOnEntry sso = lookup(ssoId);
+        if (sso != null)
+            sso.addSession(this, session);
+        synchronized (reverse) {
+            reverse.put(session, ssoId);
+        }
+
+    }
+
+
+    /**
+     * Deregister the specified single sign on identifier, and invalidate
+     * any associated sessions.
+     *
+     * @param ssoId Single sign on identifier to deregister
+     */
+    void deregister(String ssoId) {
+
+        if (debug >= 1)
+            log("Deregistering sso id '" + ssoId + "'");
+
+        // Look up and remove the corresponding SingleSignOnEntry
+        SingleSignOnEntry sso = null;
+        synchronized (cache) {
+            sso = (SingleSignOnEntry) cache.remove(ssoId);
+        }
+        if (sso == null)
+            return;
+
+        // Expire any associated sessions
+        Session sessions[] = sso.findSessions();
+        for (int i = 0; i < sessions.length; i++) {
+            if (debug >= 2)
+                log(" Invalidating session " + sessions[i]);
+            // Remove from reverse cache first to avoid recursion
+            synchronized (reverse) {
+                reverse.remove(sessions[i]);
+            }
+            // Invalidate this session
+            sessions[i].expire();
+        }
+
+        // NOTE:  Clients may still possess the old single sign on cookie,
+        // but it will be removed on the next request since it is no longer
+        // in the cache
+
+    }
+
+
+    /**
+     * Register the specified Principal as being associated with the specified
+     * value for the single sign on identifier.
+     *
+     * @param ssoId Single sign on identifier to register
+     * @param principal Associated user principal that is identified
+     * @param authType Authentication type used to authenticate this
+     *  user principal
+     */
+    void register(String ssoId, Principal principal, String authType) {
+
+        if (debug >= 1)
+            log("Registering sso id '" + ssoId + "' for user '" +
+                principal.getName() + "' with auth type '" + authType + "'");
+
+        synchronized (cache) {
+            cache.put(ssoId, new SingleSignOnEntry(principal, authType));
+        }
 
     }
 
@@ -345,16 +535,15 @@ public class SingleSignOn
 
 
     /**
-     * Look up and return the cached Principal associated with this cookie
-     * value, if there is one; otherwise return <code>null</code>.
+     * Look up and return the cached SingleSignOn entry associated with this
+     * sso id value, if there is one; otherwise return <code>null</code>.
      *
-     * @param cookie Cookie value to look up
+     * @param ssoId Single sign on identifier to look up
      */
-    protected SingleSignOnEntry lookup(String cookie) {
+    protected SingleSignOnEntry lookup(String ssoId) {
 
-        // FIXME - No timeout checking on cached Principals
         synchronized (cache) {
-            return ((SingleSignOnEntry) cache.get(cookie));
+            return ((SingleSignOnEntry) cache.get(ssoId));
         }
 
     }
@@ -371,14 +560,32 @@ public class SingleSignOn
  */
 class SingleSignOnEntry {
 
+    public String authType = null;
+
     public Principal principal = null;
 
-    public String authType = null;
+    public Session sessions[] = new Session[0];
 
     public SingleSignOnEntry(Principal principal, String authType) {
         super();
         this.principal = principal;
         this.authType = authType;
+    }
+
+    public synchronized void addSession(SingleSignOn sso, Session session) {
+        for (int i = 0; i < sessions.length; i++) {
+            if (session == sessions[i])
+                return;
+        }
+        Session results[] = new Session[sessions.length + 1];
+        System.arraycopy(sessions, 0, results, 0, sessions.length);
+        results[sessions.length] = session;
+        sessions = results;
+        session.addSessionListener(sso);
+    }
+
+    public synchronized Session[] findSessions() {
+        return (this.sessions);
     }
 
 }

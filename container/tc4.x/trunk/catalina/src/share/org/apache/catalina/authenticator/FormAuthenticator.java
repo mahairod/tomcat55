@@ -152,6 +152,9 @@ public final class FormAuthenticator
             if (debug >= 1)
                 log("Already authenticated '" +
                     principal.getName() + "'");
+            String ssoId = request.getSsoId();
+            if (ssoId != null)
+                associate(ssoId, getSession(request, true));
             return (true);
         }
 
@@ -164,6 +167,9 @@ public final class FormAuthenticator
             principal = (Principal)
               session.getSession().getAttribute(Constants.FORM_PRINCIPAL);
             register(request, response, principal, Constants.FORM_METHOD);
+            String ssoId = request.getSsoId();
+            if (ssoId != null)
+                associate(ssoId, session);
             if (restoreRequest(request, session)) {
                 if (debug >= 1)
                     log("Proceed to restored request");
@@ -244,25 +250,6 @@ public final class FormAuthenticator
             log("Redirecting to '" + requestURI + "'");
         hres.sendRedirect(hres.encodeRedirectURL(requestURI));
         return (false);
-
-        // Restore this request and redirect to the original request URI
-        /*
-        session = getSession(request, true);
-        if (debug >= 1)
-            log("restore request from session '" + session.getId() + "'");
-        register(request, response, principal, Constants.FORM_METHOD);
-        if (restoreRequest(request, session)) {
-            if (debug >= 1)
-                log("Proceed to restored request");
-            return (true);              // Perform the original request
-        } else {
-            if (debug >= 1)
-                log("Restore of original request failed");
-            hres.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            //      hres.flushBuffer();
-            return (false);
-        }
-        */
 
     }
 

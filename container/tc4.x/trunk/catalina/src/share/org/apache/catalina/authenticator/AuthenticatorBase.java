@@ -609,6 +609,22 @@ public abstract class AuthenticatorBase
 
 
     /**
+     * Associate the specified single sign on identifier with the
+     * specified Session.
+     *
+     * @param ssoId Single sign on identifier
+     * @param session Session to be associated
+     */
+    protected void associate(String ssoId, Session session) {
+
+        if (sso == null)
+            return;
+        sso.associate(ssoId, session);
+
+    }
+
+
+    /**
      * Authenticate the user making this request, based on the specified
      * login configuration.  Return <code>true</code> if any specified
      * constraint has been satisfied, or <code>false</code> if we have
@@ -970,6 +986,7 @@ public abstract class AuthenticatorBase
 
         // Register this principal with our SSO valve
         sso.register(value, principal, authType);
+        request.setSsoId(value);
 
     }
 

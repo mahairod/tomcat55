@@ -265,6 +265,12 @@ public class HttpRequestBase
 
 
     /**
+     * The single sign on identifier with which this request is associated.
+     */
+    protected String ssoId = null;
+
+
+    /**
      * The Principal who has been authenticated for this Request.
      */
     protected Principal userPrincipal = null;
@@ -292,6 +298,28 @@ public class HttpRequestBase
     public ServletRequest getRequest() {
 
         return (facade);
+
+    }
+
+
+    /**
+     * Return the single sign on identifier this request is associated with.
+     */
+    public String getSsoId() {
+
+        return (ssoId);
+
+    }
+
+
+    /**
+     * Set the single sign on identifier this request is associated with.
+     *
+     * @param ssoId The new SSO identifier (if any)
+     */
+    public void setSsoId(String ssoId) {
+
+        this.ssoId = ssoId;
 
     }
 
@@ -424,6 +452,7 @@ public class HttpRequestBase
         secure = false;
         servletPath = null;
         session = null;
+        ssoId = null;
         userPrincipal = null;
 
     }

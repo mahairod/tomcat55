@@ -88,6 +88,8 @@ import javax.servlet.http.HttpSessionListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
+import org.apache.catalina.SessionEvent;
+import org.apache.catalina.SessionListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.StringManager;
@@ -209,6 +211,12 @@ class StandardSession
 
 
     /**
+     * The session event listeners for this Session.
+     */
+    private transient ArrayList listeners = new ArrayList();
+
+
+    /**
      * The Manager with which this Session is associated.
      */
     private Manager manager = null;
@@ -327,6 +335,9 @@ class StandardSession
 
         if (manager != null)
             manager.add(this);
+
+        // Notify interested session event listeners
+        fireSessionEvent(Session.SESSION_CREATED_EVENT, null);
 
         // Notify interested application event listeners
         StandardContext context = (StandardContext) manager.getContainer();
@@ -530,6 +541,18 @@ class StandardSession
 
 
     /**
+     * Add a session event listener to this component.
+     */
+    public void addSessionListener(SessionListener listener) {
+
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+
+    }
+
+
+    /**
      * Perform the internal processing required to invalidate this session,
      * without triggering an exception if the session has already expired.
      */
@@ -549,6 +572,9 @@ class StandardSession
         String keys[] = keys();
         for (int i = 0; i < keys.length; i++)
             removeAttribute(keys[i]);
+
+        // Notify interested session event listeners
+        fireSessionEvent(Session.SESSION_DESTROYED_EVENT, null);
 
         // Notify interested application event listeners
         // FIXME - Assumes we call listeners in reverse order
@@ -653,6 +679,18 @@ class StandardSession
         // Tell our Manager that this Session has been recycled
         if ((manager != null) && (manager instanceof ManagerBase))
             ((ManagerBase) manager).recycle(this);
+
+    }
+
+
+    /**
+     * Remove a session event listener from this component.
+     */
+    public void removeSessionListener(SessionListener listener) {
+
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
 
     }
 
@@ -1242,6 +1280,29 @@ class StandardSession
 
 
     // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Notify all session event listeners that a particular event has
+     * occurred for this Session.  The default implementation performs
+     * this notification synchronously using the calling thread.
+     *
+     * @param type Event type
+     * @param data Event data
+     */
+    public void fireSessionEvent(String type, Object data) {
+
+        if (listeners.size() < 1)
+            return;
+        SessionEvent event = new SessionEvent(this, type, data);
+        SessionListener list[] = new SessionListener[0];
+        synchronized (listeners) {
+            list = (SessionListener[]) listeners.toArray(list);
+        }
+        for (int i = 0; i < list.length; i++)
+            ((SessionListener) list[i]).sessionEvent(event);
+
+    }
 
 
     /**

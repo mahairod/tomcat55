@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -81,6 +81,21 @@ import javax.servlet.http.HttpSession;
  */
 
 public interface Session {
+
+
+    // ----------------------------------------------------- Manifest Constants
+
+
+    /**
+     * The SessionEvent event type when a session is created.
+     */
+    public static final String SESSION_CREATED_EVENT = "createSession";
+
+
+    /**
+     * The SessionEvent event type when a session is destroyed.
+     */
+    public static final String SESSION_DESTROYED_EVENT = "destroySession";
 
 
     // ------------------------------------------------------------- Properties
@@ -242,6 +257,12 @@ public interface Session {
 
 
     /**
+     * Add a session event listener to this component.
+     */
+    public void addSessionListener(SessionListener listener);
+
+
+    /**
      * Perform the internal processing required to invalidate this session,
      * without triggering an exception if the session has already expired.
      */
@@ -253,6 +274,12 @@ public interface Session {
      * preparation for reuse of this object.
      */
     public void recycle();
+
+
+    /**
+     * Remove a session event listener from this component.
+     */
+    public void removeSessionListener(SessionListener listener);
 
 
 }
