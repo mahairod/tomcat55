@@ -85,6 +85,9 @@ Tomcat 3.2.1 is a maintenance and bug fix release, based on the Tomcat 3.2
   (/WEB-INF/dummy.jsp).  Previously, only requests for static files
   were being disallowed.
 
+- The JDBCRealm request interceptor will now log the description of any
+  JDBC exception that occurs, to aid in debugging.
+
 
 =============================================================================
 6.  KNOWN BUGS AND ISSUES

@@ -325,6 +325,7 @@ public final class JDBCRealm extends BaseInterceptor {
             // Log the problem for posterity
             log(sm.getString("jdbcRealm.authenticateSQLException",
                      username));
+            log("SQLException: " + ex);
 
             // Clean up the JDBC objects so that they get recreated next time
             if (preparedAuthenticate != null) {
@@ -393,6 +394,7 @@ public final class JDBCRealm extends BaseInterceptor {
           // Next time we will try to get a new connection.
             log(sm.getString("jdbcRealm.getUserRolesSQLException",
                      username));
+            log("SQLException: " + ex);
             if (preparedRoles != null) {
                 try {
                     preparedRoles.close();
