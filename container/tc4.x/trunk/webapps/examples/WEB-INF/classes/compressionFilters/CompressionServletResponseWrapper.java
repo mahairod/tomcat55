@@ -83,6 +83,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
  * the CompressionServletResponseStream implementation..
  *
  * @author Amy Roh
+ * @author Dmitri Valdin
  * @version $Revision$, $Date$
  */
 
@@ -96,10 +97,11 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
      */
 
     public CompressionServletResponseWrapper(HttpServletResponse response) {
-
         super(response);
         origResponse = response;
-
+        if (debug > 1) {
+            System.out.println("CompressionServletResponseWrapper constructor gets called");
+        }
     }
 
 
@@ -137,6 +139,10 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
      */
     protected int threshold = 0;
 
+    /**
+     * Debug level
+     */
+    private int debug = 0;
 
     // --------------------------------------------------------- Public Methods
 
@@ -145,10 +151,20 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
      * Set threshold number
      */
     public void setCompressionThreshold(int threshold) {
-
+        if (debug > 1) {
+            System.out.println("setCompressionThreshold to " + threshold);
+        }
         this.threshold = threshold;
-
     }
+
+
+    /**
+     * Set debug level
+     */
+    public void setDebugLevel(int debug) {
+        this.debug = debug;
+    }
+
 
     /**
      * Create and return a ServletOutputStream to write the content
@@ -157,8 +173,15 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
      * @exception IOException if an input/output error occurs
      */
     public ServletOutputStream createOutputStream() throws IOException {
+        if (debug > 1) {
+            System.out.println("createOutputStream gets called");
+        }
 
-        return (new CompressionResponseStream(origResponse));
+        CompressionResponseStream stream = new CompressionResponseStream(origResponse);
+        stream.setDebugLevel(debug);
+        stream.setBuffer(threshold);
+
+        return stream;
 
     }
 
@@ -167,7 +190,6 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
      * Finish a response.
      */
     public void finishResponse() {
-
         try {
             if (writer != null) {
                 writer.close();
@@ -177,7 +199,6 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
             }
         } catch (IOException e) {
         }
-
     }
 
 
@@ -190,12 +211,10 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
      * @exception IOException if an input/output error occurs
      */
     public void flushBuffer() throws IOException {
-
-        if (writer != null) {
-            writer.flush();
-        } else {
-            ((CompressionResponseStream)stream).flush();
+        if (debug > 1) {
+            System.out.println("flush buffer @ CompressionServletResponseWrapper");
         }
+        ((CompressionResponseStream)stream).flush();
 
     }
 
@@ -213,8 +232,11 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
 
         if (stream == null)
             stream = createOutputStream();
-        ((CompressionResponseStream) stream).setBuffer(threshold);
-	    return (stream);
+        if (debug > 1) {
+            System.out.println("stream is set to "+stream+" in getOutputStream");
+        }
+
+        return (stream);
 
     }
 
@@ -234,7 +256,9 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
             throw new IllegalStateException("getOutputStream() has already been called for this response");
 
         stream = createOutputStream();
-        ((CompressionResponseStream) stream).setBuffer(threshold);
+        if (debug > 1) {
+            System.out.println("stream is set to "+stream+" in getWriter");
+        }
         writer = new PrintWriter(stream);
         return (writer);
 
