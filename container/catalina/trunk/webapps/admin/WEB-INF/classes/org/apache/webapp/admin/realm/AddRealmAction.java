@@ -231,6 +231,7 @@ public class AddRealmAction extends Action {
         realmFm.setUserTable("");
         realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setRealmTypeVals(types);
+        realmFm.setBooleanVals(Lists.getBooleanValues());
     }
 
 

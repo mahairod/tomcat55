@@ -415,6 +415,7 @@ public class EditRealmAction extends Action {
         realmFm.setRealmType(realmType);
         realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setAllowDeletion(allowDeletion(rname));
+        realmFm.setBooleanVals(Lists.getBooleanValues());
 
         String attribute = null;
         try {

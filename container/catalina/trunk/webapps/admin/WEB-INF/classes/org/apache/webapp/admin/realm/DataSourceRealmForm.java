@@ -78,6 +78,10 @@ public final class DataSourceRealmForm extends RealmForm {
      */
     private String userTable = null;
         
+    /*
+     * Represent boolean (true, false) values for unpackWARs etc.
+     */
+    private List booleanVals = null;
     
     // ------------------------------------------------------------- Properties
     
@@ -226,6 +230,24 @@ public final class DataSourceRealmForm extends RealmForm {
         
     }
     
+    /**
+     * Return the booleanVals.
+     */
+    public List getBooleanVals() {
+
+        return this.booleanVals;
+
+    }
+
+    /**
+     * Set the booleanVals.
+     */
+    public void setBooleanVals(List booleanVals) {
+
+        this.booleanVals = booleanVals;
+
+    }
+    
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -239,7 +261,7 @@ public final class DataSourceRealmForm extends RealmForm {
         super.reset(mapping, request);   
         this.dataSourceName = null;
         this.digest = null;
-        this.localDataSource = null;
+        this.localDataSource = "false";
         
         this.roleNameCol = null;
         this.userCredCol = null;

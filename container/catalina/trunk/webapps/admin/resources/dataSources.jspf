@@ -28,7 +28,6 @@
             <input type="checkbox" name="dataSources"
                   value="<%= dataSource %>" styleId="dataSources">
           </td>
-        </logic:present>
         <td scope="row"><div align="left" class="table-normal-text">
           <html:link page='<%= "/resources/setUpDataSource.do?objectName=" + 
                                URLEncoder.encode(dataSource) + "&resourcetype=" +
@@ -42,6 +41,7 @@
         <td scope="row"><div align="left" class="table-normal-text">&nbsp;
           <controls:attribute name="dataSource" attribute="driverClassName"/>
         </div></td>
+        </logic:present>
       </tr>
     </logic:iterate>
 
