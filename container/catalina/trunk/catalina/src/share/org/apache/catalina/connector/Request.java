@@ -62,6 +62,7 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Session;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ApplicationFilterFactory;
+import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.ParameterMap;
 import org.apache.catalina.util.RequestUtil;
@@ -2127,7 +2128,11 @@ public class Request
      * Return the principal that has been authenticated for this Request.
      */
     public Principal getUserPrincipal() {
-        return (userPrincipal);
+        if (userPrincipal instanceof GenericPrincipal) {
+            return ((GenericPrincipal) userPrincipal).getUserPrincipal();
+        } else {
+            return (userPrincipal);
+        }
     }
 
 
