@@ -385,7 +385,7 @@ public class JspWriterImpl extends JspWriter {
     static {
 	try {
 	    lineSeparator =  System.getProperty("line.separator");
-	} catch( Exception ex ) {
+	} catch( RuntimeException ex ) {
 	    lineSeparator="\r\n";
 	}
     }
