@@ -57,10 +57,6 @@
           description="Timeout value on the incoming connection during request processing"
                  type="int"/>
 
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
     <attribute    name="disableUploadTimeout"
            description="Should Tomcat ignore setting a timeout for uploads?" 
                   type="boolean"/>

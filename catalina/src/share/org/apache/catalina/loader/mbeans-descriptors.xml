@@ -13,10 +13,6 @@
                  type="java.lang.String"
             writeable="false"/>
 
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
     <attribute   name="delegate"
           description="The 'follow standard delegation model' flag that will be
                        used to configure our ClassLoader"

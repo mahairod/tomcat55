@@ -109,10 +109,6 @@
                type="java.lang.String"
                writeable="false"/>
       
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-      
   </mbean>
 
   <mbean name="StandardContext"
@@ -161,10 +157,6 @@
                description="Should we allow the ServletContext.getContext() method to access the context of other web applications in this server?"
                type="boolean"/>
 
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-               
     <attribute name="defaultWebXml"
                description="Location of the default web.xml resource or file"
                type="java.lang.String"/>
@@ -430,10 +422,6 @@
                type="java.lang.String"
                writeable="false"/>
       
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-      
   </mbean>
   
   <mbean name="StandardEngine"
@@ -442,10 +430,6 @@
          domain="Catalina"
          group="Engine">
     
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-      
     <attribute name="defaultHost"
                description="Name of the default Host for this Engine"
                type="java.lang.String"/>
@@ -502,10 +486,6 @@
                type="java.lang.String"
                writeable="false"/>
       
-    <attribute   name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-      
   </mbean>
   
   <mbean name="StandardHost"
@@ -522,10 +502,6 @@
                description="The auto deploy flag for this Host"
                type="boolean"/>
                  
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-      
     <attribute name="deployOnStartup"
                description="The deploy on startup flag for this Host"
                type="boolean"/>
@@ -625,10 +601,6 @@
                type="java.lang.String"
                writeable="false"/>
 
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-
   </mbean>
 
   <mbean name="StandardServer"
@@ -637,10 +609,6 @@
          group="Server"
          type="org.apache.catalina.core.StandardServer">
     
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-      
     <attribute name="managedResource"
                description="The managed resource this MBean is associated with"
                type="java.lang.Object"/>
@@ -678,10 +646,6 @@
          group="Service"
          type="org.apache.catalina.core.StandardService">
     
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-      
     <attribute name="managedResource"
                description="The managed resource this MBean is associated with"
                type="java.lang.Object"/>
@@ -808,10 +772,6 @@
                 type="java.lang.String"
                 writeable="false"/>  
                     
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-
   </mbean>
 
 </mbeans-descriptors>

@@ -12,9 +12,6 @@
                type="java.lang.String"
                writeable="false"/>
       
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
   </mbean>
 
   <mbean name="EngineConfig"
@@ -28,9 +25,6 @@
                type="java.lang.String"
                writeable="false"/>
       
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
   </mbean>
 
 
@@ -53,9 +47,6 @@
                description="The Java class name of the Context implementation we should use"
                type="java.lang.String"/>
       
-    <attribute   name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
   </mbean>
 
 </mbeans-descriptors>
