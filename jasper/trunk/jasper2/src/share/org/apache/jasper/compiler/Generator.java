@@ -2702,12 +2702,18 @@ public class Generator {
 	// Generate class declaration
 	out.printin("public class ");
 	out.print(tagInfo.getTagName());
-	out.print(" extends javax.servlet.jsp.tagext.SimpleTagSupport {");
+	out.print(" extends javax.servlet.jsp.tagext.SimpleTagSupport");
+	if (tagInfo.hasDynamicAttributes())
+	    out.print(" implements javax.servlet.jsp.tagext.DynamicAttributes");
+	out.print(" {");
 	out.pushIndent();
 	
 	// Class body begins here
 
 	generateTagHandlerDeclarations(tagInfo);
+
+	if (tagInfo.hasDynamicAttributes())
+	    generateSetDynamicAttribute();
 
 	out.printil("public int doTag() throws JspException {");
 	out.pushIndent();
@@ -2747,11 +2753,13 @@ public class Generator {
     private void generateTagHandlerDeclarations(TagInfo tagInfo)
 	        throws JasperException {
 
-	TagAttributeInfo[] attrInfos;
-	TagFragmentAttributeInfo[] fragAttrInfos;
+	if (tagInfo.hasDynamicAttributes()) {
+	    out.printil("HashMap dynamicAttrs = new java.util.HashMap();");
+	}
 
-	attrInfos = tagInfo.getAttributes();
-	fragAttrInfos = tagInfo.getFragmentAttributes();
+	TagAttributeInfo[] attrInfos = tagInfo.getAttributes();
+	TagFragmentAttributeInfo[] fragAttrInfos
+	    = tagInfo.getFragmentAttributes();
 
 	// Declare "normal" attributes
 	if (attrInfos != null) {
@@ -2841,7 +2849,23 @@ public class Generator {
     }
 
     /*
-     * Creates a page-scoped variable for each tag attribute declared.
+     * Generates implementation of
+     * javax.servlet.jsp.tagext.DynamicAttributes.setDynamicAttribute() method,
+     * which saves each dynamic attribute that is passed in so that a scoped
+     * variable can later be created for it.
+     */
+    public void generateSetDynamicAttribute() {
+        out.printil("public void setDynamicAttribute(String uri, String localName, Object value) throws AttributeNotSupportedException {");
+	out.pushIndent();
+	out.printil("dynamicAttrs.put(localName, value);");
+	out.popIndent();
+	out.printil("}");
+    }
+
+    /*
+     * Creates a page-scoped variable for each declared tag attribute.
+     * Also, if the tag accepts dynamic attributes, a page-scoped variable
+     * is made available for each dynamic attribute that was passed in.
      */
     private void generatePageScopedVariables(TagInfo tagInfo) {
 
@@ -2870,6 +2894,16 @@ public class Generator {
 		out.print(toUpperCaseFirstChar(attrName));
 		out.println("());");
 	    }
+	}
+
+	// dynamic attributes
+	if (tagInfo.hasDynamicAttributes()) {
+	    out.printil("for (Iterator i = dynamicAttrs.entrySet().iterator(); i.hasNext(); ) {");
+	    out.pushIndent();
+	    out.printil("Map.Entry e = (Map.Entry) i.next();");
+	    out.printil("this.jspContext.setAttribute(e.getKey(), e.getValue());");
+	    out.popIndent();
+	    out.printil("}");
 	}
     }
 
