@@ -134,7 +134,7 @@ public class Constants {
     /**
      * Default size for the tag buffers.
      */
-    public static final int DEFAULT_TAG_BUFFER_SIZE = 256;
+    public static final int DEFAULT_TAG_BUFFER_SIZE = 512;
 
     /**
      * The query parameter that causes the JSP engine to just
