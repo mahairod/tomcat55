@@ -419,6 +419,13 @@ public class StandardContext
 
 
     /**
+     * Set flag to true to cause the system.out and system.err to be redirected
+     * to the logger when executing a servlet.
+     */
+    private boolean swallowOutput = false;
+
+
+    /**
      * The JSP tag libraries for this web application, keyed by URI
      */
     private HashMap taglibs = new HashMap();
@@ -1074,6 +1081,34 @@ public class StandardContext
         support.firePropertyChange("sessionTimeout",
                                    new Integer(oldSessionTimeout),
                                    new Integer(this.sessionTimeout));
+
+    }
+
+
+    /**
+     * Return the value of the swallowOutput flag.
+     */
+    public boolean getSwallowOutput() {
+
+        return (this.swallowOutput);
+
+    }
+
+
+    /**
+     * Set the value of the swallowOutput flag. If set to true, the system.out
+     * and system.err will be redirected to the logger during a servlet 
+     * execution.
+     * 
+     * @param swallowOuptut The new value
+     */
+    public void setSwallowOutput(boolean swallowOutput) {
+
+        boolean oldSwallowOutput = this.swallowOutput;
+        this.swallowOutput = swallowOutput;
+        support.firePropertyChange("swallowOutput",
+                                   new Boolean(oldSwallowOutput),
+                                   new Boolean(this.swallowOutput));
 
     }
 
@@ -2348,15 +2383,18 @@ public class StandardContext
         }
 
         // Normal request processing
-        try {
-            SystemLogHandler.startCapture();
+        if (swallowOutput) {
+            try {
+                SystemLogHandler.startCapture();
+                super.invoke(request, response);
+            } finally {
+                String log = SystemLogHandler.stopCapture();
+                if (log != null && log.length() > 0) {
+                    log(log);
+                }
+            }
+        } else {
             super.invoke(request, response);
-        } finally {
-            String log = SystemLogHandler.stopCapture();
-            if (log != null && log.length() > 0) {
-                log(log);
-        }
-
         }
 
     }
