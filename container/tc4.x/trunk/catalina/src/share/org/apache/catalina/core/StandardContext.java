@@ -488,6 +488,12 @@ public class StandardContext
     protected boolean cachingAllowed = true;
 
 
+    /**
+     * Non proxied resources.
+     */
+    protected DirContext webappResources = null;
+
+
     // ----------------------------------------------------- Context Properties
 
 
@@ -1145,15 +1151,28 @@ public class StandardContext
      */
     public synchronized void setResources(DirContext resources) {
 
+        if (started) {
+            throw new IllegalStateException
+                (sm.getString("standardContext.resources.started"));
+        }
+
+        DirContext oldResources = this.webappResources;
+        if (oldResources == resources)
+            return;
+
         if (resources instanceof BaseDirContext) {
             ((BaseDirContext) resources).setCached(isCachingAllowed());
         }
         if (resources instanceof FileDirContext) {
             filesystemBased = true;
         }
-        super.setResources(resources);
-        if (started)
-            postResources(); // As a servlet context attribute
+        this.webappResources = resources;
+
+        // The proxied resources will be refreshed on start
+        this.resources = null;
+
+        support.firePropertyChange("resources", oldResources, 
+                                   this.webappResources);
 
     }
 
@@ -3303,6 +3322,66 @@ public class StandardContext
 
 
     /**
+     * Allocate resources, including proxy.
+     * Return <code>true</code> if initialization was successfull,
+     * or <code>false</code> otherwise.
+     */
+    public boolean resourcesStart() {
+
+        boolean ok = true;
+
+        Hashtable env = new Hashtable();
+        if (getParent() != null)
+            env.put(ProxyDirContext.HOST, getParent().getName());
+        env.put(ProxyDirContext.CONTEXT, getName());
+
+        try {
+            ProxyDirContext proxyDirContext = 
+                new ProxyDirContext(env, webappResources);
+            if (webappResources instanceof BaseDirContext) {
+                ((BaseDirContext) webappResources).setDocBase(getBasePath());
+                ((BaseDirContext) webappResources).allocate();
+            }
+            this.resources = proxyDirContext;
+        } catch (Throwable t) {
+            log(sm.getString("standardContext.resourcesStart", t));
+            ok = false;
+        }
+
+        return (ok);
+
+    }
+
+
+    /**
+     * Deallocate resources and destroy proxy.
+     */
+    public boolean resourcesStop() {
+
+        boolean ok = true;
+
+        try {
+            if (resources != null) {
+                if (resources instanceof Lifecycle) {
+                    ((Lifecycle) resources).stop();
+                }
+                if (webappResources instanceof BaseDirContext) {
+                    ((BaseDirContext) webappResources).release();
+                }
+            }
+        } catch (Throwable t) {
+            log(sm.getString("standardContext.resourcesStop", t));
+            ok = false;
+        }
+
+        this.resources = null;
+
+        return (ok);
+
+    }
+
+
+    /**
      * Load and initialize all servlets marked "load on startup" in the
      * web application deployment descriptor.
      *
@@ -3376,7 +3455,7 @@ public class StandardContext
         boolean ok = true;
 
         // Add missing components as necessary
-        if (getResources() == null) {   // (1) Required by Loader
+        if (webappResources == null) {   // (1) Required by Loader
             if (debug >= 1)
                 log("Configuring default Resources");
             try {
@@ -3389,14 +3468,9 @@ public class StandardContext
                 ok = false;
             }
         }
-        if (ok && (resources instanceof ProxyDirContext)) {
-            DirContext dirContext = 
-                ((ProxyDirContext) resources).getDirContext();
-            if ((dirContext != null) 
-                && (dirContext instanceof BaseDirContext)) {
-                ((BaseDirContext) dirContext).setDocBase(getBasePath());
-                ((BaseDirContext) dirContext).allocate();
-            }
+        if (ok) {
+            if (!resourcesStart())
+                ok = false;
         }
         if (getLoader() == null) {      // (2) Required by Manager
             if (getPrivileged()) {
@@ -3622,29 +3696,9 @@ public class StandardContext
             // Stop our application listeners
             listenerStop();
 
-            // Stop our subordinate components, if any
-            if (resources != null) {
-                if (resources instanceof Lifecycle) {
-                    ((Lifecycle) resources).stop();
-                } else if (resources instanceof ProxyDirContext) {
-                    DirContext dirContext = 
-                        ((ProxyDirContext) resources).getDirContext();
-                    if (dirContext != null) {
-                        if (debug >= 1) {
-                            log("Releasing document base " + docBase);
-                        }
-                        if (dirContext instanceof BaseDirContext) {
-                            ((BaseDirContext) dirContext).release();
-                            if ((dirContext instanceof WARDirContext)
-                                || (dirContext instanceof FileDirContext)) {
-                                resources = null;
-                            }
-                        } else {
-                            log("Cannot release " + resources);
-                        }
-                    }
-                }
-            }
+            // Stop resources
+            resourcesStop();
+
             if ((realm != null) && (realm instanceof Lifecycle)) {
                 ((Lifecycle) realm).stop();
             }
