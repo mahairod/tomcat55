@@ -89,7 +89,7 @@
     <depend project="jaf"/>
     <depend project="javamail"/>
     <depend project="jmx"/>
-    <depend project="jsse"/>
+    <depend project="jsse" runtime="true"/>
     <depend project="xml-xalan2"/>
     <option project="jakarta-avalon"/>
     <option project="jakarta-avalon-phoenix"/>
