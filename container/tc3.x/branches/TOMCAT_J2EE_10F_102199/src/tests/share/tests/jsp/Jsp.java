@@ -47,9 +47,12 @@ public class Jsp extends TestableBase {
 
             Enumeration testNames = tests.elements();
   
+            boolean debugSaved = debug;
             while (testNames.hasMoreElements()) {
-
                 String testId = (String)testNames.nextElement();
+                String debugThis = props.getProperty("test." + testId + ".debug");
+                if (debugThis != null)
+                    debug = Boolean.valueOf(debugThis).booleanValue();
 
                 if (! test(testId)) {
                      status = false;
@@ -58,6 +61,7 @@ public class Jsp extends TestableBase {
                      msg.append("\tTest " + testId + " : " +
                          description + "\n");
                 }
+                debug = debugSaved;
             }
         }
 
@@ -104,8 +108,11 @@ public class Jsp extends TestableBase {
         if (ready()) {
             try {
                 writeRequest(testId);
-                //String response = getResponse(testId);
+                if (this.debug) 
+                    System.out.println("<--BEG---");
                 responseStatus = getResponse(testId, testCondition);
+                if (this.debug)
+                    System.out.println("---END-->");
 
             } catch (IOException ioe) {
                 ioe.printStackTrace();
@@ -174,28 +181,18 @@ public class Jsp extends TestableBase {
     private boolean getResponse(String testId, boolean testCondition)
     throws IOException {
         String line = null;
-        boolean showHeader = false;
 
-        if (this.debug) {
-            String headerTag = props.getProperty("test." + testId + ".showHeader");
-            if (headerTag != null)
-                if (headerTag.trim().toLowerCase().equals("true"))
-                    showHeader = true;
-            System.out.println("<--------");
-        }
         // Match the return code if defined 
         boolean returnCode = checkReturnCode(testId);
+
+        getServerHeader(testId);
     
         // test only the return code
         if (props.getProperty("test." + testId + ".golden") == null)
             return returnCode;
 
         // else do content matching as well
-        StringBuffer result = getServerResponse(showHeader);
-
-        if (this.debug)
-            System.out.println("-------->");
-        //System.out.println("revResult: " + result);
+        StringBuffer result = getServerBody();
 
         // Get the expected result from the "golden" file.
         StringBuffer expResult = getExpectedResult (testId);
@@ -216,6 +213,7 @@ public class Jsp extends TestableBase {
                 line = br.readLine();
             } catch (IOException ioe) {
             }
+
             if (line != null) {
                 if (this.debug)
                     System.out.println(line);
@@ -227,8 +225,15 @@ public class Jsp extends TestableBase {
         return responseStatus;
     }
 
-    private StringBuffer getServerResponse(boolean showHeader) {
-        StringBuffer result = new StringBuffer("");
+    private void getServerHeader(String testId) {
+        boolean showHeader = false;
+        if (this.debug) {
+            String headerTag = props.getProperty("test." + testId + ".showHeader");
+            if (headerTag != null)
+                if (headerTag.trim().toLowerCase().equals("true"))
+                    showHeader = true;
+        }
+
         String line;
         try {
             while ((line = br.readLine()) != null) {
@@ -238,6 +243,14 @@ public class Jsp extends TestableBase {
                 if (showHeader)
                     System.out.println(line);
             }
+        } catch (IOException ioe) {
+        }
+    }
+
+    private StringBuffer getServerBody() {
+        StringBuffer result = new StringBuffer("");
+        String line;
+        try {
             while ((line = br.readLine()) != null) {
                 if (this.debug)
                     System.out.println("\t" + line);
