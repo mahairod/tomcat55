@@ -1146,19 +1146,16 @@ public class HttpRequestBase
 	if (realm == null)
 	    return (false);
 
-        // See if this role is assigned directly to the authenticated user
-        if (realm.hasRole(userPrincipal, role))
-            return (true);
+        // Check for a role alias defined in a <security-role-ref> element
+        if (wrapper != null) {
+            String realRole = wrapper.findSecurityReference(role);
+            if ((realRole != null) &&
+                realm.hasRole(userPrincipal, realRole))
+                return (true);
+        }
 
-        // Map the specified role if it is an alias defined in a
-        // <security-role-ref> element
-        if (wrapper == null)
-            return (false);
-        String realRole = wrapper.findSecurityReference(role);
-        if (realRole != null)
-            return (realm.hasRole(userPrincipal, realRole));
-        else
-            return (false);
+        // Check for a role defined directly as a <security-role>
+        return (realm.hasRole(userPrincipal, role));
 
     }
 
