@@ -89,7 +89,7 @@ public class JspFactoryImpl extends JspFactory {
         try {
 	    PageContext pc;
 	    if( usePool ) {
-		pc=(PageContextImpl)pool.get();
+		pc=(PageContext)pool.get();
 		if( pc == null ) pc= new PageContextImpl(this);
 	    } else {
 		pc =  new PageContextImpl(this);
