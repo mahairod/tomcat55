@@ -1606,6 +1606,12 @@
                  type="java.lang.String[]"
             writeable="false"/>
 
+    <attribute   name="resourceLinks"
+          description="MBean Names of all the defined resource link references 
+	  for this application."
+                 type="java.lang.String[]"
+            writeable="false"/>
+
     <operation   name="addEnvironment"
           description="Add an environment entry for this web application"
                impact="ACTION"

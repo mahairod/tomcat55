@@ -581,8 +581,8 @@ public final class NamingResources {
             ejb = (ContextEjb) ejbs.remove(name);
         }
         if (ejb != null) {
-            ejb.setNamingResources(null);
             support.firePropertyChange("ejb", ejb, null);
+            ejb.setNamingResources(null);
         }
 
     }
@@ -602,8 +602,8 @@ public final class NamingResources {
             environment = (ContextEnvironment) envs.remove(name);
         }
         if (environment != null) {
-            environment.setNamingResources(null);
             support.firePropertyChange("environment", environment, null);
+            environment.setNamingResources(null);
         }
 
     }
@@ -623,8 +623,8 @@ public final class NamingResources {
             localEjb = (ContextLocalEjb) ejbs.remove(name);
         }
         if (localEjb != null) {
-            localEjb.setNamingResources(null);
             support.firePropertyChange("localEjb", localEjb, null);
+            localEjb.setNamingResources(null);
         }
 
     }
@@ -656,8 +656,8 @@ public final class NamingResources {
             resource = (ContextResource) resources.remove(name);
         }
         if (resource != null) {
-            resource.setNamingResources(null);
             support.firePropertyChange("resource", resource, null);
+            resource.setNamingResources(null);
         }
 
     }
@@ -698,8 +698,8 @@ public final class NamingResources {
             resourceLink = (ContextResourceLink) resourceLinks.remove(name);
         }
         if (resourceLink != null) {
-            resourceLink.setNamingResources(null);
             support.firePropertyChange("resourceLink", resourceLink, null);
+            resourceLink.setNamingResources(null);
         }
 
     }
@@ -717,9 +717,9 @@ public final class NamingResources {
             resourceParameters = (ResourceParams) resourceParams.remove(name);
         }
         if (resourceParameters != null) {
-            resourceParameters.setNamingResources(null);
             support.firePropertyChange("resourceParams", resourceParameters,
                                        null);
+            resourceParameters.setNamingResources(null);
         }
 
     }

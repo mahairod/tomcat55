@@ -1049,7 +1049,13 @@ public class ServerLifecycleListener
      * @exception Exception if an exception is thrown during MBean destruction
      */
     protected void destroyMBeans(Server server) throws Exception {
-
+        
+        // Destroy the MBeans for the global NamingResources (if any)
+        NamingResources resources = server.getGlobalNamingResources();
+        if (resources != null) {
+            destroyMBeans(resources);
+        }
+        
         // Destroy the MBeans for each child Service
         Service services[] = server.findServices();
         for (int i = 0; i < services.length; i++) {
@@ -1062,12 +1068,6 @@ public class ServerLifecycleListener
                 continue;
             }
             destroyMBeans(services[i]);
-        }
-
-        // Destroy the MBeans for the global NamingResources (if any)
-        NamingResources resources = server.getGlobalNamingResources();
-        if (resources != null) {
-            destroyMBeans(resources);
         }
 
         // Destroy the MBean for the Server itself
