@@ -113,7 +113,7 @@ depends on which <code>Realm</code> implementation you are using:</p>
     which defines the username and password used by this individual to
     log on, and the role names he or she is associated with.  You can
     add the <strong>manager</strong> role to the comma-delimited
-    <code>roles</code> attriute for one or more existing users, and/or
+    <code>roles</code> attribute for one or more existing users, and/or
     create new users with that assigned role.</li>
 <li><em>JDBCRealm</em> - Your user and role information is stored in
     a database accessed via JDBC.  Add the <strong>manager</strong> role
