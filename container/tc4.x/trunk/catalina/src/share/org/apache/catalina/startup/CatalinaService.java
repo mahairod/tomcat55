@@ -163,9 +163,24 @@ public class CatalinaService extends Catalina {
 
 
     /**
+     * Execute the processing that has been configured from the command line.
+     */
+    protected void execute() throws Exception {
+
+        if (starting) {
+            load();
+            start();
+        } else if (stopping) {
+            stop();
+        }
+
+    }
+
+
+    /**
      * Start a new server instance.
      */
-    protected void start() {
+    public void load() {
 
         // Create and execute our mapper
         XmlMapper mapper = createStartMapper();
@@ -221,6 +236,28 @@ public class CatalinaService extends Catalina {
         // Start the new server
         if (server instanceof Lifecycle) {
             try {
+                server.initialize();
+            } catch (LifecycleException e) {
+                System.out.println("Catalina.start: " + e);
+                e.printStackTrace(System.out);
+                if (e.getThrowable() != null) {
+                    System.out.println("----- Root Cause -----");
+                    e.getThrowable().printStackTrace(System.out);
+                }
+            }
+        }
+
+    }
+
+
+    /**
+     * Start a new server instance.
+     */
+    public void start() {
+
+        // Start the new server
+        if (server instanceof Lifecycle) {
+            try {
                 ((Lifecycle) server).start();
             } catch (LifecycleException e) {
                 System.out.println("Catalina.start: " + e);
@@ -238,7 +275,7 @@ public class CatalinaService extends Catalina {
     /**
      * Stop an existing server instance.
      */
-    protected void stop() {
+    public void stop() {
 
         // Shut down the server
         if (server instanceof Lifecycle) {
