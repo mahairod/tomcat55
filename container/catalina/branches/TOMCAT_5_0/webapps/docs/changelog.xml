@@ -20,6 +20,9 @@
       <update>
         Update web.xml files to 2.4 schema (from 2.3 DTD) where applicable. (yoavs)
       </update>
+      <update>
+        <bug>32235</bug>: align conf/web.xml MIME types with Apache HTTPD. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
