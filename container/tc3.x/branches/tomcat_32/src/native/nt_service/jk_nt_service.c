@@ -670,13 +670,13 @@ static void stop_tomcat(short port,
                 }                                                    
             } else {
                 char b[] = {(char)254, (char)15};
-                int rc = send(sd, b, 2, 0);
+                rc = send(sd, b, 2, 0);
                 if(2 == rc) {
                     rc = JK_TRUE;
                 }
             }
             jk_close_socket(sd);
-            if(2 == rc) {
+            if(JK_TRUE == rc) {
                 if(WAIT_OBJECT_0 == WaitForSingleObject(hTomcat, 30*1000)) {
                     return;
                 }
