@@ -626,7 +626,6 @@ public class DeltaManager
                 return;
             }
             //to survice context reloads, as only a stop/start is called, not createManager
-            System.out.println("\n\n\nADDING MANAGER WITH NAME "+getName()+"\n\n\n");
             getCluster().addManager(getName(),this);
 
             if (cluster.getMembers().length > 0) {
