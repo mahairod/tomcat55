@@ -214,10 +214,6 @@ public class SSLServerSocketFactory
      */
     private String keystorePass = "changeit";
 
-    public String getKeystorePass() {
-        return (this.keystorePass);
-    }
-
     public void setKeystorePass(String keystorePass) {
         this.keystorePass = keystorePass;
     }
