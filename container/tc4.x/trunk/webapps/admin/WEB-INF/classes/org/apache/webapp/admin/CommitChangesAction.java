@@ -59,7 +59,6 @@
  *
  */
 
-
 package org.apache.webapp.admin;
 
 
@@ -128,7 +127,6 @@ public final class CommitChangesAction extends Action {
                                  HttpServletResponse response)
         throws IOException, ServletException {
 
-        // save to server.xml        
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
             mBServer = ((ApplicationServlet) getServlet()).getServer();
@@ -144,13 +142,7 @@ public final class CommitChangesAction extends Action {
             resources = getServlet().getResources();
         }
         
-
-        // Invalidate the current session and create a new one
-        //HttpSession session = request.getSession();
-        //session.invalidate();
-        //session = request.getSession(true);
-
-        ObjectName sname = null;    
+       ObjectName sname = null;    
         try {
            sname = new ObjectName(TomcatTreeBuilder.SERVER_TYPE);
         } catch (Exception e) {
@@ -159,7 +151,7 @@ public final class CommitChangesAction extends Action {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
             return (null);
         }
-
+        
        String operation = "store";
        try {           
             mBServer.invoke(sname, operation, null, null);            
@@ -175,7 +167,7 @@ public final class CommitChangesAction extends Action {
         }
  
         //FIX ME-- just a message for debugging
-        System.out.println("Debugging-- changes written to conf/server.xml.new");
+        System.out.println("Debugging -- changes saved to conf/server.xml");
         // Forward control back to the banner
         return (mapping.findForward("Banner"));
 

@@ -203,7 +203,6 @@ public final class SaveConnectorAction extends Action {
                 values[1] = cform.getAddress();
                 values[2] = new Integer(cform.getPortText());
 
-                // FIX ME -- fix all create operations
                 if ("HTTP".equalsIgnoreCase(connectorType)) {
                         operation = "createHttpConnector"; // HTTP
                 } else if ("HTTPS".equalsIgnoreCase(connectorType)) { 
@@ -215,6 +214,7 @@ public final class SaveConnectorAction extends Action {
                 cObjectName = (String)
                     mBServer.invoke(fname, operation,
                                     values, createStandardConnectorTypes);
+                
                 // Add the new Connector to our tree control node
                 TreeControl control = (TreeControl)
                     session.getAttribute("treeControlTest");
