@@ -22,6 +22,7 @@
     </menu>
 
     <menu name="Connectors">
+        <item name="JTC Connectors"        href="connectors.html"/>
         <item name="Coyote HTTP/1.1"       href="coyote.html"/>
         <item name="Coyote JK 2"           href="jk2.html"/>
         <item name="HTTP/1.1"              href="http11.html"/>
