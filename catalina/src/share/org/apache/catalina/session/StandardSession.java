@@ -321,10 +321,13 @@ public class StandardSession
      */
     public String getId() {
 
+        // Comment out for now, will revisit for 5.5.10
+        /*
          if ( !isValid() ) {
              throw new IllegalStateException
                  (sm.getString("standardSession.getId.ise"));
          }
+	 */
 
         return (this.id);
 
