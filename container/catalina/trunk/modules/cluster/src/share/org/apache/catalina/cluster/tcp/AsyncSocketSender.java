@@ -73,6 +73,7 @@ public class AsyncSocketSender implements IDataSender {
     private Socket sc = null;
     private boolean isSocketConnected = false;
     private SmartQueue queue = new SmartQueue();
+    private boolean suspect;
     
     public AsyncSocketSender(InetAddress host, int port)  {
         this.address = host;
@@ -137,6 +138,17 @@ public class AsyncSocketSender implements IDataSender {
         StringBuffer buf = new StringBuffer("SocketSender[");
         buf.append(getAddress()).append(":").append(getPort()).append("]");
         return buf.toString();
+    }
+    public boolean isSuspect() {
+        return suspect;
+    }
+    
+    public boolean getSuspect() {
+        return suspect;
+    }
+    
+    public void setSuspect(boolean suspect) {
+        this.suspect = suspect;
     }
     
     private class QueueThread extends Thread {

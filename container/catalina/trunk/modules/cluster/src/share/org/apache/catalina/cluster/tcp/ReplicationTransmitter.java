@@ -147,18 +147,21 @@ public class ReplicationTransmitter
 
     public void sendMessage(String sessionId, byte[] indata) throws java.io.IOException
     {
-        java.util.Iterator i = map.entrySet().iterator();
-        java.util.Vector v = new java.util.Vector();
+         IDataSender[] senders = getSenders();
         byte[] data = XByteBuffer.createDataPackage(indata);
-        while ( i.hasNext() )
+        for ( int i=0; i<senders.length; i++ )
         {
-            IDataSender sender = (IDataSender)((java.util.Map.Entry)i.next()).getValue();
+
+            IDataSender sender = senders[i];
             try
             {
                 sendMessageData(sessionId,data,sender);
+                sender.setSuspect(false);
             }catch ( Exception x)
             {
-                log.warn("Unable to send replicated message to "+sender+", is server down?",x);
+
+                if ( !sender.getSuspect()) log.warn("Unable to send replicated message to "+sender+", is server down?",x);
+                sender.setSuspect(true);
             }
         }//while
     }
