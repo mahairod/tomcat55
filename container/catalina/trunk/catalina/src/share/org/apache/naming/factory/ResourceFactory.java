@@ -170,16 +170,6 @@ public class ResourceFactory
                             .newInstance();
                     } catch(Throwable t) {
                     }
-                } else if (ref.getClassName().equals("tyrex.resource.Resource")) {
-                    String tyrexResourceFactoryClassName =
-                        System.getProperty("tyrex.resource.Resource.Factory",
-                                           Constants.TYREX_RESOURCE_FACTORY);
-                    try {
-                        factory = (ObjectFactory)
-                            Class.forName(tyrexResourceFactoryClassName)
-                            .newInstance();
-                    } catch(Throwable t) {
-                    }
                 }
             }
             if (factory != null) {
