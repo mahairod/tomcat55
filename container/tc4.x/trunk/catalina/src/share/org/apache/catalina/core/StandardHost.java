@@ -852,10 +852,10 @@ public class StandardHost
                 (sm.getString("standardHost.appBase",
                               appBase.getAbsolutePath()));
         File docBase = new File(appBase, pathname);
-        if (docBase.exists())
-            throw new IOException
-                (sm.getString("standardHost.docBase",
-                              docBase.getAbsolutePath()));
+        if (docBase.exists()) {
+            // War file is already installed
+            return (docBase.getAbsolutePath());
+            }
         docBase.mkdir();
         if (debug >= 2)
             log("  Have created expansion directory " +
