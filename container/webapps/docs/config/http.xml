@@ -56,6 +56,11 @@
 
   <attributes>
 
+    <attribute name="allowTrace" required="false">
+      <p>A boolean value which can be used to enable or disable the TRACE
+      HTTP method. If not specified, this attribute is set to false.</p>
+    </attribute>
+
     <attribute name="enableLookups" required="false">
       <p>Set to <code>true</code> if you want calls to
       <code>request.getRemoteHost()</code> to perform DNS lookups in
@@ -103,9 +108,11 @@
 
     <attribute name="useBodyEncodingForURI" required="false">
       <p>This specifies if the encoding specified in contentType should be used
-      for URI query parameters, instead of using the URIEncoding. This setting is
-      present for compatibility with Tomcat 4.1.x.
-      The default value is <code>false</code>.
+      for URI query parameters, instead of using the URIEncoding. This 
+      setting is present for compatibility with Tomcat 4.1.x, where the 
+      encoding specified in the contentType, or explicitely set using 
+      Request.setCharacterEncoding method was also used for the parameters from
+      the URL. The default value is <code>false</code>.
       </p>
     </attribute>
 
