@@ -144,8 +144,8 @@ elif [ "$1" = "start" ] ; then
   WAIT=0
   if [ "$1" = "-wait" ] ; then
     shift
-    # wait at least 2 min
-    WAIT=120
+    # wait at least 6 min 
+    WAIT=360
   fi
 
   if [ "$1" = "-noout" ] ; then
