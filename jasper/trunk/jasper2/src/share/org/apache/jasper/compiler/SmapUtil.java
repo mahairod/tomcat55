@@ -558,8 +558,8 @@ public class SmapUtil {
             doSmap(n);
             visitBody(n);
         }
+
         public void visit(Node.NamedAttribute n) throws JasperException {
-            doSmap(n);
             visitBody(n);
         }
 
