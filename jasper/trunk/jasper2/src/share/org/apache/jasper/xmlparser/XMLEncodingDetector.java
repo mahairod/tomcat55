@@ -1062,7 +1062,7 @@ public class XMLEncodingDetector {
 		}
 		// handle the trailing edges
 		if (fCurrentEntity.position == fCurrentEntity.count) {
-		    load(0, true);
+		    load(0, false);
 		}
 	    }
 	}
