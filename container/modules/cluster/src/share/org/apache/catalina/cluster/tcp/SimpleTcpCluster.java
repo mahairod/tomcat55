@@ -353,7 +353,7 @@ public class SimpleTcpCluster
                 (sm.getString("cluster.alreadyStarted"));
         log.info("Cluster is about to start");
         try {
-            IntrospectionUtils.callMethod1(getContainer(), "addValve", valve, null, null);
+            IntrospectionUtils.callMethodN(getContainer(), "addValve", new Object[]  {valve}, new Class[] {valve.getClass()});
             clusterReceiver.setIsSenderSynchronized(clusterSender.getIsSenderSynchronized());
             clusterReceiver.setCatalinaCluster(this);
             clusterReceiver.start();
