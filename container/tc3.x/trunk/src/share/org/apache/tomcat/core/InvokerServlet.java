@@ -181,17 +181,15 @@ public class InvokerServlet extends HttpServlet {
 
         // try the easy one -- lookup by name
         
-        //ServletWrapper wrapper = container.getServlet(servletName);
+        ServletWrapper wrapper = container.getServletByName(servletName);
 
-	LookupResult result = container.lookupServletByName(servletName);
-	
-        if (result == null) {
+        if (wrapper == null) {
             // try the more forceful approach
 
-            result = container.lookupServletAndLoadByName(servletName);
+            wrapper = container.getServletAndLoadByName(servletName);
         }
 
-        if (result == null) {
+        if (wrapper == null) {
             // we are out of luck
 
             doError(response);
@@ -238,7 +236,7 @@ public class InvokerServlet extends HttpServlet {
 	    }
 	}
 
-        result.getWrapper().handleRequest(requestfacade, responsefacade);
+        wrapper.handleRequest(requestfacade, responsefacade);
 
 	if (inInclude) {
 	    if (savedServletPath != null) {
