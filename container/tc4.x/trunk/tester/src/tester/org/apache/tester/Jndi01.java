@@ -79,6 +79,17 @@ import javax.servlet.http.*;
 
 public class Jndi01 extends HttpServlet {
 
+    public void init() throws ServletException {
+        Context ctx = null;
+        try {
+            ctx = new InitialContext();
+            log("initialized successfully");
+        } catch (NamingException e) {
+            log("Cannot create context", e);
+            throw new ServletException(e);
+        }
+    }
+
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws IOException, ServletException {
 

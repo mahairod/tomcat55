@@ -300,6 +300,7 @@
     <servlet>
         <servlet-name>Jndi01</servlet-name>
         <servlet-class>org.apache.tester.Jndi01</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet>
