@@ -74,6 +74,7 @@
     <fixcrlf srcdir="${catalina.build}/bin" includes="*.sh" cr="remove"/>
     <fixcrlf srcdir="${catalina.build}/bin" includes="*.bat" cr="add"/>
     <chmod perm="+x" file="${catalina.build}/bin/catalina.sh"/>
+    <chmod perm="+x" file="${catalina.build}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/startup.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/shutdown.sh"/>
 
@@ -274,6 +275,7 @@
     <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.sh" cr="remove"/>
     <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.bat" cr="add"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/catalina.sh"/>
+    <chmod perm="+x" file="${catalina.build}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/startup.sh"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/shutdown.sh"/>
 
@@ -331,6 +333,7 @@
     <fixcrlf srcdir="${catalina.dist}/bin" includes="*.sh" cr="remove"/>
     <fixcrlf srcdir="${catalina.dist}/bin" includes="*.bat" cr="add"/>
     <chmod perm="+x" file="${catalina.dist}/bin/catalina.sh"/>
+    <chmod perm="+x" file="${catalina.build}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.dist}/bin/jspc.sh"/>
 
     <mkdir dir="${catalina.dist}/conf"/>
