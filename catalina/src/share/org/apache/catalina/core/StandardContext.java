@@ -3904,7 +3904,7 @@ public class StandardContext
         if( realm == null ) {
             ObjectName realmName=null;
             try {
-                realmName=new ObjectName( getEngineName() + ":type=Host,host=" + 
+                realmName=new ObjectName( getEngineName() + ":type=Realm,host=" + 
                         getHostname() + ",path=" + getPath());
                 if( mserver.isRegistered(realmName ) ) {
                     mserver.invoke(realmName, "init", 
