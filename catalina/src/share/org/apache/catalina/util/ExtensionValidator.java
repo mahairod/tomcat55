@@ -237,10 +237,12 @@ public final class ExtensionValidator {
                             InputStream in = resource.streamContent();
                             JarInputStream jin = new JarInputStream(in);
                             Manifest jmanifest = jin.getManifest();
-                            ManifestResource mre = new ManifestResource
-                                (binding.getName(), jmanifest, 
-                                ManifestResource.APPLICATION);
-                            appManifestResources.add(mre);
+                            if (jmanifest != null) {
+                                ManifestResource mre = new ManifestResource
+                                    (binding.getName(), jmanifest, 
+                                    ManifestResource.APPLICATION);
+                                appManifestResources.add(mre);
+                            }
                         } catch (java.io.IOException iox) {
                             // do not do anything... go to the next entry
                         }
