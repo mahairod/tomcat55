@@ -705,8 +705,6 @@
 
   <target name="deployer" description="Create the Tomcat deployer binary" > 
 
-    <copy todir="${tomcat.deployer}/lib" file="${tomcat.build}/common/lib/ant.jar"/>
-
     <!-- JSP and Servlet runtime -->
     <copy todir="${tomcat.deployer}/lib">
       <fileset dir="${tomcat.build}/common/lib">
