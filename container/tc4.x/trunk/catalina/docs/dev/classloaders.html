@@ -52,6 +52,9 @@ the parent class loader is above the child class loaders:</p>
                  Catalina   Shared
                            /     \
                        Webapp1  Webapp2 ...
+                         /          /
+                      Jasper1   Jasper2
+
 </pre>
 
 <p>The usage of and repositories contained in each class loader are
@@ -63,56 +66,71 @@ described further below:</p>
     is organized, this may actually be more than one class loader, or
     may not exist at all.  It is generally not referenced directly.</li>
 <li><strong>System</strong> - This class loader is initialized from the
-    contents of the <code>CLASSPATH</code> environment variable.  The
-    standard Catalina startup scripts assemble the following repositories
-    for the system class path:
+    contents of the <code>CLASSPATH</code> environment variable, and
+    contains classes that must be visible to both the Catalina internal
+    classes and to web applications.  The standard Catalina startup scripts
+    assemble the following repositories for the system class path:
     <ul>
     <li><code>$CATALINA_HOME/bin/bootstrap.jar</code> - The Bootstrap class
         that is used to initialize the Catalina server, and the class
         loader implementation classes it depends on.</li>
-    <li><code>$JAVA_HOME/lib/tools.jar</code> - Contains the Javac
-        compiler used to compile the servlets generated from JSP pages.</li>
+    <li><code>$CATALINA_HOME/bin/naming.jar</code> - The JNDI context
+        implementation that is used by Catalina.</li>
+    <li><code>$CATALINA_HOME/bin/servlet.jar</code> - The servlet and
+        JSP API classes.</li>
+    <li><code>$JAVA_HOME/lib/tools.jar</code> - The Javac
+        compiler used to compile the servlets generated from JSP pages
+        (if present on your system).</li>
     </ul>
 <li><strong>Common</strong> - This class loader is initialized to include all 
-    JAR files in the <code>$CATALINA_HOME/bin</code> directory, except 
-    <code>bootstrap.jar</code>. The following two JAR files are installed
-    by default, and are necessary to run Tomcat 4.
+    JAR files in the <code>$CATALINA_HOME/bin</code> directory, except those
+    attached to the <strong>System</strong> class loader:
     <ul>
-    <li><code>$CATALIA_HOME/bin/servlet.jar</code> - The Servlet and JSP
-        API classes, placed here so that they are shared between Catalina
-        and the web applications that run under it.</li>
     <li><code>$CATALIA_HOME/bin/naming.jar</code> - The JNDI implementation
-        used by Tomcat 4.</li>
+        used by Tomcat 4, added only if you are running in a JDK 1.2
+        environment (the JNDI classes are included in JDK 1.3 or later).</li>
     </ul>
 <li><strong>Catalina</strong> - This class loader is initialized to include
     all JAR files in the <code>$CATALINA_HOME/server</code> directory, which
     should contain Catalina itself (i.e. all classes whose fully qualified
     names begin with <code>org.apache.catalina.</code>), and any JAR files
     that it depends on.  Because these classes are loaded from a separate
-    class loader, which is not visible to the <em>Webapp</em> class loader,
-    they are <strong>not</strong> visible to web applications.</li>
+    class loader, which is not visible to the <strong>Webapp</strong> class
+    loader, they are <em>not</em> visible to web applications.</li>
 <li><strong>Shared</strong> - This class loader is initialized to include
     all JAR files in the <code>$CATALINA_HOME/lib</code> directory.  All of
     the classes in these repositories will be visible to all web applications,
     so they may be used to share information between web apps
     (<strong>NOTE</strong> - this behavior is specific to Tomcat 4.0, and
     will not necessarily be portable to other containers.)</li>
-<li><strong>Webapp</strong> - A class loader is created for each web
+<li><strong>WebappX</strong> - A class loader is created for each web
     application that is installed in Catalina, and initialized to include the
     <code>WEB-INF/classes</code> directory (if it exists), plus all JAR files
     in the <code>WEB-INF/lib</code> directory, for this web app.  Because of
     the parentage hierarchy, web applications can indirectly see (and therefore
-    load classes from) the <em>Shared</em>, <em>System</em>, and
-    <em>Bootstrap</em> class loaders, but <strong>not</strong> from the
-    <em>Catalina</em> class loader.</li>
+    load classes from) the <strong>Shared</strong>, <strong>Common</strong>,
+    <strong>System</strong>, and <strong>Bootstrap</strong> class loaders,
+    but <em>not</em> from the <strong>Catalina</strong> or
+    <strong>JasperX</strong> class loaders.</li>
+<li><strong>JasperX</strong> - If and only if a web application utilizes
+    Jasper to compile and execute JSP pages, an additional class loader is
+    created for each web application.  It is initialized to include all JAR
+    files in the <code>$CATALINA_HOME/jasper</code> directory, which normally
+    includes the Jasper compiler classes and the XML parser that they require.
+    Because the parent of this class loader is the <strong>WebappX</strong>
+    class loader for this application, the JSP compiler can see all of the
+    JavaBean and other classes that are part of this application, but the
+    application classes cannot see anything loaded from here (and, in
+    particular, will not have access to the XML parser loaded by this
+    class loader.</li>
 </ul>
 
 <p>As you can see from the above descriptions, the contents of any
 <code>CLASSPATH</code> environment variable already existing in your server
 is totally ignored.  If you want to make a JAR file available to all web
-applications, you <strong>must</strong> place a copy of this file in the
+applications, you <em>must</em> place a copy of this file in the
 <code>$CATALINA_HOME/lib</code> directory so that it becomes part of the
-<em>Shared</em> class loader's repositories.</p>
+<strong>Shared</strong> class loader's repositories.</p>
 
 <a name="Process"></a>
 <h3>Web Application Class Loading Process</h3>
@@ -122,34 +140,35 @@ for the first time (either by using the <code>new</code> operator or by
 calling the <code>Class.forName()</code> method), the following processing
 occurs to locate and load the requested class:</p>
 <ol>
-<li>The <code>loadClass()</code> method of the <em>Webapp</em> class loader
-    is called to load the specified class.</li>
-<li>If the requested class has a prefix that is on the restricted list,
-    the class loader refuses to load the class at all.  For the <em>Webapp</em>
-    class loader, the restricted list is configured to include
-    <code>org.apache.catalina.</code>, so that any attempt to load an internal
-    Catalina implementation class is refused (even if the web app developer
-    tries to put <code>catalina.jar</code> someplace visible to their app).
-    </li>
+<li>The <code>loadClass()</code> method of the <strong>WebappX</strong> class
+    loader is called to load the specified class.</li>
 <li>If this class has been previously loaded by this class loader, the
     cached copy is returned again.  This avoids having to do potentially
     expensive I/O every time a class is requested.</li>
-<li>If the requested class has a prefix that is on the "system classes" list,
-    the <em>Webapp</em> class loader delegates to its parent (i.e. the
-    <em>Shared</em> class loader), in the usual Java2 delegation fashion.
-    For the <em>Webapp</em> class loader, the "system classes" list is
-    configured to include <code>java.</code> and <code>javax.servlet.</code>
-    so that you cannot override system or servlet API classes with your
-    own copies.</li>
-<li>Local repositories (i.e. the contents of the <code>WEB-INF/classes</code>
-    directory, followed by the contents of JAR files found in the
-    <code>WEB-INF/lib</code> directory) are searched next.  If the class is
-    found here, it is cached in memory, and returned.</li>
-<li>Finally, responsibility for finding this class is delegated upward
-    to the parent class loader, who will either find the class itself (after
-    possibly delegating upwards to its own parent) or throw a
-    <code>ClassNotFoundException</code> if no class with this name can be
-    located anywhere in the class loader hierarchy visible to the web app.</li>
+<li>If the class to be loaded is a Java core class (<code>java.*</code>),
+    it is loaded directly by the <strong>System</strong> class loader.</li>
+<li>If Catalina is running under a security manager (which is normally the
+    case), the class loading permissions in the policy file are checked.  If
+    the specified policies prohibit loading the named class, the class loader
+    will log the violation attempt and return a
+    <code>ClassNotFoundException</code>.</li>
+<li>If this class loader's <code>delegate</code> property is set to
+    <code>true</code> (which is <em>not</em> the default), we will ask our
+    parent class loader to load this class before looking locally.  This is
+    the standard Java2 delegation model, but prevents a web application from
+    overriding a class from the <strong>Shared</strong> class loader with its
+    own copy from <code>WEB-INF/classes</code> or a JAR file in
+    <code>WEB-INF/lib</code>.</li>
+<li>The local repositories are searched next, starting with the
+    <code>WEB-INF/classes</code> directory (if it exists), and then the JAR
+    files in <code>WEB-INF/lib</code>.</li>
+<li>If we still have not found the class, and did not delegate earlier, we
+    delegate to our parent class loader (i.e. the <strong>Shared</strong>
+    class loader, which will attempt to load the class itself or delegate
+    upwards.  This process continues until the class is found, or we have
+    reached the top of the class loader hierarchy.</li>
+<li>If the class has still not been found, <code>ClassNotFoundException</code>
+    is thrown, as required by the Javadocs for a class loader.</li>
 </ol>
 
 <p>A similar pattern is followed when you call <code>Class.getResource()</code>
@@ -176,6 +195,37 @@ representation of the directories and JAR files available in the
 <em>webapp</em>, <em>shared</em>, and <em>system</em> class loaders, with
 each repository separated by the appropriate path separator character for
 the platform this server is running on.</li>
+</ul>
+
+<h4>A Note On XML Parsers</h4>
+
+<p>Previously, the Jasper page compiler was loaded in the
+<strong>Shared</strong> class loader, along with the XML parser that it
+requires.  This had the side effect of causing this XML parser to be visible
+to all web applications, through the inheritance hierarchy.  However, this
+causes problems if the JAR files of the selected XML parser are sealed (as are
+the JAR files in the JAXP 1.1 reference implementation, for example) -- any
+attempt to load your own XML parser (such as Xerces) from
+<code>WEB-INF/lib</code> would cause "package sealing violation" errors to be
+thrown.</p>
+
+<p>Now that the XML parser required by Jasper is loaded from the
+<strong>JasperX</strong> class loader, rather than the <strong>Shared</strong>
+class loader, this problem no longer occurs.  However, any web application that
+relied on an XML parser being made available by Catalina will fail, because
+this is no longer true by default.  If your web application requires an XML
+parser, you have three choices:</p>
+<ul>
+<li>Place the XML parser's JAR file(s) in the <code>WEB-INF/lib</code>
+    directory of your web application.</li>
+<li>Move the XML parser JAR files from the "jasper" directory to the "lib"
+    directory so that the parser is visible both to Jasper and to your
+    web applications.</li>
+<li>Place the XML parser's JAR file(s) in the <code>$CATALINA_HOME/lib</code>
+    directory so that they are available to all web applications.  Note that
+    this is likely to introduce "package sealing violation" problems again,
+    so this option is only practical if your applications do not require
+    JSP pages.</li>
 </ul>
 
 <h4>Additional Information</h4>
