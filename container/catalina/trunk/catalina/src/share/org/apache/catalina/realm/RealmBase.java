@@ -283,17 +283,15 @@ public abstract class RealmBase
             validated = serverCredentials.equals(credentials);
         }
         if(! validated ) {
-            if (container.getLogger().isTraceEnabled()) {
-                container.getLogger().
-                    trace(sm.getString("realmBase.authenticateFailure",
-                                 username));
+            if (log.isTraceEnabled()) {
+                log.trace(sm.getString("realmBase.authenticateFailure",
+                                       username));
             }
             return null;
         }
-        if (container.getLogger().isTraceEnabled()) {
-            container.getLogger().
-                trace(sm.getString("realmBase.authenticateSuccess",
-                             username));
+        if (log.isTraceEnabled()) {
+            log.trace(sm.getString("realmBase.authenticateSuccess",
+                                   username));
         }
 
         return getPrincipal(username);

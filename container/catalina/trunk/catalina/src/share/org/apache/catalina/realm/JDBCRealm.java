@@ -29,6 +29,8 @@ import java.util.Properties;
 
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -50,6 +52,7 @@ import org.apache.catalina.util.StringManager;
 public class JDBCRealm
     extends RealmBase {
 
+    private static Log log = LogFactory.getLog(JDBCRealm.class);
 
     // ----------------------------------------------------- Instance Variables
 
@@ -354,7 +357,7 @@ public class JDBCRealm
             } catch (SQLException e) {
 
                 // Log the problem for posterity
-                container.getLogger().error(sm.getString("jdbcRealm.exception"), e);
+                log.error(sm.getString("jdbcRealm.exception"), e);
 
                 // Close the connection so that it gets reopened next time
                 if (dbConnection != null)
@@ -408,13 +411,13 @@ public class JDBCRealm
         }
 
         if (validated) {
-            if (container.getLogger().isTraceEnabled())
-                container.getLogger().trace(sm.getString("jdbcRealm.authenticateSuccess",
-                                 username));
+            if (log.isTraceEnabled())
+                log.trace(sm.getString("jdbcRealm.authenticateSuccess",
+                                       username));
         } else {
-            if (container.getLogger().isTraceEnabled())
-                container.getLogger().trace(sm.getString("jdbcRealm.authenticateFailure",
-                                 username));
+            if (log.isTraceEnabled())
+                log.trace(sm.getString("jdbcRealm.authenticateFailure",
+                                       username));
             return (null);
         }
 
@@ -458,7 +461,7 @@ public class JDBCRealm
         try {
             dbConnection.close();
         } catch (SQLException e) {
-            container.getLogger().warn(sm.getString("jdbcRealm.close"), e); // Just log it here
+            log.warn(sm.getString("jdbcRealm.close"), e); // Just log it here
         } finally {
            this.dbConnection = null;
         }
@@ -538,23 +541,21 @@ public class JDBCRealm
             return dbCredentials;
             
         } catch(SQLException e){
-            container.getLogger().
-                    error(sm.getString("jdbcRealm.getPassword.exception",
-                                       username), e);
+            log.error(sm.getString("jdbcRealm.getPassword.exception",
+                                   username), e);
         } finally {
             if (rs!=null) {
                 try {
                     rs.close();
                 } catch(SQLException e) {
-                    container.getLogger().warn(sm.getString("jdbcRealm.abnormalCloseResultSet"));
+                    log.warn(sm.getString("jdbcRealm.abnormalCloseResultSet"));
                 }
             }
             try {
                 dbConnection.commit();
             } catch (SQLException e) {
-                container.getLogger().
-                        warn(sm.getString("jdbcRealm.getPassword.exception",
-                                          username));
+                log.warn(sm.getString("jdbcRealm.getPassword.exception",
+                                      username));
             }
         }
         
@@ -600,23 +601,21 @@ public class JDBCRealm
             return (roleList);
             
         } catch(SQLException e){
-            container.getLogger().
-                    error(sm.getString("jdbcRealm.getRoles.exception",
-                                       username));
+            log.error(sm.getString("jdbcRealm.getRoles.exception",
+                                   username));
         } finally {
             if (rs!=null) {
                 try {
                     rs.close();
                 } catch(SQLException e) {
-                    container.getLogger().warn(sm.getString("jdbcRealm.abnormalCloseResultSet"));
+                    log.warn(sm.getString("jdbcRealm.abnormalCloseResultSet"));
                 }
             }
             try {
                 dbConnection.commit();
             } catch (SQLException e) {
-                container.getLogger().
-                        warn(sm.getString("jdbcRealm.getRoles.exception",
-                                          username));
+                log.warn(sm.getString("jdbcRealm.getRoles.exception",
+                                      username));
             }
         }
 
@@ -719,7 +718,7 @@ public class JDBCRealm
         try {
             open();
         } catch (SQLException e) {
-            container.getLogger().error(sm.getString("jdbcRealm.open"), e);
+            log.error(sm.getString("jdbcRealm.open"), e);
         }
 
         // Perform normal superclass initialization
