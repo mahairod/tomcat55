@@ -305,7 +305,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 		// Recognized but ignored
             } else {
 		if (log.isWarnEnabled()) {
-		    log.warn(Localizer.getMessage("jsp.warning.unknown.element.in.TLD", 
+		    log.warn(Localizer.getMessage("jsp.warning.unknown.element.in.taglib", 
 						  tname));
 		}
             }
