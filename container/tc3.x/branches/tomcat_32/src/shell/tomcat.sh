@@ -87,12 +87,15 @@ if [ "$JAVACMD" = "" ] ; then
    JAVACMD=$JAVA_HOME/bin/java
 fi
 
-
 oldCP=$CLASSPATH
  
-CLASSPATH=.
+unset CLASSPATH
 for i in ${TOMCAT_HOME}/lib/* ; do
-  CLASSPATH=${CLASSPATH}:$i
+  if [ "$CLASSPATH" != "" ]; then
+    CLASSPATH=${CLASSPATH}:$i
+  else
+    CLASSPATH=$i
+  fi
 done
 
 if [ -f ${JAVA_HOME}/lib/tools.jar ] ; then
