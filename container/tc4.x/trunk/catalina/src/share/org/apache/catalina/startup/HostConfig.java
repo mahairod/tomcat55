@@ -406,16 +406,16 @@ public final class HostConfig
         if (!(host instanceof Deployer))
             return;
         if (debug >= 1)
-            log(sm.getString("hostConfig.stopping"));
+            log(sm.getString("hostConfig.undeploying"));
 
         String contextPaths[] = ((Deployer) host).findDeployedApps();
         for (int i = 0; i < contextPaths.length; i++) {
             if (debug >= 1)
-                log(sm.getString("hostConfig.stop", contextPaths[i]));
+                log(sm.getString("hostConfig.undeploy", contextPaths[i]));
             try {
-                ((Deployer) host).stop(contextPaths[i]);
+                ((Deployer) host).remove(contextPaths[i]);
             } catch (Throwable t) {
-                log(sm.getString("hostConfig.stop.error",
+                log(sm.getString("hostConfig.undeploy.error",
                                  contextPaths[i]), t);
             }
         }

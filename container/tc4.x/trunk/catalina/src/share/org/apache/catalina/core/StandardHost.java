@@ -696,28 +696,6 @@ public class StandardHost
             throw new IOException(e.toString());
         }
 
-        // Remove the context directory
-        String docBase = context.getDocBase();
-        if (docBase != null) {
-            if (debug >= 1)
-                log("Removing expanded directory " + docBase);
-            remove(new File(docBase));
-        }
-        // Remove the war file if it exists
-        File warFile = new File(docBase + ".war");
-        if (warFile.exists()) {
-            if (!warFile.delete())
-                throw new IOException("Cannot delete war file " +
-                    warFile.toString());
-        }
-
-        // Remove the work directory if it exists
-        File dir = (File)context.getServletContext().getAttribute(
-            Globals.WORK_DIR_ATTR);
-        if (debug >= 1)
-            log("Removing work directory" + dir.toString());
-        if (dir.exists())
-            remove(dir);
     }
 
 

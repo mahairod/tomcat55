@@ -1030,7 +1030,7 @@ public abstract class ContainerBase
 	// Validate and update our current component state
 	if (started)
 	    throw new LifecycleException
-		(sm.getString("containerBase.alreadyStarted"));
+		(sm.getString("containerBase.alreadyStarted", logName()));
 	started = true;
 
 	// Start our subordinate components, if any
@@ -1084,21 +1084,22 @@ public abstract class ContainerBase
 	// Validate and update our current component state
 	if (!started)
 	    throw new LifecycleException
-		(sm.getString("containerBase.notStarted"));
+		(sm.getString("containerBase.notStarted", logName()));
 
 	// Notify our interested LifecycleListeners
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
 	started = false;
 
 	// Stop the Valves in our pipeline (including the basic), if any
-        if (pipeline instanceof Lifecycle)
+        if (pipeline instanceof Lifecycle) {
             ((Lifecycle) pipeline).stop();
+        }
 
 	// Stop our child containers, if any
 	Container children[] = findChildren();
 	for (int i = 0; i < children.length; i++) {
-	    if (children[(children.length-1)-i] instanceof Lifecycle)
-		((Lifecycle) children[(children.length-1)-i]).stop();
+            if (children[i] instanceof Lifecycle)
+                ((Lifecycle) children[i]).stop();
 	}
 
 	// Stop our Mappers, if any
@@ -1109,16 +1110,21 @@ public abstract class ContainerBase
 	}
 
 	// Stop our subordinate components, if any
-	if ((resources != null) && (resources instanceof Lifecycle))
+	if ((resources != null) && (resources instanceof Lifecycle)) {
 	    ((Lifecycle) resources).stop();
-	if ((realm != null) && (realm instanceof Lifecycle))
+        }
+	if ((realm != null) && (realm instanceof Lifecycle)) {
 	    ((Lifecycle) realm).stop();
-	if ((manager != null) && (manager instanceof Lifecycle))
+        }
+	if ((manager != null) && (manager instanceof Lifecycle)) {
 	    ((Lifecycle) manager).stop();
-	if ((logger != null) && (logger instanceof Lifecycle))
+        }
+	if ((logger != null) && (logger instanceof Lifecycle)) {
 	    ((Lifecycle) logger).stop();
-	if ((loader != null) && (loader instanceof Lifecycle))
+        }
+	if ((loader != null) && (loader instanceof Lifecycle)) {
 	    ((Lifecycle) loader).stop();
+        }
 
     }
 
