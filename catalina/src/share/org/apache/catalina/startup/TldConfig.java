@@ -167,7 +167,7 @@ public final class TldConfig  {
 
     public void addApplicationListener( String s ) {
         //if(log.isDebugEnabled())
-            log.info( "Add tld listener " + s);
+            log.debug( "Add tld listener " + s);
         listeners.add(s);
     }
 
@@ -238,7 +238,7 @@ public final class TldConfig  {
         String list[] = getTldListeners();
 
         if( tldCache!= null ) {
-            log.info( "Saving tld cache: " + tldCache + " " + list.length);
+            log.debug( "Saving tld cache: " + tldCache + " " + list.length);
             try {
                 FileOutputStream out=new FileOutputStream(tldCache);
                 ObjectOutputStream oos=new ObjectOutputStream( out );
@@ -282,7 +282,7 @@ public final class TldConfig  {
 	    String path = (String) paths.next();
 	    URL url = context.getServletContext().getResource(path);
 	    if (url == null) {
-		log.info( "Null url "+ path );
+		log.debug( "Null url "+ path );
 		break;
 	    }
 	    long lastM = url.openConnection().getLastModified();

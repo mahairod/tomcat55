@@ -572,7 +572,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
                     }
                     long t2=System.currentTimeMillis();
                     if( (t2-t1) > 100 )
-                        log.info(sm.getString("managerBase.seeding", randomClass) + " " + (t2-t1));
+                        log.debug(sm.getString("managerBase.seeding", randomClass) + " " + (t2-t1));
                 }
             }
         }
@@ -635,7 +635,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
                 log.error("Error registering ",e);
             }
         }
-        log.info("Registering " + oname );
+        log.debug("Registering " + oname );
                
     }
 

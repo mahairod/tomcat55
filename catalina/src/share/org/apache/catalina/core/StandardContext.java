@@ -987,7 +987,7 @@ public class StandardContext
         String loginPage = config.getLoginPage();
         if ((loginPage != null) && !loginPage.startsWith("/")) {
             if (isServlet22()) {
-                log.info(sm.getString("standardContext.loginConfig.loginWarning",
+                log.debug(sm.getString("standardContext.loginConfig.loginWarning",
                                  loginPage));
                 config.setLoginPage("/" + loginPage);
             } else {
@@ -999,7 +999,7 @@ public class StandardContext
         String errorPage = config.getErrorPage();
         if ((errorPage != null) && !errorPage.startsWith("/")) {
             if (isServlet22()) {
-                log.info(sm.getString("standardContext.loginConfig.errorWarning",
+                log.debug(sm.getString("standardContext.loginConfig.errorWarning",
                                  errorPage));
                 config.setErrorPage("/" + errorPage);
             } else {
@@ -1488,7 +1488,7 @@ public class StandardContext
         String jspFile = wrapper.getJspFile();
         if ((jspFile != null) && !jspFile.startsWith("/")) {
             if (isServlet22()) {
-                log.info(sm.getString("standardContext.wrapper.warning", jspFile));
+                log.debug(sm.getString("standardContext.wrapper.warning", jspFile));
                 wrapper.setJspFile("/" + jspFile);
             } else {
                 throw new IllegalArgumentException
@@ -1590,7 +1590,7 @@ public class StandardContext
         String location = errorPage.getLocation();
         if ((location != null) && !location.startsWith("/")) {
             if (isServlet22()) {
-                log.info(sm.getString("standardContext.errorPage.warning",
+                log.debug(sm.getString("standardContext.errorPage.warning",
                                  location));
                 errorPage.setLocation("/" + location);
             } else {
@@ -1720,7 +1720,7 @@ public class StandardContext
         if( findChild(servletName) != null) {
             addServletMapping(pattern, servletName);
         } else {
-            log.info("Skiping " + pattern + " , no servlet " + servletName);
+            log.debug("Skiping " + pattern + " , no servlet " + servletName);
         }
     }
 
@@ -3829,7 +3829,7 @@ public class StandardContext
         log=org.apache.commons.logging.LogFactory.getLog(logName);
 
         //if (log.isDebugEnabled())
-            log.info("Starting " + logName);
+            log.debug("Starting " + logName);
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
@@ -3912,7 +3912,7 @@ public class StandardContext
 //                    The setDistributable is set after the context is started, hence 
 //                    this doesn't work :(
 //                    if ( this.getDistributable() ) {
-                        log.info("Creating clustering manager for context="+getName());
+                        log.debug("Creating clustering manager for context="+getName());
                         setManager(getCluster().createManager(getName()));
 //                    } else {
 //                        log.info("Ignoring clustering manager for context="+getName()+ " element <distributable> not present in web.xml");
@@ -4271,7 +4271,7 @@ public class StandardContext
         // Restore the original state ( pre reading web.xml in start )
         // If you extend this - override this method and make sure to clean up
         children=new HashMap();
-        log.info("resetContext " + oname + " " + mserver);
+        log.debug("resetContext " + oname + " " + mserver);
         if( oname != null ) { 
             Registry.getRegistry().unregisterComponent(oname); 
         }
@@ -4329,7 +4329,7 @@ public class StandardContext
             return (urlPattern);
         if (!isServlet22())
             return (urlPattern);
-        log.info(sm.getString("standardContext.urlPattern.patternWarning",
+        log.debug(sm.getString("standardContext.urlPattern.patternWarning",
                          urlPattern));
         return ("/" + urlPattern);
 
@@ -4991,7 +4991,7 @@ public class StandardContext
             ObjectName parentName=getParentName();
             
             if( ! mserver.isRegistered(parentName)) {
-                log.info("No host, creating one " + parentName);
+                log.debug("No host, creating one " + parentName);
                 StandardHost host=new StandardHost();
                 host.setName(hostName);
                 Registry.getRegistry().registerComponent(host, parentName, null);
@@ -5024,7 +5024,7 @@ public class StandardContext
             hostName=path.substring(0, delim);
             this.setName( path.substring(delim));
         } else {
-            log.info("Setting path " +  path );
+            log.debug("Setting path " +  path );
             this.setName( path );
         }
         // XXX The service and domain should be the same.

@@ -1106,7 +1106,7 @@ public final class CoyoteConnector
             } catch (Exception e) {
                 log.error( "Error registering connector ", e);
             }
-            log.info("Creating name for connector " + oname);
+            log.debug("Creating name for connector " + oname);
         }
 
         // Initializa adapter
@@ -1404,7 +1404,7 @@ public final class CoyoteConnector
             ObjectName parentName=new ObjectName( domain + ":" +
                     "type=Service");
             
-            log.info("Adding to " + parentName );
+            log.debug("Adding to " + parentName );
             if( mserver.isRegistered(parentName )) {
                 mserver.invoke(parentName, "addConnector", new Object[] { this },
                         new String[] {"org.apache.catalina.Connector"});
@@ -1417,13 +1417,13 @@ public final class CoyoteConnector
             ObjectName engName=new ObjectName( domain + ":" + "type=Engine");
             if( mserver.isRegistered(engName )) {
                 Object obj=mserver.getAttribute(engName, "managedResource");
-                log.info("Found engine " + obj + " " + obj.getClass());
+                log.debug("Found engine " + obj + " " + obj.getClass());
                 container=(Container)obj;
                 
                 // Internal initialize - we now have the Engine
                 initialize();
                 
-                log.info("Initialized");
+                log.debug("Initialized");
                 // As a side effect we'll get the container field set
                 // Also initialize will be called
                 return;
@@ -1436,7 +1436,7 @@ public final class CoyoteConnector
     public void init() throws Exception {
 
         if( this.getService() != null ) {
-            log.info( "Already configured" );
+            log.debug( "Already configured" );
             return;
         }
         if( container==null ) {
@@ -1446,7 +1446,7 @@ public final class CoyoteConnector
 
     public void destroy() throws Exception {
         if( oname!=null && controller==oname ) {
-            log.info("Unregister itself " + oname );
+            log.debug("Unregister itself " + oname );
             Registry.getRegistry().unregisterComponent(oname);
         }
         if( getService() == null)
