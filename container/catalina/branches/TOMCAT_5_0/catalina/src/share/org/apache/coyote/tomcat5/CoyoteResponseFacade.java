@@ -29,6 +29,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.catalina.security.SecurityUtil;
 import org.apache.catalina.connector.ResponseFacade;
 
 /**
@@ -183,7 +184,7 @@ public class CoyoteResponseFacade
         if (isCommitted())
             return;
         
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             AccessController.doPrivileged(new SetContentTypePrivilegedAction(type));
         } else {
             response.setContentType(type);            
@@ -215,7 +216,7 @@ public class CoyoteResponseFacade
             //                (/*sm.getString("responseFacade.finished")*/);
             return;
 
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             try{
                 AccessController.doPrivileged(new PrivilegedExceptionAction(){
 

@@ -45,7 +45,7 @@ import org.apache.catalina.Session;
 import org.apache.catalina.util.CustomObjectInputStream;
 import org.apache.catalina.util.LifecycleSupport;
 
-
+import org.apache.catalina.security.SecurityUtil;
 /**
  * Standard implementation of the <b>Manager</b> interface that provides
  * simple session persistence across restarts of this component (such as
@@ -325,7 +325,7 @@ public class StandardManager
      * @exception IOException if an input/output error occurs
      */
     public void load() throws ClassNotFoundException, IOException {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             try{
                 AccessController.doPrivileged( new PrivilegedDoLoad() );
             } catch (PrivilegedActionException ex){
@@ -469,7 +469,7 @@ public class StandardManager
      * @exception IOException if an input/output error occurs
      */
     public void unload() throws IOException {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             try{
                 AccessController.doPrivileged( new PrivilegedDoUnload() );
             } catch (PrivilegedActionException ex){

@@ -33,6 +33,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.connector.RequestFacade;
 
+import org.apache.catalina.security.SecurityUtil;
+
 /**
  * Facade class that wraps a Coyote request object.  
  * All methods are delegated to the wrapped request.
@@ -216,7 +218,7 @@ public class CoyoteRequestFacade
 
 
     public Enumeration getAttributeNames() {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return (Enumeration)AccessController.doPrivileged(
                 new GetAttributePrivilegedAction());        
         } else {
@@ -226,7 +228,7 @@ public class CoyoteRequestFacade
 
 
     public String getCharacterEncoding() {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return (String)AccessController.doPrivileged(
                 new GetCharacterEncodingPrivilegedAction());
         } else {
@@ -258,7 +260,7 @@ public class CoyoteRequestFacade
 
 
     public String getParameter(String name) {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return (String)AccessController.doPrivileged(
                 new GetParameterPrivilegedAction(name));
         } else {
@@ -268,7 +270,7 @@ public class CoyoteRequestFacade
 
 
     public Enumeration getParameterNames() {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return (Enumeration)AccessController.doPrivileged(
                 new GetParameterNamesPrivilegedAction());
         } else {
@@ -285,7 +287,7 @@ public class CoyoteRequestFacade
          * Clone the returned array only if there is a security manager
          * in place, so that performance won't suffer in the nonsecure case
          */
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             ret = (String[]) AccessController.doPrivileged(
                 new GetParameterValuePrivilegedAction(name));
             if (ret != null) {
@@ -300,7 +302,7 @@ public class CoyoteRequestFacade
 
 
     public Map getParameterMap() {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return (Map)AccessController.doPrivileged(
                 new GetParameterMapPrivilegedAction());        
         } else {
@@ -356,7 +358,7 @@ public class CoyoteRequestFacade
 
 
     public Locale getLocale() {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return (Locale)AccessController.doPrivileged(
                 new GetLocalePrivilegedAction());
         } else {
@@ -366,7 +368,7 @@ public class CoyoteRequestFacade
 
 
     public Enumeration getLocales() {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return (Enumeration)AccessController.doPrivileged(
                 new GetLocalesPrivilegedAction());
         } else {
@@ -381,7 +383,7 @@ public class CoyoteRequestFacade
 
 
     public RequestDispatcher getRequestDispatcher(String path) {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return (RequestDispatcher)AccessController.doPrivileged(
                 new GetRequestDispatcherPrivilegedAction(path));
         } else {
@@ -408,7 +410,7 @@ public class CoyoteRequestFacade
          * Clone the returned array only if there is a security manager
          * in place, so that performance won't suffer in the nonsecure case
          */
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             ret = (Cookie[])AccessController.doPrivileged(
                 new GetCookiesPrivilegedAction());
             if (ret != null) {
@@ -433,7 +435,7 @@ public class CoyoteRequestFacade
 
 
     public Enumeration getHeaders(String name) {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return (Enumeration)AccessController.doPrivileged(
                 new GetHeadersPrivilegedAction(name));
         } else {
@@ -443,7 +445,7 @@ public class CoyoteRequestFacade
 
 
     public Enumeration getHeaderNames() {
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return (Enumeration)AccessController.doPrivileged(
                 new GetHeaderNamesPrivilegedAction());
         } else {
@@ -519,7 +521,7 @@ public class CoyoteRequestFacade
 
     public HttpSession getSession(boolean create) {
 
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return (HttpSession)AccessController.
                 doPrivileged(new GetSessionPrivilegedAction(create));
         } else {

@@ -34,7 +34,7 @@ import org.apache.catalina.util.LifecycleSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
+import org.apache.catalina.security.SecurityUtil;
 /**
  * Extends the <b>ManagerBase</b> class to implement most of the
  * functionality required by a Manager which supports any kind of
@@ -556,7 +556,7 @@ public abstract class PersistentManagerBase
             return;
 
         try {     
-            if (System.getSecurityManager() != null){
+            if (SecurityUtil.isPackageProtectionEnabled()){
                 try{
                     AccessController.doPrivileged(new PrivilegedStoreClear());
                 }catch(PrivilegedActionException ex){
@@ -661,9 +661,10 @@ public abstract class PersistentManagerBase
 
         String[] ids = null;
         try {
-            if (System.getSecurityManager() != null){
+            if (SecurityUtil.isPackageProtectionEnabled()){
                 try{
-                    ids = (String[])AccessController.doPrivileged(new PrivilegedStoreKeys());
+                    ids = (String[])
+                        AccessController.doPrivileged(new PrivilegedStoreKeys());
                 }catch(PrivilegedActionException ex){
                     Exception exception = ex.getException();
                     log.error("Exception clearing the Store: " + exception);
@@ -718,7 +719,7 @@ public abstract class PersistentManagerBase
      */    
     protected void removeSession(String id){
         try {
-            if (System.getSecurityManager() != null){
+            if (SecurityUtil.isPackageProtectionEnabled()){
                 try{
                     AccessController.doPrivileged(new PrivilegedStoreRemove(id));
                 }catch(PrivilegedActionException ex){
@@ -785,9 +786,10 @@ public abstract class PersistentManagerBase
 
         Session session = null;
         try {
-            if (System.getSecurityManager() != null){
+            if (SecurityUtil.isPackageProtectionEnabled()){
                 try{
-                    session = (Session) AccessController.doPrivileged(new PrivilegedStoreLoad(id));
+                    session = (Session) 
+                      AccessController.doPrivileged(new PrivilegedStoreLoad(id));
                 }catch(PrivilegedActionException ex){
                     Exception exception = ex.getException();
                     log.error("Exception clearing the Store: " + exception);
@@ -865,7 +867,7 @@ public abstract class PersistentManagerBase
         }
 
         try {
-            if (System.getSecurityManager() != null){
+            if (SecurityUtil.isPackageProtectionEnabled()){
                 try{
                     AccessController.doPrivileged(new PrivilegedStoreSave(session));
                 }catch(PrivilegedActionException ex){

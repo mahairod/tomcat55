@@ -111,6 +111,22 @@ final class ApplicationFilterChain implements FilterChain {
      */
     private InstanceSupport support = null;
 
+    
+    /**
+     * Static class array used when the SecurityManager is turned on and 
+     * <code>doFilter</code is invoked.
+     */
+    private static Class[] classType = new Class[]{ServletRequest.class, 
+                                                   ServletResponse.class,
+                                                   FilterChain.class};
+                                                   
+    /**
+     * Static class array used when the SecurityManager is turned on and 
+     * <code>service</code is invoked.
+     */                                                 
+    private static Class[] classTypeUsedInService = new Class[]{
+                                                         ServletRequest.class,
+                                                         ServletResponse.class};
 
     // ---------------------------------------------------- FilterChain Methods
 
@@ -176,12 +192,12 @@ final class ApplicationFilterChain implements FilterChain {
                     final ServletResponse res = response;
                     Principal principal = 
                         ((HttpServletRequest) req).getUserPrincipal();
-                    Class[] classType = new Class[]{ServletRequest.class, 
-                                                    ServletResponse.class,
-                                                    FilterChain.class};
+
                     Object[] args = new Object[]{req, res, this};
                     SecurityUtil.doAsPrivilege
                         ("doFilter", filter, classType, args);
+                    
+                    args = null;
                 } else {  
                     filter.doFilter(request, response, this);
                 }
@@ -225,14 +241,13 @@ final class ApplicationFilterChain implements FilterChain {
                     final ServletResponse res = response;
                     Principal principal = 
                         ((HttpServletRequest) req).getUserPrincipal();
-                    Class[] classType = new Class[]{ServletRequest.class, 
-                                                     ServletResponse.class};
                     Object[] args = new Object[]{req, res};
                     SecurityUtil.doAsPrivilege("service",
                                                servlet,
-                                               classType, 
+                                               classTypeUsedInService, 
                                                args,
-                                               principal);                                                   
+                                               principal);   
+                    args = null;
                 } else {  
                     servlet.service((HttpServletRequest) request,
                                     (HttpServletResponse) response);

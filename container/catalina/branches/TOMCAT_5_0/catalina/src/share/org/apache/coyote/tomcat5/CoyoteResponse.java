@@ -47,6 +47,7 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.DateTool;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.security.SecurityUtil;
 import org.apache.coyote.Response;
 import org.apache.tomcat.util.buf.CharChunk;
 import org.apache.tomcat.util.buf.UEncoder;
@@ -934,7 +935,7 @@ public class CoyoteResponse
         cookies.add(cookie);
 
         final StringBuffer sb = new StringBuffer();
-        if (System.getSecurityManager() != null) {
+        if (SecurityUtil.isPackageProtectionEnabled()) {
             AccessController.doPrivileged(new PrivilegedAction() {
                 public Object run(){
                     ServerCookie.appendCookieValue
@@ -1359,7 +1360,7 @@ public class CoyoteResponse
         if (hreq.isRequestedSessionIdFromCookie())
             return (false);
         
-        if (System.getSecurityManager() != null) {
+        if (SecurityUtil.isPackageProtectionEnabled()) {
             return ((Boolean)
                 AccessController.doPrivileged(new PrivilegedAction() {
 
@@ -1463,7 +1464,7 @@ public class CoyoteResponse
                     
                     String encodedURI = null;
                     final String frelativePath = relativePath;
-                    if (System.getSecurityManager() != null ){
+                    if (SecurityUtil.isPackageProtectionEnabled() ){
                         try{
                             encodedURI = (String)AccessController.doPrivileged( 
                                 new PrivilegedExceptionAction(){                                
