@@ -144,8 +144,9 @@ public class PageContextImpl extends PageContext {
 	//	System.out.println("Initialize PageContextImpl " + out );
 	if( out == null ) {
 	    out = _createOut(bufferSize, autoFlush); // throws
-	} else
-	    ((JspWriterImpl)out).init(response, bufferSize, autoFlush );
+	} else {
+            ((JspWriterImpl)out).init(response, bufferSize, autoFlush );
+        }
 	
 	if (this.out == null)
 	    throw new IllegalStateException("failed initialize JspWriter");
@@ -188,8 +189,7 @@ public class PageContextImpl extends PageContext {
 	autoFlush    = true;
 	request      = null;
 	response     = null;
-	// Reuse // XXX problems - need to fix them first!!
-	out	     = null; // out is closed elsewhere
+        //out = null;
 	if( out instanceof JspWriterImpl )
 	    ((JspWriterImpl)out).recycle();
 	session      = null;
