@@ -186,6 +186,27 @@ public class ReplicationValve
             HttpRequest hrequest = (HttpRequest) request;
             HttpServletRequest hreq = (HttpServletRequest) hrequest.getRequest();
             HttpSession session = hreq.getSession(false);
+            SimpleTcpReplicationManager manager = (SimpleTcpReplicationManager)request.getContext().getManager();
+            SimpleTcpCluster cluster = (SimpleTcpCluster)getContainer().getCluster();
+            if ( cluster == null ) {
+                log("No cluster configured for this request.",2);
+                return;
+            }
+            //first check for session invalidations
+            String[] invalidIds=manager.getInvalidatedSessions();
+            if ( invalidIds.length > 0 ) {
+                for ( int i=0;i<invalidIds.length; i++ ) {
+                    try {
+                        SessionMessage imsg = manager.requestCompleted(
+                            invalidIds[i]);
+                        if (imsg != null)
+                            cluster.send(imsg);
+                    }catch ( Exception x ) {
+                        log("Unable to send session invalid message over cluster.",x,2);
+                    }
+                }
+            }
+            
             String id = null;
             if ( session != null )
                 id = session.getId();
@@ -199,11 +220,7 @@ public class ReplicationValve
                  (!(request.getContext().getManager() instanceof SimpleTcpReplicationManager)))
                 return;
 
-            SimpleTcpCluster cluster = (SimpleTcpCluster)getContainer().getCluster();
-            if ( cluster == null ) {
-                log("No cluster configured for this request.",2);
-                return;
-            }
+            
 
             String uri = hrequest.getDecodedRequestURI();
             boolean filterfound = false;
@@ -217,7 +234,7 @@ public class ReplicationValve
                 return;
 
             if ( debug > 4 ) log("Invoking replication request on "+uri,4);
-            SimpleTcpReplicationManager manager = (SimpleTcpReplicationManager)request.getContext().getManager();
+            
             SessionMessage msg = manager.requestCompleted(id);
             if ( msg == null ) return;
 
