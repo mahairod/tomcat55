@@ -41,6 +41,7 @@
     <copy todir="${tester.build}/web">
       <fileset dir="web"/>
     </copy>
+    <mkdir  dir="${tester.build}/web/WEB-INF/classes"/>
 
   </target>
 
@@ -59,7 +60,14 @@
       <fileset dir="src/tester">
         <include name="**/*.properties"/>
       </fileset>
+      <fileset dir="src/tester">
+        <include name="**/*.txt"/>
+      </fileset>
     </copy>
+    <copy file="src/tester/org/apache/tester/Resources01.txt"
+        tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked01.txt"/>
+    <copy file="src/tester/org/apache/tester/Resources03.txt"
+        tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked03.txt"/>
 
     <!-- Create and install tester library -->
     <mkdir   dir="${tester.build}/web/WEB-INF/lib"/>

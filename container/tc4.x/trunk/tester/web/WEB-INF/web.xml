@@ -81,6 +81,26 @@
     </filter-mapping>
 
     <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedResources01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedResources02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedResources03</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedResources04</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
         <filter-name>GenericFilter</filter-name>
         <url-pattern>/WrappedSetBufferSize01</url-pattern>
     </filter-mapping>
@@ -144,6 +164,26 @@
     </servlet>
 
     <servlet>
+        <servlet-name>Resources01</servlet-name>
+        <servlet-class>org.apache.tester.Resources01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Resources02</servlet-name>
+        <servlet-class>org.apache.tester.Resources02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Resources03</servlet-name>
+        <servlet-class>org.apache.tester.Resources03</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Resources04</servlet-name>
+        <servlet-class>org.apache.tester.Resources04</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>SetBufferSize01</servlet-name>
         <servlet-class>org.apache.tester.SetBufferSize01</servlet-class>
     </servlet>
@@ -152,6 +192,7 @@
         <servlet-name>SetLocale01</servlet-name>
         <servlet-class>org.apache.tester.SetLocale01</servlet-class>
     </servlet>
+
 
     <!-- ========== Servlet Mappings ====================================== -->
 
@@ -248,6 +289,46 @@
     <servlet-mapping>
         <servlet-name>Reset01</servlet-name>
         <url-pattern>/WrappedReset01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources01</servlet-name>
+        <url-pattern>/Resources01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources01</servlet-name>
+        <url-pattern>/WrappedResources01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources02</servlet-name>
+        <url-pattern>/Resources02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources02</servlet-name>
+        <url-pattern>/WrappedResources02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources03</servlet-name>
+        <url-pattern>/Resources03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources03</servlet-name>
+        <url-pattern>/WrappedResources03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources04</servlet-name>
+        <url-pattern>/Resources04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources04</servlet-name>
+        <url-pattern>/WrappedResources04</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

@@ -2,6 +2,7 @@
 
   <!-- ========== Global Properties ======================================= -->
   <property name="catalina.home"  value="../../build/tomcat-4.0"/>
+  <property name="debug"          value="0"/>
   <property name="host"           value="localhost"/>
   <property name="port"           value="8080"/>
 <!--  <property name="protocol"       value="HTTP/1.0"/> -->
@@ -10,7 +11,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,CaseSensitive,RequestDispatcher,ServletRequest,ServletResponse"/>
+  <target name="all" depends="ROOT,CaseSensitive,RequestDispatcher,Resources,ServletRequest,ServletResponse"/>
 
 
   <target name="ROOT">
@@ -112,6 +113,127 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedInclude01"
       outContent="Include01 PASSED"/>
+
+  </target>
+
+
+  <target name="Resources">
+
+    <!-- ========== Positive ServletContext.getResource() Tests =========== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources01?mode=context&amp;path=/WEB-INF/web.xml"
+      outContent="Resources01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources01?mode=context&amp;path=/Forward01.txt"
+      outContent="Resources01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources01?mode=context&amp;path=/Include01.txt"
+      outContent="Resources01 PASSED"/>
+
+    <!-- ========== Positive Class.getResource() Tests ==================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources01?mode=class&amp;path=/org/apache/tester/Resources01.txt"
+      outContent="Resources01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources01?mode=class&amp;path=/org/apache/tester/Unpacked01.txt"
+      outContent="Resources01 PASSED"/>
+
+    <!-- ========== Negative ServletContext.getResource() Tests =========== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources02?mode=context&amp;path=/WEB-INF/web.xml.bad"
+      outContent="Resources02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources02?mode=context&amp;path=/Forward02.txt.bad"
+      outContent="Resources02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources02?mode=context&amp;path=/Include02.txt.bad"
+      outContent="Resources02 PASSED"/>
+
+    <!-- ========== Negative Class.getResource() Tests ==================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources02?mode=class&amp;path=/org/apache/tester/Resources02.txt.bad"
+      outContent="Resources02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources02?mode=class&amp;path=/org/apache/tester/Unpacked02.txt.bad"
+      outContent="Resources02 PASSED"/>
+
+    <!-- ========== Positive ServletContext.getResourceAsStream() Tests === -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources03?mode=context&amp;path=/WEB-INF/web.xml"
+      outContent="&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources03?mode=context&amp;path=/Forward01.txt"
+      outContent="Forward01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources03?mode=context&amp;path=/Include01.txt"
+      outContent="Include01 PASSED"/>
+
+    <!-- ========== Positive Class.getResourceAsStream() Tests ============ -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources03?mode=class&amp;path=/org/apache/tester/Resources03.txt"
+      outContent="Resources03 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources03?mode=class&amp;path=/org/apache/tester/Unpacked03.txt"
+      outContent="Resources03 PASSED"/>
+
+    <!-- ========== Negative ServletContext.getResourceAsStream() Tests === -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources04?mode=context&amp;path=/WEB-INF/web.xml.bad"
+      outContent="Resources04 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources04?mode=context&amp;path=/Forward04.txt.bad"
+      outContent="Resources04 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources04?mode=context&amp;path=/Include04.txt.bad"
+      outContent="Resources04 PASSED"/>
+
+    <!-- ========== Negative Class.getResourceAsStream() Tests ============ -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources04?mode=class&amp;path=/org/apache/tester/Resources04.txt.bad"
+      outContent="Resources04 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources04?mode=class&amp;path=/org/apache/tester/Unpacked04.txt.bad"
+      outContent="Resources04 PASSED"/>
 
   </target>
 
