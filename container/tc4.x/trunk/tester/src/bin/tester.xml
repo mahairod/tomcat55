@@ -742,7 +742,17 @@
     <!-- Exercise session event listeners -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedSession05" debug="${debug}"
-          golden="${golden.path}/Session05.txt"/>
+          golden="${golden.path}/WrappedSession05.txt"/>
+
+    <!-- Session creation after response has been committed -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Session06" debug="${debug}"
+      outContent="Session06 PASSED"/>
+
+    <!-- Session creation after response has been committed -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedSession06" debug="${debug}"
+      outContent="Session06 PASSED"/>
 
   </target>
 
