@@ -122,6 +122,7 @@ if [ "$1" = "start" ] ; then
   shift 
   echo Using classpath: ${CLASSPATH}
   if [ "$1" = "-security" ] ; then
+    shift
     echo Starting with a SecurityManager
     $JAVACMD $TOMCAT_OPTS -Djava.security.manager -Djava.security.policy==${TOMCAT_HOME}/conf/tomcat.policy -Dtomcat.home=${TOMCAT_HOME}  org.apache.tomcat.startup.Tomcat "$@" &
   else
@@ -139,6 +140,7 @@ elif [ "$1" = "run" ] ; then
   shift 
   echo Using classpath: ${CLASSPATH}
   if [ "$1" = "-security" ] ; then
+    shift
     echo Starting with a SecurityManager
     $JAVACMD $TOMCAT_OPTS -Djava.security.manager -Djava.security.policy==${TOMCAT_HOME}/conf/tomcat.policy -Dtomcat.home=${TOMCAT_HOME} org.apache.tomcat.startup.Tomcat "$@"
   else
