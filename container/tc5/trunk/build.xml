@@ -499,15 +499,20 @@
       <param name="sourcefile" value="${commons-beanutils.loc}"/>
       <param name="destfile" value="${commons-beanutils.jar}"/>
     </antcall>
+
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-collections.loc}"/>
       <param name="destfile" value="${commons-collections.jar}"/>
     </antcall>
 
-    <antcall target="downloadzip">
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-digester.loc}"/>
+      <param name="destfile" value="${commons-digester.jar}"/>
+    </antcall>
+
+    <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-logging.loc}"/>
       <param name="destfile" value="${commons-logging.jar}"/>
-      <param name="destdir" value="${base.path}"/>
     </antcall>
 
     <antcall target="downloadgz">
