@@ -260,15 +260,8 @@ Tomcat 4.0 and XML Parsers:
 Previous versions of Tomcat 4.0 exposed the XML parser used by Jasper (the
 JAXP/1.1 reference implementation) to web applications.  This is no longer
 the case, because Jasper loads its parser with a new class loader instead.
-
-This change was primarily made to deal with "package sealing violation" errors
-caused by the fact that the "jaxp.jar" and "crimson.jar" files (supplied with
-the JAXP/1.1 release) are sealed.  While this change appears to have eliminated
-sealing violation problems when running under JDK 1.2, problems have still been
-reported under JDK 1.3.
-
-Until a solution to this problem is implemented, keep the following
-information in mind with respect to XML parsers.
+Keep the following points in mind when considering how to use XML parsers
+in Tomcat 4.0 and your web applications:
 
 * If you wish to make the JAXP/1.1 RI XML parser available to all web
   applications, simply move the "jaxp.jar" and "crimson.jar" files from
@@ -285,12 +278,15 @@ information in mind with respect to XML parsers.
   is compatible with JAXP/1.1) until Xerces completely implements this
   specification.
 
-* If you wish to include an XML parser (such as Xerces) in the WEB-INF/lib
-  directory of your web application, you may encounter "package sealing
-  violation" errors under JDK 1.3.  One solution would be to manually modify
-  the JAXP JAR files (jaxp.jar and crimson.jar) so that they are not sealed
-  (Remove the "sealed" line from META-INF/MANIFEST.MF and re-JAR the files).
-  This is being considered as a permanent solution to the sealing problem,
-  so feedback is requested about successful (or unsuccessful) attempts to
-  use this approach.
+* If you wish to use an XML parser (such as Xerces) in the WEB-INF/lib
+  directory of your web application, this should now be possible, because
+  of the modified JAXP 1.1 parser mentioned below.
 
+WARNING:  Tomcat 4.0 now ships with a modified version of the JAXP/1.1
+(Final) "jaxp.jar" and "crimson.jar" files in the "jasper" subdirectory.
+The "sealed" attribute has been removed from the manifest file for these
+two JARs, to avoid "package sealing violation" errors that were caused by
+them in a JDK 1.3 environment.  You MUST NOT replace these files with a
+different (or later) release of JAXP, unless that later release has had
+the sealed attribute removed, or you will encounter "package sealing violation"
+errors when trying to use a different XML parser in a web application.

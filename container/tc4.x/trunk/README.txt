@@ -266,3 +266,11 @@ XML parsers in Tomcat 4.0
   
     JASPER_JAXP_HOME [default: JAXP_HOME]
     JASPER_JAXP_PARSER_JAR [default: JAXP_PARSER_JAR]
+
+  ----> WARNING:  The current build process uses a special copy of the
+                  jaxp.jar and crimson.jar files from JAXP/1.1 (Final)
+                  that has had the "sealed" attribute removed.  This works
+                  around "sealing violation" errors that occur when Tomcat 4.0
+                  is run under JDK 1.3.  As a result of this, the
+                  JASPER_JAXP_HOME and JASPER_JAXP_PARSER_JAR environment
+                  variables are currently ignored.

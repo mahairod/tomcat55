@@ -89,11 +89,13 @@ set CATALINA_JAXP_PARSER_JAR=%JAXP_PARSER_JAR%
 
 if not "%JASPER_JAXP_HOME%" == "" goto gotJasperJaxpHome
 if "%JAXP_HOME%" == "" goto jaxpHome
-set JASPER_JAXP_HOME=%JAXP_HOME%
+rem set JASPER_JAXP_HOME=%JAXP_HOME%
+set JASPER_JAXP_HOME=..\lib
 :gotJasperJaxpHome
 
 if not "%JASPER_JAXP_PARSER_JAR%" == "" goto gotJasperJaxpParserJar
-set JASPER_JAXP_PARSER_JAR=%JAXP_PARSER_JAR%
+rem set JASPER_JAXP_PARSER_JAR=%JAXP_PARSER_JAR%
+set JASPER_JAXP_PARSER_JAR=crimson.jar
 :gotJasperJaxpParserJar
 
 goto gotJaxpHome

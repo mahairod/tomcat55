@@ -98,7 +98,8 @@ if [ "$CATALINA_JAXP_HOME" = "" ] ; then
 fi
 
 if [ "$JASPER_JAXP_HOME" = "" ] ; then
-  JASPER_JAXP_HOME=$JAXP_HOME
+#  JASPER_JAXP_HOME=$JAXP_HOME
+  JASPER_JAXP_HOME=../lib
 fi
 
 if [ "$CATALINA_JAXP_HOME" = "" -o "$JASPER_JAXP_HOME" = "" -o "$ANT_USING_DEFAULT" = "true" -a "$JAXP_HOME" = "" ] ; then
@@ -120,7 +121,8 @@ if [ "$CATALINA_JAXP_PARSER_JAR" = "" ] ; then
 fi
 
 if [ "$JASPER_JAXP_PARSER_JAR" = "" ] ; then
-  JASPER_JAXP_PARSER_JAR=$JAXP_PARSER_JAR
+#  JASPER_JAXP_PARSER_JAR=$JAXP_PARSER_JAR
+  JASPER_JAXP_PARSER_JAR=crimson.jar
 fi
 
 if [ "$ANT_HOME" = "" ] ; then
