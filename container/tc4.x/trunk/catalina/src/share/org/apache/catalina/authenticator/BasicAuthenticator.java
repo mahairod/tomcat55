@@ -104,7 +104,7 @@ public final class BasicAuthenticator
      * Descriptive information about this implementation.
      */
     private static final String info =
-    "org.apache.catalina.authenticator.BasicAuthenticator/1.0";
+        "org.apache.catalina.authenticator.BasicAuthenticator/1.0";
 
 
     // ------------------------------------------------------------- Properties
@@ -115,7 +115,7 @@ public final class BasicAuthenticator
      */
     public String getInfo() {
 
-    return (this.info);
+        return (this.info);
 
     }
 
@@ -137,44 +137,44 @@ public final class BasicAuthenticator
      * @exception IOException if an input/output error occurs
      */
     public boolean authenticate(HttpRequest request,
-                HttpResponse response,
-                LoginConfig config)
-    throws IOException {
+                                HttpResponse response,
+                                LoginConfig config)
+        throws IOException {
 
-    // Have we already authenticated someone?
-    Principal principal =
-        ((HttpServletRequest) request.getRequest()).getUserPrincipal();
-    if (principal != null) {
+        // Have we already authenticated someone?
+        Principal principal =
+            ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+        if (principal != null) {
             if (debug >= 1)
                 log("Already authenticated '" + principal.getName() + "'");
-        return (true);
+            return (true);
         }
 
-    // Validate any credentials already included with this request
-    HttpServletRequest hreq =
-        (HttpServletRequest) request.getRequest();
-    HttpServletResponse hres =
-        (HttpServletResponse) response.getResponse();
-    String authorization = request.getAuthorization();
-    if (authorization != null) {
-        principal = findPrincipal(authorization, context.getRealm());
-        if (principal != null) {
+        // Validate any credentials already included with this request
+        HttpServletRequest hreq =
+            (HttpServletRequest) request.getRequest();
+        HttpServletResponse hres =
+            (HttpServletResponse) response.getResponse();
+        String authorization = request.getAuthorization();
+        if (authorization != null) {
+            principal = findPrincipal(authorization, context.getRealm());
+            if (principal != null) {
                 register(request, response, principal, Constants.BASIC_METHOD);
-        return (true);
+                return (true);
+            }
         }
-    }
 
-    // Send an "unauthorized" response and an appropriate challenge
-    String realmName = config.getRealmName();
-    if (realmName == null)
-        realmName = hreq.getServerName() + ":" + hreq.getServerPort();
+        // Send an "unauthorized" response and an appropriate challenge
+        String realmName = config.getRealmName();
+        if (realmName == null)
+            realmName = hreq.getServerName() + ":" + hreq.getServerPort();
     //        if (debug >= 1)
     //            log("Challenging for realm '" + realmName + "'");
-    hres.setHeader("WWW-Authenticate",
+        hres.setHeader("WWW-Authenticate",
                        "Basic realm=\"" + realmName + "\"");
-    hres.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        //  hres.flushBuffer();
-    return (false);
+        hres.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        //      hres.flushBuffer();
+        return (false);
 
     }
 
@@ -193,24 +193,24 @@ public final class BasicAuthenticator
      */
     private static Principal findPrincipal(String authorization, Realm realm) {
 
-    // Validate the authorization credentials format
-    if (authorization == null)
-        return (null);
-    if (!authorization.startsWith("Basic "))
-        return (null);
-    authorization = authorization.substring(6).trim();
+        // Validate the authorization credentials format
+        if (authorization == null)
+            return (null);
+        if (!authorization.startsWith("Basic "))
+            return (null);
+        authorization = authorization.substring(6).trim();
 
-    // Decode and parse the authorization credentials
-    String unencoded =
-      new String(base64Helper.decode(authorization.getBytes()));
-    int colon = unencoded.indexOf(':');
-    if (colon < 0)
-        return (null);
-    String username = unencoded.substring(0, colon).trim();
-    String password = unencoded.substring(colon + 1).trim();
+        // Decode and parse the authorization credentials
+        String unencoded =
+          new String(base64Helper.decode(authorization.getBytes()));
+        int colon = unencoded.indexOf(':');
+        if (colon < 0)
+            return (null);
+        String username = unencoded.substring(0, colon).trim();
+        String password = unencoded.substring(colon + 1).trim();
 
-    // Validate these credentials in our associated realm
-    return (realm.authenticate(username, password));
+        // Validate these credentials in our associated realm
+        return (realm.authenticate(username, password));
 
     }
 

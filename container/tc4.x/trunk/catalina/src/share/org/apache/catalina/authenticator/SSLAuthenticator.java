@@ -100,7 +100,7 @@ public final class SSLAuthenticator
      * Descriptive information about this implementation.
      */
     private static final String info =
-    "org.apache.catalina.authenticator.SSLAuthenticator/1.0";
+        "org.apache.catalina.authenticator.SSLAuthenticator/1.0";
 
 
     /**
@@ -108,7 +108,7 @@ public final class SSLAuthenticator
      */
     public String getInfo() {
 
-    return (this.info);
+        return (this.info);
 
     }
 
@@ -130,15 +130,15 @@ public final class SSLAuthenticator
      * @exception IOException if an input/output error occurs
      */
     public boolean authenticate(HttpRequest request,
-                HttpResponse response,
-                LoginConfig config)
-    throws IOException {
+                                HttpResponse response,
+                                LoginConfig config)
+        throws IOException {
 
-    // Have we already authenticated someone?
-    Principal principal =
-        ((HttpServletRequest) request.getRequest()).getUserPrincipal();
-    if (principal != null)
-        return (true);
+        // Have we already authenticated someone?
+        Principal principal =
+            ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+        if (principal != null)
+            return (true);
 
         // Retrieve the certificate chain for this client
         if (debug >= 1)

@@ -102,7 +102,7 @@ public final class FormAuthenticator
      * Descriptive information about this implementation.
      */
     private static final String info =
-    "org.apache.catalina.authenticator.FormAuthenticator/1.0";
+        "org.apache.catalina.authenticator.FormAuthenticator/1.0";
 
 
     // ------------------------------------------------------------- Properties
@@ -113,7 +113,7 @@ public final class FormAuthenticator
      */
     public String getInfo() {
 
-    return (this.info);
+        return (this.info);
 
     }
 
@@ -135,9 +135,9 @@ public final class FormAuthenticator
      * @exception IOException if an input/output error occurs
      */
     public boolean authenticate(HttpRequest request,
-                HttpResponse response,
-                LoginConfig config)
-    throws IOException {
+                                HttpResponse response,
+                                LoginConfig config)
+        throws IOException {
 
         // References to objects we will need later
         HttpServletRequest hreq =
@@ -146,13 +146,13 @@ public final class FormAuthenticator
           (HttpServletResponse) response.getResponse();
         Session session = null;
 
-    // Have we already authenticated someone?
-    Principal principal = hreq.getUserPrincipal();
-    if (principal != null) {
+        // Have we already authenticated someone?
+        Principal principal = hreq.getUserPrincipal();
+        if (principal != null) {
             if (debug >= 1)
                 log("Already authenticated '" +
                     principal.getName() + "'");
-        return (true);
+            return (true);
         }
 
         // Is this the re-submit of the original request URI after successful
@@ -176,52 +176,52 @@ public final class FormAuthenticator
             }
         }
 
-    // Acquire references to objects we will need to evaluate
-    String contextPath = hreq.getContextPath();
-    String requestURI = hreq.getRequestURI();
-    response.setContext(request.getContext());
+        // Acquire references to objects we will need to evaluate
+        String contextPath = hreq.getContextPath();
+        String requestURI = hreq.getRequestURI();
+        response.setContext(request.getContext());
 
-    // Is this a request for the login page itself?  Test here to avoid
-    // displaying it twice (from the user's perspective) -- once because
-    // of the "save and redirect" and once because of the "restore and
-    // redirect" performed below.
+        // Is this a request for the login page itself?  Test here to avoid
+        // displaying it twice (from the user's perspective) -- once because
+        // of the "save and redirect" and once because of the "restore and
+        // redirect" performed below.
         String loginURI = contextPath + config.getLoginPage();
-    if (requestURI.equals(loginURI)) {
+        if (requestURI.equals(loginURI)) {
             if (debug >= 1)
                 log("Requesting login page normally");
-        return (true);  // Display the login page in the usual manner
+            return (true);      // Display the login page in the usual manner
         }
 
-    // Is this the action request from the login page?
-    boolean loginAction =
-        requestURI.startsWith(contextPath) &&
-        requestURI.endsWith(Constants.FORM_ACTION);
+        // Is this the action request from the login page?
+        boolean loginAction =
+            requestURI.startsWith(contextPath) &&
+            requestURI.endsWith(Constants.FORM_ACTION);
 
-    // No -- Save this request and redirect to the form login page
-    if (!loginAction) {
-        session = getSession(request, true);
+        // No -- Save this request and redirect to the form login page
+        if (!loginAction) {
+            session = getSession(request, true);
             if (debug >= 1)
                 log("Save request in session '" + session.getId() + "'");
-        saveRequest(request, session);
+            saveRequest(request, session);
             if (debug >= 1)
                 log("Redirect to login page '" + loginURI + "'");
             hres.sendRedirect(hres.encodeRedirectURL(loginURI));
             return (false);
-    }
+        }
 
-    // Yes -- Validate the specified credentials and redirect
-    // to the error page if they are not correct
-    Realm realm = context.getRealm();
-    String username = hreq.getParameter(Constants.FORM_USERNAME);
-    String password = hreq.getParameter(Constants.FORM_PASSWORD);
-    principal = realm.authenticate(username, password);
-    if (principal == null) {
+        // Yes -- Validate the specified credentials and redirect
+        // to the error page if they are not correct
+        Realm realm = context.getRealm();
+        String username = hreq.getParameter(Constants.FORM_USERNAME);
+        String password = hreq.getParameter(Constants.FORM_PASSWORD);
+        principal = realm.authenticate(username, password);
+        if (principal == null) {
             String errorURI = contextPath + config.getErrorPage();
             if (debug >= 1)
                 log("Redirect to error page '" + errorURI + "'");
             hres.sendRedirect(hres.encodeRedirectURL(errorURI));
             return (false);
-    }
+        }
 
         // Save the authenticated Principal in our session
         if (session == null)
@@ -236,23 +236,23 @@ public final class FormAuthenticator
         hres.sendRedirect(hres.encodeRedirectURL(requestURI));
         return (false);
 
-    // Restore this request and redirect to the original request URI
+        // Restore this request and redirect to the original request URI
         /*
         session = getSession(request, true);
         if (debug >= 1)
             log("restore request from session '" + session.getId() + "'");
         register(request, response, principal, Constants.FORM_METHOD);
-    if (restoreRequest(request, session)) {
+        if (restoreRequest(request, session)) {
             if (debug >= 1)
                 log("Proceed to restored request");
-        return (true);      // Perform the original request
-    } else {
+            return (true);              // Perform the original request
+        } else {
             if (debug >= 1)
                 log("Restore of original request failed");
-        hres.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            hres.sendError(HttpServletResponse.SC_BAD_REQUEST);
             //      hres.flushBuffer();
-        return (false);
-    }
+            return (false);
+        }
         */
 
     }
@@ -305,46 +305,46 @@ public final class FormAuthenticator
      */
     private boolean restoreRequest(HttpRequest request, Session session) {
 
-    // Retrieve and remove the SavedRequest object from our session
-    SavedRequest saved = (SavedRequest)
-        session.getSession().getAttribute(Constants.FORM_KEY);
-    session.getSession().removeAttribute(Constants.FORM_KEY);
+        // Retrieve and remove the SavedRequest object from our session
+        SavedRequest saved = (SavedRequest)
+            session.getSession().getAttribute(Constants.FORM_KEY);
+        session.getSession().removeAttribute(Constants.FORM_KEY);
         session.getSession().removeAttribute(Constants.FORM_PRINCIPAL);
-    if (saved == null)
-        return (false);
+        if (saved == null)
+            return (false);
 
-    // Modify our current request to reflect the original one
-    request.clearCookies();
-    Iterator cookies = saved.getCookies();
-    while (cookies.hasNext()) {
-        request.addCookie((Cookie) cookies.next());
-    }
-    request.clearHeaders();
-    Iterator names = saved.getHeaderNames();
-    while (names.hasNext()) {
-        String name = (String) names.next();
-        Iterator values = saved.getHeaderValues(name);
-        while (values.hasNext()) {
-            request.addHeader(name, (String) values.next());
+        // Modify our current request to reflect the original one
+        request.clearCookies();
+        Iterator cookies = saved.getCookies();
+        while (cookies.hasNext()) {
+            request.addCookie((Cookie) cookies.next());
         }
-    }
-    request.clearLocales();
-    Iterator locales = saved.getLocales();
-    while (locales.hasNext()) {
-        request.addLocale((Locale) locales.next());
-    }
-    request.clearParameters();
-    Iterator paramNames = saved.getParameterNames();
-    while (paramNames.hasNext()) {
-        String paramName = (String) paramNames.next();
-        String paramValues[] =
-          (String[]) saved.getParameterValues(paramName);
-        request.addParameter(paramName, paramValues);
-    }
-    request.setMethod(saved.getMethod());
-    request.setQueryString(saved.getQueryString());
-    request.setRequestURI(saved.getRequestURI());
-    return (true);
+        request.clearHeaders();
+        Iterator names = saved.getHeaderNames();
+        while (names.hasNext()) {
+            String name = (String) names.next();
+            Iterator values = saved.getHeaderValues(name);
+            while (values.hasNext()) {
+                request.addHeader(name, (String) values.next());
+            }
+        }
+        request.clearLocales();
+        Iterator locales = saved.getLocales();
+        while (locales.hasNext()) {
+            request.addLocale((Locale) locales.next());
+        }
+        request.clearParameters();
+        Iterator paramNames = saved.getParameterNames();
+        while (paramNames.hasNext()) {
+            String paramName = (String) paramNames.next();
+            String paramValues[] =
+              (String[]) saved.getParameterValues(paramName);
+            request.addParameter(paramName, paramValues);
+        }
+        request.setMethod(saved.getMethod());
+        request.setQueryString(saved.getQueryString());
+        request.setRequestURI(saved.getRequestURI());
+        return (true);
 
     }
 
@@ -357,41 +357,41 @@ public final class FormAuthenticator
      */
     private void saveRequest(HttpRequest request, Session session) {
 
-    // Create and populate a SavedRequest object for this request
-    HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
-    SavedRequest saved = new SavedRequest();
-    Cookie cookies[] = hreq.getCookies();
-    if (cookies != null) {
-        for (int i = 0; i < cookies.length; i++)
-        saved.addCookie(cookies[i]);
-    }
-    Enumeration names = hreq.getHeaderNames();
-    while (names.hasMoreElements()) {
-        String name = (String) names.nextElement();
-        Enumeration values = hreq.getHeaders(name);
-        while (values.hasMoreElements()) {
-        String value = (String) values.nextElement();
-        saved.addHeader(name, value);
+        // Create and populate a SavedRequest object for this request
+        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
+        SavedRequest saved = new SavedRequest();
+        Cookie cookies[] = hreq.getCookies();
+        if (cookies != null) {
+            for (int i = 0; i < cookies.length; i++)
+                saved.addCookie(cookies[i]);
         }
-    }
-    Enumeration locales = hreq.getLocales();
-    while (locales.hasMoreElements()) {
-        Locale locale = (Locale) locales.nextElement();
-        saved.addLocale(locale);
-    }
-    Map parameters = hreq.getParameterMap();
-    Iterator paramNames = parameters.keySet().iterator();
-    while (paramNames.hasNext()) {
-        String paramName = (String) paramNames.next();
-        String paramValues[] = (String[]) parameters.get(paramName);
-        saved.addParameter(paramName, paramValues);
-    }
-    saved.setMethod(hreq.getMethod());
-    saved.setQueryString(hreq.getQueryString());
-    saved.setRequestURI(hreq.getRequestURI());
+        Enumeration names = hreq.getHeaderNames();
+        while (names.hasMoreElements()) {
+            String name = (String) names.nextElement();
+            Enumeration values = hreq.getHeaders(name);
+            while (values.hasMoreElements()) {
+                String value = (String) values.nextElement();
+                saved.addHeader(name, value);
+            }
+        }
+        Enumeration locales = hreq.getLocales();
+        while (locales.hasMoreElements()) {
+            Locale locale = (Locale) locales.nextElement();
+            saved.addLocale(locale);
+        }
+        Map parameters = hreq.getParameterMap();
+        Iterator paramNames = parameters.keySet().iterator();
+        while (paramNames.hasNext()) {
+            String paramName = (String) paramNames.next();
+            String paramValues[] = (String[]) parameters.get(paramName);
+            saved.addParameter(paramName, paramValues);
+        }
+        saved.setMethod(hreq.getMethod());
+        saved.setQueryString(hreq.getQueryString());
+        saved.setRequestURI(hreq.getRequestURI());
 
-    // Stash the SavedRequest in our session for later use
-    session.getSession().setAttribute(Constants.FORM_KEY, saved);
+        // Stash the SavedRequest in our session for later use
+        session.getSession().setAttribute(Constants.FORM_KEY, saved);
 
     }
 

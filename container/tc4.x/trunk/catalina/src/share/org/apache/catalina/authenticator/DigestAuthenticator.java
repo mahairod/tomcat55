@@ -126,7 +126,7 @@ public final class DigestAuthenticator
      * Descriptive information about this implementation.
      */
     private static final String info =
-    "org.apache.catalina.authenticator.DigestAuthenticator/1.0";
+        "org.apache.catalina.authenticator.DigestAuthenticator/1.0";
 
 
     // ----------------------------------------------------------- Constructors
@@ -189,7 +189,7 @@ public final class DigestAuthenticator
      */
     public String getInfo() {
 
-    return (this.info);
+        return (this.info);
 
     }
 
@@ -211,41 +211,41 @@ public final class DigestAuthenticator
      * @exception IOException if an input/output error occurs
      */
     public boolean authenticate(HttpRequest request,
-                HttpResponse response,
-                LoginConfig config)
-    throws IOException {
+                                HttpResponse response,
+                                LoginConfig config)
+        throws IOException {
 
-    // Have we already authenticated someone?
-    Principal principal =
-        ((HttpServletRequest) request.getRequest()).getUserPrincipal();
-    if (principal != null)
-        return (true);
+        // Have we already authenticated someone?
+        Principal principal =
+            ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+        if (principal != null)
+            return (true);
 
-    // Validate any credentials already included with this request
-    HttpServletRequest hreq =
-        (HttpServletRequest) request.getRequest();
-    HttpServletResponse hres =
-        (HttpServletResponse) response.getResponse();
-    String authorization = request.getAuthorization();
-    if (authorization != null) {
-        principal = findPrincipal(hreq, authorization, context.getRealm());
-        if (principal != null) {
+        // Validate any credentials already included with this request
+        HttpServletRequest hreq =
+            (HttpServletRequest) request.getRequest();
+        HttpServletResponse hres =
+            (HttpServletResponse) response.getResponse();
+        String authorization = request.getAuthorization();
+        if (authorization != null) {
+            principal = findPrincipal(hreq, authorization, context.getRealm());
+            if (principal != null) {
                 register(request, response, principal,
                          Constants.DIGEST_METHOD);
-        return (true);
+                return (true);
+            }
         }
-    }
 
-    // Send an "unauthorized" response and an appropriate challenge
+        // Send an "unauthorized" response and an appropriate challenge
 
         // Next, generate a nOnce token (that is a token which is supposed
         // to be unique).
         String nOnce = generateNOnce(hreq);
 
-    setAuthenticateHeader(hreq, hres, config, nOnce);
-    hres.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        //  hres.flushBuffer();
-    return (false);
+        setAuthenticateHeader(hreq, hres, config, nOnce);
+        hres.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        //      hres.flushBuffer();
+        return (false);
 
     }
 
@@ -269,12 +269,12 @@ public final class DigestAuthenticator
                                            String authorization, Realm realm) {
 
         //System.out.println("Authorization token : " + authorization);
-    // Validate the authorization credentials format
-    if (authorization == null)
-        return (null);
-    if (!authorization.startsWith("Digest "))
-        return (null);
-    authorization = authorization.substring(7).trim();
+        // Validate the authorization credentials format
+        if (authorization == null)
+            return (null);
+        if (!authorization.startsWith("Digest "))
+            return (null);
+        authorization = authorization.substring(7).trim();
 
 
         StringTokenizer commaTokenizer =
@@ -403,9 +403,9 @@ public final class DigestAuthenticator
                                        String nOnce) {
 
         // Get the realm name
-    String realmName = config.getRealmName();
-    if (realmName == null)
-        realmName = request.getServerName() + ":"
+        String realmName = config.getRealmName();
+        if (realmName == null)
+            realmName = request.getServerName() + ":"
                 + request.getServerPort();
 
         byte[] buffer = md5Helper.digest(nOnce.getBytes());

@@ -134,7 +134,7 @@ public class SingleSignOn
      * The string manager for this package.
      */
     protected final static StringManager sm =
-    StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------------------- Properties
@@ -170,7 +170,7 @@ public class SingleSignOn
      */
     public String getInfo() {
 
-    return (info);
+        return (info);
 
     }
 
@@ -316,11 +316,11 @@ public class SingleSignOn
      */
     protected void log(String message) {
 
-    Logger logger = container.getLogger();
-    if (logger != null)
-        logger.log(this.toString() + ": " + message);
-    else
-        System.out.println(this.toString() + ": " + message);
+        Logger logger = container.getLogger();
+        if (logger != null)
+            logger.log(this.toString() + ": " + message);
+        else
+            System.out.println(this.toString() + ": " + message);
 
     }
 
@@ -333,13 +333,13 @@ public class SingleSignOn
      */
     protected void log(String message, Throwable throwable) {
 
-    Logger logger = container.getLogger();
-    if (logger != null)
-        logger.log(this.toString() + ": " + message, throwable);
-    else {
-        System.out.println(this.toString() + ": " + message);
-        throwable.printStackTrace(System.out);
-    }
+        Logger logger = container.getLogger();
+        if (logger != null)
+            logger.log(this.toString() + ": " + message, throwable);
+        else {
+            System.out.println(this.toString() + ": " + message);
+            throwable.printStackTrace(System.out);
+        }
 
     }
 
