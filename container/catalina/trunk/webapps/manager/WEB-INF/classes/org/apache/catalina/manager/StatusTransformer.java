@@ -585,6 +585,16 @@ public class StatusTransformer {
                 managerON = (ObjectName) iterator2.next();
             }
 
+            ObjectName queryJspMonitor = new ObjectName
+                (objectName.getDomain() + ":type=JspMonitor,path=" + contextName 
+                 + ",host=" + hostName + ",*");
+            Set jspMonitorsON = mBeanServer.queryNames(queryJspMonitor, null);
+            ObjectName jspMonitorON = null;
+            iterator2 = jspMonitorsON.iterator();
+            while (iterator2.hasNext()) {
+                jspMonitorON = (ObjectName) iterator2.next();
+            }
+
             // Special case for the root context
             if (contextName.equals("/")) {
                 contextName = "";
@@ -604,6 +614,9 @@ public class StatusTransformer {
                                     (objectName, "tldScanTime"), false));
             if (managerON != null) {
                 writeManager(writer, managerON, mBeanServer, mode);
+            }
+            if (jspMonitorON != null) {
+                writeJspMonitor(writer, jspMonitorON, mBeanServer, mode);
             }
             writer.print("</p>");
 
@@ -654,6 +667,26 @@ public class StatusTransformer {
             // for now we don't write out the wrapper details
         }
 
+    }
+
+
+    /**
+     * Write JSP monitoring information.
+     */
+    public static void writeJspMonitor(PrintWriter writer,
+                                       ObjectName objectName,
+                                       MBeanServer mBeanServer,
+                                       int mode)
+            throws Exception {
+
+        if (mode == 0) {
+            writer.print("<br>");
+            writer.print(" JSPs loaded: ");
+            writer.print(mBeanServer.getAttribute
+                         (objectName, "jspCount"));
+        } else if (mode == 1) {
+            // for now we don't write out anything
+        }
     }
 
 

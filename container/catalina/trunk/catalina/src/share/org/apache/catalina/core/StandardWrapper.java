@@ -219,6 +219,18 @@ public class StandardWrapper
 
 
     /**
+     * True if this StandardWrapper is for the JspServlet
+     */
+    private boolean isJspServlet;
+
+
+    /**
+     * The ObjectName of the JSP monitoring mbean
+     */
+    private ObjectName jspMonitorON;
+
+
+    /**
      * Should we swallow System.out
      */
     private boolean swallowOutput = false;
@@ -502,7 +514,9 @@ public class StandardWrapper
         this.servletClass = servletClass;
         support.firePropertyChange("servletClass", oldServletClass,
                                    this.servletClass);
-
+        if (Constants.JSP_SERVLET_CLASS.equals(servletClass)) {
+            isJspServlet = true;
+        }
     }
 
 
@@ -1571,21 +1585,30 @@ public class StandardWrapper
                                 sequenceNumber++);
             broadcaster.sendNotification(notification);
         }
+
+        if (isJspServlet && jspMonitorON != null ) {
+            Registry.getRegistry(null, null).unregisterComponent(jspMonitorON);
+        }
+
     }
 
     protected void registerJMX(StandardContext ctx) {
+
+        String parentName = ctx.getName();
+        parentName = ("".equals(parentName)) ? "/" : parentName;
+
+        String hostName = ctx.getParent().getName();
+        hostName = (hostName==null) ? "DEFAULT" : hostName;
+
+        String domain = ctx.getDomain();
+
+        String webMod= "//" + hostName + parentName;
+        String onameStr = domain + ":j2eeType=Servlet,name=" + getName() +
+                          ",WebModule=" + webMod + ",J2EEApplication=" +
+                          ctx.getJ2EEApplication() + ",J2EEServer=" +
+                          ctx.getJ2EEServer();
+
         try {
-            // it should be full name
-            String parentName=ctx.getName();
-            String hostName=ctx.getParent().getName();
-            String webMod= "//" + ((hostName==null)? "DEFAULT" :hostName ) +
-                    (("".equals(parentName) ) ? "/" : parentName );
-            String onameStr=ctx.getDomain() + 
-                    ":j2eeType=Servlet,name=" + getName() + ",WebModule=" +
-                    webMod + ",J2EEApplication=" +
-                    ctx.getJ2EEApplication() + ",J2EEServer=" +
-                    ctx.getJ2EEServer();
-            
             oname=new ObjectName(onameStr);
             controller=oname;
             Registry.getRegistry(null, null)
@@ -1602,6 +1625,22 @@ public class StandardWrapper
         } catch( Exception ex ) {
             log.info("Error registering servlet with jmx " + this);
         }
+
+        if (isJspServlet) {
+            // Register JSP monitoring mbean
+            try {
+                jspMonitorON = new ObjectName(domain +
+                                              " :type=JspMonitor,path=" +
+                                              parentName + ",host=" +
+                                              hostName);
+                Registry.getRegistry(null, null)
+                    .registerComponent(instance, jspMonitorON, null);
+            } catch( Exception ex ) {
+                log.info("Error registering JSP monitoring with jmx " +
+                         instance);
+            }
+        }
+
     }
     
 
