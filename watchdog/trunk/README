@@ -51,6 +51,16 @@ directory into which you are installing all of the required distributions.
   This should result in the creation of a file "servlet.jar" in the "lib"
   subdirectory, which will be used when building Watchdog.
 
+* Download and install the Tools distribution (subproject
+  "jakarta-tools") into a subdirectory named
+  "$JAKARTA_HOME/jakarta-tools".  If you have downloaded the source
+  distribution, you will need to build the executable version by
+  executing the following commands:
+
+	cd $JAKARTA_HOME/jakarta-tools/
+	./build.sh		<-- Unix
+	build			<-- Windows
+
 * Optionally, you can download and install Tomcat to practice running
   Watchdog tests against (the instructions below illustrate how).
   To do this, download and install the Tomcat distribution (subproject
