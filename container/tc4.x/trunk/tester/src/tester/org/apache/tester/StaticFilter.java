@@ -2,7 +2,7 @@
  *                                                                           *
  *                 The Apache Software License,  Version 1.1                 *
  *                                                                           *
- *         Copyright (c) 1999, 2000  The Apache Software Foundation.         *
+ *      Copyright (c) 1999, 2000, 2001  The Apache Software Foundation.      *
  *                           All rights reserved.                            *
  *                                                                           *
  * ========================================================================= *
@@ -64,14 +64,14 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
- * Configurable filter that will wrap the request and/or response objects
- * it passes on with either generic or HTTP-specific wrappers.
+ * Simple filter to reset the static log at the beginning of each request,
+ * so that no leftovers from the previous request are inadvertently included.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class WrapperFilter implements Filter {
+public class StaticFilter implements Filter {
 
 
     // ----------------------------------------------------------- Constructors
@@ -87,18 +87,6 @@ public class WrapperFilter implements Filter {
     protected FilterConfig config = null;
 
 
-    /**
-     * The type of wrapper for each request ("none", "generic", "http").
-     */
-    protected String requestWrapper = "none";
-
-
-    /**
-     * The type of wrapper for each response ("none", "generic", "http").
-     */
-    protected String responseWrapper = "none";
-
-
     // --------------------------------------------------------- Public Methods
 
 
@@ -108,8 +96,6 @@ public class WrapperFilter implements Filter {
     public void destroy() {
 
         config = null;
-        requestWrapper = "none";
-        responseWrapper = "none";
 
     }
 
@@ -121,24 +107,9 @@ public class WrapperFilter implements Filter {
                          FilterChain chain)
         throws IOException, ServletException {
 
-        // Create the appropriate wrappers
-        ServletRequest outRequest = inRequest;
-        ServletResponse outResponse = inResponse;
-        if (requestWrapper.equals("generic")) {
-            outRequest = new TesterServletRequestWrapper(inRequest);
-        } else if (requestWrapper.equals("http")) {
-            outRequest = new TesterHttpServletRequestWrapper
-                ((HttpServletRequest) inRequest);
-        }
-        if (responseWrapper.equals("generic")) {
-            outResponse = new TesterServletResponseWrapper(inResponse);
-        } else if (responseWrapper.equals("http")) {
-            outResponse = new TesterHttpServletResponseWrapper
-                ((HttpServletResponse) inResponse);
-        }
-
-        // Perform this request
-        chain.doFilter(outRequest, outResponse);
+        // Reset our logger and perform this request
+        StaticLogger.reset();
+        chain.doFilter(inRequest, inResponse);
 
     }
 
@@ -151,13 +122,6 @@ public class WrapperFilter implements Filter {
     public void init(FilterConfig config) throws ServletException {
 
         this.config = config;
-        String value = null;
-        value = config.getInitParameter("request");
-        if (value != null)
-            requestWrapper = value;
-        value = config.getInitParameter("response");
-        if (value != null)
-            responseWrapper = value;
 
     }
 
