@@ -1064,8 +1064,15 @@ class Parser {
     }
 
     /*
-     * Params ::=   '/>'
-     *            | ( '>' S? Param* '</jsp:params>' )
+     * Params ::=  `>' S?
+     *              (   ( `<jsp:body>'
+     *                    ( ( S? Param+ S? `</jsp:body>' )
+     *                      | <TRANSLATION_ERROR>
+     *                    )
+     *                  )
+     *                | Param+
+     *              )
+     *              '</jsp:params>'
      */
     private void parseJspParams(Node parent) throws JasperException {
 	Node jspParamsNode = new Node.ParamsAction(start, parent);
@@ -1075,10 +1082,19 @@ class Parser {
 
     /*
      * Fallback ::=   '/>'
-     *              | ( '>'
-     *                  ( Char* - ( Char* '</jsp:fallback>' ) )
-     *                  '</jsp:fallback>'
-     *                )
+     *               | ( `>' S? `<jsp:body>'
+     *                   (   ( S?
+     *                         ( Char* - ( Char* `</jsp:body>' ) )
+     *                         `</jsp:body>' S?
+     *                       )
+     *                     | <TRANSLATION_ERROR>
+     *                   )
+     *                   `</jsp:fallback>'
+     *                 )
+     *               | ( '>'
+     *                   ( Char* - ( Char* '</jsp:fallback>' ) )
+     *                   '</jsp:fallback>'
+     *                 )
      */
     private void parseFallBack(Node parent) throws JasperException {
 	Node fallBackNode = new Node.FallBackAction(start, parent);
