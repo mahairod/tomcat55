@@ -59,6 +59,8 @@ goto cleanup
 
 if not "%TOMCAT_HOME%" == "" goto gotTcHome
 set TOMCAT_HOME=.
+if exist "%TOMCAT_HOME%\conf\%_NULL%" goto okTcHome
+set TOMCAT_HOME=..
 :gotTcHome
 if exist "%TOMCAT_HOME%\conf\%_NULL%" goto okTcHome
 echo "%TOMCAT_HOME%\conf" not found.
@@ -68,6 +70,8 @@ goto cleanup
 
 if not "%TOMCAT_INSTALL%" == "" goto gotTcInstall
 set TOMCAT_INSTALL=.
+if exist "%TOMCAT_INSTALL%\lib\tomcat.jar" goto okTcInstall
+set TOMCAT_INSTALL=..
 if exist "%TOMCAT_INSTALL%\lib\tomcat.jar" goto okTcInstall
 set TOMCAT_INSTALL=%TOMCAT_HOME%
 :gotTcInstall
