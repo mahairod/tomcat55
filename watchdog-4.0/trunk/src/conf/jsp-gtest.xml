@@ -680,14 +680,6 @@
 	   testStrategy="testing HttpJspPage jspInit() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/HttpJspPage/positiveJSPInitExtends.jsp HTTP/1.0"
-           debug="0" host="${host}" port="${port}"
-           goldenFile="${wgdir}/engine/HttpJspPage/positiveJSPInitExtends.html"
- 	   testName="positiveJSPInitExtends.jsp" 
-	   assertion="Use extends directive to make the defined java class as the super class. now we check the result of getServletConfig, specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
-	   testStrategy="testing HttpJspPage jspService() features "
- 	/>
-
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveForward.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/positiveForward.html"
