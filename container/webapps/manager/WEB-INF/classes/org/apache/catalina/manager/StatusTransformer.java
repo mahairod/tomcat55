@@ -590,12 +590,7 @@ public class StatusTransformer {
             ObjectName queryJspMonitor = new ObjectName
                 (objectName.getDomain() + ":type=JspMonitor,WebModule=" +
                  webModuleName + ",*");
-            Set jspMonitorsON = mBeanServer.queryNames(queryJspMonitor, null);
-            ObjectName jspMonitorON = null;
-            iterator2 = jspMonitorsON.iterator();
-            while (iterator2.hasNext()) {
-                jspMonitorON = (ObjectName) iterator2.next();
-            }
+            Set jspMonitorONs = mBeanServer.queryNames(queryJspMonitor, null);
 
             // Special case for the root context
             if (contextName.equals("/")) {
@@ -621,8 +616,8 @@ public class StatusTransformer {
             if (managerON != null) {
                 writeManager(writer, managerON, mBeanServer, mode);
             }
-            if (jspMonitorON != null) {
-                writeJspMonitor(writer, jspMonitorON, mBeanServer, mode);
+            if (jspMonitorONs != null) {
+                writeJspMonitor(writer, jspMonitorONs, mBeanServer, mode);
             }
             writer.print("</p>");
 
@@ -688,17 +683,29 @@ public class StatusTransformer {
      * Write JSP monitoring information.
      */
     public static void writeJspMonitor(PrintWriter writer,
-                                       ObjectName objectName,
+                                       Set jspMonitorONs,
                                        MBeanServer mBeanServer,
                                        int mode)
             throws Exception {
 
+        int jspCount = 0;
+        int jspReloadCount = 0;
+
+        Iterator iter = jspMonitorONs.iterator();
+        while (iter.hasNext()) {
+            ObjectName jspMonitorON = (ObjectName) iter.next();
+            Object obj = mBeanServer.getAttribute(jspMonitorON, "jspCount");
+            jspCount += ((Integer) obj).intValue();
+            obj = mBeanServer.getAttribute(jspMonitorON, "jspReloadCount");
+            jspReloadCount += ((Integer) obj).intValue();
+        }
+
         if (mode == 0) {
             writer.print("<br>");
             writer.print(" JSPs loaded: ");
-            writer.print(mBeanServer.getAttribute(objectName, "jspCount"));
+            writer.print(jspCount);
             writer.print(" JSPs reloaded: ");
-            writer.print(mBeanServer.getAttribute(objectName, "jspReloadCount"));
+            writer.print(jspReloadCount);
         } else if (mode == 1) {
             // for now we don't write out anything
         }
