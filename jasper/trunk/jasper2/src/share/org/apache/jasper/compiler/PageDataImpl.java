@@ -186,21 +186,21 @@ class PageDataImpl extends PageData implements TagConstants {
 	public void visit(Node.TaglibDirective n) throws JasperException {
 	    Attributes attrs = n.getAttributes();
 	    if (attrs != null) {
-		String type = "xmlns:" + attrs.getValue("prefix");
+		String qName = "xmlns:" + attrs.getValue("prefix");
 		/*
 		 * According to javadocs of org.xml.sax.helpers.AttributesImpl,
 		 * the addAttribute method does not check to see if the
 		 * specified attribute is already contained in the list: This
 		 * is the application's responsibility!
 		 */
-		if (rootAttrs.getIndex(type) == -1) {
+		if (rootAttrs.getIndex(qName) == -1) {
 		    String location = attrs.getValue("uri");
 		    if (location != null) {
-			rootAttrs.addAttribute("", "", type, "CDATA",
+			rootAttrs.addAttribute("", "", qName, "CDATA",
 					       location);
 		    } else {
 			location = attrs.getValue("tagdir");
-			rootAttrs.addAttribute("", "", type, "CDATA",
+			rootAttrs.addAttribute("", "", qName, "CDATA",
 					       URN_JSPTAGDIR + location);
 		    }
 		}
