@@ -2,7 +2,7 @@
  *                                                                           *
  *                 The Apache Software License,  Version 1.1                 *
  *                                                                           *
- *         Copyright (c) 1999, 2000  The Apache Software Foundation.         *
+ *          Copyright (c) 1999-2001 The Apache Software Foundation.          *
  *                           All rights reserved.                            *
  *                                                                           *
  * ========================================================================= *
@@ -56,12 +56,13 @@
  * ========================================================================= */
 package org.apache.catalina.connector.warp;
 
-import org.apache.catalina.connector.HttpResponseBase;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,166 +70,173 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.TimeZone;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpUtils;
+//import javax.servlet.http.HttpUtils;
 import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Logger;
+import org.apache.catalina.connector.HttpResponseBase;
 import org.apache.catalina.util.CookieTools;
 import org.apache.catalina.util.RequestUtil;
 
-/**
- *
- *
- * @author <a href="mailto:pier.fumagalli@eng.sun.com">Pier Fumagalli</a>
- * @author Copyright &copy; 1999, 2000 <a href="http://www.apache.org">The
- *         Apache Software Foundation.
- * @version CVS $Id$
- */
 public class WarpResponse extends HttpResponseBase {
-
-    // -------------------------------------------------------------- CONSTANTS
-
-    /** Our debug flag status (Used to compile out debugging information). */
-    private static final boolean DEBUG=WarpDebug.DEBUG;
-
-    /** The WarpRequestHandler associated with this response. */
-    private WarpRequestHandler handler=null;
-
-    /** The WarpPacket used to write data. */
-    private WarpPacket packet=new WarpPacket();
+    private WarpPacket packet;
+    private WarpConnection connection;
     
-    private boolean committed=false;
+    public WarpResponse() {
+        super();
+        recycle();
+    }
 
-    /**
-     * Return the WarpRequestHandler associated with this response.
-     */
-    protected WarpRequestHandler getWarpRequestHandler() {
-        return(this.handler);
+    public void recycle() {
+        super.recycle();
+        this.setStream(new Stream(this));
+    }
+
+    public void setPacket(WarpPacket packet) {
+        this.packet=packet;
+    }
+    
+    public WarpPacket getPacket() {
+        return(this.packet);
+    }
+    
+    public void setConnection(WarpConnection connection) {
+        this.connection=connection;
+    }
+
+    public WarpConnection getConnection() {
+        return(this.connection);
     }
 
     /**
-     * Set the WarpRequestHandler associated with this response.
+     * Send the HTTP response headers, if this has not already occurred.
      */
-    protected void setWarpRequestHandler(WarpRequestHandler handler) {
-        this.handler=handler;
-    }
-
-    public boolean isCommitted() {
-        return(this.committed);
-    }
-
     protected void sendHeaders() throws IOException {
-        if (DEBUG) this.debug("Sending status and headers");
-
-        if (isCommitted()) return;
-
+    	if (isCommitted()) return;
+        if ("HTTP/0.9".equals(request.getRequest().getProtocol())) {
+            committed = true;
+            return;
+        }
+    
         this.packet.reset();
-        String prot=request.getRequest().getProtocol();
-        this.packet.writeString(prot);
-        this.packet.writeShort(status);
-        if (message != null) this.packet.writeString(message);
-        else this.packet.writeString("");
-        this.handler.send(WarpConstants.TYP_REQUEST_STA,this.packet);
+        this.packet.setType(Constants.TYPE_RES_STATUS);
+        this.packet.writeString(request.getRequest().getProtocol());
+        this.packet.writeUnsignedShort(status);
+        this.packet.writeString(message);
+        this.connection.send(this.packet);
 
-        if (DEBUG)
-            this.debug(prot+" "+status+((message==null)?(""):(" "+message)));
-
-        // Send the content-length and content-type headers (if any)
-        if (getContentType() != null) {
-            this.packet.reset();
+    	if (getContentType() != null) {
+    	    this.packet.reset();
+            this.packet.setType(Constants.TYPE_RES_HEADER);
             this.packet.writeString("Content-Type");
             this.packet.writeString(getContentType());
-            this.handler.send(WarpConstants.TYP_REQUEST_HDR,this.packet);
-            if (DEBUG) this.debug("Content-Type: "+getContentType());
-        }
-        
-        if (getContentLength() >= 0) {
-            this.packet.reset();
+            this.connection.send(this.packet);
+    	}
+    	if (getContentLength() >= 0) {
+    	    this.packet.reset();
+            this.packet.setType(Constants.TYPE_RES_HEADER);
             this.packet.writeString("Content-Length");
             this.packet.writeString(Integer.toString(getContentLength()));
-            this.handler.send(WarpConstants.TYP_REQUEST_HDR,this.packet);
-            if (DEBUG) this.debug("Content-Type: "+getContentType());
-        }
+            this.connection.send(this.packet);
+    	}
     
-        // Send all specified headers (if any)
-        synchronized (headers) {
-            Iterator names = headers.keySet().iterator();
-            while (names.hasNext()) {
-                String name = (String) names.next();
-                ArrayList values = (ArrayList) headers.get(name);
-                Iterator items = values.iterator();
-                while (items.hasNext()) {
-                    String value = (String) items.next();
-                    this.packet.reset();
+    	synchronized (headers) {
+        	Iterator names = headers.keySet().iterator();
+    	    while (names.hasNext()) {
+    	        String name = (String) names.next();
+    	        ArrayList values = (ArrayList) headers.get(name);
+    	        Iterator items = values.iterator();
+    	        while (items.hasNext()) {
+    		        String value = (String) items.next();
+            	    this.packet.reset();
+                    this.packet.setType(Constants.TYPE_RES_HEADER);
                     this.packet.writeString(name);
                     this.packet.writeString(value);
-                    this.handler.send(WarpConstants.TYP_REQUEST_HDR,this.packet);
-                    if (DEBUG) this.debug(name+": "+value);
-                }
-            }
-        }
-
-        // Add the session ID cookie if necessary
-        HttpServletRequest hreq=(HttpServletRequest)request.getRequest();
-        HttpSession session=hreq.getSession(false);
-
-        if ((session!=null) && session.isNew() && getContext().getCookies()) {
-
-            Cookie cookie=new Cookie(Globals.SESSION_COOKIE_NAME,session.getId());
-            cookie.setMaxAge(-1);
-            String contextPath = null;
-            
-            if (context != null) contextPath = context.getPath();
-            
-            if ((contextPath != null) && (contextPath.length() > 0)) {
-                cookie.setPath(contextPath);
-            } else {
-                cookie.setPath("/");
-            }
-            
-            if (hreq.isSecure()) cookie.setSecure(true);
-            addCookie(cookie);
-        }
-
-        // Send all specified cookies (if any)
-        synchronized (cookies) {
-            Iterator items = cookies.iterator();
+                    this.connection.send(this.packet);
+      		    }
+    	    }
+    	}
+    
+    	// Add the session ID cookie if necessary
+    	HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
+    	HttpSession session = hreq.getSession(false);
+    
+    	if ((session != null) && session.isNew() && (getContext() != null) 
+                && getContext().getCookies()) {
+    	    Cookie cookie = new Cookie(Globals.SESSION_COOKIE_NAME,
+    				       session.getId());
+    	    cookie.setMaxAge(-1);
+    	    String contextPath = null;
+                if (context != null)
+                    contextPath = context.getPath();
+    	    if ((contextPath != null) && (contextPath.length() > 0))
+    		cookie.setPath(contextPath);
+    	    else
+    	        cookie.setPath("/");
+    	    if (hreq.isSecure())
+    		cookie.setSecure(true);
+    	    addCookie(cookie);
+    	}
+    
+    	// Send all specified cookies (if any)
+    	synchronized (cookies) {
+    	    Iterator items = cookies.iterator();
             while (items.hasNext()) {
-                Cookie cookie = (Cookie) items.next();
-                String name=CookieTools.getCookieHeaderName(cookie);
-                String value=CookieTools.getCookieHeaderValue(cookie);
-                this.packet.reset();
+    	    	Cookie cookie = (Cookie) items.next();
+    	    	String name=CookieTools.getCookieHeaderName(cookie);
+    	    	StringBuffer value=new StringBuffer();
+    	    	CookieTools.getCookieHeaderValue(cookie,value);
+        	    this.packet.reset();
+                this.packet.setType(Constants.TYPE_RES_HEADER);
                 this.packet.writeString(name);
-                this.packet.writeString(value);
-                this.handler.send(WarpConstants.TYP_REQUEST_HDR,this.packet);
-                if (DEBUG) this.debug(name+": "+value);
-            }
+                this.packet.writeString(value.toString());
+                this.connection.send(this.packet);
+    	    }
+    	}
+
+	    this.packet.reset();
+        this.packet.setType(Constants.TYPE_RES_COMMIT);
+        this.connection.send(this.packet);
+
+        committed = true;
+    }
+    
+    private class Stream extends OutputStream {
+        private WarpConnection connection;
+        private WarpPacket packet;
+    
+        private Stream(WarpResponse response) {
+            super();
+            this.connection=response.getConnection();
+            this.packet=new WarpPacket();
+            packet.setType(Constants.TYPE_RES_BODY);
+        }
+        
+        public void write(int b) 
+        throws IOException {
+            packet.buffer[packet.size++]=(byte)b;
         }
 
-        // Commit the headers
-        this.packet.reset();
-        this.handler.send(WarpConstants.TYP_REQUEST_CMT,this.packet);
-        this.committed = true;
+        public void flush()
+        throws IOException {
+            this.connection.send(packet);
+            packet.reset();
+            packet.setType(Constants.TYPE_RES_BODY);
+        }
+        
+        public void close()
+        throws IOException {
+            flush();
+            packet.reset();
+            packet.setType(Constants.TYPE_RES_DONE);
+            this.connection.send(packet);
+            packet.reset();
+            packet.setType(Constants.TYPE_RES_BODY);
+        }
     }
-
-    // ------------------------------------------------------ DEBUGGING METHODS
-
-    /**
-     * Dump a debug message.
-     */
-    private void debug(String msg) {
-        if (DEBUG) WarpDebug.debug(this,msg);
-    }
-
-    /**
-     * Dump information for an Exception.
-     */
-    private void debug(Exception exc) {
-        if (DEBUG) WarpDebug.debug(this,exc);
-    }
-
 }

@@ -2,7 +2,7 @@
  *                                                                           *
  *                 The Apache Software License,  Version 1.1                 *
  *                                                                           *
- *         Copyright (c) 1999, 2000  The Apache Software Foundation.         *
+ *          Copyright (c) 1999-2001 The Apache Software Foundation.          *
  *                           All rights reserved.                            *
  *                                                                           *
  * ========================================================================= *
@@ -56,70 +56,188 @@
  * ========================================================================= */
 package org.apache.catalina.connector.warp;
 
-/**
- *
- *
- * @author <a href="mailto:pier.fumagalli@eng.sun.com">Pier Fumagalli</a>
- * @author Copyright &copy; 1999, 2000 <a href="http://www.apache.org">The
- *         Apache Software Foundation.
- * @version CVS $Id$
- */
+import java.io.UnsupportedEncodingException;
+
 public class WarpPacket {
 
-    /** The default size. */
-    private static final int defaultsize=4096;
+    /** This packet's data buffer */
+    protected byte buffer[]=null;
+    /** Number of bytes stored in the buffer */
+    protected int size=0;
 
-    /** The current buffer. */
-    private byte buf[];
+    /* Pointer to the last byte read in the buffer */
+    private int pointer=0;
+    /* Type of this packet */
+    private int type=-1;
+    /* Maximum value for a 16 bit unsigned value (0x0ffff +1) */
+    private static final int MAX_LENGTH=65536;
 
-    /** The current position in the buffer. */
-    private int pos;
-
+    /**
+     * Construct a new WarpPacket instance.
+     */
     public WarpPacket() {
         super();
-        this.buf=new byte[defaultsize];
+        this.buffer=new byte[MAX_LENGTH];
         this.reset();
     }
 
+    /**
+     * Reset this packet.
+     */
     public void reset() {
-        this.pos=0;
-        if (this.buf.length>(defaultsize<<1)) this.buf=new byte[defaultsize];
+        this.pointer=0;
+        this.size=0;
+        this.type=Constants.TYPE_INVALID;
     }
 
-    public void writeShort(int k) {
-        // Check if we have room
-        if ((this.pos+2)<this.buf.length) {
-            byte newbuf[]=new byte[this.buf.length+defaultsize];
-            System.arraycopy(this.buf,0,newbuf,0,this.pos);
-            this.buf=newbuf;
+    /**
+     * Set this packet type.
+     *
+     * @param type The type of this packet.
+     */
+    public void setType(int type) {
+        this.type=type;
+    }
+
+    /**
+     * Return the type of this packet.
+     *
+     * @return The type of this packet.
+     */
+    public int getType() {
+        return(this.type);
+    }
+
+    /**
+     * Write an unsigned short value (16 bit) in the packet buffer.
+     *
+     * @param value The unsigned short value to write.
+     * @exception IllegalArgumentException If the value is negative or greater
+     *                than 65535.
+     * @exception ArrayIndexOutOfBoundsException If the packet buffer cannot
+     *                contain the new value.
+     */
+    public void writeUnsignedShort(int value) {
+        if (value<0)
+            throw new IllegalArgumentException("Negative unsigned short");
+        if (value>65535)
+            throw new IllegalArgumentException("Unsigned short is too big");
+
+        if ((this.size+2)>=MAX_LENGTH)
+            throw new ArrayIndexOutOfBoundsException("Too much data");
+
+        this.buffer[this.size++]=(byte) ((value>>8)&0x0ff);
+        this.buffer[this.size++]=(byte) ((value>>0)&0x0ff);
+    }
+
+    /**
+     * Write a signed integer value (32 bit) in the packet buffer.
+     *
+     * @param value The signed integer value to write.
+     * @exception ArrayIndexOutOfBoundsException If the packet buffer cannot
+     *                contain the new value.
+     */
+    public void writeInteger(int value) {
+        if ((this.size+4)>=MAX_LENGTH)
+            throw new ArrayIndexOutOfBoundsException("Too much data");
+
+        this.buffer[this.size++]=(byte) ((value>>24)&0x0ff);
+        this.buffer[this.size++]=(byte) ((value>>16)&0x0ff);
+        this.buffer[this.size++]=(byte) ((value>>8)&0x0ff);
+        this.buffer[this.size++]=(byte) ((value>>0)&0x0ff);
+    }
+
+    /**
+     * Write a string into the packet buffer.
+     *
+     * @param string The string to write into the packet buffer.
+     * @exception ArrayIndexOutOfBoundsException If the packet buffer cannot
+     *                contain the new value.
+     * @exception RuntimeException If the platform doesn't support UTF-8
+     *                encoding.
+     */
+    public void writeString(String string) {
+        try {
+            byte temp[]=string.getBytes("UTF-8");
+            if ((this.size+temp.length+2)>MAX_LENGTH)
+                throw new ArrayIndexOutOfBoundsException("Too much data");
+
+            this.writeUnsignedShort(temp.length);
+            System.arraycopy(temp,0,this.buffer,this.size,temp.length);
+            this.size+=temp.length;
+        } catch (UnsupportedEncodingException s) {
+            throw new RuntimeException("Unsupported encoding UTF-8");
         }
-        // Store the number
-        this.buf[this.pos++]=(byte)((k>>8)&0x0ff);
-        this.buf[this.pos++]=(byte)(k&0x0ff);
     }
 
-    public void writeString(String s) {
-        // Retrieve the string bytes
-        byte k[]=s.getBytes();
-        // Write the string length
-        this.writeShort(k.length);
-        // Check if we have room
-        if ((this.pos+k.length)<this.buf.length) {
-            byte newbuf[]=new byte[this.buf.length+k.length+defaultsize];
-            System.arraycopy(this.buf,0,newbuf,0,this.pos);
-            this.buf=newbuf;
+    /**
+     * Read an unsigned short value (16 bit) from the packet buffer.
+     *
+     * @return The unsigned short value as an integer.
+     * @exception ArrayIndexOutOfBoundsException If no data is left in the
+     *                packet buffer to be read.
+     */
+    public int readUnsignedShort() {
+        if ((this.pointer+2)>this.size)
+            throw new ArrayIndexOutOfBoundsException("No data available");
+
+        int k=(this.buffer[this.pointer++])&0xff;
+        k=(k<<8)+((this.buffer[this.pointer++])&0xff);
+
+        return(k);
+    }
+
+    /**
+     * Read a signed integer value (32 bit) from the packet buffer.
+     *
+     * @return The signed integer value.
+     * @exception ArrayIndexOutOfBoundsException If no data is left in the
+     *                packet buffer to be read.
+     */
+    public int readInteger() {
+        if ((this.pointer+4)>this.size)
+            throw new ArrayIndexOutOfBoundsException("No data available");
+
+        int k=(this.buffer[this.pointer++])&0xff;
+        k=(k<<8)+((this.buffer[this.pointer++])&0xff);
+        k=(k<<8)+((this.buffer[this.pointer++])&0xff);
+        k=(k<<8)+((this.buffer[this.pointer++])&0xff);
+
+        return(k);
+    }
+
+    /**
+     * Read a string from the packet buffer.
+     *
+     * @return The string red from the packet buffer.
+     * @exception ArrayIndexOutOfBoundsException If no data is left in the
+     *                packet buffer to be read.
+     */
+    public String readString() {
+        int length=this.readUnsignedShort();
+        try {
+            String ret=new String(this.buffer,this.pointer,length,"UTF-8");
+            this.pointer+=length;
+            return(ret);
+        } catch (UnsupportedEncodingException s) {
+            throw new RuntimeException("Unsupported encoding UTF-8");
         }
-        // Store the string
-        System.arraycopy(k,0,this.buf,this.pos,k.length);
-        this.pos+=k.length;
     }
-
-    public byte[] getBuffer() {
-        return(this.buf);
+    
+    public String dump() {
+        StringBuffer buf=new StringBuffer("DATA=");
+        for (int x=0; x<this.size; x++) {
+            if ((this.buffer[x]>32)&&(this.buffer[x]<127)) {
+                buf.append((char)this.buffer[x]);
+            } else {
+                buf.append("0x");
+                String digit=Integer.toHexString((int)this.buffer[x]);
+                if (digit.length()<2) buf.append('0');
+                if (digit.length()>2) digit=digit.substring(digit.length()-2);
+                buf.append(digit);
+            }
+            buf.append(" ");
+        }
+        return(buf.toString());
     }
-
-    public int getLength() {
-        return(this.pos);
-    }
-
 }

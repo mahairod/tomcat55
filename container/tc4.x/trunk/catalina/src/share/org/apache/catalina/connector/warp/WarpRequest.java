@@ -2,7 +2,7 @@
  *                                                                           *
  *                 The Apache Software License,  Version 1.1                 *
  *                                                                           *
- *         Copyright (c) 1999, 2000  The Apache Software Foundation.         *
+ *          Copyright (c) 1999-2001 The Apache Software Foundation.          *
  *                           All rights reserved.                            *
  *                                                                           *
  * ========================================================================= *
@@ -56,108 +56,23 @@
  * ========================================================================= */
 package org.apache.catalina.connector.warp;
 
+import org.apache.catalina.Context;
+import org.apache.catalina.Host;
 import org.apache.catalina.connector.HttpRequestBase;
 
-/**
- *
- *
- * @author <a href="mailto:pier.fumagalli@eng.sun.com">Pier Fumagalli</a>
- * @author Copyright &copy; 1999, 2000 <a href="http://www.apache.org">The
- *         Apache Software Foundation.
- * @version CVS $Id$
- */
 public class WarpRequest extends HttpRequestBase {
-
-    // -------------------------------------------------------------- CONSTANTS
-
-    /** Our debug flag status (Used to compile out debugging information). */
-    private static final boolean DEBUG=WarpDebug.DEBUG;
-
-    // -------------------------------------------------------- LOCAL VARIABLES
-
-    /** The Warp Host ID of this request. */
-    private int hostid=-1;
-    /** The Warp Application ID of this request. */
-    private int applid=-1;
-    /** The Warp Request ID of this request. */
-    private int id=-1;
-    /** The WarpRequestHandler associated with this request. */
-    private WarpRequestHandler handler=null;
-
-    // ----------------------------------------------------------- BEAN METHODS
-
-    /**
-     * Return the WarpRequestHandler associated with this request.
-     */
-    protected WarpRequestHandler getWarpRequestHandler() {
-        return(this.handler);
+    private Host host=null;
+    private Context context=null;
+    
+    public WarpRequest() {
+        super();
     }
-
-    /**
-     * Set the WarpRequestHandler associated with this request.
-     */
-    protected void setWarpRequestHandler(WarpRequestHandler handler) {
-        this.handler=handler;
+    
+    public void setHost(Host host) {
+        this.host=host;
     }
-
-    /**
-     * Return the Host ID associated with this WarpRequest instance.
-     */
-    protected int getRequestID() {
-        return(this.id);
-    }
-
-    /**
-     * Set the Host ID associated with this WarpRequest instance.
-     */
-    protected void setRequestID(int id) {
-        if (DEBUG) this.debug("Setting RequestID to "+id);
-        this.id=id;
-    }
-
-    /**
-     * Return the Host ID associated with this WarpRequest instance.
-     */
-    protected int getRequestedHostID() {
-        return(this.hostid);
-    }
-
-    /**
-     * Set the Application ID associated with this WarpRequest instance.
-     */
-    protected void setRequestedHostID(int id) {
-        if (DEBUG) this.debug("Setting request HostID to "+id);
-        this.hostid=id;
-    }
-
-    /**
-     * Return the Application ID associated with this WarpRequest instance.
-     */
-    protected int getRequestedApplicationID() {
-        return(this.applid);
-    }
-
-    /**
-     * Set the Host ID associated with this WarpRequest instance.
-     */
-    protected void setRequestedApplicationID(int id) {
-        if (DEBUG) this.debug("Setting request ApplicationID to "+id);
-        this.applid=id;
-    }
-
-    // ------------------------------------------------------ DEBUGGING METHODS
-
-    /**
-     * Dump a debug message.
-     */
-    private void debug(String msg) {
-        if (DEBUG) WarpDebug.debug(this,msg);
-    }
-
-    /**
-     * Dump information for an Exception.
-     */
-    private void debug(Exception exc) {
-        if (DEBUG) WarpDebug.debug(this,exc);
+    
+    public Host getHost() {
+        return(this.host);
     }
 }

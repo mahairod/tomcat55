@@ -2,7 +2,7 @@
  *                                                                           *
  *                 The Apache Software License,  Version 1.1                 *
  *                                                                           *
- *         Copyright (c) 1999, 2000  The Apache Software Foundation.         *
+ *          Copyright (c) 1999-2001 The Apache Software Foundation.          *
  *                           All rights reserved.                            *
  *                                                                           *
  * ========================================================================= *
@@ -56,193 +56,171 @@
  * ========================================================================= */
 package org.apache.catalina.connector.warp;
 
-import java.io.*;
-import java.net.*;
-import org.apache.catalina.Container;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Random;
+import java.util.Vector;
+
 import org.apache.catalina.Connector;
+import org.apache.catalina.Container;
+import org.apache.catalina.Context;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.net.DefaultServerSocketFactory;
 import org.apache.catalina.net.ServerSocketFactory;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.util.LifecycleSupport;
-import org.apache.catalina.connector.HttpRequestBase;
-import org.apache.catalina.connector.HttpResponseBase;
 
-/**
- *
- *
- * @author <a href="mailto:pier.fumagalli@eng.sun.com">Pier Fumagalli</a>
- * @author Copyright &copy; 1999, 2000 <a href="http://www.apache.org">The
- *         Apache Software Foundation.
- * @version CVS $Id$
- */
 public class WarpConnector implements Connector, Lifecycle, Runnable {
 
-    // -------------------------------------------------------------- CONSTANTS
+    /* ==================================================================== */
+    /* Instance variables                                                   */
+    /* ==================================================================== */
 
-    /** Our debug flag status (Used to compile out debugging information). */
-    private static final boolean DEBUG=WarpDebug.DEBUG;
-    /** The descriptive information related to this implementation. */
-    private static final String info="WarpConnector/"+WarpConstants.VERSION;
+    /* -------------------------------------------------------------------- */
+    /* Local variables */
 
-    // -------------------------------------------------------- LOCAL VARIABLES
+    /** The running thread accepting connections */
+    private Thread thread=null;
+    /** The server socket. */
+    private ServerSocket server=null;
+    /** Our <code>WarpLogger</code>. */
+    private WarpLogger logger=null;
+    /** Our list of deployed web applications. */
+    private Vector applications=new Vector();
+    /** The unique ID of this connector instance. */
+    protected int uniqueId=-1;
+
+    /* -------------------------------------------------------------------- */
+    /* Bean variables */
+
+    /** The <code>Container</code> instance processing requests. */
+    private Container container=null;
+    /** The "enable DNS lookups" flag. */
+    private boolean enableLookups=false;
+    /** The <code>ServerSocketFactory</code> used by this connector. */
+    private ServerSocketFactory factory=null;
+    /** The redirect port value for SSL requests. */
+    private int redirectPort=443;
+    /** The request scheme value. */
+    private String scheme="warp";
+    /** The secure flag of this <code>Connector</code>. */
+    private boolean secure=false;
+    /** Descriptive information of this <code>Connector</code>. */
+    private String info=null;
+    /** The address we need to bind to. */
+    private String address=null;
+    /** The port we need to bind to. */
+    private int port=8008;
+    /** The server socket backlog length. */
+    private int acceptCount=10;
+    /** The server appBase for hosts created via WARP. */
+    private String appBase="webapps";
+    /** The debug level. */
+    private int debug=0;
+
+    /* -------------------------------------------------------------------- */
+    /* Lifecycle variables */
 
     /** The lifecycle event support for this component. */
-    private LifecycleSupport lifecycle=null;
-    /** The server socket factory for this connector. */
-    private ServerSocket socket=null;
-    /** Wether the start() method was called or not. */
+    private LifecycleSupport lifecycle=new LifecycleSupport(this);
+    /** The "started" flag. */
     private boolean started=false;
-    /** The accept count for the server socket. */
-    private int count = 10;
-    /** Should we enable DNS lookups? */
-    private boolean enableLookups = false;
 
-    // -------------------------------------------------------- BEAN PROPERTIES
+    /* ==================================================================== */
+    /* Constructor                                                          */
+    /* ==================================================================== */
 
-    /** The port to which non-SSL requests should be redirected for SSL */
-    private int redirectPort = 443;
-    /** Wether requests received through this connector are secure. */
-    private boolean secure=false;
-    /** The scheme to be set on requests received through this connector. */
-    private String scheme="http";
-    /** The Container used to process requests received by this Connector. */
-    private Container container=null;
-    /** The server socket factory for this connector. */
-    private ServerSocketFactory factory=null;
-    /** The server socket port. */
-    private int port=8008;
-    /** The number of concurrent connections we can handle. */
-    private int acceptcount=10;
-
-    // ------------------------------------------------------------ CONSTRUCTOR
-
+    /**
+     * Construct a new instance of a <code>WarpConnector</code>.
+     */
     public WarpConnector() {
         super();
-        this.lifecycle=new LifecycleSupport(this);
-        if (DEBUG) this.debug("New instance created");
+        this.logger=new WarpLogger(this);
+        this.uniqueId=new Random().nextInt();
+        if (Constants.DEBUG)
+            logger.debug("Instance created (ID="+this.uniqueId+")");
     }
 
-    // --------------------------------------------------------- PUBLIC METHODS
+    /* ==================================================================== */
+    /* Bean methods                                                         */
+    /* ==================================================================== */
 
     /**
-     * Run the acceptor thread, the thread that will wait on the server socket
-     * and create new connections.
+     * Return the <code>Container</code> instance which will process all
+     * requests received by this <code>Connector</code>.
      */
-    public void run() {
-        if (DEBUG) this.debug("Acceptor thread started");
-        try {
-            while (this.started) {
-                Socket s=this.socket.accept();
-                WarpConnection c=new WarpConnection();
-                c.setSocket(s);
-                c.setConnector(this);
-                try {
-                    c.start();
-                } catch (LifecycleException e) {
-                    this.log(e);
-                    continue;
-                }
+    public Container getContainer() {
+        return(this.container);
+    }
+
+    /**
+     * Set the <code>Container</code> instance which will process all requests
+     * received by this <code>Connector</code>.
+     *
+     * @param container The new Container to use
+     */
+    public void setContainer(Container container) {
+        this.container=container;
+        this.logger.setContainer(container);
+
+        if (Constants.DEBUG) {
+            if (container==null) logger.debug("Setting null container");
+            else logger.debug("Setting container "+container.getClass());
+        }
+    }
+
+    /**
+     * Return the "enable DNS lookups" flag.
+     */
+    public boolean getEnableLookups() {
+        return(this.enableLookups);
+    }
+
+    /**
+     * Set the "enable DNS lookups" flag.
+     *
+     * @param enableLookups The new "enable DNS lookups" flag value
+     */
+    public void setEnableLookups(boolean enableLookups) {
+        this.enableLookups=enableLookups;
+
+        if (Constants.DEBUG) logger.debug("Setting lookup to "+enableLookups);
+    }
+
+    /**
+     * Return the <code>ServerSocketFactory</code> used by this
+     * <code>Connector</code> to generate <code>ServerSocket</code> instances.
+     */
+    public ServerSocketFactory getFactory() {
+        if (this.factory==null) {
+            synchronized(this) {
+                if (Constants.DEBUG) logger.debug("Creating factory");
+                this.factory=new DefaultServerSocketFactory();
             }
-            this.socket.close();
-        } catch (IOException e) {
-            if (this.started) e.printStackTrace(System.err);
         }
-        if (DEBUG) this.debug("Acceptor thread exited");
+        return(this.factory);
     }
 
     /**
-     * Create and return a Request object suitable for receiving the contents
-     * of a Request from the responsible Container.
+     * Set the <code>ServerSocketFactory</code> used by this
+     * <code>Connector</code> to generate <code>ServerSocket</code> instances.
+     *
+     * @param factory The new server socket factory
      */
-    public Request createRequest() {
-        WarpRequest request = new WarpRequest();
-        request.setConnector(this);
-        return (request);
+    public void setFactory(ServerSocketFactory factory) {
+        if (factory==null) throw new NullPointerException();
+        this.factory=factory;
+
+        if (Constants.DEBUG)
+            logger.debug("Setting factory "+factory.getClass().getName());
     }
-
-    /**
-     * Create and return a Response object suitable for receiving the contents
-     * of a Response from the responsible Container.
-     */
-    public Response createResponse() {
-        WarpResponse response=new WarpResponse();
-        response.setConnector(this);
-        return (response);
-    }
-
-    /**
-     * Begin processing requests via this Connector.
-     */
-    public void start() throws LifecycleException {
-        if (DEBUG) this.debug("Starting");
-        // Validate and update our current state
-        if (started)
-            throw new LifecycleException("Connector already started");
-
-        // We're starting
-        lifecycle.fireLifecycleEvent(START_EVENT, null);
-        this.started=true;
-
-        // Establish a server socket on the specified port
-        try {
-            this.socket=getFactory().createSocket(this.port,this.count);
-        } catch (Exception e) {
-            throw new LifecycleException("Error creating server socket", e);
-        }
-
-        // Start our background thread
-        new Thread(this).start();
-    }
-
-    /**
-     * Terminate processing requests via this Connector.
-     */
-    public void stop() throws LifecycleException {
-        // Validate and update our current state
-        if (!started)
-            throw new LifecycleException("Cannot stop (never started)");
-
-        // We're stopping
-        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-        started = false;
-
-        // Close the server socket
-        try {
-            this.socket.close();
-        } catch (IOException e) {
-            throw new LifecycleException("Error closing server socket", e);
-        }
-    }
-
-    // ---------------------------------------- CONNECTOR AND LIFECYCLE METHODS
-
-    /**
-     * Add a lifecycle event listener to this component.
-     */
-    public void addLifecycleListener(LifecycleListener listener) {
-        this.lifecycle.addLifecycleListener(listener);
-    }
-
-    /**
-     * Remove a lifecycle event listener from this component.
-     */
-    public void removeLifecycleListener(LifecycleListener listener) {
-        lifecycle.removeLifecycleListener(listener);
-    }
-
-    /**
-     * Return descriptive information about this implementation.
-     */
-    public String getInfo() {
-        return (info);
-    }
-
-    // ----------------------------------------------------------- BEAN METHODS
 
     /**
      * Return the port number to which a request should be redirected if
@@ -250,7 +228,7 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
      * with a transport guarantee that requires SSL.
      */
     public int getRedirectPort() {
-        return (this.redirectPort);
+        return(this.redirectPort);
     }
 
     /**
@@ -259,42 +237,17 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
      * @param redirectPort The redirect port number (non-SSL to SSL)
      */
     public void setRedirectPort(int redirectPort) {
-        this.redirectPort = redirectPort;
+        if ((redirectPort<1) || (redirectPort>65535))
+            throw new IllegalArgumentException("Invalid port "+redirectPort);
+        this.redirectPort=redirectPort;
+
+        if (Constants.DEBUG)
+            logger.debug("Setting redirection port to "+redirectPort);
     }
 
     /**
-     * Return the secure connection flag that will be assigned to requests
-     * received through this connector. Default value is "false".
-     * <br>
-     * NOTE: For protocols such as WARP this is pointless, as we will only know
-     * at request time wether the received request is secure or not. Security
-     * is handled by an HTTP stack outside this JVM, and this can be (like with
-     * Apache) handling both HTTP and HTTPS requests.
-     */
-    public boolean getSecure() {
-        return(this.secure);
-    }
-
-    /**
-     * Set the secure connection flag that will be assigned to requests
-     * received through this connector.
-     * <br>
-     * NOTE: For protocols such as WARP this is pointless, as we will only know
-     * at request time wether the received request is secure or not. Security
-     * is handled by an HTTP stack outside this JVM, and this can be (like with
-     * Apache) handling both HTTP and HTTPS requests.
-     */
-    public void setSecure(boolean secure) {
-        if (DEBUG) this.debug("Setting secure to "+secure);
-        this.secure=secure;
-    }
-
-    /**
-     * Return the scheme that will be assigned to requests received through
-     * this connector.  Default value is "http".
-     * <br>
-     * NOTE: As noted in the getSecure() and setSecure() methods, for WARP
-     * we don't know the scheme of the request until the request is received.
+     * Return the scheme that will be assigned to requests received
+     * through this connector.  Default value is "http".
      */
     public String getScheme() {
         return(this.scheme);
@@ -303,135 +256,305 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
     /**
      * Set the scheme that will be assigned to requests received through
      * this connector.
-     * <br>
-     * NOTE: As noted in the getSecure() and setSecure() methods, for WARP
-     * we don't know the scheme of the request until the request is received.
+     *
+     * @param scheme The new scheme
      */
     public void setScheme(String scheme) {
-        if (DEBUG) this.debug("Setting scheme to "+scheme);
+        if (scheme==null) throw new NullPointerException();
         this.scheme=scheme;
+
+        if (Constants.DEBUG) logger.debug("Setting scheme to "+scheme);
     }
 
     /**
-     * Return the Container used for processing requests received by this
-     * Connector.
+     * Return the secure connection flag that will be assigned to requests
+     * received through this connector.  Default value is "false".
      */
-    public Container getContainer() {
-        return(this.container);
+    public boolean getSecure() {
+        return(this.secure);
     }
 
     /**
-     * Set the Container used for processing requests received by this
-     * Connector.
+     * Set the secure connection flag that will be assigned to requests
+     * received through this connector.
+     *
+     * @param secure The new secure connection flag
      */
-    public void setContainer(Container container) {
-        if (DEBUG) {
-            if (container==null) this.debug("Setting null container");
-            else this.debug("Setting container "+container.getInfo());
-        }
-        this.container=container;
+    public void setSecure(boolean secure) {
+        this.secure=secure;
+
+        if (Constants.DEBUG) logger.debug("Setting secure to "+secure);
     }
 
     /**
-     * Return the "enable DNS lookups" flag for this Connector.
+     * Return descriptive information about this <code>Connector</code>.
      */
-    public boolean getEnableLookups() {
-        return (this.enableLookups);
-    }
-
-    /**
-     * Set the "enable DNS lookups" flag for this Connector.
-     */
-    public void setEnableLookups(boolean enableLookups) {
-        this.enableLookups = enableLookups;
-    }
-
-    /**
-     * Return the server socket factory used by this Connector.
-     */
-    public ServerSocketFactory getFactory() {
-        synchronized (this) {
-            if (this.factory==null) {
-                if (DEBUG) this.debug("Creating ServerSocketFactory");
-
-                this.factory=new DefaultServerSocketFactory();
+    public String getInfo() {
+        if (this.info==null) {
+            synchronized(this) {
+                this.info=this.getClass().getName()+"/"+
+                          Constants.VERS_MINOR+Constants.VERS_MAJOR;
             }
         }
-        return (this.factory);
+        return(this.info);
     }
 
     /**
-     * Set the server socket factory used by this Container.
+     * Set descriptive information about this <code>Connector</code>.
      */
-    public void setFactory(ServerSocketFactory factory) {
-        if (factory==null) return;
-        synchronized (this) {
-            if (DEBUG) this.debug("Setting ServerSocketFactory");
-            this.factory=factory;
-        }
+    public void setInfo(String info) {
+        if (info==null) throw new NullPointerException();
+        this.info=info;
+
+        if (Constants.DEBUG) logger.debug("Setting info to "+info);
     }
 
     /**
-     * Return the port number on which we listen for HTTP requests.
+     * Return the IP address to which this <code>Connector</code> will bind to.
+     */
+    public String getAddress() {
+        return(this.address);
+    }
+
+    /**
+     * Set the IP address to which this <code>Connector</code> will bind to.
+     *
+     * @param address The bind IP address
+     */
+    public void setAddress(String address) {
+        this.address=address;
+
+        if (Constants.DEBUG) logger.debug("Setting address to "+address);
+    }
+
+    /**
+     * Return the port to which this <code>Connector</code> will bind to.
      */
     public int getPort() {
         return(this.port);
     }
 
     /**
-     * Set the port number on which we listen for HTTP requests.
+     * Return the port to which this <code>Connector</code> will bind to.
      */
     public void setPort(int port) {
-        if (DEBUG) this.debug("Setting port to "+port);
         this.port=port;
+    }
+
+    /**
+     * Set the IP address to which this <code>Connector</code> will bind to.
+     *
+     * @param address The bind IP address
+     */
+    public void setAddress(int port) {
+        if ((redirectPort<1) || (redirectPort>65535))
+            throw new IllegalArgumentException("Invalid port "+redirectPort);
+        this.port=port;
+
+        if (Constants.DEBUG) logger.debug("Setting port to "+port);
     }
 
     /**
      * Return the accept count for this Connector.
      */
     public int getAcceptCount() {
-        return (this.acceptcount);
+        return (this.acceptCount);
     }
+
 
     /**
      * Set the accept count for this Connector.
      *
-     * @param acceptcount The new accept count
+     * @param count The new accept count
      */
-    public void setAcceptCount(int acceptcount) {
-        if (DEBUG) this.debug("Setting accept count to "+acceptcount);
-        this.acceptcount=acceptcount;
-    }
+    public void setAcceptCount(int count) {
+        this.acceptCount = count;
 
-    // ------------------------------------------ LOGGING AND DEBUGGING METHODS
-
-    /**
-     * Dump a log message.
-     */
-    public void log(String msg) {
-        // FIXME: Log thru catalina
-        WarpDebug.debug(this,msg);
+        if (Constants.DEBUG) logger.debug("Setting acceptCount to "+count);
     }
 
     /**
-     * Dump information for an Exception.
+     * Get the applications base directory for hosts created via WARP.
      */
-    public void log(Exception exc) {
-        // FIXME: Log thru catalina
-        WarpDebug.debug(this,exc);
+    public String getAppBase() {
+        return (this.appBase);
+    }
+
+
+    /**
+     * Set the applications base directory for hosts created via WARP.
+     *
+     * @param appBase The appbase property.
+     */
+    public void setAppBase(String appbase) {
+        this.appBase = appBase;
+
+        if (Constants.DEBUG) logger.debug("Setting appBase to "+appBase);
     }
 
     /**
-     * Dump a debug message.
+     * Return the debug level.
      */
-    private void debug(String msg) {
-        if (DEBUG) WarpDebug.debug(this,msg);
+    public int getDebug() {
+        return(this.debug);
     }
 
     /**
-     * Dump information for an Exception.
+     * Set the debug level.
      */
-    private void debug(Exception exc) {
-        if (DEBUG) WarpDebug.debug(this,exc);
+    public void setDebug(int debug) {
+        this.debug=debug;
+    }
+
+    /* ==================================================================== */
+    /* Lifecycle methods                                                    */
+    /* ==================================================================== */
+
+    /**
+     * Add a <code>LifecycleEvent</code> listener to this
+     * <code>Connector</code>.
+     *
+     * @param listener The listener to add
+     */
+    public void addLifecycleListener(LifecycleListener listener) {
+        lifecycle.addLifecycleListener(listener);
+    }
+
+    /**
+     * Remove a <code>LifecycleEvent</code> listener from this
+     * <code>Connector</code>.
+     *
+     * @param listener The listener to remove
+     */
+    public void removeLifecycleListener(LifecycleListener listener) {
+        lifecycle.removeLifecycleListener(listener);
+    }
+
+    /**
+     * Start accepting connections by this <code>Connector</code>.
+     */
+    public void start() throws LifecycleException {
+        if (started) throw new LifecycleException("Already started");
+
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+
+        this.started = true;
+
+        this.thread=new Thread(this);
+        this.thread.start();
+    }
+
+    /**
+     * Stop accepting connections by this <code>Connector</code>.
+     */
+    public void stop() throws LifecycleException {
+        if (!started) throw new LifecycleException("Not started");
+
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+
+        this.started = false;
+
+        if (this.server!=null) try {
+            this.server.close();
+        } catch (IOException e) {
+            logger.log("Cannot close ServerSocket",e);
+        }
+    }
+
+    /**
+     * Check whether this service was started or not.
+     */
+    public boolean isStarted() {
+        return(this.started);
+    }
+
+    /* ==================================================================== */
+    /* Public methods                                                       */
+    /* ==================================================================== */
+
+    /**
+     * Return the application ID for a given <code>Context</code>.
+     */
+    protected int applicationId(Context context) {
+        int id=this.applications.indexOf(context);
+        if (id==-1) {
+            this.applications.add(context);
+            id=this.applications.indexOf(context);
+        }
+        return(id);
+    }
+
+    /**
+     * Return the application for a given ID.
+     */
+    protected Context applicationContext(int id) {
+        try {
+            return((Context)this.applications.elementAt(id));
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return(null);
+        }
+    }
+
+    /**
+     * Create (or allocate) and return a Request object suitable for
+     * specifying the contents of a Request to the responsible Container.
+     */
+    public Request createRequest() {
+        return(null);
+    }
+
+    /**
+     * Create (or allocate) and return a Response object suitable for
+     * receiving the contents of a Response from the responsible Container.
+     */
+    public Response createResponse() {
+        return(null);
+    }
+
+    /**
+     * Start accepting WARP requests from the network.
+     */
+    public void run() {
+        // Get a hold on a server socket
+        try {
+            ServerSocketFactory fact=this.getFactory();
+            int port=this.getPort();
+            int accc=this.getAcceptCount();
+
+            if (this.getAddress()==null) {
+                this.server=fact.createSocket(port,accc);
+            } else {
+                InetAddress addr=InetAddress.getByName(this.getAddress());
+                this.server=fact.createSocket(port,accc,addr);
+            }
+        } catch (IOException e) {
+            logger.log("Error creating server socket",e);
+        }
+
+        // Can't get a hold of a server socket
+        if (this.server==null) {
+            logger.log("Unable to create server socket");
+            return;
+        }
+
+        // Start accepting connections
+        try {
+            while (this.isStarted()) {
+                Socket sock=this.server.accept();
+                InetAddress raddr=sock.getInetAddress();
+                InetAddress laddr=sock.getLocalAddress();
+                int rport=sock.getPort();
+                int lport=sock.getLocalPort();
+                logger.log("Connection from "+raddr+":"+rport+" to "+laddr+
+                           ":"+lport);
+                WarpConnection conn=new WarpConnection();
+                conn.setConnector(this);
+                conn.setSocket(sock);
+                this.addLifecycleListener(conn);
+                conn.start();
+            }
+        } catch (IOException e) {
+            logger.log("Error accepting requests",e);
+        }
     }
 }

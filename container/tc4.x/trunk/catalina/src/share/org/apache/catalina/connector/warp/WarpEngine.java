@@ -2,7 +2,7 @@
  *                                                                           *
  *                 The Apache Software License,  Version 1.1                 *
  *                                                                           *
- *         Copyright (c) 1999, 2000  The Apache Software Foundation.         *
+ *          Copyright (c) 1999-2001 The Apache Software Foundation.          *
  *                           All rights reserved.                            *
  *                                                                           *
  * ========================================================================= *
@@ -58,177 +58,23 @@ package org.apache.catalina.connector.warp;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import org.apache.catalina.Container;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
-import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.core.StandardEngine;
 
-/**
- *
- *
- * @author <a href="mailto:pier.fumagalli@eng.sun.com">Pier Fumagalli</a>
- * @author Copyright &copy; 1999, 2000 <a href="http://www.apache.org">The
- *         Apache Software Foundation.
- * @version CVS $Id$
- */
 public class WarpEngine extends StandardEngine {
-
-    // -------------------------------------------------------------- CONSTANTS
-
-    /** Our debug flag status (Used to compile out debugging information). */
-    private static final boolean DEBUG=WarpDebug.DEBUG;
-    /** The descriptive information related to this implementation. */
-    private static final String info="WarpEngine/"+WarpConstants.VERSION;
-
-    // -------------------------------------------------------- LOCAL VARIABLES
-
-    /** The Java class name of the default Mapper class for this Container. */
-    private String mapper="org.apache.catalina.connector.warp.WarpEngineMapper";
-    /** The root path for web applications. */
-    private String appbase="";
-    /** The Host ID to use for the next dynamically configured host. */
-    private int hostid=0;
-
-    // ------------------------------------------------------------ CONSTRUCTOR
-
-    /**
-     * Create a new WarpEngine component with the default basic Valve.
-     */
-    public WarpEngine() {
-        super();
-        super.addDefaultMapper(this.mapper);
-        if (DEBUG) this.debug("New instance created");
-        this.setDebug(9);
-    }
-
-    // --------------------------------------------------------- PUBLIC METHODS
-
-    public void invoke(Request req, Response res)
-    throws ServletException, IOException {
-        if (DEBUG) this.debug("Invoked");
-        super.invoke(req,res);
-    }
-
     public Container map(Request request, boolean update) {
-        if (DEBUG) this.debug("Trying to map request to host");
+        this.log("Mapping request");
         if (request instanceof WarpRequest) {
-            WarpRequest r=(WarpRequest)request;
-
-    	    Container children[]=this.findChildren();
-    	    for (int x=0; x<children.length; x++) {
-    	        if (children[x] instanceof WarpHost) {
-    	            WarpHost host=(WarpHost)children[x];
-    	            if (r.getRequestedHostID()==host.getHostID()) {
-    	                return(children[x]);
-    	            }
-                }
+            WarpRequest wreq=(WarpRequest)request;
+            Host host=wreq.getHost();
+            if (update) {
+                request.setServerName(host.getName());
             }
-        }
-        if (DEBUG) this.debug("Trying to map request to host (std)");
-        return(super.map(request,update));
-    }
-
-    /**
-     * Add a default Mapper implementation if none have been configured
-     * explicitly.
-     *
-     * @param mapperClass Java class name of the default Mapper
-     */
-    protected void addDefaultMapper(String mapper) {
-        super.addDefaultMapper(this.mapper);
-    }
-
-    /**
-     * Return descriptive information about this implementation.
-     */
-    public String getInfo() {
-        return(this.info);
-    }
-
-    /**
-     * Create a new WarpHost with the specified host name, setup the appropriate
-     * values and add it to the list of children.
-     */
-    public synchronized WarpHost setupChild(String name) {
-        WarpHost host=(WarpHost)this.findChild(name);
-        if (host==null) {
-            this.debug("Creating new host "+name);
-            host=new WarpHost();
-            host.setName(name);
-            host.setHostID(this.hostid++);
-            host.setAppBase(this.appbase);
-            this.addChild(host);
-        }
-        return(host);
-    }
-
-    /**
-     * Add a child WarpHost to the current WarpEngine.
-     */
-    public void addChild(Container child) {
-        if (child instanceof WarpHost) {
-            WarpHost byid=this.findChild(((WarpHost)child).getHostID());
-            if (byid!=null) {
-                throw new IllegalArgumentException("Host "+byid.getName()+
-                          " already configured with ID="+byid.getHostID());
-            } else {
-                super.addChild(child);
-            }
-        } else throw new IllegalArgumentException("Child is not a WarpHost");
-    }
-
-    /**
-     * Find a child WarpHost associated with the specified Host ID.
-     */
-    public WarpHost findChild(int id) {
-        Container children[]=this.findChildren();
-        for (int x=0; x<children.length; x++) {
-            WarpHost curr=(WarpHost)children[x];
-            if (curr.getHostID()==id) return(curr);
-        }
-        return(null);
-    }
-
-    // ----------------------------------------------------------- BEAN METHODS
-
-    /**
-     * Return the application root for this Connector. This can be an absolute
-     * pathname, a relative pathname, or a URL.
-     */
-    public String getAppBase() {
-        return (this.appbase);
-    }
-
-    /**
-     * Set the application root for this Connector. This can be an absolute
-     * pathname, a relative pathname, or a URL.
-     */
-    public void setAppBase(String appbase) {
-        if (appbase==null) return;
-        if (DEBUG) this.debug("Setting application root to "+appbase);
-        String old=this.appbase;
-        this.appbase=appbase;
-    }
-
-    // ------------------------------------------------------ DEBUGGING METHODS
-
-    /**
-     * Dump a debug message.
-     */
-    private void debug(String msg) {
-        if (DEBUG) WarpDebug.debug(this,msg);
-    }
-
-    /**
-     * Dump information for an Exception.
-     */
-    private void debug(Exception exc) {
-        if (DEBUG) WarpDebug.debug(this,exc);
+            return(host);
+        } else return(super.map(request,update));
     }
 }

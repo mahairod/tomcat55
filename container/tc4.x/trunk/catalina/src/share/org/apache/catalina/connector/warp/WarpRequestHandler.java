@@ -2,7 +2,7 @@
  *                                                                           *
  *                 The Apache Software License,  Version 1.1                 *
  *                                                                           *
- *         Copyright (c) 1999, 2000  The Apache Software Foundation.         *
+ *          Copyright (c) 1999-2001 The Apache Software Foundation.          *
  *                           All rights reserved.                            *
  *                                                                           *
  * ========================================================================= *
@@ -56,139 +56,138 @@
  * ========================================================================= */
 package org.apache.catalina.connector.warp;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
-/**
- *
- *
- * @author <a href="mailto:pier.fumagalli@eng.sun.com">Pier Fumagalli</a>
- * @author Copyright &copy; 1999, 2000 <a href="http://www.apache.org">The
- *         Apache Software Foundation.
- * @version CVS $Id$
- */
-public class WarpRequestHandler extends WarpHandler {
+import org.apache.catalina.Container;
+import org.apache.catalina.Context;
+import org.apache.catalina.Deployer;
+import org.apache.catalina.Host;
+import org.apache.catalina.core.StandardHost;
 
-    /** The WarpReader associated with this WarpConnectionHandler. */
-    private WarpReader reader=new WarpReader();
-    /** The WarpPacket used to write data. */
-    private WarpPacket packet=new WarpPacket();
-    /** Wether we had an error in the request header. */
-    private boolean headererr=false;
+public class WarpRequestHandler {
 
-    /** The WarpRequest object associated with this request handler. */
-    protected WarpRequest request=null;
-    /** The WarpRequest object associated with this request handler. */
-    protected WarpResponse response=null;    
+    /* ==================================================================== */
+    /* Constructor                                                          */
+    /* ==================================================================== */
 
-    /**
-     * Process a WARP packet.
-     * <br>
-     * This method is the one which will actually perform the operation of
-     * analyzing the packet and doing whatever needs to be done.
-     * <br>
-     * This method will return true if another packet is expected for this
-     * RID, or it will return false if this was the last packet for this RID.
-     * When we return false this handler is unregistered, and the Thread
-     * started in the init() method is terminated.
-     *
-     * @param type The WARP packet type.
-     * @param buffer The WARP packet payload.
-     * @return If more packets are expected for this RID, true is returned,
-     *         false if this was the last packet.
-     */
-    public boolean process(int type, byte buffer[]) {
-        WarpConnector connector=this.getConnector();
-        WarpEngine engine=(WarpEngine)connector.getContainer();
-        String arg1=null;
-        String arg2=null;
-        int valu=-1;
+    public WarpRequestHandler() {
+        super();
+    }
 
-        this.reader.reset(buffer);
-        this.packet.reset();
-        try {
-            switch (type) {
-                // The Request method
-                case WarpConstants.TYP_REQINIT_MET:
-                    arg1=reader.readString();
-                    if (DEBUG) this.debug("Request Method "+arg1);
-                    this.request.setMethod(arg1);
-                    break;
+    public boolean handle(WarpConnection connection, WarpPacket packet)
+    throws IOException {
+        WarpLogger logger=new WarpLogger(this);
+        WarpConnector connector=connection.getConnector();
+        logger.setContainer(connector.getContainer());
+        WarpRequest request=new WarpRequest();
+        WarpResponse response=new WarpResponse();
+        response.setRequest(request);
+        response.setConnection(connection);
+        response.setPacket(packet);
 
-                // The Request URI
-                case WarpConstants.TYP_REQINIT_URI:
-                    arg1=reader.readString();
-                    if (DEBUG) this.debug("Request URI "+arg1);
-                    this.request.setRequestURI(arg1);
-                    break;
+        // Prepare the Proceed packet
+        packet.reset();
+        packet.setType(Constants.TYPE_CONF_PROCEED);
+        connection.send(packet);
 
-                // The Request query arguments
-                case WarpConstants.TYP_REQINIT_ARG:
-                    arg1=reader.readString();
-                    if (DEBUG) this.debug("Request Query Argument "+arg1);
-                    this.request.setQueryString(arg1);
-                    break;
+        // Loop for configuration packets
+        while (true) {        
+            connection.recv(packet);
+            
+            switch (packet.getType()) {
+                case Constants.TYPE_REQ_INIT: {
+                    int id=packet.readInteger();
+                    String meth=packet.readString();
+                    String ruri=packet.readString();
+                    String args=packet.readString();
+                    String prot=packet.readString();
+                    if (Constants.DEBUG)
+                        logger.debug("Request ID="+id+" \""+meth+" "+ruri+
+                                     "?"+args+" "+prot+"\"");
 
-                // The Request protocol
-                case WarpConstants.TYP_REQINIT_PRO:
-                    arg1=reader.readString();
-                    if (DEBUG) this.debug("Request Protocol "+arg1);
-                    this.request.setProtocol(arg1);
-                    break;
+                    request.recycle();
+                    response.recycle();
+                    response.setRequest(request);
+                    response.setConnection(connection);
+                    response.setPacket(packet);
 
-                // A request header
-                case WarpConstants.TYP_REQINIT_HDR:
-                    arg1=reader.readString();
-                    arg2=reader.readString();
-                    if (DEBUG) this.debug("Request Header "+arg1+": "+arg2);
-                    this.request.addHeader(arg1,arg2);
-                    break;
-
-                // A request variable
-                case WarpConstants.TYP_REQINIT_VAR:
-                    valu=reader.readShort();
-                    arg1=reader.readString();
-                    if (DEBUG) this.debug("Request Variable ["+valu+"]="+arg1);
-                    break;
-
-                // The request header is finished, run the servlet (whohoo!)
-                case WarpConstants.TYP_REQINIT_RUN:
-                    if (DEBUG) this.debug("Invoking request");
-                    // Check if we can accept (or not) this request
-                    this.packet.reset();
-                    this.send(WarpConstants.TYP_REQINIT_ACK,this.packet);
-                    WarpInputStream win=new WarpInputStream(this);
-                    WarpOutputStream wout=new WarpOutputStream(this,response);
-                    this.request.setStream(win);
-                    this.response.setStream(wout);
-                    this.response.setRequest(this.request);
-                    try {
-                        engine.invoke(this.request, this.response);
-                    } catch (Exception e) {
-                        this.log(e);
+                    request.setMethod(meth);
+                    request.setRequestURI(ruri);
+                    request.setQueryString(args);
+                    request.setProtocol(prot);
+                    Context ctx=connector.applicationContext(id);
+                    if (ctx!=null) {
+                        request.setContext(ctx);
+                        request.setContextPath(ctx.getPath());
+                        request.setHost((Host)ctx.getParent());
                     }
+                    break;
+                }
+
+                case Constants.TYPE_REQ_CONTENT: {
+                    String ctyp=packet.readString();
+                    int clen=packet.readInteger();
+                    if (Constants.DEBUG)
+                        logger.debug("Request content type="+ctyp+" length="+
+                                     clen);
+                    request.setContentType(ctyp);
+                    request.setContentLength(clen);
+                    break;
+                }
+                    
+                case Constants.TYPE_REQ_SCHEME: {
+                    String schm=packet.readString();
+                    if (Constants.DEBUG)
+                        logger.debug("Request schere="+schm);
+                    request.setScheme(schm);
+                    break;
+                }
+
+                case Constants.TYPE_REQ_AUTH: {
+                    String user=packet.readString();
+                    String auth=packet.readString();
+                    if (Constants.DEBUG)
+                        logger.debug("Request user="+user+" auth="+auth);
+                    request.setAuthType(auth);
+                    // What to do for user name?
+                    break;
+                }
+
+                case Constants.TYPE_REQ_HEADER: {
+                    String hnam=packet.readString();
+                    String hval=packet.readString();
+                    if (Constants.DEBUG)
+                        logger.debug("Request header "+hnam+": "+hval);
+                    request.addHeader(hnam,hval);
+                    break;
+                }
+
+                case Constants.TYPE_REQ_PROCEED: {
+                    if (Constants.DEBUG)
+                        logger.debug("Request is about to be processed");
                     try {
-                        this.response.flushBuffer();
-                        this.response.finishResponse();
-                        wout.flush();
-                        wout.close();
+                        connector.getContainer().invoke(request,response);
                     } catch (Exception e) {
-                        if (DEBUG) this.debug(e);
+                        logger.log(e);
                     }
-                    this.packet.reset();
-                    this.packet.writeString("End of request");
-                    this.send(WarpConstants.TYP_REQUEST_ACK,this.packet);
-                    if (DEBUG) this.debug("End of request");
+                    response.getStream().close();
+                    if (Constants.DEBUG)
+                        logger.debug("Request has been processed");
+                    break;
+                }
+                
+                default: {
+                    String msg="Invalid packet "+packet.getType();
+                    logger.log(msg);
+                    packet.reset();
+                    packet.setType(Constants.TYPE_FATAL);
+                    packet.writeString(msg);
+                    connection.send(packet);
                     return(false);
-
-                // Other packet types
-                default:
-                    this.log("Wrong packet type "+type);
-                    return(true);
+                }
             }
-            return(true);
-        } catch (IOException e) {
-            this.log(e);
-            return(false);
         }
     }
 }
