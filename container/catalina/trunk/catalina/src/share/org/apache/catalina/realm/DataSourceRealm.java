@@ -329,7 +329,7 @@ public class DataSourceRealm
      *
      * @exception SQLException if a database error occurs
      */
-    private Principal authenticate(Connection dbConnection,
+    protected Principal authenticate(Connection dbConnection,
                                                String username,
                                                String credentials)
         throws SQLException {
@@ -401,7 +401,7 @@ public class DataSourceRealm
      *
      * @param dbConnection The connection to be closed
      */
-    private void close(Connection dbConnection) {
+    protected void close(Connection dbConnection) {
 
         // Do nothing if the database connection is already closed
         if (dbConnection == null)
@@ -422,7 +422,7 @@ public class DataSourceRealm
      *
      * @return Connection to the database
      */
-    private Connection open() {
+    protected Connection open() {
 
         try {
             Context context = null;
