@@ -127,6 +127,13 @@ public class DefaultServlet
 
 
     /**
+     * File encoding to be used when reading static files. If none is specified
+     * the platform default is used.
+     */
+    protected String fileEncoding = null;
+
+    
+    /**
      * The MD5 helper object for this class.
      */
     protected static final MD5Encoder md5Encoder = new MD5Encoder();
@@ -247,6 +254,12 @@ public class DefaultServlet
         try {
             value = getServletConfig().getInitParameter("encodeRedirects");
             encodeRedirects = (new Boolean(value)).booleanValue();
+        } catch (Throwable t) {
+            ;
+        }
+        try {
+            value = getServletConfig().getInitParameter("fileEncoding");
+            fileEncoding = value;
         } catch (Throwable t) {
             ;
         }
@@ -1736,8 +1749,14 @@ public class DefaultServlet
         IOException exception = null;
 
         InputStream resourceInputStream = resourceInfo.getStream();
-        // FIXME : i18n ?
-        Reader reader = new InputStreamReader(resourceInputStream);
+
+        Reader reader;
+        if (fileEncoding == null) {
+            reader = new InputStreamReader(resourceInputStream);
+        } else {
+            reader = new InputStreamReader(resourceInputStream,
+                                           fileEncoding);
+        }
 
         // Copy the input stream to the output stream
         exception = copyRange(reader, writer);
@@ -1808,7 +1827,15 @@ public class DefaultServlet
         IOException exception = null;
 
         InputStream resourceInputStream = resourceInfo.getStream();
-        Reader reader = new InputStreamReader(resourceInputStream);
+
+        Reader reader;
+        if (fileEncoding == null) {
+            reader = new InputStreamReader(resourceInputStream);
+        } else {
+            reader = new InputStreamReader(resourceInputStream,
+                                           fileEncoding);
+        }
+
         exception = copyRange(reader, writer, range.start, range.end);
 
         // Clean up the input stream
@@ -1902,7 +1929,14 @@ public class DefaultServlet
         while ( (exception == null) && (ranges.hasMoreElements()) ) {
 
             InputStream resourceInputStream = resourceInfo.getStream();
-            Reader reader = new InputStreamReader(resourceInputStream);
+
+            Reader reader;
+            if (fileEncoding == null) {
+                reader = new InputStreamReader(resourceInputStream);
+            } else {
+                reader = new InputStreamReader(resourceInputStream,
+                                               fileEncoding);
+            }
 
             Range currentRange = (Range) ranges.nextElement();
 

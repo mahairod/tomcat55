@@ -27,6 +27,9 @@
   <!--   debug               Debugging detail level for messages logged     -->
   <!--                       by this servlet.  [0]                          -->
   <!--                                                                      -->
+  <!--   fileEncoding        Encoding to be used to read static resources   -->
+  <!--                       [platform default]                             -->
+  <!--                                                                      -->
   <!--   input               Input buffer size (in bytes) when reading      -->
   <!--                       resources to be served.  [2048]                -->
   <!--                                                                      -->
