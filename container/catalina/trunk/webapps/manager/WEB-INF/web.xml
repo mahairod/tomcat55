@@ -114,6 +114,7 @@
       <url-pattern>/stop</url-pattern>
       <url-pattern>/install</url-pattern>
       <url-pattern>/remove</url-pattern>
+      <url-pattern>/deploy</url-pattern>
       <url-pattern>/undeploy</url-pattern>
       <url-pattern>/reload</url-pattern>
       <url-pattern>/serverinfo</url-pattern>
