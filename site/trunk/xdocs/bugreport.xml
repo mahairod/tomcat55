@@ -138,6 +138,9 @@ reproduce it.  Here is a listing of information which should be included:
     with Tomcat.</li>
 </ul>
 
+Report a Tomcat 5 bug
+<a href="http://nagoya.apache.org/bugzilla/enter_bug.cgi?product=Tomcat%205">
+here</a>.<br />
 Report a Tomcat 4 bug
 <a href="http://nagoya.apache.org/bugzilla/enter_bug.cgi?product=Tomcat%204">
 here</a>.<br />
