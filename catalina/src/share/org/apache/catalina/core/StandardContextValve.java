@@ -165,7 +165,7 @@ final class StandardContextValve
             relativeURI.equals("/WEB-INF") ||
             relativeURI.startsWith("/META-INF/") ||
             relativeURI.startsWith("/WEB-INF/")) {
-            forbidden(requestURI, (HttpServletResponse) response.getResponse());
+            notFound(requestURI, (HttpServletResponse) response.getResponse());
             return;
         }
 
