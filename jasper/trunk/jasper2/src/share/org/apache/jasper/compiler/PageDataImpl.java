@@ -251,7 +251,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	public void visit(Node.Root n) throws JasperException {
 	    if (n == this.root) {
 		// top-level page
-		appendTag(JSP_ROOT, n.getAttributes(), n.getBody());
+		appendTag(JSP_ROOT, n.getAttributes(), n.getBody(), null);
 	    } else {
 		visitBody(n);
 	    }
@@ -266,7 +266,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	public void visit(Node.JspRoot n) throws JasperException {
 	    if (n == this.root) {
 		// top-level jsp:root element
-		appendTag(JSP_ROOT, n.getAttributes(), n.getBody());
+		appendTag(JSP_ROOT, n.getAttributes(), n.getBody(), null);
 	    } else {
 		visitBody(n);
 	    }
@@ -286,79 +286,91 @@ class PageDataImpl extends PageData implements TagConstants {
 	}
 
 	public void visit(Node.Declaration n) throws JasperException {
-	    appendTag(JSP_DECLARATION, n.getAttributes(), n.getText());
+	    appendTag(JSP_DECLARATION, n.getAttributes(), null, n.getText());
 	}
 
 	public void visit(Node.Expression n) throws JasperException {
-	    appendTag(JSP_EXPRESSION, n.getAttributes(), n.getText());
+	    appendTag(JSP_EXPRESSION, n.getAttributes(), null, n.getText());
 	}
 
 	public void visit(Node.Scriptlet n) throws JasperException {
-	    appendTag(JSP_SCRIPTLET, n.getAttributes(), n.getText());
+	    appendTag(JSP_SCRIPTLET, n.getAttributes(), null, n.getText());
 	}
 
 	public void visit(Node.IncludeAction n) throws JasperException {
-	    appendTag(JSP_INCLUDE, n.getAttributes(), n.getBody());
+	    appendTag(JSP_INCLUDE, n.getAttributes(), n.getBody(), null);
 	}
     
 	public void visit(Node.ForwardAction n) throws JasperException {
-	    appendTag(JSP_FORWARD, n.getAttributes(), n.getBody());
+	    appendTag(JSP_FORWARD, n.getAttributes(), n.getBody(), null);
 	}
 
 	public void visit(Node.GetProperty n) throws JasperException {
-	    appendTag(JSP_GET_PROPERTY, n.getAttributes(), n.getBody());
+	    appendTag(JSP_GET_PROPERTY, n.getAttributes(), n.getBody(), null);
 	}
 
 	public void visit(Node.SetProperty n) throws JasperException {
-	    appendTag(JSP_SET_PROPERTY, n.getAttributes(), n.getBody());
+	    appendTag(JSP_SET_PROPERTY, n.getAttributes(), n.getBody(), null);
 	}
 
 	public void visit(Node.ParamAction n) throws JasperException {
-	    appendTag(JSP_PARAM, n.getAttributes(), n.getBody());
+	    appendTag(JSP_PARAM, n.getAttributes(), n.getBody(), null);
 	}
 
 	public void visit(Node.ParamsAction n) throws JasperException {
-	    appendTag(JSP_PARAMS, n.getAttributes(), n.getBody());
+	    appendTag(JSP_PARAMS, n.getAttributes(), n.getBody(), null);
 	}
 
 	public void visit(Node.FallBackAction n) throws JasperException {
-	    appendTag(JSP_FALLBACK, n.getAttributes(), n.getBody());
+	    appendTag(JSP_FALLBACK, n.getAttributes(), n.getBody(), null);
 	}
 
 	public void visit(Node.UseBean n) throws JasperException {
-	    appendTag(JSP_USE_BEAN, n.getAttributes(), n.getBody());
+	    appendTag(JSP_USE_BEAN, n.getAttributes(), n.getBody(), null);
 	}
 	
 	public void visit(Node.PlugIn n) throws JasperException {
-	    appendTag(JSP_PLUGIN, n.getAttributes(), n.getBody());
+	    appendTag(JSP_PLUGIN, n.getAttributes(), n.getBody(), null);
 	}
 
         public void visit(Node.NamedAttribute n) throws JasperException {
-            appendTag(JSP_ATTRIBUTE, n.getAttributes(), n.getBody());
+            appendTag(JSP_ATTRIBUTE, n.getAttributes(), n.getBody(), null);
         }
         
         public void visit(Node.JspBody n) throws JasperException {
-            appendTag(JSP_BODY, n.getAttributes(), n.getBody());
+            appendTag(JSP_BODY, n.getAttributes(), n.getBody(), null);
         }
 
 	public void visit(Node.CustomTag n) throws JasperException {
-	    appendTag(n.getName(), n.getAttributes(), n.getBody());
+	    appendTag(n.getName(), n.getAttributes(), n.getBody(), null);
 	}
 
 	public void visit(Node.UninterpretedTag n) throws JasperException {
-	    appendTag(n.getName(), n.getAttributes(), n.getBody());
+	    appendTag(n.getName(), n.getAttributes(), n.getBody(), null);
 	}
 
 	public void visit(Node.JspText n) throws JasperException {
-	    appendTag(JSP_TEXT, n.getAttributes(), n.getBody());
+	    appendTag(JSP_TEXT, n.getAttributes(), n.getBody(), null);
 	}
 
 	public void visit(Node.DoBodyAction n) throws JasperException {
-	    appendTag(JSP_DO_BODY, n.getAttributes(), n.getBody());
+	    appendTag(JSP_DO_BODY, n.getAttributes(), n.getBody(), null);
 	}
 
         public void visit(Node.InvokeAction n) throws JasperException {
-	    appendTag(JSP_INVOKE, n.getAttributes(), n.getBody());
+	    appendTag(JSP_INVOKE, n.getAttributes(), n.getBody(), null);
+	}
+
+	public void visit(Node.TagDirective n) throws JasperException {
+	    appendTag(JSP_TAG_DIRECTIVE, n.getAttributes(), null, null);
+	}
+
+	public void visit(Node.AttributeDirective n) throws JasperException {
+	    appendTag(JSP_ATTRIBUTE_DIRECTIVE, n.getAttributes(), null, null);
+	}
+
+	public void visit(Node.VariableDirective n) throws JasperException {
+	    appendTag(JSP_VARIABLE_DIRECTIVE, n.getAttributes(), null, null);
 	}
         
 	public void visit(Node.TemplateText n) throws JasperException {
@@ -370,32 +382,13 @@ class PageDataImpl extends PageData implements TagConstants {
 	}
 
 	/*
-	 * Appends the given tag (including its body, if present) to the XML
-	 * view.
+	 * Appends the given tag, including its body, to the XML view.
 	 */
-	private void appendTag(String tag, Attributes attrs, Node.Nodes body)
-	            throws JasperException {
-	    buf.append("<").append(tag);
-	    buf.append("\n");
-	    buf.append("  ").append("jsp:id").append("=\"");
-	    buf.append(jspId++).append("\"\n");
-	    if (attrs != null) {
-		printAttributes(attrs);
-	    }
-	    if (body != null) {
-		buf.append(">\n");
-		body.visit(this);
-		buf.append("</" + tag + ">\n");
-	    } else {
-		buf.append("/>\n");
-	    }
-	}
+	private void appendTag(String tag,
+			       Attributes attrs,
+			       Node.Nodes body,
+			       char[] text) throws JasperException {
 
-	/*
-	 * Appends the given tag, including its text body, to the XML view.
-	 */
-	private void appendTag(String tag, Attributes attrs, char[] text)
-	            throws JasperException {
 	    buf.append("<").append(tag);
 	    buf.append("\n");
 	    buf.append("  ").append("jsp:id").append("=\"");
@@ -403,9 +396,13 @@ class PageDataImpl extends PageData implements TagConstants {
 	    if (attrs != null) {
 		printAttributes(attrs);
 	    }
-	    if (text != null) {
+	    if (body != null || text != null) {
 		buf.append(">\n");
-		appendText(text, false);
+		if (body != null) {
+		    body.visit(this);
+		} else {
+		    appendText(text, false);
+		}
 		buf.append("</" + tag + ">\n");
 	    } else {
 		buf.append("/>\n");
