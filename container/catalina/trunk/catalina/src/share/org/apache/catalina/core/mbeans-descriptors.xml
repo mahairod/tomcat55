@@ -369,14 +369,6 @@
                  type="org.apache.catalina.Valve"/>
     </operation>
     
-    <operation   name="setRealm"
-               description="Configures the realm for this webapp"
-               impact="ACTION" returnType="void">
-      <parameter name="realm"  
-                 description="Realm object"
-                 type="org.apache.catalina.Realm"/>
-    </operation>
-    
     <operation   name="reload"
                description="Reload the webapplication"
                impact="ACTION"
@@ -469,6 +461,10 @@
                description="Route used for load balancing"
                type="java.lang.String"/>
       
+    <attribute name="realm"
+               description="Associated realm."
+               type="org.apache.catalina.Realm" />
+      
     <attribute name="valveObjectNames"
                description="ObjectNames for the valves associated with this container"
                type="[Ljavax.management.ObjectName;"
@@ -483,14 +479,6 @@
                  type="org.apache.catalina.Container"/>
     </operation>
     
-    <operation   name="setRealm"
-               description="Configures the realm for this engine"
-               impact="ACTION" returnType="void">
-      <parameter name="realm"  description="Realm object"
-                 type="org.apache.catalina.Realm"/>
-    </operation>
-    
-
     <operation name="start" description="Start" impact="ACTION" returnType="void" />
     <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
       
@@ -571,6 +559,10 @@
                description="Host aliases"
                type="[Ljava.lang.String;"/>
       
+    <attribute name="realm"
+               description="Associated realm."
+               type="org.apache.catalina.Realm" />
+      
     <attribute name="valveNames"
                description="Return the MBean Names of the Valves associated with this Host"
                type="[Ljava.lang.String;"/>
@@ -608,13 +600,6 @@
       <parameter name="alias"
                  description="Alias name to be removed"
                  type="java.lang.String"/>
-    </operation>
-    
-    <operation   name="setRealm"
-               description="Configures the realm for this host"
-               impact="ACTION" returnType="void">
-      <parameter name="realm"  description="Realm object"
-                 type="org.apache.catalina.Realm"/>
     </operation>
     
     <operation name="start" description="Start" impact="ACTION" returnType="void" />
@@ -706,6 +691,10 @@
                writeable="false" />
       
     <attribute name="container"
+               description="Servlet engine that will process the requests"
+               type="org.apache.catalina.Container" />
+
+    <attribute name="containerName"
                description="ObjectNames of the engine"
                type="javax.management.ObjectName"
                writeable="false" />
@@ -717,15 +706,6 @@
       <parameter name="connector"
                  description="Connector object"
                  type="org.apache.catalina.Connector"/>
-    </operation>
-    
-    <operation name="setContainer"
-               description="Set the servlet engine that will process the requests "
-               impact="ACTION"
-               returnType="void">
-      <parameter name="engine"
-                 description="Engine object"
-                 type="org.apache.catalina.Container"/>
     </operation>
     
     <operation name="start" description="Start" impact="ACTION" returnType="void" />
