@@ -1060,6 +1060,7 @@ public class Parser {
 	if (reader.matches("/>")) {
 	    new Node.CustomTag(attrs, start, tagName, prefix, shortTagName,
 			       tagInfo, tagFileInfo, tagHandlerClass, parent);
+	    return true;
 	}
 	
         // Now we parse one of 'CustomActionTagDependent', 
