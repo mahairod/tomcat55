@@ -219,7 +219,7 @@ public final class RequestDumperFilter implements Filter {
      *
      * @param filterConfig The filter configuration object
      */
-    public void init(FilterConfig filterConfig) {
+    public void init(FilterConfig filterConfig) throws ServletException {
 
 	this.filterConfig = filterConfig;
 

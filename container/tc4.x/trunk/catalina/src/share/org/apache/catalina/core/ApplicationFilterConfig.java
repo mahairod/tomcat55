@@ -72,6 +72,7 @@ import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import org.apache.catalina.Context;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.util.Enumerator;
@@ -107,10 +108,12 @@ final class ApplicationFilterConfig implements FilterConfig {
      *  publicly instantiated
      * @exception InstantiationException if an exception occurs while
      *  instantiating the filter object
+     * @exception ServletException if thrown by the filter's init() method
      */
     public ApplicationFilterConfig(Context context, FilterDef filterDef)
 	throws ClassCastException, ClassNotFoundException,
-	       IllegalAccessException, InstantiationException {
+	       IllegalAccessException, InstantiationException,
+               ServletException {
 
 	super();
         this.context = context;
@@ -225,9 +228,10 @@ final class ApplicationFilterConfig implements FilterConfig {
      *  publicly instantiated
      * @exception InstantiationException if an exception occurs while
      *  instantiating the filter object
+     * @exception ServletException if thrown by the filter's init() method
      */
     Filter getFilter() throws ClassCastException, ClassNotFoundException,
-        IllegalAccessException, InstantiationException {
+        IllegalAccessException, InstantiationException, ServletException {
 
         // Return the existing filter instance, if any
         if (this.filter != null)
@@ -286,10 +290,12 @@ final class ApplicationFilterConfig implements FilterConfig {
      *  publicly instantiated
      * @exception InstantiationException if an exception occurs while
      *  instantiating the filter object
+     * @exception ServletException if thrown by the filter's init() method
      */
     void setFilterDef(FilterDef filterDef)
 	throws ClassCastException, ClassNotFoundException,
-	       IllegalAccessException, InstantiationException {
+	       IllegalAccessException, InstantiationException,
+               ServletException {
 
 	this.filterDef = filterDef;
 	if (filterDef == null) {
