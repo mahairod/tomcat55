@@ -1047,8 +1047,16 @@ public class ContextManager {
 	if( debug>0 )
 	    ctx.log( "Handler " + errorServlet + " " + errorPath);
 
-	if( errorServlet==null )
-	    errorServlet=ctx.getServletByName( "tomcat.statusHandler");
+        if ( statusLoop( ctx, req ) ){
+            log( "Error loop for " + req + " error code " + code);
+            return;
+        }
+        if( errorServlet==null ) {
+            if( code == 404 )
+                errorServlet=ctx.getServletByName( "tomcat.notFoundHandler");
+            else
+                errorServlet=ctx.getServletByName( "tomcat.statusHandler");
+        }
 
 	req.setAttribute("javax.servlet.error.status_code",new Integer( code));
 
@@ -1194,6 +1202,18 @@ public class ContextManager {
 	    return true;
 	}
 	return false;
+    }
+
+    /** Handle the case of status handler generating an error
+     */
+    private boolean statusLoop( Context ctx, Request req ) {
+        if ( req.getAttribute("javax.servlet.error.status_code") != null ) {
+            if( ctx.getDebug() > 0 )
+                ctx.log( "Error: nested error inside status servlet " +
+                        req.getAttribute("javax.servlet.error.status_code"));
+            return true;
+        }
+        return false;
     }
 
 	 /**
