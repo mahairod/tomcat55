@@ -33,6 +33,9 @@
       <fix>
         <bug>24723</bug>: Corrected JNDI DataSources documentation and added explicit notes about a couple of common problems. (yoavs)
       </fix>
+      <fix>
+        <bug>29258</bug>: Added explanation about jmx.jar bootstrap classpath setup to release notes. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   
