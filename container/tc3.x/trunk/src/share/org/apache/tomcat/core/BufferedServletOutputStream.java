@@ -108,6 +108,11 @@ public class BufferedServletOutputStream extends ServletOutputStream {
 	//	System.out.println("new BOS " + closed);
     }
 
+    protected BufferedServletOutputStream(ResponseAdapter resA) {
+	//	System.out.println("new BOS " + closed);
+	this.resA=resA;
+    }
+
     public void setResponseAdapter( ResponseAdapter resA ) {
 	this.resA=resA;
     }
