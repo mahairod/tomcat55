@@ -193,6 +193,11 @@
     </filter-mapping>
 
     <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedReflection01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
         <filter-name>GenericFilter</filter-name>
         <url-pattern>/WrappedReset01</url-pattern>
     </filter-mapping>
@@ -525,6 +530,11 @@
     <servlet>
         <servlet-name>Jndi02</servlet-name>
         <servlet-class>org.apache.tester.Jndi02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Reflection01</servlet-name>
+        <servlet-class>org.apache.tester.Reflection01</servlet-class>
     </servlet>
 
     <servlet>
@@ -973,6 +983,16 @@
     <servlet-mapping>
         <servlet-name>Jndi02</servlet-name>
         <url-pattern>/WrappedJndi02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Reflection01</servlet-name>
+        <url-pattern>/Reflection01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Reflection01</servlet-name>
+        <url-pattern>/WrappedReflection01</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

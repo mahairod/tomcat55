@@ -332,6 +332,24 @@
   </target>
 
 
+  <target name="Internals">
+
+
+    <!-- ========== Access Internals Via Reflection ======================= -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Reflection01"
+           debug="${debug}"
+      outContent="Reflection01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedReflection01"
+           debug="${debug}"
+      outContent="Reflection01 PASSED"/>
+
+  </target>
+
+
   <target name="Jndi">
 
     <!-- ========== JNDI Naming Context =================================== -->
