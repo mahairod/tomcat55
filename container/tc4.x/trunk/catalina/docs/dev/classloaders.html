@@ -93,13 +93,13 @@ described further below:</p>
     all JAR files in the <code>$CATALINA_HOME/server</code> directory, which
     should contain Catalina itself (i.e. all classes whose fully qualified
     names begin with <code>org.apache.catalina.</code>), and any JAR files
-    that it depends on and the <code>$CATALINA_HOME/common/classes</code>
+    that it depends on and the <code>$CATALINA_HOME/server/classes</code>
     directory if it exists.  Because these classes are loaded from a separate
     class loader, which is not visible to the <strong>Webapp</strong> class
     loader, they are <em>not</em> visible to web applications.</li>
 <li><strong>Shared</strong> - This class loader is initialized to include
     all JAR files in the <code>$CATALINA_HOME/lib</code> directory and the
-    <code>$CATALINA_HOME/common/classes</code> directory if it exists.  All of
+    <code>$CATALINA_HOME/classes</code> directory if it exists.  All of
     the classes in these repositories will be visible to all web applications,
     so they may be used to share information between web apps
     (<strong>NOTE</strong> - this behavior is specific to Tomcat 4.0, and
