@@ -28,6 +28,7 @@
     <pathelement location="${commons-digester.jar}"/>
     <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${commons-pool.jar}"/>
+    <pathelement location="${jaas.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmxri.jar}"/>
@@ -55,6 +56,7 @@
     <pathelement location="${commons-digester.jar}"/>
     <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${commons-pool.jar}"/>
+    <pathelement location="${jaas.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmxri.jar}"/>
@@ -103,6 +105,9 @@
     <available property="modeler.present"
      classname="org.apache.commons.modeler.Registry"
      classpath="${commons-modeler.jar}"/>
+    <available property="jaas.present"
+     classname="javax.security.auth.Subject"
+     classpath="${jaas.jar}" />
     <condition property="jaxp.present">
       <and>
         <available classname="javax.xml.parsers.SAXParser"
@@ -171,6 +176,7 @@
     <!-- JAR files availability flags -->
     <available property="tomcat-ajp.jar.present" file="${tomcat-ajp.jar}" />
     <available property="dbcp.jar.present" file="${commons-dbcp.jar}" />
+    <available property="jaas.jar.present" file="${jaas.jar}" />
     <condition property="javamail.jar.present">
       <and>
         <available file="${activation.jar}" />
@@ -203,6 +209,12 @@
           <equals arg1="${dbcp.present}" arg2="true" />
           <equals arg1="${pool.present}" arg2="true" />
         </and>
+      </or>
+    </condition>
+    <condition property="compile.jaas">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${jaas.present}" arg2="true" />
       </or>
     </condition>
     <condition property="compile.javamail">
@@ -274,6 +286,17 @@
       <or>
         <equals arg1="${full.dist}" arg2="on" />
         <equals arg1="${dbcp.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="copy.jaas.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <and>
+          <equals arg1="${jaas.jar.present}" arg2="true" />
+          <not>
+            <equals arg1="${jdk.1.4.present}" arg2="true" />
+          </not>
+        </and>
       </or>
     </condition>
     <condition property="copy.jdbc20ext.jar">
@@ -415,6 +438,7 @@
 
     <echo message="--- Optional Libraries ---" />
     <echo message="dbcp.present=${dbcp.present}" />
+    <echo message="jaas.present=${jaas.present}" />
     <echo message="javamail.present=${javamail.present}" />
     <echo message="jmx.present=${jmx.present}" />
     <echo message="jmxtools.present=${jmxtools.present}" />
@@ -435,6 +459,7 @@
     <echo message="--- Optional JARs ---" />
     <echo message="tomcat-ajp.jar.present=${tomcat-ajp.jar.present}" />
     <echo message="dbcp.jar.present=${dbcp.jar.present}" />
+    <echo message="jaas.jar.present=${jaas.jar.present}" />
     <echo message="javamail.jar.present=${javamail.jar.present}" />
     <echo message="jdbc20ext.jar.present=${jdbc20ext.jar.present}" />
     <echo message="jmxri.jar.present=${jmxri.jar.present}" />
@@ -449,6 +474,7 @@
 
     <echo message="--- Conditional compilation flags ---" />
     <echo message="compile.dbcp=${compile.dbcp}" />
+    <echo message="compile.jaas=${compile.jaas}" />
     <echo message="compile.javamail=${compile.javamail}" />
     <echo message="compile.jmx=${compile.jmx}" />
     <echo message="compile.jndi=${compile.jndi}" />
@@ -462,6 +488,7 @@
     <echo message="--- Distribution flags ---" />
     <echo message="copy.tomcat-ajp.jar=${copy.tomcat-ajp.jar}" />
     <echo message="copy.dbcp.jar=${copy.dbcp.jar}" />
+    <echo message="copy.jaas.jar=${copy.jaas.jar}" />
     <echo message="copy.jdbc20ext.jar=${copy.jdbc20ext.jar}" />
     <echo message="copy.javamail.jar=${copy.javamail.jar}" />
     <echo message="copy.jmxri.jar=${copy.jmxri.jar}" />
@@ -504,6 +531,9 @@
   </target>
   <target name="copy-dbcp.jar" if="copy.dbcp.jar">
     <copy todir="${catalina.build}/server/lib" file="${commons-dbcp.jar}"/>
+  </target>
+  <target name="copy-jaas.jar" if="copy.jaas.jar">
+    <copy todir="${catalina.build}/server/lib" file="${jaas.jar}"/>
   </target>
   <target name="copy-jdbc20ext.jar" if="copy.jdbc20ext.jar">
     <copy todir="${catalina.build}/common/lib" file="${jdbc20ext.jar}"/>
@@ -551,7 +581,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-tomcat-ajp.jar,copy-dbcp.jar,copy-jdbc20ext.jar,copy-jmxri.jar,copy-jmxtools.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tomcat-util.jar,copy-tyrex.jar,copy-xerces.jar">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-tomcat-ajp.jar,copy-dbcp.jar,copy-jaas.jar,copy-jdbc20ext.jar,copy-jmxri.jar,copy-jmxtools.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tomcat-util.jar,copy-tyrex.jar,copy-xerces.jar">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
@@ -618,6 +648,8 @@
        unless="compile.jmx"/>
       <exclude name="org/apache/catalina/net/SSLServerSocketFactory.java" 
        unless="compile.jsse"/>
+      <exclude name="org/apache/catalina.realm/JAAS**"
+       unless="compile.jaas"/>
       <exclude name="org/apache/catalina/servlets/SsiInvokerServlet.java"
        unless="compile.ssi"/>
       <exclude name="org/apache/catalina/util/ssi/**"

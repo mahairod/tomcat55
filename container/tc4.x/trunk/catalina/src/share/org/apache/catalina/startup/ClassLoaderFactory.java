@@ -118,6 +118,7 @@ public final class ClassLoaderFactory {
     private static String[] triggers = {
         "com.sun.jndi.ldap.LdapCtxFactory",      // LDAP      added in 1.3
         "com.sun.net.ssl.internal.ssl.Provider", // JSSE      added in 1.4
+        "javax.security.auth.Subject",           // JAAS      added in 1.4
         "javax.naming.Context",                  // JNDI      added in 1.3
         "javax.net.SocketFactory",               // JSSE      added in 1.4
         "javax.security.cert.X509Certificate",   // JSSE      added in 1.4

@@ -568,6 +568,7 @@
 
 
   <mbean         name="StandardEngine"
+            className="org.apache.catalina.mbeans.StandardEngineMBean"
           description="Standard Engine Component"
                domain="Catalina"
                 group="ENGINE"
@@ -588,6 +589,11 @@
     <attribute   name="name"
           description="Unique name of this Engine"
                  type="java.lang.String"/>
+
+    <attribute   name="parent"
+          description="Parent (Service) that owns this Engine"
+                 type="org.apache.catalina.Service"/>
+            writeable="false"/>
 
     <attribute   name="service"
           description="Service that owns this Engine"
