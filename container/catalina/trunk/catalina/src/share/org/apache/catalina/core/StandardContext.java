@@ -65,8 +65,6 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
-import org.apache.catalina.Server;
-import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
@@ -474,6 +472,12 @@ public class StandardContext
      * The JSP tag libraries for this web application, keyed by URI
      */
     private HashMap taglibs = new HashMap();
+
+
+    /**
+     * The watched resources for this application.
+     */
+    private String watchedResources[] = new String[0];
 
 
     /**
@@ -2277,6 +2281,24 @@ public class StandardContext
 
 
     /**
+     * Add a new watched resource to the set recognized by this Context.
+     *
+     * @param name New watched resource file name
+     */
+    public void addWatchedResource(String name) {
+
+        synchronized (watchedResources) {
+            String results[] = new String[watchedResources.length + 1];
+            for (int i = 0; i < watchedResources.length; i++)
+                results[i] = watchedResources[i];
+            results[watchedResources.length] = name;
+            watchedResources = results;
+        }
+
+    }
+
+
+    /**
      * Add a new welcome file to the set recognized by this Context.
      *
      * @param name New welcome file name
@@ -2973,6 +2995,15 @@ public class StandardContext
 
 
     /**
+     * Return the set of watched resources for this Context. If none are 
+     * defined, a zero length array will be returned.
+     */
+    public String[] findWatchedResources() {
+        return watchedResources;
+    }
+    
+    
+    /**
      * Return the set of welcome files defined for this Context.  If none are
      * defined, a zero-length array is returned.
      */
@@ -3555,6 +3586,41 @@ public class StandardContext
     }
 
 
+    /**
+     * Remove the specified watched resource name from the list associated
+     * with this Context.
+     * 
+     * @param name Name of the watched resource to be removed
+     */
+    public void removeWatchedResource(String name) {
+        
+        synchronized (watchedResources) {
+
+            // Make sure this watched resource is currently present
+            int n = -1;
+            for (int i = 0; i < watchedResources.length; i++) {
+                if (watchedResources[i].equals(name)) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
+
+            // Remove the specified watched resource
+            int j = 0;
+            String results[] = new String[watchedResources.length - 1];
+            for (int i = 0; i < watchedResources.length; i++) {
+                if (i != n)
+                    results[j++] = watchedResources[i];
+            }
+            watchedResources = results;
+
+        }
+
+    }
+    
+    
     /**
      * Remove the specified welcome file name from the list recognized
      * by this Context.

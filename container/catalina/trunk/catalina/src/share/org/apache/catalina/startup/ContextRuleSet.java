@@ -220,6 +220,9 @@ public class ContextRuleSet extends RuleSetBase {
                             "addValve",
                             "org.apache.catalina.Valve");
 
+        digester.addCallMethod(prefix + "Context/WatchedResource",
+                               "addWatchedResource", 0);
+
         digester.addCallMethod(prefix + "Context/WrapperLifecycle",
                                "addWrapperLifecycle", 0);
 
