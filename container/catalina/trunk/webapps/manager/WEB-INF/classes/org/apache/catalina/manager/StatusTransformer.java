@@ -683,6 +683,8 @@ public class StatusTransformer {
             writer.print("<br>");
             writer.print(" JSPs loaded: ");
             writer.print(mBeanServer.getAttribute(objectName, "jspCount"));
+            writer.print(" JSPs reloaded: ");
+            writer.print(mBeanServer.getAttribute(objectName, "jspReloadCount"));
         } else if (mode == 1) {
             // for now we don't write out anything
         }
