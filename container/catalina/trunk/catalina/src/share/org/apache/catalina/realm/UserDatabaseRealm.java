@@ -214,7 +214,13 @@ public class UserDatabaseRealm
      */
     protected String getPassword(String username) {
 
-        return (null);
+        User user = database.findUser(username);
+
+        if (user == null) {
+            return null;
+        } 
+
+        return (user.getPassword());
 
     }
 
@@ -224,7 +230,7 @@ public class UserDatabaseRealm
      */
     protected Principal getPrincipal(String username) {
 
-        return (null);
+        return (database.findUser(username));
 
     }
 
