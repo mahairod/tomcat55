@@ -31,16 +31,14 @@
            value="${tomcat-util.home}/build/lib/tomcat-util.jar"/>
   <property name="tomcat-coyote.jar"
            value="${tomcat-coyote.home}/build/lib/tomcat-coyote.jar"/>
-  <property name="tomcat-coyote-catalina.jar"
-           value="${tomcat-coyote.home}/build/lib/tomcat-coyote-catalina.jar"/>
   <property name="tomcat-jk.jar"
-           value="${tomcat-jk.home}/build/WEB-INF/lib/tomcat-ajp.jar"/>
+           value="${tomcat-jk.home}/build/WEB-INF/lib/tomcat-jk.jar"/>
   <property name="tomcat-jk2.jar"
-           value="${tomcat-jk.home}/build/WEB-INF/lib/tomcat-ajp2.jar"/>
+           value="${tomcat-jk.home}/build/WEB-INF/lib/tomcat-jk2.jar"/>
   <property name="tomcat-webapp.jar"
            value="${tomcat-webapp.home}/build/lib/tomcat-webapp.jar"/>
   <property name="tomcat-http11.jar"
-           value="${tomcat-http11.home}/build/lib/tomcat-coyote-http11.jar"/>
+           value="${tomcat-http11.home}/build/lib/tomcat-http11.jar"/>
 
   <!-- Construct Catalina classpath -->
   <path id="catalina.classpath">
@@ -211,7 +209,6 @@
      classpath="${xerces.jar}" />
 
     <!-- JAR files availability flags -->
-    <available property="tomcat-ajp.jar.present" file="${tomcat-ajp.jar}" />
     <available property="dbcp.jar.present" file="${commons-dbcp.jar}" />
     <available property="jaas.jar.present" file="${jaas.jar}" />
     <condition property="javamail.jar.present">
@@ -725,13 +722,11 @@
 
     <copy todir="${catalina.deploy}/server/lib"
            file="${tomcat-coyote.jar}"/>
-    <copy todir="${catalina.deploy}/server/lib"
-           file="${tomcat-coyote-catalina.jar}"/>
 
   </target>
 
 
-  <!-- ==================== BUILD: Build tomcat-ajp ======================= -->
+  <!-- ==================== BUILD: Build tomcat-jk ======================== -->
   <target name="build-tomcat-jk">
 
     <ant dir="${tomcat-jk.home}" target="build-main">
