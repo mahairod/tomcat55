@@ -24,7 +24,7 @@
   <ul>
     <li>
       <a href="#tc5Conf">
-        What are these files in the conf directory in tomcat5?
+        Why does tomcat 5 create context configuration files?
       </a>
     </li>
   </ul>
@@ -35,12 +35,18 @@
 <section name="Answers">
 <p>
   <question>
-    <a name="tc5Conf">What are these files in the conf directory in tomcat5?</a>
+    <a name="tc5Conf">Why does tomcat 5 create context configuration files?</a>
   </question>
   <answer>
     Unlike tomcat 4.x, tomcat 5.x creates context configuration files for you
-    in its conf/[Engine name]/[Host name] directory.  These files are NOT removed
-    by tomcat automatically.  The suggested practice, again a change from tomcat4,
+    in its conf/[Engine name]/[Host name] directory.  This is part of the change
+    in tomcat's configuration mechanism from version 4.x to make overall configuration
+    more robust, flexible, and enterprise-friendly.  Note, however, that this
+    has changed the recommended deployment practices for web applications.
+
+    These context configuration files are created by tomcat, but not removed
+    by tomcat, because the user may have changed them or other files in the conf
+    directory.  The suggested practice for tomcat 5
     is to place context configuration files in the META-INF/context.xml directory
     of your webapp, and use Tomcat's Manager webapp to deploy/undeploy your applications.
     More details can be found here:

@@ -21,6 +21,7 @@
         <item name="Class Not Found"            href="classnotfound.html"/>
         <item name="Connectors"                 href="connectors.html"/>
         <item name="Database"                   href="database.html"/>
+        <item name="Deployment"                 href="deployment.html" />
         <item name="How do I"                   href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Howto"/>
         <item name="Linux / Unix"               href="unix.html"/>
         <item name="Memory"                     href="memory.html"/>
