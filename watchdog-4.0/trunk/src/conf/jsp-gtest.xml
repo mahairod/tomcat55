@@ -3,7 +3,7 @@
    <property name="host" value="localhost" />
    <property name="port" value="8080" />
 
-   <taskdef name="gtest" classname="org.apache.tomcat.task.GTest" />
+   <taskdef name="watchdog" classname="org.apache.tomcat.task.GTest" />
    <property name="wgdir" value="lib/jsp-golden" />
 
    <target name="main" depends="jsp-test" />
@@ -15,7 +15,7 @@
 
 <!-- Precompilation tests -->
 
-        <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile HTTP/1.0"
+        <watchdog request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile HTTP/1.0"
             debug="0" host="${host}" port ="${port}"
             returncode="200" expectResponseBody="false"
  	        testName="precompileNoValueTest" 
@@ -24,7 +24,7 @@
                 firstTask="true"
  	     />
 
-        <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=false HTTP/1.0"
+        <watchdog request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=false HTTP/1.0"
             debug="0" host="${host}" port ="${port}"
  	        returnCode="200"  expectResponseBody="false"
             testName="precompileFalseTest" 
@@ -32,7 +32,7 @@
 	        testStrategy="Validate that no response body is returned when jsp_precompile is set to false."
  	    />
 
-        <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=true HTTP/1.0"
+        <watchdog request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=true HTTP/1.0"
             debug="0" host="${host}" port ="${port}"
             returncode="200" expectResponseBody="false"
  	        testName="precompileTrueTest" 
@@ -40,7 +40,7 @@
 	        testStrategy="Validate that no response body is returned when jsp_precompile is set to true."
  	    />
 
-        <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=any_invalid_value HTTP/1.0"
+        <watchdog request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=any_invalid_value HTTP/1.0"
             debug="0" host="${host}" port ="${port}"
             returncode="500"
  	        testName="precompileNegativeTest" 
@@ -51,28 +51,28 @@
 <!--  End Precompilation Tests -->
 
 <!-- Begin TLD Resource Path tests -->
-      <gtest request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_ABS_URI.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_ABS_URI.jsp HTTP/1.0"
            debug="0" host="${host}" port ="${port}"
  	   testName="positive_ABS_URI.jsp" 
            goldenFile="${wgdir}/tagext/tld_resource_path/absolute_uri.html" 
 	   assertion="Test that the proper tld file is located when the URI in tha taglib directive is an absolutr URI"
 	   testStrategy="Use an absolute URI and print a message from the tag handler telling the type of URI that was used.No error should ocurr"
  	/>
-      <gtest request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_REL_URI.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_REL_URI.jsp HTTP/1.0"
            debug="0" host="${host}" port ="${port}"
  	   testName="positive_REL_URI.jsp" 
            goldenFile="${wgdir}/tagext/tld_resource_path/relative_uri.html" 
 	   assertion="Test that the proper tld file is located when the URI in tha taglib directive is a relative URI"
 	   testStrategy="Use a relative URI and print a message from the tag handler telling the type of URI that was used.No error should ocurr"
  	/>
-      <gtest request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_NONREL_URI.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_NONREL_URI.jsp HTTP/1.0"
            debug="0" host="${host}" port ="${port}"
  	   testName="positive_NONREL_URI.jsp" 
            goldenFile="${wgdir}/tagext/tld_resource_path/non-relative_uri.html" 
 	   assertion="Test that the proper tld file is located when the URI in tha taglib directive is a non relative URI"
 	   testStrategy="Use a non relative URI and print a message from the tag handler telling the type of URI that was used.No error should ocurr"
  	/>
-      <gtest request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_JAR_URI.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_JAR_URI.jsp HTTP/1.0"
            debug="0" host="${host}" port ="${port}"
  	   testName="positive_JAR_URI.jsp" 
            goldenFile="${wgdir}/tagext/tld_resource_path/jar_uri.html" 
@@ -83,7 +83,7 @@
 <!--  End TLD Resource path  Tests -->
 <!-- Commented out to be fixed after Beta
 
-      <gtest request="GET /jsp-tests/jsp/tagext/TagLibraryValidator/validate.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/TagLibraryValidator/validate.jsp HTTP/1.0"
            debug="0" host="${host}" port ="${port}"
            goldenFile="${wgdir}/tagext/TagLibraryValidator/validate.html"
            testName="validate.jsp"
@@ -92,7 +92,7 @@
         />
 -->
 
-      <gtest request="GET /jsp-tests/jsp/HelloWorld.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/HelloWorld.jsp HTTP/1.0"
            debug="0" host="${host}" port ="${port}"
            goldenFile="${wgdir}/HelloWorld.html"
  	   testName="HelloWorld.jsp" 
@@ -100,7 +100,7 @@
 	   testStrategy="Simple html display when no JSP tags are present"	
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBeanNameClass.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBeanNameClass.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBeanNameClass.html"
  	   testName="positiveBeanNameClass.jsp" 
@@ -108,7 +108,7 @@
 	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBeanNameRes.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBeanNameRes.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBeanNameRes.html"
  	   testName="positiveBeanNameRes.jsp" 
@@ -116,7 +116,7 @@
 	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBodyExists.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBodyExists.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBodyExists.html"
  	   testName="positiveBodyExists.jsp" 
@@ -124,7 +124,7 @@
 	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBodyNew.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBodyNew.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBodyNew.html"
  	   testName="positiveBodyNew.jsp" 
@@ -132,7 +132,7 @@
 	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDPage1.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDPage1.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDPage1.html"
  	   testName="positiveDupIDPage1.jsp" 
@@ -140,7 +140,7 @@
 	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDRequest1.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDRequest1.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDRequest1.html"
  	   testName="positiveDupIDRequest1.jsp" 
@@ -148,7 +148,7 @@
 	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveNoBody.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveNoBody.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveNoBody.html"
  	   testName="positiveNoBody.jsp" 
@@ -156,7 +156,7 @@
 	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positivePageScope.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positivePageScope.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/useBean/positivePageScope.html"
  	   testName="positivePageScope.jsp" 
@@ -165,7 +165,7 @@
  	/>
 
 <!--
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveSessionScope.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveSessionScope.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="200"
  	   testName="positiveSessionScope.jsp" 
@@ -174,7 +174,7 @@
  	/>
 -->
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveTypeAssignable.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveTypeAssignable.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveTypeAssignable.html"
  	   testName="positiveTypeAssignable.jsp" 
@@ -182,7 +182,7 @@
 	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropParam.jsp?Name=MANGO HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropParam.jsp?Name=MANGO HTTP/1.0"
            debug="0" host="${host}" port ="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropParam.html"
  	   testName="positiveSetPropParam.jsp" 
@@ -190,7 +190,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropNoParam.jsp?str=SAPPOTA HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropNoParam.jsp?str=SAPPOTA HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropNoParam.html"
  	   testName="positiveSetPropNoParam.jsp" 
@@ -198,7 +198,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropValue.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropValue.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropValue.html"
  	   testName="positiveSetPropValue.jsp" 
@@ -206,7 +206,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropSingleQuotes.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropSingleQuotes.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropSingleQuotes.html"
  	   testName="positiveSetPropSingleQuotes.jsp" 
@@ -214,7 +214,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveUseBeanInit.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveUseBeanInit.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveUseBeanInit.html"
  	   testName="positiveUseBeanInit.jsp" 
@@ -222,7 +222,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveUseBeanNext.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveUseBeanNext.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveUseBeanNext.html"
  	   testName="positiveUseBeanNext.jsp" 
@@ -230,7 +230,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetLongPrim.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetLongPrim.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetLongPrim.html"
  	   testName="positiveSetLongPrim.jsp" 
@@ -238,7 +238,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetLongObj.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetLongObj.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetLongObj.html"
  	   testName="positiveSetLongObj.jsp" 
@@ -246,7 +246,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIntPrim.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIntPrim.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIntPrim.html"
  	   testName="positiveSetIntPrim.jsp" 
@@ -254,7 +254,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIntObj.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIntObj.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIntObj.html"
  	   testName="positiveSetIntObj.jsp" 
@@ -262,7 +262,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIndexedProp.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIndexedProp.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIndexedProp.html"
  	   testName="positiveSetIndexedProp.jsp" 
@@ -270,7 +270,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetFloatObj.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetFloatObj.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetFloatObj.html"
  	   testName="positiveSetFloatObj.jsp" 
@@ -278,7 +278,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetFloatPrim.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetFloatPrim.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetFloatPrim.html"
  	   testName="positiveSetFloatObj.jsp" 
@@ -286,7 +286,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetDoublePrim.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetDoublePrim.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetDoublePrim.html"
  	   testName="positiveSetDoublePrim.jsp" 
@@ -294,7 +294,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetDoubleObj.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetDoubleObj.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetDoubleObj.html"
  	   testName="positiveSetDoubleObj.jsp" 
@@ -302,7 +302,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetCharPrim.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetCharPrim.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetCharPrim.html"
  	   testName="positiveSetCharPrim.jsp" 
@@ -310,7 +310,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetCharObj.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetCharObj.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetCharObj.html"
  	   testName="positiveSetCharObj.jsp" 
@@ -318,7 +318,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBooleanObj.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBooleanObj.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBooleanObj.html"
  	   testName="positiveSetBooleanObj.jsp" 
@@ -326,7 +326,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBooleanPrim.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBooleanPrim.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBooleanPrim.html"
  	   testName="positiveSetBooleanPrim.jsp" 
@@ -334,7 +334,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetByteObj.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetByteObj.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetByteObj.html"
  	   testName="positiveSetByteObj.jsp" 
@@ -342,7 +342,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBytePrim.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBytePrim.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBytePrim.html"
  	   testName="positiveSetByteObj.jsp" 
@@ -350,7 +350,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropAll.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropAll.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropAll.html"
  	   testName="positiveSetPropAll.jsp" 
@@ -358,7 +358,7 @@
 	   testStrategy="Create a bean using useBean tag, use setProperty to set multiple properties"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/positiveGetProps.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/positiveGetProps.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/beantests/getProperty/positiveGetProps.html"
  	   testName="positiveGetProps.jsp" 
@@ -366,7 +366,7 @@
 	   testStrategy="Create a bean using useBean tag, use getProperty to access property"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkSession.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkSession.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/implicitobjects/checkSession.html"
  	   testName="checkSession.jsp" 
@@ -374,7 +374,7 @@
 	   testStrategy="checking for Session object state"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkConfig.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkConfig.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/implicitobjects/checkConfig.html"
  	   testName="checkConfig.jsp" 
@@ -382,7 +382,7 @@
 	   testStrategy="checking for config object state"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkException.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkException.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/implicitobjects/checkException.html"
  	   testName="checkException.jsp" 
@@ -390,7 +390,7 @@
 	   testStrategy="checking for Exception object state"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkOut.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkOut.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/implicitobjects/checkOut.html"
  	   testName="checkOut.jsp" 
@@ -398,7 +398,7 @@
 	   testStrategy="checking for out object type"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkPage.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkPage.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/implicitobjects/checkPage.html"
  	   testName="checkPage.jsp" 
@@ -406,7 +406,7 @@
 	   testStrategy="checking for page object type"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkPageContext.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkPageContext.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/implicitobjects/checkPageContext.html"
  	   testName="checkPageContext.jsp" 
@@ -414,7 +414,7 @@
 	   testStrategy="checking for pageContext object type"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkRequest.jsp?Years=2 HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkRequest.jsp?Years=2 HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/implicitobjects/checkRequest.html"
  	   testName="checkRequest.jsp" 
@@ -422,7 +422,7 @@
 	   testStrategy="checking for request object type"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkResponse.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkResponse.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/implicitobjects/checkResponse.html"
  	   testName="checkResponse.jsp" 
@@ -430,7 +430,7 @@
 	   testStrategy="checking for response object type"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkApplication.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkApplication.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/implicitobjects/checkApplication.html"
  	   testName="checkApplication.jsp" 
@@ -438,7 +438,7 @@
 	   testStrategy="checking for application object type"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/declaration/positiveDeclaration.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/scripting/declaration/positiveDeclaration.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/scripting/declaration/positiveDeclaration.html"
  	   testName="positiveDeclaration.jsp" 
@@ -446,7 +446,7 @@
 	   testStrategy="correct syntax is used in the declaration statement"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExpr.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExpr.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExpr.html"
  	   testName="positiveExpr.jsp" 
@@ -454,7 +454,7 @@
 	   testStrategy="correct syntax is used in the expression statement"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprBean.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprBean.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprBean.html"
  	   testName="positiveExprBean.jsp" 
@@ -462,7 +462,7 @@
 	   testStrategy="correct syntax is used in the expression  with useBean tag"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprComment.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprComment.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprComment.html"
  	   testName="positiveExprComment.jsp" 
@@ -470,7 +470,7 @@
 	   testStrategy="correct syntax is used in the expression  with HTML"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprSyntax.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprSyntax.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprSyntax.html"
  	   testName="positiveExprSyntax.jsp" 
@@ -478,7 +478,7 @@
 	   testStrategy="correct syntax is used in the expression  with no space between tags"
  	/>
 
- <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptlet.jsp HTTP/1.0"
+ <watchdog request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptlet.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptlet.html"
  	   testName="positiveScriptlet.jsp"
@@ -486,7 +486,7 @@
 	   testStrategy="correct syntax is used in the scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletComment.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletComment.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletComment.html"
  	   testName="positiveScriptletComment.jsp" 
@@ -495,7 +495,7 @@
  	/>
 
 <!-- Test commented out as the JSP file contains invalid Java code in the scriptlet
-      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletLiteral.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletLiteral.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletLiteral.html"
  	   testName="positiveScriptletLiteral.jsp" 
@@ -504,7 +504,7 @@
  	/>
 -->
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletMultiline.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletMultiline.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletMultiline.html"
  	   testName="positiveScriptletMultiline.jsp" 
@@ -512,7 +512,7 @@
 	   testStrategy="correct syntax is used in the multiline scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletMultiline2.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletMultiline2.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletMultiline2.html"
  	   testName="positiveScriptletMultiline2.jsp" 
@@ -520,7 +520,7 @@
 	   testStrategy="correct syntax is used in the multiline scriptlet"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletUseBean.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletUseBean.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletUseBean.html"
  	   testName="positiveScriptletUseBean.jsp" 
@@ -530,7 +530,7 @@
 
 <!-- Test commented out as the positiveDoubleQuotesXML gives error. jsp2XML tools needs more work; after Beta
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/forward/positiveDoubleQuotes.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/forward/positiveDoubleQuotes.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/forward/positiveDoubleQuotes.html"
  	   testName="positiveDoubleQuotes.jsp" 
@@ -539,7 +539,7 @@
  	/>
 -->
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/forward/positiveForwardRelHtml.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/forward/positiveForwardRelHtml.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/forward/positiveForwardRelHtml.html"
  	   testName="positiveForwardRelHtml.jsp" 
@@ -547,7 +547,7 @@
 	   testStrategy="testing whether forwarding works using url relative to current context"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/include/positiveIncludeRel.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/include/positiveIncludeRel.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/include/positiveIncludeRel.html"
  	   testName="positiveIncludeRel.jsp" 
@@ -555,7 +555,7 @@
 	   testStrategy="testing if including of files work"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/content/positiveContenttype.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/content/positiveContenttype.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/content/positiveContenttype.html"
  	   testName="positiveContenttype.jsp" 
@@ -563,7 +563,7 @@
 	   testStrategy="testing if including of files work"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/errorpage/positiveErrorPage.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/errorpage/positiveErrorPage.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/errorpage/positiveErrorPage.html"
  	   testName="positiveErrorPage.jsp" 
@@ -571,7 +571,7 @@
 	   testStrategy="testing if errorpage directive works"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/extend/positiveExtends.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/extend/positiveExtends.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/extend/positiveExtends.html"
  	   testName="positiveExtends.jsp" 
@@ -579,7 +579,7 @@
 	   testStrategy="testing if extends directive works"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/positiveImport.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/positiveImport.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/imports/positiveImport.html"
  	   testName="positiveImport.jsp" 
@@ -587,7 +587,7 @@
 	   testStrategy="testing if extends directive works"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/info/positiveInfo.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/info/positiveInfo.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/info/positiveInfo.html"
  	   testName="positiveInfo.jsp" 
@@ -595,7 +595,7 @@
 	   testStrategy="testing if info directive works"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/language/positiveLang.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/language/positiveLang.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/language/positiveLang.html"
  	   testName="positiveLang.jsp" 
@@ -603,7 +603,7 @@
 	   testStrategy="testing if the language directive set to java cause any problem"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/session/positiveSession.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/session/positiveSession.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="200"
            responseMatch="got true"
@@ -612,7 +612,7 @@
 	   testStrategy="testing if implicit session object works"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/session/positiveSessionDefault.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/session/positiveSessionDefault.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="200"
            responseMatch="got true"
@@ -621,7 +621,7 @@
 	   testStrategy="testing if implicit session object is available by default "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffAutoflush.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffAutoflush.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="200"
            responseMatch="5999"
@@ -630,7 +630,7 @@
 	   testStrategy="testing buffer AutoFlush  "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffCreate.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffCreate.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="200"
            responseMatch="999"
@@ -640,7 +640,7 @@
  	/>
 
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveGetDefaultFactory.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspFactory/positiveGetDefaultFactory.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspFactory/positiveGetDefaultFactory.html"
  	   testName="positiveGetDefaultFactory.jsp" 
@@ -648,7 +648,7 @@
 	   testStrategy="testing for a non null value for the default factory"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveSetDefaultFactory.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspFactory/positiveSetDefaultFactory.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspFactory/positiveSetDefaultFactory.html"
  	   testName="positiveGetDefaultFactory.jsp" 
@@ -656,7 +656,7 @@
 	   testStrategy="testing for a non null value for the default factory"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveGetPageContext.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspFactory/positiveGetPageContext.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspFactory/positiveGetPageContext.html"
  	   testName="positiveGetPageContext.jsp" 
@@ -664,7 +664,7 @@
 	   testStrategy="testing PageContext features with no compile time errors"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveReleasePageContext.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspFactory/positiveReleasePageContext.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspFactory/positiveReleasePageContext.html"
  	   testName="positiveReleasePageContext.jsp" 
@@ -672,7 +672,7 @@
 	   testStrategy="testing for null in PageContext features" 
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/HttpJspPage/positiveJSPInitJSP.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/HttpJspPage/positiveJSPInitJSP.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/HttpJspPage/positiveJSPInitJSP.html"
  	   testName="positiveJSPInitJSP.jsp" 
@@ -680,7 +680,7 @@
 	   testStrategy="testing HttpJspPage jspInit() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveForward.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/positiveForward.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/positiveForward.html"
  	   testName="positiveForward.jsp" 
@@ -688,7 +688,7 @@
 	   testStrategy="testing PageContext forward() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeAvbl.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeAvbl.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeAvbl.html"
  	   testName="positiveGetAttributeAvbl.jsp" 
@@ -696,7 +696,7 @@
 	   testStrategy="testing PageContext getAttribute() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeNotAvbl.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeNotAvbl.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeNotAvbl.html"
  	   testName="positiveGetAttributeNotAvbl.jsp" 
@@ -704,7 +704,7 @@
 	   testStrategy="testing PageContext getAttribute() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeNamesInScope.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeNamesInScope.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeNamesInScope.html"
  	   testName="positiveGetAttributeNamesInScope.jsp" 
@@ -712,7 +712,7 @@
 	   testStrategy="testing PageContext getAttributeNamesInScope() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeScope.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeScope.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeScope.html"
  	   testName="positiveGetAttributeScope.jsp" 
@@ -720,7 +720,7 @@
 	   testStrategy="testing PageContext getAttributeScope() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetSession.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/checkGetSession.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/checkGetSession.html"
  	   testName="checkGetSession.jsp" 
@@ -728,7 +728,7 @@
 	   testStrategy="testing PageContext checkGetSession() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetResponse.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/checkGetResponse.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/checkGetResponse.html"
  	   testName="checkGetResponse.jsp" 
@@ -736,7 +736,7 @@
 	   testStrategy="testing PageContext checkGetResponse() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetRequest.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/checkGetRequest.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/checkGetRequest.html"
  	   testName="checkGetRequest.jsp" 
@@ -744,7 +744,7 @@
 	   testStrategy="testing PageContext checkGetRequest() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetServletContext.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/checkGetServletContext.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/checkGetServletContext.html"
  	   testName="checkGetServletContext.jsp" 
@@ -752,7 +752,7 @@
 	   testStrategy="testing PageContext checkGetServletContext() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetServletConfig.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/checkGetServletConfig.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/checkGetServletConfig.html"
  	   testName="checkGetServletConfig.jsp" 
@@ -760,7 +760,7 @@
 	   testStrategy="testing PageContext checkGetServletConfig() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetOut.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/checkGetOut.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/checkGetOut.html"
  	   testName="checkGetOut.jsp" 
@@ -768,7 +768,7 @@
 	   testStrategy="testing PageContext checkGetOut() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveInclude.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/positiveInclude.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/positiveInclude.html"
  	   testName="positiveInclude.jsp" 
@@ -776,7 +776,7 @@
 	   testStrategy="testing PageContext positiveInclude() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveRemoveAttribute.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/positiveRemoveAttribute.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/positiveRemoveAttribute.html"
  	   testName="positiveRemoveAttribute.jsp" 
@@ -784,7 +784,7 @@
 	   testStrategy="testing PageContext positiveRemoveAttribute() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveSetAttribute.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/positiveSetAttribute.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/positiveSetAttribute.html"
  	   testName="positiveSetAttribute.jsp" 
@@ -792,7 +792,7 @@
 	   testStrategy="testing PageContext positiveSetAttribute() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveSetAttributeInScope.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/positiveSetAttributeInScope.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/positiveSetAttributeInScope.html"
  	   testName="positiveSetAttributeInScope.jsp" 
@@ -800,7 +800,7 @@
 	   testStrategy="testing PageContext positiveSetAttributeInScope() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positivePopBody.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/positivePopBody.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/positivePopBody.html"
  	   testName="positivePopBody.jsp" 
@@ -808,7 +808,7 @@
 	   testStrategy="testing PageContext positivePopBody() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positivePushBody.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/PageContext/positivePushBody.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/PageContext/positivePushBody.html"
  	   testName="positivePushBody.jsp" 
@@ -816,7 +816,7 @@
 	   testStrategy="testing PageContext positivePushBody() features "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintBoolean.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintBoolean.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintBoolean.html"
  	   testName="positivePrintBoolean.jsp" 
@@ -824,7 +824,7 @@
 	   testStrategy="testing JspWriter print(boolean b) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintChar.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintChar.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintChar.html"
  	   testName="positivePrintChar.jsp" 
@@ -832,7 +832,7 @@
 	   testStrategy="testing JspWriter print(char c) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintCharArray.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintCharArray.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintCharArray.html"
  	   testName="positivePrintCharArray.jsp" 
@@ -840,7 +840,7 @@
 	   testStrategy="testing JspWriter print(char[] c) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintDouble.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintDouble.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}" exactMatch="true"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintDouble.html"
  	   testName="positivePrintDouble.jsp" 
@@ -848,7 +848,7 @@
 	   testStrategy="testing JspWriter print(double d) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintFloat.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintFloat.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}" exactMatch="true"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintFloat.html" 
  	   testName="positivePrintFloat.jsp" 
@@ -856,7 +856,7 @@
 	   testStrategy="testing JspWriter print(float f) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintInt.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintInt.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}" exactMatch="true"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintInt.html"
  	   testName="positivePrintInt.jsp" 
@@ -864,7 +864,7 @@
 	   testStrategy="testing JspWriter print(Int i) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintLong.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintLong.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}" exactMatch="true"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintLong.html"
  	   testName="positivePrintLong.jsp" 
@@ -872,7 +872,7 @@
 	   testStrategy="testing JspWriter print(long l) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintObj.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintObj.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintObj.html"
  	   testName="positivePrintObj.jsp" 
@@ -880,7 +880,7 @@
 	   testStrategy="testing JspWriter print(java.lang.Object obj) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintStr.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintStr.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintStr.html"
  	   testName="positivePrintStr.jsp" 
@@ -888,7 +888,7 @@
 	   testStrategy="testing JspWriter print(java.lang.String str) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintln.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintln.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintln.html"
  	   testName="positivePrintln.jsp" 
@@ -896,7 +896,7 @@
 	   testStrategy="testing JspWriter println features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnBoolean.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnBoolean.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnBoolean.html"
  	   testName="positivePrintlnBoolean.jsp" 
@@ -904,7 +904,7 @@
 	   testStrategy="testing JspWriter println(boolean b) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnChar.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnChar.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnChar.html"
  	   testName="positivePrintlnChar.jsp" 
@@ -912,7 +912,7 @@
 	   testStrategy="testing JspWriter println(char c) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnCharArray.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnCharArray.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnCharArray.html"
  	   testName="positivePrintlnCharArray.jsp" 
@@ -920,7 +920,7 @@
 	   testStrategy="testing JspWriter println(char c[]) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnDouble.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnDouble.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnDouble.html"
  	   testName="positivePrintlnDouble.jsp" 
@@ -928,7 +928,7 @@
 	   testStrategy="testing JspWriter println(double d) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnFloat.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnFloat.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnFloat.html"
  	   testName="positivePrintlnFloat.jsp" 
@@ -936,7 +936,7 @@
 	   testStrategy="testing JspWriter println(float f) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnInt.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnInt.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnInt.html"
  	   testName="positivePrintlnInt.jsp" 
@@ -944,7 +944,7 @@
 	   testStrategy="testing JspWriter println(int i) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnLong.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnLong.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnLong.html"
  	   testName="positivePrintlnLong.jsp" 
@@ -952,7 +952,7 @@
 	   testStrategy="testing JspWriter println(long l) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnObj.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnObj.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnObj.html"
  	   testName="positivePrintlnObj.jsp" 
@@ -960,7 +960,7 @@
 	   testStrategy="testing JspWriter println(java.lang.Object obj) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnStr.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnStr.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnStr.html"
  	   testName="positivePrintlnStr.jsp" 
@@ -968,7 +968,7 @@
 	   testStrategy="testing JspWriter println(java.lang.String str) features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveClear.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveClear.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/misc/positiveClear.html"
  	   testName="positiveClear.jsp" 
@@ -976,7 +976,7 @@
 	   testStrategy="testing JspWriter clear() features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveFlush.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveFlush.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}" exactMatch="true"
            goldenFile="${wgdir}/engine/JspWriter/misc/positiveFlush.html"
  	   testName="positiveFlush.jsp" 
@@ -984,7 +984,7 @@
 	   testStrategy="testing JspWriter flush() features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetBufferSize.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetBufferSize.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetBufferSize.html"
  	   testName="positiveGetBufferSize.jsp" 
@@ -992,7 +992,7 @@
 	   testStrategy="testing JspWriter getBufferSize() features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.html"
  	   testName="positiveGetBufferSizeUnBuffered.jsp" 
@@ -1000,7 +1000,7 @@
 	   testStrategy="testing JspWriter getBufferSize() features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetRemaining.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetRemaining.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetRemaining.html"
  	   testName="positiveGetRemaining.jsp" 
@@ -1008,7 +1008,7 @@
 	   testStrategy="testing JspWriter getRemaining() features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetRemainingBufferUnset.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetRemainingBufferUnset.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetRemainingBufferUnset.html"
  	   testName="positiveGetRemainingBufferUnset.jsp" 
@@ -1016,7 +1016,7 @@
 	   testStrategy="testing JspWriter getRemaining() features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveIsAutoFlush.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveIsAutoFlush.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/engine/JspWriter/misc/positiveIsAutoFlush.html"
  	   testName="positiveIsAutoFlush.jsp" 
@@ -1024,7 +1024,7 @@
 	   testStrategy="testing JspWriter isAutoFlush() features"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportLang.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportLang.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportLang.html"
  	   testName="implicitImportLang.jsp" 
@@ -1033,7 +1033,7 @@
  	/>
 
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportJsp.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportJsp.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportJsp.html"
  	   testName="implicitImportJsp.jsp" 
@@ -1041,7 +1041,7 @@
 	   testStrategy="testing page directive implicit import of 'java' as the scripting language "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportServlet.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportServlet.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportServlet.html"
  	   testName="implicitImportJsp.jsp" 
@@ -1049,7 +1049,7 @@
 	   testStrategy="testing page directive implicit import of servlet package "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportHttp.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportHttp.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportHttp.html"
  	   testName="implicitImportHttp.jsp" 
@@ -1057,7 +1057,7 @@
 	   testStrategy="testing page directive implicit import of servlet package "
  	/>
 <!-- ###commented ..has to be debugged
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/taglib/positiveTagLib.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/directives/taglib/positiveTagLib.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/core_syntax/directives/taglib/positiveTagLib.html"
  	   testName="positiveTagLib.jsp" 
@@ -1066,7 +1066,7 @@
  	/>
 -->
 
-      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetValues.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetValues.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagSupport/positiveGetValues.html"
  	   testName="positiveGetValues.jsp" 
@@ -1074,7 +1074,7 @@
 	   testStrategy="testing TagSupport getValues() method "
  	/>
 
-<gtest request="GET /jsp-tests/jsp/tagext/TagSupport/default_return_values.jsp  HTTP/1.0"
+<watchdog request="GET /jsp-tests/jsp/tagext/TagSupport/default_return_values.jsp  HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagSupport/default_return_values.html"
            testName="default_return_values.jsp"
@@ -1082,7 +1082,7 @@
            testStrategy="testing TagSupport default return values by calling supe.FunctionName"
         />
 
-<gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveDoEndTag.jsp
+<watchdog request="GET /jsp-tests/jsp/tagext/TagSupport/positiveDoEndTag.jsp
  HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagSupport/positiveDoEndTag.html"
@@ -1091,7 +1091,7 @@
            testStrategy="testing TagSupport doEndTag method "
         />
 
-<gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveSetGetId.jsp HTTP/1.0"
+<watchdog request="GET /jsp-tests/jsp/tagext/TagSupport/positiveSetGetId.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagSupport/positiveSetGetId.html"
            testName="positiveSetGetId.jsp"
@@ -1099,7 +1099,7 @@
            testStrategy="testing TagSupport getId and setId in the same test"
         />
 
-<gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positivefindAncestorWithClass.jsp HTTP/1.0"
+<watchdog request="GET /jsp-tests/jsp/tagext/TagSupport/positivefindAncestorWithClass.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagSupport/positivefindAncestorWithClass.html"
            testName="positivefindAncestorWithClass.jsp"
@@ -1107,7 +1107,7 @@
            testStrategy="Testing TagSupport.findAncestorWithClass method"
         />
 
-<gtest request="GET /jsp-tests/jsp/tagext/misc/persistentValues.jsp HTTP/1.0"
+<watchdog request="GET /jsp-tests/jsp/tagext/misc/persistentValues.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/misc/persistentValues.html"
            testName="persistentValues.jsp"
@@ -1115,7 +1115,7 @@
            testStrategy="testing persistence of tag attributes"
         />
 
-<gtest request="GET /jsp-tests/jsp/tagext/misc/request_time_attributes.jsp HTTP/1.0"
+<watchdog request="GET /jsp-tests/jsp/tagext/misc/request_time_attributes.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/misc/request_time_attributes.html"
            testName="request_time_attributes.jsp"
@@ -1123,7 +1123,7 @@
            testStrategy="testing associativity of expression evaluation"
         />
 
-      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetValue.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetValue.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagSupport/positiveGetValue.html"
  	   testName="positiveGetValue.jsp" 
@@ -1131,7 +1131,7 @@
 	   testStrategy="testing TagSupport getValue() method "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveRemoveValue.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/TagSupport/positiveRemoveValue.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagSupport/positiveRemoveValue.html"
  	   testName="positiveRemoveValue.jsp" 
@@ -1139,7 +1139,7 @@
 	   testStrategy="testing TagSupport removeValue() method "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveSetValue.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/TagSupport/positiveSetValue.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagSupport/positiveSetValue.html"
  	   testName="positiveSetValue.jsp" 
@@ -1147,7 +1147,7 @@
 	   testStrategy="testing TagSupport setValue() method "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetParent.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetParent.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagSupport/positiveGetParent.html"
  	   testName="positiveGetParent.jsp" 
@@ -1155,7 +1155,7 @@
 	   testStrategy="testing TagSupport getParent() method "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveDoStartTag.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/TagSupport/positiveDoStartTag.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagSupport/positiveDoStartTag.html"
  	   testName="positiveDoStartTag.jsp" 
@@ -1163,7 +1163,7 @@
 	   testStrategy="testing TagSupport doStartTag() method "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveSetPageContext.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/TagSupport/positiveSetPageContext.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagSupport/positiveSetPageContext.html"
  	   testName="positiveSetPageContext.jsp" 
@@ -1171,7 +1171,7 @@
 	   testStrategy="testing TagSupport setPageContext() method "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveDoAfterBody.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/TagSupport/positiveDoAfterBody.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagSupport/positiveDoAfterBody.html"
  	   testName="positiveDoAfterBody.html"
@@ -1179,7 +1179,7 @@
 	   testStrategy="Test the DoAfterBody method of the TagSupport class.	 Create a Tag handler that outputs a message a given number of times from the DoAFterBody"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetEnclosingWriter.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetEnclosingWriter.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/BodyContent/positiveGetEnclosingWriter.html"
  	   testName="positiveGetEnclosingWriter.jsp" 
@@ -1187,7 +1187,7 @@
 	   testStrategy="testing BodyContent getParent() method "
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetReader.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetReader.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/BodyContent/positiveGetReader.html"
  	   testName="positiveGetReader.jsp" 
@@ -1195,7 +1195,7 @@
 	   testStrategy="testing BodyContent getReader() method"
  	/>
 
-       <gtest request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetString.jsp HTTP/1.0"       
+       <watchdog request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetString.jsp HTTP/1.0"       
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/BodyContent/positiveGetString.html"
  	   testName="positiveGetString.jsp" 
@@ -1204,7 +1204,7 @@
  	/>
 
 <!-- ##commented...has to be debugged
-      <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoInitBody.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoInitBody.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoInitBody.html"
  	   testName="positiveDoInitBody.jsp" 
@@ -1213,7 +1213,7 @@
  	/>
 
 
-      <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoAfterBody.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoAfterBody.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoAfterBody.html"
  	   testName="positiveDoAfterBody.jsp" 
@@ -1222,7 +1222,7 @@
  	/>
 
 
-      <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoEndTag.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoEndTag.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoEndTag.html"
  	   testName="positiveDoEndTag.jsp" 
@@ -1230,7 +1230,7 @@
 	   testStrategy="testing BodyTagSupport doEndTag() method"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveRelease.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveRelease.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/BodyTagSupport/positiveRelease.html"
  	   testName="positiveRelease.jsp" 
@@ -1240,7 +1240,7 @@
 
 ##Commented till here  -->
 
-      <gtest request="GET /jsp-tests/jsp/tagext/TagData/positiveTagGetAttribute.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/TagData/positiveTagGetAttribute.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagData/positiveTagGetAttribute.html"
  	   testName="positiveTagGetAttribute.jsp" 
@@ -1248,7 +1248,7 @@
 	   testStrategy="testing TagData release() method"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/TagData/positiveTagSetAttribute.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/TagData/positiveTagSetAttribute.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagData/positiveTagSetAttribute.html"
  	   testName="positiveTagSetAttribute.jsp" 
@@ -1256,7 +1256,7 @@
 	   testStrategy="testing TagData setAttribute() method"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/TagData/positiveTagGetAttributeString.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/TagData/positiveTagGetAttributeString.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/TagData/positiveTagGetAttributeString.html"
  	   testName="positiveTagGetAttributeString.jsp" 
@@ -1265,7 +1265,7 @@
  	/>
 
 <!-- ##Commented ....has to be debugged
-      <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetVarName.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetVarName.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/VariableInfo/positiveGetVarName.html"
  	   testName="positiveGetVarName.jsp" 
@@ -1273,7 +1273,7 @@
 	   testStrategy="testing VariableInfo getVarName() method"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetScope.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetScope.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/VariableInfo/positiveGetScope.html"
  	   testName="positiveGetScope.jsp" 
@@ -1281,7 +1281,7 @@
 	   testStrategy="testing VariableInfo getScope() method"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetDeclare.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetDeclare.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/VariableInfo/positiveGetDeclare.html"
  	   testName="positiveGetDeclare.jsp" 
@@ -1289,7 +1289,7 @@
 	   testStrategy="testing VariableInfo getDeclare() method"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetClassName.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetClassName.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/VariableInfo/positiveGetClassName.html"
  	   testName="positiveGetClassName.jsp" 
@@ -1299,7 +1299,7 @@
 
 ##commented till here  -->
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_attr_setting_1.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_attr_setting_1.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_attr_setting_1.html"
  	   testName="tag_attr_setting_1.jsp" 
@@ -1307,7 +1307,7 @@
 	   testStrategy="testing LifeCycle process"
  	/>
 <!-- ##Commented ..has to be debugged
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_attr_setting_2.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_attr_setting_2.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_attr_setting_2.html"
  	   testName="tag_attr_setting_2.jsp" 
@@ -1315,7 +1315,7 @@
 	   testStrategy="testing LifeCycle process"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_attr_setting_3.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_attr_setting_3.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_attr_setting_3.html"
  	   testName="tag_attr_setting_3.jsp" 
@@ -1325,7 +1325,7 @@
 ## Commented till here  -->
 
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_1.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_1.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_check_BodyContent_1.html"
  	   testName="tag_check_BodyContent_1.jsp" 
@@ -1333,7 +1333,7 @@
 	   testStrategy="testing LifeCycle process"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_2.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_2.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_check_BodyContent_2.html"
  	   testName="tag_check_BodyContent_2.jsp" 
@@ -1341,7 +1341,7 @@
 	   testStrategy="testing LifeCycle process"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_3.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_3.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_check_BodyContent_3.html"
  	   testName="tag_check_BodyContent_3.jsp" 
@@ -1349,7 +1349,7 @@
 	   testStrategy="testing LifeCycle process"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_4.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_4.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_check_BodyContent_4.html"
  	   testName="tag_check_BodyContent_4.jsp" 
@@ -1357,7 +1357,7 @@
 	   testStrategy="testing LifeCycle process"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_5.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_5.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_check_BodyContent_5.html"
  	   testName="tag_check_BodyContent_5.jsp" 
@@ -1365,7 +1365,7 @@
 	   testStrategy="testing LifeCycle process"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_comments_1.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_comments_1.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_check_comments_1.html"
  	   testName="tag_check_comments_1.jsp" 
@@ -1373,7 +1373,7 @@
 	   testStrategy="testing LifeCycle process"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_comments_2.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_comments_2.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_check_comments_2.html"
  	   testName="tag_check_comments_2.jsp" 
@@ -1381,7 +1381,7 @@
 	   testStrategy="testing LifeCycle process"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_doEndTag_skip_page.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_doEndTag_skip_page.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_doEndTag_skip_page.html"
  	   testName="tag_doEndTag_skip_page.jsp" 
@@ -1389,7 +1389,7 @@
 	   testStrategy="testing LifeCycle process"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_doStart_eval_body_include.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_doStart_eval_body_include.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_doStart_eval_body_include.html"
  	   testName="tag_doStart_eval_body_include.jsp" 
@@ -1398,7 +1398,7 @@
  	/>
 
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_doStart_skip_body.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_doStart_skip_body.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_doStart_skip_body.html"
  	   testName="tag_doStart_skip_body.jsp" 
@@ -1407,7 +1407,7 @@
  	/>
 <!--
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_doStart_skip_page.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_doStart_skip_page.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_doStart_skip_page.html"
  	   testName="tag_doStart_skip_page.jsp" 
@@ -1415,7 +1415,7 @@
 	   testStrategy="testing LifeCycle process"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_ignoreBody.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_ignoreBody.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_ignoreBody.html"
  	   testName="tag_ignoreBody.jsp" 
@@ -1424,7 +1424,7 @@
  	/>
 -->
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_int.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_int.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_int.html"
  	   testName="tag_int.jsp" 
@@ -1433,7 +1433,7 @@
  	/>
 
 <!--
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_nonempty_body_1.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_nonempty_body_1.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_nonempty_body_1.html"
  	   testName="tag_nonempty_body_1.jsp" 
@@ -1441,7 +1441,7 @@
 	   testStrategy="testing LifeCycle process"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_nonempty_body_2.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_nonempty_body_2.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_nonempty_body_2.html"
  	   testName="tag_nonempty_body_2.jsp" 
@@ -1449,7 +1449,7 @@
 	   testStrategy="testing LifeCycle process"
  	/>
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_positiveBody.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_positiveBody.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_positiveBody.html"
  	   testName="tag_positiveBody.jsp" 
@@ -1458,7 +1458,7 @@
  	/>
 -->
 
-      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_translationtime_verify_1.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_translationtime_verify_1.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/LifeCycle/tag_translationtime_verify_1.html"
  	   testName="tag_translationtime_verify_1.jsp" 
@@ -1469,47 +1469,47 @@
 
 <!-- All below JSP negative tests have been commented out till they get fixed
 
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeBody.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeBody.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="500" />
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupID.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupID.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="500" />
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupIDSession1.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupIDSession1.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="500" />
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeInvalidClass.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeInvalidClass.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="500" />
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeNoBody.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeNoBody.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="500" />
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativeSetPropNotWrite.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativeSetPropNotWrite.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="500" />
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativeSetPropNotProperty.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativeSetPropNotProperty.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="500" />
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativePropSyntax.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativePropSyntax.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="500" />
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetPropNotRead.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetPropNotRead.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="500" />
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetPropNotProperty.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetPropNotProperty.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="500" />
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetProps.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetProps.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="500" />
-      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/declaration/negativeDeclarationSyn.jsp HTTP/1.0"
+      <watchdog request="GET /jsp-tests/jsp/core_syntax/scripting/declaration/negativeDeclarationSyn.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="500" />
 -->
    </target>
 
 <!-- sample of all the various test options allowed
-    <gtest description="Content Type Test"
+    <watchdog description="Content Type Test"
            request="GET /test/binaries/image1.gif HTTP/1.0"
            goldenFile="${gdir}/image1.gif"
            responseMatch="PreInclude"
