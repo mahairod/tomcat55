@@ -70,7 +70,7 @@ import java.io.OutputStreamWriter;
 
 import org.apache.jasper34.core.*;
 import org.apache.jasper34.runtime.JasperException;
-import org.apache.jasper34.core.*;
+import org.apache.jasper34.javacompiler.*;
 //import org.apache.jasper.compiler.ParseException;
 
 import org.apache.tomcat.util.log.*;
