@@ -63,9 +63,7 @@ import java.io.IOException;
  * The HttpJspPage interface describes the interaction that a JSP Page
  * Implementation Class must satisfy when using the HTTP protocol.
  *
- * <p>HttpJspPage objects are obtained from the JspFactory class.
- *
-* <p>
+ * <p>
  * The behaviour is identical to that of the JspPage, except for the signature
  * of the _jspService method, which is now expressible in the Java type
  * system and included explicitly in the interface.

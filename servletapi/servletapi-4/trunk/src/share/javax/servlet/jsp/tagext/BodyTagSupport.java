@@ -72,7 +72,8 @@ import java.util.Hashtable;
  * bodyContent property and methods to get at the previous out JspWriter.
  *
  * <p>
- * Many tag handlers will extend TagSupport and only redefine a few methods.
+ * Many tag handlers will extend BodyTagSupport and only redefine a
+ * few methods.
  */
 
 public class BodyTagSupport extends TagSupport implements BodyTag {

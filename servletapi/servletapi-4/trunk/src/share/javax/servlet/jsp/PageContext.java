@@ -73,9 +73,10 @@ import javax.servlet.jsp.tagext.BodyContent;
 
 /**
  * <p>
- * A PageContext instance provides access to all the namespaces associated with
- * a JSP page, provides access to several page attributes, as well as a layer above the
- * implementation details.
+ * A PageContext instance provides access to all the namespaces associated
+ * with a JSP page, provides access to several page attributes, as well as
+ * a layer above the implementation details.  Implicit objects are added
+ * the pageContext automatically.
  *
  * <p> The <code> PageContext </code> class is an abstract class, designed to be
  * extended to provide implementation dependent implementations thereof, by

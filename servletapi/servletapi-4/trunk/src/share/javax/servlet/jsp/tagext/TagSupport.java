@@ -88,6 +88,27 @@ public class TagSupport implements IterationTag, Serializable {
      * interface.
      * This method is used for coordination among cooperating tags.
      *
+     * <p>
+     * The current version of the specification only provides one formal
+     * way of indicating the observable type of a tag handler: its
+     * tag handler implementation class, described in the tag-class
+     * subelement of the tag element.  This is extended in an
+     * informal manner by allowing the tag library author to
+     * indicate in the description subelement an observable type.
+     * The type should be a subtype of the tag handler implementation
+     * class or void.
+     * This addititional constraint can be exploited by a
+     * specialized container that knows about that specific tag library,
+     * as in the case of the JSP standard tag library.
+     *
+     * <p>
+     * When a tag library author provides information on the
+     * observable type of a tag handler, client programmatic code
+     * should adhere to that constraint.  Specifically, the Class
+     * passed to findAncestorWithClass should be a subtype of the
+     * observable type.
+     * 
+     *
      * @param from The instance from where to start looking.
      * @param klass The subclass of Tag or interface to be matched
      * @returns the nearest ancestor that implements the interface
