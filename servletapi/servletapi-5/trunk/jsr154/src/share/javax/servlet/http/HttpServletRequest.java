@@ -591,7 +591,7 @@ public interface HttpServletRequest extends ServletRequest {
      *
      *
      *
-     * @param		<code>true</code> to create
+     * @param create	<code>true</code> to create
      *			a new session for this request if necessary; 
      *			<code>false</code> to return <code>null</code>
      *			if there's no current session

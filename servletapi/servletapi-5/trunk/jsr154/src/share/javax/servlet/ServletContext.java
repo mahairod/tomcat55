@@ -195,7 +195,8 @@ public interface ServletContext {
 	   
 
 
-    *@param the partial path used to match the resources, which must start with a /
+    *@param path		the partial path used to match the resources,
+    *				which must start with a /
     *@return a Set containing the directory listing, or null if there are no resources in the web application whose path
 	* begins with the supplied path.
 
@@ -277,7 +278,7 @@ public interface ServletContext {
      * to a servlet from any location, without using a class loader.
      * 
      *
-     * @param name 	a <code>String</code> specifying the path
+     * @param path 	a <code>String</code> specifying the path
      *			to the resource
      *
      * @return 		the <code>InputStream</code> returned to the 
