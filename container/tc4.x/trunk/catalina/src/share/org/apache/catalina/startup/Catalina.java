@@ -223,6 +223,11 @@ public class Catalina {
 
 	boolean isConfig = false;
 
+        if (args.length < 1) {
+            usage();
+            return (false);
+        }
+
 	for (int i = 0; i < args.length; i++) {
 	    if (isConfig) {
 		configFile = args[i];
@@ -242,6 +247,7 @@ public class Catalina {
 	        stopping = true;
 	    } else {
 		usage();
+                return (false);
 	    }
 	}
 
