@@ -154,7 +154,7 @@ public class ReplicationValve
     protected static synchronized void addClusterSendTime(long time) {
         totalSendTime+=time;
         nrOfRequests++;
-        if ( (System.currentTimeMillis()-lastSendTime)>5000 ) {
+        if ( (nrOfRequests % 100) == 0 ) {
             log.info("Average cluster serialize/send time="+(totalSendTime/nrOfRequests)+" ms for "+
                      nrOfRequests+" requests ("+totalSendTime+"ms).");
             lastSendTime=System.currentTimeMillis();
