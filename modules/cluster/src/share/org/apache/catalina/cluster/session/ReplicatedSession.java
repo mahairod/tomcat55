@@ -147,6 +147,11 @@ public class ReplicatedSession extends org.apache.catalina.session.StandardSessi
         super.setAttribute(name,value);
     }
 
+    public void setMaxInactiveInterval(int interval) {
+        setIsDirty(true);
+        super.setMaxInactiveInterval(interval);
+    }
+
 
     /**
      * Sets the manager for this session
