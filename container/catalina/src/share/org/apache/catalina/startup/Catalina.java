@@ -67,6 +67,7 @@ package org.apache.catalina.startup;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -150,9 +151,16 @@ public class Catalina extends Embedded {
         configFile = file;
     }
 
+
+    public void setConfigFile(String file) {
+        configFile = file;
+    }
+
+
     public String getConfigFile() {
         return configFile;
     }
+
 
     /**
      * Set the shared extensions class loader.
@@ -468,23 +476,47 @@ public class Catalina extends Embedded {
         // Create and execute our Digester
         Digester digester = createStartDigester();
         long t1 = System.currentTimeMillis();
-        File file = configFile();
+
+        Exception ex = null;
+        InputSource inputSource = null;
+        InputStream inputStream = null;
         try {
-            InputSource is =
-                new InputSource("file://" + file.getAbsolutePath());
-            FileInputStream fis = new FileInputStream(file);
-            is.setByteStream(fis);
+            File file = configFile();
+            inputStream = new FileInputStream(file);
+            inputSource = new InputSource("file://" + file.getAbsolutePath());
+        } catch (Exception e) {
+            ;
+        }
+        if (inputStream == null) {
+            try {
+                inputStream = getClass().getClassLoader()
+                    .getResourceAsStream(getConfigFile());
+                inputSource = new InputSource
+                    (getClass().getClassLoader()
+                     .getResource(getConfigFile()).toString());
+            } catch (Exception e) {
+                ;
+            }
+        }
+
+        if (inputStream == null) {
+            System.out.println("Can't load server.xml");
+            return;
+        }
+
+        try {
+            inputSource.setByteStream(inputStream);
             digester.push(this);
-            digester.parse(is);
-            fis.close();
+            digester.parse(inputSource);
+            inputStream.close();
         } catch (Exception e) {
             System.out.println("Catalina.start: " + e);
             e.printStackTrace(System.out);
-            System.exit(1);
+            return;
         }
+
         long t2 = System.currentTimeMillis();
         log.debug( "Server.xml processed " + (t2 - t1));
-
 
         // Replace System.out and System.err with a custom PrintStream
         // TODO: move to Embedded, make it configurable
