@@ -144,7 +144,7 @@ public class HostRuleSet extends RuleSetBase {
                          new LifecycleListenerRule
                          (digester,
                           "org.apache.catalina.startup.HostConfig",
-                          "configClass"));
+                          "hostConfigClass"));
         digester.addSetNext(prefix + "Host",
                             "addChild",
                             "org.apache.catalina.Container");
