@@ -518,7 +518,7 @@
           file="${commons-fileupload.jar}"/>
   </target>
   <target name="copy-jmx.jar" if="copy.jmx.jar">
-    <copy todir="${catalina.build}/server/lib" file="${jmx.jar}"/>
+    <copy tofile="${catalina.build}/server/lib/jmx.jar" file="${jmx.jar}"/>
     <copy todir="${catalina.build}/server/lib" file="../etc/mx4j.license"/>
   </target>
   <target name="copy-launcher.jars" if="copy.launcher.jars">
