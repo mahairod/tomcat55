@@ -524,6 +524,10 @@ public class JspUtil {
  	    }
  	}
  
+	if (primitiveConverterMethod != null) {
+	    XmlEscape = false;
+	}
+
  	/*
          * Build up the base call to the interpreter.
          */
