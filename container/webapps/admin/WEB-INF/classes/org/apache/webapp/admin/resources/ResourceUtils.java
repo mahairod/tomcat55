@@ -231,7 +231,7 @@ public class ResourceUtils {
                 }
             }
         }
-       
+        System.out.println("get datasource "+rname.toString());
         Iterator iterator = (mserver.queryMBeans(rname, null).iterator());
         
         ArrayList results = new ArrayList();        

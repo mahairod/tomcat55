@@ -92,7 +92,7 @@ public final class ConnectorForm extends ActionForm {
     private String objectName = null;
     
     /**
-     * The name of the service this connector belongs to.
+     * The object name of the service this connector belongs to.
      */
     private String serviceName = null;
    

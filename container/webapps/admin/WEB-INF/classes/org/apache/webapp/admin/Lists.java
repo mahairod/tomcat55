@@ -635,7 +635,7 @@ public class Lists {
         Iterator names = mbserver.queryNames(search, null).iterator();
         String service = null;
         while (names.hasNext()) {
-            service = ((ObjectName)names.next()).getKeyProperty("name");
+            service = ((ObjectName)names.next()).getKeyProperty("serviceName");
         }
         return service;
 
@@ -654,7 +654,7 @@ public class Lists {
     public static String getAdminAppHost
         (MBeanServer mbserver, String domain, HttpServletRequest request)
         throws Exception {
-        // FIXME TEST
+        
         // Get the admin app's host name
         StringBuffer sb = new StringBuffer(domain);
         sb.append(":j2eeType=WebModule,*"); 
@@ -672,9 +672,10 @@ public class Lists {
             int i = host.indexOf("/");
             if (contextPath.equals(host.substring(i))) {
                 host = host.substring(0,i);
+                return host;
             }
         }
-        return host;
+        return "";
 
     }
 
