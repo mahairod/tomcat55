@@ -260,6 +260,7 @@ public class Handler {
 		}
 		context.log("Exception in init  " + ex.getMessage(), ex );
                 if (res.isIncluded()) { // Only propogate on includes
+		    res.setErrorException(ex);
 		    // save error URI if necessary
 		    contextM.saveErrorURI( req, res );
                     if (ex instanceof IOException)

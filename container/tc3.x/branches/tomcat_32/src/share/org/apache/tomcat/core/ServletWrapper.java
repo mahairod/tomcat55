@@ -363,7 +363,7 @@ public class ServletWrapper extends Handler {
 
 	if( unavailable!=null  ) {
 	    // check servlet availability, throw appropriate exception if not
-	    servletAvailable();
+	    servletAvailable(req,res);
 	}
 
 	// called only if unavailable==null or timer expired.
@@ -374,9 +374,10 @@ public class ServletWrapper extends Handler {
             throw e;
 	} catch ( UnavailableException e ) {
 	    // if unavailable not set, assume thrown from service(), not init()
-	    if (unavailable == null) {
+	    if (unavailable == null && res.getErrorException() != e) {
 		synchronized(this) {
 		    if (unavailable == null) {
+			res.setErrorException(e);
 			unavailable = e;
 			// XXX if the UnavailableException is permanent we are supposed
 			// to destroy the servlet.  Synchronization of this destruction
@@ -403,6 +404,9 @@ public class ServletWrapper extends Handler {
 	} else {
 	    servlet.service(req.getFacade(), res.getFacade());
 	}
+	// clear any error exception since none were thrown
+	res.setErrorException(null);
+	res.setErrorURI(null);
     }
 
     // -------------------- Reloading --------------------
@@ -472,21 +476,28 @@ public class ServletWrapper extends Handler {
     // -------------------- Unavailable --------------------
     /** Check if we can try again an init
      */
-    private void servletAvailable()
+    private void servletAvailable(Request req, Response res)
         throws IOException, ServletException
     {
 	// if permanently unavailable, rethrow exception
 	if (unavailable instanceof UnavailableException &&
-		((UnavailableException)unavailable).isPermanent())
+		((UnavailableException)unavailable).isPermanent()) {
+	    res.setErrorException(unavailable);
+	    contextM.saveErrorURI( req, res );
 	    throw (UnavailableException)unavailable;
+	}
 	// we have a timer - maybe we can try again - how much
 	// do we have to wait - (in mSec)
 	long moreWaitTime=unavailableTime - System.currentTimeMillis();
 	if( moreWaitTime > 0 ) {
 	    // get seconds left, rounded up to at least one second
 	    int secs = (int)((moreWaitTime + 999) / 1000);
+	    // set updated exception
+	    res.setErrorException(new UnavailableException(
+				unavailable.getMessage(), secs));
+	    contextM.saveErrorURI( req, res );
 	    // throw updated exception
-	    throw new UnavailableException(unavailable.getMessage(), secs);
+	    throw (UnavailableException)res.getErrorException();
 	}
 	// we can try again
 	unavailable=null;

@@ -1082,8 +1082,12 @@ public class ContextManager {
 	    the client. AFAIK the trace is the _best_ debugger.
 	*/
 	if (t instanceof UnavailableException) {
-	    int unavailableTime = ((UnavailableException)t).getUnavailableSeconds();
-	    if( unavailableTime > 0 ) {
+	    int unavailableTime = -1;
+	    if ( !((UnavailableException)t).isPermanent() ) {
+		unavailableTime = ((UnavailableException)t).getUnavailableSeconds();
+		// if unavailable time not known, use 1 second
+		if ( unavailableTime <= 0 )
+		    unavailableTime = 1;
 		res.setHeader("Retry-After", Integer.toString(unavailableTime));
 	    }
 	    String msg=t.getMessage();

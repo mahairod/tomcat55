@@ -143,6 +143,16 @@ public interface Response {
      */
     public void setIncluded(boolean b);
 
+    /** Set the error Exception that occurred during
+	request processing.
+     */
+    public void setErrorException(Exception ex) ;
+
+    /** Get the Exception that occurred during request
+	processing.
+     */
+    public Exception getErrorException() ;
+
     /** Saves the request that originates an error.
      */
     public void setErrorURI(String uri) ;

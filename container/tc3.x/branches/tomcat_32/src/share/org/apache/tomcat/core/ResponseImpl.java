@@ -108,6 +108,7 @@ public class ResponseImpl implements Response {
     protected boolean commited = false;
     
     boolean notIncluded=true;
+    Exception errorException=null;
     String errorURI=null;
 
     // default implementation will just append everything here
@@ -155,6 +156,14 @@ public class ResponseImpl implements Response {
 	    // move back to normal behavior.
 
 	}
+    }
+
+    public void setErrorException(Exception ex) {
+	errorException = ex;
+    }
+
+    public Exception getErrorException() {
+	return errorException;
     }
 
     public void setErrorURI(String uri) {
