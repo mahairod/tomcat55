@@ -33,7 +33,13 @@ shift
 goto setArgs
 :doneSetArgs
 
+rem Set classpath to handle when %0 does not contain any path
+set PRG_CLASSPATH=%PRG%\..
+if "%OS%" == "Windows_NT" goto gotClasspath
+set PRG_CLASSPATH=%PRG_CLASSPATH%;"%PATH%;."
+:gotClasspath
+
 rem Execute the Launcher using the "catalina" target
-"%JAVA_HOME%\bin\java.exe" -classpath %PRG%\..;"%PATH%" LauncherBootstrap -launchfile catalina.xml -verbose catalina %CMD_LINE_ARGS% start
+"%JAVA_HOME%\bin\java.exe" -classpath %PRG_CLASSPATH% LauncherBootstrap -launchfile catalina.xml -verbose catalina %CMD_LINE_ARGS% start
 
 :end
