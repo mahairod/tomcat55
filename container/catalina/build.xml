@@ -843,7 +843,6 @@
          manifest="etc/bootstrap.MF">
       <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/catalina/startup/Bootstrap.class" />
-        <include name="org/apache/catalina/startup/BootstrapService.class" />
         <include name="org/apache/catalina/startup/catalina.properties" />
         <include name="org/apache/catalina/startup/CatalinaProperties.class" />
         <include name="org/apache/catalina/startup/ClassLoaderFactory.class" />
@@ -864,7 +863,6 @@
         <exclude name="org/apache/catalina/launcher/**" />
         <exclude name="org/apache/naming/**" />
         <exclude name="org/apache/catalina/startup/Bootstrap.class" />
-        <exclude name="org/apache/catalina/startup/BootstrapService.class" />
         <exclude name="org/apache/catalina/startup/catalina.properties" />
         <exclude name="org/apache/catalina/startup/CatalinaProperties.class" />
         <exclude name="org/apache/catalina/startup/ClassLoaderFactory.class" />
