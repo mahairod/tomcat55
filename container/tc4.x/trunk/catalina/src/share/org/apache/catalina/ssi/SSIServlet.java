@@ -95,6 +95,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.catalina.Globals;
 
 /**
  * Servlet to process SSI requests within a webpage.
@@ -106,6 +107,7 @@ import javax.servlet.http.HttpServletResponse;
  * @version $Revision$, $Date$
  */
 public class SSIServlet extends HttpServlet {
+
     /** Debug level for this servlet. */
     protected int debug = 0;
 
@@ -217,14 +219,14 @@ public class SSIServlet extends HttpServlet {
              path.toUpperCase().startsWith("/META-INF") ) {
 
             res.sendError(res.SC_NOT_FOUND, path);
-	    log( "Can't serve file: " + path );
+        log( "Can't serve file: " + path );
             return;
         }
-	
-	URL resource = servletContext.getResource(path);
+    
+        URL resource = servletContext.getResource(path);
         if (resource==null) {
             res.sendError(res.SC_NOT_FOUND, path);
-	    log( "Can't find file: " + path );
+        log( "Can't find file: " + path );
             return;
         }
 
@@ -234,37 +236,42 @@ public class SSIServlet extends HttpServlet {
             res.setDateHeader("Expires", (
                 new java.util.Date()).getTime() + expires.longValue() * 1000);
         }
-
-	processSSI( req, res, resource );
+        
+        req.setAttribute(Globals.SSI_FLAG_ATTR,"true");
+        processSSI( req, res, resource );
     }
 
     protected void processSSI( HttpServletRequest req,
-			       HttpServletResponse res,
-			       URL resource ) throws IOException {
-	SSIExternalResolver ssiExternalResolver = new SSIServletExternalResolver( this, req, res,
-										  isVirtualWebappRelative,
-										  debug );
-	SSIProcessor ssiProcessor = new SSIProcessor( ssiExternalResolver, debug );
+                   HttpServletResponse res,
+                   URL resource ) throws IOException {
+                   
+        SSIExternalResolver ssiExternalResolver = 
+                            new SSIServletExternalResolver( this, req, res,
+                            isVirtualWebappRelative,
+                            debug );
+        SSIProcessor ssiProcessor = 
+                            new SSIProcessor( ssiExternalResolver, debug );
 
         PrintWriter printWriter = null;
-	StringWriter stringWriter = null;
+        StringWriter stringWriter = null;
         if (buffered) {
-	    stringWriter = new StringWriter();
+            stringWriter = new StringWriter();
             printWriter = new PrintWriter( stringWriter );
         } else {
             printWriter = res.getWriter();
-	}
+        }
 
         URLConnection resourceInfo = resource.openConnection();
         InputStream resourceInputStream = resourceInfo.getInputStream();
-	BufferedReader bufferedReader = new BufferedReader( new InputStreamReader( resourceInputStream ) );
-	Date lastModifiedDate = new Date( resourceInfo.getLastModified() );
-	ssiProcessor.process( bufferedReader, lastModifiedDate, printWriter );
+        BufferedReader bufferedReader = 
+            new BufferedReader(new InputStreamReader(resourceInputStream));
+        Date lastModifiedDate = new Date(resourceInfo.getLastModified());
+        ssiProcessor.process(bufferedReader, lastModifiedDate, printWriter);
 
-        if ( buffered ) {
-	    printWriter.flush();
-	    String text = stringWriter.toString();
-            res.getWriter().write( text );
-	}
+        if (buffered) {
+            printWriter.flush();
+            String text = stringWriter.toString();
+            res.getWriter().write(text);
+        }
     }
 }

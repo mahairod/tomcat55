@@ -266,6 +266,17 @@ public final class Globals {
     public static final String SESSION_PARAMETER_NAME = "jsessionid";
 
 
+   /**
+    * The servlet context attribute under which we store a flag used 
+    * to mark this request as having been processed by the SSIServlet. 
+    * We do this because of the pathInfo mangling happening when using 
+    * the CGIServlet in conjunction with the SSI servlet. (value stored 
+    * as an object of type String)
+    */
+    public static final String SSI_FLAG_ATTR = 
+        "org.apache.catalina.ssi.SSIServlet";
+
+
     /**
      * The request attribute under which we forward an HTTP status code
      * (as an object of type Integer) to an error page.

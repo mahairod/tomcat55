@@ -967,7 +967,12 @@ public class CGIServlet extends HttpServlet {
             String[] sCGINames;
 
 
-            sPathInfoOrig = this.pathInfo;
+            if (null != req.getAttribute(Globals.SSI_FLAG_ATTR)) {
+                // invoked by SSIServlet, which eats our req.getPathInfo() data
+                sPathInfoOrig = (String) req.getAttribute(Globals.PATH_INFO_ATTR);
+            } else {
+                sPathInfoOrig = this.pathInfo;
+            }
             sPathInfoOrig = sPathInfoOrig == null ? "" : sPathInfoOrig;
 
             sPathTranslatedOrig = req.getPathTranslated();
