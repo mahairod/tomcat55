@@ -261,6 +261,9 @@
       <parameter name="name"
           description="Unique name of this Service"
                  type="java.lang.String"/>
+      <parameter name="domain"
+          description="The domain of this Service"
+                 type="java.lang.String"/>
     </operation>
 
     <operation   name="createSystemErrLogger"
