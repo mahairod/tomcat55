@@ -27,6 +27,9 @@ compile.optimize=on
 #Hide configuration flags display
 #flags.hide=on
 
+#Version number
+version=4.1
+
 
 # ----- Default Base Path for Dependent Packages -----
 base.path=/usr/local
@@ -46,19 +49,19 @@ base.path=/usr/local
 
 
 # ----- Commons Beanutils, version 1.1 or later -----
-commons-beanutils.home=${base.path}/commons-beanutils-1.2
+commons-beanutils.home=${base.path}/commons-beanutils-1.3
 commons-beanutils.lib=${commons-beanutils.home}
 commons-beanutils.jar=${commons-beanutils.lib}/commons-beanutils.jar
 
 
 # ----- Commons Collections, version 1.0 or later -----
-commons-collections.home=${base.path}/commons-collections-1.0
+commons-collections.home=${base.path}/commons-collections-2.0
 commons-collections.lib=${commons-collections.home}
 commons-collections.jar=${commons-collections.lib}/commons-collections.jar
 
 
 # ----- Commons Digester, version 1.1.1 or later -----
-commons-digester.home=${base.path}/commons-digester-1.1.1
+commons-digester.home=${base.path}/commons-digester-1.2
 commons-digester.lib=${commons-digester.home}
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
 
@@ -128,8 +131,8 @@ commons-dbcp.lib=${commons-dbcp.home}
 commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp.jar
 
 
-# ----- Commons Modeler, version 20020117 or later -----
-commons-modeler.home=${base.path}/commons-modeler
+# ----- Commons Modeler, version 1.0 or later -----
+commons-modeler.home=${base.path}/commons-modeler-1.0
 commons-modeler.lib=${commons-modeler.home}
 commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
 
