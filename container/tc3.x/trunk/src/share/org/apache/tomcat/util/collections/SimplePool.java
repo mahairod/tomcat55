@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -157,6 +153,10 @@ public final class SimplePool  {
 	return current+1;
     }
 
+
+    public void shutdown() {
+    }
+    
     private void log( String s ) {
 	System.out.println("SimplePool: " + s );
     }
