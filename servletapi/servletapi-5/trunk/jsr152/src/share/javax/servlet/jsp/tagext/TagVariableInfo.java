@@ -88,6 +88,30 @@ public class TagVariableInfo {
 	this.declare           = declare;
 	this.scope             = scope;
     }
+
+    /**
+     * JSP 2.0 Constructor for TagVariableInfo
+     *
+     * @param nameGiven value of &lt;name-given&gt;
+     * @param nameFromAttribute value of &lt;name-from-attribute&gt;
+     * @param className value of &lt;variable-class&gt;
+     * @param declare value of &lt;declare&gt;
+     * @param scope value of &lt;scope&gt;
+     * @param fragment value of &lt;fragment&gt;
+     *
+     * @since JSP2.0
+     */
+    public TagVariableInfo(
+	    String nameGiven,
+	    String nameFromAttribute,
+	    String className,
+	    boolean declare,
+	    int scope,
+	    String fragment) 
+    {
+	this( nameGiven, nameFromAttribute, className, declare, scope );
+	this.fragment = fragment;
+    }
 			 
     /**
      * The body of the &lt;name-given&gt; element
@@ -142,14 +166,29 @@ public class TagVariableInfo {
 	return scope;
     }
 
+    /**
+     * The body of the &lt;fragment&gt; element
+     *
+     * @return The fragment this variable is scoped to
+     *
+     * @since JSP2.0
+     */
+    public String getFragment() {
+	return fragment;
+    }
+
 
     /*
      * private fields
      */
-
     private String   nameGiven;         // <name-given>
     private String   nameFromAttribute; // <name-from-attribute>
     private String   className;         // <class>
     private boolean  declare;           // <declare>
     private int      scope;             // <scope>
+
+    /*
+     * additional private fields for JSP 2.0
+     */
+    private String   fragment;          // <fragment>
 }

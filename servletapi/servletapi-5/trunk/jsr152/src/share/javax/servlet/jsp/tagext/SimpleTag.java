@@ -57,26 +57,52 @@ package javax.servlet.jsp.tagext;
 import javax.servlet.jsp.JspContext;
 
 /**
- * Interface for defining "simple tag handlers." 
- * <p>
- * Instead of supporting <code>doStartTag()</code> and <code>doEndTag()</code>, 
+ * Interface for defining Simple Tag Handlers.
+ * 
+ * <p>Simple Tag Handlers differ from Classic Tag Handlers in that instead 
+ * of supporting <code>doStartTag()</code> and <code>doEndTag()</code>, 
  * the <code>SimpleTag</code> interface provides a simple 
  * <code>doTag()</code> method, which is called once and only once for any 
  * given tag invocation.  All tag logic, iteration, body evaluations, etc. 
  * are to be performed in this single method.  Thus, simple tag handlers 
  * have the equivalent power of <code>IterationTag</code>, but with a much 
- * simpler lifecycle and interface.
- * <p>
- * To support body content, the <code>setJspBody()</code> 
+ * simpler lifecycle and interface.</p>
+ *
+ * <p>To support body content, the <code>setJspBody()</code> 
  * method is provided.  The container invokes the <code>setJspBody()</code> 
  * method with a <code>JspFragment</code> object encapsulating the body of 
  * the tag.  The tag handler implementation can call 
  * <code>invoke()</code> on that fragment to evaluate the body as
- * many times as it needs.
+ * many times as it needs.</p>
+ *
+ * <p>A SimpleTag handler must have a public no-args constructor.  Most
+ * SimpleTag handlers should extend SimpleTagSupport.</p>
+ * 
+ * <p><b>Lifecycle</b></p>
+ *
+ * <p>The following is a non-normative, brief overview of the 
+ * SimpleTag lifecycle.  Refer to the JSP Specification for details.</p>
+ *
+ * <ol>
+ *   <li>A new tag handler instance is created each time by the container 
+ *       by calling the provided zero-args constructor.</li>
+ *   <li>The <code>setJspContext()</code> and <code>setParent()</code> are 
+ *       called by the container.</li>
+ *   <li>The setters for each attribute defined for this tag are called
+ *       by the container, in the order in which they appear in the JSP
+ *       page or Tag File.</li>
+ *   <li>The <code>setJspBody()</code> method is called by the container 
+ *       to set the body of this tag, as a <code>JspFragment</code>.</li>
+ *   <li>The <code>doTag()</code> method is called by the container.  All
+ *       tag logic, iteration, body evaluations, etc. occur in this 
+ *       method.</li>
+ *   <li>The <code>doTag()</code> method returns and all variables are
+ *       synchronized.</li>
+ * </ol>
  * 
  * @see SimpleTagSupport
+ * @since JSP2.0
  */
-
 public interface SimpleTag extends JspTag {
     
     /** 
@@ -93,24 +119,31 @@ public interface SimpleTag extends JspTag {
      *     Tag Handler returned SKIP_PAGE or if an invoked Simple
      *     Tag Handler threw SkipPageException or if an invoked Jsp Fragment
      *     threw a SkipPageException.
+     * @throws java.io.IOException If there was an error writing to the
+     *     output stream.
      */ 
     public void doTag() 
-        throws javax.servlet.jsp.JspException; 
+        throws javax.servlet.jsp.JspException, java.io.IOException;
     
     /**
      * Sets the parent of this tag, for collaboration purposes.
+     *
+     * @param parent the tag that encloses this tag
      */
     public void setParent( JspTag parent );
     
     /**
      * Returns the parent of this tag, for collaboration purposes.
+     *
+     * @return the parent of this tag
      */ 
     public JspTag getParent();
     
     /**
-     * Stores the provided page context in the protected 
+     * Stores the provided JSP context in the protected 
      * jspContext field.
      * 
+     * @param pc the page context for this invocation
      * @see Tag#setPageContext
      */
     public void setJspContext( JspContext pc );
@@ -122,7 +155,8 @@ public interface SimpleTag extends JspTag {
      * This method is invoked by the JSP page implementation 
      * object prior to <code>doTag()</code>. 
      * 
-     * @param body The fragment encapsulating the body of this tag. 
+     * @param jspBody The fragment encapsulating the body of this tag, or
+     *     null if this tag as a body content type of empty.
      */ 
     public void setJspBody( JspFragment jspBody );
 

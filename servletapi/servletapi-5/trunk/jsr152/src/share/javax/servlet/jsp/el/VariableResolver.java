@@ -56,27 +56,30 @@
 package javax.servlet.jsp.el;
 
 /**
- * <p>This class is used to customize the way the evaluator resolves
- * variable references.  For example, instances of this class can
+ * <p>This class is used to customize the way an ExpressionEvaluator resolves
+ * variable references at evaluation time.  For example, instances of this class can
  * implement their own variable lookup mechanisms, or introduce the
  * notion of "implicit variables" which override any other variables.
- * An instance of this class should be passed to the evaluator's
- * constructor.
+ * An instance of this class should be passed when evaluating
+ * an expression.</p>
  *
- * <p>Whenever the evaluator is invoked, it is passed a "context"
- * Object from the application.  For example, in a JSP environment,
- * the "context" is a PageContext.  That context object is eventually
- * passed to this class, so that this class has a context in which to
- * resolve variables.
+ * <p>An instance of this class includes the context against which resolution
+ * will happen</p>
+ *
+ * @since JSP2.0
  */
-
 public interface VariableResolver
 {
   //-------------------------------------
   /**
-   *
-   * Resolves the specified variable within the given context.
+   * Resolves the specified variable.
    * Returns null if the variable is not found.
+   * 
+   * @param pName the name of the variable to resolve
+   * @return the result of the variable resolution
+   *
+   * @throws ELException if a failure occurred while trying to resolve
+   *     the given variable
    **/
   public Object resolveVariable (String pName,
 				 Object pContext)
