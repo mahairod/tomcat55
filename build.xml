@@ -19,7 +19,7 @@
 
 
   <!-- =================== DETECT: Display configuration ================== -->
-  <target name="detect"
+  <target name="flags.display"
    description="Display configuration and conditional compilation flags">
 
     <ant dir="${basedir}/catalina" target="flags.display"/>
