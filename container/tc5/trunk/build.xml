@@ -736,6 +736,7 @@
          index="true">
        <fileset dir="${tomcat.build}/classes">
           <include name="org/apache/catalina/LifecycleListener.class" />
+          <include name="org/apache/catalina/Manager.class" />
           <include name="org/apache/catalina/Pipeline.class" />
           <include name="org/apache/catalina/startup/Constants.class" />
           <include name="org/apache/catalina/startup/ContextConfig.class" />
