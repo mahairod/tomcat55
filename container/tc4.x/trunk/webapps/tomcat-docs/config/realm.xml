@@ -30,12 +30,10 @@
   an Engine or a Host are automatically inherited by lower-level
   containers, unless explicitly overridden.</p>
 
-  <p>For more in-depth information about container managed security in web
-  applications, see <strong>FIXME - link to "Container Managed Security Guide"
-  in the application developer's section</strong>.  For more in-depth
-  information about configuing and using the standard Realm component
-  implementations, see <strong>FIXME - link to "Realm Configuration HOW-TO"
-  in the administrator's section</strong>.</p>
+  <p>For more in-depth information about configuing container security
+  and using the standard Realm component implementations, see the
+  <a href="../realm-howto.html">Realm Configuration HOW-TO</a> in the
+  administrator's section.</p>
 
     <blockquote><em>
     <p>The description below uses the variable name $CATALINA_HOME
@@ -150,8 +148,8 @@
 
     </attributes>
 
-    <p>See <strong>FIXME - Nested pointer into HOW-TO</strong> for more
-    information on setting up container managed security using the
+    <p>See the <a href="../realm-howto.html#JDBCRealm">JDBC Realm HOW-TO</a>
+    for more information on setting up container managed security using the
     JDBC Database Realm component.</p>
 
 
@@ -317,8 +315,8 @@
 
     </attributes>
 
-    <p>See <strong>FIXME - Nested pointer into HOW-TO</strong> for more
-    information on setting up container managed security using the
+    <p>See the <a href="../realm-howto.html#JNDIRealm">JNDI Realm HOW-TO</a>
+    for more information on setting up container managed security using the
     JNDI Directory Realm component.</p>
 
 
@@ -365,7 +363,7 @@
         </ul></li>
     </ul>
 
-    <p>See <strong>FIXME - Nested pointer into HOW-TO</strong> for more
+    <p>See the <a href="../realm-howto.html#MemoryRealm">Memory Realm HOW-TO</a>
     information on setting up container managed security using the
     Memory Based Realm component.</p>
 
