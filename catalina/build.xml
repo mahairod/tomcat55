@@ -499,22 +499,6 @@
         </or>
       </and>
     </condition>
-    <condition property="copy.xerces2.jars">
-      <and>
-        <not>
-          <equals arg1="${light.dist}" arg2="on" />
-        </not>
-        <and>
-          <equals arg1="${xerces2.jars.present}" arg2="true" />
-          <or>
-            <equals arg1="${full.dist}" arg2="on" />
-            <not>
-              <equals arg1="${jdk.1.4.present}" arg2="true" />
-            </not>
-          </or>
-        </and>
-      </and>
-    </condition>
 
   </target>
 
@@ -690,7 +674,7 @@
     <copy todir="${catalina.build}/common/lib" file="../lib/tyrex.license"/>
     -->
   </target>
-  <target name="copy-xerces2.jars" if="copy.xerces2.jars">
+  <target name="copy-xerces2.jars">
     <copy todir="${catalina.build}/common/endorsed" file="${xercesImpl.jar}"/>
     <copy todir="${catalina.build}/common/endorsed" file="${xmlParserAPIs.jar}"/>
   </target>
