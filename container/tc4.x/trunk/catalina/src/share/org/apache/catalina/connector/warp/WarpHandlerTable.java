@@ -66,26 +66,15 @@ package org.apache.catalina.connector.warp;
  */
 public class WarpHandlerTable {
 
-    /** The default size of our tables. */
-    private static int defaultsize=32;
-
-    /** The current size of our arrays. */
-    private int size;
-
-    /** The number of elements present in our arrays. */
-    private int num;
-
-    /** The array of handlers. */
-    private WarpHandler handlers[];
-
-    /** The array of rids. */
-    private int rids[];
+    /** The table used by this implementation. */
+    private WarpTable table=null;
 
     /**
      * Construct a new WarpHandlerTable instance with the default size.
      */
     public WarpHandlerTable() {
-        this(defaultsize);
+        super();
+        this.table=new WarpTable();
     }
 
     /**
@@ -95,18 +84,7 @@ public class WarpHandlerTable {
      */
     public WarpHandlerTable(int size) {
         super();
-        // Paranoid, it's pointless to build a smaller than minimum size.
-        if (size<defaultsize) size=defaultsize;
-
-        // Set the current and default sizes (in Hashtable terms the load
-        // factor is always 1.0)
-        this.defaultsize=size;
-        this.size=size;
-
-        // Set the initial values.
-        this.num=0;
-        this.rids=new int[size];
-        this.handlers=new WarpHandler[size];
+        this.table=new WarpTable(size);
     }
 
     /**
@@ -117,15 +95,7 @@ public class WarpHandlerTable {
      *         specified RID.
      */
     public WarpHandler get(int rid) {
-        // Iterate thru the array of rids
-        for (int x=0; x<this.num; x++) {
-
-            // We got our rid, return the handler at the same position
-            if (this.rids[x]==rid) return(this.handlers[x]);
-        }
-
-        // Not found.
-        return(null);
+        return((WarpHandler)this.table.get(rid));
     }
 
     /**
@@ -138,35 +108,7 @@ public class WarpHandlerTable {
      */
     public boolean add(WarpHandler handler, int rid)
     throws NullPointerException {
-        // Check if we were given a valid handler
-        if (handler==null) throw new NullPointerException("Null Handler");
-
-        // Check if another handler was registered for the specified rid.
-        if (this.get(rid)!=null) return(false);
-
-        // Check if we reached the capacity limit
-        if(this.size==this.num) {
-
-            // Allocate some space for the new arrays
-            int newsize=this.size+defaultsize;
-            WarpHandler newhandlers[]=new WarpHandler[newsize];
-            int newrids[]=new int[newsize];
-            // Copy the original arrays into the new arrays
-            System.arraycopy(this.handlers,0,newhandlers,0,this.num);
-            System.arraycopy(this.rids,0,newrids,0,this.num);
-            // Update our variables
-            this.size=newsize;
-            this.handlers=newhandlers;
-            this.rids=newrids;
-        }
-
-        // Add the handler and its rid to the arrays
-        this.handlers[this.num]=handler;
-        this.rids[this.num]=rid;
-        this.num++;
-
-        // Whohoo!
-        return(true);
+        return(this.table.add(handler,rid));
     }
 
     /**
@@ -176,49 +118,7 @@ public class WarpHandlerTable {
      * @return The old WarpHandler associated with the specified RID or null.
      */
     public WarpHandler remove(int rid) {
-        // Iterate thru the array of rids
-        for (int x=0; x<this.num; x++) {
-
-            // We got our rid, and we need to get "rid" of its handler :)
-            if (this.rids[x]==rid) {
-                WarpHandler oldhandler=this.handlers[x];
-                // Decrease the number of handlers stored in this table
-                this.num--;
-                // Move the last record in our arrays in the current position
-                // (dirty way to compact a table)
-                this.handlers[x]=this.handlers[this.num];
-                this.rids[x]=this.rids[this.num];
-
-                // Now we want to see if we need to shrink our arrays (we don't
-                // want them to grow indefinitely in case of peak data storage)
-                // We check the number of available positions against the value
-                // of defaultsize*2, so that our free positions are always
-                // between 0 and defaultsize*2 (this will reduce the number of
-                // System.arraycopy() calls. Even after the shrinking is done
-                // we still have defaultsize positions available.
-                if ((this.size-this.num)>(this.defaultsize<<1)) {
-
-                    // Allocate some space for the new arrays
-                    int newsize=this.size-defaultsize;
-                    WarpHandler newhandlers[]=new WarpHandler[newsize];
-                    int newrids[]=new int[newsize];
-                    // Copy the original arrays into the new arrays
-                    System.arraycopy(this.handlers,0,newhandlers,0,this.num);
-                    System.arraycopy(this.rids,0,newrids,0,this.num);
-                    // Update our variables
-                    this.size=newsize;
-                    this.handlers=newhandlers;
-                    this.rids=newrids;
-                }
-
-                // The handler and its rid were removed, and if necessary the
-                // arrays were shrunk. We just need to return the old handler.
-                return(oldhandler);
-            }
-        }
-
-        // Not found.
-        return(null);
+        return((WarpHandler)this.table.remove(rid));
     }
 
     /**
@@ -227,8 +127,9 @@ public class WarpHandlerTable {
      * @return An array (maybe empty) of WarpHandler objects.
      */
     public WarpHandler[] handlers() {
-        WarpHandler buff[]=new WarpHandler[this.num];
-        if (this.num>0) System.arraycopy(this.handlers,0,buff,0,this.num);
+        int num=this.table.count();
+        WarpHandler buff[]=new WarpHandler[num];
+        if (num>0) System.arraycopy(this.table.objects,0,buff,0,num);
         return(buff);
     }
 }
