@@ -108,8 +108,8 @@ public class CatalinaService extends Catalina {
 
 
     // ----------------------------------------------------- Instance Variables
-
-
+    private String action="start";
+    private boolean doWait=false;
     // ------------------------------------------------------ Protected Methods
 
 
@@ -158,17 +158,53 @@ public class CatalinaService extends Catalina {
 
     }
 
+    public void setHome( String s ) {
+        System.setProperty("catalina.home", s );
+        System.setProperty("catalina.base", s );
+    }
+    
+    public void setUseNaming( boolean b ) {
+        useNaming=b;
+    }
 
+    public void setConfig( String  file ) {
+        configFile=file;
+    }
+    
+    public void setDo( String action ) {
+        if (action.equals("start")) {
+            starting = true;
+            stopping = false;
+        } else if (action.equals("stop")) {
+            starting = false;
+            stopping = true;
+        } 
+    }
+
+    public void setWait( boolean b ) {
+        doWait=b;
+    }
+    
+    public void setCompiler( String s ) {
+        System.setProperty( "build.compiler" , s );
+    }
+    
     /**
      * Execute the processing that has been configured from the command line.
      */
-    protected void execute() throws Exception {
-
+    public void execute() throws Exception {
+        // make sure the thread loader is set
+        log.info("Running tomcat5");
+        Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader());
         if (starting) {
             load();
             start();
         } else if (stopping) {
             stop();
+        }
+
+        if( doWait ) {
+            server.await();
         }
 
     }
@@ -186,9 +222,8 @@ public class CatalinaService extends Catalina {
             digester.push(this);
             digester.parse(file);
         } catch (Exception e) {
-            System.out.println("Catalina.start: " + e);
-            e.printStackTrace(System.out);
-            System.exit(1);
+            log.error("Catalina.start", e);
+            return;
         }
 
         // Setting additional variables
@@ -233,12 +268,7 @@ public class CatalinaService extends Catalina {
             try {
                 server.initialize();
             } catch (LifecycleException e) {
-                System.out.println("Catalina.start: " + e);
-                e.printStackTrace(System.out);
-                if (e.getThrowable() != null) {
-                    System.out.println("----- Root Cause -----");
-                    e.getThrowable().printStackTrace(System.out);
-                }
+                log.error("Catalina.start", e);
             }
         }
 
@@ -270,15 +300,18 @@ public class CatalinaService extends Catalina {
             try {
                 ((Lifecycle) server).start();
             } catch (LifecycleException e) {
-                System.out.println("Catalina.start: " + e);
-                e.printStackTrace(System.out);
-                if (e.getThrowable() != null) {
-                    System.out.println("----- Root Cause -----");
-                    e.getThrowable().printStackTrace(System.out);
-                }
+                log.error("Catalina.start: ", e);
             }
         }
 
+        Thread shutdownHook = new CatalinaShutdownHook();
+        try {
+            // Register shutdown hook
+            Runtime.getRuntime().addShutdownHook(shutdownHook);
+        } catch (Throwable t) {
+            // This will fail on JDK 1.2. Ignoring, as Tomcat can run
+            // fine without the shutdown hook.
+        }
     }
 
 
@@ -292,16 +325,13 @@ public class CatalinaService extends Catalina {
             try {
                 ((Lifecycle) server).stop();
             } catch (LifecycleException e) {
-                System.out.println("Catalina.stop: " + e);
-                e.printStackTrace(System.out);
-                if (e.getThrowable() != null) {
-                    System.out.println("----- Root Cause -----");
-                    e.getThrowable().printStackTrace(System.out);
-                }
+                log.error("Catalina.stop", e);
             }
         }
 
     }
 
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( CatalinaService.class );
 
 }
