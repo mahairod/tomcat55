@@ -64,6 +64,8 @@ package org.apache.catalina.startup;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 
 import org.apache.catalina.Connector;
@@ -1126,12 +1128,31 @@ public class Embedded  extends StandardService implements Lifecycle {
             }
         }
         if (catalinaHome != null) {
+            File home = new File(catalinaHome);
+            if (!home.isAbsolute()) {
+                try {
+                    catalinaHome = home.getCanonicalPath();
+                } catch (IOException e) {
+                    catalinaHome = home.getAbsolutePath();
+                }
+            }
             System.setProperty("catalina.home", catalinaHome);
         }
 
         if (System.getProperty("catalina.base") == null) {
             System.setProperty("catalina.base",
                                System.getProperty("catalina.home"));
+        } else {
+            String catalinaBase = System.getProperty("catalina.base");
+            File base = new File(catalinaBase);
+            if (!base.isAbsolute()) {
+                try {
+                    catalinaBase = base.getCanonicalPath();
+                } catch (IOException e) {
+                    catalinaBase = base.getAbsolutePath();
+                }
+            }
+            System.setProperty("catalina.base", catalinaBase);
         }
 
     }
