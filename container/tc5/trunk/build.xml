@@ -1275,11 +1275,6 @@
     </antcall>
 
     <antcall target="downloadgz">
-      <param name="sourcefile" value="${logkit.loc}"/>
-      <param name="destfile" value="${logkit.jar}"/>
-    </antcall>
-
-    <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-digester.loc}"/>
       <param name="destfile" value="${commons-digester.jar}"/>
     </antcall>
