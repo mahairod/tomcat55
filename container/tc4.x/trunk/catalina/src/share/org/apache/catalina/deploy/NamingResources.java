@@ -96,6 +96,12 @@ public final class NamingResources {
 
 
     /**
+     * Associated container object.
+     */
+    private Object container = null;
+
+
+    /**
      * List of naming entries, keyed by name. The value is the entry type, as
      * declared by the user.
      */
@@ -152,7 +158,23 @@ public final class NamingResources {
     protected PropertyChangeSupport support = new PropertyChangeSupport(this);
 
 
-    // --------------------------------------------------------------Properties
+    // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Get the container with which the naming resources are associated.
+     */
+    public Object getContainer() {
+        return container;
+    }
+
+
+    /**
+     * Set the container with which the naming resources are associated.
+     */
+    public void setContainer(Object container) {
+        this.container = container;
+    }
 
 
     /**
