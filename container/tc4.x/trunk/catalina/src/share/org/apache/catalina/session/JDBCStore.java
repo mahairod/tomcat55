@@ -388,10 +388,10 @@ public class JDBCStore
      */
     public String[] keys() throws IOException {
         String keysSql =
-            "SELECT c.size, s."+sessionIdCol+
-            " FROM "+sessionTable+" s, "+
-            "(SELECT COUNT("+sessionIdCol+
-            ") AS size FROM "+sessionTable+") c";
+            "SELECT COUNT(s."+sessionIdCol+"), s."+sessionIdCol+
+            " FROM "+sessionTable+" s, "+sessionTable+" c"+
+            " GROUP BY c."+sessionIdCol;
+
         Connection _conn = getConnection();
         ResultSet rst = null;
         String keys[] = null;
@@ -535,25 +535,28 @@ public class JDBCStore
             release(_conn);
             _conn = null;
         }
-        
-        try {
-            _session = (StandardSession) manager.createSession();
-            _session.readObjectData(ois);
-            _session.setManager(manager);
-        } finally {
-            if (ois != null) {
-                try {
-                    ois.close();
-                    bis = null;
-                } catch (IOException e) {
-                    ;
+
+        if(ois != null) {
+            try {
+                _session = (StandardSession) manager.createSession();
+                _session.readObjectData(ois);
+                _session.setManager(manager);
+            } finally {
+                if (ois != null) {
+                    try {
+                        ois.close();
+                        bis = null;
+                    } catch (IOException e) {
+                        ;
+                    }
                 }
             }
+
+            if (debug > 0)
+                log(sm.getString(getStoreName()+".loading",
+                                 id, sessionTable));
         }
         
-        if (debug > 0)
-            log(sm.getString(getStoreName()+".loading",
-                             id, sessionTable));
         return(_session);
     }
 
