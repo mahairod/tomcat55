@@ -725,11 +725,12 @@ public class StatusTransformer {
         }
 
         if (mb) {
-            long mbytes = bytes / 1000000;
-            long rest = (bytes / 10000) - mbytes * 100;
-            return (mbytes + "." + rest + " MB");
+            long mbytes = bytes / (1024 * 1024);
+            long rest = 
+                ((bytes - (mbytes * (1024 * 1024))) * 100) / (1024 * 1024);
+            return (mbytes + "." + ((rest < 10) ? "0" : "") + rest + " MB");
         } else {
-            return ((bytes / 1000) + " KB");
+            return ((bytes / 1024) + " KB");
         }
 
     }
