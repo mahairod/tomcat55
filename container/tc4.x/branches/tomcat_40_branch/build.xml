@@ -316,10 +316,10 @@
         <exclude name="${final.name}/bin/digest.sh" />
         <exclude name="${final.name}/bin/jasper.sh" />
         <exclude name="${final.name}/bin/jspc.sh" />
-        <include name="${final.name}/bin/setclasspath.sh" />
+        <exclude name="${final.name}/bin/setclasspath.sh" />
         <exclude name="${final.name}/bin/startup.sh" />
         <exclude name="${final.name}/bin/shutdown.sh" />
-        <include name="${final.name}/bin/tool-wrapper.sh" />
+        <exclude name="${final.name}/bin/tool-wrapper.sh" />
       </tarfileset>
     </tar>
     <delete dir="${tomcat.dist}/${final.name}" />
