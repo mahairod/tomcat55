@@ -102,30 +102,9 @@ public final class ExtensionValidator {
             }
         }
 
-        // get the files in the extensions directory
-        String extensionsDir = System.getProperty("java.ext.dirs");
-        if (extensionsDir != null) {
-            StringTokenizer extensionsTok
-                = new StringTokenizer(extensionsDir, File.pathSeparator);
-            while (extensionsTok.hasMoreTokens()) {
-                File targetDir = new File(extensionsTok.nextToken());
-                if (!targetDir.exists() || !targetDir.isDirectory()) {
-                    continue;
-                }
-                File[] files = targetDir.listFiles();
-                for (int i = 0; i < files.length; i++) {
-                    if (files[i].getName().toLowerCase().endsWith(".jar")) {
-                        try {
-                            addSystemResource(files[i]);
-                        } catch (IOException e) {
-                            log.error
-                                (sm.getString
-                                 ("extensionValidator.failload", files[i]), e);
-                        }
-                    }
-                }
-            }
-        }
+        // add specified folders to the list
+        addFolderList("java.ext.dirs");
+        addFolderList("catalina.ext.dirs");
 
     }
 
@@ -220,6 +199,28 @@ public final class ExtensionValidator {
         }
 
         return validateManifestResources(appName, appManifestResources);
+    }
+
+
+    /**
+     * Checks to see if the given system JAR file contains a MANIFEST, and adds
+     * it to the container's manifest resources.
+     *
+     * @param jarFile The system JAR whose manifest to add
+     */
+    public static void addSystemResource(File jarFile) throws IOException {
+
+        Manifest manifest = getManifest(new FileInputStream(jarFile));
+        if (manifest != null)  {
+            ManifestResource mre
+                = new ManifestResource(jarFile.getAbsolutePath(),
+                                       manifest,
+                                       ManifestResource.SYSTEM);
+            if (containerManifestResources == null) {
+                containerManifestResources = new ArrayList();
+            }
+            containerManifestResources.add(mre);
+        }
     }
 
 
@@ -384,28 +385,39 @@ public final class ExtensionValidator {
 
         return manifest;
     }
-    
-    /*
-     * Checks to see if the given system JAR file contains a MANIFEST, and adds
-     * it to the container's manifest resources.
-     *
-     * @param jarFile The system JAR whose manifest to add
-     */
-    private static void addSystemResource(File jarFile) throws IOException {
 
-        Manifest manifest = getManifest(new FileInputStream(jarFile));
-        if (manifest != null)  {
-            ManifestResource mre
-                = new ManifestResource(jarFile.getAbsolutePath(),
-                                       manifest,
-                                       ManifestResource.SYSTEM);
-            if (containerManifestResources == null) {
-                containerManifestResources = new ArrayList();
+
+    /**
+     * Add the JARs specified to the extension list.
+     */
+    private static void addFolderList(String property) {
+
+        // get the files in the extensions directory
+        String extensionsDir = System.getProperty(property);
+        if (extensionsDir != null) {
+            StringTokenizer extensionsTok
+                = new StringTokenizer(extensionsDir, File.pathSeparator);
+            while (extensionsTok.hasMoreTokens()) {
+                File targetDir = new File(extensionsTok.nextToken());
+                if (!targetDir.exists() || !targetDir.isDirectory()) {
+                    continue;
+                }
+                File[] files = targetDir.listFiles();
+                for (int i = 0; i < files.length; i++) {
+                    if (files[i].getName().toLowerCase().endsWith(".jar")) {
+                        try {
+                            addSystemResource(files[i]);
+                        } catch (IOException e) {
+                            log.error
+                                (sm.getString
+                                 ("extensionValidator.failload", files[i]), e);
+                        }
+                    }
+                }
             }
-            containerManifestResources.add(mre);
         }
+
     }
 
+
 }
-
-
