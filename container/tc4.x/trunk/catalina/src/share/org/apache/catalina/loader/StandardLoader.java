@@ -828,20 +828,31 @@ public final class StandardLoader
             return;
         }
 
-        // Loading the work directory
-        File workDir = 
-            (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
+        String absoluteClassesPath = servletContext.getRealPath(classesName);
 
-        if (workDir != null) {
+        if (absoluteClassesPath != null) {
 
             if (!(classpath.equals("")))
                 classpath = File.pathSeparator + classpath;
-            File classesDir = new File(workDir, classesName);
-            classesDir.mkdirs();
-            classpath = classesDir.getAbsolutePath() + classpath;
+            classpath = absoluteClassesPath + classpath;
 
-            copyDir(resources, classesDir);
+        } else {
 
+            // Loading the work directory
+            File workDir = 
+                (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
+
+            if (workDir != null) {
+                
+                if (!(classpath.equals("")))
+                    classpath = File.pathSeparator + classpath;
+                File classesDir = new File(workDir, classesName);
+                classesDir.mkdirs();
+                classpath = classesDir.getAbsolutePath() + classpath;
+                
+                copyDir(resources, classesDir);
+                
+            }
         }
 
         servletContext.setAttribute(Globals.CLASS_PATH_ATTR, classpath);
@@ -959,11 +970,13 @@ public final class StandardLoader
         if (workDir != null) {
 
             DirContext resources = container.getResources();
+
             String libName = "/WEB-INF/lib";
-
+            
             File destDir = new File(workDir, libName);
-            destDir.mkdirs();
-
+            if (servletContext.getRealPath(libName) != null)
+                destDir.mkdirs();
+            
             DirContext libDir = null;
             // Looking up directory /WEB-INF/lib in the context
             try {
@@ -986,22 +999,31 @@ public final class StandardLoader
                         String filename = ncPair.getName();
                         if (!filename.endsWith(".jar"))
                             continue;
-                        try {
-                            URL fileURL = servletContext.getResource
-                                (libName + "/" + filename);
-                            log(" Adding '" + "file: " +
-                                libName + "/" + filename + "'");
-                            // Copying the file to the work dir
-                            File dest = new File(destDir, filename);
-                            if (copy(fileURL.openStream(), 
-                                     new FileOutputStream(dest))) {
-                                if (n > 0)
-                                    classpath.append(File.pathSeparator);
-                                n++;
-                                classpath.append(dest.getAbsolutePath());
+                        String realPath = servletContext.getRealPath
+                            (libName + "/" + filename);
+                        if (realPath != null) {
+                            if (n > 0)
+                                classpath.append(File.pathSeparator);
+                            n++;
+                            classpath.append(realPath);
+                        } else {
+                            try {
+                                URL fileURL = servletContext.getResource
+                                    (libName + "/" + filename);
+                                log(" Adding '" + "file: " +
+                                    libName + "/" + filename + "'");
+                                // Copying the file to the work dir
+                                File dest = new File(destDir, filename);
+                                if (copy(fileURL.openStream(), 
+                                         new FileOutputStream(dest))) {
+                                    if (n > 0)
+                                        classpath.append(File.pathSeparator);
+                                    n++;
+                                    classpath.append(dest.getAbsolutePath());
+                                }
+                            } catch (MalformedURLException e) {
+                            } catch (IOException e) {
                             }
-                        } catch (MalformedURLException e) {
-                        } catch (IOException e) {
                         }
                         
                     }
