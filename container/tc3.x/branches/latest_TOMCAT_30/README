@@ -1,0 +1,81 @@
+How to Build
+------------
+
+First, you must have the jakarta-tools workspace checked out parallel
+to this workspace (jakarta-tomcat). Without jakarta-tools, you wont'
+be able to build.  When you have completed your downloads and checkouts,
+you should have the following directory structure:
+
+	$JAKARTA_HOME/
+		jakarta-tomcat/	<-- Contains jakarta-tomcat files
+		jakarta-tools/	<-- Contains jakarta-tools files
+
+There are a 2 compilation scripts provided, a ksh based script for
+Unix and a .bat based DOS build script. Essentially these scripts are
+wrappers that put the ant.jar file on the classpath and calls:
+
+	java com.sun.ant.Main
+
+To build, execute the following command in the jakarta-tomcat directory:
+
+	build
+
+This will build Tomcat into ../build/tomcat.
+
+Windows Note: If you get an "Out of Environment Space" message, you
+need to up the initial environment of your command prompt window.
+
+To build a 'distribution' build (without the tests, and with all the
+classes jarred up nice) execute:
+
+	build dist
+
+This will build a distribution build of Tomcat into ../dist/tomcat
+
+To clean out the build (removes the build dir):
+
+	build clean
+
+
+Running the Build
+-----------------
+
+If you are running under JDK 1.2, you will need to ensure that the
+"tools.jar" file from your JDK distribution is present on your classpath.
+The Java compiler is required by the JSP engine, which uses it when
+converting JSP source files into Java class files.
+
+Two scripts are provided for starting and stopping the server. To
+start the server:
+
+	cd ../build
+	cd tomcat
+	startup
+
+To stop the server:
+
+	shutdown
+
+
+Testing the Build
+-----------------
+
+We have started a set of 'quick tests' that test out various parts of
+Tomcat. In order to build and run tests, do the following:
+
+	build test
+	cd test
+	runtests
+
+
+BEFORE COMMITTING CHANGES
+-------------------------
+
+You must, MUST do a `build clean;build` to make sure a clean
+workspace builds. Also, you must, MUST run the tests. All tests must
+pass before checking in code. Yes, we just started adding tests, but
+as time goes on, this will be our sanity check.
+
+This is not a MUST for changes to Java code but if you modify .bat or
+sh scripts you MUST make sure that it atleast builds on Solaris, and
+Windows NT.
