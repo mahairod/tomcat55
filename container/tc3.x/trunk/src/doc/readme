@@ -191,6 +191,14 @@ most important are:
 
   See conf/server.xml for more information.
 
+- The jakarta-tomcat-jasper project has been created to support refactoring
+  and other improvements for Jasper, called as Jasper34. As a separate
+  project, this development can occur independent of Tomcat 3.x and 4.x.
+  Some preliminary work has been completed and the result is included in the
+  Tomcat 3.3 build and binary distributions.  If you wish to give Jasper34
+  a try, change "<JspInterceptor ...>" to "<JspInterceptor34 ...>" in your
+  server.xml file.
+
 - (more to be added)
 
 =============================================================================
