@@ -1190,7 +1190,7 @@ public class DefaultServlet
 
         // Parsing the range list
         while (commaTokenizer.hasMoreTokens()) {
-            String rangeDefinition = commaTokenizer.nextToken();
+            String rangeDefinition = commaTokenizer.nextToken().trim();
 
             Range currentRange = new Range();
             currentRange.length = fileLength;
@@ -2017,6 +2017,7 @@ public class DefaultServlet
             Range currentRange = (Range) ranges.nextElement();
 
             // Writing MIME header.
+            ostream.println();
             ostream.println("--" + mimeSeparation);
             if (contentType != null)
                 ostream.println("Content-Type: " + contentType);
@@ -2037,6 +2038,7 @@ public class DefaultServlet
 
         }
 
+        ostream.println();
         ostream.print("--" + mimeSeparation + "--");
 
         // Rethrow any exception that has occurred
@@ -2071,6 +2073,7 @@ public class DefaultServlet
             Range currentRange = (Range) ranges.nextElement();
 
             // Writing MIME header.
+            writer.println();
             writer.println("--" + mimeSeparation);
             if (contentType != null)
                 writer.println("Content-Type: " + contentType);
@@ -2091,6 +2094,7 @@ public class DefaultServlet
 
         }
 
+        writer.println();
         writer.print("--" + mimeSeparation + "--");
 
         // Rethrow any exception that has occurred
