@@ -87,6 +87,7 @@ import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
+import org.apache.commons.el.VariableResolverImpl;
 
 /**
  * Implementation of a JSP Context Wrapper.
@@ -119,6 +120,12 @@ public class JspContextWrapper
     private Map aliases;
 
     private Hashtable originalNestedVars;
+
+    /**
+     * The variable resolver, for evaluating EL expressions.
+     */
+    private VariableResolverImpl variableResolver
+        = new VariableResolverImpl(this);
 
     public JspContextWrapper(JspContext jspContext, ArrayList nestedVars,
 			     ArrayList atBeginVars, ArrayList atEndVars,
@@ -272,7 +279,7 @@ public class JspContextWrapper
     }
 
     public VariableResolver getVariableResolver() {
-	return null; // XXX
+	return this;
     }
 
     public BodyContent pushBody() {
@@ -308,14 +315,9 @@ public class JspContextWrapper
     /**
      * VariableResolver interface
      */
-    public Object resolveVariable( String pName )
-        throws ELException
+    public Object resolveVariable( String pName ) throws ELException
     {
-	if (invokingJspCtxt instanceof PageContextImpl) {
-	    return ((PageContextImpl) invokingJspCtxt).resolveVariable(pName);
-	}
-
-	return ((JspContextWrapper) invokingJspCtxt).resolveVariable(pName);
+        return variableResolver.resolveVariable(pName);
     }
 
     /**
