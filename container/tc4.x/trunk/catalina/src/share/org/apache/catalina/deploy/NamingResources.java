@@ -365,7 +365,7 @@ public final class NamingResources {
 
         synchronized (resourceLinks) {
             ContextResourceLink results[] = 
-                new ContextResourceLink[resources.size()];
+                new ContextResourceLink[resourceLinks.size()];
             return ((ContextResourceLink[]) resourceLinks.values()
                     .toArray(results));
         }
