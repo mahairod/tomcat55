@@ -1,5 +1,4 @@
-/*
- * $Header$
+/* * $Header$
  * $Revision$
  * $Date$
  *
@@ -738,13 +737,16 @@ final class HttpProcessor
         }
 
         // Checking for an absolute URI (with the HTTP protocol)
-        if (uri.startsWith("http://")) {
+        if (!uri.startsWith("/")) {
+            int pos = uri.indexOf("://");
             // Parsing out protocol and host name
-            int pos = uri.indexOf('/', "http://".length());
-            if (pos == -1) {
-                uri = "";
-            } else {
-                uri = uri.substring(pos);
+            if (pos != -1) {
+                pos = uri.indexOf('/', pos + 3);
+                if (pos == -1) {
+                    uri = "";
+                } else {
+                    uri = uri.substring(pos);
+                }
             }
         }
 
