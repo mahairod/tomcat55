@@ -87,6 +87,7 @@ import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.logger.FileLogger;
 import org.apache.catalina.logger.SystemOutLogger;
+import org.apache.catalina.net.SSLServerSocketFactory;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
@@ -456,11 +457,9 @@ public class Embedded implements Lifecycle {
      *  to listen on all address on this server
      * @param port Port number to listen to
      * @param secure Should this port be SSL-enabled?
-     * @param props Connection properties to be passed to the underlying
-     *  socket factory, or <code>null</code> if no properties are required
      */
     public Connector createConnector(InetAddress address, int port,
-				     boolean secure, Properties props) {
+				     boolean secure) {
 
 	if (debug >= 1)
 	    logger.log("Creating connector for address='" +
@@ -476,15 +475,7 @@ public class Embedded implements Lifecycle {
 	if (secure) {
 	    connector.setScheme("https");
 	    connector.setSecure(true);
-	    connector.setSocketFactory(socketFactory);
-	}
-	if (props != null) {
-	    Enumeration names = props.keys();
-	    while (names.hasMoreElements()) {
-		String name = (String) names.nextElement();
-		String value = props.getProperty(name);
-		connector.setParameter(name, value);
-	    }
+            connector.setFactory(new SSLServerSocketFactory());
 	}
 
 	return (connector);
@@ -974,7 +965,7 @@ public class Embedded implements Lifecycle {
 
 	// Assemble and install a non-secure connector for port 8080
 	Connector connector =
-	    embedded.createConnector(null, 8080, false, null);
+	    embedded.createConnector(null, 8080, false);
 	embedded.addConnector(connector);
 
 	// Pause for a while to allow brief testing
