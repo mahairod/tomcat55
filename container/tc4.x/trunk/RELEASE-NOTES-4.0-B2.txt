@@ -328,6 +328,9 @@ JspParseEventListener:  Handle the empty element case.  Among other things,
 this allows Jasper to run correctly when using Xerces 1.3.0 instead of the
 JAXP 1.1 reference implementation, if this is desired.
 
+ParseXJspSaxHandler:  Correctly deal with <jsp:params> elements inside a
+<jsp:plugin> element when parsing a JSP page in XML syntax.
+
 
 ============================
 KNOWN ISSUES IN THIS RELEASE:
