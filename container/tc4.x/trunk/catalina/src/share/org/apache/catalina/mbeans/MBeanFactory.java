@@ -1049,14 +1049,17 @@ public class MBeanFactory extends BaseModelMBean {
      * Create a new  UserDatabaseRealm.
      *
      * @param parent MBean Name of the associated parent component
+     * @param resourceName Global JNDI resource name of the associated
+     *  UserDatabase
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createUserDatabaseRealm(String parent)
+    public String createUserDatabaseRealm(String parent, String resourceName)
         throws Exception {
 
          // Create a new UserDatabaseRealm instance
         UserDatabaseRealm realm = new UserDatabaseRealm();
+        realm.setResourceName(resourceName);
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");

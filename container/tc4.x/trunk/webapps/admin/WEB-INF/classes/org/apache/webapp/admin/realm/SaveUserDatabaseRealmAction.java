@@ -105,10 +105,11 @@ public final class SaveUserDatabaseRealmAction extends Action {
     // ----------------------------------------------------- Instance Variables
 
     /**
-     * Signature for the <code>createStandardRealm</code> operation.
+     * Signature for the <code>createUserDatabaseRealm</code> operation.
      */
-    private String createStandardRealmTypes[] =
+    private String createUserDatabaseRealmTypes[] =
     { "java.lang.String",     // parent
+      "java.lang.String",     // name
     };
 
 
@@ -216,12 +217,13 @@ public final class SaveUserDatabaseRealmAction extends Action {
                     new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
 
                 // Create a new StandardRealm object
-                values = new String[1];
+                values = new String[2];
                 values[0] = parent;
+                values[1] = rform.getResource();
                 operation = "createUserDatabaseRealm";
                 rObjectName = (String)
                     mBServer.invoke(fname, operation,
-                                    values, createStandardRealmTypes);
+                                    values, createUserDatabaseRealmTypes);
 
                 // Add the new Realm to our tree control node
                 TreeControl control = (TreeControl)

@@ -1109,6 +1109,9 @@
       <parameter name="parent"
           description="MBean Name of the associated parent component"
                  type="java.lang.String"/>
+      <parameter name="resourceName"
+          description="Global JNDI resource name of our UserDatabase instance"
+                 type="java.lang.String"/>
     </operation>
 
     <operation   name="createWebappLoader"

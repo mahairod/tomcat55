@@ -81,8 +81,10 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Role;
 import org.apache.catalina.Server;
+import org.apache.catalina.ServerFactory;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
+import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
@@ -131,7 +133,7 @@ public class UserDatabaseRealm
      * The global JNDI name of the <code>UserDatabase</code> resource
      * we will be utilizing.
      */
-    protected String resourceName = "java:UserDatabase";
+    protected String resourceName = "UserDatabase";
 
 
     /**
@@ -297,8 +299,9 @@ public class UserDatabaseRealm
     public synchronized void start() throws LifecycleException {
 
         try {
-            database =
-                (UserDatabase) (new InitialContext()).lookup(resourceName);
+            StandardServer server = (StandardServer) ServerFactory.getServer();
+            Context context = server.getGlobalNamingContext();
+            database = (UserDatabase) context.lookup(resourceName);
         } catch (Throwable e) {
             e.printStackTrace();
             log(sm.getString("userDatabaseRealm.lookup", resourceName), e);
