@@ -142,6 +142,9 @@ public class MsgBuffer {
     public void appendBytes( byte b[], int off, int len ) {
 	BuffTool.addInt( buff, pos, len );
 	pos+=2;
+	if( pos + len > buff.length ) {
+	    System.out.println("Buffer overflow " + buff.length + " " + pos + " " + len );
+	}
 	System.arraycopy( b, off, buff, pos, len);
 	buff[pos+len]=0;
 	pos+=len;

@@ -146,7 +146,7 @@ public class Ajp23ConnectionHandler implements  TcpConnectionHandler {
 }
 
 class TcpConnector implements MsgConnector {
-    public static final int MAX_PACKET_SIZE=4096;
+    public static final int MAX_PACKET_SIZE=8192;
     public static final int H_SIZE=4;
     OutputStream out;
     InputStream in;
