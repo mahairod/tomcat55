@@ -11,7 +11,7 @@
 %>
 <%
 try{
-        pageContext.forward("/tests/engine/PageContext/forward.jsp");
+        pageContext.forward("forward.jsp");
     }catch(Exception e){
         out.println(e);
     }

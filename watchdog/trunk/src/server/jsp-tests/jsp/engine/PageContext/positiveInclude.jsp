@@ -10,10 +10,9 @@
 <!-- using pageContext object to include -->
 <%
 try{
-    pageContext.include("/tests/engine/PageContext/forward.jsp");
+    pageContext.include("forward.jsp");
     }catch(Exception e){
     out.println(e);
-    
 }
 %>
 

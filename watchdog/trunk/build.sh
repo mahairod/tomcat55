@@ -7,7 +7,7 @@ baseDir=`pwd`
 
 echo $baseDir .....
 
-ADDL_CLASSPATH=./../jakarta-tools/ant.jar:./../jakarta-tools/moo.jar:./../jakarta-tools/projectx-tr2.jar:./../jakarta-tools/servlet-2.2.0.jar
+ADDL_CLASSPATH=./../jakarta-tools/ant.jar:./../jakarta-tools/moo.jar:./../jakarta-tools/projectx-tr2.jar:../build/tomcat/lib/servlet.jar:../build/tomcat/lib/jasper.jar:../build/tomcat/lib/xml.jar
 
 if [[ -n $CLASSPATH ]]; then
   export CLASSPATH=$ADDL_CLASSPATH:$CLASSPATH

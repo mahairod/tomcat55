@@ -96,7 +96,7 @@ extends PositiveJspCheckTest {
             
             try{
             
-                    System.out.println("Connecting...setPropNoParam");
+            
                     setGoldenFileName(getGoldenFile());
                     HttpURLConnection conn=getConnection(null,query,null,null);
                     tr=getTestResult(conn);

@@ -87,7 +87,7 @@ extends PositiveJspCheckTest {
 
 	try {
 		
-            System.out.println("connecting....setPropParam"); 		
+            
 	    setGoldenFileName (getGoldenFile());
 	    query.put(key,value);
 	    HttpURLConnection connection = getConnection(null,query,null,"GET");

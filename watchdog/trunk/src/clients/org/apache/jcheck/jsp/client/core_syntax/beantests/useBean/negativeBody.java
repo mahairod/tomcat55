@@ -63,7 +63,8 @@ import org.apache.tools.moo.jsp.*;
 import org.apache.tools.moo.TestResult;
 import java.net.HttpURLConnection;
 
-public class negativeBody extends NegativeJspCheckTest {
+public class negativeBody
+extends NegativeJspCheckTest {
 
     StringManager sm = StringManager.getManager(UtilConstants.Package);
 
@@ -71,21 +72,16 @@ public class negativeBody extends NegativeJspCheckTest {
 	return sm.getString("negativeBody.description");
     }
 
-    public TestResult runTest () {
+    public TestResult
+    runTest () {
         TestResult testResult = null;
-	HttpURLConnection connection = null;
-
-        setErrorCode (500);
 
 	try {
-	    connection = getConnection();
-	    int code = connection.getResponseCode();
-	} catch (Exception e) {
-	  try {
+	    setErrorCode (500);
+	    HttpURLConnection connection = getConnection();
 	    testResult = getTestResult(connection);
-	  } catch (Exception m) {
-		testResult = getTestResult(testResult,m);
-	  }
+	} catch (Exception e) {
+            testResult = getTestResult(testResult, e);
 	}
 	return testResult;
     }

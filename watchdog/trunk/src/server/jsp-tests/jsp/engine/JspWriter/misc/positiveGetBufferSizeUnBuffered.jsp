@@ -12,6 +12,6 @@
 <!-- setting buffer size to 'none' using directive -->
 <%@ page buffer="none" %>
 <% out.println("got="+out.getBufferSize()); %>
-<!-- expected to return 1 as buffer is set 'none' --> 
+<!-- expected to return 0 as buffer is set 'none' --> 
 </body>
 </html>
