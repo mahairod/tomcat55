@@ -359,11 +359,14 @@ public class DefaultServlet extends HttpServlet {
 	// So, a check for File.separatorChar='\\' ..... It hopefully
 	// happens on flavors of Windows.
 	if (File.separatorChar  == '\\') { 
-		// On Windows check ignore case....
-		if(!absPath.equalsIgnoreCase(canPath)) {
+	    // On Windows check ignore case....
+	    // This may introduce security problems
+	    //		if(!absPath.equalsIgnoreCase(canPath)) {
+	    // more restrictive check:
+	    if(!absPath.equals(canPath)) {
 	    	response.sendError(response.SC_NOT_FOUND);
 	    	return;
-		}
+	    }
 	} else {
 		// The following code on Non Windows disallows ../ 
 		// in the path but also disallows symlinks.... 
