@@ -790,7 +790,7 @@ public abstract class ManagerBase implements Manager {
      *
      * @param message Message to be logged
      */
-    void log(String message) {
+    protected void log(String message) {
 
         Logger logger = null;
         if (container != null)
@@ -815,7 +815,7 @@ public abstract class ManagerBase implements Manager {
      * @param message Message to be logged
      * @param throwable Associated exception
      */
-    void log(String message, Throwable throwable) {
+    protected void log(String message, Throwable throwable) {
 
         Logger logger = null;
         if (container != null)
@@ -840,7 +840,7 @@ public abstract class ManagerBase implements Manager {
      *
      * @param session Session to be recycled
      */
-    void recycle(Session session) {
+    protected void recycle(Session session) {
 
         synchronized (recycled) {
             recycled.add(session);

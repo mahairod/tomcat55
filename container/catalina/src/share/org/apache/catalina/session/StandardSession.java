@@ -118,7 +118,7 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision$ $Date$
  */
 
-class StandardSession
+public class StandardSession
     implements HttpSession, Session, Serializable {
 
 
@@ -845,7 +845,7 @@ class StandardSession
      * @exception ClassNotFoundException if an unknown class is specified
      * @exception IOException if an input/output error occurs
      */
-    void readObjectData(ObjectInputStream stream)
+    public void readObjectData(ObjectInputStream stream)
         throws ClassNotFoundException, IOException {
 
         readObject(stream);
@@ -862,7 +862,7 @@ class StandardSession
      *
      * @exception IOException if an input/output error occurs
      */
-    void writeObjectData(ObjectOutputStream stream)
+    public void writeObjectData(ObjectOutputStream stream)
         throws IOException {
 
         writeObject(stream);
@@ -1550,7 +1550,7 @@ class StandardSession
      *
      * @param message Message to be logged
      */
-    private void log(String message) {
+    protected void log(String message) {
 
         if ((manager != null) && (manager instanceof ManagerBase)) {
             ((ManagerBase) manager).log(message);
@@ -1567,7 +1567,7 @@ class StandardSession
      * @param message Message to be logged
      * @param throwable Associated exception
      */
-    private void log(String message, Throwable throwable) {
+    protected void log(String message, Throwable throwable) {
 
         if ((manager != null) && (manager instanceof ManagerBase)) {
             ((ManagerBase) manager).log(message, throwable);
