@@ -934,6 +934,7 @@
         <exclude name="org/apache/catalina/launcher/**" />
         <exclude name="org/apache/catalina/servlets/**" />
         <exclude name="org/apache/catalina/startup/Bootstrap.class" />
+        <exclude name="org/apache/catalina/storeconfig/**" />
         <exclude name="org/apache/catalina/ssi/**" />
         <exclude name="org/apache/naming/**" />
 
