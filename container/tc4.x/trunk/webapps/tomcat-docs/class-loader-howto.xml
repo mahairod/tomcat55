@@ -167,8 +167,8 @@ loaders as it is initialized:</p>
     in which case you should put them in the <strong>Common</strong>
     class loader instead).  All unpacked classes and resources in
     <code>$CATALINA_HOME/shared/classes</code>, as well as classes and
-    resources in JAR files under <code>$CATALINA_HOME/lib</code>, are
-    made visible through this class loader.  By default, that includes
+    resources in JAR files under <code>$CATALINA_HOME/shared/lib</code>,
+    are made visible through this class loader.  By default, that includes
     the following:
     <ul>
     <li><em>jasper-compiler.jar</em> - The page compiler classes required
