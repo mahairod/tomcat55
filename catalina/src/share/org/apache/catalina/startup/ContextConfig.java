@@ -493,8 +493,7 @@ public final class ContextConfig
         SchemaResolver webEntityResolver = new SchemaResolver(url.toString(),
                                                               webDigester);
 
-        // FIXME: if (validation) {
-        if (false) {
+        if (validation) {
             webDigester.setSchema(url.toString());
         }
 

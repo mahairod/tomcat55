@@ -388,8 +388,7 @@ public final class TldConfig  {
         SchemaResolver tldEntityResolver = new SchemaResolver(url.toString(), 
                                                               tldDigester);
 
-        // FIXME: if (xmlValidation) {
-        if (false) {
+        if (xmlValidation) {
             tldDigester.setSchema(url.toString());
         }
         
