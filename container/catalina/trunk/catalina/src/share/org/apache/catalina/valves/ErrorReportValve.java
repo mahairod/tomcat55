@@ -99,7 +99,7 @@ import org.apache.catalina.util.StringManager;
  *
  * <p>This Valve should be attached at the Host level, although it will work
  * if attached to a Context.</p>
- * 
+ *
  * <p>HTML code from the Cocoon 2 project.</p>
  *
  * @author Remy Maucherat
@@ -153,7 +153,7 @@ public class ErrorReportValve
 
 
     /**
-     * Invoke the next Valve in the sequence. When the invoke returns, check 
+     * Invoke the next Valve in the sequence. When the invoke returns, check
      * the response state, and output an error report is necessary.
      *
      * @param request The servlet request to be processed
@@ -172,7 +172,7 @@ public class ErrorReportValve
         context.invokeNext(request, response);
 
         ServletRequest sreq = (ServletRequest) request;
-        Throwable throwable = 
+        Throwable throwable =
             (Throwable) sreq.getAttribute(Globals.EXCEPTION_ATTR);
 
         ServletResponse sresp = (ServletResponse) response;
@@ -228,7 +228,7 @@ public class ErrorReportValve
 
     /**
      * Prints out an error report.
-     * 
+     *
      * @param request The request being processed
      * @param response The response being generated
      * @param exception The exception that occurred (which possibly wraps
@@ -326,7 +326,7 @@ public class ErrorReportValve
             sb.append("</b> <pre>");
             sb.append(stackTrace.toString());
             sb.append("</pre></p>");
-            if (rootCause != null) {
+            while (rootCause != null) {
                 stackTrace = new StringWriter();
                 rootCause.printStackTrace(new PrintWriter(stackTrace));
                 sb.append("<p><b>");
@@ -334,6 +334,12 @@ public class ErrorReportValve
                 sb.append("</b> <pre>");
                 sb.append(stackTrace.toString());
                 sb.append("</pre></p>");
+
+                /* In case root cause is somehow heavily nested */
+                if (rootCause instanceof ServletException)
+                    rootCause = ((ServletException) rootCause).getRootCause();
+                else
+                    rootCause = null;
             }
         }
 
@@ -346,7 +352,7 @@ public class ErrorReportValve
             Writer writer = response.getReporter();
 
             if (writer != null) {
-            
+
                 Locale locale = Locale.getDefault();
 
                 try {
