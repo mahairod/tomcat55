@@ -70,6 +70,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.Binding;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import org.apache.catalina.Group;
@@ -160,17 +161,13 @@ public class GlobalResourcesLifecycleListener
     protected void createMBeans() {
 
         // Look up our global naming context
-        // FIXME - getGlobalNamingContext should be on Server
-        if (!(component instanceof StandardServer)) {
-            throw new IllegalArgumentException
-                ("Cannot create global resource MBeans for server " +
-                 component);
-        }
-        StandardServer server = (StandardServer) component;
-        Context context = server.getGlobalNamingContext();
-        if (context == null) {
+        Context context = null;
+        try {
+            context = (Context) (new InitialContext()).lookup("java:/");
+        } catch (NamingException e) {
+            e.printStackTrace();
             throw new IllegalStateException
-                ("No global naming context defined for server " + server);
+                ("No global naming context defined for server");
         }
 
         // Recurse through the defined global JNDI resources context
