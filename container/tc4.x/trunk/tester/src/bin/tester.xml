@@ -939,6 +939,14 @@
          request="${context.path}/WrappedInclude03?path=/Include03b.jsp"
       outContent="Include03 PASSED" debug="${debug}"/>
 
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include03c.jsp?path=/Include03a"
+      outContent="Include03c.jsp PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include03c.jsp?path=/Include03b.jsp"
+      outContent="Include03c.jsp PASSED" debug="${debug}"/>
+
     <echo message="----- Include Then Forward -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
