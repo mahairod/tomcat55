@@ -20,10 +20,13 @@ package org.apache.catalina.core;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
 import javax.naming.Reference;
@@ -33,10 +36,13 @@ import org.apache.catalina.Container;
 import org.apache.catalina.ContainerEvent;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
+import org.apache.catalina.Service;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextLocalEjb;
@@ -48,6 +54,7 @@ import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.modeler.Registry;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.EjbRef;
@@ -119,6 +126,12 @@ public class NamingContextListener
      */
     protected javax.naming.Context envCtx = null;
 
+    
+    /**
+     * Objectnames hashtable.
+     */
+    protected HashMap objectNames = new HashMap();
+    
 
     /**
      * The string manager for this package.
@@ -631,6 +644,53 @@ public class NamingContextListener
 
 
     /**
+     * Create an <code>ObjectName</code> for this
+     * <code>ContextResource</code> object.
+     *
+     * @param domain Domain in which this name is to be created
+     * @param resource The ContextResource to be named
+     *
+     * @exception MalformedObjectNameException if a name cannot be created
+     */
+    protected ObjectName createObjectName(ContextResource resource)
+        throws MalformedObjectNameException {
+
+        String domain = null;
+        if (container instanceof StandardServer) {
+            domain = ((StandardServer) container).getDomain();
+        } else if (container instanceof ContainerBase) {
+            domain = ((ContainerBase) container).getDomain();
+        }
+        if (domain == null) {
+            domain = "Catalina";
+        }
+        
+        ObjectName name = null;
+        String quotedResourceName = ObjectName.quote(resource.getName());
+        if (container instanceof Server) {        
+            name = new ObjectName(domain + ":type=DataSource" +
+                        ",class=" + resource.getType() + 
+                        ",name=" + quotedResourceName);
+        } else if (container instanceof Context) {                    
+            String path = ((Context)container).getPath();
+            if (path.length() < 1)
+                path = "/";
+            Host host = (Host) ((Context)container).getParent();
+            Engine engine = (Engine) host.getParent();
+            Service service = engine.getService();
+            name = new ObjectName(domain + ":type=DataSource" +
+                        ",path=" + path + 
+                        ",host=" + host.getName() +
+                        ",class=" + resource.getType() +
+                        ",name=" + quotedResourceName);
+        }
+        
+        return (name);
+
+    }
+
+    
+    /**
      * Set the specified EJBs in the naming context.
      */
     public void addEjb(ContextEjb ejb) {
@@ -778,6 +838,17 @@ public class NamingContextListener
             logger.error(sm.getString("naming.bindFailed", e));
         }
 
+        if ("javax.sql.DataSource".equals(ref.getClassName())) {
+            try {
+                ObjectName on = createObjectName(resource);
+                Object actualResource = envCtx.lookup(resource.getName());
+                Registry.getRegistry(null, null).registerComponent(actualResource, on, null);
+                objectNames.put(resource.getName(), on);
+            } catch (Exception e) {
+                logger.warn(sm.getString("naming.jmxRegistrationFailed", e));
+            }
+        }
+        
     }
 
 
@@ -882,6 +953,11 @@ public class NamingContextListener
             envCtx.unbind(name);
         } catch (NamingException e) {
             logger.error(sm.getString("naming.unbindFailed", e));
+        }
+
+        ObjectName on = (ObjectName) objectNames.get(name);
+        if (on != null) {
+            Registry.getRegistry(null, null).unregisterComponent(on);
         }
 
     }
