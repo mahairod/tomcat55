@@ -375,14 +375,40 @@
          request="${context.path}/WrappedInclude02?exception=NullPointerException"
       outContent="Include02 PASSED" debug="${debug}"/>
 
-    <!-- ========== Included Servlet Sets Attribute ======================= -->
+    <!-- ========== Forwarded Servlet/Page Sets Attribute ================ -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/Include03"
+         request="${context.path}/Forward03?path=/Forward03a"
+      outContent="Forward03 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward03?path=/Forward03a"
+      outContent="Forward03 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward03?path=/Forward03b.jsp"
+      outContent="Forward03 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward03?path=/Forward03b.jsp"
+      outContent="Forward03 PASSED" debug="${debug}"/>
+
+    <!-- ========== Included Servlet/Page Sets Attribute ================= -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include03?path=/Include03a"
       outContent="Include03 PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedInclude03"
+         request="${context.path}/WrappedInclude03?path=/Include03a"
+      outContent="Include03 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include03?path=/Include03b.jsp"
+      outContent="Include03 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude03?path=/Include03b.jsp"
       outContent="Include03 PASSED" debug="${debug}"/>
 
   </target>

@@ -109,6 +109,11 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedForward03</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedGetHeaders01</url-pattern>
     </filter-mapping>
 
@@ -340,6 +345,16 @@
     <servlet>
         <servlet-name>Forward01</servlet-name>
         <servlet-class>org.apache.tester.Forward01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward03</servlet-name>
+        <servlet-class>org.apache.tester.Forward03</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Forward03a</servlet-name>
+        <servlet-class>org.apache.tester.Forward03a</servlet-class>
     </servlet>
 
     <servlet>
@@ -627,6 +642,21 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>Forward03</servlet-name>
+        <url-pattern>/Forward03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward03</servlet-name>
+        <url-pattern>/WrappedForward03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward03a</servlet-name>
+        <url-pattern>/Forward03a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>GetHeaders01</servlet-name>
         <url-pattern>/GetHeaders01</url-pattern>
     </servlet-mapping>
@@ -734,11 +764,6 @@
     <servlet-mapping>
         <servlet-name>Include03a</servlet-name>
         <url-pattern>/Include03a</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>Include03a</servlet-name>
-        <url-pattern>/WrappedInclude03a</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

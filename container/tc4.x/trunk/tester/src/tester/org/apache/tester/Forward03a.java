@@ -63,20 +63,18 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
- * Test to insure that an included servlet can set request attributes that are
- * visible to the calling servlet after the <code>include()</code> returns.
- * The spec is silent on this topic, but it seems consistent with the overall
- * intent to behave in this manner.
+ * Test to ensure that a forwarded-to servlet can receive request attributes
+ * set by the calling servlet, as well as set their own request attributes.
  *
- * The test includes either a servlet ("/Include03a") or a JSP page
- * ("/Include03b.jsp") depending on the value specified for the "path"
+ * The test forwards to either a servlet ("/Forward03a") or a JSP page
+ * ("/Forward03b.jsp") depending on the value specified for the "path"
  * parameter.  The default is the servlet.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class Include03 extends HttpServlet {
+public class Forward03a extends HttpServlet {
 
     private static final String specials[] =
     { "javax.servlet.include.request_uri",
@@ -94,34 +92,16 @@ public class Include03 extends HttpServlet {
         response.setContentType("text/plain");
 	PrintWriter writer = response.getWriter();
 
-        // Acquire the path to which we will issue an include
-        String path = request.getParameter("path");
-        if (path == null)
-            path = "/Include03a";
+        // Verify that we can retrieve the forwarded attribute
+        if (request.getAttribute("Forward03") == null)
+            sb.append(" Cannot retrieve forwarded attribute/");
 
-        // Create a request dispatcher and call include() on it
-        RequestDispatcher rd =
-            getServletContext().getRequestDispatcher(path);
-        if (rd == null) {
-            sb.append(" No RequestDispatcher returned/");
-        } else {
-            rd.include(request, response);
-        }
-        response.resetBuffer();
+        // Verify that we can set and retrieve our own attribute
+        request.setAttribute("Forward03a", "This is our own attribute");
+        if (request.getAttribute("Forward03a") == null)
+            sb.append(" Cannot retrieve our own attribute");
 
-        // We MUST be able to see the attribute created by the includee
-        String value = null;
-        try {
-            value = (String)
-                request.getAttribute(path.substring(1));
-        } catch (ClassCastException e) {
-            sb.append(" Returned attribute not of type String/");
-        }
-        if ((sb.length() < 1) && (value == null)) {
-            sb.append(" No includee-created attribute was returned/");
-        }
-
-        // We MUST NOT see the special attributes created by the container
+        // Verify that no special attributes are present
         for (int i = 0; i < specials.length; i++) {
             if (request.getAttribute(specials[i]) != null) {
                 sb.append(" Returned attribute ");
@@ -132,9 +112,9 @@ public class Include03 extends HttpServlet {
 
         // Write our response
         if (sb.length() < 1)
-            writer.println("Include03 PASSED");
+            writer.println("Forward03 PASSED");
         else {
-            writer.print("Include03 FAILED -");
+            writer.print("Forward03 FAILED -");
             writer.println(sb.toString());
         }
 
