@@ -547,6 +547,12 @@
          request="${context.path}/Property02.jsp" debug="${debug}"
           status="500"/>
 
+    <!-- ========== JSP Document Parsing ================================== -->
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/JspDoc01.jsp" debug="${debug}"
+          golden="${golden.path}/JspDoc01.txt"/>
+
   </target>
 
 
