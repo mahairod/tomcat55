@@ -120,7 +120,7 @@ public final class Globals {
     /**
      * The descriptive information about this server and version.
      */
-    public static final String SERVER_INFO = "Apache Tomcat 4.0-dev";
+    public static final String SERVER_INFO = "Apache Tomcat (v4.0-m1)";
 
 
 
