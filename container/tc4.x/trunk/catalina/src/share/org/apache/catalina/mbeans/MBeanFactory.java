@@ -885,6 +885,32 @@ public class MBeanFactory extends BaseModelMBean {
 
 
     /**
+     * Remove an existing Context.
+     *
+     * @param name MBean Name of the comonent to remove
+     *
+     * @exception Exception if a component cannot be removed
+     */
+    public void removeContext(String name) throws Exception {
+
+        // Acquire a reference to the component to be removed
+        ObjectName oname = new ObjectName(name);
+        String serviceName = oname.getKeyProperty("service");
+        String hostName = oname.getKeyProperty("host");
+        String contextName = oname.getKeyProperty("context");
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(serviceName);
+        Engine engine = (Engine) service.getContainer();
+        Host host = (Host) engine.findChild(hostName);
+        Context context = (Context) host.findChild(contextName);
+
+        // Remove this component from its parent component
+        host.removeChild(context);
+
+    }
+
+
+    /**
      * Remove an existing Host.
      *
      * @param name MBean Name of the comonent to remove

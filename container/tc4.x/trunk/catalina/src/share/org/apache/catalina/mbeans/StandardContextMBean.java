@@ -120,28 +120,6 @@ public class StandardContextMBean extends BaseModelMBean {
 
 
     /**
-     * Add a new Valve to those assoicated with this Context
-     *
-     * @param valve MBean Name of the Valve to be added
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void addValve(String valve)
-        throws Exception {
-
-        StandardContext context = (StandardContext) this.resource;
-        ObjectName oname = new ObjectName(valve);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Valve valveObj = null;
-        if (obj instanceof Valve) {
-            valveObj = (Valve) obj;
-        }
-        context.addValve(valveObj);
-
-    }
-
-
-    /**
      * Remove the specified Valve from those associated this Context
      *
      * @param valve MBean Name of the Valve to be removed
@@ -161,94 +139,5 @@ public class StandardContextMBean extends BaseModelMBean {
         context.removeValve(valveObj);
 
     }
-
-
-    /**
-     * Associate the specified Loader with this Context
-     *
-     * @param loader MBean Name of the Loader with this Context
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void setLoader(String loader)
-        throws Exception {
-
-        StandardContext context = (StandardContext) this.resource;
-        ObjectName oname = new ObjectName(loader);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Loader loaderObj = null;
-        if (obj instanceof Loader) {
-            loaderObj = (Loader) obj;
-        }
-        context.setLoader(loaderObj);
-
-    }
-
-
-    /**
-     * Associate the specified Logger with this Context
-     *
-     * @param logger MBean Name of the Logger with this Context
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void setLogger(String logger)
-        throws Exception {
-
-        StandardContext context = (StandardContext) this.resource;
-        ObjectName oname = new ObjectName(logger);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Logger loggerObj = null;
-        if (obj instanceof Logger) {
-            loggerObj = (Logger) obj;
-        }
-        context.setLogger(loggerObj);
-
-    }
-
-
-    /**
-     * Associate the specified Manager with this Context
-     *
-     * @param manager MBean Name of the Manager with this Context
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void setManager(String manager)
-        throws Exception {
-
-        StandardContext context = (StandardContext) this.resource;
-        ObjectName oname = new ObjectName(manager);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Manager managerObj = null;
-        if (obj instanceof Manager) {
-            managerObj = (Manager) obj;
-        }
-        context.setManager(managerObj);
-
-    }
-
-
-    /**
-     * Associate the specified Realm with this Context
-     *
-     * @param realm MBean Name of the Realm with this Context
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void setRealm(String realm)
-        throws Exception {
-
-        StandardContext context = (StandardContext) this.resource;
-        ObjectName oname = new ObjectName(realm);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Realm realmObj = null;
-        if (obj instanceof Realm) {
-            realmObj = (Realm) obj;
-        }
-        context.setRealm(realmObj);
-
-    }
-
 
 }

@@ -123,72 +123,6 @@ public class StandardEngineMBean extends BaseModelMBean {
 
 
     /**
-     * Add a new Host to those assoicated with this Engine
-     *
-     * @param host MBean Name of the new Host to be added
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void addHost(String host)
-        throws Exception {
-
-        StandardEngine engine = (StandardEngine) this.resource;
-        ObjectName oname = new ObjectName(host);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Host hostObj = null;
-        if (obj instanceof Host) {
-            hostObj = (Host) obj;
-        }
-        engine.addChild(hostObj);
-
-    }
-
-
-    /**
-     * Remove the specified Host from those associated with this Engine
-     *
-     * @param host MBean Name of the specified Host to be removed
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void removeHost(String host)
-        throws Exception {
-
-        StandardEngine engine = (StandardEngine) this.resource;
-        ObjectName oname = new ObjectName(host);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Host hostObj = null;
-        if (obj instanceof Host) {
-            hostObj = (Host) obj;
-        }
-        engine.removeChild(hostObj);
-
-    }
-
-
-    /**
-     * Add a new Valve to those assoicated with this Engine
-     *
-     * @param valve MBean Name of the new Valve to be added
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void addValve(String valve)
-        throws Exception {
-
-        StandardEngine engine = (StandardEngine) this.resource;
-        ObjectName oname = new ObjectName(valve);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Valve valveObj = null;
-        if (obj instanceof Valve) {
-            valveObj = (Valve) obj;
-        }
-        engine.addValve(valveObj);
-
-    }
-
-
-    /**
      * Remove the specified Valve from those assoicated with this Engine
      *
      * @param valve MBean Name of the Valve to be removed
@@ -206,50 +140,6 @@ public class StandardEngineMBean extends BaseModelMBean {
             valveObj = (Valve) obj;
         }
         engine.removeValve(valveObj);
-
-    }
-
-
-    /**
-     * Associate the specified Logger with this Engine
-     *
-     * @param logger MBean Name of the Logger with this Engine
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void setLogger(String logger)
-        throws Exception {
-
-        StandardEngine engine = (StandardEngine) this.resource;
-        ObjectName oname = new ObjectName(logger);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Logger loggerObj = null;
-        if (obj instanceof Logger) {
-            loggerObj = (Logger) obj;
-        }
-        engine.setLogger(loggerObj);
-
-    }
-
-
-    /**
-     * Associate the specified Realm with this Engine
-     *
-     * @param realm MBean Name of the Realm with this Engine
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void setRealm(String realm)
-        throws Exception {
-
-        StandardEngine engine = (StandardEngine) this.resource;
-        ObjectName oname = new ObjectName(realm);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Realm realmObj = null;
-        if (obj instanceof Realm) {
-            realmObj = (Realm) obj;
-        }
-        engine.setRealm(realmObj);
 
     }
 

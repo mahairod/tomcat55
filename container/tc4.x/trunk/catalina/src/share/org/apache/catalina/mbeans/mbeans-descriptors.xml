@@ -1150,6 +1150,15 @@
     <!-- components to be stopped (if necessary) and removed, and the       -->
     <!-- corresponding MBeans to be destroyed.                              -->
 
+    <operation   name="removeContext"
+          description="Remove an existing Context"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="name"
+          description="MBean Name of the component to be removed"
+                 type="java.lang.String"/>
+    </operation>
+    
     <operation   name="removeHost"
           description="Remove an existing Host"
                impact="ACTION"

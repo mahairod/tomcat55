@@ -139,50 +139,6 @@ public class StandardHostMBean extends BaseModelMBean {
 
 
    /**
-     * Add a new Context to those assoicated with this Host
-     *
-     * @param context MBean Name of the Context to be added
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void addContext(String context)
-        throws Exception {
-
-        StandardHost host = (StandardHost) this.resource;
-        ObjectName oname = new ObjectName(context);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        StandardContext contextObj = null;
-        if (obj instanceof StandardContext) {
-            contextObj = (StandardContext) obj;
-        }
-        host.addChild(contextObj);
-
-    }
-
-    
-    /**
-     * Add a new Valve to those assoicated with this Host
-     *
-     * @param valve MBean Name of the Valve to be added
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void addValve(String valve)
-        throws Exception {
-
-        StandardHost host = (StandardHost) this.resource;
-        ObjectName oname = new ObjectName(valve);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Valve valveObj = null;
-        if (obj instanceof Valve) {
-            valveObj = (Valve) obj;
-        }
-        host.addValve(valveObj);
-
-    }
-
-
-   /**
      * Return the set of alias names for this Host
      *
      * @exception Exception if an MBean cannot be created or registered
@@ -242,28 +198,6 @@ public class StandardHostMBean extends BaseModelMBean {
     }
 
 
-   /**
-     * Remove the specified Context from those associated with this Host
-     *
-     * @param context MBean Name of the Context to be removed
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void removeContext(String context)
-        throws Exception {
-
-        StandardHost host = (StandardHost) this.resource;
-        ObjectName oname = new ObjectName(context);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        StandardContext contextObj = null;
-        if (obj instanceof StandardContext) {
-            contextObj = (StandardContext) obj;
-        }
-        host.removeChild(contextObj);
-
-    }
-
-
     /**
      * Remove the specified Valve from those associated this Host
      *
@@ -282,50 +216,6 @@ public class StandardHostMBean extends BaseModelMBean {
             valveObj = (Valve) obj;
         }
         host.removeValve(valveObj);
-
-    }
-
-
-    /**
-     * Associate the specified Logger with this Host
-     *
-     * @param logger MBean Name of the Logger with this Host
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void setLogger(String logger)
-        throws Exception {
-
-        StandardHost host = (StandardHost) this.resource;
-        ObjectName oname = new ObjectName(logger);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Logger loggerObj = null;
-        if (obj instanceof Logger) {
-            loggerObj = (Logger) obj;
-        }
-        host.setLogger(loggerObj);
-
-    }
-
-
-    /**
-     * Associate the specified Realm with this Host
-     *
-     * @param realm MBean Name of the Realm with this Host
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void setRealm(String realm)
-        throws Exception {
-
-        StandardHost host = (StandardHost) this.resource;
-        ObjectName oname = new ObjectName(realm);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Realm realmObj = null;
-        if (obj instanceof Realm) {
-            realmObj = (Realm) obj;
-        }
-        host.setRealm(realmObj);
 
     }
 
