@@ -20,26 +20,26 @@ sources successfully, you must do the following:
   This should result in the creation of a file "ant.jar" in the "lib"
   subdirectory, which will be used when building the Servlet API distribution.
 
-* Download and install the JAKARTA-SERVLETAPI source code, or check it out
+* Download and install the JAKARTA-SERVLETAPI-4 source code, or check it out
   from the CVS repository, into a directory parallel to the jakarta-ant
   directory created above.  That is, if you downloaded both subprojects into
   a directory named $JAKARTA_HOME, you would see the following two entries:
 
 	jakarta-ant/
-	jakarta-servletapi/
+	jakarta-servletapi-4/
 
   underneath it.
 
 * Build the servlet API distribution (a "servlet.jar" file containing the
   classes and a ZIP file containing the API documentation) as follows:
 
-	cd jakarta-servletapi
+	cd jakarta-servletapi-4
 	./build.sh dist		<-- Unix
 	build dist		<-- Windows
 
-  This should result in the creation of a new "dist" directory at the same
-  level as "jakarta-ant" and "jakarta-servletapi", with a "servletapi"
-  directory underneath it.  In this distribution directory, you will find:
+  This should result in the creation of a new "dist" directory underneath
+  your "jakarta-servletapi-4" source directory.  In this distribution
+  directory, you will find:
 
 	docs/api/		Directory containing the Javadoc API
 				documentation for the servlet/JSP API classes
@@ -50,3 +50,7 @@ sources successfully, you must do the following:
 
 	src/			Directory containing the source code
 				for the servlet/JSP API classes
+
+For backwards compatibility purposes, the build process will also place a copy
+of the "servlet.jar" file into the "lib" subdirectory under your top level
+"jakarta-servletapi-4" source directory.
