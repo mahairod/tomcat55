@@ -231,6 +231,7 @@ public class Main{
 	tasks.put("stop", "org.apache.tomcat.startup.StopTomcat");
 	tasks.put("enableAdmin", "org.apache.tomcat.startup.EnableAdmin");
 	tasks.put("start", "org.apache.tomcat.startup.EmbededTomcat");
+        tasks.put("startb", "org.apache.tomcat.startup.EmbededTomcat"); 
 	tasks.put("run", "org.apache.tomcat.startup.EmbededTomcat");
 	tasks.put("jspc", "org.apache.tomcat.startup.Jspc");
 	tasks.put("estart", "org.apache.tomcat.startup.EmbededTomcat");
