@@ -109,12 +109,20 @@ public class StringManager {
 
     private StringManager(String packageName) {
         String bundleName = packageName + ".LocalStrings";
-        bundle = ResourceBundle.getBundle(bundleName);
+        try {
+	    bundle = ResourceBundle.getBundle(bundleName);
+	} catch( MissingResourceException ex ) {
+	    bundle= ResourceBundle.getBundle( bundleName, Locale.US);
+	}
     }
 
     private StringManager(String packageName,Locale loc) {
         String bundleName = packageName + ".LocalStrings";
-        bundle = ResourceBundle.getBundle(bundleName,loc);
+        try {
+	    bundle = ResourceBundle.getBundle(bundleName,loc);
+	} catch( MissingResourceException ex ) {
+	    bundle= ResourceBundle.getBundle( bundleName, Locale.US);
+	}
     }
 
     /**
