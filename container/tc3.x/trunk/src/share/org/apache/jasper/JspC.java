@@ -322,10 +322,10 @@ public class JspC implements Options { //, JspCompilationContext {
             }
         }
 
-	QueueLogger ql = new QueueLogger();
-	ql.setVerbosityLevel(verbosityLevel);
+// 	QueueLogger ql = new QueueLogger();
+// 	ql.setVerbosityLevel(verbosityLevel);
         Constants.jasperLog = Log.getLog("JASPER_LOG", this );
-        Constants.jasperLog.setLogger( ql );
+//         Constants.jasperLog.setLogger( ql );
 
     }
     

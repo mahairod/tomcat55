@@ -148,7 +148,7 @@ public class JspWriterImpl extends JspWriter {
      * flushing the stream itself.  This method is non-private only so that it
      * may be invoked by PrintStream.
      */
-    protected final void flushBuffer() throws IOException {
+    public final void flushBuffer() throws IOException {
 	synchronized (lock) {
             if (bufferSize == 0)
                 return;

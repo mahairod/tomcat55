@@ -111,10 +111,10 @@ public class Compiler {
         Constants.message("jsp.message.package_name_is",
                           new Object[] { (pkgName==null)?
                                           "[default package]":pkgName },
-                          Logger.DEBUG);
+                          Log.DEBUG);
         Constants.message("jsp.message.class_file_name_is",
                           new Object[] { classFileName },
-                          Logger.DEBUG);
+                          Log.DEBUG);
 
 	if (!isOutDated())
             return false;
@@ -127,13 +127,13 @@ public class Compiler {
 
         Constants.message("jsp.message.java_file_name_is",
                           new Object[] { javaFileName },
-                          Logger.DEBUG);
+                          Log.DEBUG);
 
 	String className = mangler.getClassName();
         ctxt.setServletClassName(className);
         Constants.message("jsp.message.class_name_is",
                           new Object[] { className },
-                          Logger.DEBUG);
+                          Log.DEBUG);
 
         
         
@@ -241,7 +241,7 @@ public class Compiler {
 
         Constants.message("jsp.message.compiling_with",
                           new Object[] { b.toString() },
-                          Logger.DEBUG);
+                          Log.DEBUG);
 
         /**
          * 256 chosen randomly. The default is 32 if you don't pass
@@ -313,7 +313,7 @@ public class Compiler {
         ctxt.setServletClassName(className);
         Constants.message("jsp.message.class_name_is",
                           new Object[] { className },
-                          Logger.DEBUG);
+                          Log.DEBUG);
     }
     
     /**

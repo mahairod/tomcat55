@@ -81,7 +81,7 @@ public class JspFactoryImpl extends JspFactory {
     private SimplePool pool=new SimplePool( 100 );
     private static final boolean usePool=true;
     
-    Log loghelper = new Log("JASPER_LOG", "JspFactoryImpl");
+    Log loghelper = Log.getLog("JASPER_LOG", "JspFactoryImpl");
     
     public PageContext getPageContext(Servlet servlet, ServletRequest request,
                                       ServletResponse response, 
