@@ -32,8 +32,8 @@ public class Watchdog {
     public static void main(String args[]) throws Exception {
 
         Watchdog watchdog = new Watchdog();
-        if (args.length == 1) {
-            watchdog.runTests(args[0]);
+        if (args.length >= 1) {
+            watchdog.runTests(args);
         } else {
             watchdog.runTests();
         }
@@ -45,7 +45,7 @@ public class Watchdog {
         return watchdogProps;
     }
 
-    protected void runTests(String entityName) throws LatkaException {
+    protected void runTests(String[] entityNames) throws LatkaException {
         try {
             Properties watchdogProps = getWatchdogProps();
             String dtdLocation = 
@@ -54,8 +54,11 @@ public class Watchdog {
             Element suiteElement = new Element("suite");
             suiteElement.setAttribute("defaultHost","${host}");
             suiteElement.setAttribute("defaultPort","${port}");
-            EntityRef ref = new EntityRef(entityName);
-            suiteElement.addContent(ref);
+
+            for (int i = 0; i < entityNames.length; ++i) {
+                EntityRef ref = new EntityRef(entityNames[i]);
+                suiteElement.addContent(ref);
+            }
 
             DocType type = new DocType("suite",dtdLocation);
 
