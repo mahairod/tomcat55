@@ -114,6 +114,19 @@ public class ParserController {
     private static final String JSP_ROOT_TAG   = "<jsp:root";
 
     /*
+     * Tells if the file being processed is the "top" file
+     * in the translation unit.
+     */
+    private boolean isTopFile = true;
+
+    /*
+     * The encoding of the "top" file. This encoding is used
+     * for included files by default.
+     * Defaults to "8859_1" per JSP spec.
+     */
+    private String topFileEncoding = "8859_1"; 
+    
+    /*
      * The 'new' encoding required to read a page.
      */
     private String newEncoding;
@@ -159,12 +172,6 @@ public class ParserController {
     //*********************************************************************
     // Parse
 
-    public void parse(String inFileName) 
-	throws FileNotFoundException, JasperException 
-    {
-        parse(inFileName, null);
-    }
-
     /**
      * Parse the jsp page provided as an argument.
      * First invoked by the compiler, then invoked recursively by the
@@ -172,28 +179,18 @@ public class ParserController {
      *
      * @param The name of the jsp file to be parsed.
      */
-    public void parse(String inFileName, String encoding)
+    public void parse(String inFileName)
 	throws FileNotFoundException, JasperException
     {
-        //p("parse(" + inFileName + ", " + encoding + ")");
+        //p("parse(" + inFileName + ")");
         String absFileName = resolveFileName(inFileName);
-
-        if (encoding == null) {
-            encoding = "8859_1"; // default per JSP spec
-            // XXX - longer term, this should really be:
-            //   System.getProperty("file.encoding", "8859_1");
-            // but this doesn't work right now, so we stick with ASCII
-        }
-
-	// @@@ need to do a pass at JSP doc to find encoding as specified
-	// @@@ in page directive (see JspParseEventListener)
-
         File file = new File(absFileName);
 	String filePath = (ctxt == null) 
 	    ? file.getAbsolutePath()
 	    : ctxt.getRealPath(file.toString());
 	//p("filePath: " + filePath);
 
+	String encoding = topFileEncoding;
         InputStreamReader reader = null;
         try {
             // Figure out what type of JSP document we are dealing with
@@ -201,6 +198,12 @@ public class ParserController {
             figureOutJspDocument(file, encoding, reader);
             //p("isXml = " + isXml + "   hasTaglib = " + hasTaglib);
 	    encoding = (newEncoding!=null) ? newEncoding : encoding;
+	    if (isTopFile) {
+		// Set the "top level" file encoding that will be used
+		// for all included files where encoding is not defined.
+		topFileEncoding = encoding;
+		isTopFile = false;
+	    }
 	    try {
 		reader.close();
 	    } catch (IOException ex) {}
@@ -251,34 +254,37 @@ public class ParserController {
 	    isXml = false;
 	}
 
+	newEncoding = null;
+
 	// Figure out the encoding of the page
 	// FIXME: We assume xml parser will take care of
         // encoding for page in XML syntax. Correct?
-	newEncoding = null;
-        jspReader.reset(startMark);
-	while (jspReader.skipUntil("<%@") != null) {
-	    jspReader.skipSpaces();
-	    if (jspReader.matches("page")) {
-		jspReader.advance(4);
+	if (!isXml) {
+	    jspReader.reset(startMark);
+	    while (jspReader.skipUntil("<%@") != null) {
 		jspReader.skipSpaces();
-		Attributes attrs = jspReader.parseTagAttributes();
-		String attribute = "pageEncoding";
-		newEncoding = attrs.getValue("pageEncoding");
-		if (newEncoding == null) {
-		    String contentType = attrs.getValue("contentType");
-		    if (contentType != null) {
-			int loc = contentType.indexOf("charset=");
-			if (loc != -1) {
-			    newEncoding = contentType.substring(loc+8);
-			    return;
+		if (jspReader.matches("page")) {
+		    jspReader.advance(4);
+		    jspReader.skipSpaces();
+		    Attributes attrs = jspReader.parseTagAttributes();
+		    String attribute = "pageEncoding";
+		    newEncoding = attrs.getValue("pageEncoding");
+		    if (newEncoding == null) {
+			String contentType = attrs.getValue("contentType");
+			if (contentType != null) {
+			    int loc = contentType.indexOf("charset=");
+			    if (loc != -1) {
+				newEncoding = contentType.substring(loc+8);
+				return;
+			    }
 			}
+		    } else {
+			return;
 		    }
-		} else {
-		    return;
 		}
 	    }
 	}
-								    
+
 	/* NOT COMPILED
         // This is an XML document. Let's see if it uses tag libraries.
         jspReader.reset(startMark);

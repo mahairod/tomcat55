@@ -750,8 +750,6 @@ public class JspParseEventListener implements ParseEventListener {
 
 	if (directive.equals("include")) {
 	    String file = attrs.getValue("file");
-	    String encoding = attrs.getValue("encoding");
-
 	    if (file == null)
 		throw new CompileException(start,
 					   Constants.getString("jsp.error.include.missing.file"));
@@ -766,7 +764,7 @@ public class JspParseEventListener implements ParseEventListener {
             }
 	    */
 	    try {
-		parserCtl.parse(file, encoding);
+		parserCtl.parse(file);
 	    } catch (FileNotFoundException ex) {
 		throw new CompileException(
 					   start,
