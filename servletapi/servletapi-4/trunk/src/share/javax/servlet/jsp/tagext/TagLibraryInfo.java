@@ -126,8 +126,9 @@ abstract public class TagLibraryInfo {
 
     /**
      * The "reliable" URN indicated in the TLD.
-     * This may be used by authoring tools as a global identifier (the uri attribute) 
-     * to use when creating an include directive for this library.
+     * This may be used by authoring tools as a global identifier
+     * (the uri attribute) to use when creating a taglib directive
+     * for this library.
      *
      * @returns a reliable URN to a TLD like this
      */

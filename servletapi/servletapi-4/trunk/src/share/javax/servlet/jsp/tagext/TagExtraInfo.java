@@ -61,11 +61,10 @@ package javax.servlet.jsp.tagext;
  * The TagExtraInfo class is mentioned in the Tag Library Descriptor file (TLD).
  *
  * <p>
- * This class must be used:
+ * This class can be used:
  * <ul>
- * <li> if the tag defines any scripting variables
- * <li> if the tag wants to provide translation-time validation of the tag
- *    attributes.
+ * <li> to indicate that the tag defines scripting variables
+ * <li> to perform translation-time validation of the tag attributes.
  * </ul>
  *
  * <p>

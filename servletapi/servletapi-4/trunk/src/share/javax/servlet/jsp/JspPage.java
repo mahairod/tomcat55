@@ -62,8 +62,6 @@ import javax.servlet.*;
  * Implementation class must satisfy; pages that use the HTTP protocol
  * are described by the HttpJspPage interface.
  *
- * <p>JspPage objects are obtained from the JspFactory object.
- *
  * <p><B>Two plus One Methods</B>
  * <p>
  * The interface defines a protocol with 3 methods; only two of

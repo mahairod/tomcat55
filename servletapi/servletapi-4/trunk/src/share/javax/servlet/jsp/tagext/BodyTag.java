@@ -115,20 +115,24 @@ import javax.servlet.jsp.*;
  * <IMG src="doc-files/BodyTagProtocol.gif"/>
 
  * <p><B>Empty and Non-Empty Action</B>
- * <p> If the action is an <b>empty action</b>, the doStartTag() method must
- * return SKIP_BODY.
+ * <p> If the TagLibraryDescriptor file indicates that the action must
+ * always have an empty action, by an <body-content> entry of "empty",
+ * then the doStartTag() method must return SKIP_BODY.
  *
- * <p> If the action is a <b>non-empty action</b>, the doStartTag() method
- * may return SKIP_BODY, EVAL_BODY_INCLUDE, or EVAL_BODY_BUFFERED.
+ * Otherwise, the doStartTag() method may return SKIP_BODY,
+ * EVAL_BODY_INCLUDE, or EVAL_BODY_BUFFERED.
  *
+ * <p>
  * If SKIP_BODY is returned the body is not evaluated, and doEndTag() is
  * invoked.
  *
+ * <p>
  * If EVAL_BODY_INCLUDE is returned, setBodyContent() is not invoked,
  * doInitBody() is not invoked, the body is evaluated and
  * "passed through" to the current out, doAfterBody() is invoked
  * and then, after zero or more iterations, doEndTag() is invoked.
  *
+ * <p>
  * If EVAL_BODY_BUFFERED is returned, setBodyContent() is invoked,
  * doInitBody() is invoked, the body is evaluated, doAfterBody() is
  * invoked, and then, after zero or more iterations, doEndTag() is invoked.
