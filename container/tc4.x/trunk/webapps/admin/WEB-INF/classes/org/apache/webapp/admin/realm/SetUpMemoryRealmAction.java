@@ -63,7 +63,6 @@ package org.apache.webapp.admin.realm;
 
 import java.io.IOException;
 import java.util.Iterator;
-//import java.util.List;
 import java.util.Locale;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
@@ -78,7 +77,6 @@ import org.apache.struts.action.ActionMapping;
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-//import javax.management.JMException;
 
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.LabelValueBean;
@@ -95,12 +93,20 @@ import org.apache.struts.util.MessageResources;
 
 public class SetUpMemoryRealmAction extends Action {
     
+    /**
+     * The MBeanServer we will be interacting with.
+     */
     private static MBeanServer mBServer = null;
-
+    
     public final static String DEBUG_PROP_NAME = "debug";
     public final static String PATH_NAME_PROP_NAME = "pathname";
-
+    
     private ArrayList debugLvlList = null;
+    
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
     
     // --------------------------------------------------------- Public Methods
     
@@ -125,13 +131,31 @@ public class SetUpMemoryRealmAction extends Action {
     HttpServletResponse response)
     throws IOException, ServletException {
         
+        HttpSession session = request.getSession();
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+                
+        if (form == null) {
+            getServlet().log(" Creating new MemoryRealmForm bean under key "
+            + mapping.getAttribute());
+            
+            form = new UserDBRealmForm();
+        }
+        
+        if ("request".equals(mapping.getScope()))
+            request.setAttribute(mapping.getAttribute(), form);
+        else
+            session.setAttribute(mapping.getAttribute(), form);
+        
         // Acquire a reference to the MBeanServer containing our MBeans
         MBeanServer mBServer = null;
         try {
             mBServer = ((ApplicationServlet) getServlet()).getServer();
         } catch (Throwable t) {
             throw new ServletException
-                ("Cannot acquire MBeanServer reference", t);
+            ("Cannot acquire MBeanServer reference", t);
         }
         
         String selectedName = request.getParameter("select");
@@ -157,11 +181,11 @@ public class SetUpMemoryRealmAction extends Action {
         String pathName = null;
         
         try{
-        
+            
             Iterator realmItr =
             mBServer.queryMBeans(new
             ObjectName(selectedName), null).iterator();
-  
+            
             ObjectInstance objInstance = (ObjectInstance)realmItr.next();
             ObjectName realmObjName = (objInstance).getObjectName();
             
@@ -173,18 +197,21 @@ public class SetUpMemoryRealmAction extends Action {
             
             realmFm.setDebugLvl(
             ((Integer) mBServer.getAttribute(realmObjName, DEBUG_PROP_NAME)).toString());
-          
-            pathName = 
+            
+            pathName =
             (String) mBServer.getAttribute(realmObjName, PATH_NAME_PROP_NAME);
-
+            
         } catch(Throwable t){
-            throw new ServletException("Error in reading from mBean", t);
+            getServlet().log
+            (resources.getMessage(locale, "error.get.attributes"), t);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "error.get.attributes"));
+            return (null);
         }
-
+        
         realmFm.setPathName(pathName);
         
-        // Stash the form bean and forward to the display page
-        request.setAttribute("memoryRealmForm", realmFm);
         // Forward back to the appropriate Realm page
         return (mapping.findForward("MemoryRealm"));
         

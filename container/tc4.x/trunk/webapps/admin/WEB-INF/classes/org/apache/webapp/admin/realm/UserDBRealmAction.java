@@ -94,6 +94,14 @@ import org.apache.webapp.admin.LabelValueBean;
 
 public final class UserDBRealmAction extends Action {
     
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
+    
+    /**
+     * The MBeanServer we will be interacting with.
+     */
     private static MBeanServer mBServer = null;
     
     // --------------------------------------------------------- Public Methods
@@ -120,13 +128,15 @@ public final class UserDBRealmAction extends Action {
     HttpServletResponse response)
     throws IOException, ServletException {
         
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
+        Locale locale = (Locale)request.getSession().getAttribute(Action.LOCALE_KEY);
+        
         try{
             
             // front end validation and checking.
             // ===================================================
-            MessageResources messages = getResources();
-            Locale locale = (Locale)request.getSession().getAttribute(Action.LOCALE_KEY);
-            
             // Validate the request parameters specified by the user
             ActionErrors errors = new ActionErrors();
             
@@ -158,7 +168,7 @@ public final class UserDBRealmAction extends Action {
             /**
              * Extracting the values from the form and
              * updating the MBean with the new values.
-             */            
+             */
             String debugLvlText = request.getParameter("debugLvl");
             if(debugLvlText != null) {
                 Integer debugLvl = new Integer(debugLvlText);
@@ -175,8 +185,12 @@ public final class UserDBRealmAction extends Action {
             }
             
         }catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+            getServlet().log
+            (resources.getMessage(locale, "error.set.attributes"), t);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "error.set.attributes"));
+            return (null);
         }
         if (servlet.getDebug() >= 1)
             servlet.log(" Forwarding to success page");

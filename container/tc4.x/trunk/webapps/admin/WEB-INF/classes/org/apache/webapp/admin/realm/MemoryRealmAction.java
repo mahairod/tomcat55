@@ -67,6 +67,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -95,7 +96,16 @@ import org.apache.webapp.admin.LabelValueBean;
 
 public final class MemoryRealmAction extends Action {
     
+    /**
+     * The MBeanServer we will be interacting with.
+     */
     private static MBeanServer mBServer = null;
+    
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
+    
     
     // --------------------------------------------------------- Public Methods
     
@@ -121,20 +131,22 @@ public final class MemoryRealmAction extends Action {
     HttpServletResponse response)
     throws IOException, ServletException {
         
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
+        HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        
         try{
             
             // front end validation and checking.
             // ===================================================
-            MessageResources messages = getResources();
-            Locale locale = (Locale)request.getSession().getAttribute(Action.LOCALE_KEY);
-            
             // Validate the request parameters specified by the user
             ActionErrors errors = new ActionErrors();
             
             // Report any errors we have discovered back to the original form
             if (!errors.empty()) {
                 saveErrors(request, errors);
-                System.out.println("forward is to " + mapping.getInput());
                 return (new ActionForward(mapping.getInput()));
             }
             
@@ -177,9 +189,14 @@ public final class MemoryRealmAction extends Action {
             }
             
         }catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+            getServlet().log
+            (resources.getMessage(locale, "error.set.attributes"), t);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "error.set.attributes"));
+            return (null);
         }
+        
         if (servlet.getDebug() >= 1)
             servlet.log(" Forwarding to success page");
         // Forward back to the test page

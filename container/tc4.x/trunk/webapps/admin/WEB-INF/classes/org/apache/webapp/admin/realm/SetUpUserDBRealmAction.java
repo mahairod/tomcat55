@@ -63,7 +63,6 @@ package org.apache.webapp.admin.realm;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
@@ -78,10 +77,7 @@ import org.apache.struts.action.ActionMapping;
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
+
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.LabelValueBean;
 
@@ -97,9 +93,16 @@ import org.apache.struts.util.MessageResources;
 
 public class SetUpUserDBRealmAction extends Action {
     
-    private static MBeanServer mBServer = null;
+    /**
+     * The MBeanServer we will be interacting with.
+     */
+    private MBeanServer mBServer = null;
     
-//    public final static String CLASSNAME_PROP_NAME = "className";
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
+    
     public final static String DEBUG_PROP_NAME = "debug";
     public final static String RESOURCE_PROP_NAME = "resourceName";
     
@@ -135,13 +138,22 @@ public class SetUpUserDBRealmAction extends Action {
     throws IOException, ServletException {
         
         HttpSession session = request.getSession();
-     
+        
+        if(mBServer == null) {
+            ApplicationServlet servlet = (ApplicationServlet)getServlet();
+            mBServer = servlet.getServer();
+        }
+                
         if (form == null) {
-            getServlet().log(" Creating new RealmForm bean under key "
+            getServlet().log(" Creating new Database RealmForm bean under key "
             + mapping.getAttribute());
             
             form = new UserDBRealmForm();
         }
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         
         if ("request".equals(mapping.getScope()))
             request.setAttribute(mapping.getAttribute(), form);
@@ -170,11 +182,6 @@ public class SetUpUserDBRealmAction extends Action {
         
         try{
             
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
-            }
-            
             Iterator realmItr =
             mBServer.queryMBeans(new
             ObjectName(selectedName), null).iterator();
@@ -194,10 +201,14 @@ public class SetUpUserDBRealmAction extends Action {
             (String) mBServer.getAttribute(realmObjName, RESOURCE_PROP_NAME));
             
         } catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+            getServlet().log
+            (resources.getMessage(locale, "error.get.attributes"), t);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "error.get.attributes"));
+            return (null);
         }
- 
+        
         // Forward back to the appropriate Realm page
         return (mapping.findForward("UserDBRealm"));
         
