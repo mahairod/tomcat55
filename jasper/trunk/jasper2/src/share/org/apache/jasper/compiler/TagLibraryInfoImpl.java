@@ -161,9 +161,8 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	this.ctxt = ctxt;
 	this.parserController = pc;
 	this.err = err;
-        ZipInputStream zin;
         InputStream in = null;
-        boolean relativeURL = false;
+	boolean hasPackagedTagFiles = false;
         JarFile jarFile = null;
 
 	if (location == null) {
@@ -199,7 +198,8 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
                     jarFile = conn.getJarFile();
                     ZipEntry jarEntry = jarFile.getEntry(location[1]);
                     in = jarFile.getInputStream(jarEntry);
-                    parseTLD(ctxt, location[0], in, jarFile);
+                    hasPackagedTagFiles = parseTLD(ctxt, location[0], in,
+						   jarFile);
                 } catch (Exception ex) {
                     err.jspError("jsp.error.tld.unable_to_read", location[0],
                                  location[1], ex.toString());
@@ -211,7 +211,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
                     in.close();
                 } catch (Throwable t) {}
             }
-            if (jarFile != null) {
+            if (jarFile != null && !hasPackagedTagFiles) {
                 try {
                     jarFile.close();
                 } catch (Throwable t) {}
@@ -220,13 +220,26 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 
     }
     
-    private void parseTLD(JspCompilationContext ctxt,
-                          String uri, InputStream in, JarFile jarFile) 
+    /*
+     * @param ctxt The JSP compilation context
+     * @param uri The TLD's uri
+     * @param in The TLD's input stream
+     * @param jarFile The JAR file containing the TLD, or null if the tag
+     * library is not packaged in a JAR
+     *
+     * @return true if jarFile is different from null and the TLD represented
+     * by the given input stream contains one or more tag files packaged in the
+     * given JAR (that is, one or more tag files whose path element starts
+     * with /META-INF/tags), and false otherwise
+     */
+    private boolean parseTLD(JspCompilationContext ctxt,
+			     String uri, InputStream in, JarFile jarFile) 
         throws JasperException
     {
         Vector tagVector = new Vector();
         Vector tagFileVector = new Vector();
         Hashtable functionTable = new Hashtable();
+	boolean hasPackagedTagFiles = false;
 
         // Create an iterator over the child elements of our <taglib> element
         ParserUtils pu = new ParserUtils();
@@ -262,10 +275,15 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
                 this.tagLibraryValidator = createValidator(element);
             else if ("tag".equals(tname))
                 tagVector.addElement(createTagInfo(element));
-            else if ("tag-file".equals(tname))
-                tagFileVector.addElement(createTagFileInfo(element, uri,
-							   jarFile));
-            else if ("function".equals(tname)) {         // JSP2.0
+            else if ("tag-file".equals(tname)) {
+		TagFileInfo tagFileInfo = createTagFileInfo(element, uri,
+							    jarFile);
+                tagFileVector.addElement(tagFileInfo);
+		if (tagFileInfo.getPath().startsWith("/META-INF/tags")) {
+		    // Tag file is packaged in JAR
+		    hasPackagedTagFiles = true;
+		}
+	    } else if ("function".equals(tname)) {         // JSP2.0
 		FunctionInfo funcInfo = createFunctionInfo(element);
 		String funcName = funcInfo.getName();
 		if (functionTable.containsKey(funcName)) {
@@ -311,6 +329,8 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	while (enum.hasMoreElements()) {
 	    this.functions[i++] = (FunctionInfo) enum.nextElement();
 	}
+
+	return hasPackagedTagFiles;
     }
     
     /*
