@@ -99,6 +99,10 @@ loaders as it is initialized:</p>
         implementation classes it depends on.</li>
     <li><em>$JAVA_HOME/lib/tools.jar</em> - Contains the "javac" compiler used
         to convert JSP pages into servlet classes.</li>
+    <li><em>$CATALINA_HOME/bin/commons-logging-api.jar</em> - Jakarta commons 
+        logging API.</li>
+    <li><em>$CATALINA_HOME/bin/commons-daemon.jar</em> - Jakarta commons 
+        daemon API.</li>
     </ul></li>
 <li><strong>Common</strong> - This class loader contains additional classes
     that are made visible to both Tomcat internal classes and to all web
@@ -117,7 +121,6 @@ loaders as it is initialized:</p>
         JDBC connection pool to web applications.</li>
     <li><em>commons-el.jar</em> - Jakarta commons el, implementing the 
         expression language used by Jasper.</li>
-    <li><em>commons-logging-api.jar</em> - Jakarta commons logging API.</li>
     <li><em>commons-pool.jar</em> - Jakarta commons pool.</li>
     <li><em>jasper-compiler.jar</em> - The JSP 2.0 compiler.</li>
     <li><em>jasper-runtime.jar</em> - The JSP 2.0 runtime.</li>
