@@ -15,7 +15,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest"/>
+  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest,CGITest"/>
 
 
   <target name="ROOT">
@@ -1207,8 +1207,71 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/SSIFsize08.shtml" debug="${debug}"
           golden="${golden.path}/SSIFsize02.txt"/>
-          
+
   </target>
 
+  <target name="CGITest">
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/array.pl" debug="${debug}"
+        golden="${golden.path}/array.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/binary.pl?counter=102" debug="${debug}"
+        golden="${golden.path}/binary.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/chores.pl?" debug="${debug}"
+        golden="${golden.path}/chores.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/concat.pl?first_name=jane&amp;last_name=johnson&amp;fiance_first=john&amp;fiance_last=smith" debug="${debug}"
+        golden="${golden.path}/concat.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/days.pl" debug="${debug}"
+        golden="${golden.path}/days.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/dowhile.pl?start=10" debug="${debug}"
+        golden="${golden.path}/dowhile.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/else.pl?food=spinach" debug="${debug}"
+        golden="${golden.path}/else.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/elsif.pl?food=chocolate" debug="${debug}"
+        golden="${golden.path}/elsif.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/exponents.pl?number=2&amp;power=4" debug="${debug}"
+        golden="${golden.path}/exponents.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/for.pl?start=10" debug="${debug}"
+        golden="${golden.path}/dowhile.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/getday.pl" debug="${debug}"
+        golden="${golden.path}/getday.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/helloperl.pl" debug="${debug}"
+        golden="${golden.path}/helloperl.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/if.pl?food=spinach" debug="${debug}"
+        golden="${golden.path}/else.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/increment.pl?counter=7" debug="${debug}"
+        golden="${golden.path}/increment.txt"/>
+
+  <tester host="${host}" port="${port}" protocol="${protocol}"
+        request="${context.path}/cgi-bin/modifyall.pl?number=289" debug="${debug}"
+        golden="${golden.path}/modifyall.txt"/>
+
+  </target>
 
 </project>
