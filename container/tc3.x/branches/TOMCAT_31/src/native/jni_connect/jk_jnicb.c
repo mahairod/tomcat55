@@ -341,7 +341,6 @@ Java_org_apache_tomcat_service_connector_JNIConnectionHandler_startReasponse
         if(ok) {
             if(!ps->start_response(ps, sc, nmsg, nhnames, nhvalues, hcnt)) {
                 ok = JK_FALSE;
-            } else {
                 jk_log(pl, JK_LOG_ERROR, 
                        "In JNIConnectionHandler::startReasponse, servers startReasponse failed\n");
             }
