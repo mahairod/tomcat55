@@ -64,6 +64,7 @@
 
 package org.apache.naming.resources;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Date;
@@ -803,6 +804,7 @@ public class WARDirContext extends BaseDirContext {
         
         Vector entries = new Vector();
         Entry[] children = entry.getChildren();
+        Arrays.sort(children);
         NamingEntry namingEntry = null;
         
         for (int i = 0; i < children.length; i++) {
@@ -829,7 +831,7 @@ public class WARDirContext extends BaseDirContext {
     /**
      * Entries structure.
      */
-    protected class Entry {
+    protected class Entry implements Comparable {
 
 
         // -------------------------------------------------------- Constructor
@@ -856,6 +858,12 @@ public class WARDirContext extends BaseDirContext {
         // ----------------------------------------------------- Public Methods
         
         
+        public int compareTo(Object o) {
+            if (!(o instanceof Entry))
+                return (+1);
+            return (name.compareTo(((Entry) o).getName()));
+        }
+
         public ZipEntry getEntry() {
             return entry;
         }
