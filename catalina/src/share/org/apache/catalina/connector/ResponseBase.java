@@ -877,6 +877,38 @@ public abstract class ResponseBase
 
     }
 
+    /*
+     * Overrides the name of the character encoding used in the body
+     * of the request. This method must be called prior to reading
+     * request parameters or reading input using getReader().
+     *
+     * @param charset String containing the name of the chararacter encoding.
+     */
+    public void setCharacterEncoding(String charset) {
+
+        if (isCommitted())
+            return;
+
+        if (included)
+            return;     // Ignore any call from an included servlet
+
+        this.encoding = charset;
+
+        int start = contentType.indexOf("charset=");
+        if ( start != -1 ) {
+
+            int end = contentType.indexOf(';', start+8);
+            if (end >= 0) 
+                contentType = contentType.substring(0,start+8)
+                    +charset+contentType.substring(end-1);
+            else 
+                contentType = contentType.substring(0,start+8)
+                    +charset;
+
+        }
+    }
+
+
 
     /**
      * Set the Locale that is appropriate for this response, including
