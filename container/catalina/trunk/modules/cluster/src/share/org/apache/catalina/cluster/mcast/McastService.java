@@ -165,7 +165,7 @@ public class McastService implements MembershipService,MembershipListener {
         String host = getProperties().getProperty("tcpListenHost");
         int port = Integer.parseInt(getProperties().getProperty("tcpListenPort"));
         String name = "tcp://"+host+":"+port;
-        localMember = new McastMember(name,host,port,0);
+        localMember = new McastMember(name,host,port,100);
         impl = new McastServiceImpl((McastMember)localMember,Long.parseLong(properties.getProperty("msgFrequency")),
                                     Long.parseLong(properties.getProperty("memberDropTime")),
                                     Integer.parseInt(properties.getProperty("mcastPort")),

@@ -82,7 +82,12 @@ public class SocketSender implements IDataSender
     private Socket sc = null;
     private boolean isSocketConnected = false;
     private boolean suspect;
-    private long ackTimeout = 60*1000;
+    private long ackTimeout = 5*1000;
+    private long keepAliveTimeout = 60*1000; //keep socket open for no more than one min
+    private int keepAliveMaxRequestCount = 100; //max 100 requests before reconnecting
+    private long keepAliveConnectTime = 0;
+    private int keepAliveCount = 0;
+
 
     public SocketSender(InetAddress host, int port)
     {
@@ -105,6 +110,8 @@ public class SocketSender implements IDataSender
         sc = new Socket(getAddress(),getPort());
         sc.setSoTimeout((int)ackTimeout);
         isSocketConnected = true;
+        this.keepAliveCount = 0;
+        this.keepAliveConnectTime = System.currentTimeMillis();
     }
 
     public void disconnect()
@@ -129,9 +136,16 @@ public class SocketSender implements IDataSender
      */
     public synchronized void sendMessage(String sessionId, byte[] data) throws java.io.IOException
     {
+        long ctime = System.currentTimeMillis() - this.keepAliveConnectTime;
+        if ( (ctime > this.keepAliveTimeout) ||
+             (this.keepAliveCount >= this.keepAliveMaxRequestCount) ) {
+            disconnect();
+        }
         if ( !isConnected() ) connect();
         try
         {
+
+
             sc.getOutputStream().write(data);
             sc.getOutputStream().flush();
             waitForAck(ackTimeout);
@@ -144,6 +158,7 @@ public class SocketSender implements IDataSender
             sc.getOutputStream().flush();
             waitForAck(ackTimeout);
         }
+        this.keepAliveCount++;
     }
 
     private void waitForAck(long timeout)  throws java.io.IOException,
@@ -169,6 +184,18 @@ public class SocketSender implements IDataSender
 
     public void setSuspect(boolean suspect) {
         this.suspect = suspect;
+    }
+    public long getKeepAliveTimeout() {
+        return keepAliveTimeout;
+    }
+    public void setKeepAliveTimeout(long keepAliveTimeout) {
+        this.keepAliveTimeout = keepAliveTimeout;
+    }
+    public int getKeepAliveMaxRequestCount() {
+        return keepAliveMaxRequestCount;
+    }
+    public void setKeepAliveMaxRequestCount(int keepAliveMaxRequestCount) {
+        this.keepAliveMaxRequestCount = keepAliveMaxRequestCount;
     }
 
 

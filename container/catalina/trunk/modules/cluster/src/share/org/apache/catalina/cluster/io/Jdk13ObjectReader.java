@@ -76,30 +76,21 @@ package org.apache.catalina.cluster.io;
  * @version $Revision$, $Date$
  */
 
-import java.nio.channels.SocketChannel;
-import java.nio.channels.Selector;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.io.IOException;
 import org.apache.catalina.cluster.io.XByteBuffer;
-public class ObjectReader
+public class Jdk13ObjectReader
 {
-    private SocketChannel channel;
-    private Selector selector;
+    private Socket socket;
     private ListenCallback callback;
     private XByteBuffer buffer;
 
-    public ObjectReader( SocketChannel channel,
-                         Selector selector,
-                         ListenCallback callback )  {
-        this.channel = channel;
-        this.selector = selector;
+    public Jdk13ObjectReader( Socket socket,
+                               ListenCallback callback )  {
+        this.socket = socket;
         this.callback = callback;
         this.buffer = new XByteBuffer();
-    }
-
-
-    public SocketChannel getChannel()  {
-        return this.channel;
     }
 
     public int append(byte[] data,int off,int len) {
@@ -120,9 +111,11 @@ public class ObjectReader
         return append(new byte[0],0,0);
     }
 
-    public int write(ByteBuffer buf)
+    public int write(byte[] data)
        throws java.io.IOException {
-        return getChannel().write(buf);
+       socket.getOutputStream().write(data);
+       return 0;
+
     }
 
 
