@@ -463,9 +463,8 @@ public final class StandardServer
                 new ServerSocket(port, 1,
                                  InetAddress.getByName("127.0.0.1"));
         } catch (IOException e) {
-            System.err.println("StandardServer.await: create[" + port
-                               + "]: " + e);
-            e.printStackTrace();
+            log.error("StandardServer.await: create[" + port
+                               + "]: ", e);
             System.exit(1);
         }
 
@@ -480,12 +479,11 @@ public final class StandardServer
                 socket.setSoTimeout(10 * 1000);  // Ten seconds
                 stream = socket.getInputStream();
             } catch (AccessControlException ace) {
-                System.err.println("StandardServer.accept security exception: "
-                                   + ace.getMessage());
+                log.warn("StandardServer.accept security exception: "
+                                   + ace.getMessage(), ace);
                 continue;
             } catch (IOException e) {
-                System.err.println("StandardServer.await: accept: " + e);
-                e.printStackTrace();
+                log.error("StandardServer.await: accept: ", e);
                 System.exit(1);
             }
 
@@ -502,8 +500,7 @@ public final class StandardServer
                 try {
                     ch = stream.read();
                 } catch (IOException e) {
-                    System.err.println("StandardServer.await: read: " + e);
-                    e.printStackTrace();
+                    log.warn("StandardServer.await: read: ", e);
                     ch = -1;
                 }
                 if (ch < 32)  // Control character or EOF terminates loop
@@ -524,7 +521,7 @@ public final class StandardServer
             if (match) {
                 break;
             } else
-                System.err.println("StandardServer.await: Invalid command '" +
+                log.warn("StandardServer.await: Invalid command '" +
                                    command.toString() + "' received");
 
         }
