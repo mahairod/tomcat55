@@ -132,9 +132,11 @@ public class IncludeGenerator
 	writer.println("{");
 	writer.pushIndent();
 	writer.println("String _jspx_qStr = \"\";");
+        /*
 	if (flush) {
 	    writer.println("out.flush();");
 	}
+        */
 	if (params != null && params.size() > 0) {
 	    Enumeration en = params.keys();
 	    while (en.hasMoreElements()) {
@@ -168,12 +170,22 @@ public class IncludeGenerator
 		}
 	    }
 	}
+        /*
 	if (!isExpression) 
 	    writer.println("pageContext.include(" +
 			   writer.quoteString(page) + " + _jspx_qStr);");
 	else
 	    writer.println ("pageContext.include(" + 
 			    JspUtil.getExpr(page, isXml) + " + _jspx_qStr);");
+        */
+        if (!isExpression)
+            writer.println("JspRuntimeLibrary.include(request, response, " +
+                           writer.quoteString(page) + " + _jspx_qStr, " +
+                           "out, " + flush + ");");
+        else
+            writer.println("JspRuntimeLibrary.include(request, response, " +
+                           JspUtil.getExpr(page, isXml) + " + _jspx_qStr, " +
+                           "out, " + flush + ");");
 
 	writer.popIndent();
 	writer.println("}");

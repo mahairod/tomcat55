@@ -81,11 +81,14 @@ import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.JspWriter;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
@@ -748,8 +751,74 @@ public class JspRuntimeLibrary {
 		": " + ex);
 	}
     }
+
+
+    // ************************************************************************
+    // General Purpose Runtime Methods
+    // ************************************************************************
+
+
+    /**
+     * Convert a possibly relative resource path into a context-relative
+     * resource path that starts with a '/'.
+     *
+     * @param request The servlet request we are processing
+     * @param relativePath The possibly relative resource path
+     */
+    public static String getContextRelativePath(ServletRequest request,
+                                                String relativePath) {
+
+        if (relativePath.startsWith("/"))
+            return (relativePath);
+        if (!(request instanceof HttpServletRequest))
+            return (relativePath);
+        HttpServletRequest hrequest = (HttpServletRequest) request;
+        String uri = (String)
+            request.getAttribute("javax.servlet.include.servlet_path");
+        if (uri == null)
+            uri = hrequest.getServletPath();
+        return (uri.substring(0, uri.lastIndexOf('/')) + '/' + relativePath);
+        
+
+    }
+
+
+    /**
+     * Perform a RequestDispatcher.include() operation, with optional flushing
+     * of the response beforehand.
+     *
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are processing
+     * @param relativePath The relative path of the resource to be included
+     * @param out The JspWriter to whom we are currently writing
+     * @param flush Should we flush before the include is processed?
+     *
+     * @exception IOException if thrown by the included servlet
+     * @exception ServletException if thrown by the included servlet
+     */
+    public static void include(HttpServletRequest request,
+                               HttpServletResponse response,
+                               String relativePath,
+                               JspWriter out,
+                               boolean flush)
+        throws IOException, ServletException {
+
+        if (flush)
+            out.flush();
+
+        // FIXME - It is tempting to use request.getRequestDispatcher() to
+        // resolve a relative path directly, but Catalina currently does not
+        // take into account whether the caller is inside a RequestDispatcher
+        // include or not.  Whether Catalina *should* take that into account
+        // is a spec issue currently under review.  In the mean time,
+        // replicate Jasper's previous behavior
+
+        String resourcePath = getContextRelativePath(request, relativePath);
+        RequestDispatcher rd = request.getRequestDispatcher(resourcePath);
+        rd.include(request,
+                   new ServletResponseWrapperInclude(response, out));
+
+    }
+
+
 }
-
-
-
-
