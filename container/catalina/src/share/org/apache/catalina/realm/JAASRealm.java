@@ -189,10 +189,14 @@ public class JAASRealm
 
     public void setContainer(Container container) {
         super.setContainer(container);
-        String name=container.getName();
+
         if( appName==null  ) {
+            String name=container.getName();
+            name = makeLegalForJAAS(name);
+
             appName=name;
-            log.info("Setting JAAS app name " + appName);
+
+            log.info("Set JAAS app name " + appName);
         }
     }
 
@@ -451,6 +455,32 @@ public class JAASRealm
             return (null);
         }
     }
+
+     /**
+      * Ensure the given name is legal for JAAS configuration.
+      * Added for Bugzilla 30869, made protected for easy customization
+      * in case my implementation is insufficient, which I think is
+      * very likely.
+      *
+      * @param src The name to validate
+      * @return A string that's a valid JAAS realm name
+      */
+     protected String makeLegalForJAAS(final String src) {
+         String result = src;
+         
+         // Default name is "other" per JAAS spec
+         if(result == null) {
+             result = "other";
+         }
+
+         // Strip leading slash if present, as Sun JAAS impl
+         // barfs on it (see Bugzilla 30869 bug report).
+         if(result.startsWith("/")) {
+             result = result.substring(1);
+         }
+
+         return result;
+     }
 
 
     // ------------------------------------------------------ Lifecycle Methods
