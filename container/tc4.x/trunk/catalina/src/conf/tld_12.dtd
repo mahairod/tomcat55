@@ -107,7 +107,7 @@
         validate the conformance of a JSP page to using this tag library.
 -->
 
-<!ELEMENT validatorClass (#PCDATA) >
+<!ELEMENT validatorclass (#PCDATA) >
 
 <!--
 
