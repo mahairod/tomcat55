@@ -831,7 +831,7 @@ public class Connector
      */
     public LifecycleListener[] findLifecycleListeners() {
 
-        return null;//lifecycle.findLifecycleListeners();
+        return lifecycle.findLifecycleListeners();
 
     }
 
