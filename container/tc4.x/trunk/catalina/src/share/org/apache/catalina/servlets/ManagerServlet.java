@@ -475,17 +475,42 @@ public class ManagerServlet
             return;
         }
 
+        // Identify the appBase of the owning Host of this Context
+        // (if any)
+        String appBase = ((Host) context.getParent()).getAppBase();
+        File appBaseDir = new File(appBase);
+        if (!appBaseDir.isAbsolute()) {
+            appBaseDir = new File(System.getProperty("catalina.base"),
+                                  appBase);
+        }
+        File localWar = new File(appBaseDir, basename + ".war");
+        if (localWar.exists()) {
+            writer.println(sm.getString
+                        ("managerServlet.installUploadWarExists",localWar));
+            return;
+        }
+
         // Upload the web application archive to a local WAR file
-        File localWar = new File(deployed, basename + ".war");
+        File tempWar = new File(deployed, localWar.getName());
         if (debug >= 2) {
-            log("Uploading WAR file to " + localWar);
+            log("Uploading WAR file to " + tempWar);
         }
         try {
-            uploadWar(request, localWar);
+            uploadWar(request, tempWar);
         } catch (IOException e) {
             log("managerServlet.upload[" + displayPath + "]", e);
             writer.println(sm.getString("managerServlet.exception",
                                         e.toString()));
+            tempWar.delete();
+            return;
+        }
+
+        // renameTo doc says it is supposed not to move the file in every platform
+        boolean moved = tempWar.renameTo(localWar);
+        if (!moved){
+            writer.println(sm.getString
+                        ("managerServlet.installUploadFail",localWar));
+            tempWar.delete();
             return;
         }
 
@@ -502,6 +527,10 @@ public class ManagerServlet
                                         e.toString()));
             return;
         }
+
+        // FIXME  There is a race condition here. If liveDeploy is true it means
+        // the deployer "could" start deploy the app before we start doing it.
+        // This would need host synchronization here and in HostConfig
 
         // Deploy this web application
         try {
@@ -1167,14 +1196,13 @@ public class ManagerServlet
             }
 
             // Validate the docBase path of this application
-            String deployedPath = deployed.getCanonicalPath();
             String docBase = context.getDocBase();
             File docBaseDir = new File(docBase);
             if (!docBaseDir.isAbsolute()) {
                 docBaseDir = new File(appBaseDir, docBase);
             }
             String docBasePath = docBaseDir.getCanonicalPath();
-            if (!docBasePath.startsWith(deployedPath)) {
+            if (!docBasePath.startsWith(appBaseDir.getCanonicalPath())) {
                 writer.println(sm.getString("managerServlet.noDocBase",
                                             displayPath));
                 return;
@@ -1190,15 +1218,27 @@ public class ManagerServlet
                 return;
             }
             deployer.remove(path);
+            
+            String docBaseWarPath = null;
+            
+            // Delete the directory if there is one
             if (docBaseDir.isDirectory()) {
                 undeployDir(docBaseDir);
+                docBaseWarPath = docBaseDir.getCanonicalPath() + ".war";
             } else {
-                docBaseDir.delete();  // Delete the WAR file
+                docBaseWarPath = docBaseDir.getCanonicalPath();
             }
+            
+            // Delete the WAR file if there is one
+            File docBaseWar = new File(docBaseWarPath);
+            docBaseWar.delete();
+            
+            // Delete the context xml file if there is one
             String docBaseXmlPath =
-                docBasePath.substring(0, docBasePath.length() - 4) + ".xml";
+                docBaseWarPath.substring(0, docBaseWarPath.length() - 4) + ".xml";
             File docBaseXml = new File(docBaseXmlPath);
             docBaseXml.delete();
+
             writer.println(sm.getString("managerServlet.undeployed",
                                         displayPath));
 
