@@ -99,6 +99,9 @@
       <fix>
         <bug>30984</bug>: Added compilerTargetVM option to Jasper. (yoavs)
       </fix>
+      <fix> 
+        <bug>31171</bug>: Wrap to avoid ClassCastException in PageContextImpl. (yoavs) 
+      </fix> 
     </changelog>
   </subsection>
   <subsection name="Coyote">
