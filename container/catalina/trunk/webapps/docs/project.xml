@@ -18,7 +18,7 @@
     <menu name="User Guide">
         <item name="1) Introduction"        href="introduction.html"/>
         <item name="2) Setup"               href="setup.html"/>
-        <item name="3) First webapp"     href="appdev/index.html"/>
+        <item name="3) First webapp"        href="appdev/index.html"/>
         <item name="4) Deployer"            href="deployer-howto.html"/>
         <item name="5) Manager"             href="manager-howto.html"/>
         <item name="6) Realms and AAA"      href="realm-howto.html"/>
@@ -44,7 +44,7 @@
         <item name="Release Notes"         href="RELEASE-NOTES.txt"/>
         <item name="Tomcat Configuration"  href="config/index.html"/>
         <item name="JK Documentation"      
-              href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/jk2/index.html"/>
+              href="http://jakarta.apache.org/tomcat/connectors-doc/jk2/index.html"/>
         <item name="Servlet API Javadocs"  href="servletapi/index.html"/>
         <item name="JSP API Javadocs"      href="jspapi/index.html"/>
     </menu>
