@@ -13,6 +13,202 @@
 
 <body>
 
+<section name="Tomcat 5.0.14 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <update>
+      New procrun binaries, fixing running as a service (mturk)
+      </update>
+      <update>
+      Upgrade to commons-pool 1.1 and commons-dbcp 1.1 (remm)
+      </update>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <update>
+      Cleanup schema validation and add a status message at startup (jfarcand)
+      </update>
+      <update>
+      Small tweaks to allow to execute the bootstrap JAR (remm)
+      </update>
+      <fix>
+      Explicitely add commons-logging-api on the classpath on Unix (remm)
+      </fix>
+      <fix>
+      <bug>23799</bug>: Canonicalize catalinaBase and catalinaHome (remm)
+      </fix>
+      <fix>
+      Start/stop ContainerBackgroundProcessor thread as part 
+      of StandardContext.start()/stop(), respectively (luehe)
+      </fix>
+      <fix>
+      Better increment the error count value by incrementing the count 
+      everytime sendError is invoked (jfarcand)
+      </fix>
+      <update>
+      Add system property replacementto the Connector, to be expanded to other
+      elements (remm)
+      </update>
+      <update>
+      Added support for nesting a Context Listener and webapp Loader 
+      within a DefaultContext (glenn)
+      </update>
+      <fix>
+      Remove support for Embedded.main in the shell scripts, which has been
+      removed (jfarcand)
+      </fix>
+      <fix>
+      Add the caching flags even over a secure connection, due to Mozilla bugs
+      (remm)
+      </fix>
+      <fix>
+      <bug>23608</bug>: Improve setclasspath, submitted by Adam Hardy (remm)
+      </fix>
+      <fix>
+      Add support for resource links to DefaultContext (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <add>
+      Add regexp support to check for Compression/HTTP 1.1 compatible browsers
+      (hgomez)
+      </add>
+      <fix>
+      Allow the TrustStore to have a different type from the KeyStore
+      (billbarker)
+      </fix>
+      <fix>
+      Catch AccessControlException's so that unauthorized access to a socket 
+      when using the Java SecurityManager does not shutdown the worker thread
+      (glenn)
+      </fix>
+      <fix>
+      Don't pretend that we are going to do something if the SSL handshake 
+      fails (billbarker)
+      </fix>
+      <fix>
+      Fix setting charset through a variety of methods (luehe)
+      </fix>
+      <fix>
+      If no keepalive, don't use chunking (remm)
+      </fix>
+      <fix>
+      Avoid some copying on a common case, when a JSP page is flushing its
+      own buffer (kinman)
+      </fix>
+      <update>
+      In case the server needs to reinitiate SSL handshake (with client auth
+      enabled), consume request body and buffer it, so that it does not
+      interfere with client's handshake messages; with help from Bill Barker 
+      (luehe)
+      </update>
+      <fix>
+      SocketExceptions can occur in a networked app, so reduce logging level
+      for these during setup of the socket options (glenn)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      Serialize directory creating to avoid a potential race condition
+      (kinman)
+      </fix>
+      <fix>
+      Quote value of 'classid' attribute (luehe)
+      </fix>
+      <fix>
+      <bug>23691</bug>: Tweak the SMAP tracking code so that it works 
+      for classic custom tag and JSP fragments (kinman)
+      </fix>
+      <fix>
+      Make Smap's FileSection work for windows too (kinman)
+      </fix>
+      <fix>
+      <bug>24019</bug>: Make sure that the "No Java compiler" error message 
+      is produced only when there is really no javac (kinman)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <fix>
+      Check connectors with the same port number under different domain
+      (amyroh)
+      </fix>
+      <fix>
+      Restoring JDK 1.3.1 support to StatusTransformer (billbarker)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Modules">
+
+    <changelog>
+
+      <fix>
+      The clustered manager will now respect the distributable flag (fhanik)
+      </fix>
+      <fix>
+      The clustered manager will act like a standard manager if 
+      the distributable flag is not set (fhanik)
+      </fix>
+      <update>
+      Implemented session state transfer (fhanik)
+      </update>
+      <docs>
+      Added in a clustering how to (fhanik)
+      </docs>
+      <update>
+      Added in the suspect feature to avoid to much error printing (fhanik)
+      </update>
+      <fix>
+      Removed the session replication upon session creation, this happens at 
+      the end of the request anyway (fhanik)
+      </fix>
+      <fix>
+      In JMX land, the JSR 77 beans must be in the same domain as the engine;
+      this is due to a "limitation" of JMX which prevents retrieving 
+      attributes of a bean when the unregistration event is sent (remm)
+      </fix>
+      <fix>
+      Add regexp to embed (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.13 (remm)">
 
   <subsection name="General">
