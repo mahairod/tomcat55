@@ -86,7 +86,6 @@ import org.apache.catalina.util.StringManager;
  * @author Craig R. McClanahan
  * @author Remy Maucherat
  * @author Glenn L. Nielsen
- * @author Remy Maucherat
  * @version $Revision$
  */
 
@@ -265,6 +264,31 @@ public class ExpandWar {
 
 
     /**
+     * Delete the specified directory, including all of its contents and
+     * subdirectories recursively.
+     *
+     * @param dir File object representing the directory to be deleted
+     */
+    public static void deleteDir(File dir) {
+
+        String files[] = dir.list();
+        if (files == null) {
+            files = new String[0];
+        }
+        for (int i = 0; i < files.length; i++) {
+            File file = new File(dir, files[i]);
+            if (file.isDirectory()) {
+                deleteDir(file);
+            } else {
+                file.delete();
+            }
+        }
+        dir.delete();
+
+    }
+
+
+    /**
      * Expand the specified input stream into the specified directory, creating
      * a file named from the specified relative path.
      *
@@ -288,31 +312,6 @@ public class ExpandWar {
             output.write(buffer, 0, n);
         }
         output.close();
-
-    }
-
-
-    /**
-     * Delete the specified directory, including all of its contents and
-     * subdirectories recursively.
-     *
-     * @param dir File object representing the directory to be deleted
-     */
-    public static void deleteDir(File dir) {
-
-        String files[] = dir.list();
-        if (files == null) {
-            files = new String[0];
-        }
-        for (int i = 0; i < files.length; i++) {
-            File file = new File(dir, files[i]);
-            if (file.isDirectory()) {
-                deleteDir(file);
-            } else {
-                file.delete();
-            }
-        }
-        dir.delete();
 
     }
 
