@@ -293,6 +293,7 @@ public class SingleSignOn
         Session session = event.getSession();
         if (debug >= 1)
             log("Process session destroyed on " + session);
+
         String ssoId = null;
         synchronized (reverse) {
             ssoId = (String) reverse.get(session);
@@ -300,8 +301,22 @@ public class SingleSignOn
         if (ssoId == null)
             return;
 
-        // Deregister this single session id, invalidating associated sessions
-        deregister(ssoId);
+        if ( event.getData() != null 
+             && "logout".equals( event.getData().toString() )) {
+
+            log("XXXXX logout event on " + ssoId);
+
+            // logout of all applications
+            deregister(ssoId);
+
+        } else {
+
+            log("XXXXX invalidate of just one session " + ssoId + " " + session);
+
+            // invalidate just one session
+            deregister(ssoId, session);
+
+        }
 
     }
 
@@ -442,6 +457,35 @@ public class SingleSignOn
 
     }
 
+    /**
+     * Deregister the specified session.  If it is the last session,
+     * then also get rid of the single sign on identifier
+     *
+     * @param ssoId Single sign on identifier
+     * @param session Session to be deregistered
+     */
+    private void deregister(String ssoId, Session session) {
+
+        synchronized (reverse) {
+            reverse.remove(session);
+        }
+
+        SingleSignOnEntry sso = lookup(ssoId);
+        if ( sso == null )
+            return;
+
+        sso.removeSession( session );
+
+        // see if we are the last session, if so blow away ssoId
+        Session sessions[] = sso.findSessions();
+        if ( sessions == null || sessions.length == 0 ) {
+            synchronized (cache) {
+                sso = (SingleSignOnEntry) cache.remove(ssoId);
+            }
+        }
+
+    }
+
 
     /**
      * Deregister the specified single sign on identifier, and invalidate
@@ -449,7 +493,7 @@ public class SingleSignOn
      *
      * @param ssoId Single sign on identifier to deregister
      */
-    void deregister(String ssoId) {
+    private void deregister(String ssoId) {
 
         if (debug >= 1)
             log("Deregistering sso id '" + ssoId + "'");
@@ -459,6 +503,7 @@ public class SingleSignOn
         synchronized (cache) {
             sso = (SingleSignOnEntry) cache.remove(ssoId);
         }
+
         if (sso == null)
             return;
 
@@ -601,6 +646,16 @@ class SingleSignOnEntry {
         results[sessions.length] = session;
         sessions = results;
         session.addSessionListener(sso);
+    }
+
+    public synchronized void removeSession(Session session) {
+        Session[] nsessions = new Session[sessions.length - 1];
+        for (int i = 0, j = 0; i < sessions.length; i++) {
+            if (session == sessions[i])
+                continue;
+            nsessions[j++] = sessions[i];
+        }
+        sessions = nsessions;
     }
 
     public synchronized Session[] findSessions() {
