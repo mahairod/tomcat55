@@ -105,6 +105,11 @@ public final class ServerForm extends ActionForm {
     
     private List debugLvlVals = null;
     
+    /**
+     * The object name of the Connector this bean refers to.
+     */
+    private String objectName = null;
+    
     // ------------------------------------------------------------- Properties
     /**
      * Return the label of the node that was clicked.
@@ -194,6 +199,25 @@ public final class ServerForm extends ActionForm {
         
         this.shutdownText = shutdownText;
         
+    }
+    
+    /**
+     * Return the object name of the Connector this bean refers to.
+     */
+    public String getObjectName() {
+
+        return this.objectName;
+
+    }
+
+
+    /**
+     * Set the object name of the Connector this bean refers to.
+     */
+    public void setObjectName(String objectName) {
+
+        this.objectName = objectName;
+
     }
     
     // --------------------------------------------------------- Public Methods

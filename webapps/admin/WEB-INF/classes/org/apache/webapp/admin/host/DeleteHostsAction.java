@@ -177,7 +177,7 @@ public class DeleteHostsAction extends Action {
                     control.selectNode(null);
                     TreeControlNode node = control.findNode(hosts[i]);
                     String domain = node.getDomain();
-                    ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                    ObjectName fname = TomcatTreeBuilder.getMBeanFactory();
                     mBServer.invoke(fname, operation,
                                 values, removeHostTypes);
                     if (node != null) {

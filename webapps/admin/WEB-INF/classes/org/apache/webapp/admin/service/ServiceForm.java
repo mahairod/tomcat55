@@ -103,6 +103,11 @@ public final class ServiceForm extends ActionForm {
      * The text for the serviceName.
      */
     private String serviceName = null;    
+
+    /**
+     * The text for the serverObjectName.
+     */
+    private String serverObjectName = null; 
     
    /**
      * The text for the node label.
@@ -293,6 +298,24 @@ public final class ServiceForm extends ActionForm {
     }
     
     /**
+     * Return the Server ObjectName.
+     */
+    public String getServerObjectName() {
+        
+        return this.serverObjectName;
+        
+    }
+    
+    /**
+     * Set the Server Name.
+     */
+    public void setServerObjectName(String serverObjectName) {
+        
+        this.serverObjectName = serverObjectName;
+        
+    }
+    
+    /**
      * Return the Service Name.
      */
     public String getServiceName() {
@@ -386,6 +409,8 @@ public final class ServiceForm extends ActionForm {
         sb.append(objectName);
         sb.append("',serviceName=");
         sb.append(serviceName);
+        sb.append("',serverObjectName=");
+        sb.append(serverObjectName);
         sb.append("',adminServiceName=");
         sb.append(adminServiceName);
         sb.append("]");

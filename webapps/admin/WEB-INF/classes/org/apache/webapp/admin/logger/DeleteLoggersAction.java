@@ -176,7 +176,7 @@ public class DeleteLoggersAction extends Action {
                     control.selectNode(null);
                     TreeControlNode node = control.findNode(loggers[i]);
                     String domain = node.getDomain();
-                    ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                    ObjectName fname = TomcatTreeBuilder.getMBeanFactory();
                     mBServer.invoke(fname, operation,
                                 values, removeLoggerTypes);
                     if (node != null) {

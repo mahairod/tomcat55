@@ -177,7 +177,7 @@ public class DeleteContextsAction extends Action {
                     control.selectNode(null);
                     TreeControlNode node = control.findNode(contexts[i]);
                     String domain = node.getDomain();
-                    ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                    ObjectName fname = TomcatTreeBuilder.getMBeanFactory();
                     mBServer.invoke(fname, operation,
                                 values, removeContextTypes);
                     if (node != null) {

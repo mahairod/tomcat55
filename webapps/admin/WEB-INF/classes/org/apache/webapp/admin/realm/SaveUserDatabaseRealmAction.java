@@ -213,7 +213,7 @@ public final class SaveUserDatabaseRealmAction extends Action {
                 
                 String domain = oname.getDomain();
                 // Look up our MBeanFactory MBean
-                ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                ObjectName fname = TomcatTreeBuilder.getMBeanFactory();
 
                 // Create a new StandardRealm object
                 values = new String[2];

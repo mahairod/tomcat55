@@ -177,7 +177,7 @@ public class DeleteRealmsAction extends Action {
                     TreeControlNode node = control.findNode(realms[i]);
                     String domain = node.getDomain();
                     ObjectName fname = 
-                        TomcatTreeBuilder.getMBeanFactory(domain);
+                        TomcatTreeBuilder.getMBeanFactory();
                     mBServer.invoke(fname, operation,
                                 values, removeRealmTypes);
                     if (node != null) {
