@@ -526,27 +526,22 @@ public abstract class AuthenticatorBase
         }
 
         int i;
-        for(i=0; i < constraints.length; i++) {
-            if (log.isDebugEnabled()) {
-                log.debug(" Subject to constraint " + constraints[i]);
-            }
-            // Enforce any user data constraint for this security constraint
-            if (log.isDebugEnabled()) {
-                log.debug(" Calling hasUserDataPermission()");
-            }
-            if (!realm.hasUserDataPermission(hrequest, hresponse,
-                                             constraints[i])) {
-                if (log.isDebugEnabled()) {
-                    log.debug(" Failed hasUserDataPermission() test");
-                }
-                /*
-                 * ASSERT: Authenticator already set the appropriate
-                 * HTTP status code, so we do not have to do anything special
-                 */
-                return;
-            }
+        // Enforce any user data constraint for this security constraint
+        if (log.isDebugEnabled()) {
+            log.debug(" Calling hasUserDataPermission()");
         }
-
+        if (!realm.hasUserDataPermission(hrequest, hresponse,
+                                         constraints)) {
+            if (log.isDebugEnabled()) {
+                log.debug(" Failed hasUserDataPermission() test");
+            }
+            /*
+             * ASSERT: Authenticator already set the appropriate
+             * HTTP status code, so we do not have to do anything special
+             */
+            return;
+        }
+       
         for(i=0; i < constraints.length; i++) {
             // Authenticate based upon the specified login configuration
             if (constraints[i].getAuthConstraint()) {
@@ -563,30 +558,28 @@ public abstract class AuthenticatorBase
                      * special
                      */
                     return;
-                }
-            }
-
-            // Perform access control based on the specified role(s)
-            if (constraints[i].getAuthConstraint()) {
-                if (log.isDebugEnabled()) {
-                    log.debug(" Calling accessControl()");
-                }
-                if (!realm.hasResourcePermission(hrequest, hresponse,
-                                                 constraints[i],
-                                                 this.context)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug(" Failed accessControl() test");
-                    }
-                    /*
-                     * ASSERT: AccessControl method has already set the
-                     * appropriate HTTP status code, so we do not have to do
-                     * anything special
-                     */
-                    return;
+                } else {
+                    break;
                 }
             }
         }
-
+        if (log.isDebugEnabled()) {
+            log.debug(" Calling accessControl()");
+        }
+        if (!realm.hasResourcePermission(hrequest, hresponse,
+                                         constraints,
+                                         this.context)) {
+            if (log.isDebugEnabled()) {
+                log.debug(" Failed accessControl() test");
+            }
+            /*
+             * ASSERT: AccessControl method has already set the
+             * appropriate HTTP status code, so we do not have to do
+             * anything special
+             */
+            return;
+        }
+    
         // Any and all specified constraints have been satisfied
         if (log.isDebugEnabled()) {
             log.debug(" Successfully passed all security constraints");

@@ -92,6 +92,7 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.util.HexUtils;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.MD5Encoder;
@@ -462,30 +463,159 @@ public abstract class RealmBase
             uri = uri.substring(contextPath.length());
         
         String method = hreq.getMethod();
-        for (int i = 0; i < constraints.length; i++) {
+        int i;
+        for (i = 0; i < constraints.length; i++) {
+            SecurityCollection [] collection = constraints[i].findCollections();
+            
             if (log.isDebugEnabled())
                 log.debug("  Checking constraint '" + constraints[i] +
                     "' against " + method + " " + uri + " --> " +
                     constraints[i].included(uri, method));
-            if (constraints[i].included(uri, method)) {
-                if(results == null) {
-                    results = new ArrayList();
+            for(int j=0; j < collection.length; j++){
+                if(collection[j].findMethod(method)) {
+                    String [] patterns = collection[j].findPatterns();
+                    for(int k=0; k < patterns.length; k++) {
+                        if(uri.equals(patterns[k])) {
+                            if(results == null) {
+                                results = new ArrayList();
+                            }
+                            results.add(constraints[i]);
+                        }
+                    }
                 }
-                results.add(constraints[i]);
             }
         }
-
-        // No applicable security constraint was found
-        if (log.isDebugEnabled())
-            log.debug("  No applicable constraint located");
-        if(results == null)
-            return null;
-        SecurityConstraint [] array = new SecurityConstraint [results.size()];
-        results.toArray(array);
-        return array;
-
+        if(results != null) {
+            return resultsToArray(results);
+        }
+        int longest = -1;
+        String testURI = uri;
+        if(uri.endsWith("/")) {
+            testURI = uri.substring(0,uri.length()-1);
+        }
+        for (i = 0; i < constraints.length; i++) {
+            SecurityCollection [] collection = constraints[i].findCollections();
+            
+            if (log.isDebugEnabled())
+                log.debug("  Checking constraint '" + constraints[i] +
+                    "' against " + method + " " + uri + " --> " +
+                    constraints[i].included(uri, method));
+            for(int j=0; j < collection.length; j++){
+                if(collection[j].findMethod(method)) {
+                    String [] patterns = collection[j].findPatterns();
+                    boolean matched = false;
+                    int length = -1;
+                    for(int k=0; k < patterns.length; k++) {
+                        String pattern = patterns[j];
+                        if(pattern.startsWith("/") && pattern.endsWith("/*") && 
+                           pattern.length() >= longest) {
+                            
+                            if(pattern.length() == 0) {
+                                matched = true;
+                                length = pattern.length();
+                            } else if(testURI.startsWith(pattern)) {
+                                matched = true;
+                                length = pattern.length();
+                            }
+                        }
+                    }
+                    if(matched) {
+                        if(results == null) {
+                            results = new ArrayList();
+                        } else if(length > longest) {
+                            results.clear();
+                            longest = length;
+                        }
+                        results.add(constraints[i]);
+                        break;
+                    }
+                }
+            }
+        }
+        for (i = 0; i < constraints.length; i++) {
+            SecurityCollection [] collection = constraints[i].findCollections();
+            
+            if (log.isDebugEnabled())
+                log.debug("  Checking constraint '" + constraints[i] +
+                    "' against " + method + " " + uri + " --> " +
+                    constraints[i].included(uri, method));
+            boolean matched = false;
+            for(int j=0; j < collection.length; j++){
+                if(collection[j].findMethod(method)) {
+                    String [] patterns = collection[j].findPatterns();
+                    for(int k=0; k < patterns.length && !matched; k++) {
+                        String pattern = patterns[j];
+                        if(pattern.startsWith("*.")){
+                            int slash = testURI.lastIndexOf("/");
+                            int dot = testURI.lastIndexOf(".");
+                            if(slash >= 0 && dot > slash) {
+                                if(testURI.endsWith(pattern.substring(1))) {
+                                    matched = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                if(matched) {
+                    if(results == null) {
+                        results = new ArrayList();
+                    }                    
+                    results.add(constraints[i]);
+                    break;
+                }
+            }
+        }
+        if(results != null) {
+            return resultsToArray(results);
+        }
+        for (i = 0; i < constraints.length; i++) {
+            SecurityCollection [] collection = constraints[i].findCollections();
+            
+            if (log.isDebugEnabled())
+                log.debug("  Checking constraint '" + constraints[i] +
+                    "' against " + method + " " + uri + " --> " +
+                    constraints[i].included(uri, method));
+            for(int j=0; j < collection.length; j++){
+                if(collection[j].findMethod(method)) {
+                    String [] patterns = collection[j].findPatterns();
+                    boolean matched = false;
+                    for(int k=0; k < patterns.length && !matched; k++) {
+                        String pattern = patterns[j];
+                        if(pattern.equals("/")){
+                            matched = true;
+                        }
+                    }
+                    if(matched) {
+                        if(results == null) {
+                            results = new ArrayList();
+                        }                    
+                        results.add(constraints[i]);
+                        break;
+                    }
+                }
+            }
+        }
+                
+        if(results == null) {
+            // No applicable security constraint was found
+            if (log.isDebugEnabled())
+                log.debug("  No applicable constraint located");
+        }
+        return resultsToArray(results);
     }
  
+    /**
+     * Convert an ArrayList to a SecurityContraint [].
+     */
+    private SecurityConstraint [] resultsToArray(ArrayList results) {
+        if(results == null) {
+            return null;
+        }
+        SecurityConstraint [] array = new SecurityConstraint[results.size()];
+        results.toArray(array);
+        return array;
+    }
+
     
     /**
      * Perform access control based on the specified authorization constraint.
@@ -501,11 +631,11 @@ public abstract class RealmBase
      */
     public boolean hasResourcePermission(HttpRequest request,
                                          HttpResponse response,
-                                         SecurityConstraint constraint,
+                                         SecurityConstraint []constraints,
                                          Context context)
         throws IOException {
 
-        if (constraint == null)
+        if (constraints == null || constraints.length == 0)
             return (true);
 
         // Specifically allow access to the form login and form error pages
@@ -536,38 +666,45 @@ public abstract class RealmBase
         // Which user principal have we already authenticated?
         Principal principal =
             ((HttpServletRequest) request.getRequest()).getUserPrincipal();
-        if (principal == null) {
-            if (log.isDebugEnabled())
-                log.debug("  No user authenticated, cannot grant access");
-            ((HttpServletResponse) response.getResponse()).sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                 sm.getString("realmBase.notAuthenticated"));
-            return (false);
-        }
+        for(int i=0; i < constraints.length; i++) {
+            SecurityConstraint constraint = constraints[i];
+            String roles[] = constraint.findAuthRoles();
+            if (roles == null)
+                roles = new String[0];
 
-        String roles[] = constraint.findAuthRoles();
-        if (roles == null)
-            roles = new String[0];
-
-        if (constraint.getAllRoles())
-            return (true);
-
-        if (log.isDebugEnabled())
-            log.debug("  Checking roles " + principal);
-
-        if ((roles.length == 0) && (constraint.getAuthConstraint())) {
-            ((HttpServletResponse) response.getResponse()).sendError
-                (HttpServletResponse.SC_FORBIDDEN,
-                 sm.getString("realmBase.forbidden"));
-            if( log.isDebugEnabled() ) log.debug("No roles ");
-            return (false); // No listed roles means no access at all
-        }
-
-        for (int i = 0; i < roles.length; i++) {
-            if (hasRole(principal, roles[i]))
+            if (constraint.getAllRoles())
                 return (true);
-            if( log.isDebugEnabled() )
-                log.debug( "No role found:  " + roles[i]);
+
+            if (log.isDebugEnabled())
+                log.debug("  Checking roles " + principal);
+
+            if (roles.length == 0) {
+                if(constraint.getAuthConstraint()) {
+                    ((HttpServletResponse) response.getResponse()).sendError
+                        (HttpServletResponse.SC_FORBIDDEN,
+                         sm.getString("realmBase.forbidden"));
+                    if( log.isDebugEnabled() ) log.debug("No roles ");
+                    return (false); // No listed roles means no access at all
+                } else {
+                    log.debug("Passing all access");
+                    return (true);
+                }
+            } else if (principal == null) {
+                if (log.isDebugEnabled())
+                    log.debug("  No user authenticated, cannot grant access");
+                ((HttpServletResponse) response.getResponse()).sendError
+                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                     sm.getString("realmBase.notAuthenticated"));
+                return (false);
+            }
+
+
+            for (int j = 0; j < roles.length; j++) {
+                if (hasRole(principal, roles[j]))
+                    return (true);
+                if( log.isDebugEnabled() )
+                    log.debug( "No role found:  " + roles[j]);
+            }
         }
         // Return a "Forbidden" message denying access to this resource
         ((HttpServletResponse) response.getResponse()).sendError
@@ -627,34 +764,36 @@ public abstract class RealmBase
      */
     public boolean hasUserDataPermission(HttpRequest request,
                                     HttpResponse response,
-                                    SecurityConstraint constraint)
+                                    SecurityConstraint []constraints)
         throws IOException {
 
         // Is there a relevant user data constraint?
-        if (constraint == null) {
+        if (constraints == null || constraints.length == 0) {
             if (log.isDebugEnabled())
                 log.debug("  No applicable security constraint defined");
             return (true);
         }
-        String userConstraint = constraint.getUserConstraint();
-        if (userConstraint == null) {
-            if (log.isDebugEnabled())
-                log.debug("  No applicable user data constraint defined");
-            return (true);
-        }
-        if (userConstraint.equals(Constants.NONE_TRANSPORT)) {
-            if (log.isDebugEnabled())
-                log.debug("  User data constraint has no restrictions");
-            return (true);
-        }
+        for(int i=0; i < constraints.length; i++) {
+            SecurityConstraint constraint = constraints[i];
+            String userConstraint = constraint.getUserConstraint();
+            if (userConstraint == null) {
+                if (log.isDebugEnabled())
+                    log.debug("  No applicable user data constraint defined");
+                return (true);
+            }
+            if (userConstraint.equals(Constants.NONE_TRANSPORT)) {
+                if (log.isDebugEnabled())
+                    log.debug("  User data constraint has no restrictions");
+                return (true);
+            }
 
+        }
         // Validate the request against the user data constraint
         if (request.getRequest().isSecure()) {
             if (log.isDebugEnabled())
                 log.debug("  User data constraint already satisfied");
             return (true);
         }
-
         // Initialize variables we need to determine the appropriate action
         HttpServletRequest hrequest =
             (HttpServletRequest) request.getRequest();

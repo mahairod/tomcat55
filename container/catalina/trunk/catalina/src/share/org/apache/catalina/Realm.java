@@ -192,7 +192,7 @@ public interface Realm {
      */
     public boolean hasResourcePermission(HttpRequest request,
                                          HttpResponse response,
-                                         SecurityConstraint constraint,
+                                         SecurityConstraint [] constraint,
                                          Context context)
         throws IOException;
     
@@ -221,7 +221,7 @@ public interface Realm {
      */
     public boolean hasUserDataPermission(HttpRequest request,
                                          HttpResponse response,
-                                         SecurityConstraint constraint)
+                                         SecurityConstraint []constraint)
         throws IOException;
     
     /**
