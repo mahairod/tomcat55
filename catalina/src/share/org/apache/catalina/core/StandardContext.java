@@ -4797,7 +4797,7 @@ public class StandardContext
         if (path.equals("")) {
             basename = "ROOT";
         } else {
-            basename = path.substring(1).replace('/', '_');
+            basename = path.substring(1).replace('/', '#');
         }
         return (basename + ".xml");
     }
