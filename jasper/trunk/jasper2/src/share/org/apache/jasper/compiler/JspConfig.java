@@ -89,7 +89,7 @@ public class JspConfig {
     private ServletContext ctxt;
     private boolean initialized = false;
 
-    private String defaultIsXml = "false";
+    private String defaultIsXml = null;		// unspecified
     private String defaultIsELEnabled = "true";
     private String defaultIsScriptingEnabled = "true";
 
@@ -109,7 +109,6 @@ public class JspConfig {
 	ParserUtils pu = ParserUtils.createParserUtils(cl);
 	TreeNode webApp = pu.parseXMLDocument(WEB_XML, is);
 	if (webApp == null || !"2.4".equals(webApp.findAttribute("version"))) {
-	    System.out.println("Servlet 2.3");
 	    defaultIsELEnabled = "false";
 	    return;
 	}
