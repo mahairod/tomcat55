@@ -190,6 +190,12 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
         StringManager.getManager(Constants.Package);
 
 
+    /**
+     * Have the parameters for this request already been parsed?
+     */
+    private boolean parsedParams = false;
+
+
     // ------------------------------------------------- ServletRequest Methods
 
 
@@ -276,6 +282,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public String getParameter(String name) {
 
+	parseParameters();
         synchronized (parameters) {
             Object value = parameters.get(name);
             if (value == null)
@@ -297,6 +304,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public Map getParameterMap() {
 
+	parseParameters();
         return (parameters);
 
     }
@@ -308,6 +316,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public Enumeration getParameterNames() {
 
+	parseParameters();
         synchronized (parameters) {
             return (new Enumerator(parameters.keySet()));
         }
@@ -323,6 +332,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public String[] getParameterValues(String name) {
 
+	parseParameters();
         synchronized (parameters) {
             Object value = parameters.get(name);
             if (value == null)
@@ -389,7 +399,6 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     // -------------------------------------------------------- Package Methods
 
 
-
     /**
      * Return descriptive information about this implementation.
      */
@@ -418,47 +427,6 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
             }
         }
         return (dest);
-
-    }
-
-
-    /**
-     * Merge the parameters from the specified query string (if any), and
-     * the parameters already present on this request (if any), such that
-     * the parameter values from the query string show up first if there are
-     * duplicate parameter names.
-     *
-     * @param queryString The query string containing parameters to be merged
-     */
-    void mergeParameters(String queryString) {
-
-        if ((queryString == null) || (queryString.length() < 1))
-            return;
-
-        HashMap queryParameters = new HashMap();
-        String encoding = getCharacterEncoding();
-        if (encoding == null)
-            encoding = "ISO-8859-1";
-        try {
-            RequestUtil.parseParameters
-                (queryParameters, queryString, encoding);
-        } catch (Exception e) {
-            ;
-        }
-        synchronized (parameters) {
-            Iterator keys = parameters.keySet().iterator();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                Object value = queryParameters.get(key);
-                if (value == null) {
-                    queryParameters.put(key, parameters.get(key));
-                    continue;
-                }
-                queryParameters.put
-                    (key, mergeValues(value, parameters.get(key)));
-            }
-            parameters = queryParameters;
-        }
 
     }
 
@@ -522,11 +490,6 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
             }
         }
 
-        // Initialize the parameters for this request
-        synchronized (parameters) {
-            parameters = copyMap(request.getParameterMap());
-        }
-
         // Initialize the path elements for this request
         contextPath = request.getContextPath();
         pathInfo = request.getPathInfo();
@@ -558,6 +521,26 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
         this.servletPath = servletPath;
 
+    }
+
+
+    /**
+     * Parses the parameters of this request.
+     *
+     * If parameters are present in both the query string and the request
+     * content, they are merged.
+     */
+    void parseParameters() {
+
+	if (parsedParams) {
+	    return;
+	}
+
+        synchronized (parameters) {
+            parameters = copyMap(getRequest().getParameterMap());
+	    mergeParameters();
+	    parsedParams = true;
+        }
     }
 
 
@@ -619,4 +602,44 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     }
 
 
+    // ------------------------------------------------------ Private Methods
+
+
+    /**
+     * Merge the parameters from the saved query parameter string (if any), and
+     * the parameters already present on this request (if any), such that the
+     * parameter values from the query string show up first if there are
+     * duplicate parameter names.
+     */
+    private void mergeParameters() {
+
+        if ((queryString == null) || (queryString.length() < 1))
+            return;
+
+        HashMap queryParameters = new HashMap();
+        String encoding = getCharacterEncoding();
+        if (encoding == null)
+            encoding = "ISO-8859-1";
+        try {
+            RequestUtil.parseParameters
+                (queryParameters, queryString, encoding);
+        } catch (Exception e) {
+            ;
+        }
+        synchronized (parameters) {
+            Iterator keys = parameters.keySet().iterator();
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                Object value = queryParameters.get(key);
+                if (value == null) {
+                    queryParameters.put(key, parameters.get(key));
+                    continue;
+                }
+                queryParameters.put
+                    (key, mergeValues(value, parameters.get(key)));
+            }
+            parameters = queryParameters;
+        }
+
+    }
 }

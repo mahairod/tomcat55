@@ -466,11 +466,7 @@ final class ApplicationDispatcher
             if (queryString != null) {
                 wrequest.setAttribute(Globals.FORWARD_QUERY_STRING_ATTR,
                                       queryString);
-            }
-            
-            if (queryString != null) {
                 wrequest.setQueryString(queryString);
-                wrequest.mergeParameters(queryString);
             }
 
             // only set the Dispatcher Type to Forward if it has not been set. It will have
@@ -631,7 +627,7 @@ final class ApplicationDispatcher
             if (queryString != null) {
                 wrequest.setAttribute(Globals.INCLUDE_QUERY_STRING_ATTR,
                                       queryString);
-                wrequest.mergeParameters(queryString);
+		wrequest.setQueryString(queryString);
             }
             
             wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
