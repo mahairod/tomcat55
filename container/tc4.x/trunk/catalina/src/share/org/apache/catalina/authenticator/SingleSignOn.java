@@ -110,10 +110,16 @@ public class SingleSignOn
 
 
     /**
-     * The cache of authenticated Principals, keyed by the cookie value that
-     * is used to select them.
+     * The cache of SingleSignOnEntry instances for authenticated Principals,
+     * keyed by the cookie value that is used to select them.
      */
     protected HashMap cache = new HashMap();
+
+
+    /**
+     * The debugging detail level for this component.
+     */
+    protected int debug = 0;
 
 
     /**
@@ -171,7 +177,8 @@ public class SingleSignOn
         }
 
         // Check for the single sign on cookie
-        log("Checking for SSO cookie");
+        if (debug >= 1)
+            log("Checking for SSO cookie");
         Cookie cookie = null;
         Cookie cookies[] = hreq.getCookies();
         if (cookies == null)
@@ -188,11 +195,15 @@ public class SingleSignOn
         }
 
         // Look up the cached Principal associated with this cookie value
-        log("Checking for cached principal");
-        Principal principal = lookup(cookie.getValue());
-        if (principal != null) {
-            log("Found cached principal '" + principal.getName() + "'");
-            ((HttpRequest) request).setUserPrincipal(principal);
+        if (debug >= 1)
+            log("Checking for cached principal");
+        SingleSignOnEntry entry = lookup(cookie.getValue());
+        if (entry != null) {
+            if (debug >= 1)
+                log("Found cached principal '" +
+                    entry.principal.getName() + "'");
+            ((HttpRequest) request).setAuthType(entry.authType);
+            ((HttpRequest) request).setUserPrincipal(entry.principal);
         }
 
         // Invoke the next Valve in our pipeline
@@ -226,14 +237,17 @@ public class SingleSignOn
      *
      * @param cookie Cookie value for the single sign on cookie
      * @param principal Associated user principal that is identified
+     * @param authType Authentication type used to authenticate this
+     *  user principal
      */
-    public void register(String cookie, Principal principal) {
+    public void register(String cookie, Principal principal, String authType) {
 
-        log("Registering cookie value '" + cookie + "' for user '" +
-            principal.getName() + "'");
+        if (debug >= 1)
+            log("Registering cookie value '" + cookie + "' for user '" +
+                principal.getName() + "' with auth type '" + authType + "'");
 
         synchronized (cache) {
-            cache.put(cookie, principal);
+            cache.put(cookie, new SingleSignOnEntry(principal, authType));
         }
 
     }
@@ -296,14 +310,35 @@ public class SingleSignOn
      *
      * @param cookie Cookie value to look up
      */
-    protected Principal lookup(String cookie) {
+    protected SingleSignOnEntry lookup(String cookie) {
 
         // FIXME - No timeout checking on cached Principals
         synchronized (cache) {
-            return ((Principal) cache.get(cookie));
+            return ((SingleSignOnEntry) cache.get(cookie));
         }
 
     }
 
+
+}
+
+
+// ------------------------------------------------------------ Private Classes
+
+
+/**
+ * A private class representing entries in the cache of authenticated users.
+ */
+class SingleSignOnEntry {
+
+    public Principal principal = null;
+
+    public String authType = null;
+
+    public SingleSignOnEntry(Principal principal, String authType) {
+        super();
+        this.principal = principal;
+        this.authType = authType;
+    }
 
 }

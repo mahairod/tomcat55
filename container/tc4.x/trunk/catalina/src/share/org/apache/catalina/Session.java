@@ -87,6 +87,22 @@ public interface Session {
 
 
     /**
+     * Return the authentication type used to authenticate our cached
+     * Principal, if any.
+     */
+    public String getAuthType();
+
+
+    /**
+     * Set the authentication type used to authenticate our cached
+     * Principal, if any.
+     *
+     * @param authType The new cached authentication type
+     */
+    public void setAuthType(String authType);
+
+
+    /**
      * Return the creation time for this session.
      */
     public long getCreationTime();

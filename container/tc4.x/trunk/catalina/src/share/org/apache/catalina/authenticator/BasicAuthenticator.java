@@ -160,7 +160,7 @@ public final class BasicAuthenticator
                 //                if (debug >= 1)
                 //                    log("Cached authentication for '" + principal.getName()
                 //                        + "'");
-	        request.setAuthType(Constants.BASIC_METHOD);
+	        request.setAuthType(session.getAuthType());
 		request.setUserPrincipal(principal);
 		return (true);
 	    }
@@ -181,7 +181,7 @@ public final class BasicAuthenticator
 		request.setUserPrincipal(principal);
 		if (cache && (session != null))
 		    session.setPrincipal(principal);
-                register(request, response, principal);
+                register(request, response, principal, Constants.BASIC_METHOD);
 		return (true);
 	    }
 	}

@@ -148,7 +148,7 @@ public final class SSLAuthenticator
 	if (session != null) {
 	    principal = session.getPrincipal();
 	    if (principal != null) {
-	        request.setAuthType(Constants.CERT_METHOD);
+	        request.setAuthType(session.getAuthType());
 		request.setUserPrincipal(principal);
                 return (true);
 	    }
@@ -193,7 +193,7 @@ public final class SSLAuthenticator
         request.setUserPrincipal(principal);
         if (cache && (session != null))
             session.setPrincipal(principal);
-        register(request, response, principal);
+        register(request, response, principal, Constants.CERT_METHOD);
         return (true);
 
     }

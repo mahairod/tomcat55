@@ -152,7 +152,7 @@ public final class FormAuthenticator
 	if (session != null) {
 	    principal = session.getPrincipal();
 	    if (principal != null) {
-	        request.setAuthType(Constants.FORM_METHOD);
+	        request.setAuthType(session.getAuthType());
 		request.setUserPrincipal(principal);
 		return (true);
 	    }
@@ -204,7 +204,7 @@ public final class FormAuthenticator
 	request.setUserPrincipal(principal);
 	if (cache && (session != null))
 	    session.setPrincipal(principal);
-        register(request, response, principal);
+        register(request, response, principal, Constants.FORM_METHOD);
 	if (restoreRequest(request, session))
 	    return (true);		// Perform the original request
 	else {

@@ -825,9 +825,10 @@ public abstract class AuthenticatorBase
      * @param request The servlet request we are processing
      * @param response The servlet response we are generating
      * @param principal The authenticated Principal to be registered
+     * @param authType The authentication type to be registered
      */
     protected void register(Request request, Response response,
-                            Principal principal) {
+                            Principal principal, String authType) {
 
         if (sso == null)
             return;
@@ -844,7 +845,7 @@ public abstract class AuthenticatorBase
         hres.addCookie(cookie);
 
         // Register this principal with our SSO valve
-        sso.register(value, principal);
+        sso.register(value, principal, authType);
 
     }
 

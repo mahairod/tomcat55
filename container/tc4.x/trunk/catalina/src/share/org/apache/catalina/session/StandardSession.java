@@ -149,6 +149,14 @@ final class StandardSession
 
 
     /**
+     * The authentication type used to authenticate our cached Principal,
+     * if any.  NOTE:  This value is not included in the serialized
+     * version of this object.
+     */
+    private transient String authType = null;
+
+
+    /**
      * The time this session was created, in milliseconds since midnight,
      * January 1, 1970 GMT.
      */
@@ -235,6 +243,30 @@ final class StandardSession
 
 
     // ----------------------------------------------------- Session Properties
+
+
+    /**
+     * Return the authentication type used to authenticate our cached
+     * Principal, if any.
+     */
+    public String getAuthType() {
+
+        return (this.authType);
+
+    }
+
+
+    /**
+     * Set the authentication type used to authenticate our cached
+     * Principal, if any.
+     *
+     * @param authType The new cached authentication type
+     */
+    public void setAuthType(String authType) {
+
+        this.authType = authType;
+
+    }
 
 
     /**
@@ -506,6 +538,7 @@ final class StandardSession
 
 	// Reset the instance variables associated with this Session
 	attributes.clear();
+        authType = null;
 	creationTime = 0L;
 	expiring = false;
 	id = null;
@@ -956,6 +989,7 @@ final class StandardSession
 	throws ClassNotFoundException, IOException {
 
 	// Deserialize the scalar instance variables (except Manager)
+        authType = null;        // Transient only
 	creationTime = ((Long) stream.readObject()).longValue();
 	lastAccessedTime = ((Long) stream.readObject()).longValue();
 	maxInactiveInterval = ((Integer) stream.readObject()).intValue();

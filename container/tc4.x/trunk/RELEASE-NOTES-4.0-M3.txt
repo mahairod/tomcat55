@@ -165,6 +165,9 @@ Catalina:  When expiring a session, mark the session invalid at the beginning
 of the expiration process, so that any simultaneous access to this session
 from a different thread will get IllegalStateException.
 
+Catalina:  Single Sign On support now properly remembers the authentication
+method used to originally authenticate the user.
+
 
 ==============================
 KNOWN PROBLEMS IN THIS RELEASE:

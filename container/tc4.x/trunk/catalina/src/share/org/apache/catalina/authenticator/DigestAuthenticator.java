@@ -228,7 +228,7 @@ public final class DigestAuthenticator
 	if (session != null) {
 	    principal = session.getPrincipal();
 	    if (principal != null) {
-	        request.setAuthType(Constants.DIGEST_METHOD);
+	        request.setAuthType(session.getAuthType());
 		request.setUserPrincipal(principal);
 		return (true);
 	    }
@@ -247,7 +247,8 @@ public final class DigestAuthenticator
 		request.setUserPrincipal(principal);
 		if (cache && (session != null))
 		    session.setPrincipal(principal);
-                register(request, response, principal);
+                register(request, response, principal,
+                         Constants.DIGEST_METHOD);
 		return (true);
 	    }
 	}
