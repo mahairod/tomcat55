@@ -67,10 +67,10 @@ if [ "$1" = "debug" ] ; then
   shift
   pushd $CATALINA_HOME
   jdb \
-     -sourcepath ../../jakarta-tomcat/proposals/catalina:../../jakarta-tomcat \
+     -sourcepath ../../jakarta-tomcat-4.0/catalina/src/share \
      -Xbootclasspath:$BP \
      -classpath $CP -Dcatalina.home=$CATALINA_HOME \
-     org.apache.tomcat.startup.Bootstrap "$@" start
+     org.apache.catalina.startup.Bootstrap "$@" start
   popd
 
 elif [ "$1" = "embedded" ] ; then
@@ -85,11 +85,11 @@ elif [ "$1" = "embedded" ] ; then
   shift
   java $CATALINA_OPTS -classpath $CP \
    -Dcatalina.home=$CATALINA_HOME \
-   org.apache.tomcat.startup.Embedded "$@"
+   org.apache.catalina.startup.Embedded "$@"
 
 elif [ "$1" = "env" ] ; then
 
-  export CATALINA_HOME CP
+  export BP CATALINA_HOME CP
   exit 0
 
 elif [ "$1" = "run" ] ; then
@@ -97,7 +97,7 @@ elif [ "$1" = "run" ] ; then
   shift
   java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
    -Dcatalina.home=$CATALINA_HOME \
-   org.apache.tomcat.startup.Bootstrap "$@" start
+   org.apache.catalina.startup.Bootstrap "$@" start
 
 elif [ "$1" = "start" ] ; then
 
@@ -105,7 +105,7 @@ elif [ "$1" = "start" ] ; then
   touch $CATALINA_HOME/logs/catalina.out
   java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
    -Dcatalina.home=$CATALINA_HOME \
-   org.apache.tomcat.startup.Bootstrap "$@" start \
+   org.apache.catalina.startup.Bootstrap "$@" start \
    >> $CATALINA_HOME/logs/catalina.out 2>&1 &
 
 elif [ "$1" = "stop" ] ; then
@@ -113,7 +113,7 @@ elif [ "$1" = "stop" ] ; then
   shift
   java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
    -Dcatalina.home=$CATALINA_HOME \
-   org.apache.tomcat.startup.Bootstrap "$@" stop
+   org.apache.catalina.startup.Bootstrap "$@" stop
 
 else
 
