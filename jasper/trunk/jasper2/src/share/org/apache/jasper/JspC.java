@@ -4,10 +4,10 @@
  * $Date$
  *
  * ====================================================================
- * 
+ *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -57,7 +57,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 
 package org.apache.jasper;
 
@@ -78,7 +78,7 @@ import org.apache.jasper.compiler.JspConfig;
 import org.apache.jasper.compiler.TagPluginManager;
 
 /**
- * Shell for the jspc compiler.  Handles all options associated with the 
+ * Shell for the jspc compiler.  Handles all options associated with the
  * command line and creates compilation contexts which it then compiles
  * according to the specified options.
  *
@@ -99,11 +99,11 @@ import org.apache.jasper.compiler.TagPluginManager;
             &lt;path refid="myjars"/&gt;
          &lt;/classpath&gt;
     &lt;/taskdef&gt;
-    
-    &lt;jasper2 verbose="0" 
+
+    &lt;jasper2 verbose="0"
              package="my.package"
              uriroot="${webapps.dir}/${webapp.name}"
-             webXmlFragment="${build.dir}/generated_web.xml" 
+             webXmlFragment="${build.dir}/generated_web.xml"
              outputDir="${webapp.dir}/${webapp.name}/WEB-INF/src/my/package" /&gt;
  </pre>
  *
@@ -113,9 +113,9 @@ import org.apache.jasper.compiler.TagPluginManager;
  */
 public class JspC implements Options {
 
-    public static final String DEFAULT_IE_CLASS_ID = 
+    public static final String DEFAULT_IE_CLASS_ID =
             "clsid:8AD9C840-044E-11D1-B3E9-00805F499D93";
-    
+
     public static final String SWITCH_VERBOSE = "-v";
     public static final String SWITCH_QUIET = "-q";
     public static final String SWITCH_OUTPUT_DIR = "-d";
@@ -148,8 +148,8 @@ public class JspC implements Options {
 
     // future direction
     //public static final String SWITCH_XML_OUTPUT = "-xml";
-  
-    
+
+
     boolean largeFile = false;
     boolean mappedFile = false;
 
@@ -160,7 +160,7 @@ public class JspC implements Options {
     String ieClassId = DEFAULT_IE_CLASS_ID;
 
     String targetPackage;
-    
+
     String targetClassName;
 
     String uriBase;
@@ -174,11 +174,11 @@ public class JspC implements Options {
 
     boolean compile=false;
     String compiler=null;
-    
+
     boolean dirset;
-    
+
     boolean classDebugInfo=true;
-    
+
     Vector extensions;
 
     Vector pages = new Vector();
@@ -193,7 +193,7 @@ public class JspC implements Options {
     static PrintStream log;
 
     JspCServletContext context;
-    
+
     /**
      * Cache for the TLD locations
      */
@@ -209,7 +209,7 @@ public class JspC implements Options {
         // isn't this why we are running jspc?
         return true;
     }
-    
+
     public boolean getLargeFile() {
         return largeFile;
     }
@@ -233,7 +233,7 @@ public class JspC implements Options {
     public Object getProtectionDomain() {
 	return null;
     }
-    
+
     public boolean getSendErrorToClient() {
         // implied send to System.err
         return true;
@@ -242,7 +242,7 @@ public class JspC implements Options {
     public void setClassDebugInfo( boolean b ) {
         classDebugInfo=b;
     }
-    
+
     public boolean getClassDebugInfo() {
         // compile with debug info
         return classDebugInfo;
@@ -272,7 +272,7 @@ public class JspC implements Options {
     public String getIeClassId() {
         return ieClassId;
     }
-    
+
     public int getJspVerbosityLevel() {
         return jspVerbosityLevel;
     }
@@ -329,7 +329,7 @@ public class JspC implements Options {
     public void setClassPath(String s) {
         classPath=s;
     }
-    
+
     /** Base dir for the webapp. Used to generate class names and
      *  resolve includes
      */
@@ -348,7 +348,7 @@ public class JspC implements Options {
     public void setVerbose( int level ) {
         Constants.jasperLog.setVerbosityLevel(level);
     }
-    
+
     public void setCompile( boolean b ) {
         compile=b;
     }
@@ -356,7 +356,7 @@ public class JspC implements Options {
     public void setValidateXml( boolean b ) {
         org.apache.jasper.xmlparser.ParserUtils.validating=b;
     }
-    
+
     public void setOutputDir( String s ) {
         if( s!= null ) {
             scratchDir=new File(new File(s).getAbsolutePath());
@@ -384,7 +384,7 @@ public class JspC implements Options {
         webxmlFile=s;
         webxmlLevel=INC_WEBXML;
     }
-    
+
     /**
      * Resolve relative path, and create output directories.
      */
@@ -402,7 +402,7 @@ public class JspC implements Options {
 
         if (dirset) {
             int indexOfSlash = clctxt.getJspFile().lastIndexOf('/');
-            
+
             /* String pathName = "";
             if (indexOfSlash != -1) {
                 pathName = clctxt.getJspFile().substring(0, indexOfSlash);
@@ -438,7 +438,7 @@ public class JspC implements Options {
             classPath= classPath + File.pathSeparator +
                 ((org.apache.tools.ant.AntClassLoader)parent).getClasspath();
         }
-        
+
         // Turn the classPath in URLs
         StringTokenizer tokenizer = new StringTokenizer(classPath, File.pathSeparator);
         while (tokenizer.hasMoreTokens()) {
@@ -458,7 +458,7 @@ public class JspC implements Options {
             File classes = new File(webappBase, "/WEB-INF/classes");
             try {
                 if (classes.exists()) {
-                    classPath = classPath + File.pathSeparator 
+                    classPath = classPath + File.pathSeparator
                         + classes.getCanonicalPath();
                     urls.add(classes.getCanonicalFile().toURL());
                 }
@@ -480,7 +480,7 @@ public class JspC implements Options {
                     }
                     try {
                         File libFile = new File(lib, libs[i]);
-                        classPath = classPath + File.pathSeparator 
+                        classPath = classPath + File.pathSeparator
                             + libFile.getCanonicalPath();
                         urls.add(libFile.getCanonicalFile().toURL());
                     } catch (IOException ioe) {
@@ -502,18 +502,18 @@ public class JspC implements Options {
     }
 
     public void generateWebMapping( String file, JspCompilationContext clctxt )
-        throws IOException 
+        throws IOException
     {
         String className = clctxt.getServletClassName();
         String packageName = clctxt.getServletPackageName();
-        
+
         String thisServletName;
         if  ("".equals(packageName)) {
             thisServletName = className;
         } else {
             thisServletName = packageName + '.' + className;
         }
-        
+
         if (servletout != null) {
             servletout.write("\n\t<servlet>\n\t\t<servlet-name>");
             servletout.write(thisServletName);
@@ -527,10 +527,11 @@ public class JspC implements Options {
             mappingout.write("</servlet-name>\n\t\t<url-pattern>");
             mappingout.write(file.replace('\\', '/'));
             mappingout.write("</url-pattern>\n\t</servlet-mapping>\n");
-            
+
         }
     }
-    
+
+
     public boolean processFile(String file)
         throws JasperException
     {
@@ -547,17 +548,17 @@ public class JspC implements Options {
                 targetClassName = null;
             }
             if (targetPackage != null) {
-                int baseLen=jspUri.lastIndexOf("/");
-                if( baseLen <0 ) baseLen=0;
-                String packageSubs= jspUri.substring(0, baseLen).replace( '/', '.' );
-                clctxt.setServletPackageName( targetPackage + "." + packageSubs);
+                clctxt.setServletPackageName( targetPackage + "." +
+                        toPackageName(jspUri));
+            } else {
+                clctxt.setServletPackageName( toPackageName(jspUri));
             }
-            
+
             setupContext(clctxt);
 
             if( loader==null )
                 initClassLoader( clctxt );
-            
+
             clctxt.setClassLoader(loader);
             clctxt.setClassPath(classPath);
 
@@ -570,11 +571,11 @@ public class JspC implements Options {
                     clc.compile();
                 }
             } else {
-                // Only generate .java, compilation is separated 
+                // Only generate .java, compilation is separated
                 // Don't compile if the .class file is newer than the .jsp file
                 if( clc.isOutDated(false) ) {
                     clc.generateJava();
-                } 
+                }
             }
 
             // Generate mapping
@@ -584,11 +585,11 @@ public class JspC implements Options {
             }
             return true;
         } catch (FileNotFoundException fne) {
-            Constants.message("jspc.error.fileDoesNotExist", 
+            Constants.message("jspc.error.fileDoesNotExist",
                               new Object[] {fne.getMessage()}, Logger.WARNING);
             throw new JasperException( fne );
         } catch (Exception e) {
-            Constants.message("jspc.error.generalException", 
+            Constants.message("jspc.error.generalException",
                     new Object[] {file, e}, Logger.ERROR);
             if ( listErrors ) {
 	        log.println( "Error in File: " + file );
@@ -625,7 +626,7 @@ public class JspC implements Options {
                     if (f.exists() && f.isDirectory()) {
                         tUriBase = "/" + f.getName() + "/" + tUriBase;
                     }
-                    
+
                     String fParent = f.getParent();
                     if (fParent == null) {
                         f = new File(args[argPos]);
@@ -639,7 +640,7 @@ public class JspC implements Options {
                     } else {
                         f = new File(fParent);
                     }
-                    
+
                     // If there is no acceptible candidate, uriRoot will
                     // remain null to indicate to the CompilerContext to
                     // use the current working/user dir.
@@ -752,7 +753,7 @@ public class JspC implements Options {
 	jspConfig = new JspConfig(context);
 	tagPluginManager = new TagPluginManager(context);
     }
-    
+
 
     public void execute()  throws JasperException {
 
@@ -768,15 +769,15 @@ public class JspC implements Options {
         if( pages.size() == 0 ) {
             scanFiles( new File( uriRoot ));
         }
-            
+
         File uriRootF = new File(uriRoot);
         if (!uriRootF.exists() || !uriRootF.isDirectory()) {
             throw new JasperException(Constants.getString("jsp.error.jspc.uriroot_not_dir"));
         }
-                
+
         if( context==null )
             initServletContext();
-                                                                       
+
         initWebXml();
 
         Enumeration e = pages.elements();
@@ -785,7 +786,7 @@ public class JspC implements Options {
             try {
                 File fjsp = new File(nextjsp);
                 if (!fjsp.exists()) {
-                    Constants.message("jspc.error.fileDoesNotExist", 
+                    Constants.message("jspc.error.fileDoesNotExist",
                                       new Object[] {fjsp}, Logger.WARNING);
                     continue;
                 }
@@ -809,8 +810,8 @@ public class JspC implements Options {
     }
 
 
-    // ==================== CLI support ==================== 
-    
+    // ==================== CLI support ====================
+
     int argPos;
     // value set by beutifully obsfucscated java
     boolean fullstop = false;
@@ -827,7 +828,8 @@ public class JspC implements Options {
                 jspc.execute();
             } catch (JasperException je) {
                 System.err.print("error:");
-                System.err.println(je.getMessage());
+                je.printStackTrace();
+                //System.err.println(je.getMessage());
                 if (die != NO_DIE_LEVEL) {
                     System.exit(die);
                 }
@@ -843,7 +845,7 @@ public class JspC implements Options {
             return args[argPos++];
         }
     }
-        
+
     private String nextFile() {
         if (fullstop) argPos++;
         if (argPos >= args.length) {
@@ -872,8 +874,8 @@ public class JspC implements Options {
                      = Integer.parseInt(tok.substring(SWITCH_VERBOSE.length()));
                 } catch (NumberFormatException nfe) {
                     log.println(
-                        "Verbosity level " 
-                        + tok.substring(SWITCH_VERBOSE.length()) 
+                        "Verbosity level "
+                        + tok.substring(SWITCH_VERBOSE.length())
                         + " is not valid.  Option ignored.");
                 }
             } else if (tok.equals(SWITCH_OUTPUT_DIR)) {
@@ -943,7 +945,7 @@ public class JspC implements Options {
             if( file==null ) break;
             pages.addElement( file );
         }
-        
+
         Constants.jasperLog.setVerbosityLevel(verbosityLevel);
     }
 
@@ -954,17 +956,66 @@ public class JspC implements Options {
     public static void setLog( PrintStream log ) {
 	    JspC.log = log;
     }
-    
-    /** 
+
+    /**
      * Obtain JSP configuration informantion specified in web.xml.
      */
     public JspConfig getJspConfig() {
 	return jspConfig;
-    }    
+    }
 
     public TagPluginManager getTagPluginManager() {
         return tagPluginManager;
     }
+
+    /**
+     * Converts the JSP file path into a valid package name with a
+     * structure that mirrors the directory structure. If the JSP file
+     * path doesn't contain a directory structure (top-level file),
+     * an empty package name is returned.
+     *
+     * @param jspUri the context-relative path for the JSP file, starting
+     *  with a slash
+     */
+    private String toPackageName(String jspUri) {
+        StringBuffer modifiedPackageName = new StringBuffer();
+        int iSep = jspUri.lastIndexOf('/');
+	// Start after the first slash
+	for (int i = 1; i < iSep; i++) {
+	    char ch = jspUri.charAt(i);
+	    if (Character.isJavaIdentifierPart(ch)) {
+		modifiedPackageName.append(ch);
+	    }
+	    else if (ch == '/') {
+		modifiedPackageName.append('.');
+	    } else {
+		modifiedPackageName.append(mangleChar(ch));
+	    }
+	}
+        return modifiedPackageName.toString();
+    }
+
+    /**
+     * Mangle the specified character to create a legal Java class name.
+     * FIX: This is a copy of the method from JspCompilationContext. It
+     * would be better to make that method public, or put it in a utility
+     * class.
+     */
+    private String mangleChar(char ch) {
+
+	String s = Integer.toHexString(ch);
+	int nzeros = 5 - s.length();
+	char[] result = new char[6];
+	result[0] = '_';
+	for (int i = 1; i <= nzeros; i++) {
+	    result[i] = '0';
+        }
+	for (int i = nzeros+1, j = 0; i < 6; i++, j++) {
+	    result[i] = s.charAt(j);
+        }
+	return new String(result);
+    }
+
 
 }
 
