@@ -742,7 +742,7 @@ public abstract class ResponseBase
      */
     public void setBufferSize(int size) {
 
-	if (bufferCount > 0)
+	if (committed || (bufferCount > 0))
 	    throw new IllegalStateException
 		(sm.getString("responseBase.setBufferSize.ise"));
 
