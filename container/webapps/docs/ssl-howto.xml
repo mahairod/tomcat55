@@ -152,7 +152,7 @@ Any page within an application can be requested over a secure socket by
 simply prefixing the address with <code>https:</code> instead of
 <code>http:</code>.  Any pages which absolutely <strong>require</strong>
 a secure connection should check the protocol type associated with the
-page request and take the appropriate action of <code>https</code> is not
+page request and take the appropriate action if <code>https</code> is not
 specified.</p>
 
 <p>Finally, using name-based virtual hosts on a secured connection can be
