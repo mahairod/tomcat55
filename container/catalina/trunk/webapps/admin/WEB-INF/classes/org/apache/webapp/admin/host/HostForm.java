@@ -127,9 +127,9 @@ public final class HostForm extends ActionForm {
     private String deployXML = "true";
 
     /**
-     * Boolean for liveDeploy.
+     * Boolean for deployOnStartup.
      */
-    private String liveDeploy = "true";
+    private String deployOnStartup = "true";
     
     /**
      * Boolean for unpack WARs.
@@ -310,21 +310,21 @@ public final class HostForm extends ActionForm {
     }
 
     /**
-     * Return the liveDeploy.
+     * Return the deployOnStartup.
      */
-    public String getLiveDeploy() {
+    public String getDeployOnStartup() {
         
-        return this.liveDeploy;
+        return this.deployOnStartup;
         
     }
     
     /**
-     * Set the liveDeploy.
+     * Set the deployOnStartup.
      */
     
-    public void setLiveDeploy(String liveDeploy) {
+    public void setDeployOnStartup(String deployOnStartup) {
         
-        this.liveDeploy = liveDeploy;
+        this.deployOnStartup = deployOnStartup;
         
     }
 
@@ -485,7 +485,7 @@ public final class HostForm extends ActionForm {
         this.appBase = null;
         this.autoDeploy = "true";
         this.deployXML = "true";
-        this.liveDeploy = "true";
+        this.deployOnStartup = "true";
         this.debugLvl = "0";
         this.unpackWARs = "true";
 
@@ -506,8 +506,8 @@ public final class HostForm extends ActionForm {
         sb.append(autoDeploy);
         sb.append(",deployXML=");
         sb.append(deployXML);
-        sb.append(",liveDeploy=");
-        sb.append(liveDeploy);
+        sb.append(",deployOnStartup=");
+        sb.append(deployOnStartup);
         sb.append(",unpackWARs=");
         sb.append(unpackWARs);
         sb.append("',objectName='");

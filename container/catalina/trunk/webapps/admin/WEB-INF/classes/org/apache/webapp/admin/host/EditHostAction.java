@@ -209,8 +209,8 @@ public class EditHostAction extends Action {
             attribute = "deployXML";
             hostFm.setDeployXML
                 (((Boolean) mBServer.getAttribute(hname, attribute)).toString());
-            attribute = "liveDeploy";
-            hostFm.setLiveDeploy
+            attribute = "deployOnStartup";
+            hostFm.setDeployOnStartup
                 (((Boolean) mBServer.getAttribute(hname, attribute)).toString());                
             attribute = "unpackWARs";
             hostFm.setUnpackWARs

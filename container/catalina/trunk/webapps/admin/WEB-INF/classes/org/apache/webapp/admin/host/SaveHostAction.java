@@ -114,7 +114,7 @@ public final class SaveHostAction extends Action {
       "java.lang.String",     // appBase
       "boolean",              // autoDeploy
       "boolean",              // deployXML
-      "boolean",              // liveDeploy
+      "boolean",              // deployOnStartup
       "boolean",              // unpackWARs
       "boolean",              // xmlNamespaceAware
       "boolean",              // xmlValidation
@@ -210,7 +210,7 @@ public final class SaveHostAction extends Action {
                 values[2] = hform.getAppBase();
                 values[3] = new Boolean(hform.getAutoDeploy());
                 values[4] = new Boolean(hform.getDeployXML());
-                values[5] = new Boolean(hform.getLiveDeploy());
+                values[5] = new Boolean(hform.getDeployOnStartup());
                 values[6] = new Boolean(hform.getUnpackWARs());
                 values[7] = new Boolean(hform.getXmlNamespaceAware());
                 values[8] = new Boolean(hform.getXmlValidation());
@@ -311,15 +311,15 @@ public final class SaveHostAction extends Action {
             mBServer.setAttribute(honame,
                                   new Attribute("deployXML", new Boolean(deployXML)));
 
-            attribute = "liveDeploy";
-            String liveDeploy = "true";
+            attribute = "deployOnStartup";
+            String deployOnStartup = "true";
             try {
-                liveDeploy = hform.getLiveDeploy();
+                deployOnStartup = hform.getDeployOnStartup();
             } catch (Throwable t) {
-                liveDeploy = "true";
+                deployOnStartup = "true";
             }
             mBServer.setAttribute(honame,
-                                  new Attribute("liveDeploy", new Boolean(liveDeploy)));
+                                  new Attribute("deployOnStartup", new Boolean(deployOnStartup)));
                                   
             attribute = "unpackWARs";
             String unpackWARs = "false";

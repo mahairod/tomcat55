@@ -137,7 +137,7 @@ public class AddHostAction extends Action {
         hostFm.setAppBase("");
         hostFm.setAutoDeploy("true");
         hostFm.setDeployXML("true");
-        hostFm.setLiveDeploy("true");
+        hostFm.setDeployOnStartup("true");
         hostFm.setUnpackWARs("true");   
         hostFm.setXmlNamespaceAware("false");
         hostFm.setXmlValidation("false");
