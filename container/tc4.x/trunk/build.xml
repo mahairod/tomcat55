@@ -443,5 +443,171 @@
     <delete file="${tomcat.dist}/${jtc.final-src.name}.tar" />
   </target>
 
+  <target name="download" depends="proxyflags">
+    <!-- Downdown any sub package or tools needed. -->
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-beanutils.loc}"/>
+      <param name="destfile" value="${commons-beanutils.jar}"/>
+    </antcall>
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-collections.loc}"/>
+      <param name="destfile" value="${commons-collections.jar}"/>
+    </antcall>
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-digester.loc}"/>
+      <param name="destfile" value="${commons-digester.jar}"/>
+    </antcall>
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-logging.loc}"/>
+      <param name="destfile" value="${commons-logging.jar}"/>
+    </antcall>
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${regexp.loc}"/>
+      <param name="destfile" value="${regexp.jar}"/>
+    </antcall>
+    <!-- Servlet api needs something different. -->
+
+    <antcall target="cvsbuild">
+      <param name="location" value="${servlet.loc}"/>
+      <param name="subdir" value="${servlet.home}"/>
+      <param name="destfile" value="${servlet.jar}"/>
+    </antcall>
+
+    <antcall target="downloadgz">
+      <!-- xerces2 brings 2 files, test for one of them -->
+      <param name="sourcefile" value="${xerces.loc}"/>
+      <param name="destfile" value="${xmlParserAPIs.jar}"/>
+    </antcall>
+    <!-- commons- daemons/dbcp/pool need something different. -->
+
+    <antcall target="cvsbuild">
+      <param name="location" value="${commons-daemon.loc}"/>
+      <param name="subdir" value="${commons-daemon.home}"/>
+      <param name="destfile" value="${commons-daemon.jar}"/>
+    </antcall>
+    <antcall target="cvsbuild">
+      <!-- Pool uses name to build the jar file -->
+      <param name="name" value="commons-pool"/>
+      <param name="location" value="${commons-pool.loc}"/>
+      <param name="subdir" value="${commons-pool.home}"/>
+      <param name="destfile" value="${commons-pool.jar}"/>
+    </antcall>
+    <!-- Pool does not put commons-pool.jar in ${commons-pool.home} -->
+    <copy
+      file="${commons-pool.home}/dist/commons-pool.jar"
+      tofile="${commons-pool.jar}"
+    />
+
+    <!-- commons-dbcp needs pool and ../LICENSE -->
+    <!-- That is ugly XXX needs a review -->
+    <copy file="LICENSE" tofile="../LICENSE"/>
+    <antcall target="cvsbuild">
+      <param name="location" value="${commons-dbcp.loc}"/>
+      <param name="subdir" value="${commons-dbcp.home}"/>
+      <param name="destfile" value="${commons-dbcp.jar}"/>
+      <param name="name" value="commons-dbcp"/>
+    </antcall>
+    <!-- Dbcp does not put commons-dbcp.jar in ${commons-dbcp.home} -->
+    <copy
+      file="${commons-dbcp.home}/dist/commons-dbcp.jar"
+      tofile="${commons-dbcp.jar}"
+    />
+
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-modeler.loc}"/>
+      <param name="destfile" value="${commons-modeler.jar}"/>
+    </antcall>
+    <antcall target="downloadzip">
+      <param name="sourcefile" value="${javaservice.loc}"/>
+      <param name="destfile" value="${javaservice.home}"/>
+    </antcall>
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${jmx.loc}"/>
+      <param name="destfile" value="${jmx.jar}"/>
+    </antcall>
+    <antcall target="downloadzip">
+      <param name="sourcefile" value="${junit.loc}"/>
+      <param name="destfile" value="${junit.jar}"/>
+    </antcall>
+    <antcall target="downloadfile">
+      <param name="sourcefile" value="${nsis.loc}"/>
+      <param name="destfile" value="${nsis.home}/nsis198.exe"/>
+      <param name="destdir" value="${nsis.home}"/>
+    </antcall>
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${struts.loc}"/>
+      <param name="destfile" value="${struts.jar}"/>
+    </antcall>
+    <antcall target="downloadfile">
+      <param name="sourcefile" value="${tyrex.loc}"/>
+      <param name="destfile" value="${tyrex.jar}"/>
+      <param name="destdir" value="${tyrex.home}"/>
+    </antcall>
+  </target>
+
+  <target name="proxyflags">
+    <!-- check proxy parameters. -->
+    <condition property="useproxy">
+      <equals arg1="${proxy.use}" arg2="on" />
+    </condition>
+  </target>
+
+  <target name="setproxy"  if="useproxy">
+    <taskdef name="setproxy"
+      classname="org.apache.tools.ant.taskdefs.optional.net.SetProxy" />
+    <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}"/> 
+    <echo message="Using ${proxy.host}:${proxy.port} to download ${sourcefile}"/>
+  </target>
+
+  <target name="testexist">
+    <echo message="Testing  for ${destfile}"/>
+    <available file="${destfile}" property="exist"/>
+  </target>
+
+  <target name="downloadgz" unless="exist" depends="setproxy,testexist">
+    <!-- Download and extract the package -->
+    <get src="${sourcefile}" dest="${base.path}/file.tar.gz" />
+    <gunzip src="${base.path}/file.tar.gz" dest="${base.path}/file.tar"/>
+    <untar src="${base.path}/file.tar" dest="${base.path}"/>
+    <delete file="${base.path}/file.tar"/>
+    <delete file="${base.path}/file.tar.gz"/>
+  </target>
+
+  <target name="downloadzip" unless="exist" depends="setproxy,testexist">
+    <!-- Download and extract the package -->
+    <get src="${sourcefile}" dest="${base.path}/file.zip" />
+    <unzip src="${base.path}/file.zip" dest="${base.path}"/>
+    <delete file="${base.path}/file.zip"/>
+  </target>
+
+  <target name="downloadfile" unless="exist" depends="setproxy,testexist">
+    <!-- Download extract the file -->
+    <mkdir dir="${destdir}" />
+    <get src="${sourcefile}" dest="${destfile}" />
+  </target>
+
+  <target name="cvsbuild" unless="exist" depends="testexist">
+    <!-- cvs checkout and ant dist + copy of jar file -->
+    <echo message="cvs co ${location} and ant dist in ${subdir}"/>
+    <mkdir dir="${base.path}/tmp"/>
+    <cvs cvsRoot="${cvsroot}"
+      package="${location}"
+      dest="${base.path}/tmp"
+    />
+    <!-- the software is checked out in ${{base.path}/tmp/${location} -->
+    <move todir="${subdir}">
+      <fileset dir="${base.path}/tmp/${location}/"/>
+    </move>
+    <!-- now build the distribution -->
+    <ant dir="${subdir}" target="dist"/>
+  </target>
+
+  <target name="jfc">
+    <antcall target="cvsbuild">
+      <param name="location" value="${commons-daemon.loc}"/>
+      <param name="subdir" value="${commons-daemon.home}"/>
+      <param name="destfile" value="${commons-daemon.jar}"/>
+    </antcall>
+  </target>
 
 </project>

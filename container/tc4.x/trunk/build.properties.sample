@@ -30,6 +30,14 @@ compile.optimize=on
 #Version number
 version=4.1
 
+#Proxy to download subproject
+#proxy.host=proxy.domain
+#proxy.port=8080
+#proxy.use=on
+
+#CVS root for the jakarta subprojects that do not have released yet.
+cvsroot=":pserver:anoncvs@cvs.apache.org:/home/cvspublic"
+
 
 # ----- Default Base Path for Dependent Packages -----
 base.path=/usr/local
@@ -52,24 +60,28 @@ base.path=/usr/local
 commons-beanutils.home=${base.path}/commons-beanutils-1.3
 commons-beanutils.lib=${commons-beanutils.home}
 commons-beanutils.jar=${commons-beanutils.lib}/commons-beanutils.jar
+commons-beanutils.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-beanutils/v1.2/commons-beanutils-1.2.tar.gz
 
 
 # ----- Commons Collections, version 1.0 or later -----
 commons-collections.home=${base.path}/commons-collections-2.0
 commons-collections.lib=${commons-collections.home}
 commons-collections.jar=${commons-collections.lib}/commons-collections.jar
+commons-collections.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-collections/v2.0/commons-collections-2.0-src.tar.gz
 
 
 # ----- Commons Digester, version 1.1.1 or later -----
 commons-digester.home=${base.path}/commons-digester-1.2
 commons-digester.lib=${commons-digester.home}
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
+commons-digester.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-digester/v1.2/commons-digester-1.2.tar.gz
 
 
 # ----- Commons Logging, version 0.1 or later -----
 commons-logging.home=${base.path}/commons-logging-1.0
 commons-logging.lib=${commons-logging.home}
 commons-logging.jar=${commons-logging.lib}/commons-logging.jar
+commons-logging.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-logging/v1.0/commons-logging-1.0.tar.gz
 
 
 # ----- Java Naming and Directory Interface (JNDI), version 1.2 or later -----
@@ -85,12 +97,14 @@ jaas.jar=${jndi.lib}/jaas.jar
 regexp.home=${base.path}/jakarta-regexp-1.2
 regexp.lib=${regexp.home}
 regexp.jar=${regexp.lib}/jakarta-regexp-1.2.jar
+regexp.loc=http://jakarta.apache.org/builds/jakarta-regexp/release/v1.2/jakarta-regexp-1.2.tar.gz
 
 
 # ----- Jakarta Servlet API Classes (Servlet 2.3 / JSP 1.2) -----
 servlet.home=${base.path}/jakarta-servletapi-4
 servlet.lib=${servlet.home}/lib
 servlet.jar=${servlet.lib}/servlet.jar
+servlet.loc=jakarta-servletapi-4
 
 
 # ----- Xerces XML Parser, version 1.4.4 to 2.0.0 Beta 4 -----
@@ -104,6 +118,7 @@ servlet.jar=${servlet.lib}/servlet.jar
 # Note: Optional with JDK 1.4+, or if Xerces 1.x is present
 xerces.home=${base.path}/xerces-2_0_1
 xerces.lib=${xerces.home}
+xerces.loc=http://xml.apache.org/dist/xerces-j/Xerces-J-bin.2.0.1.tar.gz
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
 
@@ -123,28 +138,33 @@ activation.jar=${activation.lib}/activation.jar
 commons-daemon.home=${base.path}/commons-daemon
 commons-daemon.lib=${commons-daemon.home}
 commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
+commons-daemon.loc=jakarta-commons-sandbox/daemon
 
 
 # ----- Commons DBCP, version 20011030 or later -----
 commons-dbcp.home=${base.path}/commons-dbcp
 commons-dbcp.lib=${commons-dbcp.home}
 commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp.jar
+commons-dbcp.loc=jakarta-commons/dbcp
 
 
 # ----- Commons Modeler, version 1.0 or later -----
 commons-modeler.home=${base.path}/commons-modeler-1.0
 commons-modeler.lib=${commons-modeler.home}
 commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
+commons-modeler.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-modeler/v1.0/commons-modeler-1.0.tar.gz
 
 
 # ----- Commons Pool, version 1.0 or later -----
 commons-pool.home=${base.path}/commons-pool-1.0
 commons-pool.lib=${commons-pool.home}
 commons-pool.jar=${commons-pool.lib}/commons-pool.jar
+commons-pool.loc=jakarta-commons/pool
 
 
 # ----- JavaService, version 1.2.0 or later -----
 javaservice.home=${base.path}/javaservice
+javaservice.loc=http://www.alexandriasc.com/software/JavaService/JavaService-bin-1.2.0.zip
 
 
 # ----- Java Database Connectivity (JDBC) Optional Package, version 2.0 -----
@@ -154,9 +174,10 @@ jdbc20ext.jar=${jdbc20ext.lib}/jdbc2_0-stdext.jar
 
 
 # ----- Java Management Extensions (JMX), JMX RI 1.0.1 or later or MX4J 1.0 or later -----
-jmx.home=${base.path}/mx4j-1.0
+jmx.home=${base.path}/mx4j-1.0b3
 jmx.lib=${jmx.home}/lib
 jmx.jar=${jmx.lib}/mx4j.jar
+jmx.loc=http://telia.dl.sourceforge.net/sourceforge/mx4j/mx4j-1.0b3.tar.gz
 
 
 # ----- Java Secure Sockets Extension (JSSE), version 1.0.2 or later -----
@@ -177,6 +198,7 @@ jta.jar=${jta.lib}/jta-spec1_0_1.jar
 junit.home=${base.path}/junit3.7
 junit.lib=${junit.home}
 junit.jar=${junit.lib}/junit.jar
+junit.loc=http://download.sourceforge.net/junit/junit3.7.zip
 
 
 # ----- Java Mail, version 1.2 or later -----
@@ -187,17 +209,20 @@ mail.jar=${mail.lib}/mail.jar
 
 # ----- NSIS, version 1.90 or later -----
 nsis.home=${base.path}/nsis
+nsis.loc=http://www.nullsoft.com/free/nsis/nsis198.exe
 
 
 # ----- Struts, version 1.0.1 or later -----
 struts.home=${base.path}/jakarta-struts-1.0.2
 struts.lib=${struts.home}/lib
 struts.jar=${struts.lib}/struts.jar
+struts.loc=http://jakarta.apache.org/builds/jakarta-struts/release/v1.0.2/jakarta-struts-1.0.2.tar.gz
 
 
 # ----- Tyrex Data Source, version 0.9.7 -----
 tyrex.home=${base.path}/tyrex-0.9.7.0
 tyrex.lib=${tyrex.home}
 tyrex.jar=${tyrex.lib}/tyrex-0.9.7.0.jar
+tyrex.loc=ftp://ftp.exolab.org/pub/tyrex/tyrex-0.9.7.0/tyrex-0.9.7.0.jar
 
 
