@@ -8,12 +8,12 @@ if "%CLASSPATH%" == "" goto noclasspath
 
 rem else
 set _CLASSPATH=%CLASSPATH%
-set CLASSPATH=%CLASSPATH%;%ANT_HOME%\lib\ant.jar;%JAVA_HOME%/lib/tools.jar
+set CLASSPATH=%ANT_HOME%\lib\ant.jar;%JAVA_HOME%\lib\tools.jar;%CLASSPATH%
 goto next
 
 :noclasspath
 set _CLASSPATH=
-set CLASSPATH=%ANT_HOME%\lib\ant.jar;%JAVA_HOME/lib/tools.jar
+set CLASSPATH=%ANT_HOME%\lib\ant.jar;%JAVA_HOME%\lib\tools.jar
 goto next
 
 :next
