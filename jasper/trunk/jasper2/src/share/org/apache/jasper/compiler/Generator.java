@@ -407,10 +407,8 @@ public class Generator {
             out.println();
         }
         
-        // Static data for EL function maps:
+        // Static data for EL function and prefix maps:
         generateELFunctionMap();
-
-        // Static data for EL function maps:
 	generatePrefixMap();
 
  	// Class variable declarations
@@ -736,6 +734,7 @@ public class Generator {
 	private String parent;
 	private String simpleTagHandlerVar;
 	private boolean isSimpleTagHandler;
+	private boolean isTagFile;
 	private ServletWriter out;
 	private MethodsBuffer methodsBuffer;
 	private FragmentHelperClass fragmentHelperClass;
@@ -745,10 +744,12 @@ public class Generator {
 	/**
 	 * Constructor.
 	 */
-	public GenerateVisitor(ServletWriter out, 
+	public GenerateVisitor(boolean isTagFile,
+			       ServletWriter out, 
 			       MethodsBuffer methodsBuffer, 
 			       FragmentHelperClass fragmentHelperClass,
 			       TagInfo tagInfo) {
+	    this.isTagFile = isTagFile;
 	    this.out = out;
 	    this.methodsBuffer = methodsBuffer;
 	    this.fragmentHelperClass = fragmentHelperClass;
@@ -783,9 +784,9 @@ public class Generator {
 
             if (attr.isExpression() || attr.isELInterpreterInput()) {
 		if (attr.isELInterpreterInput()) {
-		    v = JspUtil.interpreterCall( attr.getValue(), 
-                        expectedType, "_jspx_prefix_map", "_jspx_fnmap",
-			defaultPrefix );
+		    v = JspUtil.interpreterCall(this.isTagFile,
+		        attr.getValue(), expectedType, "_jspx_prefix_map",
+			"_jspx_fnmap", defaultPrefix );
 		}
 		if (encode) {
 		    return "java.net.URLEncoder.encode(" + v + ")";
@@ -861,9 +862,9 @@ public class Generator {
             if ( true /*isELEnabled*/ ) {
                 out.printil(
                     "out.write("
-                      + JspUtil.interpreterCall(
-                      "${" + new String(n.getText()) + "}", String.class,
-                      "_jspx_prefix_map", "_jspx_fnmap", "null" )
+		    + JspUtil.interpreterCall(this.isTagFile,
+                        "${" + new String(n.getText()) + "}", String.class,
+			"_jspx_prefix_map", "_jspx_fnmap", "null" )
                     + ");");
             } else {
                 out.printil("out.write(" +
@@ -2392,8 +2393,8 @@ public class Generator {
 		    // Do nothing
 		} else if (attrs[i].isELInterpreterInput()) {
                     // run attrValue through the expression interpreter
-                    attrValue = JspUtil.interpreterCall( attrValue,
-                        c[0], "_jspx_prefix_map", "_jspx_fnmap",
+                    attrValue = JspUtil.interpreterCall(this.isTagFile,
+                        attrValue, c[0], "_jspx_prefix_map", "_jspx_fnmap",
                         n.getPrefix() );
                 } else {
 		    attrValue = convertString(
@@ -2729,20 +2730,21 @@ public class Generator {
 	if (gen.ctxt.isTagFile()) {
 	    TagInfo tagInfo = gen.ctxt.getTagInfo();
 	    gen.generateTagHandlerPreamble(tagInfo);
-	    page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer, null,
-					   tagInfo));
+	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(), out,
+					       gen.methodsBuffer, null,
+					       tagInfo));
 	    gen.generateTagHandlerPostamble();
-	    return;
+	} else {
+	    if (gen.ctxt.getOptions().isPoolingEnabled()) {
+		gen.compileTagHandlerPoolList(page);
+	    }
+	    gen.generatePreamble(page);
+	    gen.fragmentHelperClass.generatePreamble();
+	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(), out,
+					       gen.methodsBuffer, 
+					       gen.fragmentHelperClass, null));
+	    gen.generatePostamble(page);
 	}
-
-	if (gen.ctxt.getOptions().isPoolingEnabled()) {
-	    gen.compileTagHandlerPoolList(page);
-	}
-	gen.generatePreamble(page);
-	gen.fragmentHelperClass.generatePreamble();
-	page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer, 
-					   gen.fragmentHelperClass, null));
-	gen.generatePostamble(page);
     }
 
     /*
@@ -2762,6 +2764,10 @@ public class Generator {
 	out.pushIndent();
 	
 	// Class body begins here
+
+        // Static data for EL function and prefix maps:
+        generateELFunctionMap();
+	generatePrefixMap();
 
 	generateTagHandlerDeclarations(tagInfo);
 

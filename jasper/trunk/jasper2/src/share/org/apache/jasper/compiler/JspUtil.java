@@ -541,18 +541,25 @@ public class JspUtil {
      * @param defaultPrefix Default prefix, or literal "null"
      * @return a String representing a call to the EL interpreter.
      */
-    public static String interpreterCall(String expression,
+    public static String interpreterCall(boolean isTagFile,
+					 String expression,
                                          Class expectedType,
 					 String prefixMap,
                                          String fnMap,
                                          String defaultPrefix) 
     {
+	String jspCtxt = null;
+	if (isTagFile)
+	    jspCtxt = "getJspContext()";
+	else
+	    jspCtxt = "pageContext";
+
         return "(" + expectedType.getName() + ") "
                + Constants.EL_INTERPRETER_CONDUIT_CLASS + "."
                + Constants.EL_INTERPRETER_CONDUIT_METHOD
                + "(" + Generator.quote(expression) + ", "
                +       expectedType.getName() + ".class, "
-               +       "pageContext,"
+	       +       jspCtxt + ", "
                +       prefixMap + ", "
                +       fnMap + ", "
                +       Generator.quote( defaultPrefix ) + ")";
