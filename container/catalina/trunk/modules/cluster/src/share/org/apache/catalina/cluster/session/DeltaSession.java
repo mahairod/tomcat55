@@ -97,7 +97,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
 
         super();
         this.manager = manager;
-
+        this.resetDeltaRequest();
     }
 
     // ----------------------------------------------------- Instance Variables
@@ -350,6 +350,8 @@ public class DeltaSession implements HttpSession, Session, Serializable,
         if (manager != null)
             manager.add(this);
         tellNew();
+        if ( deltaRequest == null ) resetDeltaRequest();
+        else deltaRequest.setSessionId(id);
     }
 
     /**
