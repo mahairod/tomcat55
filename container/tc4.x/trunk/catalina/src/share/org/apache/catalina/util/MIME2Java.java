@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Xerces" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -62,12 +62,12 @@ import java.util.*;
 /**
  * MIME2Java is a convenience class which handles conversions between MIME charset names
  * and Java encoding names.
- * <p>The supported XML encodings are the intersection of XML-supported code sets and those 
+ * <p>The supported XML encodings are the intersection of XML-supported code sets and those
  * supported in JDK 1.1.
  * <p>MIME charset names are used on <var>xmlEncoding</var> parameters to methods such
  * as <code>TXDocument#setEncoding</code> and <code>DTD#setEncoding</code>.
  * <p>Java encoding names are used on <var>encoding</var> parameters to
- * methods such as <code>TXDocument#printWithFormat</code> and <code>DTD#printExternal</code>. 
+ * methods such as <code>TXDocument#printWithFormat</code> and <code>DTD#printExternal</code>.
  * <P>
  * <TABLE BORDER="0" WIDTH="100%">
  *  <TR>
@@ -505,15 +505,15 @@ import java.util.*;
  *      </TD>
  *  </TR>
  * </TABLE>
- * 
+ *
  * @version
  * @author TAMURA Kent &lt;kent@trl.ibm.co.jp&gt;
  */
 public class MIME2Java {
-    
+
     static private Hashtable s_enchash;
     static private Hashtable s_revhash;
-    
+
     static {
         s_enchash = new Hashtable();
         //    <preferred MIME name>, <Java encoding name>
@@ -558,7 +558,7 @@ public class MIME2Java {
 
                                                 // j:CNS11643 -> EUC-TW?
                                                 // ISO-2022-CN? ISO-2022-CN-EXT?
-                                                
+
         s_revhash = new Hashtable();
         //    <Java encoding name>, <preferred MIME name>
         s_revhash.put("UTF8", "UTF-8");
@@ -608,7 +608,7 @@ public class MIME2Java {
      * Convert a MIME charset name, also known as an XML encoding name, to a Java encoding name.
      * @param   mimeCharsetName Case insensitive MIME charset name: <code>UTF-8, US-ASCII, ISO-8859-1,
      *                          ISO-8859-2, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6,
-     *                          ISO-8859-7, ISO-8859-8, ISO-8859-9, ISO-2022-JP, Shift_JIS, 
+     *                          ISO-8859-7, ISO-8859-8, ISO-8859-9, ISO-2022-JP, Shift_JIS,
      *                          EUC-JP, GB2312, Big5, EUC-KR, ISO-2022-KR, KOI8-R,
      *                          EBCDIC-CP-US, EBCDIC-CP-CA, EBCDIC-CP-NL, EBCDIC-CP-DK,
      *                          EBCDIC-CP-NO, EBCDIC-CP-FI, EBCDIC-CP-SE, EBCDIC-CP-IT,
@@ -632,7 +632,7 @@ public class MIME2Java {
      * @param   encoding    Case insensitive Java encoding name: <code>UTF8, 8859_1, 8859_2, 8859_3,
      *                      8859_4, 8859_5, 8859_6, 8859_7, 8859_8, 8859_9, JIS, SJIS, EUCJIS,
      *                      GB2312, BIG5, KSC5601, ISO2022KR, KOI8_R, CP037, CP277, CP278,
-     *                      CP280, CP284, CP285, CP297, CP420, CP424, CP500, CP870, CP871 
+     *                      CP280, CP284, CP285, CP297, CP420, CP424, CP500, CP870, CP871
      *                      and CP918</code>.
      * @return              MIME charset name, or <var>null</var> if <var>encoding</var> is unknown.
      * @see #convert

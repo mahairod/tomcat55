@@ -102,7 +102,7 @@ public final class HttpRequestFacade
      * @param request The request to be wrapped
      */
     public HttpRequestFacade(HttpRequest request) {
-	super(request);
+        super(request);
     }
 
 
@@ -205,11 +205,11 @@ public final class HttpRequestFacade
 
 
     public HttpSession getSession(boolean create) {
-        HttpSession session = 
+        HttpSession session =
             ((HttpServletRequest) request).getSession(create);
         if (session == null)
             return null;
-        else 
+        else
             return new StandardSessionFacade(session);
     }
 

@@ -101,8 +101,8 @@ public abstract class ResponseWrapper implements Response {
      */
     public ResponseWrapper(Response response) {
 
-	super();
-	this.response = response;
+        super();
+        this.response = response;
 
     }
 
@@ -121,7 +121,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public Response getWrappedResponse() {
 
-	return (this.response);
+        return (this.response);
 
     }
 
@@ -134,7 +134,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public Connector getConnector() {
 
-	return (response.getConnector());
+        return (response.getConnector());
 
     }
 
@@ -146,7 +146,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public void setConnector(Connector connector) {
 
-	response.setConnector(connector);
+        response.setConnector(connector);
 
     }
 
@@ -156,7 +156,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public int getContentCount() {
 
-	return (response.getContentCount());
+        return (response.getContentCount());
 
     }
 
@@ -166,7 +166,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public Context getContext() {
 
-	return (response.getContext());
+        return (response.getContext());
 
     }
 
@@ -179,7 +179,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public void setContext(Context context) {
 
-	response.setContext(context);
+        response.setContext(context);
 
     }
 
@@ -189,7 +189,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public boolean getIncluded() {
 
-	return (response.getIncluded());
+        return (response.getIncluded());
 
     }
 
@@ -202,7 +202,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public void setIncluded(boolean included) {
 
-	response.setIncluded(included);
+        response.setIncluded(included);
 
     }
 
@@ -214,7 +214,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public String getInfo() {
 
-	return (response.getInfo());
+        return (response.getInfo());
 
     }
 
@@ -224,7 +224,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public Request getRequest() {
 
-	return (response.getRequest());
+        return (response.getRequest());
 
     }
 
@@ -236,7 +236,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public void setRequest(Request request) {
 
-	response.setRequest(request);
+        response.setRequest(request);
 
     }
 
@@ -247,7 +247,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public ServletResponse getResponse() {
 
-	return (response.getResponse());
+        return (response.getResponse());
 
     }
 
@@ -257,7 +257,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public OutputStream getStream() {
 
-	return (response.getStream());
+        return (response.getStream());
 
     }
 
@@ -269,7 +269,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public void setStream(OutputStream stream) {
 
-	response.setStream(stream);
+        response.setStream(stream);
 
     }
 
@@ -285,7 +285,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public ServletOutputStream createOutputStream() throws IOException {
 
-	return (response.createOutputStream());
+        return (response.createOutputStream());
 
     }
 
@@ -298,7 +298,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public void finishResponse() throws IOException {
 
-	response.finishResponse();
+        response.finishResponse();
 
     }
 
@@ -308,7 +308,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public int getContentLength() {
 
-	return (response.getContentLength());
+        return (response.getContentLength());
 
     }
 
@@ -319,7 +319,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public String getContentType() {
 
-	return (response.getContentType());
+        return (response.getContentType());
 
     }
 
@@ -330,7 +330,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public PrintWriter getReporter() {
 
-	return (response.getReporter());
+        return (response.getReporter());
 
     }
 
@@ -341,7 +341,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public void recycle() {
 
-	response.recycle();
+        response.recycle();
 
     }
 
@@ -351,7 +351,7 @@ public abstract class ResponseWrapper implements Response {
      */
     public void resetBuffer() {
 
-	response.resetBuffer();
+        response.resetBuffer();
 
     }
 

@@ -174,10 +174,10 @@ final class ApplicationFilterChain implements FilterChain {
                     {
                         public Object run() throws ServletException, IOException {
                             internalDoFilter(req,res);
-                            return null;       
-                        }               
-                    }              
-                );                 
+                            return null;
+                        }
+                    }
+                );
             } catch( PrivilegedActionException pe) {
                 Exception e = pe.getException();
                 if (e instanceof ServletException)
@@ -192,8 +192,8 @@ final class ApplicationFilterChain implements FilterChain {
         } else {
             internalDoFilter(request,response);
         }
-    }    
-     
+    }
+
     private void internalDoFilter(ServletRequest request, ServletResponse response)
         throws IOException, ServletException {
 

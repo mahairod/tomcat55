@@ -113,7 +113,7 @@ public final class EngineConfig
      * The string resources for this package.
      */
     private static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------------------- Properties
@@ -124,7 +124,7 @@ public final class EngineConfig
      */
     public int getDebug() {
 
-	return (this.debug);
+        return (this.debug);
 
     }
 
@@ -136,7 +136,7 @@ public final class EngineConfig
      */
     public void setDebug(int debug) {
 
-	this.debug = debug;
+        this.debug = debug;
 
     }
 
@@ -151,24 +151,24 @@ public final class EngineConfig
      */
     public void lifecycleEvent(LifecycleEvent event) {
 
-	// Identify the engine we are associated with
-	try {
-	    engine = (Engine) event.getLifecycle();
+        // Identify the engine we are associated with
+        try {
+            engine = (Engine) event.getLifecycle();
             if (engine instanceof StandardEngine) {
                 int engineDebug = ((StandardEngine) engine).getDebug();
                 if (engineDebug > this.debug)
                     this.debug = engineDebug;
             }
-	} catch (ClassCastException e) {
-	    log(sm.getString("engineConfig.cce", event.getLifecycle()), e);
-	    return;
-	}
+        } catch (ClassCastException e) {
+            log(sm.getString("engineConfig.cce", event.getLifecycle()), e);
+            return;
+        }
 
-	// Process the event that has occurred
-	if (event.getType().equals(Lifecycle.START_EVENT))
-	    start();
-	else if (event.getType().equals(Lifecycle.STOP_EVENT))
-	    stop();
+        // Process the event that has occurred
+        if (event.getType().equals(Lifecycle.START_EVENT))
+            start();
+        else if (event.getType().equals(Lifecycle.STOP_EVENT))
+            stop();
 
     }
 
@@ -183,13 +183,13 @@ public final class EngineConfig
      */
     private void log(String message) {
 
-	Logger logger = null;
-	if (engine != null)
-	    logger = engine.getLogger();
-	if (logger != null)
-	    logger.log("EngineConfig: " + message);
-	else
-	    System.out.println("EngineConfig: " + message);
+        Logger logger = null;
+        if (engine != null)
+            logger = engine.getLogger();
+        if (logger != null)
+            logger.log("EngineConfig: " + message);
+        else
+            System.out.println("EngineConfig: " + message);
 
     }
 
@@ -202,16 +202,16 @@ public final class EngineConfig
      */
     private void log(String message, Throwable throwable) {
 
-	Logger logger = null;
-	if (engine != null)
-	    logger = engine.getLogger();
-	if (logger != null)
-	    logger.log("EngineConfig: " + message, throwable);
-	else {
-	    System.out.println("EngineConfig: " + message);
-	    System.out.println("" + throwable);
-	    throwable.printStackTrace(System.out);
-	}
+        Logger logger = null;
+        if (engine != null)
+            logger = engine.getLogger();
+        if (logger != null)
+            logger.log("EngineConfig: " + message, throwable);
+        else {
+            System.out.println("EngineConfig: " + message);
+            System.out.println("" + throwable);
+            throwable.printStackTrace(System.out);
+        }
 
     }
 
@@ -221,8 +221,8 @@ public final class EngineConfig
      */
     private void start() {
 
-	if (debug > 0)
-	    log(sm.getString("engineConfig.start"));
+        if (debug > 0)
+            log(sm.getString("engineConfig.start"));
 
     }
 
@@ -232,8 +232,8 @@ public final class EngineConfig
      */
     private void stop() {
 
-	if (debug > 0)
-	    log(sm.getString("engineConfig.stop"));
+        if (debug > 0)
+            log(sm.getString("engineConfig.stop"));
 
     }
 

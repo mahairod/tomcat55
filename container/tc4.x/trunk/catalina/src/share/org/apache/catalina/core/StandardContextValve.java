@@ -107,14 +107,14 @@ final class StandardContextValve
      * The descriptive information related to this implementation.
      */
     private static final String info =
-	"org.apache.catalina.core.StandardContextValve/1.0";
+        "org.apache.catalina.core.StandardContextValve/1.0";
 
 
     /**
      * The string manager for this package.
      */
     private static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------------------- Properties
@@ -125,7 +125,7 @@ final class StandardContextValve
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -147,13 +147,13 @@ final class StandardContextValve
      */
     public void invoke(Request request, Response response,
                        ValveContext valveContext)
-	throws IOException, ServletException {
+        throws IOException, ServletException {
 
-	// Validate the request and response object types
-	if (!(request.getRequest() instanceof HttpServletRequest) ||
-	    !(response.getResponse() instanceof HttpServletResponse)) {
-	    return;	// NOTE - Not much else we can do generically
-	}
+        // Validate the request and response object types
+        if (!(request.getRequest() instanceof HttpServletRequest) ||
+            !(response.getResponse() instanceof HttpServletResponse)) {
+            return;     // NOTE - Not much else we can do generically
+        }
 
         // Disallow any direct access to resources under WEB-INF or META-INF
         HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
@@ -175,7 +175,7 @@ final class StandardContextValve
         }
 
         // Update the session last access time for our session (if any)
-	StandardContext context = (StandardContext) getContainer();
+        StandardContext context = (StandardContext) getContainer();
         String sessionId = hreq.getRequestedSessionId();
         if (sessionId != null) {
             Manager manager = context.getManager();
@@ -186,8 +186,8 @@ final class StandardContextValve
             }
         }
 
-	// Select the Wrapper to be used for this Request
-	Wrapper wrapper = null;
+        // Select the Wrapper to be used for this Request
+        Wrapper wrapper = null;
         try {
             wrapper = (Wrapper) context.map(request, true);
         } catch (IllegalArgumentException e) {
@@ -199,18 +199,18 @@ final class StandardContextValve
             }
             return;
         }
-	if (wrapper == null) {
+        if (wrapper == null) {
             notFound(requestURI, (HttpServletResponse) response.getResponse());
             try {
                 response.finishResponse();
             } catch (IOException e) {
                 ;
             }
-	    return;
-	}
+            return;
+        }
 
-	// Ask this Wrapper to process this Request
-	response.setContext(context);
+        // Ask this Wrapper to process this Request
+        response.setContext(context);
 
         // Bind current thread with the resources
         DirContextURLStreamHandler.bindThread(context.getResources());

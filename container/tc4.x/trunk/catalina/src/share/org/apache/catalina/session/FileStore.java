@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.session;
@@ -104,8 +104,8 @@ public final class FileStore
 
 
     // ----------------------------------------------------- Constants
-    
-    
+
+
     /**
      * The extension to use for serialized session filenames.
      */
@@ -188,14 +188,14 @@ public final class FileStore
      * Return the thread name for this Store.
      */
     public String getThreadName() {
-	return(threadName);
+        return(threadName);
     }
 
     /**
      * Return the name for this Store, used for logging.
      */
     public String getStoreName() {
-	return(storeName);
+        return(storeName);
     }
 
 
@@ -207,14 +207,14 @@ public final class FileStore
     public int getSize() throws IOException {
 
         String[] files = getDirectoryFile().list();
-        
+
         // Figure out which files are sessions
         int keycount = 0;
         for (int i = 0; i < files.length; i++) {
             if (files[i].endsWith(FILE_EXT))
                 keycount++;
         }
-        
+
         return (keycount);
 
     }
@@ -278,7 +278,7 @@ public final class FileStore
             return (null);
         if (debug >= 1)
             log(sm.getString(getStoreName()+".loading",
-			     id, file.getAbsolutePath()));
+                             id, file.getAbsolutePath()));
 
         FileInputStream fis = null;
         ObjectInputStream ois = null;
@@ -329,7 +329,7 @@ public final class FileStore
         }
     }
 
-    
+
     /**
      * Remove the Session with the specified session identifier from
      * this Store, if present.  If no such Session is present, this method
@@ -347,7 +347,7 @@ public final class FileStore
             return;
         if (debug >= 1)
             log(sm.getString(getStoreName()+".removing",
-			     id, file.getAbsolutePath()));
+                             id, file.getAbsolutePath()));
         file.delete();
     }
 
@@ -366,7 +366,7 @@ public final class FileStore
         }
 
     }
-    
+
 
     /**
      * Save the specified Session into this Store.  Any previously saved
@@ -384,7 +384,7 @@ public final class FileStore
             return;
         if (debug >= 1)
             log(sm.getString(getStoreName()+".saving",
-			     session.getId(), file.getAbsolutePath()));
+                             session.getId(), file.getAbsolutePath()));
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
@@ -439,7 +439,7 @@ public final class FileStore
      * Return a File object for the directory property.
      */
     private File getDirectoryFile() {
-    
+
         if (directoryFile == null) {
             Container container = manager.getContainer();
             if (container instanceof Context) {

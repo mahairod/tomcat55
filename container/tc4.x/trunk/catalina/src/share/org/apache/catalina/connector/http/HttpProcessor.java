@@ -124,17 +124,17 @@ final class HttpProcessor
      */
     public HttpProcessor(HttpConnector connector, int id) {
 
-	super();
-	this.connector = connector;
-	this.debug = connector.getDebug();
-	this.id = id;
+        super();
+        this.connector = connector;
+        this.debug = connector.getDebug();
+        this.id = id;
         this.proxyName = connector.getProxyName();
         this.proxyPort = connector.getProxyPort();
-	this.request = (HttpRequestImpl) connector.createRequest();
-	this.response = (HttpResponseImpl) connector.createResponse();
+        this.request = (HttpRequestImpl) connector.createRequest();
+        this.response = (HttpResponseImpl) connector.createResponse();
         this.serverPort = connector.getPort();
-	this.threadName =
-	  "HttpProcessor[" + connector.getPort() + "][" + id + "]";
+        this.threadName =
+          "HttpProcessor[" + connector.getPort() + "][" + id + "]";
 
     }
 
@@ -176,7 +176,7 @@ final class HttpProcessor
      * The match string for identifying a session ID parameter.
      */
     private static final String match =
-	";" + Globals.SESSION_PARAMETER_NAME + "=";
+        ";" + Globals.SESSION_PARAMETER_NAME + "=";
 
 
     /**
@@ -225,7 +225,7 @@ final class HttpProcessor
      * The string manager for this package.
      */
     protected StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -280,7 +280,7 @@ final class HttpProcessor
     /**
      * True if the client has asked to recieve a request acknoledgement. If so
      * the server will send a preliminary 100 Continue response just after it
-     * has successfully parsed the request headers, and before starting 
+     * has successfully parsed the request headers, and before starting
      * reading the request entity body.
      */
     private boolean sendAck = false;
@@ -289,7 +289,7 @@ final class HttpProcessor
     /**
      * Ack string when pipelining HTTP requests.
      */
-    private static final byte[] ack = 
+    private static final byte[] ack =
         (new String("HTTP/1.1 100 Continue\r\n\r\n")).getBytes();
 
 
@@ -340,19 +340,19 @@ final class HttpProcessor
 
         // Wait for the Processor to get the previous Socket
         while (available) {
-	    try {
-	        wait();
-	    } catch (InterruptedException e) {
-	    }
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
         }
 
-	// Store the newly available Socket and notify our thread
-	this.socket = socket;
-	available = true;
-	notifyAll();
+        // Store the newly available Socket and notify our thread
+        this.socket = socket;
+        available = true;
+        notifyAll();
 
-	if ((debug >= 1) && (socket != null))
-	    log(" An incoming request is being assigned");
+        if ((debug >= 1) && (socket != null))
+            log(" An incoming request is being assigned");
 
     }
 
@@ -368,21 +368,21 @@ final class HttpProcessor
 
         // Wait for the Connector to provide a new Socket
         while (!available) {
-	    try {
-	        wait();
-	    } catch (InterruptedException e) {
-	    }
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
         }
 
-	// Notify the Connector that we have received this Socket
-	Socket socket = this.socket;
-	available = false;
-	notifyAll();
+        // Notify the Connector that we have received this Socket
+        Socket socket = this.socket;
+        available = false;
+        notifyAll();
 
-	if ((debug >= 1) && (socket != null))
-	    log("  The incoming request has been awaited");
+        if ((debug >= 1) && (socket != null))
+            log("  The incoming request has been awaited");
 
-	return (socket);
+        return (socket);
 
     }
 
@@ -395,9 +395,9 @@ final class HttpProcessor
      */
     private void log(String message) {
 
-	Logger logger = connector.getContainer().getLogger();
-	if (logger != null)
-	    logger.log(threadName + " " + message);
+        Logger logger = connector.getContainer().getLogger();
+        if (logger != null)
+            logger.log(threadName + " " + message);
 
     }
 
@@ -410,9 +410,9 @@ final class HttpProcessor
      */
     private void log(String message, Throwable throwable) {
 
-	Logger logger = connector.getContainer().getLogger();
-	if (logger != null)
-	    logger.log(threadName + " " + message, throwable);
+        Logger logger = connector.getContainer().getLogger();
+        if (logger != null)
+            logger.log(threadName + " " + message, throwable);
 
     }
 
@@ -425,96 +425,96 @@ final class HttpProcessor
      */
     private void parseAcceptLanguage(String value) {
 
-	// Store the accumulated languages that have been requested in
-	// a local collection, sorted by the quality value (so we can
-	// add Locales in descending order).  The values will be ArrayLists
-	// containing the corresponding Locales to be added
-	TreeMap locales = new TreeMap();
+        // Store the accumulated languages that have been requested in
+        // a local collection, sorted by the quality value (so we can
+        // add Locales in descending order).  The values will be ArrayLists
+        // containing the corresponding Locales to be added
+        TreeMap locales = new TreeMap();
 
-	// Preprocess the value to remove all whitespace
-	int white = value.indexOf(' ');
-	if (white < 0)
-	    white = value.indexOf('\t');
-	if (white >= 0) {
-	    StringBuffer sb = new StringBuffer();
-	    int len = value.length();
-	    for (int i = 0; i < len; i++) {
-		char ch = value.charAt(i);
-		if ((ch != ' ') && (ch != '\t'))
-		    sb.append(ch);
-	    }
-	    value = sb.toString();
-	}
+        // Preprocess the value to remove all whitespace
+        int white = value.indexOf(' ');
+        if (white < 0)
+            white = value.indexOf('\t');
+        if (white >= 0) {
+            StringBuffer sb = new StringBuffer();
+            int len = value.length();
+            for (int i = 0; i < len; i++) {
+                char ch = value.charAt(i);
+                if ((ch != ' ') && (ch != '\t'))
+                    sb.append(ch);
+            }
+            value = sb.toString();
+        }
 
-	// Process each comma-delimited language specification
-	parser.setString(value);	// ASSERT: parser is available to us
-	int length = parser.getLength();
-	while (true) {
+        // Process each comma-delimited language specification
+        parser.setString(value);        // ASSERT: parser is available to us
+        int length = parser.getLength();
+        while (true) {
 
-	    // Extract the next comma-delimited entry
-	    int start = parser.getIndex();
-	    if (start >= length)
-		break;
-	    int end = parser.findChar(',');
-	    String entry = parser.extract(start, end).trim();
-	    parser.advance();	// For the following entry
+            // Extract the next comma-delimited entry
+            int start = parser.getIndex();
+            if (start >= length)
+                break;
+            int end = parser.findChar(',');
+            String entry = parser.extract(start, end).trim();
+            parser.advance();   // For the following entry
 
-	    // Extract the quality factor for this entry
-	    double quality = 1.0;
-	    int semi = entry.indexOf(";q=");
-	    if (semi >= 0) {
-		try {
-		    quality = Double.parseDouble(entry.substring(semi + 3));
-		} catch (NumberFormatException e) {
-		    quality = 0.0;
-		}
-		entry = entry.substring(0, semi);
-	    }
+            // Extract the quality factor for this entry
+            double quality = 1.0;
+            int semi = entry.indexOf(";q=");
+            if (semi >= 0) {
+                try {
+                    quality = Double.parseDouble(entry.substring(semi + 3));
+                } catch (NumberFormatException e) {
+                    quality = 0.0;
+                }
+                entry = entry.substring(0, semi);
+            }
 
-	    // Skip entries we are not going to keep track of
-	    if (quality < 0.00005)
-		continue;	// Zero (or effectively zero) quality factors
-	    if ("*".equals(entry))
-		continue;	// FIXME - "*" entries are not handled
+            // Skip entries we are not going to keep track of
+            if (quality < 0.00005)
+                continue;       // Zero (or effectively zero) quality factors
+            if ("*".equals(entry))
+                continue;       // FIXME - "*" entries are not handled
 
-	    // Extract the language and country for this entry
-	    String language = null;
-	    String country = null;
-	    int dash = entry.indexOf('-');
-	    if (dash < 0) {
-		language = entry;
-		country = "";
-	    } else {
-		language = entry.substring(0, dash);
-		country = entry.substring(dash + 1);
-	    }
+            // Extract the language and country for this entry
+            String language = null;
+            String country = null;
+            int dash = entry.indexOf('-');
+            if (dash < 0) {
+                language = entry;
+                country = "";
+            } else {
+                language = entry.substring(0, dash);
+                country = entry.substring(dash + 1);
+            }
 
-	    // Add a new Locale to the list of Locales for this quality level
-	    Locale locale = new Locale(language, country);
-	    Double key = new Double(-quality);	// Reverse the order
-	    ArrayList values = (ArrayList) locales.get(key);
-	    if (values == null) {
-		values = new ArrayList();
-		locales.put(key, values);
-	    }
-	    values.add(locale);
+            // Add a new Locale to the list of Locales for this quality level
+            Locale locale = new Locale(language, country);
+            Double key = new Double(-quality);  // Reverse the order
+            ArrayList values = (ArrayList) locales.get(key);
+            if (values == null) {
+                values = new ArrayList();
+                locales.put(key, values);
+            }
+            values.add(locale);
 
-	}
+        }
 
-	// Process the quality values in highest->lowest order (due to
-	// negating the Double value when creating the key)
-	Iterator keys = locales.keySet().iterator();
-	while (keys.hasNext()) {
-	    Double key = (Double) keys.next();
-	    ArrayList list = (ArrayList) locales.get(key);
-	    Iterator values = list.iterator();
-	    while (values.hasNext()) {
-		Locale locale = (Locale) values.next();
-		if (debug >= 1)
-		    log(" Adding locale '" + locale + "'");
-		request.addLocale(locale);
-	    }
-	}
+        // Process the quality values in highest->lowest order (due to
+        // negating the Double value when creating the key)
+        Iterator keys = locales.keySet().iterator();
+        while (keys.hasNext()) {
+            Double key = (Double) keys.next();
+            ArrayList list = (ArrayList) locales.get(key);
+            Iterator values = list.iterator();
+            while (values.hasNext()) {
+                Locale locale = (Locale) values.next();
+                if (debug >= 1)
+                    log(" Adding locale '" + locale + "'");
+                request.addLocale(locale);
+            }
+        }
 
     }
 
@@ -530,10 +530,10 @@ final class HttpProcessor
     private void parseConnection(Socket socket)
         throws IOException, ServletException {
 
-	if (debug >= 2)
-	    log("  parseConnection: address=" + socket.getInetAddress() +
-		", port=" + connector.getPort());
-	((HttpRequestImpl) request).setInet(socket.getInetAddress());
+        if (debug >= 2)
+            log("  parseConnection: address=" + socket.getInetAddress() +
+                ", port=" + connector.getPort());
+        ((HttpRequestImpl) request).setInet(socket.getInetAddress());
         if (proxyPort != 0)
             request.setServerPort(proxyPort);
         else
@@ -555,7 +555,7 @@ final class HttpProcessor
     private void parseHeaders(SocketInputStream input)
         throws IOException, ServletException {
 
-	while (true) {
+        while (true) {
 
             HttpHeader header = request.allocateHeader();
 
@@ -569,23 +569,23 @@ final class HttpProcessor
                         (sm.getString("httpProcessor.parseHeaders.colon"));
                 }
             }
-            
-	    String value = new String(header.value, 0, header.valueEnd);
-	    if (debug >= 1)
-	        log(" Header " + new String(header.name, 0, header.nameEnd)
+
+            String value = new String(header.value, 0, header.valueEnd);
+            if (debug >= 1)
+                log(" Header " + new String(header.name, 0, header.nameEnd)
                     + " = " + value);
-            
-	    // Set the corresponding request headers
+
+            // Set the corresponding request headers
             if (header.equals(DefaultHeaders.AUTHORIZATION_NAME)) {
                 request.setAuthorization(value);
             } else if (header.equals(DefaultHeaders.ACCEPT_LANGUAGE_NAME)) {
                 parseAcceptLanguage(value);
             } else if (header.equals(DefaultHeaders.COOKIE_NAME)) {
-		Cookie cookies[] = RequestUtil.parseCookieHeader(value);
-		for (int i = 0; i < cookies.length; i++) {
-		    if (cookies[i].getName().equals
-			(Globals.SESSION_COOKIE_NAME)) {
-			// Override anything requested in the URL
+                Cookie cookies[] = RequestUtil.parseCookieHeader(value);
+                for (int i = 0; i < cookies.length; i++) {
+                    if (cookies[i].getName().equals
+                        (Globals.SESSION_COOKIE_NAME)) {
+                        // Override anything requested in the URL
                         if (!request.isRequestedSessionIdFromCookie()) {
                             // Accept only the first session id cookie
                             request.setRequestedSessionId
@@ -597,32 +597,32 @@ final class HttpProcessor
                                     ((HttpServletRequest) request.getRequest())
                                     .getRequestedSessionId());
                         }
-		    }
+                    }
                     if (debug >= 1)
                         log(" Adding cookie " + cookies[i].getName() + "=" +
                             cookies[i].getValue());
                     request.addCookie(cookies[i]);
-		}
-	    } else if (header.equals(DefaultHeaders.CONTENT_LENGTH_NAME)) {
-		int n = -1;
-		try {
-		    n = Integer.parseInt(value);
-		} catch (Exception e) {
-		    throw new ServletException
-			(sm.getString
+                }
+            } else if (header.equals(DefaultHeaders.CONTENT_LENGTH_NAME)) {
+                int n = -1;
+                try {
+                    n = Integer.parseInt(value);
+                } catch (Exception e) {
+                    throw new ServletException
+                        (sm.getString
                          ("httpProcessor.parseHeaders.contentLength"));
-		}
-		request.setContentLength(n);
-	    } else if (header.equals(DefaultHeaders.CONTENT_TYPE_NAME)) {
-		request.setContentType(value);
-	    } else if (header.equals(DefaultHeaders.HOST_NAME)) {
-		int n = value.indexOf(':');
-		if (n < 0) {
+                }
+                request.setContentLength(n);
+            } else if (header.equals(DefaultHeaders.CONTENT_TYPE_NAME)) {
+                request.setContentType(value);
+            } else if (header.equals(DefaultHeaders.HOST_NAME)) {
+                int n = value.indexOf(':');
+                if (n < 0) {
                     if (proxyName != null)
                         request.setServerName(proxyName);
                     else
                         request.setServerName(value);
-		} else {
+                } else {
                     if (proxyName != null)
                         request.setServerName(proxyName);
                     else
@@ -641,8 +641,8 @@ final class HttpProcessor
                         }
                         request.setServerPort(port);
                     }
-		}
-	    } else if (header.equals(DefaultHeaders.CONNECTION_NAME)) {
+                }
+            } else if (header.equals(DefaultHeaders.CONNECTION_NAME)) {
                 if (header.valueEquals
                     (DefaultHeaders.CONNECTION_CLOSE_VALUE)) {
                     keepAlive = false;
@@ -660,12 +660,12 @@ final class HttpProcessor
                     throw new ServletException
                         (sm.getString
                          ("httpProcessor.parseHeaders.unknownExpectation"));
-	    } else if (header.equals(DefaultHeaders.TRANSFER_ENCODING_NAME)) {
+            } else if (header.equals(DefaultHeaders.TRANSFER_ENCODING_NAME)) {
                 //request.setTransferEncoding(header);
-	    }
-            
+            }
+
             request.nextHeader();
-            
+
         }
 
     }
@@ -684,19 +684,19 @@ final class HttpProcessor
     private void parseRequest(SocketInputStream input, OutputStream output)
         throws IOException, ServletException {
 
-	// Parse the incoming request line
+        // Parse the incoming request line
         input.readRequestLine(requestLine);
-        String method = 
+        String method =
             new String(requestLine.method, 0, requestLine.methodEnd);
         String uri = null;
-        String protocol = new String(requestLine.protocol, 0, 
+        String protocol = new String(requestLine.protocol, 0,
                                      requestLine.protocolEnd);
-        
-        //System.out.println(" Method:" + method + "_ Uri:" + uri 
+
+        //System.out.println(" Method:" + method + "_ Uri:" + uri
         //                   + "_ Protocol:" + protocol);
-        
-	if (protocol.length() == 0)
-	    protocol = "HTTP/0.9";
+
+        if (protocol.length() == 0)
+            protocol = "HTTP/0.9";
 
         // Now check if the connection should be kept alive after parsing the
         // request.
@@ -710,30 +710,30 @@ final class HttpProcessor
             // unless specified with a Connection: Keep-Alive header.
             keepAlive = false;
         }
-        
-	// Validate the incoming request line
-	if (method.length() < 1) {
-	    throw new ServletException
-		(sm.getString("httpProcessor.parseRequest.method"));
-	} else if (requestLine.uriEnd < 1) {
-	    throw new ServletException
-		(sm.getString("httpProcessor.parseRequest.uri"));
-	}
 
-	// Parse any query parameters out of the request URI
-	int question = requestLine.indexOf("?");
-	if (question >= 0) {
-	    request.setQueryString
-                (new String(requestLine.uri, question + 1, 
+        // Validate the incoming request line
+        if (method.length() < 1) {
+            throw new ServletException
+                (sm.getString("httpProcessor.parseRequest.method"));
+        } else if (requestLine.uriEnd < 1) {
+            throw new ServletException
+                (sm.getString("httpProcessor.parseRequest.uri"));
+        }
+
+        // Parse any query parameters out of the request URI
+        int question = requestLine.indexOf("?");
+        if (question >= 0) {
+            request.setQueryString
+                (new String(requestLine.uri, question + 1,
                             requestLine.uriEnd - question - 1));
-	    if (debug >= 1)
-	        log(" Query string is " +
-		    ((HttpServletRequest) request.getRequest())
+            if (debug >= 1)
+                log(" Query string is " +
+                    ((HttpServletRequest) request.getRequest())
                     .getQueryString());
-	    uri = new String(requestLine.uri, 0, question);
-	} else {
-	    request.setQueryString(null);
-	    uri = new String(requestLine.uri, 0, requestLine.uriEnd);
+            uri = new String(requestLine.uri, 0, question);
+        } else {
+            request.setQueryString(null);
+            uri = new String(requestLine.uri, 0, requestLine.uriEnd);
         }
 
         // Checking for an absolute URI (with the HTTP protocol)
@@ -750,53 +750,53 @@ final class HttpProcessor
             }
         }
 
-	// Parse any requested session ID out of the request URI
-	int semicolon = uri.indexOf(match);
-	if (semicolon >= 0) {
-	    String rest = uri.substring(semicolon + match.length());
-	    int semicolon2 = rest.indexOf(';');
-	    if (semicolon2 >= 0) {
-		request.setRequestedSessionId(rest.substring(0, semicolon2));
-		rest = rest.substring(semicolon2);
-	    } else {
-		request.setRequestedSessionId(rest);
-		rest = "";
-	    }
-	    request.setRequestedSessionURL(true);
-	    uri = uri.substring(0, semicolon) + rest;
-	    if (debug >= 1)
-	        log(" Requested URL session id is " +
-		    ((HttpServletRequest) request.getRequest())
+        // Parse any requested session ID out of the request URI
+        int semicolon = uri.indexOf(match);
+        if (semicolon >= 0) {
+            String rest = uri.substring(semicolon + match.length());
+            int semicolon2 = rest.indexOf(';');
+            if (semicolon2 >= 0) {
+                request.setRequestedSessionId(rest.substring(0, semicolon2));
+                rest = rest.substring(semicolon2);
+            } else {
+                request.setRequestedSessionId(rest);
+                rest = "";
+            }
+            request.setRequestedSessionURL(true);
+            uri = uri.substring(0, semicolon) + rest;
+            if (debug >= 1)
+                log(" Requested URL session id is " +
+                    ((HttpServletRequest) request.getRequest())
                     .getRequestedSessionId());
-	} else {
-	    request.setRequestedSessionId(null);
-	    request.setRequestedSessionURL(false);
-	}
+        } else {
+            request.setRequestedSessionId(null);
+            request.setRequestedSessionURL(false);
+        }
 
         // Normalize URI (using String operations at the moment)
         String normalizedUri = normalize(uri);
         if (debug >= 1)
             log("Normalized: '" + uri + "' to '" + normalizedUri + "'");
 
-	// Set the corresponding request properties
-	((HttpRequest) request).setMethod(method);
-	request.setProtocol(protocol);
+        // Set the corresponding request properties
+        ((HttpRequest) request).setMethod(method);
+        request.setProtocol(protocol);
         if (normalizedUri != null) {
             ((HttpRequest) request).setRequestURI(normalizedUri);
         } else {
             ((HttpRequest) request).setRequestURI(uri);
         }
-	request.setSecure(connector.getSecure());
-	request.setScheme(connector.getScheme());
+        request.setSecure(connector.getSecure());
+        request.setScheme(connector.getScheme());
 
         if (normalizedUri == null) {
-	    log(" Invalid request URI: '" + uri + "'");
+            log(" Invalid request URI: '" + uri + "'");
             throw new ServletException("Invalid URI: " + uri + "'");
         }
 
-	if (debug >= 1)
-	    log(" Request is '" + method + "' for '" + uri +
-		"' with protocol '" + protocol + "'");
+        if (debug >= 1)
+            log(" Request is '" + method + "' for '" + uri +
+                "' with protocol '" + protocol + "'");
 
     }
 
@@ -820,12 +820,12 @@ final class HttpProcessor
 
         // Prevent encoding '%', '/', '.' and '\', which are special reserved
         // characters
-        if ((normalized.indexOf("%25") >= 0) 
-	    || (normalized.indexOf("%2F") >= 0)
-            || (normalized.indexOf("%2E") >= 0) 
+        if ((normalized.indexOf("%25") >= 0)
+            || (normalized.indexOf("%2F") >= 0)
+            || (normalized.indexOf("%2E") >= 0)
             || (normalized.indexOf("%5C") >= 0)
-	    || (normalized.indexOf("%2f") >= 0)
-            || (normalized.indexOf("%2e") >= 0) 
+            || (normalized.indexOf("%2f") >= 0)
+            || (normalized.indexOf("%2e") >= 0)
             || (normalized.indexOf("%5c") >= 0)) {
             return null;
         }
@@ -833,44 +833,44 @@ final class HttpProcessor
         if (normalized.equals("/."))
             return "/";
 
-	// Normalize the slashes and add leading slash if necessary
-	if (normalized.indexOf('\\') >= 0)
-	    normalized = normalized.replace('\\', '/');
-	if (!normalized.startsWith("/"))
-	    normalized = "/" + normalized;
+        // Normalize the slashes and add leading slash if necessary
+        if (normalized.indexOf('\\') >= 0)
+            normalized = normalized.replace('\\', '/');
+        if (!normalized.startsWith("/"))
+            normalized = "/" + normalized;
 
-	// Resolve occurrences of "//" in the normalized path
-	while (true) {
-	    int index = normalized.indexOf("//");
-	    if (index < 0)
-		break;
-	    normalized = normalized.substring(0, index) +
-		normalized.substring(index + 1);
-	}
+        // Resolve occurrences of "//" in the normalized path
+        while (true) {
+            int index = normalized.indexOf("//");
+            if (index < 0)
+                break;
+            normalized = normalized.substring(0, index) +
+                normalized.substring(index + 1);
+        }
 
-	// Resolve occurrences of "/./" in the normalized path
-	while (true) {
-	    int index = normalized.indexOf("/./");
-	    if (index < 0)
-		break;
-	    normalized = normalized.substring(0, index) +
-		normalized.substring(index + 2);
-	}
+        // Resolve occurrences of "/./" in the normalized path
+        while (true) {
+            int index = normalized.indexOf("/./");
+            if (index < 0)
+                break;
+            normalized = normalized.substring(0, index) +
+                normalized.substring(index + 2);
+        }
 
-	// Resolve occurrences of "/../" in the normalized path
-	while (true) {
-	    int index = normalized.indexOf("/../");
-	    if (index < 0)
-		break;
-	    if (index == 0)
-		return (null);	// Trying to go outside our context
-	    int index2 = normalized.lastIndexOf('/', index - 1);
-	    normalized = normalized.substring(0, index2) +
-		normalized.substring(index + 3);
-	}
+        // Resolve occurrences of "/../" in the normalized path
+        while (true) {
+            int index = normalized.indexOf("/../");
+            if (index < 0)
+                break;
+            if (index == 0)
+                return (null);  // Trying to go outside our context
+            int index2 = normalized.lastIndexOf('/', index - 1);
+            normalized = normalized.substring(0, index2) +
+                normalized.substring(index + 3);
+        }
 
-	// Return the normalized path that we have completed
-	return (normalized);
+        // Return the normalized path that we have completed
+        return (normalized);
 
     }
 
@@ -897,23 +897,23 @@ final class HttpProcessor
      */
     private void process(Socket socket) {
 
-	boolean ok = true;
-	SocketInputStream input = null;
-	OutputStream output = null;
+        boolean ok = true;
+        SocketInputStream input = null;
+        OutputStream output = null;
 
-	// Construct and initialize the objects we will need
-	try {
-	    input = new SocketInputStream(socket.getInputStream(),
+        // Construct and initialize the objects we will need
+        try {
+            input = new SocketInputStream(socket.getInputStream(),
                                           connector.getBufferSize());
-	} catch (Exception e) {
-	    log("process.create", e);
-	    ok = false;
-	}
+        } catch (Exception e) {
+            log("process.create", e);
+            ok = false;
+        }
 
         keepAlive = true;
 
         while (ok && keepAlive) {
-            
+
             try {
                 request.setStream(input);
                 request.setResponse(response);
@@ -1004,7 +1004,7 @@ final class HttpProcessor
                 }
                 ok = false;
             }
-            
+
             // Finish up the handling of the request
             try {
                 response.finishResponse();
@@ -1014,27 +1014,27 @@ final class HttpProcessor
             } catch (IOException e) {
                 ok = false;
             }
-            
+
             // We have to check if the connection closure has been requested
             // by the application or the response stream (in case of HTTP/1.0
             // and keep-alive).
             if ( "close".equals(response.getHeader("Connection")) ) {
                 keepAlive = false;
             }
-            
+
             // Recycling the request and the response objects
             request.recycle();
             response.recycle();
-            
+
         }
-        
-	try {
+
+        try {
             shutdownInput(input);
             socket.close();
-	} catch (IOException e) {
-	    ;
-	}
-	socket = null;
+        } catch (IOException e) {
+            ;
+        }
+        socket = null;
 
     }
 
@@ -1063,25 +1063,25 @@ final class HttpProcessor
     public void run() {
 
         // Process requests until we receive a shutdown signal
-	while (!stopped) {
+        while (!stopped) {
 
-	    // Wait for the next socket to be assigned
-	    Socket socket = await();
-	    if (socket == null)
-		continue;
+            // Wait for the next socket to be assigned
+            Socket socket = await();
+            if (socket == null)
+                continue;
 
-	    // Process the request from this socket
-	    process(socket);
+            // Process the request from this socket
+            process(socket);
 
-	    // Finish up this request
-	    connector.recycle(this);
+            // Finish up this request
+            connector.recycle(this);
 
-	}
+        }
 
-	// Tell threadStop() we have shut ourselves down successfully
-	synchronized (threadSync) {
-	    threadSync.notifyAll();
-	}
+        // Tell threadStop() we have shut ourselves down successfully
+        synchronized (threadSync) {
+            threadSync.notifyAll();
+        }
 
     }
 
@@ -1091,14 +1091,14 @@ final class HttpProcessor
      */
     private void threadStart() {
 
-	log(sm.getString("httpProcessor.starting"));
+        log(sm.getString("httpProcessor.starting"));
 
-	thread = new Thread(this, threadName);
-	thread.setDaemon(true);
-	thread.start();
+        thread = new Thread(this, threadName);
+        thread.setDaemon(true);
+        thread.start();
 
-	if (debug >= 1)
-	    log(" Background thread has been started");
+        if (debug >= 1)
+            log(" Background thread has been started");
 
     }
 
@@ -1108,18 +1108,18 @@ final class HttpProcessor
      */
     private void threadStop() {
 
-	log(sm.getString("httpProcessor.stopping"));
+        log(sm.getString("httpProcessor.stopping"));
 
-	stopped = true;
+        stopped = true;
         assign(null);
-	synchronized (threadSync) {
-	    try {
-		threadSync.wait(5000);
-	    } catch (InterruptedException e) {
-		;
-	    }
-	}
-	thread = null;
+        synchronized (threadSync) {
+            try {
+                threadSync.wait(5000);
+            } catch (InterruptedException e) {
+                ;
+            }
+        }
+        thread = null;
 
     }
 
@@ -1134,7 +1134,7 @@ final class HttpProcessor
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -1146,7 +1146,7 @@ final class HttpProcessor
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -1158,13 +1158,13 @@ final class HttpProcessor
      */
     public void start() throws LifecycleException {
 
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("httpProcessor.alreadyStarted"));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
+        if (started)
+            throw new LifecycleException
+                (sm.getString("httpProcessor.alreadyStarted"));
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
 
-	threadStart();
+        threadStart();
 
     }
 
@@ -1176,13 +1176,13 @@ final class HttpProcessor
      */
     public void stop() throws LifecycleException {
 
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("httpProcessor.notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("httpProcessor.notStarted"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
 
-	threadStop();
+        threadStop();
 
     }
 

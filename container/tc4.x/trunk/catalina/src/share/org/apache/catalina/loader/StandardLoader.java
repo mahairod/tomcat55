@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.loader;
@@ -147,7 +147,7 @@ public final class StandardLoader
 
 
         super();
-	this.parentClassLoader = parent;
+        this.parentClassLoader = parent;
 
     }
 
@@ -191,7 +191,7 @@ public final class StandardLoader
      * The descriptive information about this Loader implementation.
      */
     private static final String info =
-	"org.apache.catalina.loader.StandardLoader/1.0";
+        "org.apache.catalina.loader.StandardLoader/1.0";
 
 
     /**
@@ -206,7 +206,7 @@ public final class StandardLoader
      * <code>Reloader</code> interface.
      */
     private String loaderClass =
-	"org.apache.catalina.loader.StandardClassLoader";
+        "org.apache.catalina.loader.StandardClassLoader";
 
 
     /**
@@ -231,7 +231,7 @@ public final class StandardLoader
      * The string manager for this package.
      */
     protected static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -272,7 +272,7 @@ public final class StandardLoader
      */
     public int getCheckInterval() {
 
-	return (this.checkInterval);
+        return (this.checkInterval);
 
     }
 
@@ -285,10 +285,10 @@ public final class StandardLoader
     public void setCheckInterval(int checkInterval) {
 
         int oldCheckInterval = this.checkInterval;
-	this.checkInterval = checkInterval;
-	support.firePropertyChange("checkInterval",
-				   new Integer(oldCheckInterval),
-				   new Integer(this.checkInterval));
+        this.checkInterval = checkInterval;
+        support.firePropertyChange("checkInterval",
+                                   new Integer(oldCheckInterval),
+                                   new Integer(this.checkInterval));
 
     }
 
@@ -298,7 +298,7 @@ public final class StandardLoader
      */
     public ClassLoader getClassLoader() {
 
-	return ((ClassLoader) classLoader);
+        return ((ClassLoader) classLoader);
 
     }
 
@@ -308,7 +308,7 @@ public final class StandardLoader
      */
     public Container getContainer() {
 
-	return (container);
+        return (container);
 
     }
 
@@ -320,20 +320,20 @@ public final class StandardLoader
      */
     public void setContainer(Container container) {
 
-	// Deregister from the old Container (if any)
-	if ((this.container != null) && (this.container instanceof Context))
-	    ((Context) this.container).removePropertyChangeListener(this);
+        // Deregister from the old Container (if any)
+        if ((this.container != null) && (this.container instanceof Context))
+            ((Context) this.container).removePropertyChangeListener(this);
 
-	// Process this property change
-	Container oldContainer = this.container;
-	this.container = container;
-	support.firePropertyChange("container", oldContainer, this.container);
+        // Process this property change
+        Container oldContainer = this.container;
+        this.container = container;
+        support.firePropertyChange("container", oldContainer, this.container);
 
-	// Register with the new Container (if any)
-	if ((this.container != null) && (this.container instanceof Context)) {
-	    setReloadable( ((Context) this.container).getReloadable() );
-	    ((Context) this.container).addPropertyChangeListener(this);
-	}
+        // Register with the new Container (if any)
+        if ((this.container != null) && (this.container instanceof Context)) {
+            setReloadable( ((Context) this.container).getReloadable() );
+            ((Context) this.container).addPropertyChangeListener(this);
+        }
 
     }
 
@@ -343,7 +343,7 @@ public final class StandardLoader
      */
     public int getDebug() {
 
-	return (this.debug);
+        return (this.debug);
 
     }
 
@@ -356,9 +356,9 @@ public final class StandardLoader
     public void setDebug(int debug) {
 
         int oldDebug = this.debug;
-	this.debug = debug;
-	support.firePropertyChange("debug", new Integer(oldDebug),
-				   new Integer(this.debug));
+        this.debug = debug;
+        support.firePropertyChange("debug", new Integer(oldDebug),
+                                   new Integer(this.debug));
 
     }
 
@@ -397,7 +397,7 @@ public final class StandardLoader
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -407,7 +407,7 @@ public final class StandardLoader
      */
     public String getLoaderClass() {
 
-	return (this.loaderClass);
+        return (this.loaderClass);
 
     }
 
@@ -419,7 +419,7 @@ public final class StandardLoader
      */
     public void setLoaderClass() {
 
-	this.loaderClass = loaderClass;
+        this.loaderClass = loaderClass;
 
     }
 
@@ -429,7 +429,7 @@ public final class StandardLoader
      */
     public boolean getReloadable() {
 
-	return (this.reloadable);
+        return (this.reloadable);
 
     }
 
@@ -441,20 +441,20 @@ public final class StandardLoader
      */
     public void setReloadable(boolean reloadable) {
 
-	// Process this property change
-	boolean oldReloadable = this.reloadable;
-	this.reloadable = reloadable;
-	support.firePropertyChange("reloadable",
-				   new Boolean(oldReloadable),
-				   new Boolean(this.reloadable));
+        // Process this property change
+        boolean oldReloadable = this.reloadable;
+        this.reloadable = reloadable;
+        support.firePropertyChange("reloadable",
+                                   new Boolean(oldReloadable),
+                                   new Boolean(this.reloadable));
 
-	// Start or stop our background thread if required
-	if (!started)
-	    return;
-	if (!oldReloadable && this.reloadable)
-	    threadStart();
-	else if (oldReloadable && !this.reloadable)
-	    threadStop();
+        // Start or stop our background thread if required
+        if (!started)
+            return;
+        if (!oldReloadable && this.reloadable)
+            threadStart();
+        else if (oldReloadable && !this.reloadable)
+            threadStop();
 
     }
 
@@ -469,7 +469,7 @@ public final class StandardLoader
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
 
-	support.addPropertyChangeListener(listener);
+        support.addPropertyChangeListener(listener);
 
     }
 
@@ -482,20 +482,20 @@ public final class StandardLoader
     public void addRepository(String repository) {
 
         if (debug >= 1)
-	    log(sm.getString("standardLoader.addRepository", repository));
+            log(sm.getString("standardLoader.addRepository", repository));
         for (int i = 0; i < repositories.length; i++) {
             if (repository.equals(repositories[i]))
                 return;
         }
-	String results[] = new String[repositories.length + 1];
-	for (int i = 0; i < repositories.length; i++)
-	    results[i] = repositories[i];
-	results[repositories.length] = repository;
-	repositories = results;
-	if (started && (classLoader != null)) {
-	    classLoader.addRepository(repository);
-	    setClassPath();
-	}
+        String results[] = new String[repositories.length + 1];
+        for (int i = 0; i < repositories.length; i++)
+            results[i] = repositories[i];
+        results[repositories.length] = repository;
+        repositories = results;
+        if (started && (classLoader != null)) {
+            classLoader.addRepository(repository);
+            setClassPath();
+        }
 
     }
 
@@ -506,7 +506,7 @@ public final class StandardLoader
      */
     public String[] findRepositories() {
 
-	return (repositories);
+        return (repositories);
 
     }
 
@@ -517,7 +517,7 @@ public final class StandardLoader
      */
     public boolean modified() {
 
-	return (classLoader.modified());
+        return (classLoader.modified());
 
     }
 
@@ -529,7 +529,7 @@ public final class StandardLoader
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
 
-	support.removePropertyChangeListener(listener);
+        support.removePropertyChangeListener(listener);
 
     }
 
@@ -539,11 +539,11 @@ public final class StandardLoader
      */
     public String toString() {
 
-	StringBuffer sb = new StringBuffer("StandardLoader[");
-	if (container != null)
-	    sb.append(container.getName());
-	sb.append("]");
-	return (sb.toString());
+        StringBuffer sb = new StringBuffer("StandardLoader[");
+        if (container != null)
+            sb.append(container.getName());
+        sb.append("]");
+        return (sb.toString());
 
     }
 
@@ -558,7 +558,7 @@ public final class StandardLoader
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -570,7 +570,7 @@ public final class StandardLoader
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -582,17 +582,17 @@ public final class StandardLoader
      */
     public void start() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("standardLoader.alreadyStarted"));
-	if (debug >= 1)
-	    log(sm.getString("standardLoader.starting"));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("standardLoader.alreadyStarted"));
+        if (debug >= 1)
+            log(sm.getString("standardLoader.starting"));
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
 
         // Register a stream handler factory for the JNDI protocol
-        URLStreamHandlerFactory streamHandlerFactory = 
+        URLStreamHandlerFactory streamHandlerFactory =
             new DirContextURLStreamHandlerFactory();
         try {
             URL.setURLStreamHandlerFactory(streamHandlerFactory);
@@ -603,29 +603,29 @@ public final class StandardLoader
         // Configure our context repositories if appropriate
         setRepositories();
 
-	// Construct a class loader based on our current repositories list
-	try {
-	    if (parentClassLoader == null)
-	        classLoader = new StandardClassLoader();
-	    else
-	        classLoader = new StandardClassLoader(parentClassLoader);
+        // Construct a class loader based on our current repositories list
+        try {
+            if (parentClassLoader == null)
+                classLoader = new StandardClassLoader();
+            else
+                classLoader = new StandardClassLoader(parentClassLoader);
             ((StandardClassLoader) classLoader).setDebug(this.debug);
-	    for (int i = 0; i < repositories.length; i++)
-		classLoader.addRepository(repositories[i]);
+            for (int i = 0; i < repositories.length; i++)
+                classLoader.addRepository(repositories[i]);
             ((StandardClassLoader) classLoader).setDelegate(this.delegate);
-	    if (container instanceof Context) {
-		// Tell the class loader the root of the context
-		ServletContext servletContext = 
+            if (container instanceof Context) {
+                // Tell the class loader the root of the context
+                ServletContext servletContext =
                     ((Context) container).getServletContext();
-		try {
-		    URL contextURL = servletContext.getResource("/");
-		    if( contextURL != null ) {
-			((StandardClassLoader)classLoader).setPermissions
+                try {
+                    URL contextURL = servletContext.getResource("/");
+                    if( contextURL != null ) {
+                        ((StandardClassLoader)classLoader).setPermissions
                             (contextURL);
-                        String jarUrl = "jar:" + contextURL.toString() 
+                        String jarUrl = "jar:" + contextURL.toString()
                             + "WEB-INF/lib/";
                         ((StandardClassLoader)classLoader).setPermissions
-                            (jarUrl);                  
+                            (jarUrl);
                     }
                     String contextRoot = servletContext.getRealPath("/");
                     if (contextRoot != null) {
@@ -634,34 +634,34 @@ public final class StandardLoader
                         String rootUrl = "file:" + contextRoot;
                         ((StandardClassLoader)classLoader).setPermissions
                             (rootUrl);
-		    }
-		} catch (MalformedURLException e) {
-		}
-	    }
-	    if (classLoader instanceof Lifecycle)
-		((Lifecycle) classLoader).start();
+                    }
+                } catch (MalformedURLException e) {
+                }
+            }
+            if (classLoader instanceof Lifecycle)
+                ((Lifecycle) classLoader).start();
             // Binding the Webapp class loader to the directory context
             DirContextURLStreamHandler.bind
                 ((ClassLoader) classLoader, this.container.getResources());
-	} catch (Throwable t) {
-	    throw new LifecycleException("start: ", t);
-	}
+        } catch (Throwable t) {
+            throw new LifecycleException("start: ", t);
+        }
 
         // Validate that all required packages are actually available
         validatePackages();
 
-	// Set up context attributes if appropriate
+        // Set up context attributes if appropriate
         setJasperEnvironment();
 
-	// Start our background thread if we are reloadable
-	if (reloadable) {
-	    log(sm.getString("standardLoader.reloading"));
-	    try {
-		threadStart();
-	    } catch (IllegalStateException e) {
-		throw new LifecycleException(e);
-	    }
-	}
+        // Start our background thread if we are reloadable
+        if (reloadable) {
+            log(sm.getString("standardLoader.reloading"));
+            try {
+                threadStart();
+            } catch (IllegalStateException e) {
+                throw new LifecycleException(e);
+            }
+        }
 
     }
 
@@ -673,31 +673,31 @@ public final class StandardLoader
      */
     public void stop() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("standardLoader.notStarted"));
-	if (debug >= 1)
-	    log(sm.getString("standardLoader.stopping"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("standardLoader.notStarted"));
+        if (debug >= 1)
+            log(sm.getString("standardLoader.stopping"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
 
-	// Stop our background thread if we are reloadable
-	if (reloadable)
-	    threadStop();
+        // Stop our background thread if we are reloadable
+        if (reloadable)
+            threadStop();
 
-	// Remove context attributes as appropriate
-	if (container instanceof Context) {
-	    ServletContext servletContext =
-		((Context) container).getServletContext();
-	    servletContext.removeAttribute(Globals.CLASS_LOADER_ATTR);
-	    servletContext.removeAttribute(Globals.CLASS_PATH_ATTR);
-	}
+        // Remove context attributes as appropriate
+        if (container instanceof Context) {
+            ServletContext servletContext =
+                ((Context) container).getServletContext();
+            servletContext.removeAttribute(Globals.CLASS_LOADER_ATTR);
+            servletContext.removeAttribute(Globals.CLASS_PATH_ATTR);
+        }
 
-	// Throw away our current class loader
-	if (classLoader instanceof Lifecycle)
-	    ((Lifecycle) classLoader).stop();
-	classLoader = null;
+        // Throw away our current class loader
+        if (classLoader instanceof Lifecycle)
+            ((Lifecycle) classLoader).stop();
+        classLoader = null;
 
     }
 
@@ -712,21 +712,21 @@ public final class StandardLoader
      */
     public void propertyChange(PropertyChangeEvent event) {
 
-	// Validate the source of this event
-	if (!(event.getSource() instanceof Context))
-	    return;
-	Context context = (Context) event.getSource();
+        // Validate the source of this event
+        if (!(event.getSource() instanceof Context))
+            return;
+        Context context = (Context) event.getSource();
 
-	// Process a relevant property change
-	if (event.getPropertyName().equals("reloadable")) {
-	    try {
-		setReloadable
-		    ( ((Boolean) event.getNewValue()).booleanValue() );
-	    } catch (NumberFormatException e) {
-		log(sm.getString("standardLoader.reloadable",
-				 event.getNewValue().toString()));
-	    }
-	}
+        // Process a relevant property change
+        if (event.getPropertyName().equals("reloadable")) {
+            try {
+                setReloadable
+                    ( ((Boolean) event.getNewValue()).booleanValue() );
+            } catch (NumberFormatException e) {
+                log(sm.getString("standardLoader.reloadable",
+                                 event.getNewValue().toString()));
+            }
+        }
 
     }
 
@@ -741,19 +741,19 @@ public final class StandardLoader
      */
     private void log(String message) {
 
-	Logger logger = null;
-	if (container != null)
-	    logger = container.getLogger();
-	if (logger != null)
-	    logger.log("StandardLoader[" + container.getName() + "]: "
-		       + message);
-	else {
-	    String containerName = null;
-	    if (container != null)
-		containerName = container.getName();
-	    System.out.println("StandardLoader[" + containerName
-			       + "]: " + message);
-	}
+        Logger logger = null;
+        if (container != null)
+            logger = container.getLogger();
+        if (logger != null)
+            logger.log("StandardLoader[" + container.getName() + "]: "
+                       + message);
+        else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println("StandardLoader[" + containerName
+                               + "]: " + message);
+        }
 
     }
 
@@ -766,21 +766,21 @@ public final class StandardLoader
      */
     private void log(String message, Throwable throwable) {
 
-	Logger logger = null;
-	if (container != null)
-	    logger = container.getLogger();
-	if (logger != null) {
-	    logger.log("StandardLoader[" + container.getName() + "] "
-		       + message, throwable);
-	} else {
-	    String containerName = null;
-	    if (container != null)
-		containerName = container.getName();
-	    System.out.println("StandardLoader[" + containerName
-			       + "]: " + message);
-	    System.out.println("" + throwable);
-	    throwable.printStackTrace(System.out);
-	}
+        Logger logger = null;
+        if (container != null)
+            logger = container.getLogger();
+        if (logger != null) {
+            logger.log("StandardLoader[" + container.getName() + "] "
+                       + message, throwable);
+        } else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println("StandardLoader[" + containerName
+                               + "]: " + message);
+            System.out.println("" + throwable);
+            throwable.printStackTrace(System.out);
+        }
 
     }
 
@@ -790,8 +790,8 @@ public final class StandardLoader
      */
     private void notifyContext() {
 
-	ContextNotifier notifier = new ContextNotifier((Context) container);
-	(new Thread(notifier)).start();
+        ContextNotifier notifier = new ContextNotifier((Context) container);
+        (new Thread(notifier)).start();
 
     }
 
@@ -800,31 +800,31 @@ public final class StandardLoader
      * Set an appropriate Jasper environment.
      */
     private void setJasperEnvironment() {
-	setClassLoader();
-	setClassPath();
+        setClassLoader();
+        setClassPath();
         copyClassesRepository();
     }
 
 
     /**
-     * Copies classes to the work directory. This is required only because 
+     * Copies classes to the work directory. This is required only because
      * Jasper depends on it.
      */
     private void copyClassesRepository() {
 
         // Validate our current state information
-	if (!(container instanceof Context))
-	    return;
-	ServletContext servletContext =
-	    ((Context) container).getServletContext();
-	if (servletContext == null)
-	    return;
+        if (!(container instanceof Context))
+            return;
+        ServletContext servletContext =
+            ((Context) container).getServletContext();
+        if (servletContext == null)
+            return;
 
-        String classpath = 
+        String classpath =
             (String) servletContext.getAttribute(Globals.CLASS_PATH_ATTR);
         if (classpath == null)
             classpath = "";
-        
+
         DirContext resources = container.getResources();
         String classesName = "/WEB-INF/classes";
 
@@ -851,19 +851,19 @@ public final class StandardLoader
         } else {
 
             // Loading the work directory
-            File workDir = 
+            File workDir =
                 (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
 
             if (workDir != null) {
-                
+
                 if (!(classpath.equals("")))
                     classpath = File.pathSeparator + classpath;
                 File classesDir = new File(workDir, classesName);
                 classesDir.mkdirs();
                 classpath = classesDir.getAbsolutePath() + classpath;
-                
+
                 copyDir(resources, classesDir);
-                
+
             }
         }
 
@@ -884,7 +884,7 @@ public final class StandardLoader
 
             NamingEnumeration enum = srcDir.list("");
             while (enum.hasMoreElements()) {
-                NameClassPair ncPair = 
+                NameClassPair ncPair =
                     (NameClassPair) enum.nextElement();
                 String name = ncPair.getName();
                 Object object = srcDir.lookup(name);
@@ -921,13 +921,13 @@ public final class StandardLoader
      */
     private void setClassLoader() {
 
-	if (!(container instanceof Context))
-	    return;
-	ServletContext servletContext =
-	    ((Context) container).getServletContext();
-	if (servletContext == null)
-	    return;
-	servletContext.setAttribute(Globals.CLASS_LOADER_ATTR,
+        if (!(container instanceof Context))
+            return;
+        ServletContext servletContext =
+            ((Context) container).getServletContext();
+        if (servletContext == null)
+            return;
+        servletContext.setAttribute(Globals.CLASS_LOADER_ATTR,
                                     getClassLoader());
         if (servletContext instanceof ApplicationContext)
             ((ApplicationContext) servletContext).setAttributeReadOnly
@@ -943,15 +943,15 @@ public final class StandardLoader
     private void setClassPath() {
 
         // Validate our current state information
-	if (!(container instanceof Context))
-	    return;
-	ServletContext servletContext =
-	    ((Context) container).getServletContext();
-	if (servletContext == null)
-	    return;
+        if (!(container instanceof Context))
+            return;
+        ServletContext servletContext =
+            ((Context) container).getServletContext();
+        if (servletContext == null)
+            return;
 
         // Assemble the class path information from our class loader chain
-	StringBuffer classpath = new StringBuffer();
+        StringBuffer classpath = new StringBuffer();
         ClassLoader loader = getClassLoader();
         int layers = 0;
         int n = 0;
@@ -967,7 +967,7 @@ public final class StandardLoader
                 else if (repository.startsWith("file:"))
                     repository = repository.substring(5);
                 else if (repository.startsWith("jndi:"))
-                    repository = 
+                    repository =
                         servletContext.getRealPath(repository.substring(5));
                 else
                     continue;
@@ -983,18 +983,18 @@ public final class StandardLoader
         }
 
         // Loading the work directory
-        File workDir = 
+        File workDir =
             (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
         if (workDir != null) {
 
             DirContext resources = container.getResources();
 
             String libName = "/WEB-INF/lib";
-            
+
             File destDir = new File(workDir, libName);
             if (servletContext.getRealPath(libName) == null)
                 destDir.mkdirs();
-            
+
             DirContext libDir = null;
             // Looking up directory /WEB-INF/lib in the context
             try {
@@ -1002,17 +1002,17 @@ public final class StandardLoader
                 if (object instanceof DirContext)
                     libDir = (DirContext) object;
             } catch(NamingException e) {
-                // Silent catch: it's valid that no /WEB-INF/lib directory 
+                // Silent catch: it's valid that no /WEB-INF/lib directory
                 //exists
             }
-            
+
             // Add the WEB-INF/lib/*.jar files
             if (libDir != null) {
                 // Enumerate children
                 try {
                     NamingEnumeration enum = resources.list(libName);
                     while (enum.hasMoreElements()) {
-                        NameClassPair ncPair = 
+                        NameClassPair ncPair =
                             (NameClassPair) enum.nextElement();
                         String filename = ncPair.getName();
                         if (!filename.endsWith(".jar"))
@@ -1032,7 +1032,7 @@ public final class StandardLoader
                                     libName + "/" + filename + "'");
                                 // Copying the file to the work dir
                                 File dest = new File(destDir, filename);
-                                if (copy(fileURL.openStream(), 
+                                if (copy(fileURL.openStream(),
                                          new FileOutputStream(dest))) {
                                     if (n > 0)
                                         classpath.append(File.pathSeparator);
@@ -1043,7 +1043,7 @@ public final class StandardLoader
                             } catch (IOException e) {
                             }
                         }
-                        
+
                     }
                 } catch(NamingException e) {
                 }
@@ -1053,13 +1053,13 @@ public final class StandardLoader
 
         // Store the assembled class path as a servlet context attribute
         servletContext.setAttribute(Globals.CLASS_PATH_ATTR,
-				    classpath.toString());
+                                    classpath.toString());
 
     }
 
 
     /**
-     * Copy a file to the specified temp directory. This is required only 
+     * Copy a file to the specified temp directory. This is required only
      * because Jasper depends on it.
      */
     private boolean copy(InputStream is, OutputStream os) {
@@ -1091,16 +1091,16 @@ public final class StandardLoader
 
         if (!(container instanceof Context))
             return;
-	ServletContext servletContext = 
+        ServletContext servletContext =
             ((Context) container).getServletContext();
 
-	// Add the WEB-INF/classes subdirectory
+        // Add the WEB-INF/classes subdirectory
         URL classesURL = null;
-	try {
+        try {
             classesURL = servletContext.getResource("/WEB-INF/classes");
         } catch (MalformedURLException e) {
-	    classesURL = null;
-	}
+            classesURL = null;
+        }
         if (classesURL != null) {
             // Work around JDK 1.3 problem on Windows
             String classesURLString = classesURL.toString();
@@ -1125,7 +1125,7 @@ public final class StandardLoader
             }
             addRepository(classesURLString + "/");
         }
-        
+
         DirContext resources = container.getResources();
         String libName = "/WEB-INF/lib";
         DirContext libDir = null;
@@ -1133,7 +1133,7 @@ public final class StandardLoader
         try {
             NamingEnumeration enum = resources.list(libName);
             while (enum.hasMoreElements()) {
-                NameClassPair ncPair = 
+                NameClassPair ncPair =
                     (NameClassPair) enum.nextElement();
                 String filename = libName + "/" + ncPair.getName();
                 if (!filename.endsWith(".jar"))
@@ -1149,7 +1149,7 @@ public final class StandardLoader
                 }
             }
         } catch (NamingException e) {
-            // Silent catch: it's valid that no /WEB-INF/lib directory 
+            // Silent catch: it's valid that no /WEB-INF/lib directory
             //exists
         }
 
@@ -1162,11 +1162,11 @@ public final class StandardLoader
      */
     private void threadSleep() {
 
-	try {
-	    Thread.sleep(checkInterval * 1000L);
-	} catch (InterruptedException e) {
-	    ;
-	}
+        try {
+            Thread.sleep(checkInterval * 1000L);
+        } catch (InterruptedException e) {
+            ;
+        }
 
     }
 
@@ -1180,26 +1180,26 @@ public final class StandardLoader
      */
     private void threadStart() {
 
-	// Has the background thread already been started?
-	if (thread != null)
-	    return;
+        // Has the background thread already been started?
+        if (thread != null)
+            return;
 
-	// Validate our current state
-	if (!reloadable)
-	    throw new IllegalStateException
-		(sm.getString("standardLoader.notReloadable"));
-	if (!(container instanceof Context))
-	    throw new IllegalStateException
-		(sm.getString("standardLoader.notContext"));
+        // Validate our current state
+        if (!reloadable)
+            throw new IllegalStateException
+                (sm.getString("standardLoader.notReloadable"));
+        if (!(container instanceof Context))
+            throw new IllegalStateException
+                (sm.getString("standardLoader.notContext"));
 
-	// Start the background thread
-	if (debug >= 1)
-	    log(" Starting background thread");
-	threadDone = false;
-	threadName = "StandardLoader[" + container.getName() + "]";
-	thread = new Thread(this, threadName);
-	thread.setDaemon(true);
-	thread.start();
+        // Start the background thread
+        if (debug >= 1)
+            log(" Starting background thread");
+        threadDone = false;
+        threadName = "StandardLoader[" + container.getName() + "]";
+        thread = new Thread(this, threadName);
+        thread.setDaemon(true);
+        thread.start();
 
     }
 
@@ -1210,20 +1210,20 @@ public final class StandardLoader
      */
     private void threadStop() {
 
-	if (thread == null)
-	    return;
+        if (thread == null)
+            return;
 
-	if (debug >= 1)
-	    log(" Stopping background thread");
-	threadDone = true;
-	thread.interrupt();
-	try {
-	    thread.join();
-	} catch (InterruptedException e) {
-	    ;
-	}
+        if (debug >= 1)
+            log(" Stopping background thread");
+        threadDone = true;
+        thread.interrupt();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            ;
+        }
 
-	thread = null;
+        thread = null;
 
     }
 
@@ -1276,31 +1276,31 @@ public final class StandardLoader
      */
     public void run() {
 
-	if (debug >= 1)
-	    log("BACKGROUND THREAD Starting");
+        if (debug >= 1)
+            log("BACKGROUND THREAD Starting");
 
         DirContextURLStreamHandler.bindThread(this.container.getResources());
 
-	// Loop until the termination semaphore is set
-	while (!threadDone) {
+        // Loop until the termination semaphore is set
+        while (!threadDone) {
 
-	    // Wait for our check interval
-	    threadSleep();
+            // Wait for our check interval
+            threadSleep();
 
-	    // Perform our modification check
-	    if (!classLoader.modified())
-		continue;
+            // Perform our modification check
+            if (!classLoader.modified())
+                continue;
 
-	    // Handle a need for reloading
-	    notifyContext();
-	    break;
+            // Handle a need for reloading
+            notifyContext();
+            break;
 
-	}
+        }
 
         DirContextURLStreamHandler.unbindThread();
 
-	if (debug >= 1)
-	    log("BACKGROUND THREAD Stopping");
+        if (debug >= 1)
+            log("BACKGROUND THREAD Stopping");
 
     }
 
@@ -1332,8 +1332,8 @@ final class ContextNotifier implements Runnable {
      */
     public ContextNotifier(Context context) {
 
-	super();
-	this.context = context;
+        super();
+        this.context = context;
 
     }
 
@@ -1343,7 +1343,7 @@ final class ContextNotifier implements Runnable {
      */
     public void run() {
 
-	context.reload();
+        context.reload();
 
     }
 

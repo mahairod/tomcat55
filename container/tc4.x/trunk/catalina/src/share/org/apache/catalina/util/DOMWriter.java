@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 package org.apache.catalina.util;
 
@@ -86,12 +86,12 @@ public class DOMWriter {
    PRINTWRITER_ENCODING = "UTF8";
 
    private static String MIME2JAVA_ENCODINGS[] =
-    { "Default", "UTF-8", "US-ASCII", "ISO-8859-1", "ISO-8859-2", "ISO-8859-3", "ISO-8859-4", 
+    { "Default", "UTF-8", "US-ASCII", "ISO-8859-1", "ISO-8859-2", "ISO-8859-3", "ISO-8859-4",
       "ISO-8859-5", "ISO-8859-6", "ISO-8859-7", "ISO-8859-8", "ISO-8859-9", "ISO-2022-JP",
-      "SHIFT_JIS", "EUC-JP","GB2312", "BIG5", "EUC-KR", "ISO-2022-KR", "KOI8-R", "EBCDIC-CP-US", 
+      "SHIFT_JIS", "EUC-JP","GB2312", "BIG5", "EUC-KR", "ISO-2022-KR", "KOI8-R", "EBCDIC-CP-US",
       "EBCDIC-CP-CA", "EBCDIC-CP-NL", "EBCDIC-CP-DK", "EBCDIC-CP-NO", "EBCDIC-CP-FI", "EBCDIC-CP-SE",
-      "EBCDIC-CP-IT", "EBCDIC-CP-ES", "EBCDIC-CP-GB", "EBCDIC-CP-FR", "EBCDIC-CP-AR1", 
-      "EBCDIC-CP-HE", "EBCDIC-CP-CH", "EBCDIC-CP-ROECE","EBCDIC-CP-YU",  
+      "EBCDIC-CP-IT", "EBCDIC-CP-ES", "EBCDIC-CP-GB", "EBCDIC-CP-FR", "EBCDIC-CP-AR1",
+      "EBCDIC-CP-HE", "EBCDIC-CP-CH", "EBCDIC-CP-ROECE","EBCDIC-CP-YU",
       "EBCDIC-CP-IS", "EBCDIC-CP-AR2", "UTF-16"
     };
 
@@ -103,7 +103,7 @@ public class DOMWriter {
    protected boolean canonical;
 
 
-   public DOMWriter(String encoding, boolean canonical)              
+   public DOMWriter(String encoding, boolean canonical)
    throws UnsupportedEncodingException {
       out = new PrintWriter(new OutputStreamWriter(System.out, encoding));
       this.canonical = canonical;
@@ -119,13 +119,13 @@ public class DOMWriter {
    }
 
     public DOMWriter(Writer writer, boolean canonical) {
-	out = new PrintWriter(writer);
-	this.canonical = canonical;	
+        out = new PrintWriter(writer);
+        this.canonical = canonical;
     }
 
    public static String getWriterEncoding( ) {
       return (PRINTWRITER_ENCODING);
-   }// getWriterEncoding 
+   }// getWriterEncoding
 
    public static void  setWriterEncoding( String encoding ) {
       if( encoding.equalsIgnoreCase( "DEFAULT" ) )
@@ -133,8 +133,8 @@ public class DOMWriter {
       else if( encoding.equalsIgnoreCase( "UTF-16" ) )
          PRINTWRITER_ENCODING  = "Unicode";
       else
-         PRINTWRITER_ENCODING = MIME2Java.convert( encoding ); 
-   }// setWriterEncoding 
+         PRINTWRITER_ENCODING = MIME2Java.convert( encoding );
+   }// setWriterEncoding
 
 
    public static boolean isValidJavaEncoding( String encoding ) {
@@ -143,7 +143,7 @@ public class DOMWriter {
             return (true);
 
       return (false);
-   }// isValidJavaEncoding 
+   }// isValidJavaEncoding
 
 
    /** Prints the specified node, recursively. */
@@ -164,7 +164,7 @@ public class DOMWriter {
                      Encoding = "UTF-8";
                   else if( Encoding.equalsIgnoreCase( "Unicode" ) )
                      Encoding = "UTF-16";
-                  else 
+                  else
                      Encoding = MIME2Java.reverse( Encoding );
 
                   out.println("<?xml version=\"1.0\" encoding=\""+
@@ -345,6 +345,6 @@ public class DOMWriter {
          }
       }
 
-   } // printJavaEncoding()            
+   } // printJavaEncoding()
 
-} 
+}

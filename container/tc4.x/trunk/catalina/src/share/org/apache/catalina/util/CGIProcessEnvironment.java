@@ -419,8 +419,8 @@ public class CGIProcessEnvironment extends ProcessEnvironment {
                     + cgiPathPrefix;
             }
             if (debug >= 2) {
-                log("findCGI: start = [" + webAppRootDir 
-		    + "], pathInfo = [" + pathInfo + "] ");
+                log("findCGI: start = [" + webAppRootDir
+                    + "], pathInfo = [" + pathInfo + "] ");
             }
             File currentLocation = new File(webAppRootDir);
             StringTokenizer dirWalker = new StringTokenizer(pathInfo, "/");

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.connector.http;
@@ -116,7 +116,7 @@ final class HttpRequestImpl
      * Descriptive information about this Request implementation.
      */
     protected static final String info =
-	"org.apache.catalina.connector.http.HttpRequestImpl/1.0";
+        "org.apache.catalina.connector.http.HttpRequestImpl/1.0";
 
 
     /**
@@ -152,7 +152,7 @@ final class HttpRequestImpl
      */
     InetAddress getInet() {
 
-	return (inet);
+        return (inet);
 
     }
 
@@ -165,7 +165,7 @@ final class HttpRequestImpl
      */
     void setInet(InetAddress inet) {
 
-	this.inet = inet;
+        this.inet = inet;
 
     }
 
@@ -177,7 +177,7 @@ final class HttpRequestImpl
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -191,8 +191,8 @@ final class HttpRequestImpl
      */
     public void recycle() {
 
-	super.recycle();
-	inet = null;
+        super.recycle();
+        inet = null;
         nextHeader = 0;
         connectionHeader = null;
 
@@ -209,20 +209,20 @@ final class HttpRequestImpl
      */
     public ServletInputStream createInputStream() throws IOException {
 
-	return (new HttpRequestStream(this, (HttpResponseImpl) response));
+        return (new HttpRequestStream(this, (HttpResponseImpl) response));
 
     }
 
 
     /**
      * Allocate new header.
-     * 
+     *
      * @return an HttpHeader buffer allocated from the pool
      */
     HttpHeader allocateHeader() {
         if (nextHeader == headerPool.length) {
             // Grow the pool
-            HttpHeader[] newHeaderPool = 
+            HttpHeader[] newHeaderPool =
                 new HttpHeader[headerPool.length + POOL_SIZE_INCREMENT];
             for (int i = 0; i < nextHeader; i++) {
                 newHeaderPool[i] = headerPool[i];
@@ -254,7 +254,7 @@ final class HttpRequestImpl
 
         if (nextHeader == headerPool.length) {
             // Grow the pool
-            HttpHeader[] newHeaderPool = 
+            HttpHeader[] newHeaderPool =
                 new HttpHeader[headerPool.length + POOL_SIZE_INCREMENT];
             for (int i = 0; i < nextHeader; i++) {
                 newHeaderPool[i] = headerPool[i];
@@ -328,7 +328,7 @@ final class HttpRequestImpl
      */
     public String getRemoteAddr() {
 
-	return (inet.getHostAddress());
+        return (inet.getHostAddress());
 
     }
 
@@ -358,7 +358,7 @@ final class HttpRequestImpl
      */
     public String getHeader(String name) {
 
-	name = name.toLowerCase();
+        name = name.toLowerCase();
         for (int i = 0; i < nextHeader; i++) {
             if (headerPool[i].equals(name))
                 return new String(headerPool[i].value, 0,
@@ -379,10 +379,10 @@ final class HttpRequestImpl
     public Enumeration getHeaders(String name) {
 
         name = name.toLowerCase();
-	ArrayList tempArrayList = new ArrayList();
-	for (int i = 0; i < nextHeader; i++) {
-	    if (headerPool[i].equals(name))
-        	tempArrayList.add(new String(headerPool[i].value, 0,
+        ArrayList tempArrayList = new ArrayList();
+        for (int i = 0; i < nextHeader; i++) {
+            if (headerPool[i].equals(name))
+                tempArrayList.add(new String(headerPool[i].value, 0,
                                              headerPool[i].valueEnd));
         }
         return (Enumeration) new Enumerator(tempArrayList);
@@ -394,12 +394,12 @@ final class HttpRequestImpl
      * Return the names of all headers received with this request.
      */
     public Enumeration getHeaderNames() {
-	ArrayList tempArrayList = new ArrayList();
-	for (int i = 0; i < nextHeader; i++) {
-	    tempArrayList.add(new String(headerPool[i].name, 0,
+        ArrayList tempArrayList = new ArrayList();
+        for (int i = 0; i < nextHeader; i++) {
+            tempArrayList.add(new String(headerPool[i].name, 0,
                                          headerPool[i].nameEnd));
-	}
-	return (Enumeration) new Enumerator(tempArrayList);
+        }
+        return (Enumeration) new Enumerator(tempArrayList);
 
     }
 

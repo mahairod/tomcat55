@@ -23,10 +23,10 @@ import org.w3c.dom.*;
 public abstract class XmlAction {
     public void start( SaxContext ctx) throws Exception {
     }
-    
+
     public void end( SaxContext ctx) throws Exception {
     }
-    
+
     public void cleanup( SaxContext ctx) throws Exception {
     }
 }

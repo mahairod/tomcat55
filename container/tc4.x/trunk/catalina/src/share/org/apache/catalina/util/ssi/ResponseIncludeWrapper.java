@@ -106,7 +106,7 @@ public final class ResponseIncludeWrapper
         super(res);
         this._out = out;
     }
-    
+
     /**
      * Return a printwriter, throws and exception if a
      * OutputStream already been returned.

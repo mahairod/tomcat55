@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 package org.apache.catalina.session;
 
@@ -131,7 +131,7 @@ public final class DistributedManager extends PersistentManagerBase {
     public String getInfo() {
         return (this.info);
     }
-    
+
     /**
      * Return the descriptive short name of this Manager implementation.
      */
@@ -157,10 +157,10 @@ public final class DistributedManager extends PersistentManagerBase {
         try {
             bos = new ByteArrayOutputStream();
             oos = new ObjectOutputStream(new BufferedOutputStream(bos));
-            
+
             ((StandardSession)session).writeObjectData(oos);
             oos.close();
-            
+
             byte[] obs = bos.toByteArray();
             clusterSender.send(obs);
 
@@ -169,7 +169,7 @@ public final class DistributedManager extends PersistentManagerBase {
         } catch (IOException e) {
             log("An error occured when replicating Session: "+session.getId());
         }
-        
+
         return (session);
     }
 
@@ -213,19 +213,19 @@ public final class DistributedManager extends PersistentManagerBase {
                 repObj = (ReplicationWrapper)objs[i];
                 buf = repObj.getDataStream();
                 bis = new ByteArrayInputStream(buf, 0, buf.length);
-                
+
                 if (container != null)
                     loader = container.getLoader();
-                
+
                 if (loader != null)
                     classLoader = loader.getClassLoader();
-                
+
                 if (classLoader != null)
                     ois = new CustomObjectInputStream(bis,
                                                       classLoader);
                 else
                     ois = new ObjectInputStream(bis);
-                
+
                 _session = (StandardSession) super.createSession();
                 _session.readObjectData(ois);
                 _session.setManager(this);

@@ -92,7 +92,7 @@ public final class PasswdUserDatabase
      */
     public PasswdUserDatabase() {
 
-	super();
+        super();
 
     }
 
@@ -126,7 +126,7 @@ public final class PasswdUserDatabase
      */
     public UserConfig getUserConfig() {
 
-	return (this.userConfig);
+        return (this.userConfig);
 
     }
 
@@ -138,8 +138,8 @@ public final class PasswdUserDatabase
      */
     public void setUserConfig(UserConfig userConfig) {
 
-	this.userConfig = userConfig;
-	init();
+        this.userConfig = userConfig;
+        init();
 
     }
 
@@ -154,7 +154,7 @@ public final class PasswdUserDatabase
      */
     public String getHome(String user) {
 
-	return ((String) homes.get(user));
+        return ((String) homes.get(user));
 
     }
 
@@ -164,7 +164,7 @@ public final class PasswdUserDatabase
      */
     public Enumeration getUsers() {
 
-	return (homes.keys());
+        return (homes.keys());
 
     }
 
@@ -177,62 +177,62 @@ public final class PasswdUserDatabase
      */
     private void init() {
 
-	BufferedReader reader = null;
-	try {
+        BufferedReader reader = null;
+        try {
 
-	    reader = new BufferedReader(new FileReader(PASSWORD_FILE));
+            reader = new BufferedReader(new FileReader(PASSWORD_FILE));
 
-	    while (true) {
+            while (true) {
 
-		// Accumulate the next line
-		StringBuffer buffer = new StringBuffer();
-		while (true) {
-		    int ch = reader.read();
-		    if ((ch < 0) || (ch == '\n'))
-		        break;
-		    buffer.append((char) ch);
-		}
-		String line = buffer.toString();
-		if (line.length() < 1)
-		    break;
+                // Accumulate the next line
+                StringBuffer buffer = new StringBuffer();
+                while (true) {
+                    int ch = reader.read();
+                    if ((ch < 0) || (ch == '\n'))
+                        break;
+                    buffer.append((char) ch);
+                }
+                String line = buffer.toString();
+                if (line.length() < 1)
+                    break;
 
-		// Parse the line into constituent elements
-		int n = 0;
-		String tokens[] = new String[7];
-		for (int i = 0; i < tokens.length; i++)
-		    tokens[i] = null;
-		while (n < tokens.length) {
-		    String token = null;
-		    int colon = line.indexOf(':');
-		    if (colon >= 0) {
-		        token = line.substring(0, colon);
-		        line = line.substring(colon + 1);
-		    } else {
-			token = line;
-			line = "";
-		    }
-		    tokens[n++] = token;
-		}
+                // Parse the line into constituent elements
+                int n = 0;
+                String tokens[] = new String[7];
+                for (int i = 0; i < tokens.length; i++)
+                    tokens[i] = null;
+                while (n < tokens.length) {
+                    String token = null;
+                    int colon = line.indexOf(':');
+                    if (colon >= 0) {
+                        token = line.substring(0, colon);
+                        line = line.substring(colon + 1);
+                    } else {
+                        token = line;
+                        line = "";
+                    }
+                    tokens[n++] = token;
+                }
 
-		// Add this user and corresponding directory
-		if ((tokens[0] != null) && (tokens[5] != null))
-		    homes.put(tokens[0], tokens[5]);
+                // Add this user and corresponding directory
+                if ((tokens[0] != null) && (tokens[5] != null))
+                    homes.put(tokens[0], tokens[5]);
 
-	    }
+            }
 
-	    reader.close();
-	    reader = null;
+            reader.close();
+            reader = null;
 
-	} catch (Exception e) {
-	    if (reader != null) {
-		try {
-		    reader.close();
-		} catch (IOException f) {
-		    ;
-		}
-		reader = null;
-	    }
-	}
+        } catch (Exception e) {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException f) {
+                    ;
+                }
+                reader = null;
+            }
+        }
 
     }
 

@@ -122,8 +122,8 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public ApplicationHttpRequest(HttpServletRequest request) {
 
-	super(request);
-	setRequest(request);
+        super(request);
+        setRequest(request);
 
     }
 
@@ -186,7 +186,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      * The string manager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------- ServletRequest Methods
@@ -199,9 +199,9 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public Object getAttribute(String name) {
 
-	synchronized (attributes) {
-	    return (attributes.get(name));
-	}
+        synchronized (attributes) {
+            return (attributes.get(name));
+        }
 
     }
 
@@ -212,9 +212,9 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public Enumeration getAttributeNames() {
 
-	synchronized (attributes) {
-	    return (new Enumerator(attributes.keySet()));
-	}
+        synchronized (attributes) {
+            return (new Enumerator(attributes.keySet()));
+        }
 
     }
 
@@ -227,11 +227,11 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public void removeAttribute(String name) {
 
-	synchronized (attributes) {
-	    attributes.remove(name);
+        synchronized (attributes) {
+            attributes.remove(name);
             if (!isSpecial(name))
                 getRequest().removeAttribute(name);
-	}
+        }
 
     }
 
@@ -245,11 +245,11 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public void setAttribute(String name, Object value) {
 
-	synchronized (attributes) {
-	    attributes.put(name, value);
+        synchronized (attributes) {
+            attributes.put(name, value);
             if (!isSpecial(name))
                 getRequest().setAttribute(name, value);
-	}
+        }
 
     }
 
@@ -263,7 +263,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public String getContextPath() {
 
-	return (this.contextPath);
+        return (this.contextPath);
 
     }
 
@@ -275,17 +275,17 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public String getParameter(String name) {
 
-	synchronized (parameters) {
-	    Object value = parameters.get(name);
-	    if (value == null)
-		return (null);
-	    else if (value instanceof String[])
-		return (((String[]) value)[0]);
-	    else if (value instanceof String)
-		return ((String) value);
-	    else
-		return (value.toString());
-	}
+        synchronized (parameters) {
+            Object value = parameters.get(name);
+            if (value == null)
+                return (null);
+            else if (value instanceof String[])
+                return (((String[]) value)[0]);
+            else if (value instanceof String)
+                return ((String) value);
+            else
+                return (value.toString());
+        }
 
     }
 
@@ -296,7 +296,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public Map getParameterMap() {
 
-	return (parameters);
+        return (parameters);
 
     }
 
@@ -307,9 +307,9 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public Enumeration getParameterNames() {
 
-	synchronized (parameters) {
-	    return (new Enumerator(parameters.keySet()));
-	}
+        synchronized (parameters) {
+            return (new Enumerator(parameters.keySet()));
+        }
 
     }
 
@@ -322,22 +322,22 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public String[] getParameterValues(String name) {
 
-	synchronized (parameters) {
-	    Object value = parameters.get(name);
-	    if (value == null)
-		return ((String[]) null);
-	    else if (value instanceof String[])
-		return ((String[]) value);
-	    else if (value instanceof String) {
-		String values[] = new String[1];
-		values[0] = (String) value;
-		return (values);
-	    } else {
-		String values[] = new String[1];
-		values[0] = value.toString();
-		return (values);
-	    }
-	}
+        synchronized (parameters) {
+            Object value = parameters.get(name);
+            if (value == null)
+                return ((String[]) null);
+            else if (value instanceof String[])
+                return ((String[]) value);
+            else if (value instanceof String) {
+                String values[] = new String[1];
+                values[0] = (String) value;
+                return (values);
+            } else {
+                String values[] = new String[1];
+                values[0] = value.toString();
+                return (values);
+            }
+        }
 
     }
 
@@ -347,7 +347,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public String getPathInfo() {
 
-	return (this.pathInfo);
+        return (this.pathInfo);
 
     }
 
@@ -358,7 +358,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public String getQueryString() {
 
-	return (this.queryString);
+        return (this.queryString);
 
     }
 
@@ -369,7 +369,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public String getRequestURI() {
 
-	return (this.requestURI);
+        return (this.requestURI);
 
     }
 
@@ -380,7 +380,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public String getServletPath() {
 
-	return (this.servletPath);
+        return (this.servletPath);
 
     }
 
@@ -406,17 +406,17 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     Map copyMap(Map orig) {
 
-	if (orig == null)
-	    return (new HashMap());
-	HashMap dest = new HashMap();
-	synchronized (orig) {
-	    Iterator keys = orig.keySet().iterator();
-	    while (keys.hasNext()) {
-		String key = (String) keys.next();
-		dest.put(key, orig.get(key));
-	    }
-	}
-	return (dest);
+        if (orig == null)
+            return (new HashMap());
+        HashMap dest = new HashMap();
+        synchronized (orig) {
+            Iterator keys = orig.keySet().iterator();
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                dest.put(key, orig.get(key));
+            }
+        }
+        return (dest);
 
     }
 
@@ -431,33 +431,33 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     void mergeParameters(String queryString) {
 
-	if ((queryString == null) || (queryString.length() < 1))
-	    return;
+        if ((queryString == null) || (queryString.length() < 1))
+            return;
 
-	HashMap queryParameters = new HashMap();
+        HashMap queryParameters = new HashMap();
         String encoding = getCharacterEncoding();
         if (encoding == null)
             encoding = "ISO-8859-1";
         try {
-	    RequestUtil.parseParameters
+            RequestUtil.parseParameters
                 (queryParameters, queryString, encoding);
         } catch (Exception e) {
             ;
         }
-	synchronized (parameters) {
-	    Iterator keys = parameters.keySet().iterator();
-	    while (keys.hasNext()) {
-		String key = (String) keys.next();
-		Object value = queryParameters.get(key);
-		if (value == null) {
-		    queryParameters.put(key, parameters.get(key));
-		    continue;
-		}
-		queryParameters.put
-		    (key, mergeValues(value, parameters.get(key)));
-	    }
-	    parameters = queryParameters;
-	}
+        synchronized (parameters) {
+            Iterator keys = parameters.keySet().iterator();
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                Object value = queryParameters.get(key);
+                if (value == null) {
+                    queryParameters.put(key, parameters.get(key));
+                    continue;
+                }
+                queryParameters.put
+                    (key, mergeValues(value, parameters.get(key)));
+            }
+            parameters = queryParameters;
+        }
 
     }
 
@@ -469,7 +469,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     void setContextPath(String contextPath) {
 
-	this.contextPath = contextPath;
+        this.contextPath = contextPath;
 
     }
 
@@ -481,7 +481,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     void setPathInfo(String pathInfo) {
 
-	this.pathInfo = pathInfo;
+        this.pathInfo = pathInfo;
 
     }
 
@@ -493,7 +493,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     void setQueryString(String queryString) {
 
-	this.queryString = queryString;
+        this.queryString = queryString;
 
     }
 
@@ -507,28 +507,28 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
         super.setRequest(request);
 
-	// Initialize the attributes for this request
-	synchronized (attributes) {
-	    attributes.clear();
-	    Enumeration names = request.getAttributeNames();
-	    while (names.hasMoreElements()) {
-		String name = (String) names.nextElement();
-		Object value = request.getAttribute(name);
-		attributes.put(name, value);
-	    }
-	}
+        // Initialize the attributes for this request
+        synchronized (attributes) {
+            attributes.clear();
+            Enumeration names = request.getAttributeNames();
+            while (names.hasMoreElements()) {
+                String name = (String) names.nextElement();
+                Object value = request.getAttribute(name);
+                attributes.put(name, value);
+            }
+        }
 
-	// Initialize the parameters for this request
-	synchronized (parameters) {
-	    parameters = copyMap(request.getParameterMap());
-	}
+        // Initialize the parameters for this request
+        synchronized (parameters) {
+            parameters = copyMap(request.getParameterMap());
+        }
 
-	// Initialize the path elements for this request
-	contextPath = request.getContextPath();
-	pathInfo = request.getPathInfo();
-	queryString = request.getQueryString();
-	requestURI = request.getRequestURI();
-	servletPath = request.getServletPath();
+        // Initialize the path elements for this request
+        contextPath = request.getContextPath();
+        pathInfo = request.getPathInfo();
+        queryString = request.getQueryString();
+        requestURI = request.getRequestURI();
+        servletPath = request.getServletPath();
 
     }
 
@@ -540,7 +540,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     void setRequestURI(String requestURI) {
 
-	this.requestURI = requestURI;
+        this.requestURI = requestURI;
 
     }
 
@@ -552,7 +552,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     void setServletPath(String servletPath) {
 
-	this.servletPath = servletPath;
+        this.servletPath = servletPath;
 
     }
 
@@ -585,32 +585,32 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     protected String[] mergeValues(Object values1, Object values2) {
 
-	ArrayList results = new ArrayList();
+        ArrayList results = new ArrayList();
 
-	if (values1 == null)
-	    ;
-	else if (values1 instanceof String)
-	    results.add(values1);
-	else if (values1 instanceof String[]) {
-	    String values[] = (String[]) values1;
-	    for (int i = 0; i < values.length; i++)
-		results.add(values[i]);
-	} else
-	    results.add(values1.toString());
+        if (values1 == null)
+            ;
+        else if (values1 instanceof String)
+            results.add(values1);
+        else if (values1 instanceof String[]) {
+            String values[] = (String[]) values1;
+            for (int i = 0; i < values.length; i++)
+                results.add(values[i]);
+        } else
+            results.add(values1.toString());
 
-	if (values2 == null)
-	    ;
-	else if (values2 instanceof String)
-	    results.add(values2);
-	else if (values2 instanceof String[]) {
-	    String values[] = (String[]) values2;
-	    for (int i = 0; i < values.length; i++)
-		results.add(values[i]);
-	} else
-	    results.add(values2.toString());
+        if (values2 == null)
+            ;
+        else if (values2 instanceof String)
+            results.add(values2);
+        else if (values2 instanceof String[]) {
+            String values[] = (String[]) values2;
+            for (int i = 0; i < values.length; i++)
+                results.add(values[i]);
+        } else
+            results.add(values2.toString());
 
-	String values[] = new String[results.size()];
-	return ((String[]) results.toArray(values));
+        String values[] = new String[results.size()];
+        return ((String[]) results.toArray(values));
 
     }
 

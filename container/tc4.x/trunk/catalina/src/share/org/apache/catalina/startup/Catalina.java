@@ -160,7 +160,7 @@ public class Catalina {
      */
     public static void main(String args[]) {
 
-	(new Catalina()).process(args);
+        (new Catalina()).process(args);
 
     }
 
@@ -173,12 +173,12 @@ public class Catalina {
     public void process(String args[]) {
 
         setCatalinaHome();
-	try {
-	    if (arguments(args))
-		execute();
-	} catch (Exception e) {
-	    e.printStackTrace(System.out);
-	}
+        try {
+            if (arguments(args))
+                execute();
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+        }
 
     }
 
@@ -222,37 +222,37 @@ public class Catalina {
      */
     protected boolean arguments(String args[]) {
 
-	boolean isConfig = false;
+        boolean isConfig = false;
 
         if (args.length < 1) {
             usage();
             return (false);
         }
 
-	for (int i = 0; i < args.length; i++) {
-	    if (isConfig) {
-		configFile = args[i];
-		isConfig = false;
-	    } else if (args[i].equals("-config")) {
-	        isConfig = true;
-	    } else if (args[i].equals("-debug")) {
-		debug = true;
-	    } else if (args[i].equals("-nonaming")) {
-		useNaming = false;
-	    } else if (args[i].equals("-help")) {
-		usage();
-		return (false);
-	    } else if (args[i].equals("start")) {
-	        starting = true;
-	    } else if (args[i].equals("stop")) {
-	        stopping = true;
-	    } else {
-		usage();
+        for (int i = 0; i < args.length; i++) {
+            if (isConfig) {
+                configFile = args[i];
+                isConfig = false;
+            } else if (args[i].equals("-config")) {
+                isConfig = true;
+            } else if (args[i].equals("-debug")) {
+                debug = true;
+            } else if (args[i].equals("-nonaming")) {
+                useNaming = false;
+            } else if (args[i].equals("-help")) {
+                usage();
                 return (false);
-	    }
-	}
+            } else if (args[i].equals("start")) {
+                starting = true;
+            } else if (args[i].equals("stop")) {
+                stopping = true;
+            } else {
+                usage();
+                return (false);
+            }
+        }
 
-	return (true);
+        return (true);
 
     }
 
@@ -262,11 +262,11 @@ public class Catalina {
      */
     protected File configFile() {
 
-	File file = new File(configFile);
-	if (!file.isAbsolute())
-	    file = new File(System.getProperty("catalina.home") +
-			    File.separator + configFile);
-	return (file);
+        File file = new File(configFile);
+        if (!file.isAbsolute())
+            file = new File(System.getProperty("catalina.home") +
+                            File.separator + configFile);
+        return (file);
 
     }
 
@@ -275,34 +275,34 @@ public class Catalina {
      * Create and configure the XmlMapper we will be using for startup.
      */
     protected XmlMapper createStartMapper() {
-        
+
         // Initialize the mapper
         XmlMapper mapper = new XmlMapper();
         if (debug)
             mapper.setDebug(999);
         mapper.setValidating(false);
-        
+
         // Configure the actions we will be using
-        
+
         mapper.addRule("Server", mapper.objectCreate
                        ("org.apache.catalina.core.StandardServer", "className"));
         mapper.addRule("Server", mapper.setProperties());
         mapper.addRule("Server", mapper.addChild
                        ("setServer", "org.apache.catalina.Server"));
-        
+
         mapper.addRule("Server/Service", mapper.objectCreate
                        ("org.apache.catalina.core.StandardService", "className"));
         mapper.addRule("Server/Service", mapper.setProperties());
         mapper.addRule("Server/Service", mapper.addChild
                        ("addService", "org.apache.catalina.Service"));
-        
+
         mapper.addRule("Server/Service/Connector", mapper.objectCreate
                        ("org.apache.catalina.connector.http.HttpConnector",
                         "className"));
         mapper.addRule("Server/Service/Connector", mapper.setProperties());
         mapper.addRule("Server/Service/Connector", mapper.addChild
                        ("addConnector", "org.apache.catalina.Connector"));
-        
+
         mapper.addRule("Server/Service/Connector/Factory", mapper.objectCreate
                        ("org.apache.catalina.net.DefaultServerSocketFactory",
                         "className"));
@@ -311,7 +311,7 @@ public class Catalina {
         mapper.addRule("Server/Service/Connector/Factory", mapper.addChild
                        ("setFactory",
                         "org.apache.catalina.net.ServerSocketFactory"));
-        
+
         mapper.addRule("Server/Service/Connector/Listener", mapper.objectCreate
                        (null, "className"));
         mapper.addRule("Server/Service/Connector/Listener",
@@ -319,7 +319,7 @@ public class Catalina {
         mapper.addRule("Server/Service/Connector/Listener", mapper.addChild
                        ("addLifecycleListener",
                         "org.apache.catalina.LifecycleListener"));
-        
+
         mapper.addRule("Server/Service/Engine", mapper.objectCreate
                        ("org.apache.catalina.core.StandardEngine",
                         "className"));
@@ -332,12 +332,12 @@ public class Catalina {
                        new SetParentClassLoaderAction(parentClassLoader));
         mapper.addRule("Server/Service/Engine", mapper.addChild
                        ("setContainer", "org.apache.catalina.Container"));
-        
+
         createStartMapperContext("Server/Service/Engine/Context", mapper);
         createStartMapperDefaultContext(
                                         "Server/Service/Engine/DefaultContext",
                                         mapper);
-        
+
         mapper.addRule("Server/Service/Engine/Host", mapper.objectCreate
                        ("org.apache.catalina.core.StandardHost",
                         "className"));
@@ -359,20 +359,20 @@ public class Catalina {
         mapper.addRule("Server/Service/Engine/Host/Cluster",
                        mapper.setProperties());
         mapper.addRule("Server/Service/Engine/Host/Cluster",
-                       mapper.addChild("setCluster", 
+                       mapper.addChild("setCluster",
                                        "org.apache.catalina.Cluster"));
-        
+
         createStartMapperContext("Server/Service/Engine/Host/Context", mapper);
         createStartMapperDefaultContext
             ("Server/Service/Engine/Host/DefaultContext", mapper);
-        
+
         mapper.addRule("Server/Service/Engine/Host/Context/Manager/Store",
                        mapper.objectCreate(null, "className"));
         mapper.addRule("Server/Service/Engine/Host/Context/Manager/Store",
                        mapper.setProperties());
         mapper.addRule("Server/Service/Engine/Host/Context/Manager/Store",
                        mapper.addChild("setStore", "org.apache.catalina.Store"));
-        
+
         mapper.addRule("Server/Service/Engine/Host/Listener",
                        mapper.objectCreate
                        (null, "className"));
@@ -381,21 +381,21 @@ public class Catalina {
         mapper.addRule("Server/Service/Engine/Host/Listener", mapper.addChild
                        ("addLifecycleListener",
                         "org.apache.catalina.LifecycleListener"));
-        
+
         mapper.addRule("Server/Service/Engine/Host/Logger", mapper.objectCreate
                        (null, "className"));
         mapper.addRule("Server/Service/Engine/Host/Logger",
                        mapper.setProperties());
         mapper.addRule("Server/Service/Engine/Host/Logger", mapper.addChild
                        ("setLogger", "org.apache.catalina.Logger"));
-        
+
         mapper.addRule("Server/Service/Engine/Host/Realm", mapper.objectCreate
                        (null, "className"));
         mapper.addRule("Server/Service/Engine/Host/Realm",
                        mapper.setProperties());
         mapper.addRule("Server/Service/Engine/Host/Realm", mapper.addChild
                        ("setRealm", "org.apache.catalina.Realm"));
-        
+
         mapper.addRule("Server/Service/Engine/Host/Resources",
                        mapper.objectCreate
                        ("org.apache.naming.resources.FileDirContext",
@@ -404,14 +404,14 @@ public class Catalina {
                        mapper.setProperties());
         mapper.addRule("Server/Service/Engine/Host/Resources", mapper.addChild
                        ("setResources", "javax.naming.directory.DirContext"));
-        
+
         mapper.addRule("Server/Service/Engine/Host/Valve", mapper.objectCreate
                        (null, "className"));
         mapper.addRule("Server/Service/Engine/Host/Valve",
                        mapper.setProperties());
         mapper.addRule("Server/Service/Engine/Host/Valve", mapper.addChild
                        ("addValve", "org.apache.catalina.Valve"));
-        
+
         mapper.addRule("Server/Service/Engine/Listener", mapper.objectCreate
                        (null, "className"));
         mapper.addRule("Server/Service/Engine/Listener",
@@ -419,19 +419,19 @@ public class Catalina {
         mapper.addRule("Server/Service/Engine/Listener", mapper.addChild
                        ("addLifecycleListener",
                         "org.apache.catalina.LifecycleListener"));
-        
+
         mapper.addRule("Server/Service/Engine/Logger", mapper.objectCreate
                        (null, "className"));
         mapper.addRule("Server/Service/Engine/Logger", mapper.setProperties());
         mapper.addRule("Server/Service/Engine/Logger", mapper.addChild
                        ("setLogger", "org.apache.catalina.Logger"));
-        
+
         mapper.addRule("Server/Service/Engine/Realm", mapper.objectCreate
                        (null, "className"));
         mapper.addRule("Server/Service/Engine/Realm", mapper.setProperties());
         mapper.addRule("Server/Service/Engine/Realm", mapper.addChild
                        ("setRealm", "org.apache.catalina.Realm"));
-        
+
         mapper.addRule("Server/Service/Engine/Resources", mapper.objectCreate
                        ("org.apache.naming.resources.FileDirContext",
                         "className"));
@@ -439,13 +439,13 @@ public class Catalina {
                        mapper.setProperties());
         mapper.addRule("Server/Service/Engine/Resources", mapper.addChild
                        ("setResources", "javax.naming.directory.DirContext"));
-        
+
         mapper.addRule("Server/Service/Engine/Valve", mapper.objectCreate
                        (null, "className"));
         mapper.addRule("Server/Service/Engine/Valve", mapper.setProperties());
         mapper.addRule("Server/Service/Engine/Valve", mapper.addChild
                        ("addValve", "org.apache.catalina.Valve"));
-        
+
         return (mapper);
 
     }
@@ -459,20 +459,20 @@ public class Catalina {
      */
     protected void createStartMapperContext(String prefix, XmlMapper mapper) {
 
-	mapper.addRule(prefix + "", mapper.objectCreate
-		       ("org.apache.catalina.core.StandardContext",
-			"className"));
-	mapper.addRule(prefix + "", mapper.setProperties());
+        mapper.addRule(prefix + "", mapper.objectCreate
+                       ("org.apache.catalina.core.StandardContext",
+                        "className"));
+        mapper.addRule(prefix + "", mapper.setProperties());
         mapper.addRule(prefix + "",
                        new CopyParentClassLoaderAction());
-	mapper.addRule(prefix + "",
-		       new LifecycleListenerAction
-			   ("org.apache.catalina.startup.ContextConfig",
-			    "configClass"));
-	mapper.addRule(prefix + "", mapper.addChild
-		       ("addChild", "org.apache.catalina.Container"));
+        mapper.addRule(prefix + "",
+                       new LifecycleListenerAction
+                           ("org.apache.catalina.startup.ContextConfig",
+                            "configClass"));
+        mapper.addRule(prefix + "", mapper.addChild
+                       ("addChild", "org.apache.catalina.Container"));
 
-	createContextCommon(prefix, mapper);
+        createContextCommon(prefix, mapper);
 
     }
 
@@ -485,13 +485,13 @@ public class Catalina {
      * @param mapper The mapper we are updating
      */
     protected void createStartMapperDefaultContext(String prefix,
-	XmlMapper mapper) {
+        XmlMapper mapper) {
 
         mapper.addRule(prefix + "", mapper.objectCreate
                        ("org.apache.catalina.core.DefaultContext",
                         "className"));
         mapper.addRule(prefix + "", mapper.setProperties());
-	mapper.addRule(prefix + "", mapper.addChild
+        mapper.addRule(prefix + "", mapper.addChild
                        ("addDefaultContext", "org.apache.catalina.core.DefaultContext"));
 
         createContextCommon(prefix, mapper);
@@ -525,24 +525,24 @@ public class Catalina {
                        ("addEnvironment",
                         "org.apache.catalina.deploy.ContextEnvironment"));
 
-	mapper.addRule(prefix + "/InstanceListener",
-		       mapper.methodSetter("addInstanceListener", 0));
+        mapper.addRule(prefix + "/InstanceListener",
+                       mapper.methodSetter("addInstanceListener", 0));
 
-	mapper.addRule(prefix + "/Listener",
-		       mapper.objectCreate
-		       (null, "className"));
-	mapper.addRule(prefix + "/Listener",
-		       mapper.setProperties());
-	mapper.addRule(prefix + "/Listener", mapper.addChild
-		       ("addLifecycleListener",
-			"org.apache.catalina.LifecycleListener"));
+        mapper.addRule(prefix + "/Listener",
+                       mapper.objectCreate
+                       (null, "className"));
+        mapper.addRule(prefix + "/Listener",
+                       mapper.setProperties());
+        mapper.addRule(prefix + "/Listener", mapper.addChild
+                       ("addLifecycleListener",
+                        "org.apache.catalina.LifecycleListener"));
 
         mapper.addRule(prefix + "/Loader", new CreateLoaderAction
             ("org.apache.catalina.loader.WebappLoader", "className"));
-	mapper.addRule(prefix + "/Loader",
-		       mapper.setProperties());
-	mapper.addRule(prefix + "/Loader", mapper.addChild
-		       ("setLoader", "org.apache.catalina.Loader"));
+        mapper.addRule(prefix + "/Loader",
+                       mapper.setProperties());
+        mapper.addRule(prefix + "/Loader", mapper.addChild
+                       ("setLoader", "org.apache.catalina.Loader"));
 
         mapper.addRule(prefix + "/Logger", mapper.objectCreate
                        (null, "className"));
@@ -551,14 +551,14 @@ public class Catalina {
         mapper.addRule(prefix + "/Logger", mapper.addChild
                        ("setLogger", "org.apache.catalina.Logger"));
 
-	mapper.addRule(prefix + "/Manager",
-		       mapper.objectCreate
-		       ("org.apache.catalina.session.StandardManager",
-			"className"));
-	mapper.addRule(prefix + "/Manager",
-		       mapper.setProperties());
-	mapper.addRule(prefix + "/Manager", mapper.addChild
-		       ("setManager", "org.apache.catalina.Manager"));
+        mapper.addRule(prefix + "/Manager",
+                       mapper.objectCreate
+                       ("org.apache.catalina.session.StandardManager",
+                        "className"));
+        mapper.addRule(prefix + "/Manager",
+                       mapper.setProperties());
+        mapper.addRule(prefix + "/Manager", mapper.addChild
+                       ("setManager", "org.apache.catalina.Manager"));
 
         mapper.addRule(prefix + "/Parameter", mapper.objectCreate
                        ("org.apache.catalina.deploy.ApplicationParameter"));
@@ -593,21 +593,21 @@ public class Catalina {
                        ("addResourceParams",
                         "org.apache.catalina.deploy.ResourceParams"));
 
-	mapper.addRule(prefix + "/ResourceParams/parameter",
-		       mapper.methodSetter("addParameter", 2));
-	mapper.addRule(prefix + "/ResourceParams/parameter/name",
-		       mapper.methodParam(0));
-	mapper.addRule(prefix + "/ResourceParams/parameter/value",
-		       mapper.methodParam(1));
+        mapper.addRule(prefix + "/ResourceParams/parameter",
+                       mapper.methodSetter("addParameter", 2));
+        mapper.addRule(prefix + "/ResourceParams/parameter/name",
+                       mapper.methodParam(0));
+        mapper.addRule(prefix + "/ResourceParams/parameter/value",
+                       mapper.methodParam(1));
 
-	mapper.addRule(prefix + "/Resources",
-		       mapper.objectCreate
-		       ("org.apache.naming.resources.FileDirContext",
-			"className"));
-	mapper.addRule(prefix + "/Resources",
-		       mapper.setProperties());
-	mapper.addRule(prefix + "/Resources", mapper.addChild
-		       ("setResources", "javax.naming.directory.DirContext"));
+        mapper.addRule(prefix + "/Resources",
+                       mapper.objectCreate
+                       ("org.apache.naming.resources.FileDirContext",
+                        "className"));
+        mapper.addRule(prefix + "/Resources",
+                       mapper.setProperties());
+        mapper.addRule(prefix + "/Resources", mapper.addChild
+                       ("setResources", "javax.naming.directory.DirContext"));
 
         mapper.addRule(prefix + "/Valve", mapper.objectCreate
                        (null, "className"));
@@ -616,11 +616,11 @@ public class Catalina {
         mapper.addRule(prefix + "/Valve", mapper.addChild
                        ("addValve", "org.apache.catalina.Valve"));
 
-	mapper.addRule(prefix + "/WrapperLifecycle",
-		       mapper.methodSetter("addWrapperLifecycle", 0));
+        mapper.addRule(prefix + "/WrapperLifecycle",
+                       mapper.methodSetter("addWrapperLifecycle", 0));
 
-	mapper.addRule(prefix + "/WrapperListener",
-		       mapper.methodSetter("addWrapperListener", 0));
+        mapper.addRule(prefix + "/WrapperListener",
+                       mapper.methodSetter("addWrapperListener", 0));
 
     }
 
@@ -632,18 +632,18 @@ public class Catalina {
 
         // Initialize the mapper
         XmlMapper mapper = new XmlMapper();
-	//        mapper.setDebug(999);
+        //        mapper.setDebug(999);
 
         // Configure the actions we will be using
 
         mapper.addRule("Server", mapper.objectCreate
-		       ("org.apache.catalina.core.StandardServer",
-			"className"));
+                       ("org.apache.catalina.core.StandardServer",
+                        "className"));
         mapper.addRule("Server", mapper.setProperties());
         mapper.addRule("Server", mapper.addChild
-		       ("setServer", "org.apache.catalina.Server"));
+                       ("setServer", "org.apache.catalina.Server"));
 
-	return (mapper);
+        return (mapper);
 
     }
 
@@ -654,9 +654,9 @@ public class Catalina {
     protected void execute() throws Exception {
 
         if (starting)
-	    start();
-	else if (stopping)
-	    stop();
+            start();
+        else if (stopping)
+            stop();
 
     }
 
@@ -682,17 +682,17 @@ public class Catalina {
 
         // Create and execute our mapper
         XmlMapper mapper = createStartMapper();
-	File file = configFile();
-	try {
-	    mapper.readXml(file, this);
-	} catch (InvocationTargetException e) {
-	    System.out.println("Catalina.start: InvocationTargetException");
-	    e.getTargetException().printStackTrace(System.out);
-	} catch (Exception e) {
-	    System.out.println("Catalina.start: " + e);
-	    e.printStackTrace(System.out);
-	    System.exit(1);
-	}
+        File file = configFile();
+        try {
+            mapper.readXml(file, this);
+        } catch (InvocationTargetException e) {
+            System.out.println("Catalina.start: InvocationTargetException");
+            e.getTargetException().printStackTrace(System.out);
+        } catch (Exception e) {
+            System.out.println("Catalina.start: " + e);
+            e.printStackTrace(System.out);
+            System.exit(1);
+        }
 
         // Setting additional variables
         if (!useNaming) {
@@ -710,59 +710,59 @@ public class Catalina {
                                "org.apache.naming.java.javaURLContextFactory");
         }
 
-	// If a SecurityManager is being used, set properties for
-	// checkPackageAccess() and checkPackageDefinition
-	if( System.getSecurityManager() != null ) {
-	    String access = Security.getProperty("package.access");
-	    if( access != null && access.length() > 0 )
-		access += ",";
-	    else
-		access = "sun.,";
-	    Security.setProperty("package.access",
-		access + "org.apache.catalina.,org.apache.jasper.");
-	    String definition = Security.getProperty("package.definition");
-	    if( definition != null && definition.length() > 0 )
-		definition += ",";
-	    else
-		definition = "sun.,";
-	    Security.setProperty("package.definition",
-		// FIX ME package "javax." was removed to prevent HotSpot
-		// fatal internal errors
-		definition + "java.,org.apache.catalina.,org.apache.jasper.");
-	}
+        // If a SecurityManager is being used, set properties for
+        // checkPackageAccess() and checkPackageDefinition
+        if( System.getSecurityManager() != null ) {
+            String access = Security.getProperty("package.access");
+            if( access != null && access.length() > 0 )
+                access += ",";
+            else
+                access = "sun.,";
+            Security.setProperty("package.access",
+                access + "org.apache.catalina.,org.apache.jasper.");
+            String definition = Security.getProperty("package.definition");
+            if( definition != null && definition.length() > 0 )
+                definition += ",";
+            else
+                definition = "sun.,";
+            Security.setProperty("package.definition",
+                // FIX ME package "javax." was removed to prevent HotSpot
+                // fatal internal errors
+                definition + "java.,org.apache.catalina.,org.apache.jasper.");
+        }
 
-	// Start the new server
-	if (server instanceof Lifecycle) {
-	    try {
-		server.initialize();
-	        ((Lifecycle) server).start();
-	    } catch (LifecycleException e) {
-	        System.out.println("Catalina.start: " + e);
-		e.printStackTrace(System.out);
+        // Start the new server
+        if (server instanceof Lifecycle) {
+            try {
+                server.initialize();
+                ((Lifecycle) server).start();
+            } catch (LifecycleException e) {
+                System.out.println("Catalina.start: " + e);
+                e.printStackTrace(System.out);
                 if (e.getThrowable() != null) {
                     System.out.println("----- Root Cause -----");
                     e.getThrowable().printStackTrace(System.out);
                 }
-	    }
-	}
+            }
+        }
 
 
-	// Wait for the server to be told to shut down
-	server.await();
+        // Wait for the server to be told to shut down
+        server.await();
 
-	// Shut down the server
-	if (server instanceof Lifecycle) {
-	    try {
-	        ((Lifecycle) server).stop();
-	    } catch (LifecycleException e) {
-	        System.out.println("Catalina.stop: " + e);
-	        e.printStackTrace(System.out);
+        // Shut down the server
+        if (server instanceof Lifecycle) {
+            try {
+                ((Lifecycle) server).stop();
+            } catch (LifecycleException e) {
+                System.out.println("Catalina.stop: " + e);
+                e.printStackTrace(System.out);
                 if (e.getThrowable() != null) {
                     System.out.println("----- Root Cause -----");
                     e.getThrowable().printStackTrace(System.out);
                 }
-	    }
-	}
+            }
+        }
 
     }
 
@@ -775,28 +775,28 @@ public class Catalina {
       // Create and execute our mapper
       XmlMapper mapper = createStopMapper();
       File file = configFile();
-	try {
-	    mapper.readXml(file, this);
-	} catch (Exception e) {
-	    System.out.println("Catalina.stop: " + e);
-	    e.printStackTrace(System.out);
-	    System.exit(1);
-	}
+        try {
+            mapper.readXml(file, this);
+        } catch (Exception e) {
+            System.out.println("Catalina.stop: " + e);
+            e.printStackTrace(System.out);
+            System.exit(1);
+        }
 
       // Stop the existing server
       try {
-	  Socket socket = new Socket("127.0.0.1", server.getPort());
-	  OutputStream stream = socket.getOutputStream();
-	  String shutdown = server.getShutdown();
-	  for (int i = 0; i < shutdown.length(); i++)
-	      stream.write(shutdown.charAt(i));
-	  stream.flush();
-	  stream.close();
-	  socket.close();
+          Socket socket = new Socket("127.0.0.1", server.getPort());
+          OutputStream stream = socket.getOutputStream();
+          String shutdown = server.getShutdown();
+          for (int i = 0; i < shutdown.length(); i++)
+              stream.write(shutdown.charAt(i));
+          stream.flush();
+          stream.close();
+          socket.close();
       } catch (IOException e) {
-	  System.out.println("Catalina.stop: " + e);
-	  e.printStackTrace(System.out);
-	  System.exit(1);
+          System.out.println("Catalina.stop: " + e);
+          e.printStackTrace(System.out);
+          System.exit(1);
       }
 
 
@@ -909,14 +909,14 @@ final class CreateLoaderAction extends XmlAction {
         ClassLoader parentClassLoader = container.getParentClassLoader();
 
         // Instantiate a new Loader implementation object
-	String className = loaderClass;
-	if (attributeName != null) {
-	    int top = context.getTagCount() - 1;
-	    AttributeList attributes = context.getAttributeList(top);
-	    if (attributes.getValue(attributeName) != null)
-		className = attributes.getValue(attributeName);
-	}
-	Class clazz = Class.forName(className);
+        String className = loaderClass;
+        if (attributeName != null) {
+            int top = context.getTagCount() - 1;
+            AttributeList attributes = context.getAttributeList(top);
+            if (attributes.getValue(attributeName) != null)
+                className = attributes.getValue(attributeName);
+        }
+        Class clazz = Class.forName(className);
         Class[] paramTypes = { ClassLoader.class };
         Object[] arguments = { parentClassLoader };
         Constructor constructor = clazz.getDeclaredConstructor(paramTypes);
@@ -958,7 +958,7 @@ final class LifecycleListenerAction extends XmlAction {
      */
     public LifecycleListenerAction(String listenerClass) {
 
-	this(listenerClass, null);
+        this(listenerClass, null);
 
     }
 
@@ -971,11 +971,11 @@ final class LifecycleListenerAction extends XmlAction {
      *  the listener class name
      */
     public LifecycleListenerAction(String listenerClass,
-				   String attributeName) {
+                                   String attributeName) {
 
-	super();
-	this.listenerClass = listenerClass;
-	this.attributeName = attributeName;
+        super();
+        this.listenerClass = listenerClass;
+        this.attributeName = attributeName;
 
     }
 
@@ -997,24 +997,24 @@ final class LifecycleListenerAction extends XmlAction {
      */
     public void start(SaxContext context) throws Exception {
 
-	// Create a new listener object
-	String className = listenerClass;
-	if (attributeName != null) {
-	    int top = context.getTagCount() - 1;
-	    AttributeList attributes = context.getAttributeList(top);
-	    if (attributes.getValue(attributeName) != null)
-		className = attributes.getValue(attributeName);
-	}
-	if (context.getDebug() >= 1)
-	    context.log("Add " + className + " listener");
-	Class clazz = Class.forName(className);
-	LifecycleListener listener =
-	    (LifecycleListener) clazz.newInstance();
+        // Create a new listener object
+        String className = listenerClass;
+        if (attributeName != null) {
+            int top = context.getTagCount() - 1;
+            AttributeList attributes = context.getAttributeList(top);
+            if (attributes.getValue(attributeName) != null)
+                className = attributes.getValue(attributeName);
+        }
+        if (context.getDebug() >= 1)
+            context.log("Add " + className + " listener");
+        Class clazz = Class.forName(className);
+        LifecycleListener listener =
+            (LifecycleListener) clazz.newInstance();
 
-	// Add it to the top object on the stack
-	Stack stack = context.getObjectStack();
-	Lifecycle top = (Lifecycle) stack.peek();
-	top.addLifecycleListener(listener);
+        // Add it to the top object on the stack
+        Stack stack = context.getObjectStack();
+        Lifecycle top = (Lifecycle) stack.peek();
+        top.addLifecycleListener(listener);
 
     }
 
@@ -1052,11 +1052,11 @@ final class SetParentClassLoaderAction extends XmlAction {
      */
     public void start(SaxContext context) throws Exception {
 
-	if (context.getDebug() >= 1)
-	    context.log("Setting parent class loader");
+        if (context.getDebug() >= 1)
+            context.log("Setting parent class loader");
 
-	// Set the parent class loader for this Container
-	Stack stack = context.getObjectStack();
+        // Set the parent class loader for this Container
+        Stack stack = context.getObjectStack();
         Container top = (Container) stack.peek();
         top.setParentClassLoader(parentClassLoader);
 

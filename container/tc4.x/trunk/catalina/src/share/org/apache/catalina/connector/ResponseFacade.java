@@ -95,7 +95,7 @@ public class ResponseFacade implements ServletResponse {
      * @param response The response to be wrapped
      */
     public ResponseFacade(Response response) {
-	this.response = (ServletResponse) response;
+        this.response = (ServletResponse) response;
     }
 
 

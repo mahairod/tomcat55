@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.core;
@@ -101,7 +101,7 @@ public final class StandardServer
      * Descriptive information about this Server implementation.
      */
     private static final String info =
-	"org.apache.catalina.core.StandardServer/1.0";
+        "org.apache.catalina.core.StandardServer/1.0";
 
 
     /**
@@ -132,7 +132,7 @@ public final class StandardServer
      * The string manager for this package.
      */
     private static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -157,7 +157,7 @@ public final class StandardServer
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -216,19 +216,19 @@ public final class StandardServer
      */
     public void addService(Service service) {
 
-	synchronized (services) {
-	    Service results[] = new Service[services.length + 1];
+        synchronized (services) {
+            Service results[] = new Service[services.length + 1];
             System.arraycopy(services, 0, results, 0, services.length);
             results[services.length] = service;
             services = results;
 
-	    if (initialized) {
-		try {
-		    service.initialize();
-		} catch (LifecycleException e) {
-		    e.printStackTrace(System.err);
-		}
-	    }
+            if (initialized) {
+                try {
+                    service.initialize();
+                } catch (LifecycleException e) {
+                    e.printStackTrace(System.err);
+                }
+            }
 
             if (started && (service instanceof Lifecycle)) {
                 try {
@@ -249,85 +249,85 @@ public final class StandardServer
 
         // Set up a server socket to wait on
         ServerSocket serverSocket = null;
-	try {
-	    serverSocket = new ServerSocket(port, 1);
-	} catch (IOException e) {
-	    System.err.println("StandardServer.await: create: " + e);
-	    e.printStackTrace();
-	    System.exit(1);
-	}
+        try {
+            serverSocket = new ServerSocket(port, 1);
+        } catch (IOException e) {
+            System.err.println("StandardServer.await: create: " + e);
+            e.printStackTrace();
+            System.exit(1);
+        }
 
-	// Loop waiting for a connection and a valid command
-	while (true) {
+        // Loop waiting for a connection and a valid command
+        while (true) {
 
-	    // Wait for the next connection
-	    Socket socket = null;
-	    InputStream stream = null;
-	    try {
-	        socket = serverSocket.accept();
-		socket.setSoTimeout(10 * 1000);  // Ten seconds
-		stream = socket.getInputStream();
+            // Wait for the next connection
+            Socket socket = null;
+            InputStream stream = null;
+            try {
+                socket = serverSocket.accept();
+                socket.setSoTimeout(10 * 1000);  // Ten seconds
+                stream = socket.getInputStream();
             } catch (AccessControlException ace) {
                 System.err.println("StandardServer.accept security exception: " + ace.getMessage());
                 continue;
-	    } catch (IOException e) {
-	        System.err.println("StandardServer.await: accept: " + e);
-		e.printStackTrace();
-		System.exit(1);
-	    }
+            } catch (IOException e) {
+                System.err.println("StandardServer.await: accept: " + e);
+                e.printStackTrace();
+                System.exit(1);
+            }
 
-	    boolean localAddress = isSameAddress(socket.getLocalAddress(),
-						 socket.getInetAddress());
-	    if (!localAddress) {
-		System.err.println("Invalid shutdown connection from " +
-				   socket.getInetAddress() + " ignored");
-		try {
-		    socket.close();
-		} catch (IOException e) {
-		    ;
-		}
-		continue;
-	    }
+            boolean localAddress = isSameAddress(socket.getLocalAddress(),
+                                                 socket.getInetAddress());
+            if (!localAddress) {
+                System.err.println("Invalid shutdown connection from " +
+                                   socket.getInetAddress() + " ignored");
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    ;
+                }
+                continue;
+            }
 
-	    // Read a line of characters from the socket
-	    StringBuffer command = new StringBuffer();
-	    while (true) {
-	        int ch = -1;
-	        try {
-		    ch = stream.read();
-		} catch (IOException e) {
-		    System.err.println("StandardServer.await: read: " + e);
-		    e.printStackTrace();
-		    ch = -1;
-		}
-		if (ch < 32)  // Control character or EOF terminates loop
-		    break;
-		command.append((char) ch);
-	    }
+            // Read a line of characters from the socket
+            StringBuffer command = new StringBuffer();
+            while (true) {
+                int ch = -1;
+                try {
+                    ch = stream.read();
+                } catch (IOException e) {
+                    System.err.println("StandardServer.await: read: " + e);
+                    e.printStackTrace();
+                    ch = -1;
+                }
+                if (ch < 32)  // Control character or EOF terminates loop
+                    break;
+                command.append((char) ch);
+            }
 
-	    // Close the socket now that we are done with it
-	    try {
-	        socket.close();
-	    } catch (IOException e) {
-	        ;
-	    }
+            // Close the socket now that we are done with it
+            try {
+                socket.close();
+            } catch (IOException e) {
+                ;
+            }
 
-	    // Match against our command string
-	    boolean match = command.toString().equals(shutdown);
-	    if (match) {
-		break;
-	    } else
-	        System.err.println("StandardServer.await: Invalid command '" +
-				   command.toString() + "' received");
+            // Match against our command string
+            boolean match = command.toString().equals(shutdown);
+            if (match) {
+                break;
+            } else
+                System.err.println("StandardServer.await: Invalid command '" +
+                                   command.toString() + "' received");
 
-	}
+        }
 
-	// Close the server socket and return
-	try {
-	    serverSocket.close();
-	} catch (IOException e) {
-	    ;
-	}
+        // Close the server socket and return
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            ;
+        }
 
     }
 
@@ -393,27 +393,27 @@ public final class StandardServer
      */
     private boolean isSameAddress(InetAddress server, InetAddress client) {
 
-	// Compare the byte array versions of the two addresses
-	byte serverAddr[] = server.getAddress();
-	byte clientAddr[] = client.getAddress();
-	if (serverAddr.length != clientAddr.length)
-	    return (false);
-	boolean match = true;
-	for (int i = 0; i < serverAddr.length; i++) {
-	    if (serverAddr[i] != clientAddr[i]) {
-		match = false;
-		break;
-	    }
-	}
-	if (match)
-	    return (true);
+        // Compare the byte array versions of the two addresses
+        byte serverAddr[] = server.getAddress();
+        byte clientAddr[] = client.getAddress();
+        if (serverAddr.length != clientAddr.length)
+            return (false);
+        boolean match = true;
+        for (int i = 0; i < serverAddr.length; i++) {
+            if (serverAddr[i] != clientAddr[i]) {
+                match = false;
+                break;
+            }
+        }
+        if (match)
+            return (true);
 
-	// Compare the reversed form of the two addresses
-	for (int i = 0; i < serverAddr.length; i++) {
-	    if (serverAddr[i] != clientAddr[(serverAddr.length-1)-i])
-		return (false);
-	}
-	return (true);
+        // Compare the reversed form of the two addresses
+        for (int i = 0; i < serverAddr.length; i++) {
+            if (serverAddr[i] != clientAddr[(serverAddr.length-1)-i])
+                return (false);
+        }
+        return (true);
 
     }
 
@@ -428,7 +428,7 @@ public final class StandardServer
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -440,7 +440,7 @@ public final class StandardServer
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -458,21 +458,21 @@ public final class StandardServer
      */
     public void start() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("standardServer.start.started"));
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("standardServer.start.started"));
 
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
 
-	// Start our defined Services
-	synchronized (services) {
-	    for (int i = 0; i < services.length; i++) {
-		if (services[i] instanceof Lifecycle)
-		    ((Lifecycle) services[i]).start();
-	    }
-	}
+        // Start our defined Services
+        synchronized (services) {
+            for (int i = 0; i < services.length; i++) {
+                if (services[i] instanceof Lifecycle)
+                    ((Lifecycle) services[i]).start();
+            }
+        }
 
     }
 
@@ -489,18 +489,18 @@ public final class StandardServer
      */
     public void stop() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("standardServer.stop.notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("standardServer.stop.notStarted"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
 
-	// Stop our defined Services
-	for (int i = 0; i < services.length; i++) {
-	    if (services[i] instanceof Lifecycle)
-		((Lifecycle) services[i]).stop();
-	}
+        // Stop our defined Services
+        for (int i = 0; i < services.length; i++) {
+            if (services[i] instanceof Lifecycle)
+                ((Lifecycle) services[i]).stop();
+        }
 
     }
 
@@ -512,13 +512,13 @@ public final class StandardServer
     throws LifecycleException {
         if (initialized)
             throw new LifecycleException (
-		sm.getString("standardServer.initialize.initialized"));
-	initialized = true;
+                sm.getString("standardServer.initialize.initialized"));
+        initialized = true;
 
-	// Initialize our defined Services
-	for (int i = 0; i < services.length; i++) {
-	    services[i].initialize();
-	}
+        // Initialize our defined Services
+        for (int i = 0; i < services.length; i++) {
+            services[i].initialize();
+        }
     }
 
 }

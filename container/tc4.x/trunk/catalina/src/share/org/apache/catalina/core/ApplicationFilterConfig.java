@@ -111,13 +111,13 @@ final class ApplicationFilterConfig implements FilterConfig {
      * @exception ServletException if thrown by the filter's init() method
      */
     public ApplicationFilterConfig(Context context, FilterDef filterDef)
-	throws ClassCastException, ClassNotFoundException,
-	       IllegalAccessException, InstantiationException,
+        throws ClassCastException, ClassNotFoundException,
+               IllegalAccessException, InstantiationException,
                ServletException {
 
-	super();
+        super();
         this.context = context;
-	setFilterDef(filterDef);
+        setFilterDef(filterDef);
 
     }
 
@@ -151,7 +151,7 @@ final class ApplicationFilterConfig implements FilterConfig {
      */
     public String getFilterName() {
 
-	return (filterDef.getFilterName());
+        return (filterDef.getFilterName());
 
     }
 
@@ -165,11 +165,11 @@ final class ApplicationFilterConfig implements FilterConfig {
      */
     public String getInitParameter(String name) {
 
-	Map map = filterDef.getParameterMap();
-	if (map == null)
-	    return (null);
-	else
-	    return ((String) map.get(name));
+        Map map = filterDef.getParameterMap();
+        if (map == null)
+            return (null);
+        else
+            return ((String) map.get(name));
 
     }
 
@@ -180,11 +180,11 @@ final class ApplicationFilterConfig implements FilterConfig {
      */
     public Enumeration getInitParameterNames() {
 
-	Map map = filterDef.getParameterMap();
-	if (map == null)
-	    return (new Enumerator(new ArrayList()));
-	else
-	    return (new Enumerator(map.keySet()));
+        Map map = filterDef.getParameterMap();
+        if (map == null)
+            return (new Enumerator(new ArrayList()));
+        else
+            return (new Enumerator(map.keySet()));
 
     }
 
@@ -194,7 +194,7 @@ final class ApplicationFilterConfig implements FilterConfig {
      */
     public ServletContext getServletContext() {
 
-	return (this.context.getServletContext());
+        return (this.context.getServletContext());
 
     }
 
@@ -204,13 +204,13 @@ final class ApplicationFilterConfig implements FilterConfig {
      */
     public String toString() {
 
-	StringBuffer sb = new StringBuffer("ApplicationFilterConfig[");
+        StringBuffer sb = new StringBuffer("ApplicationFilterConfig[");
         sb.append("name=");
         sb.append(filterDef.getFilterName());
-	sb.append(", filterClass=");
-	sb.append(filterDef.getFilterClass());
-	sb.append("]");
-	return (sb.toString());
+        sb.append(", filterClass=");
+        sb.append(filterDef.getFilterClass());
+        sb.append("]");
+        return (sb.toString());
 
     }
 
@@ -245,14 +245,14 @@ final class ApplicationFilterConfig implements FilterConfig {
         else
             classLoader = context.getLoader().getClassLoader();
 
-        ClassLoader oldCtxClassLoader = 
+        ClassLoader oldCtxClassLoader =
             Thread.currentThread().getContextClassLoader();
 
         // Instantiate a new instance of this filter and return it
         Class clazz = classLoader.loadClass(filterClass);
         this.filter = (Filter) clazz.newInstance();
         filter.init(this);
-	return (this.filter);
+        return (this.filter);
 
     }
 
@@ -262,7 +262,7 @@ final class ApplicationFilterConfig implements FilterConfig {
      */
     FilterDef getFilterDef() {
 
-	return (this.filterDef);
+        return (this.filterDef);
 
     }
 
@@ -296,24 +296,24 @@ final class ApplicationFilterConfig implements FilterConfig {
      * @exception ServletException if thrown by the filter's init() method
      */
     void setFilterDef(FilterDef filterDef)
-	throws ClassCastException, ClassNotFoundException,
-	       IllegalAccessException, InstantiationException,
+        throws ClassCastException, ClassNotFoundException,
+               IllegalAccessException, InstantiationException,
                ServletException {
 
-	this.filterDef = filterDef;
-	if (filterDef == null) {
+        this.filterDef = filterDef;
+        if (filterDef == null) {
 
-	    // Release any previously allocated filter instance
-	    if (this.filter != null)
-		this.filter.destroy();
-	    this.filter = null;
+            // Release any previously allocated filter instance
+            if (this.filter != null)
+                this.filter.destroy();
+            this.filter = null;
 
-	} else {
+        } else {
 
             // Allocate a new filter instance
             Filter filter = getFilter();
 
-	}
+        }
 
     }
 

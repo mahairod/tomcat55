@@ -120,12 +120,12 @@ public class ApplicationContext
     implements ServletContext {
 
 
-    protected class PrivilegedGetRequestDispatcher 
+    protected class PrivilegedGetRequestDispatcher
         implements PrivilegedAction {
-        
+
         private String contextPath;
         private String relativeURI;
-        private String queryString;                                       
+        private String queryString;
 
         PrivilegedGetRequestDispatcher(String contextPath, String relativeURI,
                                        String queryString) {
@@ -133,35 +133,35 @@ public class ApplicationContext
             this.relativeURI = relativeURI;
             this.queryString = queryString;
         }
-                                          
+
         public Object run() {
-	    HttpRequestBase request = new HttpRequestBase();
-            request.setContext(context);       
+            HttpRequestBase request = new HttpRequestBase();
+            request.setContext(context);
             request.setContextPath(context.getPath());
             request.setRequestURI(contextPath + relativeURI);
             request.setQueryString(queryString);
             Wrapper wrapper = (Wrapper) context.map(request, true);
-            if (wrapper == null)               
-                return (null);  
+            if (wrapper == null)
+                return (null);
 
             // Construct a RequestDispatcher to process this request
-            HttpServletRequest hrequest = 
+            HttpServletRequest hrequest =
                 (HttpServletRequest) request.getRequest();
             return (RequestDispatcher) new ApplicationDispatcher
                 (wrapper,
-                 hrequest.getServletPath(),     
-                 hrequest.getPathInfo(),   
+                 hrequest.getServletPath(),
+                 hrequest.getPathInfo(),
                  hrequest.getQueryString(),
                  null);
         }
-        
+
     }
 
 
-    protected class PrivilegedGetResource 
+    protected class PrivilegedGetResource
         implements PrivilegedExceptionAction {
-                                      
-        private String path;          
+
+        private String path;
         private String host;
         private DirContext resources;
 
@@ -170,12 +170,12 @@ public class ApplicationContext
             this.path = path;
             this.resources = resources;
         }
-        
+
         public Object run() throws Exception {
             return new URL("jndi", null, 0, "/" + host + path,
                    new DirContextURLStreamHandler(resources));
         }
-        
+
     }
 
 
@@ -199,36 +199,36 @@ public class ApplicationContext
 
     protected class PrivilegedLogMessage
         implements PrivilegedAction {
-                                              
-        private String message;                  
-                                     
+
+        private String message;
+
         PrivilegedLogMessage(String message) {
             this.message = message;
-        }                              
-                                       
+        }
+
         public Object run() {
             internalLog(message);
             return null;
         }
-                                                              
+
     }
 
     protected class PrivilegedLogException
         implements PrivilegedAction {
-                                              
+
         private String message;
         private Exception exception;
-                                     
+
         PrivilegedLogException(Exception exception,String message) {
             this.message = message;
             this.exception = exception;
-        }                              
-                                       
+        }
+
         public Object run() {
             internalLog(exception,message);
             return null;
-        }                    
-                                                              
+        }
+
     }
 
     protected class PrivilegedLogThrowable
@@ -236,17 +236,17 @@ public class ApplicationContext
 
         private String message;
         private Throwable throwable;
-                                    
+
         PrivilegedLogThrowable(String message,Throwable throwable) {
-            this.message = message;               
+            this.message = message;
             this.throwable = throwable;
-        }                             
-                                      
-        public Object run() {         
+        }
+
+        public Object run() {
             internalLog(message,throwable);
-            return null;              
-        }                   
-                                      
+            return null;
+        }
+
     }
 
 
@@ -260,8 +260,8 @@ public class ApplicationContext
      * @param context The associated Context instance
      */
     public ApplicationContext(String basePath, StandardContext context) {
-	super();
-	this.context = context;
+        super();
+        this.context = context;
         this.basePath = basePath;
     }
 
@@ -355,7 +355,7 @@ public class ApplicationContext
      */
     public DirContext getResources() {
 
-	return context.getResources();
+        return context.getResources();
 
     }
 
@@ -384,9 +384,9 @@ public class ApplicationContext
      */
     public Object getAttribute(String name) {
 
-	synchronized (attributes) {
-	    return (attributes.get(name));
-	}
+        synchronized (attributes) {
+            return (attributes.get(name));
+        }
 
     }
 
@@ -397,9 +397,9 @@ public class ApplicationContext
      */
     public Enumeration getAttributeNames() {
 
-	synchronized (attributes) {
-	    return (new Enumerator(attributes.keySet()));
-	}
+        synchronized (attributes) {
+            return (new Enumerator(attributes.keySet()));
+        }
 
     }
 
@@ -416,30 +416,30 @@ public class ApplicationContext
      */
     public ServletContext getContext(String uri) {
 
-	// Validate the format of the specified argument
-	if ((uri == null) || (!uri.startsWith("/")))
-	    return (null);
+        // Validate the format of the specified argument
+        if ((uri == null) || (!uri.startsWith("/")))
+            return (null);
 
-	// Return the current context if requested
-	String contextPath = context.getPath();
-	if ((contextPath.length() > 0) &&
-	    (uri.startsWith(contextPath))) {
-	    return (this);
-	}
+        // Return the current context if requested
+        String contextPath = context.getPath();
+        if ((contextPath.length() > 0) &&
+            (uri.startsWith(contextPath))) {
+            return (this);
+        }
 
-	// Return other contexts only if allowed
-	if (!context.getCrossContext())
-	    return (null);
-	try {
-	    Host host = (Host) context.getParent();
-	    Context child = host.map(uri);
-	    if (child != null)
-		return (child.getServletContext());
-	    else
-		return (null);
-	} catch (Throwable t) {
-	    return (null);
-	}
+        // Return other contexts only if allowed
+        if (!context.getCrossContext())
+            return (null);
+        try {
+            Host host = (Host) context.getParent();
+            Context child = host.map(uri);
+            if (child != null)
+                return (child.getServletContext());
+            else
+                return (null);
+        } catch (Throwable t) {
+            return (null);
+        }
 
     }
 
@@ -479,7 +479,7 @@ public class ApplicationContext
      */
     public int getMajorVersion() {
 
-	return (Constants.MAJOR_VERSION);
+        return (Constants.MAJOR_VERSION);
 
     }
 
@@ -489,7 +489,7 @@ public class ApplicationContext
      */
     public int getMinorVersion() {
 
-	return (Constants.MINOR_VERSION);
+        return (Constants.MINOR_VERSION);
 
     }
 
@@ -502,15 +502,15 @@ public class ApplicationContext
      */
     public String getMimeType(String file) {
 
-	if (file == null)
-	    return (null);
-	int period = file.lastIndexOf(".");
-	if (period < 0)
-	    return (null);
-	String extension = file.substring(period + 1);
-	if (extension.length() < 1)
-	    return (null);
-	return (context.findMimeMapping(extension));
+        if (file == null)
+            return (null);
+        int period = file.lastIndexOf(".");
+        if (period < 0)
+            return (null);
+        String extension = file.substring(period + 1);
+        if (extension.length() < 1)
+            return (null);
+        return (context.findMimeMapping(extension));
 
     }
 
@@ -523,17 +523,17 @@ public class ApplicationContext
      */
     public RequestDispatcher getNamedDispatcher(String name) {
 
-	// Validate the name argument
-	if (name == null)
-	    return (null);
+        // Validate the name argument
+        if (name == null)
+            return (null);
 
-	// Create and return a corresponding request dispatcher
-	Wrapper wrapper = (Wrapper) context.findChild(name);
-	if (wrapper == null)
-	    return (null);
-	ApplicationDispatcher dispatcher =
-	  new ApplicationDispatcher(wrapper, null, null, null, name);
-	return ((RequestDispatcher) dispatcher);
+        // Create and return a corresponding request dispatcher
+        Wrapper wrapper = (Wrapper) context.findChild(name);
+        if (wrapper == null)
+            return (null);
+        ApplicationDispatcher dispatcher =
+          new ApplicationDispatcher(wrapper, null, null, null, name);
+        return ((RequestDispatcher) dispatcher);
 
     }
 
@@ -582,32 +582,32 @@ public class ApplicationContext
             relativeURI = path.substring(0, question);
             queryString = path.substring(question + 1);
         }
-	if( System.getSecurityManager() != null ) {
-	    PrivilegedGetRequestDispatcher dp =
-		new PrivilegedGetRequestDispatcher(contextPath,
-			relativeURI,queryString);
-	    return (RequestDispatcher)AccessController.doPrivileged(dp);
-	}
+        if( System.getSecurityManager() != null ) {
+            PrivilegedGetRequestDispatcher dp =
+                new PrivilegedGetRequestDispatcher(contextPath,
+                        relativeURI,queryString);
+            return (RequestDispatcher)AccessController.doPrivileged(dp);
+        }
 
-	// The remaining code is duplicated in PrivilegedGetRequestDispatcher,
-	// we need to make sure they stay in sync
-	HttpRequestBase request = new HttpRequestBase();
-	request.setContext(context);   
-	request.setContextPath(context.getPath());
-	request.setRequestURI(contextPath + relativeURI);
-	request.setQueryString(queryString);
-	Wrapper wrapper = (Wrapper) context.map(request, true);
-	if (wrapper == null)           
-	    return (null);  
+        // The remaining code is duplicated in PrivilegedGetRequestDispatcher,
+        // we need to make sure they stay in sync
+        HttpRequestBase request = new HttpRequestBase();
+        request.setContext(context);
+        request.setContextPath(context.getPath());
+        request.setRequestURI(contextPath + relativeURI);
+        request.setQueryString(queryString);
+        Wrapper wrapper = (Wrapper) context.map(request, true);
+        if (wrapper == null)
+            return (null);
 
-	// Construct a RequestDispatcher to process this request
-	HttpServletRequest hrequest = 
+        // Construct a RequestDispatcher to process this request
+        HttpServletRequest hrequest =
             (HttpServletRequest) request.getRequest();
         return (RequestDispatcher) new ApplicationDispatcher(wrapper,
-                        hrequest.getServletPath(), 
-                        hrequest.getPathInfo(),    
+                        hrequest.getServletPath(),
+                        hrequest.getPathInfo(),
                         hrequest.getQueryString(),
-                        null);                   
+                        null);
 
     }
 
@@ -623,27 +623,27 @@ public class ApplicationContext
      * @exception MalformedURLException if the path is not given
      *  in the correct form
      */
-    public URL getResource(String path) 
+    public URL getResource(String path)
         throws MalformedURLException {
-	DirContext resources = context.getResources();
-	if (resources != null) {
+        DirContext resources = context.getResources();
+        if (resources != null) {
             String fullPath = context.getName() + path;
             String hostName = context.getParent().getName();
             try {
                 resources.lookup(path);
-	        if( System.getSecurityManager() != null ) {
-	            try {
-	                PrivilegedGetResource dp =
-			    new PrivilegedGetResource
+                if( System.getSecurityManager() != null ) {
+                    try {
+                        PrivilegedGetResource dp =
+                            new PrivilegedGetResource
                                 (hostName, fullPath, resources);
-	                return (URL)AccessController.doPrivileged(dp);
-	            } catch( PrivilegedActionException pe) {
-	                throw pe.getException();
-	            }
-	        } else {
-                    return new URL("jndi", null, 0, "/" + hostName + fullPath, 
+                        return (URL)AccessController.doPrivileged(dp);
+                    } catch( PrivilegedActionException pe) {
+                        throw pe.getException();
+                    }
+                } else {
+                    return new URL("jndi", null, 0, "/" + hostName + fullPath,
                                    new DirContextURLStreamHandler(resources));
-		}
+                }
             } catch (Exception e) {
                 //e.printStackTrace();
             }
@@ -681,7 +681,7 @@ public class ApplicationContext
      * Return a Set containing the resource paths of resources member of the
      * specified collection. Each path will be a String starting with
      * a "/" character. The returned set is immutable.
-     * 
+     *
      * @param path Collection path
      */
     public Set getResourcePaths(String path) {
@@ -726,7 +726,7 @@ public class ApplicationContext
      */
     public String getServerInfo() {
 
-	return (Globals.SERVER_INFO);
+        return (Globals.SERVER_INFO);
 
     }
 
@@ -736,7 +736,7 @@ public class ApplicationContext
      */
     public Servlet getServlet(String name) {
 
-	return (null);
+        return (null);
 
     }
 
@@ -756,7 +756,7 @@ public class ApplicationContext
      */
     public Enumeration getServletNames() {
 
-	return (new Enumerator(empty));
+        return (new Enumerator(empty));
 
     }
 
@@ -766,7 +766,7 @@ public class ApplicationContext
      */
     public Enumeration getServlets() {
 
-	return (new Enumerator(empty));
+        return (new Enumerator(empty));
 
     }
 
@@ -788,9 +788,9 @@ public class ApplicationContext
 
     private void internalLog(String message) {
 
-	Logger logger = context.getLogger();
-	if (logger != null)
-	    logger.log(message);
+        Logger logger = context.getLogger();
+        if (logger != null)
+            logger.log(message);
 
     }
 
@@ -815,9 +815,9 @@ public class ApplicationContext
     }
 
     private void internalLog(Exception exception, String message) {
-	Logger logger = context.getLogger();
-	if (logger != null)
-	    logger.log(exception, message);
+        Logger logger = context.getLogger();
+        if (logger != null)
+            logger.log(exception, message);
 
     }
 
@@ -833,16 +833,16 @@ public class ApplicationContext
             PrivilegedLogThrowable dp =
                 new PrivilegedLogThrowable(message,throwable);
             AccessController.doPrivileged(dp);
-        } else {   
+        } else {
             internalLog(message,throwable);
         }
     }
 
     private void internalLog(String message, Throwable throwable) {
 
-	Logger logger = context.getLogger();
-	if (logger != null)
-	    logger.log(message, throwable);
+        Logger logger = context.getLogger();
+        if (logger != null)
+            logger.log(message, throwable);
 
     }
 
@@ -857,8 +857,8 @@ public class ApplicationContext
         Object value = null;
         boolean found = false;
 
-	// Remove the specified attribute
-	synchronized (attributes) {
+        // Remove the specified attribute
+        synchronized (attributes) {
             // Check for read only attribute
            if (readOnlyAttributes.containsKey(name))
                 return;
@@ -869,33 +869,33 @@ public class ApplicationContext
             } else {
                 return;
             }
-	}
+        }
 
-	// Notify interested application event listeners
-	Object listeners[] = context.getApplicationListeners();
-	if ((listeners == null) || (listeners.length == 0))
-	    return;
-	ServletContextAttributeEvent event =
-	  new ServletContextAttributeEvent(context.getServletContext(),
-					    name, value);
-	for (int i = 0; i < listeners.length; i++) {
-	    if (!(listeners[i] instanceof ServletContextAttributeListener))
-	        continue;
+        // Notify interested application event listeners
+        Object listeners[] = context.getApplicationListeners();
+        if ((listeners == null) || (listeners.length == 0))
+            return;
+        ServletContextAttributeEvent event =
+          new ServletContextAttributeEvent(context.getServletContext(),
+                                            name, value);
+        for (int i = 0; i < listeners.length; i++) {
+            if (!(listeners[i] instanceof ServletContextAttributeListener))
+                continue;
             ServletContextAttributeListener listener =
-	        (ServletContextAttributeListener) listeners[i];
-	    try {
+                (ServletContextAttributeListener) listeners[i];
+            try {
                 context.fireContainerEvent("beforeContextAttributeRemoved",
                                            listener);
-		listener.attributeRemoved(event);
+                listener.attributeRemoved(event);
                 context.fireContainerEvent("afterContextAttributeRemoved",
                                            listener);
-	    } catch (Throwable t) {
+            } catch (Throwable t) {
                 context.fireContainerEvent("afterContextAttributeRemoved",
                                            listener);
-	        // FIXME - should we do anything besides log these?
-	        log(sm.getString("applicationContext.attributeEvent"), t);
-	    }
-	}
+                // FIXME - should we do anything besides log these?
+                log(sm.getString("applicationContext.attributeEvent"), t);
+            }
+        }
 
     }
 
@@ -918,22 +918,22 @@ public class ApplicationContext
         Object oldValue = null;
         boolean replaced = false;
 
-	// Add or replace the specified attribute
-	synchronized (attributes) {
+        // Add or replace the specified attribute
+        synchronized (attributes) {
             // Check for read only attribute
             if (readOnlyAttributes.containsKey(name))
                 return;
             oldValue = attributes.get(name);
             if (oldValue != null)
-	        replaced = true;
-	    attributes.put(name, value);
-	}
+                replaced = true;
+            attributes.put(name, value);
+        }
 
-	// Notify interested application event listeners
-	Object listeners[] = context.getApplicationListeners();
-	if ((listeners == null) || (listeners.length == 0))
-	    return;
-	ServletContextAttributeEvent event = null;
+        // Notify interested application event listeners
+        Object listeners[] = context.getApplicationListeners();
+        if ((listeners == null) || (listeners.length == 0))
+            return;
+        ServletContextAttributeEvent event = null;
         if (replaced)
             event =
                 new ServletContextAttributeEvent(context.getServletContext(),
@@ -943,36 +943,36 @@ public class ApplicationContext
                 new ServletContextAttributeEvent(context.getServletContext(),
                                                  name, value);
 
-	for (int i = 0; i < listeners.length; i++) {
-	    if (!(listeners[i] instanceof ServletContextAttributeListener))
-	        continue;
+        for (int i = 0; i < listeners.length; i++) {
+            if (!(listeners[i] instanceof ServletContextAttributeListener))
+                continue;
             ServletContextAttributeListener listener =
-	        (ServletContextAttributeListener) listeners[i];
-	    try {
-		if (replaced) {
+                (ServletContextAttributeListener) listeners[i];
+            try {
+                if (replaced) {
                     context.fireContainerEvent
                         ("beforeContextAttributeReplaced", listener);
-		    listener.attributeReplaced(event);
+                    listener.attributeReplaced(event);
                     context.fireContainerEvent("afterContextAttributeReplaced",
                                                listener);
-		} else {
+                } else {
                     context.fireContainerEvent("beforeContextAttributeAdded",
                                                listener);
-		    listener.attributeAdded(event);
+                    listener.attributeAdded(event);
                     context.fireContainerEvent("afterContextAttributeAdded",
                                                listener);
                 }
-	    } catch (Throwable t) {
+            } catch (Throwable t) {
                 if (replaced)
                     context.fireContainerEvent("afterContextAttributeReplaced",
                                                listener);
                 else
                     context.fireContainerEvent("afterContextAttributeAdded",
                                                listener);
-	        // FIXME - should we do anything besides log these?
-	        log(sm.getString("applicationContext.attributeEvent"), t);
-	    }
-	}
+                // FIXME - should we do anything besides log these?
+                log(sm.getString("applicationContext.attributeEvent"), t);
+            }
+        }
 
     }
 
@@ -1024,10 +1024,10 @@ public class ApplicationContext
 
 
     /**
-     * List resource paths (recursively), and store all of them in the given 
+     * List resource paths (recursively), and store all of them in the given
      * Set.
      */
-    private static void listPaths(Set set, DirContext resources, String path) 
+    private static void listPaths(Set set, DirContext resources, String path)
         throws NamingException {
 
         Enumeration childPaths = resources.listBindings(path);
@@ -1046,11 +1046,11 @@ public class ApplicationContext
 
 
     /**
-     * List resource paths (recursively), and store all of them in the given 
+     * List resource paths (recursively), and store all of them in the given
      * Set.
      */
     private static void listCollectionPaths
-        (Set set, DirContext resources, String path) 
+        (Set set, DirContext resources, String path)
         throws NamingException {
 
         Enumeration childPaths = resources.listBindings(path);

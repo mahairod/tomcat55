@@ -105,7 +105,7 @@ class ApplicationResponse extends ServletResponseWrapper {
      */
     public ApplicationResponse(ServletResponse response) {
 
-	this(response, false);
+        this(response, false);
 
     }
 
@@ -119,8 +119,8 @@ class ApplicationResponse extends ServletResponseWrapper {
      */
     public ApplicationResponse(ServletResponse response, boolean included) {
 
-	super(response);
-	setIncluded(included);
+        super(response);
+        setIncluded(included);
 
     }
 
@@ -139,7 +139,7 @@ class ApplicationResponse extends ServletResponseWrapper {
      * The string manager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------ ServletResponse Methods
@@ -153,9 +153,9 @@ class ApplicationResponse extends ServletResponseWrapper {
      */
     public void reset() {
 
-	// If already committed, the wrapped response will throw ISE
-	if (!included || getResponse().isCommitted())
-	    getResponse().reset();
+        // If already committed, the wrapped response will throw ISE
+        if (!included || getResponse().isCommitted())
+            getResponse().reset();
 
     }
 
@@ -167,8 +167,8 @@ class ApplicationResponse extends ServletResponseWrapper {
      */
     public void setContentLength(int len) {
 
-	if (!included)
-	    getResponse().setContentLength(len);
+        if (!included)
+            getResponse().setContentLength(len);
 
     }
 
@@ -180,8 +180,8 @@ class ApplicationResponse extends ServletResponseWrapper {
      */
     public void setContentType(String type) {
 
-	if (!included)
-	    getResponse().setContentType(type);
+        if (!included)
+            getResponse().setContentType(type);
 
     }
 
@@ -209,7 +209,7 @@ class ApplicationResponse extends ServletResponseWrapper {
      */
     boolean isIncluded() {
 
-	return (this.included);
+        return (this.included);
 
     }
 
@@ -221,7 +221,7 @@ class ApplicationResponse extends ServletResponseWrapper {
      */
     void setIncluded(boolean included) {
 
-	this.included = included;
+        this.included = included;
 
     }
 

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.util;
@@ -88,7 +88,7 @@ public final class StringParser {
      */
     public StringParser() {
 
-	this(null);
+        this(null);
 
     }
 
@@ -101,8 +101,8 @@ public final class StringParser {
      */
     public StringParser(String string) {
 
-	super();
-	setString(string);
+        super();
+        setString(string);
 
     }
 
@@ -151,7 +151,7 @@ public final class StringParser {
      */
     public int getIndex() {
 
-	return (this.index);
+        return (this.index);
 
     }
 
@@ -161,7 +161,7 @@ public final class StringParser {
      */
     public int getLength() {
 
-	return (this.length);
+        return (this.length);
 
     }
 
@@ -171,7 +171,7 @@ public final class StringParser {
      */
     public String getString() {
 
-	return (this.string);
+        return (this.string);
 
     }
 
@@ -184,15 +184,15 @@ public final class StringParser {
      */
     public void setString(String string) {
 
-	this.string = string;
-	if (string != null) {
-	    this.length = string.length();
-	    chars = this.string.toCharArray();
-	} else {
-	    this.length = 0;
-	    chars = new char[0];
-	}
-	reset();
+        this.string = string;
+        if (string != null) {
+            this.length = string.length();
+            chars = this.string.toCharArray();
+        } else {
+            this.length = 0;
+            chars = new char[0];
+        }
+        reset();
 
     }
 
@@ -206,8 +206,8 @@ public final class StringParser {
      */
     public void advance() {
 
-	if (index < length)
-	    index++;
+        if (index < length)
+            index++;
 
     }
 
@@ -221,10 +221,10 @@ public final class StringParser {
      */
     public String extract(int start) {
 
-	if ((start < 0) || (start >= length))
-	    return ("");
-	else
-	    return (string.substring(start));
+        if ((start < 0) || (start >= length))
+            return ("");
+        else
+            return (string.substring(start));
 
     }
 
@@ -239,10 +239,10 @@ public final class StringParser {
      */
     public String extract(int start, int end) {
 
-	if ((start < 0) || (start >= end) || (end > length))
-	    return ("");
-	else
-	    return (string.substring(start, end));
+        if ((start < 0) || (start >= end) || (end > length))
+            return ("");
+        else
+            return (string.substring(start, end));
 
     }
 
@@ -257,9 +257,9 @@ public final class StringParser {
      */
     public int findChar(char ch) {
 
-	while ((index < length) && (ch != chars[index]))
-	    index++;
-	return (index);
+        while ((index < length) && (ch != chars[index]))
+            index++;
+        return (index);
 
     }
 
@@ -272,9 +272,9 @@ public final class StringParser {
      */
     public int findText() {
 
-	while ((index < length) && isWhite(chars[index]))
-	    index++;
-	return (index);
+        while ((index < length) && isWhite(chars[index]))
+            index++;
+        return (index);
 
     }
 
@@ -287,9 +287,9 @@ public final class StringParser {
      */
     public int findWhite() {
 
-	while ((index < length) && !isWhite(chars[index]))
-	    index++;
-	return (index);
+        while ((index < length) && !isWhite(chars[index]))
+            index++;
+        return (index);
 
     }
 
@@ -300,7 +300,7 @@ public final class StringParser {
      */
     public void reset() {
 
-	index = 0;
+        index = 0;
 
     }
 
@@ -314,9 +314,9 @@ public final class StringParser {
      */
     public int skipChar(char ch) {
 
-	while ((index < length) && (ch == chars[index]))
-	    index++;
-	return (index);
+        while ((index < length) && (ch == chars[index]))
+            index++;
+        return (index);
 
     }
 
@@ -328,9 +328,9 @@ public final class StringParser {
      */
     public int skipText() {
 
-	while ((index < length) && !isWhite(chars[index]))
-	    index++;
-	return (index);
+        while ((index < length) && !isWhite(chars[index]))
+            index++;
+        return (index);
 
     }
 
@@ -342,9 +342,9 @@ public final class StringParser {
      */
     public int skipWhite() {
 
-	while ((index < length) && isWhite(chars[index]))
-	    index++;
-	return (index);
+        while ((index < length) && isWhite(chars[index]))
+            index++;
+        return (index);
 
     }
 
@@ -359,10 +359,10 @@ public final class StringParser {
      */
     protected boolean isWhite(char ch) {
 
-	if ((ch == ' ') || (ch == '\t') || (ch == '\r') || (ch == '\n'))
-	    return (true);
-	else
-	    return (false);
+        if ((ch == ' ') || (ch == '\t') || (ch == '\r') || (ch == '\n'))
+            return (true);
+        else
+            return (false);
 
     }
 

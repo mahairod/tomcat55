@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.deploy;
@@ -123,11 +123,11 @@ public final class LoginConfig {
     private String authMethod = null;
 
     public String getAuthMethod() {
-	return (this.authMethod);
+        return (this.authMethod);
     }
 
     public void setAuthMethod(String authMethod) {
-	this.authMethod = authMethod;
+        this.authMethod = authMethod;
     }
 
 
@@ -137,14 +137,14 @@ public final class LoginConfig {
     private String errorPage = null;
 
     public String getErrorPage() {
-	return (this.errorPage);
+        return (this.errorPage);
     }
 
     public void setErrorPage(String errorPage) {
         //        if ((errorPage == null) || !errorPage.startsWith("/"))
         //            throw new IllegalArgumentException
         //                ("Error Page resource path must start with a '/'");
-	this.errorPage = RequestUtil.URLDecode(errorPage);
+        this.errorPage = RequestUtil.URLDecode(errorPage);
     }
 
 
@@ -154,14 +154,14 @@ public final class LoginConfig {
     private String loginPage = null;
 
     public String getLoginPage() {
-	return (this.loginPage);
+        return (this.loginPage);
     }
 
     public void setLoginPage(String loginPage) {
         //        if ((loginPage == null) || !loginPage.startsWith("/"))
         //            throw new IllegalArgumentException
         //                ("Login Page resource path must start with a '/'");
-	this.loginPage = RequestUtil.URLDecode(loginPage);
+        this.loginPage = RequestUtil.URLDecode(loginPage);
     }
 
 
@@ -172,11 +172,11 @@ public final class LoginConfig {
     private String realmName = null;
 
     public String getRealmName() {
-	return (this.realmName);
+        return (this.realmName);
     }
 
     public void setRealmName(String realmName) {
-	this.realmName = realmName;
+        this.realmName = realmName;
     }
 
 
@@ -188,23 +188,23 @@ public final class LoginConfig {
      */
     public String toString() {
 
-	StringBuffer sb = new StringBuffer("LoginConfig[");
-	sb.append("authMethod=");
-	sb.append(authMethod);
-	if (realmName != null) {
-	    sb.append(", realmName=");
-	    sb.append(realmName);
-	}
-	if (loginPage != null) {
-	    sb.append(", loginPage=");
-	    sb.append(loginPage);
-	}
-	if (errorPage != null) {
-	    sb.append(", errorPage=");
-	    sb.append(errorPage);
-	}
-	sb.append("]");
-	return (sb.toString());
+        StringBuffer sb = new StringBuffer("LoginConfig[");
+        sb.append("authMethod=");
+        sb.append(authMethod);
+        if (realmName != null) {
+            sb.append(", realmName=");
+            sb.append(realmName);
+        }
+        if (loginPage != null) {
+            sb.append(", loginPage=");
+            sb.append(loginPage);
+        }
+        if (errorPage != null) {
+            sb.append(", errorPage=");
+            sb.append(errorPage);
+        }
+        sb.append("]");
+        return (sb.toString());
 
     }
 

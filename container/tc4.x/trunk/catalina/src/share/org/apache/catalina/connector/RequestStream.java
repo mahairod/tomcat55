@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.connector;
@@ -96,11 +96,11 @@ public class RequestStream
      */
     public RequestStream(Request request) {
 
-	super();
-	closed = false;
-	count = 0;
-	length = request.getRequest().getContentLength();
-	stream = request.getStream();
+        super();
+        closed = false;
+        count = 0;
+        length = request.getRequest().getContentLength();
+        stream = request.getStream();
 
     }
 
@@ -131,7 +131,7 @@ public class RequestStream
      * The localized strings for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -151,18 +151,18 @@ public class RequestStream
      */
     public void close() throws IOException {
 
-	if (closed)
-	    throw new IOException(sm.getString("requestStream.close.closed"));
+        if (closed)
+            throw new IOException(sm.getString("requestStream.close.closed"));
 
-	if (length > 0) {
-	    while (count < length) {
-		int b = read();
-		if (b < 0)
-		    break;
-	    }
-	}
+        if (length > 0) {
+            while (count < length) {
+                int b = read();
+                if (b < 0)
+                    break;
+            }
+        }
 
-	closed = true;
+        closed = true;
 
     }
 
@@ -176,19 +176,19 @@ public class RequestStream
      */
     public int read() throws IOException {
 
-	// Has this stream been closed?
-	if (closed)
-	    throw new IOException(sm.getString("requestStream.read.closed"));
+        // Has this stream been closed?
+        if (closed)
+            throw new IOException(sm.getString("requestStream.read.closed"));
 
-	// Have we read the specified content length already?
-	if ((length >= 0) && (count >= length))
-	    return (-1);	// End of file indicator
+        // Have we read the specified content length already?
+        if ((length >= 0) && (count >= length))
+            return (-1);        // End of file indicator
 
-	// Read and count the next byte, then return it
-	int b = stream.read();
-	if (b >= 0)
-	    count++;
-	return (b);
+        // Read and count the next byte, then return it
+        int b = stream.read();
+        if (b >= 0)
+            count++;
+        return (b);
 
     }
 
@@ -205,7 +205,7 @@ public class RequestStream
      */
     public int read(byte b[]) throws IOException {
 
-	return (read(b, 0, b.length));
+        return (read(b, 0, b.length));
 
     }
 
@@ -227,15 +227,15 @@ public class RequestStream
      */
     public int read(byte b[], int off, int len) throws IOException {
 
-	int toRead = len;
-	if (length > 0) {
-	    if (count >= length)
-		return (-1);
-	    if ((count + len) > length)
-		toRead = length - count;
-	}
-	int actuallyRead = super.read(b, off, toRead);
-	return (actuallyRead);
+        int toRead = len;
+        if (length > 0) {
+            if (count >= length)
+                return (-1);
+            if ((count + len) > length)
+                toRead = length - count;
+        }
+        int actuallyRead = super.read(b, off, toRead);
+        return (actuallyRead);
 
     }
 

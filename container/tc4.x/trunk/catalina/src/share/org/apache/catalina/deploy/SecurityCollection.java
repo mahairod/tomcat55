@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.deploy;
@@ -94,7 +94,7 @@ public final class SecurityCollection {
      */
     public SecurityCollection() {
 
-	this(null, null);
+        this(null, null);
 
     }
 
@@ -106,7 +106,7 @@ public final class SecurityCollection {
      */
     public SecurityCollection(String name) {
 
-	this(name, null);
+        this(name, null);
 
     }
 
@@ -119,9 +119,9 @@ public final class SecurityCollection {
      */
     public SecurityCollection(String name, String description) {
 
-	super();
-	setName(name);
-	setDescription(description);
+        super();
+        setName(name);
+        setDescription(description);
 
     }
 
@@ -161,7 +161,7 @@ public final class SecurityCollection {
      */
     public String getDescription() {
 
-	return (this.description);
+        return (this.description);
 
     }
 
@@ -173,7 +173,7 @@ public final class SecurityCollection {
      */
     public void setDescription(String description) {
 
-	this.description = description;
+        this.description = description;
 
     }
 
@@ -183,7 +183,7 @@ public final class SecurityCollection {
      */
     public String getName() {
 
-	return (this.name);
+        return (this.name);
 
     }
 
@@ -208,13 +208,13 @@ public final class SecurityCollection {
      */
     public void addMethod(String method) {
 
-	if (method == null)
-	    return;
-	String results[] = new String[methods.length + 1];
-	for (int i = 0; i < methods.length; i++)
-	    results[i] = methods[i];
-	results[methods.length] = method;
-	methods = results;
+        if (method == null)
+            return;
+        String results[] = new String[methods.length + 1];
+        for (int i = 0; i < methods.length; i++)
+            results[i] = methods[i];
+        results[methods.length] = method;
+        methods = results;
 
     }
 
@@ -224,14 +224,14 @@ public final class SecurityCollection {
      */
     public void addPattern(String pattern) {
 
-	if (pattern == null)
-	    return;
+        if (pattern == null)
+            return;
         pattern = RequestUtil.URLDecode(pattern);
-	String results[] = new String[patterns.length + 1];
-	for (int i = 0; i < patterns.length; i++)
-	    results[i] = patterns[i];
-	results[patterns.length] = pattern;
-	patterns = results;
+        String results[] = new String[patterns.length + 1];
+        for (int i = 0; i < patterns.length; i++)
+            results[i] = patterns[i];
+        results[patterns.length] = pattern;
+        patterns = results;
 
     }
 
@@ -244,13 +244,13 @@ public final class SecurityCollection {
      */
     public boolean findMethod(String method) {
 
-	if (methods.length == 0)
-	    return (true);
-	for (int i = 0; i < methods.length; i++) {
-	    if (methods[i].equals(method))
-		return (true);
-	}
-	return (false);
+        if (methods.length == 0)
+            return (true);
+        for (int i = 0; i < methods.length; i++) {
+            if (methods[i].equals(method))
+                return (true);
+        }
+        return (false);
 
     }
 
@@ -262,7 +262,7 @@ public final class SecurityCollection {
      */
     public String[] findMethods() {
 
-	return (methods);
+        return (methods);
 
     }
 
@@ -274,11 +274,11 @@ public final class SecurityCollection {
      */
     public boolean findPattern(String pattern) {
 
-	for (int i = 0; i < patterns.length; i++) {
-	    if (patterns[i].equals(pattern))
-		return (true);
-	}
-	return (false);
+        for (int i = 0; i < patterns.length; i++) {
+            if (patterns[i].equals(pattern))
+                return (true);
+        }
+        return (false);
 
     }
 
@@ -290,7 +290,7 @@ public final class SecurityCollection {
      */
     public String[] findPatterns() {
 
-	return (patterns);
+        return (patterns);
 
     }
 
@@ -303,25 +303,25 @@ public final class SecurityCollection {
      */
     public void removeMethod(String method) {
 
-	if (method == null)
-	    return;
-	int n = -1;
-	for (int i = 0; i < methods.length; i++) {
-	    if (methods[i].equals(method)) {
-		n = i;
-		break;
-	    }
-	}
-	if (n >= 0) {
-	    int j = 0;
-	    String results[] = new String[methods.length - 1];
-	    for (int i = 0; i < methods.length; i++) {
-		if (i != n)
-		    results[j++] = methods[i];
-	    }
-	    methods = results;
-	}
-	
+        if (method == null)
+            return;
+        int n = -1;
+        for (int i = 0; i < methods.length; i++) {
+            if (methods[i].equals(method)) {
+                n = i;
+                break;
+            }
+        }
+        if (n >= 0) {
+            int j = 0;
+            String results[] = new String[methods.length - 1];
+            for (int i = 0; i < methods.length; i++) {
+                if (i != n)
+                    results[j++] = methods[i];
+            }
+            methods = results;
+        }
+
     }
 
 
@@ -333,24 +333,24 @@ public final class SecurityCollection {
      */
     public void removePattern(String pattern) {
 
-	if (pattern == null)
-	    return;
-	int n = -1;
-	for (int i = 0; i < patterns.length; i++) {
-	    if (patterns[i].equals(pattern)) {
-		n = i;
-		break;
-	    }
-	}
-	if (n >= 0) {
-	    int j = 0;
-	    String results[] = new String[patterns.length - 1];
-	    for (int i = 0; i < patterns.length; i++) {
-		if (i != n)
-		    results[j++] = patterns[i];
-	    }
-	    patterns = results;
-	}
+        if (pattern == null)
+            return;
+        int n = -1;
+        for (int i = 0; i < patterns.length; i++) {
+            if (patterns[i].equals(pattern)) {
+                n = i;
+                break;
+            }
+        }
+        if (n >= 0) {
+            int j = 0;
+            String results[] = new String[patterns.length - 1];
+            for (int i = 0; i < patterns.length; i++) {
+                if (i != n)
+                    results[j++] = patterns[i];
+            }
+            patterns = results;
+        }
 
     }
 
@@ -361,13 +361,13 @@ public final class SecurityCollection {
     public String toString() {
 
         StringBuffer sb = new StringBuffer("SecurityCollection[");
-	sb.append(name);
-	if (description != null) {
-	    sb.append(", ");
-	    sb.append(description);
-	}
-	sb.append("]");
-	return (sb.toString());
+        sb.append(name);
+        if (description != null) {
+            sb.append(", ");
+            sb.append(description);
+        }
+        sb.append("]");
+        return (sb.toString());
 
     }
 

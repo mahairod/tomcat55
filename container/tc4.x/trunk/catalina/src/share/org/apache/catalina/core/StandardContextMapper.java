@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.core;
@@ -111,7 +111,7 @@ public final class StandardContextMapper
      * The string manager for this package.
      */
     private static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------------------- Properties
@@ -122,7 +122,7 @@ public final class StandardContextMapper
      */
     public Container getContainer() {
 
-	return (context);
+        return (context);
 
     }
 
@@ -137,10 +137,10 @@ public final class StandardContextMapper
      */
     public void setContainer(Container container) {
 
-	if (!(container instanceof StandardContext))
-	    throw new IllegalArgumentException
-		(sm.getString("httpContextMapper.container"));
-	context = (StandardContext) container;
+        if (!(container instanceof StandardContext))
+            throw new IllegalArgumentException
+                (sm.getString("httpContextMapper.container"));
+        context = (StandardContext) container;
 
     }
 
@@ -150,7 +150,7 @@ public final class StandardContextMapper
      */
     public String getProtocol() {
 
-	return (this.protocol);
+        return (this.protocol);
 
     }
 
@@ -162,7 +162,7 @@ public final class StandardContextMapper
      */
     public void setProtocol(String protocol) {
 
-	this.protocol = protocol;
+        this.protocol = protocol;
 
     }
 
@@ -183,22 +183,22 @@ public final class StandardContextMapper
      */
     public Container map(Request request, boolean update) {
 
-	int debug = context.getDebug();
+        int debug = context.getDebug();
 
-	// Has this request already been mapped?
-	if (update && (request.getWrapper() != null))
-	    return (request.getWrapper());
+        // Has this request already been mapped?
+        if (update && (request.getWrapper() != null))
+            return (request.getWrapper());
 
-	// Identify the context-relative URI to be mapped
-	String contextPath =
-	    ((HttpServletRequest) request.getRequest()).getContextPath();
-	String requestURI =
-	    ((HttpServletRequest) request.getRequest()).getRequestURI();
-	String relativeURI = requestURI.substring(contextPath.length());
-	if (debug >= 1)
-	    context.log("Mapping contextPath='" + contextPath +
-			"' with requestURI='" + requestURI +
-			"' and relativeURI='" + relativeURI + "'");
+        // Identify the context-relative URI to be mapped
+        String contextPath =
+            ((HttpServletRequest) request.getRequest()).getContextPath();
+        String requestURI =
+            ((HttpServletRequest) request.getRequest()).getRequestURI();
+        String relativeURI = requestURI.substring(contextPath.length());
+        if (debug >= 1)
+            context.log("Mapping contextPath='" + contextPath +
+                        "' with requestURI='" + requestURI +
+                        "' and relativeURI='" + relativeURI + "'");
 
         // Decode the relative URI, because we will ultimately return both
         // servletPath and pathInfo as decoded strings
@@ -214,93 +214,93 @@ public final class StandardContextMapper
                 (sm.getString("standardContext.urlDecode", relativeURI));
         }
 
-	// Apply the standard request URI mapping rules from the specification
-	Wrapper wrapper = null;
-	String servletPath = relativeURI;
-	String pathInfo = null;
-	String name = null;
+        // Apply the standard request URI mapping rules from the specification
+        Wrapper wrapper = null;
+        String servletPath = relativeURI;
+        String pathInfo = null;
+        String name = null;
 
-	// Rule 1 -- Exact Match
-	if (wrapper == null) {
-	    if (debug >= 2)
-		context.log("  Trying exact match");
-	    name = context.findServletMapping(relativeURI);
-	    if (name != null)
-		wrapper = (Wrapper) context.findChild(name);
-	    if (wrapper != null) {
-		servletPath = relativeURI;
-		pathInfo = null;
-	    }
-	}
+        // Rule 1 -- Exact Match
+        if (wrapper == null) {
+            if (debug >= 2)
+                context.log("  Trying exact match");
+            name = context.findServletMapping(relativeURI);
+            if (name != null)
+                wrapper = (Wrapper) context.findChild(name);
+            if (wrapper != null) {
+                servletPath = relativeURI;
+                pathInfo = null;
+            }
+        }
 
-	// Rule 2 -- Prefix Match
-	if (wrapper == null) {
-	    if (debug >= 2)
-		context.log("  Trying prefix match");
-	    servletPath = relativeURI;
-	    while (true) {
-		name = context.findServletMapping(servletPath + "/*");
-		if (name != null)
-		    wrapper = (Wrapper) context.findChild(name);
- 		if (wrapper != null) {
-		    pathInfo = relativeURI.substring(servletPath.length());
-		    if (pathInfo.length() == 0)
-			pathInfo = null;
-		    break;
-		}
-		int slash = servletPath.lastIndexOf('/');
-		if (slash < 0)
-		    break;
-		servletPath = servletPath.substring(0, slash);
-	    }
-	}
+        // Rule 2 -- Prefix Match
+        if (wrapper == null) {
+            if (debug >= 2)
+                context.log("  Trying prefix match");
+            servletPath = relativeURI;
+            while (true) {
+                name = context.findServletMapping(servletPath + "/*");
+                if (name != null)
+                    wrapper = (Wrapper) context.findChild(name);
+                if (wrapper != null) {
+                    pathInfo = relativeURI.substring(servletPath.length());
+                    if (pathInfo.length() == 0)
+                        pathInfo = null;
+                    break;
+                }
+                int slash = servletPath.lastIndexOf('/');
+                if (slash < 0)
+                    break;
+                servletPath = servletPath.substring(0, slash);
+            }
+        }
 
-	// Rule 3 -- Extension Match
-	if (wrapper == null) {
-	    if (debug >= 2)
-		context.log("  Trying extension match");
-	    int slash = relativeURI.lastIndexOf('/');
-	    if (slash >= 0) {
-		String last = relativeURI.substring(slash);
-		int period = last.lastIndexOf('.');
-		if (period >= 0) {
-		    String pattern = "*" + last.substring(period);
-		    name = context.findServletMapping(pattern);
-		    if (name != null)
-			wrapper = (Wrapper) context.findChild(name);
-		    if (wrapper != null) {
-			servletPath = relativeURI;
-			pathInfo = null;
-		    }
-		}
-	    }
-	}
+        // Rule 3 -- Extension Match
+        if (wrapper == null) {
+            if (debug >= 2)
+                context.log("  Trying extension match");
+            int slash = relativeURI.lastIndexOf('/');
+            if (slash >= 0) {
+                String last = relativeURI.substring(slash);
+                int period = last.lastIndexOf('.');
+                if (period >= 0) {
+                    String pattern = "*" + last.substring(period);
+                    name = context.findServletMapping(pattern);
+                    if (name != null)
+                        wrapper = (Wrapper) context.findChild(name);
+                    if (wrapper != null) {
+                        servletPath = relativeURI;
+                        pathInfo = null;
+                    }
+                }
+            }
+        }
 
-	// Rule 4 -- Default Match
-	if (wrapper == null) {
-	    if (debug >= 2)
-		context.log("  Trying default match");
-	    name = context.findServletMapping("/");
-	    if (name != null)
-		wrapper = (Wrapper) context.findChild(name);
-	    if (wrapper != null) {
-		servletPath = relativeURI;
-		pathInfo = null;
-	    }
-	}
+        // Rule 4 -- Default Match
+        if (wrapper == null) {
+            if (debug >= 2)
+                context.log("  Trying default match");
+            name = context.findServletMapping("/");
+            if (name != null)
+                wrapper = (Wrapper) context.findChild(name);
+            if (wrapper != null) {
+                servletPath = relativeURI;
+                pathInfo = null;
+            }
+        }
 
-	// Update the Request (if requested) and return this Wrapper
-	if ((debug >= 1) && (wrapper != null))
-	    context.log(" Mapped to servlet '" + wrapper.getName() +
-			"' with servlet path '" + servletPath +
-			"' and path info '" + pathInfo +
-			"' and update=" + update);
-	if (update) {
-	    request.setWrapper(wrapper);
-	    ((HttpRequest) request).setServletPath(servletPath);
-	    ((HttpRequest) request).setPathInfo(pathInfo);
-	}
-	return (wrapper);
+        // Update the Request (if requested) and return this Wrapper
+        if ((debug >= 1) && (wrapper != null))
+            context.log(" Mapped to servlet '" + wrapper.getName() +
+                        "' with servlet path '" + servletPath +
+                        "' and path info '" + pathInfo +
+                        "' and update=" + update);
+        if (update) {
+            request.setWrapper(wrapper);
+            ((HttpRequest) request).setServletPath(servletPath);
+            ((HttpRequest) request).setPathInfo(pathInfo);
+        }
+        return (wrapper);
 
     }
 

@@ -166,7 +166,7 @@ public class SsiMediator {
     }
 
     public SsiMediator() {}
- 
+
     /**
      * Initialize and set up out enviroment, called from SsiInvokerServlet
      *
@@ -187,7 +187,7 @@ public class SsiMediator {
         this.debug = debug;
         flush(req, res, out, servletContext, path, isVirtualWebappRelative);
     }
-    
+
     /**
      * Get the SsiCommand
      *
@@ -197,7 +197,7 @@ public class SsiMediator {
     public final SsiCommand getCommand(String cmd) {
         return (SsiCommand)ssiCommands.get(cmd);
     }
-    
+
     /**
      * Initialize and set up out enviroment, called from SsiInvokerServlet
      *
@@ -224,7 +224,7 @@ public class SsiMediator {
         this.relpath = path.substring(0, path.lastIndexOf('/')+1);
         this.isVirtualWebappRelative = isVirtualWebappRelative;
         int c=0;
-        
+
         serverVariables.put("AUTH_TYPE",
                             nullToString(req.getAuthType()));
         serverVariables.put("CONTENT_LENGTH",
@@ -267,11 +267,11 @@ public class SsiMediator {
                             nullToString(path));
         serverVariables.put("QUERY_STRING_UNESCAPED",
                             nullToString(""));
-        
+
         flushDate();
         ((SsiConfig)ssiCommands.get("config")).flush();
     }
-    
+
     /**
      * Return the current error message
      *
@@ -280,7 +280,7 @@ public class SsiMediator {
     public byte[] getError() {
         return ((SsiConfig)ssiCommands.get("config")).getError();
     }
-    
+
     /**
      * Flush the date and make us ready for a new request.
      *
@@ -293,7 +293,7 @@ public class SsiMediator {
         serverVariables.put("LAST_MODIFIED",
                             ((SsiFlastmod)ssiCommands.get("flastmod")).getDate(path));
     }
-    
+
     /**
      * Parse a Date according to the current settings.
      *
@@ -303,10 +303,10 @@ public class SsiMediator {
     protected String timefmt(Date date) {
         String pattern = ((SsiConfig)ssiCommands.get("config")).getTimefmt();
         DateFormat dateFormat = new SimpleDateFormat(pattern, DateTool.LOCALE_US);
-        
+
         return dateFormat.format(date);
     }
-    
+
     /**
      * Parse a Date according to the current settings.
      *
@@ -316,16 +316,16 @@ public class SsiMediator {
     protected String timefmt(String date) {
         DateFormat dateFormat = DateFormat.getDateTimeInstance();
         Date parsedDate = null;
-        
+
         try {
             parsedDate = dateFormat.parse(date);
         } catch (ParseException e) {
             return new String(getError());
         }
-        
+
         return timefmt(parsedDate);
     }
-    
+
     /**
      * Get a server variable
      *
@@ -334,13 +334,13 @@ public class SsiMediator {
      */
     protected String getServerVariable(String serverVar) {
         flushDate();
-        
+
         if(serverVariables.get(serverVar)==null)
             return new String(getError());
         else
             return (String)serverVariables.get(serverVar);
     }
-    
+
     /**
      * Return a path relative to either the webapp or the root("/")
      *
@@ -353,19 +353,19 @@ public class SsiMediator {
     protected String getVirtualPath(String path) {
         if (path == null)
             return null;
-        
+
         // Create a place for the normalized path
         String normalized = path;
-        
+
         if (normalized == null)
             return (null);
-        
+
         // Normalize the slashes and add leading slash if necessary
         if (normalized.indexOf('\\') >= 0)
             normalized = normalized.replace('\\', '/');
         if (!normalized.startsWith("/"))
             normalized = relpath.concat(normalized);
-        
+
         // Resolve occurrences of "//" in the normalized path
         while (true) {
             int index = normalized.indexOf("//");
@@ -374,7 +374,7 @@ public class SsiMediator {
             normalized = normalized.substring(0, index) +
                 normalized.substring(index + 1);
         }
-        
+
         // Resolve occurrences of "/./" in the normalized path
         while (true) {
             int index = normalized.indexOf("/./");
@@ -383,19 +383,19 @@ public class SsiMediator {
             normalized = normalized.substring(0, index) +
                 normalized.substring(index + 2);
         }
-        
+
         // Resolve occurrences of "/../" in the normalized path
         while (true) {
             int index = normalized.indexOf("/../");
             if (index < 0)
                 break;
             if (index == 0)
-                return (null);	// Trying to go outside our context
+                return (null);  // Trying to go outside our context
             int index2 = normalized.lastIndexOf('/', index - 1);
             normalized = normalized.substring(0, index2) +
                 normalized.substring(index + 3);
         }
-        
+
         if (!isVirtualWebappRelative) {
             // case of virtual="file.txt", "./file.txt", or dir/file.txt
             if ((!path.startsWith("/")) || (path.startsWith("./"))) {
@@ -412,7 +412,7 @@ public class SsiMediator {
                     normalized = normalized.substring(contextPath.length());
                 }
             } else if (normalized != null){
-                // find which context is the right one to handle 
+                // find which context is the right one to handle
                 String context = normalized.substring(0, path.indexOf('/', 1));
                 ServletContext sc = servletContext.getContext(context);
                 if (sc!=null) {
@@ -421,10 +421,10 @@ public class SsiMediator {
                 }
             }
         }
-        
+
         return (normalized);
     }
-    
+
     /**
      * Return a path relative to the file being parsed, if they
      * try to use "../" or have a trailing "/" we return
@@ -439,19 +439,19 @@ public class SsiMediator {
     protected String getFilePath(String path) {
         if (path == null)
             return null;
-        
+
         // Create a place for the normalized path
         String normalized = path;
-        
+
         servletContext = origServletContext;
-        
+
         if (normalized == null)
             return (null);
-        
+
         // Normalize the slashes
         if (normalized.indexOf('\\') >= 0)
             normalized = normalized.replace('\\', '/');
-        
+
         // Resolve occurrences of "//" in the normalized path
         while (true) {
             int index = normalized.indexOf("//");
@@ -460,11 +460,11 @@ public class SsiMediator {
             normalized = normalized.substring(0, index) +
                 normalized.substring(index + 1);
         }
-        
+
         // If it starts with a "/" or contains "../" we return <code>null</code>.
         if (normalized.startsWith("/") || normalized.indexOf("../") >= 0)
             return (null);
-        
+
         // Return the normalized path that we have completed
         return (relpath.concat(normalized));
     }
@@ -498,7 +498,7 @@ public class SsiMediator {
         path = commandShellStr + path;
         return (path);
     }
-    
+
     /**
      * Check if the supplied string is <code>null</code> and
      * if so return an empty string.
@@ -509,7 +509,7 @@ public class SsiMediator {
     private String nullToString(String s) {
         return s==null?"":s;
     }
-    
+
     /**
      * Get the current Date GMT formated.
      *
@@ -518,7 +518,7 @@ public class SsiMediator {
     private String getGMTDate() {
         Date date = new Date();
         DateFormat dateFormat = DateFormat.getDateTimeInstance();
-        
+
         dateFormat.setTimeZone(DateTool.GMT_ZONE);
         return dateFormat.format(date);
     }

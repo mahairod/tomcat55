@@ -96,12 +96,12 @@ public class ResponseStream
      */
     public ResponseStream(Response response) {
 
-	super();
-	closed = false;
+        super();
+        closed = false;
         commit = false;
-	count = 0;
-	this.response = response;
-	this.stream = response.getStream();
+        count = 0;
+        this.response = response;
+        this.stream = response.getStream();
 
     }
 
@@ -144,7 +144,7 @@ public class ResponseStream
      * The localized strings for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -187,11 +187,11 @@ public class ResponseStream
      */
     public void close() throws IOException {
 
-	if (closed)
-	    throw new IOException(sm.getString("responseStream.close.closed"));
+        if (closed)
+            throw new IOException(sm.getString("responseStream.close.closed"));
 
-	response.getResponse().flushBuffer();
-	closed = true;
+        response.getResponse().flushBuffer();
+        closed = true;
 
     }
 
@@ -202,8 +202,8 @@ public class ResponseStream
      */
     public void flush() throws IOException {
 
-	if (closed)
-	    throw new IOException(sm.getString("responseStream.flush.closed"));
+        if (closed)
+            throw new IOException(sm.getString("responseStream.flush.closed"));
 
         if (commit)
             response.getResponse().flushBuffer();
@@ -220,14 +220,14 @@ public class ResponseStream
      */
     public void write(int b) throws IOException {
 
-	if (closed)
-	    throw new IOException(sm.getString("responseStream.write.closed"));
+        if (closed)
+            throw new IOException(sm.getString("responseStream.write.closed"));
 
-	if ((length > 0) && (count >= length))
-	    throw new IOException(sm.getString("responseStream.write.count"));
+        if ((length > 0) && (count >= length))
+            throw new IOException(sm.getString("responseStream.write.count"));
 
-	((ResponseBase) response).write(b);
-	count++;
+        ((ResponseBase) response).write(b);
+        count++;
 
     }
 
@@ -242,7 +242,7 @@ public class ResponseStream
      */
     public void write(byte b[]) throws IOException {
 
-	write(b, 0, b.length);
+        write(b, 0, b.length);
 
     }
 
@@ -259,16 +259,16 @@ public class ResponseStream
      */
     public void write(byte b[], int off, int len) throws IOException {
 
-	if (closed)
-	    throw new IOException(sm.getString("responseStream.write.closed"));
+        if (closed)
+            throw new IOException(sm.getString("responseStream.write.closed"));
 
-	int actual = len;
-	if ((length > 0) && ((count + len) >= length))
-	    actual = length - count;
-	((ResponseBase) response).write(b, off, actual);
-	count += actual;
-	if (actual < len)
-	    throw new IOException(sm.getString("responseStream.write.count"));
+        int actual = len;
+        if ((length > 0) && ((count + len) >= length))
+            actual = length - count;
+        ((ResponseBase) response).write(b, off, actual);
+        count += actual;
+        if (actual < len)
+            throw new IOException(sm.getString("responseStream.write.count"));
 
     }
 
@@ -281,7 +281,7 @@ public class ResponseStream
      */
     boolean closed() {
 
-	return (this.closed);
+        return (this.closed);
 
     }
 
@@ -291,7 +291,7 @@ public class ResponseStream
      */
     void reset() {
 
-	count = 0;
+        count = 0;
 
     }
 

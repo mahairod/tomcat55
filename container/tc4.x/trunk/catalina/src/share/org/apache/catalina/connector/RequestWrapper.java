@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.connector;
@@ -101,8 +101,8 @@ public abstract class RequestWrapper implements Request {
      */
     public RequestWrapper(Request request) {
 
-	super();
-	this.request = request;
+        super();
+        this.request = request;
 
     }
 
@@ -121,7 +121,7 @@ public abstract class RequestWrapper implements Request {
      */
     public Request getWrappedRequest() {
 
-	return (this.request);
+        return (this.request);
 
     }
 
@@ -134,7 +134,7 @@ public abstract class RequestWrapper implements Request {
      */
     public String getAuthorization() {
 
-	return (request.getAuthorization());
+        return (request.getAuthorization());
 
     }
 
@@ -146,7 +146,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setAuthorization(String authorization) {
 
-	request.setAuthorization(authorization);
+        request.setAuthorization(authorization);
 
     }
 
@@ -156,7 +156,7 @@ public abstract class RequestWrapper implements Request {
      */
     public Connector getConnector() {
 
-	return (request.getConnector());
+        return (request.getConnector());
 
     }
 
@@ -168,7 +168,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setConnector(Connector connector) {
 
-	request.setConnector(connector);
+        request.setConnector(connector);
 
     }
 
@@ -178,7 +178,7 @@ public abstract class RequestWrapper implements Request {
      */
     public Context getContext() {
 
-	return (request.getContext());
+        return (request.getContext());
 
     }
 
@@ -193,7 +193,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setContext(Context context) {
 
-	request.setContext(context);
+        request.setContext(context);
 
     }
 
@@ -205,7 +205,7 @@ public abstract class RequestWrapper implements Request {
      */
     public String getInfo() {
 
-	return (request.getInfo());
+        return (request.getInfo());
 
     }
 
@@ -216,7 +216,7 @@ public abstract class RequestWrapper implements Request {
      */
     public ServletRequest getRequest() {
 
-	return (request.getRequest());
+        return (request.getRequest());
 
     }
 
@@ -226,7 +226,7 @@ public abstract class RequestWrapper implements Request {
      */
     public Response getResponse() {
 
-	return (request.getResponse());
+        return (request.getResponse());
 
     }
 
@@ -238,7 +238,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setResponse(Response response) {
 
-	request.setResponse(response);
+        request.setResponse(response);
 
     }
 
@@ -273,7 +273,7 @@ public abstract class RequestWrapper implements Request {
      */
     public InputStream getStream() {
 
-	return (request.getStream());
+        return (request.getStream());
 
     }
 
@@ -285,7 +285,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setStream(InputStream stream) {
 
-	request.setStream(stream);
+        request.setStream(stream);
 
     }
 
@@ -295,7 +295,7 @@ public abstract class RequestWrapper implements Request {
      */
     public Wrapper getWrapper() {
 
-	return (request.getWrapper());
+        return (request.getWrapper());
 
     }
 
@@ -309,7 +309,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setWrapper(Wrapper wrapper) {
 
-	request.setWrapper(wrapper);
+        request.setWrapper(wrapper);
 
     }
 
@@ -325,7 +325,7 @@ public abstract class RequestWrapper implements Request {
      */
     public ServletInputStream createInputStream() throws IOException {
 
-	return (request.createInputStream());
+        return (request.createInputStream());
 
     }
 
@@ -338,7 +338,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void finishRequest() throws IOException {
 
-	request.finishRequest();
+        request.finishRequest();
 
     }
 
@@ -349,7 +349,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void recycle() {
 
-	request.recycle();
+        request.recycle();
 
     }
 
@@ -361,7 +361,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setContentLength(int length) {
 
-	request.setContentLength(length);
+        request.setContentLength(length);
 
     }
 
@@ -375,7 +375,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setContentType(String type) {
 
-	request.setContentType(type);
+        request.setContentType(type);
 
     }
 
@@ -387,7 +387,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setProtocol(String protocol) {
 
-	request.setProtocol(protocol);
+        request.setProtocol(protocol);
 
     }
 
@@ -401,7 +401,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setRemoteAddr(String remote) {
 
-	request.setRemoteAddr(remote);
+        request.setRemoteAddr(remote);
 
     }
 
@@ -414,7 +414,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setScheme(String scheme) {
 
-	request.setScheme(scheme);
+        request.setScheme(scheme);
 
     }
 
@@ -427,7 +427,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setSecure(boolean secure) {
 
-	request.setSecure(secure);
+        request.setSecure(secure);
 
     }
 
@@ -439,7 +439,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setServerName(String name) {
 
-	request.setServerName(name);
+        request.setServerName(name);
 
     }
 
@@ -451,7 +451,7 @@ public abstract class RequestWrapper implements Request {
      */
     public void setServerPort(int port) {
 
-	request.setServerPort(port);
+        request.setServerPort(port);
 
     }
 

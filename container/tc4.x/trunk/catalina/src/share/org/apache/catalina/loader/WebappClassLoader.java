@@ -116,7 +116,7 @@ import org.apache.naming.resources.Resource;
  * the order they are added via the initial constructor and/or any subsequent
  * calls to <code>addRepository()</code> or <code>addJar()</code>.
  * <p>
- * <strong>IMPLEMENTATION NOTE</strong> - No check for sealing violations or 
+ * <strong>IMPLEMENTATION NOTE</strong> - No check for sealing violations or
  * security is made unless a security manager is present.
  * <p>
  * <strong>FIXME</strong> - Implement findResources.
@@ -134,15 +134,15 @@ public class WebappClassLoader
 
         private String name;
         private String path;
-                    
+
         PrivilegedFindResource(String name, String path) {
             this.name = name;
             this.path = path;
-        }           
-                    
+        }
+
         public Object run() {
             return findResourceInternal(name, path);
-        }           
+        }
 
     }
 
@@ -158,9 +158,9 @@ public class WebappClassLoader
 
         super(new URL[0]);
         this.resources = resources;
-	this.parent = getParent();
-	system = getSystemClassLoader();
-	securityManager = System.getSecurityManager();
+        this.parent = getParent();
+        system = getSystemClassLoader();
+        securityManager = System.getSecurityManager();
 
     }
 
@@ -173,9 +173,9 @@ public class WebappClassLoader
 
         super(new URL[0], parent);
         this.resources = resources;
-	this.parent = getParent();
-	system = getSystemClassLoader();
-	securityManager = System.getSecurityManager();
+        this.parent = getParent();
+        system = getSystemClassLoader();
+        securityManager = System.getSecurityManager();
 
     }
 
@@ -237,7 +237,7 @@ public class WebappClassLoader
 
 
     /**
-     * Repositories translated as path in the work directory (for Jasper 
+     * Repositories translated as path in the work directory (for Jasper
      * originally), but which is used to generate fake URLs should getURLs be
      * called.
      */
@@ -272,14 +272,14 @@ public class WebappClassLoader
 
 
     /**
-     * The list of JARs last modified dates, in the order they should be 
+     * The list of JARs last modified dates, in the order they should be
      * searched for locally loaded classes or resources.
      */
     protected long[] lastModifiedDates = new long[0];
 
 
     /**
-     * The list of resources which should be checked when checking for 
+     * The list of resources which should be checked when checking for
      * modifications.
      */
     protected String[] paths = new String[0];
@@ -392,13 +392,13 @@ public class WebappClassLoader
      * @param path file directory path
      */
     public void setPermissions(String path) {
-	if( securityManager != null ) {
+        if( securityManager != null ) {
             if( path.startsWith("jndi:") || path.startsWith("jar:jndi:") ) {
                 permissionList.add(new JndiPermission(path + "*"));
             } else {
                 permissionList.add(new FilePermission(path + "-","read"));
             }
-	}
+        }
     }
 
 
@@ -448,7 +448,7 @@ public class WebappClassLoader
      */
     public void addRepository(String repository) {
 
-        // Ignore any of the standard repositories, as they are set up using 
+        // Ignore any of the standard repositories, as they are set up using
         // either addJar or addRepository
         if (repository.startsWith("/WEB-INF/lib")
             || repository.startsWith("/WEB-INF/classes"))
@@ -477,7 +477,7 @@ public class WebappClassLoader
      */
     synchronized void addRepository(String repository, File file) {
 
-        // Note : There should be only one (of course), but I think we should 
+        // Note : There should be only one (of course), but I think we should
         // keep this a bit generic
 
         if (repository == null)
@@ -548,7 +548,7 @@ public class WebappClassLoader
 
             // Register the JAR for tracking
 
-            long lastModified = 
+            long lastModified =
                 ((ResourceAttributes) resources.getAttributes(jar))
                 .getLastModified().getTime();
 
@@ -609,12 +609,12 @@ public class WebappClassLoader
 
         // Trace our parentage tree and add declared extensions when possible
         ClassLoader loader = this;
-        while (true) {                                                       
-	    loader = loader.getParent();
-	    if (loader == null)        
-		break;        
-	    if (!(loader instanceof WebappClassLoader))
-		continue;
+        while (true) {
+            loader = loader.getParent();
+            if (loader == null)
+                break;
+            if (!(loader instanceof WebappClassLoader))
+                continue;
             Extension extensions[] =
                 ((WebappClassLoader) loader).findAvailable();
             for (int i = 0; i < extensions.length; i++)
@@ -657,7 +657,7 @@ public class WebappClassLoader
         // Trace our parentage tree and add declared extensions when possible
         ClassLoader loader = this;
         while (true) {
-	    loader = loader.getParent();
+            loader = loader.getParent();
             if (loader == null)
                 break;
             if (!(loader instanceof WebappClassLoader))
@@ -696,12 +696,12 @@ public class WebappClassLoader
 
         for (int i = 0; i < length; i++) {
             try {
-                long lastModified = 
+                long lastModified =
                     ((ResourceAttributes) resources.getAttributes(paths[i]))
                     .getLastModified().getTime();
                 if (lastModified != lastModifiedDates[i]) {
-                    log("  Resource '" + paths[i] 
-                        + "' was modified; Date is now: " 
+                    log("  Resource '" + paths[i]
+                        + "' was modified; Date is now: "
                         + new java.util.Date(lastModified) + " Was: "
                         + new java.util.Date(lastModifiedDates[i]));
                     return (true);
@@ -716,7 +716,7 @@ public class WebappClassLoader
 
         // Check if JARs have been added or removed
         if (getJarPath() != null) {
-            
+
             try {
                 NamingEnumeration enum = resources.listBindings(getJarPath());
                 int i;
@@ -740,13 +740,13 @@ public class WebappClassLoader
                 }
             } catch (NamingException e) {
                 if (debug > 2)
-                    log("    Failed tracking modifications of '" 
+                    log("    Failed tracking modifications of '"
                         + getJarPath() + "'");
             } catch (ClassCastException e) {
-                log("    Failed tracking modifications of '" 
+                log("    Failed tracking modifications of '"
                     + getJarPath() + "' : " + e.getMessage());
             }
-            
+
         }
 
         // No classes have been modified
@@ -815,13 +815,13 @@ public class WebappClassLoader
             int i = name.lastIndexOf('.');
             if (i >= 0) {
                 try {
-		    if (debug >= 4)
-		        log("      securityManager.checkPackageDefinition");
+                    if (debug >= 4)
+                        log("      securityManager.checkPackageDefinition");
                     securityManager.checkPackageDefinition(name.substring(0,i));
                 } catch (Exception se) {
-		    if (debug >= 4)
-		        log("      -->Exception-->ClassNotFoundException", se);
-		    throw new ClassNotFoundException(name);
+                    if (debug >= 4)
+                        log("      -->Exception-->ClassNotFoundException", se);
+                    throw new ClassNotFoundException(name);
                 }
             }
         }
@@ -830,18 +830,18 @@ public class WebappClassLoader
         // (throws ClassNotFoundException if it is not found)
         Class clazz = null;
         try {
-	    if (debug >= 4)
-	        log("      findClassInternal(" + name + ")");
-	    try {
-	        clazz = findClassInternal(name);
+            if (debug >= 4)
+                log("      findClassInternal(" + name + ")");
+            try {
+                clazz = findClassInternal(name);
             } catch(AccessControlException ace) {
                 ace.printStackTrace();
-		throw new ClassNotFoundException(name);
-	    } catch (RuntimeException e) {
-	        if (debug >= 4)
-		    log("      -->RuntimeException Rethrown", e);
-		throw e;
-	    }
+                throw new ClassNotFoundException(name);
+            } catch (RuntimeException e) {
+                if (debug >= 4)
+                    log("      -->RuntimeException Rethrown", e);
+                throw e;
+            }
             if (clazz == null) {
                 try {
                     clazz = super.findClass(name);
@@ -973,7 +973,7 @@ public class WebappClassLoader
                 return (url);
             }
         }
-         
+
         // (2) Search local repositories
         if (debug >= 3)
             log("  Searching local repositories");
@@ -983,22 +983,22 @@ public class WebappClassLoader
                 log("  --> Returning '" + url.toString() + "'");
             return (url);
         }
-            
+
         // (3) Delegate to parent unconditionally if not already attempted
-	if( !delegate ) {
-	    ClassLoader loader = parent;
-	    if (loader == null)
-		loader = system;
-	    url = loader.getResource(name);
-	    if (url != null) {
-		if (debug >= 2)
-		    log("  --> Returning '" + url.toString() + "'");
-		return (url); 
-	    }
+        if( !delegate ) {
+            ClassLoader loader = parent;
+            if (loader == null)
+                loader = system;
+            url = loader.getResource(name);
+            if (url != null) {
+                if (debug >= 2)
+                    log("  --> Returning '" + url.toString() + "'");
+                return (url);
+            }
         }
-                        
+
         // (4) Resource was not found
-        if (debug >= 2)   
+        if (debug >= 2)
             log("  --> Resource not found, returning null");
         return (null);
 
@@ -1158,33 +1158,33 @@ public class WebappClassLoader
             return (clazz);
         }
 
-	// If a system class, use system class loader
-	if( name.startsWith("java.") ) {
+        // If a system class, use system class loader
+        if( name.startsWith("java.") ) {
             ClassLoader loader = system;
             clazz = loader.loadClass(name);
-            if (clazz != null) {         
-                if (resolve)             
+            if (clazz != null) {
+                if (resolve)
                     resolveClass(clazz);
                 return (clazz);
             }
-	    throw new ClassNotFoundException(name);
-	}
+            throw new ClassNotFoundException(name);
+        }
 
         // (.5) Permission to access this class when using a SecurityManager
         if (securityManager != null) {
             int i = name.lastIndexOf('.');
             if (i >= 0) {
-                try {    
+                try {
                     securityManager.checkPackageAccess(name.substring(0,i));
                 } catch (SecurityException se) {
                     String error = "Security Violation, attempt to use " +
                         "Restricted Class: " + name;
-		    System.out.println(error);
-		    se.printStackTrace();
+                    System.out.println(error);
+                    se.printStackTrace();
                     log(error);
                     throw new ClassNotFoundException(error);
                 }
-            }    
+            }
         }
 
         // (1) Delegate to our parent if requested
@@ -1230,7 +1230,7 @@ public class WebappClassLoader
                 log("  Delegating to parent classloader");
             ClassLoader loader = parent;
             if (loader == null)
-		loader = system;
+                loader = system;
             try {
                 clazz = loader.loadClass(name);
                 if (clazz != null) {
@@ -1399,10 +1399,10 @@ public class WebappClassLoader
 
     /**
      * Find specified class in local repositories.
-     * 
+     *
      * @return the loaded class, or null if the class isn't found
      */
-    protected Class findClassInternal(String name) 
+    protected Class findClassInternal(String name)
         throws ClassNotFoundException {
 
         String tempPath = name.replace('.', '/');
@@ -1432,15 +1432,15 @@ public class WebappClassLoader
             packageName = name.substring(0, pos);
 
         Package pkg = null;
-        
+
         if (packageName != null) {
-            
+
             pkg = getPackage(packageName);
 
             // Define the package (if null)
             if (pkg == null) {
                 if (entry.manifest == null) {
-                    definePackage(packageName, null, null, null, null, null, 
+                    definePackage(packageName, null, null, null, null, null,
                                   null, null);
                 } else {
                     definePackage(packageName, entry.manifest, entry.source);
@@ -1450,7 +1450,7 @@ public class WebappClassLoader
         }
 
         // Create the code source object
-        CodeSource codeSource = 
+        CodeSource codeSource =
             new CodeSource(entry.source, entry.certificates);
 
         if (securityManager != null) {
@@ -1461,18 +1461,18 @@ public class WebappClassLoader
                 if (pkg.isSealed()) {
                     sealCheck = pkg.isSealed(entry.source);
                 } else {
-                    sealCheck = (entry.manifest == null) 
+                    sealCheck = (entry.manifest == null)
                         || !isPackageSealed(packageName, entry.manifest);
                 }
-		if (!sealCheck)
-		    throw new SecurityException
+                if (!sealCheck)
+                    throw new SecurityException
                         ("Sealing violation loading " + name + " : Package "
                          + packageName + " is sealed.");
             }
 
         }
 
-        clazz = defineClass(name, entry.binaryContent, 0, 
+        clazz = defineClass(name, entry.binaryContent, 0,
                             entry.binaryContent.length, codeSource);
 
         entry.loadedClass = clazz;
@@ -1484,7 +1484,7 @@ public class WebappClassLoader
 
     /**
      * Find specified resource in local repositories.
-     * 
+     *
      * @return the loaded resource, or null if the resource isn't found
      */
     protected ResourceEntry findResourceInternal(String name, String path) {
@@ -1493,7 +1493,7 @@ public class WebappClassLoader
             log("Lifecycle error : CL stopped");
             return null;
         }
-        
+
         if ((name == null) || (path == null))
             return null;
 
@@ -1516,21 +1516,21 @@ public class WebappClassLoader
 
         for (i = 0; (entry == null) && (i < repositoriesLength); i++) {
             try {
-                
+
                 String fullPath = repositories[i] + path;
-                
+
                 resource = (Resource) resources.lookup(fullPath);
-                
+
                 // Note : Not getting an exception here means the resource was
                 // found
-                
+
                 entry = new ResourceEntry();
                 try {
                     entry.source = new File(files[i], path).toURL();
                 } catch (MalformedURLException e) {
                     return null;
                 }
-                ResourceAttributes attributes = 
+                ResourceAttributes attributes =
                     (ResourceAttributes) resources.getAttributes(fullPath);
                 contentLength = (int) attributes.getContentLength();
                 entry.lastModified = attributes.getLastModified().getTime();
@@ -1539,7 +1539,7 @@ public class WebappClassLoader
                 } catch (IOException e) {
                     return null;
                 }
-                
+
                 // Register the full path for modification checking
                 synchronized (paths) {
 
@@ -1560,7 +1560,7 @@ public class WebappClassLoader
                     paths = result;
 
                 }
-                
+
             } catch (NamingException e) {
             }
         }
@@ -1606,7 +1606,7 @@ public class WebappClassLoader
         try {
             int pos = 0;
             while (true) {
-                int n = binaryStream.read(binaryContent, pos, 
+                int n = binaryStream.read(binaryContent, pos,
                                           binaryContent.length - pos);
                 if (n <= 0)
                     break;
@@ -1677,7 +1677,7 @@ public class WebappClassLoader
 
     /**
      * Finds the class with the given name if it has previously been
-     * loaded and cached by this class loader, and return the Class object.  
+     * loaded and cached by this class loader, and return the Class object.
      * If this class has not been cached, return <code>null</code>.
      *
      * @param name Name of the resource to return
@@ -1700,7 +1700,7 @@ public class WebappClassLoader
      */
     private void log(String message) {
 
-	System.out.println("WebappClassLoader: " + message);
+        System.out.println("WebappClassLoader: " + message);
 
     }
 
@@ -1713,8 +1713,8 @@ public class WebappClassLoader
      */
     private void log(String message, Throwable throwable) {
 
-	System.out.println("WebappClassLoader: " + message);
-	throwable.printStackTrace(System.out);
+        System.out.println("WebappClassLoader: " + message);
+        throwable.printStackTrace(System.out);
 
     }
 
@@ -1729,15 +1729,15 @@ public class WebappClassLoader
 
 
         /**
-	 * The "last modified" time of the origin file at the time this class
-	 * was loaded, in milliseconds since the epoch.
-	 */
+         * The "last modified" time of the origin file at the time this class
+         * was loaded, in milliseconds since the epoch.
+         */
         long lastModified;
 
 
         /**
-	 * Binary content of the resource.
-	 */
+         * Binary content of the resource.
+         */
         byte[] binaryContent;
 
 
@@ -1748,8 +1748,8 @@ public class WebappClassLoader
 
 
         /**
-	 * URL source from where the object was loaded.
-	 */
+         * URL source from where the object was loaded.
+         */
         URL source;
 
 

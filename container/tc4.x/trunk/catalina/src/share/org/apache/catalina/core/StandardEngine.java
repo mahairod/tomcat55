@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.core;
@@ -101,8 +101,8 @@ public class StandardEngine
      */
     public StandardEngine() {
 
-	super();
-	pipeline.setBasic(new StandardEngineValve());
+        super();
+        pipeline.setBasic(new StandardEngineValve());
 
     }
 
@@ -121,14 +121,14 @@ public class StandardEngine
      * The descriptive information string for this implementation.
      */
     private static final String info =
-	"org.apache.catalina.core.StandardEngine/1.0";
+        "org.apache.catalina.core.StandardEngine/1.0";
 
 
     /**
      * The Java class name of the default Mapper class for this Container.
      */
     private String mapperClass =
-	"org.apache.catalina.core.StandardEngineMapper";
+        "org.apache.catalina.core.StandardEngineMapper";
 
 
     /**
@@ -145,7 +145,7 @@ public class StandardEngine
      */
     public String getDefaultHost() {
 
-	return (defaultHost);
+        return (defaultHost);
 
     }
 
@@ -157,10 +157,10 @@ public class StandardEngine
      */
     public void setDefaultHost(String host) {
 
-	String oldDefaultHost = this.defaultHost;
-	this.defaultHost = host.toLowerCase();
-	support.firePropertyChange("defaultHost", oldDefaultHost,
-				   this.defaultHost);
+        String oldDefaultHost = this.defaultHost;
+        this.defaultHost = host.toLowerCase();
+        support.firePropertyChange("defaultHost", oldDefaultHost,
+                                   this.defaultHost);
 
     }
 
@@ -216,7 +216,7 @@ public class StandardEngine
      */
     public void importDefaultContext(Context context) {
 
-	if ( this.defaultContext != null )
+        if ( this.defaultContext != null )
             this.defaultContext.importDefaultContext(context);
 
     }
@@ -230,10 +230,10 @@ public class StandardEngine
      */
     public void addChild(Container child) {
 
-	if (!(child instanceof Host))
-	    throw new IllegalArgumentException
-		(sm.getString("standardEngine.notHost"));
-	super.addChild(child);
+        if (!(child instanceof Host))
+            throw new IllegalArgumentException
+                (sm.getString("standardEngine.notHost"));
+        super.addChild(child);
 
     }
 
@@ -245,7 +245,7 @@ public class StandardEngine
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -258,8 +258,8 @@ public class StandardEngine
      */
     public void setParent(Container container) {
 
-	throw new IllegalArgumentException
-	    (sm.getString("standardEngine.notParent"));
+        throw new IllegalArgumentException
+            (sm.getString("standardEngine.notParent"));
 
     }
 
@@ -271,11 +271,11 @@ public class StandardEngine
      */
     public void start() throws LifecycleException {
 
-	// Log our server identification information
-	System.out.println(Globals.SERVER_INFO);
+        // Log our server identification information
+        System.out.println(Globals.SERVER_INFO);
 
-	// Standard container startup
-	super.start();
+        // Standard container startup
+        super.start();
 
     }
 
@@ -285,10 +285,10 @@ public class StandardEngine
      */
     public String toString() {
 
-	StringBuffer sb = new StringBuffer("StandardEngine[");
-	sb.append(getName());
-	sb.append("]");
-	return (sb.toString());
+        StringBuffer sb = new StringBuffer("StandardEngine[");
+        sb.append(getName());
+        sb.append("]");
+        return (sb.toString());
 
     }
 
@@ -304,7 +304,7 @@ public class StandardEngine
      */
     protected void addDefaultMapper(String mapperClass) {
 
-	super.addDefaultMapper(this.mapperClass);
+        super.addDefaultMapper(this.mapperClass);
 
     }
 

@@ -103,7 +103,7 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public ApplicationHttpResponse(HttpServletResponse response) {
 
-	this(response, false);
+        this(response, false);
 
     }
 
@@ -116,10 +116,10 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      *  by a <code>RequestDispatcher.include()</code> call
      */
     public ApplicationHttpResponse(HttpServletResponse response,
-				   boolean included) {
+                                   boolean included) {
 
-	super(response);
-	setIncluded(included);
+        super(response);
+        setIncluded(included);
 
     }
 
@@ -145,7 +145,7 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      * The string manager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------ ServletResponse Methods
@@ -159,9 +159,9 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void reset() {
 
-	// If already committed, the wrapped response will throw ISE
-	if (!included || getResponse().isCommitted())
-	    getResponse().reset();
+        // If already committed, the wrapped response will throw ISE
+        if (!included || getResponse().isCommitted())
+            getResponse().reset();
 
     }
 
@@ -173,8 +173,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void setContentLength(int len) {
 
-	if (!included)
-	    getResponse().setContentLength(len);
+        if (!included)
+            getResponse().setContentLength(len);
 
     }
 
@@ -186,8 +186,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void setContentType(String type) {
 
-	if (!included)
-	    getResponse().setContentType(type);
+        if (!included)
+            getResponse().setContentType(type);
 
     }
 
@@ -202,8 +202,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void addCookie(Cookie cookie) {
 
-	if (!included)
-	    ((HttpServletResponse) getResponse()).addCookie(cookie);
+        if (!included)
+            ((HttpServletResponse) getResponse()).addCookie(cookie);
 
     }
 
@@ -216,8 +216,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void addDateHeader(String name, long value) {
 
-	if (!included)
-	    ((HttpServletResponse) getResponse()).addDateHeader(name, value);
+        if (!included)
+            ((HttpServletResponse) getResponse()).addDateHeader(name, value);
 
     }
 
@@ -230,8 +230,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void addHeader(String name, String value) {
 
-	if (!included)
-	    ((HttpServletResponse) getResponse()).addHeader(name, value);
+        if (!included)
+            ((HttpServletResponse) getResponse()).addHeader(name, value);
 
     }
 
@@ -244,8 +244,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void addIntHeader(String name, int value) {
 
-	if (!included)
-	    ((HttpServletResponse) getResponse()).addIntHeader(name, value);
+        if (!included)
+            ((HttpServletResponse) getResponse()).addIntHeader(name, value);
 
     }
 
@@ -259,8 +259,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void sendError(int sc) throws IOException {
 
-	if (!included)
-	    ((HttpServletResponse) getResponse()).sendError(sc);
+        if (!included)
+            ((HttpServletResponse) getResponse()).sendError(sc);
 
     }
 
@@ -275,8 +275,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void sendError(int sc, String msg) throws IOException {
 
-	if (!included)
-	    ((HttpServletResponse) getResponse()).sendError(sc, msg);
+        if (!included)
+            ((HttpServletResponse) getResponse()).sendError(sc, msg);
 
     }
 
@@ -290,8 +290,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void sendRedirect(String location) throws IOException {
 
-	if (!included)
-	    ((HttpServletResponse) getResponse()).sendRedirect(location);
+        if (!included)
+            ((HttpServletResponse) getResponse()).sendRedirect(location);
 
     }
 
@@ -304,8 +304,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void setDateHeader(String name, long value) {
 
-	if (!included)
-	    ((HttpServletResponse) getResponse()).setDateHeader(name, value);
+        if (!included)
+            ((HttpServletResponse) getResponse()).setDateHeader(name, value);
 
     }
 
@@ -318,8 +318,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void setHeader(String name, String value) {
 
-	if (!included)
-	    ((HttpServletResponse) getResponse()).setHeader(name, value);
+        if (!included)
+            ((HttpServletResponse) getResponse()).setHeader(name, value);
 
     }
 
@@ -332,8 +332,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void setIntHeader(String name, int value) {
 
-	if (!included)
-	    ((HttpServletResponse) getResponse()).setIntHeader(name, value);
+        if (!included)
+            ((HttpServletResponse) getResponse()).setIntHeader(name, value);
 
     }
 
@@ -345,8 +345,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void setStatus(int sc) {
 
-	if (!included)
-	    ((HttpServletResponse) getResponse()).setStatus(sc);
+        if (!included)
+            ((HttpServletResponse) getResponse()).setStatus(sc);
 
     }
 
@@ -359,8 +359,8 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void setStatus(int sc, String msg) {
 
-	if (!included)
-	    ((HttpServletResponse) getResponse()).setStatus(sc, msg);
+        if (!included)
+            ((HttpServletResponse) getResponse()).setStatus(sc, msg);
 
     }
 
@@ -383,7 +383,7 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     boolean isIncluded() {
 
-	return (this.included);
+        return (this.included);
 
     }
 
@@ -395,7 +395,7 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     void setIncluded(boolean included) {
 
-	this.included = included;
+        this.included = included;
 
     }
 

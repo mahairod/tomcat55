@@ -118,8 +118,8 @@ class ApplicationRequest extends ServletRequestWrapper {
      */
     public ApplicationRequest(ServletRequest request) {
 
-	super(request);
-	setRequest(request);
+        super(request);
+        setRequest(request);
 
     }
 
@@ -138,7 +138,7 @@ class ApplicationRequest extends ServletRequestWrapper {
      * The string manager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------- ServletRequest Methods
@@ -151,9 +151,9 @@ class ApplicationRequest extends ServletRequestWrapper {
      */
     public Object getAttribute(String name) {
 
-	synchronized (attributes) {
-	    return (attributes.get(name));
-	}
+        synchronized (attributes) {
+            return (attributes.get(name));
+        }
 
     }
 
@@ -164,9 +164,9 @@ class ApplicationRequest extends ServletRequestWrapper {
      */
     public Enumeration getAttributeNames() {
 
-	synchronized (attributes) {
-	    return (new Enumerator(attributes.keySet()));
-	}
+        synchronized (attributes) {
+            return (new Enumerator(attributes.keySet()));
+        }
 
     }
 
@@ -179,11 +179,11 @@ class ApplicationRequest extends ServletRequestWrapper {
      */
     public void removeAttribute(String name) {
 
-	synchronized (attributes) {
-	    attributes.remove(name);
+        synchronized (attributes) {
+            attributes.remove(name);
             if (!isSpecial(name))
                 getRequest().removeAttribute(name);
-	}
+        }
 
     }
 
@@ -197,11 +197,11 @@ class ApplicationRequest extends ServletRequestWrapper {
      */
     public void setAttribute(String name, Object value) {
 
-	synchronized (attributes) {
-	    attributes.put(name, value);
+        synchronized (attributes) {
+            attributes.put(name, value);
             if (!isSpecial(name))
                 getRequest().setAttribute(name, value);
-	}
+        }
 
     }
 
@@ -218,16 +218,16 @@ class ApplicationRequest extends ServletRequestWrapper {
 
         super.setRequest(request);
 
-	// Initialize the attributes for this request
-	synchronized (attributes) {
-	    attributes.clear();
-	    Enumeration names = request.getAttributeNames();
-	    while (names.hasMoreElements()) {
-		String name = (String) names.nextElement();
-		Object value = request.getAttribute(name);
-		attributes.put(name, value);
-	    }
-	}
+        // Initialize the attributes for this request
+        synchronized (attributes) {
+            attributes.clear();
+            Enumeration names = request.getAttributeNames();
+            while (names.hasMoreElements()) {
+                String name = (String) names.nextElement();
+                Object value = request.getAttribute(name);
+                attributes.put(name, value);
+            }
+        }
 
     }
 

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.connector.http10;
@@ -93,7 +93,7 @@ final class HttpRequestImpl
      * Descriptive information about this Request implementation.
      */
     protected static final String info =
-	"org.apache.catalina.connector.http10.HttpRequestImpl/1.0";
+        "org.apache.catalina.connector.http10.HttpRequestImpl/1.0";
 
 
     // ------------------------------------------------------------- Properties
@@ -105,7 +105,7 @@ final class HttpRequestImpl
      */
     InetAddress getInet() {
 
-	return (inet);
+        return (inet);
 
     }
 
@@ -118,7 +118,7 @@ final class HttpRequestImpl
      */
     void setInet(InetAddress inet) {
 
-	this.inet = inet;
+        this.inet = inet;
 
     }
 
@@ -130,7 +130,7 @@ final class HttpRequestImpl
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -144,8 +144,8 @@ final class HttpRequestImpl
      */
     public void recycle() {
 
-	super.recycle();
-	inet = null;
+        super.recycle();
+        inet = null;
 
     }
 
@@ -159,7 +159,7 @@ final class HttpRequestImpl
      */
     public String getRemoteAddr() {
 
-	return (inet.getHostAddress());
+        return (inet.getHostAddress());
 
     }
 

@@ -92,13 +92,13 @@ public final class SsiFsize
         String path = "";
         URL url = null;
         long lLength = -1;
-        
+
         if(strParamType[0].equals("file")) {
             path = super.getFilePath(strParam[0]);
         } else if(strParamType[0].equals("virtual")) {
             path = super.getVirtualPath(strParam[0]);
         }
-        
+
         try {
             url = super.servletContext.getResource(path);
             lLength = url.openConnection().getContentLength();
@@ -110,17 +110,17 @@ public final class SsiFsize
         } catch (NullPointerException e) {
             length = null;
         }
-        
+
         if(length == null)
             retLength = (new String(super.getError()));
         else
             retLength =
                 formatSize(length,
                            ((SsiConfig)super.getCommand("config")).getSizefmt());
-        
+
         return retLength;
     }
-    
+
     /**
      * Not used since this SsiCommand return a stream, use
      * <code>getStream()</code> instead.
@@ -157,17 +157,17 @@ public final class SsiFsize
      */
     private String formatSize(String length, String format) {
         String retString = "";
-        
+
         if(format.equalsIgnoreCase("bytes")) {
             retString = commaFormat(length);
         } else {
             double lParse = (new Long(length)).doubleValue();
-            
+
             if(lParse>=1048576) {
                 double abbrevSize = lParse/1048576;
                 long splitSize = (long)abbrevSize;
                 int  catSize = (int)(100 * (abbrevSize - splitSize));
-                
+
                 retString =
                     commaFormat((new Long(splitSize)).toString())+
                     "."+catSize+" MB";
@@ -175,7 +175,7 @@ public final class SsiFsize
                 double abbrevSize = lParse/1024;
                 long splitSize = (long)abbrevSize;
                 int  catSize = (int)(100 * (abbrevSize - splitSize));
-                
+
                 retString =
                     commaFormat((new Long(splitSize)).toString())+
                     "."+catSize+" KB";
@@ -184,10 +184,10 @@ public final class SsiFsize
                     commaFormat(length)+" bytes";
             }
         }
-        
+
         return retString;
     }
-    
+
     /**
      * Modify the supplied variable to be returned comma formated.
      *
@@ -196,14 +196,14 @@ public final class SsiFsize
      */
     private String commaFormat(String length) {
         String retString = "";
-        
+
         for(int i = length.length();i-1>=0;i--) {
             retString = (length.substring(i-1,i)).concat(retString);
             if((length.length()-(i-1))%3==0&&
                retString.length()<length.length())
                 retString = ",".concat(retString);
         }
-        
+
         return retString;
     }
 }

@@ -165,7 +165,7 @@ public final class HttpConnector
      * Descriptive information about this Connector implementation.
      */
     private static final String info =
-	"org.apache.catalina.connector.http.HttpConnector/1.0";
+        "org.apache.catalina.connector.http.HttpConnector/1.0";
 
 
     /**
@@ -254,7 +254,7 @@ public final class HttpConnector
      * The string manager for this package.
      */
     private StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -313,7 +313,7 @@ public final class HttpConnector
      */
     public int getConnectionTimeout() {
 
-	return (connectionTimeout);
+        return (connectionTimeout);
 
     }
 
@@ -325,7 +325,7 @@ public final class HttpConnector
      */
     public void setConnectionTimeout(int connectionTimeout) {
 
-	this.connectionTimeout = connectionTimeout;
+        this.connectionTimeout = connectionTimeout;
 
     }
 
@@ -335,7 +335,7 @@ public final class HttpConnector
      */
     public int getAcceptCount() {
 
-	return (acceptCount);
+        return (acceptCount);
 
     }
 
@@ -347,7 +347,7 @@ public final class HttpConnector
      */
     public void setAcceptCount(int count) {
 
-	this.acceptCount = count;
+        this.acceptCount = count;
 
     }
 
@@ -364,7 +364,7 @@ public final class HttpConnector
 
     /**
      * Set the allow chunking flag.
-     * 
+     *
      * @param allowChunking Allow chunking flag
      */
     public void setAllowChunking(boolean allowChunking) {
@@ -379,7 +379,7 @@ public final class HttpConnector
      */
     public String getAddress() {
 
-	return (this.address);
+        return (this.address);
 
     }
 
@@ -391,7 +391,7 @@ public final class HttpConnector
      */
     public void setAddress(String address) {
 
-	this.address = address;
+        this.address = address;
 
     }
 
@@ -401,7 +401,7 @@ public final class HttpConnector
      */
     public boolean isAvailable() {
 
-	return (started);
+        return (started);
 
     }
 
@@ -411,7 +411,7 @@ public final class HttpConnector
      */
     public int getBufferSize() {
 
-	return (this.bufferSize);
+        return (this.bufferSize);
 
     }
 
@@ -423,7 +423,7 @@ public final class HttpConnector
      */
     public void setBufferSize(int bufferSize) {
 
-	this.bufferSize = bufferSize;
+        this.bufferSize = bufferSize;
 
     }
 
@@ -434,7 +434,7 @@ public final class HttpConnector
      */
     public Container getContainer() {
 
-	return (container);
+        return (container);
 
     }
 
@@ -447,7 +447,7 @@ public final class HttpConnector
      */
     public void setContainer(Container container) {
 
-	this.container = container;
+        this.container = container;
 
     }
 
@@ -457,7 +457,7 @@ public final class HttpConnector
      */
     public int getCurProcessors() {
 
-	return (curProcessors);
+        return (curProcessors);
 
     }
 
@@ -538,7 +538,7 @@ public final class HttpConnector
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -548,7 +548,7 @@ public final class HttpConnector
      */
     public int getMinProcessors() {
 
-	return (minProcessors);
+        return (minProcessors);
 
     }
 
@@ -560,7 +560,7 @@ public final class HttpConnector
      */
     public void setMinProcessors(int minProcessors) {
 
-	this.minProcessors = minProcessors;
+        this.minProcessors = minProcessors;
 
     }
 
@@ -570,7 +570,7 @@ public final class HttpConnector
      */
     public int getMaxProcessors() {
 
-	return (maxProcessors);
+        return (maxProcessors);
 
     }
 
@@ -582,7 +582,7 @@ public final class HttpConnector
      */
     public void setMaxProcessors(int maxProcessors) {
 
-	this.maxProcessors = maxProcessors;
+        this.maxProcessors = maxProcessors;
 
     }
 
@@ -592,7 +592,7 @@ public final class HttpConnector
      */
     public int getPort() {
 
-	return (this.port);
+        return (this.port);
 
     }
 
@@ -604,7 +604,7 @@ public final class HttpConnector
      */
     public void setPort(int port) {
 
-	this.port = port;
+        this.port = port;
 
     }
 
@@ -683,7 +683,7 @@ public final class HttpConnector
      */
     public String getScheme() {
 
-	return (this.scheme);
+        return (this.scheme);
 
     }
 
@@ -696,7 +696,7 @@ public final class HttpConnector
      */
     public void setScheme(String scheme) {
 
-	this.scheme = scheme;
+        this.scheme = scheme;
 
     }
 
@@ -707,7 +707,7 @@ public final class HttpConnector
      */
     public boolean getSecure() {
 
-	return (this.secure);
+        return (this.secure);
 
     }
 
@@ -720,7 +720,7 @@ public final class HttpConnector
      */
     public void setSecure(boolean secure) {
 
-	this.secure = secure;
+        this.secure = secure;
 
     }
 
@@ -736,9 +736,9 @@ public final class HttpConnector
 
 
     /**
-     * Set the TCP no delay flag which will be set on the socket after 
+     * Set the TCP no delay flag which will be set on the socket after
      * accepting a connection.
-     * 
+     *
      * @param tcpNoDelay The new TCP no delay flag
      */
     public void setTcpNoDelay(boolean tcpNoDelay) {
@@ -759,9 +759,9 @@ public final class HttpConnector
 
         //        if (debug >= 2)
         //            log("createRequest: Creating new request");
-	HttpRequestImpl request = new HttpRequestImpl();
-	request.setConnector(this);
-	return (request);
+        HttpRequestImpl request = new HttpRequestImpl();
+        request.setConnector(this);
+        return (request);
 
     }
 
@@ -774,9 +774,9 @@ public final class HttpConnector
 
         //        if (debug >= 2)
         //            log("createResponse: Creating new response");
-	HttpResponseImpl response = new HttpResponseImpl();
-	response.setConnector(this);
-	return (response);
+        HttpResponseImpl response = new HttpResponseImpl();
+        response.setConnector(this);
+        return (response);
 
     }
 
@@ -809,28 +809,28 @@ public final class HttpConnector
      */
     private HttpProcessor createProcessor() {
 
-	synchronized (processors) {
-	    if (processors.size() > 0) {
+        synchronized (processors) {
+            if (processors.size() > 0) {
                 // if (debug >= 2)
                 // log("createProcessor: Reusing existing processor");
-		return ((HttpProcessor) processors.pop());
+                return ((HttpProcessor) processors.pop());
             }
-	    if ((maxProcessors > 0) && (curProcessors < maxProcessors)) {
+            if ((maxProcessors > 0) && (curProcessors < maxProcessors)) {
                 // if (debug >= 2)
                 // log("createProcessor: Creating new processor");
-	        return (newProcessor());
+                return (newProcessor());
             } else {
                 if (maxProcessors < 0) {
                     // if (debug >= 2)
                     // log("createProcessor: Creating new processor");
                     return (newProcessor());
-	        } else {
+                } else {
                     // if (debug >= 2)
                     // log("createProcessor: Cannot create new processor");
                     return (null);
                 }
             }
-	}
+        }
 
     }
 
@@ -842,11 +842,11 @@ public final class HttpConnector
      */
     private void log(String message) {
 
-	Logger logger = container.getLogger();
-	if (logger != null)
-	    logger.log(threadName + " " + message);
-	else
-	    System.out.println(threadName + " " + message);
+        Logger logger = container.getLogger();
+        if (logger != null)
+            logger.log(threadName + " " + message);
+        else
+            System.out.println(threadName + " " + message);
 
     }
 
@@ -859,13 +859,13 @@ public final class HttpConnector
      */
     private void log(String message, Throwable throwable) {
 
-	Logger logger = container.getLogger();
-	if (logger != null)
-	    logger.log(threadName + " " + message, throwable);
-	else {
-	    System.out.println(threadName + " " + message);
-	    throwable.printStackTrace(System.out);
-	}
+        Logger logger = container.getLogger();
+        if (logger != null)
+            logger.log(threadName + " " + message, throwable);
+        else {
+            System.out.println(threadName + " " + message);
+            throwable.printStackTrace(System.out);
+        }
 
     }
 
@@ -879,16 +879,16 @@ public final class HttpConnector
         //        if (debug >= 2)
         //            log("newProcessor: Creating new processor");
         HttpProcessor processor = new HttpProcessor(this, curProcessors++);
-	if (processor instanceof Lifecycle) {
-	    try {
-	        ((Lifecycle) processor).start();
-	    } catch (LifecycleException e) {
-	        log("newProcessor", e);
-	        return (null);
-	    }
-	}
-	created.addElement(processor);
-	return (processor);
+        if (processor instanceof Lifecycle) {
+            try {
+                ((Lifecycle) processor).start();
+            } catch (LifecycleException e) {
+                log("newProcessor", e);
+                return (null);
+            }
+        }
+        created.addElement(processor);
+        return (processor);
 
     }
 
@@ -905,21 +905,21 @@ public final class HttpConnector
         // Acquire the server socket factory for this Connector
         ServerSocketFactory factory = getFactory();
 
-	// If no address is specified, open a connection on all addresses
+        // If no address is specified, open a connection on all addresses
         if (address == null) {
-	    log(sm.getString("httpConnector.allAddresses"));
+            log(sm.getString("httpConnector.allAddresses"));
             return (factory.createSocket(port, acceptCount));
-	}
+        }
 
-	// Open a server socket on the specified address
+        // Open a server socket on the specified address
         try {
             InetAddress is = InetAddress.getByName(address);
-	    log(sm.getString("httpConnector.anAddress", address));
+            log(sm.getString("httpConnector.anAddress", address));
             return (factory.createSocket(port, acceptCount, is));
-	} catch (Exception e) {
-	    log(sm.getString("httpConnector.noAddress", address));
+        } catch (Exception e) {
+            log(sm.getString("httpConnector.noAddress", address));
             return (factory.createSocket(port, acceptCount));
-	}
+        }
 
     }
 
@@ -934,14 +934,14 @@ public final class HttpConnector
     public void run() {
 
         // Loop until we receive a shutdown command
-	while (!stopped) {
+        while (!stopped) {
 
-	    // Accept the next incoming connection from the server socket
-	    Socket socket = null;
-	    try {
+            // Accept the next incoming connection from the server socket
+            Socket socket = null;
+            try {
                 //                if (debug >= 3)
                 //                    log("run: Waiting on serverSocket.accept()");
-		socket = serverSocket.accept();
+                socket = serverSocket.accept();
                 //                if (debug >= 3)
                 //                    log("run: Returned from serverSocket.accept()");
                 if (connectionTimeout > 0)
@@ -950,12 +950,12 @@ public final class HttpConnector
             } catch (AccessControlException ace) {
                 log("socket accept security exception", ace);
                 continue;
-	    } catch (IOException e) {
+            } catch (IOException e) {
                 //                if (debug >= 3)
                 //                    log("run: Accept returned IOException", e);
-		if (started && !stopped)
-		    log("accept: ", e);
-		try {
+                if (started && !stopped)
+                    log("accept: ", e);
+                try {
                     //                    if (debug >= 3)
                     //                        log("run: Closing server socket");
                     serverSocket.close();
@@ -972,33 +972,33 @@ public final class HttpConnector
                     break;
                 }
                 continue;
-	    }
+            }
 
-	    // Hand this socket off to an appropriate processor
-	    HttpProcessor processor = createProcessor();
-	    if (processor == null) {
-		try {
-		    log(sm.getString("httpConnector.noProcessor"));
-		    socket.close();
-		} catch (IOException e) {
-		    ;
-		}
-		continue;
-	    }
+            // Hand this socket off to an appropriate processor
+            HttpProcessor processor = createProcessor();
+            if (processor == null) {
+                try {
+                    log(sm.getString("httpConnector.noProcessor"));
+                    socket.close();
+                } catch (IOException e) {
+                    ;
+                }
+                continue;
+            }
             //            if (debug >= 3)
             //                log("run: Assigning socket to processor " + processor);
-	    processor.assign(socket);
+            processor.assign(socket);
 
-	    // The processor will recycle itself when it finishes
+            // The processor will recycle itself when it finishes
 
-	}
+        }
 
-	// Notify the threadStop() method that we have shut ourselves down
+        // Notify the threadStop() method that we have shut ourselves down
         //        if (debug >= 3)
         //            log("run: Notifying threadStop() that we have shut down");
-	synchronized (threadSync) {
-	    threadSync.notifyAll();
-	}
+        synchronized (threadSync) {
+            threadSync.notifyAll();
+        }
 
     }
 
@@ -1008,11 +1008,11 @@ public final class HttpConnector
      */
     private void threadStart() {
 
-	log(sm.getString("httpConnector.starting"));
+        log(sm.getString("httpConnector.starting"));
 
-	thread = new Thread(this, threadName);
-	thread.setDaemon(true);
-	thread.start();
+        thread = new Thread(this, threadName);
+        thread.setDaemon(true);
+        thread.start();
 
     }
 
@@ -1022,17 +1022,17 @@ public final class HttpConnector
      */
     private void threadStop() {
 
-	log(sm.getString("httpConnector.stopping"));
+        log(sm.getString("httpConnector.stopping"));
 
-	stopped = true;
-	synchronized (threadSync) {
-	    try {
-		threadSync.wait(5000);
-	    } catch (InterruptedException e) {
-		;
-	    }
-	}
-	thread = null;
+        stopped = true;
+        synchronized (threadSync) {
+            try {
+                threadSync.wait(5000);
+            } catch (InterruptedException e) {
+                ;
+            }
+        }
+        thread = null;
 
     }
 
@@ -1047,7 +1047,7 @@ public final class HttpConnector
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -1059,7 +1059,7 @@ public final class HttpConnector
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -1069,11 +1069,11 @@ public final class HttpConnector
      */
     public void initialize()
     throws LifecycleException {
-	if (initialized)
-	    throw new LifecycleException (
-		sm.getString("httpConnector.alreadyInitialized"));
-	this.initialized=true;
-	System.err.println("HTTP Connector initialized");
+        if (initialized)
+            throw new LifecycleException (
+                sm.getString("httpConnector.alreadyInitialized"));
+        this.initialized=true;
+        System.err.println("HTTP Connector initialized");
     }
 
 
@@ -1084,31 +1084,31 @@ public final class HttpConnector
      */
     public void start() throws LifecycleException {
 
-	// Validate and update our current state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("httpConnector.alreadyStarted"));
+        // Validate and update our current state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("httpConnector.alreadyStarted"));
         threadName = "HttpConnector[" + port + "]";
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
 
-	// Establish a server socket on the specified port
-	try {
-	    serverSocket = open();
-	} catch (IOException e) {
-	    throw new LifecycleException(threadName + ".open", e);
-	}
+        // Establish a server socket on the specified port
+        try {
+            serverSocket = open();
+        } catch (IOException e) {
+            throw new LifecycleException(threadName + ".open", e);
+        }
 
-	// Start our background thread
-	threadStart();
+        // Start our background thread
+        threadStart();
 
-	// Create the specified minimum number of processors
-	while (curProcessors < minProcessors) {
-	    if ((maxProcessors > 0) && (curProcessors >= maxProcessors))
-		break;
-	    HttpProcessor processor = newProcessor();
-	    recycle(processor);
-	}
+        // Create the specified minimum number of processors
+        while (curProcessors < minProcessors) {
+            if ((maxProcessors > 0) && (curProcessors >= maxProcessors))
+                break;
+            HttpProcessor processor = newProcessor();
+            recycle(processor);
+        }
 
     }
 
@@ -1120,36 +1120,36 @@ public final class HttpConnector
      */
     public void stop() throws LifecycleException {
 
-	// Validate and update our current state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("httpConnector.notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+        // Validate and update our current state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("httpConnector.notStarted"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
 
-	// Gracefully shut down all processors we have created
-	for (int i = created.size() - 1; i >= 0; i--) {
-	    HttpProcessor processor = (HttpProcessor) created.elementAt(i);
-	    if (processor instanceof Lifecycle) {
-		try {
-		    ((Lifecycle) processor).stop();
-		} catch (LifecycleException e) {
-		    log("HttpConnector.stop", e);
-		}
-	    }
-	}
+        // Gracefully shut down all processors we have created
+        for (int i = created.size() - 1; i >= 0; i--) {
+            HttpProcessor processor = (HttpProcessor) created.elementAt(i);
+            if (processor instanceof Lifecycle) {
+                try {
+                    ((Lifecycle) processor).stop();
+                } catch (LifecycleException e) {
+                    log("HttpConnector.stop", e);
+                }
+            }
+        }
 
-	// Close the server socket we were using
-	if (serverSocket != null) {
-	    try {
-		serverSocket.close();
-	    } catch (IOException e) {
-		;
-	    }
-	}
+        // Close the server socket we were using
+        if (serverSocket != null) {
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                ;
+            }
+        }
 
-	// Stop our background thread
-	threadStop();
+        // Stop our background thread
+        threadStop();
         serverSocket = null;
 
     }

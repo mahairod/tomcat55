@@ -113,8 +113,8 @@ public final class ApplicationContextFacade
      * @param context The associated Context instance
      */
     public ApplicationContextFacade(ApplicationContext context) {
-	super();
-	this.context = context;
+        super();
+        this.context = context;
     }
 
 
@@ -159,7 +159,7 @@ public final class ApplicationContextFacade
     }
 
 
-    public URL getResource(String path) 
+    public URL getResource(String path)
         throws MalformedURLException {
         return context.getResource(path);
     }

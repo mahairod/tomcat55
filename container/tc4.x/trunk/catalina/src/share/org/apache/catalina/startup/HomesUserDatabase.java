@@ -91,7 +91,7 @@ public final class HomesUserDatabase
      */
     public HomesUserDatabase() {
 
-	super();
+        super();
 
     }
 
@@ -119,7 +119,7 @@ public final class HomesUserDatabase
      */
     public UserConfig getUserConfig() {
 
-	return (this.userConfig);
+        return (this.userConfig);
 
     }
 
@@ -131,8 +131,8 @@ public final class HomesUserDatabase
      */
     public void setUserConfig(UserConfig userConfig) {
 
-	this.userConfig = userConfig;
-	init();
+        this.userConfig = userConfig;
+        init();
 
     }
 
@@ -147,7 +147,7 @@ public final class HomesUserDatabase
      */
     public String getHome(String user) {
 
-	return ((String) homes.get(user));
+        return ((String) homes.get(user));
 
     }
 
@@ -157,7 +157,7 @@ public final class HomesUserDatabase
      */
     public Enumeration getUsers() {
 
-	return (homes.keys());
+        return (homes.keys());
 
     }
 
@@ -170,18 +170,18 @@ public final class HomesUserDatabase
      */
     private void init() {
 
-	String homeBase = userConfig.getHomeBase();
-	File homeBaseDir = new File(homeBase);
-	if (!homeBaseDir.exists() || !homeBaseDir.isDirectory())
-	    return;
-	String homeBaseFiles[] = homeBaseDir.list();
+        String homeBase = userConfig.getHomeBase();
+        File homeBaseDir = new File(homeBase);
+        if (!homeBaseDir.exists() || !homeBaseDir.isDirectory())
+            return;
+        String homeBaseFiles[] = homeBaseDir.list();
 
-	for (int i = 0; i < homeBaseFiles.length; i++) {
-	    File homeDir = new File(homeBaseDir, homeBaseFiles[i]);
-	    if (!homeDir.isDirectory() || !homeDir.canRead())
-	        continue;
-	    homes.put(homeBaseFiles[i], homeDir.toString());
-	}
+        for (int i = 0; i < homeBaseFiles.length; i++) {
+            File homeDir = new File(homeBaseDir, homeBaseFiles[i]);
+            if (!homeDir.isDirectory() || !homeDir.canRead())
+                continue;
+            homes.put(homeBaseFiles[i], homeDir.toString());
+        }
 
 
     }

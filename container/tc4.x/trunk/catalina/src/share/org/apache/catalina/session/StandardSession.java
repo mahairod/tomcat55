@@ -592,7 +592,7 @@ class StandardSession
      * this session.
      */
     public void passivate() {
-    
+
         // Notify ActivationListeners
         HttpSessionEvent event = null;
         String keys[] = keys();
@@ -608,13 +608,13 @@ class StandardSession
 
     }
 
-    
+
     /**
      * Perform internal processing required to activate this
      * session.
      */
     public void activate() {
-    
+
         // Notify ActivationListeners
         HttpSessionEvent event = null;
         String keys[] = keys();
@@ -629,8 +629,8 @@ class StandardSession
         }
 
     }
-    
-    
+
+
     /**
      * Release all object references, and initialize instance variables, in
      * preparation for reuse of this object.

@@ -97,11 +97,11 @@ public final class CustomObjectInputStream
      * @@exception IOException if an input/output error occurs
      */
     public CustomObjectInputStream(InputStream stream,
-				   ClassLoader classLoader)
-	throws IOException {
-	
-	super(stream);
-	this.classLoader = classLoader;
+                                   ClassLoader classLoader)
+        throws IOException {
+
+        super(stream);
+        this.classLoader = classLoader;
     }
 
     /**
@@ -114,8 +114,8 @@ public final class CustomObjectInputStream
      * @@exception IOException if an input/output error occurs
      */
     public Class resolveClass(ObjectStreamClass classDesc)
-	throws ClassNotFoundException, IOException {
+        throws ClassNotFoundException, IOException {
 
-	return (classLoader.loadClass(classDesc.getName()));
+        return (classLoader.loadClass(classDesc.getName()));
     }
 }

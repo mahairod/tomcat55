@@ -15,7 +15,7 @@ import org.w3c.dom.*;
 
 // XXX this interface is not final, but a prototype.
 
-/** SAX Context - used to match and perform actions 
+/** SAX Context - used to match and perform actions
  *    provide access to the current stack and XML elements.
  *
  * @author costin@dnt.ro
@@ -49,16 +49,16 @@ public interface SaxContext  {
        use the stack, it's much faster and better.
     */
     public Object getRoot();
-    
+
     /** We maintain a stack to keep java objects that are generated
-	as result of parsing. You can either use the stack ( which is
-	very powerfull construct !), or use the root object
-	and navigation in the result tree.
+        as result of parsing. You can either use the stack ( which is
+        very powerfull construct !), or use the root object
+        and navigation in the result tree.
     */
     public Stack getObjectStack();
 
     // -------------------- Utilities
-    
+
     public int getDebug();
 
     public void log( String s );

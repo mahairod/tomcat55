@@ -3,7 +3,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,7 +11,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -19,15 +19,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -55,7 +55,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.valves;
@@ -142,9 +142,9 @@ public final class AccessLogValve
      */
     public AccessLogValve() {
 
-	super();
-	setPattern("common");
-        
+        super();
+        setPattern("common");
+
 
     }
 
@@ -169,7 +169,7 @@ public final class AccessLogValve
      * The descriptive information about this implementation.
      */
     protected static final String info =
-	"org.apache.catalina.valves.AccessLogValve/1.0";
+        "org.apache.catalina.valves.AccessLogValve/1.0";
 
 
     /**
@@ -210,7 +210,7 @@ public final class AccessLogValve
      * The string manager for this package.
      */
     private StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -299,7 +299,7 @@ public final class AccessLogValve
      */
     public String getDirectory() {
 
-	return (directory);
+        return (directory);
 
     }
 
@@ -311,7 +311,7 @@ public final class AccessLogValve
      */
     public void setDirectory(String directory) {
 
-	this.directory = directory;
+        this.directory = directory;
 
     }
 
@@ -321,7 +321,7 @@ public final class AccessLogValve
      */
     public String getInfo() {
 
-	return (this.info);
+        return (this.info);
 
     }
 
@@ -331,7 +331,7 @@ public final class AccessLogValve
      */
     public String getPattern() {
 
-	return (this.pattern);
+        return (this.pattern);
 
     }
 
@@ -343,11 +343,11 @@ public final class AccessLogValve
      */
     public void setPattern(String pattern) {
 
-	if (pattern == null)
-	    pattern = "";
-	if (pattern.equals(Constants.AccessLog.COMMON_ALIAS))
-	    pattern = Constants.AccessLog.COMMON_PATTERN;
-	this.pattern = pattern;
+        if (pattern == null)
+            pattern = "";
+        if (pattern.equals(Constants.AccessLog.COMMON_ALIAS))
+            pattern = Constants.AccessLog.COMMON_PATTERN;
+        this.pattern = pattern;
 
         if (this.pattern.equals(Constants.AccessLog.COMMON_PATTERN))
             common = true;
@@ -362,7 +362,7 @@ public final class AccessLogValve
      */
     public String getPrefix() {
 
-	return (prefix);
+        return (prefix);
 
     }
 
@@ -374,7 +374,7 @@ public final class AccessLogValve
      */
     public void setPrefix(String prefix) {
 
-	this.prefix = prefix;
+        this.prefix = prefix;
 
     }
 
@@ -384,7 +384,7 @@ public final class AccessLogValve
      */
     public String getSuffix() {
 
-	return (suffix);
+        return (suffix);
 
     }
 
@@ -396,14 +396,14 @@ public final class AccessLogValve
      */
     public void setSuffix(String suffix) {
 
-	this.suffix = suffix;
+        this.suffix = suffix;
 
     }
 
 
     /**
      * Set the resolve hosts flag.
-     * 
+     *
      * @param resolveHosts The new resolve hosts value
      */
     public void setResolveHosts(boolean resolveHosts) {
@@ -440,10 +440,10 @@ public final class AccessLogValve
      */
     public void invoke(Request request, Response response,
                        ValveContext context)
-	throws IOException, ServletException {
+        throws IOException, ServletException {
 
-	// Pass this request on to the next valve in our pipeline
-	context.invokeNext(request, response);
+        // Pass this request on to the next valve in our pipeline
+        context.invokeNext(request, response);
 
         Date date = getDate();
         StringBuffer result = new StringBuffer();
@@ -463,7 +463,7 @@ public final class AccessLogValve
                 result.append(req.getRemoteAddr());
 
             result.append(" - ");
-            
+
             if (hreq != null)
                 value = hreq.getRemoteUser();
             if (value == null)
@@ -518,7 +518,7 @@ public final class AccessLogValve
             }
         }
         log(result.toString(), date);
-        
+
     }
 
 
@@ -530,12 +530,12 @@ public final class AccessLogValve
      */
     private synchronized void close() {
 
-	if (writer == null)
-	    return;
-	writer.flush();
-	writer.close();
-	writer = null;
-	dateStamp = "";
+        if (writer == null)
+            return;
+        writer.flush();
+        writer.close();
+        writer = null;
+        dateStamp = "";
 
     }
 
@@ -569,10 +569,10 @@ public final class AccessLogValve
             }
         }
 
-	// Log this message
-	if (writer != null) {
+        // Log this message
+        if (writer != null) {
             writer.println(message);
-	}
+        }
 
     }
 
@@ -585,13 +585,13 @@ public final class AccessLogValve
      */
     private String lookup(String month) {
 
-	int index;
-	try {
-	    index = Integer.parseInt(month) - 1;
-	} catch (Throwable t) {
-	    index = 0;	// Can not happen, in theory
-	}
-	return (months[index]);
+        int index;
+        try {
+            index = Integer.parseInt(month) - 1;
+        } catch (Throwable t) {
+            index = 0;  // Can not happen, in theory
+        }
+        return (months[index]);
 
     }
 
@@ -601,21 +601,21 @@ public final class AccessLogValve
      */
     private synchronized void open() {
 
-	// Create the directory if necessary
-	File dir = new File(directory);
-	if (!dir.isAbsolute())
-	    dir = new File(System.getProperty("catalina.home") +
-			   File.separator + directory);
-	dir.mkdirs();
+        // Create the directory if necessary
+        File dir = new File(directory);
+        if (!dir.isAbsolute())
+            dir = new File(System.getProperty("catalina.home") +
+                           File.separator + directory);
+        dir.mkdirs();
 
-	// Open the current log file
-	try {
-	    String pathname = dir.getAbsolutePath() + File.separator +
-		prefix + dateStamp + suffix;
-	    writer = new PrintWriter(new FileWriter(pathname, true), true);
-	} catch (IOException e) {
-	    writer = null;
-	}
+        // Open the current log file
+        try {
+            String pathname = dir.getAbsolutePath() + File.separator +
+                prefix + dateStamp + suffix;
+            writer = new PrintWriter(new FileWriter(pathname, true), true);
+        } catch (IOException e) {
+            writer = null;
+        }
 
     }
 
@@ -629,97 +629,97 @@ public final class AccessLogValve
      * @param request Request being processed
      * @param response Response being processed
      */
-    private String replace(char pattern, Date date, Request request, 
+    private String replace(char pattern, Date date, Request request,
                            Response response) {
 
-	String value = null;
+        String value = null;
 
-	ServletRequest req = request.getRequest();
-	HttpServletRequest hreq = null;
-	if (req instanceof HttpServletRequest)
-	    hreq = (HttpServletRequest) req;
-	ServletResponse res = response.getResponse();
-	HttpServletResponse hres = null;
-	if (res instanceof HttpServletResponse)
-	    hres = (HttpServletResponse) res;
+        ServletRequest req = request.getRequest();
+        HttpServletRequest hreq = null;
+        if (req instanceof HttpServletRequest)
+            hreq = (HttpServletRequest) req;
+        ServletResponse res = response.getResponse();
+        HttpServletResponse hres = null;
+        if (res instanceof HttpServletResponse)
+            hres = (HttpServletResponse) res;
 
-	if (pattern == 'a') {
-	    value = req.getRemoteAddr();
-	} else if (pattern == 'A') {
-	    value = "127.0.0.1";	// FIXME
-	} else if (pattern == 'b') {
-	    int length = response.getContentCount();
-	    if (length <= 0)
-		value = "-";
-	    else
-		value = "" + length;
-	} else if (pattern == 'B') {
-	    value = "" + response.getContentLength();
-	} else if (pattern == 'h') {
-	    value = req.getRemoteHost();
-	} else if (pattern == 'H') {
-	    value = req.getProtocol();
-	} else if (pattern == 'l') {
-	    value = "-";
-	} else if (pattern == 'm') {
-	    if (hreq != null)
-		value = hreq.getMethod();
-	    else
-		value = "";
-	} else if (pattern == 'p') {
-	    value = "" + req.getServerPort();
-	} else if (pattern == 'q') {
-	    String query = null;
-	    if (hreq != null)
-		query = hreq.getQueryString();
-	    if (query != null)
-		value = "?" + query;
-	    else
-		value = "";
-	} else if (pattern == 'r') {
-	    if (hreq != null)
-		value = hreq.getMethod() + space + hreq.getRequestURI() 
+        if (pattern == 'a') {
+            value = req.getRemoteAddr();
+        } else if (pattern == 'A') {
+            value = "127.0.0.1";        // FIXME
+        } else if (pattern == 'b') {
+            int length = response.getContentCount();
+            if (length <= 0)
+                value = "-";
+            else
+                value = "" + length;
+        } else if (pattern == 'B') {
+            value = "" + response.getContentLength();
+        } else if (pattern == 'h') {
+            value = req.getRemoteHost();
+        } else if (pattern == 'H') {
+            value = req.getProtocol();
+        } else if (pattern == 'l') {
+            value = "-";
+        } else if (pattern == 'm') {
+            if (hreq != null)
+                value = hreq.getMethod();
+            else
+                value = "";
+        } else if (pattern == 'p') {
+            value = "" + req.getServerPort();
+        } else if (pattern == 'q') {
+            String query = null;
+            if (hreq != null)
+                query = hreq.getQueryString();
+            if (query != null)
+                value = "?" + query;
+            else
+                value = "";
+        } else if (pattern == 'r') {
+            if (hreq != null)
+                value = hreq.getMethod() + space + hreq.getRequestURI()
                     + space + hreq.getProtocol();
-	    else
-		value = "- - " + req.getProtocol();
-	} else if (pattern == 's') {
-	    if (hres != null)
-		value = "" + ((HttpResponse) response).getStatus();
-	    else
-		value = "-";
-	} else if (pattern == 't') {
-	    StringBuffer temp = new StringBuffer("[");
-            temp.append(dayFormatter.format(date));		// Day
-	    temp.append('/');
-	    temp.append(lookup(monthFormatter.format(date)));   // Month
-	    temp.append('/');
-	    temp.append(yearFormatter.format(date));            // Year
-	    temp.append(':');
-	    temp.append(timeFormatter.format(date));            // Time
-	    temp.append(' ');
-	    temp.append(timeZone);                              // Timezone
-	    temp.append(']');
-	    value = temp.toString();
-	} else if (pattern == 'u') {
-	    if (hreq != null)
-		value = hreq.getRemoteUser();
-	    if (value == null)
-		value = "-";
-	} else if (pattern == 'U') {
-	    if (hreq != null)
-		value = hreq.getRequestURI();
-	    else
-		value = "-";
-	} else if (pattern == 'v') {
-	    value = req.getServerName();
-	} else {
-	    value = "???" + pattern + "???";
-	}
+            else
+                value = "- - " + req.getProtocol();
+        } else if (pattern == 's') {
+            if (hres != null)
+                value = "" + ((HttpResponse) response).getStatus();
+            else
+                value = "-";
+        } else if (pattern == 't') {
+            StringBuffer temp = new StringBuffer("[");
+            temp.append(dayFormatter.format(date));             // Day
+            temp.append('/');
+            temp.append(lookup(monthFormatter.format(date)));   // Month
+            temp.append('/');
+            temp.append(yearFormatter.format(date));            // Year
+            temp.append(':');
+            temp.append(timeFormatter.format(date));            // Time
+            temp.append(' ');
+            temp.append(timeZone);                              // Timezone
+            temp.append(']');
+            value = temp.toString();
+        } else if (pattern == 'u') {
+            if (hreq != null)
+                value = hreq.getRemoteUser();
+            if (value == null)
+                value = "-";
+        } else if (pattern == 'U') {
+            if (hreq != null)
+                value = hreq.getRequestURI();
+            else
+                value = "-";
+        } else if (pattern == 'v') {
+            value = req.getServerName();
+        } else {
+            value = "???" + pattern + "???";
+        }
 
-	if (value == null)
-	    return ("");
-	else
-	    return (value);
+        if (value == null)
+            return ("");
+        else
+            return (value);
 
     }
 
@@ -732,15 +732,15 @@ public final class AccessLogValve
      * spend time creating Date objects unnecessarily.
      */
     private Date getDate() {
-        
+
         // Only create a new Date once per second, max.
         long systime = System.currentTimeMillis();
         if ((systime - currentDate.getTime()) > 1000) {
             currentDate = new Date(systime);
         }
-        
+
         return currentDate;
-        
+
     }
 
 
@@ -754,7 +754,7 @@ public final class AccessLogValve
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -766,7 +766,7 @@ public final class AccessLogValve
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -783,12 +783,12 @@ public final class AccessLogValve
      */
     public void start() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("accessLogValve.alreadyStarted"));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("accessLogValve.alreadyStarted"));
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
 
         // Initialize the timeZone, Date formatters, and currentDate
         TimeZone tz = TimeZone.getDefault();
@@ -825,14 +825,14 @@ public final class AccessLogValve
      */
     public void stop() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("accessLogValve.notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("accessLogValve.notStarted"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
 
-	close();
+        close();
 
     }
 

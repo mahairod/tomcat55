@@ -166,7 +166,7 @@ public abstract class RequestBase
      * Descriptive information about this Request implementation.
      */
     protected static final String info =
-	"org.apache.catalina.connector.RequestBase/1.0";
+        "org.apache.catalina.connector.RequestBase/1.0";
 
 
     /**
@@ -239,7 +239,7 @@ public abstract class RequestBase
      * The string manager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -269,7 +269,7 @@ public abstract class RequestBase
      */
     public String getAuthorization() {
 
-	return (this.authorization);
+        return (this.authorization);
 
     }
 
@@ -281,7 +281,7 @@ public abstract class RequestBase
      */
     public void setAuthorization(String authorization) {
 
-	this.authorization = authorization;
+        this.authorization = authorization;
 
     }
 
@@ -291,7 +291,7 @@ public abstract class RequestBase
      */
     public Connector getConnector() {
 
-	return (this.connector);
+        return (this.connector);
 
     }
 
@@ -303,7 +303,7 @@ public abstract class RequestBase
      */
     public void setConnector(Connector connector) {
 
-	this.connector = connector;
+        this.connector = connector;
 
     }
 
@@ -313,7 +313,7 @@ public abstract class RequestBase
      */
     public Context getContext() {
 
-	return (this.context);
+        return (this.context);
 
     }
 
@@ -328,7 +328,7 @@ public abstract class RequestBase
      */
     public void setContext(Context context) {
 
-	this.context = context;
+        this.context = context;
 
     }
 
@@ -340,7 +340,7 @@ public abstract class RequestBase
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -361,7 +361,7 @@ public abstract class RequestBase
      */
     public Response getResponse() {
 
-	return (this.response);
+        return (this.response);
 
     }
 
@@ -373,7 +373,7 @@ public abstract class RequestBase
      */
     public void setResponse(Response response) {
 
-	this.response = response;
+        this.response = response;
 
     }
 
@@ -408,7 +408,7 @@ public abstract class RequestBase
      */
     public InputStream getStream() {
 
-	return (this.input);
+        return (this.input);
 
     }
 
@@ -420,7 +420,7 @@ public abstract class RequestBase
      */
     public void setStream(InputStream input) {
 
-	this.input = input;
+        this.input = input;
 
     }
 
@@ -430,7 +430,7 @@ public abstract class RequestBase
      */
     public Wrapper getWrapper() {
 
-	return (this.wrapper);
+        return (this.wrapper);
 
     }
 
@@ -444,7 +444,7 @@ public abstract class RequestBase
      */
     public void setWrapper(Wrapper wrapper) {
 
-	this.wrapper = wrapper;
+        this.wrapper = wrapper;
 
     }
 
@@ -460,9 +460,9 @@ public abstract class RequestBase
      */
     public void addLocale(Locale locale) {
 
-	synchronized (locales) {
-	    locales.add(locale);
-	}
+        synchronized (locales) {
+            locales.add(locale);
+        }
 
     }
 
@@ -477,7 +477,7 @@ public abstract class RequestBase
      */
     public ServletInputStream createInputStream() throws IOException {
 
-	return (new RequestStream(this));
+        return (new RequestStream(this));
 
     }
 
@@ -490,26 +490,26 @@ public abstract class RequestBase
      */
     public void finishRequest() throws IOException {
 
-	// If a Reader has been acquired, close it
-	if (reader != null) {
-	    try {
-		reader.close();
-	    } catch (IOException e) {
-		;
-	    }
-	}
+        // If a Reader has been acquired, close it
+        if (reader != null) {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                ;
+            }
+        }
 
-	// If a ServletInputStream has been acquired, close it
-	if (stream != null) {
-	    try {
-		stream.close();
-	    } catch (IOException e) {
-		;
-	    }
-	}
+        // If a ServletInputStream has been acquired, close it
+        if (stream != null) {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                ;
+            }
+        }
 
-	// The underlying input stream (perhaps from a socket)
-	// is not our responsibility
+        // The underlying input stream (perhaps from a socket)
+        // is not our responsibility
 
     }
 
@@ -520,27 +520,27 @@ public abstract class RequestBase
      */
     public void recycle() {
 
-	attributes.clear();
-	authorization = null;
-	characterEncoding = null;
-	// connector is NOT reset when recycling
-	contentLength = -1;
-	contentType = null;
-	context = null;
-	input = null;
-	locales.clear();
-	protocol = null;
-	reader = null;
-	remoteAddr = null;
-	remoteHost = null;
-	response = null;
-	scheme = null;
-	secure = false;
-	serverName = null;
-	serverPort = -1;
+        attributes.clear();
+        authorization = null;
+        characterEncoding = null;
+        // connector is NOT reset when recycling
+        contentLength = -1;
+        contentType = null;
+        context = null;
+        input = null;
+        locales.clear();
+        protocol = null;
+        reader = null;
+        remoteAddr = null;
+        remoteHost = null;
+        response = null;
+        scheme = null;
+        secure = false;
+        serverName = null;
+        serverPort = -1;
         socket = null;
-	stream = null;
-	wrapper = null;
+        stream = null;
+        wrapper = null;
 
     }
 
@@ -552,7 +552,7 @@ public abstract class RequestBase
      */
     public void setContentLength(int length) {
 
-	this.contentLength = length;
+        this.contentLength = length;
 
     }
 
@@ -566,9 +566,9 @@ public abstract class RequestBase
      */
     public void setContentType(String type) {
 
-	this.contentType = type;
-	if (type.indexOf(';') >= 0)
-	    characterEncoding = RequestUtil.parseCharacterEncoding(type);
+        this.contentType = type;
+        if (type.indexOf(';') >= 0)
+            characterEncoding = RequestUtil.parseCharacterEncoding(type);
 
     }
 
@@ -580,7 +580,7 @@ public abstract class RequestBase
      */
     public void setProtocol(String protocol) {
 
-	this.protocol = protocol;
+        this.protocol = protocol;
 
     }
 
@@ -592,7 +592,7 @@ public abstract class RequestBase
      */
     public void setRemoteAddr(String remoteAddr) {
 
-	this.remoteAddr = remoteAddr;
+        this.remoteAddr = remoteAddr;
 
     }
 
@@ -605,7 +605,7 @@ public abstract class RequestBase
      */
     public void setRemoteHost(String remoteHost) {
 
-	this.remoteHost = remoteHost;
+        this.remoteHost = remoteHost;
 
     }
 
@@ -618,7 +618,7 @@ public abstract class RequestBase
      */
     public void setScheme(String scheme) {
 
-	this.scheme = scheme;
+        this.scheme = scheme;
 
     }
 
@@ -631,7 +631,7 @@ public abstract class RequestBase
      */
     public void setSecure(boolean secure) {
 
-	this.secure = secure;
+        this.secure = secure;
 
     }
 
@@ -643,7 +643,7 @@ public abstract class RequestBase
      */
     public void setServerName(String name) {
 
-	this.serverName = name;
+        this.serverName = name;
 
     }
 
@@ -655,7 +655,7 @@ public abstract class RequestBase
      */
     public void setServerPort(int port) {
 
-	this.serverPort = port;
+        this.serverPort = port;
 
     }
 
@@ -671,9 +671,9 @@ public abstract class RequestBase
      */
     public Object getAttribute(String name) {
 
-	synchronized (attributes) {
-	    return (attributes.get(name));
-	}
+        synchronized (attributes) {
+            return (attributes.get(name));
+        }
 
     }
 
@@ -684,9 +684,9 @@ public abstract class RequestBase
      */
     public Enumeration getAttributeNames() {
 
-	synchronized (attributes) {
-	    return (new Enumerator(attributes.keySet()));
-	}
+        synchronized (attributes) {
+            return (new Enumerator(attributes.keySet()));
+        }
 
     }
 
@@ -706,7 +706,7 @@ public abstract class RequestBase
      */
     public int getContentLength() {
 
-	return (this.contentLength);
+        return (this.contentLength);
 
     }
 
@@ -716,7 +716,7 @@ public abstract class RequestBase
      */
     public String getContentType() {
 
-	return (contentType);
+        return (contentType);
 
     }
 
@@ -732,13 +732,13 @@ public abstract class RequestBase
      */
     public ServletInputStream getInputStream() throws IOException {
 
-	if (reader != null)
-	    throw new IllegalStateException
-		(sm.getString("requestBase.getInputStream.ise"));
+        if (reader != null)
+            throw new IllegalStateException
+                (sm.getString("requestBase.getInputStream.ise"));
 
-	if (stream == null)
-	    stream = createInputStream();
-	return (stream);
+        if (stream == null)
+            stream = createInputStream();
+        return (stream);
 
     }
 
@@ -751,12 +751,12 @@ public abstract class RequestBase
      */
     public Locale getLocale() {
 
-	synchronized (locales) {
-	    if (locales.size() > 0)
-		return ((Locale) locales.get(0));
-	    else
-		return (defaultLocale);
-	}
+        synchronized (locales) {
+            if (locales.size() > 0)
+                return ((Locale) locales.get(0));
+            else
+                return (defaultLocale);
+        }
 
     }
 
@@ -769,13 +769,13 @@ public abstract class RequestBase
      */
     public Enumeration getLocales() {
 
-	synchronized (locales) {
-	    if (locales.size() > 0)
-		return (new Enumerator(locales));
-	}
-	ArrayList results = new ArrayList();
-	results.add(defaultLocale);
-	return (new Enumerator(results));
+        synchronized (locales) {
+            if (locales.size() > 0)
+                return (new Enumerator(locales));
+        }
+        ArrayList results = new ArrayList();
+        results.add(defaultLocale);
+        return (new Enumerator(results));
 
     }
 
@@ -822,7 +822,7 @@ public abstract class RequestBase
      */
     public String getProtocol() {
 
-	return (this.protocol);
+        return (this.protocol);
 
     }
 
@@ -838,19 +838,19 @@ public abstract class RequestBase
      */
     public BufferedReader getReader() throws IOException {
 
-	if (stream != null)
-	    throw new IllegalStateException
-		(sm.getString("requestBase.getReader.ise"));
+        if (stream != null)
+            throw new IllegalStateException
+                (sm.getString("requestBase.getReader.ise"));
 
-	if (reader == null) {
-	    String encoding = getCharacterEncoding();
+        if (reader == null) {
+            String encoding = getCharacterEncoding();
             if (encoding == null)
                 encoding = "ISO-8859-1";
-	    InputStreamReader isr =
-		new InputStreamReader(createInputStream(), encoding);
-	    reader = new BufferedReader(isr);
-	}
-	return (reader);
+            InputStreamReader isr =
+                new InputStreamReader(createInputStream(), encoding);
+            reader = new BufferedReader(isr);
+        }
+        return (reader);
 
     }
 
@@ -865,18 +865,18 @@ public abstract class RequestBase
      */
     public String getRealPath(String path) {
 
-	if (context == null)
-	    return (null);
-	ServletContext servletContext = context.getServletContext();
-	if (servletContext == null)
-	    return (null);
-	else {
-	    try {
-		return (servletContext.getRealPath(path));
-	    } catch (IllegalArgumentException e) {
-		return (null);
-	    }
-	}
+        if (context == null)
+            return (null);
+        ServletContext servletContext = context.getServletContext();
+        if (servletContext == null)
+            return (null);
+        else {
+            try {
+                return (servletContext.getRealPath(path));
+            } catch (IllegalArgumentException e) {
+                return (null);
+            }
+        }
 
     }
 
@@ -886,7 +886,7 @@ public abstract class RequestBase
      */
     public String getRemoteAddr() {
 
-	return (this.remoteAddr);
+        return (this.remoteAddr);
 
     }
 
@@ -896,7 +896,7 @@ public abstract class RequestBase
      */
     public String getRemoteHost() {
 
-	return (this.remoteHost);
+        return (this.remoteHost);
 
     }
 
@@ -915,7 +915,7 @@ public abstract class RequestBase
      */
     public String getScheme() {
 
-	return (this.scheme);
+        return (this.scheme);
 
     }
 
@@ -925,7 +925,7 @@ public abstract class RequestBase
      */
     public String getServerName() {
 
-	return (this.serverName);
+        return (this.serverName);
 
     }
 
@@ -935,7 +935,7 @@ public abstract class RequestBase
      */
     public int getServerPort() {
 
-	return (this.serverPort);
+        return (this.serverPort);
 
     }
 
@@ -945,7 +945,7 @@ public abstract class RequestBase
      */
     public boolean isSecure() {
 
-	return (this.secure);
+        return (this.secure);
 
     }
 
@@ -957,9 +957,9 @@ public abstract class RequestBase
      */
     public void removeAttribute(String name) {
 
-	synchronized (attributes) {
-	    attributes.remove(name);
-	}
+        synchronized (attributes) {
+            attributes.remove(name);
+        }
 
     }
 
@@ -978,9 +978,9 @@ public abstract class RequestBase
             return;
         }
 
-	synchronized (attributes) {
-	    attributes.put(name, value);
-	}
+        synchronized (attributes) {
+            attributes.put(name, value);
+        }
 
     }
 

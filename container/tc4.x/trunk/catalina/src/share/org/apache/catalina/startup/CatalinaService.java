@@ -125,39 +125,39 @@ public class CatalinaService extends Catalina {
      */
     protected boolean arguments(String args[]) {
 
-	boolean isConfig = false;
+        boolean isConfig = false;
 
         if (args.length < 1) {
             usage();
             return (false);
         }
 
-	for (int i = 0; i < args.length; i++) {
-	    if (isConfig) {
-		configFile = args[i];
-		isConfig = false;
-	    } else if (args[i].equals("-config")) {
-	        isConfig = true;
-	    } else if (args[i].equals("-debug")) {
-		debug = true;
-	    } else if (args[i].equals("-nonaming")) {
-		useNaming = false;
-	    } else if (args[i].equals("-help")) {
-		usage();
-		return (false);
-	    } else if (args[i].equals("start")) {
-	        starting = true;
-                stopping = false;
-	    } else if (args[i].equals("stop")) {
-	        starting = false;
-	        stopping = true;
-	    } else {
-		usage();
+        for (int i = 0; i < args.length; i++) {
+            if (isConfig) {
+                configFile = args[i];
+                isConfig = false;
+            } else if (args[i].equals("-config")) {
+                isConfig = true;
+            } else if (args[i].equals("-debug")) {
+                debug = true;
+            } else if (args[i].equals("-nonaming")) {
+                useNaming = false;
+            } else if (args[i].equals("-help")) {
+                usage();
                 return (false);
-	    }
-	}
+            } else if (args[i].equals("start")) {
+                starting = true;
+                stopping = false;
+            } else if (args[i].equals("stop")) {
+                starting = false;
+                stopping = true;
+            } else {
+                usage();
+                return (false);
+            }
+        }
 
-	return (true);
+        return (true);
 
     }
 
@@ -169,17 +169,17 @@ public class CatalinaService extends Catalina {
 
         // Create and execute our mapper
         XmlMapper mapper = createStartMapper();
-	File file = configFile();
-	try {
-	    mapper.readXml(file, this);
-	} catch (InvocationTargetException e) {
-	    System.out.println("Catalina.start: InvocationTargetException");
-	    e.getTargetException().printStackTrace(System.out);
-	} catch (Exception e) {
-	    System.out.println("Catalina.start: " + e);
-	    e.printStackTrace(System.out);
-	    System.exit(1);
-	}
+        File file = configFile();
+        try {
+            mapper.readXml(file, this);
+        } catch (InvocationTargetException e) {
+            System.out.println("Catalina.start: InvocationTargetException");
+            e.getTargetException().printStackTrace(System.out);
+        } catch (Exception e) {
+            System.out.println("Catalina.start: " + e);
+            e.printStackTrace(System.out);
+            System.exit(1);
+        }
 
         // Setting additional variables
         if (!useNaming) {
@@ -197,40 +197,40 @@ public class CatalinaService extends Catalina {
                                "org.apache.naming.java.javaURLContextFactory");
         }
 
-	// If a SecurityManager is being used, set properties for
-	// checkPackageAccess() and checkPackageDefinition
-	if( System.getSecurityManager() != null ) {
-	    String access = Security.getProperty("package.access");
-	    if( access != null && access.length() > 0 )
-		access += ",";
-	    else
-		access = "sun.,";
-	    Security.setProperty("package.access",
-		access + "org.apache.catalina.,org.apache.jasper.");
-	    String definition = Security.getProperty("package.definition");
-	    if( definition != null && definition.length() > 0 )
-		definition += ",";
-	    else
-		definition = "sun.,";
-	    Security.setProperty("package.definition",
-		// FIX ME package "javax." was removed to prevent HotSpot
-		// fatal internal errors
-		definition + "java.,org.apache.catalina.,org.apache.jasper.");
-	}
+        // If a SecurityManager is being used, set properties for
+        // checkPackageAccess() and checkPackageDefinition
+        if( System.getSecurityManager() != null ) {
+            String access = Security.getProperty("package.access");
+            if( access != null && access.length() > 0 )
+                access += ",";
+            else
+                access = "sun.,";
+            Security.setProperty("package.access",
+                access + "org.apache.catalina.,org.apache.jasper.");
+            String definition = Security.getProperty("package.definition");
+            if( definition != null && definition.length() > 0 )
+                definition += ",";
+            else
+                definition = "sun.,";
+            Security.setProperty("package.definition",
+                // FIX ME package "javax." was removed to prevent HotSpot
+                // fatal internal errors
+                definition + "java.,org.apache.catalina.,org.apache.jasper.");
+        }
 
-	// Start the new server
-	if (server instanceof Lifecycle) {
-	    try {
-	        ((Lifecycle) server).start();
-	    } catch (LifecycleException e) {
-	        System.out.println("Catalina.start: " + e);
-		e.printStackTrace(System.out);
+        // Start the new server
+        if (server instanceof Lifecycle) {
+            try {
+                ((Lifecycle) server).start();
+            } catch (LifecycleException e) {
+                System.out.println("Catalina.start: " + e);
+                e.printStackTrace(System.out);
                 if (e.getThrowable() != null) {
                     System.out.println("----- Root Cause -----");
                     e.getThrowable().printStackTrace(System.out);
                 }
-	    }
-	}
+            }
+        }
 
     }
 
@@ -240,22 +240,22 @@ public class CatalinaService extends Catalina {
      */
     protected void stop() {
 
-	// Shut down the server
-	if (server instanceof Lifecycle) {
+        // Shut down the server
+        if (server instanceof Lifecycle) {
             try {
-	        ((Lifecycle) server).stop();
-	    } catch (LifecycleException e) {
-	        System.out.println("Catalina.stop: " + e);
-	        e.printStackTrace(System.out);
+                ((Lifecycle) server).stop();
+            } catch (LifecycleException e) {
+                System.out.println("Catalina.stop: " + e);
+                e.printStackTrace(System.out);
                 if (e.getThrowable() != null) {
                     System.out.println("----- Root Cause -----");
                     e.getThrowable().printStackTrace(System.out);
                 }
-	    }
-	}
+            }
+        }
 
         System.out.println("Stop server complete");
-        
+
     }
 
 

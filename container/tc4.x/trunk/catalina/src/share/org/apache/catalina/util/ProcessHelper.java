@@ -98,7 +98,7 @@ import org.apache.catalina.Wrapper;
 
 
 //class CGIServlet
-    
+
 
 /**
      * Encapsulates the knowledge of how to run a CGI script, given the
@@ -118,7 +118,7 @@ import org.apache.catalina.Wrapper;
      * </p>
      * <p>
      *
-     * The input and output streams can be set by the <code>setInput</code> 
+     * The input and output streams can be set by the <code>setInput</code>
      * and <code>setResponse</code> methods, respectively.
      * </p>
      *
@@ -169,10 +169,10 @@ private int iClientInputTimeout;
  *
  * @param  res       HttpServletResponse object for setting headers
  *                   based on CGI script output
- * 
+ *
  */
 public ProcessHelper(String command, Hashtable env, File wd,
-		    Hashtable params) {
+                    Hashtable params) {
     this.command = command;
     this.env = env;
     this.wd = wd;
@@ -187,13 +187,13 @@ public ProcessHelper(String command, Hashtable env, File wd,
  */
 protected void updateReadyStatus() {
     if (command != null
-	&& env != null
-	&& wd != null
-	&& params != null
-	&& response != null) {
-	readyToRun = true;
+        && env != null
+        && wd != null
+        && params != null
+        && response != null) {
+        readyToRun = true;
     } else {
-	readyToRun = false;
+        readyToRun = false;
     }
 }
 
@@ -255,8 +255,8 @@ private String[] hashToStringArray(Hashtable h)
     Vector v = new Vector();
     Enumeration e = h.keys();
     while (e.hasMoreElements()) {
-	String k = e.nextElement().toString();
-	v.add(k + "=" + h.get(k));
+        String k = e.nextElement().toString();
+        v.add(k + "=" + h.get(k));
     }
     String[] strArr = new String[v.size()];
     v.copyInto(strArr);
@@ -310,7 +310,7 @@ private String[] hashToStringArray(Hashtable h)
  * </p>
  *
  * @exception IOException if problems during reading/writing occur
- * 
+ *
  * @see    java.lang.Runtime#exec(String command, String[] envp,
  *                                File dir)
  */
@@ -321,21 +321,21 @@ public void run() throws IOException {
      */
 
     if (!isReady()) {
-	throw new IOException(this.getClass().getName()
-			      + ": not ready to run.");
+        throw new IOException(this.getClass().getName()
+                              + ": not ready to run.");
     }
 
     if (debug >= 1 ) {
-	log("runCGI(envp=[" + env + "], command=" + command + ")");
+        log("runCGI(envp=[" + env + "], command=" + command + ")");
     }
 
     if ((command.indexOf(File.separator + "." + File.separator) >= 0)
-	|| (command.indexOf(File.separator + "..") >= 0)
-	|| (command.indexOf(".." + File.separator) >= 0)) {
-	throw new IOException(this.getClass().getName()
-			      + "Illegal Character in CGI command "
-			      + "path ('.' or '..') detected.  Not "
-			      + "running CGI [" + command + "].");
+        || (command.indexOf(File.separator + "..") >= 0)
+        || (command.indexOf(".." + File.separator) >= 0)) {
+        throw new IOException(this.getClass().getName()
+                              + "Illegal Character in CGI command "
+                              + "path ('.' or '..') detected.  Not "
+                              + "running CGI [" + command + "].");
     }
 
     /* original content/structure of this section taken from
@@ -356,25 +356,25 @@ public void run() throws IOException {
     Enumeration paramNames = params.keys();
     StringBuffer cmdAndArgs = new StringBuffer(command);
     if (paramNames != null && paramNames.hasMoreElements()) {
-	cmdAndArgs.append(" ");
-	while (paramNames.hasMoreElements()) {
-	    String k = (String) paramNames.nextElement();
-	    String v = params.get(k).toString();
-	    if ((k.indexOf("=") < 0) && (v.indexOf("=") < 0)) {
-		cmdAndArgs.append(k);
-		cmdAndArgs.append("=");
-		v = java.net.URLEncoder.encode(v);
-		cmdAndArgs.append(v);
-		cmdAndArgs.append(" ");
-	    }
-	}
+        cmdAndArgs.append(" ");
+        while (paramNames.hasMoreElements()) {
+            String k = (String) paramNames.nextElement();
+            String v = params.get(k).toString();
+            if ((k.indexOf("=") < 0) && (v.indexOf("=") < 0)) {
+                cmdAndArgs.append(k);
+                cmdAndArgs.append("=");
+                v = java.net.URLEncoder.encode(v);
+                cmdAndArgs.append(v);
+                cmdAndArgs.append(" ");
+            }
+        }
     }
 
     String postIn = getPostInput(params);
     int contentLength = (postIn.length()
-	    + System.getProperty("line.separator").length());
+            + System.getProperty("line.separator").length());
     if ("POST".equals(env.get("REQUEST_METHOD"))) {
-	env.put("CONTENT_LENGTH", new Integer(contentLength));
+        env.put("CONTENT_LENGTH", new Integer(contentLength));
     }
 
     rt = Runtime.getRuntime();
@@ -388,58 +388,58 @@ public void run() throws IOException {
      */
     commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
     if (debug >= 2 ) {
-	log("runCGI stdin=[" + stdin + "], qs="
-	    + env.get("QUERY_STRING"));
+        log("runCGI stdin=[" + stdin + "], qs="
+            + env.get("QUERY_STRING"));
     }
     if ("POST".equals(env.get("REQUEST_METHOD"))) {
-	if (debug >= 2) {
-	    log("runCGI: writing ---------------\n");
-	    log(postIn);
-	    log("runCGI: new content_length=" + contentLength 
-		+ "---------------\n");
-	}
-	commandsStdIn.write(postIn.getBytes());
+        if (debug >= 2) {
+            log("runCGI: writing ---------------\n");
+            log(postIn);
+            log("runCGI: new content_length=" + contentLength
+                + "---------------\n");
+        }
+        commandsStdIn.write(postIn.getBytes());
     }
     if (stdin != null) {
-	//REMIND: document this
-	/* assume if nothing is available after a time, that nothing is
-	 * coming...
-	 */
-	if (stdin.available() <= 0) {
-	    if (debug >= 2 ) {
-		log("runCGI stdin is NOT available ["
-		    + stdin.available() + "]");
-	    }
-	    try {
-		Thread.currentThread().sleep(iClientInputTimeout);
-	    } catch (InterruptedException ignored) {
-	    }
-	}
-	if (stdin.available() > 0) {
-	    if (debug >= 2 ) {
-		log("runCGI stdin IS available ["
-		    + stdin.available() + "]");
-	    }
-	    bBuf = new byte[1024];
-	    bufRead = -1;
-	    try {
-		while ((bufRead = stdin.read(bBuf)) != -1) {
-		    if (debug >= 2 ) {
-			log("runCGI: read [" + bufRead
-			    + "] bytes from stdin");
-		    }
-		    commandsStdIn.write(bBuf, 0, bufRead);
-		}
-		if (debug >= 2 ) {
-		    log("runCGI: DONE READING from stdin");
-		}
-	    } catch (IOException ioe) {
-		//REMIND: replace with logging
-		//REMIND: should I throw this exception?
-		log("runCGI: couldn't write all bytes.");
-		ioe.printStackTrace();
-	    }
-	}
+        //REMIND: document this
+        /* assume if nothing is available after a time, that nothing is
+         * coming...
+         */
+        if (stdin.available() <= 0) {
+            if (debug >= 2 ) {
+                log("runCGI stdin is NOT available ["
+                    + stdin.available() + "]");
+            }
+            try {
+                Thread.currentThread().sleep(iClientInputTimeout);
+            } catch (InterruptedException ignored) {
+            }
+        }
+        if (stdin.available() > 0) {
+            if (debug >= 2 ) {
+                log("runCGI stdin IS available ["
+                    + stdin.available() + "]");
+            }
+            bBuf = new byte[1024];
+            bufRead = -1;
+            try {
+                while ((bufRead = stdin.read(bBuf)) != -1) {
+                    if (debug >= 2 ) {
+                        log("runCGI: read [" + bufRead
+                            + "] bytes from stdin");
+                    }
+                    commandsStdIn.write(bBuf, 0, bufRead);
+                }
+                if (debug >= 2 ) {
+                    log("runCGI: DONE READING from stdin");
+                }
+            } catch (IOException ioe) {
+                //REMIND: replace with logging
+                //REMIND: should I throw this exception?
+                log("runCGI: couldn't write all bytes.");
+                ioe.printStackTrace();
+            }
+        }
     }
     commandsStdIn.flush();
     commandsStdIn.close();
@@ -452,76 +452,76 @@ public void run() throws IOException {
 
     boolean isRunning = true;
     commandsStdOut = new BufferedReader
-	(new InputStreamReader(proc.getInputStream()));
+        (new InputStreamReader(proc.getInputStream()));
     commandsStdErr = new BufferedReader
-	(new InputStreamReader(proc.getErrorStream()));
+        (new InputStreamReader(proc.getErrorStream()));
     BufferedWriter servletContainerStdout = null;
 
     try {
-	if (response.getOutputStream() != null) {
-	    servletContainerStdout =
-		new BufferedWriter(new OutputStreamWriter
-		    (response.getOutputStream()));
-	}
+        if (response.getOutputStream() != null) {
+            servletContainerStdout =
+                new BufferedWriter(new OutputStreamWriter
+                    (response.getOutputStream()));
+        }
     } catch (IOException ignored) {
-	//NOOP: no output will be written
+        //NOOP: no output will be written
     }
 
     while (isRunning) {
 
-	try {
-	    //read stderr first
-	    cBuf = new char[1024];
-	    while ((bufRead = commandsStdErr.read(cBuf)) != -1) {
-		if (servletContainerStdout != null) {
-		    servletContainerStdout.write(cBuf, 0, bufRead);
-		}
-	    }
+        try {
+            //read stderr first
+            cBuf = new char[1024];
+            while ((bufRead = commandsStdErr.read(cBuf)) != -1) {
+                if (servletContainerStdout != null) {
+                    servletContainerStdout.write(cBuf, 0, bufRead);
+                }
+            }
 
-	    //set headers
-	    String line = null;
-	    while (((line = commandsStdOut.readLine()) != null)
-		   && !("".equals(line))) {
-		if (debug >= 2) {
-		    log("runCGI: addHeader(\"" + line + "\")");
-		}
-		if (line.startsWith("HTTP")) {
-		    //TODO: should set status codes (NPH support)
-		    /*
-		     * response.setStatus(getStatusCode(line));
-		     */
-		} else {
-		    response.addHeader
-			(line.substring(0, line.indexOf(":")).trim(),
-			 line.substring(line.indexOf(":") + 1).trim());
-		}
-	    }
+            //set headers
+            String line = null;
+            while (((line = commandsStdOut.readLine()) != null)
+                   && !("".equals(line))) {
+                if (debug >= 2) {
+                    log("runCGI: addHeader(\"" + line + "\")");
+                }
+                if (line.startsWith("HTTP")) {
+                    //TODO: should set status codes (NPH support)
+                    /*
+                     * response.setStatus(getStatusCode(line));
+                     */
+                } else {
+                    response.addHeader
+                        (line.substring(0, line.indexOf(":")).trim(),
+                         line.substring(line.indexOf(":") + 1).trim());
+                }
+            }
 
-	    //write output
-	    cBuf = new char[1024];
-	    while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
-		if (servletContainerStdout != null) {
-		    if (debug >= 4) {
-			log("runCGI: write(\"" + cBuf + "\")");
-		    }
-		    servletContainerStdout.write(cBuf, 0, bufRead);
-		}
-	    }
+            //write output
+            cBuf = new char[1024];
+            while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
+                if (servletContainerStdout != null) {
+                    if (debug >= 4) {
+                        log("runCGI: write(\"" + cBuf + "\")");
+                    }
+                    servletContainerStdout.write(cBuf, 0, bufRead);
+                }
+            }
 
-	    if (servletContainerStdout != null) {
-		servletContainerStdout.flush();
-	    }
+            if (servletContainerStdout != null) {
+                servletContainerStdout.flush();
+            }
 
-	    proc.exitValue(); // Throws exception if alive
-	
-	    isRunning = false;
+            proc.exitValue(); // Throws exception if alive
 
-	} catch (IllegalThreadStateException e) {
-	    try {
-		Thread.currentThread().sleep(500);
-	    } catch (InterruptedException ignored) {
-	    }
-	}
+            isRunning = false;
+
+        } catch (IllegalThreadStateException e) {
+            try {
+                Thread.currentThread().sleep(500);
+            } catch (InterruptedException ignored) {
+            }
+        }
     } //replacement for Process.waitFor()
 
 
@@ -542,20 +542,20 @@ protected String getPostInput(Hashtable params) {
     StringBuffer postInput = new StringBuffer("");
     StringBuffer qs = new StringBuffer("");
     if (paramNames != null && paramNames.hasMoreElements()) {
-	while (paramNames.hasMoreElements()) {
-	    String k = (String) paramNames.nextElement();
-	    String v = params.get(k).toString();
-	    if ((k.indexOf("=") < 0) && (v.indexOf("=") < 0)) {
-		postInput.append(k);
-		qs.append(k);
-		postInput.append("=");
-		qs.append("=");
-		postInput.append(v);
-		qs.append(v);
-		postInput.append(lineSeparator);
-		qs.append("&");
-	    }
-	}
+        while (paramNames.hasMoreElements()) {
+            String k = (String) paramNames.nextElement();
+            String v = params.get(k).toString();
+            if ((k.indexOf("=") < 0) && (v.indexOf("=") < 0)) {
+                postInput.append(k);
+                qs.append(k);
+                postInput.append("=");
+                qs.append("=");
+                postInput.append(v);
+                qs.append(v);
+                postInput.append(lineSeparator);
+                qs.append("&");
+            }
+        }
     }
     qs.append(lineSeparator);
     return qs.append(postInput).toString();

@@ -129,14 +129,14 @@ final class StandardWrapperValve
      * The descriptive information related to this implementation.
      */
     private static final String info =
-	"org.apache.catalina.core.StandardWrapperValve/1.0";
+        "org.apache.catalina.core.StandardWrapperValve/1.0";
 
 
     /**
      * The string manager for this package.
      */
     private static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------------------- Properties
@@ -147,7 +147,7 @@ final class StandardWrapperValve
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -168,21 +168,21 @@ final class StandardWrapperValve
      */
     public void invoke(Request request, Response response,
                        ValveContext valveContext)
-	throws IOException, ServletException {
+        throws IOException, ServletException {
 
-	// Initialize local variables we may need
-	boolean unavailable = false;
-	Throwable throwable = null;
-	StandardWrapper wrapper = (StandardWrapper) getContainer();
-	ServletRequest sreq = request.getRequest();
-	ServletResponse sres = response.getResponse();
-	Servlet servlet = null;
-	HttpServletRequest hreq = null;
-	if (sreq instanceof HttpServletRequest)
-	    hreq = (HttpServletRequest) sreq;
-	HttpServletResponse hres = null;
-	if (sres instanceof HttpServletResponse)
-	    hres = (HttpServletResponse) sres;
+        // Initialize local variables we may need
+        boolean unavailable = false;
+        Throwable throwable = null;
+        StandardWrapper wrapper = (StandardWrapper) getContainer();
+        ServletRequest sreq = request.getRequest();
+        ServletResponse sres = response.getResponse();
+        Servlet servlet = null;
+        HttpServletRequest hreq = null;
+        if (sreq instanceof HttpServletRequest)
+            hreq = (HttpServletRequest) sreq;
+        HttpServletResponse hres = null;
+        if (sres instanceof HttpServletResponse)
+            hres = (HttpServletResponse) sres;
 
         // Check for the application being marked unavailable
         if (!((Context) wrapper.getParent()).getAvailable()) {
@@ -191,117 +191,117 @@ final class StandardWrapperValve
             unavailable = true;
         }
 
-	// Check for the servlet being marked unavailable
-	if (!unavailable && wrapper.isUnavailable()) {
-	    log(sm.getString("standardWrapper.isUnavailable",
-			     wrapper.getName()));
-	    if (hres == null) {
-		;	// NOTE - Not much we can do generically
-	    } else {
-		long available = wrapper.getAvailable();
-		if ((available > 0L) && (available < Long.MAX_VALUE))
-		    hres.setDateHeader("Retry-After", available);
-		hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
-			       sm.getString("standardWrapper.isUnavailable",
-					    wrapper.getName()));
-	    }
-	    unavailable = true;
-	}
+        // Check for the servlet being marked unavailable
+        if (!unavailable && wrapper.isUnavailable()) {
+            log(sm.getString("standardWrapper.isUnavailable",
+                             wrapper.getName()));
+            if (hres == null) {
+                ;       // NOTE - Not much we can do generically
+            } else {
+                long available = wrapper.getAvailable();
+                if ((available > 0L) && (available < Long.MAX_VALUE))
+                    hres.setDateHeader("Retry-After", available);
+                hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                               sm.getString("standardWrapper.isUnavailable",
+                                            wrapper.getName()));
+            }
+            unavailable = true;
+        }
 
-	// Allocate a servlet instance to process this request
-	try {
-	    if (!unavailable) {
-		servlet = wrapper.allocate();
-	    }
-	} catch (ServletException e) {
-	    log(sm.getString("standardWrapper.allocateException",
-			     wrapper.getName()), e);
-	    throwable = e;
-	    exception(request, response, e);
-	    servlet = null;
-	} catch (Throwable e) {
-	    log(sm.getString("standardWrapper.allocateException",
-			     wrapper.getName()), e);
-	    throwable = e;
-	    exception(request, response, e);
-	    servlet = null;
-	}
+        // Allocate a servlet instance to process this request
+        try {
+            if (!unavailable) {
+                servlet = wrapper.allocate();
+            }
+        } catch (ServletException e) {
+            log(sm.getString("standardWrapper.allocateException",
+                             wrapper.getName()), e);
+            throwable = e;
+            exception(request, response, e);
+            servlet = null;
+        } catch (Throwable e) {
+            log(sm.getString("standardWrapper.allocateException",
+                             wrapper.getName()), e);
+            throwable = e;
+            exception(request, response, e);
+            servlet = null;
+        }
 
-	// Create the filter chain for this request
+        // Create the filter chain for this request
         ApplicationFilterChain filterChain =
           createFilterChain(request, servlet);
 
-	// Call the filter chain for this request
+        // Call the filter chain for this request
         // NOTE: This also calls the servlet's service() method
-	try {
+        try {
             String jspFile = wrapper.getJspFile();
             if (jspFile != null)
                 sreq.setAttribute(Globals.JSP_FILE_ATTR, jspFile);
             else
                 sreq.removeAttribute(Globals.JSP_FILE_ATTR);
-	    if ((servlet != null) && (filterChain != null)) {
+            if ((servlet != null) && (filterChain != null)) {
                 filterChain.doFilter(sreq, sres);
-	    }
+            }
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
-	} catch (IOException e) {
+        } catch (IOException e) {
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
-	    log(sm.getString("standardWrapper.serviceException",
-			     wrapper.getName()), e);
-	    ;	// No reporting to the response
-	    ;	// No change in availability status
-	} catch (UnavailableException e) {
+            log(sm.getString("standardWrapper.serviceException",
+                             wrapper.getName()), e);
+            ;   // No reporting to the response
+            ;   // No change in availability status
+        } catch (UnavailableException e) {
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
-	    log(sm.getString("standardWrapper.serviceException",
-			     wrapper.getName()), e);
-	    throwable = e;
-	    exception(request, response, e);
-	    wrapper.unavailable(e);
-	} catch (ServletException e) {
+            log(sm.getString("standardWrapper.serviceException",
+                             wrapper.getName()), e);
+            throwable = e;
+            exception(request, response, e);
+            wrapper.unavailable(e);
+        } catch (ServletException e) {
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
-	    log(sm.getString("standardWrapper.serviceException",
-			     wrapper.getName()), e);
-	    throwable = e;
-	    exception(request, response, e);
-	} catch (Throwable e) {
+            log(sm.getString("standardWrapper.serviceException",
+                             wrapper.getName()), e);
+            throwable = e;
+            exception(request, response, e);
+        } catch (Throwable e) {
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
-	    log(sm.getString("standardWrapper.serviceException",
-			     wrapper.getName()), e);
-	    throwable = e;
-	    exception(request, response, e);
-	}
+            log(sm.getString("standardWrapper.serviceException",
+                             wrapper.getName()), e);
+            throwable = e;
+            exception(request, response, e);
+        }
 
-	// Release the filter chain (if any) for this request
-	try {
+        // Release the filter chain (if any) for this request
+        try {
             if (filterChain != null)
                 filterChain.release();
-	} catch (Throwable e) {
-	    log(sm.getString("standardWrapper.releaseFilters",
-			     wrapper.getName()), e);
-	    throwable = e;
-	    exception(request, response, e);
-	}
+        } catch (Throwable e) {
+            log(sm.getString("standardWrapper.releaseFilters",
+                             wrapper.getName()), e);
+            throwable = e;
+            exception(request, response, e);
+        }
 
-	// Deallocate the allocated servlet instance
-	try {
-	    if (servlet != null) {
-		wrapper.deallocate(servlet);
-	    }
-	} catch (ServletException e) {
-	    log(sm.getString("standardWrapper.deallocateException",
-			     wrapper.getName()), e);
-	    throwable = e;
-	    exception(request, response, e);
-	} catch (Throwable e) {
-	    log(sm.getString("standardWrapper.deallocateException",
-			     wrapper.getName()), e);
-	    throwable = e;
-	    exception(request, response, e);
-	}
+        // Deallocate the allocated servlet instance
+        try {
+            if (servlet != null) {
+                wrapper.deallocate(servlet);
+            }
+        } catch (ServletException e) {
+            log(sm.getString("standardWrapper.deallocateException",
+                             wrapper.getName()), e);
+            throwable = e;
+            exception(request, response, e);
+        } catch (Throwable e) {
+            log(sm.getString("standardWrapper.deallocateException",
+                             wrapper.getName()), e);
+            throwable = e;
+            exception(request, response, e);
+        }
 
-	// Generate a response for the generated HTTP status and message
-	if (throwable == null) {
-	    status(request, response);
-	}
+        // Generate a response for the generated HTTP status and message
+        if (throwable == null) {
+            status(request, response);
+        }
 
     }
 
@@ -430,49 +430,49 @@ final class StandardWrapperValve
      * @param errorPage The errorPage directive we are obeying
      */
     private boolean custom(Request request, Response response,
-			   ErrorPage errorPage) {
+                           ErrorPage errorPage) {
 
-	if (debug >= 1)
-	    log("Processing " + errorPage);
+        if (debug >= 1)
+            log("Processing " + errorPage);
 
-	// Validate our current environment
-	if (!(request instanceof HttpRequest)) {
-	    if (debug >= 1)
-		log(" Not processing an HTTP request --> default handling");
-	    return (false);	// NOTE - Nothing we can do generically
-	}
-	HttpServletRequest hreq =
-	    (HttpServletRequest) request.getRequest();
-	if (!(response instanceof HttpResponse)) {
-	    if (debug >= 1)
-		log("Not processing an HTTP response --> default handling");
-	    return (false);	// NOTE - Nothing we can do generically
-	}
-	HttpServletResponse hres =
-	    (HttpServletResponse) response.getResponse();
+        // Validate our current environment
+        if (!(request instanceof HttpRequest)) {
+            if (debug >= 1)
+                log(" Not processing an HTTP request --> default handling");
+            return (false);     // NOTE - Nothing we can do generically
+        }
+        HttpServletRequest hreq =
+            (HttpServletRequest) request.getRequest();
+        if (!(response instanceof HttpResponse)) {
+            if (debug >= 1)
+                log("Not processing an HTTP response --> default handling");
+            return (false);     // NOTE - Nothing we can do generically
+        }
+        HttpServletResponse hres =
+            (HttpServletResponse) response.getResponse();
 
-	try {
+        try {
 
-	    // Reset the response if possible (else IllegalStateException)
-	    hres.reset();
+            // Reset the response if possible (else IllegalStateException)
+            hres.reset();
 
-	    // Forward control to the specified location
-	    ServletContext servletContext =
-		((Context) container.getParent()).getServletContext();
-	    RequestDispatcher rd =
-		servletContext.getRequestDispatcher(errorPage.getLocation());
-	    rd.forward(hreq, hres);
+            // Forward control to the specified location
+            ServletContext servletContext =
+                ((Context) container.getParent()).getServletContext();
+            RequestDispatcher rd =
+                servletContext.getRequestDispatcher(errorPage.getLocation());
+            rd.forward(hreq, hres);
 
-	    // Indicate that we have successfully processed this custom page
-	    return (true);
+            // Indicate that we have successfully processed this custom page
+            return (true);
 
-	} catch (Throwable t) {
+        } catch (Throwable t) {
 
-	    // Report our failure to process this custom page
-	    log("Exception Processing " + errorPage, t);
-	    return (false);
+            // Report our failure to process this custom page
+            log("Exception Processing " + errorPage, t);
+            return (false);
 
-	}
+        }
 
     }
 
@@ -489,12 +489,12 @@ final class StandardWrapperValve
      *  a root cause exception
      */
     private void exception(Request request, Response response,
-			   Throwable exception) {
+                           Throwable exception) {
 
-	// Handle a custom error page for this status code
+        // Handle a custom error page for this status code
         if (debug >= 1)
             log("Handling exception: " + exception);
-	Context context = (Context) container.getParent();
+        Context context = (Context) container.getParent();
         Throwable realError = exception;
         ErrorPage errorPage = findErrorPage(context, realError);
         if ((errorPage == null) && (realError instanceof ServletException)) {
@@ -504,7 +504,7 @@ final class StandardWrapperValve
             else
                 realError = exception;
         }
-	if (errorPage != null) {
+        if (errorPage != null) {
             //            if (debug >= 1)
             //                log(" Sending to custom error page " + errorPage);
             ServletRequest sreq = request.getRequest();
@@ -518,97 +518,97 @@ final class StandardWrapperValve
             if (sreq instanceof HttpServletRequest)
                 sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
                                   ((HttpServletRequest) sreq).getRequestURI());
-	    sreq.setAttribute(Globals.EXCEPTION_TYPE_ATTR,
+            sreq.setAttribute(Globals.EXCEPTION_TYPE_ATTR,
                               exception.getClass());
             if (custom(request, response, errorPage))
-		return;
-	}
+                return;
+        }
 
         // The response is an error
         response.setError();
 
-	// Reset the response (if possible)
+        // Reset the response (if possible)
         //        if (debug >= 1)
         //            log(" Resetting response");
-	try {
-	    response.getResponse().reset();
-	} catch (IllegalStateException e) {
+        try {
+            response.getResponse().reset();
+        } catch (IllegalStateException e) {
             //            if (debug >= 1)
             //                log("  IllegalStateException: " + e.toString());
-	    ;
-	}
+            ;
+        }
 
-	// Indicate an INTERNAL SERVER ERROR status (if possible)
-	try {
+        // Indicate an INTERNAL SERVER ERROR status (if possible)
+        try {
             //            if (debug >= 1)
             //                log(" Sending INTERNAL_SERVER_ERROR");
-	    ServletResponse sresponse = response.getResponse();
-	    if (sresponse instanceof HttpServletResponse)
-		((HttpServletResponse) sresponse).sendError
-		    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-	} catch (IllegalStateException e) {
+            ServletResponse sresponse = response.getResponse();
+            if (sresponse instanceof HttpServletResponse)
+                ((HttpServletResponse) sresponse).sendError
+                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (IllegalStateException e) {
             //            if (debug >= 1)
             //                log("  IllegalStateException: " + e.toString());
-	    ;
-	} catch (IOException e) {
+            ;
+        } catch (IOException e) {
             //            if (debug >= 1)
             //                log("  IOException: " + e.toString());
-	    ;
-	}
+            ;
+        }
 
-	// Render a default HTML exception report page
-	Throwable rootCause = null;
-	if (exception instanceof ServletException)
-	    rootCause = ((ServletException) exception).getRootCause();
-	try {
+        // Render a default HTML exception report page
+        Throwable rootCause = null;
+        if (exception instanceof ServletException)
+            rootCause = ((ServletException) exception).getRootCause();
+        try {
             //            if (debug >= 1)
             //                log(" Setting content type to text/html");
-	    try {
-		response.getResponse().setContentType("text/html");
-	    } catch (Throwable t) {
+            try {
+                response.getResponse().setContentType("text/html");
+            } catch (Throwable t) {
                 //                if (debug >= 1)
                 //                    log("  Throwable: " + t.toString());
-		;
-	    }
+                ;
+            }
             //            if (debug >= 1)
             //                log(" Getting reporter writer");
-	    PrintWriter writer = response.getReporter();
+            PrintWriter writer = response.getReporter();
             //            if (debug >= 1)
             //                log(" Writing standard error report page");
-	    writer.println("<html>");
-	    writer.println("<head>");
-	    writer.println("<title>" +
-			   sm.getString("standardWrapper.exception0") +
-			   "</title>");
-	    writer.println("</head>");
-	    writer.println("<body bgcolor=\"white\">");
-	    writer.println("<br><br>");
-	    writer.println("<h1>" +
-			   sm.getString("standardWrapper.exception1") +
-			   "</h1>");
-	    if (rootCause != null)
-		writer.println("<h3>" +
-			       sm.getString("standardWrapper.exception2") +
-			       "</h3>");
-	    writer.println("<pre>");
-	    exception.printStackTrace(writer);
-	    writer.println("</pre>");
-	    if (rootCause != null) {
-		writer.println("<h3>" +
-			       sm.getString("standardWrapper.exception3") +
-			       "</h3>");
-		writer.println("<pre>");
-		rootCause.printStackTrace(writer);
-		writer.println("</pre>");
-	    }
-	    writer.println("</body>");
-	    writer.println("</html>");
-	    writer.flush();
-	} catch (IllegalStateException e) {
+            writer.println("<html>");
+            writer.println("<head>");
+            writer.println("<title>" +
+                           sm.getString("standardWrapper.exception0") +
+                           "</title>");
+            writer.println("</head>");
+            writer.println("<body bgcolor=\"white\">");
+            writer.println("<br><br>");
+            writer.println("<h1>" +
+                           sm.getString("standardWrapper.exception1") +
+                           "</h1>");
+            if (rootCause != null)
+                writer.println("<h3>" +
+                               sm.getString("standardWrapper.exception2") +
+                               "</h3>");
+            writer.println("<pre>");
+            exception.printStackTrace(writer);
+            writer.println("</pre>");
+            if (rootCause != null) {
+                writer.println("<h3>" +
+                               sm.getString("standardWrapper.exception3") +
+                               "</h3>");
+                writer.println("<pre>");
+                rootCause.printStackTrace(writer);
+                writer.println("</pre>");
+            }
+            writer.println("</body>");
+            writer.println("</html>");
+            writer.flush();
+        } catch (IllegalStateException e) {
             //            if (debug >= 1)
             //                log("  IllegalStateException:", e);
-	    ;
-	}
+            ;
+        }
         //        if (debug >= 1)
         //            log(" Finished with exception() report");
 
@@ -651,19 +651,19 @@ final class StandardWrapperValve
      */
     private void log(String message) {
 
-	Logger logger = null;
-	if (container != null)
-	    logger = container.getLogger();
-	if (logger != null)
-	    logger.log("StandardWrapperValve[" + container.getName() + "]: "
-		       + message);
-	else {
-	    String containerName = null;
-	    if (container != null)
-		containerName = container.getName();
-	    System.out.println("StandardWrapperValve[" + containerName
-			       + "]: " + message);
-	}
+        Logger logger = null;
+        if (container != null)
+            logger = container.getLogger();
+        if (logger != null)
+            logger.log("StandardWrapperValve[" + container.getName() + "]: "
+                       + message);
+        else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println("StandardWrapperValve[" + containerName
+                               + "]: " + message);
+        }
 
     }
 
@@ -676,21 +676,21 @@ final class StandardWrapperValve
      */
     private void log(String message, Throwable throwable) {
 
-	Logger logger = null;
-	if (container != null)
-	    logger = container.getLogger();
-	if (logger != null)
-	    logger.log("StandardWrapperValve[" + container.getName() + "]: "
-		       + message, throwable);
-	else {
-	    String containerName = null;
-	    if (container != null)
-		containerName = container.getName();
-	    System.out.println("StandardWrapperValve[" + containerName
-			       + "]: " + message);
-	    System.out.println("" + throwable);
-	    throwable.printStackTrace(System.out);
-	}
+        Logger logger = null;
+        if (container != null)
+            logger = container.getLogger();
+        if (logger != null)
+            logger.log("StandardWrapperValve[" + container.getName() + "]: "
+                       + message, throwable);
+        else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println("StandardWrapperValve[" + containerName
+                               + "]: " + message);
+            System.out.println("" + throwable);
+            throwable.printStackTrace(System.out);
+        }
 
     }
 
@@ -704,16 +704,16 @@ final class StandardWrapperValve
      * @param servletName Servlet name being checked
      */
     private boolean matchFiltersServlet(FilterMap filterMap,
-					String servletName) {
+                                        String servletName) {
 
-//	if (debug >= 3)
-//	    log("  Matching servlet name '" + servletName +
-//		"' against mapping " + filterMap);
+//      if (debug >= 3)
+//          log("  Matching servlet name '" + servletName +
+//              "' against mapping " + filterMap);
 
-	if (servletName == null)
-	    return (false);
-	else
-	    return (servletName.equals(filterMap.getServletName()));
+        if (servletName == null)
+            return (false);
+        else
+            return (servletName.equals(filterMap.getServletName()));
 
     }
 
@@ -727,51 +727,51 @@ final class StandardWrapperValve
      * @param requestPath Context-relative request path of this request
      */
     private boolean matchFiltersURL(FilterMap filterMap,
-				    String requestPath) {
+                                    String requestPath) {
 
-//	if (debug >= 3)
-//	    log("  Matching request path '" + requestPath +
-//		"' against mapping " + filterMap);
+//      if (debug >= 3)
+//          log("  Matching request path '" + requestPath +
+//              "' against mapping " + filterMap);
 
-	if (requestPath == null)
-	    return (false);
+        if (requestPath == null)
+            return (false);
 
-	// Match on context relative request path
-	String testPath = filterMap.getURLPattern();
-	if (testPath == null)
-	    return (false);
+        // Match on context relative request path
+        String testPath = filterMap.getURLPattern();
+        if (testPath == null)
+            return (false);
 
-	// Case 1 - Exact Match
-	if (testPath.equals(requestPath))
-	    return (true);
+        // Case 1 - Exact Match
+        if (testPath.equals(requestPath))
+            return (true);
 
-	// Case 2 - Path Match ("/.../*")
-	if (testPath.equals("/*"))
-	    return (true);	// Optimize a common case
-	if (testPath.endsWith("/*")) {
-	    String comparePath = requestPath;
-	    while (true) {
-		if (testPath.equals(comparePath + "/*"))
-		    return (true);
-		int slash = comparePath.lastIndexOf('/');
-		if (slash < 0)
-		    break;
-		comparePath = comparePath.substring(0, slash);
-	    }
-	    return (false);
-	}
+        // Case 2 - Path Match ("/.../*")
+        if (testPath.equals("/*"))
+            return (true);      // Optimize a common case
+        if (testPath.endsWith("/*")) {
+            String comparePath = requestPath;
+            while (true) {
+                if (testPath.equals(comparePath + "/*"))
+                    return (true);
+                int slash = comparePath.lastIndexOf('/');
+                if (slash < 0)
+                    break;
+                comparePath = comparePath.substring(0, slash);
+            }
+            return (false);
+        }
 
-	// Case 3 - Extension Match
-	if (testPath.startsWith("*.")) {
-	    int slash = requestPath.lastIndexOf('/');
-	    int period = requestPath.lastIndexOf('.');
-	    if ((slash >= 0) && (period > slash))
-		return (testPath.equals("*." +
-					requestPath.substring(period + 1)));
-	}
+        // Case 3 - Extension Match
+        if (testPath.startsWith("*.")) {
+            int slash = requestPath.lastIndexOf('/');
+            int period = requestPath.lastIndexOf('.');
+            if ((slash >= 0) && (period > slash))
+                return (testPath.equals("*." +
+                                        requestPath.substring(period + 1)));
+        }
 
-	// Case 4 - "Default" Match
-	return (false);	// NOTE - Not relevant for selecting filters
+        // Case 4 - "Default" Match
+        return (false); // NOTE - Not relevant for selecting filters
 
     }
 
@@ -787,40 +787,40 @@ final class StandardWrapperValve
      */
     private void status(Request request, Response response) {
 
-	// Do nothing on non-HTTP responses
-	if (!(response instanceof HttpResponse))
-	    return;
-	HttpResponse hresponse = (HttpResponse) response;
-	if (!(response.getResponse() instanceof HttpServletResponse))
-	    return;
-	HttpServletResponse hres =
-	    (HttpServletResponse) response.getResponse();
-	int statusCode = hresponse.getStatus();
-	String message = RequestUtil.filter(hresponse.getMessage());
-	if (message == null)
-	    message = "";
+        // Do nothing on non-HTTP responses
+        if (!(response instanceof HttpResponse))
+            return;
+        HttpResponse hresponse = (HttpResponse) response;
+        if (!(response.getResponse() instanceof HttpServletResponse))
+            return;
+        HttpServletResponse hres =
+            (HttpServletResponse) response.getResponse();
+        int statusCode = hresponse.getStatus();
+        String message = RequestUtil.filter(hresponse.getMessage());
+        if (message == null)
+            message = "";
 
-	// Do nothing on a 1xx status
-	if (statusCode < 200)
-	    return;
-	// Do nothing on an OK status
-	if (statusCode == HttpServletResponse.SC_OK)
-	    return;
-	// Do nothing on a NO MODIFIED status
-	if (statusCode == HttpServletResponse.SC_NOT_MODIFIED)
-	    return;
-	// Do nothing on a NO CONTENT status
-	if (statusCode == HttpServletResponse.SC_NO_CONTENT)
-	    return;
+        // Do nothing on a 1xx status
+        if (statusCode < 200)
+            return;
+        // Do nothing on an OK status
+        if (statusCode == HttpServletResponse.SC_OK)
+            return;
+        // Do nothing on a NO MODIFIED status
+        if (statusCode == HttpServletResponse.SC_NOT_MODIFIED)
+            return;
+        // Do nothing on a NO CONTENT status
+        if (statusCode == HttpServletResponse.SC_NO_CONTENT)
+            return;
 
-	// Handle a custom error page for this status code
-	Context context = (Context) container.getParent();
-	ErrorPage errorPage = context.findErrorPage(statusCode);
-	if (errorPage != null) {
+        // Handle a custom error page for this status code
+        Context context = (Context) container.getParent();
+        ErrorPage errorPage = context.findErrorPage(statusCode);
+        if (errorPage != null) {
             ServletRequest sreq = request.getRequest();
-	    sreq.setAttribute(Globals.STATUS_CODE_ATTR,
+            sreq.setAttribute(Globals.STATUS_CODE_ATTR,
                               new Integer(statusCode));
-	    sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
+            sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
                               message);
             Wrapper wrapper = (Wrapper) getContainer();
             sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
@@ -828,38 +828,38 @@ final class StandardWrapperValve
             if (sreq instanceof HttpServletRequest)
                 sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
                                   ((HttpServletRequest) sreq).getRequestURI());
-	    if (custom(request, response, errorPage))
-		return;
-	}
+            if (custom(request, response, errorPage))
+                return;
+        }
 
-	// Do nothing if there is no report for the specified status code
-	String report = null;
-	try {
-	    report = sm.getString("http." + statusCode, message);
-	} catch (Throwable t) {
-	    ;
-	}
-	if (report == null)
-	    return;
+        // Do nothing if there is no report for the specified status code
+        String report = null;
+        try {
+            report = sm.getString("http." + statusCode, message);
+        } catch (Throwable t) {
+            ;
+        }
+        if (report == null)
+            return;
 
-	// Reset the response data buffer (if possible)
+        // Reset the response data buffer (if possible)
         try {
             if (hresponse.isError())
                 hresponse.reset(statusCode, message);
-	} catch (Throwable e) {
+        } catch (Throwable e) {
             if (debug >= 1)
                 log("status.reset", e);
-	}
-        
-	// Render a default HTML status report page
-	try {
-	    try {
-		hres.setContentType("text/html; charset=UTF-8");
-	    } catch (Throwable t) {
+        }
+
+        // Render a default HTML status report page
+        try {
+            try {
+                hres.setContentType("text/html; charset=UTF-8");
+            } catch (Throwable t) {
                 if (debug >= 1)
                     log("status.setContentType", t);
-	    }
-	    PrintWriter writer = response.getReporter();
+            }
+            PrintWriter writer = response.getReporter();
             if (writer != null) {
                 writer.println("<html>");
                 writer.println("<head>");
@@ -878,10 +878,10 @@ final class StandardWrapperValve
                 writer.println("</html>");
                 writer.flush();
             }
-	} catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             if (debug >= 1)
                 log("status.write", e);
-	}
+        }
 
 
     }

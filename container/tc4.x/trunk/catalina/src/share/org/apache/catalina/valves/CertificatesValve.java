@@ -155,7 +155,7 @@ public final class CertificatesValve
      * The descriptive information related to this implementation.
      */
     protected static final String info =
-	"org.apache.catalina.valves.CertificatesValve/1.0";
+        "org.apache.catalina.valves.CertificatesValve/1.0";
 
 
     /**
@@ -168,7 +168,7 @@ public final class CertificatesValve
      * The StringManager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -205,7 +205,7 @@ public final class CertificatesValve
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -226,7 +226,7 @@ public final class CertificatesValve
      */
     public void invoke(Request request, Response response,
                        ValveContext context)
-	throws IOException, ServletException {
+        throws IOException, ServletException {
 
         // Identify the underlying request if this request was wrapped
         Request actual = request;
@@ -351,14 +351,14 @@ public final class CertificatesValve
      */
     protected void expose(Request request, Request actual) {
 
-	// Ensure that this request came in on an SSLSocket
+        // Ensure that this request came in on an SSLSocket
         if (actual.getSocket() == null)
             return;
         if (!(actual.getSocket() instanceof SSLSocket))
             return;
         SSLSocket socket = (SSLSocket) actual.getSocket();
 
-	// Look up the current SSLSession
+        // Look up the current SSLSession
         SSLSession session = socket.getSession();
         if (session == null)
             return;
@@ -388,39 +388,39 @@ public final class CertificatesValve
         //            log(" expose: Has cipher suite " + cipherSuite +
         //                " and key size " + keySize);
 
-	// If we have cached certificates, return them
-	Object cached = session.getValue(Globals.CERTIFICATES_ATTR);
-	if (cached != null) {
+        // If we have cached certificates, return them
+        Object cached = session.getValue(Globals.CERTIFICATES_ATTR);
+        if (cached != null) {
             //            if (debug >= 2)
             //                log(" expose: Has cached certificates");
-	    request.getRequest().setAttribute(Globals.CERTIFICATES_ATTR,
-	                                      cached);
-	    return;
+            request.getRequest().setAttribute(Globals.CERTIFICATES_ATTR,
+                                              cached);
+            return;
         }
 
-	// Convert JSSE's certificate format to the ones we need
+        // Convert JSSE's certificate format to the ones we need
         X509Certificate jsseCerts[] = null;
-	java.security.cert.X509Certificate x509Certs[] = null;
+        java.security.cert.X509Certificate x509Certs[] = null;
         try {
             jsseCerts = session.getPeerCertificateChain();
-	    if (jsseCerts == null)
-	        jsseCerts = new X509Certificate[0];
-	    x509Certs =
+            if (jsseCerts == null)
+                jsseCerts = new X509Certificate[0];
+            x509Certs =
               new java.security.cert.X509Certificate[jsseCerts.length];
-	    for (int i = 0; i < x509Certs.length; i++) {
-		byte buffer[] = jsseCerts[i].getEncoded();
-		CertificateFactory cf =
-		  CertificateFactory.getInstance("X.509");
-		ByteArrayInputStream stream =
-		  new ByteArrayInputStream(buffer);
-		x509Certs[i] = (java.security.cert.X509Certificate)
-		  cf.generateCertificate(stream);
-	    }
+            for (int i = 0; i < x509Certs.length; i++) {
+                byte buffer[] = jsseCerts[i].getEncoded();
+                CertificateFactory cf =
+                  CertificateFactory.getInstance("X.509");
+                ByteArrayInputStream stream =
+                  new ByteArrayInputStream(buffer);
+                x509Certs[i] = (java.security.cert.X509Certificate)
+                  cf.generateCertificate(stream);
+            }
         } catch (Throwable t) {
             return;
         }
 
-	// Expose these certificates as a request attribute
+        // Expose these certificates as a request attribute
         if ((x509Certs == null) || (x509Certs.length < 1))
             return;
         session.putValue(Globals.CERTIFICATES_ATTR, x509Certs);
@@ -438,13 +438,13 @@ public final class CertificatesValve
      */
     protected void log(String message) {
 
-	Logger logger = container.getLogger();
-	if (logger != null)
-	    logger.log("CertificatesValve[" + container.getName() + "]: " +
-		       message);
-	else
-	    System.out.println("CertificatesValve[" + container.getName() +
-			       "]: " + message);
+        Logger logger = container.getLogger();
+        if (logger != null)
+            logger.log("CertificatesValve[" + container.getName() + "]: " +
+                       message);
+        else
+            System.out.println("CertificatesValve[" + container.getName() +
+                               "]: " + message);
 
     }
 
@@ -457,15 +457,15 @@ public final class CertificatesValve
      */
     protected void log(String message, Throwable throwable) {
 
-	Logger logger = container.getLogger();
-	if (logger != null)
-	    logger.log("CertificatesValve[" + container.getName() + "]: " +
-		       message, throwable);
-	else {
-	    System.out.println("CertificatesValve[" + container.getName() +
+        Logger logger = container.getLogger();
+        if (logger != null)
+            logger.log("CertificatesValve[" + container.getName() + "]: " +
+                       message, throwable);
+        else {
+            System.out.println("CertificatesValve[" + container.getName() +
                                "]: " + message);
-	    throwable.printStackTrace(System.out);
-	}
+            throwable.printStackTrace(System.out);
+        }
 
     }
 
@@ -479,14 +479,14 @@ public final class CertificatesValve
      */
     protected void verify(Request request, Request actual) {
 
-	// Ensure that this request came in on an SSLSocket
+        // Ensure that this request came in on an SSLSocket
         if (actual.getSocket() == null)
             return;
         if (!(actual.getSocket() instanceof SSLSocket))
             return;
         SSLSocket socket = (SSLSocket) actual.getSocket();
 
-	// Look up the current SSLSession
+        // Look up the current SSLSession
         SSLSession session = socket.getSession();
         if (session == null)
             return;

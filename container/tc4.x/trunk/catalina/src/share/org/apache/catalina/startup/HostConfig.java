@@ -132,7 +132,7 @@ public final class HostConfig
      * The string resources for this package.
      */
     private static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------------------- Properties
@@ -143,7 +143,7 @@ public final class HostConfig
      */
     public String getConfigClass() {
 
-	return (this.configClass);
+        return (this.configClass);
 
     }
 
@@ -155,7 +155,7 @@ public final class HostConfig
      */
     public void setConfigClass(String configClass) {
 
-	this.configClass = configClass;
+        this.configClass = configClass;
 
     }
 
@@ -165,7 +165,7 @@ public final class HostConfig
      */
     public String getContextClass() {
 
-	return (this.contextClass);
+        return (this.contextClass);
 
     }
 
@@ -177,7 +177,7 @@ public final class HostConfig
      */
     public void setContextClass(String contextClass) {
 
-	this.contextClass = contextClass;
+        this.contextClass = contextClass;
 
     }
 
@@ -187,7 +187,7 @@ public final class HostConfig
      */
     public int getDebug() {
 
-	return (this.debug);
+        return (this.debug);
 
     }
 
@@ -199,7 +199,7 @@ public final class HostConfig
      */
     public void setDebug(int debug) {
 
-	this.debug = debug;
+        this.debug = debug;
 
     }
 
@@ -214,24 +214,24 @@ public final class HostConfig
      */
     public void lifecycleEvent(LifecycleEvent event) {
 
-	// Identify the host we are associated with
-	try {
-	    host = (Host) event.getLifecycle();
+        // Identify the host we are associated with
+        try {
+            host = (Host) event.getLifecycle();
             if (host instanceof StandardHost) {
                 int hostDebug = ((StandardHost) host).getDebug();
                 if (hostDebug > this.debug)
                     this.debug = hostDebug;
             }
-	} catch (ClassCastException e) {
-	    log(sm.getString("hostConfig.cce", event.getLifecycle()), e);
-	    return;
-	}
+        } catch (ClassCastException e) {
+            log(sm.getString("hostConfig.cce", event.getLifecycle()), e);
+            return;
+        }
 
-	// Process the event that has occurred
-	if (event.getType().equals(Lifecycle.START_EVENT))
-	    start();
-	else if (event.getType().equals(Lifecycle.STOP_EVENT))
-	    stop();
+        // Process the event that has occurred
+        if (event.getType().equals(Lifecycle.START_EVENT))
+            start();
+        else if (event.getType().equals(Lifecycle.STOP_EVENT))
+            stop();
 
     }
 
@@ -245,11 +245,11 @@ public final class HostConfig
      */
     private File appBase() {
 
-	File file = new File(host.getAppBase());
-	if (!file.isAbsolute())
-	    file = new File(System.getProperty("catalina.home"),
-	    		    host.getAppBase());
-	return (file);
+        File file = new File(host.getAppBase());
+        if (!file.isAbsolute())
+            file = new File(System.getProperty("catalina.home"),
+                            host.getAppBase());
+        return (file);
 
     }
 
@@ -342,14 +342,14 @@ public final class HostConfig
      */
     private void log(String message) {
 
-	Logger logger = null;
-	if (host != null)
-	    logger = host.getLogger();
-	if (logger != null)
-	    logger.log("HostConfig[" + host.getName() + "]: " + message);
-	else
-	    System.out.println("HostConfig[" + host.getName() + "]: "
-			       + message);
+        Logger logger = null;
+        if (host != null)
+            logger = host.getLogger();
+        if (logger != null)
+            logger.log("HostConfig[" + host.getName() + "]: " + message);
+        else
+            System.out.println("HostConfig[" + host.getName() + "]: "
+                               + message);
 
     }
 
@@ -362,18 +362,18 @@ public final class HostConfig
      */
     private void log(String message, Throwable throwable) {
 
-	Logger logger = null;
-	if (host != null)
-	    logger = host.getLogger();
-	if (logger != null)
-	    logger.log("HostConfig[" + host.getName() + "] "
-		       + message, throwable);
-	else {
-	    System.out.println("HostConfig[" + host.getName() + "]: "
-			       + message);
-	    System.out.println("" + throwable);
-	    throwable.printStackTrace(System.out);
-	}
+        Logger logger = null;
+        if (host != null)
+            logger = host.getLogger();
+        if (logger != null)
+            logger.log("HostConfig[" + host.getName() + "] "
+                       + message, throwable);
+        else {
+            System.out.println("HostConfig[" + host.getName() + "]: "
+                               + message);
+            System.out.println("" + throwable);
+            throwable.printStackTrace(System.out);
+        }
 
     }
 
@@ -383,8 +383,8 @@ public final class HostConfig
      */
     private void start() {
 
-	if (debug >= 1)
-	    log(sm.getString("hostConfig.start"));
+        if (debug >= 1)
+            log(sm.getString("hostConfig.start"));
 
         deployApps();
 
@@ -396,8 +396,8 @@ public final class HostConfig
      */
     private void stop() {
 
-	if (debug >= 1)
-	    log(sm.getString("hostConfig.stop"));
+        if (debug >= 1)
+            log(sm.getString("hostConfig.stop"));
 
         undeployApps();
 

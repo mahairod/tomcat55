@@ -4,10 +4,10 @@
  * $Date$
  *
  * ====================================================================
- * 
+ *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.connector.http;
@@ -147,7 +147,7 @@ public class SocketInputStream extends InputStream {
      */
     public SocketInputStream(InputStream is, int bufferSize) {
 
-	this.is = is;
+        this.is = is;
         buf = new byte[bufferSize];
 
     }
@@ -160,7 +160,7 @@ public class SocketInputStream extends InputStream {
      * The string manager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ----------------------------------------------------- Instance Variables
@@ -170,22 +170,22 @@ public class SocketInputStream extends InputStream {
 
 
     /**
-     * Read the request line, and copies it to the given buffer. This 
-     * function is meant to be used during the HTTP request header parsing. 
+     * Read the request line, and copies it to the given buffer. This
+     * function is meant to be used during the HTTP request header parsing.
      * Do NOT attempt to read the request body using it.
-     * 
+     *
      * @param requestLine Request line object
      * @throws IOException If an exception occurs during the underlying socket
      * read operations, or if the given buffer is not big enough to accomodate
      * the whole line.
      */
-    public void readRequestLine(HttpRequestLine requestLine) 
+    public void readRequestLine(HttpRequestLine requestLine)
         throws IOException {
 
         // Recycling check
         if (requestLine.methodEnd != 0)
             requestLine.recycle();
-        
+
         // Checking for a blank line
         int chr = 0;
         do { // Skipping CR or LF
@@ -205,9 +205,9 @@ public class SocketInputStream extends InputStream {
         int maxRead = requestLine.method.length;
         int readStart = pos;
         int readCount = 0;
-        
+
         boolean space = false;
-        
+
         while (!space) {
             // if the buffer is full, extend it
             if (readCount >= maxRead) {
@@ -239,7 +239,7 @@ public class SocketInputStream extends InputStream {
             readCount++;
             pos++;
         }
-        
+
         requestLine.methodEnd = readCount - 1;
 
         // Reading URI
@@ -247,11 +247,11 @@ public class SocketInputStream extends InputStream {
         maxRead = requestLine.uri.length;
         readStart = pos;
         readCount = 0;
-        
+
         space = false;
-        
+
         boolean eol = false;
-        
+
         while (!space) {
             // if the buffer is full, extend it
             if (readCount >= maxRead) {
@@ -286,7 +286,7 @@ public class SocketInputStream extends InputStream {
             readCount++;
             pos++;
         }
-        
+
         requestLine.uriEnd = readCount - 1;
 
         // Reading protocol
@@ -294,7 +294,7 @@ public class SocketInputStream extends InputStream {
         maxRead = requestLine.protocol.length;
         readStart = pos;
         readCount = 0;
-        
+
         while (!eol) {
             // if the buffer is full, extend it
             if (readCount >= maxRead) {
@@ -330,29 +330,29 @@ public class SocketInputStream extends InputStream {
             }
             pos++;
         }
-        
+
         requestLine.protocolEnd = readCount;
-        
+
     }
 
 
     /**
-     * Read a header, and copies it to the given buffer. This 
-     * function is meant to be used during the HTTP request header parsing. 
+     * Read a header, and copies it to the given buffer. This
+     * function is meant to be used during the HTTP request header parsing.
      * Do NOT attempt to read the request body using it.
-     * 
+     *
      * @param requestLine Request line object
      * @throws IOException If an exception occurs during the underlying socket
      * read operations, or if the given buffer is not big enough to accomodate
      * the whole line.
      */
-    public void readHeader(HttpHeader header) 
+    public void readHeader(HttpHeader header)
         throws IOException {
-        
+
         // Recycling check
         if (header.nameEnd != 0)
             header.recycle();
-        
+
         // Checking for a blank line
         int chr = read();
         if ((chr == CR) || (chr == LF)) { // Skipping CR
@@ -364,15 +364,15 @@ public class SocketInputStream extends InputStream {
         } else {
             pos--;
         }
-        
+
         // Reading the header name
 
         int maxRead = header.name.length;
         int readStart = pos;
         int readCount = 0;
-        
+
         boolean colon = false;
-        
+
         while (!colon) {
             // if the buffer is full, extend it
             if (readCount >= maxRead) {
@@ -407,26 +407,26 @@ public class SocketInputStream extends InputStream {
             readCount++;
             pos++;
         }
-        
+
         header.nameEnd = readCount - 1;
-        
+
         // Reading the header value (which can be spanned over multiple lines)
 
         maxRead = header.value.length;
         readStart = pos;
         readCount = 0;
-        
+
         int crPos = -2;
-        
+
         boolean eol = false;
         boolean validLine = true;
-        
+
         while (validLine) {
-            
+
             boolean space = true;
-            
+
             // Skipping spaces
-            // Note : Only leading white spaces are removed. Trailing white 
+            // Note : Only leading white spaces are removed. Trailing white
             // spaces are not.
             while (space) {
                 // We're at the end of the internal buffer
@@ -446,7 +446,7 @@ public class SocketInputStream extends InputStream {
                     space = false;
                 }
             }
-            
+
             while (!eol) {
                 // if the buffer is full, extend it
                 if (readCount >= maxRead) {
@@ -483,7 +483,7 @@ public class SocketInputStream extends InputStream {
                 }
                 pos++;
             }
-            
+
             if (read() != SP) {
                 pos--;
                 validLine = false;
@@ -505,11 +505,11 @@ public class SocketInputStream extends InputStream {
                 header.value[readCount] = ' ';
                 readCount++;
             }
-            
+
         }
-        
+
         header.valueEnd = readCount;
-        
+
     }
 
 
@@ -520,37 +520,37 @@ public class SocketInputStream extends InputStream {
         throws IOException {
         if (pos >= count) {
             fill();
-	    if (pos >= count)
-		return -1;
+            if (pos >= count)
+                return -1;
         }
-	return buf[pos++] & 0xff;
+        return buf[pos++] & 0xff;
     }
 
 
     /**
-     * 
+     *
      */
     /*
     public int read(byte b[], int off, int len)
         throws IOException {
-        
+
     }
     */
 
 
     /**
-     * 
+     *
      */
     /*
     public long skip(long n)
         throws IOException {
-        
+
     }
     */
 
 
     /**
-     * Returns the number of bytes that can be read from this input 
+     * Returns the number of bytes that can be read from this input
      * stream without blocking.
      */
     public int available()

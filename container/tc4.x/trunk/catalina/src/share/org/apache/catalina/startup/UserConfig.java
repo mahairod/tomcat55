@@ -135,14 +135,14 @@ public final class UserConfig
      * The string resources for this package.
      */
     private static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
      * The Java class name of the user database class we should use.
      */
     private String userClass =
-	"org.apache.catalina.startup.PasswdUserDatabase";
+        "org.apache.catalina.startup.PasswdUserDatabase";
 
 
     // ------------------------------------------------------------- Properties
@@ -153,7 +153,7 @@ public final class UserConfig
      */
     public String getConfigClass() {
 
-	return (this.configClass);
+        return (this.configClass);
 
     }
 
@@ -165,7 +165,7 @@ public final class UserConfig
      */
     public void setConfigClass(String configClass) {
 
-	this.configClass = configClass;
+        this.configClass = configClass;
 
     }
 
@@ -175,7 +175,7 @@ public final class UserConfig
      */
     public String getContextClass() {
 
-	return (this.contextClass);
+        return (this.contextClass);
 
     }
 
@@ -187,7 +187,7 @@ public final class UserConfig
      */
     public void setContextClass(String contextClass) {
 
-	this.contextClass = contextClass;
+        this.contextClass = contextClass;
 
     }
 
@@ -197,7 +197,7 @@ public final class UserConfig
      */
     public int getDebug() {
 
-	return (this.debug);
+        return (this.debug);
 
     }
 
@@ -209,7 +209,7 @@ public final class UserConfig
      */
     public void setDebug(int debug) {
 
-	this.debug = debug;
+        this.debug = debug;
 
     }
 
@@ -219,7 +219,7 @@ public final class UserConfig
      */
     public String getDirectoryName() {
 
-	return (this.directoryName);
+        return (this.directoryName);
 
     }
 
@@ -231,7 +231,7 @@ public final class UserConfig
      */
     public void setDirectoryName(String directoryName) {
 
-	this.directoryName = directoryName;
+        this.directoryName = directoryName;
 
     }
 
@@ -241,7 +241,7 @@ public final class UserConfig
      */
     public String getHomeBase() {
 
-	return (this.homeBase);
+        return (this.homeBase);
 
     }
 
@@ -253,7 +253,7 @@ public final class UserConfig
      */
     public void setHomeBase(String homeBase) {
 
-	this.homeBase = homeBase;
+        this.homeBase = homeBase;
 
     }
 
@@ -263,7 +263,7 @@ public final class UserConfig
      */
     public String getUserClass() {
 
-	return (this.userClass);
+        return (this.userClass);
 
     }
 
@@ -273,7 +273,7 @@ public final class UserConfig
      */
     public void setUserClass(String userClass) {
 
-	this.userClass = userClass;
+        this.userClass = userClass;
 
     }
 
@@ -288,19 +288,19 @@ public final class UserConfig
      */
     public void lifecycleEvent(LifecycleEvent event) {
 
-	// Identify the host we are associated with
-	try {
-	    host = (Host) event.getLifecycle();
-	} catch (ClassCastException e) {
-	    log(sm.getString("hostConfig.cce", event.getLifecycle()), e);
-	    return;
-	}
+        // Identify the host we are associated with
+        try {
+            host = (Host) event.getLifecycle();
+        } catch (ClassCastException e) {
+            log(sm.getString("hostConfig.cce", event.getLifecycle()), e);
+            return;
+        }
 
-	// Process the event that has occurred
-	if (event.getType().equals(Lifecycle.START_EVENT))
-	    start();
-	else if (event.getType().equals(Lifecycle.STOP_EVENT))
-	    stop();
+        // Process the event that has occurred
+        if (event.getType().equals(Lifecycle.START_EVENT))
+            start();
+        else if (event.getType().equals(Lifecycle.STOP_EVENT))
+            stop();
 
     }
 
@@ -314,26 +314,26 @@ public final class UserConfig
      */
     private void deploy() {
 
-	if (debug >= 1)
-	    log(sm.getString("userConfig.deploying"));
+        if (debug >= 1)
+            log(sm.getString("userConfig.deploying"));
 
-	// Load the user database object for this host
-	UserDatabase database = null;
-	try {
-	    Class clazz = Class.forName(userClass);
-	    database = (UserDatabase) clazz.newInstance();
-	    database.setUserConfig(this);
-	} catch (Exception e) {
-	    log(sm.getString("userConfig.database"), e);
-	    return;
-	}
+        // Load the user database object for this host
+        UserDatabase database = null;
+        try {
+            Class clazz = Class.forName(userClass);
+            database = (UserDatabase) clazz.newInstance();
+            database.setUserConfig(this);
+        } catch (Exception e) {
+            log(sm.getString("userConfig.database"), e);
+            return;
+        }
 
-	// Deploy the web application (if any) for each defined user
-	Enumeration users = database.getUsers();
-	while (users.hasMoreElements()) {
-	    String user = (String) users.nextElement();
-	    String home = database.getHome(user);
-	    deploy(user, home);
+        // Deploy the web application (if any) for each defined user
+        Enumeration users = database.getUsers();
+        while (users.hasMoreElements()) {
+            String user = (String) users.nextElement();
+            String home = database.getHome(user);
+            deploy(user, home);
         }
 
     }
@@ -348,35 +348,35 @@ public final class UserConfig
      */
     private void deploy(String user, String home) {
 
-	// Does this user have a web application to be deployed?
-	String contextPath = "~" + user;
-	if (host.findChild(contextPath) != null)
-	    return;
-	File app = new File(home, directoryName);
-	if (!app.exists() || !app.isDirectory())
-	    return;
-	File dd = new File(app, "/WEB-INF/web.xml");
-	if (!dd.exists() || !dd.isFile() || !dd.canRead())
-	    return;
-	log(sm.getString("userConfig.deploy", user));
+        // Does this user have a web application to be deployed?
+        String contextPath = "~" + user;
+        if (host.findChild(contextPath) != null)
+            return;
+        File app = new File(home, directoryName);
+        if (!app.exists() || !app.isDirectory())
+            return;
+        File dd = new File(app, "/WEB-INF/web.xml");
+        if (!dd.exists() || !dd.isFile() || !dd.canRead())
+            return;
+        log(sm.getString("userConfig.deploy", user));
 
-	// Deploy the web application for this user
-	try {
-	    Class clazz = Class.forName(contextClass);
-	    Context context =
-	      (Context) clazz.newInstance();
-	    context.setPath(contextPath);
-	    context.setDocBase(app.toString());
-	    if (context instanceof Lifecycle) {
-		clazz = Class.forName(configClass);
-		LifecycleListener listener =
-		  (LifecycleListener) clazz.newInstance();
-		((Lifecycle) context).addLifecycleListener(listener);
-	    }
-	    host.addChild(context);
-	} catch (Exception e) {
-	    log(sm.getString("userConfig.error", user), e);
-	}
+        // Deploy the web application for this user
+        try {
+            Class clazz = Class.forName(contextClass);
+            Context context =
+              (Context) clazz.newInstance();
+            context.setPath(contextPath);
+            context.setDocBase(app.toString());
+            if (context instanceof Lifecycle) {
+                clazz = Class.forName(configClass);
+                LifecycleListener listener =
+                  (LifecycleListener) clazz.newInstance();
+                ((Lifecycle) context).addLifecycleListener(listener);
+            }
+            host.addChild(context);
+        } catch (Exception e) {
+            log(sm.getString("userConfig.error", user), e);
+        }
 
     }
 
@@ -388,14 +388,14 @@ public final class UserConfig
      */
     private void log(String message) {
 
-	Logger logger = null;
-	if (host != null)
-	    logger = host.getLogger();
-	if (logger != null)
-	    logger.log("UserConfig[" + host.getName() + "]: " + message);
-	else
-	    System.out.println("UserConfig[" + host.getName() + "]: "
-			       + message);
+        Logger logger = null;
+        if (host != null)
+            logger = host.getLogger();
+        if (logger != null)
+            logger.log("UserConfig[" + host.getName() + "]: " + message);
+        else
+            System.out.println("UserConfig[" + host.getName() + "]: "
+                               + message);
 
     }
 
@@ -408,18 +408,18 @@ public final class UserConfig
      */
     private void log(String message, Throwable throwable) {
 
-	Logger logger = null;
-	if (host != null)
-	    logger = host.getLogger();
-	if (logger != null)
-	    logger.log("UserConfig[" + host.getName() + "] "
-		       + message, throwable);
-	else {
-	    System.out.println("UserConfig[" + host.getName() + "]: "
-			       + message);
-	    System.out.println("" + throwable);
-	    throwable.printStackTrace(System.out);
-	}
+        Logger logger = null;
+        if (host != null)
+            logger = host.getLogger();
+        if (logger != null)
+            logger.log("UserConfig[" + host.getName() + "] "
+                       + message, throwable);
+        else {
+            System.out.println("UserConfig[" + host.getName() + "]: "
+                               + message);
+            System.out.println("" + throwable);
+            throwable.printStackTrace(System.out);
+        }
 
     }
 
@@ -429,10 +429,10 @@ public final class UserConfig
      */
     private void start() {
 
-	if (debug > 0)
-	    log(sm.getString("userConfig.start"));
+        if (debug > 0)
+            log(sm.getString("userConfig.start"));
 
-	deploy();
+        deploy();
 
     }
 
@@ -442,8 +442,8 @@ public final class UserConfig
      */
     private void stop() {
 
-	if (debug > 0)
-	    log(sm.getString("userConfig.stop"));
+        if (debug > 0)
+            log(sm.getString("userConfig.stop"));
 
     }
 

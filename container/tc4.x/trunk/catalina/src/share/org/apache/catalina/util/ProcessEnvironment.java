@@ -161,11 +161,11 @@ public class ProcessEnvironment {
      */
     public ProcessEnvironment(HttpServletRequest req,
         ServletContext context, int debug) {
-	    this.debug = debug;
+            this.debug = debug;
             setupFromContext(context);
             setupFromRequest(req);
             this.valid = deriveProcessEnvironment(req);
-	    log(this.getClass().getName() + "() ctor, debug level " + debug);
+            log(this.getClass().getName() + "() ctor, debug level " + debug);
     }
 
 

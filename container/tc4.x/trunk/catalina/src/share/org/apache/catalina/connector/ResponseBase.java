@@ -168,7 +168,7 @@ public abstract class ResponseBase
      * Descriptive information about this Response implementation.
      */
     protected static final String info =
-	"org.apache.catalina.connector.ResponseBase/1.0";
+        "org.apache.catalina.connector.ResponseBase/1.0";
 
 
     /**
@@ -193,7 +193,7 @@ public abstract class ResponseBase
      * The string manager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -224,7 +224,7 @@ public abstract class ResponseBase
      */
     public Connector getConnector() {
 
-	return (this.connector);
+        return (this.connector);
 
     }
 
@@ -236,7 +236,7 @@ public abstract class ResponseBase
      */
     public void setConnector(Connector connector) {
 
-	this.connector = connector;
+        this.connector = connector;
 
     }
 
@@ -246,7 +246,7 @@ public abstract class ResponseBase
      */
     public int getContentCount() {
 
-	return (this.contentCount);
+        return (this.contentCount);
 
     }
 
@@ -256,7 +256,7 @@ public abstract class ResponseBase
      */
     public Context getContext() {
 
-	return (this.context);
+        return (this.context);
 
     }
 
@@ -269,7 +269,7 @@ public abstract class ResponseBase
      */
     public void setContext(Context context) {
 
-	this.context = context;
+        this.context = context;
 
     }
 
@@ -279,7 +279,7 @@ public abstract class ResponseBase
      */
     public boolean getIncluded() {
 
-	return (this.included);
+        return (this.included);
 
     }
 
@@ -292,7 +292,7 @@ public abstract class ResponseBase
      */
     public void setIncluded(boolean included) {
 
-	this.included = included;
+        this.included = included;
 
     }
 
@@ -304,7 +304,7 @@ public abstract class ResponseBase
      */
     public String getInfo() {
 
-	return (this.info);
+        return (this.info);
 
     }
 
@@ -314,7 +314,7 @@ public abstract class ResponseBase
      */
     public Request getRequest() {
 
-	return (this.request);
+        return (this.request);
 
     }
 
@@ -326,7 +326,7 @@ public abstract class ResponseBase
      */
     public void setRequest(Request request) {
 
-	this.request = request;
+        this.request = request;
 
     }
 
@@ -337,7 +337,7 @@ public abstract class ResponseBase
      */
     public ServletResponse getResponse() {
 
-	return (facade);
+        return (facade);
 
     }
 
@@ -347,7 +347,7 @@ public abstract class ResponseBase
      */
     public OutputStream getStream() {
 
-	return (this.output);
+        return (this.output);
 
     }
 
@@ -359,7 +359,7 @@ public abstract class ResponseBase
      */
     public void setStream(OutputStream stream) {
 
-	this.output = stream;
+        this.output = stream;
 
     }
 
@@ -395,7 +395,7 @@ public abstract class ResponseBase
      */
     public ServletOutputStream createOutputStream() throws IOException {
 
-	return (new ResponseStream(this));
+        return (new ResponseStream(this));
 
     }
 
@@ -408,30 +408,30 @@ public abstract class ResponseBase
      */
     public void finishResponse() throws IOException {
 
-	// If no stream has been requested yet, get one so we can
-	// flush the necessary headers
-	if (this.stream == null) {
-	    ServletOutputStream sos = getOutputStream();
+        // If no stream has been requested yet, get one so we can
+        // flush the necessary headers
+        if (this.stream == null) {
+            ServletOutputStream sos = getOutputStream();
             sos.flush();
-	    sos.close();
-	    return;
-	}
+            sos.close();
+            return;
+        }
 
-	// If our stream is closed, no action is necessary
-	if ( ((ResponseStream) stream).closed() )
-	    return;
+        // If our stream is closed, no action is necessary
+        if ( ((ResponseStream) stream).closed() )
+            return;
 
-	// Flush and close the appropriate output mechanism
-	if (writer != null) {
-	    writer.flush();
-	    writer.close();
-	} else {
-	    stream.flush();
-	    stream.close();
-	}
+        // Flush and close the appropriate output mechanism
+        if (writer != null) {
+            writer.flush();
+            writer.close();
+        } else {
+            stream.flush();
+            stream.close();
+        }
 
-	// The underlying output stream (perhaps from a socket)
-	// is not our responsibility
+        // The underlying output stream (perhaps from a socket)
+        // is not our responsibility
 
     }
 
@@ -441,7 +441,7 @@ public abstract class ResponseBase
      */
     public int getContentLength() {
 
-	return (this.contentLength);
+        return (this.contentLength);
 
     }
 
@@ -452,7 +452,7 @@ public abstract class ResponseBase
      */
     public String getContentType() {
 
-	return (this.contentType);
+        return (this.contentType);
 
     }
 
@@ -501,21 +501,21 @@ public abstract class ResponseBase
      */
     public void recycle() {
 
-	// buffer is NOT reset when recycling
-	bufferCount = 0;
-	committed = false;
-	// connector is NOT reset when recycling
-	contentCount = 0;
-	contentLength = -1;
-	contentType = null;
-	context = null;
-	encoding = null;
-	included = false;
-	locale = Locale.getDefault();
-	output = null;
-	request = null;
-	stream = null;
-	writer = null;
+        // buffer is NOT reset when recycling
+        bufferCount = 0;
+        committed = false;
+        // connector is NOT reset when recycling
+        contentCount = 0;
+        contentLength = -1;
+        contentType = null;
+        context = null;
+        encoding = null;
+        included = false;
+        locale = Locale.getDefault();
+        output = null;
+        request = null;
+        stream = null;
+        writer = null;
         error = false;
 
     }
@@ -533,10 +533,10 @@ public abstract class ResponseBase
      */
     public void write(int b) throws IOException {
 
-	if (bufferCount >= buffer.length)
-	    flushBuffer();
-	buffer[bufferCount++] = (byte) b;
-	contentCount++;
+        if (bufferCount >= buffer.length)
+            flushBuffer();
+        buffer[bufferCount++] = (byte) b;
+        contentCount++;
 
     }
 
@@ -551,7 +551,7 @@ public abstract class ResponseBase
      */
     public void write(byte b[]) throws IOException {
 
-	write(b, 0, b.length);
+        write(b, 0, b.length);
 
     }
 
@@ -569,27 +569,27 @@ public abstract class ResponseBase
      */
     public void write(byte b[], int off, int len) throws IOException {
 
-	// If the whole thing fits in the buffer, just put it there
-	if (len == 0)
-	    return;
-	if (len <= (buffer.length - bufferCount)) {
-	    System.arraycopy(b, off, buffer, bufferCount, len);
-	    bufferCount += len;
-	    contentCount += len;
-	    return;
-	}
+        // If the whole thing fits in the buffer, just put it there
+        if (len == 0)
+            return;
+        if (len <= (buffer.length - bufferCount)) {
+            System.arraycopy(b, off, buffer, bufferCount, len);
+            bufferCount += len;
+            contentCount += len;
+            return;
+        }
 
-	// Flush the buffer and start writing full-buffer-size chunks
-	flushBuffer();
-	int iterations = len / buffer.length;
-	int leftoverStart = iterations * buffer.length;
-	int leftoverLen = len - leftoverStart;
-	for (int i = 0; i < iterations; i++)
-	    write(b, off + (i * buffer.length), buffer.length);
+        // Flush the buffer and start writing full-buffer-size chunks
+        flushBuffer();
+        int iterations = len / buffer.length;
+        int leftoverStart = iterations * buffer.length;
+        int leftoverLen = len - leftoverStart;
+        for (int i = 0; i < iterations; i++)
+            write(b, off + (i * buffer.length), buffer.length);
 
-	// Write the remainder (guaranteed to fit in the buffer)
-	if (leftoverLen > 0)
-	    write(b, off + leftoverStart, leftoverLen);
+        // Write the remainder (guaranteed to fit in the buffer)
+        if (leftoverLen > 0)
+            write(b, off + leftoverStart, leftoverLen);
 
     }
 
@@ -604,11 +604,11 @@ public abstract class ResponseBase
      */
     public void flushBuffer() throws IOException {
 
-	committed = true;
-	if (bufferCount > 0) {
-	    output.write(buffer, 0, bufferCount);
-	    bufferCount = 0;
-	}
+        committed = true;
+        if (bufferCount > 0) {
+            output.write(buffer, 0, bufferCount);
+            bufferCount = 0;
+        }
 
     }
 
@@ -618,7 +618,7 @@ public abstract class ResponseBase
      */
     public int getBufferSize() {
 
-	return (buffer.length);
+        return (buffer.length);
 
     }
 
@@ -628,10 +628,10 @@ public abstract class ResponseBase
      */
     public String getCharacterEncoding() {
 
-	if (encoding == null)
-	    return ("ISO-8859-1");
-	else
-	    return (encoding);
+        if (encoding == null)
+            return ("ISO-8859-1");
+        else
+            return (encoding);
 
     }
 
@@ -645,14 +645,14 @@ public abstract class ResponseBase
      */
     public ServletOutputStream getOutputStream() throws IOException {
 
-	if (writer != null)
-	    throw new IllegalStateException
-		(sm.getString("responseBase.getOutputStream.ise"));
+        if (writer != null)
+            throw new IllegalStateException
+                (sm.getString("responseBase.getOutputStream.ise"));
 
-	if (stream == null)
-	    stream = createOutputStream();
+        if (stream == null)
+            stream = createOutputStream();
         ((ResponseStream) stream).setCommit(true);
-	return (stream);
+        return (stream);
 
     }
 
@@ -662,7 +662,7 @@ public abstract class ResponseBase
      */
     public Locale getLocale() {
 
-	return (locale);
+        return (locale);
 
     }
 
@@ -676,19 +676,19 @@ public abstract class ResponseBase
      */
     public PrintWriter getWriter() throws IOException {
 
-	if (writer != null)
-	    return (writer);
+        if (writer != null)
+            return (writer);
 
-	if (stream != null)
-	    throw new IllegalStateException
-		(sm.getString("responseBase.getWriter.ise"));
+        if (stream != null)
+            throw new IllegalStateException
+                (sm.getString("responseBase.getWriter.ise"));
 
-	stream = createOutputStream();
+        stream = createOutputStream();
         ((ResponseStream) stream).setCommit(false);
-	OutputStreamWriter osr =
-	  new OutputStreamWriter(stream, getCharacterEncoding());
-	writer = new ResponseWriter(osr, (ResponseStream) stream);
-	return (writer);
+        OutputStreamWriter osr =
+          new OutputStreamWriter(stream, getCharacterEncoding());
+        writer = new ResponseWriter(osr, (ResponseStream) stream);
+        return (writer);
 
     }
 
@@ -698,7 +698,7 @@ public abstract class ResponseBase
      */
     public boolean isCommitted() {
 
-	return (committed);
+        return (committed);
 
     }
 
@@ -711,18 +711,18 @@ public abstract class ResponseBase
      */
     public void reset() {
 
-	if (committed)
-	    throw new IllegalStateException
-		(sm.getString("responseBase.reset.ise"));
+        if (committed)
+            throw new IllegalStateException
+                (sm.getString("responseBase.reset.ise"));
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	if (stream != null)
-	    ((ResponseStream) stream).reset();
-	bufferCount = 0;
-	contentLength = -1;
-	contentType = null;
+        if (stream != null)
+            ((ResponseStream) stream).reset();
+        bufferCount = 0;
+        contentLength = -1;
+        contentType = null;
 
     }
 
@@ -739,7 +739,7 @@ public abstract class ResponseBase
             throw new IllegalStateException
                 (sm.getString("responseBase.resetBuffer.ise"));
 
-	bufferCount = 0;
+        bufferCount = 0;
 
     }
 
@@ -754,13 +754,13 @@ public abstract class ResponseBase
      */
     public void setBufferSize(int size) {
 
-	if (committed || (bufferCount > 0))
-	    throw new IllegalStateException
-		(sm.getString("responseBase.setBufferSize.ise"));
+        if (committed || (bufferCount > 0))
+            throw new IllegalStateException
+                (sm.getString("responseBase.setBufferSize.ise"));
 
-	if (buffer.length >= size)
-	    return;
-	buffer = new byte[size];
+        if (buffer.length >= size)
+            return;
+        buffer = new byte[size];
 
     }
 
@@ -772,13 +772,13 @@ public abstract class ResponseBase
      */
     public void setContentLength(int length) {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	this.contentLength = length;
+        this.contentLength = length;
 
     }
 
@@ -790,18 +790,18 @@ public abstract class ResponseBase
      */
     public void setContentType(String type) {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	this.contentType = type;
-	if (type.indexOf(';') >= 0) {
-	    encoding = RequestUtil.parseCharacterEncoding(type);
-	    if (encoding == null)
-	        encoding = "ISO-8859-1";
-	}
+        this.contentType = type;
+        if (type.indexOf(';') >= 0) {
+            encoding = RequestUtil.parseCharacterEncoding(type);
+            if (encoding == null)
+                encoding = "ISO-8859-1";
+        }
 
     }
 
@@ -814,17 +814,17 @@ public abstract class ResponseBase
      */
     public void setLocale(Locale locale) {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	this.locale = locale;
-	if ((this.encoding == null) && (this.context != null)) {
-	    CharsetMapper mapper = context.getCharsetMapper();
-	    this.encoding = mapper.getCharset(locale);
-	}
+        this.locale = locale;
+        if ((this.encoding == null) && (this.context != null)) {
+            CharsetMapper mapper = context.getCharsetMapper();
+            this.encoding = mapper.getCharset(locale);
+        }
 
     }
 

@@ -154,7 +154,7 @@ public class DefaultContext {
      * The descriptive information string for this implementation.
      */
     private static final String info =
-	"org.apache.catalina.core.DefaultContext/1.0";
+        "org.apache.catalina.core.DefaultContext/1.0";
 
 
     /**
@@ -168,7 +168,7 @@ public class DefaultContext {
      * The Java class name of the default Mapper class for this Container.
      */
     private String mapperClass =
-	"org.apache.catalina.core.StandardContextMapper";
+        "org.apache.catalina.core.StandardContextMapper";
 
 
     /**
@@ -232,7 +232,7 @@ public class DefaultContext {
     /**
      * The resources DirContext object with which this Container is
      * associated.
-     * 
+     *
      */
     DirContext dirContext = null;
 
@@ -251,13 +251,13 @@ public class DefaultContext {
 
     /**
      * The Loader implementation with which this Container is associated.
-     */    
+     */
     protected Loader loader = null;
 
 
     /**
      * The Manager implementation with which this Container is associated.
-     */    
+     */
     protected Manager manager = null;
 
     /**
@@ -293,7 +293,7 @@ public class DefaultContext {
      */
     public boolean getCookies() {
 
-	return (this.cookies);
+        return (this.cookies);
 
     }
 
@@ -304,8 +304,8 @@ public class DefaultContext {
      * @param cookies The new flag
      */
     public void setCookies(boolean cookies) {
-	boolean oldCookies = this.cookies;
-	this.cookies = cookies;
+        boolean oldCookies = this.cookies;
+        this.cookies = cookies;
 
     }
 
@@ -315,7 +315,7 @@ public class DefaultContext {
      */
     public boolean getCrossContext() {
 
-	return (this.crossContext);
+        return (this.crossContext);
 
     }
 
@@ -326,8 +326,8 @@ public class DefaultContext {
      * @param crossContext The new cross contexts flag
      */
     public void setCrossContext(boolean crossContext) {
-	boolean oldCrossContext = this.crossContext;
-	this.crossContext = crossContext;
+        boolean oldCrossContext = this.crossContext;
+        this.crossContext = crossContext;
 
     }
 
@@ -339,7 +339,7 @@ public class DefaultContext {
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -349,7 +349,7 @@ public class DefaultContext {
      */
     public boolean getReloadable() {
 
-	return (this.reloadable);
+        return (this.reloadable);
 
     }
 
@@ -360,8 +360,8 @@ public class DefaultContext {
      * @param reloadable The new reloadable flag
      */
     public void setReloadable(boolean reloadable) {
-	boolean oldReloadable = this.reloadable;
-	this.reloadable = reloadable;
+        boolean oldReloadable = this.reloadable;
+        this.reloadable = reloadable;
 
     }
 
@@ -372,7 +372,7 @@ public class DefaultContext {
      */
     public String getWrapperClass() {
 
-	return (this.wrapperClass);
+        return (this.wrapperClass);
 
     }
 
@@ -384,19 +384,19 @@ public class DefaultContext {
      * @param wrapperClass The new wrapper class
      */
     public void setWrapperClass(String wrapperClass) {
-	this.wrapperClass = wrapperClass;
+        this.wrapperClass = wrapperClass;
 
     }
 
 
     /**
-     * Set the resources DirContext object with which this Container is 
+     * Set the resources DirContext object with which this Container is
      * associated.
      *
      * @param resources The newly associated DirContext
      */
     public void setResources(DirContext resources) {
-	this.dirContext = resources;
+        this.dirContext = resources;
 
     }
 
@@ -408,7 +408,7 @@ public class DefaultContext {
      */
     public DirContext getResources() {
 
-	return this.dirContext;
+        return this.dirContext;
 
     }
 
@@ -422,36 +422,36 @@ public class DefaultContext {
         return loader;
 
     }
-     
-     
+
+
     /**
      * Set the Loader with which this Context is associated.
      *
      * @param loader The newly associated loader
      */
     public void setLoader(Loader loader) {
-	this.loader = loader;
+        this.loader = loader;
     }
 
 
     /**
      * Return the Manager with which this Container is associated.  If there is
      * no associated Manager return <code>null</code>.
-     */           
+     */
     public Manager getManager() {
-                  
+
         return manager;
-                  
-    }             
-    
-    
+
+    }
+
+
     /**
      * Set the Manager with which this Container is associated.
-     *            
+     *
      * @param manager The newly associated Manager
-     */           
+     */
     public void setManager(Manager manager) {
-	this.manager = manager;
+        this.manager = manager;
     }
 
 
@@ -464,7 +464,7 @@ public class DefaultContext {
     public String getName() {
         return (this.name);
     }
-     
+
     public void setName(String name) {
         this.name = name;
     }
@@ -479,8 +479,8 @@ public class DefaultContext {
         return (parent);
 
     }
-     
-     
+
+
     /**
      * Set the parent Container to which this Container is being added as a
      * child.  This Container may refuse to become attached to the specified
@@ -508,13 +508,13 @@ public class DefaultContext {
      */
     public void addApplicationListener(String listener) {
 
-	synchronized (applicationListeners) {
-	    String results[] =new String[applicationListeners.length + 1];
-	    for (int i = 0; i < applicationListeners.length; i++)
-		results[i] = applicationListeners[i];
-	    results[applicationListeners.length] = listener;
-	    applicationListeners = results;
-	}
+        synchronized (applicationListeners) {
+            String results[] =new String[applicationListeners.length + 1];
+            for (int i = 0; i < applicationListeners.length; i++)
+                results[i] = applicationListeners[i];
+            results[applicationListeners.length] = listener;
+            applicationListeners = results;
+        }
 
     }
 
@@ -540,14 +540,14 @@ public class DefaultContext {
 
     /**
      * Add an EJB resource reference for this web application.
-     *          
+     *
      * @param ejb New EJB resource reference
-     */         
+     */
     public void addEjb(ContextEjb ejb) {
-                
+
         synchronized (ejbs) {
             ejbs.put(ejb.getName(), ejb);
-        }       
+        }
 
     }
 
@@ -558,9 +558,9 @@ public class DefaultContext {
      * @param environment New environment entry
      */
     public void addEnvironment(ContextEnvironment environment) {
-	synchronized (envs) {
-	    envs.put(environment.getName(), environment);
-	}
+        synchronized (envs) {
+            envs.put(environment.getName(), environment);
+        }
 
     }
 
@@ -571,10 +571,10 @@ public class DefaultContext {
      * @param resourceParameters New resource parameters
      */
     public void addResourceParams(ResourceParams resourceParameters) {
-	synchronized (resourceParams) {
-	    resourceParams.put(resourceParameters.getName(), 
+        synchronized (resourceParams) {
+            resourceParams.put(resourceParameters.getName(),
                                resourceParameters);
-	}
+        }
 
     }
 
@@ -587,13 +587,13 @@ public class DefaultContext {
      */
     public void addInstanceListener(String listener) {
 
-	synchronized (instanceListeners) {
-	    String results[] =new String[instanceListeners.length + 1];
-	    for (int i = 0; i < instanceListeners.length; i++)
-		results[i] = instanceListeners[i];
-	    results[instanceListeners.length] = listener;
-	    instanceListeners = results;
-	}
+        synchronized (instanceListeners) {
+            String results[] =new String[instanceListeners.length + 1];
+            for (int i = 0; i < instanceListeners.length; i++)
+                results[i] = instanceListeners[i];
+            results[instanceListeners.length] = listener;
+            instanceListeners = results;
+        }
 
     }
 
@@ -619,9 +619,9 @@ public class DefaultContext {
                 (sm.getString("standardContext.parameter.duplicate", name));
 
         // Add this parameter to our defined set
-	synchronized (parameters) {
-	    parameters.put(name, value);
-	}
+        synchronized (parameters) {
+            parameters.put(name, value);
+        }
 
     }
 
@@ -632,9 +632,9 @@ public class DefaultContext {
      * @param resource New resource reference
      */
     public void addResource(ContextResource resource) {
-	synchronized (resources) {
-	    resources.put(resource.getName(), resource);
-	}
+        synchronized (resources) {
+            resources.put(resource.getName(), resource);
+        }
 
     }
 
@@ -661,13 +661,13 @@ public class DefaultContext {
      */
     public void addWrapperLifecycle(String listener) {
 
-	synchronized (wrapperLifecycles) {
-	    String results[] =new String[wrapperLifecycles.length + 1];
-	    for (int i = 0; i < wrapperLifecycles.length; i++)
-		results[i] = wrapperLifecycles[i];
-	    results[wrapperLifecycles.length] = listener;
-	    wrapperLifecycles = results;
-	}
+        synchronized (wrapperLifecycles) {
+            String results[] =new String[wrapperLifecycles.length + 1];
+            for (int i = 0; i < wrapperLifecycles.length; i++)
+                results[i] = wrapperLifecycles[i];
+            results[wrapperLifecycles.length] = listener;
+            wrapperLifecycles = results;
+        }
 
     }
 
@@ -680,13 +680,13 @@ public class DefaultContext {
      */
     public void addWrapperListener(String listener) {
 
-	synchronized (wrapperListeners) {
-	    String results[] =new String[wrapperListeners.length + 1];
-	    for (int i = 0; i < wrapperListeners.length; i++)
-		results[i] = wrapperListeners[i];
-	    results[wrapperListeners.length] = listener;
-	    wrapperListeners = results;
-	}
+        synchronized (wrapperListeners) {
+            String results[] =new String[wrapperListeners.length + 1];
+            for (int i = 0; i < wrapperListeners.length; i++)
+                results[i] = wrapperListeners[i];
+            results[wrapperListeners.length] = listener;
+            wrapperListeners = results;
+        }
 
     }
 
@@ -720,9 +720,9 @@ public class DefaultContext {
      */
     public ContextEjb findEjb(String name) {
 
-	synchronized (ejbs) {
-	    return ((ContextEjb) ejbs.get(name));
-	}
+        synchronized (ejbs) {
+            return ((ContextEjb) ejbs.get(name));
+        }
 
     }
 
@@ -733,10 +733,10 @@ public class DefaultContext {
      */
     public ContextEjb[] findEjbs() {
 
-	synchronized (ejbs) {
-	    ContextEjb results[] = new ContextEjb[ejbs.size()];
-	    return ((ContextEjb[]) ejbs.values().toArray(results));
-	}
+        synchronized (ejbs) {
+            ContextEjb results[] = new ContextEjb[ejbs.size()];
+            return ((ContextEjb[]) ejbs.values().toArray(results));
+        }
 
     }
 
@@ -749,9 +749,9 @@ public class DefaultContext {
      */
     public ContextEnvironment findEnvironment(String name) {
 
-	synchronized (envs) {
-	    return ((ContextEnvironment) envs.get(name));
-	}
+        synchronized (envs) {
+            return ((ContextEnvironment) envs.get(name));
+        }
 
     }
 
@@ -763,10 +763,10 @@ public class DefaultContext {
      */
     public ContextEnvironment[] findEnvironments() {
 
-	synchronized (envs) {
-	    ContextEnvironment results[] = new ContextEnvironment[envs.size()];
-	    return ((ContextEnvironment[]) envs.values().toArray(results));
-	}
+        synchronized (envs) {
+            ContextEnvironment results[] = new ContextEnvironment[envs.size()];
+            return ((ContextEnvironment[]) envs.values().toArray(results));
+        }
 
     }
 
@@ -774,7 +774,7 @@ public class DefaultContext {
     /**
      * Return the set of defined resource parameters for this web
      * application.  If none have been defined, a zero-length array
-     * is returned.           
+     * is returned.
      */
     public ResourceParams[] findResourceParams() {
 
@@ -805,9 +805,9 @@ public class DefaultContext {
      */
     public String findParameter(String name) {
 
-	synchronized (parameters) {
-	    return ((String) parameters.get(name));
-	}
+        synchronized (parameters) {
+            return ((String) parameters.get(name));
+        }
 
     }
 
@@ -819,10 +819,10 @@ public class DefaultContext {
      */
     public String[] findParameters() {
 
-	synchronized (parameters) {
-	    String results[] = new String[parameters.size()];
-	    return ((String[]) parameters.keySet().toArray(results));
-	}
+        synchronized (parameters) {
+            String results[] = new String[parameters.size()];
+            return ((String[]) parameters.keySet().toArray(results));
+        }
 
     }
 
@@ -835,9 +835,9 @@ public class DefaultContext {
      */
     public ContextResource findResource(String name) {
 
-	synchronized (resources) {
-	    return ((ContextResource) resources.get(name));
-	}
+        synchronized (resources) {
+            return ((ContextResource) resources.get(name));
+        }
 
     }
 
@@ -878,10 +878,10 @@ public class DefaultContext {
      */
     public ContextResource[] findResources() {
 
-	synchronized (resources) {
-	    ContextResource results[] = new ContextResource[resources.size()];
-	    return ((ContextResource[]) resources.values().toArray(results));
-	}
+        synchronized (resources) {
+            ContextResource results[] = new ContextResource[resources.size()];
+            return ((ContextResource[]) resources.values().toArray(results));
+        }
 
     }
 
@@ -916,29 +916,29 @@ public class DefaultContext {
      */
     public void removeApplicationListener(String listener) {
 
-	synchronized (applicationListeners) {
+        synchronized (applicationListeners) {
 
-	    // Make sure this application listener is currently present
-	    int n = -1;
-	    for (int i = 0; i < applicationListeners.length; i++) {
-		if (applicationListeners[i].equals(listener)) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this application listener is currently present
+            int n = -1;
+            for (int i = 0; i < applicationListeners.length; i++) {
+                if (applicationListeners[i].equals(listener)) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified application listener
-	    int j = 0;
-	    String results[] = new String[applicationListeners.length - 1];
-	    for (int i = 0; i < applicationListeners.length; i++) {
-		if (i != n)
-		    results[j++] = applicationListeners[i];
-	    }
-	    applicationListeners = results;
+            // Remove the specified application listener
+            int j = 0;
+            String results[] = new String[applicationListeners.length - 1];
+            for (int i = 0; i < applicationListeners.length; i++) {
+                if (i != n)
+                    results[j++] = applicationListeners[i];
+            }
+            applicationListeners = results;
 
-	}
+        }
 
 
     }
@@ -952,30 +952,30 @@ public class DefaultContext {
      */
     public void removeApplicationParameter(String name) {
 
-	synchronized (applicationParameters) {
+        synchronized (applicationParameters) {
 
-	    // Make sure this parameter is currently present
-	    int n = -1;
-	    for (int i = 0; i < applicationParameters.length; i++) {
-		if (name.equals(applicationParameters[i].getName())) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this parameter is currently present
+            int n = -1;
+            for (int i = 0; i < applicationParameters.length; i++) {
+                if (name.equals(applicationParameters[i].getName())) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified parameter
-	    int j = 0;
-	    ApplicationParameter results[] =
+            // Remove the specified parameter
+            int j = 0;
+            ApplicationParameter results[] =
                 new ApplicationParameter[applicationParameters.length - 1];
-	    for (int i = 0; i < applicationParameters.length; i++) {
-		if (i != n)
-		    results[j++] = applicationParameters[i];
-	    }
-	    applicationParameters = results;
+            for (int i = 0; i < applicationParameters.length; i++) {
+                if (i != n)
+                    results[j++] = applicationParameters[i];
+            }
+            applicationParameters = results;
 
-	}
+        }
 
     }
 
@@ -987,9 +987,9 @@ public class DefaultContext {
      */
     public void removeEjb(String name) {
 
-	synchronized (ejbs) {
-	    ejbs.remove(name);
-	}
+        synchronized (ejbs) {
+            ejbs.remove(name);
+        }
 
     }
 
@@ -1001,9 +1001,9 @@ public class DefaultContext {
      */
     public void removeEnvironment(String name) {
 
-	synchronized (envs) {
-	    envs.remove(name);
-	}
+        synchronized (envs) {
+            envs.remove(name);
+        }
 
     }
 
@@ -1016,29 +1016,29 @@ public class DefaultContext {
      */
     public void removeInstanceListener(String listener) {
 
-	synchronized (instanceListeners) {
+        synchronized (instanceListeners) {
 
-	    // Make sure this InstanceListener is currently present
-	    int n = -1;
-	    for (int i = 0; i < instanceListeners.length; i++) {
-		if (instanceListeners[i].equals(listener)) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this InstanceListener is currently present
+            int n = -1;
+            for (int i = 0; i < instanceListeners.length; i++) {
+                if (instanceListeners[i].equals(listener)) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified InstanceListener
-	    int j = 0;
-	    String results[] = new String[instanceListeners.length - 1];
-	    for (int i = 0; i < instanceListeners.length; i++) {
-		if (i != n)
-		    results[j++] = instanceListeners[i];
-	    }
-	    instanceListeners = results;
+            // Remove the specified InstanceListener
+            int j = 0;
+            String results[] = new String[instanceListeners.length - 1];
+            for (int i = 0; i < instanceListeners.length; i++) {
+                if (i != n)
+                    results[j++] = instanceListeners[i];
+            }
+            instanceListeners = results;
 
-	}
+        }
 
     }
 
@@ -1051,9 +1051,9 @@ public class DefaultContext {
      */
     public void removeParameter(String name) {
 
-	synchronized (parameters) {
-	    parameters.remove(name);
-	}
+        synchronized (parameters) {
+            parameters.remove(name);
+        }
 
     }
 
@@ -1065,9 +1065,9 @@ public class DefaultContext {
      */
     public void removeResource(String name) {
 
-	synchronized (resources) {
-	    resources.remove(name);
-	}
+        synchronized (resources) {
+            resources.remove(name);
+        }
 
     }
 
@@ -1095,29 +1095,29 @@ public class DefaultContext {
     public void removeWrapperLifecycle(String listener) {
 
 
-	synchronized (wrapperLifecycles) {
+        synchronized (wrapperLifecycles) {
 
-	    // Make sure this LifecycleListener is currently present
-	    int n = -1;
-	    for (int i = 0; i < wrapperLifecycles.length; i++) {
-		if (wrapperLifecycles[i].equals(listener)) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this LifecycleListener is currently present
+            int n = -1;
+            for (int i = 0; i < wrapperLifecycles.length; i++) {
+                if (wrapperLifecycles[i].equals(listener)) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified LifecycleListener
-	    int j = 0;
-	    String results[] = new String[wrapperLifecycles.length - 1];
-	    for (int i = 0; i < wrapperLifecycles.length; i++) {
-		if (i != n)
-		    results[j++] = wrapperLifecycles[i];
-	    }
-	    wrapperLifecycles = results;
+            // Remove the specified LifecycleListener
+            int j = 0;
+            String results[] = new String[wrapperLifecycles.length - 1];
+            for (int i = 0; i < wrapperLifecycles.length; i++) {
+                if (i != n)
+                    results[j++] = wrapperLifecycles[i];
+            }
+            wrapperLifecycles = results;
 
-	}
+        }
 
     }
 
@@ -1131,29 +1131,29 @@ public class DefaultContext {
     public void removeWrapperListener(String listener) {
 
 
-	synchronized (wrapperListeners) {
+        synchronized (wrapperListeners) {
 
-	    // Make sure this ContainerListener is currently present
-	    int n = -1;
-	    for (int i = 0; i < wrapperListeners.length; i++) {
-		if (wrapperListeners[i].equals(listener)) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this ContainerListener is currently present
+            int n = -1;
+            for (int i = 0; i < wrapperListeners.length; i++) {
+                if (wrapperListeners[i].equals(listener)) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified ContainerListener
-	    int j = 0;
-	    String results[] = new String[wrapperListeners.length - 1];
-	    for (int i = 0; i < wrapperListeners.length; i++) {
-		if (i != n)
-		    results[j++] = wrapperListeners[i];
-	    }
-	    wrapperListeners = results;
+            // Remove the specified ContainerListener
+            int j = 0;
+            String results[] = new String[wrapperListeners.length - 1];
+            for (int i = 0; i < wrapperListeners.length; i++) {
+                if (i != n)
+                    results[j++] = wrapperListeners[i];
+            }
+            wrapperListeners = results;
 
-	}
+        }
 
     }
 
@@ -1210,7 +1210,7 @@ public class DefaultContext {
             for( int i = 0; i < resourceParams.length; i++ ) {
                 ((StandardContext)context).addResourceParams(resourceParams[i]);
             }
-        }    
+        }
         ContextResource [] resources = findResources();
         for( int i = 0; i < resources.length; i++ ) {
             context.addResource(resources[i]);
@@ -1226,14 +1226,14 @@ public class DefaultContext {
      */
     public String toString() {
 
-	StringBuffer sb = new StringBuffer();
-	if (getParent() != null) {
-	    sb.append(getParent().toString());
-	    sb.append(".");
-	}
-	sb.append("DefaultContext[");
-	sb.append("]");
-	return (sb.toString());
+        StringBuffer sb = new StringBuffer();
+        if (getParent() != null) {
+            sb.append(getParent().toString());
+            sb.append(".");
+        }
+        sb.append("DefaultContext[");
+        sb.append("]");
+        return (sb.toString());
 
     }
 

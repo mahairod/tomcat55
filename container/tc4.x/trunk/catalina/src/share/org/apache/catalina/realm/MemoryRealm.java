@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.realm;
@@ -115,7 +115,7 @@ public final class MemoryRealm
      * Descriptive information about this Realm implementation.
      */
     protected final String info =
-	"org.apache.catalina.realm.MemoryRealm/1.0";
+        "org.apache.catalina.realm.MemoryRealm/1.0";
 
 
     /**
@@ -142,7 +142,7 @@ public final class MemoryRealm
      * The string manager for this package.
      */
     private static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -161,7 +161,7 @@ public final class MemoryRealm
      */
     public String getInfo() {
 
-	return info;
+        return info;
 
     }
 
@@ -202,18 +202,18 @@ public final class MemoryRealm
      */
     public Principal authenticate(String username, String credentials) {
 
-	GenericPrincipal principal =
-	    (GenericPrincipal) principals.get(username);
-	if ((principal != null) &&
-	    (digest(credentials).equals(principal.getPassword()))) {
-	    if (debug >= 2)
-		log(sm.getString("memoryRealm.authenticateSuccess", username));
-	    return (principal);
-	} else {
-	    if (debug >= 2)
-		log(sm.getString("memoryRealm.authenticateFailure", username));
-	    return (null);
-	}
+        GenericPrincipal principal =
+            (GenericPrincipal) principals.get(username);
+        if ((principal != null) &&
+            (digest(credentials).equals(principal.getPassword()))) {
+            if (debug >= 2)
+                log(sm.getString("memoryRealm.authenticateSuccess", username));
+            return (principal);
+        } else {
+            if (debug >= 2)
+                log(sm.getString("memoryRealm.authenticateFailure", username));
+            return (null);
+        }
 
     }
 
@@ -233,19 +233,19 @@ public final class MemoryRealm
         // Accumulate the list of roles for this user
         ArrayList list = new ArrayList();
         roles += ",";
-	while (true) {
-	    int comma = roles.indexOf(',');
-	    if (comma < 0)
-		break;
-	    String role = roles.substring(0, comma).trim();
+        while (true) {
+            int comma = roles.indexOf(',');
+            if (comma < 0)
+                break;
+            String role = roles.substring(0, comma).trim();
             list.add(role);
-	    roles = roles.substring(comma + 1);
-	}
+            roles = roles.substring(comma + 1);
+        }
 
         // Construct and cache the Principal for this user
-	GenericPrincipal principal =
-	    new GenericPrincipal(this, username, password, list);
-	principals.put(username, principal);
+        GenericPrincipal principal =
+            new GenericPrincipal(this, username, password, list);
+        principals.put(username, principal);
 
     }
 
@@ -268,13 +268,13 @@ public final class MemoryRealm
      */
     protected String getPassword(String username) {
 
-	GenericPrincipal principal =
-	    (GenericPrincipal) principals.get(username);
-	if (principal != null) {
-	    return (principal.getPassword());
-	} else {
-	    return (null);
-	}
+        GenericPrincipal principal =
+            (GenericPrincipal) principals.get(username);
+        if (principal != null) {
+            return (principal.getPassword());
+        } else {
+            return (null);
+        }
 
     }
 
@@ -284,7 +284,7 @@ public final class MemoryRealm
      */
     protected Principal getPrincipal(String username) {
 
-	return (Principal) principals.get(username);
+        return (Principal) principals.get(username);
 
     }
 
@@ -302,27 +302,27 @@ public final class MemoryRealm
      */
     public synchronized void start() throws LifecycleException {
 
-	// Validate the existence of our database file
-	File file = new File(pathname);
-	if (!file.isAbsolute())
-	    file = new File(System.getProperty("catalina.home") +
-			    File.separator + pathname);
-	if (!file.exists() || !file.canRead())
-	    throw new LifecycleException
-		(sm.getString("memoryRealm.loadExist",
+        // Validate the existence of our database file
+        File file = new File(pathname);
+        if (!file.isAbsolute())
+            file = new File(System.getProperty("catalina.home") +
+                            File.separator + pathname);
+        if (!file.exists() || !file.canRead())
+            throw new LifecycleException
+                (sm.getString("memoryRealm.loadExist",
                               file.getAbsolutePath()));
 
-	// Load the contents of the database file
-	if (debug >= 1)
-	    log(sm.getString("memoryRealm.loadPath",
+        // Load the contents of the database file
+        if (debug >= 1)
+            log(sm.getString("memoryRealm.loadPath",
                              file.getAbsolutePath()));
-	XmlMapper mapper = new XmlMapper();
-	mapper.addRule("tomcat-users/user", new MemoryRealmUserAction());
-	try {
-	    mapper.readXml(file, this);
-	} catch (Exception e) {
-	    throw new LifecycleException("memoryRealm.readXml", e);
-	}
+        XmlMapper mapper = new XmlMapper();
+        mapper.addRule("tomcat-users/user", new MemoryRealmUserAction());
+        try {
+            mapper.readXml(file, this);
+        } catch (Exception e) {
+            throw new LifecycleException("memoryRealm.readXml", e);
+        }
 
         // Perform normal superclass initialization
         super.start();
@@ -342,7 +342,7 @@ public final class MemoryRealm
         // Perform normal superclass finalization
         super.stop();
 
-	// No shutdown activities required
+        // No shutdown activities required
 
     }
 
@@ -363,14 +363,14 @@ final class MemoryRealmUserAction extends XmlAction {
      */
     public void start(SaxContext context) throws Exception {
 
-	int top = context.getTagCount() - 1;
-	AttributeList attributes = context.getAttributeList(top);
-	String username = attributes.getValue("name");
-	String password = attributes.getValue("password");
-	String roles = attributes.getValue("roles");
+        int top = context.getTagCount() - 1;
+        AttributeList attributes = context.getAttributeList(top);
+        String username = attributes.getValue("name");
+        String password = attributes.getValue("password");
+        String roles = attributes.getValue("roles");
 
-	MemoryRealm realm = (MemoryRealm) context.getRoot();
-	realm.addUser(username, password, roles);
+        MemoryRealm realm = (MemoryRealm) context.getRoot();
+        realm.addUser(username, password, roles);
 
     }
 

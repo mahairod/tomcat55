@@ -115,11 +115,11 @@ public final class HTMLManagerServlet extends ManagerServlet {
 
         String path = request.getParameter("path");
         String war = request.getParameter("war");
-        
+
         // Prepare our output writer to generate the response message
         response.setContentType("text/html");
         PrintWriter writer = response.getWriter();
-        
+
         // Process the requested command
         if (command == null) {
             response.sendRedirect(request.getRequestURI()+"/list");
@@ -141,7 +141,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
             writer.println(sm.getString("managerServlet.unknownCommand",
                                         command));
         }
-        
+
         // Finish up the response
         writer.flush();
         writer.close();
@@ -158,7 +158,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         if (debug >= 1)
             log("list: Listing contexts for virtual host '" +
                 deployer.getName() + "'");
-        
+
         writer.print("<html>\n<head>\n<title>");
         writer.print("Listed applications for virtual host ");
         writer.print(deployer.getName()+"</title>\n</head>\n");
@@ -186,9 +186,9 @@ public final class HTMLManagerServlet extends ManagerServlet {
         writer.print("<td align=\"right\"><font size=\"+1\"");
         writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
         writer.print("<strong>Remove</strong></font></td>\n</tr>\n");
-        
+
         String contextPaths[] = deployer.findDeployedApps();
-        
+
         for (int i = 0; i < contextPaths.length; i++) {
             Context context = deployer.findDeployedApp(contextPaths[i]);
             String displayPath = contextPaths[i];
@@ -201,7 +201,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 writer.print(displayPath+"</font>\n</td>");
                 writer.print("<td align=\"center\"><font size=\"1\"");
                 writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-                
+
                 if (context.getAvailable()) {
                     writer.print("running / <a href=\"stop?path="+displayPath);
                     writer.print("\">stop</a>");
@@ -209,7 +209,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
                     writer.print("<a href=\"start?path="+displayPath);
                     writer.print("\">start</a> / stopped");
                 }
-                
+
                 writer.print("</font></td>\n");
                 writer.print("<td align=\"right\"><font size=\"1\"");
                 writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
@@ -218,7 +218,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 writer.print("</a></font></td>\n");
                 writer.print("<td align=\"right\"><font size=\"1\"");
                 writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-                
+
                 if (context.getAvailable()) {
                     writer.print("<a href=\"reload?path="+displayPath+"\">");
                     writer.print("Reload &#187;");
@@ -226,7 +226,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 } else {
                     writer.print("-</font></td>");
                 }
-                
+
                 writer.print("<td align=\"right\"><font size=\"1\"");
                 writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
                 writer.print("<a href=\"remove?path="+displayPath+"\">");
@@ -234,7 +234,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 writer.print("</a></font></td>\n</tr>\n");
             }
         }
-        
+
         writer.print("<tr><td colspan=\"5\">&nbsp;</td></tr>");
         writer.print("<tr><td>");
         writer.print("<font size=\"2\"");
@@ -253,7 +253,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         writer.print(Globals.SERVER_INFO+"</font></td>\n</tr>\n");
         writer.print("</table>\n</form>\n</body>\n</html>");
     }
-    
+
     /**
      * Reload the web application at the specified context path.
      *
@@ -261,32 +261,32 @@ public final class HTMLManagerServlet extends ManagerServlet {
      * @param path Context path of the application to be restarted
      */
     protected void reload(PrintWriter writer, String path) {
-        
+
         if (debug >= 1)
             log("restart: Reloading web application at '" + path + "'");
-        
+
         if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
             writer.println(sm.getString("managerServlet.invalidPath", path));
             list(writer);
-            
+
             return;
         }
-        
+
         String displayPath = path;
-        
+
         if( path.equals("/") )
             path = "";
-        
+
         try {
             Context context = deployer.findDeployedApp(path);
-            
+
             if (context == null) {
                 writer.println(sm.getString("managerServlet.noContext", displayPath));
                 list(writer);
-                
+
                 return;
             }
-            
+
             context.reload();
             list(writer);
         } catch (Throwable t) {
@@ -295,7 +295,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
                                         t.toString()));
         }
     }
-    
+
     /**
      * Remove the web application at the specified context path.
      *
@@ -303,32 +303,32 @@ public final class HTMLManagerServlet extends ManagerServlet {
      * @param path Context path of the application to be removed
      */
     protected void remove(PrintWriter writer, String path) {
-        
+
         if (debug >= 1)
             log("remove: Removing web application at '" + path + "'");
-        
+
         if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
             writer.println(sm.getString("managerServlet.invalidPath", path));
             list(writer);
-            
+
             return;
         }
-        
+
         String displayPath = path;
-        
+
         if( path.equals("/") )
             path = "";
-        
+
         try {
             Context context = deployer.findDeployedApp(path);
-            
+
             if (context == null) {
                 writer.println(sm.getString("managerServlet.noContext", displayPath));
                 list(writer);
-                
+
                 return;
             }
-            
+
             deployer.remove(path);
             list(writer);
         } catch (Throwable t) {
@@ -338,7 +338,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
                                         t.toString()));
         }
     }
-    
+
     /**
      * Start the web application at the specified context path.
      *
@@ -346,32 +346,32 @@ public final class HTMLManagerServlet extends ManagerServlet {
      * @param path Context path of the application to be started
      */
     public void start(PrintWriter writer, String path) {
-        
+
         if (debug >= 1)
             log("start: Starting web application at '" + path + "'");
-        
+
         if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
             writer.println(sm.getString("managerServlet.invalidPath", path));
             list(writer);
-            
+
             return;
         }
-        
+
         String displayPath = path;
-        
+
         if( path.equals("/") )
             path = "";
-        
+
         try {
             Context context = deployer.findDeployedApp(path);
-            
+
             if (context == null) {
                 writer.println(sm.getString("managerServlet.noContext", displayPath));
                 list(writer);
-                
+
                 return;
             }
-            
+
             deployer.start(path);
             list(writer);
         } catch (Throwable t) {
@@ -381,7 +381,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
                                         t.toString()));
         }
     }
-    
+
     /**
      * Stop the web application at the specified context path.
      *
@@ -392,11 +392,11 @@ public final class HTMLManagerServlet extends ManagerServlet {
 
         if (debug >= 1)
             log("stop: Stopping web application at '" + path + "'");
-        
+
         if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
             writer.println(sm.getString("managerServlet.invalidPath", path));
             list(writer);
-            
+
             return;
         }
 
@@ -404,24 +404,24 @@ public final class HTMLManagerServlet extends ManagerServlet {
 
         if( path.equals("/") )
             path = "";
-        
+
         try {
             Context context = deployer.findDeployedApp(path);
-            
+
             if (context == null) {
                 writer.println(sm.getString("managerServlet.noContext", displayPath));
                 list(writer);
-                
+
                 return;
-            }          
-            
+            }
+
             deployer.stop(path);
             list(writer);
         } catch (Throwable t) {
             getServletContext().log("ManagerServlet.stop[" + displayPath + "]",
-                                    t);                                  
+                                    t);
             writer.println(sm.getString("managerServlet.exception",
-                                        t.toString()));            
+                                        t.toString()));
         }
     }
 }

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.logger;
@@ -112,7 +112,7 @@ public final class FileLogger
      * The descriptive information about this implementation.
      */
     protected static final String info =
-	"org.apache.catalina.logger.FileLogger/1.0";
+        "org.apache.catalina.logger.FileLogger/1.0";
 
 
     /**
@@ -131,7 +131,7 @@ public final class FileLogger
      * The string manager for this package.
      */
     private StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -166,7 +166,7 @@ public final class FileLogger
      */
     public String getDirectory() {
 
-	return (directory);
+        return (directory);
 
     }
 
@@ -178,9 +178,9 @@ public final class FileLogger
      */
     public void setDirectory(String directory) {
 
-	String oldDirectory = this.directory;
-	this.directory = directory;
-	support.firePropertyChange("directory", oldDirectory, this.directory);
+        String oldDirectory = this.directory;
+        this.directory = directory;
+        support.firePropertyChange("directory", oldDirectory, this.directory);
 
     }
 
@@ -190,7 +190,7 @@ public final class FileLogger
      */
     public String getPrefix() {
 
-	return (prefix);
+        return (prefix);
 
     }
 
@@ -202,9 +202,9 @@ public final class FileLogger
      */
     public void setPrefix(String prefix) {
 
-	String oldPrefix = this.prefix;
-	this.prefix = prefix;
-	support.firePropertyChange("prefix", oldPrefix, this.prefix);
+        String oldPrefix = this.prefix;
+        this.prefix = prefix;
+        support.firePropertyChange("prefix", oldPrefix, this.prefix);
 
     }
 
@@ -214,7 +214,7 @@ public final class FileLogger
      */
     public String getSuffix() {
 
-	return (suffix);
+        return (suffix);
 
     }
 
@@ -226,9 +226,9 @@ public final class FileLogger
      */
     public void setSuffix(String suffix) {
 
-	String oldSuffix = this.suffix;
-	this.suffix = suffix;
-	support.firePropertyChange("suffix", oldSuffix, this.suffix);
+        String oldSuffix = this.suffix;
+        this.suffix = suffix;
+        support.firePropertyChange("suffix", oldSuffix, this.suffix);
 
     }
 
@@ -238,7 +238,7 @@ public final class FileLogger
      */
     public boolean getTimestamp() {
 
-	return (timestamp);
+        return (timestamp);
 
     }
 
@@ -250,10 +250,10 @@ public final class FileLogger
      */
     public void setTimestamp(boolean timestamp) {
 
-	boolean oldTimestamp = this.timestamp;
-	this.timestamp = timestamp;
-	support.firePropertyChange("timestamp", new Boolean(oldTimestamp),
-				   new Boolean(this.timestamp));
+        boolean oldTimestamp = this.timestamp;
+        this.timestamp = timestamp;
+        support.firePropertyChange("timestamp", new Boolean(oldTimestamp),
+                                   new Boolean(this.timestamp));
 
     }
 
@@ -271,28 +271,28 @@ public final class FileLogger
      */
     public void log(String msg) {
 
-	// Construct the timestamp we will use, if requested
-	Timestamp ts = new Timestamp(System.currentTimeMillis());
-	String tsString = ts.toString().substring(0, 19);
-	String tsDate = tsString.substring(0, 10);
+        // Construct the timestamp we will use, if requested
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        String tsString = ts.toString().substring(0, 19);
+        String tsDate = tsString.substring(0, 10);
 
-	// If the date has changed, switch log files
-	if (!date.equals(tsDate)) {
-	    synchronized (this) {
-		close();
-		date = tsDate;
-		open();
-	    }
-	}
+        // If the date has changed, switch log files
+        if (!date.equals(tsDate)) {
+            synchronized (this) {
+                close();
+                date = tsDate;
+                open();
+            }
+        }
 
-	// Log this message, timestamped if necessary
-	if (writer != null) {
-	    if (timestamp) {
-		writer.print(tsString);
-		writer.print(" ");
-	    }
-	    writer.println(msg);
-	}
+        // Log this message, timestamped if necessary
+        if (writer != null) {
+            if (timestamp) {
+                writer.print(tsString);
+                writer.print(" ");
+            }
+            writer.println(msg);
+        }
 
     }
 
@@ -305,12 +305,12 @@ public final class FileLogger
      */
     private void close() {
 
-	if (writer == null)
-	    return;
-	writer.flush();
-	writer.close();
-	writer = null;
-	date = "";
+        if (writer == null)
+            return;
+        writer.flush();
+        writer.close();
+        writer = null;
+        date = "";
 
     }
 
@@ -320,21 +320,21 @@ public final class FileLogger
      */
     private void open() {
 
-	// Create the directory if necessary
-	File dir = new File(directory);
-	if (!dir.isAbsolute())
-	    dir = new File(System.getProperty("catalina.home") +
-			   File.separator + directory);
-	dir.mkdirs();
+        // Create the directory if necessary
+        File dir = new File(directory);
+        if (!dir.isAbsolute())
+            dir = new File(System.getProperty("catalina.home") +
+                           File.separator + directory);
+        dir.mkdirs();
 
-	// Open the current log file
-	try {
-	    String pathname = dir.getAbsolutePath() + File.separator +
-		prefix + date + suffix;
-	    writer = new PrintWriter(new FileWriter(pathname, true), true);
-	} catch (IOException e) {
-	    writer = null;
-	}
+        // Open the current log file
+        try {
+            String pathname = dir.getAbsolutePath() + File.separator +
+                prefix + date + suffix;
+            writer = new PrintWriter(new FileWriter(pathname, true), true);
+        } catch (IOException e) {
+            writer = null;
+        }
 
     }
 
@@ -349,7 +349,7 @@ public final class FileLogger
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -361,7 +361,7 @@ public final class FileLogger
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -378,12 +378,12 @@ public final class FileLogger
      */
     public void start() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("fileLogger.alreadyStarted"));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("fileLogger.alreadyStarted"));
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
 
     }
 
@@ -399,14 +399,14 @@ public final class FileLogger
      */
     public void stop() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("fileLogger.notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("fileLogger.notStarted"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
 
-	close();
+        close();
 
     }
 

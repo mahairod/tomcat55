@@ -168,7 +168,7 @@ public final class ContextConfig
      * The string resources for this package.
      */
     private static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------------------- Properties
@@ -179,7 +179,7 @@ public final class ContextConfig
      */
     public int getDebug() {
 
-	return (this.debug);
+        return (this.debug);
 
     }
 
@@ -191,7 +191,7 @@ public final class ContextConfig
      */
     public void setDebug(int debug) {
 
-	this.debug = debug;
+        this.debug = debug;
 
     }
 
@@ -206,24 +206,24 @@ public final class ContextConfig
      */
     public void lifecycleEvent(LifecycleEvent event) {
 
-	// Identify the context we are associated with
-	try {
-	    context = (Context) event.getLifecycle();
+        // Identify the context we are associated with
+        try {
+            context = (Context) event.getLifecycle();
             if (context instanceof StandardContext) {
                 int contextDebug = ((StandardContext) context).getDebug();
                 if (contextDebug > this.debug)
                     this.debug = contextDebug;
             }
-	} catch (ClassCastException e) {
-	    log(sm.getString("contextConfig.cce", event.getLifecycle()), e);
-	    return;
-	}
+        } catch (ClassCastException e) {
+            log(sm.getString("contextConfig.cce", event.getLifecycle()), e);
+            return;
+        }
 
-	// Process the event that has occurred
-	if (event.getType().equals(Lifecycle.START_EVENT))
-	    start();
-	else if (event.getType().equals(Lifecycle.STOP_EVENT))
-	    stop();
+        // Process the event that has occurred
+        if (event.getType().equals(Lifecycle.START_EVENT))
+            start();
+        else if (event.getType().equals(Lifecycle.STOP_EVENT))
+            stop();
 
     }
 
@@ -238,23 +238,23 @@ public final class ContextConfig
      */
     private void applicationConfig(XmlMapper mapper) {
 
-	// Open the application web.xml file, if it exists
-	InputStream stream = null;
- 	ServletContext servletContext = context.getServletContext();
+        // Open the application web.xml file, if it exists
+        InputStream stream = null;
+        ServletContext servletContext = context.getServletContext();
         if (servletContext != null)
             stream = servletContext.getResourceAsStream
                 (Constants.ApplicationWebXml);
-	if (stream == null) {
-	    log(sm.getString("contextConfig.applicationMissing"));
-	    return;
-	}
+        if (stream == null) {
+            log(sm.getString("contextConfig.applicationMissing"));
+            return;
+        }
 
-	// Process the application web.xml file
-	try {
-	    mapper.readXml(stream, context);
-	} catch (InvocationTargetException e) {
-	    log(sm.getString("contextConfig.applicationConfig"),
-		e.getTargetException());
+        // Process the application web.xml file
+        try {
+            mapper.readXml(stream, context);
+        } catch (InvocationTargetException e) {
+            log(sm.getString("contextConfig.applicationConfig"),
+                e.getTargetException());
             ok = false;
         } catch (SAXParseException e) {
             log(sm.getString("contextConfig.applicationParse"), e);
@@ -262,16 +262,16 @@ public final class ContextConfig
                              "" + e.getLineNumber(),
                              "" + e.getColumnNumber()));
             ok = false;
-	} catch (Exception e) {
-	    log(sm.getString("contextConfig.applicationParse"), e);
+        } catch (Exception e) {
+            log(sm.getString("contextConfig.applicationParse"), e);
             ok = false;
-	} finally {
-	    try {
-		stream.close();
-	    } catch (IOException e) {
-		log(sm.getString("contextConfig.applicationClose"), e);
-	    }
-	}
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                log(sm.getString("contextConfig.applicationClose"), e);
+            }
+        }
 
     }
 
@@ -282,19 +282,19 @@ public final class ContextConfig
      */
     private synchronized void authenticatorConfig() {
 
-	// Does this Context require an Authenticator?
-	SecurityConstraint constraints[] = context.findConstraints();
-	if ((constraints == null) || (constraints.length == 0))
-	    return;
-	LoginConfig loginConfig = context.getLoginConfig();
-	if (loginConfig == null) {
+        // Does this Context require an Authenticator?
+        SecurityConstraint constraints[] = context.findConstraints();
+        if ((constraints == null) || (constraints.length == 0))
+            return;
+        LoginConfig loginConfig = context.getLoginConfig();
+        if (loginConfig == null) {
             loginConfig = new LoginConfig("NONE", null, null, null);
             context.setLoginConfig(loginConfig);
         }
 
-	// Has an authenticator been configured already?
-	if (context instanceof Authenticator)
-	    return;
+        // Has an authenticator been configured already?
+        if (context instanceof Authenticator)
+            return;
         if (context instanceof ContainerBase) {
             Pipeline pipeline = ((ContainerBase) context).getPipeline();
             if (pipeline != null) {
@@ -307,9 +307,9 @@ public final class ContextConfig
                         return;
                 }
             }
-	} else {
-	    return;	// Cannot install a Valve even if it would be needed
-	}
+        } else {
+            return;     // Cannot install a Valve even if it would be needed
+        }
 
         // Has a Realm been configured for us to authenticate against?
         if (context.getRealm() == null) {
@@ -318,38 +318,38 @@ public final class ContextConfig
             return;
         }
 
-	// Load our mapping properties if necessary
-	if (authenticators == null) {
-	    try {
-		authenticators = ResourceBundle.getBundle
-		    ("org.apache.catalina.startup.Authenticators");
-	    } catch (MissingResourceException e) {
-		log(sm.getString("contextConfig.authenticatorResources"), e);
+        // Load our mapping properties if necessary
+        if (authenticators == null) {
+            try {
+                authenticators = ResourceBundle.getBundle
+                    ("org.apache.catalina.startup.Authenticators");
+            } catch (MissingResourceException e) {
+                log(sm.getString("contextConfig.authenticatorResources"), e);
                 ok = false;
-		return;
-	    }
-	}
+                return;
+            }
+        }
 
-	// Identify the class name of the Valve we should configure
-	String authenticatorName = null;
-	try {
-	    authenticatorName =
-		authenticators.getString(loginConfig.getAuthMethod());
-	} catch (MissingResourceException e) {
-	    authenticatorName = null;
-	}
-	if (authenticatorName == null) {
-	    log(sm.getString("contextConfig.authenticatorMissing",
-			     loginConfig.getAuthMethod()));
+        // Identify the class name of the Valve we should configure
+        String authenticatorName = null;
+        try {
+            authenticatorName =
+                authenticators.getString(loginConfig.getAuthMethod());
+        } catch (MissingResourceException e) {
+            authenticatorName = null;
+        }
+        if (authenticatorName == null) {
+            log(sm.getString("contextConfig.authenticatorMissing",
+                             loginConfig.getAuthMethod()));
             ok = false;
-	    return;
-	}
+            return;
+        }
 
-	// Instantiate and install an Authenticator of the requested class
-	Valve authenticator = null;
-	try {
-	    Class authenticatorClass = Class.forName(authenticatorName);
-	    authenticator = (Valve) authenticatorClass.newInstance();
+        // Instantiate and install an Authenticator of the requested class
+        Valve authenticator = null;
+        try {
+            Class authenticatorClass = Class.forName(authenticatorName);
+            authenticator = (Valve) authenticatorClass.newInstance();
             if (context instanceof ContainerBase) {
                 Pipeline pipeline = ((ContainerBase) context).getPipeline();
                 if (pipeline != null) {
@@ -358,11 +358,11 @@ public final class ContextConfig
                                      loginConfig.getAuthMethod()));
                 }
             }
-	} catch (Throwable t) {
-	    log(sm.getString("contextConfig.authenticatorInstantiate",
-			     authenticatorName), t);
+        } catch (Throwable t) {
+            log(sm.getString("contextConfig.authenticatorInstantiate",
+                             authenticatorName), t);
             ok = false;
-	}
+        }
 
     }
 
@@ -427,8 +427,8 @@ public final class ContextConfig
         mapper.registerDTDRes(Constants.TldDtdPublicId_12,
                               Constants.TldDtdResourcePath_12);
 
-	mapper.addRule("taglib/listener/listener-class",
-		       mapper.methodSetter("addApplicationListener", 0));
+        mapper.addRule("taglib/listener/listener-class",
+                       mapper.methodSetter("addApplicationListener", 0));
 
         return (mapper);
 
@@ -441,10 +441,10 @@ public final class ContextConfig
      */
     private XmlMapper createWebMapper() {
 
-	XmlMapper mapper = new XmlMapper();
-	if (debug > 0)
-	    mapper.setDebug(3);
-	mapper.setValidating(true);
+        XmlMapper mapper = new XmlMapper();
+        if (debug > 0)
+            mapper.setDebug(3);
+        mapper.setValidating(true);
         mapper.registerDTDRes(Constants.WebDtdPublicId_22,
                               Constants.WebDtdResourcePath_22);
         mapper.registerDTDRes(Constants.WebDtdPublicId_23,
@@ -453,140 +453,140 @@ public final class ContextConfig
         mapper.addRule("web-app",
                        new SetPublicIdAction("setPublicId"));
 
-	mapper.addRule("web-app/context-param",
-		       mapper.methodSetter("addParameter", 2));
-	mapper.addRule("web-app/context-param/param-name",
-		       mapper.methodParam(0));
-	mapper.addRule("web-app/context-param/param-value",
-		       mapper.methodParam(1));
+        mapper.addRule("web-app/context-param",
+                       mapper.methodSetter("addParameter", 2));
+        mapper.addRule("web-app/context-param/param-name",
+                       mapper.methodParam(0));
+        mapper.addRule("web-app/context-param/param-value",
+                       mapper.methodParam(1));
 
         mapper.addRule("web-app/display-name",
                        mapper.methodSetter("setDisplayName", 0));
 
-	mapper.addRule("web-app/distributable",
+        mapper.addRule("web-app/distributable",
                        new SetDistributableAction());
 
-	mapper.addRule("web-app/ejb-local-ref",
-		 mapper.objectCreate("org.apache.catalina.deploy.ContextLocalEjb"));
-	mapper.addRule("web-app/ejb-local-ref",
-		       mapper.addChild("addLocalEjb",
-				     "org.apache.catalina.deploy.ContextLocalEjb"));
-	mapper.addRule("web-app/ejb-local-ref/description",
-		       mapper.methodSetter("setDescription", 0));
-	mapper.addRule("web-app/ejb-local-ref/ejb-ref-name",
-		       mapper.methodSetter("setName", 0));
-	mapper.addRule("web-app/ejb-local-ref/ejb-ref-type",
-		       mapper.methodSetter("setType", 0));
-	mapper.addRule("web-app/ejb-local-ref/local-home",
-		       mapper.methodSetter("setHome", 0));
-	mapper.addRule("web-app/ejb-local-ref/local",
-		       mapper.methodSetter("setLocal", 0));
-	mapper.addRule("web-app/ejb-local-ref/ejb-link",
-		       mapper.methodSetter("setLink", 0));
+        mapper.addRule("web-app/ejb-local-ref",
+                 mapper.objectCreate("org.apache.catalina.deploy.ContextLocalEjb"));
+        mapper.addRule("web-app/ejb-local-ref",
+                       mapper.addChild("addLocalEjb",
+                                     "org.apache.catalina.deploy.ContextLocalEjb"));
+        mapper.addRule("web-app/ejb-local-ref/description",
+                       mapper.methodSetter("setDescription", 0));
+        mapper.addRule("web-app/ejb-local-ref/ejb-ref-name",
+                       mapper.methodSetter("setName", 0));
+        mapper.addRule("web-app/ejb-local-ref/ejb-ref-type",
+                       mapper.methodSetter("setType", 0));
+        mapper.addRule("web-app/ejb-local-ref/local-home",
+                       mapper.methodSetter("setHome", 0));
+        mapper.addRule("web-app/ejb-local-ref/local",
+                       mapper.methodSetter("setLocal", 0));
+        mapper.addRule("web-app/ejb-local-ref/ejb-link",
+                       mapper.methodSetter("setLink", 0));
 
-	mapper.addRule("web-app/ejb-ref",
-		 mapper.objectCreate("org.apache.catalina.deploy.ContextEjb"));
-	mapper.addRule("web-app/ejb-ref",
-		       mapper.addChild("addEjb",
-				     "org.apache.catalina.deploy.ContextEjb"));
-	mapper.addRule("web-app/ejb-ref/description",
-		       mapper.methodSetter("setDescription", 0));
-	mapper.addRule("web-app/ejb-ref/ejb-ref-name",
-		       mapper.methodSetter("setName", 0));
-	mapper.addRule("web-app/ejb-ref/ejb-ref-type",
-		       mapper.methodSetter("setType", 0));
-	mapper.addRule("web-app/ejb-ref/home",
-		       mapper.methodSetter("setHome", 0));
-	mapper.addRule("web-app/ejb-ref/remote",
-		       mapper.methodSetter("setRemote", 0));
-	mapper.addRule("web-app/ejb-ref/ejb-link",
-		       mapper.methodSetter("setLink", 0));
+        mapper.addRule("web-app/ejb-ref",
+                 mapper.objectCreate("org.apache.catalina.deploy.ContextEjb"));
+        mapper.addRule("web-app/ejb-ref",
+                       mapper.addChild("addEjb",
+                                     "org.apache.catalina.deploy.ContextEjb"));
+        mapper.addRule("web-app/ejb-ref/description",
+                       mapper.methodSetter("setDescription", 0));
+        mapper.addRule("web-app/ejb-ref/ejb-ref-name",
+                       mapper.methodSetter("setName", 0));
+        mapper.addRule("web-app/ejb-ref/ejb-ref-type",
+                       mapper.methodSetter("setType", 0));
+        mapper.addRule("web-app/ejb-ref/home",
+                       mapper.methodSetter("setHome", 0));
+        mapper.addRule("web-app/ejb-ref/remote",
+                       mapper.methodSetter("setRemote", 0));
+        mapper.addRule("web-app/ejb-ref/ejb-link",
+                       mapper.methodSetter("setLink", 0));
 
-	mapper.addRule("web-app/env-entry",
-	 mapper.objectCreate("org.apache.catalina.deploy.ContextEnvironment"));
-	mapper.addRule("web-app/env-entry",
-		       mapper.addChild("addEnvironment",
-			     "org.apache.catalina.deploy.ContextEnvironment"));
-	mapper.addRule("web-app/env-entry/env-entry-description",
-		       mapper.methodSetter("setDescription", 0));
-	mapper.addRule("web-app/env-entry/env-entry-name",
-		       mapper.methodSetter("setName", 0));
-	mapper.addRule("web-app/env-entry/env-entry-type",
-		       mapper.methodSetter("setType", 0));
-	mapper.addRule("web-app/env-entry/env-entry-value",
-		       mapper.methodSetter("setValue", 0));
+        mapper.addRule("web-app/env-entry",
+         mapper.objectCreate("org.apache.catalina.deploy.ContextEnvironment"));
+        mapper.addRule("web-app/env-entry",
+                       mapper.addChild("addEnvironment",
+                             "org.apache.catalina.deploy.ContextEnvironment"));
+        mapper.addRule("web-app/env-entry/env-entry-description",
+                       mapper.methodSetter("setDescription", 0));
+        mapper.addRule("web-app/env-entry/env-entry-name",
+                       mapper.methodSetter("setName", 0));
+        mapper.addRule("web-app/env-entry/env-entry-type",
+                       mapper.methodSetter("setType", 0));
+        mapper.addRule("web-app/env-entry/env-entry-value",
+                       mapper.methodSetter("setValue", 0));
 
-	mapper.addRule("web-app/error-page",
-		  mapper.objectCreate("org.apache.catalina.deploy.ErrorPage"));
-	mapper.addRule("web-app/error-page",
-		       mapper.addChild("addErrorPage",
-			       "org.apache.catalina.deploy.ErrorPage"));
-	mapper.addRule("web-app/error-page/error-code",
-		       mapper.methodSetter("setErrorCode", 0));
-	mapper.addRule("web-app/error-page/exception-type",
-		       mapper.methodSetter("setExceptionType", 0));
-	mapper.addRule("web-app/error-page/location",
-		       mapper.methodSetter("setLocation", 0));
+        mapper.addRule("web-app/error-page",
+                  mapper.objectCreate("org.apache.catalina.deploy.ErrorPage"));
+        mapper.addRule("web-app/error-page",
+                       mapper.addChild("addErrorPage",
+                               "org.apache.catalina.deploy.ErrorPage"));
+        mapper.addRule("web-app/error-page/error-code",
+                       mapper.methodSetter("setErrorCode", 0));
+        mapper.addRule("web-app/error-page/exception-type",
+                       mapper.methodSetter("setExceptionType", 0));
+        mapper.addRule("web-app/error-page/location",
+                       mapper.methodSetter("setLocation", 0));
 
-	mapper.addRule("web-app/filter",
-		  mapper.objectCreate("org.apache.catalina.deploy.FilterDef"));
-	mapper.addRule("web-app/filter",
-		       mapper.addChild("addFilterDef",
-				      "org.apache.catalina.deploy.FilterDef"));
-	mapper.addRule("web-app/filter/description",
-		       mapper.methodSetter("setDescription", 0));
-	mapper.addRule("web-app/filter/display-name",
-		       mapper.methodSetter("setDisplayName", 0));
-	mapper.addRule("web-app/filter/filter-class",
-		       mapper.methodSetter("setFilterClass", 0));
-	mapper.addRule("web-app/filter/filter-name",
-		       mapper.methodSetter("setFilterName", 0));
-	mapper.addRule("web-app/filter/icon/large-icon",
-		       mapper.methodSetter("setLargeIcon", 0));
-	mapper.addRule("web-app/filter/icon/small-icon",
-		       mapper.methodSetter("setSmallIcon", 0));
-	mapper.addRule("web-app/filter/init-param",
-		       mapper.methodSetter("addInitParameter", 2));
-	mapper.addRule("web-app/filter/init-param/param-name",
-		       mapper.methodParam(0));
-	mapper.addRule("web-app/filter/init-param/param-value",
-		       mapper.methodParam(1));
+        mapper.addRule("web-app/filter",
+                  mapper.objectCreate("org.apache.catalina.deploy.FilterDef"));
+        mapper.addRule("web-app/filter",
+                       mapper.addChild("addFilterDef",
+                                      "org.apache.catalina.deploy.FilterDef"));
+        mapper.addRule("web-app/filter/description",
+                       mapper.methodSetter("setDescription", 0));
+        mapper.addRule("web-app/filter/display-name",
+                       mapper.methodSetter("setDisplayName", 0));
+        mapper.addRule("web-app/filter/filter-class",
+                       mapper.methodSetter("setFilterClass", 0));
+        mapper.addRule("web-app/filter/filter-name",
+                       mapper.methodSetter("setFilterName", 0));
+        mapper.addRule("web-app/filter/icon/large-icon",
+                       mapper.methodSetter("setLargeIcon", 0));
+        mapper.addRule("web-app/filter/icon/small-icon",
+                       mapper.methodSetter("setSmallIcon", 0));
+        mapper.addRule("web-app/filter/init-param",
+                       mapper.methodSetter("addInitParameter", 2));
+        mapper.addRule("web-app/filter/init-param/param-name",
+                       mapper.methodParam(0));
+        mapper.addRule("web-app/filter/init-param/param-value",
+                       mapper.methodParam(1));
 
-	mapper.addRule("web-app/filter-mapping",
-		  mapper.objectCreate("org.apache.catalina.deploy.FilterMap"));
-	mapper.addRule("web-app/filter-mapping",
-		       mapper.addChild("addFilterMap",
-				      "org.apache.catalina.deploy.FilterMap"));
-	mapper.addRule("web-app/filter-mapping/filter-name",
-		       mapper.methodSetter("setFilterName", 0));
-	mapper.addRule("web-app/filter-mapping/servlet-name",
-		       mapper.methodSetter("setServletName", 0));
-	mapper.addRule("web-app/filter-mapping/url-pattern",
-		       mapper.methodSetter("setURLPattern", 0));
+        mapper.addRule("web-app/filter-mapping",
+                  mapper.objectCreate("org.apache.catalina.deploy.FilterMap"));
+        mapper.addRule("web-app/filter-mapping",
+                       mapper.addChild("addFilterMap",
+                                      "org.apache.catalina.deploy.FilterMap"));
+        mapper.addRule("web-app/filter-mapping/filter-name",
+                       mapper.methodSetter("setFilterName", 0));
+        mapper.addRule("web-app/filter-mapping/servlet-name",
+                       mapper.methodSetter("setServletName", 0));
+        mapper.addRule("web-app/filter-mapping/url-pattern",
+                       mapper.methodSetter("setURLPattern", 0));
 
-	mapper.addRule("web-app/listener/listener-class",
-		       mapper.methodSetter("addApplicationListener", 0));
+        mapper.addRule("web-app/listener/listener-class",
+                       mapper.methodSetter("addApplicationListener", 0));
 
-	mapper.addRule("web-app/login-config",
-		mapper.objectCreate("org.apache.catalina.deploy.LoginConfig"));
-	mapper.addRule("web-app/login-config",
-		       mapper.addChild("setLoginConfig",
-				    "org.apache.catalina.deploy.LoginConfig"));
-	mapper.addRule("web-app/login-config/auth-method",
-		       mapper.methodSetter("setAuthMethod", 0));
-	mapper.addRule("web-app/login-config/realm-name",
-		       mapper.methodSetter("setRealmName", 0));
-	mapper.addRule("web-app/login-config/form-login-config/form-login-page",
-		       mapper.methodSetter("setLoginPage", 0));
-	mapper.addRule("web-app/login-config/form-login-config/form-error-page",
-		       mapper.methodSetter("setErrorPage", 0));
+        mapper.addRule("web-app/login-config",
+                mapper.objectCreate("org.apache.catalina.deploy.LoginConfig"));
+        mapper.addRule("web-app/login-config",
+                       mapper.addChild("setLoginConfig",
+                                    "org.apache.catalina.deploy.LoginConfig"));
+        mapper.addRule("web-app/login-config/auth-method",
+                       mapper.methodSetter("setAuthMethod", 0));
+        mapper.addRule("web-app/login-config/realm-name",
+                       mapper.methodSetter("setRealmName", 0));
+        mapper.addRule("web-app/login-config/form-login-config/form-login-page",
+                       mapper.methodSetter("setLoginPage", 0));
+        mapper.addRule("web-app/login-config/form-login-config/form-error-page",
+                       mapper.methodSetter("setErrorPage", 0));
 
-	mapper.addRule("web-app/mime-mapping",
-		       mapper.methodSetter("addMimeMapping", 2));
-	mapper.addRule("web-app/mime-mapping/extension",
-		       mapper.methodParam(0));
-	mapper.addRule("web-app/mime-mapping/mime-type",
-		       mapper.methodParam(1));
+        mapper.addRule("web-app/mime-mapping",
+                       mapper.methodSetter("addMimeMapping", 2));
+        mapper.addRule("web-app/mime-mapping/extension",
+                       mapper.methodParam(0));
+        mapper.addRule("web-app/mime-mapping/mime-type",
+                       mapper.methodParam(1));
 
 
         mapper.addRule("web-app/resource-env-ref",
@@ -596,104 +596,104 @@ public final class ContextConfig
         mapper.addRule("web-app/resource-env-ref/resource-env-ref-type",
                        mapper.methodParam(1));
 
-	mapper.addRule("web-app/resource-ref",
+        mapper.addRule("web-app/resource-ref",
             mapper.objectCreate("org.apache.catalina.deploy.ContextResource"));
         mapper.addRule("web-app/resource-ref",
-		mapper.addChild("addResource",
-			        "org.apache.catalina.deploy.ContextResource"));
-	mapper.addRule("web-app/resource-ref/description",
-		       mapper.methodSetter("setDescription", 0));
-	mapper.addRule("web-app/resource-ref/res-auth",
-		       mapper.methodSetter("setAuth", 0));
-	mapper.addRule("web-app/resource-ref/res-ref-name",
-		       mapper.methodSetter("setName", 0));
+                mapper.addChild("addResource",
+                                "org.apache.catalina.deploy.ContextResource"));
+        mapper.addRule("web-app/resource-ref/description",
+                       mapper.methodSetter("setDescription", 0));
+        mapper.addRule("web-app/resource-ref/res-auth",
+                       mapper.methodSetter("setAuth", 0));
+        mapper.addRule("web-app/resource-ref/res-ref-name",
+                       mapper.methodSetter("setName", 0));
         mapper.addRule("web-app/resource-ref/res-sharing-scope",
                        mapper.methodSetter("setScope", 0));
-	mapper.addRule("web-app/resource-ref/res-type",
-		       mapper.methodSetter("setType", 0));
+        mapper.addRule("web-app/resource-ref/res-type",
+                       mapper.methodSetter("setType", 0));
 
-	mapper.addRule("web-app/security-constraint",
-		       mapper.objectCreate("org.apache.catalina.deploy.SecurityConstraint"));
-	mapper.addRule("web-app/security-constraint",
-		       mapper.addChild("addConstraint",
-				       "org.apache.catalina.deploy.SecurityConstraint"));
+        mapper.addRule("web-app/security-constraint",
+                       mapper.objectCreate("org.apache.catalina.deploy.SecurityConstraint"));
+        mapper.addRule("web-app/security-constraint",
+                       mapper.addChild("addConstraint",
+                                       "org.apache.catalina.deploy.SecurityConstraint"));
         mapper.addRule("web-app/security-constraint/auth-constraint",
                        new SetAuthConstraint());
-	mapper.addRule("web-app/security-constraint/auth-constraint/role-name",
-		       mapper.methodSetter("addAuthRole", 0));
+        mapper.addRule("web-app/security-constraint/auth-constraint/role-name",
+                       mapper.methodSetter("addAuthRole", 0));
         mapper.addRule("web-app/security-constraint/display-name",
                        mapper.methodSetter("setDisplayName", 0));
-	mapper.addRule("web-app/security-constraint/user-data-constraint/transport-guarantee",
-		       mapper.methodSetter("setUserConstraint", 0));
-	mapper.addRule("web-app/security-constraint/web-resource-collection",
-		       mapper.objectCreate("org.apache.catalina.deploy.SecurityCollection"));
-	mapper.addRule("web-app/security-constraint/web-resource-collection",
-		       mapper.addChild("addCollection",
-				       "org.apache.catalina.deploy.SecurityCollection"));
-	mapper.addRule("web-app/security-constraint/web-resource-collection/http-method",
-		       mapper.methodSetter("addMethod", 0));
-	mapper.addRule("web-app/security-constraint/web-resource-collection/url-pattern",
-		       mapper.methodSetter("addPattern", 0));
-	mapper.addRule("web-app/security-constraint/web-resource-collection/web-resource-name",
-		       mapper.methodSetter("setName", 0));
+        mapper.addRule("web-app/security-constraint/user-data-constraint/transport-guarantee",
+                       mapper.methodSetter("setUserConstraint", 0));
+        mapper.addRule("web-app/security-constraint/web-resource-collection",
+                       mapper.objectCreate("org.apache.catalina.deploy.SecurityCollection"));
+        mapper.addRule("web-app/security-constraint/web-resource-collection",
+                       mapper.addChild("addCollection",
+                                       "org.apache.catalina.deploy.SecurityCollection"));
+        mapper.addRule("web-app/security-constraint/web-resource-collection/http-method",
+                       mapper.methodSetter("addMethod", 0));
+        mapper.addRule("web-app/security-constraint/web-resource-collection/url-pattern",
+                       mapper.methodSetter("addPattern", 0));
+        mapper.addRule("web-app/security-constraint/web-resource-collection/web-resource-name",
+                       mapper.methodSetter("setName", 0));
 
-	mapper.addRule("web-app/security-role",
-		       mapper.methodSetter("addSecurityRole", 1));
-	mapper.addRule("web-app/security-role/role-name",
-		       mapper.methodParam(0));
+        mapper.addRule("web-app/security-role",
+                       mapper.methodSetter("addSecurityRole", 1));
+        mapper.addRule("web-app/security-role/role-name",
+                       mapper.methodParam(0));
 
-	mapper.addRule("web-app/servlet",
-		       new WrapperCreate(context));
-	mapper.addRule("web-app/servlet",
-		       mapper.addChild("addChild",
-				       "org.apache.catalina.Container"));
-	mapper.addRule("web-app/servlet/init-param",
-		       mapper.methodSetter("addInitParameter", 2));
-	mapper.addRule("web-app/servlet/init-param/param-name",
-		       mapper.methodParam(0));
-	mapper.addRule("web-app/servlet/init-param/param-value",
-		       mapper.methodParam(1));
-	mapper.addRule("web-app/servlet/jsp-file",
-		       mapper.methodSetter("setJspFile", 0));
-	mapper.addRule("web-app/servlet/load-on-startup",
-		       mapper.methodSetter("setLoadOnStartupString", 0));
-	mapper.addRule("web-app/servlet/run-as/role-name",
-		       mapper.methodSetter("setRunAs", 0));
-	mapper.addRule("web-app/servlet/security-role-ref",
-		       mapper.methodSetter("addSecurityReference", 2));
-	mapper.addRule("web-app/servlet/security-role-ref/role-link",
-		       mapper.methodParam(1));
-	mapper.addRule("web-app/servlet/security-role-ref/role-name",
-		       mapper.methodParam(0));
-	mapper.addRule("web-app/servlet/servlet-class",
-		       mapper.methodSetter("setServletClass", 0));
-	mapper.addRule("web-app/servlet/servlet-name",
-		       mapper.methodSetter("setName", 0));
+        mapper.addRule("web-app/servlet",
+                       new WrapperCreate(context));
+        mapper.addRule("web-app/servlet",
+                       mapper.addChild("addChild",
+                                       "org.apache.catalina.Container"));
+        mapper.addRule("web-app/servlet/init-param",
+                       mapper.methodSetter("addInitParameter", 2));
+        mapper.addRule("web-app/servlet/init-param/param-name",
+                       mapper.methodParam(0));
+        mapper.addRule("web-app/servlet/init-param/param-value",
+                       mapper.methodParam(1));
+        mapper.addRule("web-app/servlet/jsp-file",
+                       mapper.methodSetter("setJspFile", 0));
+        mapper.addRule("web-app/servlet/load-on-startup",
+                       mapper.methodSetter("setLoadOnStartupString", 0));
+        mapper.addRule("web-app/servlet/run-as/role-name",
+                       mapper.methodSetter("setRunAs", 0));
+        mapper.addRule("web-app/servlet/security-role-ref",
+                       mapper.methodSetter("addSecurityReference", 2));
+        mapper.addRule("web-app/servlet/security-role-ref/role-link",
+                       mapper.methodParam(1));
+        mapper.addRule("web-app/servlet/security-role-ref/role-name",
+                       mapper.methodParam(0));
+        mapper.addRule("web-app/servlet/servlet-class",
+                       mapper.methodSetter("setServletClass", 0));
+        mapper.addRule("web-app/servlet/servlet-name",
+                       mapper.methodSetter("setName", 0));
 
-	mapper.addRule("web-app/servlet-mapping",
-		       mapper.methodSetter("addServletMapping", 2));
-	mapper.addRule("web-app/servlet-mapping/servlet-name",
-		       mapper.methodParam(1));
-	mapper.addRule("web-app/servlet-mapping/url-pattern",
-		       mapper.methodParam(0));
+        mapper.addRule("web-app/servlet-mapping",
+                       mapper.methodSetter("addServletMapping", 2));
+        mapper.addRule("web-app/servlet-mapping/servlet-name",
+                       mapper.methodParam(1));
+        mapper.addRule("web-app/servlet-mapping/url-pattern",
+                       mapper.methodParam(0));
 
-	mapper.addRule("web-app/session-config",
-		       mapper.methodSetter("setSessionTimeout", 1,
-					   new String[]{"int"}));
-	mapper.addRule("web-app/session-config/session-timeout",
-		       mapper.methodParam(0));
+        mapper.addRule("web-app/session-config",
+                       mapper.methodSetter("setSessionTimeout", 1,
+                                           new String[]{"int"}));
+        mapper.addRule("web-app/session-config/session-timeout",
+                       mapper.methodParam(0));
 
-	mapper.addRule("web-app/taglib",
-		       mapper.methodSetter("addTaglib", 2));
-	mapper.addRule("web-app/taglib/taglib-location",
-		       mapper.methodParam(1));
-	mapper.addRule("web-app/taglib/taglib-uri",
-		       mapper.methodParam(0));
+        mapper.addRule("web-app/taglib",
+                       mapper.methodSetter("addTaglib", 2));
+        mapper.addRule("web-app/taglib/taglib-location",
+                       mapper.methodParam(1));
+        mapper.addRule("web-app/taglib/taglib-uri",
+                       mapper.methodParam(0));
 
-	mapper.addRule("web-app/welcome-file-list/welcome-file",
-		       mapper.methodSetter("addWelcomeFile", 0));
+        mapper.addRule("web-app/welcome-file-list/welcome-file",
+                       mapper.methodSetter("addWelcomeFile", 0));
 
-	return (mapper);
+        return (mapper);
 
     }
 
@@ -706,28 +706,28 @@ public final class ContextConfig
      */
     private void defaultConfig(XmlMapper mapper) {
 
-	// Open the default web.xml file, if it exists
-	File file = new File(Constants.DefaultWebXml);
-	if (!file.isAbsolute())
-	    file = new File(System.getProperty("catalina.home") +
-			    File.separator + Constants.DefaultWebXml);
-	FileInputStream stream = null;
-	try {
-	    stream = new FileInputStream(file.getCanonicalPath());
-	} catch (FileNotFoundException e) {
-	    log(sm.getString("contextConfig.defaultMissing"));
-	    return;
+        // Open the default web.xml file, if it exists
+        File file = new File(Constants.DefaultWebXml);
+        if (!file.isAbsolute())
+            file = new File(System.getProperty("catalina.home") +
+                            File.separator + Constants.DefaultWebXml);
+        FileInputStream stream = null;
+        try {
+            stream = new FileInputStream(file.getCanonicalPath());
+        } catch (FileNotFoundException e) {
+            log(sm.getString("contextConfig.defaultMissing"));
+            return;
         } catch (IOException e) {
             log(sm.getString("contextConfig.defaultMissing"), e);
             return;
-	}
+        }
 
-	// Process the default web.xml file
-	try {
-	    mapper.readXml(stream, context);
-	} catch (InvocationTargetException e) {
-	    log(sm.getString("contextConfig.defaultConfig"),
-		e.getTargetException());
+        // Process the default web.xml file
+        try {
+            mapper.readXml(stream, context);
+        } catch (InvocationTargetException e) {
+            log(sm.getString("contextConfig.defaultConfig"),
+                e.getTargetException());
             ok = false;
         } catch (SAXParseException e) {
             log(sm.getString("contextConfig.defaultParse"), e);
@@ -735,16 +735,16 @@ public final class ContextConfig
                              "" + e.getLineNumber(),
                              "" + e.getColumnNumber()));
             ok = false;
-	} catch (Exception e) {
-	    log(sm.getString("contextConfig.defaultParse"), e);
+        } catch (Exception e) {
+            log(sm.getString("contextConfig.defaultParse"), e);
             ok = false;
-	} finally {
-	    try {
-		stream.close();
-	    } catch (IOException e) {
-		log(sm.getString("contextConfig.defaultClose"), e);
-	    }
-	}
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                log(sm.getString("contextConfig.defaultClose"), e);
+            }
+        }
 
     }
 
@@ -756,14 +756,14 @@ public final class ContextConfig
      */
     private void log(String message) {
 
-	Logger logger = null;
-	if (context != null)
-	    logger = context.getLogger();
-	if (logger != null)
-	    logger.log("ContextConfig[" + context.getName() + "]: " + message);
-	else
-	    System.out.println("ContextConfig[" + context.getName() + "]: "
-			       + message);
+        Logger logger = null;
+        if (context != null)
+            logger = context.getLogger();
+        if (logger != null)
+            logger.log("ContextConfig[" + context.getName() + "]: " + message);
+        else
+            System.out.println("ContextConfig[" + context.getName() + "]: "
+                               + message);
 
     }
 
@@ -776,18 +776,18 @@ public final class ContextConfig
      */
     private void log(String message, Throwable throwable) {
 
-	Logger logger = null;
-	if (context != null)
-	    logger = context.getLogger();
-	if (logger != null)
-	    logger.log("ContextConfig[" + context.getName() + "] "
-		       + message, throwable);
-	else {
-	    System.out.println("ContextConfig[" + context.getName() + "]: "
-			       + message);
-	    System.out.println("" + throwable);
-	    throwable.printStackTrace(System.out);
-	}
+        Logger logger = null;
+        if (context != null)
+            logger = context.getLogger();
+        if (logger != null)
+            logger.log("ContextConfig[" + context.getName() + "] "
+                       + message, throwable);
+        else {
+            System.out.println("ContextConfig[" + context.getName() + "]: "
+                               + message);
+            System.out.println("" + throwable);
+            throwable.printStackTrace(System.out);
+        }
 
     }
 
@@ -797,26 +797,26 @@ public final class ContextConfig
      */
     private synchronized void start() {
 
-	if (debug > 0)
-	    log(sm.getString("contextConfig.start"));
+        if (debug > 0)
+            log(sm.getString("contextConfig.start"));
         ok = true;
 
-	// Set properties based on DefaultContext
-	Container container = context.getParent();
-	if( !context.getOverride() ) {
-	    if( container instanceof Host ) {
-	        ((Host)container).importDefaultContext(context);
-		container = container.getParent();
-	    }
-	    if( container instanceof Engine ) {
-		((Engine)container).importDefaultContext(context);
-	    }
-	}
+        // Set properties based on DefaultContext
+        Container container = context.getParent();
+        if( !context.getOverride() ) {
+            if( container instanceof Host ) {
+                ((Host)container).importDefaultContext(context);
+                container = container.getParent();
+            }
+            if( container instanceof Engine ) {
+                ((Engine)container).importDefaultContext(context);
+            }
+        }
 
-	// Process the default and application web.xml files
-	XmlMapper mapper = createWebMapper();
-	defaultConfig(mapper);
-	applicationConfig(mapper);
+        // Process the default and application web.xml files
+        XmlMapper mapper = createWebMapper();
+        defaultConfig(mapper);
+        applicationConfig(mapper);
 
         // Scan tag library descriptor files for additional listener classes
         if (ok)
@@ -826,7 +826,7 @@ public final class ContextConfig
         if (ok)
             certificatesConfig();
 
-	// Configure an authenticator if we need one
+        // Configure an authenticator if we need one
         if (ok)
             authenticatorConfig();
 
@@ -861,8 +861,8 @@ public final class ContextConfig
      */
     private synchronized void stop() {
 
-	if (debug > 0)
-	    log(sm.getString("contextConfig.stop"));
+        if (debug > 0)
+            log(sm.getString("contextConfig.stop"));
 
         int i;
 
@@ -881,7 +881,7 @@ public final class ContextConfig
         }
 
         // Removing application parameters
-        ApplicationParameter[] applicationParameters = 
+        ApplicationParameter[] applicationParameters =
             context.findApplicationParameters();
         for (i = 0; i < applicationParameters.length; i++) {
             context.removeApplicationParameter
@@ -1050,7 +1050,7 @@ public final class ContextConfig
         try {
             NamingEnumeration enum = resources.list(libName);
             while (enum.hasMoreElements()) {
-                NameClassPair ncPair = 
+                NameClassPair ncPair =
                     (NameClassPair) enum.nextElement();
                 String filename = libName + "/" + ncPair.getName();
                 if (!filename.endsWith(".jar"))
@@ -1058,7 +1058,7 @@ public final class ContextConfig
                 tldConfigJar(filename, mapper);
             }
         } catch (NamingException e) {
-            // Silent catch: it's valid that no /WEB-INF/lib directory 
+            // Silent catch: it's valid that no /WEB-INF/lib directory
             //exists
         }
 
@@ -1123,7 +1123,7 @@ public final class ContextConfig
             }
             return (false);
         }
-        
+
     }
 
 
@@ -1186,8 +1186,8 @@ final class SetAuthConstraint extends XmlAction {
         SecurityConstraint securityConstraint =
             (SecurityConstraint) stack.peek();
         securityConstraint.setAuthConstraint(true);
-	if (ctx.getDebug() > 0)
-	    ctx.log("Calling SecurityConstraint.setAuthConstraint(true)");
+        if (ctx.getDebug() > 0)
+            ctx.log("Calling SecurityConstraint.setAuthConstraint(true)");
     }
 
 }
@@ -1227,7 +1227,7 @@ final class SetPublicIdAction extends XmlAction {
         super();
         this.method = method;
     }
-    
+
 
     private String method = null;
 
@@ -1275,16 +1275,16 @@ final class WrapperCreate extends XmlAction {
     public void start(SaxContext ctx) {
         Stack stack = ctx.getObjectStack();
         Wrapper wrapper = context.createWrapper();
-	stack.push(wrapper);
-	if (ctx.getDebug() > 0)
-	    ctx.log("new " + wrapper.getClass().getName());
+        stack.push(wrapper);
+        if (ctx.getDebug() > 0)
+            ctx.log("new " + wrapper.getClass().getName());
     }
 
     public void cleanup(SaxContext ctx) {
         Stack stack = ctx.getObjectStack();
-	Wrapper wrapper = (Wrapper) stack.pop();
-	if (ctx.getDebug() > 0)
-	    ctx.log("pop " + wrapper.getClass().getName());
+        Wrapper wrapper = (Wrapper) stack.pop();
+        if (ctx.getDebug() > 0)
+            ctx.log("pop " + wrapper.getClass().getName());
     }
 
 }

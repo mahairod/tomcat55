@@ -150,14 +150,14 @@ public abstract class RequestFilterValve
      * The descriptive information related to this implementation.
      */
     private static final String info =
-	"org.apache.catalina.valves.RequestFilterValve/1.0";
+        "org.apache.catalina.valves.RequestFilterValve/1.0";
 
 
     /**
      * The StringManager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------------------- Properties
@@ -169,7 +169,7 @@ public abstract class RequestFilterValve
      */
     public String getAllow() {
 
-	return (this.allow);
+        return (this.allow);
 
     }
 
@@ -182,8 +182,8 @@ public abstract class RequestFilterValve
      */
     public void setAllow(String allow) {
 
-	this.allow = allow;
-	allows = precalculate(allow);
+        this.allow = allow;
+        allows = precalculate(allow);
 
     }
 
@@ -194,7 +194,7 @@ public abstract class RequestFilterValve
      */
     public String getDeny() {
 
-	return (this.deny);
+        return (this.deny);
 
     }
 
@@ -207,8 +207,8 @@ public abstract class RequestFilterValve
      */
     public void setDeny(String deny) {
 
-	this.deny = deny;
-	denies = precalculate(deny);
+        this.deny = deny;
+        denies = precalculate(deny);
 
     }
 
@@ -218,7 +218,7 @@ public abstract class RequestFilterValve
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -242,7 +242,7 @@ public abstract class RequestFilterValve
      */
     public abstract void invoke(Request request, Response response,
                                 ValveContext context)
-	throws IOException, ServletException;
+        throws IOException, ServletException;
 
 
     // ------------------------------------------------------ Protected Methods
@@ -260,30 +260,30 @@ public abstract class RequestFilterValve
      */
     protected RE[] precalculate(String list) {
 
-	if (list == null)
-	    return (new RE[0]);
-	list = list.trim();
-	if (list.length() < 1)
-	    return (new RE[0]);
-	list += ",";
+        if (list == null)
+            return (new RE[0]);
+        list = list.trim();
+        if (list.length() < 1)
+            return (new RE[0]);
+        list += ",";
 
-	ArrayList reList = new ArrayList();
-	while (list.length() > 0) {
-	    int comma = list.indexOf(',');
-	    if (comma < 0)
-		break;
-	    String pattern = list.substring(0, comma).trim();
-	    try {
-		reList.add(new RE(pattern));
-	    } catch (RESyntaxException e) {
-		throw new IllegalArgumentException
-		    (sm.getString("requestFilterValve.syntax", pattern));
-	    }
-	    list = list.substring(comma + 1);
-	}
+        ArrayList reList = new ArrayList();
+        while (list.length() > 0) {
+            int comma = list.indexOf(',');
+            if (comma < 0)
+                break;
+            String pattern = list.substring(0, comma).trim();
+            try {
+                reList.add(new RE(pattern));
+            } catch (RESyntaxException e) {
+                throw new IllegalArgumentException
+                    (sm.getString("requestFilterValve.syntax", pattern));
+            }
+            list = list.substring(comma + 1);
+        }
 
-	RE reArray[] = new RE[reList.size()];
-	return ((RE[]) reList.toArray(reArray));
+        RE reArray[] = new RE[reList.size()];
+        return ((RE[]) reList.toArray(reArray));
 
     }
 
@@ -302,43 +302,43 @@ public abstract class RequestFilterValve
      * @exception ServletException if a servlet error occurs
      */
     protected void process(String property,
-			   Request request, Response response,
+                           Request request, Response response,
                            ValveContext context)
-	throws IOException, ServletException {
+        throws IOException, ServletException {
 
-	// Check the deny patterns, if any
-	for (int i = 0; i < denies.length; i++) {
-	    if (denies[i].match(property)) {
-		ServletResponse sres = response.getResponse();
-		if (sres instanceof HttpServletResponse) {
-		    HttpServletResponse hres = (HttpServletResponse) sres;
-		    hres.sendError(HttpServletResponse.SC_FORBIDDEN);
-		    return;
-		}
-	    }
-	}
+        // Check the deny patterns, if any
+        for (int i = 0; i < denies.length; i++) {
+            if (denies[i].match(property)) {
+                ServletResponse sres = response.getResponse();
+                if (sres instanceof HttpServletResponse) {
+                    HttpServletResponse hres = (HttpServletResponse) sres;
+                    hres.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    return;
+                }
+            }
+        }
 
-	// Check the allow patterns, if any
-	for (int i = 0; i < allows.length; i++) {
-	    if (allows[i].match(property)) {
-		context.invokeNext(request, response);
-		return;
-	    }
-	}
+        // Check the allow patterns, if any
+        for (int i = 0; i < allows.length; i++) {
+            if (allows[i].match(property)) {
+                context.invokeNext(request, response);
+                return;
+            }
+        }
 
-	// Allow if denies specified but not allows
-	if ((denies.length > 0) && (allows.length == 0)) {
-	    context.invokeNext(request, response);
-	    return;
-	}
+        // Allow if denies specified but not allows
+        if ((denies.length > 0) && (allows.length == 0)) {
+            context.invokeNext(request, response);
+            return;
+        }
 
-	// Deny this request
-	ServletResponse sres = response.getResponse();
-	if (sres instanceof HttpServletResponse) {
-	    HttpServletResponse hres = (HttpServletResponse) sres;
-	    hres.sendError(HttpServletResponse.SC_FORBIDDEN);
-	    return;
-	}
+        // Deny this request
+        ServletResponse sres = response.getResponse();
+        if (sres instanceof HttpServletResponse) {
+            HttpServletResponse hres = (HttpServletResponse) sres;
+            hres.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
 
     }
 

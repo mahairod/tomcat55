@@ -333,19 +333,19 @@ public class JDBCRealm
             return (principal);
 
         } catch (SQLException e) {
-            
+
             // Log the problem for posterity
             log(sm.getString("jdbcRealm.exception"), e);
-            
+
             // Close the connection so that it gets reopened next time
             if (dbConnection != null)
                 close(dbConnection);
-            
+
             // Return "not authenticated" for this request
             return (null);
-            
+
         }
-        
+
     }
 
 
@@ -370,7 +370,7 @@ public class JDBCRealm
                                                String username,
                                                String credentials)
         throws SQLException {
-        
+
         // Look up the user's credentials
         String dbCredentials = null;
         PreparedStatement stmt = credentials(dbConnection, username);
@@ -382,7 +382,7 @@ public class JDBCRealm
         if (dbCredentials == null) {
             return (null);
         }
-        
+
         // Validate the user's credentials
         if (digest(credentials).equals(dbCredentials)) {
             if (debug >= 2)
@@ -394,7 +394,7 @@ public class JDBCRealm
                                  username));
             return (null);
         }
-        
+
         // Accumulate the user's roles
         ArrayList list = new ArrayList();
         stmt = roles(dbConnection, username);
@@ -404,12 +404,12 @@ public class JDBCRealm
         }
         rs.close();
         dbConnection.commit();
-        
+
         // Create and return a suitable Principal for this user
         return (new GenericPrincipal(this, username, credentials, list));
-        
+
     }
-    
+
 
     /**
      * Close the specified database connection.
@@ -629,7 +629,7 @@ public class JDBCRealm
         // Perform normal superclass finalization
         super.stop();
 
-	// Close any open DB connection
+        // Close any open DB connection
         close(this.dbConnection);
 
     }
@@ -650,7 +650,7 @@ public class JDBCRealm
                 (MessageDigest)MessageDigest.getInstance(algorithm).clone();
             // encode the credentials
             md.update(credentials.getBytes());
-            
+
             // Digest the credentials and return as hexadecimal
             return (HexUtils.convert(md.digest()));
         } catch(Exception ex) {
@@ -658,7 +658,7 @@ public class JDBCRealm
             return credentials;
         }
     }
-    
+
     /**
      * Digest password using the algorithm especificied and
      * convert the result to a corresponding hex string.

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.core;
@@ -128,7 +128,7 @@ public final class StandardService
      * The string manager for this package.
      */
     private static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -243,13 +243,13 @@ public final class StandardService
             results[connectors.length] = connector;
             connectors = results;
 
-	    if (initialized) {
-		try {
-		    connector.initialize();
-		} catch (LifecycleException e) {
-		    e.printStackTrace(System.err);
-		}
-	    }
+            if (initialized) {
+                try {
+                    connector.initialize();
+                } catch (LifecycleException e) {
+                    e.printStackTrace(System.err);
+                }
+            }
 
             if (started && (connector instanceof Lifecycle)) {
                 try {
@@ -322,7 +322,7 @@ public final class StandardService
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -334,7 +334,7 @@ public final class StandardService
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -352,29 +352,29 @@ public final class StandardService
      */
     public void start() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("standardService.start.started"));
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("standardService.start.started"));
 
         System.out.println
             (sm.getString("standardService.start.name", this.name));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
 
-	// Start our defined Container first
-	synchronized (container) {
+        // Start our defined Container first
+        synchronized (container) {
             if ((container != null) && (container instanceof Lifecycle))
                 ((Lifecycle) container).start();
-	}
+        }
 
-	// Start our defined Connectors second
-	synchronized (connectors) {
-	    for (int i = 0; i < connectors.length; i++) {
-		if (connectors[i] instanceof Lifecycle)
-		    ((Lifecycle) connectors[i]).start();
-	    }
-	}
+        // Start our defined Connectors second
+        synchronized (connectors) {
+            for (int i = 0; i < connectors.length; i++) {
+                if (connectors[i] instanceof Lifecycle)
+                    ((Lifecycle) connectors[i]).start();
+            }
+        }
 
     }
 
@@ -391,17 +391,17 @@ public final class StandardService
      */
     public void stop() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("standardService.stop.notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("standardService.stop.notStarted"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
 
         System.out.println
             (sm.getString("standardService.stop.name", this.name));
-	started = false;
+        started = false;
 
-	// Stop our defined Connectors first
+        // Stop our defined Connectors first
         synchronized (connectors) {
             for (int i = 0; i < connectors.length; i++) {
                 if (connectors[i] instanceof Lifecycle)
@@ -409,7 +409,7 @@ public final class StandardService
             }
         }
 
-	// Stop our defined Container second
+        // Stop our defined Container second
         synchronized (container) {
             if ((container != null) && (container instanceof Lifecycle))
                 ((Lifecycle) container).stop();
@@ -430,9 +430,9 @@ public final class StandardService
 
         // Initialize our defined Connectors
         synchronized (connectors) {
-		for (int i = 0; i < connectors.length; i++) {
-		    connectors[i].initialize();
-		}
+                for (int i = 0; i < connectors.length; i++) {
+                    connectors[i].initialize();
+                }
         }
     }
 

@@ -157,8 +157,8 @@ public class StandardContext
      */
     public StandardContext() {
 
-	super();
-	pipeline.setBasic(new StandardContextValve());
+        super();
+        pipeline.setBasic(new StandardContextValve());
 
     }
 
@@ -293,7 +293,7 @@ public class StandardContext
      * The descriptive information string for this implementation.
      */
     private static final String info =
-	"org.apache.catalina.core.StandardContext/1.0";
+        "org.apache.catalina.core.StandardContext/1.0";
 
 
     /**
@@ -328,7 +328,7 @@ public class StandardContext
      * The Java class name of the default Mapper class for this Container.
      */
     private String mapperClass =
-	"org.apache.catalina.core.StandardContextMapper";
+        "org.apache.catalina.core.StandardContextMapper";
 
 
     /**
@@ -366,7 +366,7 @@ public class StandardContext
 
     /**
      * The DefaultContext override flag for this web application.
-     */    
+     */
     private boolean override = false;
 
 
@@ -495,7 +495,7 @@ public class StandardContext
 
 
     /**
-     * Returns true if the resources associated with this context are 
+     * Returns true if the resources associated with this context are
      * filesystem based.
      */
     public boolean isFilesystemBased() {
@@ -515,7 +515,7 @@ public class StandardContext
      */
     public Object[] getApplicationListeners() {
 
-	return (applicationListenersObjects);
+        return (applicationListenersObjects);
 
     }
 
@@ -553,8 +553,8 @@ public class StandardContext
 
         boolean oldAvailable = this.available;
         this.available = available;
-	support.firePropertyChange("available",
-				   new Boolean(oldAvailable),
+        support.firePropertyChange("available",
+                                   new Boolean(oldAvailable),
                                    new Boolean(this.available));
 
     }
@@ -568,13 +568,13 @@ public class StandardContext
         // Create a mapper the first time it is requested
         if (this.charsetMapper == null) {
             try {
-	        Class clazz = Class.forName(charsetMapperClass);
-		this.charsetMapper =
-		  (CharsetMapper) clazz.newInstance();
-	    } catch (Throwable t) {
-	        this.charsetMapper = new CharsetMapper();
-	    }
-	}
+                Class clazz = Class.forName(charsetMapperClass);
+                this.charsetMapper =
+                  (CharsetMapper) clazz.newInstance();
+            } catch (Throwable t) {
+                this.charsetMapper = new CharsetMapper();
+            }
+        }
 
         return (this.charsetMapper);
 
@@ -589,9 +589,9 @@ public class StandardContext
     public void setCharsetMapper(CharsetMapper mapper) {
 
         CharsetMapper oldCharsetMapper = this.charsetMapper;
-	this.charsetMapper = mapper;
-	support.firePropertyChange("charsetMapper", oldCharsetMapper,
-				   this.charsetMapper);
+        this.charsetMapper = mapper;
+        support.firePropertyChange("charsetMapper", oldCharsetMapper,
+                                   this.charsetMapper);
 
     }
 
@@ -601,7 +601,7 @@ public class StandardContext
      */
     public boolean getCookies() {
 
-	return (this.cookies);
+        return (this.cookies);
 
     }
 
@@ -613,11 +613,11 @@ public class StandardContext
      */
     public void setCookies(boolean cookies) {
 
-	boolean oldCookies = this.cookies;
-	this.cookies = cookies;
-	support.firePropertyChange("cookies",
-				   new Boolean(oldCookies),
-				   new Boolean(this.cookies));
+        boolean oldCookies = this.cookies;
+        this.cookies = cookies;
+        support.firePropertyChange("cookies",
+                                   new Boolean(oldCookies),
+                                   new Boolean(this.cookies));
 
     }
 
@@ -627,7 +627,7 @@ public class StandardContext
      */
     public boolean getCrossContext() {
 
-	return (this.crossContext);
+        return (this.crossContext);
 
     }
 
@@ -639,11 +639,11 @@ public class StandardContext
      */
     public void setCrossContext(boolean crossContext) {
 
-	boolean oldCrossContext = this.crossContext;
-	this.crossContext = crossContext;
-	support.firePropertyChange("crossContext",
-				   new Boolean(oldCrossContext),
-				   new Boolean(this.crossContext));
+        boolean oldCrossContext = this.crossContext;
+        this.crossContext = crossContext;
+        support.firePropertyChange("crossContext",
+                                   new Boolean(oldCrossContext),
+                                   new Boolean(this.crossContext));
 
     }
 
@@ -677,7 +677,7 @@ public class StandardContext
      */
     public boolean getDistributable() {
 
-	return (this.distributable);
+        return (this.distributable);
 
     }
 
@@ -689,11 +689,11 @@ public class StandardContext
      */
     public void setDistributable(boolean distributable) {
 
-	boolean oldDistributable = this.distributable;
-	this.distributable = distributable;
-	support.firePropertyChange("distributable",
-				   new Boolean(oldDistributable),
-				   new Boolean(this.distributable));
+        boolean oldDistributable = this.distributable;
+        this.distributable = distributable;
+        support.firePropertyChange("distributable",
+                                   new Boolean(oldDistributable),
+                                   new Boolean(this.distributable));
 
     }
 
@@ -704,7 +704,7 @@ public class StandardContext
      */
     public String getDocBase() {
 
-	return (this.docBase);
+        return (this.docBase);
 
     }
 
@@ -717,7 +717,7 @@ public class StandardContext
      */
     public void setDocBase(String docBase) {
 
-	this.docBase = docBase;
+        this.docBase = docBase;
 
     }
 
@@ -729,7 +729,7 @@ public class StandardContext
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -741,7 +741,7 @@ public class StandardContext
      */
     public synchronized void setLoader(Loader loader) {
 
-	super.setLoader(loader);
+        super.setLoader(loader);
         jasperLoader = null;
 
     }
@@ -752,7 +752,7 @@ public class StandardContext
      */
     public LoginConfig getLoginConfig() {
 
-	return (this.loginConfig);
+        return (this.loginConfig);
 
     }
 
@@ -794,10 +794,10 @@ public class StandardContext
         }
 
         // Process the property setting change
-	LoginConfig oldLoginConfig = this.loginConfig;
-	this.loginConfig = config;
-	support.firePropertyChange("loginConfig",
-				   oldLoginConfig, this.loginConfig);
+        LoginConfig oldLoginConfig = this.loginConfig;
+        this.loginConfig = config;
+        support.firePropertyChange("loginConfig",
+                                   oldLoginConfig, this.loginConfig);
 
     }
 
@@ -807,7 +807,7 @@ public class StandardContext
      */
     public String getPath() {
 
-	return (getName());
+        return (getName());
 
     }
 
@@ -822,7 +822,7 @@ public class StandardContext
      */
     public void setPath(String path) {
 
-	setName(RequestUtil.URLDecode(path));
+        setName(RequestUtil.URLDecode(path));
 
     }
 
@@ -850,7 +850,7 @@ public class StandardContext
             log("Setting deployment descriptor public ID to '" +
                 publicId + "'");
 
-	String oldPublicId = this.publicId;
+        String oldPublicId = this.publicId;
         this.publicId = publicId;
         support.firePropertyChange("publicId", oldPublicId, publicId);
 
@@ -862,7 +862,7 @@ public class StandardContext
      */
     public boolean getReloadable() {
 
-	return (this.reloadable);
+        return (this.reloadable);
 
     }
 
@@ -884,11 +884,11 @@ public class StandardContext
      */
     public void setReloadable(boolean reloadable) {
 
-	boolean oldReloadable = this.reloadable;
-	this.reloadable = reloadable;
-	support.firePropertyChange("reloadable",
-				   new Boolean(oldReloadable),
-				   new Boolean(this.reloadable));
+        boolean oldReloadable = this.reloadable;
+        this.reloadable = reloadable;
+        support.firePropertyChange("reloadable",
+                                   new Boolean(oldReloadable),
+                                   new Boolean(this.reloadable));
 
     }
 
@@ -914,9 +914,9 @@ public class StandardContext
      */
     public synchronized ServletContext getServletContext() {
 
-	if (context == null)
-	    context = new ApplicationContext(getBasePath(), this);
-	return (context);
+        if (context == null)
+            context = new ApplicationContext(getBasePath(), this);
+        return (context);
 
     }
 
@@ -927,7 +927,7 @@ public class StandardContext
      */
     public int getSessionTimeout() {
 
-	return (this.sessionTimeout);
+        return (this.sessionTimeout);
 
     }
 
@@ -940,11 +940,11 @@ public class StandardContext
      */
     public void setSessionTimeout(int timeout) {
 
-	int oldSessionTimeout = this.sessionTimeout;
-	this.sessionTimeout = timeout;
-	support.firePropertyChange("sessionTimeout",
-				   new Integer(oldSessionTimeout),
-				   new Integer(this.sessionTimeout));
+        int oldSessionTimeout = this.sessionTimeout;
+        this.sessionTimeout = timeout;
+        support.firePropertyChange("sessionTimeout",
+                                   new Integer(oldSessionTimeout),
+                                   new Integer(this.sessionTimeout));
 
     }
 
@@ -955,7 +955,7 @@ public class StandardContext
      */
     public String getWrapperClass() {
 
-	return (this.wrapperClass);
+        return (this.wrapperClass);
 
     }
 
@@ -968,13 +968,13 @@ public class StandardContext
      */
     public void setWrapperClass(String wrapperClass) {
 
-	this.wrapperClass = wrapperClass;
+        this.wrapperClass = wrapperClass;
 
     }
 
 
     /**
-     * Set the resources DirContext object with which this Container is 
+     * Set the resources DirContext object with which this Container is
      * associated.
      *
      * @param resources The newly associated DirContext
@@ -1016,10 +1016,10 @@ public class StandardContext
     public void setCharsetMapperClass(String mapper) {
 
         String oldCharsetMapperClass = this.charsetMapperClass;
-	this.charsetMapperClass = mapper;
-	support.firePropertyChange("charsetMapperClass",
-				   oldCharsetMapperClass,
-				   this.charsetMapperClass);
+        this.charsetMapperClass = mapper;
+        support.firePropertyChange("charsetMapperClass",
+                                   oldCharsetMapperClass,
+                                   this.charsetMapperClass);
 
     }
 
@@ -1099,7 +1099,7 @@ public class StandardContext
      */
     public String getWorkDir() {
 
-	return (this.workDir);
+        return (this.workDir);
 
     }
 
@@ -1111,10 +1111,10 @@ public class StandardContext
      */
     public void setWorkDir(String workDir) {
 
-	this.workDir = workDir;
+        this.workDir = workDir;
 
-	if (started)
-	    postWorkDirectory();
+        if (started)
+            postWorkDirectory();
 
     }
 
@@ -1130,16 +1130,16 @@ public class StandardContext
      */
     public void addApplicationListener(String listener) {
 
-	synchronized (applicationListeners) {
-	    String results[] =new String[applicationListeners.length + 1];
-	    for (int i = 0; i < applicationListeners.length; i++)
-		results[i] = applicationListeners[i];
-	    results[applicationListeners.length] = listener;
-	    applicationListeners = results;
-	}
-	fireContainerEvent("addApplicationListener", listener);
+        synchronized (applicationListeners) {
+            String results[] =new String[applicationListeners.length + 1];
+            for (int i = 0; i < applicationListeners.length; i++)
+                results[i] = applicationListeners[i];
+            results[applicationListeners.length] = listener;
+            applicationListeners = results;
+        }
+        fireContainerEvent("addApplicationListener", listener);
 
-	// FIXME - add instance if already started?
+        // FIXME - add instance if already started?
 
     }
 
@@ -1175,9 +1175,9 @@ public class StandardContext
      */
     public void addChild(Container child) {
 
-	if (!(child instanceof Wrapper))
-	    throw new IllegalArgumentException
-		(sm.getString("standardContext.notWrapper"));
+        if (!(child instanceof Wrapper))
+            throw new IllegalArgumentException
+                (sm.getString("standardContext.notWrapper"));
         Wrapper wrapper = (Wrapper) child;
         String jspFile = wrapper.getJspFile();
         if ((jspFile != null) && !jspFile.startsWith("/")) {
@@ -1190,7 +1190,7 @@ public class StandardContext
             }
         }
 
-	super.addChild(child);
+        super.addChild(child);
 
     }
 
@@ -1215,14 +1215,14 @@ public class StandardContext
         }
 
         // Add this constraint to the set for our web application
-	synchronized (constraints) {
-	    SecurityConstraint results[] =
-		new SecurityConstraint[constraints.length + 1];
-	    for (int i = 0; i < constraints.length; i++)
-		results[i] = constraints[i];
-	    results[constraints.length] = constraint;
-	    constraints = results;
-	}
+        synchronized (constraints) {
+            SecurityConstraint results[] =
+                new SecurityConstraint[constraints.length + 1];
+            for (int i = 0; i < constraints.length; i++)
+                results[i] = constraints[i];
+            results[constraints.length] = constraint;
+            constraints = results;
+        }
 
     }
 
@@ -1235,10 +1235,10 @@ public class StandardContext
      */
     public void addEjb(ContextEjb ejb) {
 
-	synchronized (ejbs) {
-	    ejbs.put(ejb.getName(), ejb);
-	}
-	fireContainerEvent("addEjb", ejb.getName());
+        synchronized (ejbs) {
+            ejbs.put(ejb.getName(), ejb);
+        }
+        fireContainerEvent("addEjb", ejb.getName());
 
     }
 
@@ -1250,10 +1250,10 @@ public class StandardContext
      */
     public void addEnvironment(ContextEnvironment environment) {
 
-	synchronized (envs) {
-	    envs.put(environment.getName(), environment);
-	}
-	fireContainerEvent("addEnvironment", environment.getName());
+        synchronized (envs) {
+            envs.put(environment.getName(), environment);
+        }
+        fireContainerEvent("addEnvironment", environment.getName());
 
     }
 
@@ -1265,11 +1265,11 @@ public class StandardContext
      */
     public void addResourceParams(ResourceParams resourceParameters) {
 
-	synchronized (resourceParams) {
-	    resourceParams.put(resourceParameters.getName(), 
+        synchronized (resourceParams) {
+            resourceParams.put(resourceParameters.getName(),
                                resourceParameters);
-	}
-	fireContainerEvent("addResourceParams", resourceParameters.getName());
+        }
+        fireContainerEvent("addResourceParams", resourceParameters.getName());
 
     }
 
@@ -1299,18 +1299,18 @@ public class StandardContext
         }
 
         // Add the specified error page to our internal collections
-	String exceptionType = errorPage.getExceptionType();
-	if (exceptionType != null) {
-	    synchronized (exceptionPages) {
-		exceptionPages.put(exceptionType, errorPage);
-	    }
-	} else {
-	    synchronized (statusPages) {
-		statusPages.put(new Integer(errorPage.getErrorCode()),
-				errorPage);
-	    }
-	}
-	fireContainerEvent("addErrorPage", errorPage);
+        String exceptionType = errorPage.getExceptionType();
+        if (exceptionType != null) {
+            synchronized (exceptionPages) {
+                exceptionPages.put(exceptionType, errorPage);
+            }
+        } else {
+            synchronized (statusPages) {
+                statusPages.put(new Integer(errorPage.getErrorCode()),
+                                errorPage);
+            }
+        }
+        fireContainerEvent("addErrorPage", errorPage);
 
     }
 
@@ -1322,10 +1322,10 @@ public class StandardContext
      */
     public void addFilterDef(FilterDef filterDef) {
 
-	synchronized (filterDefs) {
-	    filterDefs.put(filterDef.getFilterName(), filterDef);
-	}
-	fireContainerEvent("addFilterDef", filterDef);
+        synchronized (filterDefs) {
+            filterDefs.put(filterDef.getFilterName(), filterDef);
+        }
+        fireContainerEvent("addFilterDef", filterDef);
 
     }
 
@@ -1362,13 +1362,13 @@ public class StandardContext
                               urlPattern));
 
         // Add this filter mapping to our registered set
-	synchronized (filterMaps) {
-	    FilterMap results[] =new FilterMap[filterMaps.length + 1];
-	    System.arraycopy(filterMaps, 0, results, 0, filterMaps.length);
-	    results[filterMaps.length] = filterMap;
-	    filterMaps = results;
-	}
-	fireContainerEvent("addFilterMap", filterMap);
+        synchronized (filterMaps) {
+            FilterMap results[] =new FilterMap[filterMaps.length + 1];
+            System.arraycopy(filterMaps, 0, results, 0, filterMaps.length);
+            results[filterMaps.length] = filterMap;
+            filterMaps = results;
+        }
+        fireContainerEvent("addFilterMap", filterMap);
 
     }
 
@@ -1381,14 +1381,14 @@ public class StandardContext
      */
     public void addInstanceListener(String listener) {
 
-	synchronized (instanceListeners) {
-	    String results[] =new String[instanceListeners.length + 1];
-	    for (int i = 0; i < instanceListeners.length; i++)
-		results[i] = instanceListeners[i];
-	    results[instanceListeners.length] = listener;
-	    instanceListeners = results;
-	}
-	fireContainerEvent("addInstanceListener", listener);
+        synchronized (instanceListeners) {
+            String results[] =new String[instanceListeners.length + 1];
+            for (int i = 0; i < instanceListeners.length; i++)
+                results[i] = instanceListeners[i];
+            results[instanceListeners.length] = listener;
+            instanceListeners = results;
+        }
+        fireContainerEvent("addInstanceListener", listener);
 
     }
 
@@ -1400,10 +1400,10 @@ public class StandardContext
      */
     public void addLocalEjb(ContextLocalEjb ejb) {
 
-	synchronized (localEjbs) {
-	    localEjbs.put(ejb.getName(), ejb);
-	}
-	fireContainerEvent("addLocalEjb", ejb.getName());
+        synchronized (localEjbs) {
+            localEjbs.put(ejb.getName(), ejb);
+        }
+        fireContainerEvent("addLocalEjb", ejb.getName());
 
     }
 
@@ -1417,10 +1417,10 @@ public class StandardContext
      */
     public void addMimeMapping(String extension, String mimeType) {
 
-	synchronized (mimeMappings) {
-	    mimeMappings.put(extension, mimeType);
-	}
-	fireContainerEvent("addMimeMapping", extension);
+        synchronized (mimeMappings) {
+            mimeMappings.put(extension, mimeType);
+        }
+        fireContainerEvent("addMimeMapping", extension);
 
     }
 
@@ -1447,10 +1447,10 @@ public class StandardContext
                 (sm.getString("standardContext.parameter.duplicate", name));
 
         // Add this parameter to our defined set
-	synchronized (parameters) {
-	    parameters.put(name, value);
-	}
-	fireContainerEvent("addParameter", name);
+        synchronized (parameters) {
+            parameters.put(name, value);
+        }
+        fireContainerEvent("addParameter", name);
 
     }
 
@@ -1462,10 +1462,10 @@ public class StandardContext
      */
     public void addResource(ContextResource resource) {
 
-	synchronized (resources) {
-	    resources.put(resource.getName(), resource);
-	}
-	fireContainerEvent("addResource", resource.getName());
+        synchronized (resources) {
+            resources.put(resource.getName(), resource);
+        }
+        fireContainerEvent("addResource", resource.getName());
 
     }
 
@@ -1494,10 +1494,10 @@ public class StandardContext
      */
     public void addRoleMapping(String role, String link) {
 
-	synchronized (roleMappings) {
-	    roleMappings.put(role, link);
-	}
-	fireContainerEvent("addRoleMapping", role);
+        synchronized (roleMappings) {
+            roleMappings.put(role, link);
+        }
+        fireContainerEvent("addRoleMapping", role);
 
     }
 
@@ -1509,14 +1509,14 @@ public class StandardContext
      */
     public void addSecurityRole(String role) {
 
-	synchronized (securityRoles) {
-	    String results[] =new String[securityRoles.length + 1];
-	    for (int i = 0; i < securityRoles.length; i++)
-		results[i] = securityRoles[i];
-	    results[securityRoles.length] = name;
-	    securityRoles = results;
-	}
-	fireContainerEvent("addSecurityRole", role);
+        synchronized (securityRoles) {
+            String results[] =new String[securityRoles.length + 1];
+            for (int i = 0; i < securityRoles.length; i++)
+                results[i] = securityRoles[i];
+            results[securityRoles.length] = name;
+            securityRoles = results;
+        }
+        fireContainerEvent("addSecurityRole", role);
 
     }
 
@@ -1543,10 +1543,10 @@ public class StandardContext
                 (sm.getString("standardContext.servletMap.pattern", pattern));
 
         // Add this mapping to our registered set
-	synchronized (servletMappings) {
-	    servletMappings.put(pattern, name);
-	}
-	fireContainerEvent("addServletMapping", pattern);
+        synchronized (servletMappings) {
+            servletMappings.put(pattern, name);
+        }
+        fireContainerEvent("addServletMapping", pattern);
 
     }
 
@@ -1559,10 +1559,10 @@ public class StandardContext
      */
     public void addTaglib(String uri, String location) {
 
-	synchronized (taglibs) {
-	    taglibs.put(uri, location);
-	}
-	fireContainerEvent("addTaglib", uri);
+        synchronized (taglibs) {
+            taglibs.put(uri, location);
+        }
+        fireContainerEvent("addTaglib", uri);
 
     }
 
@@ -1574,15 +1574,15 @@ public class StandardContext
      */
     public void addWelcomeFile(String name) {
 
-	synchronized (welcomeFiles) {
-	    String results[] =new String[welcomeFiles.length + 1];
-	    for (int i = 0; i < welcomeFiles.length; i++)
-		results[i] = welcomeFiles[i];
-	    results[welcomeFiles.length] = name;
-	    welcomeFiles = results;
-	}
-	postWelcomeFiles();
-	fireContainerEvent("addWelcomeFile", name);
+        synchronized (welcomeFiles) {
+            String results[] =new String[welcomeFiles.length + 1];
+            for (int i = 0; i < welcomeFiles.length; i++)
+                results[i] = welcomeFiles[i];
+            results[welcomeFiles.length] = name;
+            welcomeFiles = results;
+        }
+        postWelcomeFiles();
+        fireContainerEvent("addWelcomeFile", name);
 
     }
 
@@ -1595,14 +1595,14 @@ public class StandardContext
      */
     public void addWrapperLifecycle(String listener) {
 
-	synchronized (wrapperLifecycles) {
-	    String results[] =new String[wrapperLifecycles.length + 1];
-	    for (int i = 0; i < wrapperLifecycles.length; i++)
-		results[i] = wrapperLifecycles[i];
-	    results[wrapperLifecycles.length] = listener;
-	    wrapperLifecycles = results;
-	}
-	fireContainerEvent("addWrapperLifecycle", listener);
+        synchronized (wrapperLifecycles) {
+            String results[] =new String[wrapperLifecycles.length + 1];
+            for (int i = 0; i < wrapperLifecycles.length; i++)
+                results[i] = wrapperLifecycles[i];
+            results[wrapperLifecycles.length] = listener;
+            wrapperLifecycles = results;
+        }
+        fireContainerEvent("addWrapperLifecycle", listener);
 
     }
 
@@ -1615,14 +1615,14 @@ public class StandardContext
      */
     public void addWrapperListener(String listener) {
 
-	synchronized (wrapperListeners) {
-	    String results[] =new String[wrapperListeners.length + 1];
-	    for (int i = 0; i < wrapperListeners.length; i++)
-		results[i] = wrapperListeners[i];
-	    results[wrapperListeners.length] = listener;
-	    wrapperListeners = results;
-	}
-	fireContainerEvent("addWrapperListener", listener);
+        synchronized (wrapperListeners) {
+            String results[] =new String[wrapperListeners.length + 1];
+            for (int i = 0; i < wrapperListeners.length; i++)
+                results[i] = wrapperListeners[i];
+            results[wrapperListeners.length] = listener;
+            wrapperListeners = results;
+        }
+        fireContainerEvent("addWrapperListener", listener);
 
     }
 
@@ -1637,50 +1637,50 @@ public class StandardContext
 
         Wrapper wrapper = new StandardWrapper();
 
-	synchronized (instanceListeners) {
-	    for (int i = 0; i < instanceListeners.length; i++) {
-	        try {
-	            Class clazz = Class.forName(instanceListeners[i]);
-		    InstanceListener listener =
-		      (InstanceListener) clazz.newInstance();
-		    wrapper.addInstanceListener(listener);
-		} catch (Throwable t) {
-		    log("createWrapper", t);
-		    return (null);
-		}
-	    }
-	}
+        synchronized (instanceListeners) {
+            for (int i = 0; i < instanceListeners.length; i++) {
+                try {
+                    Class clazz = Class.forName(instanceListeners[i]);
+                    InstanceListener listener =
+                      (InstanceListener) clazz.newInstance();
+                    wrapper.addInstanceListener(listener);
+                } catch (Throwable t) {
+                    log("createWrapper", t);
+                    return (null);
+                }
+            }
+        }
 
-	synchronized (wrapperLifecycles) {
-	    for (int i = 0; i < wrapperLifecycles.length; i++) {
-	        try {
-	            Class clazz = Class.forName(wrapperLifecycles[i]);
-		    LifecycleListener listener =
-		      (LifecycleListener) clazz.newInstance();
-		    if (wrapper instanceof Lifecycle)
-		        ((Lifecycle) wrapper).addLifecycleListener(listener);
-		} catch (Throwable t) {
-		    log("createWrapper", t);
-		    return (null);
-		}
-	    }
-	}
+        synchronized (wrapperLifecycles) {
+            for (int i = 0; i < wrapperLifecycles.length; i++) {
+                try {
+                    Class clazz = Class.forName(wrapperLifecycles[i]);
+                    LifecycleListener listener =
+                      (LifecycleListener) clazz.newInstance();
+                    if (wrapper instanceof Lifecycle)
+                        ((Lifecycle) wrapper).addLifecycleListener(listener);
+                } catch (Throwable t) {
+                    log("createWrapper", t);
+                    return (null);
+                }
+            }
+        }
 
-	synchronized (wrapperListeners) {
-	    for (int i = 0; i < wrapperListeners.length; i++) {
-	        try {
-	            Class clazz = Class.forName(wrapperListeners[i]);
-		    ContainerListener listener =
-		      (ContainerListener) clazz.newInstance();
-		    wrapper.addContainerListener(listener);
-		} catch (Throwable t) {
-		    log("createWrapper", t);
-		    return (null);
-		}
-	    }
-	}
+        synchronized (wrapperListeners) {
+            for (int i = 0; i < wrapperListeners.length; i++) {
+                try {
+                    Class clazz = Class.forName(wrapperListeners[i]);
+                    ContainerListener listener =
+                      (ContainerListener) clazz.newInstance();
+                    wrapper.addContainerListener(listener);
+                } catch (Throwable t) {
+                    log("createWrapper", t);
+                    return (null);
+                }
+            }
+        }
 
-	return (wrapper);
+        return (wrapper);
 
     }
 
@@ -1712,7 +1712,7 @@ public class StandardContext
      */
     public SecurityConstraint[] findConstraints() {
 
-	return (constraints);
+        return (constraints);
 
     }
 
@@ -1725,9 +1725,9 @@ public class StandardContext
      */
     public ContextEjb findEjb(String name) {
 
-	synchronized (ejbs) {
-	    return ((ContextEjb) ejbs.get(name));
-	}
+        synchronized (ejbs) {
+            return ((ContextEjb) ejbs.get(name));
+        }
 
     }
 
@@ -1738,10 +1738,10 @@ public class StandardContext
      */
     public ContextEjb[] findEjbs() {
 
-	synchronized (ejbs) {
-	    ContextEjb results[] = new ContextEjb[ejbs.size()];
-	    return ((ContextEjb[]) ejbs.values().toArray(results));
-	}
+        synchronized (ejbs) {
+            ContextEjb results[] = new ContextEjb[ejbs.size()];
+            return ((ContextEjb[]) ejbs.values().toArray(results));
+        }
 
     }
 
@@ -1754,9 +1754,9 @@ public class StandardContext
      */
     public ContextEnvironment findEnvironment(String name) {
 
-	synchronized (envs) {
-	    return ((ContextEnvironment) envs.get(name));
-	}
+        synchronized (envs) {
+            return ((ContextEnvironment) envs.get(name));
+        }
 
     }
 
@@ -1768,10 +1768,10 @@ public class StandardContext
      */
     public ContextEnvironment[] findEnvironments() {
 
-	synchronized (envs) {
-	    ContextEnvironment results[] = new ContextEnvironment[envs.size()];
-	    return ((ContextEnvironment[]) envs.values().toArray(results));
-	}
+        synchronized (envs) {
+            ContextEnvironment results[] = new ContextEnvironment[envs.size()];
+            return ((ContextEnvironment[]) envs.values().toArray(results));
+        }
 
     }
 
@@ -1784,7 +1784,7 @@ public class StandardContext
      */
     public ErrorPage findErrorPage(int errorCode) {
 
-	return ((ErrorPage) statusPages.get(new Integer(errorCode)));
+        return ((ErrorPage) statusPages.get(new Integer(errorCode)));
 
     }
 
@@ -1797,9 +1797,9 @@ public class StandardContext
      */
     public ErrorPage findErrorPage(String exceptionType) {
 
-	synchronized (exceptionPages) {
-	    return ((ErrorPage) exceptionPages.get(exceptionType));
-	}
+        synchronized (exceptionPages) {
+            return ((ErrorPage) exceptionPages.get(exceptionType));
+        }
 
     }
 
@@ -1810,23 +1810,23 @@ public class StandardContext
      */
     public ErrorPage[] findErrorPages() {
 
-	synchronized(exceptionPages) {
-	    synchronized(statusPages) {
-		ErrorPage results1[] = new ErrorPage[exceptionPages.size()];
-		results1 =
-		    (ErrorPage[]) exceptionPages.values().toArray(results1);
-		ErrorPage results2[] = new ErrorPage[statusPages.size()];
-		results2 =
-		    (ErrorPage[]) statusPages.values().toArray(results2);
-		ErrorPage results[] =
-		    new ErrorPage[results1.length + results2.length];
-		for (int i = 0; i < results1.length; i++)
-		    results[i] = results1[i];
-		for (int i = results1.length; i < results.length; i++)
-		    results[i] = results2[i - results1.length];
-		return (results);
-	    }
-	}
+        synchronized(exceptionPages) {
+            synchronized(statusPages) {
+                ErrorPage results1[] = new ErrorPage[exceptionPages.size()];
+                results1 =
+                    (ErrorPage[]) exceptionPages.values().toArray(results1);
+                ErrorPage results2[] = new ErrorPage[statusPages.size()];
+                results2 =
+                    (ErrorPage[]) statusPages.values().toArray(results2);
+                ErrorPage results[] =
+                    new ErrorPage[results1.length + results2.length];
+                for (int i = 0; i < results1.length; i++)
+                    results[i] = results1[i];
+                for (int i = results1.length; i < results.length; i++)
+                    results[i] = results2[i - results1.length];
+                return (results);
+            }
+        }
 
     }
 
@@ -1839,9 +1839,9 @@ public class StandardContext
      */
     public FilterDef findFilterDef(String filterName) {
 
-	synchronized (filterDefs) {
-	    return ((FilterDef) filterDefs.get(filterName));
-	}
+        synchronized (filterDefs) {
+            return ((FilterDef) filterDefs.get(filterName));
+        }
 
     }
 
@@ -1851,10 +1851,10 @@ public class StandardContext
      */
     public FilterDef[] findFilterDefs() {
 
-	synchronized (filterDefs) {
-	    FilterDef results[] = new FilterDef[filterDefs.size()];
-	    return ((FilterDef[]) filterDefs.values().toArray(results));
-	}
+        synchronized (filterDefs) {
+            FilterDef results[] = new FilterDef[filterDefs.size()];
+            return ((FilterDef[]) filterDefs.values().toArray(results));
+        }
 
     }
 
@@ -1864,7 +1864,7 @@ public class StandardContext
      */
     public FilterMap[] findFilterMaps() {
 
-	return (filterMaps);
+        return (filterMaps);
 
     }
 
@@ -1888,9 +1888,9 @@ public class StandardContext
      */
     public ContextLocalEjb findLocalEjb(String name) {
 
-	synchronized (localEjbs) {
-	    return ((ContextLocalEjb) localEjbs.get(name));
-	}
+        synchronized (localEjbs) {
+            return ((ContextLocalEjb) localEjbs.get(name));
+        }
 
     }
 
@@ -1901,10 +1901,10 @@ public class StandardContext
      */
     public ContextLocalEjb[] findLocalEjbs() {
 
-	synchronized (localEjbs) {
-	    ContextLocalEjb results[] = new ContextLocalEjb[localEjbs.size()];
-	    return ((ContextLocalEjb[]) localEjbs.values().toArray(results));
-	}
+        synchronized (localEjbs) {
+            ContextLocalEjb results[] = new ContextLocalEjb[localEjbs.size()];
+            return ((ContextLocalEjb[]) localEjbs.values().toArray(results));
+        }
 
     }
 
@@ -1917,9 +1917,9 @@ public class StandardContext
      */
     public String findMimeMapping(String extension) {
 
-	synchronized (mimeMappings) {
-	    return ((String) mimeMappings.get(extension));
-	}
+        synchronized (mimeMappings) {
+            return ((String) mimeMappings.get(extension));
+        }
 
     }
 
@@ -1930,11 +1930,11 @@ public class StandardContext
      */
     public String[] findMimeMappings() {
 
-	synchronized (mimeMappings) {
-	    String results[] = new String[mimeMappings.size()];
-	    return
-		((String[]) mimeMappings.keySet().toArray(results));
-	}
+        synchronized (mimeMappings) {
+            String results[] = new String[mimeMappings.size()];
+            return
+                ((String[]) mimeMappings.keySet().toArray(results));
+        }
 
     }
 
@@ -1947,9 +1947,9 @@ public class StandardContext
      */
     public String findParameter(String name) {
 
-	synchronized (parameters) {
-	    return ((String) parameters.get(name));
-	}
+        synchronized (parameters) {
+            return ((String) parameters.get(name));
+        }
 
     }
 
@@ -1961,10 +1961,10 @@ public class StandardContext
      */
     public String[] findParameters() {
 
-	synchronized (parameters) {
-	    String results[] = new String[parameters.size()];
-	    return ((String[]) parameters.keySet().toArray(results));
-	}
+        synchronized (parameters) {
+            String results[] = new String[parameters.size()];
+            return ((String[]) parameters.keySet().toArray(results));
+        }
 
     }
 
@@ -1977,9 +1977,9 @@ public class StandardContext
      */
     public ContextResource findResource(String name) {
 
-	synchronized (resources) {
-	    return ((ContextResource) resources.get(name));
-	}
+        synchronized (resources) {
+            return ((ContextResource) resources.get(name));
+        }
 
     }
 
@@ -2020,10 +2020,10 @@ public class StandardContext
      */
     public ContextResource[] findResources() {
 
-	synchronized (resources) {
-	    ContextResource results[] = new ContextResource[resources.size()];
-	    return ((ContextResource[]) resources.values().toArray(results));
-	}
+        synchronized (resources) {
+            ContextResource results[] = new ContextResource[resources.size()];
+            return ((ContextResource[]) resources.values().toArray(results));
+        }
 
     }
 
@@ -2037,14 +2037,14 @@ public class StandardContext
      */
     public String findRoleMapping(String role) {
 
-	String realRole = null;
-	synchronized (roleMappings) {
-	    realRole = (String) roleMappings.get(role);
-	}
-	if (realRole != null)
-	    return (realRole);
-	else
-	    return (role);
+        String realRole = null;
+        synchronized (roleMappings) {
+            realRole = (String) roleMappings.get(role);
+        }
+        if (realRole != null)
+            return (realRole);
+        else
+            return (role);
 
     }
 
@@ -2057,13 +2057,13 @@ public class StandardContext
      */
     public boolean findSecurityRole(String role) {
 
-	synchronized (securityRoles) {
-	    for (int i = 0; i < securityRoles.length; i++) {
-		if (role.equals(securityRoles[i]))
-		    return (true);
-	    }
-	}
-	return (false);
+        synchronized (securityRoles) {
+            for (int i = 0; i < securityRoles.length; i++) {
+                if (role.equals(securityRoles[i]))
+                    return (true);
+            }
+        }
+        return (false);
 
     }
 
@@ -2074,7 +2074,7 @@ public class StandardContext
      */
     public String[] findSecurityRoles() {
 
-	return (securityRoles);
+        return (securityRoles);
 
     }
 
@@ -2087,9 +2087,9 @@ public class StandardContext
      */
     public String findServletMapping(String pattern) {
 
-	synchronized (servletMappings) {
-	    return ((String) servletMappings.get(pattern));
-	}
+        synchronized (servletMappings) {
+            return ((String) servletMappings.get(pattern));
+        }
 
     }
 
@@ -2100,11 +2100,11 @@ public class StandardContext
      */
     public String[] findServletMappings() {
 
-	synchronized (servletMappings) {
-	    String results[] = new String[servletMappings.size()];
-	    return
-	       ((String[]) servletMappings.keySet().toArray(results));
-	}
+        synchronized (servletMappings) {
+            String results[] = new String[servletMappings.size()];
+            return
+               ((String[]) servletMappings.keySet().toArray(results));
+        }
 
     }
 
@@ -2117,7 +2117,7 @@ public class StandardContext
      */
     public String findStatusPage(int status) {
 
-	return ((String) statusPages.get(new Integer(status)));
+        return ((String) statusPages.get(new Integer(status)));
 
     }
 
@@ -2129,14 +2129,14 @@ public class StandardContext
      */
     public int[] findStatusPages() {
 
-	synchronized (statusPages) {
-	    int results[] = new int[statusPages.size()];
-	    Iterator elements = statusPages.keySet().iterator();
-	    int i = 0;
-	    while (elements.hasNext())
-		results[i++] = ((Integer) elements.next()).intValue();
-	    return (results);
-	}
+        synchronized (statusPages) {
+            int results[] = new int[statusPages.size()];
+            Iterator elements = statusPages.keySet().iterator();
+            int i = 0;
+            while (elements.hasNext())
+                results[i++] = ((Integer) elements.next()).intValue();
+            return (results);
+        }
 
     }
 
@@ -2149,9 +2149,9 @@ public class StandardContext
      */
     public String findTaglib(String uri) {
 
-	synchronized (taglibs) {
-	    return ((String) taglibs.get(uri));
-	}
+        synchronized (taglibs) {
+            return ((String) taglibs.get(uri));
+        }
 
     }
 
@@ -2163,10 +2163,10 @@ public class StandardContext
      */
     public String[] findTaglibs() {
 
-	synchronized (taglibs) {
-	    String results[] = new String[taglibs.size()];
-	    return ((String[]) taglibs.keySet().toArray(results));
-	}
+        synchronized (taglibs) {
+            String results[] = new String[taglibs.size()];
+            return ((String[]) taglibs.keySet().toArray(results));
+        }
 
     }
 
@@ -2179,13 +2179,13 @@ public class StandardContext
      */
     public boolean findWelcomeFile(String name) {
 
-	synchronized (welcomeFiles) {
-	    for (int i = 0; i < welcomeFiles.length; i++) {
-		if (name.equals(welcomeFiles[i]))
-		    return (true);
-	    }
-	}
-	return (false);
+        synchronized (welcomeFiles) {
+            for (int i = 0; i < welcomeFiles.length; i++) {
+                if (name.equals(welcomeFiles[i]))
+                    return (true);
+            }
+        }
+        return (false);
 
     }
 
@@ -2196,7 +2196,7 @@ public class StandardContext
      */
     public String[] findWelcomeFiles() {
 
-	return (welcomeFiles);
+        return (welcomeFiles);
 
     }
 
@@ -2236,19 +2236,19 @@ public class StandardContext
      *  while processing this request
      */
     public void invoke(Request request, Response response)
-	throws IOException, ServletException {
+        throws IOException, ServletException {
 
-	// Wait if we are reloading
-	while (getPaused()) {
-	    try {
-		Thread.sleep(1000);
-	    } catch (InterruptedException e) {
-		;
-	    }
-	}
+        // Wait if we are reloading
+        while (getPaused()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                ;
+            }
+        }
 
-	// Normal request processing
-	super.invoke(request, response);
+        // Normal request processing
+        super.invoke(request, response);
 
     }
 
@@ -2267,32 +2267,32 @@ public class StandardContext
      */
     public void reload() {
 
-	// Make sure reloading is enabled
-        //	if (!reloadable)
-        //	    throw new IllegalStateException
-        //		(sm.getString("standardContext.notReloadable"));
-	log(sm.getString("standardContext.reloadingStarted"));
+        // Make sure reloading is enabled
+        //      if (!reloadable)
+        //          throw new IllegalStateException
+        //              (sm.getString("standardContext.notReloadable"));
+        log(sm.getString("standardContext.reloadingStarted"));
 
-	// Stop accepting requests temporarily
-	setPaused(true);
+        // Stop accepting requests temporarily
+        setPaused(true);
 
         // Binding thread
         bindThread();
 
-	// Shut down the current version of all active servlets
-	Container children[] = findChildren();
-	for (int i = 0; i < children.length; i++) {
-	    Wrapper wrapper = (Wrapper) children[i];
-	    if (wrapper instanceof Lifecycle) {
-		try {
-		    ((Lifecycle) wrapper).stop();
-		} catch (LifecycleException e) {
-		    log(sm.getString("standardContext.stoppingWrapper",
-				     wrapper.getName()),
-			e);
-		}
-	    }
-	}
+        // Shut down the current version of all active servlets
+        Container children[] = findChildren();
+        for (int i = 0; i < children.length; i++) {
+            Wrapper wrapper = (Wrapper) children[i];
+            if (wrapper instanceof Lifecycle) {
+                try {
+                    ((Lifecycle) wrapper).stop();
+                } catch (LifecycleException e) {
+                    log(sm.getString("standardContext.stoppingWrapper",
+                                     wrapper.getName()),
+                        e);
+                }
+            }
+        }
 
         // Unbinding thread
         if (isUseNaming()) {
@@ -2308,13 +2308,13 @@ public class StandardContext
         listenerStop();
 
         // Shut down our session manager
-	if ((manager != null) && (manager instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) manager).stop();
-	    } catch (LifecycleException e) {
-		log(sm.getString("standardContext.stoppingManager"), e);
-	    }
-	}
+        if ((manager != null) && (manager instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) manager).stop();
+            } catch (LifecycleException e) {
+                log(sm.getString("standardContext.stoppingManager"), e);
+            }
+        }
 
         // Binding thread
         unbindThread();
@@ -2323,24 +2323,24 @@ public class StandardContext
         jasperLoader = null;
 
         // Shut down our application class loader
-	if ((loader != null) && (loader instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) loader).stop();
-	    } catch (LifecycleException e) {
-		log(sm.getString("standardContext.stoppingLoader"), e);
-	    }
-	}
+        if ((loader != null) && (loader instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) loader).stop();
+            } catch (LifecycleException e) {
+                log(sm.getString("standardContext.stoppingLoader"), e);
+            }
+        }
 
         // Restart our application class loader
-	if ((loader != null) && (loader instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) loader).start();
-	    } catch (LifecycleException e) {
-		log(sm.getString("standardContext.startingLoader"), e);
-	    }
-	}
+        if ((loader != null) && (loader instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) loader).start();
+            } catch (LifecycleException e) {
+                log(sm.getString("standardContext.startingLoader"), e);
+            }
+        }
 
-        // Create and register the associated naming context, if internal 
+        // Create and register the associated naming context, if internal
         // naming is used
         boolean ok = true;
         if (isUseNaming()) {
@@ -2356,9 +2356,9 @@ public class StandardContext
         // Binding thread
         bindThread();
 
-        ClassLoader oldCtxClassLoader = 
+        ClassLoader oldCtxClassLoader =
             Thread.currentThread().getContextClassLoader();
-	ClassLoader classLoader = loader.getClassLoader();
+        ClassLoader classLoader = loader.getClassLoader();
 
         // Set the context class loader
         if (classLoader != null) {
@@ -2370,7 +2370,7 @@ public class StandardContext
             try {
                 ((Lifecycle) manager).start();
             } catch (LifecycleException e) {
-                log(sm.getString("standardContext.startingManager"), e); 
+                log(sm.getString("standardContext.startingManager"), e);
             }
         }
 
@@ -2398,21 +2398,21 @@ public class StandardContext
         }
 
         // Restart our currently defined servlets
-	for (int i = 0; i < children.length; i++) {
+        for (int i = 0; i < children.length; i++) {
             if (!ok)
                 break;
-	    Wrapper wrapper = (Wrapper) children[i];
-	    if (wrapper instanceof Lifecycle) {
-		try {
-		    ((Lifecycle) wrapper).start();
-		} catch (LifecycleException e) {
-		    log(sm.getString("standardContext.startingWrapper",
-				     wrapper.getName()),
-			e);
+            Wrapper wrapper = (Wrapper) children[i];
+            if (wrapper instanceof Lifecycle) {
+                try {
+                    ((Lifecycle) wrapper).start();
+                } catch (LifecycleException e) {
+                    log(sm.getString("standardContext.startingWrapper",
+                                     wrapper.getName()),
+                        e);
                     ok = false;
-		}
-	    }
-	}
+                }
+            }
+        }
 
         // Reinitialize all load on startup servlets
         loadOnStartup(children);
@@ -2420,7 +2420,7 @@ public class StandardContext
         // Unbinding thread
         unbindThread();
 
-	// Start accepting requests again
+        // Start accepting requests again
         if (ok) {
             log(sm.getString("standardContext.reloadingCompleted"));
         } else {
@@ -2440,34 +2440,34 @@ public class StandardContext
      */
     public void removeApplicationListener(String listener) {
 
-	synchronized (applicationListeners) {
+        synchronized (applicationListeners) {
 
-	    // Make sure this welcome file is currently present
-	    int n = -1;
-	    for (int i = 0; i < applicationListeners.length; i++) {
-		if (applicationListeners[i].equals(listener)) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this welcome file is currently present
+            int n = -1;
+            for (int i = 0; i < applicationListeners.length; i++) {
+                if (applicationListeners[i].equals(listener)) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified constraint
-	    int j = 0;
-	    String results[] = new String[applicationListeners.length - 1];
-	    for (int i = 0; i < applicationListeners.length; i++) {
-		if (i != n)
-		    results[j++] = applicationListeners[i];
-	    }
-	    applicationListeners = results;
+            // Remove the specified constraint
+            int j = 0;
+            String results[] = new String[applicationListeners.length - 1];
+            for (int i = 0; i < applicationListeners.length; i++) {
+                if (i != n)
+                    results[j++] = applicationListeners[i];
+            }
+            applicationListeners = results;
 
-	}
+        }
 
-	// Inform interested listeners
-	fireContainerEvent("removeApplicationListener", listener);
+        // Inform interested listeners
+        fireContainerEvent("removeApplicationListener", listener);
 
-	// FIXME - behavior if already started?
+        // FIXME - behavior if already started?
 
     }
 
@@ -2480,33 +2480,33 @@ public class StandardContext
      */
     public void removeApplicationParameter(String name) {
 
-	synchronized (applicationParameters) {
+        synchronized (applicationParameters) {
 
-	    // Make sure this parameter is currently present
-	    int n = -1;
-	    for (int i = 0; i < applicationParameters.length; i++) {
-		if (name.equals(applicationParameters[i].getName())) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this parameter is currently present
+            int n = -1;
+            for (int i = 0; i < applicationParameters.length; i++) {
+                if (name.equals(applicationParameters[i].getName())) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified parameter
-	    int j = 0;
-	    ApplicationParameter results[] =
+            // Remove the specified parameter
+            int j = 0;
+            ApplicationParameter results[] =
                 new ApplicationParameter[applicationParameters.length - 1];
-	    for (int i = 0; i < applicationParameters.length; i++) {
-		if (i != n)
-		    results[j++] = applicationParameters[i];
-	    }
-	    applicationParameters = results;
+            for (int i = 0; i < applicationParameters.length; i++) {
+                if (i != n)
+                    results[j++] = applicationParameters[i];
+            }
+            applicationParameters = results;
 
-	}
+        }
 
-	// Inform interested listeners
-	fireContainerEvent("removeApplicationParameter", name);
+        // Inform interested listeners
+        fireContainerEvent("removeApplicationParameter", name);
 
     }
 
@@ -2518,33 +2518,33 @@ public class StandardContext
      */
     public void removeConstraint(SecurityConstraint constraint) {
 
-	synchronized (constraints) {
+        synchronized (constraints) {
 
-	    // Make sure this constraint is currently present
-	    int n = -1;
-	    for (int i = 0; i < constraints.length; i++) {
-		if (constraints[i].equals(constraint)) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this constraint is currently present
+            int n = -1;
+            for (int i = 0; i < constraints.length; i++) {
+                if (constraints[i].equals(constraint)) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified constraint
-	    int j = 0;
-	    SecurityConstraint results[] =
-		new SecurityConstraint[constraints.length - 1];
-	    for (int i = 0; i < constraints.length; i++) {
-		if (i != n)
-		    results[j++] = constraints[i];
-	    }
-	    constraints = results;
+            // Remove the specified constraint
+            int j = 0;
+            SecurityConstraint results[] =
+                new SecurityConstraint[constraints.length - 1];
+            for (int i = 0; i < constraints.length; i++) {
+                if (i != n)
+                    results[j++] = constraints[i];
+            }
+            constraints = results;
 
-	}
+        }
 
-	// Inform interested listeners
-	fireContainerEvent("removeConstraint", constraint);
+        // Inform interested listeners
+        fireContainerEvent("removeConstraint", constraint);
 
     }
 
@@ -2556,10 +2556,10 @@ public class StandardContext
      */
     public void removeEjb(String name) {
 
-	synchronized (ejbs) {
-	    ejbs.remove(name);
-	}
-	fireContainerEvent("removeEjb", name);
+        synchronized (ejbs) {
+            ejbs.remove(name);
+        }
+        fireContainerEvent("removeEjb", name);
 
     }
 
@@ -2571,10 +2571,10 @@ public class StandardContext
      */
     public void removeEnvironment(String name) {
 
-	synchronized (envs) {
-	    envs.remove(name);
-	}
-	fireContainerEvent("removeEnvironment", name);
+        synchronized (envs) {
+            envs.remove(name);
+        }
+        fireContainerEvent("removeEnvironment", name);
 
     }
 
@@ -2587,17 +2587,17 @@ public class StandardContext
      */
     public void removeErrorPage(ErrorPage errorPage) {
 
-	String exceptionType = errorPage.getExceptionType();
-	if (exceptionType != null) {
-	    synchronized (exceptionPages) {
-		exceptionPages.remove(exceptionType);
-	    }
-	} else {
-	    synchronized (statusPages) {
-		statusPages.remove(new Integer(errorPage.getErrorCode()));
-	    }
-	}
-	fireContainerEvent("removeErrorPage", errorPage);
+        String exceptionType = errorPage.getExceptionType();
+        if (exceptionType != null) {
+            synchronized (exceptionPages) {
+                exceptionPages.remove(exceptionType);
+            }
+        } else {
+            synchronized (statusPages) {
+                statusPages.remove(new Integer(errorPage.getErrorCode()));
+            }
+        }
+        fireContainerEvent("removeErrorPage", errorPage);
 
     }
 
@@ -2610,10 +2610,10 @@ public class StandardContext
      */
     public void removeFilterDef(FilterDef filterDef) {
 
-	synchronized (filterDefs) {
-	    filterDefs.remove(filterDef.getFilterName());
-	}
-	fireContainerEvent("removeFilterDef", filterDef);
+        synchronized (filterDefs) {
+            filterDefs.remove(filterDef.getFilterName());
+        }
+        fireContainerEvent("removeFilterDef", filterDef);
 
     }
 
@@ -2625,30 +2625,30 @@ public class StandardContext
      */
     public void removeFilterMap(FilterMap filterMap) {
 
-	synchronized (filterMaps) {
+        synchronized (filterMaps) {
 
-	    // Make sure this filter mapping is currently present
-	    int n = -1;
-	    for (int i = 0; i < filterMaps.length; i++) {
-		if (filterMaps[i] == filterMap) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this filter mapping is currently present
+            int n = -1;
+            for (int i = 0; i < filterMaps.length; i++) {
+                if (filterMaps[i] == filterMap) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified filter mapping
-	    FilterMap results[] = new FilterMap[filterMaps.length - 1];
-	    System.arraycopy(filterMaps, 0, results, 0, n);
-	    System.arraycopy(filterMaps, n + 1, results, n,
-			     (filterMaps.length - 1) - n);
-	    filterMaps = results;
+            // Remove the specified filter mapping
+            FilterMap results[] = new FilterMap[filterMaps.length - 1];
+            System.arraycopy(filterMaps, 0, results, 0, n);
+            System.arraycopy(filterMaps, n + 1, results, n,
+                             (filterMaps.length - 1) - n);
+            filterMaps = results;
 
-	}
+        }
 
-	// Inform interested listeners
-	fireContainerEvent("removeFilterMap", filterMap);
+        // Inform interested listeners
+        fireContainerEvent("removeFilterMap", filterMap);
 
     }
 
@@ -2661,32 +2661,32 @@ public class StandardContext
      */
     public void removeInstanceListener(String listener) {
 
-	synchronized (instanceListeners) {
+        synchronized (instanceListeners) {
 
-	    // Make sure this welcome file is currently present
-	    int n = -1;
-	    for (int i = 0; i < instanceListeners.length; i++) {
-		if (instanceListeners[i].equals(listener)) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this welcome file is currently present
+            int n = -1;
+            for (int i = 0; i < instanceListeners.length; i++) {
+                if (instanceListeners[i].equals(listener)) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified constraint
-	    int j = 0;
-	    String results[] = new String[instanceListeners.length - 1];
-	    for (int i = 0; i < instanceListeners.length; i++) {
-		if (i != n)
-		    results[j++] = instanceListeners[i];
-	    }
-	    instanceListeners = results;
+            // Remove the specified constraint
+            int j = 0;
+            String results[] = new String[instanceListeners.length - 1];
+            for (int i = 0; i < instanceListeners.length; i++) {
+                if (i != n)
+                    results[j++] = instanceListeners[i];
+            }
+            instanceListeners = results;
 
-	}
+        }
 
-	// Inform interested listeners
-	fireContainerEvent("removeInstanceListener", listener);
+        // Inform interested listeners
+        fireContainerEvent("removeInstanceListener", listener);
 
     }
 
@@ -2698,10 +2698,10 @@ public class StandardContext
      */
     public void removeLocalEjb(String name) {
 
-	synchronized (localEjbs) {
-	    localEjbs.remove(name);
-	}
-	fireContainerEvent("removeLocalEjb", name);
+        synchronized (localEjbs) {
+            localEjbs.remove(name);
+        }
+        fireContainerEvent("removeLocalEjb", name);
 
     }
 
@@ -2714,10 +2714,10 @@ public class StandardContext
      */
     public void removeMimeMapping(String extension) {
 
-	synchronized (mimeMappings) {
-	    mimeMappings.remove(extension);
-	}
-	fireContainerEvent("removeMimeMapping", extension);
+        synchronized (mimeMappings) {
+            mimeMappings.remove(extension);
+        }
+        fireContainerEvent("removeMimeMapping", extension);
 
     }
 
@@ -2730,10 +2730,10 @@ public class StandardContext
      */
     public void removeParameter(String name) {
 
-	synchronized (parameters) {
-	    parameters.remove(name);
-	}
-	fireContainerEvent("removeParameter", name);
+        synchronized (parameters) {
+            parameters.remove(name);
+        }
+        fireContainerEvent("removeParameter", name);
 
     }
 
@@ -2745,10 +2745,10 @@ public class StandardContext
      */
     public void removeResource(String name) {
 
-	synchronized (resources) {
-	    resources.remove(name);
-	}
-	fireContainerEvent("removeResource", name);
+        synchronized (resources) {
+            resources.remove(name);
+        }
+        fireContainerEvent("removeResource", name);
 
     }
 
@@ -2775,10 +2775,10 @@ public class StandardContext
      */
     public void removeRoleMapping(String role) {
 
-	synchronized (roleMappings) {
-	    roleMappings.remove(role);
-	}
-	fireContainerEvent("removeRoleMapping", role);
+        synchronized (roleMappings) {
+            roleMappings.remove(role);
+        }
+        fireContainerEvent("removeRoleMapping", role);
 
     }
 
@@ -2790,32 +2790,32 @@ public class StandardContext
      */
     public void removeSecurityRole(String role) {
 
-	synchronized (securityRoles) {
+        synchronized (securityRoles) {
 
-	    // Make sure this security role is currently present
-	    int n = -1;
-	    for (int i = 0; i < securityRoles.length; i++) {
-		if (role.equals(securityRoles[i])) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this security role is currently present
+            int n = -1;
+            for (int i = 0; i < securityRoles.length; i++) {
+                if (role.equals(securityRoles[i])) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified security role
-	    int j = 0;
-	    String results[] = new String[securityRoles.length - 1];
-	    for (int i = 0; i < securityRoles.length; i++) {
-		if (i != n)
-		    results[j++] = securityRoles[i];
-	    }
-	    securityRoles = results;
+            // Remove the specified security role
+            int j = 0;
+            String results[] = new String[securityRoles.length - 1];
+            for (int i = 0; i < securityRoles.length; i++) {
+                if (i != n)
+                    results[j++] = securityRoles[i];
+            }
+            securityRoles = results;
 
-	}
+        }
 
-	// Inform interested listeners
-	fireContainerEvent("removeSecurityRole", role);
+        // Inform interested listeners
+        fireContainerEvent("removeSecurityRole", role);
 
     }
 
@@ -2828,10 +2828,10 @@ public class StandardContext
      */
     public void removeServletMapping(String pattern) {
 
-	synchronized (servletMappings) {
-	    servletMappings.remove(pattern);
-	}
-	fireContainerEvent("removeServletMapping", pattern);
+        synchronized (servletMappings) {
+            servletMappings.remove(pattern);
+        }
+        fireContainerEvent("removeServletMapping", pattern);
 
     }
 
@@ -2843,10 +2843,10 @@ public class StandardContext
      */
     public void removeTaglib(String uri) {
 
-	synchronized (taglibs) {
-	    taglibs.remove(uri);
-	}
-	fireContainerEvent("removeTaglib", uri);
+        synchronized (taglibs) {
+            taglibs.remove(uri);
+        }
+        fireContainerEvent("removeTaglib", uri);
     }
 
 
@@ -2858,33 +2858,33 @@ public class StandardContext
      */
     public void removeWelcomeFile(String name) {
 
-	synchronized (welcomeFiles) {
+        synchronized (welcomeFiles) {
 
-	    // Make sure this welcome file is currently present
-	    int n = -1;
-	    for (int i = 0; i < welcomeFiles.length; i++) {
-		if (welcomeFiles[i].equals(name)) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this welcome file is currently present
+            int n = -1;
+            for (int i = 0; i < welcomeFiles.length; i++) {
+                if (welcomeFiles[i].equals(name)) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified constraint
-	    int j = 0;
-	    String results[] = new String[welcomeFiles.length - 1];
-	    for (int i = 0; i < welcomeFiles.length; i++) {
-		if (i != n)
-		    results[j++] = welcomeFiles[i];
-	    }
-	    welcomeFiles = results;
+            // Remove the specified constraint
+            int j = 0;
+            String results[] = new String[welcomeFiles.length - 1];
+            for (int i = 0; i < welcomeFiles.length; i++) {
+                if (i != n)
+                    results[j++] = welcomeFiles[i];
+            }
+            welcomeFiles = results;
 
-	}
+        }
 
-	// Inform interested listeners
-	postWelcomeFiles();
-	fireContainerEvent("removeWelcomeFile", name);
+        // Inform interested listeners
+        postWelcomeFiles();
+        fireContainerEvent("removeWelcomeFile", name);
 
     }
 
@@ -2898,32 +2898,32 @@ public class StandardContext
     public void removeWrapperLifecycle(String listener) {
 
 
-	synchronized (wrapperLifecycles) {
+        synchronized (wrapperLifecycles) {
 
-	    // Make sure this welcome file is currently present
-	    int n = -1;
-	    for (int i = 0; i < wrapperLifecycles.length; i++) {
-		if (wrapperLifecycles[i].equals(listener)) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this welcome file is currently present
+            int n = -1;
+            for (int i = 0; i < wrapperLifecycles.length; i++) {
+                if (wrapperLifecycles[i].equals(listener)) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified constraint
-	    int j = 0;
-	    String results[] = new String[wrapperLifecycles.length - 1];
-	    for (int i = 0; i < wrapperLifecycles.length; i++) {
-		if (i != n)
-		    results[j++] = wrapperLifecycles[i];
-	    }
-	    wrapperLifecycles = results;
+            // Remove the specified constraint
+            int j = 0;
+            String results[] = new String[wrapperLifecycles.length - 1];
+            for (int i = 0; i < wrapperLifecycles.length; i++) {
+                if (i != n)
+                    results[j++] = wrapperLifecycles[i];
+            }
+            wrapperLifecycles = results;
 
-	}
+        }
 
-	// Inform interested listeners
-	fireContainerEvent("removeWrapperLifecycle", listener);
+        // Inform interested listeners
+        fireContainerEvent("removeWrapperLifecycle", listener);
 
     }
 
@@ -2937,32 +2937,32 @@ public class StandardContext
     public void removeWrapperListener(String listener) {
 
 
-	synchronized (wrapperListeners) {
+        synchronized (wrapperListeners) {
 
-	    // Make sure this welcome file is currently present
-	    int n = -1;
-	    for (int i = 0; i < wrapperListeners.length; i++) {
-		if (wrapperListeners[i].equals(listener)) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this welcome file is currently present
+            int n = -1;
+            for (int i = 0; i < wrapperListeners.length; i++) {
+                if (wrapperListeners[i].equals(listener)) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified constraint
-	    int j = 0;
-	    String results[] = new String[wrapperListeners.length - 1];
-	    for (int i = 0; i < wrapperListeners.length; i++) {
-		if (i != n)
-		    results[j++] = wrapperListeners[i];
-	    }
-	    wrapperListeners = results;
+            // Remove the specified constraint
+            int j = 0;
+            String results[] = new String[wrapperListeners.length - 1];
+            for (int i = 0; i < wrapperListeners.length; i++) {
+                if (i != n)
+                    results[j++] = wrapperListeners[i];
+            }
+            wrapperListeners = results;
 
-	}
+        }
 
-	// Inform interested listeners
-	fireContainerEvent("removeWrapperListener", listener);
+        // Inform interested listeners
+        fireContainerEvent("removeWrapperListener", listener);
 
     }
 
@@ -3057,27 +3057,27 @@ public class StandardContext
     public boolean listenerStart() {
 
         if (debug >= 1)
-	    log("Configuring application event listeners");
+            log("Configuring application event listeners");
 
         // Instantiate the required listeners
         ClassLoader loader = getLoader().getClassLoader();
-	String listeners[] = findApplicationListeners();
+        String listeners[] = findApplicationListeners();
         Object results[] = new Object[listeners.length];
         boolean ok = true;
-	for (int i = 0; i < results.length; i++) {
-	    if (debug >= 2)
-		log(" Configuring event listener class '" +
-		    listeners[i] + "'");
-	    try {
-		Class clazz = loader.loadClass(listeners[i]);
-		results[i] = clazz.newInstance();
-	    } catch (Throwable t) {
-		log(sm.getString("standardContext.applicationListener",
-				 listeners[i]), t);
+        for (int i = 0; i < results.length; i++) {
+            if (debug >= 2)
+                log(" Configuring event listener class '" +
+                    listeners[i] + "'");
+            try {
+                Class clazz = loader.loadClass(listeners[i]);
+                results[i] = clazz.newInstance();
+            } catch (Throwable t) {
+                log(sm.getString("standardContext.applicationListener",
+                                 listeners[i]), t);
                 ok = false;
-	    }
-	}
-	if (!ok) {
+            }
+        }
+        if (!ok) {
             log(sm.getString("standardContext.applicationSkipped"));
             return (false);
         }
@@ -3085,32 +3085,32 @@ public class StandardContext
         // Send application start events
 
         if (debug >= 1)
-	    log("Sending application start events");
+            log("Sending application start events");
 
         setApplicationListeners(results);
         Object instances[] = getApplicationListeners();
         if (instances == null)
-	    return (ok);
-	ServletContextEvent event =
-	  new ServletContextEvent(getServletContext());
-	for (int i = 0; i < instances.length; i++) {
+            return (ok);
+        ServletContextEvent event =
+          new ServletContextEvent(getServletContext());
+        for (int i = 0; i < instances.length; i++) {
             if (instances[i] == null)
                 continue;
-	    if (!(instances[i] instanceof ServletContextListener))
-	        continue;
+            if (!(instances[i] instanceof ServletContextListener))
+                continue;
             ServletContextListener listener =
                 (ServletContextListener) instances[i];
-	    try {
+            try {
                 fireContainerEvent("beforeContextInitialized", listener);
-		listener.contextInitialized(event);
+                listener.contextInitialized(event);
                 fireContainerEvent("afterContextInitialized", listener);
-	    } catch (Throwable t) {
+            } catch (Throwable t) {
                 fireContainerEvent("afterContextInitialized", listener);
-	        log(sm.getString("standardContext.listenerStart",
+                log(sm.getString("standardContext.listenerStart",
                                  instances[i].getClass().getName()), t);
                 ok = false;
-	    }
-	}
+            }
+        }
         return (ok);
 
     }
@@ -3124,33 +3124,33 @@ public class StandardContext
     public boolean listenerStop() {
 
         if (debug >= 1)
-	    log("Sending application stop events");
+            log("Sending application stop events");
 
         boolean ok = true;
         Object listeners[] = getApplicationListeners();
         if (listeners == null)
-	    return (ok);
-	ServletContextEvent event =
-	  new ServletContextEvent(getServletContext());
-	for (int i = 0; i < listeners.length; i++) {
-	    int j = (listeners.length - 1) - i;
+            return (ok);
+        ServletContextEvent event =
+          new ServletContextEvent(getServletContext());
+        for (int i = 0; i < listeners.length; i++) {
+            int j = (listeners.length - 1) - i;
             if (listeners[j] == null)
                 continue;
-	    if (!(listeners[j] instanceof ServletContextListener))
-	        continue;
+            if (!(listeners[j] instanceof ServletContextListener))
+                continue;
             ServletContextListener listener =
                 (ServletContextListener) listeners[j];
-	    try {
+            try {
                 fireContainerEvent("beforeContextDestroyed", listener);
-		listener.contextDestroyed(event);
+                listener.contextDestroyed(event);
                 fireContainerEvent("beforeContextDestroyed", listener);
-	    } catch (Throwable t) {
+            } catch (Throwable t) {
                 fireContainerEvent("beforeContextDestroyed", listener);
-	        log(sm.getString("standardContext.listenerStop",
+                log(sm.getString("standardContext.listenerStop",
                                  listeners[j].getClass().getName()), t);
                 ok = false;
-	    }
-	}
+            }
+        }
         setApplicationListeners(null);
         return (ok);
 
@@ -3173,7 +3173,7 @@ public class StandardContext
             int loadOnStartup = wrapper.getLoadOnStartup();
             if (loadOnStartup < 0)
                 continue;
-            if (loadOnStartup == 0)	// Arbitrarily put them last
+            if (loadOnStartup == 0)     // Arbitrarily put them last
                 loadOnStartup = Integer.MAX_VALUE;
             Integer key = new Integer(loadOnStartup);
             ArrayList list = (ArrayList) map.get(key);
@@ -3245,21 +3245,21 @@ public class StandardContext
         getCharsetMapper();
 
         // Post work directory
-	postWorkDirectory();
+        postWorkDirectory();
 
-	// Standard container startup
+        // Standard container startup
         if (debug >= 1)
             log("Processing standard container startup");
-	super.start();
+        super.start();
 
         // Reading the "catalina.useNaming" environment variable
         String useNamingProperty = System.getProperty("catalina.useNaming");
-        if ((useNamingProperty != null) 
+        if ((useNamingProperty != null)
             && (useNamingProperty.equals("false"))) {
             useNaming = false;
         }
 
-        // Create and register the associated naming context, if internal 
+        // Create and register the associated naming context, if internal
         // naming is used
         if (isUseNaming()) {
             try {
@@ -3288,7 +3288,7 @@ public class StandardContext
                 ok = false;
         }
 
-	// Create context attributes that will be required
+        // Create context attributes that will be required
         if (ok) {
             if (debug >= 1)
                 log("Posting standard context attributes");
@@ -3336,7 +3336,7 @@ public class StandardContext
         // Finalize our character set mapper
         setCharsetMapper(null);
 
-        // Create and register the associated naming context, if internal 
+        // Create and register the associated naming context, if internal
         // naming is used
         if (isUseNaming()) {
             ContextAccessController.unsetSecurityToken
@@ -3365,15 +3365,15 @@ public class StandardContext
      */
     public String toString() {
 
-	StringBuffer sb = new StringBuffer();
-	if (getParent() != null) {
-	    sb.append(getParent().toString());
-	    sb.append(".");
-	}
-	sb.append("StandardContext[");
-	sb.append(getName());
-	sb.append("]");
-	return (sb.toString());
+        StringBuffer sb = new StringBuffer();
+        if (getParent() != null) {
+            sb.append(getParent().toString());
+            sb.append(".");
+        }
+        sb.append("StandardContext[");
+        sb.append(getName());
+        sb.append("]");
+        return (sb.toString());
 
     }
 
@@ -3389,7 +3389,7 @@ public class StandardContext
      */
     protected void addDefaultMapper(String mapperClass) {
 
-	super.addDefaultMapper(this.mapperClass);
+        super.addDefaultMapper(this.mapperClass);
 
     }
 
@@ -3439,7 +3439,7 @@ public class StandardContext
      */
     protected File engineBase() {
 
-	return (new File(System.getProperty("catalina.home")));
+        return (new File(System.getProperty("catalina.home")));
 
     }
 
@@ -3448,7 +3448,7 @@ public class StandardContext
 
 
     /**
-     * Bind current thread, both for CL purposes and for JNDI ENC support 
+     * Bind current thread, both for CL purposes and for JNDI ENC support
      * during : startup, shutdown and realoading of the context.
      */
     private void bindThread() {
@@ -3519,7 +3519,7 @@ public class StandardContext
         throws NamingException {
 
         Hashtable contextEnv = new Hashtable();
-        javax.naming.Context namingContext = 
+        javax.naming.Context namingContext =
             new NamingContext(contextEnv, getNamingContextName());
         ContextAccessController.setSecurityToken(getNamingContextName(), this);
         ContextBindings.bindContext(this, namingContext, this);
@@ -3541,7 +3541,7 @@ public class StandardContext
         while (envsList.hasNext()) {
             ContextEnvironment env = (ContextEnvironment) envsList.next();
             Object value = null;
-            // Instantiating a new instance of the correct object type, and 
+            // Instantiating a new instance of the correct object type, and
             // initializing it.
             String type = env.getType();
             try {
@@ -3579,7 +3579,7 @@ public class StandardContext
                                      e));
                 }
             }
-            
+
         }
 
         // EJB references
@@ -3598,7 +3598,7 @@ public class StandardContext
             } catch (NamingException e) {
                 log(sm.getString("standardContext.bindFailed", e));
             }
-            
+
         }
 
         // Resources
@@ -3618,7 +3618,7 @@ public class StandardContext
             } catch (NamingException e) {
                 log(sm.getString("standardContext.bindFailed", e));
             }
-            
+
         }
 
         // Resources Env
@@ -3691,7 +3691,7 @@ public class StandardContext
     /**
      * Create all intermediate subcontexts.
      */
-    private void createSubcontexts(javax.naming.Context ctx, String name) 
+    private void createSubcontexts(javax.naming.Context ctx, String name)
         throws NamingException {
         javax.naming.Context currentContext = ctx;
         StringTokenizer tokenizer = new StringTokenizer(name, "/");
@@ -3703,19 +3703,19 @@ public class StandardContext
                 } catch (NamingException e) {
                     // Silent catch. Probably an object is already bound in
                     // the context.
-                    currentContext = 
+                    currentContext =
                         (javax.naming.Context) currentContext.lookup(token);
                 }
             }
         }
     }
-    
+
 
     /**
      * Add additional parameters to the reference.
      */
     private void addAdditionalParameters(Reference ref, String name) {
-        ResourceParams resourceParameters = 
+        ResourceParams resourceParameters =
             (ResourceParams) resourceParams.get(name);
         if (resourceParameters == null)
             return;
@@ -3735,7 +3735,7 @@ public class StandardContext
      */
     private boolean getPaused() {
 
-	return (this.paused);
+        return (this.paused);
 
     }
 
@@ -3758,8 +3758,8 @@ public class StandardContext
      */
     private void postWelcomeFiles() {
 
-	getServletContext().setAttribute("org.apache.catalina.WELCOME_FILES",
-					 welcomeFiles);
+        getServletContext().setAttribute("org.apache.catalina.WELCOME_FILES",
+                                         welcomeFiles);
 
     }
 
@@ -3769,31 +3769,31 @@ public class StandardContext
      */
     private void postWorkDirectory() {
 
-	// Retrieve our parent (normally a host) name
-	String parentName = null;
-	if (getParent() != null)
-	    parentName = getParent().getName();
-	if ((parentName == null) || (parentName.length() < 1))
-	    parentName = "_";
+        // Retrieve our parent (normally a host) name
+        String parentName = null;
+        if (getParent() != null)
+            parentName = getParent().getName();
+        if ((parentName == null) || (parentName.length() < 1))
+            parentName = "_";
 
-	// Acquire (or calculate) the work directory path
-	String workDir = getWorkDir();
-	if (workDir == null) {
-	    String temp = getPath();
-	    if (temp.startsWith("/"))
-		temp = temp.substring(1);
-	    temp = temp.replace('/', '_');
-	    temp = temp.replace('\\', '_');
-	    if (temp.length() < 1)
-		temp = "_";
-	    workDir = "work" + File.separator + parentName +
-		File.separator + temp;
-	    setWorkDir(workDir);
-	}
+        // Acquire (or calculate) the work directory path
+        String workDir = getWorkDir();
+        if (workDir == null) {
+            String temp = getPath();
+            if (temp.startsWith("/"))
+                temp = temp.substring(1);
+            temp = temp.replace('/', '_');
+            temp = temp.replace('\\', '_');
+            if (temp.length() < 1)
+                temp = "_";
+            workDir = "work" + File.separator + parentName +
+                File.separator + temp;
+            setWorkDir(workDir);
+        }
 
-	// Create this directory if necessary
-	File dir = new File(workDir);
-	if (!dir.isAbsolute()) {
+        // Create this directory if necessary
+        File dir = new File(workDir);
+        if (!dir.isAbsolute()) {
             File catalinaHome = new File(System.getProperty("catalina.home"));
             String catalinaHomePath = null;
             try {
@@ -3802,14 +3802,14 @@ public class StandardContext
             } catch (IOException e) {
             }
         }
-	dir.mkdirs();
+        dir.mkdirs();
 
-	// Set the appropriate servlet context attribute
-	getServletContext().setAttribute(Globals.WORK_DIR_ATTR, dir);
+        // Set the appropriate servlet context attribute
+        getServletContext().setAttribute(Globals.WORK_DIR_ATTR, dir);
         if (getServletContext() instanceof ApplicationContext)
             ((ApplicationContext) getServletContext()).setAttributeReadOnly
                 (Globals.WORK_DIR_ATTR);
-        
+
     }
 
 
@@ -3820,7 +3820,7 @@ public class StandardContext
      */
     private void setPaused(boolean paused) {
 
-	this.paused = paused;
+        this.paused = paused;
 
     }
 

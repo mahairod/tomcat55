@@ -120,12 +120,12 @@ public final class SsiInvokerServlet extends HttpServlet {
 
     /** The start pattern */
     private final static byte[] bStart = {
-	(byte)'<',(byte)'!',(byte)'-',(byte)'-',(byte)'#'
+        (byte)'<',(byte)'!',(byte)'-',(byte)'-',(byte)'#'
     };
 
     /** The end pattern */
     private final static byte[] bEnd = {
-	(byte)'-',(byte)'-',(byte)'>'
+        (byte)'-',(byte)'-',(byte)'>'
     };
 
     //----------------- Public methods.
@@ -163,7 +163,7 @@ public final class SsiInvokerServlet extends HttpServlet {
         }
         if (debug > 0)
             log("SsiInvokerServlet.init() SSI invoker started with 'debug'="
-		+ debug);
+                + debug);
     }
 
     /**
@@ -176,7 +176,7 @@ public final class SsiInvokerServlet extends HttpServlet {
      * @exception ServletException if an error occurs
      */
     public void doGet(HttpServletRequest req, HttpServletResponse res)
-	throws IOException, ServletException {
+        throws IOException, ServletException {
 
         if (debug > 0)
             log("SsiInvokerServlet.doGet()");
@@ -193,7 +193,7 @@ public final class SsiInvokerServlet extends HttpServlet {
      * @exception ServletException if an error occurs
      */
     public void doPost(HttpServletRequest req, HttpServletResponse res)
-	throws IOException, ServletException {
+        throws IOException, ServletException {
 
         if (debug > 0)
             log("SsiInvokerServlet.doPut()");
@@ -208,32 +208,32 @@ public final class SsiInvokerServlet extends HttpServlet {
      * @param res a value of type 'HttpServletResponse'
      */
     private void requestHandler(HttpServletRequest req,
-				HttpServletResponse res)
-	throws IOException, ServletException {
+                                HttpServletResponse res)
+        throws IOException, ServletException {
 
         ServletContext servletContext = getServletContext();
         String path = getRelativePath(req);
-	    URL resource = servletContext.getResource(path);
+            URL resource = servletContext.getResource(path);
 
         if (debug > 0)
             log("SsiInvokerServlet.requestHandler()\n" +
-		"Serving " + (buffered ? "buffered " : "unbuffered ") +
+                "Serving " + (buffered ? "buffered " : "unbuffered ") +
                 "resource '" + path + "'");
 
         // Exclude any resource in the /WEB-INF and /META-INF subdirectories
         // (the "toUpperCase()" avoids problems on Windows systems)
         if ((path == null)
-	    || path.toUpperCase().startsWith("/WEB-INF")
-	    || path.toUpperCase().startsWith("/META-INF")) {
+            || path.toUpperCase().startsWith("/WEB-INF")
+            || path.toUpperCase().startsWith("/META-INF")) {
 
             res.sendError(res.SC_NOT_FOUND, path);
             return;
         }
 
-	if (resource==null) {
-	    res.sendError(res.SC_NOT_FOUND, path);
-	    return;
-	}
+        if (resource==null) {
+            res.sendError(res.SC_NOT_FOUND, path);
+            return;
+        }
 
         if (expires != null) {
             res.setDateHeader("Expires", (
@@ -241,11 +241,11 @@ public final class SsiInvokerServlet extends HttpServlet {
         }
 
         OutputStream out = null;
-    	URLConnection resourceInfo = resource.openConnection();
+        URLConnection resourceInfo = resource.openConnection();
         InputStream resourceInputStream = resourceInfo.getInputStream();
 
         InputStream in = new BufferedInputStream(resourceInputStream, 4096);
-        ByteArrayOutputStream soonOut =	new ByteArrayOutputStream(resourceInfo.getContentLength());
+        ByteArrayOutputStream soonOut = new ByteArrayOutputStream(resourceInfo.getContentLength());
 
         StringBuffer command = new StringBuffer();
         byte buf[] = new byte[4096];
@@ -297,8 +297,8 @@ public final class SsiInvokerServlet extends HttpServlet {
                     strParamType = parseParamType(command, strCmd.length());
                     strParam = parseParam(command, strCmd.length());
 
-        		    if(debug > 0)
-		        	log("Serving SSI resource: " + strCmd);
+                            if(debug > 0)
+                                log("Serving SSI resource: " + strCmd);
 
                     ssiCommand = ssiMediator.getCommand(strCmd);
                     if (ssiCommand != null && strParamType.length==strParam.length&& strParamType.length>0) {
@@ -328,7 +328,7 @@ public final class SsiInvokerServlet extends HttpServlet {
      * @return a value of type 'String'
      */
     private String parseCmd(StringBuffer cmd)
-	throws IndexOutOfBoundsException {
+        throws IndexOutOfBoundsException {
 
         String modString = ((cmd.toString()).trim()).toLowerCase();
         return modString.substring(0, modString.indexOf(' '));
@@ -341,48 +341,48 @@ public final class SsiInvokerServlet extends HttpServlet {
      * @return a value of type 'String[]'
      */
     private String[] parseParamType(StringBuffer cmd, int start) {
-	int bIdx = start;
-	int i = 0;
-	int quotes = 0;
-	boolean inside = false;
-	StringBuffer retBuf = new StringBuffer();
+        int bIdx = start;
+        int i = 0;
+        int quotes = 0;
+        boolean inside = false;
+        StringBuffer retBuf = new StringBuffer();
 
-	while(bIdx < cmd.length()) {
-	    if(!inside) {
-		while(bIdx < cmd.length()&&isSpace(cmd.charAt(bIdx)))
-		    bIdx++;
+        while(bIdx < cmd.length()) {
+            if(!inside) {
+                while(bIdx < cmd.length()&&isSpace(cmd.charAt(bIdx)))
+                    bIdx++;
 
-		if(bIdx>=cmd.length())
-		    break;
+                if(bIdx>=cmd.length())
+                    break;
 
-		inside=!inside;
-	    } else {
-		while(bIdx < cmd.length()&&cmd.charAt(bIdx)!='=') {
-		    retBuf.append(cmd.charAt(bIdx));
-		    bIdx++;
-		}
+                inside=!inside;
+            } else {
+                while(bIdx < cmd.length()&&cmd.charAt(bIdx)!='=') {
+                    retBuf.append(cmd.charAt(bIdx));
+                    bIdx++;
+                }
 
-		retBuf.append('"');
-		inside=!inside;
-		quotes=0;
+                retBuf.append('"');
+                inside=!inside;
+                quotes=0;
 
-		while(bIdx < cmd.length()&&quotes!=2) {
-		    if(cmd.charAt(bIdx)=='"')
-			    quotes++;
+                while(bIdx < cmd.length()&&quotes!=2) {
+                    if(cmd.charAt(bIdx)=='"')
+                            quotes++;
 
-		    bIdx++;
-		}
-	    }
-	}
+                    bIdx++;
+                }
+            }
+        }
 
-	StringTokenizer str = new StringTokenizer(retBuf.toString(), "\"");
-	String[] retString = new String[str.countTokens()];
+        StringTokenizer str = new StringTokenizer(retBuf.toString(), "\"");
+        String[] retString = new String[str.countTokens()];
 
-	while(str.hasMoreTokens()) {
-	    retString[i++] = str.nextToken().trim();
-	}
+        while(str.hasMoreTokens()) {
+            retString[i++] = str.nextToken().trim();
+        }
 
-	return retString;
+        return retString;
     }
 
     /**
@@ -392,43 +392,43 @@ public final class SsiInvokerServlet extends HttpServlet {
      * @return a value of type 'String[]'
      */
     private String[] parseParam(StringBuffer cmd, int start) {
-	int bIdx = start;
-	int i = 0;
-	int quotes = 0;
-	boolean inside = false;
-	StringBuffer retBuf = new StringBuffer();
+        int bIdx = start;
+        int i = 0;
+        int quotes = 0;
+        boolean inside = false;
+        StringBuffer retBuf = new StringBuffer();
 
-	while(bIdx < cmd.length()) {
-	    if(!inside) {
-		while(bIdx < cmd.length()&&
-		      cmd.charAt(bIdx)!='"')
-		    bIdx++;
+        while(bIdx < cmd.length()) {
+            if(!inside) {
+                while(bIdx < cmd.length()&&
+                      cmd.charAt(bIdx)!='"')
+                    bIdx++;
 
-		if(bIdx>=cmd.length())
-		    break;
+                if(bIdx>=cmd.length())
+                    break;
 
-		inside=!inside;
-	    } else {
-		while(bIdx < cmd.length() && cmd.charAt(bIdx)!='"') {
-		    retBuf.append(cmd.charAt(bIdx));
-		    bIdx++;
-		}
+                inside=!inside;
+            } else {
+                while(bIdx < cmd.length() && cmd.charAt(bIdx)!='"') {
+                    retBuf.append(cmd.charAt(bIdx));
+                    bIdx++;
+                }
 
-		retBuf.append('"');
-		inside=!inside;
-	    }
+                retBuf.append('"');
+                inside=!inside;
+            }
 
-	    bIdx++;
-	}
+            bIdx++;
+        }
 
-	StringTokenizer str = new StringTokenizer(retBuf.toString(), "\"");
-	String[] retString = new String[str.countTokens()];
+        StringTokenizer str = new StringTokenizer(retBuf.toString(), "\"");
+        String[] retString = new String[str.countTokens()];
 
-	while(str.hasMoreTokens()) {
-	    retString[i++] = str.nextToken();
-	}
+        while(str.hasMoreTokens()) {
+            retString[i++] = str.nextToken();
+        }
 
-	return retString;
+        return retString;
     }
 
     /**
@@ -447,7 +447,7 @@ public final class SsiInvokerServlet extends HttpServlet {
     }
 
     private boolean isSpace(char c) {
-	return c==' '||c=='\n'||c=='\t'||c=='\r';
+        return c==' '||c=='\n'||c=='\t'||c=='\r';
     }
 
     //----------------- Taken from DefaultServlet.java
@@ -460,10 +460,10 @@ public final class SsiInvokerServlet extends HttpServlet {
         // Are we being processed by a RequestDispatcher.include()?
         if (request.getAttribute("javax.servlet.include.request_uri") != null) {
             String result =
-		(String)request.getAttribute("javax.servlet.include.path_info");
+                (String)request.getAttribute("javax.servlet.include.path_info");
             if (result == null)
                 result =
-		    (String)request.getAttribute("javax.servlet.include.servlet_path");
+                    (String)request.getAttribute("javax.servlet.include.servlet_path");
             if ((result == null) || (result.equals("")))
                 result = "/";
             return (result);
@@ -517,7 +517,7 @@ public final class SsiInvokerServlet extends HttpServlet {
             if (index < 0)
                 break;
             normalized = normalized.substring(0, index) +
-		normalized.substring(index + 1);
+                normalized.substring(index + 1);
         }
         // Resolve occurrences of "/./" in the normalized path
         while (true) {
@@ -525,7 +525,7 @@ public final class SsiInvokerServlet extends HttpServlet {
             if (index < 0)
                 break;
             normalized = normalized.substring(0, index) +
-		normalized.substring(index + 2);
+                normalized.substring(index + 2);
         }
         // Resolve occurrences of "/../" in the normalized path
         while (true) {
@@ -536,7 +536,7 @@ public final class SsiInvokerServlet extends HttpServlet {
                 return (null); // Trying to go outside our context
             int index2 = normalized.lastIndexOf('/', index - 1);
             normalized = normalized.substring(0, index2) +
-		normalized.substring(index + 3);
+                normalized.substring(index + 3);
         }
         // Return the normalized path that we have completed
         return (normalized);

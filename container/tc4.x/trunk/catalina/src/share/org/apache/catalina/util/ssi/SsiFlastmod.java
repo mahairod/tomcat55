@@ -93,13 +93,13 @@ public final class SsiFlastmod
         long lastModified;
         String sLastModified = null;
         URL url = null;
-        
+
         if(strParamType[0].equals("file")) {
             path = super.getFilePath(strParam[0]);
         } else if(strParamType[0].equals("virtual")) {
             path = super.getVirtualPath(strParam[0]);
         }
-        
+
         try {
             url = super.servletContext.getResource(path);
             lastModified = url.openConnection().getLastModified();
@@ -110,15 +110,15 @@ public final class SsiFlastmod
         } catch (NullPointerException e) {
             lastModified = 0;
         }
-        
+
         if(lastModified==0)
             sLastModified = (new String(super.getError()));
         else
             sLastModified = super.timefmt(new Date(lastModified));
-        
+
         return sLastModified;
     }
-    
+
     /**
      * Get the date of a file and format it correctly
      *
@@ -129,9 +129,9 @@ public final class SsiFlastmod
         long lastModified;
         String sLastModified = null;
         URL url = null;
-        
+
         path = super.getVirtualPath(path);
-        
+
         try {
             url = super.servletContext.getResource(path);
             lastModified = url.openConnection().getLastModified();
@@ -142,15 +142,15 @@ public final class SsiFlastmod
         } catch (NullPointerException e) {
             lastModified = 0;
         }
-        
+
         if(lastModified==0)
             sLastModified = (new String(super.getError()));
         else
             sLastModified = super.timefmt(new Date(lastModified));
-        
+
         return sLastModified;
     }
-    
+
     /**
      * Not used since this SsiCommand return a stream, use
      * <code>getStream()</code> instead.

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.core;
@@ -100,14 +100,14 @@ final class StandardHostValve
      * The descriptive information related to this implementation.
      */
     private static final String info =
-	"org.apache.catalina.core.StandardHostValve/1.0";
+        "org.apache.catalina.core.StandardHostValve/1.0";
 
 
     /**
      * The string manager for this package.
      */
     private static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------------------- Properties
@@ -118,7 +118,7 @@ final class StandardHostValve
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -140,28 +140,28 @@ final class StandardHostValve
      */
     public void invoke(Request request, Response response,
                        ValveContext valveContext)
-	throws IOException, ServletException {
+        throws IOException, ServletException {
 
-	// Validate the request and response object types
-	if (!(request.getRequest() instanceof HttpServletRequest) ||
-	    !(response.getResponse() instanceof HttpServletResponse)) {
-	    return;	// NOTE - Not much else we can do generically
-	}
+        // Validate the request and response object types
+        if (!(request.getRequest() instanceof HttpServletRequest) ||
+            !(response.getResponse() instanceof HttpServletResponse)) {
+            return;     // NOTE - Not much else we can do generically
+        }
 
-	// Select the Context to be used for this Request
-	StandardHost host = (StandardHost) getContainer();
-	Context context = (Context) host.map(request, true);
-	if (context == null) {
-	    ((HttpServletResponse) response.getResponse()).sendError
-		(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-		 sm.getString("standardHost.noContext"));
-	    return;
-	}
+        // Select the Context to be used for this Request
+        StandardHost host = (StandardHost) getContainer();
+        Context context = (Context) host.map(request, true);
+        if (context == null) {
+            ((HttpServletResponse) response.getResponse()).sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 sm.getString("standardHost.noContext"));
+            return;
+        }
 
-	// Ask this Context to process this request
+        // Ask this Context to process this request
         Thread.currentThread().setContextClassLoader
             (context.getLoader().getClassLoader());
-	context.invoke(request, response);
+        context.invoke(request, response);
 
     }
 

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.core;
@@ -108,7 +108,7 @@ public class StandardEngineMapper
      * The string manager for this package.
      */
     private static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------------------- Properties
@@ -119,7 +119,7 @@ public class StandardEngineMapper
      */
     public Container getContainer() {
 
-	return (engine);
+        return (engine);
 
     }
 
@@ -134,10 +134,10 @@ public class StandardEngineMapper
      */
     public void setContainer(Container container) {
 
-	if (!(container instanceof StandardEngine))
-	    throw new IllegalArgumentException
-		(sm.getString("httpEngineMapper.container"));
-	engine = (StandardEngine) container;
+        if (!(container instanceof StandardEngine))
+            throw new IllegalArgumentException
+                (sm.getString("httpEngineMapper.container"));
+        engine = (StandardEngine) container;
 
     }
 
@@ -147,7 +147,7 @@ public class StandardEngineMapper
      */
     public String getProtocol() {
 
-	return (this.protocol);
+        return (this.protocol);
 
     }
 
@@ -159,7 +159,7 @@ public class StandardEngineMapper
      */
     public void setProtocol(String protocol) {
 
-	this.protocol = protocol;
+        this.protocol = protocol;
 
     }
 
@@ -177,54 +177,54 @@ public class StandardEngineMapper
      */
     public Container map(Request request, boolean update) {
 
-	int debug = engine.getDebug();
+        int debug = engine.getDebug();
 
-	// Extract the requested server name
-	String server = request.getRequest().getServerName();
-	if (server == null) {
-	    server = engine.getDefaultHost();
+        // Extract the requested server name
+        String server = request.getRequest().getServerName();
+        if (server == null) {
+            server = engine.getDefaultHost();
             if (update)
                 request.setServerName(server);
-	}
-	if (server == null)
-	    return (null);
+        }
+        if (server == null)
+            return (null);
         server = server.toLowerCase();
-	if (debug >= 1)
-	    engine.log("Mapping server name '" + server + "'");
+        if (debug >= 1)
+            engine.log("Mapping server name '" + server + "'");
 
-	// Find the matching child Host directly
-	if (debug >= 2)
-	    engine.log(" Trying a direct match");
-	Host host = (Host) engine.findChild(server);
+        // Find the matching child Host directly
+        if (debug >= 2)
+            engine.log(" Trying a direct match");
+        Host host = (Host) engine.findChild(server);
 
-	// Find a matching Host by alias.  FIXME - Optimize this!
-	if (host == null) {
-	    if (debug >= 2)
-		engine.log(" Trying an alias match");
-	    Container children[] = engine.findChildren();
-	    for (int i = 0; i < children.length; i++) {
-		String aliases[] = ((Host) children[i]).findAliases();
-		for (int j = 0; j < aliases.length; j++) {
-		    if (server.equals(aliases[j])) {
-			host = (Host) children[i];
-			break;
-		    }
-		}
-		if (host != null)
-		    break;
-	    }
-	}
+        // Find a matching Host by alias.  FIXME - Optimize this!
+        if (host == null) {
+            if (debug >= 2)
+                engine.log(" Trying an alias match");
+            Container children[] = engine.findChildren();
+            for (int i = 0; i < children.length; i++) {
+                String aliases[] = ((Host) children[i]).findAliases();
+                for (int j = 0; j < aliases.length; j++) {
+                    if (server.equals(aliases[j])) {
+                        host = (Host) children[i];
+                        break;
+                    }
+                }
+                if (host != null)
+                    break;
+            }
+        }
 
-	// Trying the "default" host if any
-	if (host == null) {
-	    if (debug >= 2)
-		engine.log(" Trying the default host");
-	    host = (Host) engine.findChild(engine.getDefaultHost());
-	}
+        // Trying the "default" host if any
+        if (host == null) {
+            if (debug >= 2)
+                engine.log(" Trying the default host");
+            host = (Host) engine.findChild(engine.getDefaultHost());
+        }
 
-	// Update the Request if requested, and return the selected Host
-	;	// No update to the Request is required
-	return (host);
+        // Update the Request if requested, and return the selected Host
+        ;       // No update to the Request is required
+        return (host);
 
     }
 

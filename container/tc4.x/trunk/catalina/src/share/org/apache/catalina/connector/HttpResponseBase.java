@@ -121,9 +121,9 @@ public class HttpResponseBase
      * The date format we will use for creating date headers.
      */
     protected static final SimpleDateFormat format =
-	new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz",Locale.US);
+        new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz",Locale.US);
     static {
-	format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
     };
 
 
@@ -146,7 +146,7 @@ public class HttpResponseBase
      * Descriptive information about this HttpResponse implementation.
      */
     protected static final String info =
-	"org.apache.catalina.connector.HttpResponseBase/1.0";
+        "org.apache.catalina.connector.HttpResponseBase/1.0";
 
 
     /**
@@ -253,14 +253,14 @@ public class HttpResponseBase
      */
     public String getHeader(String name) {
 
-	ArrayList values = null;
-	synchronized (headers) {
-	    values = (ArrayList) headers.get(name);
-	}
-	if (values != null)
-	    return ((String) values.get(0));
-	else
-	    return (null);
+        ArrayList values = null;
+        synchronized (headers) {
+            values = (ArrayList) headers.get(name);
+        }
+        if (values != null)
+            return ((String) values.get(0));
+        else
+            return (null);
 
     }
 
@@ -271,10 +271,10 @@ public class HttpResponseBase
      */
     public String[] getHeaderNames() {
 
-	synchronized (headers) {
-	    String results[] = new String[headers.size()];
-	    return ((String[]) headers.keySet().toArray(results));
-	}
+        synchronized (headers) {
+            String results[] = new String[headers.size()];
+            return ((String[]) headers.keySet().toArray(results));
+        }
 
     }
 
@@ -288,14 +288,14 @@ public class HttpResponseBase
      */
     public String[] getHeaderValues(String name) {
 
-	ArrayList values = null;
-	synchronized (headers) {
-	    values = (ArrayList) headers.get(name);
-	}
-	if (values == null)
-	    return (new String[0]);
-	String results[] = new String[values.size()];
-	return ((String[]) values.toArray(results));
+        ArrayList values = null;
+        synchronized (headers) {
+            values = (ArrayList) headers.get(name);
+        }
+        if (values == null)
+            return (new String[0]);
+        String results[] = new String[values.size()];
+        return ((String[]) values.toArray(results));
 
     }
 
@@ -306,7 +306,7 @@ public class HttpResponseBase
      */
     public String getMessage() {
 
-	return (this.message);
+        return (this.message);
 
     }
 
@@ -316,7 +316,7 @@ public class HttpResponseBase
      */
     public int getStatus() {
 
-	return (this.status);
+        return (this.status);
 
     }
 
@@ -327,11 +327,11 @@ public class HttpResponseBase
      */
     public void recycle() {
 
-	super.recycle();
-	cookies.clear();
-	headers.clear();
-	message = getStatusMessage(HttpServletResponse.SC_OK);
-	status = HttpServletResponse.SC_OK;
+        super.recycle();
+        cookies.clear();
+        headers.clear();
+        message = getStatusMessage(HttpServletResponse.SC_OK);
+        status = HttpServletResponse.SC_OK;
 
     }
 
@@ -361,85 +361,85 @@ public class HttpResponseBase
      */
     protected String getStatusMessage(int status) {
 
-	switch (status) {
-	case SC_OK:
-	    return ("OK");
-	case SC_ACCEPTED:
-	    return ("Accepted");
-	case SC_BAD_GATEWAY:
-	    return ("Bad Gateway");
-	case SC_BAD_REQUEST:
-	    return ("Bad Request");
-	case SC_CONFLICT:
-	    return ("Conflict");
-	case SC_CONTINUE:
-	    return ("Continue");
-	case SC_CREATED:
-	    return ("Created");
-	case SC_EXPECTATION_FAILED:
-	    return ("Expectation Failed");
-	case SC_FORBIDDEN:
-	    return ("Forbidden");
-	case SC_GATEWAY_TIMEOUT:
-	    return ("Gateway Timeout");
-	case SC_GONE:
-	    return ("Gone");
-	case SC_HTTP_VERSION_NOT_SUPPORTED:
-	    return ("HTTP Version Not Supported");
-	case SC_INTERNAL_SERVER_ERROR:
-	    return ("Internal Server Error");
-	case SC_LENGTH_REQUIRED:
-	    return ("Length Required");
-	case SC_METHOD_NOT_ALLOWED:
-	    return ("Method Not Allowed");
-	case SC_MOVED_PERMANENTLY:
-	    return ("Moved Permanently");
-	case SC_MOVED_TEMPORARILY:
-	    return ("Moved Temporarily");
-	case SC_MULTIPLE_CHOICES:
-	    return ("Multiple Choices");
-	case SC_NO_CONTENT:
-	    return ("No Content");
-	case SC_NON_AUTHORITATIVE_INFORMATION:
-	    return ("Non-Authoritative Information");
-	case SC_NOT_ACCEPTABLE:
-	    return ("Not Acceptable");
-	case SC_NOT_FOUND:
-	    return ("Not Found");
-	case SC_NOT_IMPLEMENTED:
-	    return ("Not Implemented");
-	case SC_NOT_MODIFIED:
-	    return ("Not Modified");
-	case SC_PARTIAL_CONTENT:
-	    return ("Partial Content");
-	case SC_PAYMENT_REQUIRED:
-	    return ("Payment Required");
-	case SC_PRECONDITION_FAILED:
-	    return ("Precondition Failed");
-	case SC_PROXY_AUTHENTICATION_REQUIRED:
-	    return ("Proxy Authentication Required");
-	case SC_REQUEST_ENTITY_TOO_LARGE:
-	    return ("Request Entity Too Large");
-	case SC_REQUEST_TIMEOUT:
-	    return ("Request Timeout");
-	case SC_REQUEST_URI_TOO_LONG:
-	    return ("Request URI Too Long");
-	case SC_REQUESTED_RANGE_NOT_SATISFIABLE:
-	    return ("Requested Range Not Satisfiable");
-	case SC_RESET_CONTENT:
-	    return ("Reset Content");
-	case SC_SEE_OTHER:
-	    return ("See Other");
-	case SC_SERVICE_UNAVAILABLE:
-	    return ("Service Unavailable");
-	case SC_SWITCHING_PROTOCOLS:
-	    return ("Switching Protocols");
-	case SC_UNAUTHORIZED:
-	    return ("Unauthorized");
-	case SC_UNSUPPORTED_MEDIA_TYPE:
-	    return ("Unsupported Media Type");
-	case SC_USE_PROXY:
-	    return ("Use Proxy");
+        switch (status) {
+        case SC_OK:
+            return ("OK");
+        case SC_ACCEPTED:
+            return ("Accepted");
+        case SC_BAD_GATEWAY:
+            return ("Bad Gateway");
+        case SC_BAD_REQUEST:
+            return ("Bad Request");
+        case SC_CONFLICT:
+            return ("Conflict");
+        case SC_CONTINUE:
+            return ("Continue");
+        case SC_CREATED:
+            return ("Created");
+        case SC_EXPECTATION_FAILED:
+            return ("Expectation Failed");
+        case SC_FORBIDDEN:
+            return ("Forbidden");
+        case SC_GATEWAY_TIMEOUT:
+            return ("Gateway Timeout");
+        case SC_GONE:
+            return ("Gone");
+        case SC_HTTP_VERSION_NOT_SUPPORTED:
+            return ("HTTP Version Not Supported");
+        case SC_INTERNAL_SERVER_ERROR:
+            return ("Internal Server Error");
+        case SC_LENGTH_REQUIRED:
+            return ("Length Required");
+        case SC_METHOD_NOT_ALLOWED:
+            return ("Method Not Allowed");
+        case SC_MOVED_PERMANENTLY:
+            return ("Moved Permanently");
+        case SC_MOVED_TEMPORARILY:
+            return ("Moved Temporarily");
+        case SC_MULTIPLE_CHOICES:
+            return ("Multiple Choices");
+        case SC_NO_CONTENT:
+            return ("No Content");
+        case SC_NON_AUTHORITATIVE_INFORMATION:
+            return ("Non-Authoritative Information");
+        case SC_NOT_ACCEPTABLE:
+            return ("Not Acceptable");
+        case SC_NOT_FOUND:
+            return ("Not Found");
+        case SC_NOT_IMPLEMENTED:
+            return ("Not Implemented");
+        case SC_NOT_MODIFIED:
+            return ("Not Modified");
+        case SC_PARTIAL_CONTENT:
+            return ("Partial Content");
+        case SC_PAYMENT_REQUIRED:
+            return ("Payment Required");
+        case SC_PRECONDITION_FAILED:
+            return ("Precondition Failed");
+        case SC_PROXY_AUTHENTICATION_REQUIRED:
+            return ("Proxy Authentication Required");
+        case SC_REQUEST_ENTITY_TOO_LARGE:
+            return ("Request Entity Too Large");
+        case SC_REQUEST_TIMEOUT:
+            return ("Request Timeout");
+        case SC_REQUEST_URI_TOO_LONG:
+            return ("Request URI Too Long");
+        case SC_REQUESTED_RANGE_NOT_SATISFIABLE:
+            return ("Requested Range Not Satisfiable");
+        case SC_RESET_CONTENT:
+            return ("Reset Content");
+        case SC_SEE_OTHER:
+            return ("See Other");
+        case SC_SERVICE_UNAVAILABLE:
+            return ("Service Unavailable");
+        case SC_SWITCHING_PROTOCOLS:
+            return ("Switching Protocols");
+        case SC_UNAUTHORIZED:
+            return ("Unauthorized");
+        case SC_UNSUPPORTED_MEDIA_TYPE:
+            return ("Unsupported Media Type");
+        case SC_USE_PROXY:
+            return ("Use Proxy");
         case 207:       // WebDAV
             return ("Multi-Status");
         case 422:       // WebDAV
@@ -448,9 +448,9 @@ public class HttpResponseBase
             return ("Locked");
         case 507:       // WebDAV
             return ("Insufficient Storage");
-	default:
-	    return ("HTTP Response Status " + status);
-	}
+        default:
+            return ("HTTP Response Status " + status);
+        }
 
     }
 
@@ -477,66 +477,66 @@ public class HttpResponseBase
         if (location.startsWith("#"))
             return (false);
 
-	// Are we in a valid session that is not using cookies?
-	HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
-	HttpSession session = hreq.getSession(false);
-	if (session == null)
-	    return (false);
-	if (hreq.isRequestedSessionIdFromCookie())
-	    return (false);
+        // Are we in a valid session that is not using cookies?
+        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
+        HttpSession session = hreq.getSession(false);
+        if (session == null)
+            return (false);
+        if (hreq.isRequestedSessionIdFromCookie())
+            return (false);
 
-	// Is this a valid absolute URL?
-	URL url = null;
-	try {
-	    url = new URL(location);
-	} catch (MalformedURLException e) {
-	    return (false);
-	}
+        // Is this a valid absolute URL?
+        URL url = null;
+        try {
+            url = new URL(location);
+        } catch (MalformedURLException e) {
+            return (false);
+        }
 
-	// Does this URL match down to (and including) the context path?
-	if (!hreq.getScheme().equalsIgnoreCase(url.getProtocol()))
-	    return (false);
-	if (!hreq.getServerName().equalsIgnoreCase(url.getHost()))
-	    return (false);
-	int serverPort = hreq.getServerPort();
-	if (serverPort == -1) {
+        // Does this URL match down to (and including) the context path?
+        if (!hreq.getScheme().equalsIgnoreCase(url.getProtocol()))
+            return (false);
+        if (!hreq.getServerName().equalsIgnoreCase(url.getHost()))
+            return (false);
+        int serverPort = hreq.getServerPort();
+        if (serverPort == -1) {
             if ("https".equals(hreq.getScheme()))
                 serverPort = 443;
             else
                 serverPort = 80;
         }
-	int urlPort = url.getPort();
-	if (urlPort == -1) {
+        int urlPort = url.getPort();
+        if (urlPort == -1) {
             if ("https".equals(url.getProtocol()))
                 urlPort = 443;
             else
                 urlPort = 80;
         }
-	if (serverPort != urlPort)
-	    return (false);
+        if (serverPort != urlPort)
+            return (false);
 
-	String contextPath = getContext().getPath();
-	if ((contextPath != null) && (contextPath.length() > 0)) {
-	    String file = url.getFile();
-	    if ((file == null) || !file.startsWith(contextPath))
-		return (false);
-	}
+        String contextPath = getContext().getPath();
+        if ((contextPath != null) && (contextPath.length() > 0)) {
+            String file = url.getFile();
+            if ((file == null) || !file.startsWith(contextPath))
+                return (false);
+        }
 
-	// This URL belongs to our web application, so it is encodeable
-	return (true);
+        // This URL belongs to our web application, so it is encodeable
+        return (true);
 
     }
 
 
     private void log(String message) {
-	Logger logger = context.getLogger();
-	logger.log(message);
+        Logger logger = context.getLogger();
+        logger.log(message);
     }
 
 
     private void log(String message, Throwable throwable) {
-	Logger logger = context.getLogger();
-	logger.log(message, throwable);
+        Logger logger = context.getLogger();
+        logger.log(message, throwable);
     }
 
 
@@ -545,101 +545,101 @@ public class HttpResponseBase
      */
     protected void sendHeaders() throws IOException {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
         if ("HTTP/0.9".equals(request.getRequest().getProtocol())) {
             committed = true;
             return;
         }
 
-	// Prepare a suitable output writer
-	OutputStreamWriter osr =
-	    new OutputStreamWriter(getStream(), getCharacterEncoding());
-	final PrintWriter outputWriter = new PrintWriter(osr);
+        // Prepare a suitable output writer
+        OutputStreamWriter osr =
+            new OutputStreamWriter(getStream(), getCharacterEncoding());
+        final PrintWriter outputWriter = new PrintWriter(osr);
 
-	// Send the "Status:" header
-	outputWriter.print(request.getRequest().getProtocol());
-	outputWriter.print(" ");
-	outputWriter.print(status);
-	if (message != null) {
-	    outputWriter.print(" ");
-	    outputWriter.print(message);
-	}
-	outputWriter.print("\r\n");
+        // Send the "Status:" header
+        outputWriter.print(request.getRequest().getProtocol());
+        outputWriter.print(" ");
+        outputWriter.print(status);
+        if (message != null) {
+            outputWriter.print(" ");
+            outputWriter.print(message);
+        }
+        outputWriter.print("\r\n");
         // System.out.println("sendHeaders: " +
         //                    request.getRequest().getProtocol() +
         //                    " " + status + " " + message);
 
-	// Send the content-length and content-type headers (if any)
-	if (getContentType() != null) {
-	    outputWriter.print("Content-Type: " + getContentType() + "\r\n");
+        // Send the content-length and content-type headers (if any)
+        if (getContentType() != null) {
+            outputWriter.print("Content-Type: " + getContentType() + "\r\n");
             // System.out.println(" Content-Type: " + getContentType());
-	}
-	if (getContentLength() >= 0) {
-	    outputWriter.print("Content-Length: " + getContentLength() +
-			       "\r\n");
+        }
+        if (getContentLength() >= 0) {
+            outputWriter.print("Content-Length: " + getContentLength() +
+                               "\r\n");
             // System.out.println(" Content-Length: " + getContentLength());
-	}
+        }
 
-	// Send all specified headers (if any)
-	synchronized (headers) {
-	Iterator names = headers.keySet().iterator();
-	while (names.hasNext()) {
-	    String name = (String) names.next();
-	    ArrayList values = (ArrayList) headers.get(name);
-	    Iterator items = values.iterator();
-	    while (items.hasNext()) {
-		String value = (String) items.next();
-		    outputWriter.print(name);
-		    outputWriter.print(": ");
-		    outputWriter.print(value);
-		    outputWriter.print("\r\n");
+        // Send all specified headers (if any)
+        synchronized (headers) {
+        Iterator names = headers.keySet().iterator();
+        while (names.hasNext()) {
+            String name = (String) names.next();
+            ArrayList values = (ArrayList) headers.get(name);
+            Iterator items = values.iterator();
+            while (items.hasNext()) {
+                String value = (String) items.next();
+                    outputWriter.print(name);
+                    outputWriter.print(": ");
+                    outputWriter.print(value);
+                    outputWriter.print("\r\n");
                     // System.out.println(" " + name + ": " + value);
-		}
-	    }
-	}
+                }
+            }
+        }
 
-	// Add the session ID cookie if necessary
-	HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
-	HttpSession session = hreq.getSession(false);
+        // Add the session ID cookie if necessary
+        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
+        HttpSession session = hreq.getSession(false);
 
-	if ((session != null) && session.isNew() && (getContext() != null) 
+        if ((session != null) && session.isNew() && (getContext() != null)
             && getContext().getCookies()) {
-	    Cookie cookie = new Cookie(Globals.SESSION_COOKIE_NAME,
-				       session.getId());
-	    cookie.setMaxAge(-1);
-	    String contextPath = null;
+            Cookie cookie = new Cookie(Globals.SESSION_COOKIE_NAME,
+                                       session.getId());
+            cookie.setMaxAge(-1);
+            String contextPath = null;
             if (context != null)
                 contextPath = context.getPath();
-	    if ((contextPath != null) && (contextPath.length() > 0))
-		cookie.setPath(contextPath);
-	    else
-	        cookie.setPath("/");
-	    if (hreq.isSecure())
-		cookie.setSecure(true);
-	    addCookie(cookie);
-	}
+            if ((contextPath != null) && (contextPath.length() > 0))
+                cookie.setPath(contextPath);
+            else
+                cookie.setPath("/");
+            if (hreq.isSecure())
+                cookie.setSecure(true);
+            addCookie(cookie);
+        }
 
-	// Send all specified cookies (if any)
-	synchronized (cookies) {
-	    Iterator items = cookies.iterator();
-	    while (items.hasNext()) {
-		Cookie cookie = (Cookie) items.next();
-		outputWriter.print(CookieTools.getCookieHeaderName(cookie));
-		outputWriter.print(": ");
-		outputWriter.print(CookieTools.getCookieHeaderValue(cookie));
-		outputWriter.print("\r\n");
+        // Send all specified cookies (if any)
+        synchronized (cookies) {
+            Iterator items = cookies.iterator();
+            while (items.hasNext()) {
+                Cookie cookie = (Cookie) items.next();
+                outputWriter.print(CookieTools.getCookieHeaderName(cookie));
+                outputWriter.print(": ");
+                outputWriter.print(CookieTools.getCookieHeaderValue(cookie));
+                outputWriter.print("\r\n");
                 //System.out.println(" " +
                 //                   CookieTools.getCookieHeaderName(cookie) +
                 //                   ": " +
                 //                   CookieTools.getCookieHeaderValue(cookie));
-	    }
-	}
+            }
+        }
 
-	// Send a terminating blank line to mark the end of the headers
-	outputWriter.print("\r\n");
-	outputWriter.flush();
+        // Send a terminating blank line to mark the end of the headers
+        outputWriter.print("\r\n");
+        outputWriter.flush();
         // System.out.println("----------");
 
         // The response is now committed
@@ -660,25 +660,25 @@ public class HttpResponseBase
      */
     private String toAbsolute(String location) {
 
-	if (location == null)
-	    return (location);
+        if (location == null)
+            return (location);
 
-	// Construct a new absolute URL if possible (cribbed from
-	// the DefaultErrorPage servlet)
-	URL url = null;
-	try {
-	    url = new URL(location);
-	} catch (MalformedURLException e1) {
-	    HttpServletRequest hreq =
-		(HttpServletRequest) request.getRequest();
-	    String requrl = HttpUtils.getRequestURL(hreq).toString();
-	    try {
-		url = new URL(new URL(requrl), location);
-	    } catch (MalformedURLException e2) {
-		throw new IllegalArgumentException(location);
-	    }
-	}
-	return (url.toString());
+        // Construct a new absolute URL if possible (cribbed from
+        // the DefaultErrorPage servlet)
+        URL url = null;
+        try {
+            url = new URL(location);
+        } catch (MalformedURLException e1) {
+            HttpServletRequest hreq =
+                (HttpServletRequest) request.getRequest();
+            String requrl = HttpUtils.getRequestURL(hreq).toString();
+            try {
+                url = new URL(new URL(requrl), location);
+            } catch (MalformedURLException e2) {
+                throw new IllegalArgumentException(location);
+            }
+        }
+        return (url.toString());
 
     }
 
@@ -692,21 +692,21 @@ public class HttpResponseBase
      */
     private String toEncoded(String url, String sessionId) {
 
-	if ((url == null) || (sessionId == null))
-	    return (url);
+        if ((url == null) || (sessionId == null))
+            return (url);
 
-	String path = url;
-	String query = "";
-	int question = url.indexOf('?');
-	if (question >= 0) {
-	    path = url.substring(0, question);
-	    query = url.substring(question);
-	}
-	StringBuffer sb = new StringBuffer(path);
-	sb.append(";jsessionid=");
-	sb.append(sessionId);
-	sb.append(query);
-	return (sb.toString());
+        String path = url;
+        String query = "";
+        int question = url.indexOf('?');
+        if (question >= 0) {
+            path = url.substring(0, question);
+            query = url.substring(question);
+        }
+        StringBuffer sb = new StringBuffer(path);
+        sb.append(";jsessionid=");
+        sb.append(sessionId);
+        sb.append(query);
+        return (sb.toString());
 
     }
 
@@ -722,10 +722,10 @@ public class HttpResponseBase
      */
     public void flushBuffer() throws IOException {
 
-	if (!isCommitted())
-	    sendHeaders();
+        if (!isCommitted())
+            sendHeaders();
 
-	super.flushBuffer();
+        super.flushBuffer();
 
     }
 
@@ -739,14 +739,14 @@ public class HttpResponseBase
      */
     public void reset() {
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	super.reset();
-	cookies.clear();
-	headers.clear();
-	message = null;
-	status = HttpServletResponse.SC_OK;
+        super.reset();
+        cookies.clear();
+        headers.clear();
+        message = null;
+        status = HttpServletResponse.SC_OK;
 
     }
 
@@ -758,13 +758,13 @@ public class HttpResponseBase
      */
     public void setContentLength(int length) {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	super.setContentLength(length);
+        super.setContentLength(length);
 
     }
 
@@ -777,13 +777,13 @@ public class HttpResponseBase
      */
     public void setContentType(String type) {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	super.setContentType(type);
+        super.setContentType(type);
 
     }
 
@@ -796,22 +796,22 @@ public class HttpResponseBase
      */
     public void setLocale(Locale locale) {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	super.setLocale(locale);
-	String language = locale.getLanguage();
-	if ((language != null) && (language.length() > 0)) {
+        super.setLocale(locale);
+        String language = locale.getLanguage();
+        if ((language != null) && (language.length() > 0)) {
             String country = locale.getCountry();
             StringBuffer value = new StringBuffer(language);
             if ((country != null) && (country.length() > 0)) {
                 value.append('-');
                 value.append(country);
             }
-	    setHeader("Content-Language", value.toString());
+            setHeader("Content-Language", value.toString());
         }
 
     }
@@ -828,15 +828,15 @@ public class HttpResponseBase
      */
     public void addCookie(Cookie cookie) {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	synchronized (cookies) {
-	    cookies.add(cookie);
-	}
+        synchronized (cookies) {
+            cookies.add(cookie);
+        }
 
     }
 
@@ -849,13 +849,13 @@ public class HttpResponseBase
      */
     public void addDateHeader(String name, long value) {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	addHeader(name, format.format(new Date(value)));
+        addHeader(name, format.format(new Date(value)));
 
     }
 
@@ -868,20 +868,20 @@ public class HttpResponseBase
      */
     public void addHeader(String name, String value) {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	synchronized (headers) {
-	    ArrayList values = (ArrayList) headers.get(name);
-	    if (values == null) {
-		values = new ArrayList();
-		headers.put(name, values);
-	    }
-	    values.add(value);
-	}
+        synchronized (headers) {
+            ArrayList values = (ArrayList) headers.get(name);
+            if (values == null) {
+                values = new ArrayList();
+                headers.put(name, values);
+            }
+            values.add(value);
+        }
 
     }
 
@@ -894,13 +894,13 @@ public class HttpResponseBase
      */
     public void addIntHeader(String name, int value) {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	addHeader(name, "" + value);
+        addHeader(name, "" + value);
 
     }
 
@@ -912,9 +912,9 @@ public class HttpResponseBase
      */
     public boolean containsHeader(String name) {
 
-	synchronized (headers) {
-	    return (headers.get(name) != null);
-	}
+        synchronized (headers) {
+            return (headers.get(name) != null);
+        }
 
     }
 
@@ -927,12 +927,12 @@ public class HttpResponseBase
      */
     public String encodeRedirectURL(String url) {
 
-	if (isEncodeable(toAbsolute(url))) {
-	    HttpServletRequest hreq =
-	      (HttpServletRequest) request.getRequest();
-	    return (toEncoded(url, hreq.getSession().getId()));
-	} else
-	    return (url);
+        if (isEncodeable(toAbsolute(url))) {
+            HttpServletRequest hreq =
+              (HttpServletRequest) request.getRequest();
+            return (toEncoded(url, hreq.getSession().getId()));
+        } else
+            return (url);
 
     }
 
@@ -948,7 +948,7 @@ public class HttpResponseBase
      */
     public String encodeRedirectUrl(String url) {
 
-	return (encodeRedirectURL(url));
+        return (encodeRedirectURL(url));
 
     }
 
@@ -960,12 +960,12 @@ public class HttpResponseBase
      * @param url URL to be encoded
      */
     public String encodeURL(String url) {
-	if (isEncodeable(toAbsolute(url))) {
-	    HttpServletRequest hreq =
-	      (HttpServletRequest) request.getRequest();
-	    return (toEncoded(url, hreq.getSession().getId()));
-	} else
-	    return (url);
+        if (isEncodeable(toAbsolute(url))) {
+            HttpServletRequest hreq =
+              (HttpServletRequest) request.getRequest();
+            return (toEncoded(url, hreq.getSession().getId()));
+        } else
+            return (url);
 
     }
 
@@ -981,7 +981,7 @@ public class HttpResponseBase
      */
     public String encodeUrl(String url) {
 
-	return (encodeURL(url));
+        return (encodeURL(url));
 
     }
 
@@ -998,7 +998,7 @@ public class HttpResponseBase
      */
     public void sendError(int status) throws IOException {
 
-	sendError(status, getStatusMessage(status));
+        sendError(status, getStatusMessage(status));
 
     }
 
@@ -1015,38 +1015,38 @@ public class HttpResponseBase
      */
     public void sendError(int status, String message) throws IOException {
 
-	if (isCommitted())
-	    throw new IllegalStateException
-		(sm.getString("httpResponseBase.sendError.ise"));
+        if (isCommitted())
+            throw new IllegalStateException
+                (sm.getString("httpResponseBase.sendError.ise"));
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
         setError();
 
-	// Record the status code and message.
-	this.status = status;
-	this.message = message;
+        // Record the status code and message.
+        this.status = status;
+        this.message = message;
 
-	// Clear any data content that has been buffered
-	resetBuffer();
+        // Clear any data content that has been buffered
+        resetBuffer();
 
-	// Cause the response to be committed
+        // Cause the response to be committed
         /* Per spec clarification, no default content type is set
-	String contentType = getContentType();
-	if ((contentType == null) || "text/plain".equals(contentType))
-	    setContentType("text/html");
+        String contentType = getContentType();
+        if ((contentType == null) || "text/plain".equals(contentType))
+            setContentType("text/html");
         */
 
         // Temporarily comment out the following flush so that
         // default error reports can still set the content type
         // FIXME - this stuff needs to be refactored
         /*
-	try {
-	    flushBuffer();
-	} catch (IOException e) {
-	    ;
-	}
+        try {
+            flushBuffer();
+        } catch (IOException e) {
+            ;
+        }
         */
 
     }
@@ -1063,20 +1063,20 @@ public class HttpResponseBase
      */
     public void sendRedirect(String location) throws IOException {
 
-	if (isCommitted())
-	    throw new IllegalStateException
-		(sm.getString("httpResponseBase.sendRedirect.ise"));
+        if (isCommitted())
+            throw new IllegalStateException
+                (sm.getString("httpResponseBase.sendRedirect.ise"));
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	// Clear any data content that has been buffered
-	resetBuffer();
+        // Clear any data content that has been buffered
+        resetBuffer();
 
-	// Generate a temporary redirect to the specified location
-	String absolute = toAbsolute(location);
-	setStatus(SC_MOVED_TEMPORARILY);
-	setHeader("Location", absolute);
+        // Generate a temporary redirect to the specified location
+        String absolute = toAbsolute(location);
+        setStatus(SC_MOVED_TEMPORARILY);
+        setHeader("Location", absolute);
 
     }
 
@@ -1089,13 +1089,13 @@ public class HttpResponseBase
      */
     public void setDateHeader(String name, long value) {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	setHeader(name, format.format(new Date(value)));
+        setHeader(name, format.format(new Date(value)));
 
     }
 
@@ -1108,31 +1108,31 @@ public class HttpResponseBase
      */
     public void setHeader(String name, String value) {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	ArrayList values = new ArrayList();
-	values.add(value);
-	synchronized (headers) {
-	    headers.put(name, values);
-	}
+        ArrayList values = new ArrayList();
+        values.add(value);
+        synchronized (headers) {
+            headers.put(name, values);
+        }
 
-	String match = name.toLowerCase();
-	if (match.equals("content-length")) {
-	    int contentLength = -1;
-	    try {
-		contentLength = Integer.parseInt(value);
-	    } catch (NumberFormatException e) {
-		;
-	    }
-	    if (contentLength >= 0)
-		setContentLength(contentLength);
-	} else if (match.equals("content-type")) {
-	    setContentType(value);
-	}
+        String match = name.toLowerCase();
+        if (match.equals("content-length")) {
+            int contentLength = -1;
+            try {
+                contentLength = Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                ;
+            }
+            if (contentLength >= 0)
+                setContentLength(contentLength);
+        } else if (match.equals("content-type")) {
+            setContentType(value);
+        }
 
     }
 
@@ -1145,13 +1145,13 @@ public class HttpResponseBase
      */
     public void setIntHeader(String name, int value) {
 
-	if (isCommitted())
-	    return;
+        if (isCommitted())
+            return;
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	setHeader(name, "" + value);
+        setHeader(name, "" + value);
 
     }
 
@@ -1163,7 +1163,7 @@ public class HttpResponseBase
      */
     public void setStatus(int status) {
 
-	setStatus(status, getStatusMessage(status));
+        setStatus(status, getStatusMessage(status));
 
     }
 
@@ -1180,11 +1180,11 @@ public class HttpResponseBase
      */
     public void setStatus(int status, String message) {
 
-	if (included)
-	    return;	// Ignore any call from an included servlet
+        if (included)
+            return;     // Ignore any call from an included servlet
 
-	this.status = status;
-	this.message = message;
+        this.status = status;
+        this.message = message;
 
     }
 

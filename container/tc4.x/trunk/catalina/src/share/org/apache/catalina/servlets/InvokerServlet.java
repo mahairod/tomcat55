@@ -159,7 +159,7 @@ public final class InvokerServlet
      */
     public void destroy() {
 
-	;	// No actions necessary
+        ;       // No actions necessary
 
     }
 
@@ -174,10 +174,10 @@ public final class InvokerServlet
      * @exception ServletException if a servlet-specified error occurs
      */
     public void doGet(HttpServletRequest request,
-		      HttpServletResponse response)
-	throws IOException, ServletException {
+                      HttpServletResponse response)
+        throws IOException, ServletException {
 
-	serveRequest(request, response);
+        serveRequest(request, response);
 
     }
 
@@ -192,10 +192,10 @@ public final class InvokerServlet
      * @exception ServletException if a servlet-specified error occurs
      */
     public void doHead(HttpServletRequest request,
-		       HttpServletResponse response)
-	throws IOException, ServletException {
+                       HttpServletResponse response)
+        throws IOException, ServletException {
 
-	serveRequest(request, response);
+        serveRequest(request, response);
 
     }
 
@@ -210,10 +210,10 @@ public final class InvokerServlet
      * @exception ServletException if a servlet-specified error occurs
      */
     public void doPost(HttpServletRequest request,
-		       HttpServletResponse response)
-	throws IOException, ServletException {
+                       HttpServletResponse response)
+        throws IOException, ServletException {
 
-	serveRequest(request, response);
+        serveRequest(request, response);
 
     }
 
@@ -228,16 +228,16 @@ public final class InvokerServlet
             throw new UnavailableException
                 (sm.getString("invokerServlet.noWrapper"));
 
-	// Set our properties from the initialization parameters
-	String value = null;
-	try {
-	    value = getServletConfig().getInitParameter("debug");
-	    debug = Integer.parseInt(value);
-	} catch (Throwable t) {
-	    ;
-	}
-	if (debug >= 1)
-	    log("init: Associated with Context '" + context.getPath() + "'");
+        // Set our properties from the initialization parameters
+        String value = null;
+        try {
+            value = getServletConfig().getInitParameter("debug");
+            debug = Integer.parseInt(value);
+        } catch (Throwable t) {
+            ;
+        }
+        if (debug >= 1)
+            log("init: Associated with Context '" + context.getPath() + "'");
 
     }
 
@@ -259,8 +259,8 @@ public final class InvokerServlet
      * @exception ServletException if a servlet-specified error occurs
      */
     public void serveRequest(HttpServletRequest request,
-		             HttpServletResponse response)
-	throws IOException, ServletException {
+                             HttpServletResponse response)
+        throws IOException, ServletException {
 
         // Disallow calling this servlet via a named dispatcher
         if (request.getAttribute(Globals.NAMED_DISPATCHER_ATTR) != null)
@@ -293,9 +293,9 @@ public final class InvokerServlet
         }
 
         // Make sure a servlet name or class name was specified
-	if (inPathInfo == null) {
-	    if (debug >= 1)
-	        log("Invalid pathInfo '" + inPathInfo + "'");
+        if (inPathInfo == null) {
+            if (debug >= 1)
+                log("Invalid pathInfo '" + inPathInfo + "'");
             if (included)
                 throw new ServletException
                     (sm.getString("invokerServlet.invalidPath", inRequestURI));
@@ -308,48 +308,48 @@ public final class InvokerServlet
 
         // Identify the outgoing servlet name or class, and outgoing path info
         String pathInfo = inPathInfo;
-	String servletClass = pathInfo.substring(1);
-	int slash = servletClass.indexOf('/');
+        String servletClass = pathInfo.substring(1);
+        int slash = servletClass.indexOf('/');
         //        if (debug >= 2)
         //            log("  Calculating with servletClass='" + servletClass +
         //                "', pathInfo='" + pathInfo + "', slash=" + slash);
-	if (slash >= 0) {
-	    pathInfo = servletClass.substring(slash);
-	    servletClass = servletClass.substring(0, slash);
+        if (slash >= 0) {
+            pathInfo = servletClass.substring(slash);
+            servletClass = servletClass.substring(0, slash);
         } else {
-	    pathInfo = "";
+            pathInfo = "";
         }
         if (debug >= 1)
             log("Processing servlet '" + servletClass +
                 "' with path info '" + pathInfo + "'");
-	String name = "org.apache.catalina.INVOKER." + servletClass;
-	String pattern = inServletPath + "/" + servletClass + "/*";
-	Wrapper wrapper = null;
+        String name = "org.apache.catalina.INVOKER." + servletClass;
+        String pattern = inServletPath + "/" + servletClass + "/*";
+        Wrapper wrapper = null;
 
-	// Are we referencing an existing servlet name?
-	wrapper = (Wrapper) context.findChild(servletClass);
-	if (wrapper != null) {
-	    if (debug >= 1)
-	        log("Using wrapper for servlet '" +
-		    wrapper.getName() + "' with mapping '" + pattern + "'");
-	    context.addServletMapping(pattern, wrapper.getName());
-	}
+        // Are we referencing an existing servlet name?
+        wrapper = (Wrapper) context.findChild(servletClass);
+        if (wrapper != null) {
+            if (debug >= 1)
+                log("Using wrapper for servlet '" +
+                    wrapper.getName() + "' with mapping '" + pattern + "'");
+            context.addServletMapping(pattern, wrapper.getName());
+        }
 
-	// No, create a new wrapper for the specified servlet class
+        // No, create a new wrapper for the specified servlet class
         else {
 
-	    if (debug >= 1)
-		log("Creating wrapper for '" + servletClass +
-		    "' with mapping '" + pattern + "'");
+            if (debug >= 1)
+                log("Creating wrapper for '" + servletClass +
+                    "' with mapping '" + pattern + "'");
 
             // Create and install a new wrapper
-	    try {
-	        wrapper = context.createWrapper();
-		wrapper.setName(name);
-		wrapper.setLoadOnStartup(1);
-		wrapper.setServletClass(servletClass);
-		context.addChild(wrapper);
-		context.addServletMapping(pattern, name);
+            try {
+                wrapper = context.createWrapper();
+                wrapper.setName(name);
+                wrapper.setLoadOnStartup(1);
+                wrapper.setServletClass(servletClass);
+                context.addChild(wrapper);
+                context.addServletMapping(pattern, name);
             } catch (Throwable t) {
                 log(sm.getString("invokerServlet.cannotCreate",
                                  inRequestURI), t);
@@ -364,15 +364,15 @@ public final class InvokerServlet
                 }
             }
 
-	}
+        }
 
         // Create a request wrapper to pass on to the invoked servlet
         InvokerHttpRequest wrequest =
             new InvokerHttpRequest(request);
         wrequest.setRequestURI(inRequestURI);
-	StringBuffer sb = new StringBuffer(inServletPath);
-	sb.append("/");
-	sb.append(servletClass);
+        StringBuffer sb = new StringBuffer(inServletPath);
+        sb.append("/");
+        sb.append(servletClass);
         wrequest.setServletPath(sb.toString());
         if ((pathInfo == null) || (pathInfo.length() < 1))
             wrequest.setPathInfo(null);

@@ -91,7 +91,7 @@ public final class SsiExec
     public SsiExec() {}
 
     public final String getStream(String[] strParamType,
-				  String[] strParam) {
+                                  String[] strParam) {
 
         String retString = "";
         String path = "";
@@ -118,39 +118,39 @@ public final class SsiExec
             path = super.getCommandPath(strParam[0]);
 
             if (path!=null) {
-	            BufferedReader commandsStdOut = null;
-	            BufferedReader commandsStdErr = null;
-	            BufferedOutputStream commandsStdIn = null;
+                    BufferedReader commandsStdOut = null;
+                    BufferedReader commandsStdErr = null;
+                    BufferedOutputStream commandsStdIn = null;
                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(super.out));
-	            //byte[] bBuf = new byte[1024];
-	            char[] cBuf = new char[1024];
-	            int bufRead = -1;
+                    //byte[] bBuf = new byte[1024];
+                    char[] cBuf = new char[1024];
+                    int bufRead = -1;
 
                 Runtime rt = null;
                 Process proc = null;
 
                 try {
-	            rt = Runtime.getRuntime();
-	            proc = rt.exec(path);
+                    rt = Runtime.getRuntime();
+                    proc = rt.exec(path);
 
                 commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
-	            //boolean isRunning = true;
-	            commandsStdOut = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-	            commandsStdErr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-	            BufferedWriter servletContainerStdout = null;
+                    //boolean isRunning = true;
+                    commandsStdOut = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+                    commandsStdErr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+                    BufferedWriter servletContainerStdout = null;
 
-		        while ((bufRead = commandsStdErr.read(cBuf)) != -1) {
-			        out.write(cBuf, 0, bufRead);
-			    }
+                        while ((bufRead = commandsStdErr.read(cBuf)) != -1) {
+                                out.write(cBuf, 0, bufRead);
+                            }
 
-    		    cBuf = new char[1024];
-	    	    while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
-			        out.write(cBuf, 0, bufRead);
-			    }
+                    cBuf = new char[1024];
+                    while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
+                                out.write(cBuf, 0, bufRead);
+                            }
 
-		        super.out.flush();
+                        super.out.flush();
 
-		        proc.exitValue();
+                        proc.exitValue();
                 } catch (IOException ex) {
                 }
         } else {

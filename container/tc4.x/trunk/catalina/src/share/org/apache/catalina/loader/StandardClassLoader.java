@@ -130,9 +130,9 @@ public class StandardClassLoader
     public StandardClassLoader() {
 
         super(new URL[0]);
-	this.parent = getParent();
-	this.system = getSystemClassLoader();
-	securityManager = System.getSecurityManager();
+        this.parent = getParent();
+        this.system = getSystemClassLoader();
+        securityManager = System.getSecurityManager();
 
     }
 
@@ -140,7 +140,7 @@ public class StandardClassLoader
     /**
      * Construct a new ClassLoader with no defined repositories and no
      * parent ClassLoader, but with a stream handler factory.
-     * 
+     *
      * @param factory the URLStreamHandlerFactory to use when creating URLs
      */
     public StandardClassLoader(URLStreamHandlerFactory factory) {
@@ -160,9 +160,9 @@ public class StandardClassLoader
     public StandardClassLoader(ClassLoader parent) {
 
         super((new URL[0]), parent);
-	this.parent = parent;
-	this.system = getSystemClassLoader();
-	securityManager = System.getSecurityManager();
+        this.parent = parent;
+        this.system = getSystemClassLoader();
+        securityManager = System.getSecurityManager();
 
     }
 
@@ -174,7 +174,7 @@ public class StandardClassLoader
      * @param parent The parent ClassLoader
      * @param factory the URLStreamHandlerFactory to use when creating URLs
      */
-    public StandardClassLoader(ClassLoader parent, 
+    public StandardClassLoader(ClassLoader parent,
                                URLStreamHandlerFactory factory) {
 
         super((new URL[0]), parent, factory);
@@ -192,9 +192,9 @@ public class StandardClassLoader
     public StandardClassLoader(String repositories[]) {
 
         super(convert(repositories));
-	this.parent = getParent();
-	this.system = getSystemClassLoader();
-	securityManager = System.getSecurityManager();
+        this.parent = getParent();
+        this.system = getSystemClassLoader();
+        securityManager = System.getSecurityManager();
         if (repositories != null) {
             for (int i = 0; i < repositories.length; i++)
                 addRepositoryInternal(repositories[i]);
@@ -213,9 +213,9 @@ public class StandardClassLoader
     public StandardClassLoader(String repositories[], ClassLoader parent) {
 
         super(convert(repositories), parent);
-	this.parent = parent;
-	this.system = getSystemClassLoader();
-	securityManager = System.getSecurityManager();
+        this.parent = parent;
+        this.system = getSystemClassLoader();
+        securityManager = System.getSecurityManager();
         if (repositories != null) {
             for (int i = 0; i < repositories.length; i++)
                 addRepositoryInternal(repositories[i]);
@@ -234,9 +234,9 @@ public class StandardClassLoader
     public StandardClassLoader(URL repositories[], ClassLoader parent) {
 
         super(repositories, parent);
-	this.parent = parent;
-	this.system = getSystemClassLoader();
-	securityManager = System.getSecurityManager();
+        this.parent = parent;
+        this.system = getSystemClassLoader();
+        securityManager = System.getSecurityManager();
         if (repositories != null) {
             for (int i = 0; i < repositories.length; i++)
                 addRepositoryInternal(repositories[i].toString());
@@ -394,13 +394,13 @@ public class StandardClassLoader
      * @param path file directory path
      */
     public void setPermissions(String path) {
-	if( securityManager != null ) {
+        if( securityManager != null ) {
             if( path.startsWith("jndi:") || path.startsWith("jar:jndi:") ) {
                 permissionList.add(new JndiPermission(path + "*"));
             } else {
                 permissionList.add(new FilePermission(path + "-","read"));
             }
-	}
+        }
     }
 
 
@@ -467,12 +467,12 @@ public class StandardClassLoader
 
         // Trace our parentage tree and add declared extensions when possible
         ClassLoader loader = this;
-        while (true) {                                                       
-	    loader = loader.getParent();
-	    if (loader == null)        
-		break;        
-	    if (!(loader instanceof StandardClassLoader))
-		continue;
+        while (true) {
+            loader = loader.getParent();
+            if (loader == null)
+                break;
+            if (!(loader instanceof StandardClassLoader))
+                continue;
             Extension extensions[] =
                 ((StandardClassLoader) loader).findAvailable();
             for (int i = 0; i < extensions.length; i++)
@@ -515,7 +515,7 @@ public class StandardClassLoader
         // Trace our parentage tree and add declared extensions when possible
         ClassLoader loader = this;
         while (true) {
-	    loader = loader.getParent();
+            loader = loader.getParent();
             if (loader == null)
                 break;
             if (!(loader instanceof StandardClassLoader))
@@ -572,8 +572,8 @@ public class StandardClassLoader
                     URLConnection urlConn = url.openConnection();
                     if (entries[i].lastModified != urlConn.getLastModified()) {
                         if (debug >= 2)
-                            log("  Class '" 
-                                + entries[i].loadedClass.getName() 
+                            log("  Class '"
+                                + entries[i].loadedClass.getName()
                                 + "' was modified");
                         return (true);
                     }
@@ -649,13 +649,13 @@ public class StandardClassLoader
             int i = name.lastIndexOf('.');
             if (i >= 0) {
                 try {
-		    if (debug >= 4)
-		        log("      securityManager.checkPackageDefinition");
+                    if (debug >= 4)
+                        log("      securityManager.checkPackageDefinition");
                     securityManager.checkPackageDefinition(name.substring(0,i));
                 } catch (Exception se) {
-		    if (debug >= 4)
-		        log("      -->Exception-->ClassNotFoundException", se);
-		    throw new ClassNotFoundException(name);
+                    if (debug >= 4)
+                        log("      -->Exception-->ClassNotFoundException", se);
+                    throw new ClassNotFoundException(name);
                 }
             }
         }
@@ -664,17 +664,17 @@ public class StandardClassLoader
         // (throws ClassNotFoundException if it is not found)
         Class clazz = null;
         try {
-	    if (debug >= 4)
-	        log("      super.findClass(" + name + ")");
-	    try {
-	        clazz = super.findClass(name);
+            if (debug >= 4)
+                log("      super.findClass(" + name + ")");
+            try {
+                clazz = super.findClass(name);
             } catch(AccessControlException ace) {
-		throw new ClassNotFoundException(name);
-	    } catch (RuntimeException e) {
-	        if (debug >= 4)
-		    log("      -->RuntimeException Rethrown", e);
-		throw e;
-	    }
+                throw new ClassNotFoundException(name);
+            } catch (RuntimeException e) {
+                if (debug >= 4)
+                    log("      -->RuntimeException Rethrown", e);
+                throw e;
+            }
             if (clazz == null) {
                 if (debug >= 3)
                     log("    --> Returning ClassNotFoundException");
@@ -692,9 +692,9 @@ public class StandardClassLoader
                 continue;
             String pathname =
                 repositories[i].substring(0, repositories[i].length() - 1);
-	    if (debug >= 4)
-	        log("      Checking repository " + pathname);
-            if ((pathname.startsWith("file://")) 
+            if (debug >= 4)
+                log("      Checking repository " + pathname);
+            if ((pathname.startsWith("file://"))
                 || (pathname.startsWith("file:"))) {
 
                 if (pathname.startsWith("file://")) {
@@ -702,9 +702,9 @@ public class StandardClassLoader
                 } else if (pathname.startsWith("file:")) {
                     pathname = pathname.substring(5);
                 }
-                pathname += File.separatorChar 
+                pathname += File.separatorChar
                     + name.replace('.', File.separatorChar) + ".class";
-                
+
                 try {
                     File file = new File(pathname);
                     if (file.exists() && file.canRead()) {
@@ -719,21 +719,21 @@ public class StandardClassLoader
                                  (clazz, file, file.lastModified()));
                         }
                     }
-                    
+
                 } catch(AccessControlException ace) {
                     // Don't worry about caching the class last modified
                     // if ClassLoader doesn't have permission to read file
                 }
 
             } else {
-                
+
                 pathname += "/" + name.replace('.', '/') + ".class";
 
                 try {
                     URLStreamHandler streamHandler = null;
                     String protocol = parseProtocol(pathname);
                     if (factory != null)
-                        streamHandler = 
+                        streamHandler =
                             factory.createURLStreamHandler(protocol);
                     URL classUrl = new URL(null, pathname, streamHandler);
                     try {
@@ -750,12 +750,12 @@ public class StandardClassLoader
                                 "'");
                         synchronized (classCache) {
                             classCache.put(name, new ClassCacheEntry
-                                           (clazz, classUrl, 
+                                           (clazz, classUrl,
                                             classUrlConnection.getLastModified()));
                         }
                     } catch (IOException e) {
                     }
-                    
+
                 } catch(MalformedURLException ex) {
                     // Should never happen
                     ex.printStackTrace();
@@ -769,10 +769,10 @@ public class StandardClassLoader
         }
 
         // Return the class we have located
-	if (debug >= 4)
-	    log("      Returning class " + clazz);
-	if ((debug >= 4) && (clazz != null))
-	    log("      Loaded by " + clazz.getClassLoader());
+        if (debug >= 4)
+            log("      Returning class " + clazz);
+        if ((debug >= 4) && (clazz != null))
+            log("      Loaded by " + clazz.getClassLoader());
         return (clazz);
 
     }
@@ -861,8 +861,8 @@ public class StandardClassLoader
                     log("  --> Returning '" + url.toString() + "'");
                 return (url);
             }
-        }    
-         
+        }
+
         // (2) Search local repositories
         if (debug >= 3)
             log("  Searching local repositories");
@@ -871,23 +871,23 @@ public class StandardClassLoader
             if (debug >= 2)
                 log("  --> Returning '" + url.toString() + "'");
             return (url);
-        }                 
-            
+        }
+
         // (3) Delegate to parent unconditionally if not already attempted
-	if( !delegate ) {
-	    ClassLoader loader = parent;
-	    if (loader == null)
-		loader = system;
-	    url = loader.getResource(name);
-	    if (url != null) {
-		if (debug >= 2)
-		    log("  --> Returning '" + url.toString() + "'");
-		return (url); 
-	    }
-        }                 
-                        
+        if( !delegate ) {
+            ClassLoader loader = parent;
+            if (loader == null)
+                loader = system;
+            url = loader.getResource(name);
+            if (url != null) {
+                if (debug >= 2)
+                    log("  --> Returning '" + url.toString() + "'");
+                return (url);
+            }
+        }
+
         // (4) Resource was not found
-        if (debug >= 2)   
+        if (debug >= 2)
             log("  --> Resource not found, returning null");
         return (null);
 
@@ -1031,33 +1031,33 @@ public class StandardClassLoader
             return (clazz);
         }
 
-	// If a system class, use system class loader
-	if( name.startsWith("java.") ) {
+        // If a system class, use system class loader
+        if( name.startsWith("java.") ) {
             ClassLoader loader = system;
             clazz = loader.loadClass(name);
-            if (clazz != null) {         
-                if (resolve)             
+            if (clazz != null) {
+                if (resolve)
                     resolveClass(clazz);
                 return (clazz);
             }
-	    throw new ClassNotFoundException(name);
-	}
+            throw new ClassNotFoundException(name);
+        }
 
         // (.5) Permission to access this class when using a SecurityManager
         if (securityManager != null) {
             int i = name.lastIndexOf('.');
             if (i >= 0) {
-                try {    
+                try {
                     securityManager.checkPackageAccess(name.substring(0,i));
                 } catch (SecurityException se) {
                     String error = "Security Violation, attempt to use " +
                         "Restricted Class: " + name;
-		    System.out.println(error);
-		    se.printStackTrace();
+                    System.out.println(error);
+                    se.printStackTrace();
                     log(error);
                     throw new ClassNotFoundException(error);
                 }
-            }    
+            }
         }
 
         // (1) Delegate to our parent if requested
@@ -1103,7 +1103,7 @@ public class StandardClassLoader
                 log("  Delegating to parent classloader");
             ClassLoader loader = parent;
             if (loader == null)
-		loader = system;
+                loader = system;
             try {
                 clazz = loader.loadClass(name);
                 if (clazz != null) {
@@ -1150,10 +1150,10 @@ public class StandardClassLoader
                     Permission p = (Permission)perms.next();
                     pc.add(p);
                 }
-	        loaderPC.put(codeUrl,pc);
+                loaderPC.put(codeUrl,pc);
             }
         }
-	return (pc);
+        return (pc);
 
     }
 
@@ -1163,7 +1163,7 @@ public class StandardClassLoader
 
     /**
      * Parse URL protocol.
-     * 
+     *
      * @return String protocol
      */
     protected static String parseProtocol(String spec) {
@@ -1212,7 +1212,7 @@ public class StandardClassLoader
                 } else if (repository.endsWith(".jar")) {
                     URL url = new URL(null, repository, streamHandler);
                     URLConnection conn = url.openConnection();
-                    JarInputStream jis = 
+                    JarInputStream jis =
                         new JarInputStream(conn.getInputStream());
                     manifest = jis.getManifest();
                 } else {
@@ -1244,12 +1244,12 @@ public class StandardClassLoader
         }
 
         // Add this repository to our internal list
-	synchronized (repositories) {
-	    String results[] = new String[repositories.length + 1];
+        synchronized (repositories) {
+            String results[] = new String[repositories.length + 1];
             System.arraycopy(repositories, 0, results, 0, repositories.length);
-	    results[repositories.length] = repository;
-	    repositories = results;
-	}
+            results[repositories.length] = repository;
+            repositories = results;
+        }
 
     }
 
@@ -1270,7 +1270,7 @@ public class StandardClassLoader
      * @param input The array of String to be converted
      * @param factory Handler factory to use to generate the URLs
      */
-    protected static URL[] convert(String input[], 
+    protected static URL[] convert(String input[],
                                    URLStreamHandlerFactory factory) {
 
         URLStreamHandler streamHandler = null;
@@ -1315,7 +1315,7 @@ public class StandardClassLoader
      */
     private void log(String message) {
 
-	System.out.println("StandardClassLoader: " + message);
+        System.out.println("StandardClassLoader: " + message);
 
     }
 
@@ -1328,8 +1328,8 @@ public class StandardClassLoader
      */
     private void log(String message, Throwable throwable) {
 
-	System.out.println("StandardClassLoader: " + message);
-	throwable.printStackTrace(System.out);
+        System.out.println("StandardClassLoader: " + message);
+        throwable.printStackTrace(System.out);
 
     }
 
@@ -1343,33 +1343,33 @@ public class StandardClassLoader
     private static class ClassCacheEntry {
 
         /**
-	 * The "last modified" time of the origin file at the time this class
-	 * was loaded, in milliseconds since the epoch.
-	 */
+         * The "last modified" time of the origin file at the time this class
+         * was loaded, in milliseconds since the epoch.
+         */
         long lastModified;
 
         /**
-	 * The actual loaded class.
-	 */
+         * The actual loaded class.
+         */
         Class loadedClass;
 
         /**
-	 * The File (for a directory) or JarFile (for a JAR) from which this
-	 * class was loaded, or <code>null</code> if loaded from the system.
-	 */
+         * The File (for a directory) or JarFile (for a JAR) from which this
+         * class was loaded, or <code>null</code> if loaded from the system.
+         */
         Object origin;
 
         /**
-	 * Construct a new instance of this class.
-	 */
+         * Construct a new instance of this class.
+         */
         public ClassCacheEntry(Class loadedClass, Object origin,
-			       long lastModified) {
+                               long lastModified) {
 
-	    this.loadedClass = loadedClass;
-	    this.origin = origin;
-	    this.lastModified = lastModified;
+            this.loadedClass = loadedClass;
+            this.origin = origin;
+            this.lastModified = lastModified;
 
-	}
+        }
 
     }
 
@@ -1380,33 +1380,33 @@ public class StandardClassLoader
     private static class ResourceCacheEntry {
 
         /**
-	 * The "last modified" time of the origin file at the time this
-	 * resource was loaded, in milliseconds since the epoch.
-	 */
+         * The "last modified" time of the origin file at the time this
+         * resource was loaded, in milliseconds since the epoch.
+         */
         long lastModified;
 
         /**
-	 * The actual loaded resource.
-	 */
-	byte loadedResource[];
+         * The actual loaded resource.
+         */
+        byte loadedResource[];
 
         /**
-	 * The File (for a directory) or JarFile (for a JAR) from which this
-	 * resource was loaded, or <code>null</code> if loaded from the system.
-	 */
+         * The File (for a directory) or JarFile (for a JAR) from which this
+         * resource was loaded, or <code>null</code> if loaded from the system.
+         */
         Object origin;
 
         /**
-	 * Construct a new instance of this class.
-	 */
+         * Construct a new instance of this class.
+         */
         public ResourceCacheEntry(byte loadedResource[], Object origin,
-				  long lastModified) {
+                                  long lastModified) {
 
-	    this.loadedResource = loadedResource;
-	    this.origin = origin;
-	    this.lastModified = lastModified;
+            this.loadedResource = loadedResource;
+            this.origin = origin;
+            this.lastModified = lastModified;
 
-	}
+        }
 
     }
 

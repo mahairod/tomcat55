@@ -4,10 +4,10 @@
  * $Date$
  *
  * ====================================================================
- * 
+ *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.connector.http;
@@ -69,13 +69,13 @@ import org.apache.catalina.Request;
 import org.apache.catalina.connector.RequestStream;
 
 /**
- * 
+ *
  *
  * @author <a href="mailto:remm@apache.org">Remy Maucherat</a>
  */
 public class HttpRequestStream extends RequestStream {
-    
-    
+
+
     // ----------------------------------------------------------- Constructors
 
 
@@ -85,66 +85,66 @@ public class HttpRequestStream extends RequestStream {
      * @param request The associated request
      * @param response The associated response
      */
-    public HttpRequestStream(HttpRequestImpl request, 
+    public HttpRequestStream(HttpRequestImpl request,
                              HttpResponseImpl response) {
 
-	super(request);
+        super(request);
         String transferEncoding = request.getHeader("Transfer-Encoding");
-        
+
         http11 = request.getProtocol().equals("HTTP/1.1");
-        chunk = ((transferEncoding != null) 
+        chunk = ((transferEncoding != null)
                  && (transferEncoding.indexOf("chunked") != -1));
-        
+
         if ((!chunk) && (length == -1)) {
             // Ask for connection close
             response.addHeader("Connection", "close");
         }
 
     }
-    
-    
+
+
     // ----------------------------------------------------- Instance Variables
-    
-    
+
+
     /**
      * Use chunking ?
      */
     protected boolean chunk = false;
-    
-    
+
+
     /**
      * True if the final chunk was found.
      */
     protected boolean endChunk = false;
-    
-    
+
+
     /**
      * Chunk buffer.
      */
     protected byte[] chunkBuffer = null;
-    
-    
+
+
     /**
      * Chunk length.
      */
     protected int chunkLength = 0;
-    
-    
+
+
     /**
      * Chunk buffer position.
      */
     protected int chunkPos = 0;
-    
-    
+
+
     /**
      * HTTP/1.1 flag.
      */
     protected boolean http11 = false;
-    
-    
+
+
     // --------------------------------------------------------- Public Methods
-    
-    
+
+
     /**
      * Close this input stream.  No physical level I-O is performed, but
      * any further attempt to read from this stream will throw an IOException.
@@ -153,20 +153,20 @@ public class HttpRequestStream extends RequestStream {
      */
     public void close()
         throws IOException {
-        
-	if (closed)
-	    throw new IOException(sm.getString("requestStream.close.closed"));
-        
+
+        if (closed)
+            throw new IOException(sm.getString("requestStream.close.closed"));
+
         if (chunk) {
-            
+
             while (!endChunk) {
                 int b = read();
                 if (b < 0)
                     break;
             }
-            
+
         } else {
-            
+
             if (http11 && (length > 0)) {
                 while (count < length) {
                     int b = read();
@@ -174,14 +174,14 @@ public class HttpRequestStream extends RequestStream {
                         break;
                 }
             }
-            
+
         }
-        
-	closed = true;
-        
+
+        closed = true;
+
     }
-    
-    
+
+
     /**
      * Read and return a single byte from this input stream, or -1 if end of
      * file has been encountered.
@@ -190,30 +190,30 @@ public class HttpRequestStream extends RequestStream {
      */
     public int read()
         throws IOException {
-        
+
         // Has this stream been closed?
         if (closed)
             throw new IOException(sm.getString("requestStream.read.closed"));
-        
+
         if (chunk) {
-            
+
             if (endChunk)
                 return (-1);
-            
+
             if ((chunkBuffer == null)
                 || (chunkPos >= chunkLength)) {
                 if (!fillChunkBuffer())
                     return (-1);
             }
-            
+
             return (chunkBuffer[chunkPos++] & 0xff);
-            
+
         } else {
-            
+
             return (super.read());
-            
+
         }
-        
+
     }
 
 
@@ -234,43 +234,43 @@ public class HttpRequestStream extends RequestStream {
      */
     public int read(byte b[], int off, int len) throws IOException {
         if (chunk) {
-            
+
             int avail = chunkLength - chunkPos;
             if (avail == 0)
                 fillChunkBuffer();
             avail = chunkLength - chunkPos;
             if (avail == 0)
                 return (-1);
-            
+
             int toCopy = avail;
             if (avail > len)
                 toCopy = len;
             System.arraycopy(chunkBuffer, chunkPos, b, off, toCopy);
             chunkPos += toCopy;
             return toCopy;
-            
+
         } else {
             return super.read(b, off, len);
         }
     }
-    
-    
+
+
     // -------------------------------------------------------- Private Methods
-    
-    
+
+
     /**
      * Fill the chunk buffer.
      */
-    private synchronized boolean fillChunkBuffer() 
+    private synchronized boolean fillChunkBuffer()
         throws IOException {
-        
+
         chunkPos = 0;
-        
+
         try {
             String numberValue = readLineFromStream();
             if (numberValue != null)
                 numberValue = numberValue.trim();
-            chunkLength = 
+            chunkLength =
                 Integer.parseInt(numberValue, 16);
         } catch (NumberFormatException e) {
             // Critical error, unable to parse the chunk length
@@ -279,9 +279,9 @@ public class HttpRequestStream extends RequestStream {
             close();
             return false;
         }
-        
+
         if (chunkLength == 0) {
-                    
+
             // Skipping trailing headers, if any
             String trailingLine = readLineFromStream();
             while (!trailingLine.equals(""))
@@ -289,22 +289,22 @@ public class HttpRequestStream extends RequestStream {
             endChunk = true;
             return false;
             // TODO : Should the stream be automatically closed ?
-            
+
         } else {
-            
+
             if ((chunkBuffer == null)
                 || (chunkLength > chunkBuffer.length))
                 chunkBuffer = new byte[chunkLength];
-            
+
             // Now read the whole chunk into the buffer
-            
+
             int nbRead = 0;
             int currentRead = 0;
-            
+
             while (nbRead < chunkLength) {
                 try {
-                    currentRead = 
-                        stream.read(chunkBuffer, nbRead, 
+                    currentRead =
+                        stream.read(chunkBuffer, nbRead,
                                     chunkLength - nbRead);
                 } catch (Throwable t) {
                     t.printStackTrace();
@@ -316,49 +316,49 @@ public class HttpRequestStream extends RequestStream {
                 }
                 nbRead += currentRead;
             }
-            
+
             // Skipping the CRLF
             String blank = readLineFromStream();
-            
+
         }
-        
+
         return true;
-        
+
     }
-    
+
 
     /**
-     * Reads the input stream, one line at a time. Reads bytes into an array, 
+     * Reads the input stream, one line at a time. Reads bytes into an array,
      * until it reads a certain number of bytes or reaches a newline character,
      * which it reads into the array as well.
-     * 
+     *
      * @param input Input stream on which the bytes are read
      * @return The line that was read, or <code>null</code> if end-of-file
      *  was encountered
-     * @exception IOException	if an input or output exception has occurred
+     * @exception IOException   if an input or output exception has occurred
      */
-    private String readLineFromStream() 
+    private String readLineFromStream()
         throws IOException {
-        
-	StringBuffer sb = new StringBuffer();
-	while (true) {
-	    int ch = super.read();
-	    if (ch < 0) {
-		if (sb.length() == 0) {
-		    return (null);
-		} else {
-		    break;
-		}
-	    } else if (ch == '\r') {
-		continue;
-	    } else if (ch == '\n') {
-		break;
-	    }
-	    sb.append((char) ch);
-	}
-	return (sb.toString());
-        
+
+        StringBuffer sb = new StringBuffer();
+        while (true) {
+            int ch = super.read();
+            if (ch < 0) {
+                if (sb.length() == 0) {
+                    return (null);
+                } else {
+                    break;
+                }
+            } else if (ch == '\r') {
+                continue;
+            } else if (ch == '\n') {
+                break;
+            }
+            sb.append((char) ch);
+        }
+        return (sb.toString());
+
     }
-    
-    
+
+
 }

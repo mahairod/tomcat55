@@ -104,7 +104,7 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
      */
     public InvokerHttpRequest(HttpServletRequest request) {
 
-	super(request);
+        super(request);
         this.pathInfo = request.getPathInfo();
         this.requestURI = request.getRequestURI();
         this.servletPath = request.getServletPath();
@@ -144,7 +144,7 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
      * The string manager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // --------------------------------------------- HttpServletRequest Methods
@@ -155,7 +155,7 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
      */
     public String getPathInfo() {
 
-	return (this.pathInfo);
+        return (this.pathInfo);
 
     }
 
@@ -176,7 +176,7 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
      */
     public String getServletPath() {
 
-	return (this.servletPath);
+        return (this.servletPath);
 
     }
 
@@ -202,7 +202,7 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
      */
     void setPathInfo(String pathInfo) {
 
-	this.pathInfo = pathInfo;
+        this.pathInfo = pathInfo;
 
     }
 
@@ -226,7 +226,7 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
      */
     void setServletPath(String servletPath) {
 
-	this.servletPath = servletPath;
+        this.servletPath = servletPath;
 
     }
 

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.deploy;
@@ -91,7 +91,7 @@ public final class SecurityConstraint {
      */
     public SecurityConstraint() {
 
-	super();
+        super();
 
     }
 
@@ -203,7 +203,7 @@ public final class SecurityConstraint {
      */
     public String getUserConstraint() {
 
-	return (userConstraint);
+        return (userConstraint);
 
     }
 
@@ -215,8 +215,8 @@ public final class SecurityConstraint {
      */
     public void setUserConstraint(String userConstraint) {
 
-	if (userConstraint != null)
-	    this.userConstraint = userConstraint;
+        if (userConstraint != null)
+            this.userConstraint = userConstraint;
 
     }
 
@@ -232,17 +232,17 @@ public final class SecurityConstraint {
      */
     public void addAuthRole(String authRole) {
 
-	if (authRole == null)
-	    return;
+        if (authRole == null)
+            return;
         if ("*".equals(authRole)) {
             allRoles = true;
             return;
         }
-	String results[] = new String[authRoles.length + 1];
-	for (int i = 0; i < authRoles.length; i++)
-	    results[i] = authRoles[i];
-	results[authRoles.length] = authRole;
-	authRoles = results;
+        String results[] = new String[authRoles.length + 1];
+        for (int i = 0; i < authRoles.length; i++)
+            results[i] = authRoles[i];
+        results[authRoles.length] = authRole;
+        authRoles = results;
         authConstraint = true;
 
     }
@@ -256,14 +256,14 @@ public final class SecurityConstraint {
      */
     public void addCollection(SecurityCollection collection) {
 
-	if (collection == null)
-	    return;
-	SecurityCollection results[] =
-	    new SecurityCollection[collections.length + 1];
-	for (int i = 0; i < collections.length; i++)
-	    results[i] = collections[i];
-	results[collections.length] = collection;
-	collections = results;
+        if (collection == null)
+            return;
+        SecurityCollection results[] =
+            new SecurityCollection[collections.length + 1];
+        for (int i = 0; i < collections.length; i++)
+            results[i] = collections[i];
+        results[collections.length] = collection;
+        collections = results;
 
     }
 
@@ -276,13 +276,13 @@ public final class SecurityConstraint {
      */
     public boolean findAuthRole(String role) {
 
-	if (role == null)
-	    return (false);
-	for (int i = 0; i < authRoles.length; i++) {
-	    if (role.equals(authRoles[i]))
-		return (true);
-	}
-	return (false);
+        if (role == null)
+            return (false);
+        for (int i = 0; i < authRoles.length; i++) {
+            if (role.equals(authRoles[i]))
+                return (true);
+        }
+        return (false);
 
     }
 
@@ -295,7 +295,7 @@ public final class SecurityConstraint {
      */
     public String[] findAuthRoles() {
 
-	return (authRoles);
+        return (authRoles);
 
     }
 
@@ -308,13 +308,13 @@ public final class SecurityConstraint {
      */
     public SecurityCollection findCollection(String name) {
 
-	if (name == null)
-	    return (null);
-	for (int i = 0; i < collections.length; i++) {
-	    if (name.equals(collections[i].getName()))
-		return (collections[i]);
-	}
-	return (null);
+        if (name == null)
+            return (null);
+        for (int i = 0; i < collections.length; i++) {
+            if (name.equals(collections[i].getName()))
+                return (collections[i]);
+        }
+        return (null);
 
     }
 
@@ -326,7 +326,7 @@ public final class SecurityConstraint {
      */
     public SecurityCollection[] findCollections() {
 
-	return (collections);
+        return (collections);
 
     }
 
@@ -340,23 +340,23 @@ public final class SecurityConstraint {
      */
     public boolean included(String uri, String method) {
 
-	// We cannot match without a valid request method
-	if (method == null)
-	    return (false);
+        // We cannot match without a valid request method
+        if (method == null)
+            return (false);
 
-	// Check all of the collections included in this constraint
-	for (int i = 0; i < collections.length; i++) {
-	    if (!collections[i].findMethod(method))
-		continue;
-	    String patterns[] = collections[i].findPatterns();
-	    for (int j = 0; j < patterns.length; j++) {
-		if (matchPattern(uri, patterns[j]))
-		    return (true);
-	    }
-	}
+        // Check all of the collections included in this constraint
+        for (int i = 0; i < collections.length; i++) {
+            if (!collections[i].findMethod(method))
+                continue;
+            String patterns[] = collections[i].findPatterns();
+            for (int j = 0; j < patterns.length; j++) {
+                if (matchPattern(uri, patterns[j]))
+                    return (true);
+            }
+        }
 
-	// No collection included in this constraint matches this request
-	return (false);
+        // No collection included in this constraint matches this request
+        return (false);
 
     }
 
@@ -369,24 +369,24 @@ public final class SecurityConstraint {
      */
     public void removeAuthRole(String authRole) {
 
-	if (authRole == null)
-	    return;
-	int n = -1;
-	for (int i = 0; i < authRoles.length; i++) {
-	    if (authRoles[i].equals(authRole)) {
-		n = i;
-		break;
-	    }
-	}
-	if (n >= 0) {
-	    int j = 0;
-	    String results[] = new String[authRoles.length - 1];
-	    for (int i = 0; i < authRoles.length; i++) {
-		if (i != n)
-		    results[j++] = authRoles[i];
-	    }
-	    authRoles = results;
-	}
+        if (authRole == null)
+            return;
+        int n = -1;
+        for (int i = 0; i < authRoles.length; i++) {
+            if (authRoles[i].equals(authRole)) {
+                n = i;
+                break;
+            }
+        }
+        if (n >= 0) {
+            int j = 0;
+            String results[] = new String[authRoles.length - 1];
+            for (int i = 0; i < authRoles.length; i++) {
+                if (i != n)
+                    results[j++] = authRoles[i];
+            }
+            authRoles = results;
+        }
 
     }
 
@@ -399,25 +399,25 @@ public final class SecurityConstraint {
      */
     public void removeCollection(SecurityCollection collection) {
 
-	if (collection == null)
-	    return;
-	int n = -1;
-	for (int i = 0; i < collections.length; i++) {
-	    if (collections[i].equals(collection)) {
-		n = i;
-		break;
-	    }
-	}
-	if (n >= 0) {
-	    int j = 0;
-	    SecurityCollection results[] =
-		new SecurityCollection[collections.length - 1];
-	    for (int i = 0; i < collections.length; i++) {
-		if (i != n)
-		    results[j++] = collections[i];
-	    }
-	    collections = results;
-	}
+        if (collection == null)
+            return;
+        int n = -1;
+        for (int i = 0; i < collections.length; i++) {
+            if (collections[i].equals(collection)) {
+                n = i;
+                break;
+            }
+        }
+        if (n >= 0) {
+            int j = 0;
+            SecurityCollection results[] =
+                new SecurityCollection[collections.length - 1];
+            for (int i = 0; i < collections.length; i++) {
+                if (i != n)
+                    results[j++] = collections[i];
+            }
+            collections = results;
+        }
 
     }
 
@@ -428,13 +428,13 @@ public final class SecurityConstraint {
     public String toString() {
 
         StringBuffer sb = new StringBuffer("SecurityConstraint[");
-	for (int i = 0; i < collections.length; i++) {
-	    if (i > 0)
-		sb.append(", ");
-	    sb.append(collections[i].getName());
-	}
-	sb.append("]");
-	return (sb.toString());
+        for (int i = 0; i < collections.length; i++) {
+            if (i > 0)
+                sb.append(", ");
+            sb.append(collections[i].getName());
+        }
+        sb.append("]");
+        return (sb.toString());
 
     }
 
@@ -453,50 +453,50 @@ public final class SecurityConstraint {
      */
     private boolean matchPattern(String path, String pattern) {
 
-	// Normalize the argument strings
-	if ((path == null) || (path.length() == 0))
-	    path = "/";
-	if ((pattern == null) || (pattern.length() == 0))
-	    pattern = "/";
+        // Normalize the argument strings
+        if ((path == null) || (path.length() == 0))
+            path = "/";
+        if ((pattern == null) || (pattern.length() == 0))
+            pattern = "/";
 
-	// Check for exact match
-	if (path.equals(pattern))
-	    return (true);
+        // Check for exact match
+        if (path.equals(pattern))
+            return (true);
 
-	// Check for path prefix matching
-	if (pattern.startsWith("/") && pattern.endsWith("/*")) {
-	    pattern = pattern.substring(0, pattern.length() - 2);
-	    if (pattern.length() == 0)
-		return (true);	// "/*" is the same as "/"
-	    if (path.endsWith("/"))
-		path = path.substring(0, path.length() - 1);
-	    while (true) {
-		if (pattern.equals(path))
-		    return (true);
-		int slash = path.lastIndexOf('/');
-		if (slash <= 0)
-		    break;
-		path = path.substring(0, slash);
-	    }
-	    return (false);
-	}
+        // Check for path prefix matching
+        if (pattern.startsWith("/") && pattern.endsWith("/*")) {
+            pattern = pattern.substring(0, pattern.length() - 2);
+            if (pattern.length() == 0)
+                return (true);  // "/*" is the same as "/"
+            if (path.endsWith("/"))
+                path = path.substring(0, path.length() - 1);
+            while (true) {
+                if (pattern.equals(path))
+                    return (true);
+                int slash = path.lastIndexOf('/');
+                if (slash <= 0)
+                    break;
+                path = path.substring(0, slash);
+            }
+            return (false);
+        }
 
-	// Check for suffix matching
-	if (pattern.startsWith("*.")) {
-	    int slash = path.lastIndexOf('/');
-	    int period = path.lastIndexOf('.');
-	    if ((slash >= 0) && (period > slash) &&
-		path.endsWith(pattern.substring(1))) {
-		return (true);
-	    }
-	    return (false);
-	}
+        // Check for suffix matching
+        if (pattern.startsWith("*.")) {
+            int slash = path.lastIndexOf('/');
+            int period = path.lastIndexOf('.');
+            if ((slash >= 0) && (period > slash) &&
+                path.endsWith(pattern.substring(1))) {
+                return (true);
+            }
+            return (false);
+        }
 
-	// Check for universal mapping
-	if (pattern.equals("/"))
-	    return (true);
+        // Check for universal mapping
+        if (pattern.equals("/"))
+            return (true);
 
-	return (false);
+        return (false);
 
     }
 

@@ -125,7 +125,7 @@ public final class Bootstrap {
 
         // Load our startup class and call its process() method
         try {
-            
+
             if( System.getSecurityManager() != null ) {
                 // Pre load some classes required for SecurityManager
                 // so that defineClassInPackage does not throw a
@@ -141,13 +141,13 @@ public final class Bootstrap {
                     (basePackage +
                      "core.ApplicationContext$PrivilegedGetResourcePaths");
                 catalinaLoader.loadClass
-                    (basePackage +      
+                    (basePackage +
                      "core.ApplicationContext$PrivilegedLogMessage");
                 catalinaLoader.loadClass
-                    (basePackage +      
+                    (basePackage +
                      "core.ApplicationContext$PrivilegedLogException");
                 catalinaLoader.loadClass
-                    (basePackage +      
+                    (basePackage +
                      "core.ApplicationContext$PrivilegedLogThrowable");
                 catalinaLoader.loadClass
                     (basePackage +
@@ -176,7 +176,7 @@ public final class Bootstrap {
                 catalinaLoader.loadClass
                 ("org.apache.catalina.startup.Catalina");
             Object startupInstance = startupClass.newInstance();
-            
+
             // Set the shared extensions class loader
             if (debug >= 1)
                 log("Setting startup class properties");
@@ -188,7 +188,7 @@ public final class Bootstrap {
             Method method =
                 startupInstance.getClass().getMethod(methodName, paramTypes);
             method.invoke(startupInstance, paramValues);
-            
+
             // Call the process() method
             if (debug >= 1)
                 log("Calling startup class process() method");
@@ -200,7 +200,7 @@ public final class Bootstrap {
             method =
                 startupInstance.getClass().getMethod(methodName, paramTypes);
             method.invoke(startupInstance, paramValues);
-            
+
         } catch (Exception e) {
             System.out.println("Exception during startup processing");
             e.printStackTrace(System.out);
@@ -304,10 +304,10 @@ public final class Bootstrap {
 
         // Add the "server/classes" directory if it exists
         File classes = new File(System.getProperty("catalina.home"),
-                                "server/classes");                  
-        if (classes.exists() && classes.canRead() &&                
-            classes.isDirectory()) {                
-            try {                                   
+                                "server/classes");
+        if (classes.exists() && classes.canRead() &&
+            classes.isDirectory()) {
+            try {
                 URL url = new URL("file", null,
                                   classes.getCanonicalPath() + "/");
                 if (debug >= 1)
@@ -318,7 +318,7 @@ public final class Bootstrap {
                                    classes.getAbsolutePath());
                 e.printStackTrace(System.out);
                 System.exit(1);
-            }   
+            }
         }
 
         // Add all JAR files in the "server/lib" directory if it exists
@@ -330,10 +330,10 @@ public final class Bootstrap {
                                + " does not exist");
             System.exit(1);
         }
-	String filenames[] = directory.list();
-	for (int i = 0; i < filenames.length; i++) {
-	    if (!filenames[i].toLowerCase().endsWith(".jar"))
-		continue;
+        String filenames[] = directory.list();
+        for (int i = 0; i < filenames.length; i++) {
+            if (!filenames[i].toLowerCase().endsWith(".jar"))
+                continue;
             File file = new File(directory, filenames[i]);
             try {
                 URL url = new URL("file", null, file.getCanonicalPath());
@@ -346,7 +346,7 @@ public final class Bootstrap {
                 e.printStackTrace(System.out);
                 System.exit(1);
             }
-	}
+        }
 
         // Construct the class loader itself
         String array[] = (String[]) list.toArray(new String[list.size()]);
@@ -371,21 +371,21 @@ public final class Bootstrap {
 
         // Add the "classes" directory if it exists
         File classes = new File(System.getProperty("catalina.home"),
-                                "classes");                         
-        if (classes.exists() && classes.canRead() &&                
-            classes.isDirectory()) {                
-            try {                                   
+                                "classes");
+        if (classes.exists() && classes.canRead() &&
+            classes.isDirectory()) {
+            try {
                 URL url = new URL("file", null,
                                   classes.getCanonicalPath() + "/");
-                if (debug >= 1)                                     
-                    log("  Adding " + url.toString());              
-                list.add(url.toString());             
-            } catch (IOException e) {                 
+                if (debug >= 1)
+                    log("  Adding " + url.toString());
+                list.add(url.toString());
+            } catch (IOException e) {
                 System.out.println("Cannot create URL for " +
                                    classes.getAbsolutePath());
-                e.printStackTrace(System.out);                
-                System.exit(1);                               
-            }                                 
+                e.printStackTrace(System.out);
+                System.exit(1);
+            }
         }
 
         // Add all JAR files in the "lib" directory if it exists
@@ -397,10 +397,10 @@ public final class Bootstrap {
                                + " does not exist");
             System.exit(1);
         }
-	String filenames[] = directory.list();
-	for (int i = 0; i < filenames.length; i++) {
-	    if (!filenames[i].toLowerCase().endsWith(".jar"))
-		continue;
+        String filenames[] = directory.list();
+        for (int i = 0; i < filenames.length; i++) {
+            if (!filenames[i].toLowerCase().endsWith(".jar"))
+                continue;
             File file = new File(directory, filenames[i]);
             try {
                 URL url = new URL("file", null, file.getCanonicalPath());
@@ -413,7 +413,7 @@ public final class Bootstrap {
                 e.printStackTrace(System.out);
                 System.exit(1);
             }
-	}
+        }
 
         // Construct the class loader itself
         String array[] = (String[]) list.toArray(new String[list.size()]);

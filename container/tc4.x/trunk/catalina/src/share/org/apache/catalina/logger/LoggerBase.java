@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.logger;
@@ -101,7 +101,7 @@ abstract class LoggerBase
      * The descriptive information about this implementation.
      */
     protected static final String info =
-	"org.apache.catalina.logger.LoggerBase/1.0";
+        "org.apache.catalina.logger.LoggerBase/1.0";
 
 
     /**
@@ -124,7 +124,7 @@ abstract class LoggerBase
      */
     public Container getContainer() {
 
-	return (container);
+        return (container);
 
     }
 
@@ -136,9 +136,9 @@ abstract class LoggerBase
      */
     public void setContainer(Container container) {
 
-	Container oldContainer = this.container;
-	this.container = container;
-	support.firePropertyChange("container", oldContainer, this.container);
+        Container oldContainer = this.container;
+        this.container = container;
+        support.firePropertyChange("container", oldContainer, this.container);
 
     }
 
@@ -150,7 +150,7 @@ abstract class LoggerBase
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -161,7 +161,7 @@ abstract class LoggerBase
      */
     public int getVerbosity() {
 
-	return (this.verbosity);
+        return (this.verbosity);
 
     }
 
@@ -174,7 +174,7 @@ abstract class LoggerBase
      */
     public void setVerbosity(int verbosity) {
 
-	this.verbosity = verbosity;
+        this.verbosity = verbosity;
 
     }
 
@@ -187,16 +187,16 @@ abstract class LoggerBase
      */
     public void setVerbosityLevel(String verbosity) {
 
-	if ("FATAL".equalsIgnoreCase(verbosity))
-	    this.verbosity = FATAL;
-	else if ("ERROR".equalsIgnoreCase(verbosity))
-	    this.verbosity = ERROR;
-	else if ("WARNING".equalsIgnoreCase(verbosity))
-	    this.verbosity = WARNING;
-	else if ("INFORMATION".equalsIgnoreCase(verbosity))
-	    this.verbosity = INFORMATION;
-	else if ("DEBUG".equalsIgnoreCase(verbosity))
-	    this.verbosity = DEBUG;
+        if ("FATAL".equalsIgnoreCase(verbosity))
+            this.verbosity = FATAL;
+        else if ("ERROR".equalsIgnoreCase(verbosity))
+            this.verbosity = ERROR;
+        else if ("WARNING".equalsIgnoreCase(verbosity))
+            this.verbosity = WARNING;
+        else if ("INFORMATION".equalsIgnoreCase(verbosity))
+            this.verbosity = INFORMATION;
+        else if ("DEBUG".equalsIgnoreCase(verbosity))
+            this.verbosity = DEBUG;
 
     }
 
@@ -211,7 +211,7 @@ abstract class LoggerBase
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
 
-	support.addPropertyChangeListener(listener);
+        support.addPropertyChangeListener(listener);
 
     }
 
@@ -240,7 +240,7 @@ abstract class LoggerBase
      */
     public void log(Exception exception, String msg) {
 
-	log(msg, exception);
+        log(msg, exception);
 
     }
 
@@ -257,20 +257,20 @@ abstract class LoggerBase
      */
     public void log(String msg, Throwable throwable) {
 
-	CharArrayWriter buf = new CharArrayWriter();
-	PrintWriter writer = new PrintWriter(buf);
-	writer.println(msg);
-	throwable.printStackTrace(writer);
+        CharArrayWriter buf = new CharArrayWriter();
+        PrintWriter writer = new PrintWriter(buf);
+        writer.println(msg);
+        throwable.printStackTrace(writer);
         Throwable rootCause = null;
         if (throwable instanceof LifecycleException)
             rootCause = ((LifecycleException) throwable).getThrowable();
         else if (throwable instanceof ServletException)
             rootCause = ((ServletException) throwable).getRootCause();
-	if (rootCause != null) {
+        if (rootCause != null) {
             writer.println("----- Root Cause -----");
             rootCause.printStackTrace(writer);
-	}
-	log(buf.toString());
+        }
+        log(buf.toString());
 
     }
 
@@ -286,8 +286,8 @@ abstract class LoggerBase
      */
     public void log(String message, int verbosity) {
 
-	if (this.verbosity >= verbosity)
-	    log(message);
+        if (this.verbosity >= verbosity)
+            log(message);
 
     }
 
@@ -304,8 +304,8 @@ abstract class LoggerBase
      */
     public void log(String message, Throwable throwable, int verbosity) {
 
-	if (this.verbosity >= verbosity)
-	    log(message, throwable);
+        if (this.verbosity >= verbosity)
+            log(message, throwable);
 
     }
 
@@ -317,7 +317,7 @@ abstract class LoggerBase
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
 
-	support.removePropertyChangeListener(listener);
+        support.removePropertyChangeListener(listener);
 
     }
 

@@ -226,7 +226,7 @@ public abstract class StoreBase
      * Return the Manager with which the Store is associated.
      */
     public Manager getManager() {
-    	return(this.manager);
+        return(this.manager);
     }
 
     // --------------------------------------------------------- Public Methods
@@ -278,10 +278,10 @@ public abstract class StoreBase
     protected void processExpires() {
         long timeNow = System.currentTimeMillis();
         String[] keys = null;
-        
-    	if(!started)
-    	    return;
-        
+
+        if(!started)
+            return;
+
         try {
             keys = keys();
         } catch (IOException e) {
@@ -289,7 +289,7 @@ public abstract class StoreBase
             e.printStackTrace();
             return;
         }
-        
+
         for (int i = 0; i < keys.length; i++) {
             try {
                 StandardSession session = (StandardSession) load(keys[i]);
@@ -322,10 +322,10 @@ public abstract class StoreBase
     protected void log(String message) {
         Logger logger = null;
         Container container = manager.getContainer();
-        
+
         if (container != null)
             logger = container.getLogger();
-        
+
         if (logger != null) {
             logger.log(getStoreName()+"[" + container.getName() + "]: "
                        + message);
@@ -368,7 +368,7 @@ public abstract class StoreBase
                 (sm.getString(getStoreName()+".alreadyStarted"));
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
-        
+
         // Start the background reaper thread
         threadStart();
     }
@@ -389,11 +389,11 @@ public abstract class StoreBase
                 (sm.getString(getStoreName()+".notStarted"));
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         started = false;
-        
+
         // Stop the background reaper thread
         threadStop();
     }
-    
+
     /**
      * Start the background thread that will periodically check for
      * session timeouts.
@@ -401,13 +401,13 @@ public abstract class StoreBase
     protected void threadStart() {
         if (thread != null)
             return;
-        
+
         threadDone = false;
         thread = new Thread(this, getThreadName());
         thread.setDaemon(true);
         thread.start();
     }
-    
+
     /**
      * Sleep for the duration specified by the <code>checkInterval</code>
      * property.
@@ -419,7 +419,7 @@ public abstract class StoreBase
             ;
         }
     }
-    
+
     /**
      * Stop the background thread that is periodically checking for
      * session timeouts.
@@ -427,7 +427,7 @@ public abstract class StoreBase
     protected void threadStop() {
         if (thread == null)
             return;
-        
+
         threadDone = true;
         thread.interrupt();
         try {
@@ -435,7 +435,7 @@ public abstract class StoreBase
         } catch (InterruptedException e) {
             ;
         }
-        
+
         thread = null;
     }
 }

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.realm;
@@ -129,7 +129,7 @@ public abstract class RealmBase
      * Descriptive information about this Realm implementation.
      */
     protected static final String info =
-	"org.apache.catalina.realm.RealmBase/1.0";
+        "org.apache.catalina.realm.RealmBase/1.0";
 
 
     /**
@@ -160,7 +160,7 @@ public abstract class RealmBase
      * The string manager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -183,7 +183,7 @@ public abstract class RealmBase
      */
     public Container getContainer() {
 
-	return (container);
+        return (container);
 
     }
 
@@ -195,9 +195,9 @@ public abstract class RealmBase
      */
     public void setContainer(Container container) {
 
-	Container oldContainer = this.container;
-	this.container = container;
-	support.firePropertyChange("container", oldContainer, this.container);
+        Container oldContainer = this.container;
+        this.container = container;
+        support.firePropertyChange("container", oldContainer, this.container);
 
     }
 
@@ -206,7 +206,7 @@ public abstract class RealmBase
      */
     public int getDebug() {
 
-	return (this.debug);
+        return (this.debug);
 
     }
 
@@ -218,7 +218,7 @@ public abstract class RealmBase
      */
     public void setDebug(int debug) {
 
-	this.debug = debug;
+        this.debug = debug;
 
     }
 
@@ -252,7 +252,7 @@ public abstract class RealmBase
      */
     public String getInfo() {
 
-	return info;
+        return info;
 
     }
 
@@ -267,7 +267,7 @@ public abstract class RealmBase
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
 
-	support.addPropertyChangeListener(listener);
+        support.addPropertyChangeListener(listener);
 
     }
 
@@ -281,15 +281,15 @@ public abstract class RealmBase
      *  authenticating this username
      */
     public Principal authenticate(String username, String credentials) {
-        
+
         String serverCredentials = getPassword(username);
-        
-        if ( (serverCredentials == null) 
+
+        if ( (serverCredentials == null)
              || (!serverCredentials.equals(credentials)) )
             return null;
-        
+
         return getPrincipal(username);
-        
+
     }
 
 
@@ -303,32 +303,32 @@ public abstract class RealmBase
      */
     public Principal authenticate(String username, byte[] credentials) {
 
-	return (authenticate(username, credentials.toString()));
+        return (authenticate(username, credentials.toString()));
 
     }
 
 
     /**
      * Return the Principal associated with the specified username, which
-     * matches the digest calculated using the given parameters using the 
+     * matches the digest calculated using the given parameters using the
      * method described in RFC 2069; otherwise return <code>null</code>.
-     * 
+     *
      * @param username Username of the Principal to look up
      * @param clientDigest Digest which has been submitted by the client
      * @param nOnce Unique (or supposedly unique) token which has been used
      * for this request
      * @param realm Realm name
-     * @param md5a2 Second MD5 digest used to calculate the digest : 
+     * @param md5a2 Second MD5 digest used to calculate the digest :
      * MD5(Method + ":" + uri)
      */
     public Principal authenticate(String username, String clientDigest,
                                   String nOnce, String nc, String cnonce,
                                   String qop, String realm,
                                   String md5a2) {
-        
+
         /*
           System.out.println("Digest : " + clientDigest);
-          
+
           System.out.println("************ Digest info");
           System.out.println("Username:" + username);
           System.out.println("ClientSigest:" + clientDigest);
@@ -339,17 +339,17 @@ public abstract class RealmBase
           System.out.println("realm:" + realm);
           System.out.println("md5a2:" + md5a2);
         */
-        
+
 
         String md5a1 = getDigest(username, realm);
         if (md5a1 == null)
             return null;
-        String serverDigestValue = md5a1 + ":" + nOnce + ":" + nc + ":" 
+        String serverDigestValue = md5a1 + ":" + nOnce + ":" + nc + ":"
             + cnonce + ":" + qop + ":" + md5a2;
-        String serverDigest = 
+        String serverDigest =
             md5Encoder.encode(md5Helper.digest(serverDigestValue.getBytes()));
         //System.out.println("Server digest : " + serverDigest);
-        
+
         if (serverDigest.equals(clientDigest))
             return getPrincipal(username);
         else
@@ -371,21 +371,21 @@ public abstract class RealmBase
      */
     public boolean hasRole(Principal principal, String role) {
 
-	if ((principal == null) || (role == null) ||
-	    !(principal instanceof GenericPrincipal))
-	    return (false);
+        if ((principal == null) || (role == null) ||
+            !(principal instanceof GenericPrincipal))
+            return (false);
         GenericPrincipal gp = (GenericPrincipal) principal;
         if (!(gp.getRealm() == this))
             return (false);
-	boolean result = gp.hasRole(role);
-	if (debug >= 2) {
-	    String name = principal.getName();
-	    if (result)
-		log(sm.getString("realmBase.hasRoleSuccess", name, role));
-	    else
-		log(sm.getString("realmBase.hasRoleFailure", name, role));
-	}
-	return (result);
+        boolean result = gp.hasRole(role);
+        if (debug >= 2) {
+            String name = principal.getName();
+            if (result)
+                log(sm.getString("realmBase.hasRoleSuccess", name, role));
+            else
+                log(sm.getString("realmBase.hasRoleFailure", name, role));
+        }
+        return (result);
 
     }
 
@@ -397,7 +397,7 @@ public abstract class RealmBase
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
 
-	support.removePropertyChangeListener(listener);
+        support.removePropertyChangeListener(listener);
 
     }
 
@@ -412,7 +412,7 @@ public abstract class RealmBase
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -424,7 +424,7 @@ public abstract class RealmBase
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -442,12 +442,12 @@ public abstract class RealmBase
      */
     public void start() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (started)
-	    throw new IllegalStateException
-		(sm.getString("realmBase.alreadyStarted"));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
+        // Validate and update our current component state
+        if (started)
+            throw new IllegalStateException
+                (sm.getString("realmBase.alreadyStarted"));
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
 
         // Create a MessageDigest instance for credentials, if desired
         if (digest != null) {
@@ -475,12 +475,12 @@ public abstract class RealmBase
     public void stop()
         throws LifecycleException {
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new IllegalStateException
-		(sm.getString("realmBase.notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+        // Validate and update our current component state
+        if (!started)
+            throw new IllegalStateException
+                (sm.getString("realmBase.notStarted"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
 
         // Clean up allocated resources
         md = null;
@@ -536,9 +536,9 @@ public abstract class RealmBase
                 throw new IllegalStateException();
             }
         }
-        String digestValue = username + ":" + realmName + ":" 
+        String digestValue = username + ":" + realmName + ":"
             + getPassword(username);
-        byte[] digest = 
+        byte[] digest =
             md5Helper.digest(digestValue.getBytes());
         return md5Encoder.encode(digest);
     }
@@ -570,18 +570,18 @@ public abstract class RealmBase
      */
     protected void log(String message) {
 
-	Logger logger = null;
+        Logger logger = null;
         String name = null;
-	if (container != null) {
-	    logger = container.getLogger();
+        if (container != null) {
+            logger = container.getLogger();
             name = container.getName();
         }
 
-	if (logger != null) {
-	    logger.log(getName()+"[" + name + "]: " + message);
+        if (logger != null) {
+            logger.log(getName()+"[" + name + "]: " + message);
         } else {
-	    System.out.println(getName()+"[" + name + "]: " + message);
-	}
+            System.out.println(getName()+"[" + name + "]: " + message);
+        }
 
     }
 
@@ -594,19 +594,19 @@ public abstract class RealmBase
      */
     protected void log(String message, Throwable throwable) {
 
-	Logger logger = null;
+        Logger logger = null;
         String name = null;
-	if (container != null) {
-	    logger = container.getLogger();
+        if (container != null) {
+            logger = container.getLogger();
             name = container.getName();
         }
 
-	if (logger != null) {
-	    logger.log(getName()+"[" + name + "]: " + message, throwable);
+        if (logger != null) {
+            logger.log(getName()+"[" + name + "]: " + message, throwable);
         } else {
-	    System.out.println(getName()+"[" + name + "]: " + message);
-	    throwable.printStackTrace(System.out);
-	}
+            System.out.println(getName()+"[" + name + "]: " + message);
+            throwable.printStackTrace(System.out);
+        }
     }
 
 

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.connector.http;
@@ -88,13 +88,13 @@ final class DefaultHeaders {
     static final char[] CONNECTION_CLOSE_VALUE = "close".toCharArray();
     static final char[] EXPECT_NAME = "expect".toCharArray();
     static final char[] EXPECT_100_VALUE = "100-continue".toCharArray();
-    static final char[] TRANSFER_ENCODING_NAME = 
+    static final char[] TRANSFER_ENCODING_NAME =
         "transfer-encoding".toCharArray();
 
 
-    static final HttpHeader CONNECTION_CLOSE = 
+    static final HttpHeader CONNECTION_CLOSE =
         new HttpHeader("connection", "close");
-    static final HttpHeader EXPECT_CONTINUE = 
+    static final HttpHeader EXPECT_CONTINUE =
         new HttpHeader("expect", "100-continue");
     static final HttpHeader TRANSFER_ENCODING_CHUNKED =
         new HttpHeader("transfer-encoding", "chunked");

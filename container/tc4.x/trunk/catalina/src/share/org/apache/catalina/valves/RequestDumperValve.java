@@ -111,14 +111,14 @@ public class RequestDumperValve
      * The descriptive information related to this implementation.
      */
     private static final String info =
-	"org.apache.catalina.valves.RequestDumperValve/1.0";
+        "org.apache.catalina.valves.RequestDumperValve/1.0";
 
 
     /**
      * The StringManager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------------------- Properties
@@ -129,7 +129,7 @@ public class RequestDumperValve
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -151,7 +151,7 @@ public class RequestDumperValve
      */
     public void invoke(Request request, Response response,
                        ValveContext context)
-	throws IOException, ServletException {
+        throws IOException, ServletException {
 
         // Skip logging for non-HTTP requests and responses
         if (!(request instanceof HttpRequest) ||
@@ -268,11 +268,11 @@ public class RequestDumperValve
      */
     protected void log(String message) {
 
-	Logger logger = container.getLogger();
-	if (logger != null)
-	    logger.log(this.toString() + ": " + message);
-	else
-	    System.out.println(this.toString() + ": " + message);
+        Logger logger = container.getLogger();
+        if (logger != null)
+            logger.log(this.toString() + ": " + message);
+        else
+            System.out.println(this.toString() + ": " + message);
 
     }
 
@@ -285,13 +285,13 @@ public class RequestDumperValve
      */
     protected void log(String message, Throwable throwable) {
 
-	Logger logger = container.getLogger();
-	if (logger != null)
-	    logger.log(this.toString() + ": " + message, throwable);
-	else {
-	    System.out.println(this.toString() + ": " + message);
-	    throwable.printStackTrace(System.out);
-	}
+        Logger logger = container.getLogger();
+        if (logger != null)
+            logger.log(this.toString() + ": " + message, throwable);
+        else {
+            System.out.println(this.toString() + ": " + message);
+            throwable.printStackTrace(System.out);
+        }
 
     }
 

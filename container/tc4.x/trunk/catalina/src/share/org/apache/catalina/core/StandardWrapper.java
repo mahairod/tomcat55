@@ -121,8 +121,8 @@ public final class StandardWrapper
      */
     public StandardWrapper() {
 
-	super();
-	pipeline.setBasic(new StandardWrapperValve());
+        super();
+        pipeline.setBasic(new StandardWrapperValve());
 
     }
 
@@ -162,7 +162,7 @@ public final class StandardWrapper
      * The descriptive information string for this implementation.
      */
     private static final String info =
-	"org.apache.catalina.core.StandardWrapper/1.0";
+        "org.apache.catalina.core.StandardWrapper/1.0";
 
 
     /**
@@ -247,7 +247,7 @@ public final class StandardWrapper
      */
     public long getAvailable() {
 
-	return (this.available);
+        return (this.available);
 
     }
 
@@ -261,13 +261,13 @@ public final class StandardWrapper
      */
     public void setAvailable(long available) {
 
-	long oldAvailable = this.available;
-	if (available > System.currentTimeMillis())
-	    this.available = available;
-	else
-	    this.available = 0L;
-	support.firePropertyChange("available", new Long(oldAvailable),
-				   new Long(this.available));
+        long oldAvailable = this.available;
+        if (available > System.currentTimeMillis())
+            this.available = available;
+        else
+            this.available = 0L;
+        support.firePropertyChange("available", new Long(oldAvailable),
+                                   new Long(this.available));
 
     }
 
@@ -277,7 +277,7 @@ public final class StandardWrapper
      */
     public int getDebug() {
 
-	return (this.debug);
+        return (this.debug);
 
     }
 
@@ -289,10 +289,10 @@ public final class StandardWrapper
      */
     public void setDebug(int debug) {
 
-	int oldDebug = this.debug;
-	this.debug = debug;
-	support.firePropertyChange("debug", new Integer(oldDebug),
-				   new Long(this.debug));
+        int oldDebug = this.debug;
+        this.debug = debug;
+        support.firePropertyChange("debug", new Integer(oldDebug),
+                                   new Long(this.debug));
 
     }
 
@@ -304,7 +304,7 @@ public final class StandardWrapper
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -314,7 +314,7 @@ public final class StandardWrapper
      */
     public InstanceSupport getInstanceSupport() {
 
-	return (this.instanceSupport);
+        return (this.instanceSupport);
 
     }
 
@@ -324,7 +324,7 @@ public final class StandardWrapper
      */
     public String getJspFile() {
 
-	return (this.jspFile);
+        return (this.jspFile);
 
     }
 
@@ -340,9 +340,9 @@ public final class StandardWrapper
         //        throw new IllegalArgumentException
         //                (sm.getString("standardWrapper.jspFile.format", jspFile));
 
-	String oldJspFile = this.jspFile;
-	this.jspFile = jspFile;
-	support.firePropertyChange("jspFile", oldJspFile, this.jspFile);
+        String oldJspFile = this.jspFile;
+        this.jspFile = jspFile;
+        support.firePropertyChange("jspFile", oldJspFile, this.jspFile);
 
     }
 
@@ -353,7 +353,7 @@ public final class StandardWrapper
      */
     public int getLoadOnStartup() {
 
-	return (this.loadOnStartup);
+        return (this.loadOnStartup);
 
     }
 
@@ -366,11 +366,11 @@ public final class StandardWrapper
      */
     public void setLoadOnStartup(int value) {
 
-	int oldLoadOnStartup = this.loadOnStartup;
-	this.loadOnStartup = value;
-	support.firePropertyChange("loadOnStartup",
-				   new Integer(oldLoadOnStartup),
-				   new Integer(this.loadOnStartup));
+        int oldLoadOnStartup = this.loadOnStartup;
+        this.loadOnStartup = value;
+        support.firePropertyChange("loadOnStartup",
+                                   new Integer(oldLoadOnStartup),
+                                   new Integer(this.loadOnStartup));
 
     }
 
@@ -386,14 +386,14 @@ public final class StandardWrapper
      */
     public void setLoadOnStartupString(String value) {
 
-	try {
-	    setLoadOnStartup(Integer.parseInt(value));
-	} catch (NumberFormatException e) {
-	    setLoadOnStartup(0);
-	}
+        try {
+            setLoadOnStartup(Integer.parseInt(value));
+        } catch (NumberFormatException e) {
+            setLoadOnStartup(0);
+        }
 
     }
-	    
+
 
 
     /**
@@ -405,9 +405,9 @@ public final class StandardWrapper
 
         if ((container != null) &&
             !(container instanceof Context))
-	    throw new IllegalArgumentException
-		(sm.getString("standardWrapper.notContext"));
-	super.setParent(container);
+            throw new IllegalArgumentException
+                (sm.getString("standardWrapper.notContext"));
+        super.setParent(container);
 
     }
 
@@ -441,7 +441,7 @@ public final class StandardWrapper
      */
     public String getServletClass() {
 
-	return (this.servletClass);
+        return (this.servletClass);
 
     }
 
@@ -453,10 +453,10 @@ public final class StandardWrapper
      */
     public void setServletClass(String servletClass) {
 
-	String oldServletClass = this.servletClass;
-	this.servletClass = servletClass;
-	support.firePropertyChange("servletClass", oldServletClass,
-				   this.servletClass);
+        String oldServletClass = this.servletClass;
+        this.servletClass = servletClass;
+        support.firePropertyChange("servletClass", oldServletClass,
+                                   this.servletClass);
 
     }
 
@@ -472,7 +472,7 @@ public final class StandardWrapper
      */
     public void setServletName(String name) {
 
-	setName(name);
+        setName(name);
 
     }
 
@@ -483,12 +483,12 @@ public final class StandardWrapper
      */
     public boolean isSingleThreadModel() {
 
-	try {
-	    load();
-	} catch (Throwable t) {
-	    ;
-	}
-	return (singleThreadModel);
+        try {
+            load();
+        } catch (Throwable t) {
+            ;
+        }
+        return (singleThreadModel);
 
     }
 
@@ -498,13 +498,13 @@ public final class StandardWrapper
      */
     public boolean isUnavailable() {
 
-	if (available == 0L)
-	    return (false);
-	else if (available <= System.currentTimeMillis()) {
-	    available = 0L;
-	    return (false);
-	} else
-	    return (true);
+        if (available == 0L)
+            return (false);
+        else if (available <= System.currentTimeMillis()) {
+            available = 0L;
+            return (false);
+        } else
+            return (true);
 
     }
 
@@ -520,8 +520,8 @@ public final class StandardWrapper
      */
     public void addChild(Container child) {
 
-	throw new IllegalStateException
-	    (sm.getString("standardWrapper.notChild"));
+        throw new IllegalStateException
+            (sm.getString("standardWrapper.notChild"));
 
     }
 
@@ -534,10 +534,10 @@ public final class StandardWrapper
      */
     public void addInitParameter(String name, String value) {
 
-	synchronized (parameters) {
-	    parameters.put(name, value);
-	}
-	fireContainerEvent("addInitParameter", name);
+        synchronized (parameters) {
+            parameters.put(name, value);
+        }
+        fireContainerEvent("addInitParameter", name);
 
     }
 
@@ -563,10 +563,10 @@ public final class StandardWrapper
      */
     public void addSecurityReference(String name, String link) {
 
-	synchronized (references) {
-	    references.put(name, link);
-	}
-	fireContainerEvent("addSecurityReference", name);
+        synchronized (references) {
+            references.put(name, link);
+        }
+        fireContainerEvent("addSecurityReference", name);
 
     }
 
@@ -588,49 +588,49 @@ public final class StandardWrapper
      */
     public Servlet allocate() throws ServletException {
 
-	if (debug >= 1)
-	    log("Allocating an instance");
+        if (debug >= 1)
+            log("Allocating an instance");
 
         // If we are currently unloading this servlet, throw an exception
         if (unloading)
             throw new ServletException
               (sm.getString("standardWrapper.unloading", getName()));
 
-	// Load and initialize our instance if necessary
-	if (instance == null) {
-	    try {
-		load();
-	    } catch (ServletException e) {
-		throw e;
-	    } catch (Throwable e) {
-		throw new ServletException
-		    (sm.getString("standardWrapper.allocate"), e);
-	    }
-	}
+        // Load and initialize our instance if necessary
+        if (instance == null) {
+            try {
+                load();
+            } catch (ServletException e) {
+                throw e;
+            } catch (Throwable e) {
+                throw new ServletException
+                    (sm.getString("standardWrapper.allocate"), e);
+            }
+        }
 
-	// If not SingleThreadedModel, return the same instance every time
-	if (!singleThreadModel) {
-	    if (debug >= 2)
-		log("  Returning non-STM instance");
-	    return (instance);
-	}
+        // If not SingleThreadedModel, return the same instance every time
+        if (!singleThreadModel) {
+            if (debug >= 2)
+                log("  Returning non-STM instance");
+            return (instance);
+        }
 
-	// Lock and return this instance
-	synchronized (instance) {
-	    if (allocated) {
-		if (debug >= 2)
-		    log("  Waiting for allocated STM instance");
-		try {
-		    instance.wait();
-		} catch (InterruptedException e) {
-		    ;
-		}
-	    }
-	    if (debug >= 2)
-		log("  Returning allocated STM instance");
-	    allocated = true;
-	    return (instance);
-	}
+        // Lock and return this instance
+        synchronized (instance) {
+            if (allocated) {
+                if (debug >= 2)
+                    log("  Waiting for allocated STM instance");
+                try {
+                    instance.wait();
+                } catch (InterruptedException e) {
+                    ;
+                }
+            }
+            if (debug >= 2)
+                log("  Returning allocated STM instance");
+            allocated = true;
+            return (instance);
+        }
 
     }
 
@@ -646,15 +646,15 @@ public final class StandardWrapper
      */
     public void deallocate(Servlet servlet) throws ServletException {
 
-	// If not SingleThreadModel, no action is required
-	if (!singleThreadModel)
-	    return;
+        // If not SingleThreadModel, no action is required
+        if (!singleThreadModel)
+            return;
 
-	// Unlock and free this instance
-	synchronized (instance) {
-	    allocated = false;
-	    instance.notify();
-	}
+        // Unlock and free this instance
+        synchronized (instance) {
+            allocated = false;
+            instance.notify();
+        }
 
     }
 
@@ -667,9 +667,9 @@ public final class StandardWrapper
      */
     public String findInitParameter(String name) {
 
-	synchronized (parameters) {
-	    return ((String) parameters.get(name));
-	}
+        synchronized (parameters) {
+            return ((String) parameters.get(name));
+        }
 
     }
 
@@ -680,10 +680,10 @@ public final class StandardWrapper
      */
     public String[] findInitParameters() {
 
-	synchronized (parameters) {
-	    String results[] = new String[parameters.size()];
-	    return ((String[]) parameters.keySet().toArray(results));
-	}
+        synchronized (parameters) {
+            String results[] = new String[parameters.size()];
+            return ((String[]) parameters.keySet().toArray(results));
+        }
 
     }
 
@@ -696,9 +696,9 @@ public final class StandardWrapper
      */
     public String findSecurityReference(String name) {
 
-	synchronized (references) {
-	    return ((String) references.get(name));
-	}
+        synchronized (references) {
+            return ((String) references.get(name));
+        }
 
     }
 
@@ -709,10 +709,10 @@ public final class StandardWrapper
      */
     public String[] findSecurityReferences() {
 
-	synchronized (references) {
-	    String results[] = new String[references.size()];
-	    return ((String[]) references.keySet().toArray(results));
-	}
+        synchronized (references) {
+            String results[] = new String[references.size()];
+            return ((String[]) references.keySet().toArray(results));
+        }
 
     }
 
@@ -724,10 +724,10 @@ public final class StandardWrapper
      * at server startup time.
      * <p>
      * <b>IMPLEMENTATION NOTE</b>:  Servlets whose classnames begin with
-     * <code>org.apache.catalina.</code> (so-called "container" servlets) 
-     * are loaded by the same classloader that loaded this class, rather than 
-     * the classloader for the current web application.  
-     * This gives such classes access to Catalina internals, which are 
+     * <code>org.apache.catalina.</code> (so-called "container" servlets)
+     * are loaded by the same classloader that loaded this class, rather than
+     * the classloader for the current web application.
+     * This gives such classes access to Catalina internals, which are
      * prevented for classes loaded for web applications.
      *
      * @exception ServletException if the servlet init() method threw
@@ -736,9 +736,9 @@ public final class StandardWrapper
      */
     public synchronized void load() throws ServletException {
 
-	// Nothing to do if we already have an instance
-	if (instance != null)
-	    return;
+        // Nothing to do if we already have an instance
+        if (instance != null)
+            return;
 
         // If this "servlet" is really a JSP file, get the right class.
         // HOLD YOUR NOSE - this is a kludge that avoids having to do special
@@ -753,30 +753,30 @@ public final class StandardWrapper
                 actualClass = jspWrapper.getServletClass();
         }
 
-	// Complain if no servlet class has been specified
-	if (actualClass == null) {
-	    unavailable(null);
-	    throw new ServletException
-		(sm.getString("standardWrapper.notClass", getName()));
-	}
+        // Complain if no servlet class has been specified
+        if (actualClass == null) {
+            unavailable(null);
+            throw new ServletException
+                (sm.getString("standardWrapper.notClass", getName()));
+        }
 
-	// Acquire an instance of the class loader to be used
-	Loader loader = getLoader();
-	if (loader == null) {
-	    unavailable(null);
-	    throw new ServletException
-		(sm.getString("standardWrapper.missingLoader", getName()));
-	}
+        // Acquire an instance of the class loader to be used
+        Loader loader = getLoader();
+        if (loader == null) {
+            unavailable(null);
+            throw new ServletException
+                (sm.getString("standardWrapper.missingLoader", getName()));
+        }
 
-        ClassLoader oldCtxClassLoader = 
+        ClassLoader oldCtxClassLoader =
             Thread.currentThread().getContextClassLoader();
-	ClassLoader classLoader = loader.getClassLoader();
+        ClassLoader classLoader = loader.getClassLoader();
 
         // Special case class loader for a Catalina internal servlet
-	if (isContainerServlet(actualClass)) {
-	    classLoader = this.getClass().getClassLoader();
-	    log(sm.getString
-	          ("standardWrapper.containerServlet", getName()));
+        if (isContainerServlet(actualClass)) {
+            classLoader = this.getClass().getClassLoader();
+            log(sm.getString
+                  ("standardWrapper.containerServlet", getName()));
         }
 
         // Special case class loader for the Jasper JSP servlet
@@ -790,26 +790,26 @@ public final class StandardWrapper
             Thread.currentThread().setContextClassLoader(classLoader);
         }
 
-	// Load the specified servlet class from the appropriate class loader
-	Class classClass = null;
-	try {
-	    if (classLoader != null) {
-		classClass = classLoader.loadClass(actualClass);
-	    } else {
-		classClass = Class.forName(actualClass);
+        // Load the specified servlet class from the appropriate class loader
+        Class classClass = null;
+        try {
+            if (classLoader != null) {
+                classClass = classLoader.loadClass(actualClass);
+            } else {
+                classClass = Class.forName(actualClass);
             }
-	} catch (ClassNotFoundException e) {
-	    unavailable(null);
+        } catch (ClassNotFoundException e) {
+            unavailable(null);
             // Restore the context ClassLoader
-	    if (classLoader != null) {
+            if (classLoader != null) {
                 Thread.currentThread().setContextClassLoader
                     (oldCtxClassLoader);
             }
-	    throw new ServletException
-		(sm.getString("standardWrapper.missingClass", actualClass),
-		 e);
-	}
-	if (classClass == null) {
+            throw new ServletException
+                (sm.getString("standardWrapper.missingClass", actualClass),
+                 e);
+        }
+        if (classClass == null) {
             unavailable(null);
             if (classLoader != null) {
                 Thread.currentThread().setContextClassLoader
@@ -819,29 +819,29 @@ public final class StandardWrapper
                 (sm.getString("standardWrapper.missingClass", actualClass));
         }
 
-	// Instantiate and initialize an instance of the servlet class itself
-	Servlet servlet = null;
-	try {
-	    servlet = (Servlet) classClass.newInstance();
-	} catch (ClassCastException e) {
-	    unavailable(null);
+        // Instantiate and initialize an instance of the servlet class itself
+        Servlet servlet = null;
+        try {
+            servlet = (Servlet) classClass.newInstance();
+        } catch (ClassCastException e) {
+            unavailable(null);
             // Restore the context ClassLoader
-	    if (classLoader != null) {
+            if (classLoader != null) {
                 Thread.currentThread().setContextClassLoader
                     (oldCtxClassLoader);
             }
-	    throw new ServletException
-		(sm.getString("standardWrapper.notServlet", actualClass), e);
-	} catch (Throwable e) {
-	    unavailable(null);
+            throw new ServletException
+                (sm.getString("standardWrapper.notServlet", actualClass), e);
+        } catch (Throwable e) {
+            unavailable(null);
             // Restore the context ClassLoader
-	    if (classLoader != null) {
+            if (classLoader != null) {
                 Thread.currentThread().setContextClassLoader
                     (oldCtxClassLoader);
             }
-	    throw new ServletException
-		(sm.getString("standardWrapper.instantiate", actualClass), e);
-	}
+            throw new ServletException
+                (sm.getString("standardWrapper.instantiate", actualClass), e);
+        }
 
         // Special handling for ContainerServlet instances
         if ((servlet instanceof ContainerServlet) &&
@@ -850,32 +850,32 @@ public final class StandardWrapper
         }
 
 
-	// Call the initialization method of this servlet
-	try {
-	    instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
-					      servlet);
-	    servlet.init(facade);
-	    instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
-					      servlet);
-	} catch (UnavailableException f) {
-	    instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
-					      servlet);
-	    unavailable(f);
-	    throw f;
-	} catch (ServletException f) {
-	    instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
-					      servlet);
-	    // If the servlet wanted to be unavailable it would have
-	    // said so, so do not call unavailable(null).
-	    throw f;
-	} catch (Throwable f) {
-	    instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
-					      servlet);
-	    // If the servlet wanted to be unavailable it would have
-	    // said so, so do not call unavailable(null).
-	    throw new ServletException
-		(sm.getString("standardWrapper.initException", getName()), f);
-	} finally {
+        // Call the initialization method of this servlet
+        try {
+            instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
+                                              servlet);
+            servlet.init(facade);
+            instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
+                                              servlet);
+        } catch (UnavailableException f) {
+            instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
+                                              servlet);
+            unavailable(f);
+            throw f;
+        } catch (ServletException f) {
+            instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
+                                              servlet);
+            // If the servlet wanted to be unavailable it would have
+            // said so, so do not call unavailable(null).
+            throw f;
+        } catch (Throwable f) {
+            instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
+                                              servlet);
+            // If the servlet wanted to be unavailable it would have
+            // said so, so do not call unavailable(null).
+            throw new ServletException
+                (sm.getString("standardWrapper.initException", getName()), f);
+        } finally {
             // Restore the context ClassLoader
             if (classLoader != null) {
                 Thread.currentThread().setContextClassLoader
@@ -883,10 +883,10 @@ public final class StandardWrapper
             }
         }
 
-	// Register our newly initialized instance
-	instance = servlet;
-	singleThreadModel = instance instanceof SingleThreadModel;
-	fireContainerEvent("load", this);
+        // Register our newly initialized instance
+        instance = servlet;
+        singleThreadModel = instance instanceof SingleThreadModel;
+        fireContainerEvent("load", this);
 
     }
 
@@ -898,10 +898,10 @@ public final class StandardWrapper
      */
     public void removeInitParameter(String name) {
 
-	synchronized (parameters) {
-	    parameters.remove(name);
-	}
-	fireContainerEvent("removeInitParameter", name);
+        synchronized (parameters) {
+            parameters.remove(name);
+        }
+        fireContainerEvent("removeInitParameter", name);
 
     }
 
@@ -925,10 +925,10 @@ public final class StandardWrapper
      */
     public void removeSecurityReference(String name) {
 
-	synchronized (references) {
-	    references.remove(name);
-	}
-	fireContainerEvent("removeSecurityReference", name);
+        synchronized (references) {
+            references.remove(name);
+        }
+        fireContainerEvent("removeSecurityReference", name);
 
     }
 
@@ -938,15 +938,15 @@ public final class StandardWrapper
      */
     public String toString() {
 
-	StringBuffer sb = new StringBuffer();
-	if (getParent() != null) {
-	    sb.append(getParent().toString());
-	    sb.append(".");
-	}
-	sb.append("StandardWrapper[");
-	sb.append(getName());
-	sb.append("]");
-	return (sb.toString());
+        StringBuffer sb = new StringBuffer();
+        if (getParent() != null) {
+            sb.append(getParent().toString());
+            sb.append(".");
+        }
+        sb.append("StandardWrapper[");
+        sb.append(getName());
+        sb.append("]");
+        return (sb.toString());
 
     }
 
@@ -959,18 +959,18 @@ public final class StandardWrapper
      *  to mark this servlet as permanently unavailable
      */
     public void unavailable(UnavailableException unavailable) {
-	log(sm.getString("standardWrapper.unavailable", getName()));
-	if (unavailable == null)
-	    setAvailable(Long.MAX_VALUE);
-	else if (unavailable.isPermanent())
-	    setAvailable(Long.MAX_VALUE);
-	else {
-	    int unavailableSeconds = unavailable.getUnavailableSeconds();
-	    if (unavailableSeconds <= 0)
-		unavailableSeconds = 60;	// Arbitrary default
-	    setAvailable(System.currentTimeMillis() +
-			 (unavailableSeconds * 1000L));
-	}
+        log(sm.getString("standardWrapper.unavailable", getName()));
+        if (unavailable == null)
+            setAvailable(Long.MAX_VALUE);
+        else if (unavailable.isPermanent())
+            setAvailable(Long.MAX_VALUE);
+        else {
+            int unavailableSeconds = unavailable.getUnavailableSeconds();
+            if (unavailableSeconds <= 0)
+                unavailableSeconds = 60;        // Arbitrary default
+            setAvailable(System.currentTimeMillis() +
+                         (unavailableSeconds * 1000L));
+        }
 
     }
 
@@ -987,9 +987,9 @@ public final class StandardWrapper
      */
     public synchronized void unload() throws ServletException {
 
-	// Nothing to do if we have never loaded the instance
-	if (instance == null)
-	    return;
+        // Nothing to do if we have never loaded the instance
+        if (instance == null)
+            return;
         unloading = true;
 
         // Loaf a while if the current instance is allocated
@@ -1008,38 +1008,38 @@ public final class StandardWrapper
                 }
             }
         }
-        
-        ClassLoader oldCtxClassLoader = 
+
+        ClassLoader oldCtxClassLoader =
             Thread.currentThread().getContextClassLoader();
         ClassLoader classLoader = instance.getClass().getClassLoader();
 
-	// Call the servlet destroy() method
-	try {
-	    instanceSupport.fireInstanceEvent
-	      (InstanceEvent.BEFORE_DESTROY_EVENT, instance);
+        // Call the servlet destroy() method
+        try {
+            instanceSupport.fireInstanceEvent
+              (InstanceEvent.BEFORE_DESTROY_EVENT, instance);
             Thread.currentThread().setContextClassLoader(classLoader);
-	    instance.destroy();
-	    instanceSupport.fireInstanceEvent
-	      (InstanceEvent.AFTER_DESTROY_EVENT, instance);
-	} catch (Throwable t) {
-	    instanceSupport.fireInstanceEvent
-	      (InstanceEvent.AFTER_DESTROY_EVENT, instance);
-	    instance = null;
-	    fireContainerEvent("unload", this);
+            instance.destroy();
+            instanceSupport.fireInstanceEvent
+              (InstanceEvent.AFTER_DESTROY_EVENT, instance);
+        } catch (Throwable t) {
+            instanceSupport.fireInstanceEvent
+              (InstanceEvent.AFTER_DESTROY_EVENT, instance);
+            instance = null;
+            fireContainerEvent("unload", this);
             unloading = false;
-	    throw new ServletException
-		(sm.getString("standardWrapper.destroyException", getName()),
-		 t);
-	} finally {
+            throw new ServletException
+                (sm.getString("standardWrapper.destroyException", getName()),
+                 t);
+        } finally {
             // restore the context ClassLoader
             Thread.currentThread().setContextClassLoader(oldCtxClassLoader);
         }
 
-	// Deregister the destroyed instance
-	instance = null;
+        // Deregister the destroyed instance
+        instance = null;
         jasperLoader = null;
         unloading = false;
-	fireContainerEvent("unload", this);
+        fireContainerEvent("unload", this);
 
     }
 
@@ -1055,7 +1055,7 @@ public final class StandardWrapper
      */
     public String getInitParameter(String name) {
 
-	return (findInitParameter(name));
+        return (findInitParameter(name));
 
     }
 
@@ -1066,9 +1066,9 @@ public final class StandardWrapper
      */
     public Enumeration getInitParameterNames() {
 
-	synchronized (parameters) {
-	    return (new Enumerator(parameters.keySet()));
-	}
+        synchronized (parameters) {
+            return (new Enumerator(parameters.keySet()));
+        }
 
     }
 
@@ -1078,12 +1078,12 @@ public final class StandardWrapper
      */
     public ServletContext getServletContext() {
 
-	if (parent == null)
-	    return (null);
-	else if (!(parent instanceof Context))
-	    return (null);
-	else
-	    return (((Context) parent).getServletContext());
+        if (parent == null)
+            return (null);
+        else if (!(parent instanceof Context))
+            return (null);
+        else
+            return (((Context) parent).getServletContext());
 
     }
 
@@ -1093,7 +1093,7 @@ public final class StandardWrapper
      */
     public String getServletName() {
 
-	return (getName());
+        return (getName());
 
     }
 
@@ -1112,7 +1112,7 @@ public final class StandardWrapper
      */
     protected void addDefaultMapper(String mapperClass) {
 
-	;	// No need for a default Mapper on a Wrapper
+        ;       // No need for a default Mapper on a Wrapper
 
     }
 
@@ -1125,10 +1125,10 @@ public final class StandardWrapper
      */
     private boolean isContainerServlet(String classname) {
 
-	if (classname.startsWith("org.apache.catalina."))
-	    return (true);
-	else
-	    return (false);
+        if (classname.startsWith("org.apache.catalina."))
+            return (true);
+        else
+            return (false);
 
     }
 
@@ -1159,11 +1159,11 @@ public final class StandardWrapper
      */
     public void start() throws LifecycleException {
 
-	// Start up this component
-	super.start();
+        // Start up this component
+        super.start();
 
-	// Load and initialize an instance of this servlet if requested
-	// MOVED TO StandardContext START() METHOD
+        // Load and initialize an instance of this servlet if requested
+        // MOVED TO StandardContext START() METHOD
 
     }
 
@@ -1176,15 +1176,15 @@ public final class StandardWrapper
      */
     public void stop() throws LifecycleException {
 
-	// Shut down our servlet instance (if it has been initialized)
-	try {
-	    unload();
-	} catch (ServletException e) {
-	    log(sm.getString("standardWrapper.unloadException", getName()), e);
-	}
+        // Shut down our servlet instance (if it has been initialized)
+        try {
+            unload();
+        } catch (ServletException e) {
+            log(sm.getString("standardWrapper.unloadException", getName()), e);
+        }
 
-	// Shut down this component
-	super.stop();
+        // Shut down this component
+        super.stop();
 
     }
 

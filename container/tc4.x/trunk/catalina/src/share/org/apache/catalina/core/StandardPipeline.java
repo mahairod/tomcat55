@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.core;
@@ -164,7 +164,7 @@ public class StandardPipeline
      * The string manager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -238,7 +238,7 @@ public class StandardPipeline
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -250,7 +250,7 @@ public class StandardPipeline
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -265,13 +265,13 @@ public class StandardPipeline
      */
     public synchronized void start() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("standardPipeline.alreadyStarted"));
-	started = true;
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("standardPipeline.alreadyStarted"));
+        started = true;
 
-	// Start the Valves in our pipeline (including the basic), if any
+        // Start the Valves in our pipeline (including the basic), if any
         for (int i = 0; i < valves.length; i++) {
             if (valves[i] instanceof Lifecycle)
                 ((Lifecycle) valves[i]).start();
@@ -279,8 +279,8 @@ public class StandardPipeline
         if ((basic != null) && (basic instanceof Lifecycle))
             ((Lifecycle) basic).start();
 
-	// Notify our interested LifecycleListeners
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
 
     }
 
@@ -294,16 +294,16 @@ public class StandardPipeline
      */
     public synchronized void stop() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("standardPipeline.notStarted"));
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("standardPipeline.notStarted"));
 
-	// Notify our interested LifecycleListeners
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
 
-	// Stop the Valves in our pipeline (including the basic), if any
+        // Stop the Valves in our pipeline (including the basic), if any
         if ((basic != null) && (basic instanceof Lifecycle))
             ((Lifecycle) basic).stop();
         for (int i = 0; i < valves.length; i++) {
@@ -552,7 +552,7 @@ public class StandardPipeline
      *  in the Pipeline currently being processed
      */
     public void invokeNext(Request request, Response response)
-	throws IOException, ServletException {
+        throws IOException, ServletException {
 
         // Identify the current subscript for the current request thread
         Integer current = (Integer) state.get();
@@ -582,15 +582,15 @@ public class StandardPipeline
      */
     protected void log(String message) {
 
-	Logger logger = null;
+        Logger logger = null;
         if (container != null)
             logger = container.getLogger();
-	if (logger != null)
-	    logger.log("StandardPipeline[" + container.getName() + "]: " +
-		       message);
-	else
-	    System.out.println("StandardPipeline[" + container.getName() +
-			       "]: " + message);
+        if (logger != null)
+            logger.log("StandardPipeline[" + container.getName() + "]: " +
+                       message);
+        else
+            System.out.println("StandardPipeline[" + container.getName() +
+                               "]: " + message);
 
     }
 
@@ -603,17 +603,17 @@ public class StandardPipeline
      */
     protected void log(String message, Throwable throwable) {
 
-	Logger logger = null;
+        Logger logger = null;
         if (container != null)
             logger = container.getLogger();
-	if (logger != null)
-	    logger.log("StandardPipeline[" + container.getName() + "]: " +
-		       message, throwable);
-	else {
-	    System.out.println("StandardPipeline[" + container.getName() +
+        if (logger != null)
+            logger.log("StandardPipeline[" + container.getName() + "]: " +
+                       message, throwable);
+        else {
+            System.out.println("StandardPipeline[" + container.getName() +
                                "]: " + message);
-	    throwable.printStackTrace(System.out);
-	}
+            throwable.printStackTrace(System.out);
+        }
 
     }
 

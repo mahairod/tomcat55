@@ -96,7 +96,7 @@ public abstract class HttpRequestWrapper
      */
     public HttpRequestWrapper(HttpRequest request) {
 
-	super(request);
+        super(request);
 
     }
 
@@ -111,7 +111,7 @@ public abstract class HttpRequestWrapper
      */
     public void addCookie(Cookie cookie) {
 
-	((HttpRequest) request).addCookie(cookie);
+        ((HttpRequest) request).addCookie(cookie);
 
     }
 
@@ -124,7 +124,7 @@ public abstract class HttpRequestWrapper
      */
     public void addHeader(String name, String value) {
 
-	((HttpRequest) request).addHeader(name, value);
+        ((HttpRequest) request).addHeader(name, value);
 
     }
 
@@ -137,7 +137,7 @@ public abstract class HttpRequestWrapper
      */
     public void addLocale(Locale locale) {
 
-	((HttpRequest) request).addLocale(locale);
+        ((HttpRequest) request).addLocale(locale);
 
     }
 
@@ -147,7 +147,7 @@ public abstract class HttpRequestWrapper
      */
     public void clearCookies() {
 
-	((HttpRequest) request).clearCookies();
+        ((HttpRequest) request).clearCookies();
 
     }
 
@@ -157,7 +157,7 @@ public abstract class HttpRequestWrapper
      */
     public void clearHeaders() {
 
-	((HttpRequest) request).clearHeaders();
+        ((HttpRequest) request).clearHeaders();
 
     }
 
@@ -167,7 +167,7 @@ public abstract class HttpRequestWrapper
      */
     public void clearLocales() {
 
-	((HttpRequest) request).clearLocales();
+        ((HttpRequest) request).clearLocales();
 
     }
 
@@ -181,7 +181,7 @@ public abstract class HttpRequestWrapper
      */
     public void setAuthType(String type) {
 
-	((HttpRequest) request).setAuthType(type);
+        ((HttpRequest) request).setAuthType(type);
 
     }
 
@@ -195,7 +195,7 @@ public abstract class HttpRequestWrapper
      */
     public void setContextPath(String path) {
 
-	((HttpRequest) request).setContextPath(path);
+        ((HttpRequest) request).setContextPath(path);
 
     }
 
@@ -207,7 +207,7 @@ public abstract class HttpRequestWrapper
      */
     public void setMethod(String method) {
 
-	((HttpRequest) request).setMethod(method);
+        ((HttpRequest) request).setMethod(method);
 
     }
 
@@ -220,7 +220,7 @@ public abstract class HttpRequestWrapper
      */
     public void setQueryString(String query) {
 
-	((HttpRequest) request).setQueryString(query);
+        ((HttpRequest) request).setQueryString(query);
 
     }
 
@@ -234,7 +234,7 @@ public abstract class HttpRequestWrapper
      */
     public void setPathInfo(String path) {
 
-	((HttpRequest) request).setPathInfo(path);
+        ((HttpRequest) request).setPathInfo(path);
 
     }
 
@@ -248,7 +248,7 @@ public abstract class HttpRequestWrapper
      */
     public void setRequestedSessionCookie(boolean flag) {
 
-	((HttpRequest) request).setRequestedSessionCookie(flag);
+        ((HttpRequest) request).setRequestedSessionCookie(flag);
 
     }
 
@@ -261,7 +261,7 @@ public abstract class HttpRequestWrapper
      */
     public void setRequestedSessionId(String id) {
 
-	((HttpRequest) request).setRequestedSessionId(id);
+        ((HttpRequest) request).setRequestedSessionId(id);
 
     }
 
@@ -275,7 +275,7 @@ public abstract class HttpRequestWrapper
      */
     public void setRequestedSessionURL(boolean flag) {
 
-	((HttpRequest) request).setRequestedSessionURL(flag);
+        ((HttpRequest) request).setRequestedSessionURL(flag);
 
     }
 
@@ -288,7 +288,7 @@ public abstract class HttpRequestWrapper
      */
     public void setRequestURI(String uri) {
 
-	((HttpRequest) request).setRequestURI(uri);
+        ((HttpRequest) request).setRequestURI(uri);
 
     }
 
@@ -302,7 +302,7 @@ public abstract class HttpRequestWrapper
      */
     public void setServletPath(String path) {
 
-	((HttpRequest) request).setServletPath(path);
+        ((HttpRequest) request).setServletPath(path);
 
     }
 
@@ -316,7 +316,7 @@ public abstract class HttpRequestWrapper
      */
     public void setUserPrincipal(Principal principal) {
 
-	((HttpRequest) request).setUserPrincipal(principal);
+        ((HttpRequest) request).setUserPrincipal(principal);
 
     }
 

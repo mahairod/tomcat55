@@ -205,7 +205,7 @@ public abstract class ContainerBase
      */
     protected Manager manager = null;
 
-    
+
     /**
      * The cluster with which this Container is associated.
      */
@@ -270,7 +270,7 @@ public abstract class ContainerBase
      * The string manager for this package.
      */
     protected static StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -293,7 +293,7 @@ public abstract class ContainerBase
      */
     public int getDebug() {
 
-	return (this.debug);
+        return (this.debug);
 
     }
 
@@ -305,10 +305,10 @@ public abstract class ContainerBase
      */
     public void setDebug(int debug) {
 
-	int oldDebug = this.debug;
-	this.debug = debug;
-	support.firePropertyChange("debug", new Integer(oldDebug),
-				   new Integer(this.debug));
+        int oldDebug = this.debug;
+        this.debug = debug;
+        support.firePropertyChange("debug", new Integer(oldDebug),
+                                   new Integer(this.debug));
 
     }
 
@@ -328,11 +328,11 @@ public abstract class ContainerBase
      */
     public Loader getLoader() {
 
-	if (loader != null)
-	    return (loader);
-	if (parent != null)
-	    return (parent.getLoader());
-	return (null);
+        if (loader != null)
+            return (loader);
+        if (parent != null)
+            return (parent.getLoader());
+        return (null);
 
     }
 
@@ -344,36 +344,36 @@ public abstract class ContainerBase
      */
     public synchronized void setLoader(Loader loader) {
 
-	// Change components if necessary
-	Loader oldLoader = this.loader;
-	if (oldLoader == loader)
-	    return;
-	this.loader = loader;
+        // Change components if necessary
+        Loader oldLoader = this.loader;
+        if (oldLoader == loader)
+            return;
+        this.loader = loader;
 
-	// Stop the old component if necessary
-	if (started && (oldLoader != null) &&
-	    (oldLoader instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) oldLoader).stop();
-	    } catch (LifecycleException e) {
-		log("ContainerBase.setLoader: stop: ", e);
-	    }
-	}
+        // Stop the old component if necessary
+        if (started && (oldLoader != null) &&
+            (oldLoader instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) oldLoader).stop();
+            } catch (LifecycleException e) {
+                log("ContainerBase.setLoader: stop: ", e);
+            }
+        }
 
-	// Start the new component if necessary
-	if (loader != null)
-	    loader.setContainer(this);
-	if (started && (loader != null) &&
-	    (loader instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) loader).start();
-	    } catch (LifecycleException e) {
-		log("ContainerBase.setLoader: start: ", e);
-	    }
-	}
+        // Start the new component if necessary
+        if (loader != null)
+            loader.setContainer(this);
+        if (started && (loader != null) &&
+            (loader instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) loader).start();
+            } catch (LifecycleException e) {
+                log("ContainerBase.setLoader: start: ", e);
+            }
+        }
 
-	// Report this property change to interested listeners
-	support.firePropertyChange("loader", oldLoader, this.loader);
+        // Report this property change to interested listeners
+        support.firePropertyChange("loader", oldLoader, this.loader);
 
     }
 
@@ -385,11 +385,11 @@ public abstract class ContainerBase
      */
     public Logger getLogger() {
 
-	if (logger != null)
-	    return (logger);
-	if (parent != null)
-	    return (parent.getLogger());
-	return (null);
+        if (logger != null)
+            return (logger);
+        if (parent != null)
+            return (parent.getLogger());
+        return (null);
 
     }
 
@@ -401,36 +401,36 @@ public abstract class ContainerBase
      */
     public synchronized void setLogger(Logger logger) {
 
-	// Change components if necessary
-	Logger oldLogger = this.logger;
-	if (oldLogger == logger)
-	    return;
-	this.logger = logger;
+        // Change components if necessary
+        Logger oldLogger = this.logger;
+        if (oldLogger == logger)
+            return;
+        this.logger = logger;
 
-	// Stop the old component if necessary
-	if (started && (oldLogger != null) &&
-	    (oldLogger instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) oldLogger).stop();
-	    } catch (LifecycleException e) {
-		log("ContainerBase.setLogger: stop: ", e);
-	    }
-	}
+        // Stop the old component if necessary
+        if (started && (oldLogger != null) &&
+            (oldLogger instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) oldLogger).stop();
+            } catch (LifecycleException e) {
+                log("ContainerBase.setLogger: stop: ", e);
+            }
+        }
 
-	// Start the new component if necessary
-	if (logger != null)
-	    logger.setContainer(this);
-	if (started && (logger != null) &&
-	    (logger instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) logger).start();
-	    } catch (LifecycleException e) {
-		log("ContainerBase.setLogger: start: ", e);
-	    }
-	}
+        // Start the new component if necessary
+        if (logger != null)
+            logger.setContainer(this);
+        if (started && (logger != null) &&
+            (logger instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) logger).start();
+            } catch (LifecycleException e) {
+                log("ContainerBase.setLogger: start: ", e);
+            }
+        }
 
-	// Report this property change to interested listeners
-	support.firePropertyChange("logger", oldLogger, this.logger);
+        // Report this property change to interested listeners
+        support.firePropertyChange("logger", oldLogger, this.logger);
 
     }
 
@@ -442,11 +442,11 @@ public abstract class ContainerBase
      */
     public Manager getManager() {
 
-	if (manager != null)
-	    return (manager);
-	if (parent != null)
-	    return (parent.getManager());
-	return (null);
+        if (manager != null)
+            return (manager);
+        if (parent != null)
+            return (parent.getManager());
+        return (null);
 
     }
 
@@ -458,36 +458,36 @@ public abstract class ContainerBase
      */
     public synchronized void setManager(Manager manager) {
 
-	// Change components if necessary
-	Manager oldManager = this.manager;
-	if (oldManager == manager)
-	    return;
-	this.manager = manager;
+        // Change components if necessary
+        Manager oldManager = this.manager;
+        if (oldManager == manager)
+            return;
+        this.manager = manager;
 
-	// Stop the old component if necessary
-	if (started && (oldManager != null) &&
-	    (oldManager instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) oldManager).stop();
-	    } catch (LifecycleException e) {
-		log("ContainerBase.setManager: stop: ", e);
-	    }
-	}
+        // Stop the old component if necessary
+        if (started && (oldManager != null) &&
+            (oldManager instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) oldManager).stop();
+            } catch (LifecycleException e) {
+                log("ContainerBase.setManager: stop: ", e);
+            }
+        }
 
-	// Start the new component if necessary
-	if (manager != null)
-	    manager.setContainer(this);
-	if (started && (manager != null) &&
-	    (manager instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) manager).start();
-	    } catch (LifecycleException e) {
-		log("ContainerBase.setManager: start: ", e);
-	    }
-	}
+        // Start the new component if necessary
+        if (manager != null)
+            manager.setContainer(this);
+        if (started && (manager != null) &&
+            (manager instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) manager).start();
+            } catch (LifecycleException e) {
+                log("ContainerBase.setManager: start: ", e);
+            }
+        }
 
-	// Report this property change to interested listeners
-	support.firePropertyChange("manager", oldManager, this.manager);
+        // Report this property change to interested listeners
+        support.firePropertyChange("manager", oldManager, this.manager);
 
     }
 
@@ -517,7 +517,7 @@ public abstract class ContainerBase
         if (oldCluster == cluster)
             return;
         this.cluster = cluster;
-        
+
         // Stop the old component if necessary
         if (started && (oldCluster != null) &&
             (oldCluster instanceof Lifecycle)) {
@@ -527,7 +527,7 @@ public abstract class ContainerBase
                 log("ContainerBase.setCluster: stop: ", e);
             }
         }
-        
+
         // Start the new component if necessary
         if (cluster != null)
             cluster.setContainer(this);
@@ -540,7 +540,7 @@ public abstract class ContainerBase
                 log("ContainerBase.setCluster: start: ", e);
             }
         }
-        
+
         // Report this property change to interested listeners
         support.firePropertyChange("cluster", oldCluster, this.cluster);
     }
@@ -553,7 +553,7 @@ public abstract class ContainerBase
      */
     public String getName() {
 
-	return (name);
+        return (name);
 
     }
 
@@ -571,9 +571,9 @@ public abstract class ContainerBase
      */
     public void setName(String name) {
 
-	String oldName = this.name;
-	this.name = name;
-	support.firePropertyChange("name", oldName, this.name);
+        String oldName = this.name;
+        this.name = name;
+        support.firePropertyChange("name", oldName, this.name);
 
     }
 
@@ -584,7 +584,7 @@ public abstract class ContainerBase
      */
     public Container getParent() {
 
-	return (parent);
+        return (parent);
 
     }
 
@@ -602,9 +602,9 @@ public abstract class ContainerBase
      */
     public void setParent(Container container) {
 
-	Container oldParent = this.parent;
-	this.parent = container;
-	support.firePropertyChange("parent", oldParent, this.parent);
+        Container oldParent = this.parent;
+        this.parent = container;
+        support.firePropertyChange("parent", oldParent, this.parent);
 
     }
 
@@ -662,11 +662,11 @@ public abstract class ContainerBase
      */
     public Realm getRealm() {
 
-	if (realm != null)
-	    return (realm);
-	if (parent != null)
-	    return (parent.getRealm());
-	return (null);
+        if (realm != null)
+            return (realm);
+        if (parent != null)
+            return (parent.getRealm());
+        return (null);
 
     }
 
@@ -678,76 +678,76 @@ public abstract class ContainerBase
      */
     public synchronized void setRealm(Realm realm) {
 
-	// Change components if necessary
-	Realm oldRealm = this.realm;
-	if (oldRealm == realm)
-	    return;
-	this.realm = realm;
+        // Change components if necessary
+        Realm oldRealm = this.realm;
+        if (oldRealm == realm)
+            return;
+        this.realm = realm;
 
-	// Stop the old component if necessary
-	if (started && (oldRealm != null) &&
-	    (oldRealm instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) oldRealm).stop();
-	    } catch (LifecycleException e) {
-		log("ContainerBase.setRealm: stop: ", e);
-	    }
-	}
+        // Stop the old component if necessary
+        if (started && (oldRealm != null) &&
+            (oldRealm instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) oldRealm).stop();
+            } catch (LifecycleException e) {
+                log("ContainerBase.setRealm: stop: ", e);
+            }
+        }
 
-	// Start the new component if necessary
-	if (realm != null)
-	    realm.setContainer(this);
-	if (started && (realm != null) &&
-	    (realm instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) realm).start();
-	    } catch (LifecycleException e) {
-		log("ContainerBase.setRealm: start: ", e);
-	    }
-	}
+        // Start the new component if necessary
+        if (realm != null)
+            realm.setContainer(this);
+        if (started && (realm != null) &&
+            (realm instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) realm).start();
+            } catch (LifecycleException e) {
+                log("ContainerBase.setRealm: start: ", e);
+            }
+        }
 
-	// Report this property change to interested listeners
-	support.firePropertyChange("realm", oldRealm, this.realm);
+        // Report this property change to interested listeners
+        support.firePropertyChange("realm", oldRealm, this.realm);
 
     }
 
 
     /**
-      * Return the resources DirContext object with which this Container is 
-      * associated.  If there is no associated resources object, return the 
-      * resources associated with our parent Container (if any); otherwise 
+      * Return the resources DirContext object with which this Container is
+      * associated.  If there is no associated resources object, return the
+      * resources associated with our parent Container (if any); otherwise
       * return <code>null</code>.
      */
     public DirContext getResources() {
 
-	if (resources != null)
-	    return (resources);
-	if (parent != null)
-	    return (parent.getResources());
-	return (null);
+        if (resources != null)
+            return (resources);
+        if (parent != null)
+            return (parent.getResources());
+        return (null);
 
     }
 
 
     /**
-     * Set the resources DirContext object with which this Container is 
+     * Set the resources DirContext object with which this Container is
      * associated.
      *
      * @param resources The newly associated DirContext
      */
     public synchronized void setResources(DirContext resources) {
 
-	// Change components if necessary
-	DirContext oldResources = this.resources;
-	if (oldResources == resources)
-	    return;
+        // Change components if necessary
+        DirContext oldResources = this.resources;
+        if (oldResources == resources)
+            return;
         Hashtable env = new Hashtable();
         if (getParent() != null)
             env.put(ProxyDirContext.HOST, getParent().getName());
         env.put(ProxyDirContext.CONTEXT, getName());
         this.resources = new ProxyDirContext(env, resources);
-	// Report this property change to interested listeners
-	support.firePropertyChange("resources", oldResources, this.resources);
+        // Report this property change to interested listeners
+        support.firePropertyChange("resources", oldResources, this.resources);
 
     }
 
@@ -774,24 +774,24 @@ public abstract class ContainerBase
      */
     public void addChild(Container child) {
 
-	synchronized(children) {
-	    if (children.get(child.getName()) != null)
-		throw new IllegalArgumentException("addChild:  Child name '" +
-						   child.getName() +
-						   "' is not unique");
-	    child.setParent((Container) this);	// May throw IAE
-	    if (started && (child instanceof Lifecycle)) {
-		try {
-		    ((Lifecycle) child).start();
-		} catch (LifecycleException e) {
-		    log("ContainerBase.addChild: start: ", e);
-		    throw new IllegalStateException
-		        ("ContainerBase.addChild: start: " + e);
-		}
-	    }
-	    children.put(child.getName(), child);
-	    fireContainerEvent(ADD_CHILD_EVENT, child);
-	}
+        synchronized(children) {
+            if (children.get(child.getName()) != null)
+                throw new IllegalArgumentException("addChild:  Child name '" +
+                                                   child.getName() +
+                                                   "' is not unique");
+            child.setParent((Container) this);  // May throw IAE
+            if (started && (child instanceof Lifecycle)) {
+                try {
+                    ((Lifecycle) child).start();
+                } catch (LifecycleException e) {
+                    log("ContainerBase.addChild: start: ", e);
+                    throw new IllegalStateException
+                        ("ContainerBase.addChild: start: " + e);
+                }
+            }
+            children.put(child.getName(), child);
+            fireContainerEvent(ADD_CHILD_EVENT, child);
+        }
 
     }
 
@@ -803,9 +803,9 @@ public abstract class ContainerBase
      */
     public void addContainerListener(ContainerListener listener) {
 
-	synchronized (listeners) {
-	    listeners.add(listener);
-	}
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
 
     }
 
@@ -820,28 +820,28 @@ public abstract class ContainerBase
      */
     public void addMapper(Mapper mapper) {
 
-	synchronized(mappers) {
-	    if (mappers.get(mapper.getProtocol()) != null)
-		throw new IllegalArgumentException("addMapper:  Protocol '" +
-						   mapper.getProtocol() +
-						   "' is not unique");
-	    mapper.setContainer((Container) this);	// May throw IAE
-	    if (started && (mapper instanceof Lifecycle)) {
-		try {
-		    ((Lifecycle) mapper).start();
-		} catch (LifecycleException e) {
-		    log("ContainerBase.addMapper: start: ", e);
-		    throw new IllegalStateException
-			("ContainerBase.addMapper: start: " + e);
-		}
-	    }
-	    mappers.put(mapper.getProtocol(), mapper);
-	    if (mappers.size() == 1)
-		this.mapper = mapper;
-	    else
-		this.mapper = null;
-	    fireContainerEvent(ADD_MAPPER_EVENT, mapper);
-	}
+        synchronized(mappers) {
+            if (mappers.get(mapper.getProtocol()) != null)
+                throw new IllegalArgumentException("addMapper:  Protocol '" +
+                                                   mapper.getProtocol() +
+                                                   "' is not unique");
+            mapper.setContainer((Container) this);      // May throw IAE
+            if (started && (mapper instanceof Lifecycle)) {
+                try {
+                    ((Lifecycle) mapper).start();
+                } catch (LifecycleException e) {
+                    log("ContainerBase.addMapper: start: ", e);
+                    throw new IllegalStateException
+                        ("ContainerBase.addMapper: start: " + e);
+                }
+            }
+            mappers.put(mapper.getProtocol(), mapper);
+            if (mappers.size() == 1)
+                this.mapper = mapper;
+            else
+                this.mapper = null;
+            fireContainerEvent(ADD_MAPPER_EVENT, mapper);
+        }
 
     }
 
@@ -853,7 +853,7 @@ public abstract class ContainerBase
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
 
-	support.addPropertyChangeListener(listener);
+        support.addPropertyChangeListener(listener);
 
     }
 
@@ -866,11 +866,11 @@ public abstract class ContainerBase
      */
     public Container findChild(String name) {
 
-	if (name == null)
-	    return (null);
-	synchronized (children) {	// Required by post-start changes
-	    return ((Container) children.get(name));
-	}
+        if (name == null)
+            return (null);
+        synchronized (children) {       // Required by post-start changes
+            return ((Container) children.get(name));
+        }
 
     }
 
@@ -881,10 +881,10 @@ public abstract class ContainerBase
      */
     public Container[] findChildren() {
 
-	synchronized (children) {
-	    Container results[] = new Container[children.size()];
-	    return ((Container[]) children.values().toArray(results));
-	}
+        synchronized (children) {
+            Container results[] = new Container[children.size()];
+            return ((Container[]) children.values().toArray(results));
+        }
 
     }
 
@@ -898,12 +898,12 @@ public abstract class ContainerBase
      */
     public Mapper findMapper(String protocol) {
 
-	if (mapper != null)
-	    return (mapper);
-	else
-	    synchronized (mappers) {
-		return ((Mapper) mappers.get(protocol));
-	    }
+        if (mapper != null)
+            return (mapper);
+        else
+            synchronized (mappers) {
+                return ((Mapper) mappers.get(protocol));
+            }
 
     }
 
@@ -914,10 +914,10 @@ public abstract class ContainerBase
      */
     public Mapper[] findMappers() {
 
-	synchronized (mappers) {
-	    Mapper results[] = new Mapper[mappers.size()];
-	    return ((Mapper[]) mappers.values().toArray(results));
-	}
+        synchronized (mappers) {
+            Mapper results[] = new Mapper[mappers.size()];
+            return ((Mapper[]) mappers.values().toArray(results));
+        }
 
     }
 
@@ -938,7 +938,7 @@ public abstract class ContainerBase
      *  while processing this request
      */
     public void invoke(Request request, Response response)
-	throws IOException, ServletException {
+        throws IOException, ServletException {
 
         pipeline.invoke(request, response);
 
@@ -955,13 +955,13 @@ public abstract class ContainerBase
      */
     public Container map(Request request, boolean update) {
 
-	// Select the Mapper we will use
-	Mapper mapper = findMapper(request.getRequest().getProtocol());
-	if (mapper == null)
-	    return (null);
+        // Select the Mapper we will use
+        Mapper mapper = findMapper(request.getRequest().getProtocol());
+        if (mapper == null)
+            return (null);
 
-	// Use this Mapper to perform this mapping
-	return (mapper.map(request, update));
+        // Use this Mapper to perform this mapping
+        return (mapper.map(request, update));
 
     }
 
@@ -974,20 +974,20 @@ public abstract class ContainerBase
      */
     public void removeChild(Container child) {
 
-	synchronized(children) {
-	    if (children.get(child.getName()) == null)
-		return;
-	    children.remove(child.getName());
-	    if (started && (child instanceof Lifecycle)) {
-		try {
-		    ((Lifecycle) child).stop();
-		} catch (LifecycleException e) {
-		    log("ContainerBase.removeChild: stop: ", e);
-		}
-	    }
-	    child.setParent(null);
-	    fireContainerEvent(REMOVE_CHILD_EVENT, child);
-	}
+        synchronized(children) {
+            if (children.get(child.getName()) == null)
+                return;
+            children.remove(child.getName());
+            if (started && (child instanceof Lifecycle)) {
+                try {
+                    ((Lifecycle) child).stop();
+                } catch (LifecycleException e) {
+                    log("ContainerBase.removeChild: stop: ", e);
+                }
+            }
+            child.setParent(null);
+            fireContainerEvent(REMOVE_CHILD_EVENT, child);
+        }
 
     }
 
@@ -999,9 +999,9 @@ public abstract class ContainerBase
      */
     public void removeContainerListener(ContainerListener listener) {
 
-	synchronized (listeners) {
-	    listeners.remove(listener);
-	}
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
 
     }
 
@@ -1013,28 +1013,28 @@ public abstract class ContainerBase
      */
     public void removeMapper(Mapper mapper) {
 
-	synchronized(mappers) {
+        synchronized(mappers) {
 
-	    if (mappers.get(mapper.getProtocol()) == null)
-		return;
-	    mappers.remove(mapper.getProtocol());
-	    if (started && (mapper instanceof Lifecycle)) {
-		try {
-		    ((Lifecycle) mapper).stop();
-		} catch (LifecycleException e) {
-		    log("ContainerBase.removeMapper: stop: ", e);
-		    throw new IllegalStateException
-			("ContainerBase.removeMapper: stop: " + e);
-		}
-	    }
-	    if (mappers.size() != 1)
-		this.mapper = null;
-	    else {
-		Iterator values = mappers.values().iterator();
-	        this.mapper = (Mapper) values.next();
-	    }
-	    fireContainerEvent(REMOVE_MAPPER_EVENT, mapper);
-	}
+            if (mappers.get(mapper.getProtocol()) == null)
+                return;
+            mappers.remove(mapper.getProtocol());
+            if (started && (mapper instanceof Lifecycle)) {
+                try {
+                    ((Lifecycle) mapper).stop();
+                } catch (LifecycleException e) {
+                    log("ContainerBase.removeMapper: stop: ", e);
+                    throw new IllegalStateException
+                        ("ContainerBase.removeMapper: stop: " + e);
+                }
+            }
+            if (mappers.size() != 1)
+                this.mapper = null;
+            else {
+                Iterator values = mappers.values().iterator();
+                this.mapper = (Mapper) values.next();
+            }
+            fireContainerEvent(REMOVE_MAPPER_EVENT, mapper);
+        }
 
     }
 
@@ -1046,7 +1046,7 @@ public abstract class ContainerBase
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
 
-	support.removePropertyChangeListener(listener);
+        support.removePropertyChangeListener(listener);
 
     }
 
@@ -1061,7 +1061,7 @@ public abstract class ContainerBase
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -1073,7 +1073,7 @@ public abstract class ContainerBase
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -1094,7 +1094,7 @@ public abstract class ContainerBase
                 (sm.getString("containerBase.alreadyStarted", logName()));
         addDefaultMapper(this.mapperClass);
         started = true;
-        
+
         // Start our subordinate components, if any
         if ((loader != null) && (loader instanceof Lifecycle))
             ((Lifecycle) loader).start();
@@ -1108,28 +1108,28 @@ public abstract class ContainerBase
             ((Lifecycle) realm).start();
         if ((resources != null) && (resources instanceof Lifecycle))
             ((Lifecycle) resources).start();
-        
+
         // Start our Mappers, if any
         Mapper mappers[] = findMappers();
         for (int i = 0; i < mappers.length; i++) {
             if (mappers[i] instanceof Lifecycle)
                 ((Lifecycle) mappers[i]).start();
         }
-        
+
         // Start our child containers, if any
         Container children[] = findChildren();
         for (int i = 0; i < children.length; i++) {
             if (children[i] instanceof Lifecycle)
                 ((Lifecycle) children[i]).start();
         }
-        
+
         // Start the Valves in our pipeline (including the basic), if any
         if (pipeline instanceof Lifecycle)
             ((Lifecycle) pipeline).start();
-        
+
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(START_EVENT, null);
-        
+
     }
 
 
@@ -1141,7 +1141,7 @@ public abstract class ContainerBase
      *  that needs to be reported
      */
     public synchronized void stop() throws LifecycleException {
-        
+
         // Validate and update our current component state
         if (!started)
             throw new LifecycleException
@@ -1150,26 +1150,26 @@ public abstract class ContainerBase
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         started = false;
-        
+
         // Stop the Valves in our pipeline (including the basic), if any
         if (pipeline instanceof Lifecycle) {
             ((Lifecycle) pipeline).stop();
         }
-        
+
         // Stop our child containers, if any
         Container children[] = findChildren();
         for (int i = 0; i < children.length; i++) {
             if (children[i] instanceof Lifecycle)
                 ((Lifecycle) children[i]).stop();
         }
-        
+
         // Stop our Mappers, if any
         Mapper mappers[] = findMappers();
         for (int i = 0; i < mappers.length; i++) {
             if (mappers[(mappers.length-1)-i] instanceof Lifecycle)
                 ((Lifecycle) mappers[(mappers.length-1)-i]).stop();
         }
-        
+
         // Stop our subordinate components, if any
         if ((resources != null) && (resources instanceof Lifecycle)) {
             ((Lifecycle) resources).stop();
@@ -1179,7 +1179,7 @@ public abstract class ContainerBase
         }
         if ((cluster != null) && (cluster instanceof Lifecycle)) {
             ((Lifecycle) cluster).stop();
-        }        
+        }
         if ((manager != null) && (manager instanceof Lifecycle)) {
             ((Lifecycle) manager).stop();
         }
@@ -1189,7 +1189,7 @@ public abstract class ContainerBase
         if ((loader != null) && (loader instanceof Lifecycle)) {
             ((Lifecycle) loader).stop();
         }
-        
+
     }
 
 
@@ -1217,7 +1217,7 @@ public abstract class ContainerBase
     public synchronized void addValve(Valve valve) {
 
         pipeline.addValve(valve);
-	fireContainerEvent(ADD_VALVE_EVENT, valve);
+        fireContainerEvent(ADD_VALVE_EVENT, valve);
 
     }
 
@@ -1259,22 +1259,22 @@ public abstract class ContainerBase
      */
     protected void addDefaultMapper(String mapperClass) {
 
-	// Do we need a default Mapper?
-	if (mapperClass == null)
-	    return;
-	if (mappers.size() >= 1)
-	    return;
+        // Do we need a default Mapper?
+        if (mapperClass == null)
+            return;
+        if (mappers.size() >= 1)
+            return;
 
-	// Instantiate and add a default Mapper
-	try {
-	    Class clazz = Class.forName(mapperClass);
-	    Mapper mapper = (Mapper) clazz.newInstance();
-	    mapper.setProtocol("http");
-	    addMapper(mapper);
-	} catch (Exception e) {
-	    log(sm.getString("containerBase.addDefaultMapper", mapperClass),
-		e);
-	}
+        // Instantiate and add a default Mapper
+        try {
+            Class clazz = Class.forName(mapperClass);
+            Mapper mapper = (Mapper) clazz.newInstance();
+            mapper.setProtocol("http");
+            addMapper(mapper);
+        } catch (Exception e) {
+            log(sm.getString("containerBase.addDefaultMapper", mapperClass),
+                e);
+        }
 
     }
 
@@ -1291,13 +1291,13 @@ public abstract class ContainerBase
 
         if (listeners.size() < 1)
             return;
-	ContainerEvent event = new ContainerEvent(this, type, data);
-	ContainerListener list[] = new ContainerListener[0];
-	synchronized (listeners) {
-	    list = (ContainerListener[]) listeners.toArray(list);
-	}
-	for (int i = 0; i < list.length; i++)
-	    ((ContainerListener) list[i]).containerEvent(event);
+        ContainerEvent event = new ContainerEvent(this, type, data);
+        ContainerListener list[] = new ContainerListener[0];
+        synchronized (listeners) {
+            list = (ContainerListener[]) listeners.toArray(list);
+        }
+        for (int i = 0; i < list.length; i++)
+            ((ContainerListener) list[i]).containerEvent(event);
 
     }
 
@@ -1309,11 +1309,11 @@ public abstract class ContainerBase
      */
     protected void log(String message) {
 
-	Logger logger = getLogger();
-	if (logger != null)
-	    logger.log(logName() + ": " + message);
-	else
-	    System.out.println(logName() + ": " + message);
+        Logger logger = getLogger();
+        if (logger != null)
+            logger.log(logName() + ": " + message);
+        else
+            System.out.println(logName() + ": " + message);
 
     }
 
@@ -1327,13 +1327,13 @@ public abstract class ContainerBase
      */
     protected void log(String message, Throwable throwable) {
 
-	Logger logger = getLogger();
-	if (logger != null)
-	    logger.log(logName() + ": " + message, throwable);
-	else {
-	    System.out.println(logName() + ": " + message + ": " + throwable);
-	    throwable.printStackTrace(System.out);
-	}
+        Logger logger = getLogger();
+        if (logger != null)
+            logger.log(logName() + ": " + message, throwable);
+        else {
+            System.out.println(logName() + ": " + message + ": " + throwable);
+            throwable.printStackTrace(System.out);
+        }
 
     }
 
@@ -1343,11 +1343,11 @@ public abstract class ContainerBase
      */
     protected String logName() {
 
-	String className = this.getClass().getName();
-	int period = className.lastIndexOf(".");
-	if (period >= 0)
-	    className = className.substring(period + 1);
-	return (className + "[" + getName() + "]");
+        String className = this.getClass().getName();
+        int period = className.lastIndexOf(".");
+        if (period >= 0)
+            className = className.substring(period + 1);
+        return (className + "[" + getName() + "]");
 
     }
 

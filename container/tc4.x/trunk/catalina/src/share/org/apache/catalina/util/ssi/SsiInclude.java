@@ -91,12 +91,12 @@ public final class SsiInclude
                                   String[] strParam) {
         String retString = "";
         String path = "";
-        
+
         if(strParamType[0].equals("file"))
             path = super.getFilePath(strParam[0]);
         else if(strParamType[0].equals("virtual"))
             path = super.getVirtualPath(strParam[0]);
-        
+
         if(path != null) {
             try {
                 if(super.servletContext.getResource(path) != null) {
@@ -120,7 +120,7 @@ public final class SsiInclude
         } else {
             retString = new String(super.getError());
         }
-        
+
         return retString;
     }
 

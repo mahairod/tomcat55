@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.deploy;
@@ -89,11 +89,11 @@ public final class FilterDef {
     private String description = null;
 
     public String getDescription() {
-	return (this.description);
+        return (this.description);
     }
 
     public void setDescription(String description) {
-	this.description = description;
+        this.description = description;
     }
 
 
@@ -103,11 +103,11 @@ public final class FilterDef {
     private String displayName = null;
 
     public String getDisplayName() {
-	return (this.displayName);
+        return (this.displayName);
     }
 
     public void setDisplayName(String displayName) {
-	this.displayName = displayName;
+        this.displayName = displayName;
     }
 
 
@@ -117,11 +117,11 @@ public final class FilterDef {
     private String filterClass = null;
 
     public String getFilterClass() {
-	return (this.filterClass);
+        return (this.filterClass);
     }
 
     public void setFilterClass(String filterClass) {
-	this.filterClass = filterClass;
+        this.filterClass = filterClass;
     }
 
 
@@ -132,11 +132,11 @@ public final class FilterDef {
     private String filterName = null;
 
     public String getFilterName() {
-	return (this.filterName);
+        return (this.filterName);
     }
 
     public void setFilterName(String filterName) {
-	this.filterName = filterName;
+        this.filterName = filterName;
     }
 
 
@@ -146,11 +146,11 @@ public final class FilterDef {
     private String largeIcon = null;
 
     public String getLargeIcon() {
-	return (this.largeIcon);
+        return (this.largeIcon);
     }
 
     public void setLargeIcon(String largeIcon) {
-	this.largeIcon = largeIcon;
+        this.largeIcon = largeIcon;
     }
 
 
@@ -162,7 +162,7 @@ public final class FilterDef {
 
     public Map getParameterMap() {
 
-	return (this.parameters);
+        return (this.parameters);
 
     }
 
@@ -173,11 +173,11 @@ public final class FilterDef {
     private String smallIcon = null;
 
     public String getSmallIcon() {
-	return (this.smallIcon);
+        return (this.smallIcon);
     }
 
     public void setSmallIcon(String smallIcon) {
-	this.smallIcon = smallIcon;
+        this.smallIcon = smallIcon;
     }
 
 
@@ -193,7 +193,7 @@ public final class FilterDef {
      */
     public void addInitParameter(String name, String value) {
 
-	parameters.put(name, value);
+        parameters.put(name, value);
 
     }
 
@@ -203,13 +203,13 @@ public final class FilterDef {
      */
     public String toString() {
 
-	StringBuffer sb = new StringBuffer("FilterDef[");
-	sb.append("filterName=");
-	sb.append(this.filterName);
-	sb.append(", filterClass=");
-	sb.append(this.filterClass);
-	sb.append("]");
-	return (sb.toString());
+        StringBuffer sb = new StringBuffer("FilterDef[");
+        sb.append("filterName=");
+        sb.append(this.filterName);
+        sb.append(", filterClass=");
+        sb.append(this.filterClass);
+        sb.append("]");
+        return (sb.toString());
 
     }
 

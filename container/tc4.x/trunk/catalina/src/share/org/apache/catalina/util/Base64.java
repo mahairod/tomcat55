@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.util;
@@ -67,10 +67,10 @@ package org.apache.catalina.util;
 
 /**
  * This class provides encode/decode for RFC 2045 Base64 as
- * defined by RFC 2045, N. Freed and N. Borenstein. 
+ * defined by RFC 2045, N. Freed and N. Borenstein.
  * RFC 2045: Multipurpose Internet Mail Extensions (MIME)
  * Part One: Format of Internet Message Bodies. Reference
- * 1996 Available at: http://www.ietf.org/rfc/rfc2045.txt 
+ * 1996 Available at: http://www.ietf.org/rfc/rfc2045.txt
  * This class is used by XML Schema binary format validation
  *
  * @author Jeffrey Rodriguez
@@ -78,7 +78,7 @@ package org.apache.catalina.util;
  */
 
 public final class  Base64 {
-    static private final int  BASELENGTH         = 255;       
+    static private final int  BASELENGTH         = 255;
     static private final int  LOOKUPLENGTH       = 64;
     static private final int  TWENTYFOURBITGROUP = 24;
     static private final int  EIGHTBIT           = 8;
@@ -88,14 +88,14 @@ public final class  Base64 {
     static private final int  SIGN               = -128;
     static private final byte PAD                = ( byte ) '=';
     static private final boolean fDebug          = false;
-    static private byte [] base64Alphabet       = new byte[BASELENGTH]; 
+    static private byte [] base64Alphabet       = new byte[BASELENGTH];
     static private byte [] lookUpBase64Alphabet = new byte[LOOKUPLENGTH];
 
 
     static {
 
         for (int i = 0; i<BASELENGTH; i++ ) {
-            base64Alphabet[i] = -1; 
+            base64Alphabet[i] = -1;
         }
         for ( int i = 'Z'; i >= 'A'; i-- ) {
             base64Alphabet[i] = (byte) (i-'A');
@@ -108,7 +108,7 @@ public final class  Base64 {
             base64Alphabet[i] = (byte) (i-'0' + 52);
         }
 
-        base64Alphabet['+']  = 62; 
+        base64Alphabet['+']  = 62;
         base64Alphabet['/']  = 63;
 
         for (int i = 0; i<=25; i++ )
@@ -131,7 +131,7 @@ public final class  Base64 {
 
     public static boolean isBase64( byte octect ) {
         //shall we ignore white space? JEFF??
-        return(octect == PAD || base64Alphabet[octect] != -1 ); 
+        return(octect == PAD || base64Alphabet[octect] != -1 );
     }
 
 
@@ -148,13 +148,13 @@ public final class  Base64 {
 
     /**
      * Encodes hex octects into Base64
-     * 
+     *
      * @param binaryData Array containing binaryData
      * @return Encoded Base64 array
      */
     public static byte[] encode( byte[] binaryData ) {
         int      lengthDataBits    = binaryData.length*EIGHTBIT;
-        int      fewerThan24bits   = lengthDataBits%TWENTYFOURBITGROUP; 
+        int      fewerThan24bits   = lengthDataBits%TWENTYFOURBITGROUP;
         int      numberTriplets    = lengthDataBits/TWENTYFOURBITGROUP;
         byte     encodedData[]     = null;
 
@@ -175,7 +175,7 @@ public final class  Base64 {
         for ( i = 0; i<numberTriplets; i++ ) {
 
             dataIndex = i*3;
-            b1 = binaryData[dataIndex]; 
+            b1 = binaryData[dataIndex];
             b2 = binaryData[dataIndex + 1];
             b3 = binaryData[dataIndex + 2];
 
@@ -189,10 +189,10 @@ public final class  Base64 {
             encodedIndex = i*4;
             byte val1 = ((b1 & SIGN)==0)?(byte)(b1>>2):(byte)((b1)>>2^0xc0);
 
-            byte val2 = ((b2 & SIGN)==0)?(byte)(b2>>4):(byte)((b2)>>4^0xf0); 
+            byte val2 = ((b2 & SIGN)==0)?(byte)(b2>>4):(byte)((b2)>>4^0xf0);
             byte val3 = ((b3 & SIGN)==0)?(byte)(b3>>6):(byte)((b3)>>6^0xfc);
 
-            encodedData[encodedIndex]   = lookUpBase64Alphabet[ val1 ]; 
+            encodedData[encodedIndex]   = lookUpBase64Alphabet[ val1 ];
             if (fDebug) {
                 System.out.println( "val2 = " + val2 );
                 System.out.println( "k4   = " + (k<<4));
@@ -200,7 +200,7 @@ public final class  Base64 {
             }
 
             encodedData[encodedIndex+1] = lookUpBase64Alphabet[ val2 | ( k<<4 )];
-            encodedData[encodedIndex+2] = lookUpBase64Alphabet[ (l <<2 ) | val3 ]; 
+            encodedData[encodedIndex+2] = lookUpBase64Alphabet[ (l <<2 ) | val3 ];
             encodedData[encodedIndex+3] = lookUpBase64Alphabet[ b3 & 0x3f ];
         }
 
@@ -216,7 +216,7 @@ public final class  Base64 {
             }
             byte val1 = ((b1 & SIGN)==0)?(byte)(b1>>2):(byte)((b1)>>2^0xc0);
             encodedData[encodedIndex]     = lookUpBase64Alphabet[ val1 ];
-            encodedData[encodedIndex + 1] = lookUpBase64Alphabet[ k<<4 ]; 
+            encodedData[encodedIndex + 1] = lookUpBase64Alphabet[ k<<4 ];
             encodedData[encodedIndex + 2] = PAD;
             encodedData[encodedIndex + 3] = PAD;
         } else if ( fewerThan24bits == SIXTEENBIT ) {
@@ -227,11 +227,11 @@ public final class  Base64 {
             k = ( byte ) ( b1 &0x03 );
 
             byte val1 = ((b1 & SIGN)==0)?(byte)(b1>>2):(byte)((b1)>>2^0xc0);
-            byte val2 = ((b2 & SIGN)==0)?(byte)(b2>>4):(byte)((b2)>>4^0xf0); 
+            byte val2 = ((b2 & SIGN)==0)?(byte)(b2>>4):(byte)((b2)>>4^0xf0);
 
             encodedData[encodedIndex]     = lookUpBase64Alphabet[ val1 ];
             encodedData[encodedIndex + 1] = lookUpBase64Alphabet[ val2 | ( k<<4 )];
-            encodedData[encodedIndex + 2] = lookUpBase64Alphabet[ l<<2 ]; 
+            encodedData[encodedIndex + 2] = lookUpBase64Alphabet[ l<<2 ];
             encodedData[encodedIndex + 3] = PAD;
         }
         return encodedData;
@@ -240,7 +240,7 @@ public final class  Base64 {
 
     /**
      * Decodes Base64 data into octects
-     * 
+     *
      * @param binaryData Byte array containing Base64 data
      * @return Array containind decoded data.
      */
@@ -258,10 +258,10 @@ public final class  Base64 {
 
         for (int i = 0; i<numberQuadruple; i++ ) {
             dataIndex = i*4;
-            marker0   = base64Data[dataIndex +2]; 
-            marker1   = base64Data[dataIndex +3]; 
+            marker0   = base64Data[dataIndex +2];
+            marker1   = base64Data[dataIndex +3];
 
-            b1 = base64Alphabet[base64Data[dataIndex]]; 
+            b1 = base64Alphabet[base64Data[dataIndex]];
             b2 = base64Alphabet[base64Data[dataIndex +1]];
 
             if ( marker0 != PAD && marker1 != PAD ) {     //No PAD e.g 3cQl
@@ -270,17 +270,17 @@ public final class  Base64 {
 
                 decodedData[encodedIndex]   = (byte)(  b1 <<2 | b2>>4 ) ;
                 decodedData[encodedIndex+1] = (byte)(((b2 & 0xf)<<4 ) |( (b3>>2) & 0xf) );
-                decodedData[encodedIndex+2] = (byte)( b3<<6 | b4 ); 
+                decodedData[encodedIndex+2] = (byte)( b3<<6 | b4 );
             } else if ( marker0 == PAD ) {               //Two PAD e.g. 3c[Pad][Pad]
-                decodedData[encodedIndex]   = (byte)(  b1 <<2 | b2>>4 ) ; 
-                decodedData[encodedIndex+1] = (byte)((b2 & 0xf)<<4 );  
-                decodedData[encodedIndex+2] = (byte) 0; 
+                decodedData[encodedIndex]   = (byte)(  b1 <<2 | b2>>4 ) ;
+                decodedData[encodedIndex+1] = (byte)((b2 & 0xf)<<4 );
+                decodedData[encodedIndex+2] = (byte) 0;
             } else if ( marker1 == PAD ) {              //One PAD e.g. 3cQ[Pad]
                 b3 = base64Alphabet[ marker0 ];
 
                 decodedData[encodedIndex]   = (byte)(  b1 <<2 | b2>>4 );
                 decodedData[encodedIndex+1] = (byte)(((b2 & 0xf)<<4 ) |( (b3>>2) & 0xf) );
-                decodedData[encodedIndex+2] = (byte)( b3<<6); 
+                decodedData[encodedIndex+2] = (byte)( b3<<6);
             }
             encodedIndex += 3;
         }

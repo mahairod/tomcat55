@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.util;
@@ -108,40 +108,40 @@ public final class RequestUtil {
         buf.append("=");
         buf.append(cookie.getValue());
 
-	if (cookie.getComment() != null) {
-	    buf.append("; Comment=\"");
-	    buf.append(cookie.getComment());
-	    buf.append("\"");
-	}
+        if (cookie.getComment() != null) {
+            buf.append("; Comment=\"");
+            buf.append(cookie.getComment());
+            buf.append("\"");
+        }
 
         if (cookie.getDomain() != null) {
             buf.append("; Domain=\"");
             buf.append(cookie.getDomain());
-	    buf.append("\"");
+            buf.append("\"");
         }
 
         long age = cookie.getMaxAge();
-	if (cookie.getMaxAge() >= 0) {
-	    buf.append("; Max-Age=\"");
-	    buf.append(cookie.getMaxAge());
-	    buf.append("\"");
-	}
+        if (cookie.getMaxAge() >= 0) {
+            buf.append("; Max-Age=\"");
+            buf.append(cookie.getMaxAge());
+            buf.append("\"");
+        }
 
         if (cookie.getPath() != null) {
             buf.append("; Path=\"");
             buf.append(cookie.getPath());
-	    buf.append("\"");
+            buf.append("\"");
         }
 
         if (cookie.getSecure()) {
             buf.append("; Secure");
         }
 
-	if (cookie.getVersion() > 0) {
-	    buf.append("; Version=\"");
-	    buf.append(cookie.getVersion());
-	    buf.append("\"");
-	}
+        if (cookie.getVersion() > 0) {
+            buf.append("; Version=\"");
+            buf.append(cookie.getVersion());
+            buf.append("\"");
+        }
 
         return (buf.toString());
     }
@@ -194,20 +194,20 @@ public final class RequestUtil {
      */
     public static String parseCharacterEncoding(String contentType) {
 
-	if (contentType == null)
-	    return (null);
-	int start = contentType.indexOf("charset=");
-	if (start < 0)
-	    return (null);
-	String encoding = contentType.substring(start + 8);
-	int end = encoding.indexOf(';');
-	if (end >= 0)
-	    encoding = encoding.substring(0, end);
+        if (contentType == null)
+            return (null);
+        int start = contentType.indexOf("charset=");
+        if (start < 0)
+            return (null);
+        String encoding = contentType.substring(start + 8);
+        int end = encoding.indexOf(';');
+        if (end >= 0)
+            encoding = encoding.substring(0, end);
         encoding = encoding.trim();
-        if ((encoding.length() > 2) && (encoding.startsWith("\"")) 
+        if ((encoding.length() > 2) && (encoding.startsWith("\""))
             && (encoding.endsWith("\"")))
             encoding = encoding.substring(1, encoding.length() - 1);
-	return (encoding.trim());
+        return (encoding.trim());
 
     }
 
@@ -219,8 +219,8 @@ public final class RequestUtil {
      */
     public static Cookie[] parseCookieHeader(String header) {
 
-	if ((header == null) || (header.length() < 1))
-	    return (new Cookie[0]);
+        if ((header == null) || (header.length() < 1))
+            return (new Cookie[0]);
 
         ArrayList cookies = new ArrayList();
         while (header.length() > 0) {
@@ -234,17 +234,17 @@ public final class RequestUtil {
                 header = header.substring(semicolon + 1);
             else
                 header = "";
-	    try {
-		int equals = token.indexOf('=');
-		if (equals > 0) {
-		    String name = URLDecode(token.substring(0, equals).trim());
-		    String value = URLDecode(token.substring(equals+1).trim());
-		    cookies.add(new Cookie(name, value));
-		}
-	    } catch (Throwable e) {
-		;
-	    }
-	}
+            try {
+                int equals = token.indexOf('=');
+                if (equals > 0) {
+                    String name = URLDecode(token.substring(0, equals).trim());
+                    String value = URLDecode(token.substring(equals+1).trim());
+                    cookies.add(new Cookie(name, value));
+                }
+            } catch (Throwable e) {
+                ;
+            }
+        }
 
         return ((Cookie[]) cookies.toArray(new Cookie[cookies.size()]));
 
@@ -268,22 +268,22 @@ public final class RequestUtil {
      *
      * @exception IllegalArgumentException if the data is malformed
      */
-    public static void parseParameters(Map map, String data, String encoding) 
+    public static void parseParameters(Map map, String data, String encoding)
         throws UnsupportedEncodingException {
-        
+
         if ((data != null) && (data.length() > 0)) {
             int len = data.length();
             byte[] bytes = new byte[len];
             data.getBytes(0, len, bytes, 0);
             parseParameters(map, bytes, encoding);
         }
-        
+
     }
 
 
     /**
      * Decode and return the specified URL-encoded String.
-     * When the byte array is converted to a string, the system default 
+     * When the byte array is converted to a string, the system default
      * character encoding is used...  This may be different than some other
      * servers.
      *
@@ -293,37 +293,37 @@ public final class RequestUtil {
      * by a valid 2-digit hexadecimal number
      */
     public static String URLDecode(String str) {
-        
+
         return URLDecode(str, null);
-        
+
     }
 
 
     /**
      * Decode and return the specified URL-encoded String.
-     * 
+     *
      * @param str The url-encoded string
      * @param enc The encoding to use; if null, the default encoding is used
      * @exception IllegalArgumentException if a '%' character is not followed
      * by a valid 2-digit hexadecimal number
      */
     public static String URLDecode(String str, String enc) {
-        
+
         if (str == null)
             return (null);
-        
+
         int len = str.length();
         byte[] bytes = new byte[len];
         str.getBytes(0, len, bytes, 0);
-        
+
         return URLDecode(bytes, enc);
-        
+
     }
 
 
     /**
      * Decode and return the specified URL-encoded byte array.
-     * 
+     *
      * @param bytes The url-encoded byte array
      * @exception IllegalArgumentException if a '%' character is not followed
      * by a valid 2-digit hexadecimal number
@@ -335,17 +335,17 @@ public final class RequestUtil {
 
     /**
      * Decode and return the specified URL-encoded byte array.
-     * 
+     *
      * @param bytes The url-encoded byte array
      * @param enc The encoding to use; if null, the default encoding is used
      * @exception IllegalArgumentException if a '%' character is not followed
      * by a valid 2-digit hexadecimal number
      */
     public static String URLDecode(byte[] bytes, String enc) {
-        
+
         if (bytes == null)
             return (null);
-        
+
         int len = bytes.length;
         int ix = 0;
         int ox = 0;
@@ -356,7 +356,7 @@ public final class RequestUtil {
             } else if (b == '%') {
                 b = (byte) ((convertHexDigit(bytes[ix++]) << 4)
                             + convertHexDigit(bytes[ix++]));
-            } 
+            }
             bytes[ox++] = b;
         }
         if (enc != null) {
@@ -367,7 +367,7 @@ public final class RequestUtil {
             }
         }
         return new String(bytes, 0, ox);
-        
+
     }
 
 
@@ -389,7 +389,7 @@ public final class RequestUtil {
      *
      * @param b the character value byte
      *
-     * Put name and value pair in map.  When name already exist, add value 
+     * Put name and value pair in map.  When name already exist, add value
      * to array of values.
      */
     private static void putMapEntry( Map map, String name, String value) {
@@ -426,7 +426,7 @@ public final class RequestUtil {
      *
      * @exception UnsupportedEncodingException if the data is malformed
      */
-    public static void parseParameters(Map map, byte[] data, String encoding) 
+    public static void parseParameters(Map map, byte[] data, String encoding)
         throws UnsupportedEncodingException {
 
         if (data != null && data.length > 0) {

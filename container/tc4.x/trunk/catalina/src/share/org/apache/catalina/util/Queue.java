@@ -1,9 +1,9 @@
 /*
  * ====================================================================
- * 
+ *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,7 +11,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -19,15 +19,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -53,7 +53,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 package org.apache.catalina.util;
 
 import java.util.Vector;
@@ -68,61 +68,61 @@ import java.util.Vector;
 public class Queue {
     private Vector vector = new Vector();
 
-    /** 
+    /**
      * Put the object into the queue.
-     * 
-     * @param	object		the object to be appended to the
-     * 				queue. 
+     *
+     * @param   object          the object to be appended to the
+     *                          queue.
      */
     public synchronized void put(Object object) {
-	vector.addElement(object);
-	notify();
+        vector.addElement(object);
+        notify();
     }
-    
+
     /**
      * Pull the first object out of the queue. Wait if the queue is
      * empty.
      */
     public synchronized Object pull() {
-	while (isEmpty())
-	    try {
-		wait();
-	    } catch (InterruptedException ex) {
-	    }
-	return get();
+        while (isEmpty())
+            try {
+                wait();
+            } catch (InterruptedException ex) {
+            }
+        return get();
     }
 
     /**
      * Get the first object out of the queue. Return null if the queue
-     * is empty. 
+     * is empty.
      */
     public synchronized Object get() {
-	Object object = peek();
-	if (object != null)
-	    vector.removeElementAt(0);
-	return object;
+        Object object = peek();
+        if (object != null)
+            vector.removeElementAt(0);
+        return object;
     }
 
     /**
      * Peek to see if something is available.
      */
     public Object peek() {
-	if (isEmpty())
-	    return null;
-	return vector.elementAt(0);
+        if (isEmpty())
+            return null;
+        return vector.elementAt(0);
     }
-    
+
     /**
      * Is the queue empty?
      */
     public boolean isEmpty() {
-	return vector.isEmpty();
+        return vector.isEmpty();
     }
 
     /**
      * How many elements are there in this queue?
      */
     public int size() {
-	return vector.size();
+        return vector.size();
     }
 }

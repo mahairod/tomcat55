@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.deploy;
@@ -109,7 +109,7 @@ public final class ErrorPage {
      */
     public int getErrorCode() {
 
-	return (this.errorCode);
+        return (this.errorCode);
 
     }
 
@@ -121,7 +121,7 @@ public final class ErrorPage {
      */
     public void setErrorCode(int errorCode) {
 
-	this.errorCode = errorCode;
+        this.errorCode = errorCode;
 
     }
 
@@ -133,11 +133,11 @@ public final class ErrorPage {
      */
     public void setErrorCode(String errorCode) {
 
-	try {
-	    this.errorCode = Integer.parseInt(errorCode);
-	} catch (Throwable t) {
-	    this.errorCode = 0;
-	}
+        try {
+            this.errorCode = Integer.parseInt(errorCode);
+        } catch (Throwable t) {
+            this.errorCode = 0;
+        }
 
     }
 
@@ -147,7 +147,7 @@ public final class ErrorPage {
      */
     public String getExceptionType() {
 
-	return (this.exceptionType);
+        return (this.exceptionType);
 
     }
 
@@ -159,7 +159,7 @@ public final class ErrorPage {
      */
     public void setExceptionType(String exceptionType) {
 
-	this.exceptionType = exceptionType;
+        this.exceptionType = exceptionType;
 
     }
 
@@ -169,7 +169,7 @@ public final class ErrorPage {
      */
     public String getLocation() {
 
-	return (this.location);
+        return (this.location);
 
     }
 
@@ -184,7 +184,7 @@ public final class ErrorPage {
         //        if ((location == null) || !location.startsWith("/"))
         //            throw new IllegalArgumentException
         //                ("Error Page Location must start with a '/'");
-	this.location = RequestUtil.URLDecode(location);
+        this.location = RequestUtil.URLDecode(location);
 
     }
 
@@ -197,18 +197,18 @@ public final class ErrorPage {
      */
     public String toString() {
 
-	StringBuffer sb = new StringBuffer("ErrorPage[");
-	if (exceptionType == null) {
-	    sb.append("errorCode=");
-	    sb.append(errorCode);
-	} else {
-	    sb.append("exceptionType=");
-	    sb.append(exceptionType);
-	}
-	sb.append(", location=");
-	sb.append(location);
-	sb.append("]");
-	return (sb.toString());
+        StringBuffer sb = new StringBuffer("ErrorPage[");
+        if (exceptionType == null) {
+            sb.append("errorCode=");
+            sb.append(errorCode);
+        } else {
+            sb.append("exceptionType=");
+            sb.append(exceptionType);
+        }
+        sb.append(", location=");
+        sb.append(location);
+        sb.append("]");
+        return (sb.toString());
 
     }
 

@@ -110,20 +110,20 @@ public class HttpRequestBase
 
 
     protected class PrivilegedGetSession
-        implements PrivilegedAction {   
-                                        
-        private boolean create;      
-                               
+        implements PrivilegedAction {
+
+        private boolean create;
+
         PrivilegedGetSession(boolean create) {
-            this.create = create;              
-        }                                      
-                                 
+            this.create = create;
+        }
+
         public Object run() {
             return doGetSession(create);
-        }                        
-                        
-    }    
-     
+        }
+
+    }
+
 
     // ----------------------------------------------------- Instance Variables
 
@@ -157,9 +157,9 @@ public class HttpRequestBase
      * The set of SimpleDateFormat formats to use in getDateHeader().
      */
     protected static SimpleDateFormat formats[] = {
-	new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US),
-	new SimpleDateFormat("EEEEEE, dd-MMM-yy HH:mm:ss zzz", Locale.US),
-	new SimpleDateFormat("EEE MMMM d HH:mm:ss yyyy", Locale.US)
+        new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US),
+        new SimpleDateFormat("EEEEEE, dd-MMM-yy HH:mm:ss zzz", Locale.US),
+        new SimpleDateFormat("EEE MMMM d HH:mm:ss yyyy", Locale.US)
     };
 
 
@@ -180,7 +180,7 @@ public class HttpRequestBase
      * Descriptive information about this HttpRequest implementation.
      */
     protected static final String info =
-	"org.apache.catalina.connector.HttpRequestBase/1.0";
+        "org.apache.catalina.connector.HttpRequestBase/1.0";
 
 
     /**
@@ -280,7 +280,7 @@ public class HttpRequestBase
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -306,9 +306,9 @@ public class HttpRequestBase
      */
     public void addCookie(Cookie cookie) {
 
-	synchronized (cookies) {
-	    cookies.add(cookie);
-	}
+        synchronized (cookies) {
+            cookies.add(cookie);
+        }
 
     }
 
@@ -321,15 +321,15 @@ public class HttpRequestBase
      */
     public void addHeader(String name, String value) {
 
-	name = name.toLowerCase();
-	synchronized (headers) {
-	    ArrayList values = (ArrayList) headers.get(name);
-	    if (values == null) {
-		values = new ArrayList();
-		headers.put(name, values);
-	    }
-	    values.add(value);
-	}
+        name = name.toLowerCase();
+        synchronized (headers) {
+            ArrayList values = (ArrayList) headers.get(name);
+            if (values == null) {
+                values = new ArrayList();
+                headers.put(name, values);
+            }
+            values.add(value);
+        }
 
     }
 
@@ -345,8 +345,8 @@ public class HttpRequestBase
     public void addParameter(String name, String values[]) {
 
         synchronized (parameters) {
-	    parameters.put(name, values);
-	}
+            parameters.put(name, values);
+        }
 
     }
 
@@ -356,9 +356,9 @@ public class HttpRequestBase
      */
     public void clearCookies() {
 
-	synchronized (cookies) {
-	    cookies.clear();
-	}
+        synchronized (cookies) {
+            cookies.clear();
+        }
 
     }
 
@@ -368,7 +368,7 @@ public class HttpRequestBase
      */
     public void clearHeaders() {
 
-	headers.clear();
+        headers.clear();
 
     }
 
@@ -378,7 +378,7 @@ public class HttpRequestBase
      */
     public void clearLocales() {
 
-	locales.clear();
+        locales.clear();
 
     }
 
@@ -389,11 +389,11 @@ public class HttpRequestBase
     public void clearParameters() {
 
         if (parameters != null) {
-	    parameters.setLocked(false);
-	    parameters.clear();
-	} else {
-	    parameters = new ParameterMap();
-	}
+            parameters.setLocked(false);
+            parameters.clear();
+        } else {
+            parameters = new ParameterMap();
+        }
 
     }
 
@@ -404,27 +404,27 @@ public class HttpRequestBase
      */
     public void recycle() {
 
-	super.recycle();
-	authType = null;
-	contextPath = "";
-	cookies.clear();
-	headers.clear();
-	method = null;
+        super.recycle();
+        authType = null;
+        contextPath = "";
+        cookies.clear();
+        headers.clear();
+        method = null;
         if (parameters != null) {
             parameters.setLocked(false);
             parameters.clear();
         }
         parsed = false;
-	pathInfo = null;
-	queryString = null;
-	requestedSessionCookie = false;
-	requestedSessionId = null;
-	requestedSessionURL = false;
-	requestURI = null;
-	secure = false;
-	servletPath = null;
-	session = null;
-	userPrincipal = null;
+        pathInfo = null;
+        queryString = null;
+        requestedSessionCookie = false;
+        requestedSessionId = null;
+        requestedSessionURL = false;
+        requestURI = null;
+        secure = false;
+        servletPath = null;
+        session = null;
+        userPrincipal = null;
 
     }
 
@@ -438,7 +438,7 @@ public class HttpRequestBase
      */
     public void setAuthType(String authType) {
 
-	this.authType = authType;
+        this.authType = authType;
 
     }
 
@@ -452,10 +452,10 @@ public class HttpRequestBase
      */
     public void setContextPath(String path) {
 
-	if (path == null)
-	    this.contextPath = "";
-	else
-	    this.contextPath = path;
+        if (path == null)
+            this.contextPath = "";
+        else
+            this.contextPath = path;
 
     }
 
@@ -467,7 +467,7 @@ public class HttpRequestBase
      */
     public void setMethod(String method) {
 
-	this.method = method;
+        this.method = method;
 
     }
 
@@ -481,7 +481,7 @@ public class HttpRequestBase
      */
     public void setPathInfo(String path) {
 
-	this.pathInfo = path;
+        this.pathInfo = path;
 
     }
 
@@ -494,7 +494,7 @@ public class HttpRequestBase
      */
     public void setQueryString(String query) {
 
-	this.queryString = query;
+        this.queryString = query;
 
     }
 
@@ -508,7 +508,7 @@ public class HttpRequestBase
      */
     public void setRequestedSessionCookie(boolean flag) {
 
-	this.requestedSessionCookie = flag;
+        this.requestedSessionCookie = flag;
 
     }
 
@@ -521,7 +521,7 @@ public class HttpRequestBase
      */
     public void setRequestedSessionId(String id) {
 
-	this.requestedSessionId = id;
+        this.requestedSessionId = id;
 
     }
 
@@ -535,7 +535,7 @@ public class HttpRequestBase
      */
     public void setRequestedSessionURL(boolean flag) {
 
-	this.requestedSessionURL = flag;
+        this.requestedSessionURL = flag;
 
     }
 
@@ -548,7 +548,7 @@ public class HttpRequestBase
      */
     public void setRequestURI(String uri) {
 
-	this.requestURI = uri;
+        this.requestURI = uri;
 
     }
 
@@ -562,7 +562,7 @@ public class HttpRequestBase
      */
     public void setSecure(boolean secure) {
 
-	this.secure = secure;
+        this.secure = secure;
 
     }
 
@@ -576,7 +576,7 @@ public class HttpRequestBase
      */
     public void setServletPath(String path) {
 
-	this.servletPath = path;
+        this.servletPath = path;
 
     }
 
@@ -590,7 +590,7 @@ public class HttpRequestBase
      */
     public void setUserPrincipal(Principal principal) {
 
-	this.userPrincipal = principal;
+        this.userPrincipal = principal;
 
     }
 
@@ -606,9 +606,9 @@ public class HttpRequestBase
     protected void parseParameters() {
 
         if (parsed)
-	    return;
+            return;
 
-	ParameterMap results = parameters;
+        ParameterMap results = parameters;
         if (results == null)
             results = new ParameterMap();
         results.setLocked(false);
@@ -617,43 +617,43 @@ public class HttpRequestBase
         if (encoding == null)
             encoding = "ISO-8859-1";
 
-	// Parse any parameters specified in the query string
-	String queryString = getQueryString();
+        // Parse any parameters specified in the query string
+        String queryString = getQueryString();
         try {
             RequestUtil.parseParameters(results, queryString, encoding);
         } catch (Throwable t) {
         }
 
-	// Parse any parameters specified in the input stream
+        // Parse any parameters specified in the input stream
         String contentType = getContentType();
         if (contentType == null)
             contentType = "";
         int semicolon = contentType.indexOf(';');
         if (semicolon >= 0)
             contentType = contentType.substring(0, semicolon).trim();
-	if ("POST".equals(getMethod()) && (getContentLength() > 0) 
+        if ("POST".equals(getMethod()) && (getContentLength() > 0)
             && (this.stream == null)
-	    && "application/x-www-form-urlencoded".equals(contentType)) {
-	    try {
+            && "application/x-www-form-urlencoded".equals(contentType)) {
+            try {
                 int max = getContentLength();
                 int len = 0;
-	        byte buf[] = new byte[getContentLength()];
-		ServletInputStream is = getInputStream();
+                byte buf[] = new byte[getContentLength()];
+                ServletInputStream is = getInputStream();
                 while (len < max) {
                     int next = is.read(buf, len, max - len);
                     len += next;
                 }
-		is.close();
+                is.close();
                 RequestUtil.parseParameters(results, buf, encoding);
-	    } catch (Throwable t) {
-	        ;
-	    }
-	}
+            } catch (Throwable t) {
+                ;
+            }
+        }
 
-	// Store the final results
+        // Store the final results
         results.setLocked(true);
         parsed = true;
-	parameters = results;
+        parameters = results;
 
     }
 
@@ -670,7 +670,7 @@ public class HttpRequestBase
      */
     public String getParameter(String name) {
 
-	parseParameters();
+        parseParameters();
         String values[] = (String[]) parameters.get(name);
         if (values != null)
             return (values[0]);
@@ -702,7 +702,7 @@ public class HttpRequestBase
      */
     public Enumeration getParameterNames() {
 
-	parseParameters();
+        parseParameters();
         return (new Enumerator(parameters.keySet()));
 
     }
@@ -716,7 +716,7 @@ public class HttpRequestBase
      */
     public String[] getParameterValues(String name) {
 
-	parseParameters();
+        parseParameters();
         String values[] = (String[]) parameters.get(name);
         if (values != null)
             return (values);
@@ -737,16 +737,16 @@ public class HttpRequestBase
         if (context == null)
             return (null);
 
-	// If the path is already context-relative, just pass it through
-	if (path == null)
-	    return (null);
-	else if (path.startsWith("/"))
-	    return (context.getServletContext().getRequestDispatcher(path));
+        // If the path is already context-relative, just pass it through
+        if (path == null)
+            return (null);
+        else if (path.startsWith("/"))
+            return (context.getServletContext().getRequestDispatcher(path));
 
-	// Convert a request-relative path to a context-relative one
-	String relative = getServletPath() + "/../" + path;
-	// FIXME -- Canonicalize any ".." directory references!
-	return (context.getServletContext().getRequestDispatcher(relative));
+        // Convert a request-relative path to a context-relative one
+        String relative = getServletPath() + "/../" + path;
+        // FIXME -- Canonicalize any ".." directory references!
+        return (context.getServletContext().getRequestDispatcher(relative));
 
     }
 
@@ -756,7 +756,7 @@ public class HttpRequestBase
      */
     public boolean isSecure() {
 
-	return (secure);
+        return (secure);
 
     }
 
@@ -769,7 +769,7 @@ public class HttpRequestBase
      */
     public String getAuthType() {
 
-	return (authType);
+        return (authType);
 
     }
 
@@ -780,7 +780,7 @@ public class HttpRequestBase
      */
     public String getContextPath() {
 
-	return (contextPath);
+        return (contextPath);
 
     }
 
@@ -790,12 +790,12 @@ public class HttpRequestBase
      */
     public Cookie[] getCookies() {
 
-	synchronized (cookies) {
+        synchronized (cookies) {
             if (cookies.size() < 1)
                 return (null);
-	    Cookie results[] = new Cookie[cookies.size()];
-	    return ((Cookie[]) cookies.toArray(results));
-	}
+            Cookie results[] = new Cookie[cookies.size()];
+            return ((Cookie[]) cookies.toArray(results));
+        }
 
     }
 
@@ -811,24 +811,24 @@ public class HttpRequestBase
      */
     public long getDateHeader(String name) {
 
-	String value = getHeader(name);
-	if (value == null)
-	    return (-1L);
+        String value = getHeader(name);
+        if (value == null)
+            return (-1L);
 
-	// Work around a bug in SimpleDateFormat in pre-JDK1.2b4
-	// (Bug Parade bug #4106807)
-	value += " ";
+        // Work around a bug in SimpleDateFormat in pre-JDK1.2b4
+        // (Bug Parade bug #4106807)
+        value += " ";
 
-	// Attempt to convert the date header in a variety of formats
-	for (int i = 0; i < formats.length; i++) {
-	    try {
-		Date date = formats[i].parse(value);
-		return (date.getTime());
-	    } catch (ParseException e) {
-		;
-	    }
-	}
-	throw new IllegalArgumentException(value);
+        // Attempt to convert the date header in a variety of formats
+        for (int i = 0; i < formats.length; i++) {
+            try {
+                Date date = formats[i].parse(value);
+                return (date.getTime());
+            } catch (ParseException e) {
+                ;
+            }
+        }
+        throw new IllegalArgumentException(value);
 
     }
 
@@ -841,14 +841,14 @@ public class HttpRequestBase
      */
     public String getHeader(String name) {
 
-	name = name.toLowerCase();
-	synchronized (headers) {
-	    ArrayList values = (ArrayList) headers.get(name);
-	    if (values != null)
-		return ((String) values.get(0));
-	    else
-		return (null);
-	}
+        name = name.toLowerCase();
+        synchronized (headers) {
+            ArrayList values = (ArrayList) headers.get(name);
+            if (values != null)
+                return ((String) values.get(0));
+            else
+                return (null);
+        }
 
     }
 
@@ -861,14 +861,14 @@ public class HttpRequestBase
      */
     public Enumeration getHeaders(String name) {
 
-	name = name.toLowerCase();
-	synchronized (headers) {
-	    ArrayList values = (ArrayList) headers.get(name);
-	    if (values != null)
-		return (new Enumerator(values));
-	    else
-		return (new Enumerator(empty));
-	}
+        name = name.toLowerCase();
+        synchronized (headers) {
+            ArrayList values = (ArrayList) headers.get(name);
+            if (values != null)
+                return (new Enumerator(values));
+            else
+                return (new Enumerator(empty));
+        }
 
     }
 
@@ -878,9 +878,9 @@ public class HttpRequestBase
      */
     public Enumeration getHeaderNames() {
 
-	synchronized (headers) {
-	    return (new Enumerator(headers.keySet()));
-	}
+        synchronized (headers) {
+            return (new Enumerator(headers.keySet()));
+        }
 
     }
 
@@ -896,11 +896,11 @@ public class HttpRequestBase
      */
     public int getIntHeader(String name) {
 
-	String value = getHeader(name);
-	if (value == null)
-	    return (-1);
-	else
-	    return (Integer.parseInt(value));
+        String value = getHeader(name);
+        if (value == null)
+            return (-1);
+        else
+            return (Integer.parseInt(value));
 
     }
 
@@ -910,7 +910,7 @@ public class HttpRequestBase
      */
     public String getMethod() {
 
-	return (method);
+        return (method);
 
     }
 
@@ -920,7 +920,7 @@ public class HttpRequestBase
      */
     public String getPathInfo() {
 
-	return (pathInfo);
+        return (pathInfo);
 
     }
 
@@ -934,10 +934,10 @@ public class HttpRequestBase
         if (context == null)
             return (null);
 
-	if (pathInfo == null)
-	    return (null);
-	else
-	    return (context.getServletContext().getRealPath(pathInfo));
+        if (pathInfo == null)
+            return (null);
+        else
+            return (context.getServletContext().getRealPath(pathInfo));
 
     }
 
@@ -947,7 +947,7 @@ public class HttpRequestBase
      */
     public String getQueryString() {
 
-	return (queryString);
+        return (queryString);
 
     }
 
@@ -958,10 +958,10 @@ public class HttpRequestBase
      */
     public String getRemoteUser() {
 
-	if (userPrincipal != null)
-	    return (userPrincipal.getName());
-	else
-	    return (null);
+        if (userPrincipal != null)
+            return (userPrincipal.getName());
+        else
+            return (null);
 
     }
 
@@ -971,7 +971,7 @@ public class HttpRequestBase
      */
     public String getRequestedSessionId() {
 
-	return (requestedSessionId);
+        return (requestedSessionId);
 
     }
 
@@ -981,7 +981,7 @@ public class HttpRequestBase
      */
     public String getRequestURI() {
 
-	return (requestURI);
+        return (requestURI);
 
     }
 
@@ -1005,22 +1005,22 @@ public class HttpRequestBase
     public StringBuffer getRequestURL() {
 
         StringBuffer url = new StringBuffer();
-	String scheme = getScheme();
-	int port = getServerPort();
-	if (port < 0)
-	    port = 80; // Work around java.net.URL bug
+        String scheme = getScheme();
+        int port = getServerPort();
+        if (port < 0)
+            port = 80; // Work around java.net.URL bug
 
-	url.append(scheme);
-	url.append("://");
-	url.append(getServerName());
-	if ((scheme.equals("http") && (port != 80))
-	    || (scheme.equals("https") && (port != 443))) {
-	    url.append(':');
-	    url.append(port);
-	}
-	url.append(getRequestURI());
+        url.append(scheme);
+        url.append("://");
+        url.append(getServerName());
+        if ((scheme.equals("http") && (port != 80))
+            || (scheme.equals("https") && (port != 443))) {
+            url.append(':');
+            url.append(port);
+        }
+        url.append(getRequestURI());
 
-	return (url);
+        return (url);
 
     }
 
@@ -1031,7 +1031,7 @@ public class HttpRequestBase
      */
     public String getServletPath() {
 
-	return (servletPath);
+        return (servletPath);
 
     }
 
@@ -1042,7 +1042,7 @@ public class HttpRequestBase
      */
     public HttpSession getSession() {
 
-	return (getSession(true));
+        return (getSession(true));
 
     }
 
@@ -1066,35 +1066,35 @@ public class HttpRequestBase
         if (context == null)
             return (null);
 
-	// Return the current session if it exists and is valid
-	if ((session != null) && !session.isValid())
-	    session = null;
-	if (session != null)
-	    return (session.getSession());
+        // Return the current session if it exists and is valid
+        if ((session != null) && !session.isValid())
+            session = null;
+        if (session != null)
+            return (session.getSession());
 
 
-	// Return the requested session if it exists and is valid
-	Manager manager = null;
+        // Return the requested session if it exists and is valid
+        Manager manager = null;
         if (context != null)
             manager = context.getManager();
-	if (manager == null)
-	    return (null);	// Sessions are not supported
-	if (requestedSessionId != null) {
-	    try {
-		session = manager.findSession(requestedSessionId);
-	    } catch (IOException e) {
-		session = null;
-	    }
-	    if ((session != null) && !session.isValid())
-	        session = null;
-	    if (session != null) {
-		return (session.getSession());
-	    }
-	}
+        if (manager == null)
+            return (null);      // Sessions are not supported
+        if (requestedSessionId != null) {
+            try {
+                session = manager.findSession(requestedSessionId);
+            } catch (IOException e) {
+                session = null;
+            }
+            if ((session != null) && !session.isValid())
+                session = null;
+            if (session != null) {
+                return (session.getSession());
+            }
+        }
 
-	// Create a new session if requested and the response is not committed
-	if (!create)
-	    return (null);
+        // Create a new session if requested and the response is not committed
+        if (!create)
+            return (null);
         if ((context != null) && (response != null) &&
             context.getCookies() &&
             response.getResponse().isCommitted()) {
@@ -1102,11 +1102,11 @@ public class HttpRequestBase
               (sm.getString("httpRequestBase.createCommitted"));
         }
 
-	session = manager.createSession();
-	if (session != null)
-	    return (session.getSession());
-	else
-	    return (null);
+        session = manager.createSession();
+        if (session != null)
+            return (session.getSession());
+        else
+            return (null);
 
     }
 
@@ -1117,10 +1117,10 @@ public class HttpRequestBase
      */
     public boolean isRequestedSessionIdFromCookie() {
 
-	if (requestedSessionId != null)
-	    return (requestedSessionCookie);
-	else
-	    return (false);
+        if (requestedSessionId != null)
+            return (requestedSessionCookie);
+        else
+            return (false);
 
     }
 
@@ -1131,10 +1131,10 @@ public class HttpRequestBase
      */
     public boolean isRequestedSessionIdFromURL() {
 
-	if (requestedSessionId != null)
-	    return (requestedSessionURL);
-	else
-	    return (false);
+        if (requestedSessionId != null)
+            return (requestedSessionURL);
+        else
+            return (false);
 
     }
 
@@ -1148,7 +1148,7 @@ public class HttpRequestBase
      */
     public boolean isRequestedSessionIdFromUrl() {
 
-	return (isRequestedSessionIdFromURL());
+        return (isRequestedSessionIdFromURL());
 
     }
 
@@ -1159,23 +1159,23 @@ public class HttpRequestBase
      */
     public boolean isRequestedSessionIdValid() {
 
-	if (requestedSessionId == null)
-	    return (false);
+        if (requestedSessionId == null)
+            return (false);
         if (context == null)
             return (false);
-	Manager manager = context.getManager();
-	if (manager == null)
-	    return (false);
-	Session session = null;
-	try {
-	    session = manager.findSession(requestedSessionId);
-	} catch (IOException e) {
-	    session = null;
-	}
-	if ((session != null) && session.isValid())
-	    return (true);
-	else
-	    return (false);
+        Manager manager = context.getManager();
+        if (manager == null)
+            return (false);
+        Session session = null;
+        try {
+            session = manager.findSession(requestedSessionId);
+        } catch (IOException e) {
+            session = null;
+        }
+        if ((session != null) && session.isValid())
+            return (true);
+        else
+            return (false);
 
     }
 
@@ -1195,9 +1195,9 @@ public class HttpRequestBase
         // Identify the Realm we will use for checking role assignmenets
         if (context == null)
             return (false);
-	Realm realm = context.getRealm();
-	if (realm == null)
-	    return (false);
+        Realm realm = context.getRealm();
+        if (realm == null)
+            return (false);
 
         // Check for a role alias defined in a <security-role-ref> element
         if (wrapper != null) {
@@ -1218,7 +1218,7 @@ public class HttpRequestBase
      */
     public Principal getUserPrincipal() {
 
-	return (userPrincipal);
+        return (userPrincipal);
 
     }
 

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.core;
@@ -116,8 +116,8 @@ public class StandardHost
      */
     public StandardHost() {
 
-	super();
-	pipeline.setBasic(new StandardHostValve());
+        super();
+        pipeline.setBasic(new StandardHostValve());
 
     }
 
@@ -157,14 +157,14 @@ public class StandardHost
      * The descriptive information string for this implementation.
      */
     private static final String info =
-	"org.apache.catalina.core.StandardHost/1.0";
+        "org.apache.catalina.core.StandardHost/1.0";
 
 
     /**
      * The Java class name of the default Mapper class for this Container.
      */
     private String mapperClass =
-	"org.apache.catalina.core.StandardHostMapper";
+        "org.apache.catalina.core.StandardHostMapper";
 
 
     /**
@@ -188,7 +188,7 @@ public class StandardHost
      */
     public String getAppBase() {
 
-	return (this.appBase);
+        return (this.appBase);
 
     }
 
@@ -201,9 +201,9 @@ public class StandardHost
      */
     public void setAppBase(String appBase) {
 
-	String oldAppBase = this.appBase;
-	this.appBase = appBase;
-	support.firePropertyChange("appBase", oldAppBase, this.appBase);
+        String oldAppBase = this.appBase;
+        this.appBase = appBase;
+        support.firePropertyChange("appBase", oldAppBase, this.appBase);
 
     }
 
@@ -309,7 +309,7 @@ public class StandardHost
      */
     public String getName() {
 
-	return (name);
+        return (name);
 
     }
 
@@ -324,15 +324,15 @@ public class StandardHost
      */
     public void setName(String name) {
 
-	if (name == null)
-	    throw new IllegalArgumentException
-		(sm.getString("standardHost.nullName"));
+        if (name == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.nullName"));
 
-	name = name.toLowerCase();	// Internally all names are lower case
+        name = name.toLowerCase();      // Internally all names are lower case
 
-	String oldName = this.name;
-	this.name = name;
-	support.firePropertyChange("name", oldName, this.name);
+        String oldName = this.name;
+        this.name = name;
+        support.firePropertyChange("name", oldName, this.name);
 
     }
 
@@ -367,7 +367,7 @@ public class StandardHost
      */
     public void importDefaultContext(Context context) {
 
-	if( this.defaultContext != null )
+        if( this.defaultContext != null )
             this.defaultContext.importDefaultContext(context);
 
     }
@@ -379,24 +379,24 @@ public class StandardHost
      */
     public void addAlias(String alias) {
 
-	alias = alias.toLowerCase();
+        alias = alias.toLowerCase();
 
-	// Skip duplicate aliases
-	for (int i = 0; i < aliases.length; i++) {
-	    if (aliases[i].equals(alias))
-		return;
-	}
+        // Skip duplicate aliases
+        for (int i = 0; i < aliases.length; i++) {
+            if (aliases[i].equals(alias))
+                return;
+        }
 
-	// Add this alias to the list
-	String newAliases[] = new String[aliases.length + 1];
-	for (int i = 0; i < aliases.length; i++)
-	    newAliases[i] = aliases[i];
-	newAliases[aliases.length] = alias;
+        // Add this alias to the list
+        String newAliases[] = new String[aliases.length + 1];
+        for (int i = 0; i < aliases.length; i++)
+            newAliases[i] = aliases[i];
+        newAliases[aliases.length] = alias;
 
         aliases = newAliases;
 
-	// Inform interested listeners
-	fireContainerEvent(ADD_ALIAS_EVENT, alias);
+        // Inform interested listeners
+        fireContainerEvent(ADD_ALIAS_EVENT, alias);
 
     }
 
@@ -409,10 +409,10 @@ public class StandardHost
      */
     public void addChild(Container child) {
 
-	if (!(child instanceof Context))
-	    throw new IllegalArgumentException
-		(sm.getString("standardHost.notContext"));
-	super.addChild(child);
+        if (!(child instanceof Context))
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.notContext"));
+        super.addChild(child);
 
     }
 
@@ -423,7 +423,7 @@ public class StandardHost
      */
     public String[] findAliases() {
 
-	return (this.aliases);
+        return (this.aliases);
 
     }
 
@@ -435,7 +435,7 @@ public class StandardHost
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -448,42 +448,42 @@ public class StandardHost
      */
     public Context map(String uri) {
 
-	if (debug > 0)
-	    log("Mapping request URI '" + uri + "'");
-	if (uri == null)
-	    return (null);
+        if (debug > 0)
+            log("Mapping request URI '" + uri + "'");
+        if (uri == null)
+            return (null);
 
-	// Match on the longest possible context path prefix
-	if (debug > 1)
-	    log("  Trying the longest context path prefix");
-	Context context = null;
-	while (true) {
-	    context = (Context) findChild(uri);
-	    if (context != null)
-		break;
-	    int slash = uri.lastIndexOf('/');
-	    if (slash < 0)
-		break;
-	    uri = uri.substring(0, slash);
-	}
+        // Match on the longest possible context path prefix
+        if (debug > 1)
+            log("  Trying the longest context path prefix");
+        Context context = null;
+        while (true) {
+            context = (Context) findChild(uri);
+            if (context != null)
+                break;
+            int slash = uri.lastIndexOf('/');
+            if (slash < 0)
+                break;
+            uri = uri.substring(0, slash);
+        }
 
-	// If no Context matches, select the default Context
-	if (context == null) {
-	    if (debug > 1)
-		log("  Trying the default context");
-	    context = (Context) findChild("");
-	}
+        // If no Context matches, select the default Context
+        if (context == null) {
+            if (debug > 1)
+                log("  Trying the default context");
+            context = (Context) findChild("");
+        }
 
-	// Complain if no Context has been selected
-	if (context == null) {
-	    log(sm.getString("standardHost.mappingError", uri));
-	    return (null);
-	}
+        // Complain if no Context has been selected
+        if (context == null) {
+            log(sm.getString("standardHost.mappingError", uri));
+            return (null);
+        }
 
-	// Return the mapped Context (if any)
-	if (debug > 0)
-	    log(" Mapped to context '" + context.getPath() + "'");
-	return (context);
+        // Return the mapped Context (if any)
+        if (debug > 0)
+            log(" Mapped to context '" + context.getPath() + "'");
+        return (context);
 
     }
 
@@ -495,34 +495,34 @@ public class StandardHost
      */
     public void removeAlias(String alias) {
 
-	alias = alias.toLowerCase();
+        alias = alias.toLowerCase();
 
-	synchronized (aliases) {
+        synchronized (aliases) {
 
-	    // Make sure this alias is currently present
-	    int n = -1;
-	    for (int i = 0; i < aliases.length; i++) {
-		if (aliases[i].equals(alias)) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		return;
+            // Make sure this alias is currently present
+            int n = -1;
+            for (int i = 0; i < aliases.length; i++) {
+                if (aliases[i].equals(alias)) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                return;
 
-	    // Remove the specified alias
-	    int j = 0;
-	    String results[] = new String[aliases.length - 1];
-	    for (int i = 0; i < aliases.length; i++) {
-		if (i != n)
-		    results[j++] = aliases[i];
-	    }
-	    aliases = results;
+            // Remove the specified alias
+            int j = 0;
+            String results[] = new String[aliases.length - 1];
+            for (int i = 0; i < aliases.length; i++) {
+                if (i != n)
+                    results[j++] = aliases[i];
+            }
+            aliases = results;
 
-	}
+        }
 
-	// Inform interested listeners
-	fireContainerEvent(REMOVE_ALIAS_EVENT, alias);
+        // Inform interested listeners
+        fireContainerEvent(REMOVE_ALIAS_EVENT, alias);
 
     }
 
@@ -532,15 +532,15 @@ public class StandardHost
      */
     public String toString() {
 
-	StringBuffer sb = new StringBuffer();
-	if (getParent() != null) {
-	    sb.append(getParent().toString());
-	    sb.append(".");
-	}
-	sb.append("StandardHost[");
-	sb.append(getName());
-	sb.append("]");
-	return (sb.toString());
+        StringBuffer sb = new StringBuffer();
+        if (getParent() != null) {
+            sb.append(getParent().toString());
+            sb.append(".");
+        }
+        sb.append("StandardHost[");
+        sb.append(getName());
+        sb.append("]");
+        return (sb.toString());
 
     }
 
@@ -595,7 +595,7 @@ public class StandardHost
 
         // Expand a WAR archive into an unpacked directory if needed
         if (isUnpackWARs()) {
-            
+
             if (url.startsWith("jar:"))
                 docBase = expand(war);
             else if (url.startsWith("file://"))
@@ -605,16 +605,16 @@ public class StandardHost
             else
                 throw new IllegalArgumentException
                     (sm.getString("standardHost.warURL", url));
-            
+
             // Make sure the document base directory exists and is readable
             File docBaseDir = new File(docBase);
             if (!docBaseDir.exists() || !docBaseDir.isDirectory() ||
                 !docBaseDir.canRead())
                 throw new IllegalArgumentException
                     (sm.getString("standardHost.accessBase", docBase));
-            
+
         } else {
-            
+
             if (url.startsWith("jar:")) {
                 url = url.substring(4, url.length() - 2);
             }
@@ -625,7 +625,7 @@ public class StandardHost
             else
                 throw new IllegalArgumentException
                     (sm.getString("standardHost.warURL", url));
-            
+
         }
 
         // Install this new web application
@@ -641,7 +641,7 @@ public class StandardHost
                 ((Lifecycle) context).addLifecycleListener(listener);
             }
             addChild(context);
-	    fireContainerEvent(INSTALL_EVENT, context);
+            fireContainerEvent(INSTALL_EVENT, context);
         } catch (Exception e) {
             log(sm.getString("standardHost.installError", contextPath), e);
             throw new IOException(e.toString());
@@ -755,10 +755,10 @@ public class StandardHost
         log("standardHost.start " + contextPath);
         try {
             ((Lifecycle) context).start();
-	    context.setAvailable(true);
+            context.setAvailable(true);
         } catch (LifecycleException e) {
             log("standardHost.start " + contextPath + ": ", e);
-            throw new IllegalStateException           
+            throw new IllegalStateException
                 ("standardHost.start " + contextPath + ": " + e);
         }
     }
@@ -813,7 +813,7 @@ public class StandardHost
      */
     protected void addDefaultMapper(String mapperClass) {
 
-	super.addDefaultMapper(this.mapperClass);
+        super.addDefaultMapper(this.mapperClass);
 
     }
 

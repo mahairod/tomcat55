@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.startup;
@@ -162,7 +162,7 @@ public class Embedded implements Lifecycle {
      */
     public Embedded() {
 
-	this(null, null);
+        this(null, null);
 
     }
 
@@ -177,9 +177,9 @@ public class Embedded implements Lifecycle {
      */
     public Embedded(Logger logger, Realm realm) {
 
-	super();
-	setLogger(logger);
-	setRealm(realm);
+        super();
+        setLogger(logger);
+        setRealm(realm);
 
     }
 
@@ -216,7 +216,7 @@ public class Embedded implements Lifecycle {
      * Descriptive information about this server implementation.
      */
     protected static final String info =
-	"org.apache.catalina.startup.Embedded/1.0";
+        "org.apache.catalina.startup.Embedded/1.0";
 
 
     /**
@@ -253,7 +253,7 @@ public class Embedded implements Lifecycle {
      * will be used instead.
      */
     protected String socketFactory =
-	"org.apache.catalina.net.SSLSocketFactory";
+        "org.apache.catalina.net.SSLSocketFactory";
 
 
     /**
@@ -276,7 +276,7 @@ public class Embedded implements Lifecycle {
      */
     public int getDebug() {
 
-	return (this.debug);
+        return (this.debug);
 
     }
 
@@ -288,10 +288,10 @@ public class Embedded implements Lifecycle {
      */
     public void setDebug(int debug) {
 
-	int oldDebug = this.debug;
-	this.debug = debug;
-	support.firePropertyChange("debug", new Integer(oldDebug),
-				   new Integer(this.debug));
+        int oldDebug = this.debug;
+        this.debug = debug;
+        support.firePropertyChange("debug", new Integer(oldDebug),
+                                   new Integer(this.debug));
 
     }
 
@@ -308,15 +308,15 @@ public class Embedded implements Lifecycle {
 
     /**
      * Enables or disables naming support.
-     * 
+     *
      * @param useNaming The new use naming value
      */
     public void setUseNaming(boolean useNaming) {
 
         boolean oldUseNaming = this.useNaming;
         this.useNaming = useNaming;
-	support.firePropertyChange("useNaming", new Boolean(oldUseNaming),
-				   new Boolean(this.useNaming));
+        support.firePropertyChange("useNaming", new Boolean(oldUseNaming),
+                                   new Boolean(this.useNaming));
 
     }
 
@@ -326,7 +326,7 @@ public class Embedded implements Lifecycle {
      */
     public Logger getLogger() {
 
-	return (this.logger);
+        return (this.logger);
 
     }
 
@@ -338,9 +338,9 @@ public class Embedded implements Lifecycle {
      */
     public void setLogger(Logger logger) {
 
-	Logger oldLogger = this.logger;
-	this.logger = logger;
-	support.firePropertyChange("logger", oldLogger, this.logger);
+        Logger oldLogger = this.logger;
+        this.logger = logger;
+        support.firePropertyChange("logger", oldLogger, this.logger);
 
     }
 
@@ -350,7 +350,7 @@ public class Embedded implements Lifecycle {
      */
     public Realm getRealm() {
 
-	return (this.realm);
+        return (this.realm);
 
     }
 
@@ -362,9 +362,9 @@ public class Embedded implements Lifecycle {
      */
     public void setRealm(Realm realm) {
 
-	Realm oldRealm = this.realm;
-	this.realm = realm;
-	support.firePropertyChange("realm", oldRealm, this.realm);
+        Realm oldRealm = this.realm;
+        this.realm = realm;
+        support.firePropertyChange("realm", oldRealm, this.realm);
 
     }
 
@@ -374,7 +374,7 @@ public class Embedded implements Lifecycle {
      */
     public String getSocketFactory() {
 
-	return (this.socketFactory);
+        return (this.socketFactory);
 
     }
 
@@ -386,7 +386,7 @@ public class Embedded implements Lifecycle {
      */
     public void setSocketFactory(String socketFactory) {
 
-	this.socketFactory = socketFactory;
+        this.socketFactory = socketFactory;
 
     }
 
@@ -404,40 +404,40 @@ public class Embedded implements Lifecycle {
      */
     public synchronized void addConnector(Connector connector) {
 
-	if (debug >= 1) {
-	    if (connector instanceof HttpConnector) {
-		HttpConnector hc = (HttpConnector) connector;
-		logger.log("Adding connector for address '" +
-			  ((hc.getAddress() == null) ? "ALL" : hc.getAddress())
-			   + "' port='" + hc.getPort() + "'");
-	    } else {
-		logger.log("Adding connector (" + connector.getInfo() + ")");
-	    }
-	}
+        if (debug >= 1) {
+            if (connector instanceof HttpConnector) {
+                HttpConnector hc = (HttpConnector) connector;
+                logger.log("Adding connector for address '" +
+                          ((hc.getAddress() == null) ? "ALL" : hc.getAddress())
+                           + "' port='" + hc.getPort() + "'");
+            } else {
+                logger.log("Adding connector (" + connector.getInfo() + ")");
+            }
+        }
 
-	// Make sure we have a Container to send requests to
-	if (engines.length < 1)
-	    throw new IllegalStateException
-		(sm.getString("embedded.noEngines"));
+        // Make sure we have a Container to send requests to
+        if (engines.length < 1)
+            throw new IllegalStateException
+                (sm.getString("embedded.noEngines"));
 
-	// Configure this Connector as needed
-	connector.setContainer(engines[engines.length - 1]);
+        // Configure this Connector as needed
+        connector.setContainer(engines[engines.length - 1]);
 
-	// Add this Connector to our set of defined Connectors
-	Connector results[] = new Connector[connectors.length + 1];
-	for (int i = 0; i < connectors.length; i++)
-	    results[i] = connectors[i];
-	results[connectors.length] = connector;
-	connectors = results;
+        // Add this Connector to our set of defined Connectors
+        Connector results[] = new Connector[connectors.length + 1];
+        for (int i = 0; i < connectors.length; i++)
+            results[i] = connectors[i];
+        results[connectors.length] = connector;
+        connectors = results;
 
-	// Start this Connector if necessary
-	if (started && (connector instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) connector).start();
-	    } catch (LifecycleException e) {
-		logger.log("Connector.start", e);
-	    }
-	}
+        // Start this Connector if necessary
+        if (started && (connector instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) connector).start();
+            } catch (LifecycleException e) {
+                logger.log("Connector.start", e);
+            }
+        }
 
     }
 
@@ -449,24 +449,24 @@ public class Embedded implements Lifecycle {
      */
     public synchronized void addEngine(Engine engine) {
 
-	if (debug >= 1)
-	    logger.log("Adding engine (" + engine.getInfo() + ")");
+        if (debug >= 1)
+            logger.log("Adding engine (" + engine.getInfo() + ")");
 
-	// Add this Engine to our set of defined Engines
-	Engine results[] = new Engine[engines.length + 1];
-	for (int i = 0; i < engines.length; i++)
-	    results[i] = engines[i];
-	results[engines.length] = engine;
-	engines = results;
+        // Add this Engine to our set of defined Engines
+        Engine results[] = new Engine[engines.length + 1];
+        for (int i = 0; i < engines.length; i++)
+            results[i] = engines[i];
+        results[engines.length] = engine;
+        engines = results;
 
-	// Start this Engine if necessary
-	if (started && (engine instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) engine).start();
-	    } catch (LifecycleException e) {
-		logger.log("Engine.start", e);
-	    }
-	}
+        // Start this Engine if necessary
+        if (started && (engine instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) engine).start();
+            } catch (LifecycleException e) {
+                logger.log("Engine.start", e);
+            }
+        }
 
     }
 
@@ -478,7 +478,7 @@ public class Embedded implements Lifecycle {
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
 
-	support.addPropertyChangeListener(listener);
+        support.addPropertyChangeListener(listener);
 
     }
 
@@ -493,26 +493,26 @@ public class Embedded implements Lifecycle {
      * @param secure Should this port be SSL-enabled?
      */
     public Connector createConnector(InetAddress address, int port,
-				     boolean secure) {
+                                     boolean secure) {
 
-	if (debug >= 1)
-	    logger.log("Creating connector for address='" +
-		       ((address == null) ? "ALL" : address.getHostAddress()) +
-		       "' port='" + port + "' secure='" + secure + "'");
+        if (debug >= 1)
+            logger.log("Creating connector for address='" +
+                       ((address == null) ? "ALL" : address.getHostAddress()) +
+                       "' port='" + port + "' secure='" + secure + "'");
 
-	HttpConnector connector = new HttpConnector();
+        HttpConnector connector = new HttpConnector();
 
-	if (address != null)
-	    connector.setAddress(address.getHostAddress());
-	connector.setDebug(debug);
-	connector.setPort(port);
-	if (secure) {
-	    connector.setScheme("https");
-	    connector.setSecure(true);
+        if (address != null)
+            connector.setAddress(address.getHostAddress());
+        connector.setDebug(debug);
+        connector.setPort(port);
+        if (secure) {
+            connector.setScheme("https");
+            connector.setSecure(true);
             connector.setFactory(new SSLServerSocketFactory());
-	}
+        }
 
-	return (connector);
+        return (connector);
 
     }
 
@@ -542,21 +542,21 @@ public class Embedded implements Lifecycle {
      */
     public Context createContext(String path, String docBase) {
 
-	if (debug >= 1)
-	    logger.log("Creating context '" + path + "' with docBase '" +
-		       docBase + "'");
+        if (debug >= 1)
+            logger.log("Creating context '" + path + "' with docBase '" +
+                       docBase + "'");
 
-	StandardContext context = new StandardContext();
+        StandardContext context = new StandardContext();
 
-	context.setDebug(debug);
-	context.setDocBase(docBase);
-	context.setPath(path);
+        context.setDebug(debug);
+        context.setDocBase(docBase);
+        context.setPath(path);
 
-	ContextConfig config = new ContextConfig();
-	config.setDebug(debug);
-	((Lifecycle) context).addLifecycleListener(config);
+        ContextConfig config = new ContextConfig();
+        config.setDebug(debug);
+        ((Lifecycle) context).addLifecycleListener(config);
 
-	return (context);
+        return (context);
 
     }
 
@@ -568,17 +568,17 @@ public class Embedded implements Lifecycle {
      */
     public Engine createEngine() {
 
-	if (debug >= 1)
-	    logger.log("Creating engine");
+        if (debug >= 1)
+            logger.log("Creating engine");
 
-	StandardEngine engine = new StandardEngine();
+        StandardEngine engine = new StandardEngine();
 
-	engine.setDebug(debug);
-	// Default host will be set to the first host added
-	engine.setLogger(logger);	// Inherited by all children
-	engine.setRealm(realm);		// Inherited by all children
+        engine.setDebug(debug);
+        // Default host will be set to the first host added
+        engine.setLogger(logger);       // Inherited by all children
+        engine.setRealm(realm);         // Inherited by all children
 
-	return (engine);
+        return (engine);
 
     }
 
@@ -611,17 +611,17 @@ public class Embedded implements Lifecycle {
      */
     public Host createHost(String name, String appBase) {
 
-	if (debug >= 1)
-	    logger.log("Creating host '" + name + "' with appBase '" +
-		       appBase + "'");
+        if (debug >= 1)
+            logger.log("Creating host '" + name + "' with appBase '" +
+                       appBase + "'");
 
-	StandardHost host = new StandardHost();
+        StandardHost host = new StandardHost();
 
-	host.setAppBase(appBase);
-	host.setDebug(debug);
-	host.setName(name);
+        host.setAppBase(appBase);
+        host.setDebug(debug);
+        host.setName(name);
 
-	return (host);
+        return (host);
 
     }
 
@@ -652,7 +652,7 @@ public class Embedded implements Lifecycle {
      */
     public String getInfo() {
 
-	return (this.info);
+        return (this.info);
 
     }
 
@@ -664,49 +664,49 @@ public class Embedded implements Lifecycle {
      */
     public synchronized void removeConnector(Connector connector) {
 
-	if (debug >= 1) {
-	    if (connector instanceof HttpConnector) {
-		HttpConnector hc = (HttpConnector) connector;
-		logger.log("Removing connector for address '" +
-			  ((hc.getAddress() == null) ? "ALL" : hc.getAddress())
-			   + "' port='" + hc.getPort() + "'");
-	    } else {
-		logger.log("Removing connector (" + connector.getInfo() + ")");
-	    }
-	}
+        if (debug >= 1) {
+            if (connector instanceof HttpConnector) {
+                HttpConnector hc = (HttpConnector) connector;
+                logger.log("Removing connector for address '" +
+                          ((hc.getAddress() == null) ? "ALL" : hc.getAddress())
+                           + "' port='" + hc.getPort() + "'");
+            } else {
+                logger.log("Removing connector (" + connector.getInfo() + ")");
+            }
+        }
 
-	// Is the specified Connector actually defined?
-	int j = -1;
-	for (int i = 0; i < connectors.length; i++) {
-	    if (connector == connectors[i]) {
-		j = i;
-		break;
-	    }
-	}
-	if (j < 0)
-	    return;
+        // Is the specified Connector actually defined?
+        int j = -1;
+        for (int i = 0; i < connectors.length; i++) {
+            if (connector == connectors[i]) {
+                j = i;
+                break;
+            }
+        }
+        if (j < 0)
+            return;
 
-	// Stop this Connector if necessary
-	if (connector instanceof Lifecycle) {
-	    if (debug >= 1)
-		logger.log(" Stopping this Connector");
-	    try {
-		((Lifecycle) connector).stop();
-	    } catch (LifecycleException e) {
-		logger.log("Connector.stop", e);
-	    }
-	}
+        // Stop this Connector if necessary
+        if (connector instanceof Lifecycle) {
+            if (debug >= 1)
+                logger.log(" Stopping this Connector");
+            try {
+                ((Lifecycle) connector).stop();
+            } catch (LifecycleException e) {
+                logger.log("Connector.stop", e);
+            }
+        }
 
-	// Remove this Connector from our set of defined Connectors
-	if (debug >= 1)
-	    logger.log(" Removing this Connector");
-	int k = 0;
-	Connector results[] = new Connector[connectors.length - 1];
-	for (int i = 0; i < connectors.length; i++) {
-	    if (i != j)
-		results[k++] = connectors[i];
-	}
-	connectors = results;
+        // Remove this Connector from our set of defined Connectors
+        if (debug >= 1)
+            logger.log(" Removing this Connector");
+        int k = 0;
+        Connector results[] = new Connector[connectors.length - 1];
+        for (int i = 0; i < connectors.length; i++) {
+            if (i != j)
+                results[k++] = connectors[i];
+        }
+        connectors = results;
 
     }
 
@@ -720,34 +720,34 @@ public class Embedded implements Lifecycle {
      */
     public synchronized void removeContext(Context context) {
 
-	if (debug >= 1)
-	    logger.log("Removing context[" + context.getPath() + "]");
+        if (debug >= 1)
+            logger.log("Removing context[" + context.getPath() + "]");
 
-	// Is this Context actually among those that are defined?
-	boolean found = false;
-	for (int i = 0; i < engines.length; i++) {
-	    Container hosts[] = engines[i].findChildren();
-	    for (int j = 0; j < hosts.length; j++) {
-		Container contexts[] = hosts[j].findChildren();
-		for (int k = 0; k < contexts.length; k++) {
-		    if (context == (Context) contexts[k]) {
-			found = true;
-			break;
-		    }
-		}
-		if (found)
-		    break;
-	    }
-	    if (found)
-		break;
-	}
-	if (!found)
-	    return;
+        // Is this Context actually among those that are defined?
+        boolean found = false;
+        for (int i = 0; i < engines.length; i++) {
+            Container hosts[] = engines[i].findChildren();
+            for (int j = 0; j < hosts.length; j++) {
+                Container contexts[] = hosts[j].findChildren();
+                for (int k = 0; k < contexts.length; k++) {
+                    if (context == (Context) contexts[k]) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found)
+                    break;
+            }
+            if (found)
+                break;
+        }
+        if (!found)
+            return;
 
-	// Remove this Context from the associated Host
-	if (debug >= 1)
-	    logger.log(" Removing this Context");
-	context.getParent().removeChild(context);
+        // Remove this Context from the associated Host
+        if (debug >= 1)
+            logger.log(" Removing this Context");
+        context.getParent().removeChild(context);
 
     }
 
@@ -761,57 +761,57 @@ public class Embedded implements Lifecycle {
      */
     public synchronized void removeEngine(Engine engine) {
 
-	if (debug >= 1)
-	    logger.log("Removing engine (" + engine.getInfo() + ")");
+        if (debug >= 1)
+            logger.log("Removing engine (" + engine.getInfo() + ")");
 
-	// Is the specified Engine actually defined?
-	int j = -1;
-	for (int i = 0; i < engines.length; i++) {
-	    if (engine == engines[i]) {
-		j = i;
-		break;
-	    }
-	}
-	if (j < 0)
-	    return;
+        // Is the specified Engine actually defined?
+        int j = -1;
+        for (int i = 0; i < engines.length; i++) {
+            if (engine == engines[i]) {
+                j = i;
+                break;
+            }
+        }
+        if (j < 0)
+            return;
 
-	// Remove any Connector that is using this Engine
-	if (debug >= 1)
-	    logger.log(" Removing related Containers");
-	while (true) {
-	    int n = -1;
-	    for (int i = 0; i < connectors.length; i++) {
-		if (connectors[i].getContainer() == (Container) engine) {
-		    n = i;
-		    break;
-		}
-	    }
-	    if (n < 0)
-		break;
-	    removeConnector(connectors[n]);
-	}
+        // Remove any Connector that is using this Engine
+        if (debug >= 1)
+            logger.log(" Removing related Containers");
+        while (true) {
+            int n = -1;
+            for (int i = 0; i < connectors.length; i++) {
+                if (connectors[i].getContainer() == (Container) engine) {
+                    n = i;
+                    break;
+                }
+            }
+            if (n < 0)
+                break;
+            removeConnector(connectors[n]);
+        }
 
-	// Stop this Engine if necessary
-	if (engine instanceof Lifecycle) {
-	    if (debug >= 1)
-		logger.log(" Stopping this Engine");
-	    try {
-		((Lifecycle) engine).stop();
-	    } catch (LifecycleException e) {
-		logger.log("Engine.stop", e);
-	    }
-	}
+        // Stop this Engine if necessary
+        if (engine instanceof Lifecycle) {
+            if (debug >= 1)
+                logger.log(" Stopping this Engine");
+            try {
+                ((Lifecycle) engine).stop();
+            } catch (LifecycleException e) {
+                logger.log("Engine.stop", e);
+            }
+        }
 
-	// Remove this Engine from our set of defined Engines
-	if (debug >= 1)
-	    logger.log(" Removing this Engine");
-	int k = 0;
-	Engine results[] = new Engine[engines.length - 1];
-	for (int i = 0; i < engines.length; i++) {
-	    if (i != j)
-		results[k++] = engines[i];
-	}
-	engines = results;
+        // Remove this Engine from our set of defined Engines
+        if (debug >= 1)
+            logger.log(" Removing this Engine");
+        int k = 0;
+        Engine results[] = new Engine[engines.length - 1];
+        for (int i = 0; i < engines.length; i++) {
+            if (i != j)
+                results[k++] = engines[i];
+        }
+        engines = results;
 
     }
 
@@ -825,30 +825,30 @@ public class Embedded implements Lifecycle {
      */
     public synchronized void removeHost(Host host) {
 
-	if (debug >= 1)
-	    logger.log("Removing host[" + host.getName() + "]");
+        if (debug >= 1)
+            logger.log("Removing host[" + host.getName() + "]");
 
-	// Is this Host actually among those that are defined?
-	boolean found = false;
-	for (int i = 0; i < engines.length; i++) {
-	    Container hosts[] = engines[i].findChildren();
-	    for (int j = 0; j < hosts.length; j++) {
-		if (host == (Host) hosts[j]) {
-		    found = true;
-		    break;
+        // Is this Host actually among those that are defined?
+        boolean found = false;
+        for (int i = 0; i < engines.length; i++) {
+            Container hosts[] = engines[i].findChildren();
+            for (int j = 0; j < hosts.length; j++) {
+                if (host == (Host) hosts[j]) {
+                    found = true;
+                    break;
 
-		}
-	    }
-	    if (found)
-		break;
-	}
-	if (!found)
-	    return;
+                }
+            }
+            if (found)
+                break;
+        }
+        if (!found)
+            return;
 
-	// Remove this Host from the associated Engine
-	if (debug >= 1)
-	    logger.log(" Removing this Host");
-	host.getParent().removeChild(host);
+        // Remove this Host from the associated Engine
+        if (debug >= 1)
+            logger.log(" Removing this Host");
+        host.getParent().removeChild(host);
 
     }
 
@@ -861,7 +861,7 @@ public class Embedded implements Lifecycle {
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
 
-	support.removePropertyChangeListener(listener);
+        support.removePropertyChangeListener(listener);
 
     }
 
@@ -876,7 +876,7 @@ public class Embedded implements Lifecycle {
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -888,7 +888,7 @@ public class Embedded implements Lifecycle {
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -905,15 +905,15 @@ public class Embedded implements Lifecycle {
      */
     public void start() throws LifecycleException {
 
-	if (debug >= 1)
-	    logger.log("Starting embedded server");
+        if (debug >= 1)
+            logger.log("Starting embedded server");
 
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("embedded.alreadyStarted"));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("embedded.alreadyStarted"));
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
 
         // Initialize some naming specific properties
         if (!useNaming) {
@@ -921,7 +921,7 @@ public class Embedded implements Lifecycle {
         } else {
             System.setProperty("catalina.useNaming", "true");
             String value = "org.apache.naming";
-            String oldValue = 
+            String oldValue =
                 System.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
             if (oldValue != null) {
                 value = oldValue + ":" + value;
@@ -931,17 +931,17 @@ public class Embedded implements Lifecycle {
                                "org.apache.naming.java.javaURLContextFactory");
         }
 
-	// Start our defined Engines first
-	for (int i = 0; i < engines.length; i++) {
-	    if (engines[i] instanceof Lifecycle)
-		((Lifecycle) engines[i]).start();
-	}
+        // Start our defined Engines first
+        for (int i = 0; i < engines.length; i++) {
+            if (engines[i] instanceof Lifecycle)
+                ((Lifecycle) engines[i]).start();
+        }
 
-	// Start our defined Connectors second
-	for (int i = 0; i < connectors.length; i++) {
-	    if (connectors[i] instanceof Lifecycle)
-		((Lifecycle) connectors[i]).start();
-	}
+        // Start our defined Connectors second
+        for (int i = 0; i < connectors.length; i++) {
+            if (connectors[i] instanceof Lifecycle)
+                ((Lifecycle) connectors[i]).start();
+        }
 
     }
 
@@ -957,27 +957,27 @@ public class Embedded implements Lifecycle {
      */
     public void stop() throws LifecycleException {
 
-	if (debug >= 1)
-	    logger.log("Stopping embedded server");
+        if (debug >= 1)
+            logger.log("Stopping embedded server");
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("embedded.notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("embedded.notStarted"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
 
-	// Stop our defined Connectors first
-	for (int i = 0; i < connectors.length; i++) {
-	    if (connectors[i] instanceof Lifecycle)
-		((Lifecycle) connectors[i]).stop();
-	}
+        // Stop our defined Connectors first
+        for (int i = 0; i < connectors.length; i++) {
+            if (connectors[i] instanceof Lifecycle)
+                ((Lifecycle) connectors[i]).stop();
+        }
 
-	// Stop our defined Engines second
-	for (int i = 0; i < engines.length; i++) {
-	    if (engines[i] instanceof Lifecycle)
-		((Lifecycle) engines[i]).stop();
-	}
+        // Stop our defined Engines second
+        for (int i = 0; i < engines.length; i++) {
+            if (engines[i] instanceof Lifecycle)
+                ((Lifecycle) engines[i]).stop();
+        }
 
     }
 
@@ -1000,37 +1000,37 @@ public class Embedded implements Lifecycle {
      */
     public static void main(String args[]) {
 
-	Embedded embedded = new Embedded(new SystemOutLogger(),
-					 new MemoryRealm());
-	embedded.setDebug(5);
-	embedded.setLogger(new SystemOutLogger());
-	String home = System.getProperty("catalina.home");
+        Embedded embedded = new Embedded(new SystemOutLogger(),
+                                         new MemoryRealm());
+        embedded.setDebug(5);
+        embedded.setLogger(new SystemOutLogger());
+        String home = System.getProperty("catalina.home");
 
-	// Start up this embedded server (to prove we can dynamically
-	// add and remove containers and connectors later)
-	try {
-	    embedded.start();
-	} catch (LifecycleException e) {
-	    System.err.println("start: " + e.toString());
-	    e.printStackTrace();
-	}
+        // Start up this embedded server (to prove we can dynamically
+        // add and remove containers and connectors later)
+        try {
+            embedded.start();
+        } catch (LifecycleException e) {
+            System.err.println("start: " + e.toString());
+            e.printStackTrace();
+        }
 
-	// Assemble and install a very basic container hierarchy
-	// that simulates a portion of the one configured in server.xml
-	// by default
-	Engine engine = embedded.createEngine();
-	engine.setDefaultHost("localhost");
+        // Assemble and install a very basic container hierarchy
+        // that simulates a portion of the one configured in server.xml
+        // by default
+        Engine engine = embedded.createEngine();
+        engine.setDefaultHost("localhost");
 
-	Host host = embedded.createHost("localhost", home + "/webapps");
-	engine.addChild(host);
+        Host host = embedded.createHost("localhost", home + "/webapps");
+        engine.addChild(host);
 
-	Context root = embedded.createContext("", home + "/webapps/ROOT");
-	host.addChild(root);
+        Context root = embedded.createContext("", home + "/webapps/ROOT");
+        host.addChild(root);
 
-	Context examples = embedded.createContext("/examples",
-						  home + "/webapps/examples");
-	customize(examples);	// Special customization for this web-app
-	host.addChild(examples);
+        Context examples = embedded.createContext("/examples",
+                                                  home + "/webapps/examples");
+        customize(examples);    // Special customization for this web-app
+        host.addChild(examples);
 
         // As an alternative to the three lines above, there is also a very
         // simple method to deploy a new application that has default values
@@ -1040,35 +1040,35 @@ public class Embedded implements Lifecycle {
         //   ((Deployer) host).deploy(contextPath, docRoot);
 
         // Install the assembled container hierarchy
-	embedded.addEngine(engine);
+        embedded.addEngine(engine);
 
-	// Assemble and install a non-secure connector for port 8080
-	Connector connector =
-	    embedded.createConnector(null, 8080, false);
-	embedded.addConnector(connector);
+        // Assemble and install a non-secure connector for port 8080
+        Connector connector =
+            embedded.createConnector(null, 8080, false);
+        embedded.addConnector(connector);
 
-	// Pause for a while to allow brief testing
-	// (In reality this would last until the enclosing application
-	// needs to be shut down)
-	try {
-	    Thread.sleep(2 * 60 * 1000L);	// Two minutes
-	} catch (InterruptedException e) {
-	    ;
-	}
+        // Pause for a while to allow brief testing
+        // (In reality this would last until the enclosing application
+        // needs to be shut down)
+        try {
+            Thread.sleep(2 * 60 * 1000L);       // Two minutes
+        } catch (InterruptedException e) {
+            ;
+        }
 
-	// Remove the examples context dynamically
-	embedded.removeContext(examples);
+        // Remove the examples context dynamically
+        embedded.removeContext(examples);
 
-	// Remove the engine (which should trigger removing the connector)
-	embedded.removeEngine(engine);
+        // Remove the engine (which should trigger removing the connector)
+        embedded.removeEngine(engine);
 
-	// Shut down this embedded server (should have nothing left to do)
-	try {
-	    embedded.stop();
-	} catch (LifecycleException e) {
-	    System.err.println("stop: " + e.toString());
-	    e.printStackTrace();
-	}
+        // Shut down this embedded server (should have nothing left to do)
+        try {
+            embedded.stop();
+        } catch (LifecycleException e) {
+            System.err.println("stop: " + e.toString());
+            e.printStackTrace();
+        }
 
     }
 
@@ -1083,20 +1083,20 @@ public class Embedded implements Lifecycle {
      */
     private static void customize(Context context) {
 
-	// Create a customized file logger for this context
-	String basename = context.getPath();
-	if (basename.length() < 1)
-	    basename = "ROOT";
-	else
-	    basename = basename.substring(1);
+        // Create a customized file logger for this context
+        String basename = context.getPath();
+        if (basename.length() < 1)
+            basename = "ROOT";
+        else
+            basename = basename.substring(1);
 
-	FileLogger special = new FileLogger();
-	special.setPrefix(basename + "_log.");
-	special.setSuffix(".txt");
-	special.setTimestamp(true);
+        FileLogger special = new FileLogger();
+        special.setPrefix(basename + "_log.");
+        special.setSuffix(".txt");
+        special.setTimestamp(true);
 
-	// Override the default logger for this context
-	context.setLogger(special);
+        // Override the default logger for this context
+        context.setLogger(special);
 
     }
 

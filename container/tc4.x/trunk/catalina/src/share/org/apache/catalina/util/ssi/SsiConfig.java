@@ -138,7 +138,7 @@ public final class SsiConfig
     public SsiConfig() {
         init();
     }
-    
+
     /**
      * <code>process()</code> should be used since this SsiCommand
      * does not return anything.
@@ -150,7 +150,7 @@ public final class SsiConfig
     public String getStream(String[] strParamType, String[] strParam) {
         return "";
     }
-    
+
     /**
      * Process request.
      *
@@ -159,7 +159,7 @@ public final class SsiConfig
      */
     public final void process(String[] strParamType, String[] strParam) {
         modified = true;
-        
+
         for(int i=0;i<strParamType.length;i++) {
             if(strParamType[i].equals("errmsg"))
                 errmsg = strParam[i].getBytes();
@@ -169,7 +169,7 @@ public final class SsiConfig
                 timefmt = convertFormat(strParam[i]);
         }
     }
-    
+
     /**
      * Return the current error message.
      *
@@ -178,7 +178,7 @@ public final class SsiConfig
     public final byte[] getError() {
         return errmsg;
     }
-    
+
     /**
      * Return the current Size format.
      *
@@ -218,7 +218,7 @@ public final class SsiConfig
      * @return a value of type 'boolean'
      */
     public final boolean isModified() { return modified; }
-    
+
     /**
      * Search the provided pattern and get the C standard
      * Date/Time formatting rules and convert them to the
@@ -232,44 +232,44 @@ public final class SsiConfig
         boolean mark = false;
         StringBuffer retString = new StringBuffer();
         String sRetString = "";
-        
+
         for(int i = 0; i<pattern.length();i++) {
             if(pattern.charAt(i)=='%'&&!mark) {
                 mark=true;
                 continue;
             }
-            
+
             if(pattern.charAt(i)=='%'&&mark) {
                 mark=false;
             }
-            
+
             if(mark) {
                 if(inside) {
                     retString.append("'");
                     inside=false;
                 }
-                
+
                 retString.append(translateCommand(pattern.charAt(i)));
                 mark=false;
                 continue;
             }
-            
+
             if(!inside) {
                 retString.append("'");
                 inside = true;
             }
-            
+
             retString.append(pattern.charAt(i));
         }
-        
+
         sRetString = retString.toString();
-        
+
         if(!sRetString.endsWith("'")&&inside)
             sRetString = sRetString.concat("'");
-        
+
         return sRetString;
     }
-    
+
     /**
      * try to get the Java Date/Time formating associated with
      * the C standard provided
@@ -279,10 +279,10 @@ public final class SsiConfig
      */
     private String translateCommand(char c) {
         String retCommand = translate.getProperty("".valueOf(c));
-        
+
         return retCommand==null?"":retCommand;
     }
-    
+
     /**
      * Called from <code>flush</code> Initialize internal parameters
      * in their default setting.
