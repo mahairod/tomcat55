@@ -506,7 +506,7 @@ import java.util.*;
  *  </TR>
  * </TABLE>
  *
- * @version
+ * @version $Revision$ $Date$
  * @author TAMURA Kent &lt;kent@trl.ibm.co.jp&gt;
  */
 public class MIME2Java {

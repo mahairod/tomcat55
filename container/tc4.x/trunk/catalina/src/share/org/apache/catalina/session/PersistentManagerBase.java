@@ -585,10 +585,6 @@ public abstract class PersistentManagerBase
      * Note that by default, this method is not called by the MiddleManager
      * class. In order to use it, a subclass must specifically call it,
      * for example in the start() and/or processPersistenceChecks() methods.
-     *
-     * @exception ClassNotFoundException if a serialized class cannot be
-     *  found during the reload
-     * @exception IOException if an input/output error occurs
      */
     public void load() {
 
@@ -653,8 +649,6 @@ public abstract class PersistentManagerBase
      * Note that by default, this method is not called by the MiddleManager
      * class. In order to use it, a subclass must specifically call it,
      * for example in the stop() and/or processPersistenceChecks() methods.
-     *
-     * @exception IOException if an input/output error occurs
      */
     public void unload() {
 
