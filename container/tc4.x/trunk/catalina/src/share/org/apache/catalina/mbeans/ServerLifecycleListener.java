@@ -71,8 +71,6 @@ import java.util.Iterator;
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import com.sun.jdmk.comm.AuthInfo;
-import com.sun.jdmk.comm.HtmlAdaptorServer;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerEvent;
@@ -107,15 +105,6 @@ public class ServerLifecycleListener
     implements ContainerListener, LifecycleListener {
 
 
-    // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The HtmlAdaptorServer to be executed (if any).
-     */
-    protected HtmlAdaptorServer adaptor = null;
-
-
     // ------------------------------------------------------------- Properties
 
 
@@ -130,51 +119,6 @@ public class ServerLifecycleListener
 
     public void setDebug(int debug) {
         this.debug = debug;
-    }
-
-
-    /**
-     * The port number for the <code>HtmlAdaptorServer</code> to be created,
-     * or -1 for no adaptor.
-     */
-    protected int port = -1;
-
-    public int getPort() {
-        return (this.port);
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-
-    /**
-     * The login used for the authentication by the 
-     * <code>HtmlAdaptorServer</code>.
-     */
-    protected String login = null;
-
-    public String getLogin() {
-        return (this.login);
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-
-    /**
-     * The password used for the authentication by the 
-     * <code>HtmlAdaptorServer</code>.
-     */
-    protected String password = null;
-
-    public String getPassword() {
-        return (this.password);
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
 
@@ -219,41 +163,13 @@ public class ServerLifecycleListener
 
         if (Lifecycle.START_EVENT.equals(event.getType())) {
             createMBeans();
-            createAdaptor();
         } else if (Lifecycle.STOP_EVENT.equals(event.getType())) {
-            destroyAdaptor();
         }
 
     }
 
 
     // ------------------------------------------------------ Protected Methods
-
-
-    /**
-     * Create the HTML Adaptor to respond to management requests.
-     */
-    protected void createAdaptor() {
-
-        if (port <= 0)
-            return;
-
-        try {
-            adaptor = new HtmlAdaptorServer(port);
-            if (login != null) {
-                adaptor.addUserAuthenticationInfo
-                    (new AuthInfo(getLogin(), getPassword()));
-            }
-            ObjectName name =
-                new ObjectName("Adaptor:name=html,port=" + port);
-            MBeanUtils.createServer().registerMBean(adaptor, name);
-            adaptor.start();
-        } catch (Throwable t) {
-            t.printStackTrace(System.out);
-            System.exit(1);
-        }
-
-    }
 
 
     /**
@@ -360,19 +276,6 @@ public class ServerLifecycleListener
             log("createMBeans: Throwable", t);
 
         }
-
-    }
-
-
-    /**
-     * Destroy the HtmlAdaptorServer we created (if any).
-     */
-    protected void destroyAdaptor() {
-
-        if (adaptor == null)
-            return;
-        adaptor.stop();
-        adaptor = null;
 
     }
 

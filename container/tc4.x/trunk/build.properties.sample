@@ -104,11 +104,10 @@ mail.lib=${mail.home}
 mail.jar=${mail.lib}/mail.jar
 
 
-# ----- Java Management Extensions (JMX) RI, version 1.0.1 or later -----
-jmx.home=${base.path}/jmx-ri_1.0.1/jmx
+# ----- Java Management Extensions (JMX), JMX RI 1.0.1 or later or OpenJMX 1.0b2 or later -----
+jmx.home=${base.path}/openjmx
 jmx.lib=${jmx.home}/lib
-jmxri.jar=${jmx.lib}/jmxri.jar
-jmxtools.jar=${jmx.lib}/jmxtools.jar
+jmx.jar=${jmx.lib}/openjmx.jar
 
 
 # ----- Java Naming and Directory Interface (JNDI), version 1.2 or later -----

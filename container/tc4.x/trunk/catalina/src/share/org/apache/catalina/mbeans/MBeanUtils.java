@@ -76,7 +76,6 @@ import javax.management.ObjectName;
 import javax.management.OperationsException;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 import javax.management.modelmbean.ModelMBean;
-import com.sun.management.jmx.Trace;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;

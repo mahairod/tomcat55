@@ -32,8 +32,7 @@
     <pathelement location="${jaas.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
-    <pathelement location="${jmxri.jar}"/>
-    <pathelement location="${jmxtools.jar}"/>
+    <pathelement location="${jmx.jar}"/>
     <pathelement location="${jndi.jar}"/>
     <pathelement location="${jnet.jar}"/>
     <pathelement location="${jsse.jar}"/>
@@ -61,8 +60,7 @@
     <pathelement location="${jaas.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
-    <pathelement location="${jmxri.jar}"/>
-    <pathelement location="${jmxtools.jar}"/>
+    <pathelement location="${jmx.jar}"/>
     <pathelement location="${jndi.jar}"/>
     <pathelement location="${jnet.jar}"/>
     <pathelement location="${jsse.jar}"/>
@@ -131,10 +129,7 @@
     </condition>
     <available property="jmx.present"
      classname="javax.management.MBeanServer"
-     classpath="${jmxri.jar}" />
-    <available property="jmxtools.present"
-     classname="com.sun.jdmk.Trace"
-     classpath="${jmxtools.jar}" />
+     classpath="${jmx.jar}" />
     <available property="jndi.present"
      classname="javax.naming.Context"
      classpath="${jndi.jar}" />
@@ -189,8 +184,7 @@
       </and>
     </condition>
     <available property="jdbc20ext.jar.present" file="${jdbc20ext.jar}" />
-    <available property="jmxri.jar.present" file="${jmxri.jar}" />
-    <available property="jmxtools.jar.present" file="${jmxtools.jar}" />
+    <available property="jmx.jar.present" file="${jmx.jar}" />
     <available property="jcert.jar.present" file="${jcert.jar}" />
     <available property="jndi.jar.present" file="${jndi.jar}" />
     <available property="jnet.jar.present" file="${jnet.jar}" />
@@ -234,7 +228,6 @@
         <equals arg1="${full.dist}" arg2="on" />
         <and>
           <equals arg1="${jmx.present}" arg2="true" />
-          <equals arg1="${jmxtools.present}" arg2="true" />
           <equals arg1="${modeler.present}" arg2="true" />
         </and>
       </or>
@@ -336,16 +329,10 @@
         <equals arg1="${javamail.jar.present}" arg2="true" />
       </or>
     </condition>
-    <condition property="copy.jmxri.jar">
+    <condition property="copy.jmx.jar">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
-        <equals arg1="${jmxri.jar.present}" arg2="true" />
-      </or>
-    </condition>
-    <condition property="copy.jmxtools.jar">
-      <or>
-        <equals arg1="${full.dist}" arg2="on" />
-        <equals arg1="${jmxtools.jar.present}" arg2="true" />
+        <equals arg1="${jmx.jar.present}" arg2="true" />
       </or>
     </condition>
     <condition property="copy.jta.jar">
@@ -454,7 +441,6 @@
     <echo message="jaas.present=${jaas.present}" />
     <echo message="javamail.present=${javamail.present}" />
     <echo message="jmx.present=${jmx.present}" />
-    <echo message="jmxtools.present=${jmxtools.present}" />
     <echo message="jsse.present=${jsse.present}" />
     <echo message="jta.present=${jta.present}" />
     <echo message="junit.present=${junit.present}" />
@@ -475,8 +461,7 @@
     <echo message="jaas.jar.present=${jaas.jar.present}" />
     <echo message="javamail.jar.present=${javamail.jar.present}" />
     <echo message="jdbc20ext.jar.present=${jdbc20ext.jar.present}" />
-    <echo message="jmxri.jar.present=${jmxri.jar.present}" />
-    <echo message="jmxtools.jar.present=${jmxtools.jar.present}" />
+    <echo message="jmx.jar.present=${jmx.jar.present}" />
     <echo message="jta.jar.present=${jta.jar.present}" />
     <echo message="junit.jar.present=${junit.jar.present}" />
     <echo message="ldap.jar.present=${ldap.jar.present}" />
@@ -504,8 +489,7 @@
     <echo message="copy.jaas.jar=${copy.jaas.jar}" />
     <echo message="copy.jdbc20ext.jar=${copy.jdbc20ext.jar}" />
     <echo message="copy.javamail.jar=${copy.javamail.jar}" />
-    <echo message="copy.jmxri.jar=${copy.jmxri.jar}" />
-    <echo message="copy.jmxtools.jar=${copy.jmxtools.jar}" />
+    <echo message="copy.jmx.jar=${copy.jmx.jar}" />
     <echo message="copy.jndi.jar=${copy.jndi.jar}" />
     <echo message="copy.jta.jar=${copy.jta.jar}" />
     <echo message="copy.ldap.jar=${copy.ldap.jar}" />
@@ -553,11 +537,9 @@
   <target name="copy-jdbc20ext.jar" if="copy.jdbc20ext.jar">
     <copy todir="${catalina.build}/common/lib" file="${jdbc20ext.jar}"/>
   </target>
-  <target name="copy-jmxri.jar" if="copy.jmxri.jar">
-    <copy todir="${catalina.build}/server/lib" file="${jmxri.jar}"/>
-  </target>
-  <target name="copy-jmxtools.jar" if="copy.jmxtools.jar">
-    <copy todir="${catalina.build}/server/lib" file="${jmxtools.jar}"/>
+  <target name="copy-jmx.jar" if="copy.jmx.jar">
+    <copy todir="${catalina.build}/server/lib" file="${jmx.jar}"/>
+    <copy todir="${catalina.build}/server/lib" file="../lib/openjmx.license"/>
   </target>
   <target name="copy-jndi.jar" if="copy.jndi.jar">
     <copy todir="${catalina.build}/common/lib" file="${jndi.jar}"/>
@@ -596,7 +578,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-tomcat-ajp.jar,copy-dbcp.jar,copy-jaas.jar,copy-jdbc20ext.jar,copy-jmxri.jar,copy-jmxtools.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tomcat-util.jar,copy-tyrex.jar,copy-xerces.jar">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-tomcat-ajp.jar,copy-dbcp.jar,copy-jaas.jar,copy-jdbc20ext.jar,copy-jmx.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tomcat-util.jar,copy-tyrex.jar,copy-xerces.jar">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
@@ -630,9 +612,6 @@
     <copy todir="${catalina.build}/common/lib"
            file="${commons-logging.jar}"/>
     <copy todir="${catalina.build}/server/lib" file="${regexp.jar}"/>
-<!-- Not needed for stand alone use
-    <copy todir="${catalina.build}/server/lib" file="${jmxri.jar}"/>
--->
 
   </target>
 

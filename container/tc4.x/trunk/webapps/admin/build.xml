@@ -19,7 +19,7 @@
   <!-- Construct Admin classpath -->
   <path id="admin.classpath">
     <pathelement location="${commons-modeler.jar}"/>
-    <pathelement location="${jmxri.jar}"/>
+    <pathelement location="${jmx.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${struts.jar}"/>
   </path>
@@ -49,7 +49,7 @@
     </condition>
     <available property="jmx.present"
      classname="javax.management.MBeanServer"
-     classpath="${jmxri.jar}" />
+     classpath="${jmx.jar}" />
     <available property="modeler.present"
      classname="org.apache.commons.modeler.Registry"
      classpath="${commons-modeler.jar}"/>
@@ -61,7 +61,7 @@
      classpath="${struts.jar}" />
 
     <!-- JAR files availability flags -->
-    <available property="jmxri.jar.present"   file="${jmxri.jar}" />
+    <available property="jmx.jar.present"   file="${jmx.jar}" />
     <available property="modeler.jar.present" file="${commons-modeler.jar}" />
     <available property="servlet.jar.present" file="${servlet.jar}" />
     <available property="struts.jar.present"  file="${struts.jar}" />
@@ -121,7 +121,7 @@
     <echo message="servlet.present=${servlet.present}" />
 
     <echo message="--- Required JARs ---" />
-    <echo message="jmxri.jar.present=${jmxri.jar.present}" />
+    <echo message="jmx.jar.present=${jmx.jar.present}" />
     <echo message="modeler.jar.present=${modeler.jar.present}" />
     <echo message="servlet.jar.present=${servlet.jar.present}" />
     <echo message="struts.jar.present=${struts.jar.present}" />
