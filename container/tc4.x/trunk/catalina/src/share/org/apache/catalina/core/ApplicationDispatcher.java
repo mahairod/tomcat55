@@ -78,11 +78,8 @@ import javax.servlet.ServletRequestWrapper;
 import javax.servlet.ServletResponse;
 import javax.servlet.ServletResponseWrapper;
 import javax.servlet.UnavailableException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
@@ -320,7 +317,7 @@ final class ApplicationDispatcher
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 
@@ -554,21 +551,14 @@ final class ApplicationDispatcher
                 sb.append(servletPath);
             if (pathInfo != null)
                 sb.append(pathInfo);
-            if (sb.length() > 0)
-                wrequest.setAttribute(Globals.REQUEST_URI_ATTR,
-                                      sb.toString());
-            if (contextPath != null)
-                wrequest.setAttribute(Globals.CONTEXT_PATH_ATTR,
-                                      contextPath);
-            if (servletPath != null)
-                wrequest.setAttribute(Globals.SERVLET_PATH_ATTR,
-                                      servletPath);
-            if (pathInfo != null)
-                wrequest.setAttribute(Globals.PATH_INFO_ATTR,
-                                      pathInfo);
+
+            wrequest.setAttribute(Globals.REQUEST_URI_ATTR, sb.toString());
+            wrequest.setAttribute(Globals.CONTEXT_PATH_ATTR, contextPath);
+            wrequest.setAttribute(Globals.SERVLET_PATH_ATTR, servletPath);
+            wrequest.setAttribute(Globals.PATH_INFO_ATTR, pathInfo);
+            wrequest.setAttribute(Globals.QUERY_STRING_ATTR, queryString);
+            
             if (queryString != null) {
-                wrequest.setAttribute(Globals.QUERY_STRING_ATTR,
-                                      queryString);
                 wrequest.mergeParameters(queryString);
             }
             // invoke(wrequest, wresponse);
