@@ -334,7 +334,7 @@ public class DeltaManager
       session.setId(sessionId);
       session.resetDeltaRequest();
       // Initialize the properties of the new session and return it
-
+      
       sessionCounter++;
       
       

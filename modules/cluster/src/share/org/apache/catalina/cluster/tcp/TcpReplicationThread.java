@@ -139,9 +139,16 @@ public class TcpReplicationThread extends WorkerThread
             return;
         }
         // resume interest in OP_READ, OP_WRITE
-        key.interestOps (key.interestOps() | SelectionKey.OP_READ);
-        // cycle the selector so this key is active again
-        key.selector().wakeup();
+        int resumeOps = key.interestOps() | SelectionKey.OP_READ;
+        long _debugstart = System.currentTimeMillis();
+        //acquire the interestOps mutex
+        Object mutex = this.getPool().getInterestOpsMutex();
+        synchronized (mutex) {
+            // cycle the selector so this key is active again
+            key.selector().wakeup();
+            key.interestOps(resumeOps);
+        }
+        
     }
 
     private void sendAck(SelectionKey key, SocketChannel channel) {

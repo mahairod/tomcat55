@@ -28,6 +28,10 @@ public class WorkerThread extends Thread
     public void setPool(ThreadPool pool) {
         this.pool = pool;
     }
+    
+    public ThreadPool getPool() {
+        return pool;
+    }
 
     public void close()
     {
