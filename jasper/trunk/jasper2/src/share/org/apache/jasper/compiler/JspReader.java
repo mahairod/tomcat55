@@ -280,43 +280,6 @@ public class JspReader {
 	return caw.toCharArray();
     }
 
-    /**
-     * Get the text for a scripting element from the stream.  It handles
-     * the escape string "%\>".
-     *
-     * @param start The starting postion to read
-     * @param stop The ending (exclusive) postion to read
-     * @return The resultant text
-     */
-    char[] getScriptingText(Mark start, Mark stop) throws JasperException {
-	Mark oldstart = mark();
-	reset(start);
-	CharArrayWriter caw = new CharArrayWriter();
-	while (!stop.equals(mark())) {
-	    int c = nextChar();
-	    caw.write(c);
-	    if (c == '%') {
-		if (stop.equals(mark()))
-		    break;
-		int c2 = nextChar();
-		if (stop.equals(mark())) {
-		    caw.write(c2);
-		    break;
-		}
-		int c3 = nextChar();
-		if (c2 == '\\' && c3 == '>') {
-		    caw.write('>');
-		} else {
-		    caw.write(c2);
-		    caw.write(c3);
-		}
-	    }
-	}
-	caw.close();
-	reset(oldstart);
-	return caw.toCharArray();
-    }
-
     public int peekChar() {
 	return current.stream[current.cursor];
     }

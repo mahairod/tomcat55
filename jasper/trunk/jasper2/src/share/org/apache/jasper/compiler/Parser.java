@@ -61,10 +61,12 @@
 package org.apache.jasper.compiler;
 
 import java.io.FileNotFoundException;
+import java.io.CharArrayWriter;
 import java.util.Hashtable;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.JasperException;
 
@@ -124,6 +126,160 @@ public class Parser {
 	return page;
     }
 
+    /**
+     * Attributes ::= (S Attribute)* S?
+     */
+    Attributes parseAttributes() throws JasperException {
+	AttributesImpl attrs = new AttributesImpl();
+
+	reader.skipSpaces();
+	while (parseAttribute(attrs))
+	    reader.skipSpaces();
+
+	return attrs;
+    }
+
+    /**
+     * Attribute ::= Name S? Eq S?
+     *               (   '"<%= RTAttributeValueDouble
+     *                 | '"' AttributeValueDouble
+     *                 | "'<%= RTAttributeValueSingle
+     *                 | "'" AttributeValueSingle
+     *               }
+     * Note: JSP and XML spec does not allow while spaces around Eq.  It is
+     * added to be backward compatible with Tomcat, and with other xml parsers.
+     */
+    private boolean parseAttribute(AttributesImpl attrs) throws JasperException {
+	String name = parseName();
+	if (name == null)
+	    return false;
+
+ 	reader.skipSpaces();
+	if (!reader.matches("="))
+	    err.jspError(reader.mark(), "jsp.error.attribute.noequal");
+
+ 	reader.skipSpaces();
+	char quote = (char) reader.nextChar();
+	if (quote != '\'' && quote != '"')
+	    err.jspError(reader.mark(), "jsp.error.attribute.noquote");
+
+ 	String watchString = "";
+	if (reader.matches("<%="))
+	    watchString = "%>";
+	watchString = watchString + quote;
+	
+	String attr = parseAttributeValue(watchString);
+	attrs.addAttribute("", name, name, "CDATA", attr);
+	return true;
+    }
+
+    /**
+     * Name ::= (Letter | '_' | ':') (Letter | Digit | '.' | '_' | '-' | ':')*
+     */
+    private String parseName() throws JasperException {
+	char ch = (char)reader.peekChar();
+	if (Character.isLetter(ch) || ch == '_' || ch == ':') {
+	    StringBuffer buf = new StringBuffer();
+	    buf.append(ch);
+	    reader.nextChar();
+	    ch = (char)reader.peekChar();
+	    while (Character.isLetter(ch) || Character.isDigit(ch) ||
+			ch == '.' || ch == '_' || ch == '-' || ch == ':') {
+		buf.append(ch);
+		reader.nextChar();
+		ch = (char) reader.peekChar();
+	    }
+	    return buf.toString();
+	}
+	return null;
+    }
+
+    /**
+     * AttributeValueDouble ::= (QuotedChar - '"')*
+     *				('"' | <TRANSLATION_ERROR>)
+     * RTAttributeValueDouble ::= ((QuotedChar - '"')* - ((QuotedChar-'"')'%>"')
+     *				  ('%>"' | TRANSLATION_ERROR)
+     */
+    private String parseAttributeValue(String watch) throws JasperException {
+	Mark start = reader.mark();
+	Mark stop = reader.skipUntil(watch);
+	if (stop == null) {
+	    err.jspError(start, "jsp.error.attribute.unterminated", watch);
+	}
+
+	String ret = parseQuoted(reader.getText(start, stop));
+	if (watch.length() == 1)	// quote
+	    return ret;
+
+	// putback delimiter '<%=' and '%>', since they are needed if the
+	// attribute does not allow RTexpression.
+	return "<%=" + ret + "%>";
+    }
+
+    /**
+     * QuotedChar ::=   '&apos;'
+     *	              | '&quot;'
+     *                | '\\'
+     *                | '\"'
+     *                | "\'"
+     *                | '\>'
+     *                | Char
+     */
+    private String parseQuoted(char[] tx) {
+	StringBuffer buf = new StringBuffer();
+	int size = tx.length;
+	int i = 0;
+	while (i < size) {
+	    char ch = tx[i];
+	    if (ch == '&') {
+		if (i+5 < size && tx[i+1] == 'a' && tx[i+2] == 'p' &&
+			tx[i+3] == 'o' && tx[i+4] == 's' && tx[i+5] == ';') {
+		    buf.append('\'');
+		    i += 6;
+		} else if (i+5 < size && tx[i+1] == 'q' && tx[i+2] == 'u' &&
+			tx[i+3] == 'o' && tx[i+4] == 't' && tx[i+5] == ';') {
+		    buf.append('"');
+		    i += 6;
+		} else {
+		    buf.append(ch);
+		    ++i;
+		}
+	    } else if (ch == '\\' && i+1 < size) {
+		ch = tx[i+1];
+		if (ch == '\\' || ch == '\"' || ch == '\'' || ch == '>') {
+		    buf.append(ch);
+		    i += 2;
+		} else {
+		    buf.append('\\');
+		    ++i;
+		}
+	    } else {
+		buf.append(ch);
+		++i;
+	    }
+	}
+	return buf.toString();
+    }
+
+    private char[] parseScriptText(char[] tx) {
+	CharArrayWriter cw = new CharArrayWriter();
+	int size = tx.length;
+	int i = 0;
+	while (i < size) {
+	    char ch = tx[i];
+	    if (i+2 < size && ch == '%' && tx[i+1] == '\\' && tx[i+2] == '>') {
+		cw.write('%');
+		cw.write('>');
+		i += 3;
+	    } else {
+		cw.write(ch);
+		++i;
+	    }
+	}
+	cw.close();
+	return cw.toCharArray();
+    }
+
     /*
      * Invokes parserController to parse the included page
      */
@@ -147,7 +303,7 @@ public class Parser {
      *   PageDirective ::= ( S Attribute)*
      */
     private void parsePageDirective(Node parent) throws JasperException {
-	Attributes attrs = reader.parseTagAttributes();
+	Attributes attrs = parseAttributes();
 	Node.PageDirective n = new Node.PageDirective(attrs, start, parent);
 
 	/*
@@ -167,7 +323,7 @@ public class Parser {
      *   IncludeDirective ::= ( S Attribute)*
      */
     private void parseIncludeDirective(Node parent) throws JasperException {
-	Attributes attrs = reader.parseTagAttributes();
+	Attributes attrs = parseAttributes();
 
 	// Included file expanded here
 	Node includeNode = new Node.IncludeDirective(attrs, start, parent);
@@ -179,7 +335,7 @@ public class Parser {
      *   Directive ::= ( S Attribute)*
      */
     private void parseTaglibDirective(Node parent) throws JasperException {
-	Attributes attrs = reader.parseTagAttributes();
+	Attributes attrs = parseAttributes();
 	String uri = attrs.getValue("uri");
 	String prefix = attrs.getValue("prefix");
 	if (uri != null || prefix != null) {
@@ -246,7 +402,8 @@ public class Parser {
 	    err.jspError(start, "jsp.error.unterminated", "<%!");
 	}
 
-	new Node.Declaration(reader.getScriptingText(start, stop), start, parent);
+	new Node.Declaration(parseScriptText(reader.getText(start, stop)),
+				start, parent);
     }
 
     /*
@@ -259,7 +416,8 @@ public class Parser {
 	    err.jspError(start, "jsp.error.unterminated", "<%=");
 	}
 
-	new Node.Expression(reader.getScriptingText(start, stop), start, parent);
+	new Node.Expression(parseScriptText(reader.getText(start, stop)),
+				start, parent);
     }
 	
     /*
@@ -272,7 +430,8 @@ public class Parser {
 	    err.jspError(start, "jsp.error.unterminated", "<%");
 	}
 
-	new Node.Scriptlet(reader.getScriptingText(start, stop), start, parent);
+	new Node.Scriptlet(parseScriptText(reader.getText(start, stop)),
+				start, parent);
     }
 	
     /**
@@ -283,7 +442,7 @@ public class Parser {
 	if (!reader.matches("<jsp:param")) {
 	    err.jspError(reader.mark(), "jsp.error.paramexpectedonly");
 	}
-	Attributes attrs = reader.parseTagAttributes();
+	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
 
 	if (!reader.matches("/>")) {
@@ -318,7 +477,7 @@ public class Parser {
      *			 )
      */
     private void parseInclude(Node parent) throws JasperException {
-	Attributes attrs = reader.parseTagAttributes();
+	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
 
 	if (reader.matches("/>")) {
@@ -345,7 +504,7 @@ public class Parser {
      */
     private void parseForward(Node parent) throws JasperException {
 
-	Attributes attrs = reader.parseTagAttributes();
+	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
 
 	if (reader.matches("/>")) {
@@ -368,7 +527,7 @@ public class Parser {
      * GetProperty ::= (S? Attribute)* S? '/>/
      */
     private void parseGetProperty(Node parent) throws JasperException {
-	Attributes attrs = reader.parseTagAttributes();
+	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
 
 	if (!reader.matches("/>")) {
@@ -383,7 +542,7 @@ public class Parser {
      * SetProperty ::= (S Attribute)* S? '/>'
      */
     private void parseSetProperty(Node parent) throws JasperException {
-	Attributes attrs = reader.parseTagAttributes();
+	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
 
 	if (!reader.matches("/>")) {
@@ -399,7 +558,7 @@ public class Parser {
      *		   ('/>' | ( '>' Body '</jsp:useBean' S? '>' ))
      */
     private void parseUseBean(Node parent) throws JasperException {
-	Attributes attrs = reader.parseTagAttributes();
+	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
 
 	if (reader.matches("/>")) {
@@ -455,7 +614,7 @@ public class Parser {
      *			('<jsp:fallback' JspFallack S?)?
      */
     private void parsePlugin(Node parent) throws JasperException {
-	Attributes attrs = reader.parseTagAttributes();
+	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
 
 	if (!reader.matches(">")) {
@@ -541,7 +700,7 @@ public class Parser {
 
 	// EmptyElemTag ::= '<' Name ( #S Attribute )* S? '/>'
 	// or Stag ::= '<' Name ( #S Attribute)* S? '>'
-	Attributes attrs = reader.parseTagAttributes();
+	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
 	
 	if (reader.matches("/>")) {
@@ -657,5 +816,7 @@ public class Parser {
 	}
 	err.jspError(start, "jsp.error.unterminated", "<"+tag+">");
     }
+
+    
 }
 
