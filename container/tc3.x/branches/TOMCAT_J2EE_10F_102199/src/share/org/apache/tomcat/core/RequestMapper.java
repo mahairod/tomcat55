@@ -286,7 +286,7 @@ public class RequestMapper {
             this.resourceName != null) {
             // XXX
             // hack to differentiate amongst a mapped servlet and a jsp
-            if (! wrapper.getServletName().equals(Constants.JSP.NAME)) {
+	    if (! wrapper.getServletClass().equals(Constants.JSP.CLASSNAME)) {
                 mapPath = "/" + wrapper.getServletClass();
             } else {
                 mapPath = this.resourceName;
