@@ -276,7 +276,7 @@
   <target name="convert" depends="compile,buildjars"
    description="Convert JSP syntax to XML syntax">
 
-     <java classname="org.apache.jspxml.GetWorkspaceInXML" fork="true">
+     <java classname="org.apache.watchdog.jspxml.GetWorkspaceInXML" fork="true">
        <classpath refid="convert.classpath"/>
        <sysproperty key="JSP_ROOT"
                   value="${watchdog.build}/webapps/jsp-tests/jsp"/>
