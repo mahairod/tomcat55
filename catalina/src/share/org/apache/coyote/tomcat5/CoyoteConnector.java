@@ -128,14 +128,47 @@ public class CoyoteConnector
 
 
     /**
+     * The accept count for this Connector.
+     */
+    private int acceptCount = 10;
+
+
+    /**
+     * The IP address on which to bind, if any.  If <code>null</code>, all
+     * addresses on the server will be bound.
+     */
+    private String address = null;
+
+
+    /**
+     * The input buffer size we should create on input streams.
+     */
+    private int bufferSize = 2048;
+
+
+    /**
      * The Container used for processing requests received by this Connector.
      */
     protected Container container = null;
+
+
+    /**
+     * Compression value.
+     */
+    private String compression = "off";
+
 
     /**
      * The debugging detail level for this component.
      */
     private int debug = 0;
+
+
+    /**
+     * The "enable DNS lookups" flag for this Connector.
+     */
+    private boolean enableLookups = false;
+
 
     /**
      * The server socket factory for this component.
@@ -163,10 +196,113 @@ public class CoyoteConnector
 
 
     /**
+     * The minimum number of processors to start at initialization time.
+     */
+    protected int minProcessors = 5;
+
+
+    /**
+     * The maximum number of processors allowed, or <0 for unlimited.
+     */
+    private int maxProcessors = 20;
+
+
+    /**
+     * Linger value on the incoming connection.
+     * Note : a value inferior to 0 means no linger.
+     */
+    private int connectionLinger = Constants.DEFAULT_CONNECTION_LINGER;
+
+
+    /**
+     * Timeout value on the incoming connection.
+     * Note : a value of 0 means no timeout.
+     */
+    private int connectionTimeout = Constants.DEFAULT_CONNECTION_TIMEOUT;
+
+
+    /**
+     * Timeout value on the incoming connection during request processing.
+     * Note : a value of 0 means no timeout.
+     */
+    private int connectionUploadTimeout = 
+        Constants.DEFAULT_CONNECTION_UPLOAD_TIMEOUT;
+
+
+    /**
+     * Timeout value on the server socket.
+     * Note : a value of 0 means no timeout.
+     */
+    private int serverSocketTimeout = Constants.DEFAULT_SERVER_SOCKET_TIMEOUT;
+
+
+    /**
+     * The port number on which we listen for requests.
+     */
+    private int port = 8080;
+
+
+    /**
+     * The server name to which we should pretend requests to this Connector
+     * were directed.  This is useful when operating Tomcat behind a proxy
+     * server, so that redirects get constructed accurately.  If not specified,
+     * the server name included in the <code>Host</code> header is used.
+     */
+    private String proxyName = null;
+
+
+    /**
+     * The server port to which we should pretent requests to this Connector
+     * were directed.  This is useful when operating Tomcat behind a proxy
+     * server, so that redirects get constructed accurately.  If not specified,
+     * the port number specified by the <code>port</code> property is used.
+     */
+    private int proxyPort = 0;
+
+
+    /**
+     * The redirect port for non-SSL to SSL redirects.
+     */
+    private int redirectPort = 443;
+
+
+    /**
+     * The request scheme that will be set on all requests received
+     * through this connector.
+     */
+    private String scheme = "http";
+
+
+    /**
+     * The secure connection flag that will be set on all requests received
+     * through this connector.
+     */
+    private boolean secure = false;
+
+    /** For jk, do tomcat authentication if true, trust server if false 
+     */ 
+    private boolean tomcatAuthentication = true;
+
+    /**
      * The string manager for this package.
      */
     private StringManager sm =
         StringManager.getManager(Constants.Package);
+
+
+    /**
+     * Flag to disable setting a seperate time-out for uploads.
+     * If <code>true</code>, then the <code>timeout</code> parameter is
+     * ignored.  If <code>false</code>, then the <code>timeout</code>
+     * parameter is used to control uploads.
+     */
+    private boolean disableUploadTimeout = false;
+
+    /**
+     * Maximum number of Keep-Alive requests to honor per connection.
+     */
+    private int maxKeepAliveRequests = 100;
+
 
     /**
      * Has this component been initialized yet?
@@ -190,6 +326,12 @@ public class CoyoteConnector
      * The background thread.
      */
     private Thread thread = null;
+
+
+    /**
+     * Use TCP no delay ?
+     */
+    private boolean tcpNoDelay = true;
 
 
     /**
@@ -224,6 +366,12 @@ public class CoyoteConnector
      private MapperListener mapperListener = new MapperListener(mapper);
 
 
+     /**
+      * URI encoding.
+      */
+     private String URIEncoding = null;
+
+
     // ------------------------------------------------------------- Properties
 
     /**
@@ -251,7 +399,9 @@ public class CoyoteConnector
      * Return the <code>Service</code> with which we are associated (if any).
      */
     public Service getService() {
+
         return (this.service);
+
     }
 
 
@@ -261,8 +411,10 @@ public class CoyoteConnector
      * @param service The service that owns this Engine
      */
     public void setService(Service service) {
+
         this.service = service;
         setProperty("service", service);
+
     }
 
 
@@ -270,7 +422,9 @@ public class CoyoteConnector
      * Get the value of compression.
      */
     public String getCompression() {
-        return (String)lookup("compression");
+
+        return (compression);
+
     }
 
 
@@ -281,7 +435,10 @@ public class CoyoteConnector
      * or "force"
      */
     public void setCompression(String compression) {
+
+        this.compression = compression;
         setProperty("compression", compression);
+
     }
 
 
@@ -289,7 +446,9 @@ public class CoyoteConnector
      * Return the connection linger for this Connector.
      */
     public int getConnectionLinger() {
-        return getIntProperty("soLinger", -1);
+
+        return (connectionLinger);
+
     }
 
 
@@ -299,7 +458,10 @@ public class CoyoteConnector
      * @param count The new connection linge
      */
     public void setConnectionLinger(int connectionLinger) {
+
+        this.connectionLinger = connectionLinger;
         setProperty("soLinger", String.valueOf(connectionLinger));
+
     }
 
 
@@ -307,7 +469,9 @@ public class CoyoteConnector
      * Return the connection timeout for this Connector.
      */
     public int getConnectionTimeout() {
-        return getIntProperty("soTimeout", -1);
+
+        return (connectionTimeout);
+
     }
 
 
@@ -317,7 +481,10 @@ public class CoyoteConnector
      * @param count The new connection timeout
      */
     public void setConnectionTimeout(int connectionTimeout) {
+
+        this.connectionTimeout = connectionTimeout;
         setProperty("soTimeout", String.valueOf(connectionTimeout));
+
     }
 
 
@@ -325,7 +492,9 @@ public class CoyoteConnector
      * Return the connection upload timeout for this Connector.
      */
     public int getConnectionUploadTimeout() {
-        return getIntProperty("timeout", -1);
+
+        return (connectionUploadTimeout);
+
     }
 
 
@@ -335,7 +504,10 @@ public class CoyoteConnector
      * @param connectionUploadTimeout The new connection upload timeout
      */
     public void setConnectionUploadTimeout(int connectionUploadTimeout) {
+
+        this.connectionUploadTimeout = connectionUploadTimeout;
         setProperty("timeout", String.valueOf(connectionUploadTimeout));
+
     }
 
 
@@ -343,7 +515,9 @@ public class CoyoteConnector
      * Return the server socket timeout for this Connector.
      */
     public int getServerSocketTimeout() {
-        return getIntProperty("serverSoTimeout", -1);
+
+        return (serverSocketTimeout);
+
     }
 
 
@@ -353,7 +527,10 @@ public class CoyoteConnector
      * @param connectionUploadTimeout The new server socket timeout
      */
     public void setServerSocketTimeout(int serverSocketTimeout) {
+
+        this.serverSocketTimeout = serverSocketTimeout;
         setProperty("serverSoTimeout", String.valueOf(serverSocketTimeout));
+
     }
 
 
@@ -361,7 +538,9 @@ public class CoyoteConnector
      * Return the accept count for this Connector.
      */
     public int getAcceptCount() {
-        return getIntProperty("backlog", -1);
+
+        return (acceptCount);
+
     }
 
 
@@ -371,7 +550,10 @@ public class CoyoteConnector
      * @param count The new accept count
      */
     public void setAcceptCount(int count) {
+
+        this.acceptCount = count;
         setProperty("backlog", String.valueOf(count));
+
     }
 
 
@@ -379,7 +561,9 @@ public class CoyoteConnector
      * Return the bind IP address for this Connector.
      */
     public String getAddress() {
-        return (String)lookup("address");
+
+        return (this.address);
+
     }
 
 
@@ -389,7 +573,10 @@ public class CoyoteConnector
      * @param address The bind IP address
      */
     public void setAddress(String address) {
+
+        this.address = address;
         setProperty("address", address);
+
     }
 
 
@@ -397,7 +584,9 @@ public class CoyoteConnector
      * Is this connector available for processing requests?
      */
     public boolean isAvailable() {
+
         return (started);
+
     }
 
 
@@ -405,7 +594,9 @@ public class CoyoteConnector
      * Return the input buffer size for this Connector.
      */
     public int getBufferSize() {
-        return getIntProperty("buffersize", 2048);
+
+        return (this.bufferSize);
+
     }
 
 
@@ -415,7 +606,10 @@ public class CoyoteConnector
      * @param bufferSize The new input buffer size.
      */
     public void setBufferSize(int bufferSize) {
+
+        this.bufferSize = bufferSize;
         setProperty("bufferSize", String.valueOf(bufferSize));
+
     }
 
 
@@ -440,7 +634,9 @@ public class CoyoteConnector
      * @param container The new Container to use
      */
     public void setContainer(Container container) {
+
         this.container = container;
+
     }
 
 
@@ -448,7 +644,9 @@ public class CoyoteConnector
      * Return the debugging detail level for this component.
      */
     public int getDebug() {
+
         return (debug);
+
     }
 
 
@@ -458,7 +656,9 @@ public class CoyoteConnector
      * @param debug The new debugging detail level
      */
     public void setDebug(int debug) {
+
         this.debug = debug;
+
     }
 
 
@@ -466,7 +666,9 @@ public class CoyoteConnector
      * Return the "enable DNS lookups" flag.
      */
     public boolean getEnableLookups() {
-        return getBooleanProperty("enableLookups", false);
+
+        return (this.enableLookups);
+
     }
 
 
@@ -476,16 +678,20 @@ public class CoyoteConnector
      * @param enableLookups The new "enable DNS lookups" flag value
      */
     public void setEnableLookups(boolean enableLookups) {
+
+        this.enableLookups = enableLookups;
         setProperty("enableLookups", String.valueOf(enableLookups));
+
     }
 
 
     /**
      * Return the server socket factory used by this Container.
-     * @deprecated
      */
     public ServerSocketFactory getFactory() {
+
         return (this.factory);
+
     }
 
 
@@ -493,10 +699,11 @@ public class CoyoteConnector
      * Set the server socket factory used by this Container.
      *
      * @param factory The new server socket factory
-     * @deprecated
      */
     public void setFactory(ServerSocketFactory factory) {
+
         this.factory = factory;
+
     }
 
 
@@ -504,7 +711,9 @@ public class CoyoteConnector
      * Return descriptive information about this Connector implementation.
      */
     public String getInfo() {
+
         return (info);
+
     }
 
 
@@ -512,7 +721,9 @@ public class CoyoteConnector
       * Return the mapper.
       */
      public Mapper getMapper() {
+
          return (mapper);
+
      }
 
 
@@ -520,7 +731,9 @@ public class CoyoteConnector
      * Return the minimum number of processors to start at initialization.
      */
     public int getMinProcessors() {
-        return getIntProperty("minProcessors", 0);
+
+        return (minProcessors);
+
     }
 
 
@@ -530,7 +743,10 @@ public class CoyoteConnector
      * @param minProcessors The new minimum processors
      */
     public void setMinProcessors(int minProcessors) {
+
+        this.minProcessors = minProcessors;
         setProperty("minProcessors", String.valueOf(minProcessors));
+
     }
 
 
@@ -538,7 +754,9 @@ public class CoyoteConnector
      * Return the maximum number of processors allowed, or <0 for unlimited.
      */
     public int getMaxProcessors() {
-        return getIntProperty("maxThreads", -1);
+
+        return (maxProcessors);
+
     }
 
 
@@ -548,7 +766,10 @@ public class CoyoteConnector
      * @param maxProcessors The new maximum processors
      */
     public void setMaxProcessors(int maxProcessors) {
+
+        this.maxProcessors = maxProcessors;
         setProperty("maxThreads", String.valueOf(maxProcessors));
+
     }
 
 
@@ -556,7 +777,9 @@ public class CoyoteConnector
      * Return the port number on which we listen for requests.
      */
     public int getPort() {
-        return getIntProperty("port", 8080);
+
+        return (this.port);
+
     }
 
 
@@ -566,7 +789,10 @@ public class CoyoteConnector
      * @param port The new port number
      */
     public void setPort(int port) {
+
+        this.port = port;
         setProperty("port", String.valueOf(port));
+
     }
 
 
@@ -644,7 +870,9 @@ public class CoyoteConnector
      * Return the proxy server name for this Connector.
      */
     public String getProxyName() {
-        return (String)lookup("proxyName");
+
+        return (this.proxyName);
+
     }
 
 
@@ -656,8 +884,10 @@ public class CoyoteConnector
     public void setProxyName(String proxyName) {
 
         if(proxyName != null && proxyName.length() > 0) {
+            this.proxyName = proxyName;
             setProperty("proxyName", proxyName);
         } else {
+            this.proxyName = null;
             removeProperty("proxyName");
         }
 
@@ -668,7 +898,9 @@ public class CoyoteConnector
      * Return the proxy server port for this Connector.
      */
     public int getProxyPort() {
-        return getIntProperty("proxyPort",0);
+
+        return (this.proxyPort);
+
     }
 
 
@@ -678,7 +910,10 @@ public class CoyoteConnector
      * @param proxyPort The new proxy server port
      */
     public void setProxyPort(int proxyPort) {
+
+        this.proxyPort = proxyPort;
         setProperty("proxyPort", String.valueOf(proxyPort));
+
     }
 
 
@@ -688,7 +923,9 @@ public class CoyoteConnector
      * with a transport guarantee that requires SSL.
      */
     public int getRedirectPort() {
-        return getIntProperty("redirectPort", 443);
+
+        return (this.redirectPort);
+
     }
 
 
@@ -698,14 +935,17 @@ public class CoyoteConnector
      * @param redirectPort The redirect port number (non-SSL to SSL)
      */
     public void setRedirectPort(int redirectPort) {
+
+        this.redirectPort = redirectPort;
         setProperty("redirectPort", String.valueOf(redirectPort));
+
     }
 
     /**
      * Return the flag that specifies upload time-out behavior.
      */
     public boolean getDisableUploadTimeout() {
-        return getBooleanProperty("disableUploadTimeout", false);
+        return disableUploadTimeout;
     }
 
     /**
@@ -716,6 +956,7 @@ public class CoyoteConnector
      * <code>timeout</code> parameter is used to control uploads.
      */
     public void setDisableUploadTimeout( boolean isDisabled ) {
+        disableUploadTimeout = isDisabled;
         setProperty("disableUploadTimeout", String.valueOf(isDisabled));
     }
 
@@ -724,7 +965,6 @@ public class CoyoteConnector
      * Return the Keep-Alive policy for the connection.
      */
     public boolean getKeepAlive() {
-        int maxKeepAliveRequests = getMaxKeepAliveRequests();
         return ((maxKeepAliveRequests != 0) && (maxKeepAliveRequests != 1));
     }
 
@@ -742,13 +982,14 @@ public class CoyoteConnector
      * per connection.
      */
     public int getMaxKeepAliveRequests() {
-        return getIntProperty("maxKeepAliveRequests", 0);
+        return maxKeepAliveRequests;
     }
 
     /**
      * Set the maximum number of Keep-Alive requests to honor per connection.
      */
     public void setMaxKeepAliveRequests(int mkar) {
+        maxKeepAliveRequests = mkar;
         setProperty("maxKeepAliveRequests", String.valueOf(mkar));
     }
 
@@ -757,11 +998,9 @@ public class CoyoteConnector
      * through this connector.  Default value is "http".
      */
     public String getScheme() {
-        String scheme = (String)lookup("scheme");
-        if( scheme == null ) {
-            scheme = "http";
-        }
-        return scheme;
+
+        return (this.scheme);
+
     }
 
 
@@ -772,7 +1011,10 @@ public class CoyoteConnector
      * @param scheme The new scheme
      */
     public void setScheme(String scheme) {
+
+        this.scheme = scheme;
         setProperty("scheme", scheme);
+
     }
 
 
@@ -781,7 +1023,9 @@ public class CoyoteConnector
      * received through this connector.  Default value is "false".
      */
     public boolean getSecure() {
-        return getBooleanProperty("secure", false);
+
+        return (this.secure);
+
     }
 
 
@@ -792,14 +1036,18 @@ public class CoyoteConnector
      * @param secure The new secure connection flag
      */
     public void setSecure(boolean secure) {
+
+        this.secure = secure;
         setProperty("secure", String.valueOf(secure));
+
     }
 
     public boolean getTomcatAuthentication() {
-        return getBooleanProperty("tomcatAuthentication", false);
+        return tomcatAuthentication;
     }
 
     public void setTomcatAuthentication(boolean tomcatAuthentication) {
+        this.tomcatAuthentication = tomcatAuthentication;
         setProperty("tomcatAuthentication", String.valueOf(tomcatAuthentication));
     }
     
@@ -808,7 +1056,9 @@ public class CoyoteConnector
      * Return the TCP no delay flag value.
      */
     public boolean getTcpNoDelay() {
-        return getBooleanProperty("tcpNoDelay", false);
+
+        return (this.tcpNoDelay);
+
     }
 
 
@@ -819,7 +1069,10 @@ public class CoyoteConnector
      * @param tcpNoDelay The new TCP no delay flag
      */
     public void setTcpNoDelay(boolean tcpNoDelay) {
+
+        this.tcpNoDelay = tcpNoDelay;
         setProperty("tcpNoDelay", String.valueOf(tcpNoDelay));
+
     }
 
 
@@ -827,7 +1080,9 @@ public class CoyoteConnector
       * Return the character encoding to be used for the URI.
       */
      public String getURIEncoding() {
-         return (String)lookup("uRIEncoding");
+
+         return (this.URIEncoding);
+
      }
 
 
@@ -837,7 +1092,10 @@ public class CoyoteConnector
       * @param URIEncoding The new URI character encoding.
       */
      public void setURIEncoding(String URIEncoding) {
+
+         this.URIEncoding = URIEncoding;
          setProperty("uRIEncoding", URIEncoding);
+
      }
 
 
@@ -1055,7 +1313,7 @@ public class CoyoteConnector
                                            ssf.getKeyAlias());
         } else {
             IntrospectionUtils.setProperty(protocolHandler, "secure",
-                                           "" + getSecure());
+                                           "" + secure);
         }
 
         /* Set the configured properties.  This only sets the ones that were
@@ -1066,7 +1324,8 @@ public class CoyoteConnector
         while( keys.hasNext() ) {
             String name = (String)keys.next();
             String value = properties.get(name).toString();
-            IntrospectionUtils.setProperty(protocolHandler, name, value);
+	    String trnName = translateAttributeName(name);
+            IntrospectionUtils.setProperty(protocolHandler, trnName, value);
         }
         
 
@@ -1078,6 +1337,32 @@ public class CoyoteConnector
                  ("coyoteConnector.protocolHandlerInitializationFailed", e));
         }
     }
+
+    /*
+     * Translate the attribute name from the legacy Factory names to their
+     * internal protocol names.
+     */
+    private String translateAttributeName(String name) {
+	if ("clientAuth".equals(name)) {
+	    return "clientauth";
+	} else if ("keystoreFile".equals(name)) {
+	    return "keystore";
+	} else if ("randomFile".equals(name)) {
+	    return "randomfile";
+	} else if ("rootFile".equals(name)) {
+	    return "rootfile";
+	} else if ("keystorePass".equals(name)) {
+	    return "keypass";
+	} else if ("keystoreType".equals(name)) {
+	    return "keytype";
+	} else if ("sslProtocol".equals(name)) {
+	    return "protocol";
+	} else if ("sslProtocols".equals(name)) {
+	    return "protocols";
+	}
+	return name;
+    }
+
 
     /**
      * Begin processing requests via this Connector.
@@ -1174,57 +1459,13 @@ public class CoyoteConnector
 
     // -------------------- Management methods --------------------
 
-    public String getKeystoreType() {
-        String prop = (String)lookup("keytype");
-        if( prop == null ) {
-            ServerSocketFactory factory = this.getFactory();
-            if(factory instanceof CoyoteServerSocketFactory) {
-                prop = ((CoyoteServerSocketFactory)factory).getKeystoreType();
-            }
-        }
-        return prop;
-    }
-
-    public void setKeystoreType(String kt) {
-        setProperty("keytype", kt);
-    }
-
-    public String getRootFile() {
-        String prop = (String)lookup("rootfile");
-        if( prop == null) {
-            ServerSocketFactory factory = this.getFactory();
-            if(factory instanceof CoyoteServerSocketFactory) {
-                prop = ((CoyoteServerSocketFactory)factory).getRootFile();
-            }
-        }
-        return prop;
-    }
-
-    public void setRootFile(String rf) {
-        setProperty("rootfile", rf);
-    }
-
-    public String getRandomFile() {
-        String prop = (String)lookup("randomfile");
-        if( prop == null) {
-            ServerSocketFactory factory = this.getFactory();
-            if(factory instanceof CoyoteServerSocketFactory) {
-                prop = ((CoyoteServerSocketFactory)factory).getRandomFile();
-            }
-        }
-        return prop;
-    }
-    public void setRandomFile(String rf) {
-        setProperty("randomfile", rf);
-    }
-
     public boolean getClientAuth() {
         boolean ret = false;
 
-        String prop = (String) lookup("clientauth");
+        String prop = (String) getProperty("clientauth");
         if (prop != null) {
             ret = Boolean.valueOf(prop).booleanValue();
-        } else {        
+        } else {	
             ServerSocketFactory factory = this.getFactory();
             if (factory instanceof CoyoteServerSocketFactory) {
                 ret = ((CoyoteServerSocketFactory)factory).getClientAuth();
@@ -1236,11 +1477,15 @@ public class CoyoteConnector
 
     public void setClientAuth(boolean clientAuth) {
         setProperty("clientauth", String.valueOf(clientAuth));
+        ServerSocketFactory factory = this.getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            ((CoyoteServerSocketFactory)factory).setClientAuth(clientAuth);
+        }
     }
 
 
     public String getKeystoreFile() {
-        String ret = (String) lookup("keystore");
+        String ret = (String) getProperty("keystore");
         if (ret == null) {
             ServerSocketFactory factory = this.getFactory();
             if (factory instanceof CoyoteServerSocketFactory) {
@@ -1253,13 +1498,17 @@ public class CoyoteConnector
 
     public void setKeystoreFile(String keystoreFile) {
         setProperty("keystore", keystoreFile);
+        ServerSocketFactory factory = this.getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            ((CoyoteServerSocketFactory)factory).setKeystoreFile(keystoreFile);
+        }
     }
 
     /**
      * Return keystorePass
      */
     public String getKeystorePass() {
-        String ret = (String) lookup("keypass");
+        String ret = (String) getProperty("keypass");
         if (ret == null) {
             ServerSocketFactory factory = getFactory();
             if (factory instanceof CoyoteServerSocketFactory ) {
@@ -1275,6 +1524,10 @@ public class CoyoteConnector
      */
     public void setKeystorePass(String keystorePass) {
         setProperty("keypass", keystorePass);
+        ServerSocketFactory factory = getFactory();
+        if( factory instanceof CoyoteServerSocketFactory ) {
+            ((CoyoteServerSocketFactory)factory).setKeystorePass(keystorePass);
+        }
     }
 
     /**
@@ -1285,7 +1538,7 @@ public class CoyoteConnector
      * enabled
      */
     public String getCiphers() {
-        String ret = (String) lookup("ciphers");
+        String ret = (String) getProperty("ciphers");
         if (ret == null) {
             ServerSocketFactory factory = getFactory();
             if (factory instanceof CoyoteServerSocketFactory) {
@@ -1306,6 +1559,10 @@ public class CoyoteConnector
      */
     public void setCiphers(String ciphers) {
         setProperty("ciphers", ciphers);
+        ServerSocketFactory factory = getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            ((CoyoteServerSocketFactory)factory).setCiphers(ciphers);
+        }
     }
 
     /**
@@ -1315,7 +1572,7 @@ public class CoyoteConnector
      * @return The alias name of the keypair and supporting certificate chain
      */
     public String getKeyAlias() {
-        String ret = (String) lookup("keyAlias");
+        String ret = (String) getProperty("keyAlias");
         if (ret == null) {
             ServerSocketFactory factory = getFactory();
             if (factory instanceof CoyoteServerSocketFactory) {
@@ -1335,6 +1592,10 @@ public class CoyoteConnector
      */
     public void setKeyAlias(String alias) {
         setProperty("keyAlias", alias);
+        ServerSocketFactory factory = getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            ((CoyoteServerSocketFactory)factory).setKeyAlias(alias);
+        }
     }
 
     /**
@@ -1343,7 +1604,7 @@ public class CoyoteConnector
      * @return SSL protocol variant
      */
     public String getSslProtocol() {
-        String ret = (String) lookup("sslProtocol");
+        String ret = (String) getProperty("sslProtocol");
         if (ret == null) {
             ServerSocketFactory factory = getFactory();
             if (factory instanceof CoyoteServerSocketFactory) {
@@ -1361,6 +1622,10 @@ public class CoyoteConnector
      */
     public void setSslProtocol(String sslProtocol) {
         setProperty("sslProtocol", sslProtocol);
+        ServerSocketFactory factory = getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            ((CoyoteServerSocketFactory)factory).setProtocol(sslProtocol);
+        }
     }
 
     /**
@@ -1369,7 +1634,7 @@ public class CoyoteConnector
      * @return Comma-separated list of SSL protocol variants
      */
     public String getSslProtocols() {
-        String ret = (String) lookup("sslProtocols");
+        String ret = (String) getProperty("sslProtocols");
         if (ret == null) {
             ServerSocketFactory factory = getFactory();
             if (factory instanceof CoyoteServerSocketFactory) {
@@ -1387,6 +1652,10 @@ public class CoyoteConnector
      */
     public void setSslProtocols(String sslProtocols) {
         setProperty("sslProtocols", sslProtocols);
+        ServerSocketFactory factory = getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            ((CoyoteServerSocketFactory)factory).setProtocols(sslProtocols);
+        }
     }
 
 
@@ -1490,63 +1759,6 @@ public class CoyoteConnector
         if( getService() == null)
             return;
         getService().removeConnector(this);
-    }
-
-    /**
-     * Find the value for an attribute.
-     * @param name Name of attribute.
-     * @param return value of attribute.
-     */
-    private Object lookup(String name) {
-        Object result = null;
-        /* check the Protocol first, since JkCoyote has an independent
-         * configure method.
-         */
-        if( protocolHandler != null ) {
-            result = IntrospectionUtils.getProperty(protocolHandler, name);
-        }
-        if( result == null ) {
-            result = properties.get(name);
-        }
-        return result;
-    }
-    /**
-     * Return an int value to a configured property.
-     */
-    private int getIntProperty(String name, int defval) {
-        Object ival = lookup(name);
-        int res = defval;
-        if( ival == null ) {
-            return defval;
-        } else if(ival instanceof String) {
-            try {
-                res = Integer.parseInt((String)ival);
-            } catch(NumberFormatException nfex) {
-                log.debug("Unable to parse int property " +name,nfex);
-            }
-        } else if( ival instanceof Integer) {
-            res = ((Integer)ival).intValue();
-        }
-        return res;
-    }
-    /**
-     * Return a Boolean value to a configured property.
-     */
-    private boolean getBooleanProperty(String name, boolean defval) {
-        Object bval = lookup(name);
-        boolean res = defval;
-        if( bval == null ) {
-            return defval;
-        } else if(bval instanceof String) {
-            if("true".equalsIgnoreCase((String)bval)) {
-                res = true;
-            } else if("false".equalsIgnoreCase((String)bval)) {
-                res = false;
-            }
-        } else if(bval instanceof Boolean) {
-            res = ((Boolean)bval).booleanValue();
-        }
-        return res;
     }
 
 }
