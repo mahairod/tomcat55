@@ -439,8 +439,6 @@
 
   <target name="build" depends="init"
           description="Builds all components">
-    <copy file="${commons-digester.jar}" todir="${tomcat.build}/server/lib"/>
-    <copy file="${commons-collections.jar}" todir="${tomcat.build}/common/lib"/>
 
     <antcall target="build-tomcatutil"/>
     <antcall target="build-tomcatcoyote"/>
