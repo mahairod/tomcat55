@@ -558,6 +558,9 @@ public class StatusTransformer {
             while (iterator.hasNext()) {
                 ObjectName contextON = (ObjectName) iterator.next();
                 String webModuleName = contextON.getKeyProperty("name");
+                if (webModuleName.startsWith("//")) {
+                    webModuleName = webModuleName.substring(2);
+                }
 
                 writer.print("<a href=\"#" + (count++) + ".0\">");
                 writer.print(webModuleName);
