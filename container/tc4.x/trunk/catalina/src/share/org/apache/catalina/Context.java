@@ -83,8 +83,8 @@ import org.apache.catalina.util.CharsetMapper;
 
 /**
  * A <b>Context</b> is a Container that represents a servlet context, and
- * therefore an individual web applicaiton, in the Catalina servlet engine.
- * It is therefore useful in almost every deploymentof Catalina (even if a
+ * therefore an individual web application, in the Catalina servlet engine.
+ * It is therefore useful in almost every deployment of Catalina (even if a
  * Connector attached to a web server (such as Apache) uses the web server's
  * facilities to identify the appropriate Wrapper to handle this request.
  * It also provides a convenient mechanism to use Interceptors that see
