@@ -91,6 +91,12 @@ public abstract class AbstractCatalinaTask extends Task {
     // ----------------------------------------------------- Instance Variables
 
 
+    /**
+     * manager webapp's encoding.
+     */ 
+    private static String CHARSET = "utf-8";
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -245,7 +251,7 @@ public abstract class AbstractCatalinaTask extends Task {
             }
 
             // Process the response message
-            reader = new InputStreamReader(hconn.getInputStream());
+            reader = new InputStreamReader(hconn.getInputStream(), CHARSET);
             StringBuffer buff = new StringBuffer();
             String error = null;
             boolean first = true;
