@@ -770,7 +770,8 @@ public class DeltaSession
 
             
             if ( notifyCluster ) {
-                log.debug("Notifying cluster of expiration primary=" +
+                if(log.isDebugEnabled())
+                    log.debug("Notifying cluster of expiration primary=" +
                          isPrimarySession() + " id=" + expiredId);
                 ( (DeltaManager) manager).sessionExpired(expiredId);
             }
