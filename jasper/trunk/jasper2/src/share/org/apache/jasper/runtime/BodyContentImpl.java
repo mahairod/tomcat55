@@ -106,7 +106,7 @@ public class BodyContentImpl extends BodyContent {
 	} else {
 	    ensureOpen();
 	    if (nextChar >= bufferSize) {
-		reAllocBuff (0);
+		reAllocBuff (1);
 	    }
 	    cb[nextChar++] = (char) c;
 	}
