@@ -612,9 +612,9 @@ public class StandardPipeline
             } catch (LifecycleException e) {
                 log.error("StandardPipeline.removeValve: stop: ", e);
             }
-            // Unregister the removed valave
-            unregisterValve(valve);
         }
+        // Unregister the removed valave
+        unregisterValve(valve);
 
     }
 
