@@ -50,7 +50,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.IntrospectionUtils;
 
-import org.apache.catalina.security.SecurityUtil;
 /**
  * Standard implementation of <code>RequestDispatcher</code> that allows a
  * request to be forwarded to a different resource to create the ultimate
