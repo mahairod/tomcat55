@@ -83,7 +83,6 @@ import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
 import org.apache.catalina.ValveContext;
-import org.apache.catalina.connector.HttpResponseWrapper;
 import org.apache.catalina.util.StringManager;
 
 
