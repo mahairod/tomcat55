@@ -35,7 +35,8 @@
         </logic:present>
         <td><div align="left" class="table-normal-text">
           <html:link page='<%= "/resources/setUpUserDatabase.do?objectName=" + 
-                               URLEncoder.encode(userDatabase) %>'>
+                               URLEncoder.encode(userDatabase) + "&domain=" + 
+                               URLEncoder.encode(domainInfo) %>'>
             <controls:attribute name="userDatabase" attribute="name"/>
           </html:link>
         </div></td>

@@ -18,6 +18,10 @@
 
 <html:form action="/resources/listUserDatabases">
 
+  <bean:define id="domainInfo" type="java.lang.String"
+               name="userDatabasesForm" property="domain"/>
+  <html:hidden property="domain"/>
+
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%">
@@ -36,8 +40,15 @@
 </html:form>
 
 <br>
+
 <bean:define id="checkboxes" scope="page" value="true"/>
+
 <html:form action="/resources/deleteUserDatabases">
+
+  <bean:define id="domainInfo" type="java.lang.String"
+               name="userDatabasesForm" property="domain"/>
+  <html:hidden property="domain"/>
+
   <%@ include file="../buttons.jsp" %>
   <br>
   <%@ include file="userDatabases.jspf" %>

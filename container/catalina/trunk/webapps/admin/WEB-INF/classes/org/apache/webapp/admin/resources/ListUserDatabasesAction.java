@@ -147,10 +147,16 @@ public class ListUserDatabasesAction extends Action {
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
 
+        String domain = request.getParameter("domain");
+        if (domain != null) {
+            domain = URLDecoder.decode(domain);
+        }
         // Create a form bean containing the requested MBean Names
         UserDatabasesForm userDatabasesForm = null;
         try {
-              userDatabasesForm = ResourceUtils.getUserDatabasesForm(mserver);
+              userDatabasesForm = 
+                        ResourceUtils.getUserDatabasesForm(mserver, domain);
+              userDatabasesForm.setDomain(domain);
         } catch (Exception e) {
             getServlet().log(resources.getMessage
                              (locale,

@@ -153,12 +153,14 @@ public final class SetUpUserDatabaseAction extends Action {
 
         // Set up the form bean based on the creating or editing state
         String objectName = request.getParameter("objectName");
+        String domain = request.getParameter("domain");
         
         UserDatabaseForm userDatabaseForm = new UserDatabaseForm();
         userDatabaseForm.setFactory
                             (SaveUserDatabaseAction.USERDB_FACTORY);
         userDatabaseForm.setType
-                            (ResourceUtils.USERDB_CLASS);            
+                            (ResourceUtils.USERDB_CLASS);  
+        userDatabaseForm.setDomain(domain);               
 
         if (objectName == null) {
             userDatabaseForm.setNodeLabel
