@@ -306,7 +306,8 @@ public class Javac extends Task {
 	// add our classpath to the mix
 
 	if (compileClasspath != null) {
-	    StringTokenizer tok = new StringTokenizer(compileClasspath, ":",
+	    StringTokenizer tok = new StringTokenizer(compileClasspath, 
+            File.pathSeparator,
 						      false);
 	    while (tok.hasMoreTokens()) {
 		File f = project.resolveFile(tok.nextToken());
