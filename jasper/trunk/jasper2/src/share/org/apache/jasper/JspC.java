@@ -882,9 +882,6 @@ public class JspC implements Options {
             }
             throw new JasperException(e);
         } finally {
-            if (loader != null) {
-                LogFactory.release(loader);
-            }
             if(originalClassLoader != null) {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
@@ -1013,6 +1010,10 @@ public class JspC implements Options {
                 rootCause.printStackTrace();
             }
             throw je;
+        } finally {
+            if (loader != null) {
+                LogFactory.release(loader);
+            }
         }
     }
 
