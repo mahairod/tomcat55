@@ -373,8 +373,8 @@ public final class SaveConnectorAction extends Action {
             if("HTTPS".equalsIgnoreCase(connectorType)) {
                 attribute = "clientAuth";              
                 mBServer.setAttribute(coname,
-                              new Attribute("clientAuth", new Boolean(
-                                             cform.getClientAuthentication())));            
+                              new Attribute("clientAuth", 
+                                             cform.getClientAuthentication()));            
                 
                 attribute = "keystoreFile";
                 String keyFile = cform.getKeyStoreFileName();

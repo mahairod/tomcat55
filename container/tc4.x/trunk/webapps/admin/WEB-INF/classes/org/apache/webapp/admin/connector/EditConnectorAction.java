@@ -172,6 +172,7 @@ public class EditConnectorAction extends Action {
         connectorFm.setNodeLabel(sb.toString());
         connectorFm.setDebugLvlVals(Lists.getDebugLevels());               
         connectorFm.setBooleanVals(Lists.getBooleanValues());        
+        connectorFm.setClientAuthVals(Lists.getClientAuthValues());
         
         String attribute = null;
         try {
@@ -255,7 +256,7 @@ public class EditConnectorAction extends Action {
                 // These are set only for SSL connectors.
                 attribute = "clientAuth";
                 connectorFm.setClientAuthentication
-                    (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
+                    ((String) mBServer.getAttribute(cname, attribute));
                 attribute = "keystoreFile";
                 connectorFm.setKeyStoreFileName
                     ((String) mBServer.getAttribute(cname, attribute));
