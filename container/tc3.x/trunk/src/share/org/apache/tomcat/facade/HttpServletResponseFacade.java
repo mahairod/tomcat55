@@ -210,11 +210,19 @@ final class HttpServletResponseFacade  implements HttpServletResponse
     }
 
     public void setDateHeader(String name, long date) {
-	response.setHeader(name, new HttpDate(date).toString());
+	MimeHeaders headers=response.getMimeHeaders();
+	MimeHeaderField headerF=headers.find( name );
+	if( headerF == null )
+	    headerF=headers.putHeader();
+	headerF.setName( name );
+	headerF.setDateValue( date );
     }
-
+    
     public void addDateHeader(String name, long value) {
-	response.addHeader(name, new HttpDate(value).toString());
+	MimeHeaders headers=response.getMimeHeaders();
+	MimeHeaderField headerF=headers.putHeader();
+	headerF.setName( name );
+	headerF.setDateValue( value );
     }
     
     public void setHeader(String name, String value) {

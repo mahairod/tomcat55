@@ -106,6 +106,9 @@ public class MimeHeaderField {
      */
     protected final HttpDate dateValue = new HttpDate(0);
 
+    StringBuffer sb=null;
+    // Will be used to conver date value - _never_ call toString()
+    
     /**
      * The header field value type.
      */
@@ -218,11 +221,18 @@ public class MimeHeaderField {
 	}
     }
 
+    public MessageString getNameMessageString() {
+	return name;
+    }
+
+    public MessageString getValueMessageString() {
+	return value;
+    }
+
     /**
      * Returns the integer value of the header field.
      * @exception NumberFormatException if the integer format was invalid
      */
-
     public int getIntValue()
 	throws NumberFormatException
     {

@@ -164,7 +164,10 @@ public class PageContextImpl extends PageContext {
 	autoFlush    = true;
 	request      = null;
 	response     = null;
-	// Reuse	out	     = null; // out is closed elsewhere
+	// Reuse // XXX problems - need to fix them first!!
+	out	     = null; // out is closed elsewhere
+	if( out instanceof JspWriterImpl )
+	    ((JspWriterImpl)out).recycle();
 	session      = null;
 
 	attributes.clear();

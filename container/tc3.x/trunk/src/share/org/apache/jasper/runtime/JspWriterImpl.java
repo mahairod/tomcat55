@@ -142,10 +142,6 @@ public class JspWriterImpl extends JspWriter {
 	this.bufferSize=sz;
     }
 
-    void recycle() {
-	
-    }
-    
     /**
      * Flush the output buffer to the underlying character stream, without
      * flushing the stream itself.  This method is non-private only so that it
@@ -652,4 +648,10 @@ public class JspWriterImpl extends JspWriter {
 	}
     }
 
+    /** Package-level access
+     */
+    void recycle() {
+	flushed = false;
+	nextChar = 0;
+    }
 }
