@@ -523,7 +523,7 @@ final class StandardWrapperValve
                                   ((HttpServletRequest) sreq).getRequestURI());
 	    sreq.setAttribute(Globals.EXCEPTION_TYPE_ATTR,
                               realError.getClass());
-	    if (custom(request, response, errorPage))
+            if (custom(request, response, errorPage))
 		return;
 	}
 
@@ -774,11 +774,17 @@ final class StandardWrapperValve
 	if (message == null)
 	    message = "";
 
+	// Do nothing on a 1xx status
+	if (statusCode < 200)
+	    return;
 	// Do nothing on an OK status
 	if (statusCode == HttpServletResponse.SC_OK)
 	    return;
 	// Do nothing on a NO MODIFIED status
 	if (statusCode == HttpServletResponse.SC_NOT_MODIFIED)
+	    return;
+	// Do nothing on a NO CONTENT status
+	if (statusCode == HttpServletResponse.SC_NO_CONTENT)
 	    return;
 
 	// Handle a custom error page for this status code
