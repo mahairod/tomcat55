@@ -111,12 +111,13 @@
   <!--                       is the time in seconds between checks to see   -->
   <!--                       if a JSP page needs to be recompiled. [300]    -->
   <!--                                                                      -->
-  <!--   modificationTestInterval    Causes a JSP (and its dependent        -->
-  <!--                       files) to not be checked for modification      -->
-  <!--                       during the specified time interval             -->
-  <!--                       (in seconds) from the last time the JSP was    -->
-  <!--                       checked for modification. A value of 0 will    -->
-  <!--                       cause the JSP to be checked on every access.   -->
+  <!--   modificationTestInterval                                           -->
+  <!--                       Causes a JSP (and its dependent files) to not  -->
+  <!--                       be checked for modification during the         -->
+  <!--                       specified time interval (in seconds) from the  -->
+  <!--                       last time the JSP was checked for              -->
+  <!--                       modification. A value of 0 will cause the JSP  -->
+  <!--                       to be checked on every access.                 -->
   <!--                       Used in development mode only. [4]             -->
   <!--                                                                      -->
   <!--   compiler            Which compiler Ant should use to compile JSP   -->
