@@ -64,11 +64,6 @@
 package org.apache.catalina;
 
 
-import java.beans.PropertyChangeListener;
-import java.util.Collection;
-import org.apache.catalina.cluster.ClusterMemberInfo;
-import org.apache.catalina.cluster.ClusterReceiver;
-import org.apache.catalina.cluster.ClusterSender;
 
 /**
  * A <b>Cluster</b> works as a Cluster client/server for the local host
@@ -80,6 +75,7 @@ import org.apache.catalina.cluster.ClusterSender;
  * <code>ClusterInfo</code> used for receiving information in the Cluster.
  *
  * @author Bip Thelin
+ * @author Remy Maucherat
  * @version $Revision$, $Date$
  */
 
@@ -101,21 +97,6 @@ public interface Cluster {
      * @return The name of the cluster associated with this server
      */
     public String getClusterName();
-
-    /**
-     * Set the time in seconds that the Cluster waits before
-     * checking for changes and replicated data.
-     *
-     * @param checkInterval The time in seconds to sleep
-     */
-    public void setCheckInterval(int checkInterval);
-
-    /**
-     * Get the time in seconds that this Cluster sleeps.
-     *
-     * @return The value in seconds
-     */
-    public int getCheckInterval();
 
     /**
      * Set the name of the cluster to join, if no cluster with
@@ -153,44 +134,29 @@ public interface Cluster {
      */
     public int getDebug();
 
+    /**
+     * Set the protocol parameters.
+     *
+     * @param protocol The protocol used by the cluster
+     */
+    public void setProtocol(String protocol);
+
+    /**
+     * Get the protocol used by the cluster.
+     *
+     * @return The protocol
+     */
+    public String getProtocol();
+
     // --------------------------------------------------------- Public Methods
 
     /**
-     * Returns a collection containing <code>ClusterMemberInfo</code>
-     * on the remote members of this Cluster. This method does
-     * not include the local host, to retrieve
-     * <code>ClusterMemberInfo</code> on the local host
-     * use <code>getLocalClusterInfo()</code> instead.
-     *
-     * @return Collection with all members in the Cluster
+     * Create a new manager which will use this cluster to replicate its 
+     * sessions.
+     * 
+     * @param name Name (key) of the application with which the manager is
+     * associated
      */
-    public ClusterMemberInfo[] getRemoteClusterMembers();
+    public Manager createManager(String name);
 
-    /**
-     * Returns a <code>ClusterSender</code> which is the interface
-     * to use when sending information in the Cluster. senderId is
-     * used as a identifier so that information sent through this
-     * instance can only be used with the respectice
-     * <code>ClusterReceiver</code>
-     *
-     * @return The ClusterSender
-     */
-    public ClusterSender getClusterSender(String senderId);
-
-    /**
-     * Returns a <code>ClusterReceiver</code> which is the interface
-     * to use when receiving information in the Cluster. senderId is
-     * used as a indentifier, only information send through the
-     * <code>ClusterSender</code> with the same senderId can be received.
-     *
-     * @return The ClusterReceiver
-     */
-    public ClusterReceiver getClusterReceiver(String senderId);
-
-    /**
-     * Return cluster information about the local host
-     *
-     * @return Cluster information
-     */
-    public ClusterMemberInfo getLocalClusterMember();
 }
