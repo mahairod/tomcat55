@@ -18,7 +18,39 @@
 <section name="Preface">
 <p>
     This FAQ section provides help with some security-related issues.
+    If you hear of a vulnerability or its exploitation, please let us know
+    on the user <a href="http://jakarta.apache.org/site/mail2.html#Tomcat">
+    mailing lists.</a>
 </p>
+
+<subsection name="The Record">
+<p>
+  Tomcat's security record is impeccable.  There have been no public
+  cases of damage done to a company, organization, or individual due
+  to a Tomcat security issue.  There have been no documented cases
+  of data loss or application crashes caused by an intruder.  While
+  there have been numerous analyses conducted on Tomcat, partially
+  because this is easy to do with Tomcat's source code openly available,
+  there have been only a few <strong>theoretical</strong> vulnerabilities
+  found.  All of those were addressed rapidly even though there were no
+  documented cases of actual exploitation of these vulnerabilities.  
+</p>
+</subsection>
+
+<subsection name="Role of Customization">
+<p>
+  We believe, and the evidence suggests, that Tomcat is more than secure
+  enough for most use-cases.  However, like all other components of Tomcat,
+  you can customize any and all of the relevant parts of the server to
+  achieve even higher security.  For example, the session manager implementation
+  is pluggable, and even the default implementation has support for pluggable
+  random number generators.  If you have a special need that you feel is not
+  met by Tomcat out of the box, consider these customization options.  At the
+  same time, please bring up your requirements on the user mailing list, where
+  we'll be glad to discuss it and assist in your approach/design/implementation
+  as needed.
+</p>
+</subsection>
 </section>
 
 
@@ -64,6 +96,12 @@
      <li>
        <a href="#jsvcExample">
          How do I use jsvc/procrun to run Tomcat on port 80 securely?
+       </a>
+     </li>
+
+     <li>
+       <a href="#analyses">
+         Has Tomcat's security been independently analyzed or audited?
        </a>
      </li>
 
@@ -173,6 +211,17 @@
    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=108566020231438&amp;w=2">
      this mailing list post
    </a> for a complete setup example with permissions etc.
+  </answer>
+
+  <question>
+    <a name="analyses">
+      Has Tomcat's security been independently analyzed or audited?
+    </a>
+  </question>
+  <answer>
+    Yes, by numerous organizations and individuals, many times.  Try
+    <a href="http://www.google.com/search?sourceid=navclient&amp;ie=UTF-8&amp;q=is+tomcat+secure">
+    this Google search</a> and you'll see many references, guides, and analyses.
   </answer>
 
 </section>

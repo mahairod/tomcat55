@@ -6,7 +6,39 @@
     " align="right" src="../../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Security</h2></td><td nowrap="true" valign="top" align="right"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
 <p>
     This FAQ section provides help with some security-related issues.
+    If you hear of a vulnerability or its exploitation, please let us know
+    on the user <a href="http://jakarta.apache.org/site/mail2.html#Tomcat">
+    mailing lists.</a>
 </p>
+
+<table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#828DA6"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="The Record"><strong>The Record</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+  Tomcat's security record is impeccable.  There have been no public
+  cases of damage done to a company, organization, or individual due
+  to a Tomcat security issue.  There have been no documented cases
+  of data loss or application crashes caused by an intruder.  While
+  there have been numerous analyses conducted on Tomcat, partially
+  because this is easy to do with Tomcat's source code openly available,
+  there have been only a few <strong>theoretical</strong> vulnerabilities
+  found.  All of those were addressed rapidly even though there were no
+  documented cases of actual exploitation of these vulnerabilities.  
+</p>
+</blockquote></td></tr></table>
+
+<table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#828DA6"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Role of Customization"><strong>Role of Customization</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+  We believe, and the evidence suggests, that Tomcat is more than secure
+  enough for most use-cases.  However, like all other components of Tomcat,
+  you can customize any and all of the relevant parts of the server to
+  achieve even higher security.  For example, the session manager implementation
+  is pluggable, and even the default implementation has support for pluggable
+  random number generators.  If you have a special need that you feel is not
+  met by Tomcat out of the box, consider these customization options.  At the
+  same time, please bring up your requirements on the user mailing list, where
+  we'll be glad to discuss it and assist in your approach/design/implementation
+  as needed.
+</p>
+</blockquote></td></tr></table>
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
   <ul>
      <li>
@@ -49,6 +81,12 @@
      <li>
        <a href="#jsvcExample">
          How do I use jsvc/procrun to run Tomcat on port 80 securely?
+       </a>
+     </li>
+
+     <li>
+       <a href="#analyses">
+         Has Tomcat's security been independently analyzed or audited?
        </a>
      </li>
 
@@ -155,6 +193,17 @@
    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=108566020231438&w=2">
      this mailing list post
    </a> for a complete setup example with permissions etc.
+  </div><br>
+
+  <b style="font-size: larger">
+    <a name="analyses">
+      Has Tomcat's security been independently analyzed or audited?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    Yes, by numerous organizations and individuals, many times.  Try
+    <a href="http://www.google.com/search?sourceid=navclient&ie=UTF-8&q=is+tomcat+secure">
+    this Google search</a> and you'll see many references, guides, and analyses.
   </div><br>
 
 </blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
