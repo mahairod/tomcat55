@@ -1691,7 +1691,14 @@ public final class CGIServlet extends HttpServlet {
             ByteArrayOutputStream contentStream = null;
             if(!"".equals(sContentLength)) {
                 byte[] content = new byte[Integer.parseInt(sContentLength)];
-                int lenRead = stdin.read(content);
+
+                // Bugzilla 32023
+                int lenRead = 0;
+                do {
+                    int partRead = stdin.read(content,lenRead,content.length-lenRead);
+                    lenRead += partRead;
+                } while (lenRead > 0 && lenRead < content.length);
+
                 contentStream = new ByteArrayOutputStream(
                         Integer.parseInt(sContentLength));
                 if ("POST".equals(env.get("REQUEST_METHOD"))) {
