@@ -415,8 +415,6 @@ class MyEntityResolver implements EntityResolver {
 		}
 		InputSource isrc =
 		    new InputSource(input);
-                System.out.println("MyEntityResolver '" + publicId +
-                                   "' --> '" + resourcePath + "'");
 		return isrc;
 	    }
 	}
