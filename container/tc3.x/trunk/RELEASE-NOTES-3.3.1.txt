@@ -99,6 +99,8 @@ Bug No.  Description
          Eliminated some hard coded '\n' line separators used by Jasper in the
          translated Java file.
 
+	 Fixed the position of the ;jsessionid when Tomcat generates a 401 
+	 response.  Now it is before the query string instead of after.
 
 Configuration:
 
