@@ -13,6 +13,231 @@
 
 <body>
 
+<section name="Tomcat 5.0.15 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <fix>
+      Remove useCanonicalCaches system property from JVM startup on Windows, as
+      Sun JDK 1.4.2_02 fixes the bad behavior (remm)
+      </fix>
+      <docs>
+      In the Servlet spec, add missing package Javadoc description (jfarcand)
+      </docs>
+      <update>
+      Update to commons-daemon 1.0 alpha (jfclere)
+      </update>
+      <update>
+      Use base-jakarta.loc property to avoid hardcoding locations (jfclere)
+      </update>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <update>
+      Merge digester's initialization logic into one class and add schema 
+      support for parsers other than Xerces (jfarcand)
+      </update>
+      <update>
+      Modify the MBean lifecycle for the containers: the MBeans will now be 
+      removed only on destroy, rather than on stop (remm)
+      </update>
+      <fix>
+      <bug>9723</bug>: Avoid unneccessray calls to RequestUtil.filter, 
+      submitted by Arvind Srinivasan (amyroh)
+      </fix>
+      <fix>
+      <bug>23853</bug>: add MBean description for DatasourceRealm, based on 
+      a patch by Kyle VanderBeek (amyroh)
+      </fix>
+      <fix>
+      Fix unregistration of valves on stop (the objectname should be reset so 
+      that the valve is registered again) (remm)
+      </fix>
+      <fix>
+      Fix registration of the root context through JMX (basically, it's the 
+      usual "/" to "" conversion for the path) (remm)
+      </fix>
+      <update>
+      All the properties definied in catalina.properties will now be set as
+      system properties (remm)
+      </update>
+      <update>
+      Add fields to control the resources, as well as set them globally using
+      DefaultContext (remm)
+      </update>
+      <fix>
+      In PersistentManagerBase, return the object instead of a null, and 
+      throw the proper exception (jfarcand)
+      </fix>
+      <add>
+      Extend digester to be able to do system property replacement 
+      in server.xml and the context config files, using the ${...} syntax
+      used by Ant (remm)
+      </add>
+      <fix>
+      <bug>24006</bug>: allow header handling in WebDAV servlet, 
+      submitted by Mark Thomas (remm)
+      </fix>
+      <fix>
+      <bug>24368</bug>: Fix unhandled exceptionm submitted by Mark Thomas
+      (remm)
+      </fix>
+      <fix>
+      <bug>23764</bug>: fix SSO logout (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <update>
+      Added support for localized messages in the thread pool (luehe)
+      </update>
+      <fix>
+      <bug>24270</bug>: NoClassDefFoundError when running in security mode
+      (jfarcand)
+      </fix>
+      <update>
+      Correct any maxThreads settings &lt; 10 in adjustLimits(), since 
+      they would result in a non functional connector (luehe)
+      </update>
+      <fix>
+      <bug>24428</bug>: No continue if not HTTP/1.1 (remm)
+      </fix>
+      <fix>
+      Encode address property so Connector can handle IPV6 address 
+      in ObjectName (amyroh)
+      </fix>
+      <fix>
+      Don't add the charset if it's the default one (remm)
+      </fix>
+      <fix>
+      Add getter for RequestInfo.globalProcessor - it was returning 
+      AttributeNotFoundException because of missing getter (amyroh)
+      </fix>
+      <update>
+      Add a limit to the size of a POST which will be processed 
+      using getParameter (remm)
+      </update>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      <bug>24186</bug>: Jasper SystemLogHandler memory leak, submitted by
+      Matthias Ernst
+      </fix>
+      <update>
+      Concatenate text strings of adjecent TemplateText nodes, which may
+      reduce code size and improve performance (kinman)
+      </update>
+      <fix>
+      <bug>10903</bug>: Generate errors for unbalanced end tags (kinman)
+      </fix>
+      <docs>
+      Add some javacdocs in EL related classes (kinman)
+      </docs>
+      <fix>
+      Use ISO-8859-1 as the default encoding for &lt;jsp:param&gt; since 
+      it is the default encoding for the request object (kinman)
+      </fix>
+      <update>
+      A smal performance improvement: instantiate the bean object with its
+      constructor, if "class" attribute is specified in usebean, instead of
+      going thru java.beans.Beans.instantiate() (kinman)
+      </update>
+      <update>
+      <bug>24506</bug>: provide an option to trim white spaces that appear 
+      in a template text between two actions/directives; this is not spec
+      compliant, so this is disabled by default (kinman)
+      </update>
+      <docs>
+      Document Jasper option "trimSpaces" (kinman, remm)
+      </docs>
+      <fix>
+      '&lt;' operator used in simple Math throws an error: When used 
+      with taglib (luehe)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <fix>
+      Fix incorrect tags comments in the admin webapp (kinman)
+      </fix>
+      <fix>
+      <bug>24349</bug>: Avoid NPE (which renders the HTML manager servlet 
+      unusable) if a context hasn't been started successfully, submitted by
+      Ferenc Dobi (remm)
+      </fix>
+      <fix>
+      <bug>24250</bug>: Make output compatible with JMX Ant task, submitted by
+      Peter Rossbach (remm)
+      </fix>
+      <fix>
+      Fix the webapps docbase in the embed distribution, and some cleanup 
+      (remm)
+      </fix>
+      <update>
+      Include the manager in the embed package (remm)
+      </update>
+      <docs>
+      Document new Jasper, connector and default context attributes (remm)
+      </docs>
+      <docs>
+      Remove Tyrex documentation for now (remm)
+      </docs>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Modules">
+
+    <changelog>
+
+      <add>
+      Add delta manager to clustering (fhanik)
+      </add>
+      <fix>
+      If null is passed into the value of setAttribute to a clustered session,
+      then remove the attribute (fhanik)
+      </fix>
+      <update>
+      Add more configuration options to clustering (fhanik)
+      </update>
+      <update>
+      Clustering code reorganization (fhanik)
+      </update>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.14 (remm)">
 
   <subsection name="General">
@@ -2838,6 +3063,18 @@
     </changelog>
 
   </subsection>
+
+</section>
+
+<section name="Tomcat 5.0.2 (remm)">
+
+</section>
+
+<section name="Tomcat 5.0.1 (remm)">
+
+</section>
+
+<section name="Tomcat 5.0.0 (remm)">
 
 </section>
 
