@@ -135,6 +135,10 @@ public final class EmbededServletOptions implements Options {
      */
     public String jspCompilerPath = null;
 
+    /**
+     * SAX 2 driver class name
+     */
+    public String sax2DriverClassName;
 
     /**
      * Are we keeping generated code around?
@@ -205,6 +209,10 @@ public final class EmbededServletOptions implements Options {
      */
     public String getJspCompilerPath() {
         return jspCompilerPath;
+    }
+
+    public String getSax2DriverClassName() {
+	return sax2DriverClassName;
     }
 
     /**
@@ -309,7 +317,12 @@ public final class EmbededServletOptions implements Options {
                                   Logger.FATAL);
             }
         }
-  
+
+        sax2DriverClassName = 
+	    config.getInitParameter("sax2DriverClassName");
+	if (sax2DriverClassName == null) {
+	    sax2DriverClassName = "org.apache.xerces.parsers.SAXParser";
+	}
     }
 }
 

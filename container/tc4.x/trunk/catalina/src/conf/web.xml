@@ -45,7 +45,11 @@
       <param-value>org.apache.jasper.compiler.JikesJavaCompiler</param-value>
     </init-param>
 -->
-<!--
+    <init-param>
+      <param-name>sax2DriverClassName</param-name>
+      <param-value>org.apache.xerces.parsers.SAXParser</param-value>
+    </init-param>
+g<!--
     <load-on-startup>4</load-on-startup>
 -->
   </servlet>
