@@ -98,6 +98,9 @@ public final class ApplicationFilterFactory {
     public static final String DISPATCHER_TYPE_ATTR="org.apache.catalina.core.DISPATCHER_TYPE";
     public static final String DISPATCHER_REQUEST_PATH_ATTR="org.apache.catalina.core.DISPATCHER_REQUEST_PATH";
 
+    private static final SecurityManager securityManager = 
+        System.getSecurityManager();
+
     // ----------------------------------------------------------- Constructors
 
 
@@ -142,7 +145,18 @@ public final class ApplicationFilterFactory {
             return (null);
 
         // Create and initialize a filter chain object
-        ApplicationFilterChain filterChain = new ApplicationFilterChain();
+        ApplicationFilterChain filterChain = null;
+        if (securityManager == null) {
+            Request req = (Request) request;
+            filterChain = (ApplicationFilterChain) req.getFilterChain();
+            if (filterChain == null) {
+                filterChain = new ApplicationFilterChain();
+                req.setFilterChain(filterChain);
+            }
+        } else {
+            // Security: Do not recycle
+            filterChain = new ApplicationFilterChain();
+        }
 
         filterChain.setServlet(servlet);
 

@@ -329,7 +329,7 @@ final class ApplicationFilterChain implements FilterChain {
     void release() {
 
         this.filters.clear();
-        this.iterator = iterator;
+        this.iterator = null;
         this.servlet = null;
 
     }
