@@ -39,6 +39,9 @@
         <bug>22679</bug>: Added misc note on accessing session ID to SSL-HowTo. (yoavs)
       </update>
       <update>
+        Add an asynchrounous access log valve based on NIO (jfarcand) 
+      </update>
+      <update>
         <bug>32249</bug>: Updated logging documentation. (yoavs)
       </update>
     </changelog>
