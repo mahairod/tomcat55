@@ -141,7 +141,13 @@ public final class ContextConfig
      */
     protected static boolean xmlNamespaceAware = false;
 
-        
+    
+    /**
+     * Deployment count.
+     */
+    protected static long deploymentCount = 0L;
+    
+    
     // ------------------------------------------------------------- Properties
 
 
@@ -188,6 +194,8 @@ public final class ContextConfig
         // Process the event that has occurred
         if (event.getType().equals(Lifecycle.START_EVENT)) {
             start();
+        } else if (event.getType().equals(StandardContext.BEFORE_START_EVENT)) {
+            beforeStart();
         } else if (event.getType().equals(Lifecycle.STOP_EVENT)) {
             stop();
         } else if (event.getType().equals(Lifecycle.INIT_EVENT)) {
@@ -736,9 +744,55 @@ public final class ContextConfig
     
     protected void antiLocking()
         throws IOException {
-        // FIXME: Implement anti locking, if it is enabled, by copying the whole
-        // contents of the docBase to a unique folder in temp, and setting the resources
-        // to point to that. Note: Don't mutate the docBase here.
+
+        if ((context instanceof StandardContext) 
+            && ((StandardContext) context).getAntiResourceLocking()) {
+            
+            Host host = (Host) context.getParent();
+            String appBase = host.getAppBase();
+            String docBase = context.getDocBase();
+            if (docBase == null)
+                return;
+            File docBaseFile = new File(docBase);
+            if (!docBaseFile.isAbsolute()) {
+                docBaseFile = new File(appBase, docBase);
+            }
+            
+            String path = context.getPath();
+            if (path == null) {
+                return;
+            }
+            if (path.equals("")) {
+                docBase = "ROOT";
+            } else {
+                if (path.startsWith("/")) {
+                    docBase = path.substring(1);
+                } else {
+                    docBase = path;
+                }
+            }
+
+            File file = null;
+            if (context.getDocBase().toLowerCase().endsWith(".war")) {
+                file = new File(System.getProperty("java.io.tmpdir"),
+                        deploymentCount++ + "-" + docBase + ".war");
+            } else {
+                file = new File(System.getProperty("java.io.tmpdir"), 
+                        deploymentCount++ + "-" + docBase);
+            }
+            
+            if (log.isDebugEnabled())
+                log.debug("Anti locking context[" + context.getPath() 
+                        + "] setting docBase to " + file);
+            
+            // Cleanup just in case an old deployment is lying around
+            ExpandWar.delete(file);
+            if (ExpandWar.copy(docBaseFile, file)) {
+                context.setDocBase(file.getAbsolutePath());
+            }
+            
+        }
+        
     }
     
 
@@ -760,6 +814,15 @@ public final class ContextConfig
         } catch (IOException e) {
             log.error(sm.getString("contextConfig.fixDocBase"), e);
         }
+        
+    }
+    
+    
+    /**
+     * Process a "before start" event for this Context.
+     */
+    protected synchronized void beforeStart() {
+        
         try {
             antiLocking();
         } catch (IOException e) {
