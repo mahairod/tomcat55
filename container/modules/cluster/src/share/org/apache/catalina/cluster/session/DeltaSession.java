@@ -681,6 +681,11 @@ public class DeltaSession
     }
 
 
+    public void endAccess() {
+        // FIXME
+    }
+
+
     /**
      * Add a session event listener to this component.
      */
