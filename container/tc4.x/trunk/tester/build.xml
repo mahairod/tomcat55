@@ -149,7 +149,7 @@
   <target name="dist" depends="build-main">
 
     <mkdir dir="${tester.dist}/bin"/>
-    <copy dest="${tester.dist}/bin">
+    <copy todir="${tester.dist}/bin">
       <fileset dir="${tester.build}/bin" />
     </copy>
     <fixcrlf srcdir="${tester.dist}/bin" includes="*.sh" cr="remove"/>
