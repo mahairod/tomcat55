@@ -440,6 +440,22 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
         if (initialized)
             throw new LifecycleException("Already initialized");
         this.initialized=true;
+
+        // Get a hold on a server socket
+        try {
+            ServerSocketFactory fact=this.getFactory();
+            int port=this.getPort();
+            int accc=this.getAcceptCount();
+
+            if (this.getAddress()==null) {
+                this.server=fact.createSocket(port,accc);
+            } else {
+                InetAddress addr=InetAddress.getByName(this.getAddress());
+                this.server=fact.createSocket(port,accc,addr);
+            }
+        } catch (IOException e) {
+            throw new LifecycleException("Error creating server socket",e);
+        }
     }
 
     /**
@@ -447,6 +463,10 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
      */
     public void start() throws LifecycleException {
         if (started) throw new LifecycleException("Already started");
+
+        // Can't get a hold of a server socket
+        if (this.server==null)
+            throw new LifecycleException("Server socket not created");
 
         lifecycle.fireLifecycleEvent(START_EVENT, null);
 
@@ -527,28 +547,6 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
      * Start accepting WARP requests from the network.
      */
     public void run() {
-        // Get a hold on a server socket
-        try {
-            ServerSocketFactory fact=this.getFactory();
-            int port=this.getPort();
-            int accc=this.getAcceptCount();
-
-            if (this.getAddress()==null) {
-                this.server=fact.createSocket(port,accc);
-            } else {
-                InetAddress addr=InetAddress.getByName(this.getAddress());
-                this.server=fact.createSocket(port,accc,addr);
-            }
-        } catch (IOException e) {
-            logger.log("Error creating server socket",e);
-        }
-
-        // Can't get a hold of a server socket
-        if (this.server==null) {
-            logger.log("Unable to create server socket");
-            return;
-        }
-
         // Start accepting connections
         try {
             while (this.isStarted()) {
