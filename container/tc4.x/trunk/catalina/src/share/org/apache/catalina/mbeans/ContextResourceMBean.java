@@ -237,13 +237,14 @@ public class ContextResourceMBean extends BaseModelMBean {
             if (rp != null) {
                 String valueStr = ""+value;
                 rp.addParameter(name, valueStr);
+                cr.getNamingResource().removeResourceParams(cr.getName());
             } else {
                 rp = new ResourceParams();
                 rp.setName(cr.getName());
                 String valueStr = ""+value;
                 rp.addParameter(name, valueStr);
-                cr.getNamingResource().addResourceParams(rp);
             }
+            cr.getNamingResource().addResourceParams(rp);
         }
     }
     
