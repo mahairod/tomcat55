@@ -13,6 +13,14 @@ This document describes the changes that have been made in the current
 milestone release of Apache Tomcat, relative to the previous milestone
 release.
 
+Bug reports should be entered at the interim bug reporting system for
+Jakarta projects at:
+
+        http://znutar.cortexity.com:8888/
+
+Please use project codes "Catalina" and "Jasper" for servlet-related and
+JSP-related bug reports, respectively.
+
 
 ============
 NEW FEATURES:
