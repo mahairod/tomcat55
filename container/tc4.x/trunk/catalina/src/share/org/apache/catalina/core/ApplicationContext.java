@@ -430,11 +430,15 @@ public final class ApplicationContext
     public URL getResource(String path) throws MalformedURLException {
 
 	DirContext resources = context.getResources();
-	if (resources == null)
-	    return (null);
-	else
-	    return new URL("jndi", null, 0, path, 
-                           new DirContextURLStreamHandler(resources));
+	if (resources != null) {
+            try {
+                resources.lookup(path);
+                return new URL("jndi", null, 0, path, 
+                               new DirContextURLStreamHandler(resources));
+            } catch (Exception e) {
+            }
+        }
+        return (null);
 
     }
 
