@@ -327,6 +327,8 @@ public interface HttpServletResponse extends ServletResponse {
      * for the status codes SC_OK or SC_MOVED_TEMPORARILY).  If there
      * is an error, the <code>sendError</code> method should be used
      * instead.
+     * <p> The container clears the buffer and sets the Location header, preserving
+     * cookies and other headers.
      *
      * @param	sc	the status code
      *
