@@ -1450,7 +1450,7 @@ public class CoyoteResponse
                         } catch (PrivilegedActionException pae){
                             IllegalArgumentException iae =
                                 new IllegalArgumentException(location);
-                            jdkCompat.chainException(iae, pae.getCause());
+                            jdkCompat.chainException(iae, pae.getException());
                             throw iae;
                         }
                     } else {
