@@ -14,18 +14,19 @@ JSP 1.2 specifications from Java Software.  It includes the following contents:
   RUNNING.txt                 Instructions for installing Tomcat, as well as
                               starting and stopping the server
   bin/                        Binary executables and scripts
-  classes/                    Unpacked classes global to web applications
   common/                     Classes available to both Catalina internal
                               classes and web applications:
     classes/                  Unpacked common classes
     lib/                      Common classes in JAR files
   conf/                       Configuration files
   jasper/                     JAR files visible only in the Jasper classloader
-  lib/                        Classes in JAR files global to web applications
   logs/                       Destination directory for log files
   server/                     Internal Catalina classes and their dependencies
     classes/                  Unpacked classes (internal only)
     lib/                      Classes packed in JAR files (internal only)
+  shared/                     Classes shared by all web applications
+    classes/                  Unpacked shared classes
+    lib/                      Shared classes in JAR files
   webapps/                    Base directory containing web applications
                               included with Tomcat 4.0
   work/                       Scratch directory used by Tomcat for holding
