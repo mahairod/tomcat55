@@ -17,7 +17,7 @@
   <property name="jnet.jar"        value="${jsse.home}/lib/jnet.jar"/>
   <property name="jsse.jar"        value="${jsse.home}/lib/jsse.jar"/>
   <property name="jmxri.jar"       value="${jmx.home}/lib/jmxri.jar"/>
-  <property name="regexp.jar"      value="${regexp.home}/jakarta-regexp-1.1.jar"/>
+  <property name="regexp.jar"      value="${regexp.home}/jakarta-regexp-1.2.jar"/>
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
 
   <!-- =================== BUILD: Create Directories ====================== -->
