@@ -287,54 +287,7 @@ public class MBeanFactory extends BaseModelMBean {
     public String createAjpConnector(String parent, String address, int port)
         throws Exception {
 
-        Object retobj = null;
-        try {
-            // Create a new CoyoteConnector instance for AJP
-            // use reflection to avoid j-t-c compile-time circular dependencies
-            Class cls = Class.forName("org.apache.coyote.tomcat5.CoyoteConnector");
-            Constructor ct = cls.getConstructor(null);
-            retobj = ct.newInstance(null);
-            Class partypes1 [] = new Class[1];
-            // Set address
-            String str = new String();
-            if ((address!=null) && (address.length()>0)) {
-                partypes1[0] = str.getClass();
-                Method meth1 = cls.getMethod("setAddress", partypes1);
-                Object arglist1[] = new Object[1];
-                arglist1[0] = address;
-                meth1.invoke(retobj, arglist1);
-            }
-            // Set port number
-            Class partypes2 [] = new Class[1];
-            partypes2[0] = Integer.TYPE;
-            Method meth2 = cls.getMethod("setPort", partypes2);
-            Object arglist2[] = new Object[1];
-            arglist2[0] = new Integer(port);
-            meth2.invoke(retobj, arglist2);
-            // set protocolHandlerClassName for AJP
-            Class partypes3 [] = new Class[1];
-            partypes3[0] = str.getClass();
-            Method meth3 = cls.getMethod("setProtocolHandlerClassName", partypes3);
-            Object arglist3[] = new Object[1];
-            arglist3[0] = new String("org.apache.jk.server.JkCoyoteHandler");
-            meth3.invoke(retobj, arglist3);
-
-            // Add the new instance to its parent component
-            ObjectName pname = new ObjectName(parent);
-            Service service = getService(pname);
-            service.addConnector((Connector)retobj);
-            Method getObjectName = cls.getMethod("getObjectName", null);
-            
-            // Return the corresponding MBean name
-            //ObjectName coname = (ObjectName)getObjectName.invoke(retobj, null);
-            ObjectName coname = 
-                MBeanUtils.createObjectName(pname.getDomain(), (Connector)retobj);
-            return (coname.toString());
-        
-        } catch (Exception e) {
-            throw new MBeanException(e);
-        }
-
+        return createConnector(parent, address, port, true, false);
     }
     
     /**
@@ -419,46 +372,43 @@ public class MBeanFactory extends BaseModelMBean {
      */
     public String createHttpConnector(String parent, String address, int port)
         throws Exception {
+	return createConnector(parent, address, port, false, false);
+    }
 
-        Object retobj = null;
-        try {
-            // Create a new CoyoteConnector instance
-            // use reflection to avoid j-t-c compile-time circular dependencies
-            Class cls = Class.forName("org.apache.coyote.tomcat5.CoyoteConnector");
-            Constructor ct = cls.getConstructor(null);
-            retobj = ct.newInstance(null);
-            Class partypes1 [] = new Class[1];
-            // Set address
-            String str = new String();
-            if ((address!=null) && (address.length()>0)) {
-                partypes1[0] = str.getClass();
-                Method meth1 = cls.getMethod("setAddress", partypes1);
-                Object arglist1[] = new Object[1];
-                arglist1[0] = address;
-                meth1.invoke(retobj, arglist1);
-            }
-            // Set port number
-            Class partypes2 [] = new Class[1];
-            partypes2[0] = Integer.TYPE;
-            Method meth2 = cls.getMethod("setPort", partypes2);
-            Object arglist2[] = new Object[1];
-            arglist2[0] = new Integer(port);
-            meth2.invoke(retobj, arglist2);
-            // Add the new instance to its parent component
-            ObjectName pname = new ObjectName(parent);
-            Service service = getService(pname);
-            service.addConnector((Connector)retobj);
-            Method getObjectName = cls.getMethod("getObjectName", null);
-            
-            // Return the corresponding MBean name
-            ObjectName coname = (ObjectName)getObjectName.invoke(retobj, null);
-            //ObjectName coname = 
-            //    MBeanUtils.createObjectName(pname.getDomain(), (Connector)retobj);
-            return (coname.toString());
-        } catch (Exception e) {
-            throw new MBeanException(e);
+    /**
+     * Create a new Connector
+     *
+     * @param parent MBean Name of the associated parent component
+     * @param address The IP address on which to bind
+     * @param port TCP port number to listen on
+     * @param isAjp Create a AJP/1.3 Connector
+     * @param isSSL Create a secure Connector
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    private String createConnector(String parent, String address, int port, boolean isAjp, boolean isSSL)
+        throws Exception {
+        Connector retobj = new Connector();
+        if ((address!=null) && (address.length()>0)) {
+            retobj.setAddress(address);
         }
-
+        // Set port number
+        retobj.setPort(port);
+        // Set the protocol
+        retobj.setProtocol(isAjp ? "AJP/1.3" : "HTTP/1.1");
+        // Set SSL
+        retobj.setSecure(isSSL);
+        retobj.setScheme(isSSL ? "https" : "http");
+        // Add the new instance to its parent component
+        // FIX ME - addConnector will fail
+        ObjectName pname = new ObjectName(parent);
+        Service service = getService(pname);
+        service.addConnector(retobj);
+        
+        // Return the corresponding MBean name
+        ObjectName coname = retobj.getObjectName();
+        
+        return (coname.toString());
     }
 
 
@@ -473,85 +423,8 @@ public class MBeanFactory extends BaseModelMBean {
      */
     public String createHttpsConnector(String parent, String address, int port)
         throws Exception {
-
-        Object retobj = null;
-        // Create a new CoyoteConnector instance
-        // use reflection to avoid j-t-c compile-time circular dependencies
-        Class cls = Class.forName("org.apache.coyote.tomcat5.CoyoteConnector");
-        try {
-            Constructor ct = cls.getConstructor(null);
-            retobj = ct.newInstance(null);
-            Class partypes1 [] = new Class[1];
-            // Set address
-            String str = new String();
-            if ((address!=null) && (address.length()>0)) {
-                partypes1[0] = str.getClass();
-                Method meth1 = cls.getMethod("setAddress", partypes1);
-                Object arglist1[] = new Object[1];
-                arglist1[0] = address;
-                meth1.invoke(retobj, arglist1);
-            }
-            // Set port number
-            Class partypes2 [] = new Class[1];
-            partypes2[0] = Integer.TYPE;
-            Method meth2 = cls.getMethod("setPort", partypes2);
-            Object arglist2[] = new Object[1];
-            arglist2[0] = new Integer(port);
-            meth2.invoke(retobj, arglist2);
-            // Set scheme
-            Class partypes3 [] = new Class[1];
-            partypes3[0] = str.getClass();
-            Method meth3 = cls.getMethod("setScheme", partypes3);
-            Object arglist3[] = new Object[1];
-            arglist3[0] = new String("https");
-            meth3.invoke(retobj, arglist3);
-            // Set secure
-            Class partypes4 [] = new Class[1];
-            partypes4[0] = Boolean.TYPE;
-            Method meth4 = cls.getMethod("setSecure", partypes4);
-            Object arglist4[] = new Object[1];
-            arglist4[0] = new Boolean(true);
-            meth4.invoke(retobj, arglist4);
-            // Set factory
-            Class serverSocketFactoryCls =
-                Class.forName("org.apache.catalina.net.ServerSocketFactory");
-            Class coyoteServerSocketFactoryCls =
-                Class.forName("org.apache.coyote.tomcat5.CoyoteServerSocketFactory");
-            Constructor factoryConst =
-                            coyoteServerSocketFactoryCls.getConstructor(null);
-            Object factoryObj = factoryConst.newInstance(null);
-            Class partypes5 [] = new Class[1];
-            partypes5[0] = serverSocketFactoryCls;
-            Method meth5 = cls.getMethod("setFactory", partypes5);
-            Object arglist5[] = new Object[1];
-            arglist5[0] = factoryObj;
-            meth5.invoke(retobj, arglist5);
-        } catch (Exception e) {
-            throw new MBeanException(e);
-        }
-
-        try {
-            // Add the new instance to its parent component
-            ObjectName pname = new ObjectName(parent);
-            Service service = getService(pname);
-            service.addConnector((Connector)retobj);
-            Method getObjectName = cls.getMethod("getObjectName", null);
-            
-            // Return the corresponding MBean name
-            //ObjectName coname = (ObjectName)getObjectName.invoke(retobj, null);
-            ObjectName coname = 
-                MBeanUtils.createObjectName(pname.getDomain(), (Connector)retobj);
-            return (coname.toString());
-        } catch (Exception e) {
-            // FIXME
-            // disply error message
-            // the user needs to use keytool to configure SSL first
-            // addConnector will fail otherwise
-            return null;
-        }
-
+        return createConnector(parent, address, port, false, true);
     }
-
 
     /**
      * Create a new JDBC Realm.
@@ -578,9 +451,7 @@ public class MBeanFactory extends BaseModelMBean {
         containerBase.setRealm(realm);
         // Return the corresponding MBean name
         ObjectName oname = realm.getObjectName();
-        // FIXME getObjectName() returns null
-        //ObjectName oname = 
-        //    MBeanUtils.createObjectName(pname.getDomain(), realm);
+
         if (oname != null) {
             return (oname.toString());
         } else {
@@ -610,9 +481,7 @@ public class MBeanFactory extends BaseModelMBean {
         containerBase.setRealm(realm);
         // Return the corresponding MBean name
         ObjectName oname = realm.getObjectName();
-        // FIXME getObjectName() returns null
-        //ObjectName oname = 
-        //    MBeanUtils.createObjectName(pname.getDomain(), realm);
+
         if (oname != null) {
             return (oname.toString());
         } else {
@@ -642,10 +511,7 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         containerBase.setRealm(realm);
         // Return the corresponding MBean name
-        //ObjectName oname = realm.getObjectName();
-        // FIXME getObjectName() returns null
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), realm);
+        ObjectName oname = realm.getObjectName();
         if (oname != null) {
             return (oname.toString());
         } else {
@@ -805,8 +671,8 @@ public class MBeanFactory extends BaseModelMBean {
         host.addChild(context);
 
         // Return the corresponding MBean name
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), context);
+        ObjectName oname = context.getJmxName();
+    //            MBeanUtils.createObjectName(pname.getDomain(), context);
         return (oname.toString());
 
     }
@@ -821,30 +687,6 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-// replaced by createStandardEngineService to create with service
-//     public String createStandardEngine(String parent, String name,
-//                                       String defaultHost)
-//        throws Exception {
-
-        // Create a new StandardEngine instance
-//       StandardEngine engine = new StandardEngine();
-//        engine.setName(name);
-//        engine.setDefaultHost(defaultHost);
-
-        // Add the new instance to its parent component
-//        ObjectName pname = new ObjectName(parent);
-//        Server server = ServerFactory.getServer();
-//        Service service = server.findService(name);
-//        service.setContainer(engine);
-
-        // Return the corresponding MBean name
-        //ManagedBean managed = registry.findManagedBean("StandardEngine");
-//        ObjectName oname =
-//            MBeanUtils.createObjectName(name, engine);
-//        return (oname.toString());
-
-//    }
-
 
     public Vector createStandardEngineService(String parent, 
             String engineName, String defaultHost, String serviceName)
@@ -1066,30 +908,20 @@ public class MBeanFactory extends BaseModelMBean {
         Connector conns[] = (Connector[]) service.findConnectors();
 
         for (int i = 0; i < conns.length; i++) {
-            Class cls = conns[i].getClass();
-            Method getAddrMeth = cls.getMethod("getAddress", null);
-            Object addrObj = getAddrMeth.invoke(conns[i], null);
-            String connAddress = null;
-            if (addrObj != null) {
-                connAddress = addrObj.toString();
-            }
-            Method getPortMeth = cls.getMethod("getPort", null);
-            Object portObj = getPortMeth.invoke(conns[i], null);
-            String connPort = new String();
-            if (portObj != null) {
-                connPort = portObj.toString();
-            }
+            String connAddress = conns[i].getAddress();
+            String connPort = ""+conns[i].getPort();
+
             // if (((address.equals("null")) &&
             if ((connAddress==null) && port.equals(connPort)) {
                 service.removeConnector(conns[i]);
-                ((Connector)conns[i]).destroy();
+                conns[i].destroy();
                 break;
             }
             // } else if (address.equals(connAddress))
             if (port.equals(connPort)) {
                 // Remove this component from its parent component
                 service.removeConnector(conns[i]);
-                ((Connector)conns[i]).destroy();
+                conns[i].destroy();
                 break;
             }
         }
@@ -1244,3 +1076,4 @@ public class MBeanFactory extends BaseModelMBean {
     }
 
 }
+
