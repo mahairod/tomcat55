@@ -263,16 +263,6 @@ final class CoyoteAdapter
             throw new IOException("Invalid URI");
         }
 
-        // Set the SSL properties
-	if( request.isSecure() ) {
-	    res.action(ActionCode.ACTION_REQ_SSL_ATTRIBUTE,
-                       request.getCoyoteRequest());
-	    //Set up for getAttributeNames
-	    request.getAttribute(Globals.CERTIFICATES_ATTR);
-	    request.getAttribute(Globals.CIPHER_SUITE_ATTR);
-	    request.getAttribute(Globals.KEY_SIZE_ATTR);
-	}
-
         // Set the remote principal
         String principal = req.getRemoteUser().toString();
         if (principal != null) {
