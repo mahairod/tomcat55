@@ -1011,6 +1011,7 @@ static int init_ws_service(isapi_private_data_t *private_data,
                 } else if(need_content_length_header &&
                    !strnicmp(tmp, CONTENT_LENGTH, strlen(CONTENT_LENGTH))) {
                     need_content_length_header = FALSE;
+                    s->headers_names[i]  = tmp;
                 } else {
                     s->headers_names[i]  = tmp;
                 }
