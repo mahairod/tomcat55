@@ -1,11 +1,12 @@
-
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -57,8 +58,6 @@
  *
  */
 
-
-
 package tests.javax_servlet_http.HttpSession;
 
 import javax.servlet.http.HttpServletRequest;
@@ -67,39 +66,91 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpSession;
 import javax.servlet.ServletConfig;
 import java.util.Enumeration;
+import java.util.Vector;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 
 /**
  * 	A test for HttpSession.getAttributeNames() method
  */
 
-
 public class HttpSessionGetAttributeNamesTestServlet extends HttpServlet {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		HttpSession session = request.getSession(true);
+        PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession( true );
 
-		// Binding values with the Session
-		session.setAttribute("object","string");
-		session.setAttribute("object1","isalsostring");
+        // Binding values with the Session
+        session.setAttribute( "object", "JSP" );
+        session.setAttribute( "object", "SERVLET" );
+        session.setAttribute( "object1", "JAVA" );
 
-		// getting those bound values
-		Enumeration values= session.getAttributeNames();
-		int count =0;
-		while(values.hasMoreElements()) {
-			count++;
-			values.nextElement();
-		}
-		if(count==2) { 
-			out.println("HttpSessionGetAttributeNamesTest test PASSED");
-		}
-		else {
-			out.println("HttpSessionGetAttributeNamesTest test FAILED");
-		}
-	}
+        int count = 0;
+        int expectedCount = 2;
+        String expectedResult1 = "object";
+        boolean expectedResult1Found = false;
+        String expectedResult2 = "object1";
+        boolean expectedResult2Found = false;
+        Enumeration enum = session.getAttributeNames();
+
+        if ( enum.hasMoreElements() ) {
+            Vector v = new Vector();
+
+            while ( enum.hasMoreElements() ) {
+                String name = ( String ) enum.nextElement();
+
+                if ( name.equalsIgnoreCase( expectedResult1 ) ) {
+                    if ( !expectedResult1Found ) {
+                        count++;
+                        expectedResult1Found = true;
+                    } else {
+                        out.println( "HttpSessionGetAttributeNamesTest test FAILED<BR>" );
+                        out.println( "    HttpSession.getAttributeNames() method return the same name twice <BR>" );
+                        out.println( "    The name already received was " + expectedResult1 + " <BR>" );
+                    }
+                } else if ( name.equalsIgnoreCase( expectedResult2 ) ) {
+                    if ( !expectedResult2Found ) {
+                        count++;
+                        expectedResult2Found = true;
+                    } else {
+                        out.println( "HttpSessionGetAttributeNamesTest test FAILED<BR>" );
+                        out.println( "    HttpSession.getAttributeNames() method return the same name twice <BR>" );
+                        out.println( "    The name already received was " + expectedResult2 + " <BR>" );
+                    }
+                } else {
+                    v.add( name );
+                }
+            }
+
+            if ( count != expectedCount ) {
+                out.println( "HttpSessionGetAttributeNamesTest test FAILED<BR>" );
+                out.println( "    HttpSession.getAttributeNames() method did not return the correct number of names <BR>" );
+                out.println( "    Expected count = " + expectedCount + "<BR>" );
+                out.println( "    Actual count = " + count + "<BR>" );
+                out.println( "    The expected names received were :<BR>" );
+
+                if ( expectedResult1Found ) {
+                    out.println( expectedResult1 + "<BR>" );
+                }
+
+                if ( expectedResult2Found ) {
+                    out.println( expectedResult2 + "<BR>" );
+                }
+
+                out.println( "    Other names received were :<BR>" );
+
+                for ( int i = 0;i <= v.size() - 1;i++ ) {
+                    out.println( "     " + v.elementAt( i ).toString() + "<BR>" );
+                }
+            } else {
+                out.println( "HttpSessionGetAttributeNamesTest test PASSED" );
+            }
+        } else {
+            out.println( "GetHeadersTest  test FAILED<BR>" );
+            out.println( "    HttpServletRequest.getAttributeNames() an empty enumeration <BR>" );
+
+        }
+    }
 }

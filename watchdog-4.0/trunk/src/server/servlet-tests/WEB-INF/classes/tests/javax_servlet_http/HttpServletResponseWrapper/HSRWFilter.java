@@ -6,7 +6,7 @@
  * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -74,14 +74,12 @@ public class HSRWFilter implements Filter {
     }
 
     // Remove the filter configuration object for this filter.
-    public void destroy() {}
-
+    public void destroy() {
+    }
 
     //  initialize the filter configuration object for this filter.
-
     public void init( FilterConfig filterConfig ) {
         this.filterConfig = filterConfig;
 
     }
-
 }

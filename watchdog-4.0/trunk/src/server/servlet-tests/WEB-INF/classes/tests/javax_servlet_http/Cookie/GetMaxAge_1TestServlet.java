@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -74,13 +76,21 @@ import java.io.PrintWriter;
 
 public class GetMaxAge_1TestServlet extends HttpServlet {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		Cookie testcookie = new Cookie("BestLanguage","Java");
-		//we expect a negative value
-		if(testcookie.getMaxAge() == -1) {
-			out.println("GetMaxAge_1Test test PASSED");
-		}
-	}
+        PrintWriter out = response.getWriter();
+        Cookie testcookie = new Cookie( "BestLanguage", "Java" );
+        int expectedResult = -1;
+        //we expect a negative value
+        int result = testcookie.getMaxAge();
+
+        if ( result == expectedResult ) {
+            out.println( "GetMaxAge_1Test test PASSED" );
+        } else {
+            out.println( "GetMaxAge_1Test test FAILED<BR>" );
+            out.println( "     Cookie.getMaxAge() returned an incorrect result<BR>" );
+            out.println( "     Expected result = " + expectedResult + "<BR>" );
+            out.println( "     Actual result = |" + result + "|<BR>" );
+        }
+    }
 }

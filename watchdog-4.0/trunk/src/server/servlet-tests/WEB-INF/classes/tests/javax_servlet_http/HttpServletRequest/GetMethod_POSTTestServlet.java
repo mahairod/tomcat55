@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,7 +60,6 @@
 
 package tests.javax_servlet_http.HttpServletRequest;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
@@ -67,33 +68,31 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *	A Test for getMethod() Method
  */
 
-
 public class GetMethod_POSTTestServlet extends HttpServlet {
 
+    /* Requested method was POST */
 
-/** 	Requested  method was POST 	**/
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        String expectedResult = "POST";
+        String result = request.getMethod();
 
-
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		PrintWriter out = response.getWriter();
-
-		String method = request.getMethod();
-		if(method!=null) {
-			if(method.trim().equalsIgnoreCase("POST"))
-			{
-				out.println("GetMethod_POSTTest test PASSED");
-				return;
-			}
-		}
-		out.println("GetMethod_POSTTest test FAILED");
-		out.println( "<BR>getMethod did not return proper method type");
-		out.println("Actual Return Value : " + method );
-		out.println("Expected Return Value : POST"  );
-
-	}
+        if ( result != null ) {
+            if ( result.equalsIgnoreCase( expectedResult ) ) {
+                out.println( "GetMethod_POSTTest test PASSED" );
+            } else {
+                out.println( "GetMethod_POSTTest test FAILED" );
+                out.println( "     HttpServletRequest.getMethod() returned an incorrect result<BR>" );
+                out.println( "     Expected result = " + expectedResult + " <BR>" );
+                out.println( "     Actual result = |" + result + "| <BR>" );
+            }
+        } else {
+            out.println( "GetMethod_POSTTest test FAILED" );
+            out.println( "     HttpServletRequest.getMethod() returned a null result<BR>" );
+        }
+    }
 }

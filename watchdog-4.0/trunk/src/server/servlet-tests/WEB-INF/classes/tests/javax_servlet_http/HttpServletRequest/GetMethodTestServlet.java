@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,7 +60,6 @@
 
 package tests.javax_servlet_http.HttpServletRequest;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
@@ -73,21 +74,26 @@ import java.io.PrintWriter;
 
 public class GetMethodTestServlet extends HttpServlet {
 
-/**	Requested method was GET(default)	**/
+    /* Requested method was GET(default) */
 
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		PrintWriter out = response.getWriter();
+        String expectedResult = "GET";
+        String result = request.getMethod();
 
-		if(request.getMethod().equalsIgnoreCase("GET")) {
-			out.println("GetMethodTest test PASSED");
-		}
-		else
-		{
-			out.println("GetMethodTest test FAILED");
-			out.println("Method type is returned incorrectly");
-			out.println("Actual returned Method Type: " + request.getMethod() );
-			out.println("Expected returned Method Type:GET "  );
-		}
-	}
+        if ( result != null ) {
+            if ( result.equalsIgnoreCase( expectedResult ) ) {
+                out.println( "GetMethodTest test PASSED" );
+            } else {
+                out.println( "GetMethodTest test FAILED" );
+                out.println( "     HttpServletRequest.getMethod() returned an incorrect result<BR>" );
+                out.println( "     Expected result = " + expectedResult + " <BR>" );
+                out.println( "     Actual result = |" + result + "| <BR>" );
+            }
+        } else {
+            out.println( "GetMethod_HEADTest test FAILED" );
+            out.println( "     HttpServletRequest.getMethod() returned a null result<BR>" );
+        }
+    }
 }

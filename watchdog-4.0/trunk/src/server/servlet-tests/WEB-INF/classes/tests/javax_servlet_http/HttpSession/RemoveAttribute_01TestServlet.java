@@ -1,11 +1,12 @@
-
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -57,9 +58,6 @@
  *
  */
 
-
-
-
 package tests.javax_servlet_http.HttpSession;
 
 import javax.servlet.http.HttpServletRequest;
@@ -73,22 +71,23 @@ import java.io.PrintWriter;
 
 /**
  * 	A Negative test for HttpSession.removeAttribute() method
- *       removeAttribute(String) unbinds an object from the Session
+ *  removeAttribute(String) unbinds an object from the Session
  */
-
 
 public class RemoveAttribute_01TestServlet extends HttpServlet {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		HttpSession session = request.getSession(true);
-		session.invalidate();
-		try {
-			session.removeAttribute("object");
-			out.println("RemoveAttribute_01Test test FAILED");
-		}catch(IllegalStateException ise) {
-			out.println("RemoveAttribute_01Test test PASSED");
-		}
-	}
+        PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession( true );
+        session.invalidate();
+
+        try {
+            session.removeAttribute( "object" );
+            out.println( "RemoveAttribute_01Test test FAILED<BR>" );
+            out.println( "     The exception IllegalStateException should have been thrown<BR>" );
+        } catch ( IllegalStateException ise ) {
+            out.println( "RemoveAttribute_01Test test PASSED" );
+        }
+    }
 }

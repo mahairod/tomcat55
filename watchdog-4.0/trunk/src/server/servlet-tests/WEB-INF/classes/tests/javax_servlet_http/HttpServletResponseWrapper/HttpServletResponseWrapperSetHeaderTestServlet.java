@@ -6,7 +6,7 @@
  * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,17 +66,13 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 public class HttpServletResponseWrapperSetHeaderTestServlet extends HttpServlet {
 
     public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
-
-
 
         PrintWriter out = response.getWriter();
         out.println( "in HttpServletResponseWrapperSetHeaderTest servlet<BR>" );
         response.addHeader( "MyStrHeader", "asdf" );
         response.setHeader( "MyStrHeader", "Java" );
-
     }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,7 +60,6 @@
 
 package tests.javax_servlet_http.HttpServletRequest;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
@@ -67,7 +68,7 @@ import java.util.Date;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.lang.IllegalArgumentException;
 
 /**
  *	A Test for getDateHeader Method
@@ -75,31 +76,33 @@ import java.io.PrintWriter;
 
 public class GetDateHeaderTestServlet extends HttpServlet {
 
-/**
- *	In the Client side we are sending a
- *	date format Header
- */
+    /*
+     *	In the Client side we are sending a
+     *	date format Header
+     */
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	   PrintWriter out = response.getWriter();
-	   try 
-	   {
-		long date = request.getDateHeader("If-Modified-Since");
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException, IllegalArgumentException {
+        PrintWriter out = response.getWriter();
 
-                if (date == 946684801000L) {
-			out.println("GetDateHeaderTest test PASSED");
-		}
-		else
-		{
-			out.println("GetDateHeaderTest test FAILED ");
-		}
-	     }
-	     catch ( java.lang.IllegalArgumentException ex )
-	     {
-			out.println("GetDateHeaderTest test FAILED ");
-			out.println("Can't convert the sent header value to Date ");
-	     }
-		
+        long expectedResult = 946684801000L;
+        String param = "If-Modified-Since";
 
-	}
+        try {
+            long result = request.getDateHeader( param );
+
+            if ( result == expectedResult ) {
+                out.println( "GetDateHeaderTest test PASSED" );
+            } else {
+                out.println( "GetDateHeaderTest test FAILED <BR>" );
+                out.println( "     HttpServletRequest.getDateHeader(" + param + ") returned an incorrect result<BR>" );
+                out.println( "     Expected result = " + expectedResult + " <BR>" );
+                out.println( "     Actual result = |" + result + "| <BR>" );
+            }
+        } catch ( java.lang.IllegalArgumentException ex ) {
+            out.println( "GetDateHeaderTest test FAILED <BR>" );
+            out.println( "     HttpServletRequest.getDateHeader(" + param + ") Can't convert the sent header value to Date <BR>" );
+            out.println( "     HttpServletRequest.getDateHeader(" + param + ") threw IllegalArgumentException exception<BR>" );
+            throw ex;
+        }
+    }
 }

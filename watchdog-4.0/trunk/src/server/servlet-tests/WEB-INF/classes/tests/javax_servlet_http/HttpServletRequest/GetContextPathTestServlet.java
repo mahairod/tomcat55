@@ -1,11 +1,12 @@
-
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -55,7 +56,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- * @Author : Ramesh.Mandava
  */
 
 package tests.javax_servlet_http.HttpServletRequest;
@@ -71,23 +71,27 @@ import java.io.PrintWriter;
 /**
  *	A Test for GetContextPath() method
  */
+
 public class GetContextPathTestServlet extends HttpServlet {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-		String contextPath=request.getContextPath();
-		PrintWriter out = response.getWriter();
+        PrintWriter out = response.getWriter();
+        String expectedResult = "/servlet-tests";
+        String result = request.getContextPath();
 
-		if(contextPath!=null && contextPath.equals("/servlet-tests") ) 
-		{
-			out.println("GetContextPathTest test PASSED");
-		}
-		else
-		{
-			out.println("GetContextPathTest test FAILED");
-			out.println("Actual Context path : " + contextPath );
-			out.println("Expected Context path : /servlet-tests"  );
-		}
-
-	}
+        if ( result != null ) {
+            if ( result.equals( expectedResult ) ) {
+                out.println( "GetContextPathTest test PASSED" );
+            } else {
+                out.println( "GetContextPathTest test FAILED" );
+                out.println( "     HttpServletRequest.getContextPath() returned an incorrect result<BR>" );
+                out.println( "     Expected result = " + expectedResult + " <BR>" );
+                out.println( "     Actual result = |" + result + "| <BR>" );
+            }
+        } else {
+            out.println( "GetContextPathTest test FAILED<BR>" );
+            out.println( "     HttpServletRequest.getContextPath() returned a null result<BR>" );
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -54,11 +56,9 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- * @Author : Ramesh Mandava
  */
 
 package tests.javax_servlet_http.HttpServletRequest;
-
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,25 +73,22 @@ import java.io.PrintWriter;
  *	A Negative Test for getCookies Method
  */
 
-
 public class GetCookies_01TestServlet extends HttpServlet {
 
-/**
- *	We are not sending any Cookie from
- *	the client side.We expect a null array of Cookie
- */
+    /**
+     *	We are not sending any Cookie from
+     *	the client side.We expect a null array of Cookie
+     */
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		PrintWriter out = response.getWriter();
-		Cookie[] cook=request.getCookies();
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        Cookie[] cook = request.getCookies();
 
-                if( cook==null ) {
-			out.println("GetCookies_01Test test PASSED");
-		}
-		else
-		{
-			out.println("GetCookies_01Test test FAILED");
-			out.println("getCookies() returning non null value even though client is not sending any cookies."); 
-		}
-	}
+        if ( cook == null ) {
+            out.println( "GetCookies_01Test test PASSED" );
+        } else {
+            out.println( "GetCookies_01Test test FAILED<BR>" );
+            out.println( "    HttpServletRequest.getCookies() returning non null value even though client is not sending any cookies.<BR>" );
+        }
+    }
 }

@@ -6,7 +6,7 @@
  * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,7 +65,6 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 public class HttpServletResponseWrapperConstructorTestServlet extends HttpServlet {
 
     public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException, IllegalArgumentException {
@@ -86,6 +85,5 @@ public class HttpServletResponseWrapperConstructorTestServlet extends HttpServle
             out.println( "HttpServletResponseWrapperConstructorTest test FAILED - IllegalArgumentException thrown <BR>" );
             throw new IllegalArgumentException();
         }
-
     }
 }

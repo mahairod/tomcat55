@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -71,24 +73,22 @@ import java.io.PrintWriter;
  *	A Negative Test for getHeader(String) method
  */
 
-
 public class GetHeader_01TestServlet extends HttpServlet {
 
-/** We don't set any header in the client side **/
+    /* We don't set any header in the client side */
 
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        String param = "User-Agent";
+        String result = request.getHeader( param );
 
-		PrintWriter out = response.getWriter();
-		if(request.getHeader("User-Agent")==null) {
-			out.println("GetHeader_01Test test PASSED");	
-		}
-		else
-		{
-			out.println("GetHeader_01Test test FAILED <BR>");	
-			out.println("getHeader returning Non-Null value even when we haven't set header(User-Agent) <BR>");
-			out.println("Expected Header Value : null <BR>");
-			out.println("Received Header Value : " + request.getHeader("User-Agent"));
-		}
-	}
+        if ( result == null ) {
+            out.println( "GetHeader_01Test test PASSED" );
+        } else {
+            out.println( "GetHeader_01Test test FAILED <BR>" );
+            out.println( "     HttpServletRequest.getHeader(" + param + ") returned a Non-Null value even when we haven't set header(User-Agent) <BR>" );
+            out.println( "     Actual result = |" + result + "| <BR>" );
+        }
+    }
 }

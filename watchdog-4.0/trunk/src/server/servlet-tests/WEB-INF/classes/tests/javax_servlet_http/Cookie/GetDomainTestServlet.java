@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -73,14 +75,28 @@ import java.io.PrintWriter;
 
 public class GetDomainTestServlet extends HttpServlet {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		Cookie testcookie = new Cookie("test","val");
-		//set and get
-		testcookie.setDomain(".ENG.COM");
-		if(testcookie.getDomain().equalsIgnoreCase(".ENG.COM")) {
-			out.println("GetDomainTest test PASSED");
-		}
-	}
+        PrintWriter out = response.getWriter();
+        Cookie testcookie = new Cookie( "test", "val" );
+
+        String expectedResult = ".ENG.COM";
+        //set and get
+        testcookie.setDomain( expectedResult );
+        String result = testcookie.getDomain();
+
+        if ( result != null ) {
+            if ( result.equalsIgnoreCase( expectedResult ) ) {
+                out.println( "GetDomainTest test PASSED" );
+            } else {
+                out.println( "GetDomainTest test FAILED<BR>" );
+                out.println( "     Cookie.getDomain() returned an incorrect result<BR>" );
+                out.println( "     Expected result = " + expectedResult + " <BR>" );
+                out.println( "     Actual result = |" + result + "| <BR>" );
+            }
+        } else {
+            out.println( "GetDomainTest test FAILED<BR>" );
+            out.println( "     Cookie.getDomain() returned a null result <BR>" );
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,7 +60,6 @@
 
 package tests.javax_servlet_http.HttpServletResponse;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
@@ -73,23 +74,24 @@ import java.io.PrintWriter;
 
 public class ContainsHeader_01TestServlet extends HttpServlet {
 
-/** Without setting header we are invoking this method:expect false **/
+    /* Without setting header we are invoking this method:expect false */
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		if(response.containsHeader("MyStrHeader") !=true) 
-		{ 
-			out.println("ContainsHeader_01TestServlet test PASSED");
-		}
-		else
-		{
-			
-			out.println("ContainsHeader_01TestServlet test FAILED");
-			out.println("containsHeader method returned incorrect results");
-			out.println("Actual Results -> " + response.containsHeader("MyStrHeader"));
-			out.println("Expected Results -> true");
-		}
+        PrintWriter out = response.getWriter();
+        String param = "MyStrHeader";
+        boolean expectedResult = false;
+        boolean result = response.containsHeader( param );
 
-	}
+        if ( result == expectedResult ) {
+            out.println( "ContainsHeader_01TestServlet test PASSED" );
+        } else {
+
+            out.println( "ContainsHeader_01TestServlet test FAILED" );
+            out.println( "     HttpServletResponse.containsHeader(" + param + ") gave incorrect results<BR>" );
+            out.println( "     Expected result = " + expectedResult + " <BR>" );
+            out.println( "     Actual result = |" + result + "| <BR>" );
+        }
+
+    }
 }

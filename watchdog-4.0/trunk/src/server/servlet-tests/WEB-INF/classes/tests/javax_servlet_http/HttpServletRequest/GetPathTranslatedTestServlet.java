@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -65,44 +67,41 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.File;
 
 /**
  *	A Test for getPathTranslated method
  */
 
-
-
 public class GetPathTranslatedTestServlet extends HttpServlet {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		//checking for a value that matches expected value
-                String realTranslated =
-                    getServletContext().getRealPath(request.getPathInfo());
-		String pathTranslated = request.getPathTranslated();
-                if (realTranslated == null) {
-                    if (pathTranslated == null) {
-                        out.println("GetPathTranslatedTest test PASSED");
-                    } else {
-                        out.println("GetPathTranslatedTest test FAILED");
-                        out.println("Expected --> " + realTranslated);
-                        out.println("Received --> " + pathTranslated);
-                    }
-                } else {
-                    if (pathTranslated == null) {
-                        out.println("GetPathTranslatedTest test FAILED");
-                        out.println("Expected --> " + realTranslated);
-                        out.println("Received --> " + pathTranslated);
-                    } else if (!realTranslated.equals(pathTranslated)) {
-                        out.println("GetPathTranslatedTest test FAILED");
-                        out.println("Expected --> " + realTranslated);
-                        out.println("Received --> " + pathTranslated);
-                    } else {
-                        out.println("GetPathTranslatedTest test PASSED");
-                    }
-                }
+        PrintWriter out = response.getWriter();
+        String expectedResult = getServletContext().getRealPath( request.getPathInfo() );
 
+        String result = request.getPathTranslated();
+        // null will be returned if running out of a jar
+        if ( expectedResult == null ) {
+            if ( result == null ) {
+                out.println( "GetPathTranslatedTest test PASSED" );
+            } else {
+                out.println( "GetPathTranslatedTest test FAILED" );
+                out.println( "     HttpServletRequest.getPathTranslated() returned an incorrect result<BR>" );
+                out.println( "     Expected result = " + expectedResult + " <BR>" );
+                out.println( "     Actual result = |" + result + "| <BR>" );
+            }
+        } else {
+            if ( result == null ) {
+                out.println( "GetPathTranslatedTest test FAILED" );
+                out.println( "     HttpServletRequest.getPathTranslated() returned a null result<BR>" );
+            } else if ( !expectedResult.equals( result ) ) {
+                out.println( "     HttpServletRequest.getPathTranslated() returned an incorrect result<BR>" );
+                out.println( "     Expected result = " + expectedResult + " <BR>" );
+                out.println( "     Actual result = |" + result + "| <BR>" );
+            } else {
+                out.println( "GetPathTranslatedTest test PASSED" );
+            }
         }
-
+    }
 }

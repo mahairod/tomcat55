@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -54,11 +56,9 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- * @Author: Ramesh.Mandava
  */
 
 package tests.javax_servlet_http.HttpServletRequest;
-
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,30 +68,28 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *	A  Negative Test for getDateHeader Method
  */
 
 public class GetDateHeader_01TestServlet extends HttpServlet {
 
-/**
- *	we sent no Header  from  the client side
- *	we should get a value of "-1"
- */
+    /**
+     *	we sent no Header  from  the client side
+     *	we should get a value of "-1"
+     */
 
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        long result = request.getDateHeader( "If-Modified-Since" );
 
-		PrintWriter out = response.getWriter();
-		if(request.getDateHeader("If-Modified-Since") == -1)
-		{
-			out.println("GetDateHeader_01Test test PASSED");
-		}
-		else
-		{
-			out.println("GetDateHeader_01Test test FAILED <BR>");
-			out.println("getDateHeader doesn't return -1 for NonExistent header");
-		}
-	}
+        if ( result == -1 ) {
+            out.println( "GetDateHeader_01Test test PASSED" );
+        } else {
+            out.println( "GetDateHeader_01Test test FAILED <BR>" );
+            out.println( "     HttpServletRequest.getDateHeader didn't return -1 for a NonExistent header<BR>" );
+            out.println( "     Actual result = |" + result + "| <BR>" );
+        }
+    }
 }

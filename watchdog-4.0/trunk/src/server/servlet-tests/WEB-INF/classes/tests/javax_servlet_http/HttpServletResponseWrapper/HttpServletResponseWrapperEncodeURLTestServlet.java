@@ -6,7 +6,7 @@
  * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,15 +67,16 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.io.PrintWriter;
 
-
 public class HttpServletResponseWrapperEncodeURLTestServlet extends HttpServlet {
 
     public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
+
         String expectedResult = "/HttpServletResponseWrapperRedirectedTest";
         PrintWriter out = response.getWriter();
         out.println( "in HttpServletResponseWrapperEncodeURLTest servlet<BR>" );
         String result = null;
         result = response.encodeURL( expectedResult );
+
         if ( result.indexOf( expectedResult ) > -1 ) {
             out.println( "HttpServletResponseWrapperEncodeURLTest test PASSED<BR>" );
         } else {
@@ -84,6 +85,5 @@ public class HttpServletResponseWrapperEncodeURLTestServlet extends HttpServlet 
             out.println( "     Expected result = " + expectedResult + " <BR>" );
             out.println( "     Actual result = |" + result + "| <BR>" );
         }
-
     }
 }

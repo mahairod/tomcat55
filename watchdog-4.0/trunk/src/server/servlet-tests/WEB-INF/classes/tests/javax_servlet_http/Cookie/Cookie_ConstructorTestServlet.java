@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -67,30 +69,27 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *	A Test for Cookie(String,String) constructor
  */
 
-
 public class Cookie_ConstructorTestServlet extends HttpServlet {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		//construct a Cookie
+        PrintWriter out = response.getWriter();
 
-		Cookie testcookie  = new Cookie("BestLanguage","Java");
-		//check its name and value
+        //construct a Cookie
+        Cookie testcookie = new Cookie( "BestLanguage", "Java" );
 
-		if(testcookie.getName().equals("BestLanguage") && testcookie.getValue().equals("Java")) {
-			out.println("Cookie_ConstructorTest test PASSED");
-		}
-		else {
-			out.println("Cookie_ConstructorTest test FAILED");
-			out.println("Expected Cookie -> BestLanguage,Java <BR>");
-			out.println("Actual Cookie got -> " + testcookie.getName() 
-				+ "," + testcookie.getValue() );
-		}
-	}
+        //check its name and value
+        if ( testcookie.getName().equals( "BestLanguage" ) && testcookie.getValue().equals( "Java" ) ) {
+            out.println( "Cookie_ConstructorTest test PASSED" );
+        } else {
+            out.println( "Cookie_ConstructorTest test FAILED" );
+            out.println( "Expected Cookie -> BestLanguage,Java <BR>" );
+            out.println( "Actual Cookie got -> " + testcookie.getName()
+                         + "," + testcookie.getValue() );
+        }
+    }
 }

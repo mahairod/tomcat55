@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,7 +60,6 @@
 
 package tests.javax_servlet_http.HttpServletRequest;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
@@ -71,33 +72,25 @@ import java.io.PrintWriter;
  *	A Negative Test for getPathInfo method
  */
 
-
 public class GetPathInfo_01TestServlet extends HttpServlet {
 
-/**
- *	getPathInfo fetches any extra path information specified
- *	along with the ServletPath
- *	we did not supply any extra path.so we expect null
- */
+    /*
+     *	getPathInfo fetches any extra path information specified
+     *	along with the ServletPath
+     *	we did not supply any extra path.so we expect null
+     */
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
-	{
-		PrintWriter out = response.getWriter();
-		//should retrieve any extra path info coz nothing was provided
-		if(request.getPathInfo()==null)
-		{
-			out.println("GetPathInfo_01Test test PASSED");
-		}
-		else
-		{
-			out.println("<BR>GetPathInfo_01Test test FAILED");
-			out.println("<BR>getPathInfo returning Non-Null even when there is no pathinfo");
-			out.println("<BR>Actual returned PathInfo-> " + request.getPathInfo() );
-			out.println("<BR>Expected returned PathInfo-> null");
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        //shouldn't retrieve any extra path info coz nothing was provided
+        String result = request.getPathInfo();
 
-		}
-		
-
-
-	}
+        if ( result == null ) {
+            out.println( "GetPathInfo_01Test test PASSED" );
+        } else {
+            out.println( "GetPathInfo_01Test test FAILED<BR>" );
+            out.println( "   HttpServletRequest.getPathInfo() returned a non-null result<BR>" );
+            out.println( "   Actual result = |" + result + "| <BR>" );
+        }
+    }
 }

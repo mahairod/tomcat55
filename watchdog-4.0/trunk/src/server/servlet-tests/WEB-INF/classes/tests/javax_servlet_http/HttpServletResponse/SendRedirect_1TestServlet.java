@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -72,19 +74,22 @@ import java.io.PrintWriter;
  *	When sendRirect is called after committing the response,it will throw IllegalStateException.
  */
 
-
 public class SendRedirect_1TestServlet extends HttpServlet {
 
-	 public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		response.flushBuffer();
-		try {
-			response.sendRedirect("RedirectedTest");
-			out.println("SendRedirect_1Test test FAILED");
-		}catch(IllegalStateException ise) {
-			out.println("SendRedirect_1Test test PASSED");
-		}
-	}	
+        PrintWriter out = response.getWriter();
+        response.setBufferSize( 60 );
+        response.setContentType( "text/html" );
+        out.println( "in SendRedirect_1Test servlet<BR>" );
+        response.flushBuffer();
+
+        try {
+            response.sendRedirect( "/RedirectedTest" );
+            out.println( "SendRedirect_1Test test FAILED<BR>" );
+            out.println( "     IllegalStateException exception should have been thrown<BR>" );
+        } catch ( IllegalStateException ise ) {
+            out.println( "SendRedirect_1Test test PASSED" );
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,7 +60,6 @@
 
 package tests.javax_servlet_http.HttpServletRequest;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
@@ -67,28 +68,24 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *	A Negative Test for getRequestedSessionId method
  */
 
 public class GetRequestedSessionId_01TestServlet extends HttpServlet {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		String id = request.getRequestedSessionId();
-		if(id ==null)
-		{
-			out.println("GetRequestedSessionId_01Test test PASSED");
+        PrintWriter out = response.getWriter();
+        String result = request.getRequestedSessionId();
 
-		}
-		else 
-		{
-			out.println("GetRequestedSessionId_01Test test FAILED");
-			out.println("Giving a null value even though no session id info is there in request");
-			out.println("Actual session id -> " + id);
-			out.println("Expected session id -> null ");
-		}
-	}
+        if ( result == null ) {
+            out.println( "GetRequestedSessionId_01Test test PASSED" );
+
+        } else {
+            out.println( "GetRequestedSessionId_01Test test FAILED<BR>" );
+            out.println( "     HttpServletRequest.getRequestedSessionId() returned a nonnull result <BR>" );
+            out.println( "     Actual result = |" + result + "| <BR>" );
+        }
+    }
 }

@@ -6,7 +6,7 @@
  * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,12 +69,10 @@ import java.io.PrintWriter;
  *	A Test for setStatus(int) method
  */
 
-
 public class HttpServletResponseWrapperSetStatusTestServlet extends HttpServlet {
 
     public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
         response.setStatus( HttpServletResponse.SC_OK );
-
     }
 }

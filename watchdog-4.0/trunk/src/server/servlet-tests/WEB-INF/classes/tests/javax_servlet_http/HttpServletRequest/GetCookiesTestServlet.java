@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -54,11 +56,9 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- * @Author: Ramesh.Mandava
  */
 
 package tests.javax_servlet_http.HttpServletRequest;
-
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,52 +73,53 @@ import java.io.PrintWriter;
  *	A Test for getCookies Method
  */
 
+public class GetCookiesTestServlet extends HttpServlet {
 
-public class GetCookiesTestServlet extends HttpServlet  {
+    /**
+     *	We sent some Cookies from the client side
+     *	We should be able to get them here
+     */
 
-/**
- *	We sent some Cookies from the client side
- *	We should be able to get them here
- */
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter( );
+        String expectedResult = "Java";
+        boolean expectedResultFound = false;
+        Cookie cookies[] = null;
+        int count = 0;
+        int expectedCount = 1;
+        boolean gotCookie = false;
+        cookies = request.getCookies();
+        int len = cookies.length;
 
+        for ( int i = 0; i < len;i++ ) {
+            String result = cookies[ i ].getValue();
 
-		PrintWriter out = response.getWriter( );
-                String expectedName = "BestLanguage";
-                String expectedValue = "Java";
-                int expectedCount = 1;
-		String gotName = null;
-                String gotValue= null;
-
-		Cookie cookies[] = request.getCookies();
-                if (cookies == null) {
-                    out.println("GetCookiesTest test FAILED");
-                    out.println("getCookies() returned null");
-                    out.flush();
-                    return;
-                }
-                for (int i = 0; i < cookies.length; i++) {
-                    gotName = cookies[i].getName();
-                    if (gotName.equals(expectedName)) {
-                        gotValue = cookies[i].getValue();
-                    }
-                }
-
-                if ((expectedCount != cookies.length) ||
-                    !expectedName.equals(gotName) ||
-                    !expectedValue.equals(gotValue)) {
-                    out.println("GetCookiesTest test FAILED");
-                    out.println("Expected count = " + expectedCount +
-                                ", actual count = " + cookies.length);
-                    out.println("Expected name = " + expectedName +
-                                ", gotName = " + gotName);
-                    out.println("Expected value = " + expectedValue +
-                                ", gotValue = " + gotValue);
+            if ( result.equals( expectedResult ) ) {
+                if ( !expectedResultFound ) {
+                    count++;
+                    expectedResultFound = true;
                 } else {
-                    out.println("GetCookiesTest test PASSED");
+                    out.println( "GetCookiesTest test FAILED <BR>" );
+                    out.println( "    HttpServletRequest.getCookies() method return the same cookie twice <BR>" );
+                    out.println( "    The cookie already received was " + expectedResult + " <BR>" );
                 }
-
+            }
         }
 
+        if ( count != expectedCount ) {
+            out.println( "GetCookiesTest test FAILED<BR>" );
+            out.println( "    HttpServletRequest.getCookies() method did not return the correct number of cookies <BR>" );
+            out.println( "    Expected count = " + expectedCount + "<BR>"
+                       );
+            out.println( "    Actual count = " + count + "<BR>" );
+            out.print( "    The cookie received thus far is :" );
+
+            if ( expectedResultFound ) {
+                out.println( expectedResult + "<BR>" );
+            }
+        } else {
+            out.println( "GetCookiesTest test PASSED" );
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,7 +25,7 @@
  *    any, must include the following acknowlegement:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowlegement may appear in the software itself
+ *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,7 +60,6 @@
 
 package tests.javax_servlet_http.HttpServletRequest;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
@@ -73,26 +74,29 @@ import java.io.PrintWriter;
 
 public class GetHeaderTestServlet extends HttpServlet {
 
-/**
- *	We sent a Cookie Header from the clilent side
- */
+    /*
+     *	We sent a Cookie Header from the clilent side
+     */
 
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
 
-		PrintWriter out = response.getWriter();
-		
-		String gotHeaderValue = request.getHeader("User-Agent");
-		if(  ( gotHeaderValue !=null ) && ( gotHeaderValue.equals("Mozilla/4.0") ) ){
-			out.println("GetHeaderTest test PASSED");
-		}
-		else
-		{
-			out.println("GetHeaderTest test FAILED<BR>");
-			out.println("getHeader not returning proper value for User-Agent header<BR>");
-			out.println("Got Value : " + gotHeaderValue) ;
-			out.println("<BR>Expected value : Mozilla/4.0");
-		}
-		
-	}
+        String expectedResult = "Mozilla/4.0";
+        String result = request.getHeader( "User-Agent" );
+
+        if ( result != null ) {
+            if ( result.equals( expectedResult ) ) {
+                out.println( "GetHeaderTest test PASSED" );
+            } else {
+                out.println( "GetHeaderTest test FAILED" );
+                out.println( "     HttpServletRequest.getHeader() returned an incorrect result<BR>" );
+                out.println( "     Expected result = " + expectedResult + " <BR>" );
+                out.println( "     Actual result = |" + result + "| <BR>" );
+            }
+        } else {
+            out.println( "GetHeaderTest test FAILED<BR>" );
+            out.println( "     HttpServletRequest.getHeader() returned a null result<BR>" );
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -66,33 +68,29 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *	A  Negative Test for getIntHeader(String) Method
  */
 
-
 public class GetIntHeader_1TestServlet extends HttpServlet {
 
-/**
- *	We are sending a non numeric valued header from
- *	the client side
- */
+    /**
+     *	We are sending a non numeric valued header from
+     *	the client side
+     */
 
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
 
-		PrintWriter out = response.getWriter();
-		try {
-
-			int testInt=request.getIntHeader("MyNonIntHeader");
-			out.println("GetIntHeader_1Test test FAILED<BR>");
-			out.println( "getIntHeader(String) Did not  raise NumberFormatException for a NonInt Header<BR>");
-			out.println("Actual Got value : " + testInt );
-			out.println("<BR>Expected : NumberFormatException");
-
-		}catch(NumberFormatException nfe) {
-			out.println("GetIntHeader_1Test test PASSED");
-		}
-	}
+        try {
+            String param = "MyNonIntHeader";
+            int result = request.getIntHeader( param );
+            out.println( "GetIntHeader_1Test test FAILED<BR>" );
+            out.println( "     HttpServletRequest.getIntHeader(" + param + ") did not throw a NumberFormatException for a NonInt Header<BR>" );
+            out.println( "     Actual result = |" + result + "| <BR>" );
+        } catch ( NumberFormatException nfe ) {
+            out.println( "GetIntHeader_1Test test PASSED" );
+        }
+    }
 }

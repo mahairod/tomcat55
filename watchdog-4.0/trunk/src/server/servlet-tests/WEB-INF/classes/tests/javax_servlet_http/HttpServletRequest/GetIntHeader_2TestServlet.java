@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -54,7 +56,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- * @Aythor: Ramesh.Mandava
  */
 
 package tests.javax_servlet_http.HttpServletRequest;
@@ -67,38 +68,36 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *	A  Negative Test for getIntHeader(String) Method
  */
 
-
 public class GetIntHeader_2TestServlet extends HttpServlet {
 
-/**
- *	We did not set any header in the client side
- *	we expect -1 here
- */
+    /*
+     *	We did not set any header in the client side
+     *	we expect -1 here
+     */
 
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        String param = "doesnotexist";
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		PrintWriter out = response.getWriter();
-		try {
-			int testInt=request.getIntHeader("NonExistentIntHeader");
-			if(testInt == -1) {
-			   	out.println("GetIntHeader_2Test test PASSED");
-			}
-			else
-			{
-			   	out.println("GetIntHeader_2Test test FAILED");
-				out.println("getIntHeader not giving -1 for non-existent header");
-				out.println("Got NonExistentIntHeader value = "+testInt );  
-			}
-				
-		}catch(NumberFormatException iae) {
-			out.println("GetIntHeader_2Test test FAILED");
-			out.println("For NonExistentIntHeader, getIntHeader throwing NumberFormatException instead of returning -1 according to spec");
-			
-		}
-	}
+        try {
+            int result = request.getIntHeader( param );
+
+            if ( result == -1 ) {
+                out.println( "GetIntHeader_2Test test PASSED" );
+            } else {
+                out.println( "GetIntHeader_2Test test FAILED" );
+                out.println( "     HttpServletRequest.getIntHeader(" + param + ") did not return a -1 for non-existent header" );
+                out.println( "     Actual result = |" + result + "| <BR>" );
+            }
+
+        } catch ( NumberFormatException iae ) {
+            out.println( "GetIntHeader_2Test test FAILED<BR>" );
+            out.println( "     HttpServletRequest.getIntHeader(" + param + ") threw a NumberFormatException instead of returning -1 <BR>" );
+
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,8 +60,6 @@
 
 package tests.javax_servlet_http.HttpServletRequest;
 
-
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
@@ -73,25 +73,17 @@ import java.io.PrintWriter;
  *	A Negative Test for getSession method
  */
 
-
 public class GetSession_01TestServlet extends HttpServlet {
 
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
 
-		PrintWriter out = response.getWriter();
-		if(request.getSession(false) == null ) 
-		{
-			out.println("GetSession_01Test test PASSED");	
-		}
-		else
-		{
-			out.println("GetSession_01Test test FAILED");	
-			out.println("getSession(false) returns NOn-Null value even when request is not in session");
-			out.println("Actual returned value : "+ request.getSession(false) );
-			out.println("Expected returned value : null " );
-		}
-			
-
-	}
+        if ( request.getSession( false ) == null ) {
+            out.println( "GetSession_01Test test PASSED" );
+        } else {
+            out.println( "GetSession_01Test test FAILED<BR>" );
+            out.println( "     HttpServletRequest.getSession(false) returned a non-Null result<BR>" );
+        }
+    }
 }

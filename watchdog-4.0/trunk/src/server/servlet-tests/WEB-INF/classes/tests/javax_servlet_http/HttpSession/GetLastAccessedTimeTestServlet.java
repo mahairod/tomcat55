@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,8 +58,6 @@
  *
  */
 
-
-
 package tests.javax_servlet_http.HttpSession;
 
 import javax.servlet.http.HttpServletRequest;
@@ -70,25 +70,26 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *	A test for HttpSession.GetLastAccessesTime() method
  */
 
-
 public class GetLastAccessedTimeTestServlet extends HttpServlet {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		HttpSession session = request.getSession(true);
-		long time=session.getLastAccessedTime();
-		Date date = new Date(time);
-		if(date!=null) {
-			out.println("GetLastAccessedTimeTest test PASSED");
-		}
-		else {
-			out.println("GetLastAccessedTimeTest test FAILED");
-		}
-	}
+        PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession( true );
+        long time = session.getLastAccessedTime();
+        Date date = new Date( time );
+
+        if ( date != null ) {
+            out.println( "GetLastAccessedTimeTest test PASSED" );
+        } else {
+            out.println( "GetLastAccessedTimeTest test FAILED<BR>" );
+            out.println( "    HttpSession.getLastAccessedTime() returned an invalid result <BR>" );
+            out.println( "    Actual result = |" + time + "|<BR>" );
+            out.println( "    The date returned from using the above value was a null<BR>" );
+        }
+    }
 }

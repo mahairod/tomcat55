@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,7 +25,7 @@
  *    any, must include the following acknowlegement:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowlegement may appear in the software itself
+ *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,12 +60,12 @@
 
 package tests.javax_servlet_http.HttpServletRequest;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.ServletConfig;
 import java.util.Enumeration;
+import java.util.Vector;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -74,36 +76,75 @@ import java.io.PrintWriter;
 
 public class GetHeadersTestServlet extends HttpServlet {
 
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
 
-		PrintWriter out= response.getWriter();
+        int count = 0;
+        int expectedCount = 2;
+        String expectedResult1 = "en-us";
+        boolean expectedResult1Found = false;
+        String expectedResult2 = "ga-us";
+        boolean expectedResult2Found = false;
+        String param = "Accept-Language";
+        Enumeration enum = request.getHeaders( param );
 
-		Enumeration headers = request.getHeaders("Accept-Language");
+        if ( enum.hasMoreElements() ) {
+            Vector v = new Vector();
 
-                int count =0;//header value count
-                while(headers.hasMoreElements()) {
+            while ( enum.hasMoreElements() ) {
+                String name = ( String ) enum.nextElement();
+
+                if ( name.equalsIgnoreCase( expectedResult1 ) ) {
+                    if ( !expectedResult1Found ) {
                         count++;
-                        String gotHeaderValue = (String)headers.nextElement();
-                        if ( (!gotHeaderValue.trim().equals("en-us")
-) && ( !gotHeaderValue.trim().equals("en-gb") ))
-                        {
-                                out.println("GetHeadersTest test FAILED");
-                                out.println("Got a header value which is not correct : " + gotHeaderValue );
-                        }
-
+                        expectedResult1Found = true;
+                    } else {
+                        out.println( "GetHeadersTest  test FAILED<BR>" );
+                        out.println( "    HttpServletRequest.getHeaders(" + param + ") method return the same header name twice <BR>" );
+                        out.println( "    The header already received was " + expectedResult1 + " <BR>" );
+                    }
+                } else if ( name.equalsIgnoreCase( expectedResult2 ) ) {
+                    if ( !expectedResult2Found ) {
+                        count++;
+                        expectedResult2Found = true;
+                    } else {
+                        out.println( "GetHeadersTest  test FAILED<BR>" );
+                        out.println( "    HttpServletRequest.getHeaders(" + param + ") method return the same header name twice <BR>" );
+                        out.println( "    The header already received was " + expectedResult2 + " <BR>" );
+                    }
+                } else {
+                    v.add( name );
                 }
-                if(count !=2) {
+            }
 
-                        out.println("GetHeadersTest test FAILED");
-			out.println("Not got all the set values for the header");
+            if ( count != expectedCount ) {
+                out.println( "GetHeadersTest  test FAILED<BR>" );
+                out.println( "    HttpServletRequest.getHeaders(" + param + ") method did not return the correct number of headers <BR>" );
+                out.println( "    Expected count = " + expectedCount + "<BR>" );
+                out.println( "    Actual count = " + count + "<BR>" );
+                out.println( "    The expected headers received were :<BR>" );
 
+                if ( expectedResult1Found ) {
+                    out.println( expectedResult1 + "<BR>" );
                 }
-                else
-                {
-                        out.println("GetHeadersTest test PASSED");
+
+                if ( expectedResult2Found ) {
+                    out.println( expectedResult2 + "<BR>" );
                 }
 
+                out.println( "    Other headers received were :<BR>" );
 
-	}
+                for ( int i = 0;i <= v.size() - 1;i++ ) {
+                    out.println( "     " + v.elementAt( i ).toString() + "<BR>" );
+                }
+            } else {
+                out.println( "GetHeadersTest test PASSED" );
+            }
+        } else {
+            out.println( "GetHeadersTest  test FAILED<BR>" );
+            out.println( "    HttpServletRequest.getHeaders(" + param + ") an empty enumeration <BR>" );
+
+        }
+    }
 }

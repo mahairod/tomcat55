@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,8 +60,6 @@
 
 package tests.javax_servlet_http.HttpServletRequest;
 
-
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
@@ -72,29 +72,24 @@ import java.io.PrintWriter;
  *	A Negative Test for getQueryString method
  */
 
-
 public class GetQueryString_01TestServlet extends HttpServlet {
 
-/**
- *	We should not supply some queryString in the client
- *	We should get null here
- */
+    /*
+     *	We should not supply some queryString in the client
+     *	We should get null here
+     */
 
+    public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
+        PrintWriter out = response.getWriter();
+        String result = request.getQueryString();
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		PrintWriter out = response.getWriter();
-		if(request.getQueryString() ==null) {
-			out.println("GetQueryString_01Test test PASSED");
-		}
-		else
-		{
-			out.println("GetQueryString_01Test test FAILED");
-			out.println("getQuery returned Non-Null value even when we haven't given querystring in the request");
-			out.println("Actual Returned Query String -> " + request.getQueryString() );
-			out.println("Expected Query String -> null " );
-		}
-
-	}
+        if ( result == null ) {
+            out.println( "GetQueryString_01Test test PASSED" );
+        } else {
+            out.println( "GetQueryString_01Test test FAILED<BR>" );
+            out.println( "      HttpServletRequest.getQueryString() returned a Non-Null result <BR>" );
+            out.println( "      Actual result = |" + result + "| <BR>" );
+        }
+    }
 }
