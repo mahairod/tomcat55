@@ -118,6 +118,7 @@ import org.apache.catalina.util.MD5Encoder;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.XMLWriter;
 import org.apache.catalina.util.DOMWriter;
+import org.apache.catalina.util.RequestUtil;
 
 
 /**
@@ -1497,7 +1498,8 @@ public class WebdavServlet
             }
         }
 
-        destinationPath = normalize(destinationPath);
+        destinationPath = 
+            RequestUtil.URLDecode(normalize(destinationPath), "UTF8");
 
         if (debug > 0)
             System.out.println("Dest path :" + destinationPath);
