@@ -291,7 +291,7 @@ class ParserXJspSaxHandler
 	    if (name.equals("jsp:root")) {
 		node.validate(true, false);
 		jspHandler.handleRootEnd();
-	    } else if (name.equals("jsp:cdata")) {
+	    } else if (name.equals("jsp:text")) {
 		node.validate(false, true);
 		jspHandler.handleJspCdata(node.start, stop, node.getText());
 	    } else if (name.equals("jsp:directive.include")) {

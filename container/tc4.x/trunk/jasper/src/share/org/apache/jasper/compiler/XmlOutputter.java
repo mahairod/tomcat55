@@ -98,12 +98,19 @@ public class XmlOutputter {
      */
     private int jspRootLevel = 0;
 
+    public static final String JSP_NAMESPACE = "http://java.sun.com/JSP/TagLibraryDescriptor";
+    public static final String JSP_VERSION = "1.2";
+
+
     //*********************************************************************
     // Constructor
 
     XmlOutputter() {
 	sb = new StringBuffer();
 	rootAttrs = new AttributesImpl();
+
+        rootAttrs.addAttribute("", "xmlns:jsp", "xmlns:jsp", "CDATA", JSP_NAMESPACE);
+        rootAttrs.addAttribute("", "version", "version", "CDATA", JSP_VERSION);
     }
 
     //*********************************************************************
@@ -131,7 +138,7 @@ public class XmlOutputter {
      * Add a namespace entry for every taglib in the <jsp:root> tag.
      */
      void addRootNamespaces(String prefix, String uri) {
-	 rootAttrs.addAttribute("", "localname", "xmlns:" + prefix, "CDATA", uri);
+	 rootAttrs.addAttribute("", "xmlns", "xmlns:" + prefix, "CDATA", uri);
      }
 
 
@@ -226,18 +233,17 @@ public class XmlOutputter {
     //*********************************************************************
     // Outputting the XML stream
 
-    private static final String PROLOG =
-	"<!DOCTYPE jsp:root\n  PUBLIC \"-//Sun Microsystems Inc.//DTD JavaServer Pages Version 1.1//EN\"\n  \"http://java.sun.com/products/jsp/dtd/jspcore_1_2.dtd\">\n";
-
     PageData getPageData() {
 	StringBuffer buff = new StringBuffer();
+        AttributesImpl attrs = new AttributesImpl();
 
-        buff.append(PROLOG);
+        
         append("jsp:root", rootAttrs, buff);
 	buff.append(sb.toString());
         buff.append("</jsp:root>");
 	InputStream is = 
 	    new ByteArrayInputStream(buff.toString().getBytes());
+        //System.out.println("XmlOutputter: \n" + buff);
 	PageData pageData = new PageDataImpl(is);
         return pageData;
     }
