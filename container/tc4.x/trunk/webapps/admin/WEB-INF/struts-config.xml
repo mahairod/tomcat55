@@ -19,6 +19,10 @@
     <form-bean      name="sampleForm"
                     type="org.apache.webapp.admin.SampleForm"/>
 
+    <!-- Server form bean -->
+    <form-bean      name="serverForm"
+                    type="org.apache.webapp.admin.ServerForm"/>
+
     <!-- Set Locale form bean -->
     <form-bean      name="setLocaleForm"
                     type="org.apache.webapp.admin.SetLocaleForm"/>
@@ -44,6 +48,10 @@
 
     <forward        name="Tree Control Test"
                     path="/tree-control-test.jsp"
+                redirect="false"/>
+
+    <forward        name="Server"
+                    path="/server.jsp"
                 redirect="false"/>
 
     <forward        name="Save Successful"
@@ -73,6 +81,16 @@
                   redirect="true"/>
     </action>
 
+    <!-- Set up Tree datastructure -->
+    <action    path="/setUpServer"
+               type="org.apache.webapp.admin.SetUpServerAction"
+               name="serverForm"
+               scope="session">
+      <forward        name="SetUpServer"
+                      path="/server.jsp"
+                  redirect="true"/>
+    </action>
+
     <!-- Log out of the application -->
     <action    path="/logOut"
                type="org.apache.webapp.admin.LogOutAction">
@@ -87,6 +105,14 @@
                name="sampleForm"
               scope="session"
               input="/sample.jsp">
+    </action>
+
+    <!-- Process a user server change -->
+    <action    path="/server"
+               type="org.apache.webapp.admin.ServerAction"
+               name="serverForm"
+              scope="session"
+              input="/server.jsp">
     </action>
 
     <!-- Process a set-locale action -->
