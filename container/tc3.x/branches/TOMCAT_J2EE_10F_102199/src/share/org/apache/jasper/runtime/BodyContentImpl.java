@@ -160,6 +160,7 @@ public class BodyContentImpl extends BodyContent {
 		   reAllocBuff (len);
 
             System.arraycopy(cbuf, off, cb, nextChar, len);
+	    nextChar+=len;
         }
     }
 
@@ -553,11 +554,7 @@ public class BodyContentImpl extends BodyContent {
      * @returns the value of this BodyJspWriter as a Reader
      */
     public Reader getReader() {
-	//XXX need to optimize this
-	    char[] tmp = new char [ nextChar - 1];
-	    for (int i=0; i < tmp.length; i++) 
-	        tmp[i] = cb[i];	
-	    return new CharArrayReader (tmp);
+        return new CharArrayReader (cb, 0, nextChar-1);
     }
 
     /**
