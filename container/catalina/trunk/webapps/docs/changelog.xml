@@ -98,6 +98,13 @@
 	   <add>
           Better log support to DeltaManager to see detail information at debug level. (pero)
        </add>
+	   <fix>
+          Fix FarmWarDeployer based on new HostConfig deployer. (pero)
+       </fix>
+	   <fix>
+          FarmWarDeployer controlled WarWatcher with engine backgroundProcess call.
+          Added processExpiresFrequency attribute to Deployer server.xml element. (pero)
+       </fix>
     </changelog>
   </subsection>
 
