@@ -125,7 +125,7 @@ public class Catalina {
      * The shared extensions class loader for this server.
      */
     protected ClassLoader parentClassLoader =
-        ClassLoader.getSystemClassLoader();
+        Catalina.class.getClassLoader();
 
 
     /**
@@ -275,7 +275,7 @@ public class Catalina {
      * Create and configure the Digester we will be using for startup.
      */
     protected Digester createStartDigester() {
-
+        long t1=System.currentTimeMillis();
         // Initialize the digester
         Digester digester = new Digester();
         if (debug)
@@ -357,11 +357,13 @@ public class Catalina {
         digester.addRuleSet(new ContextRuleSet("Server/Service/Engine/Host/"));
         digester.addRuleSet(new NamingRuleSet("Server/Service/Engine/Host/Context/"));
 
+        // When the 'engine' is found, set the parentClassLoader.
         digester.addRule("Server/Service/Engine",
                          new SetParentClassLoaderRule(digester,
                                                       parentClassLoader));
 
-
+        long t2=System.currentTimeMillis();
+        log.info("Digester for server.xml created " + ( t2-t1 ));
         return (digester);
 
     }
@@ -436,9 +438,9 @@ public class Catalina {
      * Start a new server instance.
      */
     protected void start() {
-
         // Create and execute our Digester
         Digester digester = createStartDigester();
+        long t1=System.currentTimeMillis();
         File file = configFile();
         try {
             InputSource is =
@@ -453,7 +455,9 @@ public class Catalina {
             e.printStackTrace(System.out);
             System.exit(1);
         }
-
+        long t2=System.currentTimeMillis();
+        log.info( "Server.xml processed " + (t2-t1 ));
+        
         // Setting additional variables
         if (!useNaming) {
             System.setProperty("catalina.useNaming", "false");
@@ -497,17 +501,21 @@ public class Catalina {
         }
 
         // Replace System.out and System.err with a custom PrintStream
-        SystemLogHandler log = new SystemLogHandler(System.out);
-        System.setOut(log);
-        System.setErr(log);
+        SystemLogHandler systemlog = new SystemLogHandler(System.out);
+        System.setOut(systemlog);
+        System.setErr(systemlog);
 
         Thread shutdownHook = new CatalinaShutdownHook();
+
+        long t3=System.currentTimeMillis();
 
         // Start the new server
         if (server instanceof Lifecycle) {
             try {
                 server.initialize();
                 ((Lifecycle) server).start();
+                long t4=System.currentTimeMillis();
+                log.info( "server.start " + server + " " + (t4-t3 ));
                 try {
                     // Register shutdown hook
                     Runtime.getRuntime().addShutdownHook(shutdownHook);
@@ -548,7 +556,6 @@ public class Catalina {
                 }
             }
         }
-
     }
 
 
@@ -633,7 +640,9 @@ public class Catalina {
         }
 
     }
-
+    
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( Catalina.class );
 
 }
 
