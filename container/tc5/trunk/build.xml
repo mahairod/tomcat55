@@ -122,13 +122,6 @@
       <srcfiles dir="${cvs.base}/jakarta-commons/modeler/src/java" includes="**" />
     </uptodate>
 
-<!--
-    <uptodate property="commons-el.build.notrequired"
-              targetfile="${commons-el.jar}">
-      <srcfiles dir="${cvs.base}/jakarta-commons/el/src/java" includes="**" />
-    </uptodate>
--->
-
     <uptodate property="commons-daemon.build.notrequired"
               targetfile="${commons-daemon.jar}">
       <srcfiles dir="${cvs.base}/jakarta-commons-sandbox/daemon/src" includes="**" />
@@ -478,18 +471,6 @@
     </ant>
   </target>
 
-<!--
-  <target name="build-commons-el" unless="commons-el.build.notrequired" description="build commons-el" >
-    <echo>========== Building: commons-el </echo>
-
-    <ant dir="${cvs.base}/jakarta-commons/el" target="dist" >
-        <property name="servlet-api.jar" location="${servlet-api.jar}" />
-        <property name="jsp-api.jar" value="${jsp-api.jar}"/>
-        <property name="compile.optimize" value="false" />
-        <property name="dist.home" value="${commons-el.home}" />
-    </ant>
-  </target>
--->
 
   <target name="build-commons-daemon" unless="commons-daemon.build.notrequired" description="build commons-daemon" >
     <echo>========== Building: commons-daemon </echo>
@@ -509,7 +490,6 @@
     <antcall target="build-servletapi"/>
     <antcall target="build-jspapi"/>
 
-    <!-- <antcall target="build-commons-el" /> -->
     <antcall target="build-commons-modeler" />
     <antcall target="build-commons-daemon" />
 
