@@ -610,7 +610,8 @@ public class MBeanUtils {
         } else if (container instanceof Context) {
             String path = ((Context)container).getPath();
             Host host = (Host) container.getParent();
-            Service service = ((Engine)container.getParent()).getService();
+            Service service = 
+                ((Engine)container.getParent().getParent()).getService();
             name = new ObjectName(domain + ":type=Logger,path=" + path +
                               ",host=" + host.getName() + ",service=" +
                               service.getName());
