@@ -845,6 +845,14 @@
         <mime-type>image/x-xbitmap</mime-type>
     </mime-mapping>
     <mime-mapping>
+        <extension>xht</extension>
+        <mime-type>application/xhtml+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xhtml</extension>
+        <mime-type>application/xhtml+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
         <extension>xml</extension>
         <mime-type>text/xml</mime-type>
     </mime-mapping>
