@@ -34,25 +34,25 @@ set _CP=%CP%
 
 rem ----- Verify and Set Required Environment Variables -----------------------
 
-if not "%JAVA_HOME%" == "" goto gotJavaHome
+if not "%JAVA_HOME%" == "" goto gotJava
 echo You must set JAVA_HOME to point at your Java Development Kit installation
 goto cleanup
-:gotJavaHome
+:gotJava
 
-if not "%CATALINA_HOME%" == "" goto gotCatalinaHome
+if not "%CATALINA_HOME%" == "" goto gotHome
 set CATALINA_HOME=.
 if exist "%CATALINA_HOME%\bin\catalina.bat" goto okCatalinaHome
 set CATALINA_HOME=..
-:gotCatalinaHome
-if exist "%CATALINA_HOME%\bin\catalina.bat" goto okCatalinaHome
+:gotHome
+if exist "%CATALINA_HOME%\bin\catalina.bat" goto okHome
 echo Cannot find catalina.bat in %CATALINA_HOME%\bin
 echo Please check your CATALINA_HOME setting
 goto cleanup
-:okCatalinaHome
+:okHome
 
-if not "%CATALINA_BASE%" == "" goto gotCatalinaBase
+if not "%CATALINA_BASE%" == "" goto gotBase
 set CATALINA_BASE=%CATALINA_HOME%
-:gotCatalinaBase
+:gotBase
 
 
 rem ----- Prepare Appropriate Java Execution Commands -------------------------
