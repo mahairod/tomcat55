@@ -3327,10 +3327,23 @@ public class StandardContext
         filterStop();
         listenerStop();
 
+        if (isUseNaming()) {
+            try {
+                ContextBindings.bindThread(this, this);
+            } catch (NamingException e) {
+                log(sm.getString("standardContext.namingInitFailed",
+                                 getName()));
+            }
+        }
+
         // Normal container shutdown processing
         if (debug >= 1)
             log("Processing standard container shutdown");
         super.stop();
+
+        if (isUseNaming()) {
+            ContextBindings.unbindThread(this, this);
+        }
 
         if (debug >= 1)
             log("Stopping complete");
