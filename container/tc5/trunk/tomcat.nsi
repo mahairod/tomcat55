@@ -13,6 +13,9 @@
   !define MUI_WELCOMEPAGE
   !define MUI_FINISHPAGE
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\webapps\ROOT\RELEASE-NOTES.txt"
+  !define MUI_FINISHPAGE_RUN $INSTDIR\bin\tomcatw.exe
+  !define MUI_FINISHPAGE_RUN_PARAMETERS //GT//Tomcat5
+
   !define MUI_FINISHPAGE_NOREBOOTSUPPORT
 
   !define MUI_LICENSEPAGE
@@ -129,6 +132,10 @@ Section "Core" SecTomcatCore
 
   Call configure
 
+  ExecWait '"$INSTDIR\bin\tomcatw.exe" //IS//Tomcat5 --DisplayName "Apache Tomcat @VERSION@" --Description "Apache Tomcat @VERSION@ Server - http://jakarta.apache.org/tomcat/"  --Install "$INSTDIR\bin\tomcat.exe" --ImagePath "$INSTDIR\bin\bootstrap.jar" --StartupClass org.apache.catalina.startup.Bootstrap;main;start --ShutdownClass org.apache.catalina.startup.Bootstrap;main;stop --Java java --Startup manual'
+
+  ExecWait '"$INSTDIR\bin\tomcatw.exe" //US//Tomcat5 --JavaOptions -Dcatalina.home="\"$INSTDIR\""#-Djava.endorsed.dirs="\"$INSTDIR\common\endorsed\"" --StdOutputFile "$INSTDIR\logs\stdout.log" --StdErrorFile "$INSTDIR\logs\stderr.log" --WorkingPath "$INSTDIR"'
+
 SectionEnd
 
 Section "Service" SecTomcatService
@@ -140,7 +147,7 @@ Section "Service" SecTomcatService
   Call findJVMPath
   Pop $2
 
-  ExecWait '"$INSTDIR\bin\tomcat.exe" //IS//Tomcat5 --DisplayName "Apache Tomcat @VERSION@" --Description "Apache Tomcat @VERSION@ Server - http://jakarta.apache.org/tomcat/"  --Install "$INSTDIR\bin\tomcat.exe" --ImagePath "$INSTDIR\bin\bootstrap.jar" --StartupClass org.apache.catalina.startup.Bootstrap;main;start --ShutdownClass org.apache.catalina.startup.Bootstrap;main;stop --Java auto --JavaOptions -Djava.endorsed.dirs="$INSTDIR\common\endorsed"#-Dcatalina.home="$INSTDIR" --StdOutputFile "$INSTDIR\logs\stdout.log" --StdErrorFile "$INSTDIR\logs\stderr.log" --WorkingPath "$INSTDIR"'
+  ExecWait '"$INSTDIR\bin\tomcatw.exe" //US//Tomcat5 --Startup auto'
 
   BringToFront
   ClearErrors
@@ -195,15 +202,15 @@ NoDocumentaion:
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat 5.0 Program Directory.lnk" \
                  "$INSTDIR"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Start Tomcat.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Start Tomcat (old).lnk" \
                  "$2\bin\java.exe" \
                  '-Duser.dir="$INSTDIR\bin" LauncherBootstrap -launchfile catalina.xml catalina start' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Stop Tomcat.lnk" \
-                 "$2\bin\java.exe" \
-                 '-Duser.dir="$INSTDIR\bin" LauncherBootstrap -launchfile catalina.xml catalina stop' \
-                 "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Start Tomcat.lnk" \
+                 "$INSTDIR\bin\tomcatw.exe" \
+                 '//GT//Tomcat5' \
+                 "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
 SectionEnd
 
