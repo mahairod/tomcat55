@@ -87,8 +87,18 @@ import java.util.Iterator;
 import java.util.Random;
 
 import javax.naming.directory.DirContext;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.RuntimeOperationsException;
+import javax.management.ObjectName;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.MBeanRegistration;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.modeler.Registry;
 
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
@@ -137,8 +147,10 @@ import org.apache.catalina.util.StringManager;
  */
 
 public final class StandardServer
-    implements Lifecycle, Server {
-
+    implements Lifecycle, Server, MBeanRegistration 
+ {
+    private static Log log = LogFactory.getLog(StandardServer.class);
+   
 
     // -------------------------------------------------------------- Constants
 
@@ -618,6 +630,16 @@ public final class StandardServer
 
         return (services);
 
+    }
+    
+    /** @jmx:attribute List services
+    */
+    public ObjectName[] getServiceNames() {
+        ObjectName onames[]=new ObjectName[ services.length ];
+        for( int i=0; i<services.length; i++ ) {
+            onames[i]=((StandardService)services[i]).getObjectName();
+        }
+        return onames;
     }
 
 
@@ -2331,21 +2353,67 @@ public final class StandardServer
 
     }
 
+    public void init() throws Exception {
+        initialize();
+    }
+    
     /**
      * Invoke a pre-startup initialization. This is used to allow connectors
      * to bind to restricted ports under Unix operating environments.
      */
     public void initialize()
-    throws LifecycleException {
-        if (initialized)
-            throw new LifecycleException (
-                sm.getString("standardServer.initialize.initialized"));
+        throws LifecycleException 
+    {
+        if (initialized) {
+                log.info(sm.getString("standardServer.initialize.initialized"));
+            return;
+        }
         initialized = true;
 
+        if( oname==null ) {
+            try {
+                oname=new ObjectName( "Catalina:type=Server");
+                Registry.getRegistry().registerComponent(this, oname, null );
+            } catch (Exception e) {
+                log.error("Error registering ",e);
+            }
+        }
+        
         // Initialize our defined Services
         for (int i = 0; i < services.length; i++) {
             services[i].initialize();
         }
     }
+    
+    protected String type;
+    protected String domain;
+    protected String suffix;
+    protected ObjectName oname;
+    protected MBeanServer mserver;
 
+    public ObjectName getObjectName() {
+        return oname;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public ObjectName preRegister(MBeanServer server,
+                                  ObjectName name) throws Exception {
+        oname=name;
+        mserver=server;
+        domain=name.getDomain();
+        return name;
+    }
+
+    public void postRegister(Boolean registrationDone) {
+    }
+
+    public void preDeregister() throws Exception {
+    }
+
+    public void postDeregister() {
+    }
+    
 }
