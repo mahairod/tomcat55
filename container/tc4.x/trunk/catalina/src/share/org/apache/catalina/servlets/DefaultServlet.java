@@ -968,7 +968,7 @@ public class DefaultServlet
         // the welcome files list.
         if (resourceInfo.collection) {
 
-	    if (!path.endsWith("/")) {
+	    if (!request.getRequestURI().endsWith("/")) {
 	        response.sendRedirect(request.getRequestURI() + "/");
 		return;
 	    }
