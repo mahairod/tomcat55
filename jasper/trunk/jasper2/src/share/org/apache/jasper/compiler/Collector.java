@@ -72,7 +72,7 @@ import org.apache.jasper.JasperException;
  * @author Mark Roth
  */
 
-public class Collector {
+class Collector {
 
     /**
      * A visitor for collecting information on the page and the body of

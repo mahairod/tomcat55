@@ -64,7 +64,7 @@ package org.apache.jasper.compiler;
 import org.xml.sax.Attributes;
 import org.apache.jasper.JasperException;
 
-public class Dumper {
+class Dumper {
 
     static class DumpVisitor extends Node.Visitor {
 	private int indent = 0;

@@ -80,7 +80,7 @@ import org.apache.jasper.xmlparser.TreeNode;
  * @author Pierre Delisle
  * @author Kin-man Chung
  */
-public class TagLibraryInfoImpl extends TagLibraryInfo {
+class TagLibraryInfoImpl extends TagLibraryInfo {
 
     private static final String TAGLIB_TLD = "META-INF/taglib.tld";
     private static final String WEB_XML = "/WEB-INF/web.xml";

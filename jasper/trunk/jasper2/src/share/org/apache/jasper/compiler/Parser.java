@@ -86,7 +86,7 @@ import org.apache.jasper.JasperException;
  * @author Mark Roth
  */
 
-public class Parser {
+class Parser {
 
     private ParserController parserController;
     private JspCompilationContext ctxt;

@@ -88,7 +88,7 @@ import org.apache.jasper.Constants;
  * @author Denis Benoit
  */
 
-public class Generator {
+class Generator {
 
     private static final Class[] OBJECT_CLASS = { Object.class};
     private ServletWriter out;

@@ -85,7 +85,7 @@ import org.xml.sax.Attributes;
  * @author Shawn Bayern
  * @author Mark Roth
  */
-public class Validator {
+class Validator {
 
     /**
      * A visitor to validate and extract page directive info

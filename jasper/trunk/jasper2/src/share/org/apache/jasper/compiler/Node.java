@@ -76,7 +76,7 @@ import org.apache.jasper.JasperException;
  * @author Mark Roth
  */
 
-public abstract class Node {
+abstract class Node {
     
     protected Attributes attrs;
     protected Nodes body;

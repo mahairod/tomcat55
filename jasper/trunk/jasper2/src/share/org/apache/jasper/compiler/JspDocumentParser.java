@@ -80,7 +80,7 @@ import org.apache.jasper.JspCompilationContext;
  * @author Jan Luehe
  */
 
-public class JspDocumentParser extends DefaultHandler
+class JspDocumentParser extends DefaultHandler
             implements LexicalHandler, TagConstants {
 
     private static final String XMLNS = "xmlns:";

@@ -74,7 +74,7 @@ import org.apache.jasper.JasperException;
  *
  * @author Jan Luehe
  */
-public class ImplicitTagLibraryInfo extends TagLibraryInfo {
+class ImplicitTagLibraryInfo extends TagLibraryInfo {
 
     private static final String WEB_INF_TAGS = "/WEB-INF/tags";
     private static final String TAG_FILE_SUFFIX = ".tag";

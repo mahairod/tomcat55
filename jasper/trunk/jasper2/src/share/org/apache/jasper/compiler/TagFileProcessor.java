@@ -80,14 +80,14 @@ import org.apache.jasper.servlet.JspServletWrapper;
  * @author Kin-man Chung
  */
 
-public class TagFileProcessor {
+class TagFileProcessor {
 
     private Vector tempVector;
 
     /**
      * A visitor the tag file
      */
-    static class TagFileVisitor extends Node.Visitor {
+    private static class TagFileVisitor extends Node.Visitor {
 
         private static final JspUtil.ValidAttribute[] tagDirectiveAttrs = {
             new JspUtil.ValidAttribute("display-name"),
@@ -406,7 +406,7 @@ public class TagFileProcessor {
      * files and compile (if necessary) and load them.
      */ 
 
-    class TagFileLoaderVisitor extends Node.Visitor {
+    private class TagFileLoaderVisitor extends Node.Visitor {
 
 	private Compiler compiler;
 	private PageInfo pageInfo;

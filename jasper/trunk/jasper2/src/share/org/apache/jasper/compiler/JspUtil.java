@@ -97,7 +97,7 @@ import org.apache.jasper.runtime.ExpressionEvaluatorImpl;
  * @author Shawn Bayern
  * @author Mark Roth
  */
-public class JspUtil {
+class JspUtil {
 
     // Delimiters for request-time expressions (JSP and XML syntax)
     private static final String OPEN_EXPR  = "<%=";

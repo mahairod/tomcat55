@@ -70,7 +70,7 @@ import org.apache.jasper.JasperException;
  *
  * @author Jan Luehe
  */
-public class ScriptingVariabler {
+class ScriptingVariabler {
 
     private static final Integer MAX_SCOPE = new Integer(Integer.MAX_VALUE);
 

@@ -67,7 +67,7 @@ import java.util.Stack;
  *
  * @author Anil K. Vijendran
  */
-public final class Mark {
+final class Mark {
     int cursor, line, col;	// position within current stream
     int fileid;			// fileid of current stream
     String fileName;            // name of the current file
