@@ -128,7 +128,7 @@ activation.lib=${activation.home}
 activation.jar=${activation.lib}/activation.jar
 
 
-# ----- Commons Daemon, version 20020728 or later -----
+# ----- Commons Daemon, version 20020730 or later -----
 commons-daemon.home=${base.path}/commons-daemon
 commons-daemon.lib=${commons-daemon.home}
 commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
