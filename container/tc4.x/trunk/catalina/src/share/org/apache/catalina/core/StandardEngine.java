@@ -221,6 +221,14 @@ public class StandardEngine
 
 
     /**
+     * Retrieve the DefaultContext for new web applications.
+     */
+    public DefaultContext getDefaultContext() {
+        return (this.defaultContext);
+    }
+
+
+    /**
      * Return the default Mapper class name.
      */
     public String getMapperClass() {

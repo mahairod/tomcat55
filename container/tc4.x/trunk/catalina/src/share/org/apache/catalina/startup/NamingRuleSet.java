@@ -155,8 +155,12 @@ public class NamingRuleSet extends RuleSetBase {
                             "addEnvironment",
                             "org.apache.catalina.deploy.ContextEnvironment");
 
-        digester.addCallMethod(prefix + "InstanceListener",
-                               "addInstanceListener", 0);
+        digester.addObjectCreate(prefix + "LocalEjb",
+                                 "org.apache.catalina.deploy.ContextLocalEjb");
+        digester.addSetProperties(prefix + "LocalEjb");
+        digester.addSetNext(prefix + "LocalEjb",
+                            "addLocalEjb",
+                            "org.apache.catalina.deploy.ContextLocalEjb");
 
         digester.addObjectCreate(prefix + "Resource",
                                  "org.apache.catalina.deploy.ContextResource");

@@ -84,6 +84,7 @@ import javax.naming.directory.DirContext;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
@@ -98,8 +99,12 @@ import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.Store;
 import org.apache.catalina.Valve;
+import org.apache.catalina.core.StandardEngine;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.NamingResources;
+import org.apache.catalina.deploy.ContextEjb;
+import org.apache.catalina.deploy.ContextLocalEjb;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextEnvironment;
@@ -485,6 +490,9 @@ public class StandardServerMBean extends BaseModelMBean {
                 listeners = new LifecycleListener[0];
             }
             for (int i = 0; i < listeners.length; i++) {
+                if (listeners[i] instanceof ServerLifecycleListener) {
+                    continue;
+                }
                 storeListener(writer, indent + 2, listeners[i]);
             }
         }
@@ -534,6 +542,9 @@ public class StandardServerMBean extends BaseModelMBean {
             LifecycleListener listeners[] =
                 ((Lifecycle) context).findLifecycleListeners();
             for (int i = 0; i < listeners.length; i++) {
+                if (listeners[i] instanceof ServerLifecycleListener) {
+                    continue;
+                }
                 storeListener(writer, indent + 2, listeners[i]);
             }
         }
@@ -562,17 +573,6 @@ public class StandardServerMBean extends BaseModelMBean {
             storeManager(writer, indent + 2, manager);
         }
 
-        // Store neste <Environment> elements
-        ContextEnvironment[] envs = context.findEnvironments();
-        for (int i = 0; i < envs.length; i++) {
-            for (int j = 0; j < indent + 2; j++) {
-                writer.print(' ');
-            }
-            writer.print("<Environment");
-            storeAttributes(writer, false, envs[i]);
-            writer.println("/>");
-        }
-        
         // Store nested <Parameter> elements
         ApplicationParameter[] appParams = context.findApplicationParameters();
         for (int i = 0; i < appParams.length; i++) {
@@ -601,74 +601,6 @@ public class StandardServerMBean extends BaseModelMBean {
         if (resources != null) {
             storeResources(writer, indent + 2, resources);
         }
-
-        /*
-        ContextResource[] resources = context.findResources();
-        for (int i = 0; i < resources.length; i++) {
-            for (int j = 0; j < indent + 2; j++) {
-                writer.print(' ');
-            }
-            writer.print("<Resource");
-            storeAttributes(writer, false, resources[i]);
-            writer.println("/>");
-        
-            // Store nested <ResourceParams> elements
-            NamingResources namingResources = context.getNamingResources();
-            ResourceParams[] params = namingResources.findResourceParams();  
-            for (int j = 0; j < params.length; j++ ) {
-                if (resources[i].getName().equals(params[j].getName())) {
-                    for (int k = 0; k < indent + 2; k++) {
-                        writer.print(' ');
-                    }
-                    writer.print("<ResourceParams ");
-                    storeAttributes(writer, false, params[j]);
-                    writer.println(">");
-                    Hashtable resourceParams = params[j].getParameters();
-                    Enumeration nameEnum = resourceParams.keys();
-                    Enumeration valueEnum = resourceParams.elements();
-                    while ((nameEnum.hasMoreElements()) && 
-                                    (valueEnum.hasMoreElements())) {      
-                        for (int k = 0; k < indent + 4; k++) {
-                            writer.print(' ');
-                        }                
-                        writer.println("<parameter>");
-                        for (int k = 0; k < indent + 6; k++) {
-                            writer.print(' ');
-                        }               
-                        writer.print("<name>");
-                        writer.print(nameEnum.nextElement());
-                        writer.println("</name>"); 
-                        for (int k = 0; k < indent + 6; k++) {
-                            writer.print(' ');
-                        }               
-                        writer.print("<value>"); 
-                        writer.print(valueEnum.nextElement());
-                        writer.println("</value>");         
-                        for (int k = 0; k < indent + 4; k++) {
-                            writer.print(' ');
-                        }               
-                        writer.println("</parameter>");      
-                    }
-                    for (int k = 0; k < indent + 2; k++) {
-                        writer.print(' ');
-                    }          
-                    writer.println("</ResourceParams>");
-                }
-            }
-        }
-        */
-        
-        
-        // Store nested <ResourceLink> elements
-        ContextResourceLink[] resourceLinks = context.findResourceLinks();
-        for (int i = 0; i < resourceLinks.length; i++) {
-            for (int j = 0; j < indent + 2; j++) {
-                writer.print(' ');
-            }
-            writer.print("<ResourceLink");
-            storeAttributes(writer, false, resourceLinks[i]);
-            writer.println("/>");
-        }       
 
         // Store nested <Valve> elements
         if (context instanceof Pipeline) {
@@ -700,11 +632,158 @@ public class StandardServerMBean extends BaseModelMBean {
             writer.println("</WrapperListener>");
         }
 
+        // Store nested naming resources elements
+        NamingResources nresources = context.getNamingResources();
+        if (nresources != null) {
+            storeNamingResources(writer, indent + 2, nresources);
+        }
+
         // Store the ending of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }
         writer.println("</Context>");
+
+    }
+
+
+    /**
+     * Store the specified DefaultContext properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param dcontext  Object whose properties are being stored
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeDefaultContext(PrintWriter writer, int indent,
+                                     DefaultContext dcontext)
+        throws Exception {
+
+        // Store the beginning of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<DefaultContext");
+        storeAttributes(writer, dcontext);
+        writer.println(">");
+
+        // Store nested <InstanceListener> elements
+        String iListeners[] = dcontext.findInstanceListeners();
+        for (int i = 0; i < iListeners.length; i++) {
+            for (int j = 0; j < indent; j++) {
+                writer.print(' ');
+            }
+            writer.print("<InstanceListener>");
+            writer.print(iListeners[i]);
+            writer.println("</InstanceListener>");
+        }
+
+        // Store nested <Listener> elements
+        if (dcontext instanceof Lifecycle) {
+            LifecycleListener listeners[] =
+                ((Lifecycle) dcontext).findLifecycleListeners();
+            for (int i = 0; i < listeners.length; i++) {
+                if (listeners[i] instanceof ServerLifecycleListener) {
+                    continue;
+                }
+                storeListener(writer, indent + 2, listeners[i]);
+            }
+        }
+
+        // Store nested <Loader> element
+        Loader loader = dcontext.getLoader();
+        if (loader != null) {
+            storeLoader(writer, indent + 2, loader);
+        }
+
+        // Store nested <Logger> element
+        /* Nested logger not currently supported on DefaultContext
+        Logger logger = dcontext.getLogger();
+        if (logger != null) {
+            Logger parentLogger = null;
+            if (dcontext.getParent() != null) {
+                parentLogger = dcontext.getParent().getLogger();
+            }
+            if (logger != parentLogger) {
+                storeLogger(writer, indent + 2, logger);
+            }
+        }
+        */
+
+        // Store nested <Manager> element
+        Manager manager = dcontext.getManager();
+        if (manager != null) {
+            storeManager(writer, indent + 2, manager);
+        }
+
+        // Store nested <Parameter> elements
+        ApplicationParameter[] appParams =
+            dcontext.findApplicationParameters();
+        for (int i = 0; i < appParams.length; i++) {
+            for (int j = 0; j < indent + 2; j++) {
+                writer.print(' ');
+            }
+            writer.print("<Parameter");
+            storeAttributes(writer, false, appParams[i]);
+            writer.println("/>");
+        }
+
+        // Store nested <Realm> element
+        /* Nested realm not currently supported on DefaultContext
+        Realm realm = dcontext.getRealm();
+        if (realm != null) {
+            Realm parentRealm = null;
+            if (dcontext.getParent() != null) {
+                parentRealm = dcontext.getParent().getRealm();
+            }
+            if (realm != parentRealm) {
+                storeRealm(writer, indent + 2, realm);
+            }
+        }
+        */
+        
+        // Store nested <Resources> element
+        DirContext resources = dcontext.getResources();
+        if (resources != null) {
+            storeResources(writer, indent + 2, resources);
+        }
+
+        // Store nested <Valve> elements
+        if (dcontext instanceof Pipeline) {
+            Valve valves[] = ((Pipeline) dcontext).getValves();
+            for (int i = 0; i < valves.length; i++) {
+                storeValve(writer, indent + 2, valves[i]);
+            }
+        }
+
+        // Store nested <WrapperLifecycle> elements
+        String wLifecycles[] = dcontext.findWrapperLifecycles();
+        for (int i = 0; i < wLifecycles.length; i++) {
+            for (int j = 0; j < indent; j++) {
+                writer.print(' ');
+            }
+            writer.print("<WrapperLifecycle>");
+            writer.print(wLifecycles[i]);
+            writer.println("</WrapperLifecycle>");
+        }
+
+        // Store nested <WrapperListener> elements
+        String wListeners[] = dcontext.findWrapperListeners();
+        for (int i = 0; i < wListeners.length; i++) {
+            for (int j = 0; j < indent; j++) {
+                writer.print(' ');
+            }
+            writer.print("<WrapperListener>");
+            writer.print(wListeners[i]);
+            writer.println("</WrapperListener>");
+        }
+
+        // Store the ending of this element
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.println("</DefaultContext>");
 
     }
 
@@ -729,11 +808,14 @@ public class StandardServerMBean extends BaseModelMBean {
         storeAttributes(writer, engine);
         writer.println(">");
 
-        // Store nested <Default> element
-        ; // FIXME
-
         // Store nested <DefaultContext> element
-        ; // FIXME
+        if (engine instanceof StandardEngine) {
+            DefaultContext dcontext =
+                ((StandardEngine) engine).getDefaultContext();
+            if (dcontext != null) {
+                storeDefaultContext(writer, indent + 2, dcontext);
+            }
+        }
 
         // Store nested <Host> elements (or other relevant containers)
         Container children[] = engine.findChildren();
@@ -752,6 +834,9 @@ public class StandardServerMBean extends BaseModelMBean {
             LifecycleListener listeners[] =
                 ((Lifecycle) engine).findLifecycleListeners();
             for (int i = 0; i < listeners.length; i++) {
+                if (listeners[i] instanceof ServerLifecycleListener) {
+                    continue;
+                }
                 storeListener(writer, indent + 2, listeners[i]);
             }
         }
@@ -820,102 +905,6 @@ public class StandardServerMBean extends BaseModelMBean {
 
     
     /**
-     * Store the specified GlobalNamingResources properties.
-     *
-     * @param writer PrintWriter to which we are storing
-     * @param indent Number of spaces to indent this element
-     * @param resources Object whose properties are being stored
-     *
-     * @exception Exception if an exception occurs while storing
-     */
-    private void storeGlobalNamingResources(PrintWriter writer, int indent,
-                              NamingResources globalNamingResources) throws Exception {
-       
-        for (int i = 0; i < indent; i++) {
-            writer.print(' ');
-        }
-        writer.println("<GlobalNamingResources>");
-        
-        for (int i = 0; i < indent + 2; i++) {
-            writer.print(' ');
-        }        
-        // Store nested <Environment> elements
-        ContextEnvironment[] envs = globalNamingResources.findEnvironments();
-        if (envs.length > 0) {
-            writer.print("<Environment");
-        }
-        for (int i = 0; i < envs.length; i++) {
-            storeAttributes(writer, false, envs[i]);
-        }
-        writer.println("/>");
-                
-        // Store nested <Resource> elements
-        ContextResource[] resources = globalNamingResources.findResources();
-        for (int i = 0; i < resources.length; i++) {
-            for (int j = 0; j < indent + 2; j++) {
-                writer.print(' ');
-            }
-            writer.print("<Resource");
-            storeAttributes(writer, false, resources[i]);
-            writer.println(">");
-            for (int j = 0; j < indent + 2; j++) {
-                writer.print(' ');
-            }          
-            writer.println("</Resource>");
-            
-            // Store nested <ResourceParams> elements
-            ResourceParams[] params = globalNamingResources.findResourceParams();
-            for (int j = 0; j < params.length; j++) {
-                if (resources[i].getName().equals(params[j].getName())) {        
-                    for (int k = 0; k < indent + 2; k++) {
-                        writer.print(' ');
-                    }
-                    writer.print("<ResourceParams");
-                    storeAttributes(writer, false, params[j]);
-                    writer.println(">");
-                    Hashtable resourceParams = params[j].getParameters();
-                    Enumeration nameEnum = resourceParams.keys();
-                    Enumeration valueEnum = resourceParams.elements();
-                    while ((nameEnum.hasMoreElements()) && (valueEnum.hasMoreElements())) {      
-                        for (int k = 0; k < indent + 4; k++) {
-                            writer.print(' ');
-                        }                
-                        writer.println("<parameter>");
-                        for (int k = 0; k < indent + 6; k++) {
-                            writer.print(' ');
-                        }               
-                        writer.print("<name>");
-                        writer.print(nameEnum.nextElement());
-                        writer.println("</name>"); 
-                        for (int k = 0; k < indent + 6; k++) {
-                            writer.print(' ');
-                        }               
-                        writer.print("<value>"); 
-                        writer.print(valueEnum.nextElement());
-                        writer.println("</value>");         
-                        for (int k = 0; k < indent + 4; k++) {
-                            writer.print(' ');
-                        }               
-                        writer.println("</parameter>");      
-                    }
-                    for (int k = 0; k < indent + 2; k++) {
-                        writer.print(' ');
-                    }          
-                    writer.println("</ResourceParams>");
-                }
-            }
-        }
-        
-        // Store the ending of this element
-        for (int i = 0; i < indent; i++) {
-            writer.print(' ');
-        }          
-        writer.println("</GlobalNamingResources>");                           
-                                  
-    }
-    
-    
-    /**
      * Store the specified Host properties.
      *
      * @param writer PrintWriter to which we are storing
@@ -961,17 +950,31 @@ public class StandardServerMBean extends BaseModelMBean {
             }
         }
 
-        // Store nested <Default> element
-        ; // FIXME
-
         // Store nested <DefaultContext> element
-        ; // FIXME
+        if (host instanceof StandardHost) {
+            DefaultContext dcontext =
+                ((StandardHost) host).getDefaultContext();
+            if (dcontext != null) {
+                Container parent = host.getParent();
+                if ((parent != null) &&
+                    (parent instanceof StandardEngine)) {
+                    DefaultContext pcontext =
+                        ((StandardEngine) parent).getDefaultContext();
+                    if (dcontext != pcontext) {
+                        storeDefaultContext(writer, indent + 2, dcontext);
+                    }
+                }
+            }
+        }
 
         // Store nested <Listener> elements
         if (host instanceof Lifecycle) {
             LifecycleListener listeners[] =
                 ((Lifecycle) host).findLifecycleListeners();
             for (int i = 0; i < listeners.length; i++) {
+                if (listeners[i] instanceof ServerLifecycleListener) {
+                    continue;
+                }
                 storeListener(writer, indent + 2, listeners[i]);
             }
         }
@@ -1125,6 +1128,124 @@ public class StandardServerMBean extends BaseModelMBean {
 
 
     /**
+     * Store the specified NamingResources properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param resources Object whose properties are being stored
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeNamingResources(PrintWriter writer, int indent,
+                                      NamingResources resources)
+        throws Exception {
+       
+        // Store nested <Ejb> elements
+        ContextEjb[] ejbs = resources.findEjbs();
+        if (ejbs.length > 0) {
+            for (int i = 0; i < ejbs.length; i++) {
+                for (int j = 0; j < indent; j++) {
+                    writer.print(' ');
+                }
+                writer.print("<Ejb");
+                storeAttributes(writer, false, ejbs[i]);
+                writer.println("/>");
+            }
+        }
+                
+        // Store nested <Environment> elements
+        ContextEnvironment[] envs = resources.findEnvironments();
+        if (envs.length > 0) {
+            for (int i = 0; i < envs.length; i++) {
+                for (int j = 0; j < indent; j++) {
+                    writer.print(' ');
+                }
+                writer.print("<Environment");
+                storeAttributes(writer, false, envs[i]);
+                writer.println("/>");
+            }
+        }
+                
+        // Store nested <LocalEjb> elements
+        ContextLocalEjb[] lejbs = resources.findLocalEjbs();
+        if (lejbs.length > 0) {
+            for (int i = 0; i < lejbs.length; i++) {
+                for (int j = 0; j < indent; j++) {
+                    writer.print(' ');
+                }
+                writer.print("<LocalEjb");
+                storeAttributes(writer, false, lejbs[i]);
+                writer.println("/>");
+            }
+        }
+                
+        // Store nested <Resource> elements
+        ContextResource[] dresources = resources.findResources();
+        for (int i = 0; i < dresources.length; i++) {
+            for (int j = 0; j < indent; j++) {
+                writer.print(' ');
+            }
+            writer.print("<Resource");
+            storeAttributes(writer, false, dresources[i]);
+            writer.println("/>");
+        }
+
+        // Store nested <ResourceParams> elements
+        ResourceParams[] params = resources.findResourceParams();
+        for (int i = 0; i < params.length; i++) {
+            for (int j = 0; j < indent; j++) {
+                writer.print(' ');
+            }
+            writer.print("<ResourceParams");
+            storeAttributes(writer, false, params[i]);
+            writer.println(">");
+            Hashtable resourceParams = params[i].getParameters();
+            Enumeration nameEnum = resourceParams.keys();
+            while (nameEnum.hasMoreElements()) {
+                String name = (String) nameEnum.nextElement();
+                String value = (String) resourceParams.get(name);
+                for (int j = 0; j < indent + 2; j++) {
+                    writer.print(' ');
+                }
+                writer.println("<parameter>");
+                for (int j = 0; j < indent + 4; j++) {
+                    writer.print(' ');
+                }
+                writer.print("<name>");
+                writer.print(name);
+                writer.println("</name>");
+                for (int j = 0; j < indent + 4; j++) {
+                    writer.print(' ');
+                }
+                writer.print("<value>");
+                writer.print(value);
+                writer.println("</value>");
+                for (int j = 0; j < indent + 2; j++) {
+                    writer.print(' ');
+                }
+                writer.println("</parameter>");
+            }
+            for (int j = 0; j < indent; j++) {
+                writer.print(' ');
+            }
+            writer.println("</ResourceParams>");
+        }
+
+        // Store nested <ResourceLink> elements
+        ContextResourceLink[] resourceLinks = resources.findResourceLinks();
+        for (int i = 0; i < resourceLinks.length; i++) {
+            for (int j = 0; j < indent; j++) {
+                writer.print(' ');
+            }
+            writer.print("<ResourceLink");
+            storeAttributes(writer, false, resourceLinks[i]);
+            writer.println("/>");
+        }       
+
+    }
+    
+    
+    /**
      * Store the specified Realm properties.
      *
      * @param writer PrintWriter to which we are storing
@@ -1159,6 +1280,9 @@ public class StandardServerMBean extends BaseModelMBean {
                                 DirContext resources) throws Exception {
 
         if (resources instanceof org.apache.naming.resources.FileDirContext) {
+            return;
+        }
+        if (resources instanceof org.apache.naming.resources.ProxyDirContext) {
             return;
         }
         if (resources instanceof org.apache.naming.resources.WARDirContext) {
@@ -1205,9 +1329,18 @@ public class StandardServerMBean extends BaseModelMBean {
         }
 
         // Store nested <GlobalNamingResources> element
-        NamingResources globalNamingResources = server.getGlobalNamingResources();
+        NamingResources globalNamingResources =
+            server.getGlobalNamingResources();
         if (globalNamingResources != null) {
-            storeGlobalNamingResources(writer, indent + 2, globalNamingResources);
+            for (int i = 0; i < indent + 2; i++) {
+                writer.print(' ');
+            }
+            writer.println("<GlobalNamingResources>");
+            storeNamingResources(writer, indent + 4, globalNamingResources);
+            for (int i = 0; i < indent + 2; i++) {
+                writer.print(' ');
+            }
+            writer.println("</GlobalNamingResources>");
         }
         
         // Store nested <Service> elements
@@ -1268,6 +1401,9 @@ public class StandardServerMBean extends BaseModelMBean {
             LifecycleListener listeners[] =
                 ((Lifecycle) service).findLifecycleListeners();
             for (int i = 0; i < listeners.length; i++) {
+                if (listeners[i] instanceof ServerLifecycleListener) {
+                    continue;
+                }
                 storeListener(writer, indent + 2, listeners[i]);
             }
         }

@@ -313,6 +313,14 @@ public class StandardHost
 
 
     /**
+     * Retrieve the DefaultContext for new web applications.
+     */
+    public DefaultContext getDefaultContext() {
+        return (this.defaultContext);
+    }
+
+
+    /**
      * Return the Java class name of the Context implementation class
      * for new web applications.
      */
