@@ -263,6 +263,17 @@
                             HashMap map = (HashMap)session.getAttribute("map");
                             map.put("key","value");
                             %>
+             replicationMode = can be either 'synchronous' or 'asynchronous'.
+                               * Synchronous means that the thread that executes the request, is also the
+                               thread the replicates the data to the other nodes, and will not return until all
+                               nodes have received the information.
+                               * Asynchronous means that there is a specific 'sender' thread for each cluster node,
+                               so the request thread will queue the replication request into a "smart" queue,
+                               and then return to the client.
+                               The "smart" queue is a queue where when a session is added to the queue, and the same session
+                               already exists in the queue from a previous request, that session will be replaced
+                               in the queue instead of replicating two requests. This almost never happens, unless there is a 
+                               large network delay.
         -->             
         
         <!-- When uncommenting the cluster, REMEMBER to uncomment the replication Valve below as well
@@ -283,6 +294,7 @@
                   printToScreen="false"
                   expireSessionsOnShutdown="false"
                   useDirtyFlag="true"
+                  replicationMode="synchronous"
         />
         -->
         <!--
