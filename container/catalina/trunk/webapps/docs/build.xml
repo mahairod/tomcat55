@@ -53,6 +53,11 @@
     <!-- Catalina Functional Specifications -->
     <mkdir     dir="${webapps.build}/${webapp.name}/catalina/funcspecs"/>
 
+    <!-- Architecture -->
+    <copy    todir="${webapps.build}/${webapp.name}/architecture">
+      <fileset dir="architecture" excludes="*.xml"/>
+    </copy>
+
     <!-- Images Subdirectory -->
     <mkdir     dir="${webapps.build}/${webapp.name}/images"/>
     <copy    todir="${webapps.build}/${webapp.name}/images">
@@ -158,6 +163,26 @@
     <mkdir     dir="${webapps.build}/${webapp.name}/config/printer"/>
     <style basedir="config"
            destdir="${webapps.build}/${webapp.name}/config/printer"
+         extension=".html"
+             style="tomcat-docs.xsl"
+          excludes="project.xml"
+          includes="*.xml">
+      <param name="relative-path" expression="../.."/>
+      <param name="project-menu" expression="nomenu"/>
+    </style>
+
+    <!-- Server Architecture -->
+    <style basedir="architecture"
+           destdir="${webapps.build}/${webapp.name}/architecture"
+         extension=".html"
+             style="tomcat-docs.xsl"
+          excludes="project.xml"
+          includes="*.xml">
+      <param name="relative-path" expression=".."/>
+    </style>
+    <mkdir     dir="${webapps.build}/${webapp.name}/architecture/printer"/>
+    <style basedir="architecture"
+           destdir="${webapps.build}/${webapp.name}/architecture/printer"
          extension=".html"
              style="tomcat-docs.xsl"
           excludes="project.xml"

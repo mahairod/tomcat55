@@ -41,7 +41,7 @@ contributions from several tomcat developers:
     and concepts.</li>
 <li><a href="startup.html"><strong>Server Startup</strong></a> -
     A detailed description, with sequence diagrams, of how the Tomcat
-    server starts up.
+    server starts up.</li>
 <li><a href="requestProcess.html"><strong>Request Process Flow</strong></a> -
     A detailed description of how Tomcat handles a request.</li>
 </ul>
