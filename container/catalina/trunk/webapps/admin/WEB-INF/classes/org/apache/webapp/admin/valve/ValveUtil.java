@@ -150,8 +150,7 @@ public final class ValveUtil {
             // Parent in this case needs to be the container mBean for the service
             try {
                 if ("Service".equalsIgnoreCase(pname.getKeyProperty("type"))) {
-                    sb.append(":type=Engine,service=");
-                    sb.append(pname.getKeyProperty("name"));
+                    sb.append(":type=Engine");
                     parent = sb.toString();
                 }
             } catch (Exception e) {
