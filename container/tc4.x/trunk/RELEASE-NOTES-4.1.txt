@@ -639,6 +639,11 @@ Catalina Bug Fixes:
          Fix cache invalidation problem when creating subcontexts or modifying
          attributes.
 
+[4.1.20] #16316
+         DataSourceRealm
+         Removed code which validates the realm can connect to the db from
+         the realm start in case the JNDI named DataSource has not been
+         initialized yet.
 
 ----------------
 Coyote Bug Fixes:
