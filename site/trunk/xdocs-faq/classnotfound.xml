@@ -19,9 +19,11 @@
     very similar errors. It is strongly advised you read the following topics:
     <ul>
       <li>
+        Classloader HOWTO pages: 
         <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/class-loader-howto.html">
-          Tomcat 4.1 Classloader HOWTO
-        </a>
+          Tomcat 4.1</a>,
+        <a href="http://jakarta.apache.org/tomcat/tomcat-5.0-doc/class-loader-howto.html">
+          Tocmat 5.0</a>.
       </li>
       <li>
          <a href="http://marc.theaimsgroup.com/?t=104317529200004&amp;r=1&amp;w=2">
