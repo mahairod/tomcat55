@@ -39,6 +39,10 @@ jndi.home=/usr/local/jndi_1.2.1
 # Extension (JSSE), version 1.0.2 or later
 jsse.home=/usr/local/jsse1.0.2
 
+# The JAR file for the JUnit unit test suite you are using.  This is required
+# only if you wish to execute the unit tests
+#junit.jar=/usr/local/junit3.5/junit.jar
+
 # The directory containing your binary distribution of the Jakarta
 # regular expressions package (jakarta-regexp), version 1.2.
 regexp.home=/usr/local/jakarta-regexp-1.2
