@@ -855,7 +855,6 @@ public class JspParseEventListener extends BaseJspListener {
 			       TagInfo ti)
 	throws JasperException
     {
-	// FIXME: null's
         Generator gen
             = new GeneratorWrapper(new TagBeginGenerator(prefix, shortTagName, attrs,
 							 tli, ti),
@@ -870,7 +869,6 @@ public class JspParseEventListener extends BaseJspListener {
                              TagLibraryInfoImpl tli, TagInfo ti)
 	throws JasperException
     {
-	// FIXME: null's
         Generator gen
             = new GeneratorWrapper(new TagEndGenerator(prefix, shortTagName, attrs, tli, ti),
                                    start, stop);
