@@ -295,6 +295,7 @@ public final class TldConfig  {
 	paths = globalJarPaths.iterator();
 	while (paths.hasNext()) {
 	    JarURLConnection conn = (JarURLConnection) paths.next();
+	    System.out.println("OPENING: " + conn.getJarFileURL().toString());
 	    long lastM = conn.getLastModified();
 	    if (lastM > lastModified) lastModified = lastM;
 	    if (log.isDebugEnabled()) {
@@ -724,20 +725,22 @@ public final class TldConfig  {
 			        && urlStr.endsWith(".jar")) {
 			    URL jarURL = new URL("jar:" + urlStr + "!/");
 			    jarConn = (JarURLConnection) jarURL.openConnection();
-			}
-		    }
-		    if (jarConn != null) {
-			try {
-			    /*
-			     * Call getJarFile() to see if JAR file exists
-			     * (throws exception in case it doesn't)
-			     */
-			    jarConn.setUseCaches(false);
-			    jarConn.getJarFile();
-			    globalJarPaths.add(jarConn);
-			} catch (Exception e) {
-			    // Ignore any JAR files that may have been
-			    // specified on the class path but don't exist
+			    try {
+				/*
+				 * Call getJarFile() to see if JAR file exists
+				 * (throws exception in case it doesn't)
+				 */
+				jarConn.getJarFile();
+				jarConn = (JarURLConnection)
+				    jarURL.openConnection();
+				jarConn.setUseCaches(false);
+				globalJarPaths.add(jarConn);
+			    } catch (Exception e) {
+				/*
+				 * Ignore any JAR files that may have been
+				 * specified on the class path but don't exist
+				 */
+			    }
 			}
 		    }
 		}
