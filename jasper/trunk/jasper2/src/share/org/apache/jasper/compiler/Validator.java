@@ -486,6 +486,22 @@ class Validator {
             visitBody(n);
 	}
 
+	public void visit(Node.ParamsAction n) throws JasperException {
+	    // Make sure we've got at least one nested jsp:param
+            Node.Nodes subElems = n.getBody();
+            if (subElems == null) {
+		err.jspError(n, "jsp.error.params.emptyBody");
+	    }
+	    for (int i=0; i<subElems.size(); i++) {
+		Node subElem = subElems.getNode(i);
+		if (!(subElem instanceof Node.ParamAction)) {
+		    err.jspError(n, "jsp.error.params.illegalChild");
+                }
+            }
+
+            visitBody(n);
+	}
+
 	public void visit(Node.IncludeAction n) throws JasperException {
             JspUtil.checkAttributes("Include action", n,
                                     includeActionAttrs, err);
