@@ -987,6 +987,9 @@ public class CoyoteRequest
      * empty <code>Enumeration</code> if there are none.
      */
     public Enumeration getAttributeNames() {
+        if (isSecure()) {
+            getAttribute(Globals.CERTIFICATES_ATTR);
+        }
         return new Enumerator(attributes.keySet(), true);
     }
 
