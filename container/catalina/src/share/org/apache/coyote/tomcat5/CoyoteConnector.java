@@ -134,6 +134,12 @@ public class CoyoteConnector
 
 
     /**
+     * Do we allow TRACE ?
+     */
+    private boolean allowTrace = false;
+
+
+    /**
      * The input buffer size we should create on input streams.
      */
     private int bufferSize = 2048;
@@ -589,6 +595,28 @@ public class CoyoteConnector
 
     }
 
+
+    /**
+     * True if the TRACE method is allowed.  Default value is "false".
+     */
+    public boolean getAllowTrace() {
+
+        return (this.allowTrace);
+
+    }
+
+
+    /**
+     * Set the allowTrace flag, to disable or enable the TRACE HTTP method.
+     *
+     * @param allowTrace The new allowTrace flag
+     */
+    public void setAllowTrace(boolean allowTrace) {
+
+        this.allowTrace = allowTrace;
+        setProperty("allowTrace", String.valueOf(allowTrace));
+
+    }
 
     /**
      * Is this connector available for processing requests?

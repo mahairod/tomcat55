@@ -20,6 +20,10 @@
           description="The certificate encoding algorithm to be used"
                  type="java.lang.String"/>
 
+    <attribute   name="allowTrace"
+          description="Allow disabling TRACE method"
+                 type="boolean"/>
+
     <attribute   name="bufferSize"
           description="The input buffer size we should create on input streams"
                  type="int"/>
