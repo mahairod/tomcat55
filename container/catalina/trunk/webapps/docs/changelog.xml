@@ -20,6 +20,9 @@
       <fix>
         <bug>30239</bug>: Updated IIS how-to to link to Wiki page with instrutions for IIS 5 and IIS 6 configurations. (yoavs)
       </fix>
+      <fix>
+        <bug>30238</bug>: Replaced isapi_redirector.dll isapi_redirect.dll in installation script for consistency. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
