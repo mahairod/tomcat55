@@ -263,10 +263,18 @@ class PageInfo {
 	return this.isEncodingSpecifiedInProlog;
     }
 
+    /*
+     * Sets the encoding specified in the JSP config element whose URL pattern
+     * matches this page.
+     */
     public void setConfigEncoding(String enc) {
 	this.configEncoding = enc;
     }
 
+    /*
+     * Gets the encoding specified in the JSP config element whose URL pattern
+     * matches this page.
+     */
     public String getConfigEncoding() {
 	return this.configEncoding;
     }

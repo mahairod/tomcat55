@@ -222,7 +222,7 @@ class ParserController {
 	    compiler.getPageInfo().addDependant(absFileName);
 	}
 
-	// Dispatch to the proper parser
+	// Dispatch to the appropriate parser
 	if (isXml) {
 	    // JSP document (XML syntax)
 	    InputStream inStream = null;
@@ -325,16 +325,14 @@ class ParserController {
 	}
 	
 	if (isExternal && !isXml) {
-	    // JSP (standard) syntax
-	    if (pageInfo.getConfigEncoding() != null) {
-		// Encoding specified in jsp-config (used by standard syntax
-		// only)
-		sourceEnc = pageInfo.getPageEncoding();
+	    // JSP (standard) syntax. Use encoding specified in jsp-config
+	    // if provided.
+	    sourceEnc = pageInfo.getConfigEncoding();
+	    if (sourceEnc != null) {
 		return;
-	    } else {
-		// We don't know the encoding
-		sourceEnc = "ISO-8859-1";
 	    }
+	    // We don't know the encoding
+	    sourceEnc = "ISO-8859-1";
 	} else {
 	    // XML syntax or unknown, (auto)detect encoding ...
 	    Object[] ret = XMLEncodingDetector.getEncoding(fname, jarFile,
@@ -409,9 +407,8 @@ class ParserController {
 	 * Determine the page encoding from the page directive, unless it's
 	 * specified via JSP config.
 	 */
-	if (pageInfo.getPageEncoding() != null) {
-	    sourceEnc = pageInfo.getPageEncoding();
-	} else {
+	sourceEnc = pageInfo.getConfigEncoding();
+	if (sourceEnc == null) {
 	    sourceEnc = getSourceEncodingForJspSyntax(jspReader, startMark);
 	}
 
