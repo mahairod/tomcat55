@@ -173,7 +173,6 @@
 
     <attribute    name="xpoweredBy"
            description="Is generation of X-Powered-By response header enabled/disabled?"
-                    is="true"
                   type="boolean"/>
 
     <operation name="start" description="Start" impact="ACTION" returnType="void" />
