@@ -66,7 +66,7 @@ import java.util.jar.Attributes;
 import java.util.ArrayList;
 
 /**
- *  Representation of a Manifest file and its available extenstions and
+ *  Representation of a Manifest file and its available extensions and
  *  required extensions
  *  
  * @author Greg Murray
@@ -274,7 +274,7 @@ public class ManifestResource {
         Attributes attributes = manifest.getMainAttributes();
         String name = attributes.getValue("Extension-Name");
         if (name == null)
-            return (null);
+            return null;
 
         HashMap extensionMap = new HashMap();
 
@@ -290,9 +290,10 @@ public class ManifestResource {
         extension.setImplementationVersion(version);
         extension.setSpecificationVersion
             (attributes.getValue("Specification-Version"));
-        // creating a unique extension identifier with the key and value pair
-        if (!extensionMap.containsKey(name + version)) 
-            extensionMap.put(name + version, extension);
+
+        if (!extensionMap.containsKey(extension.getUniqueId())) {
+            extensionMap.put(extension.getUniqueId(), extension);
+        }
 
         return extensionMap;
     }

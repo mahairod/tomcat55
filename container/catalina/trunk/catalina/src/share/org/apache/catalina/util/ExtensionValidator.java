@@ -117,56 +117,42 @@ public final class ExtensionValidator {
      *
      *  This private constructor loads the container level extensions that are
      *  available to all web applications. This method scans all extension 
-     *  directories available to via the "java.ext.dirs" System property. 
+     *  directories available via the "java.ext.dirs" System property. 
      *
      *  The System Class-Path is also scanned for jar files that may contain 
      *  available extensions. The system extensions are loaded only the 
      *  first time an instance of the ExtensionValidator is created.
      */
     private ExtensionValidator() {
-       
-        // load the container level extensions
-        containerManifestResources = new ArrayList();
+
         // check for container level optional packages
-        String systemClasspath = System.getProperties().
-                                 getProperty("java.class.path");
+        String systemClasspath = System.getProperties().getProperty("java.class.path");
 
         StringTokenizer strTok = new StringTokenizer(systemClasspath, 
                                                      File.pathSeparator);
-        ArrayList items = new ArrayList();
+
         // build a list of jar files in the classpath
         while (strTok.hasMoreTokens()) {
             String classpathItem = strTok.nextToken();
             if (classpathItem.toLowerCase().endsWith(".jar")) {
-                items.add(classpathItem);
+                addSystemResource(new File(classpathItem));
             }
         }
+
         // get the files in the extensions directory
-        String extensionsDir = System.getProperties().
-                                getProperty("java.ext.dirs");
-        StringTokenizer extensionsTok = null;
+        String extensionsDir = System.getProperties().getProperty("java.ext.dirs");
         if (extensionsDir != null) {
-            extensionsTok = new StringTokenizer(extensionsDir, 
-                                                 File.pathSeparator);
-        }
-        while ((extensionsTok != null) && extensionsTok.hasMoreTokens()) {
-            String targetDir = extensionsTok.nextToken();
-            // check if the directory exits
-            if (((new File(targetDir)).exists()) && 
-                (new File(targetDir)).isDirectory()) {
-                // get a file list
-                File[] files = (new File(targetDir)).listFiles();
-                // see if any file is a jar file
-                for (int loop = 0; loop < files.length; loop++) {
-                    if (files[loop].getName().toLowerCase().endsWith(".jar")) {
-                        items.add(files[loop].getAbsolutePath());
-                        Manifest manifest = getManifest(files[loop]);
-                        if (manifest != null)  {
-                            ManifestResource mre = new ManifestResource
-                                (files[loop].getAbsolutePath(), manifest, 
-                                 ManifestResource.SYSTEM);
-                            containerManifestResources.add(mre);
-                        }
+            StringTokenizer extensionsTok
+                = new StringTokenizer(extensionsDir, File.pathSeparator);
+            while (extensionsTok.hasMoreTokens()) {
+                File targetDir = new File(extensionsTok.nextToken());
+                if (!targetDir.exists() || !targetDir.isDirectory()) {
+                    continue;
+                }
+                File[] files = targetDir.listFiles();
+                for (int i = 0; i < files.length; i++) {
+                    if (files[i].getName().toLowerCase().endsWith(".jar")) {
+                        addSystemResource(files[i]);
                     }
                 }
             }
@@ -226,29 +212,30 @@ public final class ExtensionValidator {
         }
         // Locate the Manifests for all necessary Jar Files in the Application
         ArrayList jarEntries = new ArrayList();
-        NamingEnumeration  ne = null;
+        NamingEnumeration ne = null;
         try {
-            if (dirContext != null) ne = dirContext.listBindings("WEB-INF/lib/");
-                while ((ne != null) && ne.hasMoreElements()) {
-                    Binding  binding = (Binding)ne.nextElement();
-                    if (binding.getName().toLowerCase().endsWith(".jar")) {
-                        Resource resource = (Resource)dirContext.lookup
-                            ("/WEB-INF/lib/" + binding.getName());
-                        try {
-                            InputStream in = resource.streamContent();
-                            JarInputStream jin = new JarInputStream(in);
-                            Manifest jmanifest = jin.getManifest();
-                            if (jmanifest != null) {
-                                ManifestResource mre = new ManifestResource
-                                    (binding.getName(), jmanifest, 
-                                    ManifestResource.APPLICATION);
-                                appManifestResources.add(mre);
-                            }
-                        } catch (java.io.IOException iox) {
-                            // do not do anything... go to the next entry
+            if (dirContext != null)
+                ne = dirContext.listBindings("WEB-INF/lib/");
+            while ((ne != null) && ne.hasMoreElements()) {
+                Binding  binding = (Binding)ne.nextElement();
+                if (binding.getName().toLowerCase().endsWith(".jar")) {
+                    Resource resource = (Resource)dirContext.lookup
+                        ("/WEB-INF/lib/" + binding.getName());
+                    try {
+                        InputStream in = resource.streamContent();
+                        JarInputStream jin = new JarInputStream(in);
+                        Manifest jmanifest = jin.getManifest();
+                        if (jmanifest != null) {
+                            ManifestResource mre = new ManifestResource
+                                (binding.getName(), jmanifest, 
+                                ManifestResource.APPLICATION);
+                            appManifestResources.add(mre);
                         }
+                    } catch (java.io.IOException iox) {
+                        // do not do anything... go to the next entry
                     }
                 }
+            }
         } catch (javax.naming.NamingException nex) {
             // Jump out of the check for this application because it 
             // has no resources
@@ -314,45 +301,35 @@ public final class ExtensionValidator {
             // load the container level resource map if it has not been built
             // yet
             if (containerAvailableExtensions == null) {
-                containerAvailableExtensions = buildAvailableExtensionsMap(
-                                                containerManifestResources);
+                containerAvailableExtensions
+                    = buildAvailableExtensionsMap(containerManifestResources);
             }
 
             // iterate through the list of required extensions
             Iterator rit = requiredList.iterator();
             while (rit.hasNext()) {
-                Extension requiredExtension = (Extension)rit.next();
-                String key = requiredExtension.getUniqueId();
-                // check in the applicaion first for the extension
+                Extension requiredExt = (Extension)rit.next();
+                String extId = requiredExt.getUniqueId();
+                // check the applicaion itself for the extension
                 if (availableExtensions != null
-                                && availableExtensions.containsKey(key)) {
-                   // check if the desired extension is compatible 
-                   // with the required extension
-                   Extension targetExtension = (Extension)
-                       ((ManifestResource)availableExtensions.get(key)).
-                        getAvailableExtensions().get(key);
-                   // check if the desired extension is valid
-                   if (targetExtension.isCompatibleWith(requiredExtension)) {
-                       // extension requirements have passed
-                       requiredExtension.setFulfilled(true);
+                                && availableExtensions.containsKey(extId)) {
+                   Extension targetExt = (Extension)
+                       availableExtensions.get(extId);
+                   if (targetExt.isCompatibleWith(requiredExt)) {
+                       requiredExt.setFulfilled(true);
                    }
                 // check the container level list for the extension
                 } else if (containerAvailableExtensions != null
-                        && containerAvailableExtensions.containsKey(key)) {
-                   // check if the desired extension is compatible 
-                   // with the required extension
-                   Extension targetExtension = (Extension)
-                       ((ManifestResource)containerAvailableExtensions.
-                        get(key)).getAvailableExtensions().get(key);
-                   // check if the desired extension is valid
-                   if (targetExtension.isCompatibleWith(requiredExtension)) {
-                       // extension requirements have passed
-                       requiredExtension.setFulfilled(true);
+                        && containerAvailableExtensions.containsKey(extId)) {
+                   Extension targetExt = (Extension)
+                       containerAvailableExtensions.get(extId);
+                   if (targetExt.isCompatibleWith(requiredExt)) {
+                       requiredExt.setFulfilled(true);
                    }
                 } else {
                     // FAILURE has occured
                     String[] args = {appName, mre.getResourceName(), 
-                        requiredExtension.getExtensionName() };
+                        requiredExt.getExtensionName() };
                     logMessage("extensionValidator.extension-not-found-error", 
                                args, logger);
                     passes = false;
@@ -375,13 +352,13 @@ public final class ExtensionValidator {
     * re-build this list every time we iterate through the list of required 
     * extensions. All available extensions in all of the 
     * <code>MainfestResource</code> objects will be added to a 
-    * <code>HashMap</code>which is returned on the first dependency list
+    * <code>HashMap</code> which is returned on the first dependency list
     * processing pass. 
     *
     * The key is the name + implementation version.
     *
     * NOTE: A list is built only if there is a dependency that needs 
-    * to be checked (performace optimization).
+    * to be checked (performance optimization).
     *
     * @param resources A list of <code>ManifestResource</code> objects
     *
@@ -394,21 +371,16 @@ public final class ExtensionValidator {
         Iterator it = resources.iterator();
         while (it.hasNext()) {
             ManifestResource mre = (ManifestResource)it.next();
-            if (mre.requiresExtensions()) {
-                HashMap map = mre.getAvailableExtensions();
-                if (map != null) {
-                    Iterator kit = map.keySet().iterator();
-                    while (kit.hasNext()) {
-                        String key = (String)kit.next();
-                        Extension ext = (Extension)map.get(key);
-                        // mre is needed for error reporting if a match is not
-                        // made. it has access to the extensions
-                        if (availableMap == null) {
-                            availableMap = new HashMap();
-                            availableMap.put(ext.getUniqueId(), mre);
-                        } else if (!availableMap.containsKey(key)) {
-                            availableMap.put(ext.getUniqueId(), mre);
-                        }
+            HashMap map = mre.getAvailableExtensions();
+            if (map != null) {
+                Iterator values = map.values().iterator();
+                while (values.hasNext()) {
+                    Extension ext = (Extension) values.next();
+                    if (availableMap == null) {
+                        availableMap = new HashMap();
+                        availableMap.put(ext.getUniqueId(), ext);
+                    } else if (!availableMap.containsKey(ext.getUniqueId())) {
+                        availableMap.put(ext.getUniqueId(), ext);
                     }
                 }
             }
@@ -482,6 +454,27 @@ public final class ExtensionValidator {
             return null;
         }
     }
+
+    /*
+     * Checks to see if the given system JAR file contains a MANIFEST, and adds
+     * it to the container's manifest resources.
+     *
+     * @param jarFile The system JAR whose manifest to add
+     */
+    private static void addSystemResource(File jarFile) {
+
+        Manifest manifest = getManifest(jarFile);
+        if (manifest != null)  {
+            ManifestResource mre = new ManifestResource(jarFile.getAbsolutePath(),
+                                                        manifest,
+                                                        ManifestResource.SYSTEM);
+            if (containerManifestResources == null) {
+                containerManifestResources = new ArrayList();
+            }
+            containerManifestResources.add(mre);
+        }
+    }
+
 }
 
 
