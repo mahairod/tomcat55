@@ -16,13 +16,13 @@
 
 
 // These permissions apply to the Java Virtual Machine's core code
-grant codebase "file:${java.home}/lib/-" {
+grant codeBase "file:${java.home}/lib/-" {
         permission java.security.AllPermission;
 };
 
 
 // These permissions apply to all shared system extensions
-grant codebase "file:${java.home}/jre/lib/ext/*" {
+grant codeBase "file:${java.home}/jre/lib/ext/*" {
         permission java.security.AllPermission;
 };
 
@@ -30,19 +30,26 @@ grant codebase "file:${java.home}/jre/lib/ext/*" {
 // ========== CATALINA CODE PERMISSIONS =======================================
 
 
-// These permissions apply to the servlet container's core code, plus any
-// libraries installed in the "server" directory
-grant codebase "file:${catalina.home}/bin/bootstrap.jar" {
+// These permissions apply to the server startup code, and the servlet API
+// classes that are shared across all class loaders
+grant codeBase "file:${catalina.home}/bin/bootstrap.jar" {
         permission java.security.AllPermission;
 };
-grant codebase "file:${catalina.home}/server/-" {
+grant codeBase "file:${catalina.home}/bin/servlet.jar" {
+        permission java.security.AllPermission;
+};
+
+
+// These permissions apply to the container's core code, plus any additional
+// libraries installed in the "server" directory
+grant codeBase "file:${catalina.home}/server/-" {
         permission java.security.AllPermission;
 };
 
 
 // These permissions apply to all extension libraries (including Jasper,
 // if present) installed in the "lib" directory
-grant codebase "file:${catalina.home}/lib/-" {
+grant codeBase "file:${catalina.home}/lib/-" {
         permission java.security.AllPermission;
 };
 
@@ -79,21 +86,27 @@ grant {
 // Also by default, each web application is granted a set of permissions based
 // on its document root.  These permission additions are hard coded into
 // Catalina, and can not be adjusted in this file.  Conceptually, the additions
-// for a given web application look like this:
+// for a given web application look like this, where "${doc.root}" is the
+// document root directory for this application, and "${work.dir}" is the
+// temporary work directory for this application:
 //
-// grant codebase "file:${doc.root}/-" {
-//      permission java.io.FilePermission "${doc.root}", "read";
-//      permission java.io.FilePermission "${work.dir}", "read,write,delete";
+// grant codeBase "file:${doc.root}/WEB-INF/-" {
+//      permission java.io.FilePermission "${doc.root}/-", "read";
+//      permission java.io.FilePermission "${work.dir}/-", "read,write,delete";
+// };
+// grant codeBase "file:${work.dir}/-" {
+//      permission java.io.FilePermission "${doc.root}/-", "read";
+//      permission java.io.FilePermission "${work.dir}/-", "read,write,delete";
 // };
 
 
 // You can assign additional permissions to particular web applications by
 // adding additional "grant" entries here, based on the code base for that
-// application.  For instance, assume that the standard "exmamples" application
+// application.  For instance, assume that the standard "examples" application
 // included a JDBC driver that needed to establish a network connection to the
 // corresponding database.  You might create a "grant" entry like this:
 //
-// grant codebase "file:${catalina.home}/webapps/examples/-" {
+// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/-" {
 //      permission java.net.SocketPermission "dbhost.mycompany.com:5432", "connect";
 // }
 
