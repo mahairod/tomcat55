@@ -437,7 +437,7 @@ class Validator {
 	    new JspUtil.ValidAttribute("scope") };
 
 	private static final JspUtil.ValidAttribute[] jspOutputAttrs = {
-	    new JspUtil.ValidAttribute("omit-xml-declaration", true) };
+	    new JspUtil.ValidAttribute("omit-xml-declaration") };
 
 	/*
 	 * Constructor
