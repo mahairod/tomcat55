@@ -837,9 +837,25 @@ public class Validator {
 		err.jspError(n, "jsp.error.missing.tagInfo", n.getName());
 	    }
 
-	    if (!tagInfo.isValid(n.getTagData())) {
-		err.jspError(n, "jsp.error.invalid.attributes");
-	    }
+	    ValidationMessage[] errors = tagInfo.validate(n.getTagData());
+            if (errors != null && errors.length != 0) {
+		StringBuffer errMsg = new StringBuffer();
+                errMsg.append("<h3>");
+                errMsg.append(err.getString("jsp.error.tei.invalid.attributes",
+					    n.getName()));
+                errMsg.append("</h3>");
+                for (int i=0; i<errors.length; i++) {
+                    errMsg.append("<p>");
+		    if (errors[i].getId() != null) {
+			errMsg.append(errors[i].getId());
+			errMsg.append(": ");
+		    }
+                    errMsg.append(errors[i].getMessage());
+                    errMsg.append("</p>");
+                }
+
+		err.jspError(n, errMsg.toString());
+            }
 
 	    visitBody(n);
 	}
