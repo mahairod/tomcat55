@@ -118,7 +118,7 @@ public class Constants {
 
     /**
      * FIXME
-     * ServletContext attribute for classpath. This is tomcat specific. 
+     * ServletContext attribute for class loader. This is tomcat specific. 
      * Other servlet engines can choose to have this attribute if they 
      * want to have this JSP engine running on them. 
      */
