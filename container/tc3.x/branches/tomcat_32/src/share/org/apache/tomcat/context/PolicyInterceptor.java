@@ -123,10 +123,18 @@ public class PolicyInterceptor extends BaseInterceptor {
     {
 	// Add default read "-" FilePermission for docBase, classes, lib
 	// Default per context permissions
-	FilePermission fp = new FilePermission(base + "/-", "read");
+	FilePermission fp = new FilePermission(base + File.separator + "-", "read");
 	if( fp != null )
 	    p.add((Permission)fp);
-	
+	PropertyPermission pp = new PropertyPermission("line.separator", "read");
+	if( pp != null )
+	    p.add((Permission)pp);
+	pp = new PropertyPermission("file.separator", "read");
+	if( pp != null )
+	    p.add((Permission)pp);
+	pp = new PropertyPermission("path.separator", "read");
+	if( pp != null )
+	    p.add((Permission)pp);
     }
     
     public void contextInit( Context context)
