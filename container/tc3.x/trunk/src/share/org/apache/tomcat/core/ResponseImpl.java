@@ -176,6 +176,7 @@ public class ResponseImpl implements Response {
 		writer.close();
 	    }
 	    out.reallyFlush();
+	    request.getContextManager().doAfterBody(request, this);
 	    out.close();
 	} catch (SocketException e) {
 	    if(request!=null) request.getContext().log("Socket Exception" + request.getRequestURI());	    	    

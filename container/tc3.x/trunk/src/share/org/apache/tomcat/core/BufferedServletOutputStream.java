@@ -239,9 +239,13 @@ public class BufferedServletOutputStream extends ServletOutputStream {
 		sendHeaders();
 	        committed = true;
 	    }
-    
+
 	    if (bufferCount > 0) {
 		//	        out.write(buffer, 0, bufferCount);
+		Request req=resA.getRequest();
+		ContextManager cm=req.getContextManager();
+	    
+		cm.doBeforeCommit( req, resA );
 		doWrite( buffer, 0, bufferCount );
 	    }
 	}
