@@ -12,9 +12,8 @@
   </description>
 
   <!-- Example filter to set character encoding on each request.
-       Uncomment this filter definition, filter mapping and move
-       examples/filters.SetCharacterEncodingFilters to use filter
-       to decode post and get parameters -->
+       Uncomment this filter definition and the mapping to use 
+       the filter to decode post and get parameters -->
 
   <!--
   <filter>
