@@ -78,6 +78,7 @@ import org.apache.catalina.Server;
 import org.apache.catalina.Service;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
+import javax.management.ObjectName;
 
 
 /**
@@ -89,7 +90,7 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision$ $Date$
  */
 
-public final class StandardService
+public class StandardService
     implements Lifecycle, Service {
 
 
@@ -216,6 +217,13 @@ public final class StandardService
 
     }
 
+    public ObjectName getContainerName() {
+        if( container instanceof ContainerBase ) {
+            return ((ContainerBase)container).getObjectName();
+        }
+        return null;
+    }
+
 
     /**
      * Return the debugging detail level of this component.
@@ -334,6 +342,17 @@ public final class StandardService
             support.firePropertyChange("connector", null, connector);
         }
 
+    }
+
+    public ObjectName[] getConnectorNames() {
+        ObjectName results[] = new ObjectName[connectors.length];
+        for( int i=0; i<results.length; i++ ) {
+            // if it's a coyote connector
+            //if( connectors[i] instanceof CoyoteConnector ) {
+            //    results[i]=((CoyoteConnector)connectors[i]).getObjectName();
+            //}
+        }
+        return results;
     }
 
 
