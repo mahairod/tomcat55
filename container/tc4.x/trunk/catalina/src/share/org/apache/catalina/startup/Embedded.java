@@ -911,6 +911,22 @@ public class Embedded implements Lifecycle {
         if (debug >= 1)
             logger.log("Starting embedded server");
 
+        // Validate the setup of our required system properties
+        if (System.getProperty("catalina.home") == null) {
+            // Backwards compatibility patch for J2EE RI 1.3
+            String j2eeHome = System.getProperty("com.sun.enterprise.home");
+            if (j2eeHome != null)
+                System.setProperty
+                    ("catalina.home",
+                     System.getProperty("com.sun.enterprise.home"));
+            else
+                throw new LifecycleException
+                    ("Must set 'catalina.home' system property");
+        }
+        if (System.getProperty("catalina.base") == null)
+            System.setProperty("catalina.base",
+                               System.getProperty("catalina.home"));
+
         // Validate and update our current component state
         if (started)
             throw new LifecycleException
@@ -1009,6 +1025,15 @@ public class Embedded implements Lifecycle {
         embedded.setDebug(5);
         embedded.setLogger(new SystemOutLogger());
         String home = System.getProperty("catalina.home");
+        if (home == null) {
+            System.err.println("You must set the 'catalina.home' system property");
+            System.exit(1);
+        }
+        String base = System.getProperty("catalina.base");
+        if (base == null) {
+            base = home;
+            System.setProperty("catalina.base", base);
+        }
 
         // Start up this embedded server (to prove we can dynamically
         // add and remove containers and connectors later)
