@@ -189,7 +189,7 @@ public class CommandLineCompiler extends Compiler implements Mangler {
 	return modifiedClassName.toString();
     }
 
-    private static final String mangleChar(char ch) {
+    public static final String mangleChar(char ch) {
 	
         if(ch == File.separatorChar) {
 	    ch = '/';

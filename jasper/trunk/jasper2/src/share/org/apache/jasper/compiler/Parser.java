@@ -246,7 +246,7 @@ public class Parser {
 	    err.jspError(start, "jsp.error.unterminated", "<%!");
 	}
 
-	new Node.Declaration(reader.getText(start, stop), start, parent);
+	new Node.Declaration(reader.getScriptingText(start, stop), start, parent);
     }
 
     /*
@@ -259,7 +259,7 @@ public class Parser {
 	    err.jspError(start, "jsp.error.unterminated", "<%=");
 	}
 
-	new Node.Expression(reader.getText(start, stop), start, parent);
+	new Node.Expression(reader.getScriptingText(start, stop), start, parent);
     }
 	
     /*
@@ -272,7 +272,7 @@ public class Parser {
 	    err.jspError(start, "jsp.error.unterminated", "<%");
 	}
 
-	new Node.Scriptlet(reader.getText(start, stop), start, parent);
+	new Node.Scriptlet(reader.getScriptingText(start, stop), start, parent);
     }
 	
     /**
