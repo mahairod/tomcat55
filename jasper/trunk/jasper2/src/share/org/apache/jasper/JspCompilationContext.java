@@ -202,12 +202,14 @@ public class JspCompilationContext {
             // Log ?
             // FIXME: log
         }
-        try {
-            jspCompiler = 
-                (Compiler) Class.forName("org.apache.jasper.compiler.AntCompiler").newInstance();
-        } catch (Throwable t) {
-            // Log ?
-            // FIXME: log
+        if (jspCompiler == null) {
+            try {
+                jspCompiler = 
+                    (Compiler) Class.forName("org.apache.jasper.compiler.AntCompiler").newInstance();
+            } catch (Throwable t) {
+                // Log ?
+                // FIXME: log
+            }
         }
         jspCompiler.init(this, jsw);
         return jspCompiler;
