@@ -68,6 +68,8 @@ import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import javax.servlet.ServletException;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
@@ -730,6 +732,24 @@ public class JspC implements Options {
 					      fne.getMessage()));
 	    }
             throw new JasperException( fne );
+        } catch (ServletException e) {
+            Throwable rootCause = e;
+            Throwable rootCauseCheck = null;
+            // Extra aggressive rootCause finding
+            do {
+                if (rootCause instanceof ServletException) {
+                    rootCauseCheck = 
+                        ((ServletException) rootCause).getRootCause();
+                    if (rootCauseCheck != null) {
+                        rootCause = rootCauseCheck;
+                        rootCauseCheck = null;
+                    }
+                }
+            } while (rootCauseCheck != null);
+            log.error(Localizer.getMessage("jspc.error.generalException",
+					   file),
+		      rootCause);
+            return false;
         } catch (Exception e) {
             log.error(Localizer.getMessage("jspc.error.generalException",
 					   file),
@@ -856,6 +876,21 @@ public class JspC implements Options {
                 mergeIntoWebXml();
             }
 
+        } catch (ServletException e) {
+            Throwable rootCause = e;
+            Throwable rootCauseCheck = null;
+            // Extra aggressive rootCause finding
+            do {
+                if (rootCause instanceof ServletException) {
+                    rootCauseCheck = 
+                        ((ServletException) rootCause).getRootCause();
+                    if (rootCauseCheck != null) {
+                        rootCause = rootCauseCheck;
+                        rootCauseCheck = null;
+                    }
+                }
+            } while (rootCauseCheck != null);
+            rootCause.printStackTrace();
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -942,7 +977,7 @@ public class JspC implements Options {
     private void initClassLoader(JspCompilationContext clctxt)
 	    throws IOException {
 
-        String classPath = getClassPath();
+        classPath = getClassPath();
 
         ClassLoader jspcLoader = getClass().getClassLoader();
         if (jspcLoader instanceof AntClassLoader) {
