@@ -67,6 +67,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.Enumeration;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -75,16 +76,12 @@ import javax.mail.internet.MimePartDataSource;
 import javax.naming.Name;
 import javax.naming.Context;
 import javax.naming.Reference;
+import javax.naming.RefAddr;
 import javax.naming.spi.ObjectFactory;
 
 /**
  * Factory class that creates a JNDI named javamail MimePartDataSource
  * object which can be used for sending email using SMTP.
- * <p>
- * Requires the following environment properties:
- * <li>smtphost - SMTP server host name
- * <li>user - SMTP user
- * <li>from - default From: email address
  * <p>
  * Can be configured in the DefaultContext or Context scope
  * of your server.xml configuration file.
@@ -98,19 +95,28 @@ import javax.naming.spi.ObjectFactory;
  *   &lt;parameter>&lt;name>factory&lt;/name>
  *     &lt;value>org.apache.naming.factory.SendMailFactory&lt;/value>
  *   &lt;/parameter>
- *   &lt;parameter>&lt;name>smtphost&lt;/name>
- *     &lt;value>your.smtp.host.net&lt;/value>
+ *   &lt;parameter>&lt;name>mail.smtp.host&lt;/name>
+ *     &lt;value>your.smtp.host&lt;/value>
  *   &lt;/parameter>
- *   &lt;parameter>&lt;name>user&lt;/name>
- *     &lt;value>userid&lt;/value>
+ *   &lt;parameter>&lt;name>mail.smtp.user&lt;/name>
+ *     &lt;value>someuser&lt;/value>
  *   &lt;/parameter>
- *   &lt;parameter>&lt;name>from&lt;/name>
- *     &lt;value>joeuser@some.mail.domain.net&lt;/value>
+ *   &lt;parameter>&lt;name>mail.from&lt;/name>
+ *     &lt;value>someuser@some.host&lt;/value>
+ *   &lt;/parameter>
+ *   &lt;parameter>&lt;name>mail.smtp.sendpartial&lt;/name>
+ *     &lt;value>true&lt;/value>
+ *   &lt;/parameter>
+ *  &lt;parameter>&lt;name>mail.smtp.dsn.notify&lt;/name>
+ *     &lt;value>FAILURE&lt;/value>
+ *   &lt;/parameter>
+ *   &lt;parameter>&lt;name>mail.smtp.dsn.ret&lt;/name>
+ *     &lt;value>FULL&lt;/value>
  *   &lt;/parameter>
  * &lt;/ResourceParams>
  * </pre>
  *
- * @author Glenn Nielsen
+ * @author Glenn Nielsen Rich Catlett
  */
 
 public class SendMailFactory implements ObjectFactory 
@@ -133,20 +139,23 @@ public class SendMailFactory implements ObjectFactory
 		public Object run() {
         	    // set up the smtp session that will send the message
 	            Properties props = new Properties();
+		    // enumeration of all refaddr
+		    Enumeration list = Ref.getAll();
+		    // current refaddr to be set
+		    RefAddr refaddr;
 	            // set transport to smtp
 	            props.put("mail.transport.protocol", "smtp");
-	            // set smtp host
-	            props.put("mail.smtp.host",
-			(String)Ref.get("smtphost").getContent());
-		    // set mail user that talks to smtp host
-	            props.put("mail.smtp.user",
-			(String)Ref.get("user").getContent());
-		    // set mail from address
-		    String from = (String)Ref.get("from").getContent();
-	            props.put("mail.from", from );
+
+		    while (list.hasMoreElements()) {
+			refaddr = (RefAddr)list.nextElement();
+
+			// set property
+			props.put(refaddr.getType(), (String)refaddr.getContent());
+		    }
 		    MimeMessage message = new MimeMessage(
 			Session.getInstance(props));
 		    try {
+			String from = (String)Ref.get("mail.from").getContent();
 		        message.setFrom(new InternetAddress(from));
 		        message.setSubject("");
 		    } catch (Exception e) {}
