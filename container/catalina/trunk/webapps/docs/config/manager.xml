@@ -8,6 +8,7 @@
 
   <properties>
     <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
     <title>The Manager Component</title>
   </properties>
 
@@ -86,11 +87,6 @@
         If not specified, the default value is "MD5".</p>
       </attribute>
 
-      <attribute name="checkInterval" required="false">
-        <p>The number of seconds between checks for expired sessions
-        for this manager.  The default value is 60 seconds.</p>
-      </attribute>
-
       <attribute name="entropy" required="false">
         <p>A String value that is utilized when seeding the random number
         generator used to create session identifiers for this Manager.
@@ -104,6 +100,18 @@
         this Manager, or -1 (the default) for no limit.</p>
       </attribute>
 
+      <attribute name="maxInactiveInterval" required="false">
+        <p>The initial maximum time interval, in seconds, 
+        between client requests before a session is invalidated. A negative value
+        will result in sessions never timing out. If the attribute is not provided,
+        a default of 60 seconds is used.</p>
+        
+        <p>This attribute provides the initial value whenever a 
+        new session is created, but the interval may be dynamically 
+        varied by a servlet via the 
+        <code>setMaxInactiveInterval</code> method of the <code>HttpSession</code> object.</p>
+      </attribute>
+
       <attribute name="pathname" required="false">
         <p>Absolute or relative (to the work directory for this Context)
         pathname of the file in which session state will be preserved
@@ -113,10 +121,24 @@
         disabled by setting this attribute to an empty string.</p>
       </attribute>
 
+      <attribute name="processExpiresFrequency" required="false">
+        <p>Frequency of the session expiration, and related manager operations.
+        Manager operations will be done once for the specified amount of
+        backgrondProcess calls (ie, the lower the amount, the more often the
+        checks will occur). The minimum value is 1, and the default value is 6.
+        </p>
+      </attribute>
+
       <attribute name="randomClass" required="false">
         <p>Java class name of the <code>java.util.Random</code>
         implementation class to use.  If not specified, the default value is
         <code>java.security.SecureRandom</code>.</p>
+      </attribute>
+
+      <attribute name="sessionIdLength" required="false">
+       <p>The length of session ids created by this Manager, excluding any
+        JVM route information used for load balancing. 
+        The default is 16.</p>
       </attribute>
 
     </attributes>
@@ -150,11 +172,6 @@
         If not specified, the default value is "MD5".</p>
       </attribute>
 
-      <attribute name="checkInterval" required="false">
-        <p>The number of seconds between checks for expired sessions
-        for this Manager.  The default value is 60 seconds.</p>
-      </attribute>
-
       <attribute name="className" required="false">
         <p>Java class name of the implementation to use.  This class must
         implement the <code>org.apache.catalina.Manager</code> interface.
@@ -169,14 +186,6 @@
         If not specified, a semi-useful value is calculated, but a long
         String value should be specified in security-conscious
         environments.</p>
-      </attribute>
-
-      <attribute name="processExpiresFrequency" required="false">
-        <p>Frequency of the session expiration, and related manager operations.
-        Manager operations will be done once for the specified amount of
-        backgrondProcess calls (ie, the lower the amount, the most often the
-        checks will occur). The minimum value is 1, and the default value is 6.
-        </p>
       </attribute>
 
       <attribute name="maxActiveSessions" required="false">
@@ -209,6 +218,18 @@
         this value is set to <code>-1</code>.</p>
       </attribute>
 
+      <attribute name="maxInactiveInterval" required="false">
+        <p>The initial maximum time interval, in seconds, 
+        between client requests before a session is invalidated. A negative value
+        will result in sessions never timing out. If the attribute is not provided,
+        a default of 60 seconds is used.</p>
+        
+        <p>This attribute provides the initial value whenever a 
+        new session is created, but the interval may be dynamically 
+        varied by a servlet via the 
+        <code>setMaxInactiveInterval</code>method of the <code>HttpSession</code> object.</p>
+      </attribute>
+
       <attribute name="randomClass" required="false">
         <p>Java class name of the <code>java.util.Random</code>
         implementation class to use.  If not specified, the default value is
@@ -219,6 +240,12 @@
         <p>Should all sessions be persisted and reloaded when Tomcat is shut
         down and restarted (or when this application is reloaded)?  By default,
         this attribute is set to <code>true</code>.</p>
+      </attribute>
+
+      <attribute name="sessionIdLength" required="false">
+        <p>The length of session ids created by this Manager, excluding any
+        JVM route information used for load balancing. 
+        The default is 16.</p>
       </attribute>
 
     </attributes>

@@ -37,6 +37,9 @@
       <fix>
         Register JSP monitoring mbean for each servlet that declares a jsp-file in web.xml. (luehe)
       </fix>
+      <fix>
+        <bug>31578</bug>: Update Manager configuration documentation. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
