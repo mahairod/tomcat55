@@ -11,19 +11,24 @@
   <property name="compile.debug"       value="true"/>
   <property name="compile.deprecation" value="false"/>
   <property name="compile.optimize"    value="true"/>
-  <property name="servlet.jar"         value="${servletapi.home}/lib/servlet.jar"/>
+  <property name="servlet23.jar"       value="${servlet23api.home}/lib/servlet.jar"/>
+  <property name="servlet22.jar"       value="${servlet22api.home}/lib/servlet.jar"/>
   <property name="watchdog.build"      value="build"/>
   <property name="watchdog.dist"       value="dist"/>
 
   <!-- Establish compilation classpath -->
   <path id="compile.classpath">
-    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${servlet23.jar}"/>
+  </path>
+
+  <path id="compat.classpath">
+    <pathelement location="${servlet22.jar}"/>
   </path>
 
   <!-- Establish conversion classpath -->
   <path id="convert.classpath">
     <pathelement location="${watchdog.build}/classes"/>
-    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${servlet23.jar}"/>
   </path>
 
   <!-- Establish pattern sets -->
@@ -91,7 +96,7 @@
       <fileset dir="${ant.home}/lib" includes="parser.jar"/>
     </copy>
     <copy   tofile="${watchdog.build}/lib/servlet.jar"
-              file="${servlet.jar}" />
+              file="${servlet23.jar}" />
 
     <!-- Client golden files -->
     <copy    todir="${watchdog.build}/lib/jsp-golden">
@@ -162,7 +167,7 @@
            debug="${compile.debug}"
      deprecation="${compile.deprecation}"
         optimize="${compile.optimize}">
-      <classpath refid="compile.classpath"/>
+      <classpath refid="compat.classpath"/>
       <patternset refid="compat.servlet.tests"/>
     </javac>
 
