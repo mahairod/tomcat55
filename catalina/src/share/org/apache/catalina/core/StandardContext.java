@@ -4415,6 +4415,9 @@ public class StandardContext
         // Restore the original state ( pre reading web.xml in start )
         // If you extend this - override this method and make sure to clean up
         children=new HashMap();
+        startupTime = 0;
+        startTime = 0;
+        tldScanTime = 0;
         log.debug("resetContext " + oname + " " + mserver);
     }
 
