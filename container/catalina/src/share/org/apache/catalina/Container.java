@@ -237,6 +237,13 @@ public interface Container {
 
 
     /**
+     * Return the Pipeline object that manages the Valves associated with
+     * this Container.
+     */
+    public Pipeline getPipeline();
+
+
+    /**
      * Return the Cluster with which this Container is associated.  If there is
      * no associated Cluster, return the Cluster associated with our parent
      * Container (if any); otherwise return <code>null</code>.
