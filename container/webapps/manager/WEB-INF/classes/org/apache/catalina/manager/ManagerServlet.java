@@ -22,6 +22,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -764,8 +765,12 @@ public class ManagerServlet
                         config + "'");
                 }
             } else {
-                log("install: Installing web application at '" + path +
-                    "' from '" + war + "'");
+                if (path != null && path.length() > 0) {
+                    log("install: Installing web application at '" + path +
+                        "' from '" + war + "'");
+                } else {
+                    log("install: Installing web application from '" + war + "'");
+                }
             }
         }
 
@@ -826,6 +831,44 @@ public class ManagerServlet
             }
 
             if (path == null || path.length() == 0) {
+                if (deployer.isDeployXML()) {
+                    // Use embedded META-INF/context.xml if present
+                    URL contextXml = null;
+                    InputStream stream = null;
+                    try {
+                        String contextWar = war;
+                        if (war.startsWith("file:")) {
+                            if (war.endsWith(".war")) {
+                                contextWar = "jar:" + war + "!/";
+                            } else {
+                                contextWar = war + '/';
+                            }
+                        }
+                        contextXml = new URL(contextWar +
+                                             "META-INF/context.xml");
+                        stream = contextXml.openStream();
+                        // WAR contains META-INF/context.xml resource - install
+                        deployer.install(new URL(contextWar));
+                        return;
+                    } catch (FileNotFoundException fnfe) {
+			// No META-INF/context.xml resource - keep going
+                    } catch (Throwable t) {
+                        log("ManagerServlet.configure[" + contextXml + "]", t);
+                        writer.println(sm.getString("managerServlet.exception",
+                                                    t.toString()));
+                        return;
+                    } finally {
+                        if (stream != null) {
+                            try {
+                                stream.close();
+                            } catch (Throwable t) {
+                                // do nothing
+                            }
+                        }
+
+                    }
+                }
+
                 int end = war.length();
                 String filename = war.toLowerCase();
                 if (filename.endsWith("!/")) {
@@ -1642,6 +1685,5 @@ public class ManagerServlet
         }
         return true;
     }
-
 
 }
