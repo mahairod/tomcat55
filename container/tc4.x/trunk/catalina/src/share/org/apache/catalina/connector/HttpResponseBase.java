@@ -491,7 +491,7 @@ public class HttpResponseBase
 	    outputWriter.print("Content-Type: " + getContentType() + "\r\n");
             //            System.out.println(" Content-Type: " + getContentType());
 	}
-	if (getContentLength() > 0) {
+	if (getContentLength() >= 0) {
 	    outputWriter.print("Content-Length: " + getContentLength() +
 			       "\r\n");
             //            System.out.println(" Content-Length: " + getContentLength());
