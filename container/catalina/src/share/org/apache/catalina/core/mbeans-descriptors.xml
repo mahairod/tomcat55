@@ -1,109 +1,6 @@
 <?xml version="1.0"?>
 <mbeans-descriptors>
 
-  <mbean name="DefaultContext"
-         description="Used to store the default configuration a Host will use when creating a Context"
-         domain="Catalina"
-         group="Default-Context"
-         type="org.apache.catalina.core.StandardDefaultContext">
-
-    <attribute name="allowLinking"
-               description="Allow symlinking to outside the webapp root directory, if the webapp is an exploded directory"
-               is="true"
-               type="boolean"/>
-
-    <attribute name="cacheMaxSize"
-               description="Maximum cache size in KB"
-               type="int"/>
-      
-    <attribute name="cacheTTL"
-               description="Time interval in ms between cache refeshes"
-               type="int"/>
-      
-    <attribute name="cachingAllowed"
-               description="Should we cache static resources for this webapp"
-               is="true"
-               type="boolean"/>
-      
-    <attribute name="caseSensitive"
-               description="Should case sensitivity checks be performed"
-               is="true"
-               type="boolean"/>
-      
-    <attribute name="cookies"
-               description="Should we attempt to use cookies for session id communication?"
-               type="boolean"/>
-      
-    <attribute name="crossContext"
-               description="Should we allow the ServletContext.getContext() method to access the context of other web applications in this server?"
-               type="boolean"/>
-      
-    <attribute name="managerChecksFrequency"
-               description="The frequency of the manager checks (expiration and passivation)"
-               type="int"/>
-               
-    <attribute name="reloadable"
-               description="The reloadable flag for this web application"
-               type="boolean"/>
-
-    <attribute name="swallowOutput"
-               description="Flag to set to cause the system.out and system.err to be redirected to the logger when executing a servlet"
-               type="boolean"/>
-
-    <attribute name="useNaming"
-               description="Create JNDI naming context?"
-               is="true"
-               type="boolean"/>
-
-    <attribute name="resourceNames"
-               description="Object names for the resources"
-               is="true"
-               type="[Ljava.lang.String;"/>
-                 
-    <operation name="addEnvironment"
-               description="Add an environment entry for this web application"
-               impact="ACTION"
-               returnType="void">
-      <parameter name="envName"
-                 description="New environment entry name"
-                 type="java.lang.String"/>
-      <parameter name="type"
-                 description="Type of entry"
-                 type="java.lang.String" />
-    </operation>
-
-    <operation name="addResource"
-               description="Add a resource reference for this web application"
-               impact="ACTION"
-               returnType="void">
-      <parameter name="resourceName"
-                 description="New resource reference name"
-                 type="java.lang.String"/>
-      <parameter name="type"
-                 description="Type of resource"
-                 type="java.lang.String" />
-    </operation>
-    
-    <operation name="removeEnvironment"
-               description="Remove any environment entry with the specified name"
-               impact="ACTION"
-               returnType="void">
-      <parameter name="envName"
-                 description="Name of the environment entry to remove"
-                 type="java.lang.String"/>
-    </operation>
-    
-    <operation name="removeResource"
-               description="Remove any resource reference with the specified name"
-               impact="ACTION"
-               returnType="void">
-      <parameter name="resourceName"
-                 description="Name of the resource reference to remove"
-                 type="java.lang.String"/>
-    </operation>
-    
-  </mbean>
-  
   <mbean name="NamingContextListener"
          description="Helper class used to initialize and populate the JNDI context associated with each context and server"
          domain="Catalina"
@@ -171,6 +68,10 @@
                description="Should we allow the ServletContext.getContext() method to access the context of other web applications in this server?"
                type="boolean"/>
 
+    <attribute name="defaultContextXml"
+               description="Location of the default context.xml resource or file"
+               type="java.lang.String"/>
+               
     <attribute name="defaultWebXml"
                description="Location of the default web.xml resource or file"
                type="java.lang.String"/>

@@ -87,6 +87,12 @@ public final class ContextConfig
 
 
     /**
+     * The default web application's context file location.
+     */
+    protected String defaultContextXml = null;
+    
+    
+    /**
      * The default web application's deployment descriptor location.
      */
     protected String defaultWebXml = null;
@@ -175,6 +181,28 @@ public final class ContextConfig
     public void setDefaultWebXml(String path) {
 
         this.defaultWebXml = path;
+
+    }
+
+
+    /**
+     * Return the location of the default context file
+     */
+    public String getDefaultContextXml() {
+        if( defaultContextXml == null ) defaultContextXml=Constants.DefaultContextXml;
+        return (this.defaultContextXml);
+
+    }
+
+
+    /**
+     * Set the location of the default context file
+     *
+     * @param path Absolute/relative path to the default context.xml
+     */
+    public void setDefaultContextXml(String path) {
+
+        this.defaultContextXml = path;
 
     }
 
@@ -517,7 +545,7 @@ public final class ContextConfig
         stream = null;
         source = null;
 
-        file = new File(getConfigBase(), "web.xml.default");
+        file = new File(getConfigBase(), Constants.HostWebXml);
         
         try {
            if (file.exists()) {
@@ -588,10 +616,16 @@ public final class ContextConfig
      */
     protected void contextConfig() {
         
-        // FIXME: Externalize default context.xml path the same way as web.xml
+        // Open the default web.xml file, if it exists
+        if( defaultContextXml==null && context instanceof StandardContext ) {
+            defaultContextXml = ((StandardContext)context).getDefaultContextXml();
+        }
+        // set the default if we don't have any overrides
+        if( defaultContextXml==null ) getDefaultContextXml();
+
         if (!context.getOverride()) {
-            processContextConfig(new File(getBaseDir(), "conf/context.xml"));
-            processContextConfig(new File(getConfigBase(), "context.xml.default"));
+            processContextConfig(new File(getBaseDir(), defaultContextXml));
+            processContextConfig(new File(getConfigBase(), Constants.HostContextXml));
         }
         if (context.getConfigFile() != null)
             processContextConfig(new File(context.getConfigFile()));
