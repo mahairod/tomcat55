@@ -38,13 +38,12 @@
     </tr>
   </table>
 
-</html:form>
-
 <br>
 
 <%@ include file="envEntries.jspf" %>
 
 <br>
+</html:form>
 
 </body>
 </html:html>
