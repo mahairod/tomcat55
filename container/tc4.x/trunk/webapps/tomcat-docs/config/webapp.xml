@@ -8,7 +8,7 @@
 
   <properties>
     <author email="craigmcc@apache.org">Craig R. McClanahan</author>
-    <title>The WARP Connector</title>
+    <title>The Webapp Connector</title>
   </properties>
 
 <body>
@@ -16,7 +16,7 @@
 
 <section name="Introduction">
 
-  <p>The <strong>WARP Connector</strong> element represents a
+  <p>The <strong>Webapp Connector</strong> element represents a
   <strong>Connector</strong> component that communicates with a web
   connector via the <code>WARP</code> protocol.  This is used for cases
   where you wish to invisibly integrate Tomcat 4 into an existing (or new)
@@ -91,7 +91,7 @@
 
   <subsection name="Standard Implementation">
 
-  <p>The standard implementation of <strong>WARP Connector</strong> is
+  <p>The standard implementation of <strong>Webapp Connector</strong> is
   <strong>org.apache.catalina.connector.warp.WarpConnector</strong>.
   It supports the following additional attributes (in addition to the
   common attributes listed above):</p>

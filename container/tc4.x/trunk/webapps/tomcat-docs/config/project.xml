@@ -22,9 +22,10 @@
     </menu>
 
     <menu name="Connectors">
+        <item name="JK"                    href="jk.html"/>
+        <item name="JK 2"                  href="jk2.html"/>
         <item name="HTTP/1.1"              href="http11.html"/>
-        <item name="Warp"                  href="warp.html"/>
-        <item name="AJP"                   href="ajp.html"/>
+        <item name="Webapp"                href="webapp.html"/>
     </menu>
 
     <menu name="Containers">

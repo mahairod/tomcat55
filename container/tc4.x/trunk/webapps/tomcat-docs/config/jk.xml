@@ -8,7 +8,7 @@
 
   <properties>
     <author email="remm@apache.org">Remy Maucherat</author>
-    <title>The AJP Connector</title>
+    <title>The JK Connector</title>
   </properties>
 
 <body>
@@ -16,7 +16,7 @@
 
 <section name="Introduction">
 
-  <p>The <strong>AJP Connector</strong> element represents a
+  <p>The <strong>JK Connector</strong> element represents a
   <strong>Connector</strong> component that communicates with a web
   connector via the <code>AJP</code> protocol.  This is used for cases
   where you wish to invisibly integrate Tomcat 4 into an existing (or new)
@@ -89,7 +89,7 @@
 
   <subsection name="Standard Implementation">
 
-  <p>The standard implementation of <strong>AJP Connector</strong> is
+  <p>The standard implementation of <strong>JK Connector</strong> is
   <strong>org.apache.ajp.tomcat4.Ajp13Connector</strong>.</p>
 
   <p><strong>This implementation supports the AJP 1.3 and 1.4 protocols.</strong></p>
