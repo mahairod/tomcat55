@@ -122,32 +122,35 @@ public class JspCompiler extends Compiler implements Mangler {
 	return classFileName;
     }
 
+
+    /**
+     * Convert the final path component to a valid base class name, maintaining
+     * uniqueness as required.
+     */
     private final String getBaseClassName() {
-	String className;
-        
-        if (jsp.endsWith(".jsp"))
-            className = jsp.substring(0, jsp.length() - 4);
-        else
-            className = jsp;
-            
-	
-	// Fix for invalid characters. If you think of more add to the list.
-	StringBuffer modifiedClassName = new StringBuffer();
-	for (int i = 0; i < className.length(); i++) {
-	    if (Character.isLetterOrDigit(className.charAt(i)) == true)
-		modifiedClassName.append(className.substring(i,i+1));
-	    else
-		modifiedClassName.append(mangleChar(className.charAt(i)));
-	}
-	modifiedClassName.append("_jsp");
-	return modifiedClassName.toString();
+
+        int iSep = jsp.lastIndexOf('/') + 1;
+        int iEnd = jsp.length();
+        StringBuffer modifiedClassName = new StringBuffer(jsp.length() - iSep);
+        for (int i = iSep; i < iEnd; i++) {
+            char ch = jsp.charAt(i);
+            if (Character.isLetterOrDigit(ch))
+                modifiedClassName.append(ch);
+            else if (ch == '.')
+                modifiedClassName.append('$');
+            else
+                modifiedClassName.append(mangleChar(ch));
+        }
+        return (modifiedClassName.toString());
+
     }
 
+
+    /**
+     * Mangle the specified character to create a legal Java class name.
+     */
     private static final String mangleChar(char ch) {
 
-        if(ch == File.separatorChar) {
-	    ch = '/';
-	}	
 	String s = Integer.toHexString(ch);
 	int nzeros = 5 - s.length();
 	char[] result = new char[6];
@@ -158,6 +161,7 @@ public class JspCompiler extends Compiler implements Mangler {
 	    result[i] = s.charAt(j);
 	return new String(result);
     }
+
 
     /**
      * Determines whether the current JSP class is older than the JSP file
