@@ -57,6 +57,7 @@
         <item name="Functional Specs."     href="catalina/funcspecs/index.html"/>
         <item name="Tomcat Javadocs"       href="catalina/docs/api/index.html"/>
         <item name="Jasper Javadocs"       href="jasper/docs/api/index.html"/>
+        <item name="Architecture"          href="architecture/index.html" />
     </menu>
 
     </body>
