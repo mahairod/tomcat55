@@ -1047,7 +1047,7 @@ public class JspUtil {
      * the element type can be one of ZBCDFIJS or L<classname>;
      * It is converted into forms that can be understood by javac.
      */
-    private static String toJavaSourceType(String type) {
+    public static String toJavaSourceType(String type) {
 
 	if (type.charAt(0) != '[') {
 	    return type;
