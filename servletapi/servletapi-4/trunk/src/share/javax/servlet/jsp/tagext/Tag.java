@@ -84,16 +84,6 @@ import javax.servlet.jsp.*;
  * available for further invocations (and it is expected to have
  * retained its properties).
  *
- * <p><B>Release</B>
- *
- * <p> Once all invocations on the tag handler
- * are completed, the release method is invoked on it.  Once a release
- * method is invoked <em>all</em> properties, including parent and
- * pageContext, are assumed to have been reset to an unspecified value.
- * The page compiler guarantees that release() will be invoked on the Tag
- * handler before the handler is released to the GC.
- *
- *
  * <p><B>Lifecycle</B>
  * <p> Lifecycle details are described by the transition diagram below,
  * with the following comments:
@@ -114,6 +104,24 @@ import javax.servlet.jsp.*;
  *
  * <IMG src="doc-files/TagProtocol.gif"/>
  * 
+ * <p> Once all invocations on the tag handler
+ * are completed, the release method is invoked on it.  Once a release
+ * method is invoked <em>all</em> properties, including parent and
+ * pageContext, are assumed to have been reset to an unspecified value.
+ * The page compiler guarantees that release() will be invoked on the Tag
+ * handler before the handler is released to the GC.
+ *
+ * <p><B>Empty and Non-Empty Action</B>
+ * <p> If the action is an <b>empty action</b>, the doStartTag() method must
+ * return SKIP_BODY.
+ *
+ * <p> If the action is a <b>non-empty action</b>, the doStartTag() method
+ * may return SKIP_BODY or EVAL_BODY_INCLUDE.
+ *
+ * If SKIP_BODY is returned the body is not evaluated.
+ * 
+ * If EVAL_BODY_INCLUDE is returned, the body is evaluated and
+ * "passed through" to the current out.
 */
 
 public interface Tag {
@@ -128,8 +136,6 @@ public interface Tag {
     /**
      * Evaluate body into existing out stream.
      * Valid return value for doStartTag.
-     * This is an illegal return value for doStartTag when the class implements
-     * BodyTag, since BodyTag implies the creation of a new BodyContent.
      */
  
     public final static int EVAL_BODY_INCLUDE = 1;
@@ -209,6 +215,8 @@ public interface Tag {
      * BodyTag.EVAL_BODY_BUFFERED to indicate
      * that the body of the action should be evaluated or SKIP_BODY to
      * indicate otherwise.
+     *
+     * <p>
      * When a Tag returns EVAL_BODY_INCLUDE the result of evaluating
      * the body (if any) is included into the current "out" JspWriter as it
      * happens and then doEndTag() is invoked.
