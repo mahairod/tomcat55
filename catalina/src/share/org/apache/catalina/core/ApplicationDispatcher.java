@@ -423,17 +423,19 @@ final class ApplicationDispatcher
             wrequest.setRequestURI(requestURI);
             wrequest.setServletPath(servletPath);
             wrequest.setPathInfo(pathInfo);
-        
-            wrequest.setAttribute(Globals.FORWARD_REQUEST_URI_ATTR,
-                                  hrequest.getRequestURI());
-            wrequest.setAttribute(Globals.FORWARD_CONTEXT_PATH_ATTR,
-                                  hrequest.getContextPath());
-            wrequest.setAttribute(Globals.FORWARD_SERVLET_PATH_ATTR,
-                                  hrequest.getServletPath());
-            wrequest.setAttribute(Globals.FORWARD_PATH_INFO_ATTR,
-                                  hrequest.getPathInfo());
-            wrequest.setAttribute(Globals.FORWARD_QUERY_STRING_ATTR,
-                                  hrequest.getQueryString());
+
+            if (hrequest.getAttribute(Globals.FORWARD_REQUEST_URI_ATTR) == null) {
+                wrequest.setAttribute(Globals.FORWARD_REQUEST_URI_ATTR,
+                                      hrequest.getRequestURI());
+                wrequest.setAttribute(Globals.FORWARD_CONTEXT_PATH_ATTR,
+                                      hrequest.getContextPath());
+                wrequest.setAttribute(Globals.FORWARD_SERVLET_PATH_ATTR,
+                                      hrequest.getServletPath());
+                wrequest.setAttribute(Globals.FORWARD_PATH_INFO_ATTR,
+                                      hrequest.getPathInfo());
+                wrequest.setAttribute(Globals.FORWARD_QUERY_STRING_ATTR,
+                                      hrequest.getQueryString());
+            }
  
             if (queryString != null) {
                 wrequest.setQueryString(queryString);
