@@ -1375,8 +1375,9 @@ public class ManagerServlet
                 writer.println(sm.getString("managerServlet.noSelf"));
                 return;
             }
-            deployer.remove(path);
-            if (docBaseDir.isDirectory()) {
+            boolean dir = docBaseDir.isDirectory();
+            deployer.remove(path, true);
+            if (dir) {
                 undeployDir(docBaseDir);
                 // Delete the WAR file
                 File docBaseWar = new File(docBasePath + ".war");
