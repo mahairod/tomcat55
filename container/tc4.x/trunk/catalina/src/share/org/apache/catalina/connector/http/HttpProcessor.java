@@ -737,6 +737,17 @@ final class HttpProcessor
 	    uri = new String(requestLine.uri, 0, requestLine.uriEnd);
         }
 
+        // Checking for an absolute URI (with the HTTP protocol)
+        if (uri.startsWith("http://")) {
+            // Parsing out protocol and host name
+            int pos = uri.indexOf('/', "http://".length());
+            if (pos == -1) {
+                uri = "";
+            } else {
+                uri = uri.substring(pos);
+            }
+        }
+
 	// Parse any requested session ID out of the request URI
 	int semicolon = uri.indexOf(match);
 	if (semicolon >= 0) {
