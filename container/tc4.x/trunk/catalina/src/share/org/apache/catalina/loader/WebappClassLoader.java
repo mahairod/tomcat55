@@ -1481,7 +1481,7 @@ public class WebappClassLoader
 
         }
 
-        synchronized(this) {
+        synchronized(entry) {
             // Since all threads use the same ResourceEntry instance, it is
             // the one which will contain the class
             if (entry.loadedClass == null) {
