@@ -91,6 +91,9 @@
   <!--                       generated servlets?  [Created dynamically      -->
   <!--                       based on the current web application]          -->
   <!--                                                                      -->
+  <!--   classdebuginfo      Should the class file be compiled with         -->
+  <!--                       debugging information?  [false]                -->
+  <!--                                                                      -->
   <!--   ieClassId           The class-id value to be sent to Internet      -->
   <!--                       Explorer when using <jsp:plugin> tags.         -->
   <!--                       [clsid:8AD9C840-044E-11D1-B3E9-00805F499D93]   -->
