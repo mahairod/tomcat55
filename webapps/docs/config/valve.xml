@@ -389,6 +389,45 @@
 </section>
 
 
+<section name="Form Authenticator Valve">
+
+  <subsection name="Introduction">
+
+    <p>The <strong>Form Authenticator Valve</strong> is automatically added to
+    any <a href="context.html">Context</a> that is configured to use FORM
+    authentication.</p>
+
+    <p>If any non-default settings are required, the valve may be configured
+    within <a href="context.html">Context</a> element with the required
+    values.</p>
+
+  </subsection>
+
+  <subsection name="Attributes">
+
+    <p>The <strong>Form Authenticator Valve</strong> supports the following
+    configuration attributes:</p>
+
+    <attributes>
+
+      <attribute name="className" required="true">
+        <p>Java class name of the implementation to use.  This MUST be set to
+        <strong>org.apache.catalina.authenticator.FormAuthenticator</strong>.</p>
+      </attribute>
+
+      <attribute name="characterEncoding" required="false">
+        <p>Character encoding to use to read the username and password parameters
+        from the request. If not set, the encoding of the request body will be
+        used.</p>
+      </attribute>
+
+    </attributes>
+
+  </subsection>
+
+</section>
+
+
 </body>
 
 

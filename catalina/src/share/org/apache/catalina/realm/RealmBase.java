@@ -1135,8 +1135,10 @@ public abstract class RealmBase
      * @param credentials Password or other credentials to use in
      *  authenticating this username
      * @param algorithm Algorithm used to do the digest
+     * @param encoding Character encoding of the string to digest
      */
-    public final static String Digest(String credentials, String algorithm) {
+    public final static String Digest(String credentials, String algorithm,
+                                      String encoding) {
 
         try {
             // Obtain a new message digest with "digest" encryption
@@ -1145,7 +1147,11 @@ public abstract class RealmBase
 
             // encode the credentials
             // Should use the digestEncoding, but that's not a static field
-            md.update(credentials.getBytes());
+            if (encoding == null) {
+                md.update(credentials.getBytes());
+            } else {
+                md.update(credentials.getBytes(encoding));                
+            }
 
             // Digest the credentials and return as hexadecimal
             return (HexUtils.convert(md.digest()));
@@ -1164,14 +1170,22 @@ public abstract class RealmBase
      */
     public static void main(String args[]) {
 
-        if(args.length > 2 && args[0].equalsIgnoreCase("-a")) {
-            for(int i=2; i < args.length ; i++){
+        String encoding = null;
+        int firstCredentialArg = 2;
+        
+        if (args.length > 4 && args[2].equalsIgnoreCase("-e")) {
+            encoding = args[3];
+            firstCredentialArg = 4;
+        }
+        
+        if(args.length > firstCredentialArg && args[0].equalsIgnoreCase("-a")) {
+            for(int i=firstCredentialArg; i < args.length ; i++){
                 System.out.print(args[i]+":");
-                System.out.println(Digest(args[i], args[1]));
+                System.out.println(Digest(args[i], args[1], encoding));
             }
         } else {
             System.out.println
-                ("Usage: RealmBase -a <algorithm> <credentials>");
+                ("Usage: RealmBase -a <algorithm> [-e <encoding>] <credentials>");
         }
 
     }
