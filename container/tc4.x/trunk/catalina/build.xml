@@ -106,7 +106,6 @@
              classpath="${parser.jar}:${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}"
              deprecation="off" debug="on" optimize="off" target="1.2"
              excludes="**/CVS/**">
-      <exclude name="**/warp/*.java"/>
       <exclude name="**/factory/Tyrex*.java" 
        unless="tyrex.present" />
       <exclude name="**/factory/ResourceFactory.java" 
@@ -233,11 +232,9 @@
     <jar  jarfile="${catalina.deploy}/server/lib/catalina.jar"
           basedir="${catalina.build}/classes" 
           excludes="**/org/apache/naming/**,**/connector/warp/**,org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class" />
-<!--
     <jar  jarfile="${catalina.deploy}/server/lib/warp.jar"
           basedir="${catalina.build}/classes" 
           includes="**/connector/warp/**" />
--->
   </target>
 
 
@@ -280,7 +277,7 @@
     <jar  jarfile="${catalina.dist}/server/lib/catalina.jar"
           basedir="${catalina.build}/classes" 
           excludes="**/org/apache/naming/**,**/connector/warp/**" />
-    <jar  jarfile="${catalina.dist}/server/lib/catalina.jar"
+    <jar  jarfile="${catalina.dist}/server/lib/warp.jar"
           basedir="${catalina.build}/classes" 
           includes="**/connector/warp/**" />
 
