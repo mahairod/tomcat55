@@ -130,6 +130,19 @@ specific (WEB-INF/web.xml) settings are now reported in the log files, and
 cause the application to be unavailable until the errors are fixed and the
 application restarted.
 
+Jasper:  Correctly populate the "urn" field of TagLibraryInfo from the
+<uri> element in the tag library descriptor.
+
+Jasper:  Requesting a non-existent JSP page now returns a 404 (not found)
+error instead of a 500 (internal server error).
+
+Catalina:  Correctly rethrow exceptions thrown by a servlet that is called
+through RequestDispatcher.forward() or RequestDispatcher.include().
+
+Catalina:  Make the default file-serving servlet work correctly when it is
+the subject of a RequestDispatcher.include(), even where the calling servlet
+has already called response.getWriter() so that binary output cannot be used.
+
 
 ==============================
 KNOWN PROBLEMS IN THIS RELEASE:
@@ -140,13 +153,6 @@ No Web Connectors Available
 Current releases of Tomcat 4.0 only run in stand-alone mode.  A new web
 connector for Apache will be integrated shortly, followed by integration
 with the other servers currently supported by Tomcat 3.x.
-
-
-Referencing A Non-Existent JSP Page
------------------------------------
-If you request a JSP page that does not exist, you get an error 500 reporting
-a java.io.FileNotFoundException.  This should cause an error 404 instead.
-This will be fixed in a future release.
 
 
 Including A Static File
