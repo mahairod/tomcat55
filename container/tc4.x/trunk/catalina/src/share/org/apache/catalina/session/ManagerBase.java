@@ -547,8 +547,6 @@ public abstract class ManagerBase implements Manager {
 	    return (null);
 	synchronized (sessions) {
 	    Session session = (Session) sessions.get(id);
-	    if (session != null)
-		session.access();
 	    return (session);
 	}
 

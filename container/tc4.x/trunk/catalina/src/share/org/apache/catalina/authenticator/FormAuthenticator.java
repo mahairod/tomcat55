@@ -142,8 +142,12 @@ public final class FormAuthenticator
 	// Have we already authenticated someone?
 	Principal principal =
 	    ((HttpServletRequest) request.getRequest()).getUserPrincipal();
-	if (principal != null)
+	if (principal != null) {
+            if (debug >= 1)
+                log("Already authenticated '" +
+                    principal.getName() + "'");
 	    return (true);
+        }
 
 	// Acquire references to objects we will need to evaluate
 	HttpServletRequest hreq =
@@ -159,8 +163,11 @@ public final class FormAuthenticator
 	// displaying it twice (from the user's perspective) -- once because
 	// of the "save and redirect" and once because of the "restore and
 	// redirect" performed below.
-	if (requestURI.equals(contextPath + config.getLoginPage()))
+	if (requestURI.equals(contextPath + config.getLoginPage())) {
+            if (debug >= 1)
+                log("Requesting login page normally");
 	    return (true);	// Display the login page in the usual manner
+        }
 
 	// Is this the action request from the login page?
 	boolean loginAction =
@@ -170,6 +177,8 @@ public final class FormAuthenticator
 	// No -- Save this request and redirect to the form login page
 	if (!loginAction) {
 	    session = getSession(request, true);
+            if (debug >= 1)
+                log("Save request in session '" + session.getId() + "'");
 	    saveRequest(request, session);
 	    request.setRequestURI(contextPath + config.getLoginPage());
 	    return (true);	// Display the login page in the usual manner
@@ -182,6 +191,8 @@ public final class FormAuthenticator
 	String password = hreq.getParameter(Constants.FORM_PASSWORD);
 	principal = realm.authenticate(username, password);
 	if (principal == null) {
+            if (debug >= 1)
+                log("Authentication failed, show error page");
 	    request.setRequestURI(contextPath + config.getErrorPage());
 	    return (true);	// Display the error page in the usual manner
 	}
@@ -189,10 +200,16 @@ public final class FormAuthenticator
 
 	// Restore this request and redirect to the original request URI
         session = getSession(request, true);
+        if (debug >= 1)
+            log("restore request from session '" + session.getId() + "'");
         register(request, response, principal, Constants.FORM_METHOD);
-	if (restoreRequest(request, session))
+	if (restoreRequest(request, session)) {
+            if (debug >= 1)
+                log("Proceed to restored request");
 	    return (true);		// Perform the original request
-	else {
+	} else {
+            if (debug >= 1)
+                log("Restore of original request failed");
 	    hres.sendError(HttpServletResponse.SC_BAD_REQUEST);
             //	    hres.flushBuffer();
 	    return (false);

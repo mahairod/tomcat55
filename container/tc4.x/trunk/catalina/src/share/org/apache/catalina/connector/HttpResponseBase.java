@@ -541,9 +541,9 @@ public class HttpResponseBase
 	    outputWriter.print(message);
 	}
 	outputWriter.print("\r\n");
-        //        System.out.println("sendHeaders: " +
-        //                           request.getRequest().getProtocol() +
-        //                           " " + status + " " + message);
+        // System.out.println("sendHeaders: " +
+        //                    request.getRequest().getProtocol() +
+        //                    " " + status + " " + message);
 
 	// Send the content-length and content-type headers (if any)
 	if (getContentType() != null) {
@@ -604,17 +604,17 @@ public class HttpResponseBase
 		outputWriter.print(": ");
 		outputWriter.print(CookieTools.getCookieHeaderValue(cookie));
 		outputWriter.print("\r\n");
-                // System.out.println(" " +
-                // CookieTools.getCookieHeaderName(cookie) +
-                //     ": " +
-                //     CookieTools.getCookieHeaderValue(cookie));
+                //System.out.println(" " +
+                //                   CookieTools.getCookieHeaderName(cookie) +
+                //                   ": " +
+                //                   CookieTools.getCookieHeaderValue(cookie));
 	    }
 	}
 
 	// Send a terminating blank line to mark the end of the headers
 	outputWriter.print("\r\n");
 	outputWriter.flush();
-        //        System.out.println("----------");
+        // System.out.println("----------");
 
         // The response is now committed
         committed = true;

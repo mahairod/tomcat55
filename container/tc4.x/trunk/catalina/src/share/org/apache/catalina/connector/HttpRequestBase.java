@@ -1042,7 +1042,6 @@ public class HttpRequestBase
 	    if ((session != null) && !session.isValid())
 	        session = null;
 	    if (session != null) {
-		session.access();
 		return (session.getSession());
 	    }
 	}

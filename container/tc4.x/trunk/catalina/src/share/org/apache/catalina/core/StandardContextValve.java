@@ -73,8 +73,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.naming.NamingException;
 import org.apache.naming.ContextBindings;
 import org.apache.catalina.Container;
+import org.apache.catalina.Manager;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.Session;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.StringManager;
@@ -152,10 +154,9 @@ final class StandardContextValve
 	}
 
         // Disallow any direct access to resources under WEB-INF or META-INF
-        String contextPath =
-            ((HttpServletRequest) request.getRequest()).getContextPath();
-        String requestURI =
-            ((HttpServletRequest) request.getRequest()).getRequestURI();
+        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
+        String contextPath = hreq.getContextPath();
+        String requestURI = hreq.getRequestURI();
         String relativeURI =
             requestURI.substring(contextPath.length()).toUpperCase();
         if (relativeURI.equals("/META-INF") ||
@@ -171,8 +172,19 @@ final class StandardContextValve
             return;
         }
 
-	// Select the Wrapper to be used for this Request
+        // Update the session last access time for our session (if any)
 	StandardContext context = (StandardContext) getContainer();
+        String sessionId = hreq.getRequestedSessionId();
+        if (sessionId != null) {
+            Manager manager = context.getManager();
+            if (manager != null) {
+                Session session = manager.findSession(sessionId);
+                if ((session != null) && session.isValid())
+                    session.access();
+            }
+        }
+
+	// Select the Wrapper to be used for this Request
 	Wrapper wrapper = (Wrapper) context.map(request, true);
 	if (wrapper == null) {
             notFound(requestURI, (HttpServletResponse) response.getResponse());

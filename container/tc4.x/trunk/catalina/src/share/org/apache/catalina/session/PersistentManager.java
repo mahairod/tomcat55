@@ -464,8 +464,6 @@ public final class PersistentManager
 		maxIdleBackup >= 0)
 	    session = swapIn(id);
 
-	if (session != null)
-	    session.access();
 	return (session);
 
     }
