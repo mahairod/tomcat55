@@ -879,9 +879,11 @@ public class StandardContext
     public void setDistributable(boolean distributable) {
         boolean oldDistributable = this.distributable;
         this.distributable = distributable;
+        if ( getCluster() != null ) getCluster().setDistributable(getName(),distributable);
         support.firePropertyChange("distributable",
                                    new Boolean(oldDistributable),
                                    new Boolean(this.distributable));
+        
 
     }
 
@@ -3891,13 +3893,15 @@ public class StandardContext
                 log.debug("Configuring default Manager");
             if (getCluster() != null) {
                 try {
-                    if ( this.getDistributable() ) {
+//                    The setDistributable is set after the context is started, hence 
+//                    this doesn't work :(
+//                    if ( this.getDistributable() ) {
                         log.info("Creating clustering manager for context="+getName());
                         setManager(getCluster().createManager(getName()));
-                    } else {
-                        log.info("Ignoring clustering manager for context="+getName()+ " element <distributable> not present in web.xml");
-                        setManager(new StandardManager());    
-                    }
+//                    } else {
+//                        log.info("Ignoring clustering manager for context="+getName()+ " element <distributable> not present in web.xml");
+//                        setManager(new StandardManager());    
+//                    }
                 } catch ( Exception x ) {
                     log.warn("Clustering disabled for context:"+getName()+" reason:"+x.getMessage());
                     setManager(new StandardManager());
@@ -4004,8 +4008,10 @@ public class StandardContext
                 // Notify our interested LifecycleListeners
                 lifecycle.fireLifecycleEvent(START_EVENT, null);
 
-                if ((manager != null) && (manager instanceof Lifecycle))
+                if ((manager != null) && (manager instanceof Lifecycle)) {
                     ((Lifecycle) manager).start();
+                }
+                    
 
             } finally {
                 // Unbinding thread

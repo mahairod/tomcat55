@@ -125,7 +125,7 @@ public class SimpleTcpCluster
                LifecycleListener {
 
 
-    private static org.apache.commons.logging.Log log =
+    public static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
 
 
@@ -253,9 +253,13 @@ public class SimpleTcpCluster
 
 
     /**
-     * The context name <-> manager association.
+     * The context name <-> manager association for distributed contexts. 
      */
     protected HashMap managers = new HashMap();
+    /**
+     * The context name <-> manager association for all contexts.
+     */
+    protected HashMap allmanagers = new HashMap();
 
     /**
      * Nr of milliseconds between every heart beat
@@ -401,16 +405,28 @@ public class SimpleTcpCluster
 
     public synchronized Manager createManager(String name) {
         SimpleTcpReplicationManager manager = new SimpleTcpReplicationManager(name);
-        manager.setCluster(this);
+        manager.setCluster(null);
+        manager.setDistributable(false);
         manager.setExpireSessionsOnShutdown(expireSessionsOnShutdown);
         manager.setPrintToScreen(printToScreen);
         manager.setUseDirtyFlag(useDirtyFlag);
         manager.setDebug(debug);
-        managers.put(name, manager);
+        allmanagers.put(name, manager);
         return manager;
     }
 
-
+    public void setDistributable(String contextName, boolean distributable)
+    {
+        log.info("Setting distributable for context:"+contextName+" to "+distributable);
+        SimpleTcpReplicationManager manager = (SimpleTcpReplicationManager)allmanagers.get(contextName);
+        manager.setDistributable(distributable);
+        if (distributable) {
+            manager.setCluster(this);
+            manager.setDistributable(true);
+            managers.put(contextName,manager);
+        }
+        
+    }
 
 
     // ------------------------------------------------------ Lifecycle Methods
