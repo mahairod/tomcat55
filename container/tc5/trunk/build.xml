@@ -159,6 +159,7 @@
       <property name="tomcat5.detect" value="true"/>
       <property name="commons-logging.jar" value="${commons-logging.jar}"/>
       <property name="jmx.jar" value="${jmx.jar}"/>
+      <property name="jmx.detect" value="true"/>
       <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
 
       <property name="jk.build" value="${tomcat.build}"/>
@@ -476,6 +477,9 @@
       </fileset>
       <fileset dir="build/common/lib">
         <include name="commons-collections.jar"/>
+      </fileset>
+      <fileset dir="${ant.home}/lib">
+        <include name="ant.jar"/>
       </fileset>
     </copy>
     
