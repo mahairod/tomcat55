@@ -269,7 +269,7 @@ web application.
 
 * Download a binary distribution of Struts 1.0 from:
 
-    http://jakarta.apache.org/builds/jakarta-struts/release/1.0/
+    http://jakarta.apache.org/builds/jakarta-struts/release/v1.0/
 
   On a Windows platform, you will need:
     jakarta-struts-1.0.zip
