@@ -22,15 +22,12 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
-import java.net.MalformedURLException;
 import java.util.Iterator;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.naming.Binding;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
@@ -45,10 +42,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerServlet;
 import org.apache.catalina.Context;
-import org.apache.catalina.Deployer;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
+import org.apache.catalina.Lifecycle;
 import org.apache.catalina.Role;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
@@ -58,6 +55,7 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.modeler.Registry;
 import org.apache.naming.resources.ProxyDirContext;
 import org.apache.naming.resources.WARDirContext;
 
@@ -203,12 +201,28 @@ public class ManagerServlet
 
 
     /**
-     * The Deployer container that contains our own web application's Context,
-     * along with the associated Contexts for web applications that we
-     * are managing.
+     * The associated host.
      */
-    protected Deployer deployer = null;
+    protected Host host = null;
 
+    
+    /**
+     * The host appBase.
+     */
+    protected File appBase = null;
+    
+    
+    /**
+     * MBean server.
+     */
+    protected MBeanServer mBeanServer = null;
+
+
+    /**
+     * The associated deployer ObjectName.
+     */
+    protected ObjectName oname = null;
+    
 
     /**
      * The global JNDI <code>NamingContext</code> for this server,
@@ -253,12 +267,23 @@ public class ManagerServlet
         this.wrapper = wrapper;
         if (wrapper == null) {
             context = null;
-            deployer = null;
+            host = null;
+            oname = null;
         } else {
             context = (Context) wrapper.getParent();
-            deployer = (Deployer) context.getParent();
+            host = (Host) context.getParent();
+            Engine engine = (Engine) host.getParent();
+            try {
+                oname = new ObjectName(engine.getName() 
+                        + ":type=Deployer,host=" + host.getName());
+            } catch (Exception e) {
+                // ?
+            }
         }
 
+        // Retrieve the MBean server
+        mBeanServer = Registry.getRegistry(null, null).getMBeanServer();
+        
     }
 
 
@@ -477,7 +502,7 @@ public class ManagerServlet
         // Log debugging messages as necessary
         if (debug >= 1) {
             log("init: Associated with Deployer '" +
-                deployer.getName() + "'");
+                oname + "'");
             if (global != null) {
                 log("init: Global resources are available");
             }
@@ -519,7 +544,7 @@ public class ManagerServlet
             if (path.equals("/")) {
                 contextPath = "";
             }
-            Context context =  deployer.findDeployedApp(contextPath);
+            Context context = (Context) host.findChild(contextPath);
             if (context == null) {
                 writer.println(sm.getString("managerServlet.noContext", path));
                 return;
@@ -564,15 +589,15 @@ public class ManagerServlet
         String displayPath = path;
         if( path.equals("/") )
             path = "";
-        String basename = getConfigFile(path);
+        String basename = getDocBase(path);
 
         // Check if app already exists, or undeploy it if updating
-        Context context =  deployer.findDeployedApp(path);
+        Context context = (Context) host.findChild(path);
         if (update) {
             if (context != null) {
                 undeploy(writer, displayPath);
             }
-            context =  deployer.findDeployedApp(path);
+            context = (Context) host.findChild(path);
         }
         if (context != null) {
             writer.println
@@ -610,47 +635,29 @@ public class ManagerServlet
             localWar = localWarCopy;
         }
 
-        String war = null;
+        // Copy WAR to appBase
         try {
-            URL url = localWar.toURL();
-            war = url.toString();
-            war = "jar:" + war + "!/";
-        } catch(MalformedURLException e) {
-            log("managerServlet.badUrl[" + displayPath + "]", e);
-            writer.println(sm.getString("managerServlet.exception",
-                                        e.toString()));
-            return;
-        }
-
-        // Extract the nested context deployment file (if any)
-        File localXml = new File(configBase, basename + ".xml");
-        if (debug >= 2) {
-            log("Extracting XML file to " + localXml);
-        }
-        try {
-            extractXml(localWar, localXml);
-        } catch (IOException e) {
-            log("managerServlet.extract[" + displayPath + "]", e);
-            writer.println(sm.getString("managerServlet.exception",
-                                        e.toString()));
-            return;
-        }
-        String config = null;
-        try {
-            if (localXml.exists()) {
-                URL url = localXml.toURL();
-                config = url.toString();
+            if (!isServiced(path)) {
+                addServiced(path);
+                copy(localWar, new File(getAppBase(), basename + ".war"));
+                check(path);
+                removeServiced(path);
             }
-        } catch (MalformedURLException e) {
-            log("managerServlet.badUrl[" + displayPath + "]", e);
+        } catch (Exception e) {
+            log("managerServlet.check[" + displayPath + "]", e);
             writer.println(sm.getString("managerServlet.exception",
                                         e.toString()));
             return;
         }
-
-        // Deploy this web application
-        deploy(writer, config, path, war, update);
-
+        
+        context = (Context) host.findChild(path);
+        if (context != null) {
+            writer.println(sm.getString("managerServlet.deployed", displayPath));
+        } else {
+            // Something failed
+            writer.println(sm.getString("managerServlet.deployFailed", displayPath));
+        }
+        
     }
 
 
@@ -672,7 +679,6 @@ public class ManagerServlet
         String displayPath = path;
         if( path.equals("/") )
             path = "";
-        String basename = getConfigFile(path);
 
         // Calculate the base path
         File deployedPath = versioned;
@@ -681,59 +687,39 @@ public class ManagerServlet
         }
 
         // Find the local WAR file
-        File localWar = new File(deployedPath, basename + ".war");
+        File localWar = new File(deployedPath, getDocBase(path) + ".war");
         // Find the local context deployment file (if any)
-        File localXml = new File(configBase, basename + ".xml");
+        File localXml = new File(configBase, getConfigFile(path) + ".xml");
 
         // Check if app already exists, or undeploy it if updating
-        Context context =  deployer.findDeployedApp(path);
+        Context context = (Context) host.findChild(path);
         if (context != null) {
             undeploy(writer, displayPath);
         }
 
-        // Copy WAR and XML to the host base
-        if (tag != null) {
-            File localWarCopy = new File(deployed, basename + ".war");
-            copy(localWar, localWarCopy);
-            try {
-                extractXml(localWar, localXml);
-            } catch (IOException e) {
-                log("managerServlet.extract[" + displayPath + "]", e);
-                writer.println(sm.getString("managerServlet.exception",
-                                            e.toString()));
-                return;
-            }
-            localWar = localWarCopy;
-        }
-
-        // Compute URLs
-        String war = null;
+        // Copy WAR to appBase
         try {
-            URL url = localWar.toURL();
-            war = url.toString();
-            war = "jar:" + war + "!/";
-        } catch(MalformedURLException e) {
-            log("managerServlet.badUrl[" + displayPath + "]", e);
+            if (!isServiced(path)) {
+                addServiced(path);
+                copy(localWar, new File(getAppBase(), getDocBase(path) + ".war"));
+                check(path);
+                removeServiced(path);
+            }
+        } catch (Exception e) {
+            log("managerServlet.check[" + displayPath + "]", e);
             writer.println(sm.getString("managerServlet.exception",
                                         e.toString()));
             return;
         }
-        String config = null;
-        try {
-            if (localXml.exists()) {
-                URL url = localXml.toURL();
-                config = url.toString();
-            }
-        } catch (MalformedURLException e) {
-            log("managerServlet.badUrl[" + displayPath + "]", e);
-            writer.println(sm.getString("managerServlet.exception",
-                                        e.toString()));
-            return;
+        
+        context = (Context) host.findChild(path);
+        if (context != null) {
+            writer.println(sm.getString("managerServlet.deployed", displayPath));
+        } else {
+            // Something failed
+            writer.println(sm.getString("managerServlet.deployFailed", displayPath));
         }
-
-        // Deploy webapp
-        deploy(writer, config, path, war, false);
-
+        
     }
 
 
@@ -748,188 +734,78 @@ public class ManagerServlet
      * @param update true to override any existing webapp on the path
      */
     protected void deploy(PrintWriter writer, String config,
-                          String path, String war, boolean update) {
-
+            String path, String war, boolean update) {
+        
         if (war != null && war.length() == 0) {
             war = null;
         }
-
+        
         if (debug >= 1) {
             if (config != null && config.length() > 0) {
                 if (war != null) {
                     log("install: Installing context configuration at '" +
-                        config + "' from '" + war + "'");
+                            config + "' from '" + war + "'");
                 } else {
                     log("install: Installing context configuration at '" +
-                        config + "'");
+                            config + "'");
                 }
             } else {
                 if (path != null && path.length() > 0) {
                     log("install: Installing web application at '" + path +
-                        "' from '" + war + "'");
+                            "' from '" + war + "'");
                 } else {
                     log("install: Installing web application from '" + war + "'");
                 }
             }
         }
-
-        // See if directory/war is relative to host appBase
-        if (war != null && war.indexOf('/') < 0 ) {
-            // Identify the appBase of the owning Host of this Context (if any)
-            String appBase = null;
-            File appBaseDir = null;
-            if (context.getParent() instanceof Host) {
-                appBase = ((Host) context.getParent()).getAppBase();
-                appBaseDir = new File(appBase);
-                if (!appBaseDir.isAbsolute()) {
-                    appBaseDir = new File(System.getProperty("catalina.base"),
-                                          appBase);
-                }
-                File file = new File(appBaseDir, war);
-                try {
-                    URL url = file.toURL();
-                    war = url.toString();
-                    if (war.toLowerCase().endsWith(".war")) {
-                        war = "jar:" + war + "!/";
-                    }
-                } catch(MalformedURLException e) {
-                    ;
-                }
-            }
+        
+        if (path == null || path.length() == 0 || !path.startsWith("/")) {
+            writer.println(sm.getString("managerServlet.invalidPath",
+                    path));
+            return;
         }
-
-        if (config != null && config.length() > 0) {
-
-            if ((war != null) &&
-                (!war.startsWith("file:") && !war.startsWith("jar:"))) {
-                writer.println(sm.getString("managerServlet.invalidWar", war));
-                return;
-            }
-
-            try {
-                if (war == null) {
-                    deployer.install(new URL(config), null);
-                } else {
-                    deployer.install(new URL(config), new URL(war));
-                }
-                writer.println(sm.getString("managerServlet.configured",
-                                            config));
-            } catch (Throwable t) {
-                log("ManagerServlet.configure[" + config + "]", t);
-                writer.println(sm.getString("managerServlet.exception",
-                                            t.toString()));
-                return;
-            }
-
-        } else {
-
-            if ((war == null) ||
-                (!war.startsWith("file:") && !war.startsWith("jar:"))) {
-                writer.println(sm.getString("managerServlet.invalidWar", war));
-                return;
-            }
-
-            if (path == null || path.length() == 0) {
-                if (deployer.isDeployXML()) {
-                    // Use embedded META-INF/context.xml if present
-                    URL contextXml = null;
-                    InputStream stream = null;
-                    try {
-                        String contextWar = war;
-                        if (war.startsWith("file:")) {
-                            if (war.endsWith(".war")) {
-                                contextWar = "jar:" + war + "!/";
-                            } else {
-                                contextWar = war + '/';
-                            }
-                        }
-                        contextXml = new URL(contextWar +
-                                             "META-INF/context.xml");
-                        stream = contextXml.openStream();
-                        // WAR contains META-INF/context.xml resource - install
-                        deployer.install(new URL(contextWar));
-                        return;
-                    } catch (FileNotFoundException fnfe) {
-			// No META-INF/context.xml resource - keep going
-                    } catch (Throwable t) {
-                        log("ManagerServlet.configure[" + contextXml + "]", t);
-                        writer.println(sm.getString("managerServlet.exception",
-                                                    t.toString()));
-                        return;
-                    } finally {
-                        if (stream != null) {
-                            try {
-                                stream.close();
-                            } catch (Throwable t) {
-                                // do nothing
-                            }
-                        }
-
-                    }
-                }
-
-                int end = war.length();
-                String filename = war.toLowerCase();
-                if (filename.endsWith("!/")) {
-                    filename = filename.substring(0,filename.length()-2);
-                    end -= 2;
-                }
-                if (filename.endsWith(".war")) {
-                    filename = filename.substring(0,filename.length()-4);
-                    end -= 4;
-                }
-                if (filename.endsWith("/")) {
-                    filename = filename.substring(0,filename.length()-1);
-                    end--;
-                }
-                int beg = filename.lastIndexOf('/') + 1;
-                if (beg < 0 || end < 0 || beg >= end) {
-                    writer.println(sm.getString("managerServlet.invalidWar", war));
-                    return;
-                }
-                path = "/" + war.substring(beg, end);
-                if (path.equals("/ROOT")) {
-                    path = "/";
-                }
-            }
-
-            if (path == null || path.length() == 0 || !path.startsWith("/")) {
-                writer.println(sm.getString("managerServlet.invalidPath",
-                                            path));
-                return;
-            }
-            String displayPath = path;
-            if("/".equals(path)) {
-                path = "";
-            }
-
-            // Check if app already exists, or undeploy it if updating
-            Context context =  deployer.findDeployedApp(path);
-            if (update) {
-                if (context != null) {
-                    undeploy(writer, displayPath);
-                }
-                context =  deployer.findDeployedApp(path);
-            }
+        String displayPath = path;
+        if("/".equals(path)) {
+            path = "";
+        }
+        
+        // Check if app already exists, or undeploy it if updating
+        Context context = (Context) host.findChild(path);
+        if (update) {
             if (context != null) {
-                writer.println
-                    (sm.getString("managerServlet.alreadyContext",
-                                  displayPath));
-                return;
+                undeploy(writer, displayPath);
             }
-
-            try {
-                deployer.install(path, new URL(war));
-                writer.println(sm.getString("managerServlet.deployed",
-                                            displayPath));
-            } catch (Throwable t) {
-                log("ManagerServlet.install[" + displayPath + "]", t);
-                writer.println(sm.getString("managerServlet.exception",
-                                            t.toString()));
-            }
-
+            context = (Context) host.findChild(path);
         }
-
+        if (context != null) {
+            writer.println
+            (sm.getString("managerServlet.alreadyContext",
+                    displayPath));
+            return;
+        }
+        
+        try {
+            if (!isServiced(path)) {
+                addServiced(path);
+                if (config != null) {
+                    copy(new File(config), 
+                            new File(configBase, getConfigFile(path) + ".xml"));
+                }
+                if (war != null) {
+                    copy(new File(war), 
+                            new File(getAppBase(), getDocBase(path) + ".war"));
+                }
+                check(path);
+                removeServiced(path);
+            }
+            writer.println(sm.getString("managerServlet.deployed",
+                    displayPath));
+        } catch (Throwable t) {
+            log("ManagerServlet.install[" + displayPath + "]", t);
+            writer.println(sm.getString("managerServlet.exception",
+                    t.toString()));
+        }
+        
     }
 
 
@@ -942,14 +818,14 @@ public class ManagerServlet
 
         if (debug >= 1)
             log("list: Listing contexts for virtual host '" +
-                deployer.getName() + "'");
+                host.getName() + "'");
 
         writer.println(sm.getString("managerServlet.listed",
-                                    deployer.getName()));
-        String contextPaths[] = deployer.findDeployedApps();
-        for (int i = 0; i < contextPaths.length; i++) {
-            Context context = deployer.findDeployedApp(contextPaths[i]);
-            String displayPath = contextPaths[i];
+                                    host.getName()));
+        Container[] contexts = host.findChildren();
+        for (int i = 0; i < contexts.length; i++) {
+            Context context = (Context) contexts[i];
+            String displayPath = context.getPath();
             if( displayPath.equals("") )
                 displayPath = "/";
             if (context != null ) {
@@ -991,7 +867,7 @@ public class ManagerServlet
             path = "";
 
         try {
-            Context context = deployer.findDeployedApp(path);
+            Context context = (Context) host.findChild(path);
             if (context == null) {
                 writer.println(sm.getString
                                ("managerServlet.noContext", displayPath));
@@ -1044,7 +920,7 @@ public class ManagerServlet
             path = "";
 
         try {
-            Context context = deployer.findDeployedApp(path);
+            Context context = (Context) host.findChild(path);
             if (context == null) {
                 writer.println(sm.getString("managerServlet.noContext", displayPath));
                 return;
@@ -1054,7 +930,7 @@ public class ManagerServlet
                 writer.println(sm.getString("managerServlet.noSelf"));
                 return;
             }
-            deployer.remove(path,true);
+            host.removeChild(context);
             writer.println(sm.getString("managerServlet.undeployed", displayPath));
         } catch (Throwable t) {
             log("ManagerServlet.remove[" + displayPath + "]", t);
@@ -1248,7 +1124,7 @@ public class ManagerServlet
         if( path.equals("/") )
             path = "";
         try {
-            Context context = deployer.findDeployedApp(path);
+            Context context = (Context) host.findChild(path);
             if (context == null) {
                 writer.println(sm.getString("managerServlet.noContext", displayPath));
                 return;
@@ -1313,13 +1189,13 @@ public class ManagerServlet
             path = "";
 
         try {
-            Context context = deployer.findDeployedApp(path);
+            Context context = (Context) host.findChild(path);
             if (context == null) {
                 writer.println(sm.getString("managerServlet.noContext", 
                                             displayPath));
                 return;
             }
-            deployer.start(path);
+            ((Lifecycle) context).start();
             if (context.getAvailable())
                 writer.println
                     (sm.getString("managerServlet.started", displayPath));
@@ -1358,7 +1234,7 @@ public class ManagerServlet
             path = "";
 
         try {
-            Context context = deployer.findDeployedApp(path);
+            Context context = (Context) host.findChild(path);
             if (context == null) {
                 writer.println(sm.getString("managerServlet.noContext", 
                                             displayPath));
@@ -1369,7 +1245,7 @@ public class ManagerServlet
                 writer.println(sm.getString("managerServlet.noSelf"));
                 return;
             }
-            deployer.stop(path);
+            ((Lifecycle) context).stop();
             writer.println(sm.getString("managerServlet.stopped", displayPath));
         } catch (Throwable t) {
             log("ManagerServlet.stop[" + displayPath + "]", t);
@@ -1402,7 +1278,7 @@ public class ManagerServlet
         try {
 
             // Validate the Context of the specified application
-            Context context = deployer.findDeployedApp(path);
+            Context context = (Context) host.findChild(path);
             if (context == null) {
                 writer.println(sm.getString("managerServlet.noContext",
                                             displayPath));
@@ -1421,46 +1297,25 @@ public class ManagerServlet
                 }
             }
 
-            // Validate the docBase path of this application
-            String deployedPath = deployed.getCanonicalPath();
-            String docBase = context.getDocBase();
-            File docBaseDir = new File(docBase);
-            if (!docBaseDir.isAbsolute()) {
-                docBaseDir = new File(appBaseDir, docBase);
-            }
-            String docBasePath = docBaseDir.getCanonicalPath();
-            boolean deleteDir = true;
-            if (!docBasePath.startsWith(deployedPath)) {
-                deleteDir = false;
-            }
-
-            // Remove this web application and its associated docBase
-            if (debug >= 2) {
-                log("Undeploying document base " + docBasePath);
-            }
-            // It isn't possible for the manager to undeploy itself
-            if (context.getPath().equals(this.context.getPath())) {
-                writer.println(sm.getString("managerServlet.noSelf"));
-                return;
-            }
-            boolean dir = docBaseDir.isDirectory();
-            deployer.remove(path, true);
-            if (deleteDir) {
-                if (dir) {
-                    undeployDir(docBaseDir);
-                    // Delete the WAR file
-                    File docBaseWar = new File(docBasePath + ".war");
-                    docBaseWar.delete();
+            // Stop the context first to be nicer
+            if (!isServiced(path)) {
+                addServiced(path);
+                ((Lifecycle) context).stop();
+                File war = new File(getAppBase(), getDocBase(path) + ".war");
+                File dir = new File(getAppBase(), getDocBase(path));
+                File xml = new File(configBase, getConfigFile(path) + ".xml");
+                if (war.exists()) {
+                    war.delete();
+                } else if (dir.exists()) {
+                    undeployDir(dir);
                 } else {
-                    // Delete the WAR file
-                    docBaseDir.delete();
+                    xml.delete();
                 }
+                check(path);
+                removeServiced(path);
             }
-            File docBaseXml = new File(context.getConfigFile());
-            docBaseXml.delete();
             writer.println(sm.getString("managerServlet.undeployed",
                                         displayPath));
-
         } catch (Throwable t) {
             log("ManagerServlet.undeploy[" + displayPath + "]", t);
             writer.println(sm.getString("managerServlet.exception",
@@ -1488,81 +1343,88 @@ public class ManagerServlet
 
 
     /**
-     * Extract the context configuration file from the specified WAR,
-     * if it is present.  If it is not present, ensure that the corresponding
-     * file does not exist.
-     *
-     * @param war File object representing the WAR
-     * @param xml File object representing where to store the extracted
-     *  context configuration file (if it exists)
-     *
-     * @exception IOException if an i/o error occurs
+     * Given a context path, get the config file name.
      */
-    protected void extractXml(File war, File xml) throws IOException {
-
-        xml.delete();
-        JarFile jar = null;
-        JarEntry entry = null;
-        InputStream istream = null;
-        BufferedOutputStream ostream = null;
-        try {
-            jar = new JarFile(war);
-            entry = jar.getJarEntry("META-INF/context.xml");
-            if (entry == null) {
-                return;
-            }
-            istream = jar.getInputStream(entry);
-            ostream =
-                new BufferedOutputStream(new FileOutputStream(xml), 1024);
-            byte buffer[] = new byte[1024];
-            while (true) {
-                int n = istream.read(buffer);
-                if (n < 0) {
-                    break;
-                }
-                ostream.write(buffer, 0, n);
-            }
-            ostream.flush();
-            ostream.close();
-            ostream = null;
-            istream.close();
-            istream = null;
-            entry = null;
-            jar.close();
-            jar = null;
-        } catch (IOException e) {
-            xml.delete();
-            throw e;
-        } finally {
-            if (ostream != null) {
-                try {
-                    ostream.close();
-                } catch (Throwable t) {
-                    ;
-                }
-                ostream = null;
-            }
-            if (istream != null) {
-                try {
-                    istream.close();
-                } catch (Throwable t) {
-                    ;
-                }
-                istream = null;
-            }
-            entry = null;
-            if (jar != null) {
-                try {
-                    jar.close();
-                } catch (Throwable t) {
-                    ;
-                }
-                jar = null;
-            }
+    protected String getDocBase(String path) {
+        String basename = null;
+        if (path.equals("")) {
+            basename = "ROOT";
+        } else {
+            basename = path.substring(1);
         }
+        return (basename);
+    }
+
+    
+    /**
+     * Return a File object representing the "application root" directory
+     * for our associated Host.
+     */
+    protected File getAppBase() {
+
+        if (appBase != null) {
+            return appBase;
+        }
+
+        File file = new File(host.getAppBase());
+        if (!file.isAbsolute())
+            file = new File(System.getProperty("catalina.base"),
+                            host.getAppBase());
+        try {
+            appBase = file.getCanonicalFile();
+        } catch (IOException e) {
+            appBase = file;
+        }
+        return (appBase);
 
     }
 
+
+    /**
+     * Invoke the check method on the deployer.
+     */
+    protected void check(String name) 
+        throws Exception {
+        String[] params = { name };
+        String[] signature = { "java.lang.String" };
+        mBeanServer.invoke(oname, "check", params, signature);
+    }
+    
+
+    /**
+     * Invoke the check method on the deployer.
+     */
+    protected boolean isServiced(String name) 
+        throws Exception {
+        String[] params = { name };
+        String[] signature = { "java.lang.String" };
+        Boolean result = 
+            (Boolean) mBeanServer.invoke(oname, "isServiced", params, signature);
+        return result.booleanValue();
+    }
+    
+
+    /**
+     * Invoke the check method on the deployer.
+     */
+    protected void addServiced(String name) 
+        throws Exception {
+        String[] params = { name };
+        String[] signature = { "java.lang.String" };
+        mBeanServer.invoke(oname, "addServiced", params, signature);
+    }
+    
+
+    /**
+     * Invoke the check method on the deployer.
+     */
+    protected void removeServiced(String name) 
+        throws Exception {
+        String[] params = { name };
+        String[] signature = { "java.lang.String" };
+        mBeanServer.invoke(oname, "removeServiced", params, signature);
+    }
+    
 
     /**
      * Delete the specified directory, including all of its contents and
