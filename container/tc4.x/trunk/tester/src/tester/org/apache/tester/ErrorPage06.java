@@ -123,7 +123,8 @@ public class ErrorPage06 extends HttpServlet {
             sb.append(" message class is ");
             sb.append(value.getClass().getName());
             sb.append("/");
-        } else if (!"ErrorPage05 Threw ArithmeticException".equals(value)) {
+        } else if (!"ErrorPage05 Threw ArithmeticException".equals(value) &&
+                   !"ErrorPage08 Threw ArithmeticException".equals(value)) {
             sb.append(" message is not correct");
         }
 
@@ -139,7 +140,10 @@ public class ErrorPage06 extends HttpServlet {
             String request_uri = (String) value;
             String test1 = request.getContextPath() + "/ErrorPage05";
             String test2 = request.getContextPath() + "/WrappedErrorPage05";
-            if (!request_uri.equals(test1) && !request_uri.equals(test2)) {
+            String test3 = request.getContextPath() + "/ErrorPage08.jsp";
+            String test4 = request.getContextPath() + "/WrappedErrorPage08.jsp";
+            if (!request_uri.equals(test1) && !request_uri.equals(test2) &&
+                !request_uri.equals(test3) && !request_uri.equals(test4)) {
                 sb.append(" request_uri is ");
                 sb.append(request_uri);
                 sb.append("/");
@@ -156,7 +160,8 @@ public class ErrorPage06 extends HttpServlet {
             sb.append("/");
         } else {
             String servlet_name = (String) value;
-            if (!"ErrorPage05".equals(servlet_name)) {
+            if (!"ErrorPage05".equals(servlet_name) &&
+                !"ErrorPage08".equals(servlet_name)) {
                 sb.append(" servlet_name is ");
                 sb.append(servlet_name);
                 sb.append("/");

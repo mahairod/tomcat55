@@ -216,7 +216,7 @@
       outContent="ErrorPage02 PASSED"/>
 
 
-    <!-- ========== Exception Mapping ===================================== -->
+    <!-- ========== Exception Mapping (Servlet Source) ==================== -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/ErrorPage03" debug="${debug}"
@@ -274,6 +274,44 @@
          request="${context.path}/WrappedErrorPage07"
            debug="${debug}"
           status="503"/>
+
+    <!-- ========== Exception Mapping (JSP Source) ======================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ErrorPage08?type=Arithmetic"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage06 PASSED - SERVLET"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedErrorPage08?type=Arithmetic"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage06 PASSED - SERVLET"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ErrorPage08?type=Array"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage06 PASSED - JSP"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedErrorPage08?type=Array"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage06 PASSED - JSP"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ErrorPage08?type=Number"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage06 PASSED - HTML"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedErrorPage08?type=Number"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage06 PASSED - HTML"/>
 
   </target>
 
