@@ -86,7 +86,7 @@ ${StrRep}
     LangString DESC_SecMenu ${LANG_ENGLISH} "Create a Start Menu program group for Tomcat."
     LangString DESC_SecDocs ${LANG_ENGLISH} "Install the Tomcat documentation bundle. This include documentation on the servlet container and its configuration options, on the Jasper JSP page compiler, as well as on the native webserver connectors."
     LangString DESC_SecExamples ${LANG_ENGLISH} "Installs some examples web applications."
-    LangString DESC_SecAdmin ${LANG_ENGLISH} "Installs the administration web application.";    LangString DESC_SecWebapps ${LANG_ENGLISH} "Installs other utility web applications (WebDAV, balancer, etc)."
+    LangString DESC_SecAdmin ${LANG_ENGLISH} "Installs the administration web application.";
 ;    LangString DESC_SecWebapps ${LANG_ENGLISH} "Installs other utility web applications (WebDAV, balancer, etc)."
 ;    LangString DESC_SecCompat ${LANG_ENGLISH} "Installs Java2™ compatibility package. This release of Apache Tomcat was packaged to run on J2SE 5.0 or later. It can be run on earlier JVMs by installng this package."
 
