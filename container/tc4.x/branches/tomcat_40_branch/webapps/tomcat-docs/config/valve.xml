@@ -172,7 +172,7 @@
         that the remote client's IP address is compared to.  If this attribute
         is specified, the remote address MUST match for this request to be
         accepted.  If this attribute is not specified, all requests will be
-        excepted UNLESS the remote address matches a <code>deny</code>
+        accepted UNLESS the remote address matches a <code>deny</code>
         pattern.</p>
       </attribute>
 
@@ -223,7 +223,7 @@
         that the remote client's hostname is compared to.  If this attribute
         is specified, the remote hostname MUST match for this request to be
         accepted.  If this attribute is not specified, all requests will be
-        excepted UNLESS the remote hostname matches a <code>deny</code>
+        accepted UNLESS the remote hostname matches a <code>deny</code>
         pattern.</p>
       </attribute>
 

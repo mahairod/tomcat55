@@ -143,7 +143,7 @@ the order defined by the DTD (see Section 13.3).</p>
 <p>In order to be executed, a web application must be deployed on
 a servlet container.  This is true even during development.
 We will describe using Tomcat 4 to provide the execution environment.
-A web application can be deployed in Tomcat by one of three different
+A web application can be deployed in Tomcat by one of the following
 approaches:</p>
 <ul>
 <li><em>Copy unpacked directory hierarchy into a subdirectory in directory

@@ -34,10 +34,10 @@ set _CP=%CP%
 
 rem ----- Verify and Set Required Environment Variables -----------------------
 
-if not "%JAVA_HOME%" == "" goto gotJavaHome
+if not "%JAVA_HOME%" == "" goto gotJava
 echo You must set JAVA_HOME to point at your Java Development Kit installation
 goto cleanup
-:gotJavaHome
+:gotJava
 
 if not "%CATALINA_HOME%" == "" goto gotHome
 set CATALINA_HOME=.
