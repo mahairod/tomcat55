@@ -272,8 +272,8 @@ public class NamingResourcesMBean extends BaseModelMBean {
      * @param resourceLinkName New resource link reference name
      * @param type New resource link reference type
      */
-    public String addResourceLink(String global, String resourceLinkName, 
-                            String type) throws MalformedObjectNameException {
+    public String addResourceLink(String resourceLinkName, String type, 
+                                  String global) throws MalformedObjectNameException {
         
         NamingResources nresources = (NamingResources) this.resource;
         if (nresources == null) {
