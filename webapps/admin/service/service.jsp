@@ -24,8 +24,6 @@
                name="serviceForm" property="objectName"/>
   <bean:define id="thisServiceName" type="java.lang.String"
                name="serviceForm" property="serviceName"/>
-  <bean:define id="thisEngineObjectName" type="java.lang.String"
-               name="serviceForm" property="engineObjectName"/>
   <html:hidden property="adminServiceName"/>
   <html:hidden property="objectName"/>
   <html:hidden property="engineObjectName"/>
@@ -79,9 +77,7 @@
                 -------------------------------------
               </controls:action>
               <controls:action url='<%= "/AddHost.do?select=" +
-                                        URLEncoder.encode(thisObjectName) +
-                                  	"&engine=" +
-                                  	URLEncoder.encode(thisEngineObjectName)%>'>
+                                        URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.hosts.create"/>
               </controls:action>
               <controls:action url='<%= "/DeleteHost.do?select=" +
@@ -92,9 +88,7 @@
                 -------------------------------------
               </controls:action>
               <controls:action url='<%= "/AddLogger.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) +
-                                  "&engine=" +
-                                  URLEncoder.encode(thisEngineObjectName)%>'>
+                                  URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.loggers.create"/>
               </controls:action>
               <controls:action url='<%= "/DeleteLogger.do?parent=" +
@@ -107,9 +101,7 @@
                 -------------------------------------
               </controls:action>
               <controls:action url='<%= "/AddRealm.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) +
-                                  "&engine=" +
-                                  URLEncoder.encode(thisEngineObjectName)%>'>
+                                  URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.realms.create"/>
              </controls:action>
              <controls:action url='<%= "/DeleteRealm.do?parent=" +
@@ -121,9 +113,7 @@
                 -------------------------------------
               </controls:action>
               <controls:action url='<%= "/AddValve.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) +
-                                  "&engine=" +
-                                  URLEncoder.encode(thisEngineObjectName)%>'>
+                                  URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.valves.create"/>
               </controls:action>
               <controls:action url='<%= "/DeleteValve.do?parent=" +

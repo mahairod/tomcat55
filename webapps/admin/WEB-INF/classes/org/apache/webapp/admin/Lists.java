@@ -325,51 +325,7 @@ public class Lists {
         return (getContexts(mbserver, new ObjectName(host)));
 
     }
-    
 
-    /**
-     * Return a list of <code>Engine</code> object name strings
-     * for the specified <code>Service</code> object name.
-     *
-     * @param mbserver MBeanServer from which to retrieve the engines
-     * @param service Object name of the service for which to select engines
-     *
-     * @exception Exception if thrown while retrieving the list
-     */
-    public static List getEngines(MBeanServer mbserver, ObjectName service)
-        throws Exception {
-
-        StringBuffer sb = new StringBuffer(service.getDomain());
-        sb.append(":type=Engine,*");
-        ObjectName search = new ObjectName(sb.toString());
-        ArrayList engines = new ArrayList();
-        Iterator names = mbserver.queryNames(search, null).iterator();
-        while (names.hasNext()) {
-            engines.add(names.next().toString());
-        }
-        Collections.sort(engines);
-        return (engines);
-
-    }
-
-
-    /**
-     * Return a list of <code>Engine</code> object name strings
-     * for the specified <code>Service</code> object name.
-     *
-     * @param mbserver MBeanServer from which to retrieve the list
-     * @param service Object name of the service for which to select engines
-     *
-     * @exception Exception if thrown while retrieving the list
-     */
-    public static List getEngines(MBeanServer mbserver, String service)
-        throws Exception {
-
-        return (getEngines(mbserver, new ObjectName(service)));
-
-    }
-     
-      
     /**
      * Return a list of <code>Host</code> object name strings
      * for the specified <code>Service</code> object name.
