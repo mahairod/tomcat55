@@ -401,8 +401,8 @@ public class ServletRequestWrapper implements ServletRequest {
     }
     
     /**
-     * Returns the Internet Protocol (IP) source port of the client
-     * or last proxy that sent the request.
+     * The default behavior of this method is to return
+     * getRemotePort() on the wrapped request object.
      */    
     public int getRemotePort(){
         return this.request.getRemotePort();
@@ -410,16 +410,16 @@ public class ServletRequestWrapper implements ServletRequest {
 
 
     /**
-     * Returns the host name of the Internet Protocol (IP) interface on
-     * which the request was received.
+     * The default behavior of this method is to return
+     * getLocalName() on the wrapped request object.
      */
     public String getLocalName(){
         return this.request.getLocalName();
     }
 
     /**
-     * Returns the Internet Protocol (IP) address of the interface on
-     * which the request  was received.
+     * The default behavior of this method is to return
+     * getLocalAddr() on the wrapped request object.
      */       
     public String getLocalAddr(){
         return this.request.getLocalAddr();
@@ -427,8 +427,8 @@ public class ServletRequestWrapper implements ServletRequest {
 
 
     /**
-     * Returns the Internet Protocol (IP) port number of the interface
-     * on which the request was received.
+     * The default behavior of this method is to return
+     * getLocalPort() on the wrapped request object.
      */
     public int getLocalPort(){
         return this.request.getLocalPort();

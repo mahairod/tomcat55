@@ -133,7 +133,7 @@ public interface ServletContext {
     /**
      * Returns the major version of the Java Servlet API that this
      * servlet container supports. All implementations that comply
-     * with Version 2.3 must have this method
+     * with Version 2.4 must have this method
      * return the integer 2.
      *
      * @return 		2
@@ -147,10 +147,10 @@ public interface ServletContext {
     /**
      * Returns the minor version of the Servlet API that this
      * servlet container supports. All implementations that comply
-     * with Version 2.3 must have this method
-     * return the integer 3.
+     * with Version 2.4 must have this method
+     * return the integer 4.
      *
-     * @return 		3
+     * @return 		4
      *
      */
 
