@@ -67,6 +67,7 @@ package org.apache.catalina.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -95,6 +96,7 @@ import org.apache.catalina.connector.HttpResponseBase;
 import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.InstanceSupport;
+import org.apache.tomcat.util.log.SystemLogHandler;
 
 
 /**
@@ -824,137 +826,150 @@ public final class StandardWrapper
         if (!singleThreadModel && (instance != null))
             return instance;
 
-        // If this "servlet" is really a JSP file, get the right class.
-        // HOLD YOUR NOSE - this is a kludge that avoids having to do special
-        // case Catalina-specific code in Jasper - it also requires that the
-        // servlet path be replaced by the <jsp-file> element content in
-        // order to be completely effective
-        String actualClass = servletClass;
-        if ((actualClass == null) && (jspFile != null)) {
-            Wrapper jspWrapper = (Wrapper)
-                ((Context) getParent()).findChild(Constants.JSP_SERVLET_NAME);
-            if (jspWrapper != null)
-                actualClass = jspWrapper.getServletClass();
-        }
-
-        // Complain if no servlet class has been specified
-        if (actualClass == null) {
-            unavailable(null);
-            throw new ServletException
-                (sm.getString("standardWrapper.notClass", getName()));
-        }
-
-        // Acquire an instance of the class loader to be used
-        Loader loader = getLoader();
-        if (loader == null) {
-            unavailable(null);
-            throw new ServletException
-                (sm.getString("standardWrapper.missingLoader", getName()));
-        }
-
-        ClassLoader classLoader = loader.getClassLoader();
-
-        // Special case class loader for a container provided servlet
-        if (isContainerProvidedServlet(actualClass)) {
-            classLoader = this.getClass().getClassLoader();
-            log(sm.getString
-                  ("standardWrapper.containerServlet", getName()));
-        }
-
-        // Load the specified servlet class from the appropriate class loader
-        Class classClass = null;
-        try {
-            if (classLoader != null) {
-                classClass = classLoader.loadClass(actualClass);
-            } else {
-                classClass = Class.forName(actualClass);
-            }
-        } catch (ClassNotFoundException e) {
-            unavailable(null);
-            throw new ServletException
-                (sm.getString("standardWrapper.missingClass", actualClass),
-                 e);
-        }
-        if (classClass == null) {
-            unavailable(null);
-            throw new ServletException
-                (sm.getString("standardWrapper.missingClass", actualClass));
-        }
-
-        // Instantiate and initialize an instance of the servlet class itself
+        PrintStream out = System.out;
+        SystemLogHandler.startCapture();
         Servlet servlet = null;
         try {
-            servlet = (Servlet) classClass.newInstance();
-        } catch (ClassCastException e) {
-            unavailable(null);
-            // Restore the context ClassLoader
-            throw new ServletException
-                (sm.getString("standardWrapper.notServlet", actualClass), e);
-        } catch (Throwable e) {
-            unavailable(null);
-            // Restore the context ClassLoader
-            throw new ServletException
-                (sm.getString("standardWrapper.instantiate", actualClass), e);
-        }
-
-        // Check if loading the servlet in this web application should be 
-        // allowed
-        if (!isServletAllowed(servlet)) {
-            throw new SecurityException
-                (sm.getString("standardWrapper.privilegedServlet", 
-                              actualClass));
-        }
-
-        // Special handling for ContainerServlet instances
-        if ((servlet instanceof ContainerServlet) &&
-            isContainerProvidedServlet(actualClass)) {
-            ((ContainerServlet) servlet).setWrapper(this);
-        }
-
-
-        // Call the initialization method of this servlet
-        try {
-            instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
-                                              servlet);
-            servlet.init(facade);
-            // Invoke jspInit on JSP pages
-            if ((loadOnStartup > 0) && (jspFile != null)) {
-                // Invoking jspInit
-                HttpRequestBase req = new HttpRequestBase();
-                HttpResponseBase res = new HttpResponseBase();
-                req.setServletPath(jspFile);
-                req.setQueryString("jsp_precompile=true");
-                servlet.service(req, res);
+            // If this "servlet" is really a JSP file, get the right class.
+            // HOLD YOUR NOSE - this is a kludge that avoids having to do special
+            // case Catalina-specific code in Jasper - it also requires that the
+            // servlet path be replaced by the <jsp-file> element content in
+            // order to be completely effective
+            String actualClass = servletClass;
+            if ((actualClass == null) && (jspFile != null)) {
+                Wrapper jspWrapper = (Wrapper)
+                    ((Context) getParent()).findChild(Constants.JSP_SERVLET_NAME);
+                if (jspWrapper != null)
+                    actualClass = jspWrapper.getServletClass();
             }
-            instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
-                                              servlet);
-        } catch (UnavailableException f) {
-            instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
-                                              servlet, f);
-            unavailable(f);
-            throw f;
-        } catch (ServletException f) {
-            instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
-                                              servlet, f);
-            // If the servlet wanted to be unavailable it would have
-            // said so, so do not call unavailable(null).
-            throw f;
-        } catch (Throwable f) {
-            instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
-                                              servlet, f);
-            // If the servlet wanted to be unavailable it would have
-            // said so, so do not call unavailable(null).
-            throw new ServletException
-                (sm.getString("standardWrapper.initException", getName()), f);
+    
+            // Complain if no servlet class has been specified
+            if (actualClass == null) {
+                unavailable(null);
+                throw new ServletException
+                    (sm.getString("standardWrapper.notClass", getName()));
+            }
+    
+            // Acquire an instance of the class loader to be used
+            Loader loader = getLoader();
+            if (loader == null) {
+                unavailable(null);
+                throw new ServletException
+                    (sm.getString("standardWrapper.missingLoader", getName()));
+            }
+    
+            ClassLoader classLoader = loader.getClassLoader();
+    
+            // Special case class loader for a container provided servlet
+            if (isContainerProvidedServlet(actualClass)) {
+                classLoader = this.getClass().getClassLoader();
+                log(sm.getString
+                      ("standardWrapper.containerServlet", getName()));
+            }
+    
+            // Load the specified servlet class from the appropriate class loader
+            Class classClass = null;
+            try {
+                if (classLoader != null) {
+                    classClass = classLoader.loadClass(actualClass);
+                } else {
+                    classClass = Class.forName(actualClass);
+                }
+            } catch (ClassNotFoundException e) {
+                unavailable(null);
+                throw new ServletException
+                    (sm.getString("standardWrapper.missingClass", actualClass),
+                     e);
+            }
+            if (classClass == null) {
+                unavailable(null);
+                throw new ServletException
+                    (sm.getString("standardWrapper.missingClass", actualClass));
+            }
+    
+            // Instantiate and initialize an instance of the servlet class itself
+            try {
+                servlet = (Servlet) classClass.newInstance();
+            } catch (ClassCastException e) {
+                unavailable(null);
+                // Restore the context ClassLoader
+                throw new ServletException
+                    (sm.getString("standardWrapper.notServlet", actualClass), e);
+            } catch (Throwable e) {
+                unavailable(null);
+                // Restore the context ClassLoader
+                throw new ServletException
+                    (sm.getString("standardWrapper.instantiate", actualClass), e);
+            }
+    
+            // Check if loading the servlet in this web application should be 
+            // allowed
+            if (!isServletAllowed(servlet)) {
+                throw new SecurityException
+                    (sm.getString("standardWrapper.privilegedServlet", 
+                                  actualClass));
+            }
+    
+            // Special handling for ContainerServlet instances
+            if ((servlet instanceof ContainerServlet) &&
+                isContainerProvidedServlet(actualClass)) {
+                ((ContainerServlet) servlet).setWrapper(this);
+            }
+    
+    
+            // Call the initialization method of this servlet
+            try {
+                instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
+                                                  servlet);
+                servlet.init(facade);
+                // Invoke jspInit on JSP pages
+                if ((loadOnStartup > 0) && (jspFile != null)) {
+                    // Invoking jspInit
+                    HttpRequestBase req = new HttpRequestBase();
+                    HttpResponseBase res = new HttpResponseBase();
+                    req.setServletPath(jspFile);
+                    req.setQueryString("jsp_precompile=true");
+                    servlet.service(req, res);
+                }
+                instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
+                                                  servlet);
+            } catch (UnavailableException f) {
+                instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
+                                                  servlet, f);
+                unavailable(f);
+                throw f;
+            } catch (ServletException f) {
+                instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
+                                                  servlet, f);
+                // If the servlet wanted to be unavailable it would have
+                // said so, so do not call unavailable(null).
+                throw f;
+            } catch (Throwable f) {
+                instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
+                                                  servlet, f);
+                // If the servlet wanted to be unavailable it would have
+                // said so, so do not call unavailable(null).
+                throw new ServletException
+                    (sm.getString("standardWrapper.initException", getName()), f);
+            }
+    
+            // Register our newly initialized instance
+            singleThreadModel = servlet instanceof SingleThreadModel;
+            if (singleThreadModel) {
+                if (instancePool == null)
+                    instancePool = new Stack();
+            }
+            fireContainerEvent("load", this);
+        } finally {
+            String log = SystemLogHandler.stopCapture();
+            if (log != null && log.length() > 0) {
+                if (getServletContext() != null) {
+                    getServletContext().log(log);
+                } else {
+                    out.println(log);
+                }
+            }
         }
-
-        // Register our newly initialized instance
-        singleThreadModel = servlet instanceof SingleThreadModel;
-        if (singleThreadModel) {
-            if (instancePool == null)
-                instancePool = new Stack();
-        }
-        fireContainerEvent("load", this);
         return servlet;
 
     }
