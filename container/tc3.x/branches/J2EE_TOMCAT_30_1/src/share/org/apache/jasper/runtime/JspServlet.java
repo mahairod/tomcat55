@@ -349,6 +349,23 @@ public class JspServlet extends HttpServlet {
                     System.err.println("\t\t "+name+" = "+request.getParameter(name));
                 }
             }
+	    
+	    if (File.separatorChar  == '\\') { 
+		// Checks similar with DefaultServlet
+		String realPath=getServletConfig().getServletContext().
+		    getRealPath(jspUri);
+		File file=new File( realPath );
+		String absPath = file.getAbsolutePath();
+		String canPath = file.getCanonicalPath();
+		
+		absPath = org.apache.tomcat.util.FileUtil.patch(absPath);
+		
+		if(!absPath.equals(canPath)) {
+		    response.sendError(response.SC_NOT_FOUND);
+		    return;
+		}
+	    } 
+	    
             serviceJspFile(request, response, jspUri, null, precompile);
 	    
 	} catch (RuntimeException e) {
