@@ -2320,11 +2320,6 @@ public class CoyoteRequest
         int len = getContentLength();
 
         if (len > 0) {
-            int maxPostSize = ((CoyoteConnector) connector).getMaxPostSize();
-            if ((maxPostSize > 0) && (len > maxPostSize)) {
-                log(sm.getString("coyoteRequest.postTooLarge"));
-                return;
-            }
             try {
                 byte[] formData = null;
                 if (len < CACHED_POST_LEN) {
