@@ -452,7 +452,7 @@ public class Generator {
         genPreambleImports();
 
 	// Generate class declaration
-	out.printin("public class ");
+	out.printin("public final class ");
 	out.print  (servletClassName);
 	out.print  (" extends ");
 	out.println(pageInfo.getExtends());
@@ -2972,7 +2972,7 @@ public class Generator {
         genPreambleImports();
 
 	// Generate class declaration
-	out.printin("public class ");
+	out.printin("public final class ");
 	out.print(tagInfo.getTagName());
 	out.println(" extends javax.servlet.jsp.tagext.SimpleTagSupport");
 	out.printil("    implements javax.servlet.jsp.el.FunctionMapper, ");
@@ -3441,7 +3441,7 @@ public class Generator {
             out.pushIndent();
             // Note: cannot be static, as we need to reference things like
 	    // _jspx_meth_*
-	    out.printil( "class " + className );
+	    out.printil( "private class " + className );
             out.printil( "    extends " +
                 "org.apache.jasper.runtime.JspFragmentHelper" );
             out.printil( "{" );
