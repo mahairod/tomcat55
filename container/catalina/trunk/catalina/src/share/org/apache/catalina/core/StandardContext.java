@@ -646,7 +646,7 @@ public class StandardContext
      *  this application has started, or after it has been stopped
      */
     public Object[] getApplicationLifecycleListeners() {
-        return (applicationEventListenersObjects);
+        return (applicationLifecycleListenersObjects);
     }
 
 
@@ -658,7 +658,7 @@ public class StandardContext
      * @param listeners The set of instantiated listener objects.
      */
     public void setApplicationLifecycleListeners(Object listeners[]) {
-        applicationEventListenersObjects = listeners;
+        applicationLifecycleListenersObjects = listeners;
     }
 
 
@@ -3523,7 +3523,8 @@ public class StandardContext
         for (int i = 0; i < results.length; i++) {
             if ((results[i] instanceof ServletContextAttributeListener)
                 || (results[i] instanceof ServletRequestAttributeListener)
-                || (results[i] instanceof ServletRequestListener)) {
+                || (results[i] instanceof ServletRequestListener)
+                || (results[i] instanceof HttpSessionAttributeListener)) {
                 eventListeners.add(results[i]);
             }
             if ((results[i] instanceof ServletContextListener)
