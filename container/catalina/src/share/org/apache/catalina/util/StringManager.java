@@ -117,7 +117,17 @@ public class StringManager {
             bundle = ResourceBundle.getBundle(bundleName);
             return;
         } catch( MissingResourceException ex ) {
-            ClassLoader cl=this.getClass().getClassLoader();
+            // Try from the current loader ( that's the case for trusted apps )
+            ClassLoader cl=Thread.currentThread().getContextClassLoader();
+            if( cl != null ) {
+                try {
+                    bundle=ResourceBundle.getBundle(bundleName, Locale.getDefault(), cl);
+                    return;
+                } catch(MissingResourceException ex2) {
+                }
+            }
+            if( cl==null )
+                cl=this.getClass().getClassLoader();
 
             System.out.println("Can't find resource " + bundleName +
                     " " + cl);
