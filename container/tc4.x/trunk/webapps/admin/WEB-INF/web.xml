@@ -80,7 +80,9 @@
     <web-resource-collection>
       <web-resource-name>Protected Area</web-resource-name>
       <!-- Define the context-relative URL(s) to be protected -->
-      <url-pattern>/*</url-pattern>
+      <url-pattern>*.jsp</url-pattern>
+      <url-pattern>*.do</url-pattern>
+      <url-pattern>*.html</url-pattern>
     </web-resource-collection>
     <auth-constraint>
       <!-- Anyone with one of the listed roles may access this area -->
