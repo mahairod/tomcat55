@@ -454,19 +454,6 @@ public class ManagerServlet
                                         command));
         }
 
-        // Saving configuration
-        /*
-        Server server = ServerFactory.getServer();
-        if ((server != null) && (server instanceof StandardServer)) {
-            try {
-                ((StandardServer) server).storeConfig();
-            } catch (Exception e) {
-                writer.println(sm.getString("managerServlet.saveFail",
-                                            e.getMessage()));
-            }
-        }
-        */
-
         // Finish up the response
         writer.flush();
         writer.close();
@@ -1391,8 +1378,12 @@ public class ManagerServlet
             deployer.remove(path);
             if (docBaseDir.isDirectory()) {
                 undeployDir(docBaseDir);
+                // Delete the WAR file
+                File docBaseWar = new File(docBasePath + ".war");
+                docBaseWar.delete();
             } else {
-                docBaseDir.delete();  // Delete the WAR file
+                // Delete the WAR file
+                docBaseDir.delete();
             }
             File docBaseXml = new File(configBase, context.getPath() + ".xml");
             docBaseXml.delete();
@@ -1404,19 +1395,6 @@ public class ManagerServlet
             writer.println(sm.getString("managerServlet.exception",
                                         t.toString()));
         }
-
-        // Saving configuration
-        /*
-        Server server = ServerFactory.getServer();
-        if ((server != null) && (server instanceof StandardServer)) {
-            try {
-                ((StandardServer) server).storeConfig();
-            } catch (Exception e) {
-                writer.println(sm.getString("managerServlet.saveFail",
-                                            e.getMessage()));
-            }
-        }
-        */
 
     }
 

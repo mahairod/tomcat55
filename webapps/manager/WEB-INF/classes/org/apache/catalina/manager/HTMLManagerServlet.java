@@ -253,15 +253,13 @@ public final class HTMLManagerServlet extends ManagerServlet {
                     appBaseDir = new File(System.getProperty("catalina.base"),
                                           appBase);
                 }
-                File file = new File(appBaseDir,war);
+                File file = new File(appBaseDir, war);
                 if (file.exists()) {
                     message = sm.getString
                         ("htmlManagerServlet.deployUploadWarExists",war);
                     break;
                 }
                 warUpload.write(file);
-                war = file.getAbsolutePath();
-                /*
                 try {
                     URL url = file.toURL();
                     war = url.toString();
@@ -270,7 +268,6 @@ public final class HTMLManagerServlet extends ManagerServlet {
                     file.delete();
                     throw e;
                 }
-                */
                 break;
             }
         } catch(Exception e) {
