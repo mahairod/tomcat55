@@ -705,7 +705,7 @@ class PageDataImpl extends PageData implements TagConstants {
 		String name = attrs.getQName(i);
 		String value = attrs.getValue(i);
 		buf.append("  ").append(name).append("=\"").append(value).append("\"\n");
-		defaultNSSeen = "xmlns".equals(name);
+		defaultNSSeen |= "xmlns".equals(name);
 	    }
 	    if (resetDefaultNS && !defaultNSSeen) {
 		buf.append("  xmlns=\"\"\n");
