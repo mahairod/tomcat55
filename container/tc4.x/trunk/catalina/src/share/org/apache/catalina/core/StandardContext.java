@@ -2211,6 +2211,13 @@ public final class StandardContext
      */
     private void setWorkDirectory() {
 
+	// Retrieve our parent (normally a host) name
+	String parentName = null;
+	if (getParent() != null)
+	    parentName = getParent().getName();
+	if ((parentName == null) || (parentName.length() < 1))
+	    parentName = "_";
+
 	// Acquire (or calculate) the work directory path
 	String workDir = getWorkDir();
 	if (workDir == null) {
@@ -2221,7 +2228,8 @@ public final class StandardContext
 	    temp = temp.replace('\\', '_');
 	    if (temp.length() < 1)
 		temp = "_";
-	    workDir = "work" + File.separator + temp;
+	    workDir = "work" + File.separator + parentName +
+		File.separator + temp;
 	    setWorkDir(workDir);
 	}
 
