@@ -949,7 +949,6 @@ public class DeltaManager
      * Invalidate all sessions that have expired.
      */
     public void processExpires() {
-
         long timeNow = System.currentTimeMillis();
         Session sessions[] = findSessions();
 
@@ -958,7 +957,6 @@ public class DeltaManager
             if (!session.isValid()) {
                 try {
                     expiredSessions++;
-                    session.expire();
                 } catch (Throwable t) {
                     log.error(sm.getString
                               ("standardManager.expireException"), t);
@@ -967,17 +965,20 @@ public class DeltaManager
         }
         long timeEnd = System.currentTimeMillis();
         processingTime += ( timeEnd - timeNow );
-
     }
+
     public boolean getStateTransferred() {
         return stateTransferred;
     }
+
     public void setStateTransferred(boolean stateTransferred) {
         this.stateTransferred = stateTransferred;
     }
+
     public CatalinaCluster getCluster() {
         return cluster;
     }
+
     public void setCluster(CatalinaCluster cluster) {
         this.cluster = cluster;
     }

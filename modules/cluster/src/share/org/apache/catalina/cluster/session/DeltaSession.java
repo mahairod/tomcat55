@@ -661,7 +661,7 @@ public class DeltaSession
                 //the primary session has probably crashed, and no other
                 //requests are coming in. that is why we do this. otherwise
                 //we would have a memory leak
-                expire(true);
+                expire(true,false);
             }
         }
 
@@ -745,7 +745,6 @@ public class DeltaSession
         // Mark this session as "being expired" if needed
         if (expiring)
             return;
-        
         String expiredId = getId();
 
         synchronized (this) {
