@@ -73,6 +73,7 @@ import org.apache.catalina.Deployer;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Valve;
+import org.apache.catalina.Realm;
 import org.apache.catalina.valves.ErrorDispatcherValve;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.modeler.Registry;
@@ -561,7 +562,6 @@ public class StandardHost
         this.workDir = workDir;
     }
 
-
     // --------------------------------------------------------- Public Methods
 
 
@@ -763,6 +763,24 @@ public class StandardHost
         }
         if( ! initialized )
             init();
+
+        // Look for a realm - that may have been configured earlier. 
+        // If the realm is added after context - it'll set itself.
+        if( realm == null ) {
+            ObjectName realmName=null;
+            try {
+                realmName=new ObjectName( domain + ":type=Host,host=" + getName());
+                if( mserver.isRegistered(realmName ) ) {
+                    mserver.invoke(realmName, "setContext", 
+                            new Object[] {this},
+                            new String[] { "org.apache.catalina.Container" }
+                    );            
+                }
+            } catch( Throwable t ) {
+                log.debug("No realm for this host " + realmName);
+            }
+        }
+            
         // Set error report valve
         if ((errorReportValveClass != null)
             && (!errorReportValveClass.equals(""))) {
