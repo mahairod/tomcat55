@@ -65,6 +65,7 @@
 #include <strings.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <limits.h>
 #include <stdio.h>
@@ -124,7 +125,7 @@ typedef struct jsvc_config {
 /* Defined in jsvc_help.c */
 /* ********************** */
 // Display the standard help message
-int jsvc_help(jsvc_config *);
+void jsvc_help(jsvc_config *);
 
 /* *********************** */
 /* Defined in jsvc_parse.c */

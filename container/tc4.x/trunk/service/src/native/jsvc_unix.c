@@ -65,7 +65,6 @@ int main(int argc, char *argv[]) {
     char *bin;
     char *root;
     char *home;
-    int x;
 
     // Resolve the real full path name of the binary
     root=(char *)malloc(PATH_MAX*sizeof(char));

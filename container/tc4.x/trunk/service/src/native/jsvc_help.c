@@ -60,7 +60,12 @@
 
 #include <jsvc.h>
 
-int jsvc_help(jsvc_config *config) {
+/**
+ * Display the help page file.
+ *
+ * @param config The service configuration member.
+ */
+void jsvc_help(jsvc_config *config) {
     printf("Usage: %s [@file] [-options] class [args...]\n",config->binary);
     printf("\n");
     printf("Where options include:\n");

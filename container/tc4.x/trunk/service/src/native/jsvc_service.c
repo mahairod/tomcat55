@@ -60,6 +60,15 @@
 
 #include <jsvc.h>
 
+/**
+ * This method is registered in the JNI environment to provide logging
+ * falcilities. Actual logging is performed by jsvc_error wich is system
+ * dependant.
+ *
+ * @param env The JNI environment.
+ * @param obj The object that is calling this native method.
+ * @param msg The message to be logged.
+ */
 void jsvc_log(JNIEnv *env, jobject obj, jstring msg) {
     jboolean copy=JNI_TRUE;
     const char *message=(*env)->GetStringUTFChars(env, msg, &copy);
@@ -68,14 +77,16 @@ void jsvc_log(JNIEnv *env, jobject obj, jstring msg) {
     (*env)->ReleaseStringUTFChars(env, msg, message);
 }
 
+/**
+ * Register native methods and prepare the Virtual Machine to invoke the 
+ * service, getting a hold on the helper class.
+ *
+ * @param cvs A pointer to a jsvc_config structure.
+ * @return TRUE if preparation was successful, FALSE otherwise.
+ */
 boolean jsvc_prepare(jsvc_config *cfg) {
     JNINativeMethod log;
-    jmethodID method;
-    jstring name;
     jclass class;
-    jboolean ret;
-    jobjectArray arg;
-    int x;
 
     // Register the native logging method for messages
     jsvc_debug(JSVC_MARK, "Registering natives");
@@ -103,13 +114,15 @@ boolean jsvc_prepare(jsvc_config *cfg) {
     return(TRUE);
 }
 
+/**
+ * Display the Virtual Machine version information, calling the version method
+ * in the helper class.
+ * 
+ * @param cfg A pointer to a jsvc_config structure.
+ * @return TRUE if we can load the service, FALSE if we need to exit.
+ */
 boolean jsvc_version(jsvc_config *cfg) {
-    JNINativeMethod log;
     jmethodID method;
-    jstring name;
-    jboolean ret;
-    jobjectArray arg;
-    int x;
 
     if (cfg->showversion==JSVC_VERSION_NO) return(TRUE);
 
@@ -132,11 +145,15 @@ boolean jsvc_version(jsvc_config *cfg) {
     return(FALSE);
 }
 
+/**
+ * Initialize the service.
+ * 
+ * @param cfg A pointer to a jsvc_config structure.
+ * @return TRUE if the service was initialized, FALSE otherwise.
+ */
 boolean jsvc_init(jsvc_config *cfg) {
-    JNINativeMethod log;
     jmethodID method;
     jstring name;
-    jclass class;
     jboolean ret;
     jobjectArray arg;
     int x;
@@ -171,12 +188,8 @@ boolean jsvc_init(jsvc_config *cfg) {
 }
 
 boolean jsvc_start(jsvc_config *cfg) {
-    JNINativeMethod log;
     jmethodID method;
-    jstring name;
     jboolean ret;
-    jobjectArray arg;
-    int x;
 
     // Retrieve the start static method in the helper class
     jsvc_debug(JSVC_MARK, "Locating start method in \"%s\"",JSVC_HELPER);
@@ -196,12 +209,8 @@ boolean jsvc_start(jsvc_config *cfg) {
 }
 
 boolean jsvc_restart(jsvc_config *cfg) {
-    JNINativeMethod log;
     jmethodID method;
-    jstring name;
     jboolean ret;
-    jobjectArray arg;
-    int x;
 
     // Retrieve the restart static method in the helper class
     jsvc_debug(JSVC_MARK, "Locating restart method in \"%s\"",JSVC_HELPER);
@@ -221,12 +230,8 @@ boolean jsvc_restart(jsvc_config *cfg) {
 }
 
 boolean jsvc_stop(jsvc_config *cfg) {
-    JNINativeMethod log;
     jmethodID method;
-    jstring name;
     jboolean ret;
-    jobjectArray arg;
-    int x;
 
     // Retrieve the stop static method in the helper class
     jsvc_debug(JSVC_MARK, "Locating stop method in \"%s\"",JSVC_HELPER);

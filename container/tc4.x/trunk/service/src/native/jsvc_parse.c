@@ -63,6 +63,16 @@
 // Temporary variable used to process the classpath entry
 static boolean classpath=FALSE;
 
+/**
+ * Parse command line options.
+ *
+ * @param b The binary filename (ala argv[0])
+ * @param r The home directory (where the binary resides)
+ * @param h The JAVA_HOME environment variable (root of JDK or JRE)
+ * @param argc The number of command line arguments 
+ * @param argv The command line arguments (without argv[0])
+ * @return A pointer to a jsvc_config structure or NULL in case of error.
+ */
 jsvc_config *jsvc_parse(char *b, char *r, char *h, int argc, char *argv[]) {
     jsvc_config *config=(jsvc_config *)malloc(sizeof(jsvc_config));
     char *buffer=(char *)malloc(PATH_MAX*sizeof(char));
@@ -75,7 +85,7 @@ jsvc_config *jsvc_parse(char *b, char *r, char *h, int argc, char *argv[]) {
     } else config->binary=strdup(b);
 
     if (r==NULL) {
-        jsvc_error(JSVC_MARK, "Default configuration filename unspecified");
+        jsvc_error(JSVC_MARK, "Home directory unspecified");
         return(NULL);
     } else config->root=strdup(r);
 
@@ -116,6 +126,14 @@ jsvc_config *jsvc_parse(char *b, char *r, char *h, int argc, char *argv[]) {
     return(config);
 }
 
+/**
+ * Parse a single command line argument and set the appropriate value in the
+ * specified jsvc_config structure.
+ *
+ * @param a The command line argument.
+ * @param conf A pointer to a jsvc_config structure.
+ * @return TRUE if the option was parsed successfully, FALSE otherwise.
+ */
 boolean jsvc_parse_argument(char *a, jsvc_config *conf) {
     if (a==NULL) {
         jsvc_error(JSVC_MARK, "Null argument specified");
@@ -221,6 +239,13 @@ boolean jsvc_parse_argument(char *a, jsvc_config *conf) {
     return(TRUE);
 }
 
+/**
+ * Parse arguments from a file.
+ *
+ * @param f The configuration file to parse.
+ * @param conf A pointer to a jsvc_config structure.
+ * @return TRUE if the file was parsed successfully, FALSE otherwise.
+ */
 boolean jsvc_parse_file(char *f, jsvc_config *conf) {
     char *filename=f;
 
