@@ -75,6 +75,7 @@ import java.util.Vector;
 import java.util.Enumeration;
 import java.lang.NullPointerException;
 
+
 /**
  * This class handles the mapping of client tests to server tests
  */
@@ -134,10 +135,12 @@ public class MapManager {
         String prefix = props.getProperty(Constants.Config.ResourceBase) + "/";
         while (e.hasMoreElements()) {
             String key = (String)e.nextElement();
-            String value = prefix + maps.get(key);
-            maps.put(key, value); //replace the old value
+            String uri = (String)maps.get(key);
+            if (uri.trim().charAt(0) != '/') {
+                String value = prefix + uri;
+                maps.put(key, value);
+            }
         }
-
     }
 
     /**

@@ -73,6 +73,7 @@ import java.util.Properties;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
+import java.util.StringTokenizer;
 import java.lang.NullPointerException;
 
 /**
@@ -150,8 +151,15 @@ public class MapManager {
 
         while (e.hasMoreElements()) {
             String key = (String)e.nextElement();
-            String value = prefix + maps.get(key);
-            maps.put(key, value); //replace the old value
+            String uri = (String)maps.get(key);
+            if (uri.trim().charAt(0) != '/') {
+                String value = prefix + uri;
+                maps.put(key, value);
+            } else {
+                StringTokenizer stok = new StringTokenizer(uri, "/");
+                if (stok.hasMoreElements())
+                    this.resourceBase = "/" + (String) stok.nextToken();
+            }
         }
     }
 
@@ -169,6 +177,7 @@ public class MapManager {
      */
     public String getGoldenfilePrefix(String mapResource, String goldenFile)
     throws FileNotFoundException {
+
         String toConnect = get(mapResource);
         int index = toConnect.lastIndexOf(this.resourceBase);
 
