@@ -295,6 +295,9 @@ public class CoyoteAdapter
             return false;
         }
 
+        // Parse session Id
+        parseSessionCookiesId(req, request);
+
         return true;
     }
 
@@ -352,6 +355,14 @@ public class CoyoteAdapter
             request.setRequestedSessionId(null);
             request.setRequestedSessionURL(false);
         }
+
+    }
+
+
+    /**
+     * Parse session id in URL.
+     */
+    protected void parseSessionCookiesId(Request req, CoyoteRequest request) {
 
         // Parse session id from cookies
         Cookies serverCookies = req.getCookies();
