@@ -14,7 +14,7 @@ set baseDir=%pwd%
 
 set libDir=.\lib\
 
-set addtl_classPath=.\client.jar;.\..\..\jakarta-tools\moo.jar
+set addtl_classPath=.\lib\client.jar;.\..\..\jakarta-tools\moo.jar
 set cp=%CLASSPATH%
 
 set CLASSPATH=%addtl_classPath%
