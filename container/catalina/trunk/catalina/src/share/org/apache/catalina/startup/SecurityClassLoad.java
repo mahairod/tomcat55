@@ -111,12 +111,6 @@ public final class SecurityClassLoad {
              "core.ContainerBase$PrivilegedAddChild");
         loader.loadClass
             (basePackage +
-             "connector.HttpRequestBase$PrivilegedGetSession");
-        loader.loadClass
-            (basePackage +
-             "connector.HttpResponseBase$PrivilegedFlushBuffer");
-        loader.loadClass
-            (basePackage +
              "loader.WebappClassLoader$PrivilegedFindResource");
         loader.loadClass
             (basePackage + "session.StandardSession");
