@@ -24,13 +24,19 @@
   <html:hidden property="connectorName"/>
   <html:hidden property="adminAction"/>
   <html:hidden property="objectName"/>
-  <html:hidden property="connectorType"/>
+  <html:hidden property="connectorType"/>  
+  <html:hidden property="serviceName"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%"> 
        <div class="page-title-text" align="left">
-         <bean:write name="connectorForm" property="nodeLabel" scope="session"/>
+          <logic:equal name="connectorForm" property="adminAction" value="Create">
+            <bean:message key="actions.connectors.create"/>
+          </logic:equal>
+          <logic:equal name="connectorForm" property="adminAction" value="Edit">
+            <bean:message key="actions.connectors.edit"/>
+          </logic:equal>
        </div>
       </td>
       <td width="19%"> 
@@ -111,15 +117,17 @@
             </controls:data>
         </controls:row>
 
+        <%-- Input only allowed on create transaction --%>
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="connector.address.ip"/>:</controls:label>
             <controls:data> 
-<%-- FIXME - input only allowed on create transaction --%>
-<%--
+             <logic:equal name="connectorForm" property="adminAction" value="Create">
                <html:text property="address" size="20"/>    
---%>
+             </logic:equal>
+             <logic:equal name="connectorForm" property="adminAction" value="Edit">
                &nbsp;<bean:write name="connectorForm" property="address"/>
                <html:hidden property="address"/> 
+             </logic:equal>
             </controls:data>
         </controls:row>
  
@@ -127,16 +135,18 @@
             <controls:label>Ports</controls:label>
             <controls:data>&nbsp;</controls:data>
         </controls:row>
-    
+
+        <%-- Input only allowed on create transaction --%>
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="server.portnumber"/>:</controls:label>
             <controls:data>
-<%-- FIXME - input only allowed on create transaction --%>
-<%--
+             <logic:equal name="connectorForm" property="adminAction" value="Create">
                <html:text property="portText" size="5"/> 
---%>
+             </logic:equal>
+             <logic:equal name="connectorForm" property="adminAction" value="Edit">
                <bean:write name="connectorForm" property="portText"/>
                <html:hidden property="portText"/>
+             </logic:equal>
             </controls:data>
         </controls:row>
 
