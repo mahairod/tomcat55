@@ -65,6 +65,9 @@
 package org.apache.catalina.deploy;
 
 
+import org.apache.catalina.util.RequestUtil;
+
+
 /**
  * Representation of a filter mapping for a web application, as represented
  * in a <code>&lt;filter-mapping&gt;</code> element in the deployment
@@ -120,7 +123,7 @@ public final class FilterMap {
     }
 
     public void setURLPattern(String urlPattern) {
-	this.urlPattern = urlPattern;
+	this.urlPattern = RequestUtil.URLDecode(urlPattern);
     }
 
 

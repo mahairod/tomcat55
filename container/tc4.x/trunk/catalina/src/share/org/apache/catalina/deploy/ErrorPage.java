@@ -65,6 +65,9 @@
 package org.apache.catalina.deploy;
 
 
+import org.apache.catalina.util.RequestUtil;
+
+
 /**
  * Representation of an error page element for a web application,
  * as represented in a <code>&lt;error-page&gt;</code> element in the
@@ -178,7 +181,10 @@ public final class ErrorPage {
      */
     public void setLocation(String location) {
 
-	this.location = location;
+        if ((location == null) || !location.startsWith("/"))
+            throw new IllegalArgumentException
+                ("Error Page Location must start with a '/'");
+	this.location = RequestUtil.URLDecode(location);
 
     }
 

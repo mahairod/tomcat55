@@ -96,8 +96,10 @@ import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.LoginConfig;
+import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.CharsetMapper;
+import org.apache.catalina.util.RequestUtil;
 
 
 /**
@@ -638,7 +640,7 @@ public final class StandardContext
      */
     public void setPath(String path) {
 
-	setName(path);
+	setName(RequestUtil.URLDecode(path));
 
     }
 
@@ -827,6 +829,20 @@ public final class StandardContext
      */
     public void addConstraint(SecurityConstraint constraint) {
 
+        // Validate the proposed constraint
+        SecurityCollection collections[] = constraint.findCollections();
+        for (int i = 0; i < collections.length; i++) {
+            String patterns[] = collections[i].findPatterns();
+            for (int j = 0; j < patterns.length; j++) {
+                if (!validateURLPattern(patterns[j]))
+                    throw new IllegalArgumentException
+                        (sm.getString
+                         ("standardContext.securityConstraint.pattern",
+                          patterns[j]));
+            }
+        }
+
+        // Add this constraint to the set for our web application
 	synchronized (constraints) {
 	    SecurityConstraint results[] =
 		new SecurityConstraint[constraints.length + 1];
@@ -1082,6 +1098,7 @@ public final class StandardContext
         if (findChild(name) == null)
             throw new IllegalArgumentException
                 (sm.getString("standardContext.servletMap.name", name));
+        pattern = RequestUtil.URLDecode(pattern);
         if (!validateURLPattern(pattern))
             throw new IllegalArgumentException
                 (sm.getString("standardContext.servletMap.pattern", pattern));

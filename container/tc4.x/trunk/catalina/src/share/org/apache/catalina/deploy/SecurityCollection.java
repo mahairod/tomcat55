@@ -65,6 +65,9 @@
 package org.apache.catalina.deploy;
 
 
+import org.apache.catalina.util.RequestUtil;
+
+
 /**
  * Representation of a web resource collection for a web application's security
  * constraint, as represented in a <code>&lt;web-resource-collection&gt;</code>
@@ -223,6 +226,7 @@ public final class SecurityCollection {
 
 	if (pattern == null)
 	    return;
+        pattern = RequestUtil.URLDecode(pattern);
 	String results[] = new String[patterns.length + 1];
 	for (int i = 0; i < patterns.length; i++)
 	    results[i] = patterns[i];
