@@ -217,8 +217,8 @@ Bugzilla Bugs Resolved:
 4949  jspc cannot find bean when using jsp:getProperty or jsp:setProperty
 4956  There are two <BODY> tags found in a source code
 4969  SSO cookie malformed in AuthenticatorBase.generateSessionId()
-5004  /a/b/c/nonexistent.jsp -> a file and directory chain created.
-5026  INITIAL_CONTEXT_FACTORY can not be defined in properties.
+5004  /a/b/c/nonexistent.jsp -> a file and directory chain created
+5026  INITIAL_CONTEXT_FACTORY can not be defined in properties
 5050  Taglib prefix cannot contain '-' character
 5096  PageData.getInputStream() returns XML doc with invalid encoding
 5123  Optional value variable-class is expected
@@ -226,7 +226,7 @@ Bugzilla Bugs Resolved:
 5169  If jsp_precompile is evalutated to be false, the request will be 
       processed by the target JSP
 5345  Redirection fails in embedded Tomcat in wspack1-b06
-
+5497  JSP include not always including
 
 
 ============================
