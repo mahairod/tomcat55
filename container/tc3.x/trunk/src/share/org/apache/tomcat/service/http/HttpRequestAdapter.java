@@ -382,20 +382,10 @@ public class HttpRequestAdapter extends RequestImpl {
 	    ((requestURI.indexOf('%') >= 0) || (requestURI.indexOf('+') >= 0))) {
 
 	    try {
-		requestURI = RequestUtil.URLDecode(requestURI);
+		    requestURI = RequestUtil.URLDecode(requestURI);
 	    } catch (Exception e) {
-		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		return;
-	    }
-	}
-	if ((queryString != null) &&
-	    ((queryString.indexOf('%') >= 0) || (queryString.indexOf('+') >= 0))) {
-
-	    try {
-		queryString = RequestUtil.URLDecode(queryString);
-	    } catch (Exception e) {
-		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		return;
+		    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		    return;
 	    }
 	}
 
