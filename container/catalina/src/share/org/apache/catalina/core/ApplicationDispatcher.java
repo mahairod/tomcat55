@@ -92,6 +92,7 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.ClientAbortException;
 import org.apache.catalina.connector.RequestFacade;
 import org.apache.catalina.connector.ResponseFacade;
 import org.apache.catalina.core.StandardWrapper;
@@ -755,6 +756,11 @@ final class ApplicationDispatcher
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
+        } catch (ClientAbortException e) {
+            request.removeAttribute(Globals.JSP_FILE_ATTR);
+            support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
+                                      servlet, request, response);
+            ioException = e;
         } catch (IOException e) {
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
