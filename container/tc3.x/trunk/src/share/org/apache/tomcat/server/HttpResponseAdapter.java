@@ -111,7 +111,7 @@ public class HttpResponseAdapter implements  ResponseAdapter {
 	statusSB.setLength(0);
     }
     
-    void setOutputStream(OutputStream os) {
+    public void setOutputStream(OutputStream os) {
 	sout = os;
     }
 
