@@ -126,7 +126,6 @@ public class JkMain
         modules.put("request","org.apache.jk.common.HandlerRequest");
         modules.put("container","org.apache.jk.common.HandlerRequest");
 
-        initHTTPSUrls();
     }
 
     public static JkMain getJkMain() {
@@ -282,6 +281,10 @@ public class JkMain
                 if( log.isWarnEnabled() )
                     log.warn( "No properties file found " + propsF );
             }
+        }
+        String initHTTPS = props.get("class.initHTTPS");
+        if("true".equalsIgnoreCase(initHTTPS)) {
+            initHTTPSUrls();
         }
         long t2=System.currentTimeMillis();
         initTime=t2-t1;
