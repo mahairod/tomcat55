@@ -147,6 +147,9 @@
         <exclude name="org/apache/jasper/Constants.class" />
         <exclude name="org/apache/jasper/JasperException.class" />
         <include name="org/apache/jasper/*.class" />
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
       </fileset>
     </jar>
 
@@ -160,6 +163,9 @@
         <include name="org/apache/jasper/runtime/**" />
         <include name="org/apache/jasper/security/**" />
         <include name="org/apache/jasper/util/**" />
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
       </fileset>
     </jar>
 
