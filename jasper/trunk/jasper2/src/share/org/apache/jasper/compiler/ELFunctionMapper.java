@@ -185,64 +185,22 @@ public class ELFunctionMapper {
 		String key = f.getPrefix()+ ":" + f.getName();
 		ds.append("  " + decName + ".mapFunction(\"" + key + "\", " +
 			funcInfo.getFunctionClass() + ".class, " +
-			'\"' + getMethod(f) + "\", " +
-			"new Class[] {" + getParameters(f) + "}" + 
-			");\n");
+			'\"' + f.getMethodName() + "\", " +
+			"new Class[] {");
+		String params[] = f.getParameters();
+		for (int k = 0; k < params.length; k++) {
+		    if (k != 0) {
+			ds.append(", ");
+		    }
+		    ds.append(params[k] + ".class");
+		}
+		ds.append("});\n");
 	    }
 	    el.setMapName(decName);
 	}
 
 	private String getMapName() {
 	    return "_jspx_fnmap_" + currFunc++;
-	}
-
-	private String getMethod(ELNode.Function func)
-		throws JasperException {
-	    FunctionInfo funcInfo = func.getFunctionInfo();
-	    String signature = funcInfo.getFunctionSignature();
-	    
-	    int start = signature.indexOf(' ');
-	    if (start < 0) {
-		err.jspError("jsp.error.tld.fn.invalid.signature",
-			func.getPrefix(), func.getName());
-	    }
-	    int end = signature.indexOf('(');
-	    if (end < 0) {
-		err.jspError("jsp.error.tld.fn.invalid.signature.parenexpected",
-			func.getPrefix(), func.getName());
-	    }
-	    return signature.substring(start+1, end).trim();
-	}
-
-	private String getParameters(ELNode.Function func) 
-		throws JasperException {
-	    FunctionInfo funcInfo = func.getFunctionInfo();
-	    StringBuffer buf = new StringBuffer();
-	    String signature = funcInfo.getFunctionSignature();
-	    // Signature is of the form
-	    // <return-type> S <method-name S? '('
-	    // < <arg-type> ( ',' <arg-type> )* )? ')'
-	    int start = signature.indexOf('(') + 1;
-	    boolean lastArg = false;
-	    while (true) {
-		int p = signature.indexOf(',', start);
-		if (p < 0) {
-		    p = signature.indexOf(')', start);
-		    if (p < 0) {
-			err.jspError("jsp.error.tld.fn.invalid.signature",
-				func.getPrefix(), func.getName());
-		    }
-		    lastArg = true;
-		}
-		String arg = signature.substring(start, p).trim();
-		buf.append(arg + ".class");
-		if (lastArg) {
-		    break;
-		}
-		buf.append(',');
-		start = p+1;
-	    }
-	    return buf.toString();
 	}
     }
 }

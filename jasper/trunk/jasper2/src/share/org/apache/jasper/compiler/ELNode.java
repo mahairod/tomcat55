@@ -143,9 +143,11 @@ abstract class ELNode {
      */
     public static class Function extends ELNode {
 
-	String prefix;
-	String name;
-	FunctionInfo functionInfo;
+	private String prefix;
+	private String name;
+	private FunctionInfo functionInfo;
+	private String methodName;
+	private String[] parameters;
 
 	Function(String prefix, String name) {
 	    this.prefix = prefix;
@@ -170,6 +172,22 @@ abstract class ELNode {
 
 	public FunctionInfo getFunctionInfo() {
 	    return functionInfo;
+	}
+
+	public void setMethodName(String methodName) {
+	    this.methodName = methodName;
+	}
+
+	public String getMethodName() {
+	    return methodName;
+	}
+
+	public void setParameters(String[] parameters) {
+	    this.parameters = parameters;
+	}
+
+	public String[] getParameters() {
+	    return parameters;
 	}
     }
 

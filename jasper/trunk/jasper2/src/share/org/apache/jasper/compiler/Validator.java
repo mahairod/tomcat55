@@ -62,6 +62,7 @@ package org.apache.jasper.compiler;
 
 import java.lang.reflect.Method;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Enumeration;
@@ -666,16 +667,16 @@ class Validator {
 	    // a null FunctionMapper is passed.
             if ( !pageInfo.isELIgnored() ) {
 		String expressions = "${" + new String(n.getText()) + "}";
+		ELNode.Nodes el = ELParser.parse(expressions);
+		validateFunctions(el, n);
                 JspUtil.validateExpressions(
                     n.getStart(),
 		    expressions,
                     java.lang.String.class, // XXX - Should template text 
                                             // always evaluate to String?
-                    null,
+                    getFunctionMapper(el),
                     null,
                     err);
-		ELNode.Nodes el = ELParser.parse(expressions);
-		validateFunctions(el, n);
 		n.setEL(el);
             }
         }
@@ -1096,15 +1097,15 @@ class Validator {
                     // expression(s)
                     ELNode.Nodes el = ELParser.parse(value);
                     if (el.containsEL() && !pageInfo.isELIgnored()) {
+	                validateFunctions(el, n);
                         JspUtil.validateExpressions(
                             n.getStart(),
                             value, 
                             expectedType, 
-                            null,
+                            getFunctionMapper(el),
                             defaultPrefix,
                             this.err);
 
-	                validateFunctions(el, n);
                         
                         result = new Node.JspAttribute(qName, uri, localName,
 						       value, false, el,
@@ -1249,10 +1250,134 @@ class Validator {
 		    }
 		    // Skip TLD function uniqueness check.  Done by Schema ?
 		    func.setFunctionInfo(funcInfo);
+		    processSignature(func);
 		}
 	    }
 
 	    el.visit(new FVVisitor(n));
+	}
+
+	private void processSignature(ELNode.Function func)
+		throws JasperException {
+	    func.setMethodName(getMethod(func));
+	    func.setParameters(getParameters(func));
+	}
+
+	/**
+	 * Get the method name from the signature.
+	 */
+	private String getMethod(ELNode.Function func)
+		throws JasperException {
+	    FunctionInfo funcInfo = func.getFunctionInfo();
+	    String signature = funcInfo.getFunctionSignature();
+	    
+	    int start = signature.indexOf(' ');
+	    if (start < 0) {
+		err.jspError("jsp.error.tld.fn.invalid.signature",
+			func.getPrefix(), func.getName());
+	    }
+	    int end = signature.indexOf('(');
+	    if (end < 0) {
+		err.jspError("jsp.error.tld.fn.invalid.signature.parenexpected",
+			func.getPrefix(), func.getName());
+	    }
+	    return signature.substring(start+1, end).trim();
+	}
+
+	/**
+	 * Get the parameters types from the function signature.
+	 * @return An array of parameter class names
+	 */
+	private String[] getParameters(ELNode.Function func) 
+		throws JasperException {
+	    FunctionInfo funcInfo = func.getFunctionInfo();
+	    String signature = funcInfo.getFunctionSignature();
+	    ArrayList params = new ArrayList();
+	    // Signature is of the form
+	    // <return-type> S <method-name S? '('
+	    // < <arg-type> ( ',' <arg-type> )* )? ')'
+	    int start = signature.indexOf('(') + 1;
+	    boolean lastArg = false;
+	    while (true) {
+		int p = signature.indexOf(',', start);
+		if (p < 0) {
+		    p = signature.indexOf(')', start);
+		    if (p < 0) {
+			err.jspError("jsp.error.tld.fn.invalid.signature",
+				func.getPrefix(), func.getName());
+		    }
+		    lastArg = true;
+		}
+		params.add(signature.substring(start, p).trim());
+		if (lastArg) {
+		    break;
+		}
+		start = p+1;
+	    }
+	    return (String[]) params.toArray(new String[params.size()]);
+	}
+
+	private FunctionMapper getFunctionMapper(ELNode.Nodes el)
+		throws JasperException {
+
+	    class ValidateFunctionMapper implements FunctionMapper {
+
+		private HashMap fnmap = new java.util.HashMap();
+		public void mapFunction(String fnQName, Method method) {
+		    fnmap.put(fnQName, method);
+		}
+
+		public Method resolveFunction(String prefix, String localName) {
+		    return (Method) this.fnmap.get(prefix + ":" + localName);
+		}
+	    }
+
+	    class MapperELVisitor extends ELNode.Visitor {
+		ValidateFunctionMapper fmapper;
+
+		MapperELVisitor(ValidateFunctionMapper fmapper) {
+		    this.fmapper = fmapper;
+		}
+
+		public void visit(ELNode.Function n) throws JasperException {
+
+		    Class c = null;
+		    Method method = null;
+		    try {
+			c = loader.loadClass(
+				n.getFunctionInfo().getFunctionClass());
+		    } catch (ClassNotFoundException e) {
+			err.jspError("jsp.error.function.classnotfound",
+				n.getFunctionInfo().getFunctionClass(),
+				n.getPrefix() + ':' + n.getName(),
+				e.getMessage());
+		    }
+		    String paramTypes[] = n.getParameters();
+		    int size = paramTypes.length;
+		    Class params[] = new Class[size];
+		    int i = 0;
+		    try {
+			for (i = 0; i < size; i++) {
+			    params[i] = JspUtil.toClass(paramTypes[i], loader);
+			}
+			method = c.getDeclaredMethod(n.getMethodName(), params);
+		    } catch (ClassNotFoundException e) {
+			err.jspError("jsp.error.signature.classnotfound",
+				paramTypes[i],
+				n.getPrefix() + ':' + n.getName(),
+				e.getMessage());
+		    } catch (NoSuchMethodException e ) {
+			err.jspError("jsp.error.noMethod", n.getName(),
+				n.getMethodName(), c.getName());
+		    }
+		    fmapper.mapFunction(n.getPrefix() + ':' + n.getName(),
+					method);
+		}
+	    }
+
+	    ValidateFunctionMapper fmapper = new ValidateFunctionMapper();
+	    el.visit(new MapperELVisitor(fmapper));
+	    return fmapper;
 	}
     } // End of ValidateVisitor
 
