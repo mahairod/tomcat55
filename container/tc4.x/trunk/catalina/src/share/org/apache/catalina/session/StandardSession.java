@@ -373,6 +373,13 @@ class StandardSession
 
         if (manager != null)
             manager.add(this);
+        tellNew();
+    }
+    /**
+     * Inform the listener about the new session.
+     *
+     */
+    public void tellNew() {
 
         // Notify interested session event listeners
         fireSessionEvent(Session.SESSION_CREATED_EVENT, null);

@@ -574,18 +574,7 @@ public abstract class ManagerBase implements Manager {
     public Session createSession() {
 
         // Recycle or create a Session instance
-        Session session = null;
-        synchronized (recycled) {
-            int size = recycled.size();
-            if (size > 0) {
-                session = (Session) recycled.get(size - 1);
-                recycled.remove(size - 1);
-            }
-        }
-        if (session != null)
-            session.setManager(this);
-        else
-            session = new StandardSession(this);
+        Session session = createEmptySession();
 
         // Initialize the properties of the new session and return it
         session.setNew(true);
@@ -615,6 +604,28 @@ public abstract class ManagerBase implements Manager {
 
         return (session);
 
+    }
+
+
+    /**
+     * Get a session from the recycled ones or create a new empty one.
+     * The PersistentManager manager does not need to create session data
+     * because it reads it from the Store.
+     */
+    public Session createEmptySession() {
+        Session session = null;
+        synchronized (recycled) {
+            int size = recycled.size();
+            if (size > 0) {
+                session = (Session) recycled.get(size - 1);
+                recycled.remove(size - 1);
+            }
+        }
+        if (session != null)
+            session.setManager(this);
+        else
+            session = new StandardSession(this);
+        return(session);
     }
 
 

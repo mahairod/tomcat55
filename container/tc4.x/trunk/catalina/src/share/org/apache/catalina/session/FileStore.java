@@ -333,7 +333,7 @@ public final class FileStore
 
         try {
             StandardSession session =
-                (StandardSession) manager.createSession();
+                (StandardSession) manager.createEmptySession();
             session.readObjectData(ois);
             session.setManager(manager);
             return (session);
@@ -385,6 +385,7 @@ public final class FileStore
     public void save(Session session) throws IOException {
 
         // Open an output stream to the specified pathname, if any
+        System.out.println("save: " + session.getId());
         File file = file(session.getId());
         if (file == null) {
             return;
