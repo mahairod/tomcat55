@@ -130,7 +130,7 @@ public final class DeleteUsersAction extends Action {
 
             for (int i = 0; i < users.length; i++) {
                 ObjectName oname = new ObjectName(users[i]);
-                params[0] = oname.getKeyProperty("username");
+                params[0] = ObjectName.unquote(oname.getKeyProperty("username"));
                 mserver.invoke(dname, "removeUser",
                                params, signature);
             }

@@ -130,7 +130,7 @@ public final class DeleteGroupsAction extends Action {
 
             for (int i = 0; i < groups.length; i++) {
                 ObjectName oname = new ObjectName(groups[i]);
-                params[0] = oname.getKeyProperty("groupname");
+                params[0] = ObjectName.unquote(oname.getKeyProperty("groupname"));
                 mserver.invoke(dname, "removeGroup",
                                params, signature);
             }
