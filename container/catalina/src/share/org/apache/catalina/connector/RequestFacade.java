@@ -49,7 +49,8 @@ public class RequestFacade
         
     // ----------------------------------------------------------- DoPrivileged
     
-    private final class GetAttributePrivilegedAction implements PrivilegedAction{
+    private final class GetAttributePrivilegedAction
+            implements PrivilegedAction {
         
         public Object run() {
             return request.getAttributeNames();
@@ -57,7 +58,8 @@ public class RequestFacade
     }
      
     
-    private final class GetParameterMapPrivilegedAction implements PrivilegedAction{
+    private final class GetParameterMapPrivilegedAction
+            implements PrivilegedAction {
         
         public Object run() {
             return request.getParameterMap();
@@ -65,30 +67,38 @@ public class RequestFacade
     }    
     
     
-    private final class GetRequestDispatcherPrivilegedAction implements PrivilegedAction{
+    private final class GetRequestDispatcherPrivilegedAction
+            implements PrivilegedAction {
+
         private String path;
+
         public GetRequestDispatcherPrivilegedAction(String path){
             this.path = path;
         }
         
         public Object run() {   
             return request.getRequestDispatcher(path);
-       }           
+        }           
     }    
     
     
-    private final class GetParameterPrivilegedAction implements PrivilegedAction{
+    private final class GetParameterPrivilegedAction
+            implements PrivilegedAction {
+
         public String name;
+
         public GetParameterPrivilegedAction(String name){
             this.name = name;
         }
+
         public Object run() {       
             return request.getParameter(name);
         }           
     }    
     
      
-    private final class GetParameterNamesPrivilegedAction implements PrivilegedAction{
+    private final class GetParameterNamesPrivilegedAction
+            implements PrivilegedAction {
         
         public Object run() {          
             return request.getParameterNames();
@@ -96,26 +106,32 @@ public class RequestFacade
     } 
     
     
-    private final class GetParameterValuePrivilegedAction implements PrivilegedAction{
+    private final class GetParameterValuePrivilegedAction
+            implements PrivilegedAction {
+
         public String name;
+
         public GetParameterValuePrivilegedAction(String name){
             this.name = name;
         }
+
         public Object run() {       
             return request.getParameterValues(name);
         }           
     }    
   
     
-    private final class GetCookiesPrivilegedAction implements PrivilegedAction{
+    private final class GetCookiesPrivilegedAction
+            implements PrivilegedAction {
         
-       public Object run() {       
+        public Object run() {       
             return request.getCookies();
         }           
     }      
     
     
-    private final class GetCharacterEncodingPrivilegedAction implements PrivilegedAction{
+    private final class GetCharacterEncodingPrivilegedAction
+            implements PrivilegedAction {
         
         public Object run() {       
             return request.getCharacterEncoding();
@@ -123,8 +139,11 @@ public class RequestFacade
     }   
         
     
-    private final class GetHeadersPrivilegedAction implements PrivilegedAction{
+    private final class GetHeadersPrivilegedAction
+            implements PrivilegedAction {
+
         private String name;
+
         public GetHeadersPrivilegedAction(String name){
             this.name = name;
         }
@@ -135,7 +154,8 @@ public class RequestFacade
     }    
         
     
-    private final class GetHeaderNamesPrivilegedAction implements PrivilegedAction{
+    private final class GetHeaderNamesPrivilegedAction
+            implements PrivilegedAction {
 
         public Object run() {       
             return request.getHeaderNames();
@@ -143,7 +163,8 @@ public class RequestFacade
     }  
             
     
-    private final class GetLocalePrivilegedAction implements PrivilegedAction{
+    private final class GetLocalePrivilegedAction
+            implements PrivilegedAction {
 
         public Object run() {       
             return request.getLocale();
@@ -151,14 +172,17 @@ public class RequestFacade
     }    
             
     
-    private final class GetLocalesPrivilegedAction implements PrivilegedAction{
+    private final class GetLocalesPrivilegedAction
+            implements PrivilegedAction {
 
         public Object run() {       
             return request.getLocales();
         }           
     }    
     
-    private final class GetSessionPrivilegedAction implements PrivilegedAction{
+    private final class GetSessionPrivilegedAction
+            implements PrivilegedAction {
+
         private boolean create;
         
         public GetSessionPrivilegedAction(boolean create){
@@ -168,7 +192,8 @@ public class RequestFacade
         public Object run() {  
             return request.getSession(create);
         }           
-    }      
+    }
+
     // ----------------------------------------------------------- Constructors
 
 
@@ -550,22 +575,22 @@ public class RequestFacade
 
 
     public String getLocalAddr() {
-		return request.getLocalAddr();
-	}
+        return request.getLocalAddr();
+    }
 
 
-	public String getLocalName() {
-		return request.getLocalName();
-	}
+    public String getLocalName() {
+        return request.getLocalName();
+    }
 
 
-	public int getLocalPort() {
-		return request.getLocalPort();
-	}
+    public int getLocalPort() {
+        return request.getLocalPort();
+    }
 
 
-	public int getRemotePort() {
-		return request.getRemotePort();
-	}
+    public int getRemotePort() {
+        return request.getRemotePort();
+    }
 
 }
