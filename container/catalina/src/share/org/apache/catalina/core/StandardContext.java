@@ -4238,6 +4238,11 @@ public class StandardContext
             postWelcomeFiles();
         }
 
+        if (ok) {
+            // Notify our interested LifecycleListeners
+            lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
+        }
+
         // Configure and call application event listeners and filters
         if (ok) {
             if (!listenerStart()) {
@@ -4250,6 +4255,11 @@ public class StandardContext
                 log.error( "Error filterStart");
                 ok = false;
             }
+        }
+
+        // Load and initialize all "load on startup" servlets
+        if (ok) {
+            loadOnStartup(findChildren());
         }
 
         // Unbinding thread
@@ -4273,11 +4283,6 @@ public class StandardContext
         // JMX registration
         registerJMX();
 
-        if (ok) {
-            // Notify our interested LifecycleListeners
-            lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
-        }
-
         startTime=System.currentTimeMillis();
         
         // Send j2ee.state.running notification 
@@ -4286,13 +4291,6 @@ public class StandardContext
                 new Notification("j2ee.state.running", this.getObjectName(), 
                                 sequenceNumber++);
             broadcaster.sendNotification(notification);
-        }
-
-        // Load and initialize all "load on startup" servlets
-        if (ok) {
-            oldCCL = bindThread();
-            loadOnStartup(findChildren());
-            unbindThread(oldCCL);
         }
 
         // Close all JARs right away to avoid always opening a peak number 
