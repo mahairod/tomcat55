@@ -51,10 +51,6 @@
     </antcall>
   </target>
 
-  <target name="xml-servlet" depends="jsp-xml,servlet"
-   description="XML-syntax and servlet tests"/>
-
-
   <!-- ================ Execution Subroutine Target ====================== -->
 
   <target name="execute">
