@@ -849,29 +849,6 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     // -------------------------------------------------------- Package Methods
 
 
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     * @deprecated
-     */
-    protected void log(String message) {
-        log.info( message );
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     * @deprecated
-     */
-    protected void log(String message, Throwable throwable) {
-        log.info(message,throwable);
-    }
-
-
     public void setSessionCounter(int sessionCounter) {
         this.sessionCounter = sessionCounter;
     }

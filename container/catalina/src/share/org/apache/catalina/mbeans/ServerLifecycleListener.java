@@ -69,7 +69,6 @@ public class ServerLifecycleListener
     private static Log log = LogFactory.getLog(ServerLifecycleListener.class);
 
 
-
     // ------------------------------------------------------------- Properties
 
 
@@ -1099,33 +1098,6 @@ public class ServerLifecycleListener
         if (service instanceof StandardService) {
             ((StandardService) service).removePropertyChangeListener(this);
         }
-
-    }
-
-
-    /**
-     * Log a message.
-     *
-     * @param message The message to be logged
-     */
-    protected void log(String message) {
-
-        System.out.print("ServerLifecycleListener: ");
-        System.out.println(message);
-
-    }
-
-
-    /**
-     * Log a message and associated exception.
-     *
-     * @param message The message to be logged
-     * @param throwable The exception to be logged
-     */
-    protected void log(String message, Throwable throwable) {
-
-        log(message);
-        throwable.printStackTrace(System.out);
 
     }
 

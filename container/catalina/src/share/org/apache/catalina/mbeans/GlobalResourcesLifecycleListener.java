@@ -233,25 +233,4 @@ public class GlobalResourcesLifecycleListener
 
     }
 
-    /**
-     * Log a message.
-     *
-     * @param message The message to be logged
-     */
-    protected void log(String message) {
-        log.info(message);
-    }
-
-
-    /**
-     * Log a message and associated exception.
-     *
-     * @param message The message to be logged
-     * @param throwable The exception to be logged
-     */
-    protected void log(String message, Throwable throwable) {
-        log.info(message, throwable);
-    }
-
-
 }

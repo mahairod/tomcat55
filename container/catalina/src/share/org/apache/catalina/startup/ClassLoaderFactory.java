@@ -165,36 +165,4 @@ public final class ClassLoaderFactory {
     }
 
 
-    // -------------------------------------------------------- Private Methods
-
-
-    /**
-     * Log a message for this class.
-     *
-     * @param message Message to be logged
-     */
-    private static void log(String message) {
-
-        System.out.print("ClassLoaderFactory:  ");
-        System.out.println(message);
-
-    }
-
-
-    /**
-     * Log a message and exception for this class.
-     *
-     * @param message Message to be logged
-     * @param exception Exception to be logged
-     */
-    private static void log(String message, Throwable exception) {
-
-        log(message);
-        exception.printStackTrace(System.out);
-
-    }
-
-
-
-
 }
