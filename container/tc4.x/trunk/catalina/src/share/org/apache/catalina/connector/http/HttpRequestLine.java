@@ -87,9 +87,9 @@ final class HttpRequestLine {
     public static final int INITIAL_METHOD_SIZE = 8;
     public static final int INITIAL_URI_SIZE = 64;
     public static final int INITIAL_PROTOCOL_SIZE = 8;
-    public static final int MAX_METHOD_SIZE = 128;
-    public static final int MAX_URI_SIZE = 4096;
-    public static final int MAX_PROTOCOL_SIZE = 32;
+    public static final int MAX_METHOD_SIZE = 1024;
+    public static final int MAX_URI_SIZE = 32768;
+    public static final int MAX_PROTOCOL_SIZE = 1024;
 
 
     // ----------------------------------------------------------- Constructors
