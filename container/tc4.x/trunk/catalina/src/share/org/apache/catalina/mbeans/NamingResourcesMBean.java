@@ -181,7 +181,7 @@ public class NamingResourcesMBean extends BaseModelMBean {
      *
      * @param envName New environment entry name
      */
-    public void addEnvironment(String envName, String type, String value) {
+    public void addEnvironment(String envName, String type) {
 
         NamingResources nresources = (NamingResources) this.resource;
         if (nresources == null) {
@@ -195,7 +195,6 @@ public class NamingResourcesMBean extends BaseModelMBean {
         env = new ContextEnvironment();
         env.setName(envName);
         env.setType(type);
-        env.setValue(value);
         nresources.addEnvironment(env);
         // FIXME add to the javax.naming.directory.DirContext
     }
