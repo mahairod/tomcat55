@@ -87,9 +87,10 @@ public class Cvs extends Task {
 		sb.append("-r ").append(tag).append(" ");
 
 	    sb.append( pack );
+	    String command=sb.toString();
+
             project.log(command, "cvs", Project.MSG_WARN);
 
-	    String command=sb.toString();
 
 	    // exec command on system runtime
 	    Process proc = Runtime.getRuntime().exec( command);

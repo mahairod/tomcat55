@@ -5,7 +5,6 @@
   <property name="src.dir" value="src/main"/>
   <property name="build.dir" value="build"/>
   <property name="dist.dir" value="${user.home}/opt"/>
-  <property name="package.dir" value="../pkg" />  
 
   <property name="classpath" value="lib/projectx-tr2.jar"/>
   <property name="manifest" value="src/etc/manifest"/>
@@ -35,11 +34,6 @@
      <copydir src="docs" dest="${dist.dir}/ant/docs"/>
      <chmod perm="+x" src="${dist.dir}/ant/bin/ant"/>
      <chmod perm="+x" src="${dist.dir}/ant/bin/antRun"/>
-  </target>
-
-  <target name="package" depends="dist">
-     <mkdir dir="${package.dir}/ant" />
-     <zip zipfile="${package.dir}/ant/ant.zip" basedir="${dist.dir}" items="ant"/>
   </target>
 
   <target name="clean">

@@ -49,13 +49,16 @@
 
    <!-- ******************** Building  ******************** -->
   <target name="tomcat">
-     <ant dir="${ws.dir}/jakarta-tomcat" antfile="${ws.dir}/jakarta-tomcat/build.xml" target="package" />
+     <ant dir="${ws.dir}/jakarta-tomcat" antfile="${ws.dir}/jakarta-tomcat/build.xml" target="dist" />
+     <zip zipfile="${package.dir}/tomcat/tomcat.zip" basedir="${tomcat.home}/.." 
+          items="tomcat" />
      <copyfile src="${package.dir}/tomcat/tomcat.zip" dest="${package.dir}/tomcat/tomcat-${os.name}-${DSTAMP}.zip" />
      <copyfile src="${package.dir}/tomcat/tomcat.zip" dest="${package.dir}/tomcat/tomcat-${DSTAMP}.zip" />
   </target>
 
   <target name="ant">
-     <ant dir="${ws.dir}/jakarta-tools/ant" antfile="${ws.dir}/jakarta-tools/ant/build.xml" target="package" /> 
+     <ant dir="${ws.dir}/jakarta-tools/ant" antfile="${ws.dir}/jakarta-tools/ant/build.xml" target="dist" /> 
+     <zip zipfile="${package.dir}/ant/ant.zip" basedir="${dist.dir}" items="ant"/>
      <copyfile src="${package.dir}/ant/ant.zip" dest="${package.dir}/ant/ant-${os.name}-${DSTAMP}.zip" />
      <copyfile src="${package.dir}/ant/ant.zip" dest="${package.dir}/ant/ant-${DSTAMP}.zip" />
    </target>
@@ -87,12 +90,14 @@
 
    <!-- ******************** Platform specific packages  ******************** -->
    <target name="pkg" > 
-     <exec os="SunOS" dir="${ws.dir}/jakarta-tomcat/src/etc" command="pkgmk -f prototype -d ${ws.dir}/build  -r / " />
+     <deltree dir="${ws.dir}/build/ASFtomcat" />
+     <exec os="SunOS" dir="${ws.dir}/jakarta-tomcat/src/etc" command="pkgmk -o -f prototype -d ${ws.dir}/build  -r / " />
      <zip zipfile="${package.dir}/tomcat/ASFtomcat-pkg.zip" 
          basedir="${ws.dir}/build"
          items="ASFtomcat" />
 
-     <exec os="SunOS" dir="${ws.dir}/jakarta-tools/ant/src/etc" command="pkgmk -f prototype -d ${ws.dir}/build  -r / " />
+     <deltree dir="${ws.dir}/build/ASFant" />
+     <exec os="SunOS" dir="${ws.dir}/jakarta-tools/ant/src/etc" command="pkgmk -o -f prototype -d ${ws.dir}/build  -r / " />
      <zip zipfile="${package.dir}/ant/ASFant-pkg.zip" 
          basedir="${ws.dir}/build"
          items="ASFant" />

@@ -65,7 +65,6 @@ import java.util.zip.*;
 public class Expand extends Task {
     String dest; // req
     String source; // req
-    String verbose;
     
     // XXX move it to util or tools
     public void execute() throws BuildException {
@@ -73,7 +72,7 @@ public class Expand extends Task {
 	    File srcF=new File( source );
 	    File dir=new File(dest);
 	    
-	    System.out.println("<log:expand src=\"" + source + "\" dest=\"" + dest + "\">");
+	    project.log("expand src=" + source + " dest=" + dest, "expand", Project.MSG_ERR);
 	    // code from WarExpand
 	    ZipInputStream zis = new ZipInputStream(new FileInputStream(srcF));
 	    ZipEntry ze = null;
@@ -81,7 +80,7 @@ public class Expand extends Task {
 	    while ((ze = zis.getNextEntry()) != null) {
 		try {
 		    File f = new File(dir, ze.getName());
-		    if(  "true".equals(verbose)) System.out.println("<log:expand-file name=\"" + ze.getName() + "\" />");
+		    project.log("expand-file " + ze.getName() , "expand", Project.MSG_WARN );
 		    // create intermediary directories - sometimes zip don't add them
 		    File dirF=new File(f.getParent());
 		    dirF.mkdirs();
@@ -100,7 +99,7 @@ public class Expand extends Task {
 			fos.close();
 		    }
 		} catch( FileNotFoundException ex ) {
-		    System.out.println("WARUtil: FileNotFoundException: " +  ze.getName()  );
+		    System.out.println("FileNotFoundException: " +  ze.getName()  );
 		}
 	    }
 	    System.out.println("</log:expand>");
@@ -116,9 +115,4 @@ public class Expand extends Task {
     public void setSrc(String s) {
 	this.source = s;
     }
-
-    public void setVerbose(String v) {
-	verbose=v;
-    }
-
 }

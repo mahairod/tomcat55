@@ -60,20 +60,19 @@
    <!-- ******************** Getting binaries from build machines  ******************** -->
    <target name="binaries.get" >
     <get src="ftp://tokyo.javasoft.com/pub/tomcat/tomcat.zip" 
-         dest="${nightly.dir}/tomcat-${DSTAMP}.zip" />
+         dest="${nightly.dir}/tomcat.zip" />
     <get src="ftp://tokyo.javasoft.com/pub/ant/ant.zip" 
          dest="${nightly.dir}/ant.zip" />
     <get src="ftp://tokyo.javasoft.com/pub/tomcat/ASFtomcat-pkg.zip" 
-         dest="${nightly.dir}/tomcat-${DSTAMP}.zip" />
+         dest="${nightly.dir}/ASFtomcat-pkg.zip" />
+    <get src="ftp://tokyo.javasoft.com/pub/ant/ASFant-pkg.zip" 
+         dest="${nightly.dir}/ASFant-pkg.zip" />
+
     <get src="ftp://tokyo.javasoft.com/pub/tomcat/tomcat-test.log" 
          dest="${nightly.dir}/log/tomcat-test-SunOS-${DSTAMP}.log" />
     <get src="ftp://tokyo.javasoft.com/pub/tomcat/watchdog-test.log" 
          dest="${nightly.dir}/log/watchdog-test-SunOS-${DSTAMP}.log" />
 
-    <get src="ftp://osaka.javasoft.com/pub/tomcat/watchdog-test.log" 
-         dest="${nightly.dir}/log/watchdog-test-Linux-i386-${DSTAMP}.log" />
-    <get src="ftp://osaka.javasoft.com/pub/tomcat/tomcat-test.log" 
-         dest="${nightly.dir}/log/tomcat-test-Linux-i386-${DSTAMP}.log" />
     <get src="ftp://osaka.javasoft.com/pub/ant/ant-1.0-0.noarch.rpm" 
          dest="${nightly.dir}/ant-1.0-0.noarch.rpm  " />
     <get src="ftp://osaka.javasoft.com/pub/ant/ant-1.0-0.src.rpm" 
@@ -83,7 +82,13 @@
     <get src="ftp://osaka.javasoft.com/pub/tomcat/tomcat-3.0-0.src.rpm" 
          dest="${nightly.dir}/tomcat-3.0-0.src.rpm  " />
 
-    <copyfile src="${nightly.dir}/tomcat-${DSTAMP}.zip" dest="${nightly.dir}/tomcat.zip" />
+    <get src="ftp://osaka.javasoft.com/pub/tomcat/watchdog-test.log" 
+         dest="${nightly.dir}/log/watchdog-test-Linux-i386-${DSTAMP}.log" />
+    <get src="ftp://osaka.javasoft.com/pub/tomcat/tomcat-test.log" 
+         dest="${nightly.dir}/log/tomcat-test-Linux-i386-${DSTAMP}.log" />
+
+    <copyfile src="${nightly.dir}/tomcat.zip" dest="${nightly.dir}/tomcat-${DSTAMP}.zip" />
+    <copyfile src="${nightly.dir}/ant.zip" dest="${nightly.dir}/ant-${DSTAMP}.zip" />
    </target>
 
 
@@ -92,9 +97,9 @@
      <deltree dir="${ws.dir}/tmp" />
      <mkdir dir="${ws.dir}/tmp" />
      <expand src="${nightly.dir}/tomcat.zip" dest="${ws.dir}/tmp" />
-     <exec dir="${ws.dir}/tmp"  command="tar cf tomcat.tar tomcat/>
+     <exec dir="${ws.dir}/tmp"  command="tar cf tomcat.tar tomcat" />
      <exec dir="${ws.dir}/tmp"  command="compress tomcat.tar "/>
-     <exec dir="${ws.dir}/tmp"  command="tar cf tomcat.tar tomcat/>
+     <exec dir="${ws.dir}/tmp"  command="tar cf tomcat.tar tomcat" />
      <exec dir="${ws.dir}/tmp"  command="bzip2 tomcat.tar "/>
    </target>
 
@@ -102,9 +107,9 @@
      <deltree dir="${ws.dir}/tmp" />
      <mkdir dir="${ws.dir}/tmp" />
      <expand src="${nightly.dir}/ant.zip" dest="${ws.dir}/tmp" />
-     <exec dir="${ws.dir}/tmp"  command="tar cf ant.tar ant/>
+     <exec dir="${ws.dir}/tmp"  command="tar cf ant.tar ant" />
      <exec dir="${ws.dir}/tmp"  command="compress ant.tar "/>
-     <exec dir="${ws.dir}/tmp"  command="tar cf ant.tar ant/>
+     <exec dir="${ws.dir}/tmp"  command="tar cf ant.tar ant" />
      <exec dir="${ws.dir}/tmp"  command="bzip2 ant.tar "/>
    </target>
 
