@@ -129,13 +129,6 @@ static int JK_METHOD log_to_file(jk_logger_t *l,
             fwrite(what, 1, sz, p->logfile);
 	    /* [V] Flush the dam' thing! */
 	    fflush(p->logfile);
-#ifndef WIN32
-#ifndef FREEBSD
-#ifndef NETWARE
-	    fdatasync(fileno(p->logfile));
-#endif
-#endif
-#endif
         }
 
         return JK_TRUE;
