@@ -179,7 +179,7 @@
       
     <attribute name="servlets"
                description="JSR77 list of servlets"
-               type="[Ljavax.management.ObjectName;"
+               type="[Ljava.lang.String;"
                writeable="false"/>
 
     <attribute name="reloadable"
