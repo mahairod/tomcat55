@@ -313,7 +313,13 @@ public abstract class StoreBase
                 int timeIdle = // Truncate, do not round up
                     (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
                 if (timeIdle >= maxInactiveInterval) {
-                    session.expire();
+                    if ( ( (PersistentManagerBase) manager).isLoaded( keys[i] )) {
+                        // recycle old backup session
+                        session.recycle();
+                    } else {
+                        // expire swapped out session
+                        session.expire();
+                    }
                     remove(session.getId());
                 }
             } catch (IOException e) {
