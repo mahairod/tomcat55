@@ -138,6 +138,7 @@ static void reset_endpoint(ajp13_endpoint_t *ep)
 static void close_endpoint(ajp13_endpoint_t *ep)
 {
     reset_endpoint(ep);
+    jk_close_pool(&(ep->pool));
     if(ep->sd > 0) {
         jk_close_socket(ep->sd);
     } 
