@@ -108,6 +108,10 @@
   <subsection name="Cluster">
     <changelog>
 	   <add>
+          JvmRouteBinderValve/JvmRouteSessionIDBinderListener to bind cluster session after primary node failure at first calling backup node.
+          This was an option to have session stickyness after cluster node crashed. Work only with JESSIONID cookies. (pero)
+       </add>
+	   <add>
           Better log support to DeltaManager to see detail information at debug level. (pero)
        </add>
 	   <fix>
@@ -115,7 +119,7 @@
        </fix>
 	   <fix>
           FarmWarDeployer controlled WarWatcher with engine backgroundProcess call.
-          Added processExpiresFrequency attribute to Deployer server.xml element. (pero)
+          Added processDeployFrequency attribute to Deployer server.xml element. (pero)
        </fix>
     </changelog>
   </subsection>
