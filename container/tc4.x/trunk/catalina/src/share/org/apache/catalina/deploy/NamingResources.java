@@ -65,6 +65,8 @@
 package org.apache.catalina.deploy;
 
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 
 
@@ -136,6 +138,12 @@ public final class NamingResources {
     private HashMap resourceParams = new HashMap();
 
 
+    /**
+     * The property change support for this component.
+     */
+    protected PropertyChangeSupport support = new PropertyChangeSupport(this);
+
+
     // --------------------------------------------------------------Properties
 
 
@@ -147,8 +155,10 @@ public final class NamingResources {
     public void addEjb(ContextEjb ejb) {
 
         synchronized (ejbs) {
+            ejb.setNamingResources(this);
             ejbs.put(ejb.getName(), ejb);
         }
+        support.firePropertyChange("ejb", null, ejb);
 
     }
 
@@ -161,8 +171,10 @@ public final class NamingResources {
     public void addEnvironment(ContextEnvironment environment) {
 
         synchronized (envs) {
+            environment.setNamingResources(this);
             envs.put(environment.getName(), environment);
         }
+        support.firePropertyChange("environment", null, environment);
 
     }
 
@@ -175,9 +187,11 @@ public final class NamingResources {
     public void addResourceParams(ResourceParams resourceParameters) {
 
         synchronized (resourceParams) {
+            resourceParameters.setNamingResources(this);
             resourceParams.put(resourceParameters.getName(),
                                resourceParameters);
         }
+        support.firePropertyChange("resourceParams", null, resourceParameters);
 
     }
 
@@ -190,8 +204,22 @@ public final class NamingResources {
     public void addLocalEjb(ContextLocalEjb ejb) {
 
         synchronized (localEjbs) {
+            ejb.setNamingResources(this);
             localEjbs.put(ejb.getName(), ejb);
         }
+        support.firePropertyChange("localEjb", null, ejb);
+
+    }
+
+
+    /**
+     * Add a property change listener to this component.
+     *
+     * @param listener The listener to add
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+
+        support.addPropertyChangeListener(listener);
 
     }
 
@@ -204,8 +232,10 @@ public final class NamingResources {
     public void addResource(ContextResource resource) {
 
         synchronized (resources) {
+            resource.setNamingResources(this);
             resources.put(resource.getName(), resource);
         }
+        support.firePropertyChange("resource", null, resource);
 
     }
 
@@ -221,6 +251,8 @@ public final class NamingResources {
         synchronized (resourceEnvRefs) {
             resourceEnvRefs.put(name, type);
         }
+        support.firePropertyChange("resourceEnvRef", null,
+                                   name + ":" + type);
 
     }
 
@@ -233,8 +265,10 @@ public final class NamingResources {
     public void addResourceLink(ContextResourceLink resourceLink) {
 
         synchronized (resourceLinks) {
+            resourceLink.setNamingResources(this);
             resourceLinks.put(resourceLink.getName(), resourceLink);
         }
+        support.firePropertyChange("resourceLink", null, resourceLink);
 
     }
 
@@ -457,8 +491,13 @@ public final class NamingResources {
      */
     public void removeEjb(String name) {
 
+        ContextEjb ejb = null;
         synchronized (ejbs) {
-            ejbs.remove(name);
+            ejb = (ContextEjb) ejbs.remove(name);
+        }
+        if (ejb != null) {
+            ejb.setNamingResources(null);
+            support.firePropertyChange("ejb", ejb, null);
         }
 
     }
@@ -471,8 +510,13 @@ public final class NamingResources {
      */
     public void removeEnvironment(String name) {
 
+        ContextEnvironment environment = null;
         synchronized (envs) {
-            envs.remove(name);
+            environment = (ContextEnvironment) envs.remove(name);
+        }
+        if (environment != null) {
+            environment.setNamingResources(null);
+            support.firePropertyChange("environment", environment, null);
         }
 
     }
@@ -485,9 +529,26 @@ public final class NamingResources {
      */
     public void removeLocalEjb(String name) {
 
+        ContextLocalEjb localEjb = null;
         synchronized (localEjbs) {
-            localEjbs.remove(name);
+            localEjb = (ContextLocalEjb) ejbs.remove(name);
         }
+        if (localEjb != null) {
+            localEjb.setNamingResources(null);
+            support.firePropertyChange("localEjb", localEjb, null);
+        }
+
+    }
+
+
+    /**
+     * Remove a property change listener from this component.
+     *
+     * @param listener The listener to remove
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+
+        support.removePropertyChangeListener(listener);
 
     }
 
@@ -499,8 +560,13 @@ public final class NamingResources {
      */
     public void removeResource(String name) {
 
+        ContextResource resource = null;
         synchronized (resources) {
-            resources.remove(name);
+            resource = (ContextResource) resources.remove(name);
+        }
+        if (resource != null) {
+            resource.setNamingResources(null);
+            support.firePropertyChange("resource", resource, null);
         }
 
     }
@@ -513,8 +579,13 @@ public final class NamingResources {
      */
     public void removeResourceEnvRef(String name) {
 
+        String type = null;
         synchronized (resourceEnvRefs) {
-            resourceEnvRefs.remove(name);
+            type = (String) resourceEnvRefs.remove(name);
+        }
+        if (type != null) {
+            support.firePropertyChange("resourceEnvRef",
+                                       name + ":" + type, null);
         }
 
     }
@@ -527,8 +598,13 @@ public final class NamingResources {
      */
     public void removeResourceLink(String name) {
 
+        ContextResourceLink resourceLink = null;
         synchronized (resourceLinks) {
-            resourceLinks.remove(name);
+            resourceLink = (ContextResourceLink) resourceLinks.remove(name);
+        }
+        if (resourceLink != null) {
+            resourceLink.setNamingResources(null);
+            support.firePropertyChange("resourceLink", resourceLink, null);
         }
 
     }
@@ -541,8 +617,14 @@ public final class NamingResources {
      */
     public void removeResourceParams(String name) {
 
+        ResourceParams resourceParameters = null;
         synchronized (resourceParams) {
-            resourceParams.remove(name);
+            resourceParameters = (ResourceParams) resourceParams.remove(name);
+        }
+        if (resourceParameters != null) {
+            resourceParameters.setNamingResources(null);
+            support.firePropertyChange("resourceParams", resourceParameters,
+                                       null);
         }
 
     }

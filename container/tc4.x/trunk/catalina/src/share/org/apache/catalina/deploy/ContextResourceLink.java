@@ -147,4 +147,21 @@ public final class ContextResourceLink {
     }
 
 
+    // -------------------------------------------------------- Package Methods
+
+
+    /**
+     * The NamingResources with which we are associated (if any).
+     */
+    protected NamingResources resources = null;
+
+    public NamingResources getNamingResource() {
+        return (this.resources);
+    }
+
+    void setNamingResources(NamingResources resources) {
+        this.resources = resources;
+    }
+
+
 }
