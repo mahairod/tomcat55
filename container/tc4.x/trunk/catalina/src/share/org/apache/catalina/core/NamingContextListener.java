@@ -65,6 +65,8 @@
 package org.apache.catalina.core;
 
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -120,7 +122,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public class NamingContextListener
-    implements LifecycleListener, ContainerListener {
+    implements LifecycleListener, ContainerListener, PropertyChangeListener {
 
 
     // ----------------------------------------------------------- Constructors
@@ -264,6 +266,7 @@ public class NamingContextListener
             namingResources = ((Context) container).getNamingResources();
         } else if (container instanceof Server) {
             namingResources = ((Server) container).getGlobalNamingResources();
+            namingResources.addPropertyChangeListener(this);
         } else {
             return;
         }
@@ -337,6 +340,7 @@ public class NamingContextListener
             }
 
             if (container instanceof Server) {
+                namingResources.removePropertyChangeListener(this);
                 ContextBindings.unbindClassLoader
                     (container, container, 
                      this.getClass().getClassLoader());
@@ -507,7 +511,152 @@ public class NamingContextListener
     }
 
 
+    // ----------------------------------------- PropertyChangeListener Methods
+
+
+    /**
+     * Process property change events.  Currently, only listens to such events
+     * on the <code>NamingResources</code> instance for the global naming
+     * resources.
+     *
+     * @param event The property change event that has occurred
+     */
+    public void propertyChange(PropertyChangeEvent event) {
+
+        Object source = event.getSource();
+        if (source == namingResources) {
+            processGlobalResourcesChange(event.getPropertyName(),
+                                         event.getOldValue(),
+                                         event.getNewValue());
+        }
+
+    }
+
+
     // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Process a property change on the global naming resources, by making the
+     * corresponding addition or removal to the associated JNDI context.
+     *
+     * @param name Property name of the change to be processed
+     * @param oldValue The old value (or <code>null</code> if adding)
+     * @param newValue The new value (or <code>null</code> if removing)
+     */
+    private void processGlobalResourcesChange(String name,
+                                              Object oldValue,
+                                              Object newValue) {
+
+        // NOTE - It seems that the Context for global JNDI resources
+        // is left in read-write mode, so we do not have to change it here
+
+        if (name.equals("ejb")) {
+            if (oldValue != null) {
+                ContextEjb ejb = (ContextEjb) oldValue;
+                if (ejb.getName() != null) {
+                    removeEjb(ejb.getName());
+                }
+            }
+            if (newValue != null) {
+                ContextEjb ejb = (ContextEjb) newValue;
+                if (ejb.getName() != null) {
+                    addEjb(ejb);
+                }
+            }
+        } else if (name.equals("environment")) {
+            if (oldValue != null) {
+                ContextEnvironment env = (ContextEnvironment) oldValue;
+                if (env.getName() != null) {
+                    removeEnvironment(env.getName());
+                }
+            }
+            if (newValue != null) {
+                ContextEnvironment env = (ContextEnvironment) newValue;
+                if (env.getName() != null) {
+                    addEnvironment(env);
+                }
+            }
+        } else if (name.equals("localEjb")) {
+            if (oldValue != null) {
+                ContextLocalEjb ejb = (ContextLocalEjb) oldValue;
+                if (ejb.getName() != null) {
+                    removeLocalEjb(ejb.getName());
+                }
+            }
+            if (newValue != null) {
+                ContextLocalEjb ejb = (ContextLocalEjb) newValue;
+                if (ejb.getName() != null) {
+                    addLocalEjb(ejb);
+                }
+            }
+        } else if (name.equals("resource")) {
+            if (oldValue != null) {
+                ContextResource resource = (ContextResource) oldValue;
+                if (resource.getName() != null) {
+                    removeResource(resource.getName());
+                }
+            }
+            if (newValue != null) {
+                ContextResource resource = (ContextResource) newValue;
+                if (resource.getName() != null) {
+                    addResource(resource);
+                }
+            }
+        } else if (name.equals("resourceEnvRef")) {
+            if (oldValue != null) {
+                String update = (String) oldValue;
+                int colon = update.indexOf(':');
+                removeResourceEnvRef(update.substring(0, colon));
+            }
+            if (newValue != null) {
+                String update = (String) newValue;
+                int colon = update.indexOf(':');
+                addResourceEnvRef(update.substring(0, colon),
+                                  update.substring(colon + 1));
+            }
+        } else if (name.equals("resourceLink")) {
+            if (oldValue != null) {
+                ContextResourceLink rl = (ContextResourceLink) oldValue;
+                if (rl.getName() != null) {
+                    removeResourceLink(rl.getName());
+                }
+            }
+            if (newValue != null) {
+                ContextResourceLink rl = (ContextResourceLink) newValue;
+                if (rl.getName() != null) {
+                    addResourceLink(rl);
+                }
+            }
+        } else if (name.equals("resourceParams")) {
+            if (oldValue != null) {
+                ResourceParams rp = (ResourceParams) oldValue;
+                if (rp.getName() != null) {
+                    // Remove and re-add the resource without the parameters
+                    ContextResource resource =
+                        namingResources.findResource(rp.getName());
+                    if (resource != null) {
+                        removeResource(resource.getName());
+                        addResource(resource);
+                    }
+                }
+            }
+            if (newValue != null) {
+                ResourceParams rp = (ResourceParams) newValue;
+                if (rp.getName() != null) {
+                    // Remove and re-add the resource with the parameters
+                    ContextResource resource =
+                        namingResources.findResource(rp.getName());
+                    if (resource != null) {
+                        removeResource(resource.getName());
+                        addResource(resource);
+                    }
+                }
+            }
+        }
+
+
+    }
 
 
     /**

@@ -197,7 +197,6 @@ public class NamingResourcesMBean extends BaseModelMBean {
         env.setName(envName);
         env.setType(type);
         nresources.addEnvironment(env);
-        // FIXME add to the javax.naming.directory.DirContext
         
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("ContextEnvironment");
@@ -229,7 +228,6 @@ public class NamingResourcesMBean extends BaseModelMBean {
         resource.setName(resourceName);
         resource.setType(type);
         nresources.addResource(resource);
-        // FIXME
         
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("ContextResource");
