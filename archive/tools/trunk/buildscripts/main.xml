@@ -47,6 +47,7 @@
    <!-- ******************** Building  ******************** -->
   <target name="tomcat" depends="init">
      <ant dir="${ws.dir}/jakarta-tomcat" antfile="${ws.dir}/jakarta-tomcat/build.xml" target="dist" />
+     <mkdir dir="${package.dir}/tomcat"/>
      <zip zipfile="${package.dir}/tomcat/tomcat.zip" basedir="${tomcat.home}/.." 
           items="tomcat" />
      <copyfile src="${package.dir}/tomcat/tomcat.zip" dest="${package.dir}/tomcat/tomcat-${os.name}-${DSTAMP}.zip" />
