@@ -61,10 +61,6 @@
       </fileset>
     </copy>
 
-    <jar jarfile="${build.dir}/jasper34_runtime.jar" 
-	 basedir="${build.dir}/classes"> 
-      <include name="org/apache/jasper34/runtime/**"/>    
-    </jar>
   </target>
 
   <target name="generator" 
@@ -89,18 +85,6 @@
       </fileset>
     </copy>
 
-    <jar manifest="${jasper34.src}/tools/manifest.jspc" 
-	 jarfile="${build.dir}/jasper34.jar" 
-	 basedir="${build.dir}/classes"> 
-      <include name="org/apache/jasper34/generator/**"/>    
-      <include name="org/apache/jasper34/jsptree/**"/>    
-      <include name="org/apache/jasper34/parser/**"/>    
-      <include name="org/apache/jasper34/javagen/**"/>    
-      <include name="org/apache/jasper34/core/**"/>    
-      <include name="org/apache/jasper34/javacompiler/**"/>    
-      <include name="org/apache/jasper34/resources/**"/>    
-      
-    </jar>
   </target>
 
   <!-- XXX detect if tomcat33, tomcat40 is available, build the adapters
@@ -135,17 +119,35 @@
 	<include name="**/*.dtd"/>
       </fileset>
     </copy>
-
-    <jar jarfile="${build.dir}/jasper34_liaison.jar" 
-	 basedir="${build.dir}/classes"> 
-      <include name="org/apache/jasper34/servlet/**"/>    
-      <include name="org/apache/jasper34/liaison/**"/>    
-      <include name="org/apache/jasper34/tomcat33/**"/>    
-    </jar>
-
   </target>
 
-  <target name="main" depends="prepare,runtime,generator,liaison"/>
+  <target name="jars" >
+    <jar jarfile="${build.dir}/jasper34_runtime.jar" 
+	 basedir="${build.dir}/classes"> 
+      <include name="org/apache/jasper34/runtime/**"/>    
+    </jar>
+
+    <jar manifest="${jasper34.src}/tools/manifest.jspc" 
+	 jarfile="${build.dir}/jasper34.jar" 
+	 basedir="${build.dir}/classes"> 
+      <include name="org/apache/jasper34/generator/**"/>    
+      <include name="org/apache/jasper34/jsptree/**"/>    
+      <include name="org/apache/jasper34/parser/**"/>    
+      <include name="org/apache/jasper34/javagen/**"/>    
+      <include name="org/apache/jasper34/core/**"/>    
+      <include name="org/apache/jasper34/javacompiler/**"/>    
+      <include name="org/apache/jasper34/resources/**"/>    
+      
+    </jar>
+    <jar jarfile="${build.dir}/jasper34_liaison.jar" 
+	 basedir="${build.dir}/classes"> 
+      <include name="org/apache/jasper34/tomcat33/**"/>    
+      <include name="org/apache/jasper34/servlet/**"/>    
+      <include name="org/apache/jasper34/liaison/**"/>    
+    </jar>
+   </target>
+
+  <target name="main" depends="prepare,runtime,generator,liaison,jars"/>
 
   <target name="install" depends="main" >
     <copy file="${build.dir}/jasper34_liaison.jar" 
