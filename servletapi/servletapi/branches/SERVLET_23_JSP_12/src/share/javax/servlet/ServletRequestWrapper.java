@@ -154,7 +154,7 @@ public class ServletRequestWrapper implements ServletRequest {
      * on the wrapped request object.
      */
 
-    public void setCharacterEncoding(String enc) {
+    public void setCharacterEncoding(String enc) throws java.io.UnsupportedEncodingException {
 	this.request.setCharacterEncoding(enc);
 	}
     

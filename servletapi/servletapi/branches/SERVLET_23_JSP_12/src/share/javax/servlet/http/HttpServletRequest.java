@@ -367,11 +367,12 @@ public interface HttpServletRequest extends ServletRequest {
      * Returns the query string that is contained in the request
      * URL after the path. This method returns <code>null</code>
      * if the URL does not have a query string. Same as the value
-     * of the CGI variable QUERY_STRING.
+     * of the CGI variable QUERY_STRING. 
      *
      * @return		a <code>String</code> containing the query
      *			string or <code>null</code> if the URL 
-     *			contains no query string
+     *			contains no query string. The value is not
+     *			decoded by the container.
      *
      */
 
