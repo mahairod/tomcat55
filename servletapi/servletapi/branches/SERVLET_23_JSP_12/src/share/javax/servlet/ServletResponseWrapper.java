@@ -103,6 +103,19 @@ public class ServletResponseWrapper implements ServletResponse {
 	public ServletResponse getResponse() {
 		return this.response;
 	}	
+	
+	
+	/**
+	* Sets the response being wrapped. 
+	* @throws java.lang.IllegalArgumentException if the response is null.
+	*/
+	
+	public void setResponse(ServletResponse response) {
+	    if (response == null) {
+		throw new IllegalArgumentException("Response cannot be null");
+	    }
+	    this.response = response;
+	}
 
 	  /**
      * The default behavior of this method is to return getCharacterEncoding()

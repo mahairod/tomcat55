@@ -104,6 +104,18 @@ public class ServletRequestWrapper implements ServletRequest {
 	public ServletRequest getRequest() {
 		return this.request;
 	}
+	
+	/**
+	* Sets the request object being wrapped. 
+	* @throws java.lang.IllegalArgumentException if the request is null.
+	*/
+	
+	public void setResponse(ServletRequest request) {
+	    if (request == null) {
+		throw new IllegalArgumentException("Request cannot be null");
+	    }
+	    this.request = request;
+	}
 
     /**
      *
