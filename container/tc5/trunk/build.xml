@@ -42,8 +42,6 @@
   <!-- Build Defaults -->
   <property name="catalina.build"   value="${catalina.home}/build"/>
   <property name="jasper.build"     value="${jasper.home}/build"/>
-  <property name="javaservice.home" value="../javaservice"/>
-  <property name="nsis.home"        value="c:\program files\nsis"/>
   <property name="servlet.home"     value="../jakarta-servletapi-5/jsr154/dist"/>
   <property name="jsp.home"         value="../jakarta-servletapi-5/jsr152/dist"/>
   <property name="tomcat.build"     value="${basedir}/build"/>
@@ -827,7 +825,8 @@
       <fileset dir="resources" />
     </copy>
     <copy file="${nsis.installoptions.dll}" todir="${tomcat.dist}" />
-    <copy file="${javaservice.exe}" tofile="${tomcat.dist}/bin/tomcat.exe" />
+    <copy file="${commons-daemon.procrun.exe}" tofile="${tomcat.dist}/bin/tomcat.exe" />
+    <copy file="${commons-daemon.procrunw.exe}" tofile="${tomcat.dist}/bin/tomcatw.exe" />
     <filter token="VERSION" value="${version}"/>
     <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" 
      filtering="true"/>
@@ -907,7 +906,8 @@
     <condition property="execute.installer">
       <and>
         <os family="windows" />
-        <available file="${javaservice.exe}" />
+        <available file="${commons-daemon.procrun.exe}" />
+        <available file="${commons-daemon.procrunw.exe}" />
         <available file="${nsis.exe}" />
         <available file="${nsis.installoptions.dll}" />
       </and>
@@ -1063,6 +1063,12 @@
       <param name="sourcefile" value="${junit.loc}"/>
       <param name="destfile" value="${junit.jar}"/>
       <param name="destdir" value="${base.path}"/>
+    </antcall>
+
+    <antcall target="cvsbuild">
+      <param name="location" value="${commons-daemon.cvs.loc}"/>
+      <param name="subdir" value="${commons-daemon.home}"/>
+      <param name="destfile" value="${commons-daemon.jar}"/>
     </antcall>
 
     <antcall target="downloadgz">

@@ -111,7 +111,6 @@ Section "Core" SecTomcatCore
   File tomcat.ico
   File LICENSE
   File /r bin
-  Delete "$INSTDIR\bin\tomcat.exe"
   File /r common
   File /r conf
   File /r shared
@@ -124,7 +123,8 @@ Section "Core" SecTomcatCore
   File /r webapps\ROOT
 
   !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
-  CopyFiles "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
+  CopyFiles /SILENT "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
+  ClearErrors
   BringToFront
 
   Call configure
@@ -140,11 +140,12 @@ Section "Service" SecTomcatService
   Call findJVMPath
   Pop $2
 
-  SetOutPath $INSTDIR\bin
-  File /oname=tomcat.exe bin\tomcat.exe
-  
-  ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Apache Tomcat 5.0" "$2" -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Dcatalina.home="$INSTDIR" -Djava.endorsed.dirs="$INSTDIR\common\endorsed" -start org.apache.catalina.startup.Bootstrap -params startd -stop org.apache.catalina.startup.Bootstrap -params stopd -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
-  
+  ExecWait '"$INSTDIR\bin\tomcatw.exe" //IS//Tomcat5 --DisplayName "Apache Tomcat @VERSION@" --Description "Apache Tomcat @VERSION@ Server http://jakarta.apache.org/tomcat"  --Install "$INSTDIR\bin\tomcat.exe" --ImagePath "$INSTDIR\bin\bootstrap.jar" --StartupClass org.apache.catalina.startup.Bootstrap;main;start --ShutdownClass org.apache.catalina.startup.Bootstrap;main;stop --Java auto --JavaOptions -Djava.endorsed.dirs="$INSTDIR\common\endorsed"#-Dcatalina.home="$INSTDIR" --StdOutputFile "$INSTDIR\logs\stdout.log" --StdErrorFile "$INSTDIR\logs\stderr.log" --WorkingPath "$INSTDIR"'
+
+  ;ExecWait '"$INSTDIR\bin\tomcatw.exe" //US//Tomcat5 --ImagePath "$INSTDIR\bin\bootstrap.jar" --StartupClass org.apache.catalina.startup.Bootstrap;main;start --ShutdownClass org.apache.catalina.startup.Bootstrap;main;stop --Java auto --StdOutputFile "$INSTDIR\logs\stdout.log" --StdErrorFile "$INSTDIR\logs\stderr.log" --WorkingPath "$INSTDIR"'
+
+;--JavaOptions -Djava.endorsed.dirs="$INSTDIR\common\endorsed"#-Dcatalina.home="$INSTDIR"
+
   BringToFront
   ClearErrors
 
@@ -216,8 +217,8 @@ Section "Examples" SecExamples
 
   SetOverwrite on
   SetOutPath $INSTDIR\webapps
-  File webapps\jsp-examples.war
-  File webapps\servlets-examples.war
+  File /r webapps\jsp-examples
+  File /r webapps\servlets-examples
 
 SectionEnd
 
@@ -227,8 +228,6 @@ Section -post
   File "${NSISDIR}\Contrib\UIs\modern.exe"
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
-
-  Call startService
 
   WriteRegStr HKLM "SOFTWARE\Apache Group\Tomcat\5.0" "" $INSTDIR
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0" \
@@ -293,10 +292,9 @@ Function findJavaPath
 
   ClearErrors
 
-  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
-  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$2" "JavaHome"
-  ReadRegStr $3 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
-  ReadRegStr $4 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$3" "RuntimeLib"
+  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
+  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$2" "JavaHome"
+  ReadRegStr $3 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$2" "RuntimeLib"
 
   FoundJDK:
 
@@ -374,7 +372,7 @@ Function checkJvm
   Quit
 NoErrors1:
   Push $3
-  Call findJvmPath
+  Call findJVMPath
   Pop $4
   StrCmp $4 "" 0 NoErrors2
   MessageBox MB_OK "No Java Virtual Machine found."
@@ -478,7 +476,7 @@ FunctionEnd
 Function startService
 
   IfFileExists "$INSTDIR\bin\tomcat.exe" 0 NoService
-  ExecWait 'net start "Apache Tomcat 5.0"'
+  ExecWait 'net start "Tomcat5"'
   BringToFront
 
  NoService:
@@ -495,7 +493,7 @@ FunctionEnd
 Function un.stopService
 
   IfFileExists "$INSTDIR\bin\tomcat.exe" 0 NoService
-  ExecWait 'net stop "Apache Tomcat 5.0"'
+  ExecWait 'net stop "Tomcat5"'
   Sleep 1000
   BringToFront
 
@@ -515,7 +513,8 @@ Section Uninstall
   ; Stopping NT service (if in use)
   Call un.stopService
 
-  ExecWait '"$INSTDIR\bin\tomcat.exe" -uninstall "Apache Tomcat 5.0"'
+  ;ExecWait '"$INSTDIR\bin\tomcat.exe" -uninstall "Apache Tomcat 5.0"'
+  ExecWait '"$INSTDIR\bin\tomcatw.exe" //DS//Tomcat5'
   ClearErrors
 
   DeleteRegKey HKCR "JSPFile"
@@ -535,8 +534,6 @@ Section Uninstall
   RMDir /r "$INSTDIR\webapps\tomcat-docs"
   RMDir /r "$INSTDIR\webapps\servlets-examples"
   RMDir /r "$INSTDIR\webapps\jsp-examples"
-  Delete "$INSTDIR\webapps\servlets-examples.war"
-  Delete "$INSTDIR\webapps\jsp-examples.war"
   RMDir "$INSTDIR\webapps"
   RMDir /r "$INSTDIR\work"
   RMDir /r "$INSTDIR\temp"

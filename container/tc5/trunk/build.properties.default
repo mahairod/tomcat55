@@ -67,6 +67,17 @@ commons-launcher.bootstrap.class=${commons-launcher.bin}/LauncherBootstrap.class
 commons-launcher.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-launcher/v0.9/commons-launcher-0.9.tar.gz
 
 
+# ----- Commons Daemon -----
+commons-daemon.home=${base.path}/commons-daemon
+commons-daemon.lib=${commons-daemon.home}/dist
+commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
+commons-daemon.procrun.home=${commons-daemon.home}/src/native/nt/procrun/bin
+commons-daemon.procrun.exe=${commons-daemon.procrun.home}/procrun.exe
+commons-daemon.procrunw.exe=${commons-daemon.procrun.home}/procrunw.exe
+commons-daemon.loc=jakarta-commons-sandbox/daemon
+commons-daemon.cvs.loc=jakarta-commons-sandbox/daemon
+
+
 # ----- Commons Digester, version 1.4 or later -----
 commons-digester.home=${base.path}/commons-digester-1.4
 commons-digester.lib=${commons-digester.home}
@@ -168,12 +179,6 @@ javagroups.home=${base.path}/JavaGroups-2.0.3.bin
 javagroups.lib=${javagroups.home}
 javagroups.jar=${javagroups.lib}/javagroups-all.jar
 javagroups.loc=http://telia.dl.sourceforge.net/sourceforge/javagroups/JavaGroups-2.0.3.bin.zip
-
-
-# ----- JavaService, version 1.2.0 or later -----
-javaservice.home=${base.path}/javaservice
-javaservice.exe=${javaservice.home}/bin/JavaService.exe
-javaservice.loc=http://www.alexandriasc.com/software/JavaService/JavaService-bin-1.2.0.zip
 
 
 # ----- Java Management Extensions (JMX), JMX RI 1.0.1 or later or MX4J 1.1 or later -----
