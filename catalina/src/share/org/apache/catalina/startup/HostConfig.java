@@ -118,6 +118,18 @@ public class HostConfig
 
 
     /**
+     * App base.
+     */
+    private File appBase = null;
+
+
+    /**
+     * Config base.
+     */
+    private File configBase = null;
+
+
+    /**
      * The Java class name of the Context configuration class we should use.
      */
     protected String configClass = "org.apache.catalina.startup.ContextConfig";
@@ -400,11 +412,20 @@ public class HostConfig
      */
     protected File appBase() {
 
+        if (appBase != null) {
+            return appBase;
+        }
+
         File file = new File(host.getAppBase());
         if (!file.isAbsolute())
             file = new File(System.getProperty("catalina.base"),
                             host.getAppBase());
-        return (file);
+        try {
+            appBase = file.getCanonicalFile();
+        } catch (IOException e) {
+            appBase = file;
+        }
+        return (appBase);
 
     }
 
@@ -421,7 +442,12 @@ public class HostConfig
             file = new File(file, parent.getName());
         }
         file = new File(file, host.getName());
-        return (file);
+        try {
+            configBase = file.getCanonicalFile();
+        } catch (IOException e) {
+            configBase = file;
+        }
+        return (configBase);
 
     }
 
@@ -685,6 +711,7 @@ public class HostConfig
             }
 
             Long lastModified = (Long) contextXmlLastModified.get(contextName);
+            String configBase = configBase().getPath();
             String configFileName = context.getConfigFile();
             if (configFileName != null) {
                 File configFile = new File(configFileName);
@@ -699,23 +726,22 @@ public class HostConfig
                 } else {
                     if (lastModified.longValue() != newLastModified) {
                         contextXmlLastModified.remove(contextName);
-                        String fileName = contextName;
-                        if (fileName.equals("")) {
-                            fileName = "ROOT.xml";
-                        } else {
-                            fileName = fileName + ".war";
-                        }
-                        try {
-                            deployed.remove(fileName);
-                            if (host.findChild(contextName) != null) {
-                                ((Deployer) host).remove(contextName);
+                        String fileName = configFileName;
+                        if (fileName.startsWith(configBase)) {
+                            fileName = 
+                                fileName.substring(configBase.length() + 1);
+                            try {
+                                deployed.remove(fileName);
+                                if (host.findChild(contextName) != null) {
+                                    ((Deployer) host).remove(contextName);
+                                }
+                            } catch (Throwable t) {
+                                log.error(sm.getString
+                                          ("hostConfig.undeployJar.error",
+                                           fileName), t);
                             }
-                        } catch (Throwable t) {
-                            log.error(sm.getString
-                                      ("hostConfig.undeployJar.error",
-                                       fileName), t);
+                            deployApps();
                         }
-                        deployApps();
                     }
                 }
             }
@@ -906,6 +932,9 @@ public class HostConfig
             log.debug(sm.getString("hostConfig.stop"));
 
         undeployApps();
+
+        appBase = null;
+        configBase = null;
 
     }
 
