@@ -613,7 +613,7 @@ public class ProxyDirContext implements DirContext {
     public Context createSubcontext(String name)
         throws NamingException {
         Context context = dirContext.createSubcontext(parseName(name));
-        cacheUnload(name.toString());
+        cacheUnload(name);
         return context;
     }
 
