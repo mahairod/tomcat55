@@ -471,13 +471,16 @@ in the following table.</p>
   <p>The cmd_line property can be given in multiple lines. In
   this case the jk environment will concatenate all the cmd_line entries
   together by putting spaces between the entries.</p>
+
+  <p><b>Note:</b> The cmd_line string doesn't support embedded spaces. This is
+  mostly likely to affect path specifications.  On Windows, you can use the
+  MS-DOS 8.3 name for directories that would otherwise contain a space.</p>
   </td>
   <td>
   <p>worker.localjni.cmd_line=-config</p>
   <p>worker.localjni.cmd_line=path-to-tomcats-server.xml-file</p>
   <p>worker.localjni.cmd_line=-home</p>
   <p>worker.localjni.cmd_line=-path-to-tomcat-home</p>
-
   </td>
  </tr>
  <tr>
@@ -546,8 +549,8 @@ the property files. These macros let you define properties and later on use
 them while constructing other properties. For example the following fragment:</p>
 
 <pre>
-workers.tomcat_home=d:\tomcat
-workers.java_home=d:\sdk\jdk1.2.2
+workers.tomcat_home=c:\jakarta-tomcat
+workers.java_home=c:\jdk1.2.2
 ps=\
 worker.inprocess.class_path=$(workers.tomcat_home)$(ps)classes
 worker.inprocess.class_path=$(workers.java_home)$(ps)lib$(ps)tools.jar
@@ -557,8 +560,8 @@ worker.inprocess.class_path=$(workers.java_home)$(ps)lib$(ps)tools.jar
 worker.inprocess.class_path properties</p>
 
 <pre>
-worker.inprocess.class_path= d:\tomcat\classes
-worker.inprocess.class_path=d:\sdk\jdk1.2.2\lib\tools.jar
+worker.inprocess.class_path= c:\jakarta-tomcat\classes
+worker.inprocess.class_path=c:\jdk1.2.2\lib\tools.jar
 </pre>
 
 <h2>The sample worker.properties</h2>
@@ -588,7 +591,7 @@ set the following properties in the file:</p>
 
 <ul>
  <li>workers.tomcat_home
-     - Have it point to your tomcat_home. E.g. wrkers.tomcat_home=d:\tomcat</li>
+     - Have it point to your tomcat_home. E.g. wrkers.tomcat_home=c:\jakarta-tomcat</li>
  <li>workers.java_home
      - Have it point to where you placed your JDK. E.g.
      workers.java_home=c:\jdk1.2.2</li>

@@ -29,11 +29,11 @@ install it you will need to:</p>
      hold on the NT executable (jk_nt_service.exe)</li>
  <ul>
   <li>Download
-      the executable from <a
-      href="http://jakarta.apache.org/cvsweb/index.cgi/~checkout~/jakarta-tomcat/bin/nt_service/jk_nt_service.exe?rev=1.1.2.1">http://jakarta.apache.org/cvsweb/index.cgi/~checkout~/jakarta-tomcat/bin/nt_service/jk_nt_service.exe?rev=1.1.2.1</a>
-      and save it under the name jk_nt_service.exe.<br>
-      As of the Tomcat 3.2 release, jk_nt_service.exe may also be found in the Tomcat
-      source distribution under jakarta-tomcat\bin\nt_service.</li>
+      the executable from the win32/i386 directory  found where you downloaded the
+      <a href="http://jakarta.apache.org/downloads/binindex.html"> Tomcat binary
+      distribution.</a> For those using Netscape as your browser, try downloading
+      a zip version of the file, if available. There can be problems using Netscape
+      to download DLL files.</li>
  </ul>
  <li>Customize
      a properties file that provides the service with Tomcat information
@@ -69,6 +69,9 @@ install it you will need to:</p>
   <li>From
       the NT services applet, highlight your service and press start.</li>
  </ul>
+ <b>Note:</b> If the log file location in your wrapper.properties file points to
+ the <tt>logs</tt> directory, and the <tt>logs</tt> directory doesn't yet exist,
+ manually create it before starting the service.
  <li>Stop
      Tomcat as a service.</li>
  <ul>
@@ -85,6 +88,8 @@ perform clean shutdown and you should make sure that an AJPV12 connector is
 defined in your server.xml. In the absence of a configured AJPV12 port the
 Tomcat service will kill Tomcat abruptly (that is murder it) without giving it
 a chance to clean up. </p>
+
+<p>To remove the installed service, execute jk_nt_service -R &lt;name of service&gt;</p>
 
 <h1>Advance Setup</h1>
 

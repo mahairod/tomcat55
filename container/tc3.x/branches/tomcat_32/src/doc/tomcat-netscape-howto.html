@@ -26,7 +26,7 @@ installation should have the following subdirectories:
   <li>&lt;tomcat_home&gt;\bin - Where you place web server plugins </li>
 </ol>
 
-<p>In all the examples in this document &lt;tomcat_home&gt; will be d:\tomcat.</p>
+<p>In all the examples in this document &lt;tomcat_home&gt; will be c:\jakarta-tomcat.</p>
 
 <p>A <tt>worker</tt> is defined to be a tomcat process that accepts work from
 the Netscape server.</p>
@@ -49,20 +49,11 @@ in-process mode can be found in the in process howto.</p>
 <h2>Installation</h2>
 
 <p>As of Tomcat 3.2, a pre-built version of the Netscape redirector server plugin
-for Win32, <tt>nsapi_redirect.dll</tt>, is available from two locations.  First,
-it may be found under the win32/i386 directory where you got the
-<a href="http://jakarta.apache.org/downloads/binindex.html"> Tomcat binary
-distribution.</a> Second, it may be found in the Tomcat source distribution under
-jakarta-tomcat\bin\netscape\nt4\i386.  The <tt>nsapi_redirect.dll</tt>
-may be used on Win98 systems in spite of the "nt4" in the sequence of subdirectories.
-For those using Netscape as your browser, your best bet is to download the Tomcat
-source distribution since there have been reported problems with Netscape downloading
-DLLs directly.</p>
-
-<p>A pre-built version of the Netscape redirector server plugin for Linux,
-<tt>nsapi_redirect.so</tt>, is available in the Tomcat source distribution
-under jakarta-tomcat\bin\netscape\linux\i386.  (Though this Linux version is available,
-the OS dependent instructions below refer only to Windows NT.)</p>
+for Win32, <tt>nsapi_redirect.dll</tt>, is available under the win32/i386
+directory where you downloaded the <a href="http://jakarta.apache.org/downloads/binindex.html">
+Tomcat binary distribution.</a> For those using Netscape as your browser, try
+downloading a zip version of the file, if available. There can be problems using
+Netscape to download DLL files.</p>
 
 <p>You can also build a copy locally from the source in Tomcat's source
 distribution.</p>
@@ -88,8 +79,8 @@ distribution.</p>
 <h3>Configuring the NSAPI Redirector</h3>
 
 <p>In this document I will assume that nsapi_redirect.dll is placed in
-d:\tomcat\bin\netscape\nt4\i386\nsapi_redirect.dll and that you created the
-properties files are in d:\tomcat\conf.</p>
+c:\jakarta-tomcat\bin\win32\i386\nsapi_redirect.dll and that you created the
+properties files are in c:\jakarta-tomcat\conf.</p>
 
 <ol>
   <li>If the Netscape built in servlet support is working disable it.</li>
@@ -205,12 +196,12 @@ following:
 
 <p>Adding a Tomcat context to Netscape requires the addition of a new Netscape 
 virtual directory that covers the Tomcat context. For example, adding a 
-/example Netscape virtual directory that covers the d:\tomkat\webapps\examples 
+/example Netscape virtual directory that covers the c:\jakarta-tomcat\webapps\examples 
 directory.
 
 To add a new virtual directory add the following line to your obj.conf:</p>
 
-<p><tt>NameTrans fn=pfx2dir from=/examples dir=&quot;d:/tomcat/webapps/examples&quot;</tt></p>
+<p><tt>NameTrans fn=pfx2dir from=/examples dir=&quot;c:/jakarta-tomcat/webapps/examples&quot;</tt></p>
 
 <p>WEB-INF protection requires some explanation; Each servlet application (context) has a
 special directory named WEB-INF, this directory contains sensitive configurations data and
