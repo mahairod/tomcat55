@@ -49,10 +49,10 @@ base.path=/usr/local
 
 
 # ----- Commons Beanutils, version 1.3 or later -----
-commons-beanutils.home=${base.path}/commons-beanutils-1.3
+commons-beanutils.home=${base.path}/commons-beanutils-1.4
 commons-beanutils.lib=${commons-beanutils.home}
 commons-beanutils.jar=${commons-beanutils.lib}/commons-beanutils.jar
-commons-beanutils.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-beanutils/v1.3/commons-beanutils-1.3.tar.gz
+commons-beanutils.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-beanutils/v1.4/commons-beanutils-1.4.tar.gz
 
 
 # ----- Commons Collections, version 2.0 or later -----
@@ -79,12 +79,12 @@ commons-digester.jar=${commons-digester.lib}/commons-digester.jar
 commons-digester.loc=jakarta-commons/digester
 
 
-# ----- Commons Logging, version 20020728 or later -----
-commons-logging.home=${base.path}/commons-logging
+# ----- Commons Logging, version 1.0.1 or later -----
+commons-logging.home=${base.path}/commons-logging-1.0.1
 commons-logging.lib=${commons-logging.home}
 commons-logging-api.jar=${commons-logging.lib}/commons-logging-api.jar
 commons-logging.jar=${commons-logging.lib}/commons-logging.jar
-commons-logging.loc=jakarta-commons/logging
+commons-logging.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-logging/v1.0.1/commons-logging-1.0.1.zip
 
 
 # ----- Java Naming and Directory Interface (JNDI), version 1.2 or later -----
