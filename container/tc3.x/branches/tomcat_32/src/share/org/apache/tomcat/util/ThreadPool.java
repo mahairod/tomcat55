@@ -205,6 +205,9 @@ public class ThreadPool  {
                     int toOpen = currentThreadCount + minSpareThreads;
                     openThreads(toOpen);
                 } else {
+                    // XXX There really should be a way to log which pool is exhuasted
+                    loghelper.log("Pool exhausted with " + currentThreadCount + " threads.");
+
                     // Wait for a thread to become idel.
                     while(currentThreadsBusy == currentThreadCount) {
                         try {
