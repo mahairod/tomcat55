@@ -977,7 +977,7 @@
  	/>
 
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveFlush.jsp HTTP/1.0"
-           debug="0" host="${host}" port="${port}"
+           debug="0" host="${host}" port="${port}" exactMatch="true"
            goldenFile="${wgdir}/engine/JspWriter/misc/positiveFlush.html"
  	   testName="positiveFlush.jsp" 
 	   assertion="Test for flush() method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
