@@ -158,7 +158,7 @@ public class Compiler {
         project.addBuildListener( logger );
         
         if( options.getCompiler() != null ) {
-            Constants.jasperLog.log("Compiler " + options.getCompiler(), Logger.ERROR );
+            Constants.jasperLog.log("Compiler " + options.getCompiler(), Logger.INFORMATION);
             project.setProperty("build.compiler", options.getCompiler() );
         }
         project.init();
