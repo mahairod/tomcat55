@@ -59,6 +59,14 @@
     <!-- Note : To disable connection timeouts, set connectionTimeout value 
      to -1 -->
 
+    <!-- Define a non-SSL Coyote HTTP/1.1 Connector on port 8081 -->
+    <!--
+    <Connector className="org.apache.coyote.tomcat4.CoyoteConnector"
+               port="8081" minProcessors="5" maxProcessors="75"
+               enableLookups="true" redirectPort="8443"
+               acceptCount="10" debug="0" connectionTimeout="20000"/>
+    -->
+
     <!-- Define an SSL HTTP/1.1 Connector on port 8443 -->
     <!--
     <Connector className="org.apache.catalina.connector.http.HttpConnector"
@@ -79,7 +87,7 @@
     <!-- See proxy documentation for more information about using this. -->
     <!--
     <Connector className="org.apache.catalina.connector.http.HttpConnector"
-               port="8081" minProcessors="5" maxProcessors="75"
+               port="8082" minProcessors="5" maxProcessors="75"
                enableLookups="true"
                acceptCount="10" debug="0" connectionTimeout="60000"
                proxyPort="80"/>
@@ -88,7 +96,7 @@
     <!-- Define a non-SSL HTTP/1.0 Test Connector on port 8082 -->
     <!--
     <Connector className="org.apache.catalina.connector.http10.HttpConnector"
-               port="8082" minProcessors="5" maxProcessors="75"
+               port="8083" minProcessors="5" maxProcessors="75"
                enableLookups="true" redirectPort="8443"
                acceptCount="10" debug="0"/>
     -->

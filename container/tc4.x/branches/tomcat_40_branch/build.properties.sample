@@ -39,6 +39,12 @@ tomcat-util.jar=../lib/tomcat-util.jar
 tomcat-ajp.jar=../lib/tomcat-ajp.jar
 
 
+# ----- Coyote connector for Tomcat 4.0 -----
+commons-logging.jar=../lib/commons-logging.jar
+tomcat-coyote.jar=../lib/tomcat-coyote.jar
+tomcat-http11.jar=../lib/tomcat-http11.jar
+
+
 # ----- Jakarta Regular Expressions Library, version 1.2 -----
 regexp.jar=../lib/jakarta-regexp-1.2.jar
 

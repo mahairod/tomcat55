@@ -37,6 +37,12 @@ General New Features:
      ***** Please note the revised documentation below related to *****
      ***** using XML parsers with Tomcat 4.0 based applications.  *****
 
+Coyote: This release include a completely new HTTP/1.1 connector and connector 
+  API, called Coyote. This connector provides much improved performance and 
+  robustness over the default HTTP/1.1 connector.
+  This connector is disabled in the default configuration, but can be enabled 
+  by uncommenting an element in the server.xml configuration file.
+
 
 ---------------------
 Catalina New Features:
@@ -91,9 +97,13 @@ Webapps Bug Fixes:
 Bugzilla Bugs Resolved:
 ----------------------
 
+6846  dispatcher.forward() is confused when using special servlet mapping URLs
+6982  Stop + start of the context makes weird things
 7061  Servlet loaded TWICE on application startup?
 7102  response.encodeURL() doesn't encode
 7171  FileStore directory must exists
+7344  Tomcat appears to be case-sensitive with regard to the token "Basic" 
+      in Authorization request parameter
 
 
 ============================

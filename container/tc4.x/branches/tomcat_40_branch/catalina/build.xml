@@ -435,6 +435,11 @@
   <target name="copy-tomcat-ajp.jar" if="copy.tomcat-ajp.jar">
     <copy todir="${catalina.build}/server/lib" file="${tomcat-ajp.jar}"/>
   </target>
+  <target name="copy-tomcat-coyote.jar">
+    <copy todir="${catalina.build}/server/lib" file="${commons-logging.jar}"/>
+    <copy todir="${catalina.build}/server/lib" file="${tomcat-coyote.jar}"/>
+    <copy todir="${catalina.build}/server/lib" file="${tomcat-http11.jar}"/>
+  </target>
   <target name="copy-activation.jar" if="copy.javamail.jar">
     <copy todir="${catalina.build}/common/lib" file="${activation.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${mail.jar}"/>
@@ -473,7 +478,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-tomcat-ajp.jar,copy-jdbc20ext.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-tomcat-util.jar,copy-tyrex.jar,copy-xerces.jar">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-tomcat-ajp.jar,copy-tomcat-coyote.jar,copy-jdbc20ext.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-tomcat-util.jar,copy-tyrex.jar,copy-xerces.jar">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
