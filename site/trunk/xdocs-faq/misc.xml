@@ -149,6 +149,11 @@ Questions that were not categorized.
         How do open a file for reading in my webapp?
       </a>
     </li>
+    <li>
+      <a href="#fullJdk">
+        Can I run tomcat with the JRE only, or do I need the full JDK?
+      </a>
+    </li>
   </ul>
 </p>
 
@@ -642,6 +647,18 @@ Questions that were not categorized.
   </question>
   <answer>
     Use <tt>ServletContext.getResourceAsStream()</tt>.
+  </answer>
+
+  <question>
+    <a name="fullJdk">
+      Can I run tomcat with the JRE, or do I need the full JDK?
+    </a>
+  </question>
+  <answer>
+    Tomcat officially requires the full JDK, because it needs
+    javac in order to compile JSPs.  If you pre-compile all
+    your JSPs, you can get away with running tomcat
+    on a JRE only, but you do so at your own risk.
   </answer>
 
 </section>
