@@ -61,7 +61,7 @@ fi
 
 # ----- Set Up The Runtime Classpath ------------------------------------------
 
-CP=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar
+CP=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar:$JAXP_HOME/jaxp.jar:$JAXP_HOME/parser.jar
 if [ "$CLASSPATH" != "" ] ; then
   CP=$CLASSPATH:$CP
 fi
