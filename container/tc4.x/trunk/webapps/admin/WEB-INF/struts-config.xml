@@ -30,6 +30,10 @@
 
   <global-forwards>
 
+    <forward        name="Dump Registry Results"
+                    path="/dumpRegistry.jsp"
+                redirect="false"/>
+
     <forward        name="Main Menu"
                     path="/index.jsp"
                 redirect="false"/>
@@ -40,6 +44,10 @@
   <!-- ========== Action Mapping Definitions ============================== -->
 
   <action-mappings>
+
+    <!-- Dump registry information (debugging) -->
+    <action    path="/dumpRegistry"
+               type="org.apache.webapp.admin.DumpRegistryAction"/>
 
     <!-- Log out of the application -->
     <action    path="/logOut"

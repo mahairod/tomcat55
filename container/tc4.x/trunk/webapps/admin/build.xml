@@ -18,6 +18,7 @@
 
   <!-- Construct Admin classpath -->
   <path id="admin.classpath">
+    <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${jmxri.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${struts.jar}"/>
@@ -49,6 +50,9 @@
     <available property="jmx.present"
      classname="javax.management.MBeanServer"
      classpath="${jmxri.jar}" />
+    <available property="modeler.present"
+     classname="org.apache.commons.modeler.Registry"
+     classpath="${commons-modeler.jar}"/>
     <available property="servlet.present"
      classname="javax.servlet.Servlet"
      classpath="${servlet.jar}" />
@@ -58,6 +62,7 @@
 
     <!-- JAR files availability flags -->
     <available property="jmxri.jar.present"   file="${jmxri.jar}" />
+    <available property="modeler.jar.present" file="${commons-modeler.jar}" />
     <available property="servlet.jar.present" file="${servlet.jar}" />
     <available property="struts.jar.present"  file="${struts.jar}" />
 
@@ -68,6 +73,7 @@
         <and>
           <equals arg1="${struts.present}" arg2="true" />
           <equals arg1="${jmx.present}" arg2="true" />
+          <equals arg1="${modeler.present}" arg2="true" />
           <available file="${struts.lib}/struts-bean.tld" />
           <available file="${struts.lib}/struts-html.tld" />
           <available file="${struts.lib}/struts-logic.tld" />
@@ -111,10 +117,12 @@
     <echo message="--- Required Libraries ---" />
     <echo message="jaxp.present=${jaxp.present}" />
     <echo message="jmx.present=${jmx.present}" />
+    <echo message="modeler.present=${modeler.present}" />
     <echo message="servlet.present=${servlet.present}" />
 
     <echo message="--- Required JARs ---" />
     <echo message="jmxri.jar.present=${jmxri.jar.present}" />
+    <echo message="modeler.jar.present=${modeler.jar.present}" />
     <echo message="servlet.jar.present=${servlet.jar.present}" />
     <echo message="struts.jar.present=${struts.jar.present}" />
 

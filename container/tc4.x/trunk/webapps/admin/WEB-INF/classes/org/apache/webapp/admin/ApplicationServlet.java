@@ -62,12 +62,14 @@
 
 package org.apache.webapp.admin;
 
-
 import java.text.DateFormat;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import javax.management.MBeanServer;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
+import org.apache.commons.modeler.Registry;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.util.MessageResources;
 
@@ -93,19 +95,115 @@ public class ApplicationServlet extends ActionServlet {
     public static final String LOCALES_KEY = "applicationLocales";
 
 
+    // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * The managed beans Registry used to look up metadata.
+     */
+    protected Registry registry = null;
+
+
+    /**
+     * The JMX MBeanServer we will use to look up management beans.
+     */
+    protected MBeanServer server = null;
+
+
     // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Convenience method to make the managed beans Registry available.
+     *
+     * @exception ServletException if the Registry is not available
+     */
+    public Registry getRegistry() throws ServletException {
+
+        if (registry == null)
+            initRegistry();
+        return (this.registry);
+
+    }
+
+
+    /**
+     * Convenience method to make the JMX MBeanServer available.
+     *
+     * @exception ServletException if the MBeanServer is not available
+     */
+    public MBeanServer getServer() throws ServletException {
+
+        if (server == null)
+            initServer();
+        return (this.server);
+
+    }
+
 
     /**
      * Initialize this servlet.
+     *
+     * @exception ServletException if an initialization error occurs.
      */
     public void init() throws javax.servlet.ServletException {
 
         // Perform normal superclass initialization
         super.init();
 
-        // Create an ApplicationLocales object 
+        // Perform initialization specific to this application
+        initApplicationLocales();
+
+    }
+
+
+    // ---------------------------------------------------- Protected Methods
+
+
+    /**
+     * Create and initialize the ApplicationLocales object, and make it
+     * available as a servlet context attribute.
+     */
+    protected void initApplicationLocales() {
+
         ApplicationLocales locales = new ApplicationLocales(this);
         getServletContext().setAttribute(LOCALES_KEY, locales);
+
+    }
+
+
+    /**
+     * Validate the existence of the Registry that should have been
+     * provided to us by an instance of
+     * <code>org.apache.catalina.mbean.ServerLifecycleListener</code>
+     * enabled at startup time.
+     *
+     * @exception ServletException if we cannot find the Registry
+     */
+    protected void initRegistry() throws ServletException {
+
+        registry = (Registry) getServletContext().getAttribute
+            ("org.apache.catalina.Registry");
+        if (registry == null)
+            throw new UnavailableException("Registry is not available");
+
+    }
+
+
+    /**
+     * Validate the existence of the MBeanServer that should have been
+     * provided to us by an instance of
+     * <code>org.apache.catalina.mbean.ServerLifecycleListener</code>
+     * enabled at startup time.
+     *
+     * @exception ServletException if we cannot find the MBeanServer
+     */
+    protected void initServer() throws ServletException {
+
+        server = (MBeanServer) getServletContext().getAttribute
+            ("org.apache.catalina.MBeanServer");
+        if (server == null)
+            throw new UnavailableException("MBeanServer is not available");
 
     }
 
