@@ -95,6 +95,11 @@ abstract class Node {
     private boolean isDummy;
 
     /**
+     * Zero-arg Constructor.
+     */
+    public Node() {}
+
+    /**
      * Constructor.
      * @param start The location of the jsp page
      * @param parent The enclosing node
