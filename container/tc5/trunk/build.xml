@@ -579,7 +579,7 @@
     <!-- Add XML declarations for admin and manager -->
     <move file="${tomcat.build}/server/webapps/manager/manager.xml"
          todir="${tomcat.build}/webapps" />
-    <move file="${tomcat.build}/server/webapps/admin/admin.xml"
+    <copy file="${tomcat.build}/server/webapps/admin/admin.xml"
          todir="${tomcat.build}/webapps" />
 
   </target>
