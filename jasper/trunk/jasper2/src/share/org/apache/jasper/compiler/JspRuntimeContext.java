@@ -371,7 +371,7 @@ public final class JspRuntimeContext implements Runnable {
             }
         }    
 
-	cpath.append(options.getScratchDir() + "/tags" + sep);
+	cpath.append(options.getScratchDir() + sep);
 
         String cp = (String) context.getAttribute(Constants.SERVLET_CLASSPATH);
         if (cp == null || cp.equals("")) {
