@@ -160,7 +160,7 @@ public class MsgBuffer {
     public String getString() throws java.io.UnsupportedEncodingException {
 	int ll= getInt();
 	if( (ll == 0xFFFF) || (ll==-1) ) {
-	    System.out.println("null string " + ll);
+	    //	    System.out.println("null string " + ll);
 	    return null;
 	}
 	String s=BuffTool.getString( buff, pos, ll );

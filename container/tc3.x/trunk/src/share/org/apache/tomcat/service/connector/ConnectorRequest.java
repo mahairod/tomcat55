@@ -98,7 +98,8 @@ public class ConnectorRequest extends RequestImpl {
 	for( int i=0; i<envCount; i++ ) {
 	    String n= msg.getString();
 	    String v= msg.getString();
-	    env_vars.put( n , v );
+	    if(n!=null && v!=null)
+		env_vars.put( n , v );
 	}
 	
 	int hCount = msg.getInt();
