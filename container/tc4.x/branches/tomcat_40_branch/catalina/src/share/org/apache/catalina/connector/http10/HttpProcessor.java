@@ -128,8 +128,8 @@ final class HttpProcessor
         this.id = id;
         this.proxyName = connector.getProxyName();
         this.proxyPort = connector.getProxyPort();
-        this.request = (HttpRequest) connector.createRequest();
-        this.response = (HttpResponse) connector.createResponse();
+        this.request = (HttpRequestImpl) connector.createRequest();
+        this.response = (HttpResponseImpl) connector.createResponse();
         this.serverPort = connector.getPort();
         this.threadName =
           "HttpProcessor[" + connector.getPort() + "][" + id + "]";
@@ -192,13 +192,13 @@ final class HttpProcessor
     /**
      * The HTTP request object we will pass to our associated container.
      */
-    private HttpRequest request = null;
+    private HttpRequestImpl request = null;
 
 
     /**
      * The HTTP response object we will pass to our associated container.
      */
-    private HttpResponse response = null;
+    private HttpResponseImpl response = null;
 
 
     /**
@@ -464,16 +464,18 @@ final class HttpProcessor
                 for (int i = 0; i < cookies.length; i++) {
                     if (cookies[i].getName().equals
                         (Globals.SESSION_COOKIE_NAME)) {
-
                         // Override anything requested in the URL
-                        request.setRequestedSessionId(cookies[i].getValue());
-                        request.setRequestedSessionCookie(true);
-                        request.setRequestedSessionURL(false);
-                        if (debug >= 1)
-                          log(" Requested cookie session id is " +
-                              ((HttpServletRequest) request.getRequest()).getRequestedSessionId());
-                        break;  // Accept only the first session id value
-
+                        if (!request.isRequestedSessionIdFromCookie()) {
+                            // Accept only the first session id cookie
+                            request.setRequestedSessionId
+                                (cookies[i].getValue());
+                            request.setRequestedSessionCookie(true);
+                            request.setRequestedSessionURL(false);
+                            if (debug >= 1)
+                                log(" Requested cookie session id is " +
+                                    ((HttpServletRequest) request.getRequest())
+                                    .getRequestedSessionId());
+                        }
                     }
                     request.addCookie(cookies[i]);
                 }
