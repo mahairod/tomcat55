@@ -188,7 +188,7 @@ public class DigestAuthenticator
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 
@@ -335,21 +335,15 @@ public class DigestAuthenticator
             if ("username".equals(currentTokenName))
                 userName = removeQuotes(currentTokenValue);
             if ("realm".equals(currentTokenName))
-                realmName = removeQuotes(currentTokenValue);
+                realmName = removeQuotes(currentTokenValue, true);
             if ("nonce".equals(currentTokenName))
                 nOnce = removeQuotes(currentTokenValue);
             if ("nc".equals(currentTokenName))
                 nc = currentTokenValue;
             if ("cnonce".equals(currentTokenName))
                 cnonce = removeQuotes(currentTokenValue);
-            if ("qop".equals(currentTokenName)) {
-                //support both quoted and non-quoted
-                if (currentTokenValue.startsWith("\"") &&
-                    currentTokenValue.endsWith("\""))
-                  qop = removeQuotes(currentTokenValue);
-                else
-                  qop = currentTokenValue;
-            }
+            if ("qop".equals(currentTokenName))
+                qop = removeQuotes(currentTokenValue);
             if ("uri".equals(currentTokenName))
                 uri = removeQuotes(currentTokenValue);
             if ("response".equals(currentTokenName))
@@ -414,16 +408,28 @@ public class DigestAuthenticator
 
 
     /**
-     * Removes the quotes on a string.
+     * Removes the quotes on a string. RFC2617 states quotes are optional for
+     * all parameters except realm.
      */
-    protected static String removeQuotes(String quotedString) {
-        if (quotedString.length() > 2) {
+    protected static String removeQuotes(String quotedString,
+                                         boolean quotesRequired) {
+        //support both quoted and non-quoted
+        if (quotedString.length() > 0 && quotedString.charAt(0) != '"' &&
+                !quotesRequired) {
+            return quotedString;
+        } else if (quotedString.length() > 2) {
             return quotedString.substring(1, quotedString.length() - 1);
         } else {
             return new String();
         }
     }
 
+    /**
+     * Removes the quotes on a string.
+     */
+    protected static String removeQuotes(String quotedString) {
+        return removeQuotes(quotedString, false);
+    }
 
     /**
      * Generate a unique token. The token is generated according to the
