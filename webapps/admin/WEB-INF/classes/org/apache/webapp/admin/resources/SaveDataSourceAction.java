@@ -265,9 +265,11 @@ public final class SaveDataSourceAction extends Action {
                 (oname,
                  new Attribute(attribute, dataSourceForm.getWait()));
             attribute = "validationQuery";
-            mserver.setAttribute
-                (oname,
-                 new Attribute(attribute, dataSourceForm.getQuery()));
+            String validationQuery = dataSourceForm.getQuery();
+            if ((validationQuery != null) && (validationQuery.length()>0)) {
+                mserver.setAttribute(oname,
+                                new Attribute(attribute, validationQuery));
+            }
 
         } catch (Exception e) {
 
