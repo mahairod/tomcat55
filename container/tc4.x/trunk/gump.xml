@@ -58,7 +58,7 @@
       <depend property="jdbc20ext.jar" project="jdbc"/>
       <depend property="jndi.jar" project="jndi"/>
       <depend property="jaas.jar" project="jaas"/>
-      <depend property="jmxri.jar" project="jmx"/>
+      <depend property="jmx.jar" project="jmx" reference="jarpath" id="jmxri"/>
       <depend property="jta.jar" project="jta"/>
       <depend property="ldap.jar" project="ldap"/>
       <depend property="servlet.jar" project="jakarta-servletapi-4"/>
