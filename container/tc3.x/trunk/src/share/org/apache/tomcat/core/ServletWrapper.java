@@ -373,8 +373,9 @@ public class ServletWrapper {
 		    loadServlet();
 		} catch(Exception ex ) {
 		    // return not found
+		    context.log( "Class Not Found", ex );
 		    res.setStatus( 404 );
-		    contextM.handleError( req, res, ex, 404 );
+		    contextM.handleError( req, res, null,  404 );
 		    return;
 		}
 	    }
