@@ -66,8 +66,8 @@ package org.apache.naming.resources;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Map;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
@@ -86,8 +86,6 @@ import javax.naming.directory.SearchControls;
 
 import org.apache.naming.StringManager;
 
-import org.apache.commons.collections.LRUMap;
-
 /**
  * Proxy Directory Context implementation.
  *
@@ -103,6 +101,7 @@ public class ProxyDirContext implements DirContext {
 
     public static final String CONTEXT = "context";
     public static final String HOST = "host";
+    public static final int INCREMENT = 32;
 
 
     // ----------------------------------------------------------- Constructors
@@ -118,10 +117,11 @@ public class ProxyDirContext implements DirContext {
             // Initialize parameters based on the associated dir context, like
             // the caching policy.
             if (((BaseDirContext) dirContext).isCached()) {
-                cache = Collections.synchronizedMap(new LRUMap(cacheSize));
                 cacheTTL = ((BaseDirContext) dirContext).getCacheTTL();
                 cacheObjectMaxSize = 
                     ((BaseDirContext) dirContext).getCacheObjectMaxSize();
+                cache = new CacheEntry[0];
+                notFoundCache = new ThreadLocal();
             }
         }
         hostName = (String) env.get(HOST);
@@ -133,21 +133,32 @@ public class ProxyDirContext implements DirContext {
      * Builds a clone of this proxy dir context, wrapping the given directory
      * context, and sharing the same cache.
      */
+    // TODO: Refactor using the proxy field
+    /*
     protected ProxyDirContext(ProxyDirContext proxyDirContext, 
                               DirContext dirContext, String vPath) {
         this.env = proxyDirContext.env;
         this.dirContext = dirContext;
         this.vPath = vPath;
         this.cache = proxyDirContext.cache;
+        this.cacheMaxSize = proxyDirContext.cacheMaxSize;
         this.cacheSize = proxyDirContext.cacheSize;
         this.cacheTTL = proxyDirContext.cacheTTL;
         this.cacheObjectMaxSize = proxyDirContext.cacheObjectMaxSize;
+        this.notFoundCache = proxyDirContext.notFoundCache;
         this.hostName = proxyDirContext.hostName;
         this.contextName = proxyDirContext.contextName;
     }
+    */
 
 
     // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * Proxy DirContext (either this or the real proxy).
+     */
+    protected ProxyDirContext proxy = this;
 
 
     /**
@@ -190,13 +201,19 @@ public class ProxyDirContext implements DirContext {
      * Cache.
      * Path -> Cache entry.
      */
-    protected Map cache = null;
+    protected CacheEntry[] cache = null;
 
 
     /**
-     * Cache size
+     * Current cache size in KB.
      */
-    protected int cacheSize = 1000;
+    protected int cacheSize = 0;
+
+
+    /**
+     * Thread local cache for not found resources.
+     */
+    protected ThreadLocal notFoundCache = null;
 
 
     /**
@@ -208,7 +225,44 @@ public class ProxyDirContext implements DirContext {
     /**
      * Max size of resources which will have their content cached.
      */
-    protected int cacheObjectMaxSize = 32768; // 32 KB
+    protected int cacheMaxSize = 10240; // 10 MB
+
+
+    /**
+     * Max size of resources which will have their content cached.
+     */
+    protected int cacheObjectMaxSize = cacheMaxSize / 20; // 512 KB
+
+
+    /**
+     * Max amount of removals during a make space.
+     */
+    protected int maxMakeSpaceIterations = 10;
+
+
+    /**
+     * Entry hit ratio at which an entry will never be removed from the cache.
+     * Compared with entry.access / hitsCount
+     */
+    protected long desiredEntryAccessRatio = 3;
+
+
+    /**
+     * Spare amount of not found entries.
+     */
+    protected int spareNotFoundEntries = 10;
+
+
+    /**
+     * Number of accesses to the cache.
+     */
+    protected long accessCount = 0;
+
+
+    /**
+     * Number of cache hits.
+     */
+    protected long hitsCount = 0;
 
 
     /**
@@ -253,6 +307,34 @@ public class ProxyDirContext implements DirContext {
      */
     public String getContextName() {
         return this.contextName;
+    }
+
+
+    /**
+     * Return the access count.
+     * Note: Update is not synced, so the number may not be completely 
+     * accurate.
+     */
+    public long getAccessCount() {
+        return accessCount;
+    }
+
+
+    /**
+     * Return the number of cache hits.
+     * Note: Update is not synced, so the number may not be completely 
+     * accurate.
+     */
+    public long getHitsCount() {
+        return hitsCount;
+    }
+
+
+    /**
+     * Return the current cache size in KB.
+     */
+    public int getCacheSize() {
+        return cacheSize;
     }
 
 
@@ -1404,7 +1486,20 @@ public class ProxyDirContext implements DirContext {
         throws NamingException {
         if (cache == null)
             return (null);
-        CacheEntry cacheEntry = (CacheEntry) cache.get(name);
+        CacheEntry cacheEntry = null;
+        accessCount++;
+        int pos = find(cache, name);
+        if ((pos != -1) && (name.equals(cache[pos].name))) {
+            cacheEntry = cache[pos];
+        }
+        if (cacheEntry == null) {
+            HashMap localCache = (HashMap) notFoundCache.get();
+            if (localCache == null) {
+                notFoundCache.set(new HashMap());
+            }
+            cacheEntry = 
+                (CacheEntry) ((HashMap) notFoundCache.get()).get(name);
+        }
         if (cacheEntry == null) {
             cacheEntry = new CacheEntry();
             cacheEntry.name = name;
@@ -1420,6 +1515,8 @@ public class ProxyDirContext implements DirContext {
                         System.currentTimeMillis() + cacheTTL;
                 }
             }
+            cacheEntry.accessCount++;
+            hitsCount++;
         }
         if (!cacheEntry.exists) {
             throw notFoundException;
@@ -1525,6 +1622,9 @@ public class ProxyDirContext implements DirContext {
             && (entry.attributes.getContentLength() >= 0)
             && (entry.attributes.getContentLength() < cacheObjectMaxSize)) {
             int length = (int) entry.attributes.getContentLength();
+            // The entry size is 1 + the resource size in KB, if it will be 
+            // cached
+            entry.size += (entry.attributes.getContentLength() / 1024);
             InputStream is = null;
             try {
                 is = entry.resource.streamContent();
@@ -1556,7 +1656,26 @@ public class ProxyDirContext implements DirContext {
         entry.timestamp = System.currentTimeMillis() + cacheTTL;
 
         // Add new entry to cache
-        cache.put(name, entry);
+        synchronized (this) {
+            // Check cache size, and remove elements if too big
+            if (!makeSpace(entry.size)) {
+                // Don't cache
+                return;
+            }
+            if (exists) {
+                CacheEntry[] newCache = new CacheEntry[cache.length + 1];
+                if (insertMap(cache, newCache, entry)) {
+                    cache = newCache;
+                }
+            } else {
+                HashMap localCache = (HashMap) notFoundCache.get();
+                if (localCache == null) {
+                    notFoundCache.set(new HashMap());
+                }
+                ((HashMap) notFoundCache.get()).put(name, entry);
+            }
+            cacheSize += entry.size;
+        }
 
     }
 
@@ -1567,7 +1686,174 @@ public class ProxyDirContext implements DirContext {
     protected boolean cacheUnload(String name) {
         if (cache == null)
             return false;
-        return (cache.remove(name) != null);
+        synchronized (this) {
+            CacheEntry[] newCache = new CacheEntry[cache.length + 1];
+            CacheEntry removedEntry = removeMap(cache, newCache, name);
+            if (removedEntry != null) {
+                cache = newCache;
+                cacheSize -= removedEntry.size;
+                return true;
+            } else if (((HashMap) notFoundCache.get()).remove(name) != null) {
+                cacheSize--;
+                return true;
+            }
+            return false;
+        }
+    }
+
+
+    /**
+     * Make space for a new entry.
+     */
+    protected boolean makeSpace(int space) {
+
+        int toFree = space - (cacheMaxSize - cacheSize);
+
+        if (toFree < 0) {
+            return true;
+        }
+
+        HashMap localNotFoundCache = (HashMap) notFoundCache.get();
+        int size = localNotFoundCache.size();
+        if (size > spareNotFoundEntries) {
+            localNotFoundCache.clear();
+            cacheSize -= size;
+            toFree -= size;
+        }
+
+        if (toFree < 0) {
+            return true;
+        }
+
+        int attempts = 0;
+        long totalSpace = 0;
+        int[] toRemove = new int[maxMakeSpaceIterations];
+        while (toFree > 0) {
+            if (attempts == maxMakeSpaceIterations) {
+                // Give up, no changes are made to the current cache
+                return false;
+            }
+            if (toFree > 0) {
+                // Randomly select an entry in the array
+                int entryPos = -1;
+                while (true) {
+                    entryPos = (int) Math.round(Math.random() 
+                                                * (cache.length - 1));
+                    // Guarantee uniqueness
+                    for (int i = 0; i < attempts; i++) {
+                        if (toRemove[i] == entryPos) {
+                            continue;
+                        }
+                    }
+                    break;
+                }
+                long entryAccessRatio = 
+                    ((cache[entryPos].accessCount * 100) / accessCount);
+                if (entryAccessRatio < desiredEntryAccessRatio) {
+                    toRemove[attempts] = entryPos;
+                    totalSpace += cache[entryPos].size;
+                    toFree -= cache[entryPos].size;
+                }
+            }
+            attempts++;
+        }
+
+        // Now remove the selected entries
+        java.util.Arrays.sort(toRemove, 0, attempts);
+        CacheEntry[] newCache = new CacheEntry[cache.length - attempts];
+        int pos = 0;
+        for (int i = 0; i < attempts; i++) {
+            System.arraycopy(cache, pos, newCache, pos - i, toRemove[i] - pos);
+            pos = toRemove[i] + 1;
+            // Special case: last element
+            if (pos == cache.length) {
+                break;
+            }
+        }
+        cache = newCache;
+        cacheSize -= totalSpace;
+
+        return true;
+
+    }
+
+
+    /**
+     * Find a map elemnt given its name in a sorted array of map elements.
+     * This will return the index for the closest inferior or equal item in the
+     * given array.
+     */
+    private static final int find(CacheEntry[] map, String name) {
+
+        int a = 0;
+        int b = map.length - 1;
+
+        // Special cases: -1 and 0
+        if (b == -1) {
+            return -1;
+        }
+        if (name.compareTo(map[0].name) < 0) {
+            return -1;
+        }
+        if (b == 0) {
+            return 0;
+        }
+
+        int i = 0;
+        while (true) {
+            i = (b + a) / 2;
+            int result = name.compareTo(map[i].name);
+            if (result > 0) {
+                a = i;
+            } else if (result == 0) {
+                return i;
+            } else {
+                b = i;
+            }
+            if ((b - a) == 1) {
+                int result2 = name.compareTo(map[b].name);
+                if (result2 < 0) {
+                    return a;
+                } else {
+                    return b;
+                }
+            }
+        }
+
+    }
+
+
+    /**
+     * Insert into the right place in a sorted MapElement array, and prevent
+     * duplicates.
+     */
+    private static final boolean insertMap
+        (CacheEntry[] oldMap, CacheEntry[] newMap, CacheEntry newElement) {
+        int pos = find(oldMap, newElement.name);
+        if ((pos != -1) && (newElement.name.equals(oldMap[pos].name))) {
+            return false;
+        }
+        System.arraycopy(oldMap, 0, newMap, 0, pos + 1);
+        newMap[pos + 1] = newElement;
+        System.arraycopy
+            (oldMap, pos + 1, newMap, pos + 2, oldMap.length - pos - 1);
+        return true;
+    }
+
+
+    /**
+     * Insert into the right place in a sorted MapElement array.
+     */
+    private static final CacheEntry removeMap
+        (CacheEntry[] oldMap, CacheEntry[] newMap, String name) {
+        int pos = find(oldMap, name);
+        if ((pos != -1) && (name.equals(oldMap[pos].name))) {
+            System.arraycopy(oldMap, 0, newMap, 0, pos);
+            System.arraycopy(oldMap, pos + 1, newMap, pos, 
+                             oldMap.length - pos - 1);
+            return oldMap[pos];
+        }
+        return null;
     }
 
 
@@ -1586,6 +1872,8 @@ public class ProxyDirContext implements DirContext {
         Resource resource = null;
         DirContext context = null;
         boolean exists = true;
+        long accessCount = 0;
+        int size = 1;
 
 
         // ----------------------------------------------------- Public Methods
@@ -1598,6 +1886,8 @@ public class ProxyDirContext implements DirContext {
             resource = null;
             context = null;
             exists = true;
+            accessCount = 0;
+            size = 1;
         }
 
 
