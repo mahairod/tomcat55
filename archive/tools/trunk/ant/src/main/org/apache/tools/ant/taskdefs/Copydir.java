@@ -71,6 +71,7 @@ public class Copydir extends Task {
     public File destDir;
 
     private Hashtable filecopyList = new Hashtable();
+    private Vector ignoreList = new Vector();
 
     public void setSrc(String src) {
 	srcDir = project.resolveFile(src);
@@ -100,25 +101,53 @@ public class Copydir extends Task {
 	}
     }
 
+    /**
+        List of filenames and directory names to not 
+        include in the final .jar file. They should be either 
+        , or " " (space) separated.
+        <p>
+        For example:
+        <p>
+        ignore="package.html, foo.class"
+        <p>
+        The ignored files will be logged.
+        
+        @author Jon S. Stevens <a href="mailto:jon@clearink.com">jon@clearink.com</a>
+    */
+    public void setIgnore(String ignoreString) {
+        ignoreString = ignoreString;
+        if (ignoreString != null && ignoreString.length() > 0) {
+            StringTokenizer tok =
+            new StringTokenizer(ignoreString, ", ", false);
+            while (tok.hasMoreTokens()) {
+                ignoreList.addElement ( tok.nextToken().trim() );
+            }
+        }
+    }
+
     private void scanDir(File from, File to) {
-	String[] list = from.list(new DesirableFilter());
-	if (list == null) {
-	    project.log("Source directory " + srcDir.getAbsolutePath()
-			+ " does not exist.", "copydir", Project.MSG_WARN);
-	    return;
-	}
-	for (int i = 0; i < list.length; i++) {
-	    String filename = list[i];
-	    File srcFile = new File(from, filename);
-	    File destFile = new File(to, filename);
-	    if (srcFile.isDirectory()) {
-		scanDir(srcFile, destFile);
-	    } else {
-		if (srcFile.lastModified() > destFile.lastModified()) {
-		    filecopyList.put(srcFile.getAbsolutePath(),
-				     destFile.getAbsolutePath());
-		}
-	    }
-	}
+        String[] list = from.list(new DesirableFilter());
+        if (list == null) {
+            project.log("Source directory " + srcDir.getAbsolutePath()
+                + " does not exist.", "copydir", Project.MSG_WARN);
+            return;
+        }
+        for (int i = 0; i < list.length; i++) {
+            String filename = list[i];
+            File srcFile = new File(from, filename);
+            File destFile = new File(to, filename);
+            if ( ! ignoreList.contains(filename) ) {            
+                if (srcFile.isDirectory()) {
+                    scanDir(srcFile, destFile);
+                } else {
+                    if (srcFile.lastModified() > destFile.lastModified()) {
+                        filecopyList.put(srcFile.getAbsolutePath(),
+                                 destFile.getAbsolutePath());
+                    }
+                }
+            } else {
+                project.log("Copydir Ignored: " + filename, Project.MSG_WARN);
+            }
+        }
     }
 }
