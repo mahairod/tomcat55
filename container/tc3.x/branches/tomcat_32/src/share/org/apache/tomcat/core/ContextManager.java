@@ -1172,6 +1172,7 @@ public class ContextManager {
 	RequestImpl req1=new RequestImpl();
 	ResponseImpl res1=new ResponseImpl();
 	initRequest( req1, res1 );
+	req1.setServerName( ctx.getHost() );
 
 	req1.setRequestURI( ctx.getPath() + path );
 	processRequest( req1 );
