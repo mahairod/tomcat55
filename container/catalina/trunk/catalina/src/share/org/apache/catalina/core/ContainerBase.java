@@ -93,6 +93,8 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
+import org.apache.catalina.logger.LoggerBase;
+import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
@@ -445,6 +447,7 @@ public abstract class ContainerBase
             }
         }
 
+        
         // Start the new component if necessary
         if (logger != null)
             logger.setContainer(this);
@@ -1195,7 +1198,19 @@ public abstract class ContainerBase
             log.info(sm.getString("containerBase.alreadyStarted", logName()));
             return;
         }
-
+        
+        if( logger instanceof LoggerBase ) {
+            LoggerBase lb=(LoggerBase)logger;
+            if( lb.getObjectName()==null ) {
+                ObjectName lname=lb.createObjectName();
+                try {
+                    Registry.getRegistry().registerComponent(lb, lname, null);
+                } catch( Exception ex ) {
+                    log.error( "Can't register logger " + lname, ex);
+                }
+            }
+        }
+        
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
 
