@@ -137,8 +137,6 @@
       running (as a special note, when making changes JSPs without reloading
       the application, the changes has to be duplicated to the path where the
       web application resources have been copied in the temp folder).
-      The antiResourceLocking attribute should not be used at the same time as
-      the antiJARLocking attribute.
   </answer>
 
 
