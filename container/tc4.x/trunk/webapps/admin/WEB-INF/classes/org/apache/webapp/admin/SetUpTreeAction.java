@@ -137,8 +137,8 @@ public class SetUpTreeAction extends Action {
         TreeControlNode root =
             new TreeControlNode("ROOT-NODE",
                                 null, rootnodeName,
-                                "treeControlTest.do?select=ROOT-NODE",
-                                null, true);
+                                "setUpTree.do?select=ROOT-NODE",
+                                "content", true);
                 
         TreeControl control = new TreeControl(root);
         
@@ -172,7 +172,14 @@ public class SetUpTreeAction extends Action {
         HttpSession session = request.getSession();
         session.setAttribute("treeControlTest", control);
 
-        return (mapping.findForward("Tree Control Test"));
+         String  name = request.getParameter("select");
+         if (name != null) {
+            control.selectNode(name);
+            // Forward back to the Blank page
+            return (mapping.findForward("Blank"));
+        }
+
+         return (mapping.findForward("Tree Control Test"));
 
     }
 }

@@ -223,11 +223,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             String nodeLabel = "Connector (" + connectorName + ")";
             String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
             
-            // Do not display the connector node if it is a warp connector.
-            // This is because warp connector doesn't conform to the
-            // standard Engine/Host/Context hierarchy and we don't support it.
-            if (!"warp".equalsIgnoreCase(connectorName)) {
-                connectorNode =
+            connectorNode =
                 new TreeControlNode(connectorObj.getObjectName().toString(),
                 "folder_16_pad.gif",
                 nodeLabel,
@@ -235,10 +231,8 @@ public class TomcatTreeBuilder implements TreeBuilder{
                 + "&nodeLabel="+ encodedNodeLabel,
                 "content", true);
                 
-                serviceNode.addChild(connectorNode);
-            }
-        }
-        
+            serviceNode.addChild(connectorNode);
+        }        
     }
     
     public void getHosts(TreeControlNode serviceNode, String serviceName)

@@ -85,6 +85,10 @@
     <forward        name="Save Successful"
                     path="/saved.jsp"
                 redirect="false"/>
+                
+    <forward        name="Blank"
+                    path="/blank.jsp"
+                redirect="false"/>
 
   </global-forwards>
 
