@@ -59,10 +59,6 @@
  *
  */ 
 
-
-
-
-
 package org.apache.jasper;
 
 import org.apache.jasper.compiler.JspReader;
@@ -127,7 +123,7 @@ public class JspCompilationContext {
     public JspCompilationContext(String jspUri, boolean isErrPage, Options options,
                                  ServletContext context, JspServletWrapper jsw,
                                  JspRuntimeContext rctxt) {
-        this.jspUri = jspUri;
+        this.jspUri = canonicalURI(jspUri);
         this.isErrPage = isErrPage;
         this.options=options;
         this.jsw=jsw;
@@ -572,6 +568,68 @@ public class JspCompilationContext {
 	return new String(result);
     }
 
+    private static final boolean isPathSeparator(char c) {
+       return (c == '/' || c == '\\');
+    }
+
+    private static final String canonicalURI(String s) {
+       if (s == null) return null;
+       StringBuffer result = new StringBuffer();
+       final int len = s.length();
+       int pos = 0;
+       while (pos < len) {
+           char c = s.charAt(pos);
+           if ( isPathSeparator(c) ) {
+               /*
+                * multiple path separators.
+                * 'foo///bar' -> 'foo/bar'
+                */
+               while (pos+1 < len && isPathSeparator(s.charAt(pos+1))) {
+                   ++pos;
+               }
+
+               if (pos+1 < len && s.charAt(pos+1) == '.') {
+                   /*
+                    * a single dot at the end of the path - we are done.
+                    */
+                   if (pos+2 >= len) break;
+
+                   switch (s.charAt(pos+2)) {
+                       /*
+                        * self directory in path
+                        * foo/./bar -> foo/bar
+                        */
+                   case '/':
+                   case '\\':
+                       pos += 2;
+                       continue;
+
+                       /*
+                        * two dots in a path: go back one hierarchy.
+                        * foo/bar/../baz -> foo/baz
+                        */
+                   case '.':
+                       // only if we have exactly _two_ dots.
+                       if (pos+3 < len && isPathSeparator(s.charAt(pos+3))) {
+                           pos += 3;
+                           int separatorPos = result.length()-1;
+                           while (separatorPos >= 0 && 
+                                  ! isPathSeparator(result
+                                                    .charAt(separatorPos))) {
+                               --separatorPos;
+                           }
+                           if (separatorPos >= 0)
+                               result.setLength(separatorPos);
+                           continue;
+                       }
+                   }
+               }
+           }
+           result.append(c);
+           ++pos;
+       }
+       return result.toString();
+    }
 
 }
 
