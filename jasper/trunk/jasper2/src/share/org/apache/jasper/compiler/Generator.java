@@ -1700,8 +1700,6 @@ class Generator {
 	    }
 	}
 
-	private static final int CHUNKSIZE = 1024;
-
 	public void visit(Node.TemplateText n) throws JasperException {
 
 	    String text = n.getText();
@@ -1711,7 +1709,7 @@ class Generator {
 	    out.printin();
 	    StringBuffer sb = new StringBuffer("out.write(\"");
 	    int initLength = sb.length();
-	    int count = CHUNKSIZE;
+	    int count = JspUtil.CHUNKSIZE;
 	    for (int i = 0 ; i < text.length() ; i++) {
 		char ch = text.charAt(i);
 		--count;
@@ -1736,7 +1734,7 @@ class Generator {
                             out.printin();
                         }
 			sb.setLength(initLength);
-			count = CHUNKSIZE;
+			count = JspUtil.CHUNKSIZE;
 		    }
 		    break;
 		case '\t':	// Not sure we need this

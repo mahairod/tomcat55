@@ -117,6 +117,8 @@ public class JspUtil {
         "this", "throws", "transient", "try", "void",
         "volatile", "while" };
 
+    public static final int CHUNKSIZE = 1024;
+        
     public static char[] removeQuotes(char []chars) {
         CharArrayWriter caw = new CharArrayWriter();
         for (int i = 0; i < chars.length; i++) {

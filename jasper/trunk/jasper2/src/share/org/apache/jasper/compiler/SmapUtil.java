@@ -120,7 +120,7 @@ public class SmapUtil {
 
         g.setOutputFileName(unqualify(ctxt.getServletJavaFileName()));
         // Map out Node.Nodes
-        evaluateNodes(pageNodes, s);
+        evaluateNodes(pageNodes, s, ctxt.getOptions().getMappedFile());
         g.addStratum(s, true);
 
         if (ctxt.getOptions().isSmapDumped()) {
@@ -482,19 +482,22 @@ public class SmapUtil {
         }
     }
 
-    public static void evaluateNodes(Node.Nodes nodes, SmapStratum s) {
+    public static void evaluateNodes(Node.Nodes nodes, SmapStratum s, boolean breakAtLF) {
         try {
-            nodes.visit(new SmapGenVisitor(s));
+            nodes.visit(new SmapGenVisitor(s, breakAtLF));
         } catch (JasperException ex) {
 	}
+        s.optimizeLineSection();
     }
 
     static class SmapGenVisitor extends Node.Visitor {
 
         private SmapStratum smap;
+        private boolean breakAtLF;
 
-        SmapGenVisitor(SmapStratum s) {
+        SmapGenVisitor(SmapStratum s, boolean breakAtLF) {
             this.smap = s;
+            this.breakAtLF = breakAtLF;
         }
 
         public void visit(Node.Declaration n) throws JasperException {
@@ -579,16 +582,36 @@ public class SmapUtil {
         }
 
         public void visit(Node.TemplateText n) throws JasperException {
-            // Skip smap there the text is all noise
-            String text = n.getText();
-            int i = 0;
-            while (i < text.length()) {
-                if (text.charAt(i) > ' ')
-                    break;
-                i++;
+            Mark mark = n.getStart();
+            if (mark == null) {
+                return;
             }
-            if (i < text.length()) {
-                doSmap(n);
+
+            //Add the file information
+            String fileName = mark.getFile();
+            smap.addFile(unqualify(fileName), fileName);
+            
+            //Add a LineInfo that corresponds to the beginning of this node
+            int iInputStartLine = mark.getLineNumber();
+            int iOutputStartLine = n.getBeginJavaLine();
+            smap.addLineData(iInputStartLine, fileName, 1, iOutputStartLine, 1);
+            
+            //Walk through the node text the same way Generator.java's 
+            //visit(Node.TemplateText n) does.  Every time the 
+            //line number advances in the input file or the output file, 
+            //add a LineInfo with the new line numbers.
+            String text = n.getText();
+            int count = JspUtil.CHUNKSIZE;
+            for (int i = 0 ; i < text.length()-1 ; i++) {
+                --count;
+                if (text.charAt(i) == '\n') {
+                    iInputStartLine++;
+                    if (breakAtLF || count < 0) {
+                        iOutputStartLine++;
+                        count = JspUtil.CHUNKSIZE;
+                    }
+                    smap.addLineData(iInputStartLine, fileName, 1, iOutputStartLine, 1);
+                }
             }
         }
 
