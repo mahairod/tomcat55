@@ -799,8 +799,11 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
         StringBuffer buffer = new StringBuffer();
         do {
             int resultLenBytes = 0;
-            if (result != null)
+            if (result != null) {
                 buffer = new StringBuffer();
+                duplicates++;
+            }
+
             while (resultLenBytes < this.sessionIdLength) {
                 getRandomBytes(random);
                 random = getDigest().digest(random);

@@ -57,6 +57,9 @@
      <fix>
        <bug>31362</bug>: Missing -Xdebug in catalina.bat when launching with JPDA and Security. (yoavs)
      </fix>
+     <fix>
+       <bug>31356</bug>: Duplicates not counted in session generation. (yoavs)
+     </fix>
     </changelog>
   </subsection>
 
