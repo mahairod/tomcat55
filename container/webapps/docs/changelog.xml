@@ -52,6 +52,9 @@
         <bug>34220</bug>: Provide better error message when server.xml can't be located.
           [Modified patch from Ralf Hauser] (yoavs)
       </add>
+      <add>
+          Add MessageListener and LifecylceListener cluster saving to storeconfig module (pero)
+      </add>  
       <fix>
         <bug>33743</bug>: Add additional synchronization in webapp classloader to avoid
         possible race condition when defining a class (remm)
@@ -62,7 +65,7 @@
         to it would leak a minimal amount of memory) (remm)
       </fix>
       <update>
-        Readd patch causing Session.getId to throw an ISE, and make all internal components
+        Read patch causing Session.getId to throw an ISE, and make all internal components
         use a safe getIdInternal method (remm)
       </update>
     </changelog>
@@ -75,7 +78,52 @@
       </fix>
     </changelog>
   </subsection>
-</section>
+  <subsection name="Cluster">
+    <changelog>
+      <update>
+        Setup JvmRouteBinderValve as host valve instead context valve. Refactor the API a little bit. (pero)
+      </update>
+      <fix>
+        Don't increment open socket counter before socket is really open, counte socket open failures (pero) 
+      </fix>  
+      <add>
+        Add MessageListener support to cluster server.xml element (ClusterListener) to 
+        register your own cluster message receiver (pero)
+      </add>  
+      <add>
+        Add LifecycleListener support to cluster server.xml element (Listener)
+        and notify those listener from start/stop cluster,
+        add/remove session manager, sending fault and start/stop member  (pero)
+      </add>  
+      <add>
+        Add active backgroundProcess keepAlive timeout and request count socket close check
+        at ReplicationTransmitter.  Check frequency can be change with attribute 
+        processSenderFrequency (default 2). (pero)
+      </add>
+      <fix>
+        Jdk13ReplicationListener active threads closed, when stop called (pero)
+      </fix>
+      <update>
+        Add and update some API documentation (pero)
+      </update>
+      <update>
+        Refactor ReplicationValve for better understanding and small optimization (pero)
+      </update>
+      <add>
+        Starting a unit test suite for cluster module - very much todo (pero)
+      </add>
+      <fix>
+        Fix ant build.xml to direct compile at cluster module directory (pero)
+      </fix>
+      <fix>
+        Fix some I18N messages (pero)
+      </fix>
+      <add>
+        Add ReplicationValve Mbeans stats attribute getter and resetStatistics operation (pero)
+      </add>
+     </changelog>
+  </subsection>
+ </section>
 
 <section name="Tomcat 5.5.9 (yoavs)">
   <subsection name="General">
