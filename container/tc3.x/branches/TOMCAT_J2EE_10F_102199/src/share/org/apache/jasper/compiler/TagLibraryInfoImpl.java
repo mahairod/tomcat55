@@ -151,9 +151,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    // Parse web.xml.
 	    InputStream is = ctxt.getServletContext().getResourceAsStream(WEBAPP_INF);
 	    
-	    if (is == null) {
-		throw new IOException(Constants.getString("jsp.error.webxml_not_found"));
-	    }
+	    if (is != null) {
 	    
 	    URL dtdURL =  this.getClass().getResource(Constants.WEBAPP_DTD_RESOURCE);
 	    XmlDocument webtld = JspUtil.parseXMLDoc(is, dtdURL,
@@ -195,7 +193,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                         this.uri = tagLoc;
 		}
             }
-	    
+	}
 	    // "uri" should point to the correct tld location.
 
 	    if (!uri.startsWith("/")) {
