@@ -93,7 +93,7 @@ public class Validator {
     /**
      * A visitor to validate and extract page directive info
      */
-    static class PageDirectiveVisitor extends Node.Visitor {
+    static class DirectiveVisitor extends Node.Visitor {
 
 	private PageInfo pageInfo;
 	private ErrorDispatcher err;
@@ -113,6 +113,42 @@ public class Validator {
 	    new JspUtil.ValidAttribute("pageEncoding"),
 	    new JspUtil.ValidAttribute("isScriptingEnabled") };
 
+	private static final JspUtil.ValidAttribute[] tagDirectiveAttrs = {
+	    new JspUtil.ValidAttribute("name"),
+	    new JspUtil.ValidAttribute("dispaly-name"),
+	    new JspUtil.ValidAttribute("body-content"),
+	    new JspUtil.ValidAttribute("small-icon"),
+	    new JspUtil.ValidAttribute("large-icon"),
+	    new JspUtil.ValidAttribute("description"),
+	    new JspUtil.ValidAttribute("example"),
+	    new JspUtil.ValidAttribute("pageEncoding") };
+
+	private static final JspUtil.ValidAttribute[] attributeDirectiveAttrs = {
+	    new JspUtil.ValidAttribute("name", true),
+	    new JspUtil.ValidAttribute("required"),
+	    new JspUtil.ValidAttribute("fragment"),
+	    new JspUtil.ValidAttribute("rtexprvalue"),
+	    new JspUtil.ValidAttribute("type"),
+	    new JspUtil.ValidAttribute("description")
+	};
+
+	private static final JspUtil.ValidAttribute[] variableDirectiveAttrs = {
+	    new JspUtil.ValidAttribute("name-given"),
+	    new JspUtil.ValidAttribute("name-from"),
+	    new JspUtil.ValidAttribute("variable-class"),
+	    new JspUtil.ValidAttribute("scope"),
+	    new JspUtil.ValidAttribute("declare"),
+	    new JspUtil.ValidAttribute("description")
+	};
+
+	private static final JspUtil.ValidAttribute[] fragmentInputDirectiveAttrs = {
+	    new JspUtil.ValidAttribute("name", true),
+	    new JspUtil.ValidAttribute("fragment", true),
+	    new JspUtil.ValidAttribute("required"),
+	    new JspUtil.ValidAttribute("type"),
+	    new JspUtil.ValidAttribute("description")
+	};
+
 	private boolean languageSeen = false;
 	private boolean extendsSeen = false;
 	private boolean sessionSeen = false;
@@ -128,7 +164,7 @@ public class Validator {
 	/*
 	 * Constructor
 	 */
-	PageDirectiveVisitor(Compiler compiler) {
+	DirectiveVisitor(Compiler compiler) {
 	    this.pageInfo = compiler.getPageInfo();
 	    this.err = compiler.getErrorDispatcher();
 	}
@@ -260,6 +296,26 @@ public class Validator {
 	    // Attributes for imports for this node have been processed by
 	    // the parsers, just add them to pageInfo.
 	    pageInfo.addImports(n.getImports());
+	}
+
+	public void visit(Node.TagDirective n) throws JasperException {    
+            JspUtil.checkAttributes("Tag directive", n,
+                                    tagDirectiveAttrs, err);
+	}
+
+	public void visit(Node.AttributeDirective n) throws JasperException {
+            JspUtil.checkAttributes("Attribute directive", n,
+                                    attributeDirectiveAttrs, err);
+	}
+
+	public void visit(Node.VariableDirective n) throws JasperException {
+            JspUtil.checkAttributes("Variable directive", n,
+                                    variableDirectiveAttrs, err);
+	}
+
+	public void visit(Node.FragmentInputDirective n) throws JasperException{
+            JspUtil.checkAttributes("Fragment-input directive", n,
+                                    fragmentInputDirectiveAttrs, err);
 	}
     }
 
@@ -793,16 +849,17 @@ public class Validator {
 				Node.Nodes page) throws JasperException {
 
 	/*
-	 * Visit the page directives first, as they are global to the page
+	 * Visit the page/tag directives first, as they are global to the page
 	 * and are position independent.
 	 */
-	page.visit(new PageDirectiveVisitor(compiler));
+	page.visit(new DirectiveVisitor(compiler));
 
 	// Determine the default output content type, per errata_a
 	// http://jcp.org/aboutJava/communityprocess/maintenance/jsr053/errata_1_2_a_20020321.html
 	PageInfo pageInfo = compiler.getPageInfo();
 	String contentType = pageInfo.getContentType();
-	if (contentType == null || contentType.indexOf("charset=") < 0) {
+	if (!pageInfo.isTagFile() && 
+		(contentType == null || contentType.indexOf("charset=") < 0)) {
 	    boolean isXml = page.getRoot().isXmlSyntax();
 	    String defaultType;
 	    if (contentType == null) {

@@ -389,6 +389,62 @@ public abstract class Node {
     }
 
     /**
+     * Represents a tag directive
+     */
+    public static class TagDirective extends Node {
+
+	public TagDirective(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    /**
+     * Represents an attribute directive
+     */
+    public static class AttributeDirective extends Node {
+
+	public AttributeDirective(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    /**
+     * Represents a variable directive
+     */
+    public static class VariableDirective extends Node {
+
+	public VariableDirective(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    /**
+     * Represents a fragment-input directive
+     */
+    public static class FragmentInputDirective extends Node {
+
+	public FragmentInputDirective(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    /**
      * Represents a Jsp comment
      * Comments are kept for completeness.
      */
@@ -1426,12 +1482,28 @@ public abstract class Node {
 	    doVisit(n);
 	}
 
+	public void visit(TagDirective n) throws JasperException {
+	    doVisit(n);
+	}
+
 	public void visit(IncludeDirective n) throws JasperException {
 	    doVisit(n);
 	    visitBody(n);
 	}
 
 	public void visit(TaglibDirective n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(AttributeDirective n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(VariableDirective n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(FragmentInputDirective n) throws JasperException {
 	    doVisit(n);
 	}
 

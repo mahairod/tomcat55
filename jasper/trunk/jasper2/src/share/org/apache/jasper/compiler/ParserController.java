@@ -110,6 +110,11 @@ public class ParserController {
     private boolean isTopFile = true;
 
     /*
+     * Tells if this is a regular jsp page or tag file.
+     */
+    private boolean isTagFile = false;
+
+    /*
      * The encoding of the "top" file. This encoding is used
      * for included files by default.
      * Defaults to "ISO-8859-1" per JSP spec.
@@ -196,7 +201,7 @@ public class ParserController {
 		JspReader r = new JspReader(ctxt, absFileName, encoding,
 					    reader,
 					    compiler.getErrorDispatcher());
-                parsedPage = Parser.parse(this, r, parent);
+                parsedPage = Parser.parse(this, r, parent, isTagFile);
             }
 	    baseDirStack.pop();
         } finally {
@@ -249,7 +254,8 @@ public class ParserController {
 	    jspReader.reset(startMark);
 	    while (jspReader.skipUntil("<%@") != null) {
 		jspReader.skipSpaces();
-		if (jspReader.matches("page")) {
+		isTagFile = jspReader.matches("tag");
+		if (isTagFile || jspReader.matches("page")) {
 		    jspReader.skipSpaces();
 		    Attributes attrs = Parser.parseAttributes(this, jspReader);
 		    String attribute = "pageEncoding";

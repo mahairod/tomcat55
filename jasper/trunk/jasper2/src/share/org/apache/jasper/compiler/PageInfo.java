@@ -91,6 +91,8 @@ class PageInfo {
     private int maxTagNesting = 0;
     private boolean scriptless = false;
     private boolean scriptingEnabled = true;
+    private boolean elEnabled = true;
+    private boolean tagFile = false;
 
     PageInfo(BeanRepository beanRepository) {
 	this.beanRepository = beanRepository;
@@ -229,5 +231,21 @@ class PageInfo {
 
     public boolean isScriptingEnabled() {
 	return scriptingEnabled;
+    }
+
+    public void setELEnabled(boolean s) {
+	elEnabled = s;
+    }
+
+    public boolean isELEnabled() {
+	return elEnabled;
+    }
+
+    public void setTagFile(boolean s) {
+	tagFile = s;
+    }
+
+    public boolean isTagFile() {
+	return tagFile;
     }
 }

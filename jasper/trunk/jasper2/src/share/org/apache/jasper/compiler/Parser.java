@@ -92,6 +92,7 @@ public class Parser {
     private Hashtable taglibs;
     private ErrorDispatcher err;
     private int scriptlessCount;
+    private boolean isTagFile;
     
     // Virtual body content types, to make parsing a little easier.
     // These are not accessible from outside the parser.
@@ -103,7 +104,7 @@ public class Parser {
     /**
      * The constructor
      */
-    private Parser(ParserController pc, JspReader reader) {
+    private Parser(ParserController pc, JspReader reader, boolean isTagFile) {
 	this.parserController = pc;
 	this.ctxt = pc.getJspCompilationContext();
 	this.taglibs = pc.getCompiler().getPageInfo().getTagLibraries();
@@ -111,6 +112,8 @@ public class Parser {
 	this.reader = reader;
 	this.currentFile = reader.mark().getFile();
         this.scriptlessCount = 0;
+	this.isTagFile = isTagFile;
+	pc.getCompiler().getPageInfo().setTagFile(isTagFile);
         start = reader.mark();
     }
 
@@ -125,8 +128,13 @@ public class Parser {
      */
     public static Node.Nodes parse(ParserController pc,
 				   JspReader reader,
-				   Node parent) throws JasperException {
-	Parser parser = new Parser(pc, reader);
+				   Node parent,
+				   boolean isTagFile) throws JasperException {
+	Parser parser = new Parser(pc, reader, isTagFile);
+
+	// Tag files takes only scriptless body.
+	if (isTagFile)
+	    parser.scriptlessCount++;
 
 	Node.Root root = new Node.Root(null, reader.mark(), parent);
 
@@ -157,7 +165,7 @@ public class Parser {
     public static Attributes parseAttributes(ParserController pc,
 					     JspReader reader)
 		throws JasperException {
-	Parser tmpParser = new Parser(pc, reader);
+	Parser tmpParser = new Parser(pc, reader, false);
 	return tmpParser.parseAttributes();
     }
 
@@ -377,6 +385,14 @@ public class Parser {
      *			    | 'include' IncludeDirective
      *			    | 'taglib' TagLibDirective)
      *		       S? '%>'
+     *
+     *   TagDirective ::= S? ('tag' PageDirective
+     *			    | 'include' IncludeDirective
+     *			    | 'taglib' TagLibDirective)
+     *                      | 'attribute AttributeDirective
+     *                      | 'variable VariableDirective
+     *                      | 'fragment-input FragmentInputDirective
+     *		       S? '%>'
      */
     private void parseDirective(Node parent) throws JasperException {
 	reader.skipSpaces();
@@ -384,6 +400,10 @@ public class Parser {
 	String directive = null;
 	if (reader.matches("page")) {
 	    directive = "<%@ page";
+	    if (isTagFile) {
+		err.jspError(reader.mark(), "jsp.error.directive.istagfile",
+					    directive);
+	    }
 	    parsePageDirective(parent);
 	} else if (reader.matches("include")) {
 	    directive = "<%@ include";
@@ -391,6 +411,34 @@ public class Parser {
 	} else if (reader.matches("taglib")) {
 	    directive = "<%@ taglib";
 	    parseTaglibDirective(parent);
+	} else if (reader.matches("tag")) {
+	    directive = "<%@ page";
+	    if (!isTagFile) {
+		err.jspError(reader.mark(), "jsp.error.directive.isnottagfile",
+					    directive);
+	    }
+	    parsePageDirective(parent);
+	} else if (reader.matches("attribute")) {
+	    directive = "<%@ attribute";
+	    if (!isTagFile) {
+		err.jspError(reader.mark(), "jsp.error.directive.isnottagfile",
+					    directive);
+	    }
+	    parseAttributeDirective(parent);
+	} else if (reader.matches("variable")) {
+	    directive = "<%@ variable";
+	    if (!isTagFile) {
+		err.jspError(reader.mark(), "jsp.error.directive.isnottagfile",
+					    directive);
+	    }
+	    parseVariableDirective(parent);
+	} else if (reader.matches("fragment-input")) {
+	    directive = "<%@ fragment-input";
+	    if (!isTagFile) {
+		err.jspError(reader.mark(), "jsp.error.directive.isnottagfile",
+					    directive);
+	    }
+	    parseFragmentInputDirective(parent);
 	} else {
 	    err.jspError(reader.mark(), "jsp.error.invalid.directive");
 	}
@@ -401,6 +449,46 @@ public class Parser {
 	}
     }
 	
+    /*
+     * Parses a tag directive with the following syntax:
+     *   PageDirective ::= ( S Attribute)*
+     */
+    private void parseTagDirective(Node parent) throws JasperException {
+	Attributes attrs = parseAttributes();
+	Node.TagDirective n = new Node.TagDirective(attrs, start, parent);
+    }
+
+    /*
+     * Parses a attribute directive with the following syntax:
+     *   AttributeDirective ::= ( S Attribute)*
+     */
+    private void parseAttributeDirective(Node parent) throws JasperException {
+	Attributes attrs = parseAttributes();
+	Node.AttributeDirective n =
+		new Node.AttributeDirective(attrs, start, parent);
+    }
+
+    /*
+     * Parses a variable directive with the following syntax:
+     *   PageDirective ::= ( S Attribute)*
+     */
+    private void parseVariableDirective(Node parent) throws JasperException {
+	Attributes attrs = parseAttributes();
+	Node.VariableDirective n =
+		new Node.VariableDirective(attrs, start, parent);
+    }
+
+    /*
+     * Parses a fragment input directive with the following syntax:
+     *   PageDirective ::= ( S Attribute)*
+     */
+    private void parseFragmentInputDirective(Node parent)
+		throws JasperException {
+	Attributes attrs = parseAttributes();
+	Node.FragmentInputDirective n =
+		new Node.FragmentInputDirective(attrs, start, parent);
+    }
+
     /*
      * JSPCommentBody ::= (Char* - (Char* '--%>')) '--%>'
      */
