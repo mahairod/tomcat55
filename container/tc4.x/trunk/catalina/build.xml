@@ -493,7 +493,7 @@
     <!-- Copy static resource files -->
     <copy todir="${catalina.build}/classes">
       <fileset dir="src/share">
-        <include name="**/*.properties"/>
+        <exclude name="**/*.java"/>
       </fileset>
     </copy>
 
