@@ -140,13 +140,17 @@ public class Compiler {
     public Compiler(JspCompilationContext ctxt, JspServletWrapper jsw) {
         this.jsw = jsw;
         this.ctxt = ctxt;
-	this.errDispatcher = new ErrorDispatcher();
         this.options = ctxt.getOptions();
     }
 
     // Lazy eval - if we don't need to compile we probably don't need the project
     private Project getProject() {
+
+        if (errDispatcher == null) {
+            this.errDispatcher = new ErrorDispatcher();
+        }
         if( project!=null ) return project;
+
         // Initializing project
         project = new Project();
         // XXX We should use a specialized logger to redirect to jasperlog
@@ -237,6 +241,10 @@ public class Compiler {
 	// generate servlet .java file
 	Generator.generate(writer, this, pageNodes);
         writer.close();
+        // The writer is only used during the compile, dereference
+        // it in the JspCompilationContext when done to allow it
+        // to be GC'd and save memory.
+        ctxt.setWriter(null);
     }
 
     /** 
@@ -353,8 +361,20 @@ public class Compiler {
     public void compile()
         throws FileNotFoundException, JasperException, Exception
     {
-        generateJava();
-        generateClass();
+        try {
+            generateJava();
+            generateClass();
+        } finally {
+            // Make sure these object which are only used during the
+            // generation and compilation of the JSP page get
+            // dereferenced so that they can be GC'd and reduce the
+            // memory footprint.
+            errDispatcher = null;
+            logger = null;
+            project = null;
+            pageInfo = null;
+            pageNodes = null;
+        }
     }
 
     /**
