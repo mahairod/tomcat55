@@ -19,6 +19,14 @@
 <p>
     This FAQ section provides help with logging-related issues.
 </p>
+<p>
+  As you read these questions, please keep in mind that Tomcat's internal
+  logging is separate from your own webapp's logging.  You would typically
+  be concerned only with your own webapp's logging.  You would modify Tomcat's
+  internal logging settings if you are debugging a possible issue or running
+  into other problems.  It is anticipated that Tomcat's out-of-the-box logging
+  configuration will be fine for the vast majority of users and environments.
+</p>
 </section>
 
 
