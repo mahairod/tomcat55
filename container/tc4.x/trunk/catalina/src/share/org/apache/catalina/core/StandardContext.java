@@ -2281,13 +2281,6 @@ public class StandardContext
             ContextBindings.unbindThread(this, this);
         }
 
-        // Unload sessions to persistent storage, if supported
-        try {
-            getManager().unload();
-        } catch (Throwable t) {
-            log(sm.getString("standardContext.managerUnload"), t);
-        }
-
         // Shut down filters and application event listeners
         filterStop();
         listenerStop();
@@ -3313,15 +3306,6 @@ public class StandardContext
 
         // Mark this application as unavailable while we shut down
         setAvailable(false);
-
-        // Unload sessions to persistent storage, if supported
-        try {
-            if (debug >= 1)
-                log("Saving persisted sessions");
-            getManager().unload();
-        } catch (Throwable t) {
-            log(sm.getString("standardContext.managerUnload"), t);
-        }
 
         // Stop our filters and application listeners
         filterStop();
