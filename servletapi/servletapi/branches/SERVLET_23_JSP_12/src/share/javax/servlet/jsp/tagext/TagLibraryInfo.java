@@ -114,11 +114,11 @@ abstract public class TagLibraryInfo {
     // ==== methods using the TLD data =======
 
     /**
-     * The prefered short name (prefix) as indicated in the TLD.
-     * This may be used by authoring tools as the prefered prefix
+     * The preferred short name (prefix) as indicated in the TLD.
+     * This may be used by authoring tools as the preferred prefix
      * to use when creating an include directive for this library.
      *
-     * @returns the prefered short name for the library
+     * @returns the preferred short name for the library
      */
     public String getShortName() {
         return shortname;

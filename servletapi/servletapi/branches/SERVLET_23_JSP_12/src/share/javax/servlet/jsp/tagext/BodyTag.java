@@ -101,6 +101,15 @@ import javax.servlet.jsp.*;
  * setBodyContent() and before the body evaluation.  This method is only
  * invoked if doStartTag() returns EVAL_BODY_BUFFERED.
  *
+ * <p><B>Lifecycle</B>
+ * <p> Lifecycle details are described by the transition diagram below.
+ * Exceptions that are thrown during the computation of doStartTag(),
+ * setBodyContent(), doInitBody(), BODY, doAfterBody() interrupt the
+ * execution sequence and are propagated up the stack, unless the
+ * tag handler implements the TryCatchFinally interface; see that
+ * interface for details.
+ * <p>
+ * <IMG src="doc-files/BodyTagProtocol.gif"/>
  */
 
 public interface BodyTag extends IterationTag {
