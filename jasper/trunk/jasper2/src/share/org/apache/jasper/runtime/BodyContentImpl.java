@@ -594,7 +594,7 @@ public class BodyContentImpl extends BodyContent {
 	bodyContent.writeOut (new PrintWriter (System.out));
     }
 
-    /*
+    /**
      * Sets the writer to which all output is written.
      */
     void setWriter(Writer writer) {
@@ -614,25 +614,28 @@ public class BodyContentImpl extends BodyContent {
 	if (closed) throw new IOException("Stream closed");
     }
 
-    /*
+    /**
      * Reallocates buffer since the spec requires it to be unbounded.
      */
-    private void reAllocBuff (int len) {
+    private void reAllocBuff(int len) {
 
-	char[] tmp = null;
+        if (bufferSize + len <= cb.length) {
+            bufferSize = cb.length;
+            return;
+        }
 
-	//XXX Should it be multiple of DEFAULT_TAG_BUFFER_SIZE?
+        if (len < Constants.DEFAULT_TAG_BUFFER_SIZE) {
+            len = Constants.DEFAULT_TAG_BUFFER_SIZE;
+        }
 
-	if (len <= Constants.DEFAULT_TAG_BUFFER_SIZE) {
-	    tmp = new char [bufferSize + Constants.DEFAULT_TAG_BUFFER_SIZE];
-	    bufferSize += Constants.DEFAULT_TAG_BUFFER_SIZE;
-	} else {
-	    tmp = new char [bufferSize + len];
-	    bufferSize += len;
-	}
+        bufferSize = cb.length + len;
+        char[] tmp = new char[bufferSize];
 
 	System.arraycopy(cb, 0, tmp, 0, cb.length);
 	cb = tmp;
 	tmp = null;
+
     }
+
+
 }
