@@ -6,6 +6,7 @@ Name "Apache Tomcat 4.1"
 OutFile tomcat4.exe
 CRCCheck on
 SetCompress force
+SetCompressor lzma
 SetDatablockOptimize on
 
 BGGradient 000000 800000 FFFFFF
