@@ -91,6 +91,8 @@ import javax.naming.NamingEnumeration;
 import javax.naming.directory.DirContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.catalina.Authenticator;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
@@ -125,8 +127,9 @@ import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.digester.Digester;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
-
 
 /**
  * Startup event listener for a <b>Context</b> that configures the properties
@@ -491,26 +494,7 @@ public final class ContextConfig
             tldDigester.setSchema(url.toString());
         }
 
-        // Add local copy of Servlet 2.4 XML Schema instance.
-        url = ContextConfig.class.getResource(Constants.J2eeSchemaResourcePath_14);
-        tldDigester.register(Constants.J2eeSchemaPublicId_14,
-                             url.toString());
-
-        url = ContextConfig.class.getResource(Constants.JspSchemaResourcePath_20);
-        tldDigester.register(Constants.JspSchemaPublicId_20,
-                             url.toString());
-
-        url = ContextConfig.class.getResource(Constants.W3cSchemaResourcePath_10);
-        tldDigester.register(Constants.W3cSchemaPublicId_10,
-                             url.toString());
-
-        url = ContextConfig.class.getResource(Constants.TldSchemaResourcePath_20);
-        tldDigester.register(Constants.TldSchemaPublicId_20,
-                             url.toString());
-
-        url = ContextConfig.class.getResource(Constants.WebSchemaResourcePath_24);
-        tldDigester.register(Constants.WebSchemaPublicId_24,
-                             url.toString());
+        tldDigester = registerLocalSchema(tldDigester);
 
         tldDigester.addRuleSet(new TldRuleSet());
         return (tldDigester);
@@ -539,28 +523,12 @@ public final class ContextConfig
         webDigester.register(Constants.WebSchemaPublicId_24,
                              url.toString());
 
-
         // to support servlet.jar that does not contains the schema
         if (url != null){
             webDigester.setSchema(url.toString());
         }
 
-        // Add local copy of Servlet 2.4 XML Schema instance.
-        url = ContextConfig.class.getResource(Constants.J2eeSchemaResourcePath_14);
-        webDigester.register(Constants.J2eeSchemaPublicId_14,
-                             url.toString());
-
-        url = ContextConfig.class.getResource(Constants.W3cSchemaResourcePath_10);
-        webDigester.register(Constants.W3cSchemaPublicId_10,
-                             url.toString());
-
-        url = ContextConfig.class.getResource(Constants.JspSchemaResourcePath_20);
-        webDigester.register(Constants.JspSchemaPublicId_20,
-                             url.toString());
-
-        url = ContextConfig.class.getResource(Constants.TldSchemaResourcePath_20);
-        webDigester.register(Constants.TldSchemaPublicId_20,
-                             url.toString());
+        webDigester = registerLocalSchema(webDigester);
 
         webDigester.addRuleSet(new WebRuleSet());
         return (webDigester);
@@ -668,6 +636,54 @@ public final class ContextConfig
         }
 
     }
+
+    /**
+     * Utilities used to force the parser to use local schema, when available,
+     * instead of the <code>schemaLocation</code> XML element.
+     * @param digester The instance on which properties are set.
+     * @return an instance ready to parse XML schema.
+     */
+    protected static Digester registerLocalSchema(Digester digester){
+
+        // This feature is needed for backward compatibility with old DDs
+        // which used Java encoding names such as ISO8859_1 etc.
+        // with Crimson (bug 4701993). By default, Xerces does not
+        // support ISO8859_1.
+        if (digester.getFactory().getClass().getName().indexOf("xerces")!=-1) {
+            try{
+                digester.setFeature(
+                    "http://apache.org/xml/features/allow-java-encodings", true);
+            } catch(ParserConfigurationException e){
+                    // log("contextConfig.registerLocalSchema", e);
+            } catch(SAXNotRecognizedException e){
+                    // log("contextConfig.registerLocalSchema", e);
+            } catch(SAXNotSupportedException e){
+                    // log("contextConfig.registerLocalSchema", e);
+            }
+        }
+
+        URL url = ContextConfig.class.getResource(Constants.J2eeSchemaResourcePath_14);
+        digester.register(Constants.J2eeSchemaPublicId_14,
+                             url.toString());
+
+        url = ContextConfig.class.getResource(Constants.W3cSchemaResourcePath_10);
+        digester.register(Constants.W3cSchemaPublicId_10,
+                             url.toString());
+
+        url = ContextConfig.class.getResource(Constants.JspSchemaResourcePath_20);
+        digester.register(Constants.JspSchemaPublicId_20,
+                             url.toString());
+
+        url = ContextConfig.class.getResource(Constants.TldSchemaResourcePath_20);
+        digester.register(Constants.TldSchemaPublicId_20,
+                             url.toString());
+        url = ContextConfig.class.getResource(Constants.WebSchemaResourcePath_24);
+        digester.register(Constants.WebSchemaPublicId_24,
+                             url.toString());
+
+        return digester;
+    }
+
 
 
     /**
