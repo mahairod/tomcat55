@@ -2,12 +2,10 @@
 ; Tomcat script for Nullsoft Installer
 ; $Id$
 
+!include "MUI.nsh"
+
 !define MUI_PRODUCT "Apache Tomcat"
 !define MUI_VERSION "@VERSION@"
-
-!define MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
-
-!include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
 ;--------------------------------
 ;Configuration
@@ -29,6 +27,9 @@
 
   !define TEMP1 $R0
   !define TEMP2 $R1
+
+  !define MUI_ICON tomcat.ico
+  !define MUI_UNICON tomcat.ico
 
   ;Language
   !insertmacro MUI_LANGUAGE "English"
@@ -85,9 +86,8 @@
   ; Main registry key
   InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\5.0" ""
 
+  !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-  !insertmacro MUI_RESERVEFILE_SPECIALINI
-  !insertmacro MUI_RESERVEFILE_SPECIALBITMAP
   ReserveFile "jvm.ini"
   ReserveFile "config.ini"
 
