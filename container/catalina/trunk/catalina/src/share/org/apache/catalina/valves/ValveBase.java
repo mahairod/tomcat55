@@ -311,9 +311,11 @@ public abstract class ValveBase
         int seq=0;
         for( int i=0; i<valves.length; i++ ) {
             // Find other valves with the same name
+            if (valves[i] == this) {
+                break;
+            }
             if( valves[i]!=null &&
-                    valves[i].getClass() == this.getClass() &&
-                    valves[i] != this ) {
+                    valves[i].getClass() == this.getClass() ) {
                 log.debug("Duplicate " + valves[i] + " " + this + " " + container);
                 seq++;
             }
