@@ -85,6 +85,7 @@ import org.apache.catalina.realm.JAASRealm;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.modeler.Registry;
 
 /**
  * Standard implementation of the <b>Engine</b> interface.  Each
@@ -383,6 +384,7 @@ public class StandardEngine
                 domain=getName();
                 log.info( "Register " + domain );
                 oname=new ObjectName(domain + ":type=Engine");
+                Registry.getRegistry().registerComponent(this, oname, null);
             } catch( Throwable t ) {
                 log.info("Error registering ", t );
             }
@@ -415,6 +417,9 @@ public class StandardEngine
     public void start() throws LifecycleException {
         if( started ) {
             return;
+        }
+        if( !initialized ) {
+            init();
         }
         // Log our server identification information
         //System.out.println(ServerInfo.getServerInfo());
