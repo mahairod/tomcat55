@@ -2,7 +2,7 @@ $Id$
 
 PROJECT jakarta-check SOURCE TREE 
 =================================
-
+ 
 This is the source code tree for jakarta-check(Jcheck) which is a
 set of API validation tests for the Servlet 2.2 APIs and the JSP 
 1.1 APIs.
