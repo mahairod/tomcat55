@@ -1986,11 +1986,6 @@ class Generator {
 
             n.setBeginJavaLine(out.getJavaLine());
 
-            // Invoke fragment, unless fragment is null
-            out.printin("if (");
-            out.print(toGetterMethod(n.getTextAttribute("fragment")));
-            out.println(" != null) {");
-            out.pushIndent();
             // Copy virtual page scope of tag file to page scope of invoking
             // page
             out.printil(
@@ -2002,8 +1997,16 @@ class Generator {
             } else {
                 out.printil("_jspx_sout = null;");
             }
+
+            // Invoke fragment, unless fragment is null
+            out.printin("if (");
+            out.print(toGetterMethod(n.getTextAttribute("fragment")));
+            out.println(" != null) {");
+            out.pushIndent();
             out.printin(toGetterMethod(n.getTextAttribute("fragment")));
             out.println(".invoke(_jspx_sout);");
+            out.popIndent();
+            out.printil("}");
 
             // Store varReader in appropriate scope
             if (varReaderAttr != null || varAttr != null) {
@@ -2023,9 +2026,6 @@ class Generator {
                 }
                 out.println(");");
             }
-
-            out.popIndent();
-            out.printil("}");
 
             n.setEndJavaLine(out.getJavaLine());
         }
