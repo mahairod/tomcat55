@@ -552,19 +552,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
         if (includeUri != null)
             request.removeAttribute(Constants.INC_SERVLET_PATH);
         try {
-            if (System.getSecurityManager() != null){
-                AccessController.doPrivileged(new PrivilegedExceptionAction(){                    
-                    public Object run() throws ServletException, IOException{
-                        context.getRequestDispatcher(path).forward(frequest, 
-                                                                   fresponse);
-                        return (null);
-                    }                    
-                });
-            } else {
-                context.getRequestDispatcher(path).forward(request, response);
-            } 
-        } catch(PrivilegedActionException e){
-            ;                    
+            context.getRequestDispatcher(path).forward(request, response);
         } finally {
             if (includeUri != null)
                 request.setAttribute(Constants.INC_SERVLET_PATH, includeUri);
