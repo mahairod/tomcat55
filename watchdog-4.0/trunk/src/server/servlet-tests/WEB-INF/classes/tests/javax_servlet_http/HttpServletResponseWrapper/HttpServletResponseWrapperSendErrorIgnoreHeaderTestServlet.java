@@ -72,6 +72,6 @@ public class HttpServletResponseWrapperSendErrorIgnoreHeaderTestServlet extends 
 
         PrintWriter out = response.getWriter();
         out.println( "in HttpServletResponseWrapperSendErroIgnoreHeaderTest servlet<BR>" );
-        response.sendError( HttpServletResponse.SC_CONTINUE );
+        response.sendError( HttpServletResponse.SC_GONE );
     }
 }

@@ -76,6 +76,6 @@ public class SendError_StringTestServlet extends HttpServlet {
 
     public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-        response.sendError( HttpServletResponse.SC_CONTINUE, "in SendError_StringTest servlet" );
+        response.sendError( HttpServletResponse.SC_GONE, "in SendError_StringTest servlet" );
     }
 }

@@ -76,7 +76,7 @@ public class HttpServletResponseWrapperSendErrorTestServlet extends HttpServlet 
 
         PrintWriter out = response.getWriter();
         out.println( "in HttpServletResponseWrapperSendErrorTest servlet<BR>" );
-        response.sendError( HttpServletResponse.SC_CONTINUE );
+        response.sendError( HttpServletResponse.SC_GONE );
 
     }
 }

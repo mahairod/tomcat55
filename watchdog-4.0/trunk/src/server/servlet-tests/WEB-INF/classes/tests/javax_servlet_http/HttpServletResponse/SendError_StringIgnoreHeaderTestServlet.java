@@ -77,7 +77,7 @@ public class SendError_StringIgnoreHeaderTestServlet extends HttpServlet {
 
     public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-        response.sendError( HttpServletResponse.SC_CONTINUE, "in SendError_StringIgnoreHeaderTest servlet" );
+        response.sendError( HttpServletResponse.SC_GONE, "in SendError_StringIgnoreHeaderTest servlet" );
         response.addHeader( "HttpServletResponse", "sendErrorMsgIgnoreHeader" );
     }
 }
