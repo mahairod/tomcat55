@@ -80,6 +80,10 @@ public class ContextInterceptor implements RequestInterceptor {
     }
 
     public int handleRequest( Request rrequest ) {
+	// someone else set it up, no need to worry
+	if( rrequest.getContext() != null )
+	    return OK;
+	
 	// resolve the server that we are for
 	String path = rrequest.getRequestURI();
 	
