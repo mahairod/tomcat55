@@ -55,6 +55,8 @@ Connectors  3509    Apache 1.3.20 and mod_webapp and Tomcat 4b7 HANGS
 
 Connectors  3534    File Upload doesn't work with Apache, mod_webapp, Tomcat 4
 
+Jasper      3079    NullPointerException in JakartaCommentGenerator.generateEnd
+
 
 Nice To Have Fixes Before Final Release:
 ---------------------------------------
@@ -76,17 +78,14 @@ Catalina    3511    Line too long (awaiting reproducible failure case)
 Catalina    3515    Process hanging after stopping Tomcat (awaiting
                     reproducible failure case)
 
-Catalina    3589    Cannot process taglib TLD when deployed through
-                    EmbeddedManagerMBean
-
 Catalina    3594    Have to reload page or page will not be shown
                     (awaiting reproducible failure case, likely user error)
 
 Catalina    3597    Shutting down takes *ages* (not confirmed against
                     latest Tomcat 4.0 build)
 
-Jasper      3079    NullPointerException in JakartaCommentGenerator.generateEnd
-                    (awaiting reproducible failure case)
+Catalina    3612    getServletPath() returns wrong value (awaiting reproducible
+                    failure case)
 
 Jasper      3127    <jsp:directive.include/> not supported (awaiting
                     reproducible failure case)

@@ -128,12 +128,11 @@ fi
 if [ "$1" = "debug" ] ; then
 
   shift
-  pushd $CATALINA_HOME
   if [ "$1" = "-security" ] ; then
     shift
     $JAVA_HOME/bin/jdb \
        $CATALINA_OPTS \
-       -sourcepath ../../jakarta-tomcat-4.0/catalina/src/share \
+       -sourcepath $CATALINA_HOME/../../jakarta-tomcat-4.0/catalina/src/share \
        -classpath $CP \
        -Dcatalina.base=$CATALINA_BASE \
        -Dcatalina.home=$CATALINA_HOME \
@@ -141,13 +140,12 @@ if [ "$1" = "debug" ] ; then
   else
     $JAVA_HOME/bin/jdb \
        $CATALINA_OPTS \
-       -sourcepath ../../jakarta-tomcat-4.0/catalina/src/share \
+       -sourcepath $CATALINA_HOME/../../jakarta-tomcat-4.0/catalina/src/share \
        -classpath $CP \
        -Dcatalina.base=$CATALINA_BASE \
        -Dcatalina.home=$CATALINA_HOME \
        org.apache.catalina.startup.Bootstrap "$@" start
   fi
-  popd
 
 elif [ "$1" = "embedded" ] ; then
 
