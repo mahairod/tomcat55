@@ -243,8 +243,11 @@ public class RequestImpl  implements Request {
 	// the real path for this ( i.e. the URI ).
 
 	// Check the PATH_TRANSLATED specs before changing!
-	if( pathTranslated==null)
-	    pathTranslated=context.getRealPath( getPathInfo() );
+	if( pathTranslated==null) {
+	    String path=getPathInfo();
+	    if(path==null) path="";
+	    pathTranslated=context.getRealPath( path );
+	}
 	return pathTranslated;
     }
 

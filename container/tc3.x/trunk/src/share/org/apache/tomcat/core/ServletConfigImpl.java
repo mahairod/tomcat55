@@ -85,6 +85,13 @@ implements ServletConfig {
     private String servletName = null;
     private String servletClassName = null;
     
+    ServletConfigImpl() {
+    }
+
+    void setContext( Context ctx ) {
+	context=ctx;
+    }
+    
     ServletConfigImpl(Context context) {
         this.context = context;
     }

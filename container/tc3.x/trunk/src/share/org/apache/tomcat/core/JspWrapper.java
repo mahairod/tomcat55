@@ -180,13 +180,6 @@ public class JspWrapper extends ServletWrapper {
 	    RequestDispatcher rd = request.getRequestDispatcher(requestURI);
 	    
 	    try {
-		// Watch out, ugly code ahead...
-		// We need to do a forward or include here, but we can't
-		// easily determine which.  So we try a forward, and if
-		// there's an IllegalStateException thrown, then we know
-		// we should have tried an include, so we do the include.
-		// It's so ugly I have to giggle.
-		// All this to support dispatching to named JSPs!
 		if (! response.getRealResponse().isStarted())
 		    rd.forward(request, response);
 		else
@@ -199,10 +192,7 @@ public class JspWrapper extends ServletWrapper {
 		ioe.printStackTrace();
 		response.sendError(404);
 	    }
-	    
 	    return;
-	    // I have no ideea how it works - but the code should be
-	    // equivalent with the original in ServletWrapper.
 	}
     }
 }
