@@ -70,7 +70,7 @@ import java.io.IOException;
  * functionality in sending a response.  For example, it has methods
  * to access HTTP headers and cookies.
  *
- * <p>The servlet container creates an <code>HttpServletRequest</code> object
+ * <p>The servlet container creates an <code>HttpServletResponse</code> object
  * and passes it as an argument to the servlet's service methods
  * (<code>doGet</code>, <code>doPost</code>, etc).
  *
