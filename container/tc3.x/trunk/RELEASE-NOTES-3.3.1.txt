@@ -115,6 +115,8 @@ Bug No.  Description
 5390	 Fixed the behavior of LoadOnStartup servlets when the servlet is
 	 actually a JSP page.
 
+5365	 Fixed the JasperMangler to handle Java reserved words correctly.
+
 Documentation:
 
 Bug No.  Description
