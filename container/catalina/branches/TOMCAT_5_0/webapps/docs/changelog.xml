@@ -30,7 +30,7 @@
         <bug>22679</bug>: Added misc note on accessing session ID to SSL-HowTo. (yoavs) 
       </update> 
       <update> 
-       When the package protection is not used, do not create the doPrivileged objects so we don't suffer the performance hit.
+       When the package protection is not used, do not create the doPrivileged objects so we don't suffer the performance hit (jfarcand)
       </update> 
       <update>
         <bug>32282</bug>: Modify Windows Uninstaller to remove webapps and webapps/ROOT only if user asks to remove everything. (yoavs)
