@@ -862,6 +862,7 @@
     <ant dir="${tomcat-jk.home}" target="build-main">
       <property name="tomcat40.home" value="${catalina.deploy}"/>
       <property name="tomcat41.home" value="${catalina.deploy}"/>
+      <property name="catalina.home" value="${catalina.deploy}"/>
       <property name="commons-logging.jar" value="${commons-logging.jar}"/>
       <property name="jmx.jar" value="${jmx.jar}"/>
     </ant>
