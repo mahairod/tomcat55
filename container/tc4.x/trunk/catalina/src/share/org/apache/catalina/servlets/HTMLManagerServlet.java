@@ -258,7 +258,10 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 args[2] = appsStop;
                 args[3] = appsReload;
                 args[4] = appsRemove;
-                if (context.getAvailable()) {
+                if (context.getPath().equals(this.context.getPath())) {
+                    writer.print(MessageFormat.format(
+                        MANAGER_APP_ROW_BUTTON_SECTION, args));
+                } else if (context.getAvailable()) {
                     writer.print(MessageFormat.format(
                         STARTED_APPS_ROW_BUTTON_SECTION, args));
                 } else {
@@ -513,6 +516,17 @@ public final class HTMLManagerServlet extends ManagerServlet {
         " <td class=\"row-center\"><small>{2}</small></td> \n" +
         " <td class=\"row-center\">" +
         "<small><a href=\"sessions?path={0}\">{3}</a></small></td> \n";
+
+    private static final String MANAGER_APP_ROW_BUTTON_SECTION =
+        " <td class=\"row-left\"> \n" +
+        "  <small> \n" +
+        "  &nbsp;{1}&nbsp; \n" +
+        "  &nbsp;{2}&nbsp; \n" +
+        "  &nbsp;{3}&nbsp; \n" +
+        "  &nbsp;{4}&nbsp; \n" +
+        "  </small> \n" +
+        " </td> \n" +
+        "</tr> \n";
 
     private static final String STARTED_APPS_ROW_BUTTON_SECTION =
         " <td class=\"row-left\"> \n" +

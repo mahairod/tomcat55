@@ -728,6 +728,11 @@ public class ManagerServlet
                 writer.println(sm.getString("managerServlet.noReload", displayPath));
                 return;
             }
+            // It isn't possible for the manager to reload itself
+            if (context.getPath().equals(this.context.getPath())) {
+                writer.println(sm.getString("managerServlet.noSelf"));
+                return;
+            }
             context.reload();
             writer.println(sm.getString("managerServlet.reloaded", displayPath));
         } catch (Throwable t) {
@@ -762,6 +767,11 @@ public class ManagerServlet
             Context context = deployer.findDeployedApp(path);
             if (context == null) {
                 writer.println(sm.getString("managerServlet.noContext", displayPath));
+                return;
+            }
+            // It isn't possible for the manager to remove itself
+            if (context.getPath().equals(this.context.getPath())) {
+                writer.println(sm.getString("managerServlet.noSelf"));
                 return;
             }
             deployer.remove(path);
@@ -1041,6 +1051,11 @@ public class ManagerServlet
                 writer.println(sm.getString("managerServlet.noContext", displayPath));
                 return;
             }
+            // It isn't possible for the manager to stop itself
+            if (context.getPath().equals(this.context.getPath())) {
+                writer.println(sm.getString("managerServlet.noSelf"));
+                return;
+            }
             deployer.stop(path);
             writer.println(sm.getString("managerServlet.stopped", displayPath));
         } catch (Throwable t) {
@@ -1112,6 +1127,11 @@ public class ManagerServlet
             // Remove this web application and its associated docBase
             if (debug >= 2) {
                 log("Undeploying document base " + docBasePath);
+            }
+            // It isn't possible for the manager to undeploy itself
+            if (context.getPath().equals(this.context.getPath())) {
+                writer.println(sm.getString("managerServlet.noSelf"));
+                return;
             }
             deployer.remove(path);
             if (docBaseDir.isDirectory()) {
