@@ -657,16 +657,21 @@ class Generator {
      */
     private void generateConstructor(String className) {
 	out.printil("public " + className + "() {");
-	out.pushIndent();
-	for (int i=0; i<tagHandlerPoolNames.size(); i++) {
-	    out.printin((String) tagHandlerPoolNames.elementAt(i));
-	    out.print(" = org.apache.jasper.runtime.TagHandlerPool.getTagHandlerPool(");
-            out.print("this");
-            out.println(");");
-	}
-	out.popIndent();
 	out.printil("}");
 	out.println();
+
+        out.printil("public void _jspInit() {");
+        out.pushIndent();
+        for (int i=0; i<tagHandlerPoolNames.size(); i++) {
+            out.printin((String) tagHandlerPoolNames.elementAt(i));
+            out.print(" = org.apache.jasper.runtime.TagHandlerPool.getTagHandlerPool(");
+            out.print("this");
+            out.println(");");
+        }
+        out.popIndent();
+        out.printil("}");
+        out.println();
+
     }
 
     /**
