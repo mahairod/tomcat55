@@ -23,6 +23,10 @@
       <update>
         <bug>32235</bug>: align conf/web.xml MIME types with Apache HTTPD. (yoavs)
       </update>
+      <fix> 
+        <bug>31132</bug>: Modified startup scripts for better OS/400 -x/-r handling. (yoavs)
+      </fix>
+
     </changelog>
   </subsection>
 

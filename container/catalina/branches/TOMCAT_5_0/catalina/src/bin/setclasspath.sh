@@ -31,9 +31,17 @@ if [ -z "$BASEDIR" ]; then
   exit 1
 fi
 if [ ! -x "$BASEDIR"/bin/setclasspath.sh ]; then
-  echo "The BASEDIR environment variable is not defined correctly"
-  echo "This environment variable is needed to run this program"
-  exit 1
+  if $os400; then
+    # -x will Only work on the os400 if the files are:
+    # 1. owned by the user
+    # 2. owned by the PRIMARY group of the user
+    # this will not work if the user belongs in secondary groups 
+    eval
+  else
+    echo "The BASEDIR environment variable is not defined correctly"
+    echo "This environment variable is needed to run this program"
+    exit 1
+  fi
 fi
 
 # Set the default -Djava.endorsed.dirs argument
