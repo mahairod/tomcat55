@@ -448,6 +448,15 @@ public class Project {
         for (char c = sci.first(); c != CharacterIterator.DONE; c = sci.next()) {
             tmp = String.valueOf(c);
             
+            if (tmp.equals(":")) {
+		// could be a DOS drive or a Unix path separator...
+		// if followed by a backslash, assume it is a drive
+		c = sci.next();
+		tmp = String.valueOf(c);
+		bs.append( tmp.equals("\\") ? ":" : path );
+		if (c == CharacterIterator.DONE) break;
+	    }
+
             if (tmp.equals(":") || tmp.equals(";"))
                 tmp = path;
             else if (tmp.equals("/") || tmp.equals ("\\"))
