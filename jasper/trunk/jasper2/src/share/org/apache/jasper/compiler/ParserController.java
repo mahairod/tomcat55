@@ -112,7 +112,9 @@ public class ParserController {
     private boolean isTopFile = true;
 
     /*
-     * Tells if this is a regular jsp page or tag file.
+     * Tells if the file to be parsed is a regular jsp page or tag file.
+     * Usually we get the info from the compilation context, but it can
+     * be temporarily overrideen with a parameter to the parse method
      */
     private boolean isTagFile = false;
 
@@ -136,7 +138,6 @@ public class ParserController {
         this.ctxt = ctxt; // @@@ can we assert that ctxt is not null?
 	this.compiler = compiler;
     }
-   
 
     public JspCompilationContext getJspCompilationContext () {
 	return ctxt;
@@ -157,7 +158,7 @@ public class ParserController {
      */
     public Node.Nodes parse(String inFileName)
 	        throws FileNotFoundException, JasperException, IOException {
-	return parse(inFileName, null, false);
+	return parse(inFileName, null, ctxt.isTagFile());
     }
 
     /**

@@ -244,6 +244,10 @@ public class JspServletWrapper {
 	return null;
     }
 
+    public boolean isTagFile() {
+	return this.isTagFile;
+    }
+
     public void service(HttpServletRequest request, 
                         HttpServletResponse response,
                         boolean precompile)
