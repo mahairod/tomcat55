@@ -24,8 +24,9 @@
       <td align="right" nowrap> 
         <div class="page-title-text">
           <html:select property="action">
-            <html:options collection="actionVals" property="value"
-                   labelProperty="label"/>
+          <bean:define id="actionVals" name="serverForm" property="actionVals"/>
+          <html:options collection="actionVals" 
+            property="value" labelProperty="label"/>
             </html:select>
         </div>
       </td>
@@ -80,6 +81,7 @@
             <td>
               <div class="table-normal-text" >
                 <html:select property="debugLvl">
+                     <bean:define id="debugLvlVals" name="serverForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                    labelProperty="label"/>
                 </html:select>

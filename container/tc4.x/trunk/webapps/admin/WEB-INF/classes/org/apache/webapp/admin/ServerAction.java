@@ -83,20 +83,23 @@ import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.MBeanInfo;
+import org.apache.struts.util.MessageResources;
+
 /**
  * Implementation of <strong>Action</strong> that validates a user logon.
  *
  * @author Jazmin Jonson
+ * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
 public final class ServerAction extends Action {
-
+    
     private static MBeanServer mBServer = null;
-
+    
     // --------------------------------------------------------- Public Methods
-
-
+    
+    
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -113,58 +116,75 @@ public final class ServerAction extends Action {
      * @exception ServletException if a servlet exception occurs
      */
     public ActionForward perform(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws IOException, ServletException {
+    ActionForm form,
+    HttpServletRequest request,
+    HttpServletResponse response)
+    throws IOException, ServletException {
+        
+        System.out.println(mapping.getInput());
         
         try{
-	
+            
+            // front end validation and checking.
+            // ===================================================
+            MessageResources messages = getResources();
+            
+            // Validate the request parameters specified by the user
+            ActionErrors errors = new ActionErrors();
+            
+            // Report any errors we have discovered back to the original form
+            if (!errors.empty()) {
+                saveErrors(request, errors);
+                return (new ActionForward(mapping.getInput()));
+            }
+            
             if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();	
+                ApplicationServlet servlet = (ApplicationServlet)getServlet();
                 mBServer = servlet.getServer();
-	    }        
-            Iterator serverItr = 
-                mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
-                                                    TomcatTreeBuilder. WILDCARD),
-                                     null).iterator();
-
+            }
+            Iterator serverItr =
+            mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
+            TomcatTreeBuilder. WILDCARD),
+            null).iterator();
+            
             ObjectName serverObjName =
-                ((ObjectInstance)serverItr.next()).getObjectName();
-
-	    String shutdownText = request.getParameter("shutdownText");
-	    String portNumberText = request.getParameter("portNumberText");
-	    String debugLvlText = request.getParameter("debugLvl");
-
-	    if(shutdownText != null) {
-
-	        mBServer.setAttribute(serverObjName,
-                                      new Attribute(SetUpServerAction.SHUTDOWN_PROP_NAME,
-				                    shutdownText));
-	    }
-
-	    if(portNumberText != null) {
-
+            ((ObjectInstance)serverItr.next()).getObjectName();
+            
+            String shutdownText = request.getParameter("shutdownText");
+            String portNumberText = request.getParameter("portNumberText");
+            String debugLvlText = request.getParameter("debugLvl");
+            
+            if(shutdownText != null) {
+                
+                mBServer.setAttribute(serverObjName,
+                new Attribute(SetUpServerAction.SHUTDOWN_PROP_NAME,
+                shutdownText));
+            }
+            
+            if(portNumberText != null) {
+                
                 Integer port = new Integer(portNumberText);
-	        mBServer.setAttribute(serverObjName,
-                                      new Attribute(SetUpServerAction.PORT_PROP_NAME,
-				                    port));
-	    }
-
-	    if(debugLvlText != null) {
+                mBServer.setAttribute(serverObjName,
+                new Attribute(SetUpServerAction.PORT_PROP_NAME,
+                port));
+            }
+            
+            if(debugLvlText != null) {
                 Integer debugLvl = new Integer(debugLvlText);
-	        mBServer.setAttribute(serverObjName,
-                                      new Attribute(SetUpServerAction.DEBUG_PROP_NAME,
-				                    debugLvl));
-	    }
-	    
+                mBServer.setAttribute(serverObjName,
+                new Attribute(SetUpServerAction.DEBUG_PROP_NAME,
+                debugLvl));
+            }
+            
         }catch(Throwable t){
             t.printStackTrace(System.out);
             //forward to error page
-        } 
+        }
+        if (servlet.getDebug() >= 1)
+            servlet.log(" Forwarding to success page");
         // Forward back to the test page
         return (mapping.findForward("Save Successful"));
-
+        
     }
-
+    
 }

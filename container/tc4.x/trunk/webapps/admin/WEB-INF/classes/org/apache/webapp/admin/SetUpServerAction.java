@@ -226,7 +226,9 @@ public class SetUpServerAction extends Action {
         // Hardcode debuglvl for now
         serverFm.setDebugLvl(debug.toString());
         serverFm.setShutdownText(shutdown);
-
+        serverFm.setActionVals(actionList);
+        serverFm.setDebugLvlVals(debugLvlList);
+        
         // Forward back to the test page
         return (mapping.findForward("Server"));
 

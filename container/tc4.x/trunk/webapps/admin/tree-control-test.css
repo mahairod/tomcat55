@@ -1,18 +1,18 @@
 .tree-control {
-  font-family: verdana, geneva, helvetica, arial, sans-serif;
+  font-family: arial, verdana, geneva, helvetica, sans-serif;
   font-size: 80%;
   line-height: 1.0;
 }
 
 .tree-control-selected {
-  color: red;
+  color: black;
   font-weight: bold;
   text-decoration: none;
 }
 
 .tree-control-unselected {
-  color: green;
-  font-style: italic;
+  color: black;
+  font-style: normal;
   font-weight: normal;
   text-decoration: none;
 }

@@ -69,119 +69,154 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
+import java.util.ArrayList;
 
 /**
- * Form bean for the user locale page.  This form has the following fields,
- * with default values in square brackets:
- * <ul>
- * <li><b>someText</b> - Entered text value
- * <li><b>moreText</b> - Entered text value
- * </ul>
- *
+ * Form bean for the server form page.  
  * @author Patrick Luby
+ * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
 public final class ServerForm extends ActionForm {
-
+    
     // ----------------------------------------------------- Instance Variables
-
+    
     /**
      * The text for the port number.
      */
     private String action = null;
-
+    
     private String portNumberText = "8080";
-
+    
     /**
      * The text for the debug level.
      */
     private String debugLvl = "0";
-
+    
     /**
      * The text for the debug level.
      */
-
+    
     private String shutdownText = null;
-
-
+    
+    private ArrayList debugLvlVals = null;
+    private ArrayList actionVals = null;
     // ------------------------------------------------------------- Properties
-
+    
+    
     /**
-     * Return the portNumberText.
+     * Return the debugVals.
      */
-    public String getAction() {
-
-        return this.action;
-
+    public ArrayList getDebugLvlVals() {
+        
+        return this.debugLvlVals;
+        
     }
-
+    
+    /**
+     * Set the debugVals.
+     */
+    public void setDebugLvlVals(ArrayList debugLvlVals) {
+        
+        this.debugLvlVals = debugLvlVals;
+        
+    }
+    
+    
+    /**
+     * Return the ActionVals.
+     */
+    public ArrayList getActionVals() {
+        
+        return this.actionVals;
+        
+    }
+    
     /**
      * Set the portNumberText.
      */
-    public void setAction(String action) {
-
-        this.portNumberText = action;
-
+    public void setActionVals(ArrayList actionVals) {
+        
+        this.actionVals = actionVals;
+        
     }
-
-
+    
+    /**
+     * Return the Action.
+     */
+    public String getAction() {
+        
+        return this.action;
+        
+    }
+    
+    /**
+     * Set the action.
+     */
+    public void setAction(String action) {
+        
+        this.action = action;
+        
+    }
+    
+    
     /**
      * Return the portNumberText.
      */
     public String getPortNumberText() {
-
+        
         return this.portNumberText;
-
+        
     }
-
+    
     /**
      * Set the portNumberText.
      */
     public void setPortNumberText(String portNumberText) {
-
+        
         this.portNumberText = portNumberText;
-
+        
     }
-
+    
     /**
      * Return the Debug Level Text.
      */
     public String getDebugLvl() {
-
+        
         return this.debugLvl;
-
+        
     }
-
+    
     /**
      * Set the Debug Level Text.
      */
     public void setDebugLvl(String debugLvl) {
-
+        
         this.debugLvl = debugLvl;
-
+        
     }
-
+    
     /**
      * Return the Shutdown Text.
      */
     public String getShutdownText() {
-
+        
         return this.shutdownText;
-
+        
     }
-
+    
     /**
      * Set the Shut down  Text.
      */
     public void setShutdownText(String shutdownText) {
-
+        
         this.shutdownText = shutdownText;
-
+        
     }
-
+    
     // --------------------------------------------------------- Public Methods
-
+    
     /**
      * Reset all properties to their default values.
      *
@@ -189,15 +224,15 @@ public final class ServerForm extends ActionForm {
      * @param request The servlet request we are processing
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
-
+        
         this.portNumberText = null;
         this.debugLvl = "0";
-	this.shutdownText = null;
+        this.shutdownText = null;
         this.action = null;
-
+        
     }
-
-
+    
+    
     /**
      * Validate the properties that have been set from this HTTP request,
      * and return an <code>ActionErrors</code> object that encapsulates any
@@ -209,20 +244,41 @@ public final class ServerForm extends ActionForm {
      * @param request The servlet request we are processing
      */
     public ActionErrors validate(ActionMapping mapping,
-                                 HttpServletRequest request) {
-
-       
+    HttpServletRequest request) {
+        
         ActionErrors errors = new ActionErrors();
-
-	/* Do nothing for now
-        if ((someText == null) || (someText.length() < 1))
-            errors.add("someText", new ActionError("sample.someText.required"));
-        if ((moreText == null) || (moreText.length() < 1))
-            errors.add("moreText", new ActionError("sample.moreText.required"));
-	*/
-
+        
+        String submit = request.getParameter("submit");
+        if (submit != null) {
+            
+            // check for portNumber -- must not be blank, must be in
+            // the range 1 to 65535.
+            
+            if ((portNumberText == null) || (portNumberText.length() < 1)) {
+                errors.add("portNumberText",
+                new ActionError("error.portNumberText.required"));
+            } else {
+                try {
+                    int port = Integer.parseInt(portNumberText);
+                    if ((port <= 0) || (port >65535 ))
+                        errors.add("portNumberText", 
+                            new ActionError("error.portNumber.range"));
+                } catch (NumberFormatException e) {
+                    errors.add("portNumberText", 
+                        new ActionError("error.portNumber.format"));
+                }
+            }
+        
+            // shutdown text can be any non-empty string of atleast 6 characters.
+            
+            if ((shutdownText == null) || (shutdownText.length() < 7))
+                errors.add("shutdownText",
+                new ActionError("error.shutdownText.length"));
+            
+        }
+        
         return errors;
-
+        
     }
-
+    
 }
