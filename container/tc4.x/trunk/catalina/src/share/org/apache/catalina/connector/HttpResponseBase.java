@@ -69,7 +69,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
-import java.net.URL;
+// import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.SimpleDateFormat;
@@ -90,6 +90,7 @@ import org.apache.catalina.Globals;
 import org.apache.catalina.Logger;
 import org.apache.catalina.util.CookieTools;
 import org.apache.catalina.util.RequestUtil;
+import org.apache.catalina.util.URL;
 
 
 /**
@@ -690,7 +691,7 @@ public class HttpResponseBase
                 throw new IllegalArgumentException(location);
             }
         }
-        return (url.toString());
+        return (url.toExternalForm());
 
     }
 
