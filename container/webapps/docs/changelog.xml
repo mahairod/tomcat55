@@ -49,6 +49,9 @@
       <fix>
         <bug>32502</bug>: memory leak in DigestAuthenticator. (yoavs)
       </fix>
+      <fix>
+        <bug>28709</bug>: javax.servlet.http.HttpServletRequest.isRequestedSessionIdValid() returns true for an invalidated session. (luehe)
+      </fix>
     </changelog>
   </subsection>
 
