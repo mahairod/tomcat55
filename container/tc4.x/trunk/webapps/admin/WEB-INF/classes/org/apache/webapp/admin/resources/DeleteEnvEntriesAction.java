@@ -152,11 +152,6 @@ public final class DeleteEnvEntriesAction extends Action {
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         
-        getServlet().log("resourcetype = "+request.getParameter("resourcetype"));
-        getServlet().log("path = "+request.getParameter("path"));
-        getServlet().log("host = "+request.getParameter("host"));
-        getServlet().log("service = "+request.getParameter("service"));
-        
         // Has this transaction been cancelled?
         if (isCancelled(request)) {
             return (mapping.findForward("List EnvEntries Setup"));
@@ -172,8 +167,11 @@ public final class DeleteEnvEntriesAction extends Action {
 
         // Perform any extra validation that is required
         EnvEntriesForm envEntriesForm = (EnvEntriesForm) form;
-        getServlet().log("form resourcetype = "+envEntriesForm.getResourcetype());
         String envEntries[] = envEntriesForm.getEnvEntries();
+        String resourcetype = envEntriesForm.getResourcetype();
+        String path = envEntriesForm.getPath();
+        String host = envEntriesForm.getHost();
+        String service = envEntriesForm.getService();
         
         if (envEntries == null) {
             envEntries = new String[0];
@@ -181,9 +179,21 @@ public final class DeleteEnvEntriesAction extends Action {
 
         // Perform "Delete EnvEntry" transactions as required
         try {
-
-            // Construct the MBean Name for the naming source
-            ObjectName dname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE);
+            
+            ObjectName dname = null;
+            if (resourcetype!=null) {
+                // Construct the MBean Name for the naming source
+                if (resourcetype.equals("Global")) {
+                    dname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
+                                                    ResourceUtils.GLOBAL_TYPE);
+                } else if (resourcetype.equals("Context")) {            
+                    dname = new ObjectName (ResourceUtils.NAMINGRESOURCES_TYPE + 
+                            ResourceUtils.CONTEXT_TYPE + ",path=" + path + 
+                            ",host=" + host + ",service=" + service);
+                } else if (resourcetype.equals("DefaultContext")) {
+                        // add defaultcontext support later
+                }
+            }
 
             String signature[] = new String[1];
             signature[0] = "java.lang.String";

@@ -173,9 +173,27 @@ public final class DeleteDataSourcesAction extends Action {
 
         // Perform "Delete EnvEntry" transactions as required
         try {
+            
+            String resourcetype = dataSourcesForm.getResourcetype();
+            String path = dataSourcesForm.getPath();
+            String host = dataSourcesForm.getHost();
+            String service = dataSourcesForm.getService();
+            
+            ObjectName dname = null;
 
-            // Construct the MBean Name for the naming source
-            ObjectName dname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE);
+            if (resourcetype!=null) {
+                // Construct the MBean Name for the naming source
+                if (resourcetype.equals("Global")) {
+                    dname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
+                                            ResourceUtils.GLOBAL_TYPE);
+                } else if (resourcetype.equals("Context")) {            
+                    dname = new ObjectName (ResourceUtils.NAMINGRESOURCES_TYPE + 
+                                ResourceUtils.CONTEXT_TYPE + ",path=" + path + 
+                                ",host=" + host + ",service=" + service);
+                } else if (resourcetype.equals("DefaultContext")) {
+                    // add defaultcontext support later
+                }
+            }
 
             String signature[] = new String[1];
             signature[0] = "java.lang.String";
