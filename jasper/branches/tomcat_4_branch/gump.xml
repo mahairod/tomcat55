@@ -5,7 +5,7 @@
   </description>
   <url href="http://jakarta.apache.org/tomcat/index.html"/>
 
-  <cvs repository="jakarta" />
+  <cvs repository="jakarta" tag="tomcat_4_branch"/>
   <project name="jakarta-tomcat-jasper"/>
   
 </module>
