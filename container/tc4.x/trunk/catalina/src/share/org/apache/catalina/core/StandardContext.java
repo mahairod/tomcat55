@@ -3250,7 +3250,9 @@ public class StandardContext
                 } catch (ServletException e) {
                     log(sm.getString("standardWrapper.loadException",
                                      getName()), e);
-                    ok = false;
+                    // NOTE: load errors (including a servlet that throws
+                    // UnavailableException from tht init() method) are NOT
+                    // fatal to application startup
                 }
             }
         }
