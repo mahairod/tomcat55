@@ -29,7 +29,7 @@
       <copyfile src="../jakarta-tools/moo.jar"
                dest="${watchdog.build}/lib/moo.jar"/>
 
-      <copyfile src="../jakarta-ant/lib/ant.jar"
+      <copyfile src="${ant.home}/lib/ant.jar"
                 dest="${watchdog.build}/lib/ant.jar"/>
 
       <copyfile src="../jakarta-servletapi/lib/servlet.jar"
@@ -112,7 +112,7 @@
       <copyfile src="../jakarta-tools/moo.jar"
                dest="${watchdog.dist}/lib/moo.jar"/>
 
-      <copyfile src="../jakarta-ant/lib/ant.jar"
+      <copyfile src="${ant.home}/lib/ant.jar"
                dest="${watchdog.dist}/lib/ant.jar"/>
 
       <copyfile src="../jakarta-servletapi/lib/servlet.jar"
