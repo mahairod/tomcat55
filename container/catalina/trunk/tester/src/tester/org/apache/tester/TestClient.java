@@ -354,7 +354,7 @@ public class TestClient extends Task {
         try {
             readGolden();
         } catch (IOException e) {
-            System.out.println("FAIL:  readGolden(" + golden + ")");
+            log("FAIL:  readGolden(" + golden + ")");
             e.printStackTrace(System.out);
         }
         if ((protocol == null) || (protocol.length() == 0))
@@ -378,7 +378,7 @@ public class TestClient extends Task {
         // Construct a summary of the request we will be sending
         String summary = "[" + method + " " + request + "]";
         if (debug >= 1)
-            System.out.println("RQST: " + summary);
+            log("RQST: " + summary);
         boolean success = true;
         String result = null;
         Throwable throwable = null;
@@ -396,7 +396,7 @@ public class TestClient extends Task {
                 conn.setRequestProperty("Content-Length",
                                         "" + inContent.length());
                 if (debug >= 1)
-                    System.out.println("INPH: Content-Length: " +
+                    log("INPH: Content-Length: " +
                                        inContent.length());
             } else {
                 conn.setDoOutput(false);
@@ -407,12 +407,12 @@ public class TestClient extends Task {
                 conn.setRequestProperty("Cookie",
                                         "JSESSIONID=" + sessionId);
                 if (debug >= 1)
-                    System.out.println("INPH: Cookie: JSESSIONID=" +
+                    log("INPH: Cookie: JSESSIONID=" +
                                        sessionId);
             }
 
             if (this.redirect && (debug >= 1))
-                System.out.println("FLAG: setInstanceFollowRedirects(" +
+                log("FLAG: setInstanceFollowRedirects(" +
                                    this.redirect + ")");
             conn.setInstanceFollowRedirects(this.redirect);
             conn.setRequestMethod(method);
@@ -435,7 +435,7 @@ public class TestClient extends Task {
                     String value = header.substring(colon + 1).trim();
                     conn.setRequestProperty(name, value);
                     if (debug >= 1)
-                        System.out.println("INPH: " + name + ": " + value);
+                        log("INPH: " + name + ": " + value);
                 }
             }
 
@@ -443,7 +443,7 @@ public class TestClient extends Task {
             conn.connect();
             if (inContent != null) {
                 if (debug >= 1)
-                    System.out.println("INPD: " + inContent);
+                    log("INPD: " + inContent);
                 OutputStream os = conn.getOutputStream();
                 for (int i = 0; i < inContent.length(); i++)
                     os.write(inContent.charAt(i));
@@ -471,7 +471,7 @@ public class TestClient extends Task {
 
             // Dump out the response stuff
             if (debug >= 1)
-                System.out.println("RESP: " + conn.getResponseCode() + " " +
+                log("RESP: " + conn.getResponseCode() + " " +
                                    conn.getResponseMessage());
             for (int i = 1; i < 1000; i++) {
                 String name = conn.getHeaderFieldKey(i);
@@ -479,15 +479,15 @@ public class TestClient extends Task {
                 if ((name == null) || (value == null))
                     break;
                 if (debug >= 1)
-                    System.out.println("HEAD: " + name + ": " + value);
+                    log("HEAD: " + name + ": " + value);
                 save(name, value);
                 if ("Set-Cookie".equals(name))
                     parseSession(value);
             }
             if (debug >= 1) {
-                System.out.println("DATA: " + outData);
+                log.println("DATA: " + outData);
                 if (outText.length() > 2)
-                    System.out.println("TEXT: " + outText);
+                    log.println("TEXT: " + outText);
             }
 
             // Validate the response against our criteria
@@ -546,9 +546,9 @@ public class TestClient extends Task {
 
         // Log the results of executing this request
         if (success)
-            System.out.println("OK " + summary);
+            log.println("OK " + summary);
         else {
-            System.out.println("FAIL " + summary + " " + result);
+            log.println("FAIL " + summary + " " + result);
             if (throwable != null)
                 throwable.printStackTrace(System.out);
         }
@@ -567,7 +567,7 @@ public class TestClient extends Task {
         String command = method + " " + request + " " + protocol;
         String summary = "[" + command + "]";
         if (debug >= 1)
-            System.out.println("RQST: " + summary);
+            log("RQST: " + summary);
         boolean success = true;
         String result = null;
         Socket socket = null;
@@ -590,7 +590,7 @@ public class TestClient extends Task {
             pw.print(command + "\r\n");
             if (inContent != null) {
                 if (debug >= 1)
-                    System.out.println("INPH: " + "Content-Length: " +
+                    log("INPH: " + "Content-Length: " +
                                        inContent.length());
                 pw.print("Content-Length: " + inContent.length() + "\r\n");
             }
@@ -599,7 +599,7 @@ public class TestClient extends Task {
             if (joinSession && (sessionId != null)) {
                 pw.println("Cookie: JSESSIONID=" + sessionId);
                 if (debug >= 1)
-                    System.out.println("INPH: Cookie: JSESSIONID=" +
+                    log("INPH: Cookie: JSESSIONID=" +
                                        sessionId);
             }
 
@@ -622,7 +622,7 @@ public class TestClient extends Task {
                     String name = header.substring(0, colon).trim();
                     String value = header.substring(colon + 1).trim();
                     if (debug >= 1)
-                        System.out.println("INPH: " + name + ": " + value);
+                        log("INPH: " + name + ": " + value);
                     pw.print(name + ": " + value + "\r\n");
                 }
             }
@@ -631,7 +631,7 @@ public class TestClient extends Task {
             // Send our content (if any)
             if (inContent != null) {
                 if (debug >= 1)
-                    System.out.println("INPD: " + inContent);
+                    log("INPD: " + inContent);
                 for (int i = 0; i < inContent.length(); i++)
                     pw.print(inContent.charAt(i));
             }

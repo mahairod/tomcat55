@@ -117,7 +117,7 @@ public final class CommitChangesAction extends Action {
         }
  
 
-        System.out.println("Debugging -- changes saved to conf/server.xml");
+        getServlet().log("Debugging -- changes saved to conf/server.xml");
         // Forward control back to the banner
         return (mapping.findForward("Banner"));
 
