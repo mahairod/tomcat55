@@ -451,12 +451,19 @@ final class HttpProcessor
               while (le.hasMoreElements()) {
                 String language = (String)le.nextElement();
                 String country = "";
+                String variant = "";
                 int countryIndex = language.indexOf('-');
                 if (countryIndex > -1) {
                     country = language.substring(countryIndex + 1).trim();
                     language = language.substring(0, countryIndex).trim();
+                    int vDash = country.indexOf("-");
+                    if (vDash > 0) {
+                        String cTemp = country.substring(0, vDash);
+                        variant = country.substring(vDash + 1);
+                        country = cTemp;
+                    } 
                 }
-                request.addLocale(new Locale(language, country));
+                request.addLocale(new Locale(language, country, variant));
               }
           }
             } else if (match.equals("cookie")) {
