@@ -930,6 +930,13 @@
 
    </target>
 
+   <target name="clean-tester" 
+           description="Clean the Catalina tester">
+
+    <ant dir="${catalina.home}/tester" target="clean" />
+
+   </target>
+
   <target name="run-tester"
    description="Catalina Tests" depends="dist-tester">
 
@@ -1294,7 +1301,7 @@
 
 
   <!-- ==================== RELEASE: Create Release ======================= -->
-  <target name="release" depends="clean,dist,dist-source,prepare-release,installer,package-zip,package-tgz,package-embed-zip,package-embed-tgz,package-deployer-zip,package-deployer-tgz,package-src-zip,package-src-tgz"
+  <target name="release" depends="clean,dist,dist-source,prepare-release,installer,package-zip,package-tgz,package-embed-zip,package-embed-tgz,package-deployer-zip,package-deployer-tgz,package-src-zip,package-src-tgz,clean-tester,run-tester"
    description="Create a Tomcat 5 packaged distribution">
 
     <filter token="VERSION" value="${version}"/>
