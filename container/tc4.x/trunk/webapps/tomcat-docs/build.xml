@@ -45,10 +45,38 @@
       </fileset>
     </copy>
 
+    <!-- Application Developer's Guide Examples -->
+    <copy    todir="${webapps.build}/${webapp.name}/appdev">
+      <fileset dir="appdev" includes="*.txt"/>
+    </copy>
+    <copy    todir="${webapps.build}/${webapp.name}/appdev/sample">
+      <fileset dir="appdev/sample"/>
+    </copy>
+    <copy   tofile="${webapps.build}/${webapp.name}/appdev/sample/build.xml"
+              file="appdev/build.xml.txt"/>
+
+    <!-- Catalina Javadocs -->
+    <mkdir     dir="${webapps.build}/${webapp.name}/catalina/docs/api"/>
+    <copy    todir="${webapps.build}/${webapp.name}/catalina/docs/api">
+      <fileset dir="../../catalina/build/javadoc"/>
+    </copy>
+
     <!-- Images Subdirectory -->
     <mkdir     dir="${webapps.build}/${webapp.name}/images"/>
     <copy    todir="${webapps.build}/${webapp.name}/images">
       <fileset dir="images"/>
+    </copy>
+
+    <!-- Jasper Javadocs -->
+    <mkdir     dir="${webapps.build}/${webapp.name}/jasper/docs/api"/>
+    <copy    todir="${webapps.build}/${webapp.name}/jasper/docs/api">
+      <fileset dir="../../jasper/build/javadoc"/>
+    </copy>
+
+    <!-- Servlet/JSP Javadocs -->
+    <mkdir     dir="${webapps.build}/${webapp.name}/servletapi"/>
+    <copy    todir="${webapps.build}/${webapp.name}/servletapi">
+      <fileset dir="${servletapi.home}/docs/api"/>
     </copy>
 
     <!-- WEB-INF Subdirectory -->
@@ -72,6 +100,9 @@
       <fileset dir="."/>
       <fileset dir="${site2.home}/xdocs/stylesheets" includes="site.xsl"/>
     </copy>
+    <copy    todir="${webapp.work}/appdev">
+      <fileset dir="${site2.home}/xdocs/stylesheets" includes="site.xsl"/>
+    </copy>
 
     <!-- Top Level Directory -->
     <style basedir="${webapp.work}"
@@ -79,6 +110,16 @@
          extension=".html"
              style="site.xsl"
           excludes="build.xml project.xml"
+          includes="*.xml">
+      <param name="relative-path" expression="."/>
+    </style>
+
+    <!-- Application Developer's Guide -->
+    <style basedir="${webapp.work}/appdev"
+           destdir="${webapps.build}/${webapp.name}/appdev"
+         extension=".html"
+             style="site.xsl"
+          excludes="project.xml"
           includes="*.xml">
       <param name="relative-path" expression="."/>
     </style>
