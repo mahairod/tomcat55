@@ -264,7 +264,7 @@ public class JspServlet extends HttpServlet {
 
 	// Get the parent class loader
 	parentClassLoader =
-	    (URLClassLoader)context.getAttribute(Constants.SERVLET_CLASS_LOADER);
+	    (URLClassLoader) Thread.currentThread().getContextClassLoader();
         if (parentClassLoader == null)
             parentClassLoader = (URLClassLoader)this.getClass().getClassLoader();
         if (parentClassLoader != null) {
