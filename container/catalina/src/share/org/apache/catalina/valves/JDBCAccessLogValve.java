@@ -35,7 +35,6 @@ import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.Logger;
 
 /**
  * <p>
@@ -503,7 +502,7 @@ public final class JDBCAccessLogValve
                 return;
               } catch (SQLException e) {
                 // Log the problem for posterity
-                log(sm.getString("jdbcAccessLogValve.exception"), e);
+                  container.getLogger().error(sm.getString("jdbcAccessLogValve.exception"), e);
 
                 // Close the connection so that it gets reopened next time
                 if (conn != null)
@@ -623,7 +622,7 @@ public final class JDBCAccessLogValve
         try {
             conn.close();
         } catch (SQLException e) {
-            log(sm.getString("jdbcAccessLogValeve.close"), e); // Just log it here            
+            container.getLogger().error(sm.getString("jdbcAccessLogValeve.close"), e); // Just log it here            
         } finally {
            this.conn = null;
         }
@@ -677,52 +676,6 @@ public final class JDBCAccessLogValve
             currentTimeMillis  =  new java.util.Date(systime).getTime();
         }
         return currentTimeMillis;
-    }
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message) {
-
-        Logger logger = null;
-        String name = null;
-        if (container != null) {
-            logger = container.getLogger();
-            name = container.getName();
-        }
-
-        if (logger != null) {
-            logger.log(connectionURL+"[" + name + "]: " + message);
-        } else {
-            System.out.println(connectionURL+"[" + name + "]: " + message);
-        }
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    protected void log(String message, Throwable throwable) {
-
-        Logger logger = null;
-        String name = null;
-        if (container != null) {
-            logger = container.getLogger();
-            name = container.getName();
-        }
-
-        if (logger != null) {
-            logger.log(connectionURL+"[" + name + "]: " + message, throwable);
-        } else {
-            System.out.println(connectionURL+"[" + name + "]: " + message);
-            throwable.printStackTrace(System.out);
-        }
     }
 
 }

@@ -29,8 +29,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.catalina.Host;
-import org.apache.catalina.Logger;
-import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 
 /**
@@ -68,16 +66,9 @@ public class ExpandWar {
     public static String expand(Host host, URL war)
         throws IOException {
 
-        int debug = 0;
-        Logger logger = host.getLogger();
-
-        if (host instanceof StandardHost) {
-            debug = ((StandardHost) host).getDebug();
-        }
-
         // Calculate the directory name of the expanded directory
-        if (debug >= 1) {
-            logger.log("expand(" + war.toString() + ")");
+        if (host.getLogger().isDebugEnabled()) {
+            host.getLogger().debug("expand(" + war.toString() + ")");
         }
         String pathname = war.toString().replace('\\', '/');
         if (pathname.endsWith("!/")) {
@@ -90,8 +81,8 @@ public class ExpandWar {
         if (slash >= 0) {
             pathname = pathname.substring(slash + 1);
         }
-        if (debug >= 1) {
-            logger.log("  Proposed directory name: " + pathname);
+        if (host.getLogger().isDebugEnabled()) {
+            host.getLogger().debug("  Proposed directory name: " + pathname);
         }
         return expand(host, war, pathname);
 
@@ -115,13 +106,6 @@ public class ExpandWar {
     public static String expand(Host host, URL war, String pathname)
         throws IOException {
 
-        int debug = 0;
-        Logger logger = host.getLogger();
-
-        if (host instanceof StandardHost) {
-            debug = ((StandardHost) host).getDebug();
-        }
-
         // Make sure that there is no such directory already existing
         File appBase = new File(host.getAppBase());
         if (!appBase.isAbsolute()) {
@@ -141,10 +125,6 @@ public class ExpandWar {
 
         // Create the new document base directory
         docBase.mkdir();
-        if (debug >= 2) {
-            logger.log("  Have created expansion directory " +
-                docBase.getAbsolutePath());
-        }
 
         // Expand the WAR into the new document base directory
         JarURLConnection juc = (JarURLConnection) war.openConnection();
@@ -153,33 +133,18 @@ public class ExpandWar {
         InputStream input = null;
         try {
             jarFile = juc.getJarFile();
-            if (debug >= 2) {
-                logger.log("  Have opened JAR file successfully");
-            }
             Enumeration jarEntries = jarFile.entries();
-            if (debug >= 2) {
-                logger.log("  Have retrieved entries enumeration");
-            }
             while (jarEntries.hasMoreElements()) {
                 JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
                 String name = jarEntry.getName();
-                if (debug >= 2) {
-                    logger.log("  Am processing entry " + name);
-                }
                 int last = name.lastIndexOf('/');
                 if (last >= 0) {
                     File parent = new File(docBase,
                                            name.substring(0, last));
-                    if (debug >= 2) {
-                        logger.log("  Creating parent directory " + parent);
-                    }
                     parent.mkdirs();
                 }
                 if (name.endsWith("/")) {
                     continue;
-                }
-                if (debug >= 2) {
-                    logger.log("  Creating expanded file " + name);
                 }
                 input = jarFile.getInputStream(jarEntry);
                 expand(input, docBase, name);

@@ -298,7 +298,7 @@ public class DataSourceRealm
         } catch (SQLException e) {
 
             // Log the problem for posterity
-            log(sm.getString("dataSourceRealm.exception"), e);
+            container.getLogger().error(sm.getString("dataSourceRealm.exception"), e);
 
             // Close the connection so that it gets reopened next time
             if (dbConnection != null)
@@ -364,12 +364,12 @@ public class DataSourceRealm
                 validated = (digest(credentials).equals(dbCredentials));
     
             if (validated) {
-                if (debug >= 2)
-                    log(sm.getString("dataSourceRealm.authenticateSuccess",
+                if (container.getLogger().isTraceEnabled())
+                    container.getLogger().trace(sm.getString("dataSourceRealm.authenticateSuccess",
                                      username));
             } else {
-                if (debug >= 2)
-                    log(sm.getString("dataSourceRealm.authenticateFailure",
+                if (container.getLogger().isDebugEnabled())
+                    container.getLogger().trace(sm.getString("dataSourceRealm.authenticateFailure",
                                      username));
                 return (null);
             }
@@ -411,7 +411,7 @@ public class DataSourceRealm
         try {
             dbConnection.close();
         } catch (SQLException e) {
-            log(sm.getString("dataSourceRealm.close"), e); // Just log it here
+            container.getLogger().error(sm.getString("dataSourceRealm.close"), e); // Just log it here
         }
 
     }
@@ -438,7 +438,7 @@ public class DataSourceRealm
 	    return dataSource.getConnection();
         } catch (Exception e) {
             // Log the problem for posterity
-            log(sm.getString("dataSourceRealm.exception"), e);
+            container.getLogger().error(sm.getString("dataSourceRealm.exception"), e);
         }  
         return null;
     }

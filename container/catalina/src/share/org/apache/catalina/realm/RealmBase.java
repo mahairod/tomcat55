@@ -37,7 +37,6 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
@@ -74,12 +73,6 @@ public abstract class RealmBase
      * The Container with which this Realm is associated.
      */
     protected Container container = null;
-
-
-    /**
-     * The debugging detail level for this component.
-     */
-    protected int debug = 0;
 
 
     /**
@@ -172,28 +165,6 @@ public abstract class RealmBase
         support.firePropertyChange("container", oldContainer, this.container);
 
     }
-
-    /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        this.debug = debug;
-
-    }
-
 
     /**
      * Return the digest algorithm  used for storing credentials.
@@ -1000,53 +971,6 @@ public abstract class RealmBase
      * Return the Principal associated with the given user name.
      */
     protected abstract Principal getPrincipal(String username);
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message) {
-
-        Logger logger = null;
-        String name = null;
-        if (container != null) {
-            logger = container.getLogger();
-            name = container.getName();
-        }
-
-        if (logger != null) {
-            logger.log(getName()+"[" + name + "]: " + message);
-        } else {
-            System.out.println(getName()+"[" + name + "]: " + message);
-        }
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    protected void log(String message, Throwable throwable) {
-
-        Logger logger = null;
-        String name = null;
-        if (container != null) {
-            logger = container.getLogger();
-            name = container.getName();
-        }
-
-        if (logger != null) {
-            logger.log(getName()+"[" + name + "]: " + message, throwable);
-        } else {
-            System.out.println(getName()+"[" + name + "]: " + message);
-            throwable.printStackTrace(System.out);
-        }
-    }
 
 
     // --------------------------------------------------------- Static Methods

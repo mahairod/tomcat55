@@ -246,8 +246,8 @@ public final class FileStore
         if (! file.exists()) {
             return (null);
         }
-        if (debug >= 1) {
-            log(sm.getString(getStoreName()+".loading",
+        if (manager.getContainer().getLogger().isDebugEnabled()) {
+            manager.getContainer().getLogger().debug(sm.getString(getStoreName()+".loading",
                              id, file.getAbsolutePath()));
         }
 
@@ -268,8 +268,8 @@ public final class FileStore
             else
                 ois = new ObjectInputStream(bis);
         } catch (FileNotFoundException e) {
-            if (debug >= 1)
-                log("No persisted data file found");
+            if (manager.getContainer().getLogger().isDebugEnabled())
+                manager.getContainer().getLogger().debug("No persisted data file found");
             return (null);
         } catch (IOException e) {
             if (ois != null) {
@@ -317,8 +317,8 @@ public final class FileStore
         if (file == null) {
             return;
         }
-        if (debug >= 1) {
-            log(sm.getString(getStoreName()+".removing",
+        if (manager.getContainer().getLogger().isDebugEnabled()) {
+            manager.getContainer().getLogger().debug(sm.getString(getStoreName()+".removing",
                              id, file.getAbsolutePath()));
         }
         file.delete();
@@ -341,8 +341,8 @@ public final class FileStore
         if (file == null) {
             return;
         }
-        if (debug >= 1) {
-            log(sm.getString(getStoreName()+".saving",
+        if (manager.getContainer().getLogger().isDebugEnabled()) {
+            manager.getContainer().getLogger().debug(sm.getString(getStoreName()+".saving",
                              session.getId(), file.getAbsolutePath()));
         }
         FileOutputStream fos = null;

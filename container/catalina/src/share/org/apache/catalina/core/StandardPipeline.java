@@ -29,7 +29,6 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Valve;
 import org.apache.catalina.connector.Request;
@@ -580,51 +579,5 @@ public class StandardPipeline
     
     }
 
-
-    // ------------------------------------------------------ Protected Methods
-
-
-    /**
-	 * Log a message on the Logger associated with our Container (if any).
-	 * 
-	 * @param message
-	 *            Message to be logged
-	 */
-    protected void log(String message) {
-
-        Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log("StandardPipeline[" + container.getName() + "]: " +
-                       message);
-        else
-            System.out.println("StandardPipeline[" + container.getName() +
-                               "]: " + message);
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    protected void log(String message, Throwable throwable) {
-
-        Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log("StandardPipeline[" + container.getName() + "]: " +
-                       message, throwable);
-        else {
-            System.out.println("StandardPipeline[" + container.getName() +
-                               "]: " + message);
-            throwable.printStackTrace(System.out);
-        }
-
-    }
 
 }
