@@ -133,7 +133,7 @@
         <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=108578233003073&amp;w=2">Example with JSVC and running on port 80.</a>
       </li>
       <li>
-        <a href="http://nagoya.apache.org/eyebrowse/BrowseList?listName=tomcat-user@jakarta.apache.org&amp;by=thread&amp;from=877025">Need for it to be in bootstrap classpath.</a>
+        <a href="http://mail-archives.apache.org/eyebrowse/BrowseList?listName=tomcat-user@jakarta.apache.org&amp;by=thread&amp;from=877025">Need for it to be in bootstrap classpath.</a>
       </li>
     </ul>
   </answer>
@@ -178,7 +178,7 @@
     See these mailing list archive threads:
     <ul>
       <li>
-        <a href="http://nagoya.apache.org/eyebrowse/BrowseList?listName=tomcat-user@jakarta.apache.org&amp;by=thread&amp;from=863525">Where are the Tomcat logs when running as a Windows service?</a>
+        <a href="http://mail-archives.apache.org/eyebrowse/BrowseList?listName=tomcat-user@jakarta.apache.org&amp;by=thread&amp;from=863525">Where are the Tomcat logs when running as a Windows service?</a>
       </li>
     </ul>
   </answer>
