@@ -548,7 +548,7 @@ public class JspC implements Options {
                 targetClassName = null;
             }
             if (targetPackage != null) {
-                clctxt.setServletPackageName( targetPackage + "." +
+                clctxt.setServletPackageName( targetPackage +
                         toPackageName(jspUri));
             } else {
                 clctxt.setServletPackageName( toPackageName(jspUri));
