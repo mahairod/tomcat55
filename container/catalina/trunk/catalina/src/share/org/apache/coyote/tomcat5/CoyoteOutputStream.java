@@ -27,7 +27,7 @@ import javax.servlet.ServletOutputStream;
  * @author Costin Manolache
  * @author Remy Maucherat
  */
-final class CoyoteOutputStream 
+public class CoyoteOutputStream 
     extends ServletOutputStream {
 
 

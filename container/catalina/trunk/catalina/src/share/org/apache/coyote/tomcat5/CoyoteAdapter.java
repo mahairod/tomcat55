@@ -49,7 +49,7 @@ import org.apache.tomcat.util.http.ServerCookie;
  * @version $Revision$ $Date$
  */
 
-final class CoyoteAdapter
+public class CoyoteAdapter
     implements Adapter 
  {
     private static Log log = LogFactory.getLog(CoyoteAdapter.class);
