@@ -1346,7 +1346,10 @@ class Validator {
 		    }
 		    lastArg = true;
 		}
-		params.add(signature.substring(start, p).trim());
+                String arg = signature.substring(start, p).trim();
+                if (!"".equals(arg)) {
+                    params.add(arg);
+                }
 		if (lastArg) {
 		    break;
 		}
