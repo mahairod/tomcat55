@@ -22,7 +22,7 @@
   <xsl:param    name="void-image"       select="'/images/void.gif'"/>
   <xsl:param    name="project-menu"     select="'menu'"/>
   <xsl:param    name="standalone"       select="''"/>
-  <xsl:param    name="buglink"          select="'http://nagoya.apache.org/bugzilla/show_bug.cgi?id='"/>
+  <xsl:param    name="buglink"          select="'http://issues.apache.org/bugzilla/show_bug.cgi?id='"/>
 
   <!-- Defined variables (non-overrideable) -->
   <xsl:variable name="body-bg"          select="'#ffffff'"/>
