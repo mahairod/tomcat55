@@ -465,6 +465,14 @@ class FormAuthHandler extends ServletWrapper {
 	session=req.getSession( true );
 	String username=(String)session.getAttribute( "j_username" );
 
+        String originalLocation = req.getRequestURI();
+
+	if (req.getQueryString() != null)
+	    originalLocation += "?" + req.getQueryString();
+
+ 	session.setAttribute( "tomcat.auth.originalLocation",
+			      originalLocation);
+        
 	if( debug>0) log( "Username = " + username);
 	if( username != null ) {
 	    // 401 with existing j_username - that means wrong credentials.
@@ -477,13 +485,6 @@ class FormAuthHandler extends ServletWrapper {
 	    return;
 	}
 
-    String originalLocation = req.getRequestURI();
-
-	if (req.getQueryString() != null)
-	    originalLocation += "?" + req.getQueryString();
-
- 	session.setAttribute( "tomcat.auth.originalLocation",
-			      originalLocation);
 	if( debug > 0 )
 	    log("Redirect1: " + page  + " originalUri=" + req.getRequestURI());
 
