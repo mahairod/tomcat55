@@ -154,7 +154,8 @@ public abstract class BaseDirContextTestCase extends TestCase {
      * The set of names that should be attributes of WEB-INF.
      */
     protected static final String webInfAttrs[] =
-    { "creationdate", "displayname", "getcontentlength", "getlastmodified" };
+    { "creationdate", "displayname", "getcontentlength", "getlastmodified",
+      "resourcetype" };
 
 
     /**
