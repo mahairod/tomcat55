@@ -44,9 +44,6 @@
 
     <status>
       <item priority="High" owner="remm">
-        Deployer refactoring.
-      </item>
-      <item priority="High" owner="remm">
         Documentation updates for new user guide book.
       </item>
       <item priority="Medium" owner="remm">
