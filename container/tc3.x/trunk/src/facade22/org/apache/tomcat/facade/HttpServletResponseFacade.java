@@ -413,7 +413,7 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 		return (location);	// Give up
 	    }
 	}
-	return (url.toString());
+	return (url.toExternalForm());
 
     }
 
