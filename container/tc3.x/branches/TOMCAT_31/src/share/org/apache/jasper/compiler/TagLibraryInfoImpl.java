@@ -499,7 +499,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                                   );
         }
         
-        return new TagAttributeInfo(name, required, rtexprvalue, type);
+        return new TagAttributeInfo(name, required, type, rtexprvalue);
     }
 
     static void copy(InputStream in, String fileName) 

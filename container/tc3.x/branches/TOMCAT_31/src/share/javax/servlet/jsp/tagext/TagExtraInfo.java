@@ -93,7 +93,7 @@ public abstract class TagExtraInfo {
      *
      * @param tagInfo The TagInfo this instance is extending
      */
-    public void setTagInfo(TagInfo tagInfo) {
+    public final void setTagInfo(TagInfo tagInfo) {
 	this.tagInfo = tagInfo;
     }
 
@@ -102,11 +102,11 @@ public abstract class TagExtraInfo {
      *
      * @returns the taginfo instnace this instance is extending
      */
-    public TagInfo getTagInfo() {
+    public final TagInfo getTagInfo() {
 	return tagInfo;
     }
     
-    // protected data
-    protected TagInfo tagInfo;
+    // private data
+    private TagInfo tagInfo;
 }
 

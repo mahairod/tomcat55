@@ -95,7 +95,11 @@ public class TagData implements Cloneable {
      * @param atts the static attribute and values.  May be null.
      */
     public TagData(Object[] atts[]) {
-	attributes = new Hashtable(atts.length);
+	if (atts == null) {
+	    attributes = new Hashtable();
+	} else {
+	    attributes = new Hashtable(atts.length);
+	}
 
 	if (atts != null) {
 	    for (int i = 0; i < atts.length; i++) {
@@ -152,7 +156,12 @@ public class TagData implements Cloneable {
      */
 
     public String getAttributeString(String attName) {
-	return (String) attributes.get(attName);
+	Object o = attributes.get(attName);
+	if (o == null) {
+	    return null;
+	} else {
+	    return (String) o;
+	}	
     }
 
     /**
