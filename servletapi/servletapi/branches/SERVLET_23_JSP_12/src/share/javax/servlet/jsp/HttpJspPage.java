@@ -67,7 +67,7 @@ import java.io.IOException;
  *
 * <p>
  * The behaviour is identical to that of the JspPage, except for the signature
- * of the _jspService method, which is now expressable in the Java type
+ * of the _jspService method, which is now expressible in the Java type
  * system and included explicitly in the interface.
  * 
  * @see JspPage

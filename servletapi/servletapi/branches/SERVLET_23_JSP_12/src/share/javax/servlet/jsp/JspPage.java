@@ -73,7 +73,7 @@ import javax.servlet.*;
  * way in Java.
  * <p>
  * A class implementing this interface is responsible for invoking
- * the above methods at the apropriate time based on the
+ * the above methods at the appropriate time based on the
  * corresponding Servlet-based method invocations.
  * <p>
  * The jspInit() and jspDestroy() methods can be defined by a JSP
