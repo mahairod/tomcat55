@@ -19,7 +19,6 @@ package org.apache.catalina.mbeans;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.StringTokenizer;
 import javax.management.MBeanException;
 
 import org.apache.catalina.Container;
@@ -168,9 +167,6 @@ public class ServerLifecycleListener
 
             if (lifecycle instanceof Server) {
 
-                // Loading additional MBean descriptors
-                loadMBeanDescriptors();
-
                 createMBeans();
 
                 if (adaptor != null) {
@@ -188,7 +184,6 @@ public class ServerLifecycleListener
                 try {
                     MBeanFactory factory = new MBeanFactory();
                     createMBeans(factory);
-                    loadMBeanDescriptors();
                     createMBeans((Service)lifecycle);
                 } catch( Exception ex ) {
                     log.error("Create mbean factory");
@@ -319,22 +314,6 @@ public class ServerLifecycleListener
 
 
     // ------------------------------------------------------ Protected Methods
-
-
-    /**
-     * Load additional MBean descriptor resources.
-     */
-    protected void loadMBeanDescriptors() {
-
-        if (descriptors != null) {
-            StringTokenizer tokenizer = new StringTokenizer(descriptors, ";");
-            while (tokenizer.hasMoreTokens()) {
-                String resource = tokenizer.nextToken();
-                MBeanUtils.loadMBeanDescriptors(resource);
-            }
-        }
-
-    }
 
 
     /**
