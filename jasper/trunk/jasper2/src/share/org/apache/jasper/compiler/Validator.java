@@ -1168,17 +1168,23 @@ class Validator {
 
 	private String findUri(String prefix, Node n) {
 
-	    Node p = n;
-	    while (p != null) {
-		if (p instanceof Node.CustomTag) {
-		    Node.CustomTag ct = (Node.CustomTag) p;
-		    if (prefix.equals(ct.getPrefix())) {
-			return (ct.getURI());
-		    }
-		} else if (p instanceof Node.JspRoot) {
-		    // XXX find Uri from the root node
+	    for (Node p = n; p != null; p = p.getParent()) {
+		Attributes attrs = p.getXmlnsAttributes();
+		if (attrs == null) {
+		    continue;
 		}
-		p = p.getParent();
+		for (int i = 0; i < attrs.getLength(); i++) {
+		    String name = attrs.getQName(i);
+		    int k = name.indexOf(':');
+		    if (prefix == null && k < 0) {
+			// prefix not specified and a default ns found
+			return attrs.getValue(i);
+		    }   
+		    if (prefix != null && k >= 0 &&
+				prefix.equals(name.substring(k+1))) {
+			return attrs.getValue(i);
+		    }
+		}
 	    }
 	    return null;
 	}
@@ -1198,24 +1204,27 @@ class Validator {
 		}
 
 		public void visit(ELNode.Function func) throws JasperException {
-		    String defaultNS = null;	// for now
 		    String prefix = func.getPrefix();
 		    String function = func.getName();
 		    String uri = null;
-		    if (prefix == null) {
-			// In XML syntax, use the default namespace
-			if (defaultNS == null) {
-			    err.jspError(n, "jsp.error.noFunctionPrefix",
-					 function);
-		        }
-			uri = defaultNS;
-		    } else if (n.isXmlSyntax()) {
+
+		    if (n.isXmlSyntax()) {
 		        uri = findUri(prefix, n);
-		    } else {
+		    } else if (prefix != null) {
 			Hashtable prefixMapper = pageInfo.getPrefixMapper();
 			uri = (String) prefixMapper.get(prefix);
 		    }
 
+		    if (uri == null) {
+			if (prefix == null) {
+			    err.jspError(n, "jsp.error.noFunctionPrefix",
+				function);
+			}
+			else {
+			    err.jspError(n,
+				"jsp.error.attribute.invalidPrefix", prefix);
+			}
+		    }
 		    TagLibraryInfo taglib = 
 					(TagLibraryInfo) taglibs.get(uri);
 		    FunctionInfo funcInfo = null;
