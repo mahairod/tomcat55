@@ -226,6 +226,13 @@
   <!--                       relative to the context root, instead of       -->
   <!--                       the server root?  (0=false, 1=true) [0]        -->
   <!--                                                                      -->
+  <!--   inputEncoding       The encoding to assume for SSI resources if    -->
+  <!--                       one is not available from the resource.        -->
+  <!--                       [Platform default]                             -->
+  <!--                                                                      -->
+  <!--   outputEncoding      The encoding to use for the page that results  -->
+  <!--                       from the SSI processing. [UTF-8]               -->
+  <!--                                                                      -->
   <!--                                                                      -->
   <!-- IMPORTANT: To use the SSI servlet, you also need to rename the       -->
   <!--            $CATALINA_HOME/server/lib/servlets-ssi.renametojar file   -->

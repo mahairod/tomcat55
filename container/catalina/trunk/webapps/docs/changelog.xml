@@ -75,6 +75,10 @@
         Store principal to be exposed for Request.getUserPrincipal inside the GenericPrincipal,
         to remove hacks from the JAAS realm (remm)
       </update>
+      <fix>
+        <bug>10385</bug>: SSI Servlet now includes better support for files that use character
+        encodings other than the platform default.(markt)
+      </fix>
     </changelog>
   </subsection>
   

@@ -44,6 +44,10 @@ public class SSIServlet extends HttpServlet {
     protected Long expires = null;
     /** virtual path can be webapp-relative */
     protected boolean isVirtualWebappRelative = false;
+    /** Input encoding. If not specified, uses platform default */
+    protected String inputEncoding = null;
+    /** Output encoding. If not specified, uses platform default */
+    protected String outputEncoding = "UTF-8";
 
 
     //----------------- Public methods.
@@ -80,6 +84,19 @@ public class SSIServlet extends HttpServlet {
         try {
             value = getServletConfig().getInitParameter("buffered");
             buffered = Integer.parseInt(value) > 0?true:false;
+        } catch (Throwable t) {
+            ;
+        }
+        try {
+            inputEncoding = getServletConfig().getInitParameter("inputEncoding");
+        } catch (Throwable t) {
+            ;
+        }
+        try {
+            value = getServletConfig().getInitParameter("outputEncoding");
+            if (value != null) {
+                outputEncoding = value;
+            }
         } catch (Throwable t) {
             ;
         }
@@ -159,9 +176,9 @@ public class SSIServlet extends HttpServlet {
         }
         String resourceMimeType = servletContext.getMimeType(path);
         if (resourceMimeType == null) {
-            resourceMimeType = "text/html;charset=UTF-8";
+            resourceMimeType = "text/html";
         }
-        res.setContentType(resourceMimeType);
+        res.setContentType(resourceMimeType + ";charset=" + outputEncoding);
         if (expires != null) {
             res.setDateHeader("Expires", (new java.util.Date()).getTime()
                     + expires.longValue() * 1000);
@@ -174,7 +191,7 @@ public class SSIServlet extends HttpServlet {
     protected void processSSI(HttpServletRequest req, HttpServletResponse res,
             URL resource) throws IOException {
         SSIExternalResolver ssiExternalResolver = new SSIServletExternalResolver(
-                this, req, res, isVirtualWebappRelative, debug);
+                this, req, res, isVirtualWebappRelative, debug, inputEncoding);
         SSIProcessor ssiProcessor = new SSIProcessor(ssiExternalResolver,
                 debug);
         PrintWriter printWriter = null;
@@ -185,10 +202,21 @@ public class SSIServlet extends HttpServlet {
         } else {
             printWriter = res.getWriter();
         }
+
         URLConnection resourceInfo = resource.openConnection();
         InputStream resourceInputStream = resourceInfo.getInputStream();
-        BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(resourceInputStream));
+        String encoding = resourceInfo.getContentEncoding();
+        if (encoding == null) {
+            encoding = inputEncoding;
+        }
+        InputStreamReader isr;
+        if (encoding == null) {
+            isr = new InputStreamReader(resourceInputStream);
+        } else {
+            isr = new InputStreamReader(resourceInputStream, encoding);
+        }
+        BufferedReader bufferedReader = new BufferedReader(isr);
+
         Date lastModifiedDate = new Date(resourceInfo.getLastModified());
         ssiProcessor.process(bufferedReader, lastModifiedDate, printWriter);
         if (buffered) {
