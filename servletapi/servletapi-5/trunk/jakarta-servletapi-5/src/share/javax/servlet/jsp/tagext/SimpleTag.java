@@ -79,26 +79,22 @@ import javax.servlet.jsp.JspContext;
 
 public interface SimpleTag extends JspTag {
     
-    /**
-     * Skip the rest of the page.
-     * Valid return value for doTag().
-     */
-    public final static int SKIP_PAGE = 5;
-
-    /**
-     * Continue evaluating the page.
-     * Valid return value for doTag().
-     */
-    public final static int EVAL_PAGE = 6;
-    
     /** 
      * Called by the container to invoke this tag.
      * The implementation of this method is provided by the tag library
      * developer, and handles all tag processing, body iteration, etc.
      * 
-     * @return SKIP_PAGE to abort the processing, or EVAL_PAGE to continue. 
+     * @throws javax.servlet.jsp.JspException If an error occurred 
+     *     while processing this tag.
+     * @throws javax.servlet.jsp.SkipPageException If the page that
+     *     (either directly or indirectly) invoked this tag is to
+     *     cease evaluation.  A Simple Tag Handler generated from a 
+     *     tag file must throw this exception if an invoked Classic 
+     *     Tag Handler returned SKIP_PAGE or if an invoked Simple
+     *     Tag Handler threw SkipPageException or if an invoked Jsp Fragment
+     *     threw a SkipPageException.
      */ 
-    public int doTag() 
+    public void doTag() 
         throws javax.servlet.jsp.JspException; 
     
     /**
