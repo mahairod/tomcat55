@@ -24,6 +24,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 
+import org.apache.catalina.security.SecurityUtil;
 import org.apache.coyote.ActionCode;
 import org.apache.coyote.Response;
 import org.apache.tomcat.util.buf.ByteChunk;
@@ -558,7 +559,7 @@ public class OutputBuffer extends Writer
         conv = (C2BConverter) encoders.get(enc);
         if (conv == null) {
             
-            if (System.getSecurityManager() != null){
+            if (SecurityUtil.isPackageProtectionEnabled()){
                 try{
                     conv = (C2BConverter)AccessController.doPrivileged(
                             new PrivilegedExceptionAction(){

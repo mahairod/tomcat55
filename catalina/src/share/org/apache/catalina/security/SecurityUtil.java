@@ -68,6 +68,10 @@ public final class SecurityUtil{
     
     private static String PACKAGE = "org.apache.catalina.security";
     
+    private static boolean packageDefinitionEnabled =  
+         (System.getProperty("package.definition") == null && 
+           System.getProperty("package.access")  == null) ? false : true;
+    
     /**
      * The string resources for this package.
      */
@@ -363,4 +367,18 @@ public final class SecurityUtil{
     public static void remove(Object cachedObject){
         objectCache.remove(cachedObject);
     }
+    
+    
+    /**
+     * Return the <code>SecurityManager</code> only if Security is enabled AND
+     * package protection mechanism is enabled.
+     */
+    public static boolean isPackageProtectionEnabled(){
+        if (packageDefinitionEnabled && System.getSecurityManager() !=  null){
+            return true;
+        }
+        return false;
+    }
+    
+    
 }
