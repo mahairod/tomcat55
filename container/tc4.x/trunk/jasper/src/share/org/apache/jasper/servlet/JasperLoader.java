@@ -62,8 +62,10 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
 import java.security.CodeSource;
 import java.security.PermissionCollection;
+import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
 
 import org.apache.jasper.JasperException;
@@ -85,11 +87,24 @@ import javax.servlet.http.*;
  */
 public class JasperLoader extends URLClassLoader {
 
+    protected class PrivilegedLoadClass
+        implements PrivilegedAction {
+
+        PrivilegedLoadClass() {
+        }
+         
+        public Object run() {
+            return Thread.currentThread().getContextClassLoader();
+        }
+
+    }
+
     private PermissionCollection permissionCollection = null;
     private CodeSource codeSource = null;
     private String className = null;
     private ClassLoader parent = null;
     private SecurityManager securityManager = null;
+    private PrivilegedLoadClass privLoadClass = null;
 
     JasperLoader(URL [] urls, String className, ClassLoader parent,
 		 PermissionCollection permissionCollection,
@@ -99,6 +114,7 @@ public class JasperLoader extends URLClassLoader {
 	this.codeSource = codeSource;
 	this.className = className;
 	this.parent = parent;
+        this.privLoadClass = new PrivilegedLoadClass();
 	this.securityManager = System.getSecurityManager();
     }
 
@@ -173,8 +189,13 @@ public class JasperLoader extends URLClassLoader {
 
 	// Class is in a package, delegate to thread context class loader
 	if( !name.startsWith(Constants.JSP_PACKAGE_NAME) ) {
-	    clazz = Thread.currentThread().getContextClassLoader()
-                .loadClass(name);
+            ClassLoader classLoader = null;
+	    if (System.getSecurityManager() != null) {
+                 classLoader = (ClassLoader)AccessController.doPrivileged(privLoadClass);
+            } else {
+	        classLoader = Thread.currentThread().getContextClassLoader();
+            }
+            clazz = classLoader.loadClass(name);
 	    if( resolve )
 		resolveClass(clazz);
 	    return clazz;
