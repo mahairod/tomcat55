@@ -113,7 +113,10 @@
   <target name="dist-source">
     <mkdir dir="${tomcat.dist}/src"/>
     <copy todir="${tomcat.dist}/src">
-      <fileset dir="." />
+      <fileset dir=".">
+        <exclude name="**/dist/**" />
+        <exclude name="**/build/**" />
+      </fileset>
     </copy>
   </target>
 
