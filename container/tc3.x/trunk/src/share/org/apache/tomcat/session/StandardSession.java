@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -72,7 +68,6 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
