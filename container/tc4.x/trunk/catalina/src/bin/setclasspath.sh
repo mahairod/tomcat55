@@ -10,7 +10,7 @@ if [ -z "$JAVA_HOME" ]; then
   echo "This environment variable is needed to run this program"
   exit 1
 fi
-if $os400; then
+if [ ! "$os400" ]; then
   if [ ! -r "$JAVA_HOME"/bin/java -o ! -r "$JAVA_HOME"/bin/javac ]; then
     echo "The JAVA_HOME environment variable is not defined correctly"
     echo "This environment variable is needed to run this program"
