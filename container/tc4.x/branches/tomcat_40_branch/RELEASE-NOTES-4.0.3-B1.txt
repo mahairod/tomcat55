@@ -42,6 +42,7 @@ General New Features:
 Catalina New Features:
 ---------------------
 
+Authenticator:  Make authenticator non-final so that they can be subclassed.
 
 
 -------------------
@@ -212,10 +213,6 @@ APIs) available to web applications.  This parser is also used internally
 to parse web.xml files and the server.xml configuration file.  If you wish,
 you may replace the "xerces.jar" file in "common/lib" with another XML parser,
 as long as it is compatible with the JAXP/1.1 APIs.
-
-If you wish to *not* make any XML parser visible to all web applications,
-this can be accomplished by copying the "xerces.jar" file from "common/lib"
-to both "server/lib" and "jasper", and removing it from "common/lib".
 
 
 ---------------------------------------------------------------
