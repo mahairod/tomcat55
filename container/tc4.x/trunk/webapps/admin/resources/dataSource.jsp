@@ -75,16 +75,26 @@
           <controls:row labelStyle="table-label-text"
                          dataStyle="table-normal-text">
             <controls:label>
-              <bean:message key="resources.datasrc.url"/>:
+              <bean:message key="resources.datasrc.jndi"/>:
             </controls:label>
             <controls:data>
               <logic:present name="dataSourceForm" property="objectName">
-                <bean:write name="dataSourceForm" property="url"/>
-                <html:hidden property="url"/>
+                <bean:write name="dataSourceForm" property="jndiName"/>
+                <html:hidden property="jndiName"/>
               </logic:present>
               <logic:notPresent name="dataSourceForm" property="objectName">
-                <html:textarea property="url" cols="35" rows="2"/>
+                <html:text property="jndiName" size="35" maxlength="56"/>
               </logic:notPresent>
+            </controls:data>
+          </controls:row>
+
+          <controls:row labelStyle="table-label-text"
+                         dataStyle="table-normal-text">
+            <controls:label>
+              <bean:message key="resources.datasrc.url"/>:
+            </controls:label>
+            <controls:data>
+                <html:textarea property="url" cols="35" rows="2"/>
             </controls:data>
           </controls:row>
 

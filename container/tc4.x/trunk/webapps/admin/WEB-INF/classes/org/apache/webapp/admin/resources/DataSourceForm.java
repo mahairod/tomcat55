@@ -101,6 +101,18 @@ public final class DataSourceForm extends BaseForm {
         this.url = url;
     }
 
+    /**
+     * The JNDI name of the data source.
+     */
+    private String jndiName = null;
+
+    public String getJndiName() {
+        return (this.jndiName);
+    }
+
+    public void setJndiName(String jndiName) {
+        this.jndiName = jndiName;
+    }
     
     /**
      * The JDBC driver class of the data source.
@@ -220,12 +232,13 @@ public final class DataSourceForm extends BaseForm {
     public void reset(ActionMapping mapping, HttpServletRequest request) {
 
         super.reset(mapping, request);
-        url = null;
+        url = null;        
+        jndiName = null;
         driverClass = null;
         username = null;
         password = null;
         type = null;
-        
+    
         active = null;
         idle = null;
         wait = null;
@@ -254,10 +267,16 @@ public final class DataSourceForm extends BaseForm {
 
         if (submit != null) {
 
-            // name is a required field
+            // url is a required field
             if ((url == null) || (url.length() < 1)) {
                 errors.add("url",
                            new ActionError("resources.error.url.required"));
+            }
+
+            // jndiName is a required field
+            if (( jndiName == null) || (jndiName.length() < 1)) {
+                errors.add("jndiName",
+                           new ActionError("resources.error.jndiName.required"));
             }
 
             // driverClass is a required field

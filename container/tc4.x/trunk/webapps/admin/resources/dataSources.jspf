@@ -12,7 +12,7 @@
         </td>
       </logic:present>
       <td width="20%"><div align="left" class="table-header-text">
-        <bean:message key="service.name"/>
+        <bean:message key="resources.datasrc.jndi"/>
       </div></td>
       <td><div align="left" class="table-header-text">
         <bean:message key="resources.datasrc.jdbcclass"/>
@@ -30,7 +30,7 @@
         <td><div align="left" class="table-normal-text">
           <html:link page='<%= "/resources/setUpDataSource.do?objectName=" + 
                                URLEncoder.encode(dataSource) %>'>
-            <controls:attribute name="dataSource" attribute="url"/>
+            <controls:attribute name="dataSource" attribute="name"/>
           </html:link>
         </div></td>
         <td><div align="left" class="table-normal-text">&nbsp;

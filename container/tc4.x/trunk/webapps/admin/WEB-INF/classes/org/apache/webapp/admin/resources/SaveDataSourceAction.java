@@ -175,7 +175,7 @@ public final class SaveDataSourceAction extends Action {
             signature[1] = "java.lang.String";
 
             Object params[] = new Object[2];
-            params[0] = dataSourceForm.getUrl();
+            params[0] = dataSourceForm.getJndiName();
             params[1] = ResourceUtils.DATASOURCE_CLASS;     
            
             ObjectName oname = null;
@@ -209,6 +209,9 @@ public final class SaveDataSourceAction extends Action {
             
             ObjectName oname = new ObjectName(objectName);
 
+            attribute = "name";
+            mserver.setAttribute
+                (oname, new Attribute(attribute,dataSourceForm.getJndiName()));
             attribute = "url";
             mserver.setAttribute
                 (oname,

@@ -172,6 +172,9 @@ public final class SetUpDataSourceAction extends Action {
             String attribute = null;
             try {
                 ObjectName oname = new ObjectName(objectName);
+                attribute = "name";
+                dataSourceForm.setJndiName
+                    ((String) mserver.getAttribute(oname, attribute));
                 attribute = "url";
                 dataSourceForm.setUrl
                     ((String) mserver.getAttribute(oname, attribute));
