@@ -721,7 +721,7 @@ public class StandardManager
      */
     private File file() {
 
-        if (pathname == null)
+        if ((pathname == null) || (pathname.length() == 0))
             return (null);
         File file = new File(pathname);
         if (!file.isAbsolute()) {
