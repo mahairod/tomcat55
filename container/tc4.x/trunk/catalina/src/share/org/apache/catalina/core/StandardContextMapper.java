@@ -204,6 +204,7 @@ public final class StandardContextMapper
         // servletPath and pathInfo as decoded strings
         try {
             relativeURI = RequestUtil.URLDecode(relativeURI);
+            validate(relativeURI);
             if (debug >= 1)
                 context.log("Decoded relativeURI='" + relativeURI + "'");
         } catch (Exception e) {
@@ -300,6 +301,32 @@ public final class StandardContextMapper
 	    ((HttpRequest) request).setPathInfo(pathInfo);
 	}
 	return (wrapper);
+
+    }
+
+
+    // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Throw an exception if the specified relative URI (assumed to be already
+     * decoded) contains any control characters.  See RFC 2396, Section 2.4.3,
+     * for a discussion of why these characters are not allowed in URIs.
+     *
+     * @param relativeURI The decoded relative URI to be validated
+     *
+     * @exception IllegalArgumentException if the specified relative URI
+     *  contains invalid characters
+     */
+    private void validate(String relativeURI) {
+
+        int n = relativeURI.length();
+        for (int i = 0; i < n; i++) {
+            char c = relativeURI.charAt(i);
+            if ((c < '\u0020') || (c == '\u007f'))
+                throw new IllegalArgumentException
+                    (sm.getString("standardContext.urlValidate", relativeURI));
+        }
 
     }
 
