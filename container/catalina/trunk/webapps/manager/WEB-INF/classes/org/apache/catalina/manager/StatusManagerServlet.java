@@ -87,6 +87,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.modeler.Registry;
 
+import org.apache.tomcat.util.compat.JdkCompat;
+
 /**
  * This servlet will display a complete status of the HTTP/1.1 connector.
  *
@@ -271,7 +273,7 @@ public class StatusManagerServlet
         writer.print(" Total memory: ");
         writer.print(Runtime.getRuntime().totalMemory());
         writer.print(" Max memory: ");
-        writer.print(Runtime.getRuntime().maxMemory());
+        writer.print(JdkCompat.getJdkCompat().getMaxMemory());
 
         writer.print("<br/>");
 
