@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+
+<HTML>
+
+  <HEAD>
+
+    <TITLE> contentType </TITLE>
+
+  </HEAD>
+
+
+
+  <BODY>
+
+      <H1> contentType directive </H1>
+
+      
+
+      <P>
+        The <b>contentType</b> directive defines the character encoding for the JSP page
+        ,for the response of the JSP page and for the MIME type for the response of the 
+        JSP page.
+        
+      </P>
+
+      
+
+      <H3> Summary </H3>
+
+      
+
+      <P>  contentType cases  </P>
+
+      
+
+      <H3> Positive Test(s) </H3>
+
+
+
+	<P><b> positiveContenttype: </b> Here, the directive is used to set the TYPE and charset.
+	Check is done from javatest side , to check whether the set one has returned or not.</p>
+     <A NAME="positiveContenttype"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    	<TR>
+
+    		<TD><B>title</B></TD>
+
+    		<TD>ExtendsTest</TD>
+
+    	</TR>
+
+
+      	<TR>
+    		<TD><B>source</B></TD>
+
+    		<TD>
+    		<A HREF="ContenttypeTest.java">ContenttypeTest.java</A>
+    		
+    		</TD>
+	</TR>
+
+    	<TR>
+
+    		<TD><B>executeClass</B></TD>
+
+      		<TD>core_syntax.directives.page.content.ContenttypeTest</TD> 
+
+    	</TR>
+
+    	<TR>
+
+    		<TD><B>executeArgs</B></TD>
+
+    		<TD>-TestCaseID positiveContenttype -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      	</TR>
+
+
+
+    	<TR>
+
+    		<TD><B>keywords</B></TD>
+
+    		<TD>positive extensionAPI</TD>
+
+      	</TR>
+
+    </TABLE>
+
+
+  </BODY>
+
+</HTML>

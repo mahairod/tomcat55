@@ -1,0 +1,1249 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+
+<HTML>
+
+  <HEAD>
+
+    <TITLE>
+        Setproperty test
+
+      </TITLE>
+
+  </HEAD>
+
+
+
+  <BODY>
+
+      <H1>
+
+         Setproperty test
+      </H1>
+
+      
+
+
+      
+
+      <H3>
+
+        Summary
+
+      </H3>
+      The 'jsp:setProperty' action sets the value of the properties in 
+      the bean.The 'name' attribute denotes an object that must be defined
+      before this action appears.
+      
+
+      
+      <h2>
+      
+      Positive tests
+      </h2> 
+      <p><b>positiveUseBeanInit:</b>Try to create a valid useBean action.In the action,
+      add a setProperty statement to set a specific property of the bean. Ensure that
+      the bean class does not exist before calling the page.Calling the page for the
+      first time.</p>   
+      <A NAME="positiveUseBeanInit" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="SetpropBean.java">SetpropBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveUseBeanInit -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      
+      <p><b>positiveSetPropParam:</b>Try to create a valid useBean.Set a specific
+      property of that bean from the request.</p>
+
+
+      <A NAME="positiveSetPropParam" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="SetpropBean.java">SetpropBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetPropParam -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+      
+      </TABLE>
+      
+      
+      
+      <p><b>positiveSetPropValue:</b>Try to  create a useBean action in JSP.Set a specific 
+      property of that bean .
+      </p>
+           
+      
+      <A NAME="positiveSetPropValue" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="SetpropBean.java">SetpropBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetPropValue -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      
+      
+      <p><b>positiveSetPropAll:</b>Try to create a valid useBean action.Set all the
+      properties of the bean from the request.</p>
+      
+      <A NAME="positiveSetPropAll" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="SetpropBean.java">SetpropBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetPropAll  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      
+      <p><b>positiveUseBeanNext:</b>Try to create a valid useBean.In the body of the action, put
+      setProperty statements to set the specific properties of the bean.Ensured that the bean 
+      exists already.</p>
+     
+     <A NAME="positiveUseBeanNext" ></A>
+     <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="SetpropBean.java">SetpropBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveUseBeanNext -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      <br>
+      
+
+ <p><b>positiveSingleQuotes:</b> check whether a value in the setProperty given as a single quoted expression works</p>
+      
+      <A NAME="positiveSingleQuotes" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSingleQuotes  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetBooleanObj:</b> To check whether setProperty with a Boolean (object) is working in the bean.</p>
+      
+      <A NAME="positiveSetBooleanObj" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetBooleanObj  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetBooleanPrim:</b> To check whether setProperty with a Boolean (Primitive Type) is working in the bean.</p>
+      
+      <A NAME="positiveSetBooleanPrim" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetBooleanPrim  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetByteObj:</b> To check whether setProperty with a Byte (object) is working in the bean.</p>
+      
+      <A NAME="positiveSetByteObj" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetByteObj  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetBytePrim:</b> To check whether setProperty with a Byte (Primitive Type) is working in the bean.</p>
+      
+      <A NAME="positiveSetBytePrim" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetBytePrim  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetCharObj:</b> To check whether setProperty with a Char (object) is working in the bean.</p>
+      
+      <A NAME="positiveSetCharObj" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetCharObj  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetCharPrim:</b> To check setProperty with a Char (Primitive Type) is working in the bean.</p>
+      
+      <A NAME="positiveSetCharPrim" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetCharPrim  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetDoubleObj:</b> To check setProperty with a Double (object) is working in the bean.</p>
+      
+      <A NAME="positiveSetDoubleObj" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetDoubleObj  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetDoublePrim:</b> To check setProperty with a Double (Primitive Type) is working in the bean.</p>
+      
+      <A NAME="positiveSetDoublePrim" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetDoublePrim  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetIntObj:</b> To check setProperty with an Int (object) is working in the bean.</p>
+      
+      <A NAME="positiveSetIntObj" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetIntObj  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetIntPrim:</b> To check setProperty with an Int (Primitive Type) is working in the bean.</p>
+      
+      <A NAME="positiveSetIntPrim" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetIntPrim  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetFloatObj:</b> To check setProperty with a Float (object) is working in the bean.</p>
+      
+      <A NAME="positiveSetFloatObj" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetFloatObj  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetFloatPrim:</b> To check setProperty with a Float (Primitive Type) is working in the bean.</p>
+      
+      <A NAME="positiveSetFloatPrim" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetFloatPrim  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetLongObj:</b> To check setProperty with a Long (object) is working in the bean.</p>
+      
+      <A NAME="positiveSetLongObj" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetLongObj  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ <p><b>positiveSetLongPrim:</b> To check setProperty with a Long (Primitive Type) is working in the bean.</p>
+      
+      <A NAME="positiveSetLongPrim" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="MiscBean.java">MiscBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetLongPrim  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      
+       <p><b>positiveSetPropNoParam:</b> A bean is instantiated and its property is 
+       set from the request.</p>
+       
+       <A NAME="positiveSetPropNoParam" ></A>
+       <TABLE BORDER CLASS="TestDescription">
+ 
+     <TR>
+ 
+     <TD><B>title</B></TD>
+ 
+     <TD>SetpropertyTest</TD>
+ 
+     </TR>
+ 
+ 
+     <TR>
+     <TD><B>source</B></TD>
+ 
+     <TD>
+     <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+     <A HREF="SetpropBean.java">SetpropBean.java</A>
+     </TD>
+     </TR>
+ 
+     <TR>
+ 
+     <TD><B>executeClass</B></TD>
+ 
+     <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+ 
+     </TR>
+ 
+     <TR>
+ 
+     <TD><B>executeArgs</B></TD>
+ 
+     <TD>-TestCaseID positiveSetPropNoParam  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+ 
+       </TR>
+ 
+ 
+ 
+     <TR>
+ 
+     <TD><B>keywords</B></TD>
+ 
+     <TD>positive extensionAPI</TD>
+ 
+       </TR>
+ 
+       </TABLE>
+ 
+ 
+       <p><b>positiveSetIndexedProp:</b>Here, the setProperty tag is used to set the value for
+                 an indexed property.An array is declared and defined in a
+                 scriptlet and then assigned through the setProperty tag, with 
+                 an expression.</p>
+       
+       <A NAME="positiveSetIndexedProp" ></A>
+       <TABLE BORDER CLASS="TestDescription">
+ 
+     <TR>
+ 
+     <TD><B>title</B></TD>
+ 
+     <TD>SetpropertyTest</TD>
+ 
+     </TR>
+ 
+ 
+     <TR>
+     <TD><B>source</B></TD>
+ 
+     <TD>
+     <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+     <A HREF="SetpropBean.java">SetpropBean.java</A>
+     </TD>
+     </TR>
+ 
+     <TR>
+ 
+     <TD><B>executeClass</B></TD>
+ 
+     <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+ 
+     </TR>
+ 
+     <TR>
+ 
+     <TD><B>executeArgs</B></TD>
+ 
+     <TD>-TestCaseID positiveSetIndexedProp  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+ 
+       </TR>
+ 
+ 
+ 
+     <TR>
+ 
+     <TD><B>keywords</B></TD>
+ 
+     <TD>positive extensionAPI</TD>
+ 
+       </TR>
+ 
+       </TABLE>
+ 
+ 
+
+ 
+      <h2>Negative tests</h2>
+      
+      <p><b>negativePropSyntax:</b> Try to create a valid useBean tag.Use both param and 
+      value in the setProperty action.Expected for translation error.</p>
+      
+      <A NAME="negativePropSyntax" ></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>SetpropertyTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="SetpropertyTest.java">SetpropertyTest.java</A>
+    <A HREF="SetpropBean.java">SetpropBean.java</A>
+    </TD>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.beantests.setProperty.SetpropertyTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID negativePropSyntax  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      
+ 
+
+
+      </BODY>
+
+</HTML>

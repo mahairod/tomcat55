@@ -1,0 +1,711 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+
+<HTML>
+
+  <HEAD>
+
+    <TITLE>
+        MiscTest
+
+      </TITLE>
+
+  </HEAD>
+
+
+
+  <BODY>
+
+      <H1>
+
+         MiscTest
+      </H1>
+
+      
+      
+
+      <H3>
+
+        Summary
+
+      </H3>
+
+      The javax.servlet.jsp.JspWriter interface emulates some of the functionality found in java.io.Writer,java.io.BufferedWriter and 
+      java.io.PrintWriter, however it differs in throwing the java.io.IOException from the print methods.
+      
+      
+     
+
+<H3> Positive Tests </H3>
+      
+      
+      
+ <p><b> positiveClear Test: </b>Initially we write something to the buffer and later we call the clear
+ method. If we get a blank page output, clear works.</p>
+
+     <A NAME="positiveClear"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>MiscTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="MiscTest.java">MiscTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.JspWriter.misc.MiscTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveClear -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+ 
+      
+     <p><b> positiveClose Test: </b>Write something to the stream and then close it. After closing try to write something to the stream.</p>
+     <A NAME="positiveClose"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>MiscTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="MiscTest.java">MiscTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.JspWriter.misc.MiscTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveClose -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+ 
+     <p><b> positiveFlush Test: </b> Write some thing into the buffer and then call the method. </p>
+     <A NAME="positiveFlush"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>MiscTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="MiscTest.java">MiscTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.JspWriter.misc.MiscTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveFlush -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      
+     <p><b> positiveGetBufferSize Test: </b> Set the buffer size,with buffer directive,then use the getBufferSize() method. </p>
+
+     <A NAME="positiveGetBufferSize"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>MiscTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="MiscTest.java">MiscTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.JspWriter.misc.MiscTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveGetBufferSize -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+     <p><b> positiveGetBufferSizeUnBuffered Test: </b> Set the buffer directive to 'none'. Then call the method </p>
+
+     <A NAME="positiveGetBufferSizeUnBuffered"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>MiscTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="MiscTest.java">MiscTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.JspWriter.misc.MiscTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveGetBufferSizeUnBuffered -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+     <p><b> positiveGetRemaining Test: </b> Set the buffer using the buffer directive and then call the method. </p>
+
+     <A NAME="positiveGetRemaining"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>MiscTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="MiscTest.java">MiscTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.JspWriter.misc.MiscTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveGetRemaining -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      
+     <p><b> positiveGetRemainingBufferUnset Test: </b> Set the buffer directive to 'none' and call the method getRemaining() in the JSP page. </p>
+
+     <A NAME="positiveGetRemainingBufferUnset"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>MiscTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="MiscTest.java">MiscTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.JspWriter.misc.MiscTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveGetRemainingBufferUnset -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+     
+     <p><b> positiveIsAutoFlush Test: </b> Set the autoflush directive to 'true' and then call the method(Should work with out setting this directive , as it is true by default)</p>
+
+     <A NAME="positiveIsAutoFlush"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>MiscTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="MiscTest.java">MiscTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.JspWriter.misc.MiscTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveIsAutoFlush -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+     
+     <p><b> positiveNewLine Test: </b> Call the method in the JSP page.Check for number of new lines in the code generated. </p>
+
+     <A NAME="positiveNewLine"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>MiscTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="MiscTest.java">MiscTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.JspWriter.misc.MiscTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveNewLine -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+     
+       
+
+<H3> Negative Tests </H3> 
+
+
+
+     <p><b> negativeClose Test: </b>We are closing the stream. After closing 
+     we trying to write to the output stream.It throws IOException.</p>
+     <A NAME="negativeClose"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>MiscTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="MiscTest.java">MiscTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.JspWriter.misc.MiscTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID negativeClose -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+
+     <p><b> negativeClearUnbuffered Test: </b>We are unbuffering using 
+     directive(buffer="none"),we expecting IllegalStateException as error </p>
+
+     <A NAME="negativeClearUnbuffered"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>MiscTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="MiscTest.java">MiscTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.JspWriter.misc.MiscTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID negativeClearUnbuffered -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+
+     <p><b> negativeClearIOExpr Test: </b>We closing stream before clear method 
+     is called,This results in IOException as error message </p>
+
+     <A NAME="negativeClearIOExpr"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>MiscTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="MiscTest.java">MiscTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.JspWriter.misc.MiscTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID negativeClearIOExpr -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+     
+
+     <p><b> negativeFlush Test: </b>We are testing if method flush() flushes 
+     the contents of the buffer.Initially we write something into buffer and 
+     later call the flush method.</p>
+
+     <A NAME="negativeFlush"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>MiscTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="MiscTest.java">MiscTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.JspWriter.misc.MiscTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID negativeFlush -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+   
+
+   </BODY>
+
+</HTML>

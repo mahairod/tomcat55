@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+
+<HTML>
+
+  <HEAD>
+
+    <TITLE>
+        ImportTest
+
+      </TITLE>
+
+  </HEAD>
+
+
+
+  <BODY>
+
+      <H1>
+
+         ImportTest
+      </H1>
+
+      
+
+      
+      
+
+      <H3>
+
+        Summary
+
+      </H3>
+
+      This value is defined when the "language" is java. The value is a comma
+      separated list of one or more java package names.
+
+      <H3> Positive Tests </H3>
+      
+      <b>positiveImport:</b>Use a jsp directive with language="java" and a valid
+       import attribute. Use the imported package in the page.<br>
+
+      <A NAME="positiveImport"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>ImportTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="ImportTest.java">ImportTest.java</A>
+    
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.directives.page.imports.ImportTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID  positiveImport   -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      
+      <H3> Negative Tests </H3>
+
+     <b>negativeImport:</b> Use a jsp directive with language  attribute
+    set to something other than java. Create an import statement with any package
+     <A NAME="negativeImport"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>ImportTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="ImportTest.java">ImportTest.java</A>
+    
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.directives.page.imports.ImportTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID   negativeImport  -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+      </BODY>
+
+</HTML>

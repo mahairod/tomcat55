@@ -1,0 +1,1085 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+
+<HTML>
+
+  <HEAD>
+
+    <TITLE>
+        PageContextTest
+
+      </TITLE>
+
+  </HEAD>
+
+
+
+  <BODY>
+
+      <H1>
+
+         PageContextTest
+      </H1>
+
+      
+      
+
+      <H3>
+
+        Summary
+
+      </H3>
+
+      A PageContext instance provides access to all the namespaces associated with a JSP page,
+      provides to several page attributes as well as a layer above the implementation details.      
+      
+
+      <H3>
+
+         Positive Tests
+ 
+      </H3>
+      <br>
+
+      <b><u>positiveForward:</u></b>The forward method is used to re-direct the current ServletRequest and ServletResponse
+      to another active component in the application.Here, we are forwarding to a jsp page named forward.jsp.
+      <br>
+      
+      <A NAME="positiveForward"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveForward -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>  
+      
+      <b><u>positiveGetAttributeAvbl:</u></b>Here,the method getAttribute(java.lang.String name) is tested.This returns an java.lang.Object. 
+      In the test, we are declaring a useBean action tag ,and the same is testsd.
+      <br>
+      
+      <A NAME="positiveGetAttributeAvbl"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    <A HREF="TestBean.java">TestBean.java</A>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveGetAttributeAvbl -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>        
+      
+      <b><u>positiveGetAttributeNotAvbl:</u></b>Here,the method getAttribute(java.lang.String name) is tested.This returns an java.lang.Object. 
+      It returns <i>null</i> if the attribute specified is not available.We are testing for this.
+      
+      <br>
+      
+      <A NAME="positiveGetAttributeNotAvbl"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    <A HREF="TestBean.java">TestBean.java</A>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveGetAttributeNotAvbl -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>     
+      
+      
+      <b><u>positiveGetAttributeNamesInScope:</u></b>Here,the method getAttributeNameInScope(int scope).This returns an java.util.Enumeration. 
+            
+      <br>
+      
+      <A NAME="positiveGetAttributeNamesInScope"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    <A HREF="TestBean.java">TestBean.java</A>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveGetAttributeNamesInScope -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>        
+      
+
+      <b><u>positiveGetAttributeScope:</u></b>Here,the method getAttributesScope().An integer value of the scope is returned. 
+            
+      <br>
+      
+      <A NAME="positiveGetAttributeScope"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    <A HREF="TestBean.java">TestBean.java</A>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveGetAttributeScope -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>        
+ 
+
+
+
+      <b><u>checkGetException:</u></b>This method tests for the method getException() of the PageContext class.
+      It is expected to return an object of type java.lang.Exception.This test is testing for the return type.
+      </br>
+
+      <A NAME="checkGetException"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID checkGetException -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      
+      <b><u>checkGetOut:</u></b>This method tests for the method getOut() of the PageContext class.This is expected to return an
+      object of type javax.servlet.jsp.JspWriter.This test tests for this return type.
+      <br>
+      
+      <A NAME="checkGetOut"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID checkGetOut -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>   
+                  
+     
+      
+      
+      <b><u>checkGetServletConfig:</u></b>This method tests for the method getServletConfig() of the PageContext class.This is expected to return an
+      object of type javax.servlet.ServletConfig.This test tests for this return type.
+      <br>
+      
+      <A NAME="checkGetServletConfig"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID checkGetServletConfig -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>      
+      
+
+
+      <b><u>checkGetServletContext:</u></b>This method tests for the method getServletContext() of the PageContext class.This is expected to return an
+      object of type javax.servlet.ServletContext.This test tests for this return type.
+      <br>
+      
+      <A NAME="checkGetServletContext"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID checkGetServletContext -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>      
+
+
+
+      <b><u>checkGetRequest:</u></b>This method tests for the method getRequest() of the PageContext class.This is expected to return an
+      object of type javax.servlet.ServletRequest.This test tests for this return type.
+      <br>
+      
+      <A NAME="checkGetRequest"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID checkGetRequest -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>      
+      
+      
+      <b><u>checkGetResponse:</u></b>This method tests for the method getResponse() of the PageContext class.This is expected to return an
+      object of type javax.servlet.ServletResponse.This test tests for this return type.
+      <br>
+      
+      <A NAME="checkGetResponse"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID checkGetResponse -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE> 
+      
+      
+      <b><u>checkGetSession:</u></b>This method tests for the method getSession() of the PageContext class.This is expected to return an
+      object of type javax.servlet.http.HttpSession.This test tests for this return type.
+      <br>
+      
+      <A NAME="checkGetSession"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID checkGetSession -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE> 
+      
+ 
+
+
+      <b><u>positiveInclude:</u></b> This method test for the include() method.
+      This causes the resource specified to be processed as part the current 
+      ServletRequest and ServletResponse being processed by the calling thread.     
+            
+      <br>
+      
+      <A NAME="positiveInclude"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    <A HREF="TestBean.java">TestBean.java</A>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveInclude -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+    </TR>
+    <TR>
+    <TD><B>keywords</B></TD>
+    <TD>positive JSP extensionAPI</TD>
+    </TR>
+    </TABLE>        
+
+      <b><u>positiveRemoveAttribute:</u></b>This tests for the removeAttribute method of the PageContext class.
+      It removes the object reference associated with the specified name.
+           
+            
+      <br>
+      
+      <A NAME="positiveRemoveAttribute"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    <A HREF="TestBean.java">TestBean.java</A>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveRemoveAttribute -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+    </TR>
+    <TR>
+    <TD><B>keywords</B></TD>
+    <TD>positive JSP extensionAPI</TD>
+    </TR>
+    </TABLE>        
+
+
+      <b><u>positiveSetAttribute:</u></b> This method registers the name and object specified with page scope      
+            
+      <br>
+      
+      <A NAME="positiveSetAttribute"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    <A HREF="TestBean.java">TestBean.java</A>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetAttribute -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+    </TR>
+    <TR>
+    <TD><B>keywords</B></TD>
+    <TD>positive JSP extensionAPI</TD>
+    </TR>
+    </TABLE>        
+
+      <b><u>positiveSetAttributeInScope:</u></b>This method registers the name and object specified with appropriate scope      
+            
+      <br>
+      
+      <A NAME="positiveSetAttributeInScope"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    <A HREF="TestBean.java">TestBean.java</A>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveSetAttributeInScope -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+    </TR>
+    <TR>
+    <TD><B>keywords</B></TD>
+    <TD>positive JSP extensionAPI</TD>
+    </TR>
+    </TABLE>        
+
+
+
+
+      <H3>
+
+         Negative Tests
+ 
+      </H3>  
+      
+      <b><u>negativeForwardIllegalState:</u></b>Here the forward method is tested for IllegalStateException.
+      
+      <br>
+      
+      <A NAME="negativeForwardIllegalState"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID negativeForwardIllegalState -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      
+      
+      <b><u>negativeForwardIllegalArg:</u></b>Here the forward method is tested for IllegalArgumentException
+      <br>
+      
+      <A NAME="negativeForwardIllegalArg"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+
+       
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID negativeForwardIllegalArg -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive JSP extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>        
+
+      <b><u>negativeInclude:</u></b>The method tests for include() method.
+      we are passing an unavailable JSP page as an parameter.     
+            
+      <br>
+      
+      <A NAME="negativeInclude"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    <A HREF="TestBean.java">TestBean.java</A>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID negativeInclude -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+    </TR>
+    <TR>
+    <TD><B>keywords</B></TD>
+    <TD>positive JSP extensionAPI</TD>
+    </TR>
+    </TABLE>        
+
+
+      <b><u>negativeRemoveAttribute:</u></b>This tests for the removeAttribute method of the 
+      PageContext class.It trys to remove unavailable the attribute.    
+            
+      <br>
+      
+      <A NAME="negativeRemoveAttribute"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>PageContextTest</TD>
+
+    </TR>
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="PageContextTest.java">PageContextTest.java</A>
+    <A HREF="TestBean.java">TestBean.java</A>
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>engine.PageContext.PageContextTest</TD>
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID negativeRemoveAttribute -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+    </TR>
+    <TR>
+    <TD><B>keywords</B></TD>
+    <TD>positive JSP extensionAPI</TD>
+    </TR>
+    </TABLE>        
+
+
+
+      </BODY>
+
+</HTML>
