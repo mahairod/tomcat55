@@ -29,7 +29,7 @@
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
- * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
+ * 4. The names "The Jakarta Project", "Struts", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
  *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -61,94 +61,78 @@
 
 package org.apache.webapp.admin.resources;
 
-import java.net.URLEncoder;
+
+import javax.management.ObjectName;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.Action;
-import org.apache.struts.util.MessageResources;
-import org.apache.webapp.admin.ApplicationServlet;
-import org.apache.webapp.admin.TreeBuilder;
-import org.apache.webapp.admin.TreeControl;
-import org.apache.webapp.admin.TreeControlNode;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
 
 
 /**
- * Implementation of <code>TreeBuilder</code> that adds the nodes required
- * for administering the resources (data sources).
+ * Base class for form beans for the resource administration.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  * @since 4.1
  */
 
-public class ResourcesTreeBuilder implements TreeBuilder {
+public class BaseForm extends ActionForm {
 
 
     // ----------------------------------------------------- Instance Variables
 
 
-    // ---------------------------------------------------- TreeBuilder Methods
+    // ------------------------------------------------------------- Properties
+
+    /**
+     * The node label to be displayed in the user interface.
+     */
+    private String nodeLabel = null;
+
+    public String getNodeLabel() {
+        return (this.nodeLabel);
+    }
+
+    public void setNodeLabel(String nodeLabel) {
+        this.nodeLabel = nodeLabel;
+    }
 
 
     /**
-     * Add the required nodes to the specified <code>treeControl</code>
-     * instance.
+     * The MBean object name of this object.  A null or zero-length
+     * value indicates that this is a new object.
+     */
+    private String objectName = null;
+
+    public String getObjectName() {
+        return (this.objectName);
+    }
+
+    public void setObjectName(String objectName) {
+        if ((objectName != null) && (objectName.length() < 1)) {
+            this.objectName = null;
+        } else {
+            this.objectName = objectName;
+        }
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+    /**
+     * Reset all properties to their default values.
      *
-     * @param treeControl The <code>TreeControl</code> to which we should
-     *  add our nodes
-     * @param servlet The controller servlet for the admin application
+     * @param mapping The mapping used to select this instance
      * @param request The servlet request we are processing
      */
-    public void buildTree(TreeControl treeControl,
-                          ApplicationServlet servlet,
-                          HttpServletRequest request) {
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
 
-        MessageResources resources = (MessageResources)
-            servlet.getServletContext().getAttribute(Action.MESSAGES_KEY);
-        addSubtree(treeControl.getRoot(), resources);
+        nodeLabel = null;
+        objectName = null;
 
     }
 
-
-    // ------------------------------------------------------ Protected Methods
-
-
-    /**
-     * Add the subtree of nodes required for user administration.
-     *
-     * @param root The root node of our tree control
-     * @param resources The MessageResources for our localized messages
-     *  messages
-     */
-    protected void addSubtree(TreeControlNode root,
-                              MessageResources resources) {
-
-        TreeControlNode subtree = new TreeControlNode
-            ("Global Resource Administration",
-             "folder_16_pad.gif",
-             resources.getMessage("resources.treeBuilder.subtreeNode"),
-             null,
-             "content",
-             true);        
-        TreeControlNode datasources = new TreeControlNode
-            ("Global Administer Data Sources",
-             "Datasource.gif",
-             resources.getMessage("resources.treeBuilder.datasources"),
-             // FIX ME -- add URL once its implemented
-             null,
-             "content",
-             false);
-        TreeControlNode envs = new TreeControlNode
-            ("Global Administer Environment Entries",
-             "EnvironmentEntries.gif",
-             resources.getMessage("resources.env.entries"),
-             "resources/listEnvEntries.do?forward=" +
-             URLEncoder.encode("EnvEntries List Setup"),
-             "content",
-             false);
-        root.addChild(subtree);
-        subtree.addChild(datasources);
-        subtree.addChild(envs);
-
-    }
 
 }

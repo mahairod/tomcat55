@@ -29,7 +29,7 @@
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
- * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
+ * 4. The names "The Jakarta Project", "Struts", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
  *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -61,94 +61,60 @@
 
 package org.apache.webapp.admin.resources;
 
-import java.net.URLEncoder;
+
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.Action;
-import org.apache.struts.util.MessageResources;
-import org.apache.webapp.admin.ApplicationServlet;
-import org.apache.webapp.admin.TreeBuilder;
-import org.apache.webapp.admin.TreeControl;
-import org.apache.webapp.admin.TreeControlNode;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
 
 
 /**
- * Implementation of <code>TreeBuilder</code> that adds the nodes required
- * for administering the resources (data sources).
+ * Form bean for the delete env entries page.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  * @since 4.1
  */
 
-public class ResourcesTreeBuilder implements TreeBuilder {
+public final class EnvEntriesForm extends BaseForm {
 
 
     // ----------------------------------------------------- Instance Variables
 
 
-    // ---------------------------------------------------- TreeBuilder Methods
+    // ------------------------------------------------------------- Properties
 
 
     /**
-     * Add the required nodes to the specified <code>treeControl</code>
-     * instance.
+     * The object names of the specified environment entries.
+     */
+    private String envEntries[] = null;
+
+    public String[] getEnvEntries() {
+        return (this.envEntries);
+    }
+
+    public void setEnvEntries(String envEntries[]) {
+        this.envEntries = envEntries;
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Reset all properties to their default values.
      *
-     * @param treeControl The <code>TreeControl</code> to which we should
-     *  add our nodes
-     * @param servlet The controller servlet for the admin application
+     * @param mapping The mapping used to select this instance
      * @param request The servlet request we are processing
      */
-    public void buildTree(TreeControl treeControl,
-                          ApplicationServlet servlet,
-                          HttpServletRequest request) {
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
 
-        MessageResources resources = (MessageResources)
-            servlet.getServletContext().getAttribute(Action.MESSAGES_KEY);
-        addSubtree(treeControl.getRoot(), resources);
+        super.reset(mapping, request);
+        this.envEntries = null;
 
     }
 
-
-    // ------------------------------------------------------ Protected Methods
-
-
-    /**
-     * Add the subtree of nodes required for user administration.
-     *
-     * @param root The root node of our tree control
-     * @param resources The MessageResources for our localized messages
-     *  messages
-     */
-    protected void addSubtree(TreeControlNode root,
-                              MessageResources resources) {
-
-        TreeControlNode subtree = new TreeControlNode
-            ("Global Resource Administration",
-             "folder_16_pad.gif",
-             resources.getMessage("resources.treeBuilder.subtreeNode"),
-             null,
-             "content",
-             true);        
-        TreeControlNode datasources = new TreeControlNode
-            ("Global Administer Data Sources",
-             "Datasource.gif",
-             resources.getMessage("resources.treeBuilder.datasources"),
-             // FIX ME -- add URL once its implemented
-             null,
-             "content",
-             false);
-        TreeControlNode envs = new TreeControlNode
-            ("Global Administer Environment Entries",
-             "EnvironmentEntries.gif",
-             resources.getMessage("resources.env.entries"),
-             "resources/listEnvEntries.do?forward=" +
-             URLEncoder.encode("EnvEntries List Setup"),
-             "content",
-             false);
-        root.addChild(subtree);
-        subtree.addChild(datasources);
-        subtree.addChild(envs);
-
-    }
 
 }
