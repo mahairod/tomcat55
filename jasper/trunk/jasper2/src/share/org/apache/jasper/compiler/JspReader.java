@@ -546,7 +546,7 @@ class JspReader {
 	    log.error("Exception parsing file ", ex);
 	    // Pop state being constructed:
 	    popFile();
-	    err.jspError("jsp.error.file.cannot.read", "ze file");
+	    err.jspError("jsp.error.file.cannot.read", file);
 	} finally {
 	    if (reader != null) {
 		try {
