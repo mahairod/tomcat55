@@ -276,6 +276,14 @@ public class SmapStratum {
 	    throw new IllegalArgumentException(
 		"inputFileName: " + inputFileName);
 
+        //Jasper incorrectly SMAPs certain Nodes, giving them an 
+        //outputStartLine of 0.  This can cause a fatal error in
+        //optimizeLineSection, making it impossible for Jasper to
+        //compile the JSP.  Until we can fix the underlying
+        //SMAPping problem, we simply ignore the flawed SMAP entries.
+        if (outputStartLine == 0)
+            return;
+
 	// build the LineInfo
 	LineInfo li = new LineInfo();
 	li.setInputStartLine(inputStartLine);
