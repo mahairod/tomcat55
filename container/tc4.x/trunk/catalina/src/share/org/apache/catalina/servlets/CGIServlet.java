@@ -1930,8 +1930,12 @@ public class CGIServlet extends HttpServlet {
                     }
                 }
             }
-            qs.append(lineSeparator);
-            return qs.append(postInput.toString()).toString();
+            if (qs.length() > 0) {
+                qs.append(lineSeparator);
+                return qs.append(postInput.toString()).toString();
+            } else {
+                return null;
+            }
         }
 
 
