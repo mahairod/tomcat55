@@ -33,7 +33,8 @@
   <xsl:variable name="sub-banner-fg"    select="'#ffffff'"/>
   <xsl:variable name="source-color"     select="'#023264'"/>
   <xsl:variable name="attributes-color" select="'#023264'"/>
-
+  <xsl:variable name="table-th-bg"      select="'#039acc'"/>
+  <xsl:variable name="table-td-bg"      select="'#a0ddf0'"/>
 
   <!-- Process an entire document into an HTML page -->
   <xsl:template match="document">
@@ -324,6 +325,91 @@
         <a name="{$name}"><xsl:apply-templates/></a>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+
+  <!-- Changelog related tags -->
+  <xsl:template match="changelog">
+    <table border="0" cellpadding="2" cellspacing="2">
+      <xsl:apply-templates/>
+    </table>
+  </xsl:template>
+
+  <xsl:template match="changelog/add">
+    <tr>
+      <xsl:variable name="src"><xsl:value-of select="$relative-path"/>/images/add.gif</xsl:variable>
+      <td><img alt="add" class="icon" src="{$src}"/></td>
+      <td><xsl:apply-templates/></td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="changelog/update">
+    <tr>
+      <xsl:variable name="src"><xsl:value-of select="$relative-path"/>/images/update.gif</xsl:variable>
+      <td><img alt="update" class="icon" src="{$src}"/></td>
+      <td><xsl:apply-templates/></td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="changelog/design">
+    <tr>
+      <xsl:variable name="src"><xsl:value-of select="$relative-path"/>/images/design.gif</xsl:variable>
+      <td><img alt="design" class="icon" src="{$src}"/></td>
+      <td><xsl:apply-templates/></td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="changelog/docs">
+    <tr>
+      <xsl:variable name="src"><xsl:value-of select="$relative-path"/>/images/docs.gif</xsl:variable>
+      <td><img alt="docs" class="icon" src="{$src}"/></td>
+      <td><xsl:apply-templates/></td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="changelog/fix">
+    <tr>
+      <xsl:variable name="src"><xsl:value-of select="$relative-path"/>/images/fix.gif</xsl:variable>
+      <td><img alt="fix" class="icon" src="{$src}"/></td>
+      <td><xsl:apply-templates/></td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="changelog/scode">
+    <tr>
+      <xsl:variable name="src"><xsl:value-of select="$relative-path"/>/images/code.gif</xsl:variable>
+      <td><img alt="code" class="icon" src="{$src}"/></td>
+      <td><xsl:apply-templates/></td>
+    </tr>
+  </xsl:template>
+
+  <!-- Process an attributes list with nested attribute elements -->
+  <xsl:template match="status">
+    <table border="1" cellpadding="5">
+      <tr>
+        <th width="15%" bgcolor="{$attributes-color}">
+          <font color="#ffffff">Priority</font>
+        </th>
+        <th width="50%" bgcolor="{$attributes-color}">
+          <font color="#ffffff">Action Item</font>
+        </th>
+        <th width="25%" bgcolor="{$attributes-color}">
+          <font color="#ffffff">Volunteers</font>
+        </th>
+        <xsl:for-each select="item">
+        <tr>
+          <td align="left" valign="center">
+            <xsl:value-of select="@priority"/>
+          </td>
+          <td align="left" valign="center">
+            <xsl:apply-templates/>
+          </td>
+          <td align="left" valign="center">
+            <xsl:value-of select="@owner"/>
+          </td>
+        </tr>
+        </xsl:for-each>
+      </tr>
+    </table>
   </xsl:template>
 
   <!-- Process everything else by just passing it through -->
