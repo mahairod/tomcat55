@@ -890,8 +890,15 @@ public class DefaultServlet
             collectionName += "/";
         }
             
+	// Refresh our currently defined set of welcome files
+	synchronized (welcomes) {
+	    welcomes = (String[]) getServletContext().getAttribute
+		("org.apache.catalina.WELCOME_FILES");
+	    if (welcomes == null)
+		welcomes = new String[0];
+	}
+
         // Serve a welcome resource or file if one exists
-        // FIXME - update the welcome files list?
         for (int i = 0; i < welcomes.length; i++) {
             
             // Does the specified resource exist?

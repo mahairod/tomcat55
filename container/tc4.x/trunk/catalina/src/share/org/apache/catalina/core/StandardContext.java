@@ -611,7 +611,7 @@ public final class StandardContext
 	this.workDir = workDir;
 
 	if (started)
-	    setWorkDirectory();
+	    postWorkDirectory();
 
     }
 
@@ -1552,18 +1552,6 @@ public final class StandardContext
 
 
     /**
-     * Post a copy of our current list of welcome files as a servlet context
-     * attribute, so that the default servlet can find them.
-     */
-    private void postWelcomeFiles() {
-
-	getServletContext().setAttribute("org.apache.catalina.WELCOME_FILES",
-					 welcomeFiles);
-
-    }
-
-
-    /**
      * Reload this web application, if reloading is supported.
      * <p>
      * <b>IMPLEMENTATION NOTE</b>:  This method is designed to deal with
@@ -2144,7 +2132,8 @@ public final class StandardContext
      */
     public void start() throws LifecycleException {
 
-	setWorkDirectory();
+	postWelcomeFiles();
+	postWorkDirectory();
 	super.start();
 
     }
@@ -2195,13 +2184,13 @@ public final class StandardContext
 
 
     /**
-     * Set the request processing paused flag for this Context.
-     *
-     * @param paused The new request processing paused flag
+     * Post a copy of our current list of welcome files as a servlet context
+     * attribute, so that the default servlet can find them.
      */
-    private void setPaused(boolean paused) {
+    private void postWelcomeFiles() {
 
-	this.paused = paused;
+	getServletContext().setAttribute("org.apache.catalina.WELCOME_FILES",
+					 welcomeFiles);
 
     }
 
@@ -2209,7 +2198,7 @@ public final class StandardContext
     /**
      * Set the appropriate context attribute for our work directory.
      */
-    private void setWorkDirectory() {
+    private void postWorkDirectory() {
 
 	// Retrieve our parent (normally a host) name
 	String parentName = null;
@@ -2241,6 +2230,18 @@ public final class StandardContext
 
 	// Set the appropriate servlet context attribute
 	getServletContext().setAttribute(Constants.WORKDIR_ATTR, dir);
+
+    }
+
+
+    /**
+     * Set the request processing paused flag for this Context.
+     *
+     * @param paused The new request processing paused flag
+     */
+    private void setPaused(boolean paused) {
+
+	this.paused = paused;
 
     }
 
