@@ -77,7 +77,7 @@ public class Ajp13ConnectorResponse extends ResponseImpl
 {
 	public static final int  MAX_SEND_SIZE = TcpConnector.MAX_PACKET_SIZE - 
 	                                         TcpConnector.H_SIZE - 
-	                                         2;
+	                                         4;
 	
     public static final byte JK_AJP13_SEND_BODY_CHUNK   = 3;
     public static final byte JK_AJP13_SEND_HEADERS      = 4;
