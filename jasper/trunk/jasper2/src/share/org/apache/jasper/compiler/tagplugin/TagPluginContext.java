@@ -64,9 +64,9 @@ package org.apache.jasper.compiler.tagplugin;
 import org.apache.jasper.compiler.ServletWriter;
 
 /**
- * This interface allows the plugin author to query about the properties
- * of the current tag, and to use Jasper resources to generate more
- * efficient implementation for the tag handler under some conditions.
+ * This interface allows the plugin author to make inqueries about the
+ * properties of the current tag, and to use Jasper resources to generate
+ * direct Java codes in place of tag handler invokations.
  */
 
 public interface TagPluginContext {
@@ -104,10 +104,10 @@ public interface TagPluginContext {
     void generateBody();
 
     /**
-     * Abandon optimization for this tag handler, and instruct the
+     * Abandon optimization for this tag handler, and instruct
      * Jaser to generate the tag handler calls, as usual.
-     * Should be invoked if errors are detected, or that the tag body is
-     * too compilicated for optimization.
+     * Should be invoked if errors are detected, or when the tag body
+     * is judged to be too compilicated for optimization.
      */
     void dontUseTagPlugin();
 }
