@@ -141,9 +141,7 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
     // --------------------------------------------------------- Public Methods
 
     public JAASMemoryLoginModule() {
-        if (log.isDebugEnabled()) {
-            log.debug("MEMORY LOGIN MODULE");
-        }
+        log.debug("MEMORY LOGIN MODULE");
     }
 
     /**
@@ -170,9 +168,7 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
             committed = false;
             principal = null;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Abort");
-        }
+        log.debug("Abort");
         return (true);
 
     }
@@ -190,9 +186,7 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
      * @exception LoginException if the commit fails
      */
     public boolean commit() throws LoginException {
-        if (log.isDebugEnabled()) {
-            log.debug("commit " + principal);
-        }
+        log.debug("commit " + principal);
 
         // If authentication was not successful, just return false
         if (principal == null)
@@ -221,8 +215,8 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
         // Are there any defined security constraints?
         SecurityConstraint constraints[] = context.findConstraints();
         if ((constraints == null) || (constraints.length == 0)) {
-            if (log.isDebugEnabled())
-                log.debug("  No applicable constraints defined");
+            if (context.getLogger().isDebugEnabled())
+                context.getLogger().debug("  No applicable constraints defined");
             return (null);
         }
 
@@ -234,8 +228,8 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
         uri = RequestUtil.URLDecode(uri); // Before checking constraints
         String method = request.getMethod();
         for (int i = 0; i < constraints.length; i++) {
-            if (log.isDebugEnabled())
-                log.debug("  Checking constraint '" + constraints[i] +
+            if (context.getLogger().isDebugEnabled())
+                context.getLogger().debug("  Checking constraint '" + constraints[i] +
                     "' against " + method + " " + uri + " --> " +
                     constraints[i].included(uri, method));
             if (constraints[i].included(uri, method)) {
@@ -247,8 +241,8 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
         }
 
         // No applicable security constraint was found
-        if (log.isDebugEnabled())
-            log.debug("  No applicable constraint located");
+        if (context.getLogger().isDebugEnabled())
+            context.getLogger().debug("  No applicable constraint located");
         if(results == null)
             return null;
         SecurityConstraint [] array = new SecurityConstraint[results.size()];
@@ -271,10 +265,7 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
      */
     public void initialize(Subject subject, CallbackHandler callbackHandler,
                            Map sharedState, Map options) {
-
-        if (log.isDebugEnabled()) {
-            log.debug("Init");
-        }
+        log.debug("Init");
 
         // Save configuration values
         this.subject = subject;
@@ -327,9 +318,7 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
         // Validate the username and password we have received
         principal = super.authenticate(username, password);
 
-        if (log.isDebugEnabled()) {
-            log.debug("login " + username + " " + principal);
-        }
+        log.debug("login " + username + " " + principal);
 
         // Report results based on success or failure
         if (principal != null) {
@@ -387,7 +376,7 @@ public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule, R
             digester.parse(file);
         } catch (Exception e) {
             log.warn("Error processing configuration file " +
-                     file.getAbsolutePath(), e);
+                file.getAbsolutePath(), e);
             return;
         } finally {
             digester.reset();
