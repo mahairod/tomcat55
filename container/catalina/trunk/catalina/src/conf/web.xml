@@ -306,7 +306,7 @@
 -->
 
     <!-- The mapping for the CGI Gateway servlet -->
-    
+
 <!--
     <servlet-mapping>
         <servlet-name>cgi</servlet-name>
@@ -724,6 +724,10 @@
         <mime-type>audio/x-midi</mime-type>
     </mime-mapping>
     <mime-mapping>
+        <extension>sit</extension>
+        <mime-type>application/x-stuffit</mime-type>
+    </mime-mapping>
+    <mime-mapping>
         <extension>snd</extension>
         <mime-type>audio/basic</mime-type>
     </mime-mapping>
@@ -826,7 +830,7 @@
     <mime-mapping>
         <extension>svgz</extension>
         <mime-type>image/svg+xml</mime-type>
-    </mime-mapping>    
+    </mime-mapping>
     <mime-mapping>
         <!-- Wireless Bitmap -->
         <extension>wbmp</extension>
