@@ -117,6 +117,9 @@ Catalina New Features:
          Added support for using an alternateURL if a socket connection
          can not be made to the provider at the connectionURL.
 
+[4.1.19] CoyoteConnector:
+         Add HTTP/1.1 GZIP compression support.
+
 
 -------------------
 Jasper New Features:
@@ -168,6 +171,7 @@ Jasper New Features:
          Added new "fork" option. This tells Ant to fork the JSP page javac
          compile so that it is run in a different JVM from the one Tomcat
          is running in. Please refer to the Jasper-HOWTO for more information.
+
 
 ==========================
 BUG FIXES AND IMPROVEMENTS:
@@ -224,6 +228,10 @@ Generic Bug Fixes:
          Updated documentation and added some minor new features.
          See the Manager App HOW-TO and HTML Manager App HOW-TO
          documentation for more information.
+
+[4.1.19] Administration Webapp:
+         Add a check for empty validation query before setting it.
+
 
 ------------------
 Catalina Bug Fixes:
@@ -590,6 +598,35 @@ Catalina Bug Fixes:
          DataSourceRealm:
          Fixed the Realm-HOWTO docs for the DataSourceRealm.
 
+[4.1.19] #10383
+         Ajp13:
+         Fix hanging Ajp13Processor and web server request when invalid 
+         Cookie sent. An HTTP status code 400 - Bad Request is now returned.
+
+[4.1.19] ApplicationFilterConfig:
+         Wrap filter initialization with swallow output.
+
+[4.1.19] #15819
+         StandardServer:
+         Don't write out listeners for StandardDefaultContext.
+
+[4.1.19] #15762
+         StandardServer:
+         Filter special characters in DataSource URL.
+
+[4.1.19] #15890
+         DefaultServlet:
+         Invalid date headers should be ignored.
+
+[4.1.19] ManagerBase:
+         Add code to guarantee uniqueness of a session ID (even though the
+         probability that this event occurs is negligible, some people feel
+         more comfortable with that code enabled).
+
+[4.1.19] RequestFilterValve:
+         Catch null pointer property to match on, deny by default if found.
+
+
 ----------------
 Coyote Bug Fixes:
 ----------------
@@ -734,10 +771,24 @@ Coyote Bug Fixes:
          JK 2 CoyoteHandler:
          Fix NPE occurring in SSL mode.
 
-[4.1.19] #10383
-         Ajp13
-         Fix hanging Ajp13Processor and web server request when invalid Cookie sent.
-         An HTTP status code 400 - Bad Request is now returned.
+[4.1.19] ActionCode:
+         Fix incorrect number which could cause bad matching.
+
+[4.1.19] HTTP/1.1 Http11Processor:
+         Fix case sensitivity matching of some special header values, which 
+         could prevent HTTP/1.0 keep alive with some clients.
+
+[4.1.19] PoolTcpEndpoint:
+         Fix incorrect handling when an exception occurs during a SSL 
+         handshake.
+
+[4.1.19] PoolTcpEndpoint:
+         More robust socket restart code for the case where an exception occurs
+         during an accept.
+
+[4.1.19] ThreadPool:
+         Remove thread from active thread list when it ends.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -964,8 +1015,16 @@ Jasper Bug Fixes:
          Background Thread Recompile:
          Fixed a thread synchronization bug which could cause the thread which
          does background JSP recompiles (development=false) to die.
-        
-         
+
+[4.1.19] #14200
+         TldLocationCache:
+         TLDs under WEB-INF are not scanned for URI mappings.
+
+[4.1.19] JspWriterImpl:
+         Remove custom flushing, which caused client disconnects to log
+         stack traces with Jasper.
+
+
 ============================
 KNOWN ISSUES IN THIS RELEASE:
 ============================
