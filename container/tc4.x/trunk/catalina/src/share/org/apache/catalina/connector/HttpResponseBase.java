@@ -922,7 +922,7 @@ public class HttpResponseBase
 
 	// Generate a temporary redirect to the specified location
 	String absolute = toAbsolute(location);
-	setStatus(SC_MOVED_TEMPORARILY, absolute);
+	setStatus(SC_MOVED_TEMPORARILY);
 	setHeader("Location", absolute);
         setContentLength(0);
 	flushBuffer();
