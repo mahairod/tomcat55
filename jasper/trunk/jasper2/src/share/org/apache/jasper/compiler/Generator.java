@@ -1042,16 +1042,17 @@ public class Generator {
                 // that body.
                 String valueVarName = generateNamedAttributeValue(
                     value.getNamedAttributeNode() );
-                out.println("JspRuntimeLibrary.handleSetProperty(" +
+                out.printil("JspRuntimeLibrary.introspecthelper(" +
                             "pageContext.findAttribute(\""  + name + "\"), \""
-                            + property + "\", " + valueVarName + " );" );
-
+                            + property + "\", "
+			    + valueVarName
+			    + ", null, null, false);");
 	    } else {
-		out.printil("JspRuntimeLibrary.introspecthelper(" +
-			    "pageContext.findAttribute(\"" + name + "\"), \"" +
-    			    property + "\",");
+		out.printin("JspRuntimeLibrary.introspecthelper(" +
+			    "pageContext.findAttribute(\"" + name + "\"), \""
+			    + property + "\", ");
 		out.print(attributeValue(value, false, null, "null"));
-		out.println(",null, null, false);");
+		out.println(", null, null, false);");
 	    }
 
 	    n.setEndJavaLine(out.getJavaLine());
