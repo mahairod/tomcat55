@@ -42,6 +42,16 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedAggregate01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedAggregate02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedForward01</url-pattern>
     </filter-mapping>
 
@@ -112,6 +122,16 @@
 
 
     <!-- ========== Servlet Definitions =================================== -->
+
+    <servlet>
+        <servlet-name>Aggregate01</servlet-name>
+        <servlet-class>org.apache.tester.Aggregate01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Aggregate02</servlet-name>
+        <servlet-class>org.apache.tester.Aggregate02</servlet-class>
+    </servlet>
 
     <servlet>
         <servlet-name>Authentication01</servlet-name>
@@ -195,6 +215,26 @@
 
 
     <!-- ========== Servlet Mappings ====================================== -->
+
+    <servlet-mapping>
+        <servlet-name>Aggregate01</servlet-name>
+        <url-pattern>/Aggregate01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Aggregate01</servlet-name>
+        <url-pattern>/WrappedAggregate01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Aggregate02</servlet-name>
+        <url-pattern>/Aggregate02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Aggregate02</servlet-name>
+        <url-pattern>/WrappedAggregate02</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>Authentication01</servlet-name>

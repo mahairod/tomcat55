@@ -355,9 +355,11 @@ public class TestClient extends Task {
             conn.setDoInput(true);
             if (inContent != null) {
                 conn.setDoOutput(true);
-                inContent += "\r\n";
                 conn.setRequestProperty("Content-Length",
                                         "" + inContent.length());
+                if (debug >= 1)
+                    System.out.println("INPH: Content-Length: " +
+                                       inContent.length());
             } else {
                 conn.setDoOutput(false);
             }
@@ -381,12 +383,16 @@ public class TestClient extends Task {
                     String name = header.substring(0, colon).trim();
                     String value = header.substring(colon + 1).trim();
                     conn.setRequestProperty(name, value);
+                    if (debug >= 1)
+                        System.out.println("INPH: " + name + ": " + value);
                 }
             }
 
             // Connect to the server and send our output if necessary
             conn.connect();
             if (inContent != null) {
+                if (debug >= 1)
+                    System.out.println("INPD: " + inContent);
                 OutputStream os = conn.getOutputStream();
                 for (int i = 0; i < inContent.length(); i++)
                     os.write(inContent.charAt(i));
@@ -528,7 +534,7 @@ public class TestClient extends Task {
             pw.print(command + "\r\n");
             if (inContent != null) {
                 if (debug >= 1)
-                    System.out.println("HEAD: " + "Content-Length: " +
+                    System.out.println("INPH: " + "Content-Length: " +
                                        inContent.length());
                 pw.print("Content-Length: " + inContent.length() + "\r\n");
             }
@@ -552,7 +558,7 @@ public class TestClient extends Task {
                     String name = header.substring(0, colon).trim();
                     String value = header.substring(colon + 1).trim();
                     if (debug >= 1)
-                        System.out.println("HEAD: " + name + ": " + value);
+                        System.out.println("INPH: " + name + ": " + value);
                     pw.print(name + ": " + value + "\r\n");
                 }
             }
@@ -561,12 +567,9 @@ public class TestClient extends Task {
             // Send our content (if any)
             if (inContent != null) {
                 if (debug >= 1)
-                    System.out.print("DATA: ");
-                for (int i = 0; i < inContent.length(); i++) {
-                    if (debug >= 1)
-                        System.out.print(inContent.charAt(i));
+                    System.out.println("INPD: " + inContent);
+                for (int i = 0; i < inContent.length(); i++)
                     pw.print(inContent.charAt(i));
-                }
             }
             pw.flush();
 

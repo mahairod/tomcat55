@@ -266,6 +266,34 @@
          request="${context.path}/WrappedGetQueryString01?foo=1"
       outContent="GetQueryString01 PASSED"/>
 
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}" method="POST"
+       inHeaders="Content-Type:application/x-www-form-urlencoded"
+       inContent="b=3&amp;a=2"
+         request="${context.path}/Aggregate01?a=1"
+      outContent="Aggregate01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}" method="POST"
+       inHeaders="Content-Type:application/x-www-form-urlencoded"
+       inContent="b=3&amp;a=2"
+         request="${context.path}/WrappedAggregate01?a=1"
+      outContent="Aggregate01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}" method="POST"
+       inHeaders="Content-Type:application/x-www-form-urlencoded"
+       inContent="b=3&amp;a=2"
+         request="${context.path}/Aggregate02?a=1"
+      outContent="Aggregate02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}" method="POST"
+       inHeaders="Content-Type:application/x-www-form-urlencoded"
+       inContent="b=3&amp;a=2"
+         request="${context.path}/WrappedAggregate02?a=1"
+      outContent="Aggregate02 PASSED"/>
+
     <!-- ========== Other ServletRequest Tests ============================ -->
 
     <!-- Servlet compliance tests, until equivalent tests are included
