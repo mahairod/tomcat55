@@ -133,13 +133,6 @@ public class StandardEngine
 
 
     /**
-     * The Java class name of the default Mapper class for this Container.
-     */
-    private String mapperClass =
-        "org.apache.catalina.core.StandardEngineMapper";
-
-
-    /**
      * The <code>Service</code> that owns this Engine, if any.
      */
     private Service service = null;
@@ -276,31 +269,6 @@ public class StandardEngine
      */
     public DefaultContext getDefaultContext() {
         return (this.defaultContext);
-    }
-
-
-    /**
-     * Return the default Mapper class name.
-     */
-    public String getMapperClass() {
-
-        return (this.mapperClass);
-
-    }
-
-
-    /**
-     * Set the default Mapper class name.
-     *
-     * @param mapperClass The new default Mapper class name
-     */
-    public void setMapperClass(String mapperClass) {
-
-        String oldMapperClass = this.mapperClass;
-        this.mapperClass = mapperClass;
-        support.firePropertyChange("mapperClass",
-                                   oldMapperClass, this.mapperClass);
-
     }
 
 
@@ -560,18 +528,6 @@ public class StandardEngine
 
     // ------------------------------------------------------ Protected Methods
 
-
-    /**
-     * Add a default Mapper implementation if none have been configured
-     * explicitly.
-     *
-     * @param mapperClass The default mapper class name to add
-     */
-    protected void addDefaultMapper(String mapperClass) {
-
-        super.addDefaultMapper(this.mapperClass);
-
-    }
 
     // -------------------- JMX registration  --------------------
 

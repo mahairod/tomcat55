@@ -89,7 +89,6 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
-import org.apache.catalina.Mapper;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Request;
@@ -242,24 +241,6 @@ public abstract class ContainerBase
      * The cluster with which this Container is associated.
      */
     protected Cluster cluster = null;
-
-
-    /**
-     * The one and only Mapper associated with this Container, if any.
-     */
-    protected Mapper mapper = null;
-
-
-    /**
-     * The set of Mappers associated with this Container, keyed by protocol.
-     */
-    protected HashMap mappers = new HashMap();
-
-
-    /**
-     * The Java class name of the default Mapper class for this Container.
-     */
-    protected String mapperClass = null;
 
 
     /**
@@ -870,42 +851,6 @@ public abstract class ContainerBase
 
 
     /**
-     * Add the specified Mapper associated with this Container.
-     *
-     * @param mapper The corresponding Mapper implementation
-     *
-     * @exception IllegalArgumentException if this exception is thrown by
-     *  the <code>setContainer()</code> method of the Mapper
-     */
-    public void addMapper(Mapper mapper) {
-
-        synchronized(mappers) {
-            if (mappers.get(mapper.getProtocol()) != null)
-                throw new IllegalArgumentException("addMapper:  Protocol '" +
-                                                   mapper.getProtocol() +
-                                                   "' is not unique");
-            mapper.setContainer((Container) this);      // May throw IAE
-            if (started && (mapper instanceof Lifecycle)) {
-                try {
-                    ((Lifecycle) mapper).start();
-                } catch (LifecycleException e) {
-                    log.error("ContainerBase.addMapper: start: ", e);
-                    throw new IllegalStateException
-                        ("ContainerBase.addMapper: start: " + e);
-                }
-            }
-            mappers.put(mapper.getProtocol(), mapper);
-            if (mappers.size() == 1)
-                this.mapper = mapper;
-            else
-                this.mapper = null;
-            fireContainerEvent(ADD_MAPPER_EVENT, mapper);
-        }
-
-    }
-
-
-    /**
      * Add a property change listener to this component.
      *
      * @param listener The listener to add
@@ -965,39 +910,6 @@ public abstract class ContainerBase
 
 
     /**
-     * Return the Mapper associated with the specified protocol, if there
-     * is one.  If there is only one defined Mapper, use it for all protocols.
-     * If there is no matching Mapper, return <code>null</code>.
-     *
-     * @param protocol Protocol for which to find a Mapper
-     */
-    public Mapper findMapper(String protocol) {
-
-        if (mapper != null)
-            return (mapper);
-        else
-            synchronized (mappers) {
-                return ((Mapper) mappers.get(protocol));
-            }
-
-    }
-
-
-    /**
-     * Return the set of Mappers associated with this Container.  If this
-     * Container has no Mappers, a zero-length array is returned.
-     */
-    public Mapper[] findMappers() {
-
-        synchronized (mappers) {
-            Mapper results[] = new Mapper[mappers.size()];
-            return ((Mapper[]) mappers.values().toArray(results));
-        }
-
-    }
-
-
-    /**
      * Process the specified Request, to produce the corresponding Response,
      * by invoking the first Valve in our pipeline (if any), or the basic
      * Valve otherwise.
@@ -1016,27 +928,6 @@ public abstract class ContainerBase
         throws IOException, ServletException {
 
         pipeline.invoke(request, response);
-
-    }
-
-
-    /**
-     * Return the child Container that should be used to process this Request,
-     * based upon its characteristics.  If no such child Container can be
-     * identified, return <code>null</code> instead.
-     *
-     * @param request Request being processed
-     * @param update Update the Request to reflect the mapping selection?
-     */
-    public Container map(Request request, boolean update) {
-
-        // Select the Mapper we will use
-        Mapper mapper = findMapper(request.getRequest().getProtocol());
-        if (mapper == null)
-            return (null);
-
-        // Use this Mapper to perform this mapping
-        return (mapper.map(request, update));
 
     }
 
@@ -1085,39 +976,6 @@ public abstract class ContainerBase
 
         synchronized (listeners) {
             listeners.remove(listener);
-        }
-
-    }
-
-
-    /**
-     * Remove a Mapper associated with this Container, if any.
-     *
-     * @param mapper The Mapper to be removed
-     */
-    public void removeMapper(Mapper mapper) {
-
-        synchronized(mappers) {
-
-            if (mappers.get(mapper.getProtocol()) == null)
-                return;
-            mappers.remove(mapper.getProtocol());
-            if (started && (mapper instanceof Lifecycle)) {
-                try {
-                    ((Lifecycle) mapper).stop();
-                } catch (LifecycleException e) {
-                    log.error("ContainerBase.removeMapper: stop: ", e);
-                    throw new IllegalStateException
-                        ("ContainerBase.removeMapper: stop: " + e);
-                }
-            }
-            if (mappers.size() != 1)
-                this.mapper = null;
-            else {
-                Iterator values = mappers.values().iterator();
-                this.mapper = (Mapper) values.next();
-            }
-            fireContainerEvent(REMOVE_MAPPER_EVENT, mapper);
         }
 
     }
@@ -1202,7 +1060,6 @@ public abstract class ContainerBase
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
 
-        addDefaultMapper(this.mapperClass);
         started = true;
 
         // Start our subordinate components, if any
@@ -1218,13 +1075,6 @@ public abstract class ContainerBase
             ((Lifecycle) realm).start();
         if ((resources != null) && (resources instanceof Lifecycle))
             ((Lifecycle) resources).start();
-
-        // Start our Mappers, if any
-        Mapper mappers[] = findMappers();
-        for (int i = 0; i < mappers.length; i++) {
-            if (mappers[i] instanceof Lifecycle)
-                ((Lifecycle) mappers[i]).start();
-        }
 
         // Start our child containers, if any
         Container children[] = findChildren();
@@ -1282,13 +1132,6 @@ public abstract class ContainerBase
         children = findChildren();
         for (int i = 0; i < children.length; i++) {
             removeChild(children[i]);
-        }
-
-        // Stop our Mappers, if any
-        Mapper mappers[] = findMappers();
-        for (int i = 0; i < mappers.length; i++) {
-            if (mappers[(mappers.length-1)-i] instanceof Lifecycle)
-                ((Lifecycle) mappers[(mappers.length-1)-i]).stop();
         }
 
         // Stop our subordinate components, if any
@@ -1475,34 +1318,6 @@ public abstract class ContainerBase
 
 
     // ------------------------------------------------------ Protected Methods
-
-
-    /**
-     * Add a default Mapper implementation if none have been configured
-     * explicitly.
-     *
-     * @param mapperClass Java class name of the default Mapper
-     */
-    protected void addDefaultMapper(String mapperClass) {
-
-        // Do we need a default Mapper?
-        if (mapperClass == null)
-            return;
-        if (mappers.size() >= 1)
-            return;
-
-        // Instantiate and add a default Mapper
-        try {
-            Class clazz = Class.forName(mapperClass);
-            Mapper mapper = (Mapper) clazz.newInstance();
-            mapper.setProtocol("http");
-            addMapper(mapper);
-        } catch (Exception e) {
-            log.error(sm.getString("containerBase.addDefaultMapper", mapperClass),
-                e);
-        }
-
-    }
 
 
     /**
