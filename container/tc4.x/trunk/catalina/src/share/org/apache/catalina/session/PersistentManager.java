@@ -264,6 +264,7 @@ public final class PersistentManager
     public void setStore(Store store) {
     
     	this.store = store;
+    	store.setManager(this);
     	
     }
     
@@ -595,11 +596,9 @@ public final class PersistentManager
         if (debug >= 1)
             log("Force random number initialization completed");
 
-	// Create the FileStore object.
-	// FIXME: Do this properly (configurable)
-	store = new FileStore();
-	store.setManager (this);
-	if (store instanceof Lifecycle)
+	if (store == null)
+	    log("No Store configured");
+	else if (store instanceof Lifecycle)
 	    ((Lifecycle)store).start();
 	    
 	// Start the background reaper thread
