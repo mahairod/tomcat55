@@ -148,6 +148,12 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
 
     /**
+     * The longest time (in seconds) that an expired session had been alive.
+     */
+    protected int sessionMaxAliveTime;
+
+
+    /**
      * The set of currently active Sessions for this Manager, keyed by
      * session identifier.
      */
@@ -877,6 +883,30 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
     public void setMaxActive(int maxActive) {
         this.maxActive = maxActive;
+    }
+
+
+    /**
+     * Gets the longest time (in seconds) that an expired session had been
+     * alive.
+     *
+     * @return Longest time (in seconds) that an expired session had been
+     * alive.
+     */
+    public int getSessionMaxAliveTime() {
+        return sessionMaxAliveTime;
+    }
+
+
+    /**
+     * Sets the longest time (in seconds) that an expired session had been
+     * alive.
+     *
+     * @param sessionMaxAliveTime Longest time (in seconds) that an expired
+     * session had been alive.
+     */
+    public void setSessionMaxAliveTime(int sessionMaxAliveTime) {
+        this.sessionMaxAliveTime = sessionMaxAliveTime;
     }
 
 

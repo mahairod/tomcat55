@@ -660,6 +660,10 @@ public class StatusTransformer {
             writer.print(" Expired sessions: ");
             writer.print(mBeanServer.getAttribute
                          (objectName, "expiredSessions"));
+            writer.print(" Longest session alive time: ");
+            writer.print(formatSeconds(mBeanServer.getAttribute(
+                                                    objectName,
+                                                    "sessionMaxAliveTime")));
             writer.print(" Processing time: ");
             writer.print(formatTime(mBeanServer.getAttribute
                                     (objectName, "processingTime"), false));
@@ -829,6 +833,27 @@ public class StatusTransformer {
         } else {
             return (time + " ms");
         }
+    }
+
+
+    /**
+     * Formats the given time (given in seconds) as a string.
+     *
+     * @param obj Time object to be formatted as string
+     *
+     * @return String formatted time
+     */
+    public static String formatSeconds(Object obj) {
+
+        long time = -1L;
+
+        if (obj instanceof Long) {
+            time = ((Long) obj).longValue();
+        } else if (obj instanceof Integer) {
+            time = ((Integer) obj).intValue();
+        }
+
+        return (time + " s");
     }
 
 }
