@@ -106,7 +106,7 @@ public class ResourceCache {
     /**
      * Max amount of removals during a make space.
      */
-    protected int maxAllocateIterations = 10;
+    protected int maxAllocateIterations = 20;
 
 
     /**
@@ -242,9 +242,13 @@ public class ResourceCache {
 
         int toFree = space - (cacheMaxSize - cacheSize);
 
-        if (toFree < 0) {
+        if (toFree <= 0) {
             return true;
         }
+
+        // Increase the amount to free so that allocate won't have to run right
+        // away again
+        toFree += (cacheMaxSize / 20);
 
         int size = notFoundCache.size();
         if (size > spareNotFoundEntries) {
@@ -253,11 +257,12 @@ public class ResourceCache {
             toFree -= size;
         }
 
-        if (toFree < 0) {
+        if (toFree <= 0) {
             return true;
         }
 
         int attempts = 0;
+        int entriesFound = 0;
         long totalSpace = 0;
         int[] toRemove = new int[maxAllocateIterations];
         while (toFree > 0) {
@@ -268,38 +273,50 @@ public class ResourceCache {
             if (toFree > 0) {
                 // Randomly select an entry in the array
                 int entryPos = -1;
-                while (true) {
-                    entryPos = (int) Math.round(Math.random() 
+                boolean unique = false;
+                int count = 0;
+                while (!unique) {
+                    unique = true;
+                    entryPos = (int) Math.floor(Math.random() 
                                                 * (cache.length - 1));
                     // Guarantee uniqueness
-                    for (int i = 0; i < attempts; i++) {
+                    for (int i = 0; i < entriesFound; i++) {
                         if (toRemove[i] == entryPos) {
-                            continue;
+                            unique = false;
                         }
                     }
-                    break;
                 }
                 long entryAccessRatio = 
                     ((cache[entryPos].accessCount * 100) / accessCount);
                 if (entryAccessRatio < desiredEntryAccessRatio) {
-                    toRemove[attempts] = entryPos;
+                    toRemove[entriesFound] = entryPos;
                     totalSpace += cache[entryPos].size;
                     toFree -= cache[entryPos].size;
+                    entriesFound++;
                 }
             }
             attempts++;
         }
 
         // Now remove the selected entries
-        java.util.Arrays.sort(toRemove, 0, attempts);
-        CacheEntry[] newCache = new CacheEntry[cache.length - attempts];
+        java.util.Arrays.sort(toRemove, 0, entriesFound);
+        CacheEntry[] newCache = new CacheEntry[cache.length - entriesFound];
         int pos = 0;
-        for (int i = 0; i < attempts; i++) {
-            System.arraycopy(cache, pos, newCache, pos - i, toRemove[i] - pos);
-            pos = toRemove[i] + 1;
-            // Special case: last element
-            if (pos == cache.length) {
-                break;
+        int n = -1;
+        if (entriesFound > 0) {
+            n = toRemove[0];
+            for (int i = 0; i < cache.length; i++) {
+                if (i == n) {
+                    if ((pos + 1) < entriesFound) {
+                        n = toRemove[pos + 1];
+                        pos++;
+                    } else {
+                        pos++;
+                        n = -1;
+                    }
+                } else {
+                    newCache[i - pos] = cache[i];
+                }
             }
         }
         cache = newCache;
