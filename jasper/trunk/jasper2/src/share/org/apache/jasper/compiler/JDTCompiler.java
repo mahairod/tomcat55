@@ -386,8 +386,8 @@ public class JDTCompiler extends org.apache.jasper.compiler.Compiler {
             errDispatcher.javacError(jeds);
         }
         
-        long t2=System.currentTimeMillis();
         if( log.isDebugEnabled() ) {
+            long t2=System.currentTimeMillis();
             log.debug( "Compiled " + ctxt.getServletJavaFileName() + " " + (t2-t1) + "ms");
         }
 
