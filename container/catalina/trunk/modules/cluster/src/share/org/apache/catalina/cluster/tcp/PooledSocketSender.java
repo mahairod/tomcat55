@@ -86,9 +86,9 @@ public class PooledSocketSender implements IDataSender
     private InetAddress address;
     private int port;
     private Socket sc = null;
-    private boolean isSocketConnected = false;
+    private boolean isSocketConnected = true;
     private boolean suspect;
-    private long ackTimeout = 150*1000;  //15 seconds socket read timeout (for acknowledgement)
+    private long ackTimeout = 15*1000;  //15 seconds socket read timeout (for acknowledgement)
     private long keepAliveTimeout = 60*1000; //keep socket open for no more than one min
     private int keepAliveMaxRequestCount = 100; //max 100 requests before reconnecting
     private long keepAliveConnectTime = 0;
@@ -118,11 +118,13 @@ public class PooledSocketSender implements IDataSender
     {
         //do nothing, happens in the socket sender itself
         senderQueue.open();
+        isSocketConnected = true;
     }
 
     public void disconnect()
     {
         senderQueue.close();
+        isSocketConnected = false;
     }
 
     public boolean isConnected()
@@ -156,6 +158,10 @@ public class PooledSocketSender implements IDataSender
     {
         //get a socket sender from the pool
         SocketSender sender = senderQueue.getSender(0);
+        if ( sender == null && isConnected() ) {
+            log.warn("No socket sender available for client="+this.getAddress()+":"+this.getPort());
+            return;
+        }//end if
         //send the message
         sender.sendMessage(sessionId,data);
         //return the connection to the pool
