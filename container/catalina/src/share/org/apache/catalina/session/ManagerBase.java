@@ -622,7 +622,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
             try {
                 StandardContext ctx=(StandardContext)this.getContainer();
                 Engine eng=(Engine)ctx.getParent().getParent();
-                domain=ctx.getDomain();
+                domain=ctx.getEngineName();
                 StandardHost hst=(StandardHost)ctx.getParent();
                 String path = ctx.getPath();
                 if (path.equals("")) {
