@@ -65,7 +65,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.StringTokenizer;
 import java.net.URLEncoder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -360,11 +359,10 @@ public class TomcatTreeBuilder implements TreeBuilder{
             SetUpLoggerAction.CLASSNAME_PROP_NAME);
             
             String loggerType = null;
-            StringTokenizer st = new StringTokenizer(className, ".");
-            while (st.hasMoreTokens()) {
-                loggerType = st.nextToken().trim();
-            }
-           
+            int period = className.lastIndexOf(".");
+            if (period >= 0)
+                loggerType = className.substring(period + 1);
+            
             String encodedLoggerType =  URLEncoder.encode(loggerType);
             
             String nodeLabel="Logger";

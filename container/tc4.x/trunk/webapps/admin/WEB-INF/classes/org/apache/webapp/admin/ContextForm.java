@@ -682,10 +682,13 @@ public final class ContextForm extends ActionForm {
             // FIXME-- verify if these ranges are ok.
             numberCheck("ldrCheckInterval", ldrCheckInterval  , true, 0, 10000);
             
-            // session manager properties
+            // session manager properties            
             numberCheck("mgrCheckInterval",  mgrCheckInterval, true, 0, 10000);
             numberCheck("mgrMaxSessions",  mgrMaxSessions, false, -1, 100);
             
+            if ((mgrSessionIDInit == null) || (mgrSessionIDInit.length() < 1)) {
+                errors.add("mgrSessionIDInit", new ActionError("error.mgrSessionIDInit.required"));
+            }
         }
         
         return errors;

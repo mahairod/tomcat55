@@ -81,12 +81,32 @@
             </controls:data>
         </controls:row>   
       </controls:table>
+      </td>
+    </tr>
+  </table>
 
-    <%-- Display the following fileds only if it is a FileLogger --%>
+    <%-- Display the following fields only if it is a FileLogger --%>
+    <%-- These are the properties specific to a FileLogger --%>
      <logic:equal name="loggerForm" property="loggerType" scope="session" 
                   value="FileLogger">
+     <br>
+        
+     <table border="0" cellspacing="0" cellpadding="0" width="100%">
+        <tr> <td>  <div class="table-title-text">  
+            <bean:message key="logger.filelogger.properties"/>
+        </div> </td> </tr>
+     </table>
 
-       <controls:table tableStyle="front-table" lineStyle="line-row">
+    <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
+     <tr> 
+      <td> 
+     <controls:table tableStyle="front-table" lineStyle="line-row">
+            <controls:row header="true" 
+                labelStyle="table-header-text" dataStyle="table-header-text">
+            <controls:label><bean:message key="service.property"/></controls:label>
+            <controls:data><bean:message key="service.value"/></controls:data>
+        </controls:row>
+
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="logger.directory"/>:</controls:label>
             <controls:data>
@@ -119,12 +139,12 @@
             </controls:data>
         </controls:row> 
    </controls:table>
-
+   </td>
+  </tr>
+  </table>
  </logic:equal>
   
-      </td>
-    </tr>
-  </table>
+    
     <%@ include file="buttons.jsp" %>
   <br>
   </html:form>
