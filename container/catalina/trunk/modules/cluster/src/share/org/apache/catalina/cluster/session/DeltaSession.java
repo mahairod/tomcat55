@@ -125,7 +125,8 @@ import org.apache.catalina.session.Constants;
  */
 
 public class DeltaSession
-    implements HttpSession, Session, Serializable {
+    implements HttpSession, Session, Serializable,
+               ClusterSession {
 
 
     // ----------------------------------------------------------- Constructors
@@ -245,7 +246,7 @@ public class DeltaSession
     /**
      * The Manager with which this Session is associated.
      */
-    private Manager manager = null;
+    private transient Manager manager = null;
 
 
     /**
@@ -311,8 +312,33 @@ public class DeltaSession
     private long thisAccessedTime = creationTime;
 
 
+    /**
+     * only the primary session will expire, or be able to
+     * expire due to inactivity. This is set to false
+     * as soon as I receive this session over the wire in
+     * a session message. That means that someone else has
+     * made a request on another server.
+     */
+    private transient boolean isPrimarySession = true;
+
     // ----------------------------------------------------- Session Properties
 
+    /**
+     * returns true if this session is the primary session, if that is the
+     * case, the manager can expire it upon timeout.
+     * @return
+     */
+    public boolean isPrimarySession() {
+       return isPrimarySession;
+    }
+
+    /**
+     * Sets whether this is the primary session or not.
+     * @param primarySession
+     */
+    public void setPrimarySession(boolean primarySession) {
+       this.isPrimarySession=primarySession;
+    }
 
     /**
      * Return the authentication type used to authenticate our cached
