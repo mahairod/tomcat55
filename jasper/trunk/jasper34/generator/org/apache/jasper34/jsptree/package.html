@@ -1,0 +1,15 @@
+<h2>Tree representation of a JSP page</h2>
+
+<h2>History</h2>
+
+jasper33 and 40 creates a tree of Generators, and then it traverses the
+tree for each stage to generate the code for a specific hook.
+
+<p>
+This code represents the information that was stored in the generators,
+in order to allow a Visitor pattern to be used and decouple the actual
+code generator from the representation of the source tree.
+
+<p>
+It will also be used ( via Facade pattern ) to plug other code generator
+models for advanced processings and optimizations.
