@@ -52,6 +52,8 @@ Jasper:
 
 Bug No.  Description
 
+11463	 Fix PageContext.removeAttribute(String) to work for a page with
+	 session=false.
 
 
 Configuration:
