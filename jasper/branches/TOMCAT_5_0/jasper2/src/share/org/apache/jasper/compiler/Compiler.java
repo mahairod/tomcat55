@@ -356,6 +356,7 @@ public class Compiler {
         javac.setClasspath(path);
         javac.setDebug(ctxt.getOptions().getClassDebugInfo());
         javac.setSrcdir(srcPath);
+        javac.setTempdir(options.getScratchDir());
         javac.setOptimize(! ctxt.getOptions().getClassDebugInfo() );
         javac.setFork(ctxt.getOptions().getFork());
         info.append("    srcDir=" + srcPath + "\n" );
