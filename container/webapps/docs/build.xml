@@ -87,6 +87,7 @@
     <!-- Build Tomcat-util documentation -->
     <mkdir     dir="${webapps.build}/${webapp.name}/coyote/util"/>
     <ant dir="${jtc.home}/util" target="javadoc"/>
+    <mkdir dir="${jtc.home}/util/build/javadoc"/>
 
     <copy todir="${webapps.build}/${webapp.name}/coyote/util">
       <fileset dir="${jtc.home}/util/build/javadoc"/>
