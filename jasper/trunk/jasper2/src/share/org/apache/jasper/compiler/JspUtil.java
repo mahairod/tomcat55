@@ -538,7 +538,7 @@ public class JspUtil {
 	if (isTagFile)
 	    jspCtxt = "this.getJspContext()";
 	else
-	    jspCtxt = "pageContext";
+	    jspCtxt = "_jspx_page_context";
 
 	/*
          * Determine whether to use the expected type's textual name

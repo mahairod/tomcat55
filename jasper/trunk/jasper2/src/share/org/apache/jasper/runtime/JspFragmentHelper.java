@@ -83,7 +83,7 @@ public abstract class JspFragmentHelper
     
     protected int discriminator;
     protected JspContext jspContext;
-    protected PageContext pageContext;
+    protected PageContext _jspx_page_context;
     protected JspTag parentTag;
 
     public JspFragmentHelper( int discriminator, JspContext jspContext, 
@@ -91,9 +91,9 @@ public abstract class JspFragmentHelper
     {
         this.discriminator = discriminator;
         this.jspContext = jspContext;
-        this.pageContext = null;
+        this._jspx_page_context = null;
         if( jspContext instanceof PageContext ) {
-            pageContext = (PageContext)jspContext;
+            _jspx_page_context = (PageContext)jspContext;
         }
         this.parentTag = parentTag;
     }
