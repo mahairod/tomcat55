@@ -2,97 +2,152 @@
    <!-- ******************** Initialization ******************** -->
    <target name="init">
     <tstamp />
-    <property name="src.dir" value="${user.home}/ws" />
+    <property name="ws.dir" value="${user.home}/ws" />
     <property name="nightly.dir" value="/www/jakarta.apache.org/builds/tomcat/nightly" />
-    <property name="public.dir" value="/www/jakarta.apache.org/builds/tmp" />
+    <property name="nightly.url" value="http://jakarta.apache.org/builds/tomcat/nightly" />
     <property name="tomcat.home" value="/opt/tomcat" />
+    <property name="dist.dir" value="/opt" />
     <property name="package.dir" value="/home/ftp/pub" />
+    <!-- Allow user to override any of the hardcoded directories -->
+    <property file="${user.home}/.ant.properties" />
+  </target>
+
+  <target name="clean.src">
+     <deltree dir="${ws.dir}/jakarta-tomcat" />
+     <deltree dir="${ws.dir}/jakarta-watchdog" />
+     <deltree dir="${ws.dir}/jakarta-tools" />
+     <deltree dir="${ws.dir}/jakarta-tomcat.src.zip" />
+     <deltree dir="${ws.dir}/jakarta-tools.src.zip" />
+     <deltree dir="${ws.dir}/jakarta-watchdog.src.zip" />
   </target>
 
   <target name="clean">
-     <deltree dir="${src.dir}/jakarta-tomcat" />
-     <deltree dir="${src.dir}/jakarta-tools" />
-     <deltree dir="${src.dir}/tomcat-src.zip" />
-     <deltree dir="${src.dir}/ant-src.zip" />
+     <deltree dir="${ws.dir}/build" />
+     <deltree dir="${ws.dir}/dist" />
+     <deltree dir="${dist.dir}/ant" />
+     <deltree dir="${dist.dir}/tomcat" />
   </target>
 
-
-  <target name="init.SunOS">
-    <property name="package.dir" value="/export/home/ftp/pub" />
-  </target>
-
-
+  <target name="prepare">
+    <mkdir dir="${ws.dir}" />
+   </target>
    <!-- ******************** Getting sources ******************** -->
-  <target name="tomcat.get">
-    <mkdir dir="${src.dir}" />
-    <get src="http://jakarta.apache.org/builds/tmp/tomcat/jakarta-tomcat.src.zip" dest="${src.dir}/tomcat-src.zip" />
-    <expand src="${src.dir}/tomcat-src.zip" dest="${src.dir}" />
+  <target name="tomcat.get" depends="prepare">
+    <get src="${nightly.url}/src/jakarta-tomcat.src.zip" dest="${ws.dir}/jakarta-tomcat.src.zip" />
+    <expand src="${ws.dir}/jakarta-tomcat.src.zip" dest="${ws.dir}" />
   </target>
   
-  <target name="ant.get">
-    <mkdir dir="${src.dir}" />
-    <get src="http://jakarta.apache.org/builds/tmp/ant/ant.src.zip" dest="${src.dir}/ant-src.zip" />
-    <expand src="${src.dir}/ant-src.zip" dest="${src.dir}" />
-    <deltree dir="${src.dir}/jakarta-tools/ant/src/main/org/apache/tools/ant/ApacheParser.java" />
+  <target name="tools.get" depends="prepare">
+    <get src="${nightly.url}/src/jakarta-tools.src.zip" dest="${ws.dir}/jakarta-tools.src.zip" />
+    <expand src="${ws.dir}/jakarta-tools.src.zip" dest="${ws.dir}" />
+  </target>
+
+  <target name="watchdog.get" depends="prepare">
+    <get src="${nightly.url}/src/jakarta-watchdog.src.zip" dest="${ws.dir}/jakarta-watchdog.src.zip" />
+    <expand src="${ws.dir}/jakarta-watchdog.src.zip" dest="${ws.dir}" />
   </target>
 
    <!-- ******************** Building  ******************** -->
   <target name="tomcat">
-     <ant dir="${src.dir}/jakarta-tomcat" antfile="${src.dir}/jakarta-tomcat/build.xml" target="package" />
+     <ant dir="${ws.dir}/jakarta-tomcat" antfile="${ws.dir}/jakarta-tomcat/build.xml" target="package" />
+     <copyfile src="${package.dir}/tomcat/tomcat.zip" dest="${package.dir}/tomcat/tomcat-${os.name}-${DSTAMP}.zip" />
+     <copyfile src="${package.dir}/tomcat/tomcat.zip" dest="${package.dir}/tomcat/tomcat-${DSTAMP}.zip" />
   </target>
 
   <target name="ant">
-     <ant dir="${src.dir}/jakarta-tools/ant" antfile="${src.dir}/jakarta-tools/ant/build.xml" target="package" />
-  </target>
+     <ant dir="${ws.dir}/jakarta-tools/ant" antfile="${ws.dir}/jakarta-tools/ant/build.xml" target="package" /> 
+     <copyfile src="${package.dir}/ant/ant.zip" dest="${package.dir}/ant/ant-${os.name}-${DSTAMP}.zip" />
+     <copyfile src="${package.dir}/ant/ant.zip" dest="${package.dir}/ant/ant-${DSTAMP}.zip" />
+   </target>
+
+   <target name="test">
+     <ant dir="${ws.dir}/jakarta-tomcat" antfile="${ws.dir}/jakarta-tomcat/build.xml" target="test" />
+   </target>
+
+   <target name="watchdog">
+     <ant dir="${ws.dir}/jakarta-watchdog" antfile="${ws.dir}/jakarta-watchdog/build.xml" target="dist" />
+   </target>
+
+   <!-- ******************** Testing  ******************** -->
+   <target name="tomcat-test">
+     <exec dir="${ws.dir}/build/tomcat/test" command="sh runtest.sh " out="${package.dir}/tomcat-test.log" />
+   </target>
+
+   <target name="watchdog-test">
+     <exec dir="${ws.dir}/build/watchdog" command="sh runtest.sh  " out="${package.dir}/watchdog-test.log" />
+   </target>
+
 
    <!-- ******************** Platform specific packages  ******************** -->
-  <target name="tomcat.pkg" > 
-    <exec os="SunOS" dir="${src.dir}/jakarta-tomcat/src/etc" command="pkgmk -f prototype -d ${src.dir}/build  -r / " />
-    <zip zipfile="${package.dir}/tomcat/ASFtomcat-pkg.zip" 
-         basedir="${src.dir}/build"
+   <target name="pkg" > 
+     <exec os="SunOS" dir="${ws.dir}/jakarta-tomcat/src/etc" command="pkgmk -f prototype -d ${ws.dir}/build  -r / " />
+     <zip zipfile="${package.dir}/tomcat/ASFtomcat-pkg.zip" 
+         basedir="${ws.dir}/build"
          items="ASFtomcat" />
   </target>
 
-
-
-   <!-- ******************** Creating source snapshots  ******************** -->
-  <target name="ant.src.snap">
-    <mkdir dir="${src.dir}" />
-    <cvs cvsRoot=":pserver:anoncvs@jakarta.apache.org:/home/cvspublic" 
-         package="jakarta-tools"
-         dest="${src.dir}"  />
-    <mkdir dir="${public.dir}/ant" />
-    <zip zipfile="${public.dir}/ant/ant.src.zip" basedir="${src.dir}" items="jakarta-tools"/>
-    <zip zipfile="${public.dir}/ant/ant.src-${DSTAMP}.zip" basedir="${src.dir}" items="jakarta-tools"/>
+  <target name="rpm" > 
+    <copyfile src="${ws.dir}/tomcat-src.zip" dest="/usr/src/redhat/SOURCES/jakarta-tomcat.src.zip" />
+    <copyfile src="${ws.dir}/ant-src.zip" dest="/usr/src/redhat/SOURCES/jakarta-tools.src.zip" />
+    <exec os="Linux" dir="${ws.dir}" command="rpm -ba --target noarch ${ws.dir}/jakarta-tomcat/src/etc/tomcat.spec " />
+    <copyfile src="/usr/src/redhat/RPMS/noarch/tomcat-1-0.noarch.rpm" dest="${package.dir}/tomcat/tomcat-1-0.noarch.rpm" />
+    <copyfile src="/usr/src/redhat/SRPMS/tomcat-1-0.src.rpm" dest="${package.dir}/tomcat/tomcat-1-0.src.rpm" />
   </target>
 
-  <target name="tomcat.src.snap">
-    <mkdir dir="${src.dir}" />
+   <!-- ******************** Creating source snapshots  ******************** -->
+  <target name="ant.src.snap" depends="prepare">
+    <cvs cvsRoot=":pserver:anoncvs@jakarta.apache.org:/home/cvspublic" 
+         package="jakarta-tools"   dest="${ws.dir}"  />
+    <zip zipfile="${nightly.dir}/src/jakarta-tools.src.zip" 
+         basedir="${ws.dir}" items="jakarta-tools"/>
+    <copyfile src="${nightly.dir}/src/jakarta-tools.src.zip"
+              dest="${nightly.dir}/src/jakarta-tools-${DSTAMP}.src.zip" />
+  </target>
+
+  <target name="tomcat.src.snap" depends="prepare">
     <cvs cvsRoot=":pserver:anoncvs@jakarta.apache.org:/home/cvspublic"
-         package="jakarta-tomcat"
-         dest="${src.dir}"  />
-    <mkdir dir="${public.dir}/tomcat" />
-    <zip zipfile="${public.dir}/tomcat/jakarta-tomcat.src.zip" 
-         basedir="${src.dir}" 
-         items="jakarta-tomcat"/>
-    <zip zipfile="${public.dir}/tomcat/jakarta-tomcat.src-${DSTAMP}.zip" 
-         basedir="${src.dir}"
-         items="jakarta-tomcat"/>
+         package="jakarta-tomcat"   dest="${ws.dir}"  />
+    <zip zipfile="${nightly.dir}/src/jakarta-tomcat.src.zip" 
+         basedir="${ws.dir}"  items="jakarta-tomcat"/>
+    <copyfile src="${nightly.dir}/src/jakarta-tomcat.src.zip" 
+         dest="${nightly.dir}/src/jakarta-tomcat-${DSTAMP}.src.zip" />
+  </target> 
+
+  <target name="watchdog.src.snap" depends="prepare">
+    <cvs cvsRoot=":pserver:anoncvs@jakarta.apache.org:/home/cvspublic"
+         package="jakarta-watchdog"  dest="${ws.dir}"  />
+    <zip zipfile="${nightly.dir}/src/jakarta-watchdog.src.zip" 
+         basedir="${ws.dir}" items="jakarta-watchdog"/>
+    <copyfile src="${nightly.dir}/src/jakarta-watchdog.src.zip" 
+              dest="${nightly.dir}/src/jakarta-watchdog-${DSTAMP}.src.zip" />
   </target> 
  
    <!-- ******************** Getting binaries from build machines  ******************** -->
    <target name="binaries.get" >
-    <get src="ftp ftp://tokyo.javasoft.com/pub/tomcat/tomcat-SunOS-${DSTAMP}.zip" 
+    <get src="ftp ftp://tokyo.javasoft.com/pub/tomcat/tomcat.zip" 
          dest="${nightly.dir}/tomcat-${DSTAMP}.zip" />
+    <get src="ftp ftp://tokyo.javasoft.com/pub/tomcat/tomcat-test.log" 
+         dest="${nightly.dir}/log/tomcat-test-SunOS-${DSTAMP}.log" />
+    <get src="ftp ftp://tokyo.javasoft.com/pub/tomcat/watchdog-test.log" 
+         dest="${nightly.dir}/log/watchdog-test-SunOS-${DSTAMP}.log" />
     <copyfile src="${nightly.dir}/tomcat-${DSTAMP}.zip" dest="${nightly.dir}/tomcat.zip" />
-    <exec dir="${nightly.dir}" command="find . -atime +3 -name tomcat-\*.zip -print" />
    </target>
 
+   <target name="remove-old" >
+      <exec dir="${nightly.dir}" command="find . -atime +3 -name tomcat-\*.zip -print -exec rm {} \;" />
+      <exec dir="${nightly.dir}/logs" command="find . -atime +3  -print -exec rm {} \;" />
+   </target>
    <!-- ******************** Agregate targets  ******************** -->
-  <target name="all" depends="clean,tomcat.get,tomcat">
+  <target name="get.all" depends="clean.src,tomcat.get,tools.get,watchdog.get">
   </target>
 
-  <target name="src.snap" depends="clean,ant.src.snap,tomcat.src.snap" >
+  <target name="build" depends="tomcat,ant,tomcat,ant,test,watchdog">
+  </target>
+
+  <target name="all" depends="clean,get.all,build">
+  </target>
+
+  <target name="src.snap" depends="clean.src,clean,ant.src.snap,tomcat.src.snap,watchdog.src.snap" >
   </target>
   
 </project>

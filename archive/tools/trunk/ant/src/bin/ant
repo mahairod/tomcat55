@@ -1,5 +1,9 @@
 #! /bin/sh
 
+if [ -f $HOME/.antrc ] ; then 
+  . $HOME/.antrc
+fi
+
 if [ "$ANT_HOME" = "" ] ; then
   # try to find ANT
   if [ -d /opt/ant ] ; then 
@@ -31,8 +35,7 @@ fi
 # Use the original tools.jar if available
 if [ ! "$JAVA_HOME" = "" ] ; then
    CLASSPATH=${JAVA_HOME}/lib/tools.jar:$CLASSPATH
-else
-   CLASSPATH=${ANT_HOME}/lib/javac.jar:$CLASSPATH
+   CLASSPATH=${JAVA_HOME}/lib/classes.zip:$CLASSPATH
 fi
 
 

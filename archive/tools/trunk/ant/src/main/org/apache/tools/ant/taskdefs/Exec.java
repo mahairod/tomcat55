@@ -65,6 +65,7 @@ import java.io.*;
 
 public class Exec extends Task {
     private String os;
+    private String out;
     private String dir;
     private String command;
     
@@ -95,17 +96,25 @@ public class Exec extends Task {
 	    BufferedReader din = new BufferedReader(isr);
 	    
 	    project.log("Output: ", "exec", Project.MSG_WARN);
+	    PrintWriter fos=null;
+	    if( out!=null ) 
+		fos=new PrintWriter( new FileWriter( out ) );
+
 	    // pipe CVS output to STDOUT
 	    String line;
 	    while((line = din.readLine()) != null) {
-		project.log(line, "exec", Project.MSG_WARN);
-		System.out.println(line);
+		if( fos==null)
+		    project.log(line, "exec", Project.MSG_ERR);
+		else
+		    fos.println(line);
 	    }
+	    if(fos!=null)
+		fos.close();
 	    
 	    proc.waitFor();
 	    int err = proc.exitValue();
 	    if (err != 0) {
-		throw new BuildException( "Error " + err + "in " + command);
+		project.log("Result: " + err, "exec", Project.MSG_ERR);
 	    }
 	    
 	} catch (IOException ioe) {
@@ -126,4 +135,9 @@ public class Exec extends Task {
     public void setCommand(String command) {
 	this.command = command;
     }
+
+    public void setOutput(String out) {
+	this.out = out;
+    }
+
 }

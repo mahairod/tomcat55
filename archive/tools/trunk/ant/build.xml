@@ -5,7 +5,8 @@
   <property name="src.dir" value="src/main"/>
   <property name="build.dir" value="build"/>
   <property name="dist.dir" value="${user.home}/opt"/>
-  
+  <property name="package.dir" value="../pkg" />  
+
   <property name="classpath" value="lib/projectx-tr2.jar"/>
   <property name="manifest" value="src/etc/manifest"/>
   
@@ -28,7 +29,6 @@
      <mkdir dir="${dist.dir}/ant/docs"/>
      <jar jarfile="${dist.dir}/ant/lib/ant.jar" basedir="${build.dir}" items="org" manifest="${manifest}"/>
      <copyfile src="../projectx-tr2.jar" dest="${dist.dir}/ant/lib/xml.jar"/>
-     <copyfile src="../javac.jar" dest="${dist.dir}/ant/lib/javac.jar"/>
      <copyfile src="../moo.jar" dest="${dist.dir}/ant/lib/moo.jar"/>
      <copyfile src="build.xml" dest="${dist.dir}/ant/lib/build.xml"/>
      <copydir src="src/bin" dest="${dist.dir}/ant/bin"/>
@@ -38,7 +38,8 @@
   </target>
 
   <target name="package" depends="dist">
-     <zip zipfile="ant.zip" basedir="${dist.dir}" items="ant"/>
+     <mkdir dir="${package.dir}/ant" />
+     <zip zipfile="${package.dir}/ant/ant.zip" basedir="${dist.dir}" items="ant"/>
   </target>
 
   <target name="clean">

@@ -79,7 +79,7 @@ public class Cvs extends Task {
 	    String ant=project.getProperty("ant.home");
 	    if(ant==null) throw new BuildException("Needs ant.home");
 
-	    String command=ant + "/bin/antRun " + dest + "cvs -d " + cvsRoot + " checkout " + pack;
+	    String command=ant + "/bin/antRun " + dest + " cvs -d " + cvsRoot + " checkout " + pack;
             project.log(command, "cvs", Project.MSG_WARN);
 
 	    // exec command on system runtime
@@ -92,7 +92,8 @@ public class Cvs extends Task {
 	    // pipe CVS output to STDOUT
 	    String line;
 	    while((line = din.readLine()) != null) {
-    		System.out.println(line);
+		project.log(line, "cvs", Project.MSG_WARN);
+		//System.out.println(line);
 	    }
 	    
 	    proc.waitFor();
