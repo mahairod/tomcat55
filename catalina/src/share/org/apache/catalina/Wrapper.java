@@ -132,6 +132,19 @@ public interface Wrapper extends Container {
 
 
     /**
+     * Gets the names of the methods supported by the underlying servlet.
+     *
+     * This is the same set of methods included in the Allow response header
+     * in response to an OPTIONS request method processed by the underlying
+     * servlet.
+     *
+     * @return Array of names of the methods supported by the underlying
+     * servlet
+     */
+    public String[] getServletMethods() throws ServletException;
+
+
+    /**
      * Is this servlet currently unavailable?
      */
     public boolean isUnavailable();
