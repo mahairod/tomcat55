@@ -74,6 +74,8 @@
   <target name="init">
     <mkdir dir="${tomcat.build}"/>
     <mkdir dir="${tomcat.build}/classes" />
+    <mkdir dir="${tomcat.build}/server/lib" />
+    <mkdir dir="${tomcat.build}/common/lib" />
 
     <uptodate property="servletapi.build.notrequired"
               targetfile="${tomcat.build}/common/lib/servlet-api.jar">
@@ -132,6 +134,8 @@
         <property name="jsp-api.build" value="${tomcat.build}" />
         <property name="jsp-api.jar" value="${tomcat.build}/common/lib/jsp-api.jar"/>
     </ant>
+    <!-- clean up -->
+    <delete file="${tomcat.build}/manifest" />
   </target>
 
   <target name="build-tomcatutil" unless="tomcatutil.build.notrequired" >
@@ -423,6 +427,9 @@
     </ant>
   </target>
 
+  <target name="build-all" depends="init,build-depends,build"/>
+
+
   <target name="build-depends" depends="init"
           description="Builds various dependent components">
     <uptodate property="commons-logging.build.notrequired"
@@ -439,10 +446,84 @@
     </uptodate>
     <antcall target="build-commons-logging" />
     <antcall target="build-commons-modeler" />
+    <antcall target="build-servletapi"/>
+    <antcall target="build-jspapi"/>
     <antcall target="build-commons-el" />
   </target>
 
+  <!-- ====================== Embeded target =================== -->
 
+  <target name="embed" description="Create a set of jars for embeded tomcat" > 
+    <!-- Generic libraries ( share ?) -->
+    <copy todir="embed/lib">
+      <fileset dir="build/server/lib">
+        <include name="commons-logging.jar"/>
+        <include name="commons-modeler.jar"/>
+        <include name="commons-digester.jar"/>
+        <include name="commons-beanutils.jar"/>
+        <include name="tomcat-util.jar"/>
+      </fileset>
+    </copy>
+    
+    <!-- Connector -->
+    <copy todir="embed/lib">
+      <fileset dir="build/server/lib">
+        <include name="tomcat-coyote.jar"/>
+        <include name="tomcat-http11.jar"/>
+        <include name="tomcat-jk2.jar"/>
+      </fileset>
+    </copy>
+
+    <!-- Servlet API implementation -->
+    <copy todir="embed/lib">
+      <fileset dir="build/common/lib">
+        <include name="servlet-api.jar"/>
+        <include name="naming-resources.jar"/>
+        <include name="naming-common.jar"/>
+      </fileset>
+      <fileset dir="build/server/lib">
+        <include name="servlets-common.jar"/>
+        <include name="servlets-invoker.jar"/>
+        <include name="servlets-default.jar"/>
+        <include name="catalina.jar"/>
+      </fileset>
+    </copy>
+
+    <!-- JNDI extra -->
+    <copy todir="embed/lib">
+      <fileset dir="build/common/lib">
+        <include name="naming-java.jar"/>
+        <include name="naming-factory.jar"/>
+      </fileset>
+    </copy>
+
+    <!-- JSP runtime -->
+    <copy todir="embed/lib">
+      <fileset dir="build/common/lib">
+        <include name="commons-el.jar"/>
+        <include name="jsp-api.jar"/>
+        <include name="jasper-runtime.jar"/>
+        <include name="jasper-compiler.jar"/>
+      </fileset>
+    </copy>
+
+    <!-- JSP compiler - not needed for an minimal server if it 
+         uses precompilation -->
+    <!--
+    <copy todir="embed/lib">
+      <fileset dir="build/common/lib">
+        <include name="ant.jar"/>
+      </fileset>
+      <fileset dir="build/common/lib">
+        <include name="jasper-compiler.jar"/>
+      </fileset>
+    </copy>
+    -->
+    <copy tofile="embed/tomcat5-mbeans.xml" file="resources/mbeans/tomcat5-mbeans.xml" />
+    <copy tofile="embed/tomcat5-ant.xml" file="resources/mbeans/tomcat5-ant.xml" />
+    <copy tofile="embed/tomcat5-mlet.xml" file="resources/mbeans/tomcat5-mlet.xml" />
+    <copy tofile="embed/tomcat5-service.xml" file="resources/mbeans/tomcat5-service.xml" />
+  </target>
 
   <!-- ====================== DEPLOY: Deploy Components =================== -->
 
@@ -454,6 +535,9 @@
 
     <echo>Target: JSP API - Dist ...</echo>
     <ant dir="${api.home}/jsr152" target="dist"/>
+
+    <echo>Target: Modeler - Dist ...</echo>
+    <ant dir="${commons-modeler.home}" target="dist"/>
 
     <echo>Target: Catalina - Deploy ...</echo>
     <ant dir="${catalina.home}" target="deploy"/>
