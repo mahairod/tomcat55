@@ -66,6 +66,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Session;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.session.StandardManager;
+import org.apache.catalina.session.StandardSession;
 import org.apache.catalina.util.CustomObjectInputStream;
 
 import org.javagroups.stack.IpAddress;
@@ -132,6 +133,14 @@ public class JGManager
             return;
         }
         this.cluster = cluster;
+    }
+
+
+    /**
+     * Get new session class to be used in the doLoad() method.
+     */
+    protected StandardSession getNewSession() {
+        return new ReplicatedSession(this);
     }
 
 
