@@ -238,7 +238,7 @@ public class Generator {
         out.println();
         out.println();
 
-        out.printil("private void addTagToVector(java.util.Vector tags, int index, javax.servlet.jsp.tagext.Tag tag) {");
+        out.printil("private void addTagToVector(java.util.Vector tags, int index, Object tag) {");
         out.pushIndent();
         out.printil("if (index + 1 > tags.size())");
         out.pushIndent();
@@ -1000,9 +1000,9 @@ public class Generator {
                     out.println(");");
                     out.printin("addTagToVector(tags, ");
                     out.print(tryBitVal.toString());
-                    out.print(", ");
-                    out.print(tagHandlerVar);
-                    out.println(");");
+                    out.print(", new Integer(");
+                    out.print(tagEvalVar);
+                    out.println("));");
 		    out.printin("if (");
 		    out.print(tagEvalVar);
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE) {");
@@ -1070,12 +1070,6 @@ public class Generator {
                     out.print(tryBitVal.toString());
                     out.println(");");
 
-                    out.printin("addTagToVector(tags, ");
-                    out.print(tryBitVal.toString());
-                    out.print(", ");
-                    out.print(tagHandlerVar);
-                    out.println(");");
-
 		    out.printin("if (");
 		    out.print(tagEvalVar);
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
@@ -1085,9 +1079,9 @@ public class Generator {
 
                     finallies.beginPartMethod(tryBitVal.intValue());
                     finallies.print("      if (");
-                    finallies.print("((javax.servlet.jsp.tagext.BodyTag)tags.elementAt(");
+                    finallies.print("((Integer)tags.elementAt(");
                     finallies.print(tryBitVal.toString());
-                    finallies.print(")).doAfterBody()");
+                    finallies.print(")).intValue()");
                     finallies.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
                     finallies.println("        out = pageContext.popBody();");
 
