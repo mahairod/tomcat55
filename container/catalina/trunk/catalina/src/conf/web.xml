@@ -115,6 +115,8 @@
   <!--   enablePooling       Determines whether tag handler pooling is      -->
   <!--                       enabled  [true]                                -->
   <!--                                                                      -->
+  <!--   tagPoolSize         The tag handler pool size                      -->
+  <!--                                                                      -->
   <!--   logVerbosityLevel   The level of detailed messages to be produced  -->
   <!--                       by this servlet.  Increasing levels cause the  -->
   <!--                       generation of more messages.  Valid values are -->
