@@ -152,6 +152,13 @@ public class JspC implements Options {
     private static final int DEFAULT_DIE_LEVEL = 1;
     private static final int NO_DIE_LEVEL = 0;
 
+    private static final String[] insertBefore = 
+    { "</web-app>", "<servlet-mapping>", "<session-config>", 
+      "<mime-mapping>", "<welcome-file-list>", "<error-page>", "<taglib>",
+      "<resource-env-ref>", "<resource-ref>", "<security-constraint>",
+      "<login-config>", "<security-role>", "<env-entry>", "<ejb-ref>", 
+      "<ejb-local-ref>" };
+
     private static int die; 
     private String classPath = null;
     private URLClassLoader loader = null;
@@ -552,33 +559,44 @@ public class JspC implements Options {
             new BufferedReader(new FileReader(webxmlFile));
         PrintWriter writer = new PrintWriter(new FileWriter(webXml2));
 
-        // TODO: This is a hack
+        // Insert the <servlet> and <servlet-mapping> declarations
+        int pos = -1;
+        String line = null;
         while (true) {
-            String line = reader.readLine();
+            line = reader.readLine();
             if (line == null) {
                 break;
             }
-            int pos = line.indexOf("</web-app>");
+            for (int i = 0; i < insertBefore.length; i++) {
+                pos = line.indexOf(insertBefore[i]);
+                if (pos >= 0)
+                    break;
+            }
             if (pos >= 0) {
                 writer.println(line.substring(0, pos));
                 break;
             } else {
-                writer.write(line);
-                writer.write("\n");
+                writer.println(line);
             }
         }
 
         while (true) {
-            String line = fragmentReader.readLine();
+            String line2 = fragmentReader.readLine();
+            if (line2 == null) {
+                break;
+            }
+            writer.println(line2);
+        }
+
+        writer.println(line.substring(pos));
+
+        while (true) {
+            line = reader.readLine();
             if (line == null) {
                 break;
             }
-            writer.write(line);
-            writer.write("\n");
+            writer.println(line);
         }
-
-        writer.write("</web-app>");
-        writer.write("\n");
         writer.close();
 
         reader.close();
