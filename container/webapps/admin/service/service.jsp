@@ -65,6 +65,7 @@
                 -------------------------------------
               </controls:action>
               <!-- FIXME add/remove defaultcontext-->
+<%--
               <!--controls:action url='<%= "/AddDefaultContext.do?serviceName=" +
                                         URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.defaultcontexts.create"/>
@@ -73,6 +74,7 @@
                                         URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.defaultcontexts.deletes"/>
               </controls:action-->
+--%>
               <controls:action disabled="true">
                 -------------------------------------
               </controls:action>
