@@ -523,18 +523,21 @@ class JspDocumentParser
                         ttext.write(ch);
                         lastCh = ch;
                     }
+                } else if (lastCh == '\\' && ch == '$') {
+                    ttext.write('$');
+                    ch = 0;  // Not start of EL anymore
                 } else {
-                    if ((lastCh == '$') && (ch != '{')) {
-                        ttext.write('$');
+                    if (lastCh == '$' || lastCh == '\\') {
+                        ttext.write(lastCh);
                     }
-                    if (ch != '$') {
+                    if (ch != '$' && ch != '\\') {
                         ttext.write(ch);
                     }
                 }
                 lastCh = ch;
             }
-            if (lastCh == '$') {
-                ttext.write('$');
+            if (lastCh == '$' || lastCh == '\\') {
+                ttext.write(lastCh);
             }
             if (ttext.size() > 0) {
                 new Node.TemplateText(ttext.toString(), startMark, current);
