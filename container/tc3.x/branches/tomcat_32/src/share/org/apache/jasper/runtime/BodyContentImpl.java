@@ -111,9 +111,10 @@ public class BodyContentImpl extends BodyContent {
 
 	//XXX Should it be multiple of DEFAULT_BUFFER_SIZE??
 
-	if (len <= Constants.DEFAULT_BUFFER_SIZE) {
-	    tmp = new char [bufferSize + Constants.DEFAULT_BUFFER_SIZE];
-	    bufferSize = bufferSize * 2;
+    int newBufferSize = bufferSize * 2;
+    if (len <= newBufferSize) {
+	    bufferSize = newBufferSize;
+	    tmp = new char [bufferSize];
 	} else {
 	    tmp = new char [bufferSize + len];
 	    bufferSize += len;
