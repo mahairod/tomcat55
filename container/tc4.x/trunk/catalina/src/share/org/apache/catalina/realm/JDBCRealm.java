@@ -595,8 +595,7 @@ public class JDBCRealm
             // obtain the byte array from the digest
             byte[] dig = md.digest();
             // convert the byte array to hex string
-            Base64 enc=new Base64();
-            return new String(enc.encode(HexUtils.convert(dig).getBytes()));
+            return HexUtils.convert(dig);
 
         } catch( Exception ex ) {
                 ex.printStackTrace();
