@@ -14,8 +14,7 @@
       <mkdir dir="${watchdog.build}/clients"/>
       <mkdir dir="${watchdog.build}/conf" />
       <mkdir dir="${watchdog.build}/lib" />
-      <mkdir dir="${watchdog.build}/props" />  <!-- what is this for?? - akv -->
-
+     
       <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
       <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib"/>
       <mkdir dir="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib"/>
@@ -31,8 +30,6 @@
 
       <copydir src="src/bin" dest="${watchdog.build}"/>
       <copydir src="src/conf" dest="${watchdog.build}/conf" />
-
-      <copydir src="src/props" dest="${watchdog.build}/props"/>
 
       <copyfile src="../jakarta-tools/moo.jar" 
                 dest="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib/moo.jar"/>
@@ -68,8 +65,7 @@
       <mkdir dir="${watchdog.dist}/conf" />
       <mkdir dir="${watchdog.dist}/lib" />
       <mkdir dir="${watchdog.dist}/webapps" />
-      <mkdir dir="${watchdog.dist}/props" />  <!-- what is this for?? - akv -->
-
+    
       <copyfile src="../jakarta-tools/moo.jar"
                 dest="${watchdog.dist}/lib/moo.jar"/>
 
@@ -79,10 +75,9 @@
       <copydir src="src/bin" dest="${watchdog.dist}"/>
       <copydir src="src/conf" dest="${watchdog.dist}/conf" />
       <copyfile src="src/conf/dist-test.xml" dest="${watchdog.dist}/conf/server-test.xml" />
-      <copydir src="src/props" dest="${watchdog.dist}/props"/>
-
-      <chmod src="${watchdog.dist}/runclient.sh" perm="+x"/>
-      <chmod src="${watchdog.dist}/runtest.sh" perm="+x"/> 
+    
+      <chmod src="${watchdog.dist}/runClient.sh" perm="+x"/>
+      <chmod src="${watchdog.dist}/runTest.sh" perm="+x"/> 
 
       <jar jarfile="${watchdog.dist}/lib/client.jar"
         basedir="${watchdog.build}/clients" 
