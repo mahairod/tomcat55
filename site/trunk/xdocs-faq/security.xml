@@ -74,7 +74,7 @@
 
 <section name="Answers">
   <question>
-    <a href="openSSL">
+    <a name="openSSL">
       How do I use OpenSSL to set up my own Certificate Authority (CA)?
     </a>
   </question>
@@ -164,7 +164,7 @@
   </answer>
 
   <question>
-    <a href="jsvcExample">
+    <a name="jsvcExample">
       How do I use jsvc/procrun to run Tomcat on port 80 securely?
     </a>
   </question>
