@@ -97,7 +97,6 @@ import org.apache.webapp.admin.TreeControlNode;
  * <em>Edit Logger</em> transactions.
  *
  * @author Manveen Kaur
- * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -110,8 +109,7 @@ public final class SaveLoggerAction extends Action {
      * Signature for the <code>createStandardLogger</code> operation.
      */
     private String createStandardLoggerTypes[] =
-    { "java.lang.String",     // parent
-      "java.lang.String"      // host
+    { "java.lang.String"     // parent
     };
 
 
@@ -178,10 +176,9 @@ public final class SaveLoggerAction extends Action {
 
             try {
    
-                String parent = lform.getParentObjectName();      
-                String host = lform.getHostName();          
+                String parent = lform.getParentObjectName();                
                 String objectName = DeleteLoggerAction.getObjectName(
-                                        parent, host, TomcatTreeBuilder.LOGGER_TYPE);
+                                        parent, TomcatTreeBuilder.LOGGER_TYPE);
                 
                 ObjectName pname = new ObjectName(parent);
                 StringBuffer sb = new StringBuffer(pname.getDomain());                    
@@ -219,9 +216,8 @@ public final class SaveLoggerAction extends Action {
                     new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
 
                 // Create a new StandardLogger object
-                values = new String[2];
+                values = new String[1];
                 values[0] = parent;
-                values[1] = host;
                 operation = "create" + loggerType;
                 lObjectName = (String)
                     mBServer.invoke(fname, operation,

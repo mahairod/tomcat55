@@ -170,12 +170,11 @@ public class DeleteRealmAction extends Action {
         // Accumulate a list of all available realms
         ArrayList list = new ArrayList();
         String parent = request.getParameter("parent");
-        String host = request.getParameter("host");
         
         if (parent != null) {
             try {
                 pattern = DeleteLoggerAction.getObjectName(
-                             parent, host, TomcatTreeBuilder.REALM_TYPE);
+                             parent,TomcatTreeBuilder.REALM_TYPE);
             } catch (Exception e) {
                 getServlet().log
                 (resources.getMessage(locale, "users.error.select"));

@@ -93,7 +93,6 @@ import org.apache.webapp.admin.TreeControlNode;
  * transactions.
  *
  * @author Manveen Kaur
- * @author Amy Roh
  * @version $Revision$ $Date$
  */
 

@@ -92,7 +92,6 @@ import org.apache.webapp.admin.TomcatTreeBuilder;
  * Realm </em> transactions, based on the type of Realm.
  *
  * @author Manveen Kaur
- * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -114,8 +113,6 @@ public class EditRealmAction extends Action {
     private Locale locale = null;
     private HttpServletRequest request = null;
 
-    private String parent = null;
-    private String host = null;
     // --------------------------------------------------------- Public Methods
 
     /**
@@ -171,8 +168,6 @@ public class EditRealmAction extends Action {
 
        String realmType = null;
        String attribute = null;
-       parent = request.getParameter("parent");
-       host = request.getParameter("host");
 
        // Find what type of Realm this is
        try {
@@ -192,7 +187,7 @@ public class EditRealmAction extends Action {
                                       attribute));
             return (null);
         }
-        
+
         // Forward to the appropriate realm display page
 
         if ("UserDatabaseRealm".equalsIgnoreCase(realmType)) {
@@ -217,8 +212,6 @@ public class EditRealmAction extends Action {
         session.setAttribute("userDatabaseRealmForm", realmFm);
         realmFm.setAdminAction("Edit");
         realmFm.setObjectName(rname.toString());
-        realmFm.setParentObjectName(parent); 
-        realmFm.setHostName(host);
         String realmType = "UserDatabaseRealm";
         StringBuffer sb = new StringBuffer("");
         String host = rname.getKeyProperty("host");
@@ -265,8 +258,6 @@ public class EditRealmAction extends Action {
         session.setAttribute("memoryRealmForm", realmFm);
         realmFm.setAdminAction("Edit");
         realmFm.setObjectName(rname.toString());
-        realmFm.setParentObjectName(parent); 
-        realmFm.setHostName(host);
         String realmType = "MemoryRealm";
         StringBuffer sb = new StringBuffer("Realm (");
         sb.append(realmType);
@@ -306,8 +297,6 @@ public class EditRealmAction extends Action {
         session.setAttribute("jdbcRealmForm", realmFm);
         realmFm.setAdminAction("Edit");
         realmFm.setObjectName(rname.toString());
-        realmFm.setParentObjectName(parent); 
-        realmFm.setHostName(host);
         String realmType = "JDBCRealm";
         StringBuffer sb = new StringBuffer("Realm (");
         sb.append(realmType);
@@ -374,8 +363,6 @@ public class EditRealmAction extends Action {
         session.setAttribute("jndiRealmForm", realmFm);
         realmFm.setAdminAction("Edit");
         realmFm.setObjectName(rname.toString());
-        realmFm.setParentObjectName(parent); 
-        realmFm.setHostName(host);
         String realmType = "JNDIRealm";
         StringBuffer sb = new StringBuffer("Realm (");
         sb.append(realmType);

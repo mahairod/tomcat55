@@ -85,7 +85,7 @@ public final class LoggerForm extends ActionForm {
      */
     private String adminAction = "Edit";
 
-   /**
+  /**
      * The object name of the Logger this bean refers to.
      */
     private String objectName = null;
@@ -94,12 +94,7 @@ public final class LoggerForm extends ActionForm {
      * The object name of the parent of this Logger.
      */
     private String parentObjectName = null;
-    
-    /**
-     * The object name of the host of this Logger (if exists).
-     */
-    private String hostName = null;
-       
+   
     /**
      * The text for the logger type. 
      * Specifies if it is a FileLogger, or SysErr or SysOut Logger.
@@ -205,27 +200,6 @@ public final class LoggerForm extends ActionForm {
         this.parentObjectName = parentObjectName;
 
     }
-    
-    
-    /**
-     * Return the host object name of the Logger this bean refers to.
-     */
-    public String getHostName() {
-
-        return this.hostName;
-
-    }
-
-
-    /**
-     * Set the host object name of the Logger this bean refers to.
-     */
-    public void setHostName(String hostName) {
-
-        this.hostName = hostName;
-
-    }
-    
     
     /**
      * Return the Logger type.
@@ -456,7 +430,6 @@ public final class LoggerForm extends ActionForm {
         this.objectName = null;
         this.loggerType = null;
         this.parentObjectName = null;
-        this.hostName = null;
         this.debugLvl = "0";
         this.verbosityLvl = "0";        
         this.directory = null;
@@ -489,8 +462,6 @@ public final class LoggerForm extends ActionForm {
         sb.append(objectName);
         sb.append(",parentObjectName=");
         sb.append(parentObjectName);
-        sb.append(",hostName=");
-        sb.append(hostName);
         sb.append("]");
         return (sb.toString());
 

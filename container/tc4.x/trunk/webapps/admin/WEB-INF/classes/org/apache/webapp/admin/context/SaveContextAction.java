@@ -97,7 +97,6 @@ import org.apache.webapp.admin.TreeControlNode;
  * <em>Edit Context</em> transactions.
  *
  * @author Manveen Kaur
- * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -202,19 +201,11 @@ public final class SaveContextAction extends Action {
                 ObjectName honame = new ObjectName(parentName);
                 
                 // Ensure that the requested context name is unique
-                String path = cform.getPath();
-                String hostName = honame.getKeyProperty("host");
-                String localName= "//" +
-                    ((hostName==null)? "DEFAULT" : hostName) + path;
-                ObjectName oname = new ObjectName(TomcatTreeBuilder.DOMAIN + 
-                                                ":j2eeType=WebModule,name=" +
-                                                localName + 
-                                                ",J2EEApplication=none,J2EEServer=none");
-                //ObjectName oname =
-                //    new ObjectName(TomcatTreeBuilder.CONTEXT_TYPE +
-                //                   ",path=" + cform.getPath() +
-                //                   ",host=" + honame.getKeyProperty("host") +
-                //                   ",service=" + honame.getKeyProperty("service"));
+                ObjectName oname =
+                    new ObjectName(TomcatTreeBuilder.CONTEXT_TYPE +
+                                   ",path=" + cform.getPath() +
+                                   ",host=" + honame.getKeyProperty("host") +
+                                   ",service=" + honame.getKeyProperty("service"));
                 
                 if (mBServer.isRegistered(oname)) {
                     ActionErrors errors = new ActionErrors();
@@ -259,7 +250,7 @@ public final class SaveContextAction extends Action {
                                     values, createStandardManagerTypes);
                 
                 // Add the new Context to our tree control node
-                addToTreeControlNode(oname, cObjectName, parentName, path, 
+                addToTreeControlNode(oname, cObjectName, parentName, 
                                     resources, session);
 
             } catch (Exception e) {
@@ -465,16 +456,15 @@ public final class SaveContextAction extends Action {
      *  messages
      */
     public void addToTreeControlNode(ObjectName oname, String containerName, 
-                                    String parentName, String path,
-                                    MessageResources resources, HttpSession session) 
+                                    String parentName, MessageResources resources, 
+                                    HttpSession session) 
         throws Exception {
                               
         TreeControl control = (TreeControl) session.getAttribute("treeControlTest");
         if (control != null) {
             TreeControlNode parentNode = control.findNode(parentName);
-            ObjectName pname = new ObjectName(parentName);
             if (parentNode != null) {
-                //String path = oname.getKeyProperty("path");
+                String path = oname.getKeyProperty("path");
                 String nodeLabel = "Context (" + path + ")";
                 String encodedName = URLEncoder.encode(oname.toString());
                 TreeControlNode childNode = 
@@ -482,21 +472,23 @@ public final class SaveContextAction extends Action {
                                         "Context.gif",
                                         nodeLabel,
                                         "EditContext.do?select=" +
-                                        encodedName + "&hostName=" +
-                                        URLEncoder.encode(parentName),
+                                        encodedName,
                                         "content",
                                         true);
                 parentNode.addChild(childNode);
                 // FIXME - force a redisplay
-                String type = "Context";
+                String type = oname.getKeyProperty("type");
+                if (type == null) {
+                    type = "";
+                }
                 if (path == null) {
                     path = "";
                 }        
-                String host = pname.getKeyProperty("host");
+                String host = oname.getKeyProperty("host");
                 if (host == null) {
                     host = "";
                 }        
-                String service = pname.getKeyProperty("service");
+                String service = oname.getKeyProperty("service");
                 TreeControlNode subtree = new TreeControlNode
                     ("Context Resource Administration " + containerName,
                     "folder_16_pad.gif",

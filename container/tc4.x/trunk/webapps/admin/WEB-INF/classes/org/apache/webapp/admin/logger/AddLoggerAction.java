@@ -82,7 +82,6 @@ import org.apache.webapp.admin.Lists;
  * The <code>Action</code> that sets up <em>Add Logger</em> transactions.
  *
  * @author Manveen Kaur
- * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -130,12 +129,7 @@ public class AddLoggerAction extends Action {
         loggerFm.setAdminAction("Create");
         loggerFm.setObjectName("");
         String parent = request.getParameter("parent");
-        String host = request.getParameter("host");
-        if (host == null) {
-            host = "";
-        }
         loggerFm.setParentObjectName(parent);
-        loggerFm.setHostName(host);
         String type = request.getParameter("type");
         if (type == null)
             type = "FileLogger";    // default type is FileLogger
@@ -153,14 +147,12 @@ public class AddLoggerAction extends Action {
         ArrayList types = new ArrayList();    
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,
-                "AddLogger.do?parent=" + URLEncoder.encode(parent) 
-                + "&host=" + URLEncoder.encode(host) 
+                "/admin/AddLogger.do?parent=" + URLEncoder.encode(parent) 
                 + "&type=" + type));        
         for (int i=0; i< loggerTypes.length; i++) {
             if (!type.equalsIgnoreCase(loggerTypes[i])) {
                 types.add(new LabelValueBean(loggerTypes[i],
-                "AddLogger.do?parent=" + URLEncoder.encode(parent) 
-                + "&host=" + URLEncoder.encode(host) 
+                "/admin/AddLogger.do?parent=" + URLEncoder.encode(parent) 
                 + "&type=" + loggerTypes[i]));        
             }
         }

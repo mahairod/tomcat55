@@ -166,8 +166,7 @@ public class EditLoggerAction extends Action {
         session.setAttribute("loggerForm", loggerFm);
         loggerFm.setAdminAction("Edit");
         loggerFm.setObjectName(lname.toString());
-        loggerFm.setParentObjectName("");  
-        loggerFm.setHostName("");      
+        loggerFm.setParentObjectName("");        
         sb = new StringBuffer("");
         String host = lname.getKeyProperty("host");
         String context = lname.getKeyProperty("path");        

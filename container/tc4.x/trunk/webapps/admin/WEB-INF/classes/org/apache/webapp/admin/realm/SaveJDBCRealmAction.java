@@ -96,7 +96,6 @@ import org.apache.webapp.admin.logger.DeleteLoggerAction;
  * <em>Edit Realm</em> transactions for JDBC realm.
  *
  * @author Manveen Kaur
- * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -110,7 +109,6 @@ public final class SaveJDBCRealmAction extends Action {
      */
     private String createStandardRealmTypes[] =
     { "java.lang.String",     // parent
-      "java.lang.String"      // host
     };
 
 
@@ -178,9 +176,8 @@ public final class SaveJDBCRealmAction extends Action {
 
             try {
 
-                String parent = rform.getParentObjectName();          
-                String host = rform.getHostName();                
-                String objectName = DeleteLoggerAction.getObjectName(parent, host,
+                String parent = rform.getParentObjectName();                
+                String objectName = DeleteLoggerAction.getObjectName(parent,
                                     TomcatTreeBuilder.REALM_TYPE);
                 
                 ObjectName pname = new ObjectName(parent);
@@ -219,9 +216,8 @@ public final class SaveJDBCRealmAction extends Action {
                     new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
 
                 // Create a new StandardRealm object
-                values = new String[2];
+                values = new String[1];
                 values[0] = parent;
-                values[1] = host;
                 operation = "createJDBCRealm";
                 rObjectName = (String)
                     mBServer.invoke(fname, operation,

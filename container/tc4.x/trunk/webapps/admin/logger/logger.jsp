@@ -21,13 +21,10 @@
 
   <bean:define id="thisObjectName" type="java.lang.String"
                name="loggerForm" property="objectName"/>
-  <bean:define id="thisHostName" type="java.lang.String"
-               name="loggerForm" property="hostName"/>
   <html:hidden property="parentObjectName"/>
   <html:hidden property="adminAction"/>
   <html:hidden property="objectName"/>
   <html:hidden property="loggerType"/>
-  <html:hidden property="hostName"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
@@ -48,8 +45,7 @@
             <controls:action disabled="true"> --------------------------------- </controls:action>
             <logic:notEqual name="loggerForm" property="adminAction" value="Create">
             <controls:action url='<%= "/DeleteLogger.do?select=" +
-                                  URLEncoder.encode(thisObjectName) +
-                                 "&host="+ URLEncoder.encode(thisHostName) %>'>
+                                  URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.loggers.delete"/>
             </controls:action>
             </logic:notEqual>

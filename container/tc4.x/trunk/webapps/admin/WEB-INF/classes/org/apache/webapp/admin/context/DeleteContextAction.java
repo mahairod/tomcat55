@@ -90,14 +90,12 @@ import javax.management.JMException;
 import org.apache.struts.util.MessageResources;
 
 import org.apache.webapp.admin.ApplicationServlet;
-import org.apache.webapp.admin.Lists;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
  * The <code>Action</code> that sets up <em>Delete Contexts</em> transactions.
  *
  * @author Manveen Kaur
- * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -169,36 +167,28 @@ public class DeleteContextAction extends Action {
             contextsForm.setContexts(contexts);
             patternObject = select;
         }        
+        request.setAttribute("contextsForm", contextsForm);
                 
         // get the parent host object name
         String parent = request.getParameter("parent");
         if (parent != null) {                
             patternObject = parent;
         } 
-        contextsForm.setHostName(patternObject);
-        request.setAttribute("contextsForm", contextsForm);
         
-        ObjectName poname = null;
         // Accumulate a list of all available contexts
-        // ArrayList list = new ArrayList();
-        List list = null;
+        ArrayList list = new ArrayList();
         try {
-            poname = new ObjectName(patternObject);
-            //String pattern = TomcatTreeBuilder.DOMAIN +
-            //                 TomcatTreeBuilder.CONTEXT_JSR77_TYPE +
-            //                 TomcatTreeBuilder.WILDCARD;      
-            //getServlet().log(pattern);
-            //String pattern = TomcatTreeBuilder.CONTEXT_TYPE +
-            //                 TomcatTreeBuilder.WILDCARD +
-            //                 ",host=" + poname.getKeyProperty("host") +
-            //                 ",service=" + poname.getKeyProperty("service"); 
+            ObjectName poname = new ObjectName(patternObject);
+            String pattern = TomcatTreeBuilder.CONTEXT_TYPE +
+                             TomcatTreeBuilder.WILDCARD +
+                             ",host=" + poname.getKeyProperty("host") +
+                             ",service=" + poname.getKeyProperty("service"); 
             // get all available contexts only for this host
-            //Iterator items =
-            //    mBServer.queryNames(new ObjectName(pattern), null).iterator();
-            //while (items.hasNext()) {
-            //    list.add(items.next().toString());
-            //}
-            list = Lists.getContexts(mBServer, poname);
+            Iterator items =
+                mBServer.queryNames(new ObjectName(pattern), null).iterator();
+            while (items.hasNext()) {
+                list.add(items.next().toString());
+            }
         } catch (Exception e) {
             getServlet().log
                 (resources.getMessage(locale, "users.error.select"));
@@ -209,10 +199,7 @@ public class DeleteContextAction extends Action {
         }
         Collections.sort(list);
         request.setAttribute("contextsList", list);
-        request.setAttribute("hostName", parent);
-        String host = poname.getKeyProperty("host");
-        request.setAttribute("host",host);
-             
+        
         // Forward to the list display page
         return (mapping.findForward("Contexts"));
 

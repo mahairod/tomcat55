@@ -22,13 +22,10 @@
                name="singleSignOnValveForm" property="objectName"/>
   <bean:define id="thisParentName" type="java.lang.String"
                name="singleSignOnValveForm" property="parentObjectName"/>
-  <bean:define id="thisHostName" type="java.lang.String"
-               name="singleSignOnValveForm" property="hostName"/>  
   <html:hidden property="adminAction"/>
   <html:hidden property="parentObjectName"/>
   <html:hidden property="objectName"/>
   <html:hidden property="valveType"/>
-  <html:hidden property="hostName"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
@@ -50,8 +47,7 @@
             <logic:notEqual name="singleSignOnValveForm" property="adminAction" value="Create">
              <controls:action url='<%= "/DeleteValve.do?"  +
                                  "select=" + URLEncoder.encode(thisObjectName) +
-                                 "&parent="+ URLEncoder.encode(thisParentName) +
-                                 "&host="+ URLEncoder.encode(thisHostName) %>'>
+                                 "&parent="+ URLEncoder.encode(thisParentName) %>'>
                 <bean:message key="actions.valves.delete"/>
               </controls:action>
               </logic:notEqual>

@@ -112,11 +112,6 @@ public class RealmForm extends ActionForm {
      * The object name of the parent of this realm.
      */
     private String parentObjectName = null;
-    
-    /**
-     * The object name of the host of this Logger (if exists).
-     */
-    private String hostName = null;
         
     /**
      * Set of valid values for debug level.
@@ -227,28 +222,8 @@ public class RealmForm extends ActionForm {
 
     }
     
-    
-    /**
-     * Return the host object name of the Logger this bean refers to.
-     */
-    public String getHostName() {
-
-        return this.hostName;
-
-    }
-
-
-    /**
-     * Set the host object name of the Logger this bean refers to.
-     */
-    public void setHostName(String hostName) {
-
-        this.hostName = hostName;
-
-    }    
-     
         
-    /**
+   /**
      * Return the realmTypeVals.
      */
     public List getRealmTypeVals() {

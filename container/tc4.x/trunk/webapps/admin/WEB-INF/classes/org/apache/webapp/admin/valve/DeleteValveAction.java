@@ -97,7 +97,6 @@ import org.apache.webapp.admin.Lists;
  * The <code>Action</code> that sets up <em>Delete Valves</em> transactions.
  *
  * @author Manveen Kaur
- * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -172,10 +171,9 @@ public class DeleteValveAction extends Action {
         ArrayList list = new ArrayList();
         String parent = request.getParameter("parent");
         valvesForm.setParentObjectName(parent);
-        String host = request.getParameter("host");
         
         try {
-            Iterator items = (Lists.getValves(mBServer, parent, host)).iterator();
+            Iterator items = (Lists.getValves(mBServer, parent)).iterator();
             while (items.hasNext()) {
                 list.add(items.next().toString());
             }

@@ -92,7 +92,6 @@ import org.apache.webapp.admin.TomcatTreeBuilder;
  * The <code>Action</code> that sets up <em>Edit Host</em> transactions.
  *
  * @author Manveen Kaur
- * @author Amy Roh
  * @version $Revision$ $Date$
  */
 

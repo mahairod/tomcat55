@@ -97,7 +97,6 @@ import org.apache.webapp.admin.logger.DeleteLoggerAction;
  * A utility class that contains methods common across valves.
  *
  * @author Manveen Kaur
- * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -111,13 +110,12 @@ public final class ValveUtil {
      */
     private static String createStandardValveTypes[] =
     { "java.lang.String",     // parent
-      "java.lang.String"      // host
     };
     
     
     // --------------------------------------------------------- Public Methods
     
-    public static String createValve(String parent, String host, String valveType,
+    public static String createValve(String parent, String valveType,
     HttpServletResponse response, HttpServletRequest request,
     ActionMapping mapping, ApplicationServlet servlet)
     throws IOException, ServletException {
@@ -141,7 +139,7 @@ public final class ValveUtil {
         
         try {
             
-            String objectName = DeleteLoggerAction.getObjectName(parent, host,
+            String objectName = DeleteLoggerAction.getObjectName(parent,
             TomcatTreeBuilder.VALVE_TYPE);
                         
             String parentNodeName = parent;
@@ -186,9 +184,8 @@ public final class ValveUtil {
             new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
             
             // Create a new StandardValve object
-            values = new String[2];            
-            values[0] = parent;  
-            values[1] = host;         
+            values = new String[1];            
+            values[0] = parent;           
             
             operation = "create" + valveType;
             if ("AccessLogValve".equalsIgnoreCase(valveType))
@@ -213,8 +210,7 @@ public final class ValveUtil {
                     nodeLabel,
                     "EditValve.do?select=" + encodedName +
                     "&nodeLabel=" + URLEncoder.encode(nodeLabel) +
-                    "&parent=" + URLEncoder.encode(parentNodeName) +
-                    "&host=" + URLEncoder.encode(host),
+                    "&parent=" + URLEncoder.encode(parentNodeName),
                     "content",
                     true);
                     parentNode.addChild(childNode);

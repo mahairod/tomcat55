@@ -104,7 +104,6 @@ public class DeleteContextsAction extends Action {
      */
     private String removeContextTypes[] =
     { "java.lang.String",      // Object name
-      "java.lang.String"       // Parent object name 
     };
 
 
@@ -162,8 +161,7 @@ public class DeleteContextsAction extends Action {
         
         // Delete the specified Contexts
         String contexts[]  = ((ContextsForm) form).getContexts();
-        String pname = ((ContextsForm) form).getHostName();
-        String values[] = new String[2];
+        String values[] = new String[1];
         String operation = "removeContext";
 
         try {
@@ -175,7 +173,6 @@ public class DeleteContextsAction extends Action {
             TreeControl control = (TreeControl)
                 session.getAttribute("treeControlTest");
 
-            values[1] = pname;
             // Remove the specified contexts
             for (int i = 0; i < contexts.length; i++) {
                 values[0] = contexts[i];
