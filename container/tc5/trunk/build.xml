@@ -14,6 +14,7 @@
   <property name="name"                  value="Apache Tomcat" />
   <property name="year"                  value="2004" />
   <property name="version"               value="5.5-dev" />
+  <property name="dottedver"             value="5.5.0.1" />
   <property name="project"               value="jakarta-tomcat" />
   <property name="final.name"            value="${project}-${version}" />
   <property name="final-src.name"        value="${project}-${version}-src" />
@@ -1507,6 +1508,7 @@
     <copy file="${jtc.home}/procrun/bin/tomcat5w.exe" 
         tofile="${tomcat.dist}/bin/tomcat5w.exe" />
     <filter token="VERSION" value="${version}"/>
+    <filter token="DOTTEDVER" value="${dottedver}"/>
     <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" 
      filtering="true"/>
     <exec dir="${tomcat.dist}" executable="${nsis.exe}">

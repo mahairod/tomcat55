@@ -19,7 +19,7 @@
   VIAddVersionKey ProductVersion "@VERSION@"
   VIAddVersionKey Comments "jakarta.apache.org/tomcat"
   VIAddVersionKey InternalName "jakarta-tomcat-@VERSION@.exe"
-  VIProductVersion @VERSION@.0.0
+  VIProductVersion @DOTTEDVER@
 
 !include "MUI.nsh"
 !include "StrFunc.nsh"
