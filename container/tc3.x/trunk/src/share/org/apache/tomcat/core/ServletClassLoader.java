@@ -70,7 +70,7 @@ import java.util.*;
 
 /**
  * This class now extends NetworkClassLoader. Previous
- * implementation of ServletClassLoader is called ServletLoader.
+ * implementation of ServletClassLoader was called ServletLoader.
  * This implementation is a complete rewrite of the earlier
  * class loader. This should speed up performance compared
  * to the earlier class loader.
