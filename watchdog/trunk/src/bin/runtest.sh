@@ -57,7 +57,7 @@ if [ "$1" != "" ]; then
   default=$1
 fi
 
-java org.apache.tomcat.shell.Startup -config $webconf  $* &
+java org.apache.tomcat.startup.Tomcat -config $webconf $* &
 sleep 20
 
 if [ "${default}" = jsp -o "${default}" = all ];then
@@ -70,7 +70,7 @@ java -Dtest.hostname=$host -Dtest.port=$port org.apache.tools.moo.Main \
     -testfile $stest
 fi
 
-java org.apache.tomcat.shell.Shutdown $*
+java org.apache.tomcat.startup.Tomcat -stop -config $webconf $*
 
 if [ "$cp" != ""]; then
     CLASSPATH=${cp}
