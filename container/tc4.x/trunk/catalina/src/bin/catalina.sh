@@ -110,7 +110,7 @@ if [ "$1" = "jpda" ] ; then
   if [ -z "$JPDA_ADDRESS" ]; then
     JPDA_ADDRESS="8000"
   fi
-  if [ -z "$JDPA_OPTS" ]; then
+  if [ -z "$JPDA_OPTS" ]; then
     JPDA_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,address=$JPDA_ADDRESS,server=y,suspend=n"
   fi
   CATALINA_OPTS="$CATALINA_OPTS $JPDA_OPTS"
