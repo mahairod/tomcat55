@@ -128,7 +128,6 @@ Section "Core" SecTomcatCore
   !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
   CopyFiles /SILENT "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
   ClearErrors
-  BringToFront
 
   Call configure
 
@@ -147,7 +146,6 @@ Section "Service" SecTomcatService
 
   ExecWait '"$INSTDIR\bin\tomcatw.exe" //US//Tomcat5 --Startup auto'
 
-  BringToFront
   ClearErrors
 
 SectionEnd
@@ -235,8 +233,6 @@ Section -post
                    "DisplayName" "Apache Tomcat 5.0 (remove only)"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0" \
                    "UninstallString" '"$INSTDIR\Uninstall.exe"'
-
-  BringToFront
 
 SectionEnd
 
