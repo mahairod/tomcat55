@@ -1317,11 +1317,15 @@ public class ManagerServlet
                 }
             }
 
-            // Stop the context first to be nicer
             if (!isServiced(path)) {
                 addServiced(path);
                 try {
+                    // Try to stop the context first to be nicer
                     ((Lifecycle) context).stop();
+                } catch (Throwable t) {
+                    // Ignore
+                }
+                try {
                     File war = new File(getAppBase(), getDocBase(path) + ".war");
                     File dir = new File(getAppBase(), getDocBase(path));
                     File xml = new File(configBase, getConfigFile(path) + ".xml");
