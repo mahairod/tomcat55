@@ -78,7 +78,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionAttributeListener;
@@ -696,8 +695,11 @@ class StandardSession
             if (attribute instanceof HttpSessionActivationListener) {
                 if (event == null)
                     event = new HttpSessionEvent(this);
-                // FIXME: Should we catch throwables?
-                ((HttpSessionActivationListener)attribute).sessionWillPassivate(event);
+                try {
+                    ((HttpSessionActivationListener)attribute).sessionWillPassivate(event);
+                } catch (Throwable t) {
+                    log(sm.getString("standardSession.attributeEvent"), t);
+                }
             }
         }
 
@@ -718,8 +720,11 @@ class StandardSession
             if (attribute instanceof HttpSessionActivationListener) {
                 if (event == null)
                     event = new HttpSessionEvent(this);
-                // FIXME: Should we catch throwables?
-                ((HttpSessionActivationListener)attribute).sessionDidActivate(event);
+                try {
+                    ((HttpSessionActivationListener)attribute).sessionDidActivate(event);
+                } catch (Throwable t) {
+                    log(sm.getString("standardSession.attributeEvent"), t);
+                }
             }
         }
 
@@ -1150,8 +1155,13 @@ class StandardSession
         HttpSessionBindingEvent event =
           new HttpSessionBindingEvent((HttpSession) this, name, value);
         if ((value != null) &&
-            (value instanceof HttpSessionBindingListener))
-            ((HttpSessionBindingListener) value).valueUnbound(event);
+            (value instanceof HttpSessionBindingListener)) {
+            try {
+                ((HttpSessionBindingListener) value).valueUnbound(event);
+            } catch (Throwable t) {
+                log(sm.getString("standardSession.bindingEvent"), t);
+            }
+        }
 
         // Notify interested application event listeners
         Context context = (Context) manager.getContainer();
@@ -1255,8 +1265,13 @@ class StandardSession
                 ((HttpSession) this, name, value);
 
         // Call the valueBound() method if necessary
-        if (value instanceof HttpSessionBindingListener)
+        if (value instanceof HttpSessionBindingListener) {
+            try {
                 ((HttpSessionBindingListener) value).valueBound(event);
+            } catch (Throwable t) {
+                log(sm.getString("standardSession.bindingEvent"), t);
+            }
+        }
 
         // Replace or add this attribute
         Object unbound = null;
@@ -1268,8 +1283,12 @@ class StandardSession
         // Call the valueUnbound() method if necessary
         if ((unbound != null) &&
                 (unbound instanceof HttpSessionBindingListener)) {
-            ((HttpSessionBindingListener) unbound).valueUnbound
-                    (new HttpSessionBindingEvent((HttpSession) this, name));
+            try {
+                ((HttpSessionBindingListener) unbound).valueUnbound
+                        (new HttpSessionBindingEvent((HttpSession) this, name));
+            } catch (Throwable t) {
+                log(sm.getString("standardSession.bindingEvent"), t); 
+            }
         }
 
         // Replace the current event with one containing 
