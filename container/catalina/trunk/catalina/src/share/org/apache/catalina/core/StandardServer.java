@@ -2296,9 +2296,10 @@ public final class StandardServer
     public void start() throws LifecycleException {
 
         // Validate and update our current component state
-        if (started)
-            throw new LifecycleException
-                (sm.getString("standardServer.start.started"));
+        if (started) {
+            log.debug(sm.getString("standardServer.start.started"));
+            return;
+        }
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
