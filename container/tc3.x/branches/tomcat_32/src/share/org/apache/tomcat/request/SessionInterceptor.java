@@ -84,12 +84,17 @@ public class SessionInterceptor extends  BaseInterceptor
     // GS, separates the session id from the jvm route
     static final char SESSIONID_ROUTE_SEP = '.';
     ContextManager cm;
+    boolean noCookies = false;
 
     public SessionInterceptor() {
     }
 
     public void setContextManager( ContextManager cm ) {
 	this.cm=cm;
+    }
+
+    public void setNoCookies(boolean noCookies) {
+        this.noCookies = noCookies;
     }
 
     /** Extract the session id from the request.
@@ -131,7 +136,8 @@ public class SessionInterceptor extends  BaseInterceptor
 	if( debug>0 ) cm.log("Before Body " + reqSessionId );
 	if( reqSessionId==null)
 	    return 0;
-
+        if (noCookies)
+            return 0;
 
         // GS, set the path attribute to the cookie. This way
         // multiple session cookies can be used, one for each

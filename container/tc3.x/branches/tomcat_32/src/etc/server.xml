@@ -126,10 +126,13 @@
 
         <!-- Request processing -->
         <!-- Session interceptor will extract the session id from cookies and 
-             deal with URL rewriting ( by fixing the URL )
+             deal with URL rewriting ( by fixing the URL ).  If you wish to
+             suppress the use of cookies for session identifiers, change the
+             "noCookies" attribute to "true"
           -->
         <RequestInterceptor 
-            className="org.apache.tomcat.request.SessionInterceptor" />
+            className="org.apache.tomcat.request.SessionInterceptor"
+            noCookies="false" />
 
         <!-- Find the container ( context and prefix/extension map ) 
              for a request.
