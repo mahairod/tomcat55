@@ -59,7 +59,6 @@
  *
  */
 
-
 package org.apache.webapp.admin.service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -73,27 +72,12 @@ import java.util.Iterator;
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.modelmbean.ModelMBean;
 
+import javax.servlet.ServletException;
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
-
-import javax.management.modelmbean.ModelMBean;
-import javax.management.modelmbean.ModelMBeanInfo;
-
-import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
-
-import javax.management.RuntimeOperationsException;
-import javax.management.MBeanException;
-import java.lang.RuntimeException;
-
-//import org.apache.catalina.mbeans.MBeanUtils;
 
 /**
  * Form bean for the add service page.
@@ -265,80 +249,59 @@ public final class AddServiceForm extends ActionForm {
         
         ActionErrors errors = new ActionErrors();
         String submit = request.getParameter("submit");
-        ObjectInstance mBeanFactory = null;
         
         if (submit != null) {
             
             if ((serviceName == null) || (serviceName.length() < 1)) {
                 errors.add("serviceName",
                 new ActionError("error.serviceName.required"));
-            } else {
-                
-                // try to create a new service.
-                try {
-                    
-                    ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                    mBServer = servlet.getServer();
-                    
-                    // Get hold of the parent server.
-                    Iterator serverItr =
-                    mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
-                    TomcatTreeBuilder.WILDCARD), null).iterator();
-                    
-                    ObjectInstance objInstance = (ObjectInstance)serverItr.next();
-                    ObjectName server = (objInstance).getObjectName();
-                    
-                    mBeanFactory = TomcatTreeBuilder.getMBeanFactory();
-                    ObjectName factory = mBeanFactory.getObjectName();
-                    
-                    Object[] params = new Object[2];
-                    // mBean name of the parent server
-                    params[0] = new String(server.toString());
-                    // name of the new service to be added
-                    params[1] = new String(serviceName);
-                    
-                    String[] types = new String[2];
-                    types[0]= "java.lang.String";
-                    types[1]= "java.lang.String";
-                    
-                    // get a unique service name for the new service.
-                    String newService = (String)
-                    mBServer.invoke(factory, "createStandardService", params, types);
-                    
-                    // add this newly created service to the server mBean.
-                    Object[] serviceParam = new Object[1];
-                    serviceParam[0] = new String(newService);
-                    
-                    String[] type = new String[1];
-                    type[0]= "java.lang.String";
-                    
-                    // System.out.println("Created Service " + newService);
-                    mBServer.invoke(server, "addService", serviceParam, type);
-                    
-                } catch (RuntimeOperationsException ex) {
-                    RuntimeException e = ex.getTargetException();
-                    // print the root exception
-                    if (e instanceof RuntimeOperationsException){
-                        ((RuntimeOperationsException)e).getTargetException().printStackTrace();
-                    } else {
-                        e.printStackTrace();
-                    }
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-                
             }
             
-            if ((engineName == null) || (engineName.length() < 1))
+            if ((engineName == null) || (engineName.length() < 1)) {
                 errors.add("engineName",
                 new ActionError("error.engineName.required"));
+            }
             
-            if ((defaultHost == null) || (defaultHost.length() < 1))
+            if ((defaultHost == null) || (defaultHost.length() < 1)) {
                 errors.add("defaultHost",
                 new ActionError("error.defaultHost.required"));
+            }
+            
+            Iterator serviceItr  = null;           
+            // service name must be unique.
+            try {
+                
+                ApplicationServlet servlet = (ApplicationServlet)getServlet();
+                mBServer = servlet.getServer();
+                
+                serviceItr =
+                mBServer.queryMBeans(new ObjectName(
+                TomcatTreeBuilder.SERVICE_TYPE + TomcatTreeBuilder.WILDCARD),
+                null).iterator();
+                
+            } catch (Exception e) {
+               getServlet().log("Error getting service mBean", e);
+            }
+            
+            try {
+                // check if a service with this name already exists
+                while(serviceItr.hasNext()){
+                    ObjectInstance service = (ObjectInstance)serviceItr.next();
+                    
+                    String name =
+                    (String)mBServer.getAttribute(service.getObjectName(),"name");
+                    
+                    // error service name already exists
+                    if (name.equalsIgnoreCase(serviceName)) {
+                        errors.add("serviceName",
+                        new ActionError("error.serviceName.exists"));
+                    }
+                }
+            } catch (Exception e) {
+               getServlet().log("Error getting attribute name", e);
+            }
         }
-        
         return errors;
     }
-    
 }
+

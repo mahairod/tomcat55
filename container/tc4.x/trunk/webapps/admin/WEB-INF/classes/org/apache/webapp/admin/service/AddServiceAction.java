@@ -63,7 +63,9 @@ package org.apache.webapp.admin.service;
 
 import java.util.Iterator;
 import java.io.IOException;
+import java.util.Locale;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.Action;
@@ -75,7 +77,6 @@ import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.QueryExp;
-import javax.management.Query;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.JMException;
@@ -95,6 +96,7 @@ import org.apache.webapp.admin.TomcatTreeBuilder;
 public final class AddServiceAction extends Action {
     
     private static MBeanServer mBServer = null;
+    private static MessageResources resources = null;
     
     // --------------------------------------------------------- Public Methods
     
@@ -120,80 +122,134 @@ public final class AddServiceAction extends Action {
     HttpServletResponse response)
     throws IOException, ServletException {
         
+        // Look up the components we will be using as needed
+        if (mBServer == null) {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        }
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
+        HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        
+        // Validate the request parameters specified by the user
+        ActionErrors errors = new ActionErrors();
+        
+        // Report any errors we have discovered back to the original form
+        if (!errors.empty()) {
+            saveErrors(request, errors);
+            return (new ActionForward(mapping.getInput()));
+        }
+        
+        String serviceName = request.getParameter("serviceName");
+        String engineName = request.getParameter("engineName");
+        String debugLvlText = request.getParameter("debugLvl");
+        String defaultHost = request.getParameter("defaultHost");
+        
+        ObjectInstance mBeanFactory = null;
+        
+        // unique mBean name of the new service that is created.
+        String newService = null;
+        
+        // Get hold of the parent server.
+        ObjectName server = null;
+        try {
+            Iterator serverItr =
+            mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
+            TomcatTreeBuilder.WILDCARD), null).iterator();
+            
+            ObjectInstance objInstance = (ObjectInstance)serverItr.next();
+            server = (objInstance).getObjectName();
+            
+        } catch (Exception e) {
+            throw new ServletException("Error getting server mBean", e);
+        }
+        
+        // invoke createStandardService operation on the mBean factory.
+        try {
+            mBeanFactory = TomcatTreeBuilder.getMBeanFactory();
+            ObjectName factory = mBeanFactory.getObjectName();
+            
+            Object[] params = new Object[2];
+            // mBean name of the parent server
+            params[0] = new String(server.toString());
+            // name of the new service to be added
+            params[1] = new String(serviceName);
+            
+            String[] types = new String[2];
+            types[0]= "java.lang.String";
+            types[1]= "java.lang.String";
+            
+            newService = (String)
+            mBServer.invoke(factory, "createStandardService", params, types);
+            
+        } catch (Exception e) {
+            getServlet().log
+            (resources.getMessage(locale, "users.error.invoke","createStandardService"), e);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.invoke","createStandardService"));
+            return (null);
+        }
+        
+        // add the newly created service to the server mBean.
+        try {
+            Object[] params = new Object[1];
+            params[0] = new String(newService);
+            
+            String[] type = new String[1];
+            type[0]= "java.lang.String";
+            
+            mBServer.invoke(server, "addService", params, type);
+            
+        } catch (Exception e) {
+            getServlet().log
+            (resources.getMessage(locale, "users.error.invoke",
+            "addService"), e);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.invoke",
+            "addService"));
+            return (null);
+        }
+        
+        // set the attributes read from the form to this newly created service.
+        String attribute = null;
         try{
-            
-            // front end validation and checking.
-            // ===================================================
-            MessageResources messages = getResources();
-            
-            // Validate the request parameters specified by the user
-            ActionErrors errors = new ActionErrors();
-            
-            // Report any errors we have discovered back to the original form
-            if (!errors.empty()) {
-                saveErrors(request, errors);
-                return (new ActionForward(mapping.getInput()));
-            }
-            
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
-            }
-            
-            String serviceName = request.getParameter("serviceName");
-            
-            Iterator serviceItr =
-            mBServer.queryMBeans(new ObjectName(
-            TomcatTreeBuilder.ENGINE_TYPE +
-            ",service=" + serviceName),
-            null).iterator();
-            
-            ObjectName serviceObjName =
-            ((ObjectInstance)serviceItr.next()).getObjectName();
-            
-            String engineName = request.getParameter("engineName");
-            String debugLvlText = request.getParameter("debugLvl");
-            String defaultHost = request.getParameter("defaultHost");
+            ObjectName serviceObjName = new ObjectName(newService);
             
             if (engineName != null) {
-                
                 mBServer.setAttribute(serviceObjName,
-                new Attribute(SetUpServiceAction.NAME_PROP_NAME,
+                new Attribute(attribute=SetUpServiceAction.NAME_PROP_NAME,
                 engineName));
             }
             
             if(debugLvlText != null) {
                 Integer debugLvl = new Integer(debugLvlText);
                 mBServer.setAttribute(serviceObjName,
-                new Attribute(SetUpServiceAction.DEBUG_PROP_NAME,
+                new Attribute(attribute=SetUpServiceAction.DEBUG_PROP_NAME,
                 debugLvl));
             }
             
             if(defaultHost != null) {
-                
-            /*
-                if ((" ").equals(defaultHost)) {
-                 // no default host value set.
-                // remove this attribute.
-                 TBD: FIX ME - if needed.
-                }
-             */
                 mBServer.setAttribute(serviceObjName,
                 new Attribute(SetUpServiceAction.HOST_PROP_NAME,
                 defaultHost));
-                
             }
-            
-        }catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+        }catch(Exception e){
+            getServlet().log
+            (resources.getMessage(locale, "users.error.set.attribute",
+            attribute), e);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.set.attribute",
+            attribute));
+            return (null);
         }
         
         if (servlet.getDebug() >= 1)
             servlet.log(" Forwarding to success page");
-        // Forward back to the test page
         return (mapping.findForward("Save Successful"));
-        
     }
     
 }
