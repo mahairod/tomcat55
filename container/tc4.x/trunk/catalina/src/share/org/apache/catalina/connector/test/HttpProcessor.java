@@ -446,8 +446,8 @@ final class HttpProcessor
 			if (debug >= 1)
 			  log(" Requested cookie session id is " +
 			      ((HttpServletRequest) request.getRequest()).getRequestedSessionId());
-		    } else
-			request.addCookie(cookies[i]);
+		    }
+                    request.addCookie(cookies[i]);
 		}
 		// Keep Watchdog from whining by adding the header as well
 		// (GetHeaderTest, GetIntHeader_1Test)
