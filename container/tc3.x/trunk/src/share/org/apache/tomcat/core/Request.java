@@ -93,6 +93,8 @@ public class Request  {
     protected String remoteHost;
     protected ServletInputStream in;
     // End RequestAdapterImpl
+
+
     //  RequestAdapterImpl Hints
     protected Vector cookies = new Vector();
 
@@ -109,7 +111,6 @@ public class Request  {
     protected String charEncoding = null;
     protected String authType;
     protected String remoteUser;
-
 
     // Request 
     protected Response response;

@@ -87,7 +87,25 @@ public class RequestAdapterImpl implements  RequestAdapter {
     protected String remoteAddr;
     protected String remoteHost;
 
+    // Hints 
     
+    protected Vector cookies;
+
+    protected String contextPath;
+    protected String lookupPath;
+    protected String servletPath;
+    protected String pathInfo;
+    protected String queryString;
+    
+    protected Hashtable parameters;
+    protected String reqSessionId;
+    protected int contentLength;
+    protected String contentType;
+    protected String charEncoding;
+    protected String authType;
+    protected String remoteUser;
+
+
     public RequestAdapterImpl() {
 	headers = new MimeHeaders();
 	recycle(); // XXX need better placement-super()
