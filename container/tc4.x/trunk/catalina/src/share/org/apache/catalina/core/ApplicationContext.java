@@ -572,15 +572,20 @@ public final class ApplicationContext
     public void removeAttribute(String name) {
 
         Object value = null;
+        boolean found = false;
 
 	// Remove the specified attribute
 	synchronized (attributes) {
-	    value = attributes.get(name);
-	    attributes.remove(name);
+            found = attributes.containsKey(name);
+            if (found) {
+                value = attributes.get(name);
+                attributes.remove(name);
+            } else {
+                return;
+            }
 	}
 
 	// Notify interested application event listeners
-	// FIXME - Assumes we notify even if the attribute was not there?
 	Object listeners[] = context.getApplicationListeners();
 	if ((listeners == null) || (listeners.length == 0))
 	    return;

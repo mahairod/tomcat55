@@ -853,9 +853,15 @@ final class StandardSession
 
 	// Remove this attribute from our collection
 	Object value = null;
+        boolean found = false;
 	synchronized (attributes) {
-	    value = attributes.get(name);
-	    attributes.remove(name);
+            found = attributes.containsKey(name);
+            if (found) {
+                value = attributes.get(name);
+                attributes.remove(name);
+            } else {
+                return;
+            }
 	}
 
 	// Call the valueUnbound() method if necessary
@@ -866,7 +872,6 @@ final class StandardSession
 	    ((HttpSessionBindingListener) value).valueUnbound(event);
 
 	// Notify interested application event listeners
-	// FIXME - Assumes we notify even if the attribute was not there?
 	StandardContext context = (StandardContext) manager.getContainer();
 	Object listeners[] = context.getApplicationListeners();
 	if (listeners == null)
