@@ -66,6 +66,9 @@ package org.apache.catalina;
 
 
 import javax.servlet.ServletContext;
+
+import org.apache.tomcat.util.http.mapper.Mapper;
+
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
@@ -292,6 +295,12 @@ public interface Context extends Container {
      * @param config The new login configuration
      */
     public void setLoginConfig(LoginConfig config);
+
+
+    /**
+     * Get the request dispatcher mapper.
+     */
+    public Mapper getMapper();
 
 
     /**

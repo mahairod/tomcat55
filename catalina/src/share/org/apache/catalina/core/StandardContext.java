@@ -161,6 +161,8 @@ public class StandardContext
 
 
     // ----------------------------------------------------- Instance Variables
+
+
     /**
      * The alternate deployment descriptor name.
      */
@@ -327,6 +329,13 @@ public class StandardContext
      * The login configuration descriptor for this web application.
      */
     private LoginConfig loginConfig = null;
+
+
+    /**
+     * The mapper associated with this context.
+     */
+    private org.apache.tomcat.util.http.mapper.Mapper mapper = 
+        new org.apache.tomcat.util.http.mapper.Mapper();
 
 
     /**
@@ -1032,6 +1041,14 @@ public class StandardContext
 
 
     /**
+     * Get the mapper associated with the context.
+     */
+    public org.apache.tomcat.util.http.mapper.Mapper getMapper() {
+        return (mapper);
+    }
+
+
+    /**
      * Return the naming resources associated with this web application.
      */
     public NamingResources getNamingResources() {
@@ -1520,7 +1537,8 @@ public class StandardContext
         String jspFile = wrapper.getJspFile();
         if ((jspFile != null) && !jspFile.startsWith("/")) {
             if (isServlet22()) {
-                log.debug(sm.getString("standardContext.wrapper.warning", jspFile));
+                log.debug(sm.getString("standardContext.wrapper.warning", 
+                                       jspFile));
                 wrapper.setJspFile("/" + jspFile);
             } else {
                 throw new IllegalArgumentException
@@ -3013,6 +3031,26 @@ public class StandardContext
 
 
     /**
+     * Add a child Container, only if the proposed child is an implementation
+     * of Wrapper.
+     *
+     * @param child Child container to be added
+     *
+     * @exception IllegalArgumentException if the proposed container is
+     *  not an implementation of Wrapper
+     */
+    public void removeChild(Container child) {
+
+        if (!(child instanceof Wrapper))
+            throw new IllegalArgumentException
+                (sm.getString("standardContext.notWrapper"));
+
+        super.removeChild(child);
+
+    }
+
+
+    /**
      * Remove the specified security constraint from this web application.
      *
      * @param constraint Constraint to be removed
@@ -4039,11 +4077,15 @@ public class StandardContext
                     ((Lifecycle) resources).start();
 
                 // Start our Mappers, if any
+                // FIXME: Remove this
                 Mapper mappers[] = findMappers();
                 for (int i = 0; i < mappers.length; i++) {
                     if (mappers[i] instanceof Lifecycle)
                         ((Lifecycle) mappers[i]).start();
                 }
+
+                // Initialize associated mapper
+                mapper.setContext(welcomeFiles, resources);
 
                 // Start our child containers, if any
                 Container children[] = findChildren();
@@ -4069,6 +4111,16 @@ public class StandardContext
 
                 // Notify our interested LifecycleListeners
                 lifecycle.fireLifecycleEvent(START_EVENT, null);
+
+                children = findChildren();
+                for (int i = 0; i < children.length; i++) {
+                    // Updating associated mapper
+                    Wrapper wrapper = (Wrapper) children[i];
+                    String[] mappings = wrapper.findMappings();
+                    for (int j = 0; j < mappings.length; j++) {
+                        mapper.addWrapper(mappings[j], wrapper);
+                    }
+                }
 
                 if ((manager != null) && (manager instanceof Lifecycle)) {
                     ((Lifecycle) manager).start();
@@ -4243,6 +4295,16 @@ public class StandardContext
             ((Lifecycle) manager).stop();
         }
 
+        // Updating associated mapper
+        Container children[] = findChildren();
+        for (int i = 0; i < children.length; i++) {
+            Wrapper wrapper = (Wrapper) children[i];
+            String[] mappings = wrapper.findMappings();
+            for (int j = 0; j < mappings.length; j++) {
+                mapper.removeWrapper(mappings[j]);
+            }
+        }
+
         // Normal container shutdown processing
         if (log.isDebugEnabled())
             log.debug("Processing standard container shutdown");
@@ -4258,7 +4320,7 @@ public class StandardContext
             }
 
             // Stop our child containers, if any
-            Container children[] = findChildren();
+            children = findChildren();
             for (int i = 0; i < children.length; i++) {
                 if (children[i] instanceof Lifecycle)
                     ((Lifecycle) children[i]).stop();
