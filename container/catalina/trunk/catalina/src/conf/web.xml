@@ -141,6 +141,9 @@
   <!--                                                                      -->
   <!--   reloading           Should Jasper check for modified JSPs?  [true] -->
   <!--                                                                      -->
+  <!--   suppressSmap        Should the generation of SMAP info for JSR45   -->
+  <!--                       debugging be suppressed? [false]               -->
+  <!--                                                                      -->
   <!--   scratchdir          What scratch directory should we use when      -->
   <!--                       compiling JSP pages?  [default work directory  -->
   <!--                       for the current web application]               -->
