@@ -119,6 +119,8 @@ import org.apache.catalina.util.StringManager;
  * commonly utilized patterns:</p>
  * <ul>
  * <li><b>common</b> - <code>%h %l %u %t "%r" %s %b</code>
+ * <li><b>combined</b> - 
+ *   <code>%h %l %u %t "%r" %s %b "%{Referer}i" "%{User-Agent}i"</code>
  * </ul>
  *
  * <p><b>FIXME</b> - Improve the parsing so that things like
@@ -192,6 +194,13 @@ public final class AccessLogValve
      * a more optimal and hard-coded way.
      */
     private boolean common = false;
+
+
+    /**
+     * For the combined format (common, plus useragent and referer), we do
+     * the same
+     */
+    private boolean combined = false;
 
 
     /**
@@ -347,12 +356,19 @@ public final class AccessLogValve
             pattern = "";
         if (pattern.equals(Constants.AccessLog.COMMON_ALIAS))
             pattern = Constants.AccessLog.COMMON_PATTERN;
+        if (pattern.equals(Constants.AccessLog.COMBINED_ALIAS))
+            pattern = Constants.AccessLog.COMBINED_PATTERN;
         this.pattern = pattern;
 
         if (this.pattern.equals(Constants.AccessLog.COMMON_PATTERN))
             common = true;
         else
             common = false;
+
+        if (this.pattern.equals(Constants.AccessLog.COMBINED_PATTERN))
+            combined = true;
+        else
+            combined = false;
 
     }
 
@@ -449,7 +465,7 @@ public final class AccessLogValve
         StringBuffer result = new StringBuffer();
 
         // Check to see if we should log using the "common" access log pattern
-        if (common) {
+        if (common || combined) {
             String value = null;
 
             ServletRequest req = request.getRequest();
@@ -501,11 +517,33 @@ public final class AccessLogValve
             result.append(space);
 
             int length = response.getContentCount();
+
             if (length <= 0)
                 value = "-";
             else
                 value = "" + length;
             result.append(value);
+
+            if (combined) {
+                result.append(space);
+                result.append("\"");
+                String referer = hreq.getHeader("referer");
+                if(referer != null)
+                    result.append(referer);
+                else
+                    result.append("-");
+                result.append("\"");
+
+                result.append(space);
+                result.append("\"");
+                String ua = hreq.getHeader("user-agent");
+                if(ua != null)
+                    result.append(ua);
+                else
+                    result.append("-");
+                result.append("\"");
+            }
+
         } else {
             // Generate a message based on the defined pattern
             boolean replace = false;
