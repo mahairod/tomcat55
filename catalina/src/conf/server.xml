@@ -84,10 +84,10 @@
 
     <!-- Define a non-SSL Coyote HTTP/1.1 Connector on port 8080 -->
     <Connector className="org.apache.coyote.tomcat5.CoyoteConnector"
-               port="8080" minProcessors="5" maxProcessors="75"
-               enableLookups="true" redirectPort="8443"
-               acceptCount="10" debug="0" connectionTimeout="20000"
-               useURIValidationHack="false" />
+               port="8080" minProcessors="5" maxProcessors="100"
+               enableLookups="true"redirectPort="8443" acceptCount="100"
+               debug="0" connectionTimeout="20000" 
+               disableUploadTimeout="true" />
     <!-- Note : To disable connection timeouts, set connectionTimeout value
      to -1 -->
 
@@ -95,9 +95,8 @@
     <!--
     <Connector className="org.apache.coyote.tomcat5.CoyoteConnector"
                port="8443" minProcessors="5" maxProcessors="75"
-               enableLookups="true"
-	       acceptCount="10" debug="0" scheme="https" secure="true"
-               useURIValidationHack="false">
+               enableLookups="true" disableUploadTimeout="true"
+	       acceptCount="100" debug="0" scheme="https" secure="true">
       <Factory className="org.apache.coyote.tomcat5.CoyoteServerSocketFactory"
                clientAuth="false" protocol="TLS" />
     </Connector>
@@ -107,8 +106,7 @@
     <Connector className="org.apache.coyote.tomcat5.CoyoteConnector"
                port="8009" minProcessors="5" maxProcessors="75"
                enableLookups="true" redirectPort="8443"
-               acceptCount="10" debug="0" connectionTimeout="20000"
-               useURIValidationHack="false"
+               acceptCount="10" debug="0"
                protocolHandlerClassName="org.apache.jk.server.JkCoyoteHandler"/>
 
     <!-- Define a Proxied HTTP/1.1 Connector on port 8082 -->
@@ -117,8 +115,8 @@
     <Connector className="org.apache.coyote.tomcat5.CoyoteConnector"
                port="8082" minProcessors="5" maxProcessors="75"
                enableLookups="true"
-               acceptCount="10" debug="0" connectionTimeout="20000"
-               proxyPort="80" useURIValidationHack="false" />
+               acceptCount="100" debug="0" connectionTimeout="20000"
+               proxyPort="80" disableUploadTimeout="true" />
     -->
 
     <!-- An Engine represents the entry point (within Catalina) that processes
