@@ -57,6 +57,9 @@
       <fix>
         Add back retry logic in JDBC realm in case of a connection failure (remm)
       </fix>
+      <fix>
+        <bug>22041</bug>: Support dynamic proxies as session objects. (markt)
+      </fix>
     </changelog>
    </subsection>
 </section>
