@@ -66,7 +66,7 @@ import java.io.Writer;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.servlet.Servlet;
@@ -106,19 +106,19 @@ public class JspContextWrapper
 
     private transient Hashtable	pageAttributes;
 
-    // Vector of NESTED scripting variables
-    private Vector nestedVars;
+    // ArrayList of NESTED scripting variables
+    private ArrayList nestedVars;
 
-    // Vector of AT_BEGIN scripting variables
-    private Vector atBeginVars;
+    // ArrayList of AT_BEGIN scripting variables
+    private ArrayList atBeginVars;
 
-    // Vector of AT_END scripting variables
-    private Vector atEndVars;
+    // ArrayList of AT_END scripting variables
+    private ArrayList atEndVars;
 
     private Hashtable originalNestedVars;
 
-    public JspContextWrapper(JspContext jspContext, Vector nestedVars,
-			     Vector atBeginVars, Vector atEndVars) {
+    public JspContextWrapper(JspContext jspContext, ArrayList nestedVars,
+			     ArrayList atBeginVars, ArrayList atEndVars) {
         this.invokingJspCtxt = (PageContext) jspContext;
 	this.nestedVars = nestedVars;
 	this.atBeginVars = atBeginVars;

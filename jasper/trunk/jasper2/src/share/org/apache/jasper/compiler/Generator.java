@@ -3043,9 +3043,9 @@ class Generator {
         out.pushIndent();
         out.printil("super.setJspContext(ctx);");
 	TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
-	out.printil("java.util.Vector _jspx_nested = null;");
-	out.printil("java.util.Vector _jspx_at_begin = null;");
-	out.printil("java.util.Vector _jspx_at_end = null;");
+	out.printil("java.util.ArrayList _jspx_nested = null;");
+	out.printil("java.util.ArrayList _jspx_at_begin = null;");
+	out.printil("java.util.ArrayList _jspx_at_end = null;");
 
 	for (int i=0; i<tagVars.length; i++) {
 
@@ -3053,25 +3053,25 @@ class Generator {
 	    case VariableInfo.NESTED:
 		out.printil("if (_jspx_nested == null)");
 		out.pushIndent();
-		out.printil("_jspx_nested = new java.util.Vector();");
+		out.printil("_jspx_nested = new java.util.ArrayList();");
 		out.popIndent();
-		out.printin("_jspx_nested.addElement(");
+		out.printin("_jspx_nested.add(");
 		break;
 
 	    case VariableInfo.AT_BEGIN:
 		out.printil("if (_jspx_at_begin == null)");
 		out.pushIndent();
-		out.printil("_jspx_at_begin = new java.util.Vector();");
+		out.printil("_jspx_at_begin = new java.util.ArrayList();");
 		out.popIndent();
-		out.printin("_jspx_at_begin.addElement(");
+		out.printin("_jspx_at_begin.add(");
 		break;
 
 	    case VariableInfo.AT_END:
 		out.printil("if (_jspx_at_end == null)");
 		out.pushIndent();
-		out.printil("_jspx_at_end = new java.util.Vector();");
+		out.printil("_jspx_at_end = new java.util.ArrayList();");
 		out.popIndent();
-		out.printin("_jspx_at_end.addElement(");
+		out.printin("_jspx_at_end.add(");
 		break;
 	    } // switch
 	    
