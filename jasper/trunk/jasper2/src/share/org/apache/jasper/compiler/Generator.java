@@ -706,7 +706,7 @@ class Generator {
 
 	private Hashtable tagVarNumbers;
 	private String parent;
-	private String pushBodyCount;
+	private String pushBodyCountVar;
 	private String simpleTagHandlerVar;
 	private boolean isSimpleTagHandler;
 	private boolean isFragment;
@@ -1559,10 +1559,10 @@ class Generator {
 		// visit body
 		String tmpParent = parent;
 		parent = tagHandlerVar;
-		String tmpPushBodyCount = null;
+		String tmpPushBodyCountVar = null;
 		if (n.implementsTryCatchFinally()) {
-		    tmpPushBodyCount = pushBodyCount;
-		    pushBodyCount = tagPushBodyCountVar;
+		    tmpPushBodyCountVar = pushBodyCountVar;
+		    pushBodyCountVar = tagPushBodyCountVar;
 		}
 		boolean tmpIsSimpleTagHandler = isSimpleTagHandler;
 		isSimpleTagHandler = false;
@@ -1571,7 +1571,7 @@ class Generator {
 
 		parent = tmpParent;
 		if (n.implementsTryCatchFinally()) {
-		    pushBodyCount = tmpPushBodyCount;
+		    pushBodyCountVar = tmpPushBodyCountVar;
 		}
 		isSimpleTagHandler = tmpIsSimpleTagHandler;
 
@@ -1998,8 +1998,8 @@ class Generator {
 		    if (n.implementsTryCatchFinally()) {
 			out.printin(tagPushBodyCountVar);
 			out.println("++;");
-		    } else if (pushBodyCount != null) {
-			out.printin(pushBodyCount);
+		    } else if (pushBodyCountVar != null) {
+			out.printin(pushBodyCountVar);
 			out.println("++;");
 		    }
 		    out.printin(tagHandlerVar);
@@ -2061,8 +2061,8 @@ class Generator {
 		    if (n.implementsTryCatchFinally()) {
 			out.printin(tagPushBodyCountVar);
 			out.println("--;");
-		    } else if (pushBodyCount != null) {
-			out.printin(pushBodyCount);
+		    } else if (pushBodyCountVar != null) {
+			out.printin(pushBodyCountVar);
 			out.println("--;");
 		    }
 		    out.popIndent();
