@@ -330,6 +330,7 @@ public class PageContextImpl
 		break;
 
 	    default:
+		throw new IllegalArgumentException("Invalid scope");
 	}
     }
 
@@ -386,11 +387,8 @@ public class PageContextImpl
 	    case APPLICATION_SCOPE:
 		return context.getAttributeNames();
 
-	    default: return new Enumeration() { // empty enumeration
-		public boolean hasMoreElements() { return false; }
-
-		public Object nextElement() { throw new NoSuchElementException(); }
-	    };
+	    default:
+		throw new IllegalArgumentException("Invalid scope");
 	}
     }
 
