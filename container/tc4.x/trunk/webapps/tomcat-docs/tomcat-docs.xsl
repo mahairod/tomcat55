@@ -14,22 +14,23 @@
 
 
   <!-- Defined parameters (overrideable) -->
-  <xsl:param    name="home-name"     select="'The Jakarta Project'"/>
-  <xsl:param    name="home-href"     select="'http://jakarta.apache.org/'"/>
-  <xsl:param    name="home-logo"     select="'/images/jakarta-logo.gif'"/>
-  <xsl:param    name="relative-path" select="'.'"/>
-  <xsl:param    name="void-image"    select="'/images/void.gif'"/>
+  <xsl:param    name="home-name"        select="'The Jakarta Project'"/>
+  <xsl:param    name="home-href"        select="'http://jakarta.apache.org/'"/>
+  <xsl:param    name="home-logo"        select="'/images/jakarta-logo.gif'"/>
+  <xsl:param    name="relative-path"    select="'.'"/>
+  <xsl:param    name="void-image"       select="'/images/void.gif'"/>
 
 
   <!-- Defined variables (non-overrideable) -->
-  <xsl:variable name="body-bg"       select="'#ffffff'"/>
-  <xsl:variable name="body-fg"       select="'#000000'"/>
-  <xsl:variable name="body-link"     select="'#525D76'"/>
-  <xsl:variable name="banner-bg"     select="'#525D76'"/>
-  <xsl:variable name="banner-fg"     select="'#ffffff'"/>
-  <xsl:variable name="sub-banner-bg" select="'#828DA6'"/>
-  <xsl:variable name="sub-banner-fg" select="'#ffffff'"/>
-  <xsl:variable name="source-color"  select="'#023264'"/>
+  <xsl:variable name="body-bg"          select="'#ffffff'"/>
+  <xsl:variable name="body-fg"          select="'#000000'"/>
+  <xsl:variable name="body-link"        select="'#525D76'"/>
+  <xsl:variable name="banner-bg"        select="'#525D76'"/>
+  <xsl:variable name="banner-fg"        select="'#ffffff'"/>
+  <xsl:variable name="sub-banner-bg"    select="'#828DA6'"/>
+  <xsl:variable name="sub-banner-fg"    select="'#ffffff'"/>
+  <xsl:variable name="source-color"     select="'#023264'"/>
+  <xsl:variable name="attributes-color" select="'#023264'"/>
 
 
   <!-- Process an entire document into an HTML page -->
@@ -231,6 +232,36 @@
         </tr>
       </table>
     </div>
+  </xsl:template>
+
+
+  <!-- Process an attributes list with nested attribute elements -->
+  <xsl:template match="attributes">
+    <table border="1" cellpadding="5" width="100%">
+      <tr>
+        <th width="15%" bgcolor="{$attributes-color}">
+          <font color="#ffffff">Attribute</font>
+        </th>
+        <th width="85%" bgcolor="{$attributes-color}">
+          <font color="#ffffff">Description</font>
+        </th>
+        <xsl:for-each select="attribute">
+        <tr>
+          <td align="left" valign="center">
+            <xsl:if test="@required = 'true'">
+              <strong><code><xsl:value-of select="@name"/></code></strong>
+            </xsl:if>
+            <xsl:if test="@required != 'true'">
+              <code><xsl:value-of select="@name"/></code>
+            </xsl:if>
+          </td>
+          <td align="left" valign="center">
+            <xsl:apply-templates/>
+          </td>
+        </tr>
+        </xsl:for-each>
+      </tr>
+    </table>
   </xsl:template>
 
 
