@@ -139,11 +139,25 @@ public class JspRuntimeLibrary {
      * Returns the value of the javax.servlet.error.exception request
      * attribute value, if present, otherwise the value of the
      * javax.servlet.jsp.jspException request attribute value.
+     *
+     * This method is called at the beginning of the generated servlet code
+     * for a JSP error page, when the "exception" implicit scripting language
+     * variable is initialized.
      */
     public static Throwable getThrowable(ServletRequest request) {
 	Throwable error = (Throwable) request.getAttribute(SERVLET_EXCEPTION);
 	if (error == null) {
 	    error = (Throwable) request.getAttribute(JSP_EXCEPTION);
+	    if (error != null) {
+		/*
+		 * The only place that sets JSP_EXCEPTION is
+		 * PageContextImpl.handlePageException(). It really should set
+		 * SERVLET_EXCEPTION, but that would interfere with the 
+		 * ErrorReportValve. Therefore, if JSP_EXCEPTION is set, we
+		 * need to set SERVLET_EXCEPTION.
+		 */
+		request.setAttribute(SERVLET_EXCEPTION, error);
+	    }
 	}
 
 	return error;
