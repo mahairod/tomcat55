@@ -1265,6 +1265,37 @@ abstract class Node {
 	    }
 	    return n;
 	}
+
+	/**
+	 * Returns true if this custom action has an empty body, and false
+	 * otherwise.
+	 *
+	 * A custom action is considered to have an empty body if the 
+	 * following holds true:
+	 * - getBody() returns null, or
+	 * - all immediate children are jsp:attribute actions, or
+	 * - the action's jsp:body is empty.
+	 */
+	 public boolean hasEmptyBody() {
+	     boolean hasEmptyBody = true;
+	     Nodes nodes = getBody();
+	     if (nodes != null) {
+		 int numChildNodes = nodes.size();
+		 for (int i=0; i<numChildNodes; i++) {
+		     Node n = nodes.getNode(i);
+		     if (!(n instanceof NamedAttribute)) {
+			 if (n instanceof JspBody) {
+			     hasEmptyBody = (n.getBody() == null);
+			 } else {
+			     hasEmptyBody = false;
+			 }
+			 break;
+		     }
+		 }
+	     }
+
+	     return hasEmptyBody;
+	 }
     }
 
     /**

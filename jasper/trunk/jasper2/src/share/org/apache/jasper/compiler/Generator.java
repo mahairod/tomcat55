@@ -1958,7 +1958,7 @@ class Generator {
 		syncScriptingVars(n, VariableInfo.AT_BEGIN);
 	    }
 
-	    if (n.getBody() != null) {
+	    if (!n.hasEmptyBody()) {
 		out.printin("if (");
 		out.print(tagEvalVar);
 		out.println(" != javax.servlet.jsp.tagext.Tag.SKIP_BODY) {");
@@ -2003,7 +2003,7 @@ class Generator {
 				       String tagHandlerVar,
 				       String tagEvalVar) {
 
-	    if (n.getBody() != null) {
+	    if (!n.hasEmptyBody()) {
 		if (n.implementsIterationTag()) {
 		    out.printin("int evalDoAfterBody = ");
 		    out.print(tagHandlerVar);
@@ -2120,7 +2120,7 @@ class Generator {
 		 * and pass it to tag handler's setJspBody(), unless tag body
 		 * is empty
 		 */
-		if (n.getBody() != null) {
+		if (!n.hasEmptyBody()) {
 		    out.printin(tagHandlerVar);
 		    out.print(".setJspBody(");
 		    generateJspFragment(n, tagHandlerVar);
