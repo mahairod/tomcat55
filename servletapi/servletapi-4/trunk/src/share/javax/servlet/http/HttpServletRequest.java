@@ -101,17 +101,20 @@ public interface HttpServletRequest extends ServletRequest {
 
     /**
      * Returns the name of the authentication scheme used to protect
-     * the servlet. All servlet containers support BASIC_AUTH, 
-     * FORM_AUTH, and CLIENT_CERT_AUTH and may support DIGEST_AUTH.
+     * the servlet. All servlet containers support basic, form and client 
+     * certificate authentication, and may additionally support digest 
+     * authentication.
      * If the servlet is not authenticated <code>null</code> is returned. 
      *
      * <p>Same as the value of the CGI variable AUTH_TYPE.
      *
      *
-     * @return		a <code>String</code> specifying the name of
-     *			the authentication scheme, or
-     *			<code>null</code> if the request was not
-     *			authenticated
+     * @return		one of the static members BASIC_AUTH, 
+     *			FORM_AUTH, CLIENT_CERT_AUTH, DIGEST_AUTH
+     *			(suitable for == comparison) 
+     *			indicating the authentication scheme, or 
+     *			<code>null</code> if the request was 
+     *			not authenticated.     
      *
      */
    
@@ -571,7 +574,9 @@ public interface HttpServletRequest extends ServletRequest {
      *
      * <p>To make sure the session is properly maintained,
      * you must call this method before 
-     * the response is committed.
+     * the response is committed. If the container is using cookies
+     * to maintain session integrity and is asked to create a new session
+     * when the response is committed, an IllegalStateException is thrown.
      *
      *
      *

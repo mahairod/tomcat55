@@ -66,21 +66,21 @@ import java.util.EventObject;
 
 /**
  *
- * Either Sent to an object that implements
+ * Events of this type are either sent to an object that implements
  * {@link HttpSessionBindingListener} when it is bound or 
  * unbound from a session, or to a {@link HttpSessionAttributeListener} 
- * that has been configured in the deploymewnt descriptor when any attribute is
+ * that has been configured in the deployment descriptor when any attribute is
  * bound, unbound or replaced in a session.
  *
- * <p>Yhe session binds the object by a call to
- * <code>HttpSession.putValue</code> and unbinds the object
- * by a call to <code>HttpSession.removeValue</code>.
+ * <p>The session binds the object by a call to
+ * <code>HttpSession.setAttribute</code> and unbinds the object
+ * by a call to <code>HttpSession.removeAttribute</code>.
  *
  *
  *
  * @author		Various
  * @version		$Version$
- * @since v2.3
+ * 
  * @see 		HttpSession
  * @see 		HttpSessionBindingListener
  * @see			HttpSessionAttributeListener
@@ -159,7 +159,7 @@ public class HttpSessionBindingEvent extends HttpSessionEvent {
     
     /**
      *
-     * Returns the name with which the object is bound to or
+     * Returns the name with which the attribute is bound to or
      * unbound from the session.
      *
      *
@@ -175,11 +175,12 @@ public class HttpSessionBindingEvent extends HttpSessionEvent {
     }
     
     /**
-	* Returns the value of the attribute being added, removed or replaced.
+	* Returns the value of the attribute that has been added, removed or replaced.
 	* If the attribute was added (or bound), this is the value of the attribute. If the attrubute was
 	* removed (or unbound), this is the value of the removed attribute. If the attribute was replaced, this
 	* is the old value of the attribute.
 	*
+        * @since 2.3
 	*/
 	
 	public Object getValue() {
