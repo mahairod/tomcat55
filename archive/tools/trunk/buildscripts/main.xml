@@ -82,17 +82,17 @@
 
    <!-- ******************** Testing  ******************** -->
    <target name="tomcat-test" depends="init">
-     <exec dir="${ws.dir}/build/tomcat/test" command="sh runtest.sh " output="${package.dir}/tomcat/tomcat-test.log" />
+     <exec dir="${ws.dir}/build/tomcat/test" command="runtest" output="${package.dir}/tomcat/tomcat-test.log" />
    </target>
 
    <target name="watchdog-test" depends="init">
-     <exec dir="${ws.dir}/build/watchdog" command="sh runtest.sh  " output="${package.dir}/tomcat/watchdog-test.log" />
+     <exec dir="${ws.dir}/build/watchdog" command="runtest" output="${package.dir}/tomcat/watchdog-test.log" />
    </target>
 
    <target name="test-apache" depends="init">
      <exec dir="${ws.dir}" command="/usr/local/apache/bin/apachectl start" />
-     <exec dir="${ws.dir}/build/tomcat/test" command="sh runtest.sh " output="${package.dir}/tomcat/tomcat-test.log" />
-     <exec dir="${ws.dir}/build/watchdog" command="sh runtest.sh  " output="${package.dir}/tomcat/watchdog-test.log" />
+     <exec dir="${ws.dir}/build/tomcat/test" command="runtest" output="${package.dir}/tomcat/tomcat-test.log" />
+     <exec dir="${ws.dir}/build/watchdog" command="runtest" output="${package.dir}/tomcat/watchdog-test.log" />
      <exec dir="${ws.dir}" command="/usr/local/apache/bin/apachectl stop" />
    </target>
 
