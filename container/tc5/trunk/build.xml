@@ -530,11 +530,6 @@
       <param name="subdir" value="${commons-digester.home}"/>
       <param name="destfile" value="${commons-digester.jar}"/>
     </antcall>
-    <copy
-      file="${commons-digester.home}/dist/commons-digester.jar"
-      tofile="${commons-digester.jar}"
-    />
-
 
     <antcall target="downloadgz">
       <param name="sourcefile" value="${regexp.loc}"/>
