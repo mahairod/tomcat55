@@ -288,6 +288,12 @@ public class WebappClassLoader
 
 
     /**
+     * Repositories URLs, used to cache the result of getURLs. 
+     */ 
+    protected URL[] repositoryURLs = null; 
+
+
+    /** 
      * Repositories translated as path in the work directory (for Jasper
      * originally), but which is used to generate fake URLs should getURLs be
      * called.
@@ -565,6 +571,7 @@ public class WebappClassLoader
             URL url = new URL(repository);
             super.addURL(url);
             hasExternalRepositories = true;
+            repositoryURLs = null;
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e.toString());
         }
@@ -922,6 +929,15 @@ public class WebappClassLoader
 
     // ---------------------------------------------------- ClassLoader Methods
 
+
+    /**
+     * Add the specified URL to the classloader.
+     */
+    protected void addURL(URL url) { 
+        super.addURL(url); 
+        hasExternalRepositories = true; 
+        repositoryURLs = null; 
+    } 
 
     /**
      * Find the specified class in our local repositories, if possible.  If
@@ -1478,6 +1494,10 @@ public class WebappClassLoader
      */
     public URL[] getURLs() {
 
+        if (repositoryURLs != null) {
+            return repositoryURLs;
+        }
+
         URL[] external = super.getURLs();
 
         int filesLength = files.length;
@@ -1498,12 +1518,13 @@ public class WebappClassLoader
                 }
             }
 
-            return urls;
-
+            repositoryURLs = urls; 
+    
         } catch (MalformedURLException e) {
-            return (new URL[0]);
+            repositoryURLs = new URL[0];
         }
 
+        return repositoryURLs; 
     }
 
 
@@ -1571,6 +1592,7 @@ public class WebappClassLoader
         notFoundResources.clear();
         resourceEntries.clear();
         repositories = new String[0];
+        repositoryURLs = null;
         files = new File[0];
         jarFiles = new JarFile[0];
         jarRealFiles = new File[0];
