@@ -19,5 +19,45 @@
 
   </section>
 
+  <section name="Windows">
+
+    <p>
+      Installing Tomcat on Windows can be done easily using the Windows 
+      installer. Its interface and functionality is similar to other wizard
+      based installers, with only a few items of interest.
+    </p>
+
+    <p>
+      <ul>
+        <li><strong>Installation as a service</strong>: Tomcat will be 
+            installed as a Windows
+            NT/2k/XP service no matter what setting is selected. Using the
+            checkbox on the component page sets the service as "auto"
+            startup, so that Tomcat is automatically startup when Windows
+            starts. For optimal security, the service should be affected a
+            separate user, with reduced permissions (see the Windows Services
+            administration tool and its documentation).</li>
+        <li><strong>Java location</strong>: The installer will use the registry
+            or the JAVA_HOME environment variable to determine the base path
+            of the JDK or a JRE. If only a JRE (or an incorrect path) 
+            is specified, Tomcat will run but will be unable to compile
+            JSP pages at runtime. Either all webapps will need to be 
+            precompiled (this can be easily done using the Tomcat deployer),
+            or the <code>lib\tools.jar</code> file from a JDK installation
+            to the <code>common\lib</code> path of the Tomcat installation.
+            </li>
+        <li><strong>Tray icon</strong>: When Tomcat is run as a service, there
+            will not be any tray icon present when Tomcat is running. Note that
+            when choosing to run Tomcat at the end of installation, the tray
+            icon will be used even if Tomcat was installed as a service.</li>
+      </ul>
+    </p>
+
+    <p>The installer will create shortcuts allowing starting and configuring 
+       Tomcat. It is important to note that Tomcat administration web 
+       application can only be used when Tomcat is started.</p>
+
+  </section>
+
 </body>
 </document>
