@@ -161,8 +161,9 @@ public class StandardContext
     /**
      * The alternate deployment descriptor name.
      */
-     private String altDDName = null;
-
+    private String altDDName = null;
+    
+    private String hostName;
 
     /**
      * The set of application listener class names configured for this
@@ -3824,6 +3825,24 @@ public class StandardContext
                 ok = false;
             }
         }
+        // Look for a realm - that may have been configured earlier. 
+        // If the realm is added after context - it'll set itself.
+        if( realm == null ) {
+            ObjectName realmName=null;
+            try {
+                realmName=new ObjectName( domain + ":type=Host,host=" + 
+                        getHostname() + ",path=" + getPath());
+                if( mserver.isRegistered(realmName ) ) {
+                    mserver.invoke(realmName, "init", 
+                            new Object[] {},
+                            new String[] {}
+                    );            
+                }
+            } catch( Throwable t ) {
+                log.debug("No realm for this host " + realmName);
+            }
+        }
+        
         if (getLoader() == null) {      // (2) Required by Manager
             if (getPrivileged()) {
                 if (log.isDebugEnabled())
@@ -4449,6 +4468,15 @@ public class StandardContext
 
     }
 
+    public String getHostname() {
+        Container parentHost = getParent();
+        if (parentHost != null) {
+            hostName = parentHost.getName();
+        }
+        if ((hostName == null) || (hostName.length() < 1))
+            hostName = "_";
+        return hostName;
+    }
 
     /**
      * Set the appropriate context attribute for our work directory.
@@ -4884,8 +4912,6 @@ public class StandardContext
         super.init();
     }
 
-    String hostName;
-    
     public ObjectName getParentName() throws MalformedObjectNameException {
         // "Life" update
         String path=oname.getKeyProperty("name");
