@@ -255,9 +255,9 @@ class JNIRequestAdapter extends Request {
          * Read the environment
          */
         if(h.readEnvironment(s, l, env) > 0) {
-    		method      = env[0];
-    		requestURI  = env[1];
-    		queryString = env[2];
+    		methodMB.setString( env[0] );
+    		uriMB.setString( env[1] );
+    		queryMB.setString( env[2] );
     		remoteAddr  = env[3];
     		remoteHost  = env[4];
     		serverName  = env[5];
@@ -265,7 +265,7 @@ class JNIRequestAdapter extends Request {
             authType    = env[7];
             remoteUser  = env[8];
             schemeMB.setString(env[9]);
-            protocol    = env[10];
+            protoMB.setString( env[10] );
             // response.setServerHeader(env[11]);
             
             if(schemeMB.equalsIgnoreCase("https")) {
@@ -306,11 +306,6 @@ class JNIRequestAdapter extends Request {
             }
         }
 
-	    // REQUEST_URI may include a query string
-	    int idQ= requestURI.indexOf("?");
-	    if ( idQ > -1) {
-    	    requestURI = requestURI.substring(0, idQ);
-        }
 
     }
 }
