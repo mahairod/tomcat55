@@ -522,7 +522,7 @@ int ajp13_unmarshal_response(jk_msg_buf_t *msg,
         return JK_FALSE;
     }
 
-    d->msg = jk_b_get_string(msg);
+    d->msg = (char *)jk_b_get_string(msg);
 
     jk_log(l, JK_LOG_DEBUG, 
            "ajp13_unmarshal_response: status = %d\n",
@@ -556,7 +556,7 @@ int ajp13_unmarshal_response(jk_msg_buf_t *msg,
                         return JK_FALSE;
                     }
                 } else {
-                    d->header_names[i] = jk_b_get_string(msg);
+                    d->header_names[i] = (char *)jk_b_get_string(msg);
                     if(!d->header_names[i]) {
                         jk_log(l, JK_LOG_ERROR, 
                                "Error ajp13_unmarshal_response - Null header name\n");
@@ -565,7 +565,7 @@ int ajp13_unmarshal_response(jk_msg_buf_t *msg,
                     }
                 }
 
-                d->header_values[i] = jk_b_get_string(msg);
+                d->header_values[i] = (char *)jk_b_get_string(msg);
                 if(!d->header_values[i]) {
                     jk_log(l, JK_LOG_ERROR, 
                            "Error ajp13_unmarshal_response - Null header value\n");
