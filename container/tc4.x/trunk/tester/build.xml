@@ -7,10 +7,12 @@
   <property name="tester.build"    value="build"/>
   <property name="tester.deploy"   value="../build"/>
   <property name="tester.dist"     value="dist"/>
+  <property name="xerces.home"     value="../../xerces-1_3_0"/>
 
   <!-- ================== Derived Property Values ========================= -->
   <property name="ant.jar"         value="${ant.home}/lib/ant.jar"/>
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
+  <property name="xerces.jar"      value="${xerces.home}/xerces.jar"/>
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
@@ -51,7 +53,7 @@
 
     <!-- Compile tester components and tools -->
     <javac srcdir="src/tester" destdir="${tester.build}/classes"
-     classpath="${ant.jar}:${servlet.jar}"
+     classpath="${ant.jar}:${servlet.jar}:${xerces.jar}"
      deprecation="off" debug="on" optimize="off"
      excludes="**/CVS/**"/>
 
@@ -68,6 +70,11 @@
         tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked01.txt"/>
     <copy file="src/tester/org/apache/tester/Resources03.txt"
         tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked03.txt"/>
+
+    <!-- Install Xerces -->
+    <copy  todir="${tester.build}/web/WEB-INF/lib">
+        <fileset dir="${xerces.home}" includes="xerces.jar"/>
+    </copy>
 
     <!-- Create and install tester library -->
     <mkdir   dir="${tester.build}/web/WEB-INF/lib"/>

@@ -170,6 +170,11 @@
         <url-pattern>/WrappedSetLocale01</url-pattern>
     </filter-mapping>
 
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedXerces01</url-pattern>
+    </filter-mapping>
+
 
     <!-- ========== Servlet Definitions =================================== -->
 
@@ -316,6 +321,11 @@
     <servlet>
         <servlet-name>SetLocale01</servlet-name>
         <servlet-class>org.apache.tester.SetLocale01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Xerces01</servlet-name>
+        <servlet-class>org.apache.tester.Xerces01</servlet-class>
     </servlet>
 
 
@@ -604,6 +614,16 @@
     <servlet-mapping>
         <servlet-name>SetLocale01</servlet-name>
         <url-pattern>/WrappedSetLocale01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Xerces01</servlet-name>
+        <url-pattern>/Xerces01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Xerces01</servlet-name>
+        <url-pattern>/WrappedXerces01</url-pattern>
     </servlet-mapping>
 
 

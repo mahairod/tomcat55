@@ -12,7 +12,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,CaseSensitive,ErrorPage,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession"/>
+  <target name="all" depends="ROOT,CaseSensitive,ErrorPage,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest"/>
 
 
   <target name="ROOT">
@@ -21,13 +21,13 @@
 
     <!-- Should be able to see the home page -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/index.html"
+         request="/index.html" debug="${debug}"
           status="200"/>
 
     <!-- Should be able to use relative path to document root -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/examples/.." debug="${debug}"
-          status="200"/>
+          status="302"/>
 
     <!-- Should not be able to use relative path above document root -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
@@ -43,63 +43,63 @@
 
     <!-- Make sure that static resources are matched case sensitively -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/index.HTML"
+         request="/index.HTML" debug="${debug}"
           status="404"/>
 
     <!-- Should be able to execute the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/dates/date.jsp"
+         request="/examples/jsp/dates/date.jsp" debug="${debug}"
           status="200"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/dates/date.Jsp"
+         request="/examples/jsp/dates/date.Jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/dates/Date.jsp"
+         request="/examples/jsp/dates/Date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/Dates/date.jsp"
+         request="/examples/jsp/Dates/date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/Jsp/dates/date.jsp"
+         request="/examples/Jsp/dates/date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/Examples/jsp/dates/date.jsp"
+         request="/Examples/jsp/dates/date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should be able to execute the HelloWorld servlet example -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/servlet/HelloWorldExample"
+         request="/examples/servlet/HelloWorldExample" debug="${debug}"
           status="200"/>
 
     <!-- Should not be able to execute HelloWorld with different cases -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/servlet/helloWorldExample"
+         request="/examples/servlet/helloWorldExample" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to execute HelloWorld with different cases -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/Servlet/HelloWorldExample"
+         request="/examples/Servlet/HelloWorldExample" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to execute HelloWorld with different cases -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/Examples/servlet/HelloWorldExample"
+         request="/Examples/servlet/HelloWorldExample" debug="${debug}"
           status="404"/>
 
   </target>
@@ -162,46 +162,46 @@
     <!-- ========== Forward and Include to Static Resource ================ -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/Forward01"
+         request="${context.path}/Forward01" debug="${debug}"
       outContent="Forward01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedForward01"
+         request="${context.path}/WrappedForward01" debug="${debug}"
       outContent="Forward01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/Include01"
+         request="${context.path}/Include01" debug="${debug}"
       outContent="Include01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedInclude01"
+         request="${context.path}/WrappedInclude01" debug="${debug}"
       outContent="Include01 PASSED"/>
 
     <!-- ========== Included Servlet Throwing Exceptions ================== -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Include02?exception=IOException"
-      outContent="Include02 PASSED"/>
+      outContent="Include02 PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Include02?exception=ServletException"
-      outContent="Include02 PASSED"/>
+      outContent="Include02 PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Include02?exception=NullPointerException"
-      outContent="Include02 PASSED"/>
+      outContent="Include02 PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedInclude02?exception=IOException"
-      outContent="Include02 PASSED"/>
+      outContent="Include02 PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedInclude02?exception=ServletException"
-      outContent="Include02 PASSED"/>
+      outContent="Include02 PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedInclude02?exception=NullPointerException"
-      outContent="Include02 PASSED"/>
+      outContent="Include02 PASSED" debug="${debug}"/>
 
   </target>
 
@@ -332,28 +332,28 @@
     <!-- ========== Parameters and Query Strings ========================== -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/GetParameter01?foo=1"
+         request="${context.path}/GetParameter01?foo=1" debug="${debug}"
       outContent="GetParameter01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedGetParameter01?foo=1"
+         request="${context.path}/WrappedGetParameter01?foo=1" debug="${debug}"
       outContent="GetParameter01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/GetParameterMap00?BestLanguage=Java&amp;BestJSP=Java2"
-      outContent="GetParameterMap00 PASSED"/>
+      outContent="GetParameterMap00 PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedGetParameterMap00?BestLanguage=Java&amp;BestJSP=Java2"
-      outContent="GetParameterMap00 PASSED"/>
+      outContent="GetParameterMap00 PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/GetQueryString01?foo=1"
-      outContent="GetQueryString01 PASSED"/>
+      outContent="GetQueryString01 PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedGetQueryString01?foo=1"
-      outContent="GetQueryString01 PASSED"/>
+      outContent="GetQueryString01 PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
            debug="${debug}" method="POST"
@@ -440,29 +440,29 @@
 
     <!-- ========== Other ServletResponse Tests =========================== -->
 
-    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
-         request="${context.path}/Reset01"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Reset01" debug="${debug}"
       outContent="Reset01 PASSED"/>
 
-    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
-         request="${context.path}/WrappedReset01"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedReset01" debug="${debug}"
       outContent="Reset01 PASSED"/>
 
-    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
-         request="${context.path}/SetBufferSize01"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SetBufferSize01" debug="${debug}"
       outContent="SetBufferSize01 PASSED"/>
 
-    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
-         request="${context.path}/WrappedSetBufferSize01"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedSetBufferSize01" debug="${debug}"
       outContent="SetBufferSize01 PASSED"/>
 
-    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
-         request="${context.path}/SetLocale01"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SetLocale01" debug="${debug}"
       outContent="SetLocale01 PASSED"
       outHeaders="Content-Language:en"/>
 
-    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
-         request="${context.path}/WrappedSetLocale01"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedSetLocale01" debug="${debug}"
       outContent="SetLocale01 PASSED"
       outHeaders="Content-Language:en"/>
 
@@ -515,6 +515,22 @@
          request="${context.path}/WrappedSession03" debug="${debug}"
      joinSession="true"
       outContent="Session03 PASSED"/>
+
+  </target>
+
+
+  <target name="XercesTest">
+
+    <!-- ========== Xerces Sealing Violation Test ========================= -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Xerces01" debug="${debug}"
+      outContent="Xerces01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedXerces01" debug="${debug}"
+      outContent="Xerces01 PASSED"/>
+
 
   </target>
 

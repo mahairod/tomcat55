@@ -11,6 +11,9 @@
 #
 #   JAVA_HOME        Must point at your Java Development Kit [REQUIRED]
 #
+#   XERCES_HOME      Must point at your Xerces installation
+#                    [../../xerces-1_3_0]
+#
 # $Id$
 # -----------------------------------------------------------------------------
 
@@ -30,6 +33,11 @@ if [ "$ANT_OPTS" = "" ] ; then
   ANT_OPTS=""
 fi
 
+if [ "$XERCES_HOME" = "" ] ; then
+  XERCES_HOME="../../xerces-1_3_0"
+fi
+
+
 # ----- Set Up The Runtime Classpath ------------------------------------------
 
 CP=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar
@@ -43,4 +51,5 @@ fi
 $JAVA_HOME/bin/java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main \
  -Dant.home=$ANT_HOME \
  -Djava.home=$JAVA_HOME \
+ -Dxerces.home=$XERCES_HOME \
  "$@"
