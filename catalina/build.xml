@@ -222,11 +222,8 @@
     <available property="regexp.present"
      classname="org.apache.regexp.RE"
      classpath="${regexp.jar}" />
-    <available property="servlet.present"
-     classname="javax.servlet.Servlet"
-     classpath="${servlet.jar}" />
     <available property="tyrex.present"
-     classname="tyrex.tm.Tyrex"
+     classname="tyrex.resource.Resources"
      classpath="${tyrex.jar}" />
     <available property="xerces.present"
      classname="org.apache.xerces.parsers.SAXParser"
@@ -584,7 +581,6 @@
     <echo message="jndi.present=${jndi.present}" />
     <echo message="logging.present=${logging.present}" />
     <echo message="regexp.present=${regexp.present}" />
-    <echo message="servlet.present=${servlet.present}" />
 
     <echo message="--- Optional Libraries ---" />
     <echo message="daemon.present=${daemon.present}" />
