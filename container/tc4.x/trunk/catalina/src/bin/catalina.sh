@@ -31,31 +31,17 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 
-# ----- Set Up The Bootstrap Classpath ----------------------------------------
-
-BP=$CATALINA_HOME/bin/bootstrap.jar
-
-if [ -f $JAVA_HOME/jre/lib/i18n.jar ] ; then
-  BP=$BP:$JAVA_HOME/jre/lib/i18n.jar
-fi
-
-if [ -f $JAVA_HOME/jre/lib/rt.jar ] ; then
-  BP=$BP:$JAVA_HOME/jre/lib/rt.jar
-fi
-
-if [ -f $JAVA_HOME/lib/tools.jar ] ; then
-  BP=$BP:$JAVA_HOME/lib/tools.jar
-fi
-
-echo Using BOOT PATH: $BP
-
-
 # ----- Set Up The System Classpath -------------------------------------------
 
-CP=$CATALINA_HOME/dummy
+CP=$CATALINA_HOME/bin/bootstrap.jar
+
 for i in $CATALINA_HOME/lib/*.jar ; do
   CP=$CP:$i
 done
+
+if [ -f $JAVA_HOME/lib/tools.jar ] ; then
+  CP=$CP:$JAVA_HOME/lib/tools.jar
+fi
 
 echo Using CLASSPATH: $CP
 
@@ -71,27 +57,18 @@ if [ "$1" = "debug" ] ; then
     jdb \
        $CATALINA_OPTS \
        -sourcepath ../../jakarta-tomcat-4.0/catalina/src/share \
-       -Xbootclasspath:$BP \
        -classpath $CP -Dcatalina.home=$CATALINA_HOME \
        org.apache.catalina.startup.Bootstrap "$@" start
   else
     jdb \
        $CATALINA_OPTS \
        -sourcepath ../../jakarta-tomcat-4.0/catalina/src/share \
-       -Xbootclasspath:$BP \
        -classpath $CP -Dcatalina.home=$CATALINA_HOME \
        org.apache.catalina.startup.Bootstrap "$@" start
   fi
   popd
 
 elif [ "$1" = "embedded" ] ; then
-
-  # NOTE: Embedded does not currently use the boot class path for
-  # separating internal classes from the system class path
-  CP=$CP:$CATALINA_HOME/classes
-  for i in $CATALINA_HOME/lib/*.jar ; do
-    CP=$CP:$i
-  done
 
   shift
   java $CATALINA_OPTS -classpath $CP \
@@ -109,13 +86,13 @@ elif [ "$1" = "run" ] ; then
   if [ "$1" = "-security" ] ; then
     echo Using Security Manager
     shift
-    java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
+    java $CATALINA_OPTS -classpath $CP \
      -Djava.security.manager \
      -Djava.security.policy==$CATALINA_HOME/conf/catalina.policy \
      -Dcatalina.home=$CATALINA_HOME \
      org.apache.catalina.startup.Bootstrap "$@" start
   else
-    java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
+    java $CATALINA_OPTS -classpath $CP \
      -Dcatalina.home=$CATALINA_HOME \
      org.apache.catalina.startup.Bootstrap "$@" start
   fi
@@ -127,14 +104,14 @@ elif [ "$1" = "start" ] ; then
   if [ "$1" = "-security" ] ; then
     echo Using Security Manager
     shift
-    java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
+    java $CATALINA_OPTS -classpath $CP \
      -Djava.security.manager \
      -Djava.security.policy==$CATALINA_HOME/conf/catalina.policy \
      -Dcatalina.home=$CATALINA_HOME \
      org.apache.catalina.startup.Bootstrap "$@" start \
      >> $CATALINA_HOME/logs/catalina.out 2>&1 &
   else
-    java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
+    java $CATALINA_OPTS -classpath $CP \
      -Dcatalina.home=$CATALINA_HOME \
      org.apache.catalina.startup.Bootstrap "$@" start \
      >> $CATALINA_HOME/logs/catalina.out 2>&1 &
@@ -143,7 +120,7 @@ elif [ "$1" = "start" ] ; then
 elif [ "$1" = "stop" ] ; then
 
   shift
-  java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
+  java $CATALINA_OPTS -classpath $CP \
    -Dcatalina.home=$CATALINA_HOME \
    org.apache.catalina.startup.Bootstrap "$@" stop
 

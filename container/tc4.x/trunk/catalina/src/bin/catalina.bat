@@ -18,7 +18,6 @@ rem ---------------------------------------------------------------------------
 
 rem ----- Save Environment Variables That May Change --------------------------
 
-set _BP=%BP%
 set _CATALINA_HOME=%CATALINA_HOME%
 set _CLASSPATH=%CLASSPATH%
 set _CP=%CP%
@@ -51,17 +50,9 @@ set _STARTJAVA=start "%JAVA_HOME%\bin\java"
 set _RUNJAVA="%JAVA_HOME%\bin\java"
 
 
-rem ----- Set Up The Bootstrap Classpath --------------------------------------
-
-:setBootpath
-set BP=%CATALINA_HOME%\bin\bootstrap.jar;%JAVA_HOME%\jre\lib\i18n.jar;%JAVA_HOME%\jre\lib\rt.jar;%JAVA_HOME%\lib\tools.jar
-
-echo Using BOOT PATH: %BP%
-
-
 rem ----- Set Up The Runtime Classpath ----------------------------------------
 
-set CP=%CATALINA_HOME%\dummy
+set CP=%CATALINA_HOME%\bin\bootstrap.jar
 rem Try to determine if CATALINA_HOME contains spaces
 if exist %CATALINA_HOME%\server\catalina.jar goto dynClasspath
 echo Your CATALINA_HOME appears to contain spaces.
@@ -117,23 +108,23 @@ goto finish
 
 :doRun
 if "%2" == "-security" goto doRunSecure
-%_RUNJAVA% %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
+%_RUNJAVA% %CATALINA_OPTS% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 :doRunSecure
-%_RUNJAVA% %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_HOME%/conf/catalina.policy" -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
+%_RUNJAVA% %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_HOME%/conf/catalina.policy" -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 
 :doStart
 if "%2" == "-security" goto doStartSecure
-%_STARTJAVA% %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
+%_STARTJAVA% %CATALINA_OPTS% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 :doStartSecure
 echo Using Security Manager
-%_STARTJAVA% %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_HOME%/conf/catalina.policy" -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
+%_STARTJAVA% %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_HOME%/conf/catalina.policy" -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 
 :doStop
-%_RUNJAVA% %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home=%CATALINA_HOME% org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 stop
+%_RUNJAVA% %CATALINA_OPTS% -Dcatalina.home=%CATALINA_HOME% org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 stop
 goto cleanup
 
 
@@ -141,8 +132,6 @@ goto cleanup
 rem ----- Restore Environment Variables ---------------------------------------
 
 :cleanup
-set BP=%_BP%
-set _BP=
 set CATALINA_HOME=%_CATALINA_HOME%
 set _CATALINA_HOME=
 set CLASSPATH=%_CLASSPATH%
