@@ -376,7 +376,7 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
      */
     public void setAddress(int port) {
         if ((port<1) || (port>65535))
-            throw new IllegalArgumentException("Invalid port "+redirectPort);
+            throw new IllegalArgumentException("Invalid port "+port);
         this.port=port;
 
         if (Constants.DEBUG) logger.debug("Setting port to "+port);
