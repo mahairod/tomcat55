@@ -181,6 +181,14 @@ public interface Session {
 
 
     /**
+     * Set the <code>isNew</code> flag for this session.
+     *
+     * @param isNew The new value for the <code>isNew</code> flag
+     */
+    public void setNew(boolean isNew);
+
+
+    /**
      * Return the authenticated Principal that is associated with this Session.
      * This provides an <code>Authenticator</code> with a means to cache a
      * previously authenticated Principal, and avoid potentially expensive
@@ -208,6 +216,20 @@ public interface Session {
     public HttpSession getSession();
 
 
+    /**
+     * Set the <code>isValid</code> flag for this session.
+     *
+     * @param isValid The new value for the <code>isValid</code> flag
+     */
+    public void setValid(boolean isValid);
+
+
+    /**
+     * Return the <code>isValid</code> flag for this session.
+     */
+    public boolean isValid();
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -224,12 +246,6 @@ public interface Session {
      * without triggering an exception if the session has already expired.
      */
     public void expire();
-
-
-    /**
-     * Return the <code>isValid</code> flag for this session.
-     */
-    public boolean isValid();
 
 
     /**
