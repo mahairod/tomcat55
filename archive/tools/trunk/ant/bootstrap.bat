@@ -19,13 +19,13 @@ mkdir %TMPDIR%
 echo ** COMPILING ANT CLASSES
 
 rem Compile the classes into the temp directory
-javac -classpath %C% -d %TMPDIR% %SRCDIR%\*.java
+javac -classpath "%C%" -d %TMPDIR% %SRCDIR%\*.java
 
 rem Reset classpath to include base ant class files
 set C=%TMPDIR%;%C%
 
 rem Compile sub classes into the temp directory
-javac -classpath %C% -d %TMPDIR% %SRCDIR%\taskdefs\*.java
+javac -classpath "%C%" -d %TMPDIR% %SRCDIR%\taskdefs\*.java
 
 echo ** COPYING REQUIRED FILES
 
@@ -37,11 +37,11 @@ rem Copy all the property/manifest files into the temp directory
 echo ** BUILDING ANT DISTRIBUTION
 
 rem Build the distribution using the newly compiled classes in the temp directory
-java -classpath %C% org.apache.tools.ant.Main jar %1 %2 %3 %4 %5
+java -classpath "%C%" org.apache.tools.ant.Main jar %1 %2 %3 %4 %5
 
 echo ** CLEANING UP BUILD DIRECTORIES
 
-java -classpath %C% org.apache.tools.ant.Main clean %1 %2 %3 %4 %5
+java -classpath "%C%" org.apache.tools.ant.Main clean %1 %2 %3 %4 %5
 
 rem remove the temp directory
 %RMDIRCMD% %TMPDIR%
