@@ -31,8 +31,8 @@ import org.apache.catalina.Role;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.util.StringManager;
-import org.apache.commons.digester.Digester;
-import org.apache.commons.digester.ObjectCreationFactory;
+import org.apache.tomcat.util.digester.Digester;
+import org.apache.tomcat.util.digester.ObjectCreationFactory;
 import org.xml.sax.Attributes;
 
 
