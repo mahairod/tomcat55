@@ -145,12 +145,6 @@ public class Embedded  extends StandardService implements Lifecycle {
 
 
     /**
-     * The debugging detail level for this component.
-     */
-    protected int debug = 0;
-
-
-    /**
      * Is naming enabled ?
      */
     protected boolean useNaming = true;
@@ -219,31 +213,6 @@ public class Embedded  extends StandardService implements Lifecycle {
 
 
     // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        int oldDebug = this.debug;
-        this.debug = debug;
-        support.firePropertyChange("debug", new Integer(oldDebug),
-                                   new Integer(this.debug));
-
-    }
 
 
     /**
