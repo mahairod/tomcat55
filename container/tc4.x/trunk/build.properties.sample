@@ -72,7 +72,7 @@ ldap.jar=${jndi.lib}/ldap.jar
 
 
 # ----- Java Secure Sockets Extension (JSSE), version 1.0.2 or later -----
-jsse.home=${base.path}/jsse1.0.2
+jsse.home=${base.path}/jsse-1.0.2
 jsse.lib=${jsse.home}/lib
 jcert.jar=${jsse.lib}/jcert.jar
 jnet.jar=${jsse.lib}/jnet.jar
