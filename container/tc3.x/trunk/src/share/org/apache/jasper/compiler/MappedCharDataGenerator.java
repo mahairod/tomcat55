@@ -113,7 +113,7 @@ public class MappedCharDataGenerator extends CharDataGenerator {
 		sb.append("\\t");
 		break;
 	    default:
-		sb.append((char) ch);
+		this.writeChar((char) ch, sb);
 	    }
 	}
 	writer.print(sb.toString());
