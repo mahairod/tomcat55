@@ -706,10 +706,11 @@ public class HostConfig
                 if (files[i].endsWith(".war")) {
                     File dir = new File(appBase, files[i]);
                     Long lastModified = (Long) warLastModified.get(files[i]);
+                    long dirLastModified = dir.lastModified();
                     if (lastModified == null) {
                         warLastModified.put
                             (files[i], new Long(dir.lastModified()));
-                    } else if (dir.lastModified() > lastModified.longValue()) {
+                    } else if (dirLastModified > lastModified.longValue()) {
                         // The WAR has been modified: redeploy
                         String expandedDir = files[i];
                         int period = expandedDir.lastIndexOf(".");
@@ -719,10 +720,13 @@ public class HostConfig
                         String contextPath = "/" + expandedDir;
                         if (contextPath.equals("/ROOT"))
                             contextPath = "";
-                        if (dir.lastModified() > expanded.lastModified()) {
+                        if (dirLastModified > expanded.lastModified()) {
                             try {
-                                ((Deployer) host).remove(contextPath, true);
                                 deployed.remove(files[i]);
+                                if (host.findChild(contextPath) != null) {
+                                    ((Deployer) host).remove(contextPath, 
+                                                             true);
+                                }
                             } catch (Throwable t) {
                                 log.error(sm.getString("hostConfig.undeployJar.error",
                                                        files[i]), t);
