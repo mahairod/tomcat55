@@ -91,8 +91,8 @@ public class Constants {
 	}
 
         public static class JSWDK {
-	    public static final String Name = "Java Server Web Dev Kit";
-	    public static final String Version = "1.0 EA";
+	    public static final String Name = "Tomcat Web Server";
+	    public static final String Version = "2.2";
 	}
 
         public static class Attribute {

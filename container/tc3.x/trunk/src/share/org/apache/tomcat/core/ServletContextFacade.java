@@ -140,11 +140,11 @@ implements ServletContext {
     }
 
     public int getMajorVersion() {
-        return Constants.Context.JSDK.MajorVersion;
+        return Constants.Context.Servlet.MajorVersion;
     }
 
     public int getMinorVersion() {
-        return Constants.Context.JSDK.MinorVersion;
+        return Constants.Context.Servlet.MinorVersion;
     }
 
     public String getMimeType(String filename) {
