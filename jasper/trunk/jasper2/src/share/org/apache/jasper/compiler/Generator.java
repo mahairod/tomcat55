@@ -1574,26 +1574,25 @@ class Generator {
 	    out.print(n.getQName());
 	    Attributes attrs = n.getAttributes();
 	    Node.JspAttribute[] jspAttrs = n.getJspAttributes();
-	    if (attrs != null) {
-		int attrsLength = attrs.getLength();
-		for (int i=0; i<attrsLength; i++) {
-		    out.print(" ");
-		    out.print(attrs.getQName(i));
-		    out.print("=");
-		    if (jspAttrs[i].isELInterpreterInput()) {
-			out.print("\\\"\" + ");
-			out.print(attributeValue(jspAttrs[i], false, Object.class));
-			out.print(" + \"\\\"");
-		    } else {
-			String quote = DOUBLE_QUOTE;
-			String value = attrs.getValue(i);
-			if (value.indexOf('"') != -1) {
-			    quote = SINGLE_QUOTE;
-			}
-			out.print(quote);
-			out.print(value);
-			out.print(quote);
+	    int attrsLength = (attrs == null) ? 0 : attrs.getLength();
+	    for (int i=0; i<attrsLength; i++) {
+		out.print(" ");
+		out.print(attrs.getQName(i));
+		out.print("=");
+		if (jspAttrs[i].isELInterpreterInput()) {
+		    out.print("\\\"\" + ");
+		    out.print(attributeValue(jspAttrs[i], false,
+					     Object.class));
+		    out.print(" + \"\\\"");
+		} else {
+		    String quote = DOUBLE_QUOTE;
+		    String value = attrs.getValue(i);
+		    if (value.indexOf('"') != -1) {
+			quote = SINGLE_QUOTE;
 		    }
+		    out.print(quote);
+		    out.print(value);
+		    out.print(quote);
 		}
 	    }
 
@@ -1620,7 +1619,7 @@ class Generator {
 	    // attributes
 	    Hashtable map = new Hashtable();
 	    Node.JspAttribute[] attrs = n.getJspAttributes();
-	    for (int i=0; i<attrs.length; i++) {
+	    for (int i=0; attrs != null && i<attrs.length; i++) {
 		String attrStr = null;
 		if (attrs[i].isNamedAttribute()) {
 		    attrStr = generateNamedAttributeValue(
@@ -1818,7 +1817,7 @@ class Generator {
 	public void visit(Node.AttributeGenerator n) throws JasperException {
 	    Node.CustomTag tag = n.getTag();
             Node.JspAttribute[] attrs = tag.getJspAttributes();
-            for (int i=0; i<attrs.length; i++) {
+            for (int i=0; attrs != null && i<attrs.length; i++) {
 		if (attrs[i].getName().equals(n.getName())) {
 	            out.print(evaluateAttribute(getTagHandlerInfo(tag),
 						attrs[i], tag, null));

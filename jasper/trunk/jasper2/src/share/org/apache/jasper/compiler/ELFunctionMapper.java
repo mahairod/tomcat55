@@ -136,7 +136,7 @@ public class ELFunctionMapper {
         public void visit(Node.JspElement n) throws JasperException {
 
 	    Node.JspAttribute[] attrs = n.getJspAttributes();
-	    for (int i = 0; i < attrs.length; i++) {
+	    for (int i = 0; attrs != null && i < attrs.length; i++) {
 		doMap(attrs[i]);
 	    }
 	    doMap(n.getNameAttribute());
@@ -146,7 +146,7 @@ public class ELFunctionMapper {
         public void visit(Node.UninterpretedTag n) throws JasperException {
 
 	    Node.JspAttribute[] attrs = n.getJspAttributes();
-	    for (int i = 0; i < attrs.length; i++) {
+	    for (int i = 0; attrs != null && i < attrs.length; i++) {
 		doMap(attrs[i]);
 	    }
 	    visitBody(n);

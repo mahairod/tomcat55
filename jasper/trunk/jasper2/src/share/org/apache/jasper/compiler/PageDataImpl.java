@@ -492,7 +492,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	private void appendPageDirective(Node.PageDirective n) {
 	    boolean append = false;
 	    Attributes attrs = n.getAttributes();
-	    int len = attrs.getLength();
+	    int len = (attrs == null) ? 0 : attrs.getLength();
 	    for (int i=0; i<len; i++) {
 		String attrName = attrs.getQName(i);
 		if (!"pageEncoding".equals(attrName)
@@ -583,7 +583,7 @@ class PageDataImpl extends PageData implements TagConstants {
 
 	    boolean append = false;
 	    Attributes attrs = n.getAttributes();
-	    int len = attrs.getLength();
+	    int len = (attrs == null) ? 0 : attrs.getLength();
 	    for (int i=0; i<len; i++) {
 		String attrName = attrs.getQName(i);
 		if (!"pageEncoding".equals(attrName)) {
@@ -684,14 +684,12 @@ class PageDataImpl extends PageData implements TagConstants {
 	    }
 
 	    attrs = n.getAttributes();
-	    if (attrs != null) {
-		int len = attrs.getLength();
-		for (int i=0; i<len; i++) {
-		    String name = attrs.getQName(i);
-		    String value = attrs.getValue(i);
-		    buf.append("  ").append(name).append("=\"");
-		    buf.append(JspUtil.getExprInXml(value)).append("\"\n");
-		}
+	    int len = (attrs == null) ? 0 : attrs.getLength();
+	    for (int i=0; i<len; i++) {
+		String name = attrs.getQName(i);
+		String value = attrs.getValue(i);
+		buf.append("  ").append(name).append("=\"");
+		buf.append(JspUtil.getExprInXml(value)).append("\"\n");
 	    }
 	}
 

@@ -273,7 +273,7 @@ public class TagPluginManager {
 
 	private Node.JspAttribute getNodeAttribute(String attribute) {
 	    Node.JspAttribute[] attrs = node.getJspAttributes();
-	    for (int i=0; i < attrs.length; i++) {
+	    for (int i=0; attrs != null && i < attrs.length; i++) {
 		if (attrs[i].getName().equals(attribute)) {
 		    return attrs[i];
 		}

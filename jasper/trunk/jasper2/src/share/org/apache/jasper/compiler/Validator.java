@@ -728,6 +728,7 @@ class Validator {
 	    TagAttributeInfo[] tldAttrs = tagInfo.getAttributes();
 	    String customActionUri = n.getURI();
 	    Attributes attrs = n.getAttributes();
+	    int attrsSize = (attrs == null) ? 0 : attrs.getLength();
 	    for (int i=0; i<tldAttrs.length; i++) {
 		String attr = null;
 		if (attrs != null) {
@@ -751,25 +752,15 @@ class Validator {
 	    }
 
             Node.Nodes naNodes = n.getNamedAttributeNodes();
-	    int jspAttrsSize = naNodes.size();
-	    if (attrs != null) {
-		jspAttrsSize += attrs.getLength();
-	    }
+	    int jspAttrsSize = naNodes.size() + attrsSize;
 	    Node.JspAttribute[] jspAttrs = null;
 	    if (jspAttrsSize > 0) {
 		jspAttrs = new Node.JspAttribute[jspAttrsSize];
 	    }
-	    Hashtable tagDataAttrs = null;
-	    if (attrs != null) {
-		tagDataAttrs = new Hashtable(attrs.getLength());
-	    } else {
-		tagDataAttrs = new Hashtable(0);
-	    }
+	    Hashtable tagDataAttrs = new Hashtable(attrsSize);
 
 	    checkXmlAttributes(n, jspAttrs, tagDataAttrs);
-            checkNamedAttributes(n, jspAttrs,
-				 (attrs!=null) ? attrs.getLength():0,
-				 tagDataAttrs);
+            checkNamedAttributes(n, jspAttrs, attrsSize, tagDataAttrs);
 
 	    TagData tagData = new TagData(tagDataAttrs);
 
