@@ -100,11 +100,11 @@ public class TomcatTreeBuilder implements TreeBuilder{
     // This SERVER_LABEL needs to be localized
     private final static String SERVER_LABEL = "Tomcat Server";
 
-    private final static String SERVER_TYPE = "Catalina:type=Server";
+    public final static String SERVER_TYPE = "Catalina:type=Server";
     private final static String SERVICE_TYPE = "Catalina:type=Service";
     private final static String ENGINE_TYPE = "Engine";
     private final static String CONNECTOR_TYPE = "Catalina:type=Connector";
-    private final static String WILDCARD = ",*";
+    public final static String WILDCARD = ",*";
 
     private static MBeanServer mBServer = null;
 
@@ -135,15 +135,15 @@ public class TomcatTreeBuilder implements TreeBuilder{
         // HACK to take into account special characters like = and &
         // in the node name, could remove this code if encode URL
         // and later request.getParameter() could deal with = and &
-        // character in parameter values. Must decode name in users action.
-        // TreeControlTest.java in this case
+        // character in parameter values. Decoding name not needed
+        // because Tomcat does this automatically
  
 	String encodedServerName =  URLEncoder.encode(serverObjName);
         TreeControlNode serverNode =
             new TreeControlNode(serverObjName,
                                 "folder_16_pad.gif", SERVER_LABEL,
-                                "treeControlTest.do?select=" + encodedServerName,
-                                null, true);
+                                "setUpServer.do?select=" + encodedServerName,
+                                "content", true);
 
         return serverNode;
 
@@ -168,8 +168,9 @@ public class TomcatTreeBuilder implements TreeBuilder{
             // HACK to take into account special characters like = and &
             // in the node name, could remove this code if encode URL
             // and later request.getParameter() could deal with = and &
-            // character in parameter values. Must decode name in users action.
-            // TreeControlTest.java in this case
+            // character in parameter values. Decoding name not needed
+            // because Tomcat does this automatically  
+
             encodedServiceName =  URLEncoder.encode(service.getObjectName().toString());
 
             TreeControlNode serviceNode = 
@@ -210,8 +211,9 @@ public class TomcatTreeBuilder implements TreeBuilder{
             // HACK to take into account special characters like = and &
             // in the node name, could remove this code if encode URL
             // and later request.getParameter() could deal with = and &
-            // character in parameter values. Must decode name in users action.
-            // TreeControlTest.java in this case
+            // character in parameter values. Decoding name not needed
+            // because Tomcat does this automatically 
+
             encodedConnectorName =  URLEncoder.encode(connectorObj.getObjectName().toString());
 
             connectorNode = 
