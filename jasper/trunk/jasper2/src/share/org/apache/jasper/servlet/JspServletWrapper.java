@@ -195,9 +195,7 @@ public class JspServletWrapper {
                 }
             }
         } catch (FileNotFoundException ex) {
-                throw new JasperException(ex);
-        } catch (JasperException ex) {
-            throw ex;
+            throw new JasperException(ex);
 	}
 
 	return tagHandlerClass;
