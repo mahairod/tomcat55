@@ -600,10 +600,6 @@ public final class StandardLoader
             // Ignore the error here.
         }
 
-        // Temporarily bind the current Catalina classloader to the directory
-        // context
-        DirContextURLStreamHandler.bind(this.container.getResources());
-        
         // Configure our context repositories if appropriate
         setRepositories();
 
@@ -625,7 +621,8 @@ public final class StandardLoader
 		    if( contextURL != null ) {
 			((StandardClassLoader)classLoader).setPermissions
                             (contextURL);
-                        String jarUrl = "jar:" + contextURL.toString() + "WEB-INF/lib/";
+                        String jarUrl = "jar:" + contextURL.toString() 
+                            + "WEB-INF/lib/";
                         ((StandardClassLoader)classLoader).setPermissions
                             (jarUrl);                  
                     }
@@ -648,9 +645,6 @@ public final class StandardLoader
 	} catch (Throwable t) {
 	    throw new LifecycleException("start: ", t);
 	}
-
-        // Unbind Catalina classloader
-        DirContextURLStreamHandler.unbind();
 
         // Validate that all required packages are actually available
         validatePackages();
