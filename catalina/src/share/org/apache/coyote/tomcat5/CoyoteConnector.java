@@ -1449,6 +1449,37 @@ public class CoyoteConnector
         }
     }
 
+
+    /**
+     * Pause the connector.
+     */
+    public void pause()
+        throws LifecycleException {
+        try {
+            protocolHandler.pause();
+        } catch (Exception e) {
+            throw new LifecycleException
+                (sm.getString
+                 ("coyoteConnector.protocolHandlerPauseFailed", e));
+        }
+    }
+
+
+    /**
+     * Pause the connector.
+     */
+    public void resume()
+        throws LifecycleException {
+        try {
+            protocolHandler.resume();
+        } catch (Exception e) {
+            throw new LifecycleException
+                (sm.getString
+                 ("coyoteConnector.protocolHandlerResumeFailed", e));
+        }
+    }
+
+
     /*
      * Translate the attribute name from the legacy Factory names to their
      * internal protocol names.
