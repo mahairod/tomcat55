@@ -143,10 +143,6 @@ elif [ "$1" = "stop_msg" ]; then
 elif [ "$1" = "start" ] ; then 
   shift 
 
-  if [ -f ${TOMCAT_HOME}/conf/ajp12.id ] ;  then  
-        rm -f  ${TOMCAT_HOME}/conf/ajp12.id
-  fi
-
   MAX_WAIT=360
   WAIT=0
   if [ "$1" = "-wait" ] ; then
