@@ -125,6 +125,10 @@ public final class BootstrapService
 
         System.out.println("Create Catalina server");
 
+        // Set Catalina path
+        setCatalinaBase();
+        setCatalinaHome();
+
         // Construct the class loaders we will need
         ClassLoader commonLoader = createCommonLoader();
         ClassLoader catalinaLoader =
@@ -385,8 +389,7 @@ public final class BootstrapService
         ArrayList list = new ArrayList();
 
         // Add the "common/classes" directory if it exists
-        File classes = new File(System.getProperty("catalina.home"),
-                                "common/classes");
+        File classes = new File(getCatalinaHome(), "common/classes");
         if (classes.exists() && classes.canRead() &&
             classes.isDirectory()) {
             try {
@@ -404,8 +407,7 @@ public final class BootstrapService
         }
 
         // Add all JAR files in the "common/lib" directory if it exists
-        File directory = new File(System.getProperty("catalina.home"),
-                                  "common/lib");
+        File directory = new File(getCatalinaHome(), "common/lib");
         if (!directory.exists() || !directory.canRead() ||
             !directory.isDirectory()) {
             System.out.println("Directory " + directory.getAbsolutePath()
@@ -455,8 +457,7 @@ public final class BootstrapService
         ArrayList list = new ArrayList();
 
         // Add the "server/classes" directory if it exists
-        File classes = new File(System.getProperty("catalina.home"),
-                                "server/classes");
+        File classes = new File(getCatalinaHome(), "server/classes");
         if (classes.exists() && classes.canRead() &&
             classes.isDirectory()) {
             try {
@@ -474,8 +475,7 @@ public final class BootstrapService
         }
 
         // Add all JAR files in the "server/lib" directory if it exists
-        File directory = new File(System.getProperty("catalina.home"),
-                                  "server/lib");
+        File directory = new File(getCatalinaHome(), "server/lib");
         if (!directory.exists() || !directory.canRead() ||
             !directory.isDirectory()) {
             System.out.println("Directory " + directory.getAbsolutePath()
@@ -522,8 +522,7 @@ public final class BootstrapService
         ArrayList list = new ArrayList();
 
         // Add the "classes" directory if it exists
-        File classes = new File(System.getProperty("catalina.home"),
-                                "classes");
+        File classes = new File(getCatalinaHome(), "classes");
         if (classes.exists() && classes.canRead() &&
             classes.isDirectory()) {
             try {
@@ -541,8 +540,7 @@ public final class BootstrapService
         }
 
         // Add all JAR files in the "lib" directory if it exists
-        File directory = new File(System.getProperty("catalina.home"),
-                                  "lib");
+        File directory = new File(getCatalinaHome(), "lib");
         if (!directory.exists() || !directory.canRead() ||
             !directory.isDirectory()) {
             System.out.println("Directory " + directory.getAbsolutePath()
@@ -585,6 +583,43 @@ public final class BootstrapService
 
         return (loader);
 
+    }
+
+
+    /**
+     * Set the <code>catalina.base</code> System property to the current
+     * working directory if it has not been set.
+     */
+    private void setCatalinaBase() {
+
+        if (System.getProperty("catalina.base") != null)
+            return;
+        System.setProperty("catalina.base",
+                           System.getProperty("user.dir"));
+
+    }
+
+
+    /**
+     * Set the <code>catalina.home</code> System property to the current
+     * working directory if it has not been set.
+     */
+    private void setCatalinaHome() {
+
+        if (System.getProperty("catalina.home") != null)
+            return;
+        System.setProperty("catalina.home",
+                           System.getProperty("user.dir"));
+
+    }
+
+
+    /**
+     * Get the value of the catalina.home environment variable.
+     */
+    private static String getCatalinaHome() {
+        return System.getProperty("catalina.home",
+                                  System.getProperty("user.dir"));
     }
 
 
