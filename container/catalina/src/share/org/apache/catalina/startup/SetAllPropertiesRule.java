@@ -99,22 +99,9 @@ public class SetAllPropertiesRule extends Rule {
                 name = attributes.getQName(i);
             }
             String value = attributes.getValue(i);
-            value = IntrospectionUtils.replaceProperties
-                (value, new SystemPropertyPropertyResource());
             IntrospectionUtils.setProperty(digester.peek(), name, value);
         }
 
-    }
-
-
-    // ----------------------------- SystemPropertyPropertyResource Inner Class
-
-
-    protected class SystemPropertyPropertyResource
-        implements IntrospectionUtils.PropertySource {
-        public String getProperty(String key) {
-            return System.getProperty(key);
-        }
     }
 
 

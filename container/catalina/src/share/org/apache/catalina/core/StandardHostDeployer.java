@@ -79,6 +79,7 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.startup.ContextRuleSet;
 import org.apache.catalina.startup.ExpandWar;
 import org.apache.catalina.startup.NamingRuleSet;
+import org.apache.catalina.util.CatalinaDigester;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
 
@@ -853,7 +854,7 @@ public class StandardHostDeployer implements Deployer {
      */
     protected Digester createDigester() {
         if (digester == null) {
-            digester = new Digester();
+            digester = new CatalinaDigester();
             if (host.getDebug() > 0)
                 digester.setDebug(3);
             digester.setValidating(false);
