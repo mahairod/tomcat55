@@ -64,6 +64,7 @@ package org.apache.webapp.admin;
 
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
@@ -372,7 +373,15 @@ public class TreeControlTag extends TagSupport {
         }
 
         // Render the tree state image for this node
-        String action = replace(getAction(), "${name}", node.getName());
+
+        // HACK to take into account special characters like = and &
+        // in the node name, could remove this code if encode URL
+        // and later request.getParameter() could deal with = and &
+        // character in parameter values. 
+        String encodedNodeName = URLEncoder.encode(node.getName());
+
+        String action = replace(getAction(), "${name}", encodedNodeName);
+
         out.print("    <td>");
         if ((action != null) && !node.isLeaf()) {
             out.print("<a href=\"");
@@ -444,7 +453,9 @@ public class TreeControlTag extends TagSupport {
             else if (!node.isSelected() && (styleUnselected != null))
                 labelStyle = styleUnselected;
             if (hyperlink != null) {
-                out.print("<a href=\"");
+                // Note the leading space so that the text has some space
+                // between it and any preceding images
+                out.print(" <a href=\"");
                 out.print(hyperlink);
                 out.print("\"");
                 String target = node.getTarget();

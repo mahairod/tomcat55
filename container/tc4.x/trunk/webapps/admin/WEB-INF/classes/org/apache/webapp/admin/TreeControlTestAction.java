@@ -67,6 +67,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.net.URLDecoder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -112,24 +113,47 @@ public class TreeControlTestAction extends Action {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws IOException, ServletException {
+            
 
+	getServlet().log("Entered TreeControlTestAction:perform()");
         String name = null;
+	String encodedName = null;
         HttpSession session = request.getSession();
         TreeControl control =
             (TreeControl) session.getAttribute("treeControlTest");
 
         // Handle a tree expand/contract event
-        name = request.getParameter("tree");
-        if (name != null) {
+        encodedName = request.getParameter("tree");
+
+        if (encodedName != null) {
+
+        // HACK to take into account special characters like = and &
+        // in the node name, could remove this code if encode URL
+        // and request.getParameter() could deal with = and &
+        // character in parameter values. 
+            name = URLDecoder.decode(encodedName);
+
+
             getServlet().log("Tree expand/contract on " + name);
             TreeControlNode node = control.findNode(name);
-            if (node != null)
+            if (node != null){
+		getServlet().log("Found Node: " + name);
                 node.setExpanded(!node.isExpanded());
-        }
+	    }
+        }else{
+            getServlet().log("tree param is null");
+	}
 
         // Handle a select item event
-        name = request.getParameter("select");
-        if (name != null) {
+        encodedName = request.getParameter("select");
+        if (encodedName != null) {
+
+           // HACK to take into account special characters like = and &
+           // in the node name, could remove this code if encode URL
+           // and request.getParameter() could deal with = and &
+           // character in parameter values. 
+            name = URLDecoder.decode(encodedName);
+
             getServlet().log("Select event on " + name);
             control.selectNode(name);
         }

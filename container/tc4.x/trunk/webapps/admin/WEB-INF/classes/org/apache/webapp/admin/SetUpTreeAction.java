@@ -126,7 +126,7 @@ public class SetUpTreeAction extends Action {
         TreeControl control = new TreeControl(root);
         ApplicationServlet servlet = (ApplicationServlet)getServlet();
 
-        // Wait for web.xml code to be hooked up
+        // Getting init parms from web.xml
 
         String treeBuildersStr  =
             (String)servlet.getServletConfig().getInitParameter(TREEBUILDER_KEY);
