@@ -183,11 +183,7 @@ public class JspServlet extends HttpServlet {
             } catch (FileNotFoundException ex) {
 		try {
 		    response.sendError(HttpServletResponse.SC_NOT_FOUND, 
-				       Constants.getString
-				       ("jsp.error.file.not.found", 
-					new Object[] {
-					    ex.getMessage()
-					}));
+				       ex.getMessage());
 		} catch (IllegalStateException ise) {
 		    Constants.jasperLog.log(Constants.getString
 					    ("jsp.error.file.not.found",
