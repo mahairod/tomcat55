@@ -611,12 +611,7 @@ public class ManagerServlet
         String displayPath = path;
         if( path.equals("/") )
             path = "";
-        String basename = null;
-        if (path.equals("")) {
-            basename = "_";
-        } else {
-            basename = path.substring(1).replace('/', '_');
-        }
+        String basename = getConfigFile(path);
 
         // Check if app already exists, or undeploy it if updating
         Context context =  deployer.findDeployedApp(path);
@@ -724,12 +719,7 @@ public class ManagerServlet
         String displayPath = path;
         if( path.equals("/") )
             path = "";
-        String basename = null;
-        if (path.equals("")) {
-            basename = "_";
-        } else {
-            basename = path.substring(1).replace('/', '_');
-        }
+        String basename = getConfigFile(path);
 
         // Calculate the base path
         File deployedPath = versioned;
@@ -902,7 +892,7 @@ public class ManagerServlet
                     writer.println(sm.getString("managerServlet.invalidWar", war));
                     return;
                 }
-                path = "/" + war.substring(beg,end);
+                path = "/" + war.substring(beg, end);
                 if (path.equals("/ROOT")) {
                     path = "/";
                 }
@@ -1485,6 +1475,20 @@ public class ManagerServlet
 
 
     // -------------------------------------------------------- Support Methods
+
+
+    /**
+     * Given a context path, get the config file name.
+     */
+    protected String getConfigFile(String path) {
+        String basename = null;
+        if (path.equals("")) {
+            basename = "ROOT";
+        } else {
+            basename = path.substring(1).replace('/', '_');
+        }
+        return (basename);
+    }
 
 
     /**
