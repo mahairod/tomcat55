@@ -102,10 +102,12 @@ Bugzilla Bugs Resolved:
 ----------------------
 
 3770  HttpSessionListener.sessionCreated() called twice for each session
+4295  Cookies not following RFC2109
 4518  Jsp-file and load-on-startup and init-param does not work
 5422  HTTP Headers not being cleared after form authentication
 5647  AJP13 connector will not pass authentication requests
 6090  Listener not instantiated in tld file
+6201  ISO-8859-8-i  problem. (hebrew)
 6374  Class not found for: org/w3c/dom/range/Range
 6396  LoggerBase class is package not public
 6406  All classes in $CATALINA_HOME/classes become invisible 
@@ -118,6 +120,10 @@ Bugzilla Bugs Resolved:
 6550  Old WebappClassLoaders can't be GC'd
 6558  NPE in RequestDumperValve.toString if debug in catalina/XmlMapper
 6569  setLocale() doesn't set the Content-Type charset attribute
+6600  EncodeURL adds 'jsession' when 'isRequestedSessionIdFromURL' 
+      returns false
+6609  SendMailServlet.java is not compiled  even if javamail is installed 
+      correctly
 
 
 ============================
