@@ -617,9 +617,6 @@ public class WebappClassLoader
             // Ignore
         }
 
-        if (!validateJarFile(file))
-            System.out.println("Didn't validate:" + file);
-
         // If the JAR currently contains invalid classes, don't actually use it
         // for classloading
         if (!validateJarFile(file))
