@@ -118,13 +118,7 @@ public final class Bootstrap {
         StringTokenizer tokenizer = new StringTokenizer(value, ",");
         while (tokenizer.hasMoreElements()) {
             String repository = tokenizer.nextToken();
-            // Check for a JAR URL repository
-            try {
-                urlList.add(new URL(repository));
-                continue;
-            } catch (MalformedURLException e) {
-                // Ignore
-            }
+
             // Local repository
             boolean packed = false;
             if (repository.startsWith(CATALINA_HOME_TOKEN)) {
@@ -134,6 +128,15 @@ public final class Bootstrap {
                 repository = getCatalinaBase() 
                     + repository.substring(CATALINA_BASE_TOKEN.length());
             }
+
+            // Check for a JAR URL repository
+            try {
+                urlList.add(new URL(repository));
+                continue;
+            } catch (MalformedURLException e) {
+                // Ignore
+            }
+
             if (repository.endsWith("*.jar")) {
                 packed = true;
                 repository = repository.substring
