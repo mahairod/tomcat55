@@ -36,8 +36,9 @@
       <depend property="jmx.jar" project="jmx" reference="jarpath" id="jmxri"/>
       <depend property="jta.jar" project="jta"/>
       <depend property="ldap.jar" project="ldap"/>
-      <depend property="servlet-api.jar" project="jakarta-servletapi-5"/>
-      <depend property="jsp-api.jar" project="jakarta-servletapi-5"/>
+      <depend property="servlet-api.jar" 
+              project="jakarta-servletapi-5-servlet"/>
+      <depend property="jsp-api.jar" project="jakarta-servletapi-5-jsp"/>
       <depend property="xerces.jar" project="xml-xerces" id="parser"/>
       <depend property="tomcat-util.jar" project="jakarta-tomcat-util"/>
       <depend property="commons-beanutils.jar" project="commons-beanutils"
