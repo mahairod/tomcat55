@@ -28,6 +28,11 @@
   <property name="jtc.project"           value="jakarta-tomcat-connectors" />
   <property name="jasper.project"        value="jakarta-tomcat-jasper" />
 
+  <!-- Dependent projects -->
+  <property name="commons-el.project"      value="jakarta-commons/el" />
+  <property name="commons-daemon.project"  value="jakarta-commons-sandbox/daemon" />
+  <property name="commons-modeler.project" value="jakarta-commons/modeler" />
+
   <!-- Source dependencies -->
   <property name="api.home"
            value="${basedir}/${api.project}"/>
@@ -62,6 +67,7 @@
 
   <target name="checkout"
           description="Update or checkout required sources from CVS">
+
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${tomcat.project}" 
          dest="${basedir}" compression="true" />
@@ -77,6 +83,20 @@
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${api.project}" 
          dest="${basedir}" compression="true" />
+
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P jakarta-commons/LICENSE" 
+         dest="${basedir}" compression="true" />
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P ${commons-el.project}" 
+         dest="${basedir}" compression="true" />
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P ${commons-daemon.project}" 
+         dest="${basedir}" compression="true" />
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P ${commons-modeler.project}" 
+         dest="${basedir}" compression="true" />
+
   </target>
 
 
