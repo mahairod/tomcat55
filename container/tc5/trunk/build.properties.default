@@ -267,7 +267,8 @@ servlet23api.loc=jakarta-servletapi-4
 
 
 # ----- Watchdog, version 20020801 or later -----
-watchdog.home=${base.path}/watchdog-4.0
+watchdog.home=${base.path}/jakarta-watchdog-4.0
 watchdog.webapps=${watchdog.home}/dist/webapps
 watchdog.war=${watchdog.webapps}/servlet-tests.war
 watchdog.loc=jakarta-watchdog-4.0
+watchdog.target=all

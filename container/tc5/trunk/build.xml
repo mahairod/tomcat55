@@ -44,7 +44,8 @@
   <property name="jasper.build"     value="${jasper.home}/build"/>
   <property name="javaservice.home" value="../javaservice"/>
   <property name="nsis.home"        value="c:\program files\nsis"/>
-  <property name="servlet.home"     value="../jakarta-servletapi-4/dist"/>
+  <property name="servlet.home"     value="../jakarta-servletapi-5/jsr154/dist"/>
+  <property name="jsp.home"         value="../jakarta-servletapi-5/jsr152/dist"/>
   <property name="tomcat.build"     value="${basedir}/build"/>
   <property name="tomcat.dist"      value="${basedir}/dist"/>
   <property name="tomcat.release"   value="${basedir}/release"/>
@@ -453,66 +454,120 @@
   </target>
 
   <!-- ======================= WATCHDOG: Run Watchdog Tests================ -->
-  <target name="watchdog"
-   description="Watchdog Servlet Container Tests">
-    <property name="catalina.base" location="${tomcat.build}/tmp/tomcat"/>
-    <delete dir="${catalina.base}"/>
-    <mkdir dir="${catalina.base}"/>
-    <copy todir="${catalina.base}/conf">
-      <fileset dir="${tomcat.build}/conf"/>
-    </copy>
-    <copy todir="${catalina.base}/webapps">
-      <fileset dir="${tomcat.build}/webapps"/> 
-    </copy>
-    <copy todir="${catalina.base}/work">
-      <fileset dir="${tomcat.build}/work"/> 
-    </copy>
-    <copy todir="${catalina.base}/logs">
-      <fileset dir="${tomcat.build}/logs"/> 
-    </copy>
-    <copy todir="${catalina.base}/server/webapps">
-      <fileset dir="${tomcat.build}/server/webapps"/> 
-    </copy>
-    <copy todir="${catalina.base}/temp">
-      <fileset dir="${tomcat.build}/temp"/> 
-    </copy>
-    <copy todir="${catalina.base}/webapps">
+  
+   <target name="dist-watchdog"  depends="proxyflags"
+    description="Download Watchdog binary">
+
+   <cvs cvsRoot="${cvsroot}"
+      package="${watchdog.loc}"
+      dest="${base.path}"
+    />
+    
+    <mkdir dir="${watchdog.home}/tmp"/>
+
+    <unjar dest="${watchdog.home}/tmp" src="${servlet.home}/lib/servlet-api.jar"/>
+    <unjar dest="${watchdog.home}/tmp" src="${jsp.home}/lib/jsp-api.jar"/>
+
+    <jar destfile="${watchdog.home}/servlet.jar"
+         basedir="${watchdog.home}/tmp"
+    />      
+
+    <replace file="${watchdog.home}/build.xml" 
+        token="$${servlet23api.home}/lib/servlet.jar" 
+        value="${watchdog.home}/servlet.jar"/>  
+
+    <replace file="${watchdog.home}/build.xml" 
+        token="$${servlet22api.home}/lib/servlet.jar" 
+        value="${watchdog.home}/servlet.jar"/>  
+
+    <ant dir="${watchdog.home}" target="dist" inheritAll="false"/>
+  </target>
+  
+  <target name="prepare-watchdog">
+    <copy todir="${catalina.build}/webapps">
       <fileset dir="${watchdog.home}/dist/webapps"/>
     </copy>
+  </target>
+  
+  <target name="run-watchdog"
+   description="Watchdog Servlet Container Tests" depends="dist-watchdog,
+                                                           prepare-watchdog">
+    <parallel>
+        <java classname="LauncherBootstrap" fork="yes">
+            <arg value="-launchfile"/>
+            <arg value="catalina.xml"/>
+            <arg value="-verbose"/>
+            <arg value="catalina"/>
+            <arg value="start"/>
+            <classpath>
+                <pathelement path="${java.class.path}"/>
+                <pathelement path="${catalina.build}/bin"/>
+            </classpath>
+        </java>
 
-    <java classname="LauncherBootstrap" fork="yes">
-      <arg value="-launchfile"/>
-      <arg value="catalina.xml"/>
-      <arg value="-verbose"/>
-      <arg value="catalina"/>
-      <arg value="-Dcatalina.base=${catalina.base}"/>
-      <arg value="start"/>
-      <classpath>
-        <pathelement path="${java.class.path}"/>
-        <pathelement path="${tomcat.build}/bin"/>
-      </classpath>
-    </java>
+        <sequential>
+            <!-- Let tomcat starts before starting Watchdog -->
+            <sleep seconds="60"/>
 
-    <sleep seconds="60"/>
+            <ant dir="${watchdog.home}/dist" target="${watchdog.target}"/>
 
-    <ant dir="${watchdog.home}/dist" target="all"/>
-   
-    <java classname="LauncherBootstrap" fork="yes">
-      <arg value="-launchfile"/>
-      <arg value="catalina.xml"/>
-      <arg value="-verbose"/>
-      <arg value="catalina"/>
-      <arg value="-Dcatalina.base=${catalina.base}"/>
-      <arg value="stop"/>
-      <classpath>
-        <pathelement path="${java.class.path}"/>
-        <pathelement path="${tomcat.build}/bin"/>
-      </classpath>
-    </java>
+            <java classname="LauncherBootstrap" fork="yes">
+                <arg value="-launchfile"/>
+                <arg value="catalina.xml"/>
+                <arg value="-verbose"/>
+                <arg value="catalina"/>
+                <arg value="stop"/>
+                <classpath>
+                    <pathelement path="${java.class.path}"/>
+                    <pathelement path="${catalina.build}/bin"/>
+                </classpath>
+            </java>
+        </sequential>
+    </parallel>  
     
   </target>
 
+  <target name="run-watchdog-security"
+   description="Watchdog Servlet Container Tests" depends="dist-watchdog,
+                                                           prepare-watchdog" >
+ 
+    <parallel>
+        <java classname="LauncherBootstrap" fork="yes">
+            <arg value="-launchfile"/>
+            <arg value="catalina.xml"/>
+            <arg value="-verbose"/>
+            <arg value="catalina"/>
+            <arg value="-Dcatalina.base=${catalina.base}"/>
+            <arg value="start"/>
+            <arg value="-security "/>
+            <classpath>
+                <pathelement path="${java.class.path}"/>
+                <pathelement path="${tomcat.build}/bin"/>
+            </classpath>
+        </java>
 
+        <sequential>
+            <!-- Let tomcat starts before starting Watchdog -->
+            <sleep seconds="60"/>
+
+            <ant dir="${watchdog.home}/dist" target="all"/>
+
+            <java classname="LauncherBootstrap" fork="yes">
+                <arg value="-launchfile"/>
+                <arg value="catalina.xml"/>
+                <arg value="-verbose"/>
+                <arg value="catalina"/>
+                <arg value="-Dcatalina.base=${catalina.base}"/>
+                <arg value="stop"/>
+                <classpath>
+                    <pathelement path="${java.class.path}"/>
+                    <pathelement path="${tomcat.build}/bin"/>
+                </classpath>
+            </java>
+        </sequential>
+    </parallel>  
+    
+  </target>
   <!-- ====================== DIST: Create Directories ==================== -->
   <target name="dist-prepare">
     <mkdir dir="${tomcat.dist}"/>
@@ -969,23 +1024,6 @@
       <param name="sourcefile" value="${tyrex.loc}"/>
       <param name="destfile" value="${tyrex.jar}"/>
       <param name="destdir" value="${tyrex.home}"/>
-    </antcall>
-
-  </target>
-
-  <target name="download.watchdog"  depends="proxyflags"
-    description="Download Watchdog binary">
-
-    <antcall target="cvsbuild">
-      <param name="location" value="${servlet23api.loc}"/>
-      <param name="subdir" value="${servlet23api.home}"/>
-      <param name="destfile" value="${servlet23api.jar}"/>
-    </antcall>
-    <antcall target="cvsbuild">
-      <param name="servlet22api.home" value="${servlet23api.home}"/>
-      <param name="location" value="${watchdog.loc}"/>
-      <param name="subdir" value="${watchdog.home}"/>
-      <param name="destfile" value="${watchdog.war}"/>
     </antcall>
 
   </target>
