@@ -492,6 +492,16 @@
     </antcall>
     -->
 
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${log4j.loc}"/>
+      <param name="destfile" value="${log4j.jar}"/>
+    </antcall>
+
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${logkit.loc}"/>
+      <param name="destfile" value="${logkit.jar}"/>
+    </antcall>
+
     <antcall target="cvsbuild">
       <param name="location" value="${commons-logging.loc}"/>
       <param name="subdir" value="${commons-logging.home}"/>

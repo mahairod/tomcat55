@@ -122,8 +122,17 @@ activation.lib=${activation.home}
 activation.jar=${activation.lib}/activation.jar
 
 # ----- Log4j -----
-log4j.home=${base.path}/log4j
-log4j.jar=${log4j.home}/log4j.jar
+log4j.home=${base.path}/jakarta-log4j-1.2.6
+log4j.lib=${log4j.home}
+log4j.jar=${log4j.lib}/dist/lib/log4j-1.2.6.jar
+log4j.loc=http://jakarta.apache.org/log4j/jakarta-log4j-1.2.6.tar.gz
+
+# ----- LogKit -----
+logkit.home=${base.path}/LogKit-1.0.1
+logkit.lib=${logkit.home}
+logkit.jar=${logkit.lib}/logkit-1.0.1.jar
+logkit.loc=http://jakarta.apache.org/builds/jakarta-avalon/release/logkit/latest/LogKit-1.0.1-bin.tar.gz
+
 
 # ----- Jaxen ( required by taglibs/standard required by jasper ) -----
 jaxen.home=${base.path}/jaxen-1.0-FCS
