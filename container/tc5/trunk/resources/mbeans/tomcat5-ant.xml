@@ -139,7 +139,7 @@
   <!-- ======================= Server.xml based - backward compat ================ -->
 
   <property name="domain" value="Catalina" />
-  <property name="jsr77Domain" value="JSR77" />
+  <property name="jsr77Domain" value="Catalina" />
 
   <!-- ======================= JMX only  ================ -->
 
