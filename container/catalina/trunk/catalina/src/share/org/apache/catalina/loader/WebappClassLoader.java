@@ -901,9 +901,9 @@ public class WebappClassLoader
             sb.append(required.next().toString());
             sb.append("\r\n");
         }
-        if (getParent() != null) {
+        if (this.parent != null) {
             sb.append("----------> Parent Classloader:\r\n");
-            sb.append(getParent().toString());
+            sb.append(this.parent.toString());
             sb.append("\r\n");
         }
         return (sb.toString());
