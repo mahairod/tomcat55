@@ -239,7 +239,7 @@ mysql>
   application to generate digests and print them to stdout.  Usage
   is:<br>
 
-  <code>java org.apache.tomcat.modules.aaa.JDBCRealm -a
+  <code>java org.apache.tomcat.modules.aaa.RealmBase -a
   &lt;<i>algorithm</i>&gt; &lt;<i>password</i>&gt;
   [&lt;<i>password</i>&gt; ...]</code><br>
 
@@ -247,7 +247,9 @@ mysql>
   algorithm, e.g. MD5, and &lt;<i>password</i>&gt; is a plaintext
   password to be digested.
 </p>
-
+<p>
+    Note: the jar where RealmBase class can be found is %TOMCAT_HOME%/lib/container/tomcat_modules.jar
+</p>
 <h2>Hints</h2>
 <p>
    
