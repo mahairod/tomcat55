@@ -883,7 +883,6 @@ public abstract class PersistentManagerBase
                     session.expire();
                 } catch (Throwable t) {
                     log(sm.getString("standardManager.expireException"), t);
-                    ;
                 }
             }
         }
@@ -966,7 +965,11 @@ public abstract class PersistentManagerBase
             if (!session.isValid())
                 continue;
             if (isSessionStale(session, timeNow))
+            try {
                 session.expire();
+            } catch (Throwable t) {
+                log(sm.getString("standardManager.expireException"), t);
+            }
         }
 
     }
