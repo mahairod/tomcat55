@@ -166,6 +166,13 @@ struct jk_ws_service {
     char     *ssl_session;
 
     /*
+     * SSL extra information for Servlet 2.3 API
+     *
+     * ssl_key_size - ssl key size in use
+     */
+    int     ssl_key_size;
+
+    /*
      * Headers, names and values.
      */
     char    **headers_names;    /* Names of the request headers  */
