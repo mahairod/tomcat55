@@ -548,6 +548,11 @@ public class HttpResponseBase
 	if (isCommitted())
 	    return;
 
+        if ("HTTP/0.9".equals(request.getRequest().getProtocol())) {
+            committed = true;
+            return;
+        }
+
 	// Prepare a suitable output writer
 	OutputStreamWriter osr =
 	    new OutputStreamWriter(getStream(), getCharacterEncoding());
