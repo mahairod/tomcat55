@@ -301,6 +301,12 @@ public class CoyoteConnector
 
 
     /**
+     * Maximum size of a HTTP header. 4KB is the default.
+     */
+    private int maxHttpHeaderSize = 4 * 1024;
+
+
+    /**
      * Maximum number of Keep-Alive requests to honor per connection.
      */
     private int maxKeepAliveRequests = 100;
@@ -1041,6 +1047,21 @@ public class CoyoteConnector
     }
 
     /**
+     * Return the maximum HTTP header size.
+     */
+    public int getMaxHttpHeaderSize() {
+        return maxHttpHeaderSize;
+    }
+
+    /**
+     * Set the maximum HTTP header size.
+     */
+    public void setMaxHttpHeaderSize(int size) {
+        maxHttpHeaderSize = size;
+        setProperty("maxHttpHeaderSize", String.valueOf(size));
+    }
+
+    /**
      * Return the maximum number of Keep-Alive requests to honor 
      * per connection.
      */
@@ -1055,6 +1076,7 @@ public class CoyoteConnector
         maxKeepAliveRequests = mkar;
         setProperty("maxKeepAliveRequests", String.valueOf(mkar));
     }
+
 
     /**
      * Return the scheme that will be assigned to requests received

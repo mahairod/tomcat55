@@ -85,6 +85,10 @@
           description="Alias name of this connector's keypair and supporting certificate chain"
                  type="java.lang.String"/>
 
+    <attribute   name="maxHttpHeaderSize"
+          description="Maximum size in bytes of the HTTP header"
+                 type="int"/>
+
     <attribute   name="maxKeepAliveRequests"
           description="Maximum number of Keep-Alive requests to honor per connection"
                  type="int"/>
