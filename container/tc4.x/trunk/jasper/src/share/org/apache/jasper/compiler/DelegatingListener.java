@@ -227,13 +227,17 @@ final class DelegatingListener implements ParseEventListener {
         return delegate.getTagLibraries();
     }
 
-    public void handleRootBegin(Attributes attrs) {}
+    public void handleRootBegin(Attributes attrs) throws JasperException {}
     public void handleRootEnd() {}
 
-    public void handleUninterpretedTagBegin(Mark start,Mark stop,String rawName,Attributes attrs) throws JasperException {}
-
+    public void handleUninterpretedTagBegin(Mark start, Mark stop,
+                                            String rawName,Attributes attrs) 
+        throws JasperException {}
     public void handleUninterpretedTagEnd(Mark start, Mark stop,
-					  String rawName)
-	throws JasperException {}
+                                          String rawName, char[] data)
+        throws JasperException {}
+
+    public void handleJspCdata(Mark start, Mark stop, char[] data)
+        throws JasperException {}
 }
 

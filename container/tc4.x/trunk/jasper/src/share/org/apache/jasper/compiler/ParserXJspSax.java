@@ -140,6 +140,7 @@ public class ParserXJspSax {
     // Parse
     
     public void parse() throws JasperException {
+	//System.out.println("in ParserXJspSax");
         try {
 	    SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
 	    SAXParser saxParser = saxParserFactory.newSAXParser();
@@ -195,9 +196,6 @@ public class ParserXJspSax {
         } catch (SAXException ex) {
 	    Exception ex2 = ex;
 	    if (ex.getException() != null) ex2 = ex.getException();
-	    System.out.println("**** ICI ***");
-	    System.out.println(ex2.getMessage());
-	    System.out.println(ex2.getClass().getName());
 	    throw new JasperException(ex2);
         }
     }

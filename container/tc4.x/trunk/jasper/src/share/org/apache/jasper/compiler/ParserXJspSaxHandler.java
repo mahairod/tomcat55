@@ -77,7 +77,6 @@ import org.apache.jasper.*;
  *
  * @@@ TODO
  * - make sure validation is in sync with Parser (jsp syntax)
- * - fix the node.validate()
  */
 class ParserXJspSaxHandler 
     extends DefaultHandler implements LexicalHandler 
@@ -169,30 +168,16 @@ class ParserXJspSaxHandler
     public void characters(char[] ch, int start, int length)
         throws SAXException
     {
-	// @@@ have startMark computed from stopMark
-	Mark stopMark = new Mark(filePath, locator.getLineNumber(),
-				 locator.getColumnNumber());
-
 	//p("\n*** characters");
 	//printLocation();
 	//p("|" + String.valueOf(ch, start, length) + "|");
 
 	Node node = (Node)stack.peek();
-	if (node.isRoot() || node.isUninterpretedTag()) {
-	    // template data in <jsp:root>.
-	    //p("these chars are added directly in jsp:root");
-	    try {
-		jspHandler.handleCharData(stopMark, stopMark,
-					  makeCharArray(ch, start, length)); 
-	    } catch (Exception ex) {
-		throw new SAXException(ex);
-	    }
-	} else {
-	    // characters added to the body content of the element
-	    // at the top of the stack
-	    //p("these chars are added to node " + node.rawName + " in stack");
-	    node.addText(ch, start, length);
-	}
+
+	// characters added to the body content of the element
+	// at the top of the stack
+	//p("these chars are added to node " + node.rawName + " in stack");
+	node.addText(ch, start, length);
     }
 
     public void ignorableWhitespace(char[] ch,
@@ -294,7 +279,6 @@ class ParserXJspSaxHandler
 	//p("namespaceURI: " + namespaceURI);
 	//p("localName: " + localName);
 	//p("rawName: " + rawName);
-	//p("attrs: " + attrs.toString());
 
 	Mark stop = new Mark(filePath, locator.getLineNumber(),
 			     locator.getColumnNumber());
@@ -305,19 +289,19 @@ class ParserXJspSaxHandler
 
 	try {
 	    if (name.equals("jsp:root")) {
+		node.validate(true, false);
 		jspHandler.handleRootEnd();
+	    } else if (name.equals("jsp:cdata")) {
+		node.validate(false, true);
+		jspHandler.handleJspCdata(node.start, stop, node.getText());
 	    } else if (name.equals("jsp:directive.include")) {
 		node.validate(true, false);
 		jspHandler.handleDirective("include", node.start, stop, 
-                        node.attrs);
+					   node.attrs);
 	    } else if (name.equals("jsp:directive.page")) {
 		node.validate(true, false);
 		jspHandler.handleDirective("page", node.start, stop, 
-                        node.attrs);
-	    } else if (name.equals("jsp:directive.taglib")) {
-		node.validate(true, false);
-		jspHandler.handleDirective("taglib", node.start, stop,
-                        node.attrs);
+					   node.attrs);
 	    } else if (name.equals("jsp:declaration")) {
 		node.validate(false, true);
 		jspHandler.handleDeclaration(
@@ -346,7 +330,7 @@ class ParserXJspSaxHandler
 		    params = popParams();
 		    node = (Node)stack.pop();
 		}
-		node.validate(true, true); //@@@
+		node.validate(true, false);
 		jspHandler.handleInclude(node.start, stop, node.attrs, params, true);
 	    } else if (name.equals("jsp:forward")) {
 		Hashtable params = null;
@@ -356,16 +340,16 @@ class ParserXJspSaxHandler
 		    params = popParams();
 		    node = (Node)stack.pop();
 		}
-		node.validate(true, true);
+		node.validate(true, false);
 		jspHandler.handleForward(node.start, stop, node.attrs, params, true);
 	    } else if (name.equals("jsp:useBean")) {
-		node.validate(true, true); // @@@
+		node.validate(true, false);
 		jspHandler.handleBeanEnd(node.start, stop, node.attrs);
 	    } else if (name.equals("jsp:getProperty")) {
-		node.validate(true, true); // @@@
+		node.validate(true, false);
 		jspHandler.handleGetProperty(node.start, stop, node.attrs);
 	    } else if (name.equals("jsp:setProperty")) {
-		node.validate(true, true); // @@@
+		node.validate(true, false);
 		jspHandler.handleSetProperty(node.start, stop, node.attrs, true);
 	    } else if (name.equals("jsp:plugin")) {
 		//@@@ test jsp parser to see if fallback can come first?
@@ -382,22 +366,27 @@ class ParserXJspSaxHandler
 		    params = popParams();
 		    node = (Node)stack.pop();
 		}
-		node.validate(true, true);
+		node.validate(true, false);
 		//p(node);
 		jspHandler.handlePlugin(node.start, stop, node.attrs, params, 
                         fallback, true);
 	    } else {
 		if (node.isUninterpretedTag()) {
 		    // this is an 'uninterpreted' tag
-		    jspHandler.handleUninterpretedTagEnd(stop, stop, rawName);
+		    jspHandler.handleUninterpretedTagEnd(stop, stop, rawName,
+							 node.getText());
 		} else {
 		    // this is a custom tag
+		    node.validate(true, false);
 		    processCustomTagEnd((NodeTag)node, stop);
 		}
 	    }
 	} catch (Exception ex) {
-	    ex.printStackTrace();
-	    throw new SAXException(ex);
+	    if (ex instanceof SAXException) {
+		throw (SAXException)ex;
+	    } else {
+		throw new SAXException(ex);
+	    }
 	}
     }
 
@@ -639,10 +628,16 @@ class ParserXJspSaxHandler
 				       rawName + " cannot have attributes.");
 	    }
 	    if (!canHaveText && text != null) {
-		throw new SAXException("VALIDATE ERROR: " +
-				       rawName + " cannot have text.");
+		String data = text.toString().trim();
+		if (data.length() > 0) {
+		throw new SAXException(
+		    Constants.getString(
+			"jspx.error.templateDataNotInJspCdata",
+			new Object[]{rawName, JspUtil.escapeXml(data)}));
+		}
 	    }
 	}
+
 	public void display() {
 	    p("NODE: " + rawName);
 	    for (int i=0; i<attrs.getLength(); i++) {

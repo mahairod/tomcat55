@@ -92,25 +92,36 @@ public interface ParseEventListener {
 
     void handleComment(Mark start, Mark stop, char[] text) throws JasperException;
     void handleDirective(String directive, 
-			 Mark start, Mark stop, 
-			 Attributes attrs) throws JasperException;
-    void handleDeclaration(Mark start, Mark stop, Attributes attrs, char[] text) throws JasperException;
-    void handleScriptlet(Mark start, Mark stop, Attributes attrs, char[] text) throws JasperException;
-    void handleExpression(Mark start, Mark stop, Attributes attrs, char[] text) throws JasperException;
+                         Mark start, Mark stop, 
+                         Attributes attrs) 
+        throws JasperException;
+    void handleDeclaration(Mark start, Mark stop, Attributes attrs, char[] text) 
+        throws JasperException;
+    void handleScriptlet(Mark start, Mark stop, Attributes attrs, char[] text) 
+        throws JasperException;
+    void handleExpression(Mark start, Mark stop, Attributes attrs, char[] text)
+        throws JasperException;
     void handleBean(Mark start, Mark stop, Attributes attrs) 
-	throws JasperException;
+        throws JasperException;
     void handleBean(Mark start, Mark stop, Attributes attrs, boolean isXml) 
-	throws JasperException;
+        throws JasperException;
     void handleBeanEnd (Mark start, Mark stop, Attributes attrs)
-	throws JasperException;
-    void handleGetProperty(Mark start, Mark stop, Attributes attrs) throws JasperException;
-    void handleSetProperty(Mark start, Mark stop, Attributes attrs) throws JasperException;
-    void handleSetProperty(Mark start, Mark stop, Attributes attrs, boolean isXml) throws JasperException;
+        throws JasperException;
+    void handleGetProperty(Mark start, Mark stop, Attributes attrs) 
+        throws JasperException;
+    void handleSetProperty(Mark start, Mark stop, Attributes attrs) 
+        throws JasperException;
+    void handleSetProperty(Mark start, Mark stop, Attributes attrs, 
+                           boolean isXml) 
+        throws JasperException;
     void handlePlugin(Mark start, Mark stop, Attributes attrs, Hashtable param, 
-    			String fallback) throws JasperException;
+                      String fallback) 
+        throws JasperException;
     void handlePlugin(Mark start, Mark stop, Attributes attrs, Hashtable param, 
-    			String fallback, boolean isXml) throws JasperException;
-    void handleCharData(Mark start, Mark stop, char[] chars) throws JasperException;
+                      String fallback, boolean isXml) 
+        throws JasperException;
+    void handleCharData(Mark start, Mark stop, char[] chars) 
+        throws JasperException;
 
 
     /*
@@ -124,35 +135,38 @@ public interface ParseEventListener {
      * stop: can be null if the body contained JSP tags... 
      */
     void handleTagBegin(Mark start, Mark stop, Attributes attrs, String prefix, String shortTagName,
-			TagLibraryInfo tli, TagInfo ti) 
-	throws JasperException;
+                        TagLibraryInfo tli, TagInfo ti) 
+        throws JasperException;
     void handleTagBegin(Mark start, Mark stop, Attributes attrs, String prefix, String shortTagName,
-			TagLibraryInfo tli, TagInfo ti, boolean isXml) 
-	throws JasperException;
+                        TagLibraryInfo tli, TagInfo ti, boolean isXml) 
+        throws JasperException;
 
     void handleTagEnd(Mark start, Mark stop, String prefix, String shortTagName,
-		      Attributes attrs, TagLibraryInfo tli, TagInfo ti)
-	throws JasperException;
+                      Attributes attrs, TagLibraryInfo tli, TagInfo ti)
+        throws JasperException;
 
     void handleForward(Mark start, Mark stop, Attributes attrs, Hashtable param)
-	throws JasperException;
+        throws JasperException;
     void handleForward(Mark start, Mark stop, Attributes attrs, Hashtable param, boolean isXml)
-	throws JasperException;
+        throws JasperException;
     void handleInclude(Mark start, Mark stop, Attributes attrs, Hashtable param)
-	throws JasperException;
+        throws JasperException;
     void handleInclude(Mark start, Mark stop, Attributes attrs, Hashtable param, boolean isXml)
-	throws JasperException;
+        throws JasperException;
 
     void endPageProcessing() throws JasperException;
 
-    public void handleRootBegin(Attributes attrs);
+    public void handleRootBegin(Attributes attrs) throws JasperException;
     public void handleRootEnd();
 
     public void handleUninterpretedTagBegin(Mark start, Mark stop,
-					    String rawName, Attributes attrs)
-	throws JasperException;
+                                            String rawName, Attributes attrs)
+        throws JasperException;
     public void handleUninterpretedTagEnd(Mark start, Mark stop,
-					  String rawName)
-	throws JasperException;
+                                          String rawName, char[] data)
+        throws JasperException;
+
+    public void handleJspCdata(Mark start, Mark stop, char[] data)
+        throws JasperException;
 }
 

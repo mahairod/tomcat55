@@ -742,21 +742,6 @@ public class JspParseEventListener implements ParseEventListener {
             throw new CompileException(start, Constants.getString(
 	    				"jsp.error.page.bad_b_and_a_combo"));
 
-	if (directive.equals("taglib")) {
-            String uri = attrs.getValue("uri");
-            String prefix = attrs.getValue("prefix");
-	    TagLibraryInfo tl = null;
-
-	    String[] location = 
-		ctxt.getTldLocation(uri);
-	    if (location == null) {
-		tl = new TagLibraryInfoImpl(ctxt, prefix, uri);
-	    } else {
-		tl = new TagLibraryInfoImpl(ctxt, prefix, uri, location);
-	    }
-	    libraries.addTagLibrary(prefix, tl);
-	}
-
 	if (directive.equals("include")) {
 	    String file = attrs.getValue("file");
 	    String encoding = attrs.getValue("encoding");
@@ -1046,7 +1031,33 @@ public class JspParseEventListener implements ParseEventListener {
 	xo.append("jsp:root");
     }
     
-    public void handleRootBegin(Attributes attrs) {
+    public void handleRootBegin(Attributes attrs) 
+	throws JasperException 
+    {
+        int attrsLength = attrs.getLength();
+        for (int i = 0; i < attrsLength; i++) {
+	    String qName = attrs.getQName(i);
+	    if (qName.startsWith("xmlns:")) {
+		String prefix = qName.substring(6);
+		if (!prefix.equals("jsp")) {
+		    String uri = attrs.getValue(i);
+		    System.out.println("prefix: " + prefix);
+		    System.out.println("uri: " + uri);
+		    if (uri.startsWith("urn:jsptld:")) {
+			uri = uri.substring(11);
+		    }
+		    TagLibraryInfo tl = null;
+		    String[] location = 
+			ctxt.getTldLocation(uri);
+		    if (location == null) {
+			tl = new TagLibraryInfoImpl(ctxt, prefix, uri);
+		    } else {
+			tl = new TagLibraryInfoImpl(ctxt, prefix, uri, location);
+		    }
+		    libraries.addTagLibrary(prefix, tl);
+		}
+	    }
+        }
         xo.addRootAttrs(attrs);
     }
     
@@ -1062,14 +1073,23 @@ public class JspParseEventListener implements ParseEventListener {
     }
 
     public void handleUninterpretedTagEnd(Mark start, Mark stop,
-					  String rawName)
+					  String rawName, char[] data)
 	throws JasperException
     {
+	if (data != null) {
+	    handleCharData(start, stop, data);
+	}
         UninterpretedTagEndGenerator gen = 
 	    new UninterpretedTagEndGenerator(rawName);
         Generator genWrapper = new GeneratorWrapper(gen, start, stop);
 	addGenerator(genWrapper);
         xo.append(rawName);
+    }
+
+    public void handleJspCdata(Mark start, Mark stop, char[] data)
+	throws JasperException
+    {
+	handleCharData(start, stop, data);
     }
 
     /**
