@@ -104,6 +104,7 @@ import org.apache.tomcat.core.*;
  *
  * @author Craig R. McClanahan
  * @author costin@eng.sun.com
+ * @author <a href="mailto:jon@latchkey.com">Jon S. Stevens</a>
  * @version $Revision$ $Date$
  */
 public final class StandardManager implements Runnable, SessionManager {
@@ -314,6 +315,14 @@ public final class StandardManager implements Runnable, SessionManager {
 	}
     }
 
+	/**
+		This method will return a Hashtable of HttpSession
+		objects.
+	*/
+	public Hashtable getSessions() {
+		return this.sessions;
+	}
+	
     /**
      * Construct and return a new session object, based on the default
      * settings specified by this Manager's properties.  The session
