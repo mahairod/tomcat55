@@ -57,17 +57,6 @@
         deployment descriptor (<code>/WEB-INF/web.xml</code>).</p>
       </attribute>
 
-      <attribute name="maxInactiveInterval" required="false">
-        <p>The default maximum inactive interval (in minutes) for Sessions
-        created by this Manager.  If not specified, the default value is
-        sixty (60) minutes.</p>
-
-        <p><strong>NOTE</strong> - The value for this property is inherited
-        automatically if you specify a <code>&lt;session-timeout&gt;</code>
-        element in the web application deployment descriptor
-        (<code>/WEB-INF/web.xml</code>).</p>
-      </attribute>
-
     </attributes>
 
   </subsection>
