@@ -13,7 +13,7 @@
   <tlibversion>1.0</tlibversion>
   <jspversion>1.1</jspversion>
   <shortname>simple</shortname>
-  <urn></urn>
+  <uri></uri>
   <info>
 	A simple tab library for the examples
   </info>
