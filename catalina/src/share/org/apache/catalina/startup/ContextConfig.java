@@ -309,14 +309,11 @@ public final class ContextConfig
                 if( url!=null ) {
                     InputSource is = new InputSource(url.toExternalForm());
                     is.setByteStream(stream);
+                    webDigester.clear();
                     webDigester.setDebug(getDebug());
                     if (context instanceof StandardContext) {
                         ((StandardContext) context).setReplaceWelcomeFiles(true);
                     }
-                    webDigester.clear();
-//                    ClassLoader cl=Thread.currentThread().getContextClassLoader();
-//                    if( cl!=null )
-//                        webDigester.setClassLoader(cl);
                     webDigester.setUseContextClassLoader(true);
                     webDigester.push(context);
                     webDigester.parse(is);
@@ -340,6 +337,7 @@ public final class ContextConfig
                 } catch (IOException e) {
                     log.error(sm.getString("contextConfig.applicationClose"), e);
                 }
+                webDigester.push(null);
             }
         }
         webRuleSet.recycle();

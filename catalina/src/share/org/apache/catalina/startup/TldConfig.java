@@ -533,9 +533,13 @@ public final class TldConfig  {
         }
         
         synchronized (tldDigester) {
-            tldDigester.clear();
-            tldDigester.push(this);
-            tldDigester.parse(resourceStream);
+            try {
+                tldDigester.push(this);
+                tldDigester.parse(resourceStream);
+            } finally {
+                tldDigester.push(null);
+                tldDigester.clear();
+            }
         }
 
     }
