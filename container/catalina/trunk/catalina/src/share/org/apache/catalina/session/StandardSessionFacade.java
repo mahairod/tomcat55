@@ -211,10 +211,5 @@ public class StandardSessionFacade
         return session.isNew();
     }
 
-    public void logout(){
-        session.logout();
-    }
-
-
 
 }
