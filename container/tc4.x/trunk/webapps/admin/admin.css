@@ -74,6 +74,7 @@
 
 .button {
   background-color: #CCCCFF;
+  font-family: Verdana, Arial, Helvetica, Sans-Serif;
 }
 
 a.button-link-text:visited, a.button-link-text:link, a.button-link-text:active {
