@@ -112,9 +112,9 @@
       <Host name="localhost" debug="0" appBase="webapps">
 
         <!-- Access log processes all requests for this virtual host -->
-        <!--Valve className="org.apache.catalina.valves.AccessLogValve"
+        <Valve className="org.apache.catalina.valves.AccessLogValve"
                   prefix="localhost_access_log." suffix=".txt"
-                 pattern="common"/-->
+                 pattern="common"/>
 
         <!-- Logger shared by all Contexts related to this virtual host -->
         <Logger className="org.apache.catalina.logger.FileLogger"
