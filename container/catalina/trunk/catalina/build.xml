@@ -523,10 +523,8 @@
     <copy todir="${catalina.build}/server/lib" file="${tomcat-util.jar}"/>
   </target>
   <target name="copy-xerces2.jars">
-<!--
     <copy todir="${catalina.build}/common/endorsed" file="${xercesImpl.jar}"/>
     <copy todir="${catalina.build}/common/endorsed" file="${xmlParserAPIs.jar}"/>
--->
   </target>
 
 
