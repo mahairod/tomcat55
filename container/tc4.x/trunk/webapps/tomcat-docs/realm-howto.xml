@@ -129,7 +129,7 @@ different elements, which has a direct impact on the "scope" of that Realm
 
 <p><strong>JDBCRealm</strong> is an implementation of the Tomcat 4
 <code>Realm</code> interface that looks up users in a relational database
-accessed via a JDBC driver.  There is substantial conviguration flexibility
+accessed via a JDBC driver.  There is substantial configuration flexibility
 that lets you adapt to existing table and column names, as long as your
 database structure conforms to the following requirements:</p>
 <ul>
