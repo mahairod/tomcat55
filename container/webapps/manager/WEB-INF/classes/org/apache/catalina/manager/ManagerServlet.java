@@ -32,7 +32,6 @@ import javax.naming.Binding;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.UnavailableException;
@@ -56,8 +55,6 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.modeler.Registry;
-import org.apache.naming.resources.ProxyDirContext;
-import org.apache.naming.resources.WARDirContext;
 
 
 /**
@@ -355,7 +352,7 @@ public class ManagerServlet
             reload(writer, path);
         } else if (command.equals("/remove")) {
             // Deprecated
-            remove(writer, path);
+            undeploy(writer, path);
         } else if (command.equals("/resources")) {
             resources(writer, type);
         } else if (command.equals("/roles")) {
@@ -893,15 +890,6 @@ public class ManagerServlet
                                ("managerServlet.noContext", displayPath));
                 return;
             }
-            DirContext resources = context.getResources();
-            if (resources instanceof ProxyDirContext) {
-                resources = ((ProxyDirContext) resources).getDirContext();
-            }
-            if (resources instanceof WARDirContext) {
-                writer.println(sm.getString
-                               ("managerServlet.noReload", displayPath));
-                return;
-            }
             // It isn't possible for the manager to reload itself
             if (context.getPath().equals(this.context.getPath())) {
                 writer.println(sm.getString("managerServlet.noSelf"));
@@ -912,48 +900,6 @@ public class ManagerServlet
                 (sm.getString("managerServlet.reloaded", displayPath));
         } catch (Throwable t) {
             log("ManagerServlet.reload[" + displayPath + "]", t);
-            writer.println(sm.getString("managerServlet.exception",
-                                        t.toString()));
-        }
-
-    }
-
-
-    /**
-     * Remove the web application at the specified context path.
-     *
-     * @param writer Writer to render to
-     * @param path Context path of the application to be removed
-     * @deprecated Replaced by undeploy
-     */
-    protected void remove(PrintWriter writer, String path) {
-
-        if (debug >= 1)
-            log("remove: Removing web application at '" + path + "'");
-
-        if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
-            writer.println(sm.getString("managerServlet.invalidPath", path));
-            return;
-        }
-        String displayPath = path;
-        if( path.equals("/") )
-            path = "";
-
-        try {
-            Context context = (Context) host.findChild(path);
-            if (context == null) {
-                writer.println(sm.getString("managerServlet.noContext", displayPath));
-                return;
-            }
-            // It isn't possible for the manager to remove itself
-            if (context.getPath().equals(this.context.getPath())) {
-                writer.println(sm.getString("managerServlet.noSelf"));
-                return;
-            }
-            host.removeChild(context);
-            writer.println(sm.getString("managerServlet.undeployed", displayPath));
-        } catch (Throwable t) {
-            log("ManagerServlet.remove[" + displayPath + "]", t);
             writer.println(sm.getString("managerServlet.exception",
                                         t.toString()));
         }
