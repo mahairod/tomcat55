@@ -20,7 +20,7 @@ $Id$
 
 Tomcat is a servlet container and JavaServer Pages(tm) implementation.  It may
 be used stand alone, or in conjunction with several popular web servers:
-- Apache, version 1.3 or later (FIXME - tested with 2.0alpha?)
+- Apache, version 1.3 or later
 - Microsoft Internet Information Server, version 4.0 or later
 - Microsoft Personal Web Server, version 4.0 or later
 - Netscape Enterprise Server, version 3.0 or later
