@@ -93,6 +93,10 @@ XML parser, as long as it is compatible with the JAXP 1.2 APIs.
 
 Xerces 2.6.2 is included.
 
+On a related note, JDK 1.4 includes Xalan.  If you run into Xalan-related
+problems, try downloading the latest Xalan version (from 
+http://xml.apache.org/xalan-j/index.html) and placing the Xalan jar file
+in the common/endorsed directory.
 
 ---------------------------------------------------------------
 Web application reloading and static fields in shared libraries:
