@@ -94,31 +94,9 @@ public class Compiler {
     // ----------------------------------------------------------------- Static
 
 
-    protected static Project project;
-    protected static Javac javac;
-    protected static Path path;
-    protected static Path srcPath;
-
-    protected static CompilerBuildListener listener;
-
     static {
 
         System.setErr(new SystemLogHandler(System.err));
-
-        // Initializing project
-        project = new Project();
-        project.init();
-
-        // Initializing javac task
-        javac = (Javac) project.createTask("javac");
-
-        // Initializing paths
-        path = new Path(project);
-        srcPath = new Path(project);
-
-        // Initializing listener
-        listener = new CompilerBuildListener();
-        project.addBuildListener(listener);
 
     }
 
@@ -132,6 +110,8 @@ public class Compiler {
     private ErrorDispatcher errDispatcher;
     private PageInfo pageInfo;
 
+    protected Project project;
+
 
     // ------------------------------------------------------------ Constructor
 
@@ -139,6 +119,9 @@ public class Compiler {
     public Compiler(JspCompilationContext ctxt) {
         this.ctxt = ctxt;
 	this.errDispatcher = new ErrorDispatcher();
+        // Initializing project
+        project = new Project();
+        project.init();
     }
 
 
@@ -212,43 +195,43 @@ public class Compiler {
         String errorReport = null;
         boolean success = true;
 
-        // Call the actual Java compiler
-        synchronized (project) {
+        // Initializing javac task
+        Javac javac = (Javac) project.createTask("javac");
 
-            path.setPath(System.getProperty("java.class.path") + sep
-                         + classpath);
-            srcPath.setPath(ctxt.getOutputDir());
+        // Initializing paths
+        Path path = new Path(project);
+        Path srcPath = new Path(project);
 
-            /*
-             * Configure the compiler object
-             */
-            javac.setEncoding(javaEncoding);
-            javac.setClasspath(path);
-            if (ctxt.getJavacOutputDir() != null) {
-                javac.setDestdir(new File(ctxt.getJavacOutputDir()));
-            }
-            javac.setDebug(ctxt.getOptions().getClassDebugInfo());
-            javac.setSrcdir(srcPath);
+        path.setPath(System.getProperty("java.class.path") + sep
+                     + classpath);
+        srcPath.setPath(ctxt.getOutputDir());
 
-            listener.clear();
-
-            SystemLogHandler.setThread();
-
-            try {
-                javac.execute();
-            } catch (BuildException e) {
-                success = false;
-            }
-
-            errorReport = SystemLogHandler.unsetThread();
-
+        /*
+         * Configure the compiler object
+         */
+        javac.setEncoding(javaEncoding);
+        javac.setClasspath(path);
+        if (ctxt.getJavacOutputDir() != null) {
+            javac.setDestdir(new File(ctxt.getJavacOutputDir()));
         }
+        javac.setDebug(ctxt.getOptions().getClassDebugInfo());
+        javac.setSrcdir(srcPath);
+
+        SystemLogHandler.setThread();
+
+        try {
+            javac.execute();
+        } catch (BuildException e) {
+            success = false;
+        }
+
+        errorReport = SystemLogHandler.unsetThread();
 
         if (!ctxt.keepGenerated()) {
             File javaFile = new File(javaFileName);
             javaFile.delete();
         }
-    
+
         if (!success) {
             errDispatcher.javacError(errorReport, javaFileName, pageNodes);
         }
@@ -363,49 +346,6 @@ public class Compiler {
         } catch (Exception e) {
             //Remove as much as possible, ignore possible exceptions
         }
-    }
-
-
-    // -------------------------------------- CompilerBuildListener Inner Class
-
-
-    protected static class CompilerBuildListener
-        implements BuildListener {
-
-        protected StringBuffer report = null;
-
-        public String getReport() {
-            return report.toString();
-        }
-
-        public void clear() {
-            report = new StringBuffer();
-        }
-
-        public void buildStarted(BuildEvent event) {
-        }
-
-        public void buildFinished(BuildEvent event) {
-        }
-
-        public void targetStarted(BuildEvent event) {
-        }
-
-        public void targetFinished(BuildEvent event) {
-        }
-
-        public void taskStarted(BuildEvent event) {
-        }
-
-        public void taskFinished(BuildEvent event) {
-        }
-
-        public void messageLogged(BuildEvent event) {
-            String line = event.getMessage();
-            report.append(line);
-            report.append("\n");
-        }
-
     }
 
 
