@@ -235,10 +235,10 @@ public final class MulticastReceiver
             if(obj.getSenderId().equals(this.senderId))
                 stack.add(obj);
         } catch (IOException e) {
-            log("An error occured when trying to replicate: "+
+            log("An error occurred when trying to replicate: "+
                 e.toString());
         } catch (ClassNotFoundException e) {
-            log("An error occured when trying to replicate: "+
+            log("An error occurred when trying to replicate: "+
                 e.toString());
         }
     }

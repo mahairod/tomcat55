@@ -167,7 +167,8 @@ public final class DistributedManager extends PersistentManagerBase {
             if(debug > 0)
                 log("Replicating Session: "+session.getId());
         } catch (IOException e) {
-            log("An error occured when replicating Session: "+session.getId());
+            log("An error occurred when replicating Session: " 
+                + session.getId());
         }
 
         return (session);
@@ -233,10 +234,10 @@ public final class DistributedManager extends PersistentManagerBase {
                 if (debug > 0)
                     log("Loading replicated session: "+_session.getId());
             } catch (IOException e) {
-                log("Error occured when trying to read replicated session: "+
+                log("Error occurred when trying to read replicated session: "+
                     e.toString());
             } catch (ClassNotFoundException e) {
-                log("Error occured when trying to read replicated session: "+
+                log("Error occurred when trying to read replicated session: "+
                     e.toString());
             } finally {
                 if (ois != null) {

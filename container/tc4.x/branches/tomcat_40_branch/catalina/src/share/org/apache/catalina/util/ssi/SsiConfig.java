@@ -68,7 +68,7 @@ import java.util.Properties;
 
 /**
  * Implementation of the SsiCommand config, example of usage:
- * &lt;!--#config sizefmt="abbrev" errmsg="An error occured!"--&gt;
+ * &lt;!--#config sizefmt="abbrev" errmsg="An error occurred!"--&gt;
  *
  * @author Bip Thelin
  * @version $Revision$, $Date$

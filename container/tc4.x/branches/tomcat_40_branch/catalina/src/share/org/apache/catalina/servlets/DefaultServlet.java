@@ -1886,7 +1886,7 @@ public class DefaultServlet
      *
      * @param istream The input stream to read from
      * @param ostream The output stream to write to
-     * @return Exception which occured during processing
+     * @return Exception which occurred during processing
      */
     private IOException copyRange(InputStream istream,
                                   ServletOutputStream ostream) {
@@ -1919,7 +1919,7 @@ public class DefaultServlet
      *
      * @param reader The reader to read from
      * @param writer The writer to write to
-     * @return Exception which occured during processing
+     * @return Exception which occurred during processing
      */
     private IOException copyRange(Reader reader, PrintWriter writer) {
 
@@ -1953,7 +1953,7 @@ public class DefaultServlet
      * @param ostream The output stream to write to
      * @param start Start of the range which will be copied
      * @param end End of the range which will be copied
-     * @return Exception which occured during processing
+     * @return Exception which occurred during processing
      */
     private IOException copyRange(InputStream istream,
                                   ServletOutputStream ostream,
@@ -2005,7 +2005,7 @@ public class DefaultServlet
      * @param writer The writer to write to
      * @param start Start of the range which will be copied
      * @param end End of the range which will be copied
-     * @return Exception which occured during processing
+     * @return Exception which occurred during processing
      */
     private IOException copyRange(Reader reader, PrintWriter writer,
                                   long start, long end) {

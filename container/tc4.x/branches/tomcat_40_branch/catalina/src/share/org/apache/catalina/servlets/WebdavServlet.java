@@ -1657,7 +1657,7 @@ public class WebdavServlet
      * Copy a collection.
      *
      * @param resources Resources implementation to be used
-     * @param errorList Hashtable containing the list of errors which occured
+     * @param errorList Hashtable containing the list of errors which occurred
      * during the copy operation
      * @param source Path of the resource to be copied
      * @param dest Destination path
@@ -1839,7 +1839,7 @@ public class WebdavServlet
      *
      * @param resources Resources implementation associated with the context
      * @param path Path to the collection to be deleted
-     * @param errorList Contains the list of the errors which occured
+     * @param errorList Contains the list of the errors which occurred
      */
     private void deleteCollection(HttpServletRequest req,
                                   DirContext resources,
