@@ -81,6 +81,7 @@ public class SocketSender implements IDataSender
     private int port;
     private Socket sc = null;
     private boolean isSocketConnected = false;
+    private boolean suspect;
 
     public SocketSender(InetAddress host, int port)
     {
@@ -143,6 +144,17 @@ public class SocketSender implements IDataSender
         StringBuffer buf = new StringBuffer("SocketSender[");
         buf.append(getAddress()).append(":").append(getPort()).append("]");
         return buf.toString();
+    }
+    public boolean isSuspect() {
+        return suspect;
+    }
+    
+    public boolean getSuspect() {
+        return suspect;
+    }
+    
+    public void setSuspect(boolean suspect) {
+        this.suspect = suspect;
     }
 
 
