@@ -17,12 +17,19 @@
 package org.apache.catalina.cluster.tcp;
 import org.apache.catalina.cluster.Member;
 import java.net.InetAddress;
+
+/**
+ * @author Peter Rossbach
+ * @version 1.0
+ * @since 5.5.7
+ */
 public class IDataSenderFactory {
     private IDataSenderFactory() {
     }
     public static final String SYNC_MODE="synchronous";
     public static final String ASYNC_MODE="asynchronous";
     public static final String POOLED_SYNC_MODE="pooled";
+    public static final String FAST_ASYNC_QUEUE_MODE="fastasyncqueue";
 
     public synchronized static IDataSender getIDataSender(String mode, Member mbr)
     throws java.io.IOException {
@@ -30,7 +37,9 @@ public class IDataSenderFactory {
             return new SocketSender(InetAddress.getByName(mbr.getHost()),mbr.getPort());
         else if ( ASYNC_MODE.equals(mode) )
             return new AsyncSocketSender(InetAddress.getByName(mbr.getHost()),mbr.getPort());
-        if (POOLED_SYNC_MODE.equals(mode) )
+        else if ( FAST_ASYNC_QUEUE_MODE.equals(mode) )
+            return new FastAsyncSocketSender(InetAddress.getByName(mbr.getHost()),mbr.getPort());
+        else if (POOLED_SYNC_MODE.equals(mode) )
             return new PooledSocketSender(InetAddress.getByName(mbr.getHost()),mbr.getPort());
         else
             throw new java.io.IOException("Invalid replication mode="+mode);
@@ -39,10 +48,11 @@ public class IDataSenderFactory {
     public static String validateMode(String mode) {
         if (SYNC_MODE.equals(mode) ||
             ASYNC_MODE.equals(mode) ||
+            FAST_ASYNC_QUEUE_MODE.equals(mode) ||
             POOLED_SYNC_MODE.equals(mode) ) {
             return null;
         } else {
-            return "Replication mode has to be '"+SYNC_MODE+"', '"+ASYNC_MODE+"' or '"+POOLED_SYNC_MODE+"'";
+            return "Replication mode has to be '"+SYNC_MODE+"', '" + FAST_ASYNC_QUEUE_MODE +"', '"+ASYNC_MODE+"' or '"+POOLED_SYNC_MODE+"'";
         }
     }
 
