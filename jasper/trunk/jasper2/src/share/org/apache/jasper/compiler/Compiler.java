@@ -64,6 +64,7 @@ import java.util.*;
 import java.io.*;
 import java.net.URL;
 import javax.servlet.jsp.tagext.TagInfo;
+import javax.servlet.ServletException;
 
 import org.xml.sax.Attributes;
 
@@ -142,12 +143,15 @@ public class Compiler {
         // Initializing project
         project = new Project();
         // XXX We should use a specialized logger to redirect to jasperlog
-        DefaultLogger bl=new JasperAntLogger();
-        bl.setOutputPrintStream(System.out);
+        //        DefaultLogger bl=new JasperAntLogger();
+        DefaultLogger bl=new DefaultLogger();
+        bl.setOutputPrintStream(System.err);
         bl.setErrorPrintStream(System.err);
 
         if( Constants.jasperLog.getVerbosityLevel() >= Logger.DEBUG ) {
             bl.setMessageOutputLevel( Project.MSG_VERBOSE );
+        } else {
+            bl.setMessageOutputLevel( Project.MSG_INFO );
         }
         project.addBuildListener( bl );
         
@@ -156,6 +160,12 @@ public class Compiler {
             project.setProperty("build.compiler", options.getCompiler() );
         }
         project.init();
+//         Vector v=project.getBuildListeners();
+//         if( v.size() > 0 ) {
+//             BuildListener bl=(BuildListener)v.elementAt(0);
+//             System.out.println("XXX " + bl );
+//             ((DefaultLogger)bl).setMessageOutputLevel(Project.MSG_VERBOSE);
+//         }
         return project;
     }
 
@@ -246,6 +256,9 @@ public class Compiler {
         String errorReport = null;
         boolean success = true;
 
+        // Start capturing the System.err output for this thread
+        SystemLogHandler.setThread();
+
         // Initializing javac task
         getProject();
         Javac javac = (Javac) project.createTask("javac");
@@ -265,7 +278,7 @@ public class Compiler {
         //javac.setDestdir(new File(options.getScratchDir().getAbsolutePath()));
         javac.setDebug(ctxt.getOptions().getClassDebugInfo());
         javac.setSrcdir(srcPath);
-        javac.setOptimize(true);
+        javac.setOptimize(! ctxt.getOptions().getClassDebugInfo() );
 
         // Set the Java compiler to use
         if (options.getCompiler() != null) {
@@ -275,13 +288,11 @@ public class Compiler {
         // Build includes path
         javac.setIncludes(ctxt.getJspPath());
 
-        // Start capturing the System.err output for this thread
-        SystemLogHandler.setThread();
-
         try {
             javac.execute();
         } catch (BuildException e) {
-            e.printStackTrace();
+            //   System.out.println("Javac execption ");
+            //   e.printStackTrace(System.out);
             success = false;
         }
 
@@ -295,8 +306,9 @@ public class Compiler {
 
         if (!success) {
             Constants.jasperLog.log( "Error compiling file: " + javaFileName + " " + errorReport,
-                               Logger.ERROR);
-            errDispatcher.javacError(errorReport, javaFileName, pageNodes);
+                                     Logger.ERROR);
+            if(errorReport!=null ) 
+                errDispatcher.javacError(errorReport, javaFileName, pageNodes);
         }
     }
 
@@ -356,6 +368,7 @@ public class Compiler {
         }
         targetLastModified = targetFile.lastModified();
         if (targetLastModified < jspRealLastModified) {
+            //System.out.println("Compiler: outdated, " + targetFile + " " + targetLastModified );
             return true;
         }
 
@@ -363,8 +376,14 @@ public class Compiler {
         if( jsw==null ) {
             return false;
         }
-        HttpJspBase servlet = jsw.getServlet();
+        HttpJspBase servlet=null;
+        try {
+            servlet = jsw.getServlet();
+        } catch( ServletException ex1 ) {
+        } catch( IOException ex2 ) {
+        }
         if (servlet == null) {
+            // System.out.println("Compiler: outdated, no servlet " + targetFile );
             return true;
         }
         List includes = servlet.getIncludes();
@@ -378,10 +397,12 @@ public class Compiler {
             try {
                 URL includeUrl = ctxt.getResource(include);
                 if (includeUrl == null) {
+                    System.out.println("Compiler: outdated, no includeUri " + include );
                     return true;
                 }
                 if (includeUrl.openConnection().getLastModified() >
                     targetLastModified) {
+                    System.out.println("Compiler: outdated, include old " + include );
                     return true;
                 }
             } catch (Exception e) {
