@@ -272,9 +272,11 @@ public class CoyoteConnector
      */
     private boolean secure = false;
 
+
     /** For jk, do tomcat authentication if true, trust server if false 
      */ 
     private boolean tomcatAuthentication = true;
+
 
     /**
      * The string manager for this package.
@@ -291,10 +293,18 @@ public class CoyoteConnector
      */
     private boolean disableUploadTimeout = false;
 
+
     /**
      * Maximum number of Keep-Alive requests to honor per connection.
      */
     private int maxKeepAliveRequests = 100;
+
+
+    /**
+     * Maximum size of a POST which will be automatically parsed by the 
+     * container. 2MB by default.
+     */
+    private int maxPostSize = 2 * 1024 * 1024;
 
 
     /**
@@ -763,6 +773,31 @@ public class CoyoteConnector
 
         this.maxProcessors = maxProcessors;
         setProperty("maxThreads", String.valueOf(maxProcessors));
+
+    }
+
+
+    /**
+     * Return the maximum size of a POST which will be automatically
+     * parsed by the container.
+     */
+    public int getMaxPostSize() {
+
+        return (maxPostSize);
+
+    }
+
+
+    /**
+     * Set the maximum size of a POST which will be automatically
+     * parsed by the container.
+     *
+     * @param maxPostSize The new maximum size in bytes of a POST which will 
+     * be automatically parsed by the container
+     */
+    public void setMaxPostSize(int maxPostSize) {
+
+        this.maxPostSize = maxPostSize;
 
     }
 
