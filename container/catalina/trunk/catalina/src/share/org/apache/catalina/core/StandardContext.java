@@ -136,7 +136,7 @@ import org.apache.commons.logging.LogFactory;
 public class StandardContext
     extends ContainerBase
     implements Context, Serializable
- {
+{
     private Log log = LogFactory.getLog(StandardContext.class);
 
 
@@ -230,6 +230,12 @@ public class StandardContext
 
 
     /**
+     * Compiler classpath to use.
+     */
+    private String compilerClasspath = null;
+
+
+    /**
      * Should we attempt to use cookies for session id communication?
      */
     private boolean cookies = true;
@@ -247,10 +253,13 @@ public class StandardContext
      */
     private String displayName = null;
 
-    /** Override the default web xml location. ContextConfig is not configurable
+
+    /** 
+     * Override the default web xml location. ContextConfig is not configurable
      * so the setter is not used.
      */
     private String defaultWebXml;
+
 
     /**
      * The distributable flag for this web application.
@@ -816,6 +825,23 @@ public class StandardContext
             context.setAttribute(Globals.ALT_DD_ATTR,altDDName);
         }
     }
+
+
+    /**
+     * Return the compiler classpath.
+     */
+    public String getCompilerClasspath(){
+        return compilerClasspath;
+    }
+
+
+    /**
+     * Set the compiler classpath.
+     */
+    public void setCompilerClasspath(String compilerClasspath) {
+        this.compilerClasspath = compilerClasspath;
+    }
+
 
     /**
      * Set the display name of this web application.

@@ -111,6 +111,10 @@
                description="Access to tomcat internals"
                type="boolean"/>
       
+    <attribute name="compilerClasspath"
+               description="The compiler classpath to use"
+               type="java.lang.String"/>
+      
     <attribute name="debug"
                description="The debugging detail level for this component"
                type="int"/>
@@ -128,6 +132,10 @@
                description="MBean Names of the set of defined environment entries for this web application"
                type="[Ljava.lang.String;"
                writeable="false"/>
+      
+    <attribute name="parentClassLoader"
+               description="Parent class loader."
+               type="java.lang.ClassLoader" />
       
     <attribute name="managedResource"
                description="The managed resource this MBean is associated with"
