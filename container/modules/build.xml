@@ -22,10 +22,13 @@
     <ant dir="${basedir}/cluster" target="dist"/>
   </target>
 
+  <target name="config" >
+    <ant dir="${basedir}/storeconfig" target="dist"/>
+  </target>
 
   <!-- ================= BUILD: Compile Server Components ================= -->
   <!-- Update the depends list for each subproject -->
-  <target name="build" depends="build-prepare,cluster"/>
+  <target name="build" depends="build-prepare,cluster,config"/>
 
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
