@@ -219,15 +219,14 @@ public final class HttpResponseStream extends ResponseStream {
             // If we should chunk, but chunking is forbidden by the connector,
             // we close the connection
             response.setHeader("Connection", "close");
-        } else {
-            response.removeHeader("Connection", "close");
         }
         // Don't chunk is the connection will be closed
         useChunking = (useChunking && !response.isCloseConnection());
-        if (useChunking)
+        if (useChunking) {
             response.setHeader("Transfer-Encoding", "chunked");
-        else
+        } else if (response.isChunkingAllowed()) {
             response.removeHeader("Transfer-Encoding", "chunked");
+        }
     }
 
 

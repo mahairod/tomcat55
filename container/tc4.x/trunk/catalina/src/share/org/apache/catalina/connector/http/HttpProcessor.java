@@ -652,6 +652,7 @@ final class HttpProcessor
                 if (header.valueEquals
                     (DefaultHeaders.CONNECTION_CLOSE_VALUE)) {
                     keepAlive = false;
+                    response.setHeader("Connection", "close");
                 }
                 //request.setConnection(header);
                 /*
