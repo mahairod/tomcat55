@@ -304,7 +304,7 @@ public interface ServletRequest {
      * are extra information sent with the request.  For HTTP servlets,
      * parameters are contained in the query string or posted form data.
      *
-     * @return a java.util.Map container parameter names as keys and parameter values as
+     * @return an immutable java.util.Map containing parameter names as keys and parameter values as
      * map values.
      */
     public Map getParameterMap();
