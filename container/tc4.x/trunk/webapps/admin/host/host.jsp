@@ -63,11 +63,11 @@
             <controls:action url="">  <bean:message key="actions.valve.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.valve.delete"/> </controls:action>
             <controls:action> ------------------------------------- </controls:action>
-            --%>
             <controls:action url='<%= "/DeleteHost.do?select=" + 
                                         URLEncoder.encode(thisObjectName) %>'>  
                 <bean:message key="actions.hosts.delete"/> 
             </controls:action>
+            --%>            
            </logic:notEqual>          
          </controls:actions>
        </div>

@@ -121,7 +121,7 @@
               --%>
               <controls:action url='<%= "/DeleteService.do?select=" +
                                         URLEncoder.encode(thisObjectName) %>'>
-                <bean:message key="actions.service.delete"/>
+                <bean:message key="actions.services.delete"/>
               </controls:action>
             </logic:notEqual>
           </controls:actions>
