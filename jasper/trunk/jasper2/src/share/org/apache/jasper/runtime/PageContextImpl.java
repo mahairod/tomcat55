@@ -254,150 +254,228 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 	attributes.clear();
     }
 
-    public Object getAttribute(String name) {
+    public Object getAttribute(final String name) {
 
-	if (name == null) {
-	    throw new NullPointerException(
-	            Localizer.getMessage("jsp.error.attribute.null_name"));
-	}
-	return attributes.get(name);
+        if (name == null) {
+            throw new NullPointerException(
+                    Localizer.getMessage("jsp.error.attribute.null_name"));
+        }
+
+        if (System.getSecurityManager() != null){
+            return AccessController.doPrivileged(new PrivilegedAction(){
+                public Object run(){
+                    return doGetAttribute(name);
+                }
+            });
+        } else {
+            return doGetAttribute(name);
+        }
+
     }
 
-    public Object getAttribute(String name, int scope) {
-
-	if (name == null) {
-	    throw new NullPointerException(
-	            Localizer.getMessage("jsp.error.attribute.null_name"));
-	}
-
-	switch (scope) {
-	    case PAGE_SCOPE:
-		return attributes.get(name);
-
-	    case REQUEST_SCOPE:
-		return request.getAttribute(name);
-
-	    case SESSION_SCOPE:
-		if (session == null) {
-		    throw new IllegalStateException(
-		            Localizer.getMessage("jsp.error.page.noSession"));
-		}
-		return session.getAttribute(name);
-
-	    case APPLICATION_SCOPE:
-		return context.getAttribute(name);
-
-	    default:
-		throw new IllegalArgumentException("Invalid scope");
-	}
+    private Object doGetAttribute(String name){
+        return attributes.get(name);
     }
 
-    public void setAttribute(String name, Object attribute) {
+    public Object getAttribute(final String name, final int scope) {
 
-	if (name == null) {
-	    throw new NullPointerException(
-	            Localizer.getMessage("jsp.error.attribute.null_name"));
-	}
+        if (name == null) {
+            throw new NullPointerException(
+                    Localizer.getMessage("jsp.error.attribute.null_name"));
+        }
 
-	if (attribute != null) {
-	    attributes.put(name, attribute);
-	} else {
-	    removeAttribute(name, PAGE_SCOPE);
-	}
+        if (System.getSecurityManager() != null){
+            return AccessController.doPrivileged(new PrivilegedAction(){
+                public Object run(){
+                    return doGetAttribute(name, scope);
+                }
+            });
+        } else {
+            return doGetAttribute(name, scope);
+        }
+
     }
 
-    public void setAttribute(String name, Object o, int scope) {
+    private Object doGetAttribute(String name, int scope){
+        switch (scope) {
+            case PAGE_SCOPE:
+            return attributes.get(name);
 
-	if (name == null) {
-	    throw new NullPointerException(
-	            Localizer.getMessage("jsp.error.attribute.null_name"));
-	}
+            case REQUEST_SCOPE:
+            return request.getAttribute(name);
 
-	if (o != null) {
-	    switch (scope) {
-	    case PAGE_SCOPE:
-		attributes.put(name, o);
-		break;
+            case SESSION_SCOPE:
+            if (session == null) {
+                throw new IllegalStateException(
+                        Localizer.getMessage("jsp.error.page.noSession"));
+            }
+            return session.getAttribute(name);
 
-	    case REQUEST_SCOPE:
-		request.setAttribute(name, o);
-		break;
+            case APPLICATION_SCOPE:
+            return context.getAttribute(name);
 
-	    case SESSION_SCOPE:
-		if (session == null) {
-		    throw new IllegalStateException(
-		            Localizer.getMessage("jsp.error.page.noSession"));
-		}
-		session.setAttribute(name, o);
-		break;
-
-	    case APPLICATION_SCOPE:
-		context.setAttribute(name, o);
-		break;
-
-	    default:
-		throw new IllegalArgumentException("Invalid scope");
-	    }
-	} else {
-	    removeAttribute(name, scope);
-	}
+            default:
+            throw new IllegalArgumentException("Invalid scope");
+        }
     }
 
-    public void removeAttribute(String name, int scope) {
+    public void setAttribute(final String name, final Object attribute) {
 
-	if (name == null) {
-	    throw new NullPointerException(
-	            Localizer.getMessage("jsp.error.attribute.null_name"));
-	}
+        if (name == null) {
+            throw new NullPointerException(
+                    Localizer.getMessage("jsp.error.attribute.null_name"));
+        }
 
-	switch (scope) {
-	case PAGE_SCOPE:
-	    attributes.remove(name);
-	    break;
-
-	case REQUEST_SCOPE:
-	    request.removeAttribute(name);
-	    break;
-
-	case SESSION_SCOPE:
-	    if (session == null) {
-		throw new IllegalStateException(
-		            Localizer.getMessage("jsp.error.page.noSession"));
-	    }
-	    session.removeAttribute(name);
-	    break;
-
-	case APPLICATION_SCOPE:
-	    context.removeAttribute(name);
-	    break;
-	    
-	default:
-	    throw new IllegalArgumentException("Invalid scope");
-	}
+        if (System.getSecurityManager() != null){
+            AccessController.doPrivileged(new PrivilegedAction(){
+                public Object run(){
+                    doSetAttribute(name, attribute);
+                    return null;
+                }
+            });
+        } else {
+            doSetAttribute(name, attribute);
+        }
     }
 
-    public int getAttributesScope(String name) {
+    private void doSetAttribute(String name, Object attribute){
+        if (attribute != null) {
+            attributes.put(name, attribute);
+        } else {
+            removeAttribute(name, PAGE_SCOPE);
+        }
+    }
 
-	if (name == null) {
-	    throw new NullPointerException(
-	            Localizer.getMessage("jsp.error.attribute.null_name"));
-	}
+    public void setAttribute(final String name, final Object o, final int scope) {
 
-	if (attributes.get(name) != null)
-	    return PAGE_SCOPE;
+        if (name == null) {
+            throw new NullPointerException(
+                    Localizer.getMessage("jsp.error.attribute.null_name"));
+        }
 
-	if (request.getAttribute(name) != null)
-	    return REQUEST_SCOPE;
+        if (System.getSecurityManager() != null){
+            AccessController.doPrivileged(new PrivilegedAction(){
+                public Object run(){
+                    doSetAttribute(name, o, scope);
+                    return null;
+                }
+            });
+        } else {
+            doSetAttribute(name, o, scope);
+        }
 
-	if (session != null) {
-	    if (session.getAttribute(name) != null)
-	        return SESSION_SCOPE;
-	}
+    }
 
-	if (context.getAttribute(name) != null)
-	    return APPLICATION_SCOPE;
+    private void doSetAttribute(String name, Object o, int scope ){
+        if (o != null) {
+            switch (scope) {
+            case PAGE_SCOPE:
+            attributes.put(name, o);
+            break;
 
-	return 0;
+            case REQUEST_SCOPE:
+            request.setAttribute(name, o);
+            break;
+
+            case SESSION_SCOPE:
+            if (session == null) {
+                throw new IllegalStateException(
+                        Localizer.getMessage("jsp.error.page.noSession"));
+            }
+            session.setAttribute(name, o);
+            break;
+
+            case APPLICATION_SCOPE:
+            context.setAttribute(name, o);
+            break;
+
+            default:
+            throw new IllegalArgumentException("Invalid scope");
+            }
+        } else {
+            removeAttribute(name, scope);
+        }
+    }
+
+    public void removeAttribute(final String name, final int scope) {
+
+        if (name == null) {
+            throw new NullPointerException(
+                    Localizer.getMessage("jsp.error.attribute.null_name"));
+        }
+        if (System.getSecurityManager() != null){
+            AccessController.doPrivileged(new PrivilegedAction(){
+                public Object run(){
+                    doRemoveAttribute(name, scope);
+                    return null;
+                }
+            });
+        } else {
+            doRemoveAttribute(name, scope);
+        }
+    }
+
+    private void doRemoveAttribute(String name, int scope){
+        switch (scope) {
+        case PAGE_SCOPE:
+            attributes.remove(name);
+            break;
+
+        case REQUEST_SCOPE:
+            request.removeAttribute(name);
+            break;
+
+        case SESSION_SCOPE:
+            if (session == null) {
+            throw new IllegalStateException(
+                        Localizer.getMessage("jsp.error.page.noSession"));
+            }
+            session.removeAttribute(name);
+            break;
+
+        case APPLICATION_SCOPE:
+            context.removeAttribute(name);
+            break;
+            
+        default:
+            throw new IllegalArgumentException("Invalid scope");
+        }
+    }
+
+    public int getAttributesScope(final String name) {
+
+        if (name == null) {
+            throw new NullPointerException(
+                    Localizer.getMessage("jsp.error.attribute.null_name"));
+        }
+
+        if (System.getSecurityManager() != null){
+            return ((Integer)AccessController.doPrivileged(new PrivilegedAction(){
+                public Object run(){
+                    return new Integer(doGetAttributeScope(name));
+                }
+            })).intValue();
+        } else {
+            return doGetAttributeScope(name);
+        }
+    }
+
+    private int doGetAttributeScope(String name){
+        if (attributes.get(name) != null)
+            return PAGE_SCOPE;
+
+        if (request.getAttribute(name) != null)
+            return REQUEST_SCOPE;
+
+        if (session != null) {
+            if (session.getAttribute(name) != null)
+                return SESSION_SCOPE;
+        }
+
+        if (context.getAttribute(name) != null)
+            return APPLICATION_SCOPE;
+
+        return 0;
     }
 
     public Object findAttribute(final String name) {
@@ -437,47 +515,74 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     }
 
 
-    public Enumeration getAttributeNamesInScope(int scope) {
-	switch (scope) {
-	case PAGE_SCOPE:
-	    return attributes.keys();
-	    
-	case REQUEST_SCOPE:
-	    return request.getAttributeNames();
-
-	case SESSION_SCOPE:
-	    if (session == null) {
-		throw new IllegalStateException(
-		            Localizer.getMessage("jsp.error.page.noSession"));
-	    }
-	    return session.getAttributeNames();
-
-	case APPLICATION_SCOPE:
-	    return context.getAttributeNames();
-
-	default:
-	    throw new IllegalArgumentException("Invalid scope");
-	}
+    public Enumeration getAttributeNamesInScope(final int scope) {
+        if (System.getSecurityManager() != null){
+            return (Enumeration)
+                    AccessController.doPrivileged(new PrivilegedAction(){
+                public Object run(){
+                    return doGetAttributeNamesInScope(scope);
+                }
+            });
+        } else {
+            return doGetAttributeNamesInScope(scope);
+        }
     }
 
-    public void removeAttribute(String name) {
+    private Enumeration doGetAttributeNamesInScope(int scope){
+        switch (scope) {
+        case PAGE_SCOPE:
+            return attributes.keys();
+            
+        case REQUEST_SCOPE:
+            return request.getAttributeNames();
 
-	if (name == null) {
-	    throw new NullPointerException(
-	            Localizer.getMessage("jsp.error.attribute.null_name"));
-	}
-
-	try {
-	    removeAttribute(name, PAGE_SCOPE);
-	    removeAttribute(name, REQUEST_SCOPE);
-	    if( session != null ) {
-                removeAttribute(name, SESSION_SCOPE);
+        case SESSION_SCOPE:
+            if (session == null) {
+            throw new IllegalStateException(
+                        Localizer.getMessage("jsp.error.page.noSession"));
             }
-            removeAttribute(name, APPLICATION_SCOPE);
-        } catch (Exception ex) {
-	    // we remove as much as we can, and
-	    // simply ignore possible exceptions
+            return session.getAttributeNames();
+
+        case APPLICATION_SCOPE:
+            return context.getAttributeNames();
+
+        default:
+            throw new IllegalArgumentException("Invalid scope");
+        }
+    }
+
+    public void removeAttribute(final String name) {
+
+        if (name == null) {
+            throw new NullPointerException(
+                    Localizer.getMessage("jsp.error.attribute.null_name"));
+        }
+
+        if (System.getSecurityManager() != null){
+            AccessController.doPrivileged(new PrivilegedAction(){
+                public Object run(){
+                    doRemoveAttribute(name);
+                    return null;
+                }
+            });
+        } else {
+            doRemoveAttribute(name);
+        }
 	}
+
+
+    private void doRemoveAttribute(String name){
+        try {
+            removeAttribute(name, PAGE_SCOPE);
+            removeAttribute(name, REQUEST_SCOPE);
+            if( session != null ) {
+                    removeAttribute(name, SESSION_SCOPE);
+                }
+                removeAttribute(name, APPLICATION_SCOPE);
+            } catch (Exception ex) {
+            // we remove as much as we can, and
+            // simply ignore possible exceptions
+        }
     }
 
     public JspWriter getOut() {
@@ -517,7 +622,30 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 				  true);
     }
 
-    public void include(String relativeUrlPath, boolean flush)
+    public void include(final String relativeUrlPath, final boolean flush)
+	        throws ServletException, IOException {
+        if (System.getSecurityManager() != null){
+            try{
+                AccessController.doPrivileged(new PrivilegedExceptionAction(){
+                    public Object run() throws Exception{
+                        doInclude(relativeUrlPath, flush);
+                        return null;
+                    }
+                });
+            } catch (PrivilegedActionException e){
+                Exception ex =  e.getException();
+                if (ex instanceof IOException){
+                    throw (IOException)ex;
+                } else {
+                    throw (ServletException)ex;
+                }
+            }
+        } else {
+            doInclude(relativeUrlPath, flush);
+        }
+    }
+
+    private void doInclude(String relativeUrlPath, boolean flush)
 	        throws ServletException, IOException {
         JspRuntimeLibrary.include(request, response, relativeUrlPath, out,
 				  flush);
@@ -527,38 +655,61 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 	return this;
     }
 
-    public void forward(String relativeUrlPath)
-        throws ServletException, IOException
-    {
-	// JSP.4.5 If the buffer was flushed, throw IllegalStateException
-	try {
-	    out.clear();
-	} catch (IOException ex) {
-	    throw new IllegalStateException(
-                Localizer.getMessage("jsp.error.attempt_to_clear_flushed_buffer"));
-	}
-
-	// Make sure that the response object is not the wrapper for include
-	while (response instanceof ServletResponseWrapperInclude) {
-	    response = ((ServletResponseWrapperInclude)response).getResponse();
+    public void forward(final String relativeUrlPath)
+        throws ServletException, IOException {
+        if (System.getSecurityManager() != null){
+            try{
+                AccessController.doPrivileged(new PrivilegedExceptionAction(){
+                    public Object run() throws Exception{
+                        doForward(relativeUrlPath);
+                        return null;
+                    }
+                });
+            } catch (PrivilegedActionException e){
+                Exception ex =  e.getException();
+                if (ex instanceof IOException){
+                    throw (IOException)ex;
+                } else {
+                    throw (ServletException)ex;
+                }
+            }
+        } else {
+            doForward(relativeUrlPath);
         }
+    }
 
-        final String path = getAbsolutePathRelativeToContext(relativeUrlPath);
-        String includeUri
-            = (String) request.getAttribute(Constants.INC_SERVLET_PATH);
-        
-        final ServletResponse fresponse = response;
-        final ServletRequest frequest = request;
-        
-        if (includeUri != null)
-            request.removeAttribute(Constants.INC_SERVLET_PATH);
+    private void doForward(String relativeUrlPath)
+        throws ServletException, IOException{
+
+        // JSP.4.5 If the buffer was flushed, throw IllegalStateException
         try {
-            context.getRequestDispatcher(path).forward(request, response);
-        } finally {
-            if (includeUri != null)
-                request.setAttribute(Constants.INC_SERVLET_PATH, includeUri);
-	    request.setAttribute(Constants.FORWARD_SEEN, "true");
+            out.clear();
+        } catch (IOException ex) {
+            throw new IllegalStateException(
+                    Localizer.getMessage("jsp.error.attempt_to_clear_flushed_buffer"));
         }
+
+        // Make sure that the response object is not the wrapper for include
+        while (response instanceof ServletResponseWrapperInclude) {
+            response = ((ServletResponseWrapperInclude)response).getResponse();
+            }
+
+            final String path = getAbsolutePathRelativeToContext(relativeUrlPath);
+            String includeUri
+                = (String) request.getAttribute(Constants.INC_SERVLET_PATH);
+            
+            final ServletResponse fresponse = response;
+            final ServletRequest frequest = request;
+            
+            if (includeUri != null)
+                request.removeAttribute(Constants.INC_SERVLET_PATH);
+            try {
+                context.getRequestDispatcher(path).forward(request, response);
+            } finally {
+                if (includeUri != null)
+                    request.setAttribute(Constants.INC_SERVLET_PATH, includeUri);
+            request.setAttribute(Constants.FORWARD_SEEN, "true");
+            }
     }
 
     public BodyContent pushBody() {
@@ -613,78 +764,103 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     public void handlePageException(Exception ex)
         throws IOException, ServletException
     {
-	// Should never be called since handleException() called with a
-	// Throwable in the generated servlet.
-	handlePageException((Throwable) ex);
+        // Should never be called since handleException() called with a
+        // Throwable in the generated servlet.
+        handlePageException((Throwable) ex);
     }
 
-    public void handlePageException(Throwable t)
+    public void handlePageException(final Throwable t)
         throws IOException, ServletException
     {
-	if (t == null)
-	    throw new NullPointerException("null Throwable");
+        if (t == null)
+            throw new NullPointerException("null Throwable");
 
-	if (errorPageURL != null && !errorPageURL.equals("")) {
+        if (System.getSecurityManager() != null){
+            try{
+                AccessController.doPrivileged(new PrivilegedExceptionAction(){
+                    public Object run() throws Exception{
+                        doHandlePageException(t);
+                        return null;
+                    }
+                });
+            } catch (PrivilegedActionException e){
+                Exception ex =  e.getException();
+                if (ex instanceof IOException){
+                    throw (IOException)ex;
+                } else {
+                    throw (ServletException)ex;
+                }
+            }
+        } else {
+            doHandlePageException(t);
+        }
 
-	    /*
-	     * Set request attributes.
-	     * Do not set the javax.servlet.error.exception attribute here
-	     * (instead, set in the generated servlet code for the error page)
-	     * in order to prevent the ErrorReportValve, which is invoked as
-	     * part of forwarding the request to the error page, from
-	     * throwing it if the response has not been committed (the response
-	     * will have been committed if the error page is a JSP page).
-	     */
-	    request.setAttribute("javax.servlet.jsp.jspException", t);
-	    request.setAttribute("javax.servlet.error.status_code",
-	        new Integer(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
-	    request.setAttribute("javax.servlet.error.request_uri",
-		((HttpServletRequest) request).getRequestURI());
-	    request.setAttribute("javax.servlet.error.servlet_name",
-				 config.getServletName());
-            try {
-                forward(errorPageURL);
-            } catch (IllegalStateException ise) {
-                include(errorPageURL);
+    }
+
+    private void doHandlePageException(Throwable t)
+        throws IOException, ServletException {
+
+        if (errorPageURL != null && !errorPageURL.equals("")) {
+
+            /*
+             * Set request attributes.
+             * Do not set the javax.servlet.error.exception attribute here
+             * (instead, set in the generated servlet code for the error page)
+             * in order to prevent the ErrorReportValve, which is invoked as
+             * part of forwarding the request to the error page, from
+             * throwing it if the response has not been committed (the response
+             * will have been committed if the error page is a JSP page).
+             */
+            request.setAttribute("javax.servlet.jsp.jspException", t);
+            request.setAttribute("javax.servlet.error.status_code",
+                new Integer(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
+            request.setAttribute("javax.servlet.error.request_uri",
+            ((HttpServletRequest) request).getRequestURI());
+            request.setAttribute("javax.servlet.error.servlet_name",
+                     config.getServletName());
+                try {
+                    forward(errorPageURL);
+                } catch (IllegalStateException ise) {
+                    include(errorPageURL);
+                }
+
+                // The error page could be inside an include.
+
+                Object newException = request.getAttribute("javax.servlet.error.exception");
+
+                // t==null means the attribute was not set.
+                if( (newException!= null) && (newException==t) ) {
+                    request.removeAttribute("javax.servlet.error.exception");
+                }
+
+                // now clear the error code - to prevent double handling.
+                request.removeAttribute("javax.servlet.error.status_code");
+                request.removeAttribute("javax.servlet.error.request_uri");
+                request.removeAttribute("javax.servlet.error.status_code");
+                request.removeAttribute("javax.servlet.jsp.jspException");
+
+        } else {
+
+                // Otherwise throw the exception wrapped inside a ServletException.
+            // Set the exception as the root cause in the ServletException
+            // to get a stack trace for the real problem
+            if (t instanceof IOException) throw (IOException)t;
+            if (t instanceof ServletException) throw (ServletException)t;
+                if (t instanceof RuntimeException) throw (RuntimeException)t;
+
+            Throwable rootCause = null;
+                if (t instanceof JspException) {
+                    rootCause = ((JspException) t).getRootCause();
+            } else if (t instanceof ELException) {
+            rootCause = ((ELException) t).getRootCause();
             }
 
-            // The error page could be inside an include.
-
-            Object newException = request.getAttribute("javax.servlet.error.exception");
-
-            // t==null means the attribute was not set.
-            if( (newException!= null) && (newException==t) ) {
-                request.removeAttribute("javax.servlet.error.exception");
+            if (rootCause != null) {
+            throw new ServletException(t.getMessage(), rootCause);
             }
-
-            // now clear the error code - to prevent double handling.
-            request.removeAttribute("javax.servlet.error.status_code");
-            request.removeAttribute("javax.servlet.error.request_uri");
-            request.removeAttribute("javax.servlet.error.status_code");
-            request.removeAttribute("javax.servlet.jsp.jspException");
-
-	} else {
-
-            // Otherwise throw the exception wrapped inside a ServletException.
-	    // Set the exception as the root cause in the ServletException
-	    // to get a stack trace for the real problem
-	    if (t instanceof IOException) throw (IOException)t;
-	    if (t instanceof ServletException) throw (ServletException)t;
-            if (t instanceof RuntimeException) throw (RuntimeException)t;
-
-	    Throwable rootCause = null;
-            if (t instanceof JspException) {
-                rootCause = ((JspException) t).getRootCause();
-	    } else if (t instanceof ELException) {
-		rootCause = ((ELException) t).getRootCause();
-	    }
-
-	    if (rootCause != null) {
-		throw new ServletException(t.getMessage(), rootCause);
-	    }
-             
-	    throw new ServletException(t);
-	}
+                 
+            throw new ServletException(t);
+        }
     }
 
     /**
