@@ -951,6 +951,10 @@ class Validator {
 	public void visit(Node.JspOutput n) throws JasperException {
             JspUtil.checkAttributes("jsp:output", n, jspOutputAttrs, err);
 
+	    if (n.getBody() != null) {
+                err.jspError(n, "jsp.error.jspoutput.nonemptybody");
+	    }
+
 	    if (pageInfo.getOmitXmlDecl() != null) {
                 err.jspError(n, "jsp.error.multiple.jspoutput");
 	    }
