@@ -1,12 +1,12 @@
 /*
  * Copyright 1999,2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -72,7 +72,6 @@ class Generator {
     private boolean isPoolingEnabled;
     private boolean breakAtLF;
     private PageInfo pageInfo;
-    private int maxTagNesting;
     private Vector tagHandlerPoolNames;
     private GenBuffer charArrayBuffer;
 
@@ -526,7 +525,7 @@ class Generator {
         genPreambleClassVariableDeclarations(servletClassName);
 
         // Constructor
-        //	generateConstructor(className);
+        //  generateConstructor(className);
 
         // Methods here
         genPreambleMethods();
@@ -563,9 +562,6 @@ class Generator {
         out.printil("JspWriter out = null;");
         out.printil("Object page = this;");
 
-        // Number of tag object that need to be popped
-        // XXX TODO: use a better criteria
-        maxTagNesting = pageInfo.getMaxTagNesting();
         out.printil("JspWriter _jspx_out = null;");
         out.printil("PageContext _jspx_page_context = null;");
         out.println();
@@ -679,7 +675,7 @@ class Generator {
          *   <key>: tag prefix
          *   <value>: hashtable containing introspection on tag handlers:
          *              <key>: tag short name
-         *              <value>: introspection info of tag handler for 
+         *              <value>: introspection info of tag handler for
          *                       <prefix:shortName> tag
          */
         private Hashtable handlerInfos;
@@ -907,7 +903,7 @@ class Generator {
         /**
          * Scans through all child nodes of the given parent for
          * <param> subelements.  For each <param> element, if its value
-         * is specified via a Named Attribute (<jsp:attribute>), 
+         * is specified via a Named Attribute (<jsp:attribute>),
          * generate the code to evaluate those bodies first.
          * <p>
          * If parent is null, simply returns.
@@ -1146,7 +1142,7 @@ class Generator {
             String type = n.getTextAttribute("type");
             Node.JspAttribute beanName = n.getBeanName();
 
-            if (type == null) // if unspecified, use class as type of bean 
+            if (type == null) // if unspecified, use class as type of bean
                 type = klass;
 
             String scopename = "PageContext.PAGE_SCOPE"; // Default to page
@@ -1344,7 +1340,7 @@ class Generator {
                     // Double check that this is now the correct behavior.
                     if (ie) {
                         // We want something of the form
-                        // out.println( "<PARAM name=\"blah\" 
+                        // out.println( "<PARAM name=\"blah\"
                         //     value=\"" + ... + "\">" );
                         out.printil(
                             "out.write( \"<PARAM name=\\\""
@@ -1434,12 +1430,12 @@ class Generator {
                 }
             }
 
-            // XXX - Fixed a bug here - width and height can be set 
+            // XXX - Fixed a bug here - width and height can be set
             // dynamically.  Double-check if this generation is correct.
 
             // IE style plugin
             // <OBJECT ...>
-            // First compose the runtime output string 
+            // First compose the runtime output string
             String s0 = "<OBJECT"
                     + makeAttr("classid", ctxt.getOptions().getIeClassId())
                     + makeAttr("name", name);
@@ -1920,7 +1916,7 @@ class Generator {
             StringBuffer sb = new StringBuffer("out.write(\"");
             int initLength = sb.length();
             int count = JspUtil.CHUNKSIZE;
-            int srcLine = 0;	// relative to starting srouce line
+            int srcLine = 0;    // relative to starting srouce line
             for (int i = 0; i < text.length(); i++) {
                 char ch = text.charAt(i);
                 --count;
@@ -2447,7 +2443,7 @@ class Generator {
          * This method is called as part of the custom tag's start element.
          *
          * If the given custom tag has a custom nesting level greater than 0,
-         * save the current values of its scripting variables to 
+         * save the current values of its scripting variables to
          * temporary variables, so those values may be restored in the tag's
          * end element. This way, the scripting variables may be synchronized
          * by the given tag without affecting their original values.
@@ -2773,7 +2769,7 @@ class Generator {
 
             // Set context
             if (simpleTag) {
-                // Generate alias map 
+                // Generate alias map
                 String aliasMapVar = null;
                 if (n.isTagFile()) {
                     aliasMapVar = generateAliasMap(n, tagHandlerVar);
@@ -2967,7 +2963,7 @@ class Generator {
             throws JasperException {
             // XXX - A possible optimization here would be to check to see
             // if the only child of the parent node is TemplateText.  If so,
-            // we know there won't be any parameters, etc, so we can 
+            // we know there won't be any parameters, etc, so we can
             // generate a low-overhead JspFragment that just echoes its
             // body.  The implementation of this fragment can come from
             // the org.apache.jasper.runtime package as a support class.
@@ -3075,7 +3071,7 @@ class Generator {
          * @param n The parent node of the named attribute
          * @param tagHandlerVar The variable the tag handler is stored in,
          *     so the fragment knows its parent tag.
-         * @return The name of the temporary variable the fragment 
+         * @return The name of the temporary variable the fragment
          *     is stored in.
          */
         public String generateNamedAttributeJspFragment(
@@ -3106,7 +3102,7 @@ class Generator {
             // Cannot access err since this method is static, but at
             // least flag an error.
             throw new JasperException("Unexpected Node Type");
-            //err.getString( 
+            //err.getString(
             //    "jsp.error.internal.unexpected_node_type" ) );
         }
 
@@ -3361,11 +3357,11 @@ class Generator {
          * According to the spec, 'pageContext' must not be made available as
          * an implicit object in tag files.
          * Declare _jspx_page_context, so we can share the code generator with
-         * JSPs. 
+         * JSPs.
          */
         out.printil("PageContext _jspx_page_context = (PageContext)jspContext;");
 
-        // Declare implicit objects.  
+        // Declare implicit objects.
         out.printil(
             "HttpServletRequest request = "
                 + "(HttpServletRequest) _jspx_page_context.getRequest();");
@@ -3381,10 +3377,6 @@ class Generator {
             out.printil("_jspInit(config);");
         }
         generatePageScopedVariables(tagInfo);
-
-        // Number of tag object that need to be popped
-        // XXX TODO: use a better criteria
-        maxTagNesting = pageInfo.getMaxTagNesting();
 
         declareTemporaryScriptingVars(tag);
         out.println();
@@ -3504,7 +3496,7 @@ class Generator {
     /*
      * Generate setter for JspContext so we can create a wrapper and
      * store both the original and the wrapper.  We need the wrapper
-     * to mask the page context from the tag file and simulate a 
+     * to mask the page context from the tag file and simulate a
      * fresh page context.  We need the original to do things like
      * sync AT_BEGIN and AT_END scripting variables.
      */
@@ -3598,7 +3590,7 @@ class Generator {
         out.printil(
             "public void setDynamicAttribute(String uri, String localName, Object value) throws JspException {");
         out.pushIndent();
-        /* 
+        /*
          * According to the spec, only dynamic attributes with no uri are to
          * be present in the Map; all other dynamic attributes are ignored.
          */
@@ -3738,7 +3730,7 @@ class Generator {
          * For a CustomTag, the codes that are generated at the beginning of
          * the tag may not be in the same buffer as those for the body of the
          * tag.  Two fields are used here to keep this straight.  For codes
-         * that do not corresponds to any JSP lines, they should be null.  
+         * that do not corresponds to any JSP lines, they should be null.
          */
         private Node node;
         private Node.Nodes body;
