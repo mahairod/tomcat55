@@ -538,13 +538,17 @@ public class Compiler {
             try {
                 URL includeUrl = ctxt.getResource(include);
                 if (includeUrl == null) {
-                    //System.out.println("Compiler: outdated, no includeUri " + include );
                     outDated = true;
                 }
-                if (!outDated && includeUrl.openConnection().getLastModified() >
-                    targetLastModified) {
-                    //System.out.println("Compiler: outdated, include old " + include );
-                    outDated = true;
+                if (!outDated) {
+
+                    URLConnection includeUconn = includeUrl.openConnection();
+                    long includeLastModified = includeUconn.getLastModified();
+                    includeUconn.getInputStream().close();
+
+                    if (includeLastModified > targetLastModified) {
+                        outDated = true;
+                    }
                 }
                 if (outDated) {
                     // Remove any potential Wrappers for tag files
