@@ -187,6 +187,9 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	    reqA.setResponse( resA );
 	    
 	    reqA.setSocket( socket );
+
+	    connection.getEndpoint().getServerSocketFactory().preProcessRequest( socket, reqA );
+
 	    resA.setOutputStream( out );
 
 	    reqA.readNextRequest(resA);

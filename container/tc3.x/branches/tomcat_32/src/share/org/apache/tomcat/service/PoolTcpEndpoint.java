@@ -191,6 +191,10 @@ public class PoolTcpEndpoint  { // implements Endpoint {
 	    this.factory=factory;
     }
 
+    public ServerSocketFactory getServerSocketFactory() {
+	return factory;
+    }
+
     public void setConnectionHandler( TcpConnectionHandler handler ) {
     	this.handler=handler;
     }

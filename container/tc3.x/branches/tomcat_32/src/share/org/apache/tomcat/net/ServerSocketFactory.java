@@ -194,5 +194,26 @@ public abstract class ServerSocketFactory implements Cloneable {
 
     public void initSocket( Socket s ) {
     }
+
+    /** 3.2 specific hack to allow SSL certificates. This is just
+	a hook to allow SSL factory to set the certificate attributes
+	with minimal changes in tomcat 3.2 - there is only one
+	empty call for non-ssl code.
+
+	In tomcat 3.3 we have a simple and clear mechanism - SSL can
+	be implemented in a normal interceptor ( as all server
+	adapters are in 3.3 ), and this hook is not needed.
+
+	The only bad thing about this hook is that it introduce a
+	dependency on core in ServerSocketFactory. I think this is
+	acceptable, knowing we have a clean solution for 3.3.
+
+	Please note that presenting SSL certificates is part of the
+	spec ( I'm not sure it's "required" or optional, but people
+	expect this to work ).
+    */
+    public void preProcessRequest( Socket s,
+				   org.apache.tomcat.core.Request req ) {
+    }
 }
 
