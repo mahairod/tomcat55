@@ -207,12 +207,12 @@ public class Compiler {
 	// a jsp-property-group in web.xml, initialize pageInfo with
 	// those properties.
 	if (jspProperty.isXml() != null) {
-	    pageInfo.setIsXmlSpecified(true);
+	    pageInfo.setIsXmlConfigSpecified(true);
 	}
 	if (jspProperty.isELIgnored() != null) {
 	    pageInfo.setELIgnoredSpecified(true);
 	}
-	pageInfo.setIsXml(JspUtil.booleanValue(jspProperty.isXml()));
+	pageInfo.setIsXmlConfig(JspUtil.booleanValue(jspProperty.isXml()));
 	pageInfo.setConfigEncoding(jspProperty.getPageEncoding());
 	pageInfo.setELIgnored(JspUtil.booleanValue(jspProperty.isELIgnored()));
 	pageInfo.setScriptingInvalid(JspUtil.booleanValue(jspProperty.isScriptingInvalid()));

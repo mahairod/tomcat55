@@ -109,9 +109,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	        throws JasperException {
 
 	// First pass
-	boolean isXml = compiler.getPageInfo().isXml();
-	FirstPassVisitor firstPass = new FirstPassVisitor(page.getRoot(),
-							  isXml);
+	FirstPassVisitor firstPass = new FirstPassVisitor(page.getRoot());
 	page.visit(firstPass);
 
 	// Second pass
@@ -155,12 +153,12 @@ class PageDataImpl extends PageData implements TagConstants {
 	/*
 	 * Constructor
 	 */
-	public FirstPassVisitor(Node.Root root, boolean isXml) {
+	public FirstPassVisitor(Node.Root root) {
 	    this.root = root;
 	    this.rootAttrs = new AttributesImpl();
 	    this.rootAttrs.addAttribute("", "", "version", "CDATA",
 					JSP_VERSION);
-	    if (!isXml) {
+	    if (!root.isXmlSyntax()) {
 		this.rootAttrs.addAttribute("", "", "xmlns:jsp", "CDATA",
 					    JSP_NAMESPACE);
 	    } 
@@ -179,11 +177,6 @@ class PageDataImpl extends PageData implements TagConstants {
 	    addAttributes(n.getAttributes());
 
 	    visitBody(n);
-
-	    if (n == this.root) {
-		// top-level jsp:root element
-		this.root.setAttributes(rootAttrs);
-	    }
 	}
 
 	/*
@@ -248,7 +241,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	}
 
 	/*
-	 * Visits root node of JSP page in JSP syntax.
+	 * Visits root node.
 	 */
 	public void visit(Node.Root n) throws JasperException {
 	    if (n == this.root) {
@@ -267,13 +260,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	 * include directive) are ignored.
 	 */
 	public void visit(Node.JspRoot n) throws JasperException {
-	    if (n == this.root) {
-		// top-level jsp:root element
-		appendXmlProlog();
-		appendTag(n);
-	    } else {
-		visitBody(n);
-	    }
+	    visitBody(n);
 	}
 
 	public void visit(Node.PageDirective n) throws JasperException {
@@ -414,9 +401,11 @@ class PageDataImpl extends PageData implements TagConstants {
 
 	    buf.append("<").append(n.getQName());
 	    buf.append("\n");
+
+	    printAttributes(n);
 	    buf.append("  ").append("jsp:id").append("=\"");
 	    buf.append(jspId++).append("\"\n");
-	    printAttributes(n);
+
 	    if (ROOT_ACTION.equals(n.getLocalName()) || body != null
 		        || text != null) {
 		buf.append(">\n");

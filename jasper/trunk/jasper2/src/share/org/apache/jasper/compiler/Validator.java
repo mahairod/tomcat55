@@ -341,7 +341,7 @@ class Validator {
 			     configEnc, pageDirEnc);
 	    }
 
-	    if (pageInfo.isXml() && pageInfo.isEncodingSpecifiedInProlog()) {
+	    if (n.isXmlSyntax() && pageInfo.isEncodingSpecifiedInProlog()) {
 		String pageEnc = pageInfo.getPageEncoding();
 		if (!pageDirEnc.equals(pageEnc) 
 		        && (!pageDirEnc.startsWith("UTF-16")
@@ -1191,8 +1191,7 @@ class Validator {
 	// Determine the default output content type
 	PageInfo pageInfo = compiler.getPageInfo();
 	String contentType = pageInfo.getContentType();
-	if (!compiler.getCompilationContext().isTagFile() && 
-		(contentType == null || contentType.indexOf("charset=") < 0)) {
+	if (contentType == null || contentType.indexOf("charset=") < 0) {
 	    boolean isXml = page.getRoot().isXmlSyntax();
 	    String defaultType;
 	    if (contentType == null) {
@@ -1257,6 +1256,7 @@ class Validator {
             TagLibraryInfo tli = (TagLibraryInfo) enum.nextElement();
 	    if (!(tli instanceof TagLibraryInfoImpl))
 		continue;
+
 	    ValidationMessage[] errors
 		= ((TagLibraryInfoImpl) tli).validate(xmlView);
             if ((errors != null) && (errors.length != 0)) {

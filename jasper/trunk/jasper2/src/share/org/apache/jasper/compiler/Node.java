@@ -400,6 +400,8 @@ abstract class Node implements TagConstants {
 	 */
 	Root(boolean isXmlSyntax) {
 	    this.isXmlSyntax = isXmlSyntax;
+	    this.qName = JSP_ROOT_ACTION;
+	    this.localName = ROOT_ACTION;
 	}
 
 	/*
@@ -408,6 +410,8 @@ abstract class Node implements TagConstants {
 	Root(Mark start, Node parent, boolean isXmlSyntax) {
 	    super(start, parent);
 	    this.isXmlSyntax = isXmlSyntax;
+	    this.qName = JSP_ROOT_ACTION;
+	    this.localName = ROOT_ACTION;
 
 	    // Figure out and set the parent root
 	    Node r = parent;

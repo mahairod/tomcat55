@@ -594,16 +594,21 @@ class Generator {
     }
 
     /**
-     * Generates a XML declaration
+     * Generates an XML declaration, under the following conditions:
+     *
+     * - 'omit-xml-declaration' attribute of <jsp:output> action is set to
+     *   "no" or "false"
+     * - JSP document without a <jsp:root>
      */
     private void generateXmlDeclaration(Node.Nodes page) {
-	if (page.getRoot().isXmlSyntax() && ! pageInfo.hasJspRoot() && 
-		(pageInfo.getOmitXmlDecl() == null /* not specified */ ||
-		 ! JspUtil.booleanValue(pageInfo.getOmitXmlDecl()))) {
+	if (pageInfo.getOmitXmlDecl() != null
+	            && !JspUtil.booleanValue(pageInfo.getOmitXmlDecl())
+	    || (page.getRoot().isXmlSyntax() && !pageInfo.hasJspRoot()
+		&& !ctxt.isTagFile())) {
 	    String cType = pageInfo.getContentType();
 	    String charSet = cType.substring(cType.indexOf("charset=")+8);
 	    out.printil("out.write(\"<?xml version=\\\"1.0\\\" encoding=\\\"" +
-		charSet + "\\\"?>\\n\");");
+			charSet + "\\\"?>\\n\");");
 	}
     }
 
@@ -2969,6 +2974,7 @@ class Generator {
 		return;
 	    }
 
+	    gen.generateXmlDeclaration(page);
 	    gen.fragmentHelperClass.generatePreamble();
 	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(),
 					       out,

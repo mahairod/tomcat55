@@ -106,11 +106,13 @@ class PageInfo {
     private boolean scriptingInvalid = false;
     private boolean elIgnored = false;
     private boolean elIgnoredSpecified = false;
-    private boolean isXml = false;
     private String omitXmlDecl = null;
 
-    // true is there is a is-xml element in jsp-config
-    private boolean isXmlSpecified = false;	
+    // true if there is an is-xml element in the jsp-config
+    private boolean isXmlConfigSpecified = false;	
+
+    // The value of the is-xml element in the jsp-config
+    private boolean isXmlConfig = false;
 
     // A custom tag is a tag file
     private boolean hasTagFile = false;
@@ -320,20 +322,20 @@ class PageInfo {
 	return elIgnoredSpecified;
     }
 
-    public boolean isXml() {
-	return isXml;
+    public boolean isXmlConfig() {
+	return isXmlConfig;
     }
 
-    public void setIsXml(boolean xml) {
-	isXml = xml;
+    public void setIsXmlConfig(boolean xml) {
+	isXmlConfig = xml;
     }
 
-    public boolean isXmlSpecified() {
-	return isXmlSpecified;
+    public boolean isXmlConfigSpecified() {
+	return isXmlConfigSpecified;
     }
 
-    public void setIsXmlSpecified(boolean xmlSpecified) {
-	isXmlSpecified = xmlSpecified;
+    public void setIsXmlConfigSpecified(boolean xmlSpecified) {
+	isXmlConfigSpecified = xmlSpecified;
     }
 
     public List getIncludePrelude() {

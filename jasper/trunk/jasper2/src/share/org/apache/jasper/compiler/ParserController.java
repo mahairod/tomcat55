@@ -216,7 +216,6 @@ class ParserController {
 		}
 	    }
 	    pageInfo.setPageEncoding(sourceEnc);
-	    pageInfo.setIsXml(isXml);
 	    isTopFile = false;
 	} else {
 	    compiler.getPageInfo().addDependant(absFileName);
@@ -289,11 +288,12 @@ class ParserController {
      * The properties to be determined are:
      *
      *   - Syntax (JSP or XML).
-     *     This information is supplied by setting the instance variable
-     *     'isXml'.
+     *     This information is supplied by setting the 'isXml' instance
+     *     variable.
      *
      *   - Source Encoding.
-     *     This information is supplied as the return value.
+     *     This information is supplied by setting the 'sourceEnc' instance
+     *     variable.
      *
      * If these properties are already specified in the jsp-config element
      * in web.xml, then they are used.
@@ -315,11 +315,11 @@ class ParserController {
 	 */
 	boolean revert = false;
 
-	if (pageInfo.isXmlSpecified()) {
+	if (pageInfo.isXmlConfigSpecified()) {
 	    // If <is-xml> is specified in a <jsp-property-group>, it is used.
-	    isXml = pageInfo.isXml();
+	    isXml = pageInfo.isXmlConfig();
 	    isExternal = true;
-	} else if (fname.endsWith(".jspx")) {
+	} else if (fname.endsWith(".jspx") || fname.endsWith(".tagx")) {
 	    isXml = true;
 	    isExternal = true;
 	}
