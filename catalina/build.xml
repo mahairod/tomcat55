@@ -711,7 +711,8 @@
       version="true"
       windowtitle="Tomcat API Documentation"
       doctitle="Tomcat API"
-      bottom="Copyright &#169; 2000-2003 Apache Software Foundation.  All Rights Reserved."
+      bottom="Copyright &#169; 2000-2004 Apache Software Foundation.  All Rights Reserved."
+      additionalparam="-breakiterator"
     />
   </target>
 
