@@ -110,8 +110,6 @@ import java.net.InetAddress;
  */
 public class SimpleTcpReplicationManager extends org.apache.catalina.session.StandardManager
 {
-    private static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
 
     //the channel configuration
     protected String mChannelConfig = null;
@@ -142,7 +140,9 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
 
     protected String name;
 
-    protected int debug = 0;
+    protected int debug = 10;
+
+    protected boolean distributable = true;
 
     protected org.apache.catalina.cluster.tcp.SimpleTcpCluster cluster;
     /**
@@ -200,6 +200,11 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
     public int getDebug()
     {
         return this.debug;
+    }
+
+    public void setDebug(int debug) {
+        this.debug = debug;
+        super.setDebug(debug);
     }
     /**
      * Creates a HTTP session.
@@ -267,7 +272,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
         */
         if ( setId ) session.setId(sessionId);
 
-        if ( notify )
+        if ( notify && (cluster!=null) )
         {
             //notify javagroups
             SessionMessage msg = new SessionMessage(this.name,
@@ -296,7 +301,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
     public Session createSession()
     {
         //create a session and notify the other nodes in the cluster
-        Session session =  createSession(true,true);
+        Session session =  createSession(distributable,true);
         add(session);
         return session;
     }
@@ -411,6 +416,11 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
         try {
             //the channel is already running
             if ( mChannelStarted ) return;
+            log("Starting clustering manager...:"+getName(),1);
+            if ( cluster == null ) {
+                log("Starting... no cluster associated with this context:"+getName(),1);
+                return;
+            }
             if (cluster.getMembers().length > 0) {
                 SessionMessage msg =
                     new SessionMessage(this.getName(),
@@ -453,7 +463,13 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
         }
     }
 
+    public void setDistributable(boolean dist) {
+        this.distributable = dist;
+    }
 
+    public boolean getDistributable() {
+        return distributable;
+    }
 
     /**
      * This method is called by the received thread when a SessionMessage has
@@ -553,7 +569,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
         if ( getDebug() >= level ) {
             String lmsg = "[InMemoryReplicationManager] "+msg;
             if ( mPrintToScreen ) System.out.println(lmsg);
-            super.log(lmsg);
+            SimpleTcpCluster.log.info(lmsg);
         }
     }
 
@@ -564,7 +580,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
                 System.out.println(lmsg);
                 x.printStackTrace();
             }
-            super.log(lmsg,x);
+            SimpleTcpCluster.log.info(lmsg,x);
         }//end if
     }
 }
