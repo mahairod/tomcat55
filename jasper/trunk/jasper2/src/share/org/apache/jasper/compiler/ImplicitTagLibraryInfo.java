@@ -79,6 +79,7 @@ class ImplicitTagLibraryInfo extends TagLibraryInfo {
 
     private static final String WEB_INF_TAGS = "/WEB-INF/tags";
     private static final String TAG_FILE_SUFFIX = ".tag";
+    private static final String TAGX_FILE_SUFFIX = ".tagx";
     private static final String TAGS_SHORTNAME = "tags";
     private static final String TLIB_VERSION = "1.0";
     private static final String JSP_VERSION = "2.0";
@@ -128,13 +129,18 @@ class ImplicitTagLibraryInfo extends TagLibraryInfo {
 	    Iterator it = dirList.iterator();
 	    while (it.hasNext()) {
 		String path = (String) it.next();
-		if (path.endsWith(TAG_FILE_SUFFIX)) {
-		    // use the filename of the tag file, without the .tag
-		    // extension, as the <name> subelement of the "imaginary"
-		    // <tag-file> element
+		if (path.endsWith(TAG_FILE_SUFFIX)
+		        || path.endsWith(TAGX_FILE_SUFFIX)) {
+		    /*
+		     * Use the filename of the tag file, without the .tag or
+		     * .tagx extension, respectively, as the <name> subelement
+		     * of the "imaginary" <tag-file> element
+		     */
+		    String suffix = path.endsWith(TAG_FILE_SUFFIX) ?
+			TAG_FILE_SUFFIX : TAGX_FILE_SUFFIX; 
 		    String tagName = path.substring(path.lastIndexOf("/") + 1);
 		    tagName = tagName.substring(0,
-						tagName.lastIndexOf(TAG_FILE_SUFFIX));
+						tagName.lastIndexOf(suffix));
 		    tagFileMap.put(tagName, path);
 		}
 	    }
