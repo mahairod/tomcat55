@@ -144,6 +144,13 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
 
     /**
+     * Descriptive information about this implementation.
+     */
+    protected static final String info =
+        "org.apache.catalina.core.ApplicationHttpRequest/1.0";
+
+
+    /**
      * The request parameters for this request.  This is initialized from the
      * wrapped request, but updates are allowed.
      */
@@ -385,6 +392,16 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
     // -------------------------------------------------------- Package Methods
 
+
+
+    /**
+     * Return descriptive information about this implementation.
+     */
+    public String getInfo() {
+
+        return (this.info);
+
+    }
 
 
     /**

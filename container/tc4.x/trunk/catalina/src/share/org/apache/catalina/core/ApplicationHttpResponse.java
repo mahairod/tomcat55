@@ -138,6 +138,13 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
 
 
     /**
+     * Descriptive information about this implementation.
+     */
+    protected static final String info =
+        "org.apache.catalina.core.ApplicationHttpResponse/1.0";
+
+
+    /**
      * The parent object that is actually an internal response object.
      */
     protected HttpResponse parent = null;
@@ -368,6 +375,16 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
 
 
     // -------------------------------------------------------- Package Methods
+
+
+    /**
+     * Return descriptive information about this implementation.
+     */
+    public String getInfo() {
+
+        return (this.info);
+
+    }
 
 
     /**
