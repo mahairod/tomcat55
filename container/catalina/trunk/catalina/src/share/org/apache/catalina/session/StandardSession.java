@@ -1283,6 +1283,14 @@ public class StandardSession
             throw new IllegalArgumentException
                 (sm.getString("standardSession.setAttribute.iae"));
 
+        // Construct an event with the new value
+        HttpSessionBindingEvent event = new HttpSessionBindingEvent
+                ((HttpSession) this, name, value);
+
+        // Call the valueBound() method if necessary
+        if (value instanceof HttpSessionBindingListener)
+                ((HttpSessionBindingListener) value).valueBound(event);
+
         // Replace or add this attribute
         Object unbound = null;
         synchronized (attributes) {
@@ -1292,21 +1300,16 @@ public class StandardSession
 
         // Call the valueUnbound() method if necessary
         if ((unbound != null) &&
-            (unbound instanceof HttpSessionBindingListener)) {
+                (unbound instanceof HttpSessionBindingListener)) {
             ((HttpSessionBindingListener) unbound).valueUnbound
-              (new HttpSessionBindingEvent((HttpSession) this, name));
+                    (new HttpSessionBindingEvent((HttpSession) this, name));
         }
 
-        // Call the valueBound() method if necessary
-        HttpSessionBindingEvent event = null;
+        // Replace the current event with one containing 
+        // the old value if necesary
         if (unbound != null)
-            event = new HttpSessionBindingEvent
-                ((HttpSession) this, name, unbound);
-        else
-            event = new HttpSessionBindingEvent
-                ((HttpSession) this, name, value);
-        if (value instanceof HttpSessionBindingListener)
-            ((HttpSessionBindingListener) value).valueBound(event);
+            event = new HttpSessionBindingEvent((HttpSession) this,
+                                                name, unbound);
 
         // Notify interested application event listeners
         Context context = (Context) manager.getContainer();
