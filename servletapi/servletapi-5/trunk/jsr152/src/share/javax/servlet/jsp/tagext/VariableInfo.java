@@ -150,18 +150,12 @@ package javax.servlet.jsp.tagext;
  *     </td>
  *   </tr>
  *   <tr>
- *     <td valign="top" bgcolor="#c0c0c0"><b><br>
- *     </b></td>
- *     <td valign="top" bgcolor="#c0c0c0" align="center"><b>doStartTag()<br>
- *     </b></td>
- *     <td valign="top" bgcolor="#c0c0c0" align="center"><b>doInitBody()<br>
- *     </b></td>
- *     <td valign="top" bgcolor="#c0c0c0" align="center"><b>doAfterBody()<br>
- *     </b></td>
- *     <td valign="top" bgcolor="#c0c0c0" align="center"><b>doEndTag()<br>
- *     </b></td>
- *     <td valign="top" bgcolor="#c0c0c0" align="center"><b>doTag()<br>
- *     </b></td>
+ *     <th valign="top" bgcolor="#c0c0c0">&nbsp;</th>
+ *     <th valign="top" bgcolor="#c0c0c0" align="center">doStartTag()</th>
+ *     <th valign="top" bgcolor="#c0c0c0" align="center">doInitBody()</th>
+ *     <th valign="top" bgcolor="#c0c0c0" align="center">doAfterBody()</th>
+ *     <th valign="top" bgcolor="#c0c0c0" align="center">doEndTag()</th>
+ *     <th valign="top" bgcolor="#c0c0c0" align="center">doTag()</th>
  *   </tr>
  *   <tr>
  *     <td valign="top" bgcolor="#c0c0c0"><b>Tag<br>
