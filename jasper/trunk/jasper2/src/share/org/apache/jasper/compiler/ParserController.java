@@ -103,6 +103,8 @@ class ParserController implements TagConstants {
     private String sourceEnc;
 
     private boolean isDefaultPageEncoding;
+    private boolean isTagFile;
+    private boolean directiveOnly;
 
     /*
      * Constructor
@@ -132,7 +134,8 @@ class ParserController implements TagConstants {
 	// (using an include directive), ctxt.getTagFileJar() returns the 
 	// JAR file from which to read the tag file or included resource,
 	// respectively.
-	return parse(inFileName, null, ctxt.getTagFileJarUrl());
+	return parse(inFileName, null, ctxt.isTagFile(), false,
+                     ctxt.getTagFileJarUrl());
     }
 
     /**
@@ -146,7 +149,8 @@ class ParserController implements TagConstants {
     public Node.Nodes parse(String inFileName, Node parent,
 			    URL jarFileUrl)
 	        throws FileNotFoundException, JasperException, IOException {
-	return parse(inFileName, parent, ctxt.isTagFile(), false, jarFileUrl);
+        // For files statically included, keep isTagfile and directiveOnly
+	return parse(inFileName, parent, isTagFile, directiveOnly, jarFileUrl);
     }
 
     /**
@@ -187,6 +191,8 @@ class ParserController implements TagConstants {
 	Node.Nodes parsedPage = null;
 	isEncodingSpecifiedInProlog = false;
 	isDefaultPageEncoding = false;
+        this.isTagFile = isTagFile;
+        this.directiveOnly = directiveOnly;
 
 	JarFile jarFile = getJarFile(jarFileUrl);
 	String absFileName = resolveFileName(inFileName);
