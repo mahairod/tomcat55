@@ -419,7 +419,7 @@ public class HttpResponseBase
             return ("Method Not Allowed");
         case SC_MOVED_PERMANENTLY:
             return ("Moved Permanently");
-        case SC_MOVED_TEMPORARILY:
+        case SC_FOUND:
             return ("Moved Temporarily");
         case SC_MULTIPLE_CHOICES:
             return ("Multiple Choices");
@@ -1138,7 +1138,7 @@ public class HttpResponseBase
         // Generate a temporary redirect to the specified location
         try {
             String absolute = toAbsolute(location);
-            setStatus(SC_MOVED_TEMPORARILY);
+            setStatus(SC_FOUND);
             setHeader("Location", absolute);
         } catch (IllegalArgumentException e) {
             setStatus(SC_NOT_FOUND);
