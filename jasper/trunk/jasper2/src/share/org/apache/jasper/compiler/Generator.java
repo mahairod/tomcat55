@@ -706,6 +706,7 @@ class Generator {
 
 	private Hashtable tagVarNumbers;
 	private String parent;
+	private String pushBodyCount;
 	private String simpleTagHandlerVar;
 	private boolean isSimpleTagHandler;
 	private boolean isFragment;
@@ -1489,6 +1490,7 @@ class Generator {
 					      n.getShortName());
 	    String tagEvalVar = "_jspx_eval_" + baseVar;
 	    String tagHandlerVar = "_jspx_th_" + baseVar;
+	    String tagPushBodyCountVar = "_jspx_push_body_count_" + baseVar;
 
 	    // If the tag contains no scripting element, generate its codes
 	    // to a method.
@@ -1551,18 +1553,30 @@ class Generator {
 		 * Classic tag handler: Generate code for start element, body,
 		 * and end element
 		 */
-		generateCustomStart(n, handlerInfo, tagHandlerVar, tagEvalVar);
+		generateCustomStart(n, handlerInfo, tagHandlerVar, tagEvalVar,
+				    tagPushBodyCountVar);
 
 		// visit body
 		String tmpParent = parent;
 		parent = tagHandlerVar;
+		String tmpPushBodyCount = null;
+		if (n.implementsTryCatchFinally()) {
+		    tmpPushBodyCount = pushBodyCount;
+		    pushBodyCount = tagPushBodyCountVar;
+		}
 		boolean tmpIsSimpleTagHandler = isSimpleTagHandler;
 		isSimpleTagHandler = false;
+
 		visitBody(n);
+
 		parent = tmpParent;
+		if (n.implementsTryCatchFinally()) {
+		    pushBodyCount = tmpPushBodyCount;
+		}
 		isSimpleTagHandler = tmpIsSimpleTagHandler;
 
-		generateCustomEnd(n, tagHandlerVar, tagEvalVar);
+		generateCustomEnd(n, tagHandlerVar, tagEvalVar,
+				  tagPushBodyCountVar);
 	    }
 
 	    if (ci.isScriptless() && !ci.hasScriptingVars()) {
@@ -1911,7 +1925,8 @@ class Generator {
 	private void generateCustomStart(Node.CustomTag n,
 					 TagHandlerInfo handlerInfo,
 					 String tagHandlerVar,
-					 String tagEvalVar)
+					 String tagEvalVar,
+					 String tagPushBodyCountVar)
 	                    throws JasperException {
 
 	    Class tagHandlerClass = handlerInfo.getTagHandlerClass();
@@ -1946,6 +1961,9 @@ class Generator {
 	    generateSetters(n, tagHandlerVar, handlerInfo, false);
 	    
             if (n.implementsTryCatchFinally()) {
+		out.printin("int ");
+		out.print(tagPushBodyCountVar);
+		out.println(" = 0;");
                 out.printil("try {");
                 out.pushIndent();
             }
@@ -1977,6 +1995,13 @@ class Generator {
 		    // Assume EVAL_BODY_BUFFERED
 		    out.pushIndent();
 		    out.printil("out = pageContext.pushBody();");
+		    if (n.implementsTryCatchFinally()) {
+			out.printin(tagPushBodyCountVar);
+			out.println("++;");
+		    } else if (pushBodyCount != null) {
+			out.printin(pushBodyCount);
+			out.println("++;");
+		    }
 		    out.printin(tagHandlerVar);
 		    out.println(".setBodyContent((javax.servlet.jsp.tagext.BodyContent) out);");
 		    out.printin(tagHandlerVar);
@@ -2003,7 +2028,8 @@ class Generator {
 	
 	private void generateCustomEnd(Node.CustomTag n,
 				       String tagHandlerVar,
-				       String tagEvalVar) {
+				       String tagEvalVar,
+				       String tagPushBodyCountVar) {
 
 	    if (!n.hasEmptyBody()) {
 		if (n.implementsIterationTag()) {
@@ -2032,6 +2058,13 @@ class Generator {
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
 		    out.pushIndent();
                     out.printil("out = pageContext.popBody();");
+		    if (n.implementsTryCatchFinally()) {
+			out.printin(tagPushBodyCountVar);
+			out.println("--;");
+		    } else if (pushBodyCount != null) {
+			out.printin(pushBodyCount);
+			out.println("--;");
+		    }
 		    out.popIndent();
 		}
 
@@ -2058,6 +2091,14 @@ class Generator {
                 out.popIndent(); // try
 		out.printil("} catch (Throwable _jspx_exception) {");
 		out.pushIndent();
+
+		out.printin("while (");
+		out.print(tagPushBodyCountVar);
+		out.println("-- > 0)");
+		out.pushIndent();
+		out.printil("out = pageContext.popBody();");
+		out.popIndent();
+
 		out.printin(tagHandlerVar);
 		out.println(".doCatch(_jspx_exception);");
 		out.popIndent();
