@@ -365,31 +365,38 @@ public class StatusManagerServlet
 
         switch (stage) {
 
-        case (org.apache.coyote.Constants.STAGE_PARSE):
+        case (1/*org.apache.coyote.Constants.STAGE_PARSE*/):
             writer.write("P");
             fullStatus = false;
             break;
-        case (org.apache.coyote.Constants.STAGE_SERVICE):
+        case (2/*org.apache.coyote.Constants.STAGE_PREPARE*/):
+            writer.write("P");
+            fullStatus = false;
+            break;
+        case (3/*org.apache.coyote.Constants.STAGE_SERVICE*/):
             writer.write("S");
             break;
-        case (org.apache.coyote.Constants.STAGE_ENDINPUT):
+        case (4/*org.apache.coyote.Constants.STAGE_ENDINPUT*/):
             writer.write("F");
             break;
-        case (org.apache.coyote.Constants.STAGE_ENDOUTPUT):
+        case (5/*org.apache.coyote.Constants.STAGE_ENDOUTPUT*/):
             writer.write("F");
             break;
-        case (org.apache.coyote.Constants.STAGE_ENDED):
+        case (7/*org.apache.coyote.Constants.STAGE_ENDED*/):
             writer.write("R");
             fullStatus = false;
             break;
-        case (org.apache.coyote.Constants.STAGE_KEEPALIVE):
+        case (6/*org.apache.coyote.Constants.STAGE_KEEPALIVE*/):
             writer.write("K");
             fullStatus = false;
             break;
-        case (org.apache.coyote.Constants.STAGE_NEW):
+        case (0/*org.apache.coyote.Constants.STAGE_NEW*/):
             writer.write("R");
             fullStatus = false;
             break;
+        default:
+            writer.write("?");
+            fullStatus = false;
 
         }
 
