@@ -2340,8 +2340,7 @@ public class CoyoteRequest
                 }
                 cookies[idx++] = cookie;
             } catch(IllegalArgumentException e) {
-                log.info("Bad Cookie: Name: " + scookie.getName() 
-                         + " Value: " + scookie.getValue());
+                // Ignore bad cookie
             }
         }
         if( idx < count ) {
