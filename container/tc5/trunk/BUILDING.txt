@@ -52,21 +52,21 @@ do the following:
   available, which will be used to actually perform the build.
 
 
-(1.2) Download and Install the Xerces 2 Distribution
+(1.2) Download and Install the Xalan 2 Distribution
 
-* Download a binary distribution of version 2.1.0 from:
+* Download a binary distribution of version 2.x from:
 
-  http://xml.apache.org/dist/xerces-j/old_xerces2/
+  http://xml.apache.org/dist/xalan-j/
 
   On a Windows platform, you will need:
-    Xerces-J-bin.2.1.0.zip
+    Xerces-J-bin.2.x.y.zip
 
   On a Unix platform, you will need:
-    Xerces-J-bin.2.1.0.tar.gz
+    Xerces-J-bin.2.x.y.tar.gz
 
 * Unpack the binary distribution into a convenient location so that the
   distribution resides in its own directory (conventionally named
-  "xerces-x_y_z").
+  "xalan-2_x_y").
 
 * Copy the xalan.jar file from that distribution to the "${ant.home}/lib"
   directory.
@@ -121,6 +121,7 @@ To do this, execute the following commands:
 
     cd ${tomcat.source}
     ant checkout
+
 
 (4) Rebuilds
 
