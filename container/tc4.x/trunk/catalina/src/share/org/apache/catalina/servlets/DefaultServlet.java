@@ -80,7 +80,6 @@ import java.io.Writer;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Enumeration;
@@ -89,7 +88,6 @@ import java.util.StringTokenizer;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Hashtable;
-import java.util.BitSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.security.MessageDigest;
@@ -117,6 +115,7 @@ import org.apache.catalina.util.MD5Encoder;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.util.URLEncoder;
 
 
 /**
@@ -195,14 +194,27 @@ public class DefaultServlet
 
     protected final static TimeZone gmtZone = TimeZone.getTimeZone("GMT");
 
+    /**
+     * Array containing the safe characters set.
+     */
+    protected static URLEncoder urlEncoder;
+
 
     /**
      * GMT timezone - all HTTP dates are on GMT
      */
+    // ----------------------------------------------------- Static Initializer
     static {
         formats[0].setTimeZone(gmtZone);
         formats[1].setTimeZone(gmtZone);
         formats[2].setTimeZone(gmtZone);
+
+        urlEncoder = new URLEncoder();
+        urlEncoder.addSafeCharacter('-');
+        urlEncoder.addSafeCharacter('_');
+        urlEncoder.addSafeCharacter('.');
+        urlEncoder.addSafeCharacter('*');
+        urlEncoder.addSafeCharacter('/');
     }
 
 
@@ -226,43 +238,9 @@ public class DefaultServlet
 
 
     /**
-     * Array containing the safe characters set.
-     */
-    protected static BitSet safeCharacters;
-
-
-    protected static final char[] hexadecimal =
-    {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-     'A', 'B', 'C', 'D', 'E', 'F'};
-
-
-    /**
      * Size of file transfer buffer in bytes.
      */
     private static final int BUFFER_SIZE = 4096;
-
-
-    // ----------------------------------------------------- Static Initializer
-
-
-    static {
-        safeCharacters = new BitSet(256);
-        int i;
-        for (i = 'a'; i <= 'z'; i++) {
-            safeCharacters.set(i);
-        }
-        for (i = 'A'; i <= 'Z'; i++) {
-            safeCharacters.set(i);
-        }
-        for (i = '0'; i <= '9'; i++) {
-            safeCharacters.set(i);
-        }
-        safeCharacters.set('-');
-        safeCharacters.set('_');
-        safeCharacters.set('.');
-        safeCharacters.set('*');
-        safeCharacters.set('/');
-    }
 
 
     // --------------------------------------------------------- Public Methods
@@ -1016,55 +994,7 @@ public class DefaultServlet
      * @param path Path which has to be rewiten
      */
     protected String rewriteUrl(String path) {
-
-        /**
-         * Note: This code portion is very similar to URLEncoder.encode.
-         * Unfortunately, there is no way to specify to the URLEncoder which
-         * characters should be encoded. Here, ' ' should be encoded as "%20"
-         * and '/' shouldn't be encoded.
-         */
-
-        int maxBytesPerChar = 10;
-        int caseDiff = ('a' - 'A');
-        StringBuffer rewrittenPath = new StringBuffer(path.length());
-        ByteArrayOutputStream buf = new ByteArrayOutputStream(maxBytesPerChar);
-        OutputStreamWriter writer = null;
-        try {
-            writer = new OutputStreamWriter(buf, "UTF8");
-        } catch (Exception e) {
-            e.printStackTrace();
-            writer = new OutputStreamWriter(buf);
-        }
-
-        for (int i = 0; i < path.length(); i++) {
-            int c = (int) path.charAt(i);
-            if (safeCharacters.get(c)) {
-                rewrittenPath.append((char)c);
-            } else {
-                // convert to external encoding before hex conversion
-                try {
-                    writer.write(c);
-                    writer.flush();
-                } catch(IOException e) {
-                    buf.reset();
-                    continue;
-                }
-                byte[] ba = buf.toByteArray();
-                for (int j = 0; j < ba.length; j++) {
-                    // Converting each byte in the buffer
-                    byte toEncode = ba[j];
-                    rewrittenPath.append('%');
-                    int low = (int) (toEncode & 0x0f);
-                    int high = (int) ((toEncode & 0xf0) >> 4);
-                    rewrittenPath.append(hexadecimal[high]);
-                    rewrittenPath.append(hexadecimal[low]);
-                }
-                buf.reset();
-            }
-        }
-
-        return rewrittenPath.toString();
-
+        return urlEncoder.encode( path );
     }
 
 
