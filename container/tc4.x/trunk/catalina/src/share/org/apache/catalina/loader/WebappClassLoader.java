@@ -1994,6 +1994,9 @@ public class WebappClassLoader
                 log(" Checking for " + name);
             JarEntry jarEntry = jarFile.getJarEntry(name);
             if (jarEntry != null) {
+                log("validateJarFile(" + jarfile + 
+                    ") - jar not loaded. See Servlet Spec 2.3, "
+                    + "section 9.7.2. Offending class: " + name);
                 jarFile.close();
                 return (false);
             }
