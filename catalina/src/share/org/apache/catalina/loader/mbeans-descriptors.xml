@@ -53,4 +53,11 @@
   </mbean>
 
 
+  <mbean         name="WebappClassLoader"
+          description="Classloader implementation which is specialized for
+                       handling web applications"
+               domain="Catalina"
+                group="Loader"
+                 type="org.apache.catalina.loader.WebappClassLoader" />
+
 </mbeans-descriptors>

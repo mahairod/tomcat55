@@ -70,7 +70,7 @@ import org.apache.naming.JndiPermission;
 
 public class StandardClassLoader
     extends URLClassLoader
-    implements Reloader {
+    implements Reloader, StandardClassLoaderMBean {
 
 
     // ----------------------------------------------------------- Constructors
