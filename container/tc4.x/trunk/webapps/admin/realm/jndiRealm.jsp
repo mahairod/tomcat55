@@ -22,6 +22,7 @@
   <html:hidden property="adminAction"/>
   <html:hidden property="objectName"/>
   <html:hidden property="parentObjectName"/>
+  <html:hidden property="allowDeletion"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
@@ -41,11 +42,13 @@
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
             <logic:notEqual name="jndiRealmForm" property="adminAction" value="Create">              
+                <logic:notEqual name="userDatabaseRealmForm" property="allowDeletion" value="false">  
                 <controls:action url='<%= "/DeleteRealm.do?select=" + 
                                         URLEncoder.encode(thisObjectName) %>'>  
                 <bean:message key="actions.realms.delete"/> 
             </controls:action>           
-           </logic:notEqual>          
+           </logic:notEqual>  
+        </logic:notEqual>
        </controls:actions>   
          </div>
       </td>
