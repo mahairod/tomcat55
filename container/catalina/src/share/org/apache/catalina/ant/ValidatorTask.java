@@ -27,7 +27,6 @@ import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.DigesterFactory;
 import org.apache.tomcat.util.digester.Digester;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 import org.xml.sax.InputSource;
 
 
@@ -40,7 +39,7 @@ import org.xml.sax.InputSource;
  * @since 5.0
  */
 
-public class ValidatorTask extends Task {
+public class ValidatorTask extends BaseRedirectorHelperTask {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -97,11 +96,16 @@ public class ValidatorTask extends Task {
             InputSource is = new InputSource(file.toURL().toExternalForm());
             is.setByteStream(stream);
             digester.parse(is);
-            System.out.println("web.xml validated");
+            handleOutput("web.xml validated");
         } catch (Throwable t) {
-            throw new BuildException("Validation failure", t);
+            if (isFailOnError()) {
+                throw new BuildException("Validation failure", t);
+            } else {
+                handleErrorOutput("Validation failure: " + t);
+            }
         } finally {
             Thread.currentThread().setContextClassLoader(oldCL);
+            closeRedirector();
         }
 
     }
