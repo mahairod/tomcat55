@@ -1195,7 +1195,7 @@ public class WebappClassLoader
         // Don't load classes if class loader is stopped
         if (!started) {
             log("Lifecycle error : CL stopped");
-            throw new ClassNotFoundException(name);
+            throw new IncompatibleClassChangeError(name);
         }
 
         // (0) Check our previously loaded local class cache
