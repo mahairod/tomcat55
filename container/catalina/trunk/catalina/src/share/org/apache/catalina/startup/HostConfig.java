@@ -188,6 +188,12 @@ public class HostConfig
 
 
     /**
+     * Last modified dates of the source WAR files, keyed by WAR name.
+     */
+    private HashMap warLastModified = new HashMap();
+
+
+    /**
      * Attribute value used to turn on/off XML validation
      */
     private boolean xmlValidation = false;
@@ -689,16 +695,50 @@ public class HostConfig
 
         }
 
+        // Check for WAR modification
+        if (isUnpackWARs()) {
+            File appBase = appBase();
+            if (!appBase.exists() || !appBase.isDirectory())
+                return;
+            String files[] = appBase.list();
+
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].endsWith(".war")) {
+                    File dir = new File(appBase, files[i]);
+                    Long lastModified = (Long) warLastModified.get(files[i]);
+                    if (lastModified == null) {
+                        warLastModified.put
+                            (files[i], new Long(dir.lastModified()));
+                    } else if (dir.lastModified() > lastModified.longValue()) {
+                        // The WAR has been modified: redeploy
+                        String expandedDir = files[i];
+                        int period = expandedDir.lastIndexOf(".");
+                        if (period >= 0)
+                            expandedDir = expandedDir.substring(0, period);
+                        String contextPath = "/" + expandedDir;
+                        if (contextPath.equals("/ROOT"))
+                            contextPath = "";
+                        try {
+                            ((Deployer) host).remove(contextPath, true);
+                            deployed.remove(files[i]);
+                        } catch (Throwable t) {
+                            log.error(sm.getString("hostConfig.undeployJar.error",
+                                                   files[i]), t);
+                        }
+                        webXmlLastModified.remove(contextPath);
+                        warLastModified.put
+                            (files[i], new Long(dir.lastModified()));
+                        deployApps();
+                    }
+                }
+            }
+        }
+
     }
 
 
     protected boolean restartContext(Context context) {
         boolean result = true;
-        if( context.getReloadable() == false ) {
-            log.info("restartContext(" + context.getName() + "): not reloadable");
-            return false;
-        }
-
         log.info("restartContext(" + context.getName() + ")");
 
         /*
@@ -853,13 +893,16 @@ public class HostConfig
             }
         }
 
+        webXmlLastModified.clear();
+        deployed.clear();
+
     }
 
 
     /**
      * Deploy webapps.
      */
-    public void check() {
+    protected void check() {
 
         if (host.getAutoDeploy()) {
             // Deploy apps if the Host allows auto deploying
