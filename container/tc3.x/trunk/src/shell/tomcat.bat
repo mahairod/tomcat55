@@ -48,6 +48,8 @@ set CP=%CP%;%CLASSPATH%
 :noClasspath
 set CP=%CP%;%JAVA_HOME%\lib\tools.jar
 echo Using CLASSPATH: %CP%
+echo Using JAVA_HOME: %JAVA_HOME%
+echo Using TOMCAT_HOME: %TOMCAT_HOME%
 
 
 rem ----- Execute The Requested Command -------------------------------------
