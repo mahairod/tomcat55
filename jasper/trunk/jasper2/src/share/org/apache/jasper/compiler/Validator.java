@@ -657,7 +657,7 @@ class Validator {
         }
 
 	public void visit(Node.UninterpretedTag n) throws JasperException {
-            if (n.getNamedAttributeNodes() != null) {
+            if (n.getNamedAttributeNodes().size() != 0) {
 		err.jspError(n, "jsp.error.namedAttribute.invalidUse");
             }
         }

@@ -195,6 +195,9 @@ abstract class Node {
     /**
      * Searches all subnodes of this node for jsp:attribute standard
      * actions, and returns that set of nodes as a Node.Nodes object.
+     *
+     * @return Possibly empty Node.Nodes object containing any jsp:attribute
+     * subnodes of this Node
      */
     public Node.Nodes getNamedAttributeNodes() {
 
