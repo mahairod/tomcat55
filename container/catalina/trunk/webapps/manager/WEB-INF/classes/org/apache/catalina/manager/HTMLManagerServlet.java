@@ -347,22 +347,23 @@ public final class HTMLManagerServlet extends ManagerServlet {
         PrintWriter writer = response.getWriter();
 
         // HTML Header Section
-        writer.print(HTML_HEADER_SECTION);
+        writer.print(Constants.HTML_HEADER_SECTION);
 
         // Body Header Section
         Object[] args = new Object[2];
         args[0] = request.getContextPath();
         args[1] = sm.getString("htmlManagerServlet.title");
-        writer.print(MessageFormat.format(BODY_HEADER_SECTION, args));
+        writer.print(MessageFormat.format
+                     (Constants.BODY_HEADER_SECTION, args));
 
         // Message Section
         args = new Object[3];
         args[0] = sm.getString("htmlManagerServlet.messageLabel");
         args[1] = (message == null || message.length() == 0) ? "OK" : message;
-        writer.print(MessageFormat.format(MESSAGE_SECTION, args));
+        writer.print(MessageFormat.format(Constants.MESSAGE_SECTION, args));
 
         // Manager Section
-        args = new Object[7];
+        args = new Object[9];
         args[0] = sm.getString("htmlManagerServlet.manager");
         args[1] = response.encodeURL(request.getContextPath() + "/html/list");
         args[2] = sm.getString("htmlManagerServlet.list");
@@ -374,7 +375,10 @@ public final class HTMLManagerServlet extends ManagerServlet {
             (request.getContextPath() + "/" +
              sm.getString("htmlManagerServlet.helpManagerFile"));
         args[6] = sm.getString("htmlManagerServlet.helpManager");
-        writer.print(MessageFormat.format(MANAGER_SECTION, args));
+        args[7] = response.encodeURL
+            (request.getContextPath() + "/status");
+        args[8] = sm.getString("statusServlet.title");
+        writer.print(MessageFormat.format(Constants.MANAGER_SECTION, args));
 
         // Apps Header Section
         args = new Object[6];
@@ -486,7 +490,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
         args[4] = sm.getString("htmlManagerServlet.serverOSName");
         args[5] = sm.getString("htmlManagerServlet.serverOSVersion");
         args[6] = sm.getString("htmlManagerServlet.serverOSArch");
-        writer.print(MessageFormat.format(SERVER_HEADER_SECTION, args));
+        writer.print(MessageFormat.format
+                     (Constants.SERVER_HEADER_SECTION, args));
 
         // Server Row Section
         args = new Object[6];
@@ -496,10 +501,10 @@ public final class HTMLManagerServlet extends ManagerServlet {
         args[3] = System.getProperty("os.name");
         args[4] = System.getProperty("os.version");
         args[5] = System.getProperty("os.arch");
-        writer.print(MessageFormat.format(SERVER_ROW_SECTION, args));
+        writer.print(MessageFormat.format(Constants.SERVER_ROW_SECTION, args));
 
         // HTML Tail Section
-        writer.print(HTML_TAIL_SECTION);
+        writer.print(Constants.HTML_TAIL_SECTION);
 
         // Finish up the response
         writer.flush();
@@ -601,121 +606,6 @@ public final class HTMLManagerServlet extends ManagerServlet {
     // These HTML sections are broken in relatively small sections, because of
     // limited number of subsitutions MessageFormat can process
     // (maximium of 10).
-
-    private static final String HTML_HEADER_SECTION =
-        "<html>\n" +
-        "<head>\n" +
-        "<style>\n" +
-        "  table { width: 100%; }\n" +
-        "  td.page-title {\n" +
-        "    text-align: center;\n" +
-        "    vertical-align: top;\n" +
-        "    font-family:verdana,sans-serif;\n" +
-        "    font-weight: bold;\n" +
-        "    background: white;\n" +
-        "    color: black;\n" +
-        "  }\n" +
-        "  td.title {\n" +
-        "    text-align: left;\n" +
-        "    vertical-align: top;\n" +
-        "    font-family:verdana,sans-serif;\n" +
-        "    font-style:italic;\n" +
-        "    font-weight: bold;\n" +
-        "    background: #D2A41C;\n" +
-        "  }\n" +
-        "  td.header-left {\n" +
-        "    text-align: left;\n" +
-        "    vertical-align: top;\n" +
-        "    font-family:verdana,sans-serif;\n" +
-        "    font-weight: bold;\n" +
-        "    background: #FFDC75;\n" +
-        "  }\n" +
-        "  td.header-center {\n" +
-        "    text-align: center;\n" +
-        "    vertical-align: top;\n" +
-        "    font-family:verdana,sans-serif;\n" +
-        "    font-weight: bold;\n" +
-        "    background: #FFDC75;\n" +
-        "  }\n" +
-        "  td.row-left {\n" +
-        "    text-align: left;\n" +
-        "    vertical-align: middle;\n" +
-        "    font-family:verdana,sans-serif;\n" +
-        "    color: black;\n" +
-        "    background: white;\n" +
-        "  }\n" +
-        "  td.row-center {\n" +
-        "    text-align: center;\n" +
-        "    vertical-align: middle;\n" +
-        "    font-family:verdana,sans-serif;\n" +
-        "    color: black;\n" +
-        "    background: white;\n" +
-        "  }\n" +
-        "  td.row-right {\n" +
-        "    text-align: right;\n" +
-        "    vertical-align: middle;\n" +
-        "    font-family:verdana,sans-serif;\n" +
-        "    color: black;\n" +
-        "    background: white;\n" +
-        "  }\n" +
-        "</style>\n";
-
-    private static final String BODY_HEADER_SECTION =
-        "<title>{0}</title>\n" +
-        "</head>\n" +
-        "\n" +
-        "<body bgcolor=\"#FFFFFF\">\n" +
-        "\n" +
-        "<table cellspacing=\"4\" width=\"100%\" border=\"0\">\n" +
-        " <tr>\n" +
-        "  <td colspan=\"2\">\n" +
-        "   <a href=\"http://jakarta.apache.org/\">\n" +
-        "    <img border=\"0\" alt=\"The Jakarta Project\" align=\"left\"\n" +
-        "         src=\"{0}/images/jakarta-logo.gif\">\n" +
-        "   </a>\n" +
-        "   <a href=\"http://jakarta.apache.org/tomcat/\">\n" +
-        "    <img border=\"0\" alt=\"The Tomcat Servlet/JSP Container\"\n" +
-        "         align=\"right\" src=\"{0}/images/tomcat.gif\">\n" +
-        "   </a>\n" +
-        "  </td>\n" +
-        " </tr>\n" +
-        "</table>\n" +
-        "<hr size=\"1\" noshade\"\">\n" +
-        "<table cellspacing=\"4\" width=\"100%\" border=\"0\">\n" +
-        " <tr>\n" +
-        "  <td class=\"page-title\" bordercolor=\"#000000\" " +
-        "align=\"left\" nowrap>\n" +
-        "   <font size=\"+2\">{1}</font>\n" +
-        "  </td>\n" +
-        " </tr>\n" +
-        "</table>\n" +
-        "<br>\n" +
-        "\n";
-
-    private static final String MESSAGE_SECTION =
-        "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n" +
-        " <tr>\n" +
-        "  <td class=\"row-left\" width=\"10%\">" +
-        "<small><b>{0}</b></small>&nbsp;</td>\n" +
-        "  <td class=\"row-left\"><pre>{1}</pre></td>\n" +
-        " </tr>\n" +
-        "</table>\n" +
-        "<br>\n" +
-        "\n";
-
-    private static final String MANAGER_SECTION =
-        "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n" +
-        "<tr>\n" +
-        " <td colspan=\"3\" class=\"title\">{0}</td>\n" +
-        "</tr>\n" +
-        " <tr>\n" +
-        "  <td class=\"row-left\"><a href=\"{1}\">{2}</a></td>\n" +
-        "  <td class=\"row-center\"><a href=\"{3}\">{4}</a></td>\n" +
-        "  <td class=\"row-right\"><a href=\"{5}\">{6}</a></td>\n" +
-        " </tr>\n" +
-        "</table>\n" +
-        "<br>\n" +
-        "\n";
 
     private static final String APPS_HEADER_SECTION =
         "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n" +
@@ -854,39 +744,4 @@ public final class HTMLManagerServlet extends ManagerServlet {
         "<br>\n" +
         "\n";
 
-    private static final String SERVER_HEADER_SECTION =
-        "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n" +
-        "<tr>\n" +
-        " <td colspan=\"6\" class=\"title\">{0}</td>\n" +
-        "</tr>\n" +
-        "<tr>\n" +
-        " <td class=\"header-center\"><small>{1}</small></td>\n" +
-        " <td class=\"header-center\"><small>{2}</small></td>\n" +
-        " <td class=\"header-center\"><small>{3}</small></td>\n" +
-        " <td class=\"header-center\"><small>{4}</small></td>\n" +
-        " <td class=\"header-center\"><small>{5}</small></td>\n" +
-        " <td class=\"header-center\"><small>{6}</small></td>\n" +
-        "</tr>\n";
-
-    private static final String SERVER_ROW_SECTION =
-        "<tr>\n" +
-        " <td class=\"row-center\"><small>{0}</small></td>\n" +
-        " <td class=\"row-center\"><small>{1}</small></td>\n" +
-        " <td class=\"row-center\"><small>{2}</small></td>\n" +
-        " <td class=\"row-center\"><small>{3}</small></td>\n" +
-        " <td class=\"row-center\"><small>{4}</small></td>\n" +
-        " <td class=\"row-center\"><small>{5}</small></td>\n" +
-        "</tr>\n" +
-        "</table>\n" +
-        "<br>\n" +
-        "\n";
-
-    private static final String HTML_TAIL_SECTION =
-        "<hr size=\"1\" noshade\"\">\n" +
-        "<center><font size=\"-1\" color=\"#525D76\">\n" +
-        " <em>Copyright &copy; 1999-2002, Apache Software Foundation</em>" +
-        "</font></center>\n" +
-        "\n" +
-        "</body>\n" +
-        "</html>";
 }

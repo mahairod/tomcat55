@@ -67,6 +67,7 @@ package org.apache.catalina.manager;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Set;
@@ -88,6 +89,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.modeler.Registry;
 
 import org.apache.tomcat.util.compat.JdkCompat;
+
+import org.apache.catalina.util.ServerInfo;
+import org.apache.catalina.util.StringManager;
 
 /**
  * This servlet will display a complete status of the HTTP/1.1 connector.
@@ -137,6 +141,13 @@ public class StatusManagerServlet
      * Vector of global request processors object names.
      */
     protected Vector globalRequestProcessors = new Vector();
+
+
+    /**
+     * The string manager for this package.
+     */
+    protected static StringManager sm =
+        StringManager.getManager(Constants.Package);
 
 
     // --------------------------------------------------------- Public Methods
@@ -240,6 +251,72 @@ public class StatusManagerServlet
 
         PrintWriter writer = response.getWriter();
 
+        boolean completeStatus = false;
+        if ((request.getPathInfo() != null) 
+            && (request.getPathInfo().equals("/all"))) {
+            completeStatus = true;
+        }
+
+        // HTML Header Section
+        writer.print(Constants.HTML_HEADER_SECTION);
+
+        // Body Header Section
+        Object[] args = new Object[2];
+        args[0] = request.getContextPath();
+        if (completeStatus) {
+            args[1] = sm.getString("statusServlet.complete");
+        } else {
+            args[1] = sm.getString("statusServlet.title");
+        }
+        writer.print(MessageFormat.format
+                     (Constants.BODY_HEADER_SECTION, args));
+
+        // Manager Section
+        args = new Object[9];
+        args[0] = sm.getString("htmlManagerServlet.manager");
+        args[1] = response.encodeURL(request.getContextPath() + "/html/list");
+        args[2] = sm.getString("htmlManagerServlet.list");
+        args[3] = response.encodeURL
+            (request.getContextPath() + "/" +
+             sm.getString("htmlManagerServlet.helpHtmlManagerFile"));
+        args[4] = sm.getString("htmlManagerServlet.helpHtmlManager");
+        args[5] = response.encodeURL
+            (request.getContextPath() + "/" +
+             sm.getString("htmlManagerServlet.helpManagerFile"));
+        args[6] = sm.getString("htmlManagerServlet.helpManager");
+        if (completeStatus) {
+            args[7] = response.encodeURL
+                (request.getContextPath() + "/status");
+            args[8] = sm.getString("statusServlet.title");
+        } else {
+            args[7] = response.encodeURL
+                (request.getContextPath() + "/status/all");
+            args[8] = sm.getString("statusServlet.complete");
+        }
+        writer.print(MessageFormat.format(Constants.MANAGER_SECTION, args));
+
+        // Server Header Section
+        args = new Object[7];
+        args[0] = sm.getString("htmlManagerServlet.serverTitle");
+        args[1] = sm.getString("htmlManagerServlet.serverVersion");
+        args[2] = sm.getString("htmlManagerServlet.serverJVMVersion");
+        args[3] = sm.getString("htmlManagerServlet.serverJVMVendor");
+        args[4] = sm.getString("htmlManagerServlet.serverOSName");
+        args[5] = sm.getString("htmlManagerServlet.serverOSVersion");
+        args[6] = sm.getString("htmlManagerServlet.serverOSArch");
+        writer.print(MessageFormat.format
+                     (Constants.SERVER_HEADER_SECTION, args));
+
+        // Server Row Section
+        args = new Object[6];
+        args[0] = ServerInfo.getServerInfo();
+        args[1] = System.getProperty("java.runtime.version");
+        args[2] = System.getProperty("java.vm.vendor");
+        args[3] = System.getProperty("os.name");
+        args[4] = System.getProperty("os.version");
+        args[5] = System.getProperty("os.arch");
+        writer.print(MessageFormat.format(Constants.SERVER_ROW_SECTION, args));
+
         try {
 
             // Display virtual machine statistics
@@ -261,6 +338,9 @@ public class StatusManagerServlet
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // HTML Tail Section
+        writer.print(Constants.HTML_TAIL_SECTION);
 
     }
 
