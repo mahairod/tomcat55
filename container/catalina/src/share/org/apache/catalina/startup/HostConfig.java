@@ -1102,8 +1102,9 @@ public class HostConfig
         } catch (Exception e) {
             log.error(sm.getString("hostConfig.jmx.register", oname), e);
         }
-        
-        deployApps();
+
+        if (host.getDeployOnStartup())
+            deployApps();
         
     }
 
