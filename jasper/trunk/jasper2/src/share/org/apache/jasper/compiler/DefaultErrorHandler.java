@@ -106,8 +106,7 @@ class DefaultErrorHandler implements ErrorHandler {
         StringBuffer buf = new StringBuffer();
 	
         if ((details.length == 1) 
-            && (details[0].getJspBeginLineNumber() == -1)
-            && (details[0].getJspFileName() == null)) {
+            && (details[0].getJavaLineNumber() == -1)) {
             // Special case: No Java compiler found
             buf.append(Localizer.getMessage("jsp.error.nojavac"));
             buf.append('\n');
