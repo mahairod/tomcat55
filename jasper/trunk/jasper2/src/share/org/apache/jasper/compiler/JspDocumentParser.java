@@ -90,6 +90,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * syntax.
  *
  * @author Jan Luehe
+ * @author Kin-man Chung
  */
 
 class JspDocumentParser
@@ -110,6 +111,7 @@ class JspDocumentParser
     private JspCompilationContext ctxt;
     private PageInfo pageInfo;
     private String path;
+    private StringBuffer charBuffer;
 
     // Node representing the XML element currently being parsed
     private Node current;
@@ -287,6 +289,8 @@ class JspDocumentParser
         AttributesImpl nonTaglibAttrs = null;
         AttributesImpl nonTaglibXmlnsAttrs = null;
 
+        processChars();
+
         checkPrefixes(uri, qName, attrs);
 
         if (directivesOnly &&
@@ -399,14 +403,33 @@ class JspDocumentParser
     /*
      * Receives notification of character data inside an element.
      *
+     * The SAX does not call this method with all of the template text, but may
+     * invoke this method with chunks of it.  This is a problem when we try
+     * to determine if the text contains only whitespaces, or when we are
+     * looking for an EL expression string.  Therefore it is necessary to
+     * buffer and concatenate the chunks and process the concatenated text 
+     * later (at beginTag and endTag)
+     *
      * @param buf The characters
      * @param offset The start position in the character array
      * @param len The number of characters to use from the character array
      *
      * @throws SAXException
      */
-    public void characters(char[] buf, int offset, int len)
-        throws SAXException {
+    public void characters(char[] buf, int offset, int len) {
+
+        if (charBuffer == null) {
+            charBuffer = new StringBuffer();
+        }
+        charBuffer.append(buf, offset, len);
+    }
+
+    private void processChars() throws SAXException {
+
+        if (charBuffer == null) {
+            return;
+        }
+
         /*
          * JSP.6.1.1: All textual nodes that have only white space are to be
          * dropped from the document, except for nodes in a jsp:text element,
@@ -418,11 +441,11 @@ class JspDocumentParser
         boolean isAllSpace = true;
         if (!(current instanceof Node.JspText)
             && !(current instanceof Node.NamedAttribute)) {
-            for (int i = offset; i < offset + len; i++) {
-                if (!(buf[i] == ' '
-                    || buf[i] == '\n'
-                    || buf[i] == '\r'
-                    || buf[i] == '\t')) {
+            for (int i = 0; i < charBuffer.length(); i++) {
+                if (!(charBuffer.charAt(i) == ' '
+                    || charBuffer.charAt(i) == '\n'
+                    || charBuffer.charAt(i) == '\r'
+                    || charBuffer.charAt(i) == '\t')) {
                     isAllSpace = false;
                     break;
                 }
@@ -436,10 +459,10 @@ class JspDocumentParser
             int column = startMark.getColumnNumber();
 
             CharArrayWriter ttext = new CharArrayWriter();
-            int limit = offset + len;
             int lastCh = 0;
-            for (int i = offset; i < limit; i++) {
-                int ch = buf[i];
+            for (int i = 0; i < charBuffer.length(); i++) {
+
+                int ch = charBuffer.charAt(i);
                 if (ch == '\n') {
                     column = 1;
                     line++;
@@ -463,7 +486,7 @@ class JspDocumentParser
                     boolean doubleQ = false;
                     lastCh = 0;
                     for (;; i++) {
-                        if (i >= limit) {
+                        if (i >= charBuffer.length()) {
                             throw new SAXParseException(
                                 Localizer.getMessage(
                                     "jsp.error.unterminated",
@@ -471,7 +494,7 @@ class JspDocumentParser
                                 locator);
 
                         }
-                        ch = buf[i];
+                        ch = charBuffer.charAt(i);
                         if (ch == '\n') {
                             column = 1;
                             line++;
@@ -519,6 +542,8 @@ class JspDocumentParser
         }
         startMark =
             new Mark(path, locator.getLineNumber(), locator.getColumnNumber());
+
+        charBuffer = null;
     }
 
     /*
@@ -526,6 +551,8 @@ class JspDocumentParser
      */
     public void endElement(String uri, String localName, String qName)
         throws SAXException {
+
+        processChars();
 
         if (directivesOnly &&
             !(JSP_URI.equals(uri) && localName.startsWith(DIRECTIVE_ACTION))) {
