@@ -657,29 +657,6 @@ public abstract class PersistentManagerBase
 
 
     /**
-     * Return a new session object as long as the number of active
-     * sessions does not exceed <b>maxActiveSessions</b>. If there
-     * aren't too many active sessions, or if there is no limit,
-     * a session is created or retrieved from the recycled pool.
-     *
-     * @exception IllegalStateException if a new session cannot be
-     *  instantiated for any reason
-     */
-    public Session createSession() {
-
-        if ((maxActiveSessions >= 0) &&
-            (sessions.size() >= maxActiveSessions)) {
-            rejectedSessions++;
-            throw new IllegalStateException
-                (sm.getString("standardManager.createSession.ise"));
-        }
-
-        return (super.createSession());
-
-    }
-
-
-    /**
      * Return the active Session, associated with this Manager, with the
      * specified session id (if any); otherwise return <code>null</code>.
      * This method checks the persistence store if persistence is enabled,
