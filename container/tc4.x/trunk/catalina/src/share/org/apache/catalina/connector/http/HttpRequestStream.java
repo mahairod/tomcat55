@@ -101,8 +101,6 @@ public class HttpRequestStream extends RequestStream {
 
         http11 = request.getProtocol().equals("HTTP/1.1");
         
-        System.out.println("HTTP/1.1: " + http11);
-        
     }
     
     
@@ -172,7 +170,6 @@ public class HttpRequestStream extends RequestStream {
             
             if (http11 && (length > 0)) {
                 while (count < length) {
-                    System.out.println("Consuming bytes");
                     int b = read();
                     if (b < 0)
                         break;
