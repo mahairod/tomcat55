@@ -43,11 +43,10 @@
     <p>The <strong>Access Log Valve</strong> creates log files in the same
     format as those created by standard web servers.  These logs can later
     be analyzed by standard log analysis tools to track page hit counts,
-    user session activity, and so on.  The Access Log Valve shares many
-    configuration and behavior characteristics of the
-    <a href="logger.html#Standard Implementation">File Logger</a>, including
-    the automatic rollover of log files at midnight each night.  An
-    Access Log Valve can be associated with any Catalina container, and
+    user session activity, and so on.  The files produces by this <code>Valve</code>
+    are rolled over nightly at midnight.  This <code>Valve</code>
+    may be associated with any Catalina container (<code>Context</code>,
+    <code>Host</code>, or <code>Engine</code>), and
     will record ALL requests processed by that container.</p>
 
   </subsection>
@@ -304,12 +303,11 @@
     <p>The <em>Request Dumper Valve</em> is a useful tool in debugging
     interactions with a client application (or browser) that is sending
     HTTP requests to your Tomcat-based server.  When configured, it causes
-    details about each request processed by its associated Engine, Host,
-    or Context to be logged to the <a href="logger.html">Logger</a> that
-    corresponds to that container.</p>
+    details about each request processed by its associated <code>Engine</code>, 
+    <code>Host</code>, or <code>Context</code> to be logged according to 
+    the logging configuration for that container.</p>
 
-    <p><strong>WARNING: Using this valve has side-effects.</strong>
- The
+    <p><strong>WARNING: Using this valve has side-effects.</strong>  The
     output from this valve includes any parameters included with the request.
     The parameters will be decoded using the default platform encoding. Any
     subsequent calls to <code>request.setCharacterEncoding()</code> within

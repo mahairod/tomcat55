@@ -137,7 +137,8 @@
 
     <p>An engine is associated with the 
        <code>org.apache.catalina.core.ContainerBase.[enginename]</code>
-       log category.</p>
+       log category.  Note that the brackets are actually part of the name,
+       don't omit them.</p>
 
   </subsection>
 

@@ -369,7 +369,7 @@
 
     <p>A context is associated with the 
        <code>org.apache.catalina.core.ContainerBase.[enginename].[hostname].[path]</code>
-       log category.</p>
+       log category.  Note that the brackets are actually part of the name, don't omit them.</p>
 
   </subsection>
 

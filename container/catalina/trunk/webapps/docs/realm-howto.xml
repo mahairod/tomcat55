@@ -22,6 +22,13 @@
 <a href="#What is a Realm?">What is a Realm?</a><br />
 <a href="#Configuring a Realm">Configuring a Realm</a><br />
 </blockquote>
+<a href="#Common Features">Common Features</a><br />
+<blockquote>
+<a href="#Digested Passwords">Digested Passwords</a><br />
+<a href="#Example Application">Example Application</a><br />
+<a href="#Manager Application">Manager Application</a><br />
+<a href="#Realm Logging">Logging Within Realms</a><br />
+</blockquote>
 <a href="#Standard Realm Implementations">
 Standard Realm Implementations</a><br />
 <blockquote>
@@ -30,12 +37,6 @@ Standard Realm Implementations</a><br />
 <a href="#JNDIRealm">JNDIRealm</a><br />
 <a href="#MemoryRealm">MemoryRealm</a><br />
 <a href="#JAASRealm">JAASRealm</a><br />
-</blockquote>
-<a href="#Common Features">Common Features</a><br />
-<blockquote>
-<a href="#Digested Passwords">Digested Passwords</a><br />
-<a href="#Example Application">Example Application</a><br />
-<a href="#Manager Application">Manager Application</a><br />
 </blockquote>
 </p>
 
@@ -54,10 +55,7 @@ safely skip this document.</p>
 
 <p>For fundamental background information about container managed security,
 see the <a href="http://java.sun.com/products/servlet/download.html">Servlet
-Specification (Version 2.3)</a>, Section 12.  For a more introductory level
-document for web application developers as well as administrators, see
-(<strong>FIXME</strong> - link to backgrounder on container managed security
-to be provided).</p>
+Specification (Version 2.4)</a>, Section 12.</p>
 
 <p>For information about utilizing the <em>Single Sign On</em> feature of
 Tomcat 5 (allowing a user to authenticate themselves once across the entire
@@ -150,8 +148,106 @@ different elements, which has a direct impact on the "scope" of that Realm
 </section>
 
 
-<section name="Standard Realm Implementations">
+<section name="Common Features">
 
+
+<subsection name="Digested Passwords">
+
+<p>For each of the standard <code>Realm</code> implementations, the
+user's password (by default) is stored in clear text.  In many
+environments, this is undesireable because casual observers of the
+authentication data can collect enough information to log on
+successfully, and impersonate other users.  To avoid this problem, the
+standard implementations support the concept of <em>digesting</em>
+user passwords.  This allows the stored version of the passwords to be
+encoded (in a form that is not easily reversible), but that the
+<code>Realm</code> implementation can still utilize for
+authentication.</p>
+
+<p>When a standard realm authenticates by retrieving the stored
+password and comparing it with the value presented by the user, you
+can select digested passwords by specifying the <code>digest</code>
+attribute on your <code>&lt;Realm&gt;</code> element.  The value for
+this attribute must be one of the digest algorithms supported by the
+<code>java.security.MessageDigest</code> class (SHA, MD2, or MD5).
+When you select this option, the contents of the password that is
+stored in the <code>Realm</code> must be the cleartext version of the
+password, as digested by the specified algorithm.</p>
+
+<p>When the <code>authenticate()</code> method of the Realm is called, the
+(cleartext) password specified by the user is itself digested by the same
+algorithm, and the result is compared with the value returned by the
+<code>Realm</code>.  An equal match implies that the cleartext version of the
+original password is the same as the one presented by the user, so that this
+user should be authorized.</p>
+
+<p>To calculate the digested value of a cleartext password, two convenience
+techniques are supported:</p>
+<ul>
+<li>If you are writing an application that needs to calculate digested
+    passwords dynamically, call the static <code>Digest()</code> method of the
+    <code>org.apache.catalina.realm.RealmBase</code> class, passing the
+    cleartext password and the digest algorithm name as arguments.  This
+    method will return the digested password.</li>
+<li>If you want to execute a command line utility to calculate the digested
+    password, simply execute
+<source>
+java org.apache.catalina.realm.RealmBase \
+    -a {algorithm} {cleartext-password}
+</source>
+    and the digested version of this cleartext password will be returned to
+    standard output.</li>
+</ul>
+
+<p>To use either of the above techniques, the
+<code>$CATALINA_HOME/server/lib/catalina.jar</code> file will need to be
+on your class path to make the <code>RealmBase</code> class available.</p>
+
+</subsection>
+
+
+
+<subsection name="Example Application">
+
+<p>The example application shipped with Tomcat 5 includes an area that is
+protected by a security constraint, utilizing form-based login.  To access it,
+point your browser at
+<a href="http://localhost:8080/jsp-examples/security/protected/">http://localhost:8080/jsp-examples/security/protected/</a>
+and log on with one of the usernames and passwords described for the default
+<a href="#MemoryRealm">MemoryRealm</a>.</p>
+
+</subsection>
+
+
+<subsection name="Manager Application">
+
+<p>If you wish to use the <a href="manager-howto.html">Manager Application</a>
+to deploy and undeploy applications in a running Tomcat 5 installation, you
+MUST add the "manager" role to at least one username in your selected Realm
+implementation.  This is because the manager web application itself uses a
+security constraint that requires role "manager" to access ANY request URI
+within that application.</p>
+
+<p>For security reasons, no username in the default Realm (i.e. using
+<code>conf/tomcat-users.xml</code> is assigned the "manager" role.  Therfore,
+no one will be able to utilize the features of this application until the
+Tomcat administrator specifically assigns this role to one or more users.</p>
+
+</subsection>
+
+<subsection name="Realm Logging">
+
+<p>Debugging and exception messages logged by a <code>Realm</code> will
+   be recorded by the logging configuration associated with the container
+   for the realm: its surrounding <a href="context.html">Context</a>,
+   <a href="host.html">Host</a>, or <a href="engine.html">Engine</a>.</p>
+
+</subsection>
+
+</section>
+
+
+<section name="Standard Realm Implementations">
 
 <subsection name="JDBCRealm">
 
@@ -231,13 +327,6 @@ attributes are supported by this implementation:</p>
 
   <attribute name="connectionURL" required="true">
     <p>The database URL used to establish a JDBC connection.</p>
-  </attribute>
-
-  <attribute name="debug" required="false">
-    <p>The level of debugging detail logged by this Realm
-    to the associated <a href="config/logger.html">Logger</a>.  Higher numbers
-    generate more detailed output.  If not specified, the default
-    debugging detail level is zero (0).</p>
   </attribute>
 
   <attribute name="digest" required="false">
@@ -335,11 +424,6 @@ described above, and accessed with username "dbuser" and password "dbpass":</p>
 <li>Administering the information in the <em>users</em> and <em>user roles</em>
     table is the responsibility of your own applications.  Tomcat does not
     provide any built-in capabilities to maintain users and roles.</li>
-<li>Debugging and exception messages logged by this <code>Realm</code> will
-    be recorded by the <code>Logger</code> that is associated with our
-    surrounding <code>Context</code>, <code>Host</code>, or
-    <code>Engine</code>.  By default, the corresponding Logger will create a
-    log file in the <code>$CATALINA_HOME/logs</code> directory.</li>
 </ul>
 
 </subsection>
@@ -418,13 +502,6 @@ attributes are supported by this implementation:</p>
     DataSource.</p>
   </attribute>
 
-  <attribute name="debug" required="false">
-    <p>The level of debugging detail logged by this Realm
-    to the associated <a href="config/logger.html">Logger</a>.  Higher numbers
-    generate more detailed output.  If not specified, the default
-    debugging detail level is zero (0).</p>
-  </attribute>
-    
   <attribute name="digest" required="false">
     <p>The digest algorithm used to store passwords in non-plaintext formats.
     Valid values are those accepted for the algorithm name by the
@@ -519,11 +596,6 @@ name "java:/comp/env/jdbc/authority".</p>
 <li>Administering the information in the <em>users</em> and <em>user roles</em>
     table is the responsibility of your own applications.  Tomcat does not
     provide any built-in capabilities to maintain users and roles.</li>
-<li>Debugging and exception messages logged by this <code>Realm</code> will
-    be recorded by the <code>Logger</code> that is associated with our
-    surrounding <code>Context</code>, <code>Host</code>, or
-    <code>Engine</code>.  By default, the corresponding Logger will create a
-    log file in the <code>$CATALINA_HOME/logs</code> directory.</li>
 </ul>
 
 </subsection>
@@ -760,13 +832,6 @@ attributes are supported by this implementation:</p>
         factory to be used for this connection.  By default, the standard
         JNDI LDAP provider is used
         (<code>com.sun.jndi.ldap.LdapCtxFactory</code>).</p>
-      </attribute>
-
-      <attribute name="debug" required="false">
-      <p>The level of debugging detail logged by this Realm to the
-      associated <a href="config/logger.html">Logger</a>.  Higher
-      numbers generate more detailed output.  If not specified, the
-      default debugging detail level is zero (0).</p>
       </attribute>
 
       <attribute name="digest" required="false">
@@ -1067,11 +1132,6 @@ authentication is usually to be preferred.</p>
 <li>Administering the information in the directory server
     is the responsibility of your own applications.  Tomcat does not
     provide any built-in capabilities to maintain users and roles.</li>
-<li>Debugging and exception messages logged by this <code>Realm</code> will
-    be recorded by the <code>Logger</code> that is associated with our
-    surrounding <code>Context</code>, <code>Host</code>, or
-    <code>Engine</code>.  By default, the corresponding Logger will create a
-    log file in the <code>$CATALINA_HOME/logs</code> directory.</li>
 </ul>
 
 </subsection>
@@ -1100,13 +1160,6 @@ attributes are supported by this implementation:</p>
     <p>The fully qualified Java class name of this Realm implementation.
     You <strong>MUST</strong> specify the value
     "<code>org.apache.catalina.realm.MemoryRealm</code>" here.</p>
-  </attribute>
-
-  <attribute name="debug" required="false">
-    <p>The level of debugging detail logged by this Realm
-    to the associated <a href="config/logger.html">Logger</a>.  Higher numbers
-    generate more detailed output.  If not specified, the default
-    debugging detail level is zero (0).</p>
   </attribute>
 
   <attribute name="digest" required="false">
@@ -1176,11 +1229,6 @@ to all virtual hosts and web applications.  The default contents of the
 <li>Administering the information in the users file is the responsibility
     of your application.  Tomcat does not
     provide any built-in capabilities to maintain users and roles.</li>
-<li>Debugging and exception messages logged by this <code>Realm</code> will
-    be recorded by the <code>Logger</code> that is associated with our
-    surrounding <code>Context</code>, <code>Host</code>, or
-    <code>Engine</code>.  By default, the corresponding Logger will create a
-    log file in the <code>$CATALINA_HOME/logs</code> directory.</li>
 </ul>
 
 
@@ -1255,13 +1303,6 @@ are supported by this implementation:</p>
     "<code>org.apache.catalina.realm.MemoryRealm</code>" here.</p>
   </attribute>
 
-  <attribute name="debug" required="false">
-    <p>The level of debugging detail logged by this Realm
-    to the associated <a href="config/logger.html">Logger</a>.  Higher numbers
-    generate more detailed output.  If not specified, the default
-    debugging detail level is zero (0).</p>
-  </attribute>
-
   <attribute name="appName" required="true">
     <p>The name of the realm as configured in your login configuration file 
     (<a href="http://java.sun.com/j2se/1.4.1/docs/guide/security/jaas/tutorials/LoginConfigFile.html">JAAS LoginConfig</a>).</p>
@@ -1309,121 +1350,24 @@ and restarting the server, without any code changes to your application.</li>
 
         <h3>Additional Notes</h3>
         <ul>
-          <li>
-When a user attempts to access a protected resource for
-the first time,     Tomcat 4 will call the <code>authenticate()</code>
-method of this <code>Realm</code>.  Thus, any changes you have made in
-the security mechanism     directly (new users, changed passwords or
-roles, etc.) will be immediately     reflected.</li>
+          <li>When a user attempts to access a protected resource for
+              the first time, Tomcat 4 will call the <code>authenticate()</code>
+              method of this <code>Realm</code>.  Thus, any changes you have made in
+              the security mechanism directly (new users, changed passwords or
+              roles, etc.) will be immediately reflected.</li>
           <li>Once a user has been authenticated, the user (and his or
-her associated     roles) are cached within Tomcat for the duration of
-the user's login.     (For FORM-based authentication, that means until
-the session times out or     is invalidated; for BASIC authentication,
-that means until the user     closes their browser).  Any changes to the
-security information for an     already authenticated user will <strong>not</strong>
-be reflected until     the next time that user logs on again.</li>
-          <li>Debugging and exception messages logged by this <code>Realm</code>
-will be recorded by the <code>Logger</code> that is associated with our
-surrounding <code>Context</code>, <code>Host</code>, or <code>Engine</code>.
-By default, the corresponding Logger will create a     log file in the <code>$CATALINA_HOME/logs</code>
-directory.</li>
+              her associated roles) are cached within Tomcat for the duration of
+              the user's login.  For FORM-based authentication, that means until
+              the session times out or is invalidated; for BASIC authentication,
+              that means until the user closes their browser.  Any changes to the
+              security information for an already authenticated user will <strong>not</strong>
+              be reflected until the next time that user logs on again.</li>
         </ul>
 
 </subsection>
 
 
 </section>
-
-
-<section name="Common Features">
-
-
-<subsection name="Digested Passwords">
-
-<p>For each of the standard <code>Realm</code> implementations, the
-user's password (by default) is stored in clear text.  In many
-environments, this is undesireable because casual observers of the
-authentication data can collect enough information to log on
-successfully, and impersonate other users.  To avoid this problem, the
-standard implementations support the concept of <em>digesting</em>
-user passwords.  This allows the stored version of the passwords to be
-encoded (in a form that is not easily reversible), but that the
-<code>Realm</code> implementation can still utilize for
-authentication.</p>
-
-<p>When a standard realm authenticates by retrieving the stored
-password and comparing it with the value presented by the user, you
-can select digested passwords by specifying the <code>digest</code>
-attribute on your <code>&lt;Realm&gt;</code> element.  The value for
-this attribute must be one of the digest algorithms supported by the
-<code>java.security.MessageDigest</code> class (SHA, MD2, or MD5).
-When you select this option, the contents of the password that is
-stored in the <code>Realm</code> must be the cleartext version of the
-password, as digested by the specified algorithm.</p>
-
-<p>When the <code>authenticate()</code> method of the Realm is called, the
-(cleartext) password specified by the user is itself digested by the same
-algorithm, and the result is compared with the value returned by the
-<code>Realm</code>.  An equal match implies that the cleartext version of the
-original password is the same as the one presented by the user, so that this
-user should be authorized.</p>
-
-<p>To calculate the digested value of a cleartext password, two convenience
-techniques are supported:</p>
-<ul>
-<li>If you are writing an application that needs to calculate digested
-    passwords dynamically, call the static <code>Digest()</code> method of the
-    <code>org.apache.catalina.realm.RealmBase</code> class, passing the
-    cleartext password and the digest algorithm name as arguments.  This
-    method will return the digested password.</li>
-<li>If you want to execute a command line utility to calculate the digested
-    password, simply execute
-<source>
-java org.apache.catalina.realm.RealmBase \
-    -a {algorithm} {cleartext-password}
-</source>
-    and the digested version of this cleartext password will be returned to
-    standard output.</li>
-</ul>
-
-<p>To use either of the above techniques, the
-<code>$CATALINA_HOME/server/lib/catalina.jar</code> file will need to be
-on your class path to make the <code>RealmBase</code> class available.</p>
-
-</subsection>
-
-
-<subsection name="Example Application">
-
-<p>The example application shipped with Tomcat 5 includes an area that is
-protected by a security constraint, utilizing form-based login.  To access it,
-point your browser at
-<a href="http://localhost:8080/jsp-examples/security/protected/">http://localhost:8080/jsp-examples/security/protected/</a>
-and log on with one of the usernames and passwords described for the default
-<a href="#MemoryRealm">MemoryRealm</a>.</p>
-
-</subsection>
-
-
-<subsection name="Manager Application">
-
-<p>If you wish to use the <a href="manager-howto.html">Manager Application</a>
-to deploy and undeploy applications in a running Tomcat 5 installation, you
-MUST add the "manager" role to at least one username in your selected Realm
-implementation.  This is because the manager web application itself uses a
-security constraint that requires role "manager" to access ANY request URI
-within that application.</p>
-
-<p>For security reasons, no username in the default Realm (i.e. using
-<code>conf/tomcat-users.xml</code> is assigned the "manager" role.  Therfore,
-no one will be able to utilize the features of this application until the
-Tomcat administrator specifically assigns this role to one or more users.</p>
-
-</subsection>
-
-
-</section>
-
 
 </body>
 
