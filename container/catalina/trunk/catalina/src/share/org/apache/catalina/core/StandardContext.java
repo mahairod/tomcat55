@@ -1726,7 +1726,7 @@ public class StandardContext
         synchronized (applicationParameters) {
             String newName = parameter.getName();
             for (int i = 0; i < applicationParameters.length; i++) {
-                if (name.equals(applicationParameters[i].getName()) &&
+                if (newName.equals(applicationParameters[i].getName()) &&
                     !applicationParameters[i].getOverride())
                     return;
             }
