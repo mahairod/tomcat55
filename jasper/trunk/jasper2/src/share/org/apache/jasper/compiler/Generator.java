@@ -749,7 +749,7 @@ public class Generator {
 			"_jspx_fnmap" );
 		}
 		if (encode) {
-		    return "java.net.URLEncoder.encode(" + v + ")";
+		    return "java.net.URLEncoder.encode(\"\" + " + v + ")";
 		}
 		return v;
             } else if( attr.isNamedAttribute() ) {
