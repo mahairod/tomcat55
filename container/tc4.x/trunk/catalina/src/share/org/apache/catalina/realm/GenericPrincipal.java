@@ -66,6 +66,7 @@ package org.apache.catalina.realm;
 
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.catalina.Realm;
 
@@ -120,6 +121,8 @@ class GenericPrincipal implements Principal {
         if (roles != null) {
             this.roles = new String[roles.size()];
             this.roles = (String[]) roles.toArray(this.roles);
+            if (this.roles.length > 0)
+                Arrays.sort(this.roles);
         }
 
     }
@@ -198,11 +201,7 @@ class GenericPrincipal implements Principal {
 
         if (role == null)
             return (false);
-        for (int i = 0; i < roles.length; i++) {
-            if (role.equals(roles[i]))
-                return (true);
-        }
-        return (false);
+        return (Arrays.binarySearch(roles, role) >= 0);
 
     }
 

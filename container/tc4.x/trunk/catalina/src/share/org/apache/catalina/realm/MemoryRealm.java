@@ -65,8 +65,6 @@
 package org.apache.catalina.realm;
 
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.security.Principal;
 import java.io.File;
 import java.util.ArrayList;
@@ -167,15 +165,28 @@ public final class MemoryRealm
 
     }
 
-    /**
-     * Return short name of this Realm implementation
-     */
-    public String getName() {
 
-	return name;
+    /**
+     * Return the pathname of our XML file containing user definitions.
+     */
+    public String getPathname() {
+
+        return pathname;
 
     }
 
+
+    /**
+     * Set the pathname of our XML file containing user definitions.  If a
+     * relative pathname is specified, it is resolved against "catalina.home".
+     *
+     * @param pathname The new pathname
+     */
+    public void setPathname(String pathname) {
+
+        this.pathname = pathname;
+
+    }
 
 
     // --------------------------------------------------------- Public Methods
@@ -194,44 +205,15 @@ public final class MemoryRealm
 	GenericPrincipal principal =
 	    (GenericPrincipal) principals.get(username);
 	if ((principal != null) &&
-	    (credentials.equals(principal.getPassword()))) {
-	    if (debug > 1)
+	    (digest(credentials).equals(principal.getPassword()))) {
+	    if (debug >= 2)
 		log(sm.getString("memoryRealm.authenticateSuccess", username));
 	    return (principal);
 	} else {
-	    if (debug > 1)
+	    if (debug >= 2)
 		log(sm.getString("memoryRealm.authenticateFailure", username));
 	    return (null);
 	}
-
-    }
-
-
-    /**
-     * Return <code>true</code> if the specified Principal has the specified
-     * security role, within the context of this Realm; otherwise return
-     * <code>false</code>.
-     *
-     * @param principal Principal for whom the role is to be checked
-     * @param role Security role to be checked
-     */
-    public boolean hasRole(Principal principal, String role) {
-
-	if ((principal == null) || (role == null) ||
-	    !(principal instanceof GenericPrincipal))
-	    return (false);
-        GenericPrincipal gp = (GenericPrincipal) principal;
-        if (!(gp.getRealm() == this))
-            return (false);
-	boolean result = gp.hasRole(role);
-	if (debug > 1) {
-	    String name = principal.getName();
-	    if (result)
-		log(sm.getString("memoryRealm.hasRoleSuccess", name, role));
-	    else
-		log(sm.getString("memoryRealm.hasRoleFailure", name, role));
-	}
-	return (result);
 
     }
 
@@ -272,9 +254,20 @@ public final class MemoryRealm
 
 
     /**
+     * Return a short name for this Realm implementation.
+     */
+    protected String getName() {
+
+        return (this.name);
+
+    }
+
+
+    /**
      * Return the password associated with the given principal's user name.
      */
     protected String getPassword(String username) {
+
 	GenericPrincipal principal =
 	    (GenericPrincipal) principals.get(username);
 	if (principal != null) {
@@ -282,6 +275,7 @@ public final class MemoryRealm
 	} else {
 	    return (null);
 	}
+
     }
 
 
@@ -289,9 +283,10 @@ public final class MemoryRealm
      * Return the Principal associated with the given user name.
      */
     protected Principal getPrincipal(String username) {
-	return (Principal) principals.get(username);
-    }
 
+	return (Principal) principals.get(username);
+
+    }
 
 
     // ------------------------------------------------------ Lifecycle Methods
@@ -307,32 +302,30 @@ public final class MemoryRealm
      */
     public synchronized void start() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("memoryRealm.alreadyStarted"));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
-
 	// Validate the existence of our database file
 	File file = new File(pathname);
 	if (!file.isAbsolute())
 	    file = new File(System.getProperty("catalina.home") +
 			    File.separator + pathname);
-	if (!file.exists())
+	if (!file.exists() || !file.canRead())
 	    throw new LifecycleException
-		(sm.getString("memoryRealm.loadExist", pathname));
+		(sm.getString("memoryRealm.loadExist",
+                              file.getAbsolutePath()));
 
 	// Load the contents of the database file
-	if (debug > 0)
-	    log(sm.getString("memoryRealm.loadPath", pathname));
+	if (debug >= 1)
+	    log(sm.getString("memoryRealm.loadPath",
+                             file.getAbsolutePath()));
 	XmlMapper mapper = new XmlMapper();
 	mapper.addRule("tomcat-users/user", new MemoryRealmUserAction());
 	try {
 	    mapper.readXml(file, this);
 	} catch (Exception e) {
-	    throw new LifecycleException("MemoryRealm.start.readXml: " + e, e);
+	    throw new LifecycleException("memoryRealm.readXml", e);
 	}
+
+        // Perform normal superclass initialization
+        super.start();
 
     }
 
@@ -346,12 +339,8 @@ public final class MemoryRealm
      */
     public synchronized void stop() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("memoryRealm.notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+        // Perform normal superclass finalization
+        super.stop();
 
 	// No shutdown activities required
 

@@ -78,6 +78,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
+import org.apache.catalina.util.HexUtils;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.MD5Encoder;
@@ -116,6 +117,15 @@ public abstract class RealmBase
 
 
     /**
+     * Digest algorithm used in storing passwords in a non-plaintext format.
+     * Valid values are those accepted for the algorithm name by the
+     * MessageDigest class, or <code>null</code> if no digesting should
+     * be performed.
+     */
+    protected String digest = null;
+
+
+    /**
      * Descriptive information about this Realm implementation.
      */
     protected static final String info =
@@ -123,14 +133,27 @@ public abstract class RealmBase
 
 
     /**
-     * Short name for this Realm Implementation
-     */
-    protected static final String name = "RealmBase";
-
-    /**
      * The lifecycle event support for this component.
      */
     protected LifecycleSupport lifecycle = new LifecycleSupport(this);
+
+
+    /**
+     * The MessageDigest object for digesting user credentials (passwords).
+     */
+    protected MessageDigest md = null;
+
+
+    /**
+     * The MD5 helper object for this class.
+     */
+    protected static final MD5Encoder md5Encoder = new MD5Encoder();
+
+
+    /**
+     * MD5 message digest provider.
+     */
+    protected static MessageDigest md5Helper;
 
 
     /**
@@ -150,18 +173,6 @@ public abstract class RealmBase
      * The property change support for this component.
      */
     protected PropertyChangeSupport support = new PropertyChangeSupport(this);
-
-
-    /**
-     * MD5 message digest provider.
-     */
-    protected static MessageDigest md5Helper;
-
-
-    /**
-     * The MD5 helper object for this class.
-     */
-    protected static final MD5Encoder md5Encoder = new MD5Encoder();
 
 
     // ------------------------------------------------------------- Properties
@@ -194,7 +205,9 @@ public abstract class RealmBase
      * Return the debugging detail level for this component.
      */
     public int getDebug() {
+
 	return (this.debug);
+
     }
 
 
@@ -204,7 +217,31 @@ public abstract class RealmBase
      * @param debug The new debugging detail level
      */
     public void setDebug(int debug) {
+
 	this.debug = debug;
+
+    }
+
+
+    /**
+     * Return the digest algorithm  used for storing credentials.
+     */
+    public String getDigest() {
+
+        return digest;
+
+    }
+
+
+    /**
+     * Set the digest algorithm used for storing credentials.
+     *
+     * @param digest The new digest algorithm
+     */
+    public void setDigest(String digest) {
+
+        this.digest = digest;
+
     }
 
 
@@ -219,14 +256,6 @@ public abstract class RealmBase
 
     }
 
-    /**
-     * Return short name of this Realm implementation
-     */
-    public String getName() {
-
-	return name;
-
-    }
 
     // --------------------------------------------------------- Public Methods
 
@@ -332,12 +361,33 @@ public abstract class RealmBase
     /**
      * Return <code>true</code> if the specified Principal has the specified
      * security role, within the context of this Realm; otherwise return
-     * <code>false</code>.
+     * <code>false</code>.  This method can be overridden by Realm
+     * implementations, but the default is adequate when an instance of
+     * <code>GenericPrincipal</code> is used to represent authenticated
+     * Principals from this Realm.
      *
      * @param principal Principal for whom the role is to be checked
      * @param role Security role to be checked
      */
-    public abstract boolean hasRole(Principal principal, String role);
+    public boolean hasRole(Principal principal, String role) {
+
+	if ((principal == null) || (role == null) ||
+	    !(principal instanceof GenericPrincipal))
+	    return (false);
+        GenericPrincipal gp = (GenericPrincipal) principal;
+        if (!(gp.getRealm() == this))
+            return (false);
+	boolean result = gp.hasRole(role);
+	if (debug >= 2) {
+	    String name = principal.getName();
+	    if (result)
+		log(sm.getString("realmBase.hasRoleSuccess", name, role));
+	    else
+		log(sm.getString("realmBase.hasRoleFailure", name, role));
+	}
+	return (result);
+
+    }
 
 
     /**
@@ -390,15 +440,24 @@ public abstract class RealmBase
      * @exception LifecycleException if this component detects a fatal error
      *  that prevents this component from being used
      */
-    public void start()
-        throws LifecycleException {
+    public void start() throws LifecycleException {
 
 	// Validate and update our current component state
 	if (started)
-	    throw new LifecycleException
-		(sm.getString("memoryRealm.alreadyStarted"));
+	    throw new IllegalStateException
+		(sm.getString("realmBase.alreadyStarted"));
 	lifecycle.fireLifecycleEvent(START_EVENT, null);
 	started = true;
+
+        // Create a MessageDigest instance for credentials, if desired
+        if (digest != null) {
+            try {
+                md = MessageDigest.getInstance(digest);
+            } catch (NoSuchAlgorithmException e) {
+                throw new LifecycleException
+                    (sm.getString("realmBase.algorithm", digest), e);
+            }
+        }
 
     }
 
@@ -418,15 +477,51 @@ public abstract class RealmBase
 
 	// Validate and update our current component state
 	if (!started)
-	    throw new LifecycleException
-		(sm.getString("memoryRealm.notStarted"));
+	    throw new IllegalStateException
+		(sm.getString("realmBase.notStarted"));
 	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
 	started = false;
+
+        // Clean up allocated resources
+        md = null;
 
     }
 
 
     // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Digest the password using the specified algorithm and
+     * convert the result to a corresponding hexadecimal string.
+     * If exception, the plain credentials string is returned.
+     *
+     * <strong>IMPLEMENTATION NOTE</strong> - This implementation is
+     * synchronized because it reuses the MessageDigest instance.
+     * This should be faster than cloning the instance on every request.
+     *
+     * @param credentials Password or other credentials to use in
+     *  authenticating this username
+     */
+    protected String digest(String credentials)  {
+
+        // If no MessageDigest instance is specified, return unchanged
+        if (md == null)
+            return (credentials);
+
+        // Digest the user credentials and return as hexadecimal
+        synchronized (this) {
+            try {
+                md.reset();
+                md.update(credentials.getBytes());
+                return (HexUtils.convert(md.digest()));
+            } catch (Exception e) {
+                log(sm.getString("realmBase.digest"), e);
+                return (credentials);
+            }
+        }
+
+    }
 
 
     /**
@@ -450,6 +545,13 @@ public abstract class RealmBase
 
 
     /**
+     * Return a short name for this Realm implementation, for use in
+     * log messages.
+     */
+    protected abstract String getName();
+
+
+    /**
      * Return the password associated with the given principal's user name.
      */
     protected abstract String getPassword(String username);
@@ -467,21 +569,20 @@ public abstract class RealmBase
      * @param message Message to be logged
      */
     protected void log(String message) {
-	Logger logger = null;
 
+	Logger logger = null;
+        String name = null;
 	if (container != null) {
 	    logger = container.getLogger();
+            name = container.getName();
         }
 
 	if (logger != null) {
-	    logger.log(getName()+"[" + container.getName() + "]: " + message);
+	    logger.log(getName()+"[" + name + "]: " + message);
         } else {
-	    String containerName = null;
-	    if (container != null) {
-		containerName = container.getName();
-            }
-	    System.out.println(getName()+"[" + containerName + "]: " + message);
+	    System.out.println(getName()+"[" + name + "]: " + message);
 	}
+
     }
 
 
@@ -492,21 +593,18 @@ public abstract class RealmBase
      * @param throwable Associated exception
      */
     protected void log(String message, Throwable throwable) {
-	Logger logger = null;
 
+	Logger logger = null;
+        String name = null;
 	if (container != null) {
 	    logger = container.getLogger();
+            name = container.getName();
         }
 
 	if (logger != null) {
-	    logger.log(getName()+"[" + container.getName() + "]: " + message, throwable);
+	    logger.log(getName()+"[" + name + "]: " + message, throwable);
         } else {
-	    String containerName = null;
-	    if (container != null) {
-		containerName = container.getName();
-            }
-	    System.out.println(getName()+"[" + containerName + "]: " + message);
-	    System.out.println("" + throwable);
+	    System.out.println(getName()+"[" + name + "]: " + message);
 	    throwable.printStackTrace(System.out);
 	}
     }
