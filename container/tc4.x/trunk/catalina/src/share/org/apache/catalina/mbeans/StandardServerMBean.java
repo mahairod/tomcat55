@@ -64,6 +64,8 @@
 package org.apache.catalina.mbeans;
 
 
+import java.beans.IndexedPropertyDescriptor;
+import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -76,8 +78,25 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
+import org.apache.catalina.Connector;
+import org.apache.catalina.Container;
+import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Loader;
+import org.apache.catalina.Logger;
+import org.apache.catalina.Manager;
+import org.apache.catalina.Pipeline;
+import org.apache.catalina.Realm;
 import org.apache.catalina.Server;
-import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.ServerFactory;
+import org.apache.catalina.Service;
+import org.apache.catalina.Store;
+import org.apache.catalina.Valve;
+import org.apache.catalina.net.ServerSocketFactory;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.modeler.BaseModelMBean;
 
 
@@ -91,10 +110,67 @@ import org.apache.commons.modeler.BaseModelMBean;
 
 public class StandardServerMBean extends BaseModelMBean {
 
+
+    // ------------------------------------------------------- Static Variables
+
+
     /**
      * The <code>MBeanServer</code> for this application.
      */
     private static MBeanServer mserver = MBeanUtils.createServer();
+
+
+    /**
+     * The set of class/property combinations that should <strong>NOT</strong>
+     * be persisted because they are automatically calculated.
+     */
+    private static String exceptions[][] = {
+        { "org.apache.catalina.core.StandardContext", "configured" },
+        { "org.apache.catalina.core.StandardContext", "publicId" },
+        { "org.apache.catalina.core.StandardContext", "workDir" },
+        { "org.apache.catalina.session.StandardManager", "distributable" },
+        { "org.apache.catalina.session.StandardManager", "entropy" },
+    };
+
+
+    /**
+     * The set of classes that represent persistable properties.
+     */
+    private static Class persistables[] = {
+        String.class,
+        Integer.class, Integer.TYPE,
+        Boolean.class, Boolean.TYPE,
+        Byte.class, Byte.TYPE,
+        Character.class, Character.TYPE,
+        Double.class, Double.TYPE,
+        Float.class, Float.TYPE,
+        Long.class, Long.TYPE,
+        Short.class, Short.TYPE,
+    };
+
+
+    /**
+     * The set of class names that should be skipped when persisting state,
+     * because the corresponding listeners, valves, etc. are configured
+     * automatically at startup time.
+     */
+    private static String skippables[] = {
+        "org.apache.catalina.authenticator.BasicAuthenticator",
+        "org.apache.catalina.authenticator.DigestAuthenticator",
+        "org.apache.catalina.authenticator.FormAuthenticator",
+        "org.apache.catalina.authenticator.NonLoginAuthenticator",
+        "org.apache.catalina.authenticator.SSLAuthenticator",
+        "org.apache.catalina.core.NamingContextListener",
+        "org.apache.catalina.core.StandardContextValve",
+        "org.apache.catalina.core.StandardEngineValve",
+        "org.apache.catalina.core.StandardHostValve",
+        "org.apache.catalina.startup.ContextConfig",
+        "org.apache.catalina.startup.EngineConfig",
+        "org.apache.catalina.startup.HostConfig",
+        "org.apache.catalina.valves.CertificatesValve",
+        "org.apache.catalina.valves.ErrorDispatcherValve",
+        "org.apache.catalina.valves.ErrorReportValve",
+    };
 
 
     // ----------------------------------------------------------- Constructors
@@ -199,10 +275,7 @@ public class StandardServerMBean extends BaseModelMBean {
         // (which will recursively store everything
         ObjectName oname = null;
         try {
-            oname =
-                MBeanUtils.createObjectName("Catalina",
-                                            (Server) getManagedResource());
-            storeServer(writer, 0, oname);
+            storeServer(writer, 0, ServerFactory.getServer());
         } catch (Exception e) {
             if (writer != null) {
                 try {
@@ -234,56 +307,135 @@ public class StandardServerMBean extends BaseModelMBean {
 
 
     /**
-     * Store the relevant attributes of the specified MBean.
+     * Is the specified class name + property name combination an
+     * exception that should not be persisted?
+     *
+     * @param className The class name to check
+     * @param property The property name to check
+     */
+    private boolean isException(String className, String property) {
+
+        for (int i = 0; i < exceptions.length; i++) {
+            if (className.equals(exceptions[i][0]) &&
+                property.equals(exceptions[i][1])) {
+                return (true);
+            }
+        }
+        return (false);
+
+    }
+
+
+    /**
+     * Is the specified property type one for which we should generate
+     * a persistence attribute?
+     *
+     * @param clazz Java class to be tested
+     */
+    private boolean isPersistable(Class clazz) {
+
+        for (int i = 0; i < persistables.length; i++) {
+            if (persistables[i] == clazz) {
+                return (true);
+            }
+        }
+        return (false);
+
+    }
+
+
+    /**
+     * Is the specified class name one that should be skipped because
+     * the corresponding component is configured automatically at
+     * startup time?
+     *
+     * @param className Class name to be tested
+     */
+    private boolean isSkippable(String className) {
+
+        for (int i = 0; i < skippables.length; i++) {
+            if (skippables[i] == className) {
+                return (true);
+            }
+        }
+        return (false);
+
+    }
+
+
+    /**
+     * Store the relevant attributes of the specified JavaBean, plus a
+     * <code>className</code> attribute defining the fully qualified
+     * Java class name of the bean.
      *
      * @param writer PrintWriter to which we are storing
-     * @param oname ObjectName of the MBean for the object we are storing
+     * @param bean Bean whose properties are to be rendered as attributes,
      *
      * @exception Exception if an exception occurs while storing
      */
     private void storeAttributes(PrintWriter writer,
-                                 ObjectName oname) throws Exception {
+                                 Object bean) throws Exception {
 
-        // Acquire the set of attributes we should be saving
-        MBeanInfo minfo = mserver.getMBeanInfo(oname);
-        MBeanAttributeInfo ainfo[] = minfo.getAttributes();
-        if (ainfo == null) {
-            ainfo = new MBeanAttributeInfo[0];
+        storeAttributes(writer, true, bean);
+
+    }
+
+
+    /**
+     * Store the relevant attributes of the specified JavaBean.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param include Should we include a <code>className</code> attribute?
+     * @param bean Bean whose properties are to be rendered as attributes,
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeAttributes(PrintWriter writer, boolean include,
+                                 Object bean) throws Exception {
+
+        // Render a className attribute if requested
+        if (include) {
+            writer.print(" className=\"");
+            writer.print(bean.getClass().getName());
+            writer.print("\"");
         }
 
-        // Save the value of each relevant attribute
-        for (int i = 0; i < ainfo.length; i++) {
+        // Acquire the list of properties for this bean
+        PropertyDescriptor descriptors[] =
+            PropertyUtils.getPropertyDescriptors(bean);
+        if (descriptors == null) {
+            descriptors = new PropertyDescriptor[0];
+        }
 
-            // Make sure this is an attribute we want to save
-            String aname = ainfo[i].getName();
-            if ("managedResource".equals(aname)) {
-                continue; // KLUDGE - these should be removed
+        // Render the relevant properties of this bean
+        String className = bean.getClass().getName();
+        for (int i = 0; i < descriptors.length; i++) {
+            if (descriptors[i] instanceof IndexedPropertyDescriptor) {
+                continue; // Indexed properties are not persisted
             }
-            if (!ainfo[i].isReadable()) {
-                continue; // We cannot read the current value
+            if (!isPersistable(descriptors[i].getPropertyType()) ||
+                (descriptors[i].getReadMethod() == null) ||
+                (descriptors[i].getWriteMethod() == null)) {
+                continue; // Must be a read-write primitive or String
             }
-            if (!"className".equals(aname) && !ainfo[i].isWritable()) {
-                continue; // We will not be able to configure this attribute
-            }
-
-            // Acquire the value of this attribute
-            Object value = mserver.getAttribute(oname, aname);
+            Object value =
+                PropertyUtils.getSimpleProperty(bean,
+                                                descriptors[i].getName());
             if (value == null) {
-                continue; // No need to explicitly record this
+                continue; // Null values are not persisted
+            }
+            if (isException(className, descriptors[i].getName())) {
+                continue; // Skip the specified exceptions
             }
             if (!(value instanceof String)) {
                 value = value.toString();
             }
-
-            // Add this attribute value to our output
-            writer.print(" ");
-            writer.print(aname);
+            writer.print(' ');
+            writer.print(descriptors[i].getName());
             writer.print("=\"");
             writer.print((String) value);
             writer.print("\"");
-
         }
-
 
     }
 
@@ -293,26 +445,38 @@ public class StandardServerMBean extends BaseModelMBean {
      *
      * @param writer PrintWriter to which we are storing
      * @param indent Number of spaces to indent this element
-     * @param oname ObjectName of the MBean for the object we are storing
+     * @param connector Object whose properties are being stored
      *
      * @exception Exception if an exception occurs while storing
      */
     private void storeConnector(PrintWriter writer, int indent,
-                                ObjectName oname) throws Exception {
+                                Connector connector) throws Exception {
 
         // Store the beginning of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }
         writer.print("<Connector");
-        storeAttributes(writer, oname);
+        storeAttributes(writer, connector);
         writer.println(">");
 
-        // Store nested <Listener> elements
-        ; // FIXME
-
         // Store nested <Factory> element
-        ; // FIXME
+        ServerSocketFactory factory = connector.getFactory();
+        if (factory != null) {
+            storeFactory(writer, indent + 2, factory);
+        }
+
+        // Store nested <Listener> elements
+        if (connector instanceof Lifecycle) {
+            LifecycleListener listeners[] =
+                ((Lifecycle) connector).findLifecycleListeners();
+            if (listeners == null) {
+                listeners = new LifecycleListener[0];
+            }
+            for (int i = 0; i < listeners.length; i++) {
+                storeListener(writer, indent + 2, listeners[i]);
+            }
+        }
 
         // Store the ending of this element
         for (int i = 0; i < indent; i++) {
@@ -328,76 +492,85 @@ public class StandardServerMBean extends BaseModelMBean {
      *
      * @param writer PrintWriter to which we are storing
      * @param indent Number of spaces to indent this element
-     * @param oname ObjectName of the MBean for the object we are storing
+     * @param context  Object whose properties are being stored
      *
      * @exception Exception if an exception occurs while storing
      */
     private void storeContext(PrintWriter writer, int indent,
-                              ObjectName oname) throws Exception {
+                              Context context) throws Exception {
 
         // Store the beginning of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }
         writer.print("<Context");
-        storeAttributes(writer, oname);
+        storeAttributes(writer, context);
         writer.println(">");
 
         // Store nested <InstanceListener> elements
         ; // FIXME
 
         // Store nested <Listener> elements
-        ; // FIXME
+        if (context instanceof Lifecycle) {
+            LifecycleListener listeners[] =
+                ((Lifecycle) context).findLifecycleListeners();
+            for (int i = 0; i < listeners.length; i++) {
+                storeListener(writer, indent + 2, listeners[i]);
+            }
+        }
 
         // Store nested <Loader> element
-        ; // FIXME
+        Loader loader = context.getLoader();
+        if (loader != null) {
+            storeLoader(writer, indent + 2, loader);
+        }
 
         // Store nested <Logger> element
-        StringBuffer loggerSearch =
-            new StringBuffer("Catalina:type=Logger,path=");
-        loggerSearch.append(oname.getKeyProperty("path"));
-        loggerSearch.append(",host=");
-        loggerSearch.append(oname.getKeyProperty("host"));
-        loggerSearch.append(",service=");
-        loggerSearch.append(oname.getKeyProperty("service"));
-        ObjectName loggerQuery = new ObjectName(loggerSearch.toString());
-        Iterator loggerNames =
-            mserver.queryNames(loggerQuery, null).iterator();
-        while (loggerNames.hasNext()) {
-            storeLogger(writer, indent + 2,
-                        (ObjectName) loggerNames.next());
+        Logger logger = context.getLogger();
+        if (logger != null) {
+            Logger parentLogger = null;
+            if (context.getParent() != null) {
+                parentLogger = context.getParent().getLogger();
+            }
+            if (logger != parentLogger) {
+                storeLogger(writer, indent + 2, logger);
+            }
         }
 
         // Store nested <Manager> element
-        ; // FIXME
+        Manager manager = context.getManager();
+        if (manager != null) {
+            storeManager(writer, indent + 2, manager);
+        }
 
         // Store nested <Parameter> elements
         ; // FIXME
 
         // Store nested <Realm> element
-        StringBuffer realmSearch =
-            new StringBuffer("Catalina:type=Realm,path=");
-        realmSearch.append(oname.getKeyProperty("path"));
-        realmSearch.append(",host=");
-        realmSearch.append(oname.getKeyProperty("host"));
-        realmSearch.append(",service=");
-        realmSearch.append(oname.getKeyProperty("service"));
-        ObjectName realmQuery = new ObjectName(realmSearch.toString());
-        Iterator realmNames =
-            mserver.queryNames(realmQuery, null).iterator();
-        while (realmNames.hasNext()) {
-            storeRealm(writer, indent + 2,
-                        (ObjectName) realmNames.next());
+        Realm realm = context.getRealm();
+        if (realm != null) {
+            Realm parentRealm = null;
+            if (context.getParent() != null) {
+                parentRealm = context.getParent().getRealm();
+            }
+            if (realm != parentRealm) {
+                storeRealm(writer, indent + 2, realm);
+            }
         }
 
-        // Store nested <ResourceLink> elements
+        // Store nested <ResourceLink> elements (and resource params?)
         ; // FIXME
 
         // Store nested <Resources> element
         ; // FIXME
 
         // Store nested <Valve> elements
-        ; // FIXME
+        if (context instanceof Pipeline) {
+            Valve valves[] = ((Pipeline) context).getValves();
+            for (int i = 0; i < valves.length; i++) {
+                storeValve(writer, indent + 2, valves[i]);
+            }
+        }
 
         // Store nested <WrapperLifecycle> elements
         ; // FIXME
@@ -419,19 +592,19 @@ public class StandardServerMBean extends BaseModelMBean {
      *
      * @param writer PrintWriter to which we are storing
      * @param indent Number of spaces to indent this element
-     * @param oname ObjectName of the MBean for the object we are storing
+     * @param engine  Object whose properties are being stored
      *
      * @exception Exception if an exception occurs while storing
      */
     private void storeEngine(PrintWriter writer, int indent,
-                             ObjectName oname) throws Exception {
+                             Engine engine) throws Exception {
 
         // Store the beginning of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }
         writer.print("<Engine");
-        storeAttributes(writer, oname);
+        storeAttributes(writer, engine);
         writer.println(">");
 
         // Store nested <Default> element
@@ -440,48 +613,58 @@ public class StandardServerMBean extends BaseModelMBean {
         // Store nested <DefaultContext> element
         ; // FIXME
 
-        // Store nested <Host> elements
-        StringBuffer hostSearch =
-            new StringBuffer("Catalina:type=Host,service=");
-        hostSearch.append(oname.getKeyProperty("service"));
-        hostSearch.append(",*");
-        ObjectName hostQuery = new ObjectName(hostSearch.toString());
-        Iterator hostNames =
-            mserver.queryNames(hostQuery, null).iterator();
-        while (hostNames.hasNext()) {
-            storeHost(writer, indent + 2,
-                      (ObjectName) hostNames.next());
+        // Store nested <Host> elements (or other relevant containers)
+        Container children[] = engine.findChildren();
+        for (int i = 0; i < children.length; i++) {
+            if (children[i] instanceof Context) {
+                storeContext(writer, indent + 2, (Context) children[i]);
+            } else if (children[i] instanceof Engine) {
+                storeEngine(writer, indent + 2, (Engine) children[i]);
+            } else if (children[i] instanceof Host) {
+                storeHost(writer, indent + 2, (Host) children[i]);
+            }
         }
 
         // Store nested <Listener> elements
-        ; // FIXME
+        if (engine instanceof Lifecycle) {
+            LifecycleListener listeners[] =
+                ((Lifecycle) engine).findLifecycleListeners();
+            for (int i = 0; i < listeners.length; i++) {
+                storeListener(writer, indent + 2, listeners[i]);
+            }
+        }
 
         // Store nested <Logger> element
-        StringBuffer loggerSearch =
-            new StringBuffer("Catalina:type=Logger,service=");
-        loggerSearch.append(oname.getKeyProperty("service"));
-        ObjectName loggerQuery = new ObjectName(loggerSearch.toString());
-        Iterator loggerNames =
-            mserver.queryNames(loggerQuery, null).iterator();
-        while (loggerNames.hasNext()) {
-            storeLogger(writer, indent + 2,
-                        (ObjectName) loggerNames.next());
+        Logger logger = engine.getLogger();
+        if (logger != null) {
+            Logger parentLogger = null;
+            if (engine.getParent() != null) {
+                parentLogger = engine.getParent().getLogger();
+            }
+            if (logger != parentLogger) {
+                storeLogger(writer, indent + 2, logger);
+            }
         }
 
         // Store nested <Realm> element
-        StringBuffer realmSearch =
-            new StringBuffer("Catalina:type=Realm,service=");
-        realmSearch.append(oname.getKeyProperty("service"));
-        ObjectName realmQuery = new ObjectName(realmSearch.toString());
-        Iterator realmNames =
-            mserver.queryNames(realmQuery, null).iterator();
-        while (realmNames.hasNext()) {
-            storeRealm(writer, indent + 2,
-                        (ObjectName) realmNames.next());
+        Realm realm = engine.getRealm();
+        if (realm != null) {
+            Realm parentRealm = null;
+            if (engine.getParent() != null) {
+                parentRealm = engine.getParent().getRealm();
+            }
+            if (realm != parentRealm) {
+                storeRealm(writer, indent + 2, realm);
+            }
         }
 
         // Store nested <Valve> elements
-        ; // FIXME
+        if (engine instanceof Pipeline) {
+            Valve valves[] = ((Pipeline) engine).getValves();
+            for (int i = 0; i < valves.length; i++) {
+                storeValve(writer, indent + 2, valves[i]);
+            }
+        }
 
         // Store the ending of this element
         for (int i = 0; i < indent; i++) {
@@ -493,45 +676,64 @@ public class StandardServerMBean extends BaseModelMBean {
 
 
     /**
+     * Store the specified ServerSocketFactory properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param factory Object whose properties are being stored
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeFactory(PrintWriter writer, int indent,
+                              ServerSocketFactory factory) throws Exception {
+
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<Factory");
+        storeAttributes(writer, factory);
+        writer.println("/>");
+
+    }
+
+
+    /**
      * Store the specified Host properties.
      *
      * @param writer PrintWriter to which we are storing
      * @param indent Number of spaces to indent this element
-     * @param oname ObjectName of the MBean for the object we are storing
+     * @param host  Object whose properties are being stored
      *
      * @exception Exception if an exception occurs while storing
      */
     private void storeHost(PrintWriter writer, int indent,
-                           ObjectName oname) throws Exception {
+                           Host host) throws Exception {
 
         // Store the beginning of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }
         writer.print("<Host");
-        storeAttributes(writer, oname);
+        storeAttributes(writer, host);
         writer.println(">");
 
         // Store nested <Alias> elements
         ; // FIXME
 
-        // Store nested <Context> elements
-        StringBuffer contextSearch =
-            new StringBuffer("Catalina:type=Context,host=");
-        contextSearch.append(oname.getKeyProperty("host"));
-        contextSearch.append(",service=");
-        contextSearch.append(oname.getKeyProperty("service"));
-        contextSearch.append(",*");
-        ObjectName contextQuery = new ObjectName(contextSearch.toString());
-        Iterator contextNames =
-            mserver.queryNames(contextQuery, null).iterator();
-        while (contextNames.hasNext()) {
-            storeContext(writer, indent + 2,
-                         (ObjectName) contextNames.next());
-        }
-
         // Store nested <Cluster> elements
         ; // FIXME
+
+        // Store nested <Context> elements (or other relevant containers)
+        Container children[] = host.findChildren();
+        for (int i = 0; i < children.length; i++) {
+            if (children[i] instanceof Context) {
+                storeContext(writer, indent + 2, (Context) children[i]);
+            } else if (children[i] instanceof Engine) {
+                storeEngine(writer, indent + 2, (Engine) children[i]);
+            } else if (children[i] instanceof Host) {
+                storeHost(writer, indent + 2, (Host) children[i]);
+            }
+        }
 
         // Store nested <Default> element
         ; // FIXME
@@ -540,38 +742,45 @@ public class StandardServerMBean extends BaseModelMBean {
         ; // FIXME
 
         // Store nested <Listener> elements
-        ; // FIXME
+        if (host instanceof Lifecycle) {
+            LifecycleListener listeners[] =
+                ((Lifecycle) host).findLifecycleListeners();
+            for (int i = 0; i < listeners.length; i++) {
+                storeListener(writer, indent + 2, listeners[i]);
+            }
+        }
 
         // Store nested <Logger> element
-        StringBuffer loggerSearch =
-            new StringBuffer("Catalina:type=Logger,host=");
-        loggerSearch.append(oname.getKeyProperty("host"));
-        loggerSearch.append(",service=");
-        loggerSearch.append(oname.getKeyProperty("service"));
-        ObjectName loggerQuery = new ObjectName(loggerSearch.toString());
-        Iterator loggerNames =
-            mserver.queryNames(loggerQuery, null).iterator();
-        while (loggerNames.hasNext()) {
-            storeLogger(writer, indent + 2,
-                        (ObjectName) loggerNames.next());
+        Logger logger = host.getLogger();
+        if (logger != null) {
+            Logger parentLogger = null;
+            if (host.getParent() != null) {
+                parentLogger = host.getParent().getLogger();
+            }
+            if (logger != parentLogger) {
+                storeLogger(writer, indent + 2, logger);
+            }
         }
 
         // Store nested <Realm> element
-        StringBuffer realmSearch =
-            new StringBuffer("Catalina:type=Realm,host=");
-        realmSearch.append(oname.getKeyProperty("host"));
-        realmSearch.append(",service=");
-        realmSearch.append(oname.getKeyProperty("service"));
-        ObjectName realmQuery = new ObjectName(realmSearch.toString());
-        Iterator realmNames =
-            mserver.queryNames(realmQuery, null).iterator();
-        while (realmNames.hasNext()) {
-            storeRealm(writer, indent + 2,
-                        (ObjectName) realmNames.next());
+        Realm realm = host.getRealm();
+        if (realm != null) {
+            Realm parentRealm = null;
+            if (host.getParent() != null) {
+                parentRealm = host.getParent().getRealm();
+            }
+            if (realm != parentRealm) {
+                storeRealm(writer, indent + 2, realm);
+            }
         }
 
         // Store nested <Valve> elements
-        ; // FIXME
+        if (host instanceof Pipeline) {
+            Valve valves[] = ((Pipeline) host).getValves();
+            for (int i = 0; i < valves.length; i++) {
+                storeValve(writer, indent + 2, valves[i]);
+            }
+        }
 
         // Store the ending of this element
         for (int i = 0; i < indent; i++) {
@@ -583,30 +792,103 @@ public class StandardServerMBean extends BaseModelMBean {
 
 
     /**
+     * Store the specified Listener properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param listener Object whose properties are being stored
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeListener(PrintWriter writer, int indent,
+                               LifecycleListener listener) throws Exception {
+
+        if (isSkippable(listener.getClass().getName())) {
+            return;
+        }
+
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<Listener");
+        storeAttributes(writer, listener);
+        writer.println("/>");
+
+    }
+
+
+    /**
+     * Store the specified Loader properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param loader Object whose properties are being stored
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeLoader(PrintWriter writer, int indent,
+                             Loader loader) throws Exception {
+
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<Loader");
+        storeAttributes(writer, loader);
+        writer.println("/>");
+
+    }
+
+
+    /**
      * Store the specified Logger properties.
      *
      * @param writer PrintWriter to which we are storing
      * @param indent Number of spaces to indent this element
-     * @param oname ObjectName of the MBean for the object we are storing
+     * @param logger Object whose properties are being stored
      *
      * @exception Exception if an exception occurs while storing
      */
     private void storeLogger(PrintWriter writer, int indent,
-                             ObjectName oname) throws Exception {
+                             Logger logger) throws Exception {
+
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<Logger");
+        storeAttributes(writer, logger);
+        writer.println("/>");
+
+    }
+
+
+    /**
+     * Store the specified Manager properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param manager Object whose properties are being stored
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeManager(PrintWriter writer, int indent,
+                              Manager manager) throws Exception {
 
         // Store the beginning of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }
-        writer.print("<Logger");
-        storeAttributes(writer, oname);
+        writer.print("<Manager");
+        storeAttributes(writer, manager);
         writer.println(">");
+
+        // Store nested <Store> element
+        ; // FIXME
 
         // Store the ending of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }
-        writer.println("</Logger>");
+        writer.println("</Manager>");
 
     }
 
@@ -616,26 +898,19 @@ public class StandardServerMBean extends BaseModelMBean {
      *
      * @param writer PrintWriter to which we are storing
      * @param indent Number of spaces to indent this element
-     * @param oname ObjectName of the MBean for the object we are storing
+     * @param realm Object whose properties are being stored
      *
      * @exception Exception if an exception occurs while storing
      */
     private void storeRealm(PrintWriter writer, int indent,
-                            ObjectName oname) throws Exception {
+                            Realm realm) throws Exception {
 
-        // Store the beginning of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }
         writer.print("<Realm");
-        storeAttributes(writer, oname);
-        writer.println(">");
-
-        // Store the ending of this element
-        for (int i = 0; i < indent; i++) {
-            writer.print(' ');
-        }
-        writer.println("</Realm>");
+        storeAttributes(writer, realm);
+        writer.println("/>");
 
     }
 
@@ -645,36 +920,37 @@ public class StandardServerMBean extends BaseModelMBean {
      *
      * @param writer PrintWriter to which we are storing
      * @param indent Number of spaces to indent this element
-     * @param oname ObjectName of the MBean for the object we are storing
+     * @param server Object to be stored
      *
      * @exception Exception if an exception occurs while storing
      */
     private void storeServer(PrintWriter writer, int indent,
-                             ObjectName oname) throws Exception {
+                             Server server) throws Exception {
 
         // Store the beginning of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }
         writer.print("<Server");
-        storeAttributes(writer, oname);
+        storeAttributes(writer, server);
         writer.println(">");
 
         // Store nested <GlobalNamingResources> element
         ; // FIXME
 
         // Store nested <Listener> elements
-        ; // FIXME
+        if (server instanceof Lifecycle) {
+            LifecycleListener listeners[] =
+                ((Lifecycle) server).findLifecycleListeners();
+            for (int i = 0; i < listeners.length; i++) {
+                storeListener(writer, indent + 2, listeners[i]);
+            }
+        }
 
         // Store nested <Service> elements
-        StringBuffer serviceSearch =
-            new StringBuffer("Catalina:type=Service,*");
-        ObjectName serviceQuery = new ObjectName(serviceSearch.toString());
-        Iterator serviceNames =
-            mserver.queryNames(serviceQuery, null).iterator();
-        while (serviceNames.hasNext()) {
-            storeService(writer, indent + 2,
-                         (ObjectName) serviceNames.next());
+        Service services[] = server.findServices();
+        for (int i = 0; i < services.length; i++) {
+            storeService(writer, indent + 2, services[i]);
         }
 
         // Store the ending of this element
@@ -691,55 +967,101 @@ public class StandardServerMBean extends BaseModelMBean {
      *
      * @param writer PrintWriter to which we are storing
      * @param indent Number of spaces to indent this element
-     * @param oname ObjectName of the MBean for the object we are storing
+     * @param server Object to be stored
      *
      * @exception Exception if an exception occurs while storing
      */
     private void storeService(PrintWriter writer, int indent,
-                              ObjectName oname) throws Exception {
+                              Service service) throws Exception {
 
         // Store the beginning of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }
         writer.print("<Service");
-        storeAttributes(writer, oname);
+        storeAttributes(writer, service);
         writer.println(">");
 
         // Store nested <Connector> elements
-        StringBuffer connectorSearch =
-            new StringBuffer("Catalina:type=Connector,service=");
-        connectorSearch.append(oname.getKeyProperty("name"));
-        connectorSearch.append(",*");
-        ObjectName connectorQuery = new ObjectName(connectorSearch.toString());
-        Iterator connectorNames =
-            mserver.queryNames(connectorQuery, null).iterator();
-        while (connectorNames.hasNext()) {
-            storeConnector(writer, indent + 2,
-                           (ObjectName) connectorNames.next());
+        Connector connectors[] = service.findConnectors();
+        for (int i = 0; i < connectors.length; i++) {
+            storeConnector(writer, indent + 2, connectors[i]);
         }
 
-        // Store nested <Engine> element
-        StringBuffer engineSearch =
-            new StringBuffer("Catalina:type=Engine,service=");
-        engineSearch.append(oname.getKeyProperty("name"));
-        engineSearch.append(",*");
-        ObjectName engineQuery = new ObjectName(engineSearch.toString());
-        Iterator engineNames =
-            mserver.queryNames(engineQuery, null).iterator();
-        while (engineNames.hasNext()) {
-            storeEngine(writer, indent + 2,
-                        (ObjectName) engineNames.next());
+        // Store nested <Engine> element (or other appropriate container)
+        Container container = service.getContainer();
+        if (container != null) {
+            if (container instanceof Context) {
+                storeContext(writer, indent + 2, (Context) container);
+            } else if (container instanceof Engine) {
+                storeEngine(writer, indent + 2, (Engine) container);
+            } else if (container instanceof Host) {
+                storeHost(writer, indent + 2, (Host) container);
+            }
         }
 
         // Store nested <Listener> elements
-        ; // FIXME
+        if (service instanceof Lifecycle) {
+            LifecycleListener listeners[] =
+                ((Lifecycle) service).findLifecycleListeners();
+            for (int i = 0; i < listeners.length; i++) {
+                storeListener(writer, indent + 2, listeners[i]);
+            }
+        }
 
         // Store the ending of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }
         writer.println("</Service>");
+
+    }
+
+
+    /**
+     * Store the specified Store properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param store Object whose properties are being stored
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeStore(PrintWriter writer, int indent,
+                             Store store) throws Exception {
+
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<Store");
+        storeAttributes(writer, store);
+        writer.println("/>");
+
+    }
+
+
+    /**
+     * Store the specified Valve properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param valve Object whose properties are being valved
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeValve(PrintWriter writer, int indent,
+                             Valve valve) throws Exception {
+
+        if (isSkippable(valve.getClass().getName())) {
+            return;
+        }
+
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.print("<Valve");
+        storeAttributes(writer, valve);
+        writer.println("/>");
 
     }
 
