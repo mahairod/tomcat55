@@ -593,9 +593,7 @@ public final class AccessLogValve
             String value = null;
 
             ServletRequest req = request.getRequest();
-            HttpServletRequest hreq = null;
-            if (req instanceof HttpServletRequest)
-                hreq = (HttpServletRequest) req;
+            HttpServletRequest hreq = (HttpServletRequest) req;
 
             if (isResolveHosts())
                 result.append(req.getRemoteHost());
@@ -604,8 +602,7 @@ public final class AccessLogValve
 
             result.append(" - ");
 
-            if (hreq != null)
-                value = hreq.getRemoteUser();
+            value = hreq.getRemoteUser();
             if (value == null)
                 result.append("- ");
             else {
@@ -838,13 +835,9 @@ public final class AccessLogValve
         String value = null;
 
         ServletRequest req = request.getRequest();
-        HttpServletRequest hreq = null;
-        if (req instanceof HttpServletRequest)
-            hreq = (HttpServletRequest) req;
+        HttpServletRequest hreq = (HttpServletRequest) req;
         ServletResponse res = response.getResponse();
-        HttpServletResponse hres = null;
-        if (res instanceof HttpServletResponse)
-            hres = (HttpServletResponse) res;
+        HttpServletResponse hres = (HttpServletResponse) res;
 
         if (pattern == 'a') {
             value = req.getRemoteAddr();
@@ -967,9 +960,7 @@ public final class AccessLogValve
         Object value = null;
 
         ServletRequest req = request.getRequest();
-        HttpServletRequest hreq = null;
-        if (req instanceof HttpServletRequest)
-            hreq = (HttpServletRequest) req;
+        HttpServletRequest hreq = (HttpServletRequest) req;
 
         switch (type) {
             case 'i':
