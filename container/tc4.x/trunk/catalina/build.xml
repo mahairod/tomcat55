@@ -711,8 +711,10 @@
     <copy todir="${catalina.build}/server/lib" file="${tomcat-util.jar}"/>
   </target>
   <target name="copy-tyrex.jar" if="copy.tyrex.jar">
+    <!--
     <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="../lib/tyrex.license"/>
+    -->
   </target>
   <target name="copy-xerces.jar" if="copy.xerces.jar">
     <copy todir="${catalina.build}/common/endorsed" file="${xerces.jar}"/>
