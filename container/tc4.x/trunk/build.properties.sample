@@ -150,6 +150,13 @@ commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp.jar
 commons-dbcp.loc=jakarta-commons/dbcp
 
 
+# ----- Commons Lang, version 20020808 or later -----
+commons-lang.home=${base.path}/commons-lang
+commons-lang.lib=${commons-lang.home}
+commons-lang.jar=${commons-lang.lib}/commons-lang.jar
+commons-lang.loc=jakarta-commons/lang
+
+
 # ----- Commons Modeler, version 1.0 or later -----
 commons-modeler.home=${base.path}/commons-modeler-1.0
 commons-modeler.lib=${commons-modeler.home}
