@@ -64,9 +64,9 @@
 package org.apache.catalina.users;
 
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import org.apache.catalina.Group;
+import org.apache.catalina.Role;
 import org.apache.catalina.User;
 
 
@@ -94,12 +94,6 @@ public abstract class AbstractUser implements User {
      * The logon password of this user.
      */
     protected String password = null;
-
-
-    /**
-     * The set of security roles associated with this user.
-     */
-    protected ArrayList roles = new ArrayList();
 
 
     /**
@@ -166,16 +160,9 @@ public abstract class AbstractUser implements User {
 
 
     /**
-     * Return the set of security roles assigned specifically to this user,
-     * as Strings.
+     * Return the set of {@link Role}s assigned specifically to this user.
      */
-    public Iterator getRoles() {
-
-        synchronized (roles) {
-            return (roles.iterator());
-        }
-
-    }
+    public abstract Iterator getRoles();
 
 
     /**
@@ -214,23 +201,15 @@ public abstract class AbstractUser implements User {
 
 
     /**
-     * Add a new security role to those assigned specifically to this user.
+     * Add a new {@link Role} to those assigned specifically to this user.
      *
      * @param role The new role
      */
-    public void addRole(String role) {
-
-        synchronized (roles) {
-            if (!roles.contains(role)) {
-                roles.add(role);
-            }
-        }
-
-    }
+    public abstract void addRole(Role role);
 
 
     /**
-     * Is this user in the specified group?
+     * Is this user in the specified {@link Group}?
      *
      * @param group The group to check
      */
@@ -238,19 +217,13 @@ public abstract class AbstractUser implements User {
 
 
     /**
-     * Is this user specifically assigned the specified role?  This method
-     * does <strong>NOT</strong> check for roles inherited based on group
-     * membership.
+     * Is this user specifically assigned the specified {@link Role}?  This
+     * method does <strong>NOT</strong> check for roles inherited based on
+     * {@link Group} membership.
      *
      * @param role The role to check
      */
-    public boolean isInRole(String role) {
-
-        synchronized (roles) {
-            return (roles.contains(role));
-        }
-
-    }
+    public abstract boolean isInRole(Role role);
 
 
     /**
@@ -262,17 +235,11 @@ public abstract class AbstractUser implements User {
 
 
     /**
-     * Remove a security role from those assigned to this user.
+     * Remove a {@link Role} from those assigned to this user.
      *
      * @param role The old role
      */
-    public void removeRole(String role) {
-
-        synchronized (roles) {
-            roles.remove(role);
-        }
-
-    }
+    public abstract void removeRole(Role role);
 
 
     // ------------------------------------------------------ Principal Methods

@@ -72,7 +72,7 @@ import java.util.Iterator;
  * <p>Abstract representation of a user in a {@link UserDatabase}.  Each user
  * is optionally associated with a set of {@link Group}s through which he or
  * she inherits additional security roles, and is optionally assigned a set
- * of specific security roles.</p>
+ * of specific {@link Role}s.</p>
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
@@ -124,8 +124,7 @@ public interface User extends Principal {
 
 
     /**
-     * Return the set of security roles assigned specifically to this user,
-     * as Strings.
+     * Return the set of {@link Role}s assigned specifically to this user.
      */
     public Iterator getRoles();
 
@@ -164,15 +163,15 @@ public interface User extends Principal {
 
 
     /**
-     * Add a new security role to those assigned specifically to this user.
+     * Add a {@link Role} to those assigned specifically to this user.
      *
      * @param role The new role
      */
-    public void addRole(String role);
+    public void addRole(Role role);
 
 
     /**
-     * Is this user in the specified group?
+     * Is this user in the specified {@link Group}?
      *
      * @param group The group to check
      */
@@ -180,13 +179,13 @@ public interface User extends Principal {
 
 
     /**
-     * Is this user specifically assigned the specified role?  This method
-     * does <strong>NOT</strong> check for roles inherited based on group
-     * membership.
+     * Is this user specifically assigned the specified {@link Role}?  This
+     * method does <strong>NOT</strong> check for roles inherited based on
+     * {@link Group} membership.
      *
      * @param role The role to check
      */
-    public boolean isInRole(String role);
+    public boolean isInRole(Role role);
 
 
     /**
@@ -198,11 +197,11 @@ public interface User extends Principal {
 
 
     /**
-     * Remove a security role from those assigned to this user.
+     * Remove a {@link Role} from those assigned to this user.
      *
      * @param role The old role
      */
-    public void removeRole(String role);
+    public void removeRole(Role role);
 
 
 }

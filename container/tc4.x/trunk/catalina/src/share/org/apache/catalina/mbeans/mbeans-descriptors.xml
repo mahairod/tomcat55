@@ -134,13 +134,14 @@
                  type="java.lang.String"/>
 
     <attribute   name="roles"
-          description="Authorized roles for this group"
+          description="MBean Names of roles for this group"
                  type="java.lang.String[]"
             writeable="false"/>
 
     <attribute   name="users"
           description="MBean Names of user members of this group"
-                 type="java.lang.String[]"/>
+                 type="java.lang.String[]"
+            writeable="false"/>
 
     <operation   name="addRole"
           description="Add a new authorized role for this group"
@@ -679,6 +680,11 @@
           description="Relative or absolute pathname to database file"
                  type="java.lang.String"/>
 
+    <attribute   name="roles"
+          description="MBean Names of all defined roles"
+                 type="java.lang.String[]"
+            writeable="false"/>
+
     <attribute   name="users"
           description="MBean Names of all defined users"
                  type="java.lang.String[]"
@@ -697,6 +703,18 @@
       <parameter name="roles"
           description="Roles list for the new group"
                  type="java.lang.String[]"/>
+    </operation>
+
+    <operation   name="createRole"
+          description="Create new role and return MBean name"
+               impact="ACTION"
+           returnType="java.lang.String">
+      <parameter name="rolename"
+          description="Role name of the new role"
+                 type="java.lang.String"/>
+      <parameter name="description"
+          description="Description of the new role"
+                 type="java.lang.String"/>
     </operation>
 
     <operation   name="createUser"
@@ -726,6 +744,15 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation   name="findRole"
+          description="Return MBean Name of the specified role (if any)"
+               impact="INFO"
+           returnType="java.lang.String">
+      <parameter name="rolename"
+          description="Role name of the requested role"
+                 type="java.lang.String"/>
+    </operation>
+
     <operation   name="findUser"
           description="Return MBean Name of the specified user (if any)"
                impact="INFO"
@@ -741,6 +768,15 @@
            returnType="void">
       <parameter name="groupname"
           description="Group name of the group to remove"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeRole"
+          description="Remove existing role"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="rolename"
+          description="Role name of the role to remove"
                  type="java.lang.String"/>
     </operation>
 
@@ -831,6 +867,24 @@
     <attribute   name="debug"
           description="The debugging detail level for this component"
                  type="int"/>
+
+  </mbean>
+
+
+  <mbean         name="Role"
+            className="org.apache.catalina.mbeans.RoleMBean"
+          description="Security role from a user database"
+               domain="Users"
+                group="Role"
+                 type="org.apache.catalina.Role">
+
+    <attribute   name="description"
+          description="Description of this role"
+                 type="java.lang.String"/>
+
+    <attribute   name="rolename"
+          description="Role name of this role"
+                 type="java.lang.String"/>
 
   </mbean>
 
@@ -981,7 +1035,7 @@
     <attribute   name="managedResource"
           description="The managed resource this MBean is associated with"
                  type="java.lang.Object"/>
-                 
+
     <attribute   name="name"
           description="Unique name of this Engine"
                  type="java.lang.String"/>
@@ -1061,7 +1115,7 @@
     <attribute   name="managedResource"
           description="The managed resource this MBean is associated with"
                  type="java.lang.Object"/>
-                 
+
     <attribute   name="name"
           description="Unique name of this Host"
                  type="java.lang.String"/>
@@ -1186,7 +1240,7 @@
     <attribute   name="managedResource"
           description="The managed resource this MBean is associated with"
                  type="java.lang.Object"/>
-                 
+
     <attribute   name="maxActiveSessions"
           description="The maximum number of active Sessions allowed, or -1 for no limit"
                  type="int"/>
@@ -1221,7 +1275,7 @@
     <attribute   name="managedResource"
           description="The managed resource this MBean is associated with"
                  type="java.lang.Object"/>
-                 
+
     <attribute   name="port"
           description="TCP port for shutdown messages"
                  type="int"/>
@@ -1257,7 +1311,7 @@
                domain="Catalina"
                 group="Service"
                  type="org.apache.catalina.core.StandardService">
-                 
+
     <attribute   name="managedResource"
           description="The managed resource this MBean is associated with"
                  type="java.lang.Object"/>
@@ -1353,7 +1407,7 @@
                  type="java.lang.String"/>
 
     <attribute   name="roles"
-          description="Authorized roles for this user"
+          description="MBean Names of roles for this user"
                  type="java.lang.String[]"
             writeable="false"/>
 

@@ -4,6 +4,7 @@
  * $Date$
  *
  * ====================================================================
+ *
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 2002 The Apache Software Foundation.  All rights
@@ -60,103 +61,82 @@
  *
  */
 
+package org.apache.catalina.mbeans;
 
-package org.apache.catalina;
 
-
-import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Iterator;
+import javax.management.MalformedObjectNameException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.management.RuntimeOperationsException;
+import org.apache.catalina.Group;
+import org.apache.catalina.Role;
+import org.apache.catalina.User;
+import org.apache.catalina.UserDatabase;
+import org.apache.commons.modeler.BaseModelMBean;
+import org.apache.commons.modeler.ManagedBean;
+import org.apache.commons.modeler.Registry;
 
 
 /**
- * <p>Abstract representation of a group of {@link User}s in a
- * {@link UserDatabase}.  Each user that is a member of this group
- * inherits the {@link Role}s assigned to the group.</p>
+ * <p>A <strong>ModelMBean</strong> implementation for the
+ * <code>org.apache.catalina.Role</code> component.</p>
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
- * @since 4.1
  */
 
-public interface Group extends Principal {
+public class RoleMBean extends BaseModelMBean {
 
 
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the description of this group.
-     */
-    public String getDescription();
+    // ----------------------------------------------------------- Constructors
 
 
     /**
-     * Set the description of this group.
+     * Construct a <code>ModelMBean</code> with default
+     * <code>ModelMBeanInfo</code> information.
      *
-     * @param description The new description
+     * @exception MBeanException if the initializer of an object
+     *  throws an exception
+     * @exception RuntimeOperationsException if an IllegalArgumentException
+     *  occurs
      */
-    public void setDescription(String description);
+    public RoleMBean()
+        throws MBeanException, RuntimeOperationsException {
+
+        super();
+
+    }
+
+
+    // ----------------------------------------------------- Instance Variables
 
 
     /**
-     * Return the group name of this group, which must be unique
-     * within the scope of a {@link UserDatabase}.
+     * The configuration information registry for our managed beans.
      */
-    public String getGroupname();
+    protected Registry registry = MBeanUtils.createRegistry();
 
 
     /**
-     * Set the group name of this group, which must be unique
-     * within the scope of a {@link UserDatabase}.
-     *
-     * @param groupname The new group name
+     * The <code>MBeanServer</code> in which we are registered.
      */
-    public void setGroupname(String groupname);
+    protected MBeanServer mserver = MBeanUtils.createServer();
 
 
     /**
-     * Return the set of {@link Role}s assigned specifically to this group.
+     * The <code>ManagedBean</code> information describing this MBean.
      */
-    public Iterator getRoles();
+    protected ManagedBean managed =
+        registry.findManagedBean("Role");
 
 
-    /**
-     * Return the {@link UserDatabase} within which this Group is defined.
-     */
-    public UserDatabase getUserDatabase();
+    // ------------------------------------------------------------- Attributes
 
 
-    /**
-     * Return the set of {@link User}s that are members of this group.
-     */
-    public Iterator getUsers();
-
-
-    // --------------------------------------------------------- Public Methods
-
-
-    /**
-     * Add a new {@link Role} to those assigned specifically to this group.
-     *
-     * @param role The new role
-     */
-    public void addRole(Role role);
-
-
-    /**
-     * Is this group specifically assigned the specified {@link Role}?
-     *
-     * @param role The role to check
-     */
-    public boolean isInRole(Role role);
-
-
-    /**
-     * Remove a {@link Role} from those assigned to this group.
-     *
-     * @param role The old role
-     */
-    public void removeRole(Role role);
+    // ------------------------------------------------------------- Operations
 
 
 }

@@ -61,102 +61,111 @@
  */
 
 
-package org.apache.catalina;
+package org.apache.catalina.users;
 
 
-import java.security.Principal;
 import java.util.Iterator;
+import org.apache.catalina.Group;
+import org.apache.catalina.Role;
+import org.apache.catalina.User;
+import org.apache.catalina.UserDatabase;
 
 
 /**
- * <p>Abstract representation of a group of {@link User}s in a
- * {@link UserDatabase}.  Each user that is a member of this group
- * inherits the {@link Role}s assigned to the group.</p>
+ * <p>Convenience base class for {@link Role} implementations.</p>
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  * @since 4.1
  */
 
-public interface Group extends Principal {
+public abstract class AbstractRole implements Role {
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * The description of this Role.
+     */
+    protected String description = null;
+
+
+    /**
+     * The role name of this Role.
+     */
+    protected String rolename = null;
 
 
     // ------------------------------------------------------------- Properties
 
 
     /**
-     * Return the description of this group.
+     * Return the description of this role.
      */
-    public String getDescription();
+    public String getDescription() {
+
+        return (this.description);
+
+    }
 
 
     /**
-     * Set the description of this group.
+     * Set the description of this role.
      *
      * @param description The new description
      */
-    public void setDescription(String description);
+    public void setDescription(String description) {
+
+        this.description = description;
+
+    }
 
 
     /**
-     * Return the group name of this group, which must be unique
+     * Return the role name of this role, which must be unique
      * within the scope of a {@link UserDatabase}.
      */
-    public String getGroupname();
+    public String getRolename() {
+
+        return (this.rolename);
+
+    }
 
 
     /**
-     * Set the group name of this group, which must be unique
+     * Set the role name of this role, which must be unique
      * within the scope of a {@link UserDatabase}.
      *
-     * @param groupname The new group name
+     * @param rolename The new role name
      */
-    public void setGroupname(String groupname);
+    public void setRolename(String rolename) {
+
+        this.rolename = rolename;
+
+    }
 
 
     /**
-     * Return the set of {@link Role}s assigned specifically to this group.
+     * Return the {@link UserDatabase} within which this Role is defined.
      */
-    public Iterator getRoles();
-
-
-    /**
-     * Return the {@link UserDatabase} within which this Group is defined.
-     */
-    public UserDatabase getUserDatabase();
-
-
-    /**
-     * Return the set of {@link User}s that are members of this group.
-     */
-    public Iterator getUsers();
+    public abstract UserDatabase getUserDatabase();
 
 
     // --------------------------------------------------------- Public Methods
 
 
-    /**
-     * Add a new {@link Role} to those assigned specifically to this group.
-     *
-     * @param role The new role
-     */
-    public void addRole(Role role);
+    // ------------------------------------------------------ Principal Methods
 
 
     /**
-     * Is this group specifically assigned the specified {@link Role}?
-     *
-     * @param role The role to check
+     * Make the principal name the same as the role name.
      */
-    public boolean isInRole(Role role);
+    public String getName() {
 
+        return (getRolename());
 
-    /**
-     * Remove a {@link Role} from those assigned to this group.
-     *
-     * @param role The old role
-     */
-    public void removeRole(Role role);
+    }
 
 
 }

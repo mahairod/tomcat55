@@ -89,6 +89,7 @@ import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Realm;
+import org.apache.catalina.Role;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
@@ -127,6 +128,8 @@ public class MBeanUtils {
           "Http11Connector" },
         { "org.apache.catalina.users.MemoryGroup",
           "Group" },
+        { "org.apache.catalina.users.MemoryRole",
+          "Role" },
         { "org.apache.catalina.users.MemoryUser",
           "User" },
     };
@@ -443,6 +446,33 @@ public class MBeanUtils {
             domain = mserver.getDefaultDomain();
         ModelMBean mbean = managed.createMBean(realm);
         ObjectName oname = createObjectName(domain, realm);
+        mserver.registerMBean(mbean, oname);
+        return (mbean);
+
+    }
+
+
+    /**
+     * Create, register, and return an MBean for this
+     * <code>Role</code> object.
+     *
+     * @param role The Role to be managed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public static ModelMBean createMBean(Role role)
+        throws Exception {
+
+        String mname = createManagedName(role);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            return null;
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ModelMBean mbean = managed.createMBean(role);
+        ObjectName oname = createObjectName(domain, role);
         mserver.registerMBean(mbean, oname);
         return (mbean);
 
@@ -880,7 +910,7 @@ public class MBeanUtils {
 
     }
 
-    
+
     /**
      * Create an <code>ObjectName</code> for this
      * <code>Realm</code> object.
@@ -920,6 +950,28 @@ public class MBeanUtils {
                               service.getName());
         }
 
+        return (name);
+
+    }
+
+
+    /**
+     * Create an <code>ObjectName</code> for this
+     * <code>Role</code> object.
+     *
+     * @param domain Domain in which this name is to be created
+     * @param role The Role to be named
+     *
+     * @exception MalformedObjectNameException if a name cannot be created
+     */
+    public static ObjectName createObjectName(String domain,
+                                              Role role)
+        throws MalformedObjectNameException {
+
+        ObjectName name = null;
+        name = new ObjectName(domain + ":type=Role,rolename=" +
+                              role.getRolename() + ",database=" +
+                              role.getUserDatabase().getId());
         return (name);
 
     }
@@ -1258,7 +1310,7 @@ public class MBeanUtils {
         mserver.unregisterMBean(oname);
 
     }
-    
+
 
     /**
      * Deregister the MBean for this
@@ -1354,6 +1406,31 @@ public class MBeanUtils {
         if (domain == null)
             domain = mserver.getDefaultDomain();
         ObjectName oname = createObjectName(domain, realm);
+        mserver.unregisterMBean(oname);
+
+    }
+
+
+    /**
+     * Deregister the MBean for this
+     * <code>Role</code> object.
+     *
+     * @param role The Role to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(Role role)
+        throws Exception {
+
+        String mname = createManagedName(role);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            return;
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, role);
         mserver.unregisterMBean(oname);
 
     }

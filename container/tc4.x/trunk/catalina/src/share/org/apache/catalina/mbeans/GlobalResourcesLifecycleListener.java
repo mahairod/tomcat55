@@ -77,6 +77,7 @@ import org.apache.catalina.Group;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Role;
 import org.apache.catalina.Server;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
@@ -241,6 +242,19 @@ public class GlobalResourcesLifecycleListener
                 ("Cannot create UserDatabase MBean for resource " + name);
         }
 
+        // Create the MBeans for each defined Role
+        Iterator roles = database.getRoles();
+        while (roles.hasNext()) {
+            Role role = (Role) roles.next();
+            if (debug >= 3) {
+                log("  Creating Role MBean for role " + role);
+            }
+            if (MBeanUtils.createMBean(role) == null) {
+                throw new IllegalArgumentException
+                    ("Cannot create Role MBean for role " + role);
+            }
+        }
+
         // Create the MBeans for each defined Group
         Iterator groups = database.getGroups();
         while (groups.hasNext()) {
@@ -282,6 +296,13 @@ public class GlobalResourcesLifecycleListener
     }
 
 
+
+    /**
+     * The destination for log messages.
+     */
+    protected java.io.PrintStream  stream = System.out;
+
+
     /**
      * Log a message.
      *
@@ -289,8 +310,19 @@ public class GlobalResourcesLifecycleListener
      */
     protected void log(String message) {
 
-        System.out.print("GlobalResourcesLifecycleListener: ");
-        System.out.println(message);
+        /*
+        if (stream == System.out) {
+            try {
+                stream = new java.io.PrintStream
+                             (new java.io.FileOutputStream("grll.log"));
+            } catch (Throwable t) {
+                ;
+            }
+        }
+        */
+
+        stream.print("GlobalResourcesLifecycleListener: ");
+        stream.println(message);
 
     }
 
@@ -304,7 +336,7 @@ public class GlobalResourcesLifecycleListener
     protected void log(String message, Throwable throwable) {
 
         log(message);
-        throwable.printStackTrace(System.out);
+        throwable.printStackTrace(stream);
 
     }
 

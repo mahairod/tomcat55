@@ -79,6 +79,7 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.Group;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
+import org.apache.catalina.Role;
 import org.apache.catalina.Server;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
@@ -225,9 +226,10 @@ public class UserDatabaseRealm
         ArrayList combined = new ArrayList();
         Iterator roles = user.getRoles();
         while (roles.hasNext()) {
-            String role = (String) roles.next();
-            if (!combined.contains(role)) {
-                combined.add(role);
+            Role role = (Role) roles.next();
+            String rolename = role.getRolename();
+            if (!combined.contains(rolename)) {
+                combined.add(rolename);
             }
         }
         Iterator groups = user.getGroups();
@@ -235,9 +237,10 @@ public class UserDatabaseRealm
             Group group = (Group) groups.next();
             roles = group.getRoles();
             while (roles.hasNext()) {
-                String role = (String) roles.next();
-                if (!combined.contains(role)) {
-                    combined.add(role);
+                Role role = (Role) roles.next();
+                String rolename = role.getRolename();
+                if (!combined.contains(rolename)) {
+                    combined.add(rolename);
                 }
             }
         }
@@ -294,7 +297,7 @@ public class UserDatabaseRealm
     public synchronized void start() throws LifecycleException {
 
         try {
-            database = 
+            database =
                 (UserDatabase) (new InitialContext()).lookup(resourceName);
         } catch (Throwable e) {
             e.printStackTrace();

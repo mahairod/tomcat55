@@ -72,6 +72,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Group;
+import org.apache.catalina.Role;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.commons.modeler.BaseModelMBean;
@@ -140,6 +141,13 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
 
 
     /**
+     * The <code>ManagedBean</code> information describing Group MBeans.
+     */
+    protected ManagedBean managedRole =
+        registry.findManagedBean("Role");
+
+
+    /**
      * The <code>ManagedBean</code> information describing User MBeans.
      */
     protected ManagedBean managedUser =
@@ -167,6 +175,23 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
 
 
     /**
+     * Return the MBean Names of all roles defined in this database.
+     */
+    public String[] getRoles() {
+
+        UserDatabase database = (UserDatabase) this.resource;
+        ArrayList results = new ArrayList();
+        Iterator roles = database.getRoles();
+        while (roles.hasNext()) {
+            Role role = (Role) roles.next();
+            results.add(findRole(role.getRolename()));
+        }
+        return ((String[]) results.toArray(new String[results.size()]));
+
+    }
+
+
+    /**
      * Return the MBean Names of all users defined in this database.
      */
     public String[] getUsers() {
@@ -179,7 +204,7 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
             results.add(findUser(user.getUsername()));
         }
         return ((String[]) results.toArray(new String[results.size()]));
-                                            
+
     }
 
 
@@ -200,7 +225,12 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         Group group = database.createGroup(groupname, description);
         if (roles != null) {
             for (int i = 0; i < roles.length; i++) {
-                group.addRole(roles[i]);
+                Role role = database.findRole(roles[i]);
+                if (role == null) {
+                    createRole(roles[i], null);
+                    role = database.findRole(roles[i]);
+                }
+                group.addRole(role);
             }
         }
         try {
@@ -210,6 +240,27 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
                                                group + " MBean: " + e);
         }
         return (findGroup(groupname));
+
+    }
+
+
+    /**
+     * Create a new Role and return the corresponding MBean Name.
+     *
+     * @param rolename Group name of the new group
+     * @param description Description of the new group
+     */
+    public String createRole(String rolename, String description) {
+
+        UserDatabase database = (UserDatabase) this.resource;
+        Role role = database.createRole(rolename, description);
+        try {
+            MBeanUtils.createMBean(role);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Exception creating role " +
+                                               role + " MBean: " + e);
+        }
+        return (findRole(rolename));
 
     }
 
@@ -229,7 +280,12 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         User user = database.createUser(username, password, fullName);
         if (roles != null) {
             for (int i = 0; i < roles.length; i++) {
-                user.addRole(roles[i]);
+                Role role = database.findRole(roles[i]);
+                if (role == null) {
+                    createRole(roles[i], null);
+                    role = database.findRole(roles[i]);
+                }
+                user.addRole(role);
             }
         }
         try {
@@ -263,6 +319,31 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         } catch (MalformedObjectNameException e) {
             throw new IllegalArgumentException
                 ("Cannot create object name for group " + group);
+        }
+
+    }
+
+
+    /**
+     * Return the MBean Name for the specified role name (if any);
+     * otherwise return <code>null</code>.
+     *
+     * @param rolename Role name to look up
+     */
+    public String findRole(String rolename) {
+
+        UserDatabase database = (UserDatabase) this.resource;
+        Role role = database.findRole(rolename);
+        if (role == null) {
+            return (null);
+        }
+        try {
+            ObjectName oname =
+                MBeanUtils.createObjectName(managedRole.getDomain(), role);
+            return (oname.toString());
+        } catch (MalformedObjectNameException e) {
+            throw new IllegalArgumentException
+                ("Cannot create object name for role " + role);
         }
 
     }
@@ -311,6 +392,29 @@ public class MemoryUserDatabaseMBean extends BaseModelMBean {
         } catch (Exception e) {
             throw new IllegalArgumentException("Exception destroying group " +
                                                group + " MBean: " + e);
+        }
+
+    }
+
+
+    /**
+     * Remove an existing role and destroy the corresponding MBean.
+     *
+     * @param rolename Role name to remove
+     */
+    public void removeRole(String rolename) {
+
+        UserDatabase database = (UserDatabase) this.resource;
+        Role role = database.findRole(rolename);
+        if (role == null) {
+            return;
+        }
+        try {
+            MBeanUtils.destroyMBean(role);
+            database.removeRole(role);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Exception destroying role " +
+                                               role + " MBean: " + e);
         }
 
     }

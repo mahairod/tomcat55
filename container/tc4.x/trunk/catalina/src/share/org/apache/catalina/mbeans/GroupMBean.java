@@ -72,6 +72,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Group;
+import org.apache.catalina.Role;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.commons.modeler.BaseModelMBean;
@@ -136,7 +137,7 @@ public class GroupMBean extends BaseModelMBean {
 
 
     /**
-     * Return the set of authorized roles for this group.
+     * Return the MBean Names of all authorized roles for this group.
      */
     public String[] getRoles() {
 
@@ -144,7 +145,16 @@ public class GroupMBean extends BaseModelMBean {
         ArrayList results = new ArrayList();
         Iterator roles = group.getRoles();
         while (roles.hasNext()) {
-            results.add(roles.next());
+            Role role = null;
+            try {
+                role = (Role) roles.next();
+                ObjectName oname =
+                    MBeanUtils.createObjectName(managed.getDomain(), role);
+                results.add(oname.toString());
+            } catch (MalformedObjectNameException e) {
+                throw new IllegalArgumentException
+                    ("Cannot create object name for role " + role);
+            }
         }
         return ((String[]) results.toArray(new String[results.size()]));
 
@@ -177,6 +187,48 @@ public class GroupMBean extends BaseModelMBean {
 
 
     // ------------------------------------------------------------- Operations
+
+
+    /**
+     * Add a new {@link Role} to those this group belongs to.
+     *
+     * @param rolename Role name of the new role
+     */
+    public void addRole(String rolename) {
+
+        Group group = (Group) this.resource;
+        if (group == null) {
+            return;
+        }
+        Role role = group.getUserDatabase().findRole(rolename);
+        if (role == null) {
+            throw new IllegalArgumentException
+                ("Invalid role name '" + rolename + "'");
+        }
+        group.addRole(role);
+
+    }
+
+
+    /**
+     * Remove a {@link Role} from those this group belongs to.
+     *
+     * @param rolename Role name of the old role
+     */
+    public void removeRole(String rolename) {
+
+        Group group = (Group) this.resource;
+        if (group == null) {
+            return;
+        }
+        Role role = group.getUserDatabase().findRole(rolename);
+        if (role == null) {
+            throw new IllegalArgumentException
+                ("Invalid role name '" + rolename + "'");
+        }
+        group.removeRole(role);
+
+    }
 
 
 }

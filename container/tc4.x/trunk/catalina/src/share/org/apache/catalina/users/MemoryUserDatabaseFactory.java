@@ -65,7 +65,6 @@ package org.apache.catalina.users;
 
 
 import java.util.Hashtable;
-import java.security.AccessControlException;
 import javax.naming.Name;
 import javax.naming.Context;
 import javax.naming.NamingException;

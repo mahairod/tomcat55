@@ -64,9 +64,11 @@
 package org.apache.catalina.users;
 
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import org.apache.catalina.Group;
+import org.apache.catalina.Role;
+import org.apache.catalina.User;
+import org.apache.catalina.UserDatabase;
 
 
 /**
@@ -93,12 +95,6 @@ public abstract class AbstractGroup implements Group {
      * The group name of this group.
      */
     protected String groupname = null;
-
-
-    /**
-     * The set of security roles associated with this group.
-     */
-    protected ArrayList roles = new ArrayList();
 
 
     // ------------------------------------------------------------- Properties
@@ -151,16 +147,15 @@ public abstract class AbstractGroup implements Group {
 
 
     /**
-     * Return the set of security roles assigned specifically to this group,
-     * as Strings.
+     * Return the set of {@link Role}s assigned specifically to this group.
      */
-    public Iterator getRoles() {
+    public abstract Iterator getRoles();
 
-        synchronized (roles) {
-            return (roles.iterator());
-        }
 
-    }
+    /**
+     * Return the {@link UserDatabase} within which this Group is defined.
+     */
+    public abstract UserDatabase getUserDatabase();
 
 
     /**
@@ -173,47 +168,27 @@ public abstract class AbstractGroup implements Group {
 
 
     /**
-     * Add a new security role to those assigned specifically to this group.
+     * Add a new {@link Role} to those assigned specifically to this group.
      *
      * @param role The new role
      */
-    public void addRole(String role) {
-
-        synchronized (roles) {
-            if (!roles.contains(role)) {
-                roles.add(role);
-            }
-        }
-
-    }
+    public abstract void addRole(Role role);
 
 
     /**
-     * Is this group specifically assigned the specified role?
+     * Is this group specifically assigned the specified {@link Role}?
      *
      * @param role The role to check
      */
-    public boolean isInRole(String role) {
-
-        synchronized (roles) {
-            return (roles.contains(role));
-        }
-
-    }
+    public abstract boolean isInRole(Role role);
 
 
     /**
-     * Remove a security role from those assigned to this group.
+     * Remove a {@link Role} from those assigned to this group.
      *
      * @param role The old role
      */
-    public void removeRole(String role) {
-
-        synchronized (roles) {
-            roles.remove(role);
-        }
-
-    }
+    public abstract void removeRole(Role role);
 
 
     // ------------------------------------------------------ Principal Methods

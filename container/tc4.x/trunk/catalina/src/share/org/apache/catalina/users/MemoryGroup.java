@@ -67,6 +67,7 @@ package org.apache.catalina.users;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.apache.catalina.Group;
+import org.apache.catalina.Role;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 
@@ -114,7 +115,25 @@ public class MemoryGroup extends AbstractGroup {
     protected MemoryUserDatabase database = null;
 
 
-    // --------------------------------------------------------- Public Methods
+    /**
+     * The set of {@link Role}s associated with this group.
+     */
+    protected ArrayList roles = new ArrayList();
+
+
+    // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the set of {@link Role}s assigned specifically to this group.
+     */
+    public Iterator getRoles() {
+
+        synchronized (roles) {
+            return (roles.iterator());
+        }
+
+    }
 
 
     /**
@@ -132,7 +151,6 @@ public class MemoryGroup extends AbstractGroup {
      */
     public Iterator getUsers() {
 
-        String groupname = getGroupname();
         ArrayList results = new ArrayList();
         Iterator users = database.getUsers();
         while (users.hasNext()) {
@@ -142,6 +160,53 @@ public class MemoryGroup extends AbstractGroup {
             }
         }
         return (results.iterator());
+
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Add a new {@link Role} to those assigned specifically to this group.
+     *
+     * @param role The new role
+     */
+    public void addRole(Role role) {
+
+        synchronized (roles) {
+            if (!roles.contains(role)) {
+                roles.add(role);
+            }
+        }
+
+    }
+
+
+    /**
+     * Is this group specifically assigned the specified {@link Role}?
+     *
+     * @param role The role to check
+     */
+    public boolean isInRole(Role role) {
+
+        synchronized (roles) {
+            return (roles.contains(role));
+        }
+
+    }
+
+
+    /**
+     * Remove a {@link Role} from those assigned to this group.
+     *
+     * @param role The old role
+     */
+    public void removeRole(Role role) {
+
+        synchronized (roles) {
+            roles.remove(role);
+        }
 
     }
 
@@ -169,7 +234,7 @@ public class MemoryGroup extends AbstractGroup {
                         sb.append(',');
                     }
                     n++;
-                    sb.append((String) values.next());
+                    sb.append((String) ((Role) values.next()).getRolename());
                 }
                 sb.append("'");
             }

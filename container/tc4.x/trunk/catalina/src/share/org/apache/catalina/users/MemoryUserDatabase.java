@@ -73,6 +73,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.apache.catalina.Group;
+import org.apache.catalina.Role;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.util.StringManager;
@@ -83,8 +84,8 @@ import org.xml.sax.Attributes;
 
 /**
  * <p>Concrete implementation of {@link UserDatabase} that loads all
- * defined users and groups into an in-memory data structure, and uses
- * a specified XML file for its persistent storage.</p>
+ * defined users, groups, and roles into an in-memory data structure,
+ * and uses a specified XML file for its persistent storage.</p>
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
@@ -158,6 +159,13 @@ public class MemoryUserDatabase implements UserDatabase {
 
 
     /**
+     * The set of {@link Role}s defined in this database, keyed by
+     * role name.
+     */
+    protected HashMap roles = new HashMap();
+
+
+    /**
      * The string manager for this package.
      */
     private static StringManager sm =
@@ -221,6 +229,18 @@ public class MemoryUserDatabase implements UserDatabase {
 
 
     /**
+     * Return the set of {@link Role}s defined in this user database.
+     */
+    public Iterator getRoles() {
+
+        synchronized (roles) {
+            return (roles.values().iterator());
+        }
+
+    }
+
+
+    /**
      * Return the set of {@link User}s defined in this user database.
      */
     public Iterator getUsers() {
@@ -273,6 +293,23 @@ public class MemoryUserDatabase implements UserDatabase {
 
 
     /**
+     * Create and return a new {@link Role} defined in this user database.
+     *
+     * @param rolename The role name of the new group (must be unique)
+     * @param description The description of this group
+     */
+    public Role createRole(String rolename, String description) {
+
+        MemoryRole role = new MemoryRole(this, rolename, description);
+        synchronized (roles) {
+            roles.put(role.getRolename(), role);
+        }
+        return (role);
+
+    }
+
+
+    /**
      * Create and return a new {@link User} defined in this user database.
      *
      * @param username The logon username of the new user (must be unique)
@@ -307,6 +344,21 @@ public class MemoryUserDatabase implements UserDatabase {
 
 
     /**
+     * Return the {@link Role} with the specified role name, if any;
+     * otherwise return <code>null</code>.
+     *
+     * @param rolename Name of the role to return
+     */
+    public Role findRole(String rolename) {
+
+        synchronized (roles) {
+            return ((Role) roles.get(rolename));
+        }
+
+    }
+
+
+    /**
      * Return the {@link User} with the specified user name, if any;
      * otherwise return <code>null</code>.
      *
@@ -334,6 +386,7 @@ public class MemoryUserDatabase implements UserDatabase {
                 // Erase any previous groups and users
                 users.clear();
                 groups.clear();
+                roles.clear();
 
                 // Construct a reader for the XML input file (if it exists)
                 File file = new File(pathname);
@@ -351,6 +404,9 @@ public class MemoryUserDatabase implements UserDatabase {
                 digester.addFactoryCreate
                     ("tomcat-users/group",
                      new MemoryGroupCreationFactory(this));
+                digester.addFactoryCreate
+                    ("tomcat-users/role",
+                     new MemoryRoleCreationFactory(this));
                 digester.addFactoryCreate
                     ("tomcat-users/user",
                      new MemoryUserCreationFactory(this));
@@ -388,6 +444,30 @@ public class MemoryUserDatabase implements UserDatabase {
                 user.removeGroup(group);
             }
             groups.remove(group.getGroupname());
+        }
+
+    }
+
+
+    /**
+     * Remove the specified {@link Role} from this user database.
+     *
+     * @param role The role to be removed
+     */
+    public void removeRole(Role role) {
+
+        synchronized (roles) {
+            Iterator groups = getGroups();
+            while (groups.hasNext()) {
+                Group group = (Group) groups.next();
+                group.removeRole(role);
+            }
+            Iterator users = getUsers();
+            while (users.hasNext()) {
+                User user = (User) users.next();
+                user.removeRole(role);
+            }
+            roles.remove(role.getRolename());
         }
 
     }
@@ -433,8 +513,14 @@ public class MemoryUserDatabase implements UserDatabase {
             writer.println("<?xml version='1.0'?>");
             writer.println("<tomcat-users>");
 
-            // Print entries for each defined group and user
-            Iterator values = getGroups();
+            // Print entries for each defined role, group, and user
+            Iterator values = null;
+            values = getRoles();
+            while (values.hasNext()) {
+                writer.print("  ");
+                writer.println(values.next());
+            }
+            values = getGroups();
             while (values.hasNext()) {
                 writer.print("  ");
                 writer.println(values.next());
@@ -509,6 +595,8 @@ public class MemoryUserDatabase implements UserDatabase {
         sb.append(pathname);
         sb.append(",groupCount=");
         sb.append(this.groups.size());
+        sb.append(",roleCount=");
+        sb.append(this.roles.size());
         sb.append(",userCount=");
         sb.append(this.users.size());
         sb.append("]");
@@ -553,19 +641,59 @@ class MemoryGroupCreationFactory implements ObjectCreationFactory {
         Group group = database.createGroup(groupname, description);
         if (roles != null) {
             while (roles.length() > 0) {
-                String role = null;
+                String rolename = null;
                 int comma = roles.indexOf(',');
                 if (comma >= 0) {
-                    role = roles.substring(0, comma).trim();
+                    rolename = roles.substring(0, comma).trim();
                     roles = roles.substring(comma + 1);
                 } else {
-                    role = roles.trim();
+                    rolename = roles.trim();
                     roles = "";
                 }
-                group.addRole(role);
+                if (rolename.length() > 0) {
+                    Role role = database.findRole(rolename);
+                    if (role == null) {
+                        role = database.createRole(rolename, null);
+                    }
+                    group.addRole(role);
+                }
             }
         }
         return (group);
+    }
+
+    private MemoryUserDatabase database = null;
+
+    private Digester digester = null;
+
+    public Digester getDigester() {
+        return (this.digester);
+    }
+
+    public void setDigester(Digester digester) {
+        this.digester = digester;
+    }
+
+}
+
+
+/**
+ * Digester object creation factory for role instances.
+ */
+class MemoryRoleCreationFactory implements ObjectCreationFactory {
+
+    public MemoryRoleCreationFactory(MemoryUserDatabase database) {
+        this.database = database;
+    }
+
+    public Object createObject(Attributes attributes) {
+        String rolename = attributes.getValue("rolename");
+        if (rolename == null) {
+            rolename = attributes.getValue("name");
+        }
+        String description = attributes.getValue("description");
+        Role role = database.createRole(rolename, description);
+        return (role);
     }
 
     private MemoryUserDatabase database = null;
@@ -613,27 +741,33 @@ class MemoryUserCreationFactory implements ObjectCreationFactory {
                     groupname = groups.trim();
                     groups = "";
                 }
-                Group group = database.findGroup(groupname);
-                if (group == null) {
-                    throw new IllegalArgumentException
-                        (database.getStringManager().getString
-                         ("memoryUserDatabase.invalidGroup", groupname));
+                if (groupname.length() > 0) {
+                    Group group = database.findGroup(groupname);
+                    if (group == null) {
+                        group = database.createGroup(groupname, null);
+                    }
+                    user.addGroup(group);
                 }
-                user.addGroup(group);
             }
         }
         if (roles != null) {
             while (roles.length() > 0) {
-                String role = null;
+                String rolename = null;
                 int comma = roles.indexOf(',');
                 if (comma >= 0) {
-                    role = roles.substring(0, comma).trim();
+                    rolename = roles.substring(0, comma).trim();
                     roles = roles.substring(comma + 1);
                 } else {
-                    role = roles.trim();
+                    rolename = roles.trim();
                     roles = "";
                 }
-                user.addRole(role);
+                if (rolename.length() > 0) {
+                    Role role = database.findRole(rolename);
+                    if (role == null) {
+                        role = database.createRole(rolename, null);
+                    }
+                    user.addRole(role);
+                }
             }
         }
         return (user);

@@ -67,6 +67,7 @@ package org.apache.catalina.users;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.apache.catalina.Group;
+import org.apache.catalina.Role;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 
@@ -122,7 +123,13 @@ public class MemoryUser extends AbstractUser {
     protected ArrayList groups = new ArrayList();
 
 
-    // --------------------------------------------------------- Public Methods
+    /**
+     * The set of {@link Role}s associated with this user.
+     */
+    protected ArrayList roles = new ArrayList();
+
+
+    // ------------------------------------------------------------- Properties
 
 
     /**
@@ -138,6 +145,18 @@ public class MemoryUser extends AbstractUser {
 
 
     /**
+     * Return the set of {@link Role}s assigned specifically to this user.
+     */
+    public Iterator getRoles() {
+
+        synchronized (roles) {
+            return (roles.iterator());
+        }
+
+    }
+
+
+    /**
      * Return the {@link UserDatabase} within which this User is defined.
      */
     public UserDatabase getUserDatabase() {
@@ -145,6 +164,9 @@ public class MemoryUser extends AbstractUser {
         return (this.database);
 
     }
+
+
+    // --------------------------------------------------------- Public Methods
 
 
     /**
@@ -157,6 +179,22 @@ public class MemoryUser extends AbstractUser {
         synchronized (groups) {
             if (!groups.contains(group)) {
                 groups.add(group);
+            }
+        }
+
+    }
+
+
+    /**
+     * Add a new {@link Role} to those assigned specifically to this user.
+     *
+     * @param role The new role
+     */
+    public void addRole(Role role) {
+
+        synchronized (roles) {
+            if (!roles.contains(role)) {
+                roles.add(role);
             }
         }
 
@@ -178,6 +216,22 @@ public class MemoryUser extends AbstractUser {
 
 
     /**
+     * Is this user specifically assigned the specified {@link Role}?  This
+     * method does <strong>NOT</strong> check for roles inherited based on
+     * {@link Group} membership.
+     *
+     * @param role The role to check
+     */
+    public boolean isInRole(Role role) {
+
+        synchronized (roles) {
+            return (roles.contains(role));
+        }
+
+    }
+
+
+    /**
      * Remove a {@link Group} from those this user belongs to.
      *
      * @param group The old group
@@ -186,6 +240,20 @@ public class MemoryUser extends AbstractUser {
 
         synchronized (groups) {
             groups.remove(group);
+        }
+
+    }
+
+
+    /**
+     * Remove a {@link Role} from those assigned to this user.
+     *
+     * @param role The old role
+     */
+    public void removeRole(Role role) {
+
+        synchronized (roles) {
+            roles.remove(role);
         }
 
     }
@@ -236,7 +304,7 @@ public class MemoryUser extends AbstractUser {
                         sb.append(',');
                     }
                     n++;
-                    sb.append((String) values.next());
+                    sb.append(((Role) values.next()).getRolename());
                 }
                 sb.append("'");
             }
