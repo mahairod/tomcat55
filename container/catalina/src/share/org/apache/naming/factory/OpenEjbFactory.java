@@ -64,48 +64,73 @@
 
 package org.apache.naming.factory;
 
+import org.apache.naming.EjbRef;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.Name;
+import javax.naming.Reference;
+import javax.naming.RefAddr;
+import javax.naming.spi.ObjectFactory;
+import java.util.Hashtable;
+import java.util.Properties;
 
 /**
- * Static constants for this package.
+ * Object factory for EJBs.
+ * 
+ * @author Jacek Laskowski
+ * @author Remy Maucherat
+ * @version $Revision$ $Date$
  */
+public class OpenEjbFactory implements ObjectFactory {
 
-public final class Constants {
 
-    public static final String Package = "org.apache.naming.factory";
+    // -------------------------------------------------------------- Constants
 
-    public static final String DEFAULT_RESOURCE_FACTORY = 
-        Package + ".ResourceFactory";
 
-    public static final String DEFAULT_RESOURCE_LINK_FACTORY = 
-        Package + ".ResourceLinkFactory";
+    protected static final String DEFAULT_OPENEJB_FACTORY = 
+        "org.openejb.client.LocalInitialContextFactory";
 
-    public static final String DEFAULT_TRANSACTION_FACTORY = 
-        Package + ".TransactionFactory";
 
-    public static final String DEFAULT_RESOURCE_ENV_FACTORY = 
-        Package + ".ResourceEnvFactory";
+    // -------------------------------------------------- ObjectFactory Methods
 
-    public static final String DEFAULT_EJB_FACTORY = 
-        Package + ".EjbFactory";
 
-    public static final String DBCP_DATASOURCE_FACTORY = 
-        "org.apache.commons.dbcp.BasicDataSourceFactory";
+    /**
+     * Crete a new EJB instance using OpenEJB.
+     * 
+     * @param obj The reference object describing the DataSource
+     */
+    public Object getObjectInstance(Object obj, Name name, Context nameCtx,
+                                    Hashtable environment)
+        throws Exception {
 
-    public static final String OPENEJB_EJB_FACTORY = 
-        Package + ".OpenEjbFactory";
+        Object beanObj = null;
 
-    public static final String TYREX_RESOURCE_FACTORY =
-        Package + ".TyrexResourceFactory";
+        if (obj instanceof EjbRef) {
 
-    public static final String TYREX_TRANSACTION_FACTORY = 
-        Package + ".TyrexTransactionFactory";
+            Reference ref = (Reference) obj;
 
-    public static final String OBJECT_FACTORIES = "";
+            String factory = DEFAULT_OPENEJB_FACTORY;
+            RefAddr factoryRefAddr = ref.get("openejb.factory");
+            if (factoryRefAddr != null) {
+                // Retrieving the OpenEJB factory
+                factory = factoryRefAddr.getContent().toString();
+            }
 
-    public static final String FACTORY = "factory";
+            Properties env = new Properties();
+            env.put(Context.INITIAL_CONTEXT_FACTORY, factory);
 
-    public static final String TYREX_DOMAIN_CONFIG = "tyrexDomainConfig";
+            RefAddr linkRefAddr = ref.get("openejb.link");
+            if (linkRefAddr != null) {
+                String ejbLink = linkRefAddr.getContent().toString();
+                beanObj = (new InitialContext(env)).lookup(ejbLink);
+            }
 
-    public static final String TYREX_DOMAIN_NAME = "tyrexDomainName";
+        }
+
+        return beanObj;
+
+    }
+
 
 }
