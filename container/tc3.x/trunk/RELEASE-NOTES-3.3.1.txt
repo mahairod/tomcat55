@@ -208,6 +208,9 @@ Bug No.  Description
 
 5191	 Fix parsing of JSP comments with extra '-' characters.
 
+5983	 Fix the flushing of unread POST data on the HTTP connector.  On the
+	 reported bug, it was mostly a nuisance.  In other cases (see 6143)
+	 it was causing major problems.
 
 Configuration:
 
