@@ -119,13 +119,6 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
 
     /**
-     * The number of random bytes to include when generating a
-     * session identifier.
-     */
-    protected static final int SESSION_ID_BYTES = 16;
-
-
-    /**
      * The message digest algorithm to be used when generating session
      * identifiers.  This must be an algorithm supported by the
      * <code>java.security.MessageDigest</code> class on your platform.
@@ -184,6 +177,12 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
      * this Manager.
      */
     protected int maxInactiveInterval = 60;
+
+
+    /**
+     * The session id length of Sessions created by this Manager.
+     */
+    protected int sessionIdLength = 16;
 
 
     /**
@@ -488,6 +487,36 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
 
     /**
+     * Gets the session id length (in bytes) of Sessions created by
+     * this Manager.
+     *
+     * @return The session id length
+     */
+    public int getSessionIdLength() {
+
+        return (this.sessionIdLength);
+
+    }
+
+
+    /**
+     * Sets the session id length (in bytes) for Sessions created by this
+     * Manager.
+     *
+     * @param sessionIdLength The session id length
+     */
+    public void setSessionIdLength(int idLength) {
+
+        int oldSessionIdLength = this.sessionIdLength;
+        this.sessionIdLength = idLength;
+        support.firePropertyChange("sessionIdLength",
+                                   new Integer(oldSessionIdLength),
+                                   new Integer(this.sessionIdLength));
+
+    }
+
+
+    /**
      * Return the descriptive short name of this Manager implementation.
      */
     public String getName() {
@@ -496,8 +525,9 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
     }
 
-        /** Use /dev/random-type special device. This is new code, but may reduce the
-     *  big delay in generating the random.
+    /** 
+     * Use /dev/random-type special device. This is new code, but may reduce
+     * the big delay in generating the random.
      *
      *  You must specify a path to a random generator file. Use /dev/urandom
      *  for linux ( or similar ) systems. Use /dev/random for maximum security
@@ -828,23 +858,30 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
      * Generate and return a new session identifier.
      */
     protected synchronized String generateSessionId() {
-        byte bytes[] = new byte[SESSION_ID_BYTES];
-        getRandomBytes( bytes );
-        bytes = getDigest().digest(bytes);
+
+        byte random[] = new byte[16];
 
         // Render the result as a String of hexadecimal digits
         StringBuffer result = new StringBuffer();
-        for (int i = 0; i < bytes.length; i++) {
-            byte b1 = (byte) ((bytes[i] & 0xf0) >> 4);
-            byte b2 = (byte) (bytes[i] & 0x0f);
-            if (b1 < 10)
-                result.append((char) ('0' + b1));
-            else
-                result.append((char) ('A' + (b1 - 10)));
-            if (b2 < 10)
-                result.append((char) ('0' + b2));
-            else
-                result.append((char) ('A' + (b2 - 10)));
+        int resultLenBytes = 0;
+        while (resultLenBytes < this.sessionIdLength) {
+            getRandomBytes(random);
+            random = getDigest().digest(random);
+            for (int j = 0;
+                    j < random.length && resultLenBytes < this.sessionIdLength;
+                    j++) {
+                byte b1 = (byte) ((random[j] & 0xf0) >> 4);
+                byte b2 = (byte) (random[j] & 0x0f);
+                if (b1 < 10)
+                    result.append((char) ('0' + b1));
+                else
+                    result.append((char) ('A' + (b1 - 10)));
+                if (b2 < 10)
+                    result.append((char) ('0' + b2));
+                else
+                    result.append((char) ('A' + (b2 - 10)));
+                resultLenBytes++;
+            }
         }
         return (result.toString());
 

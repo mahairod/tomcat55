@@ -164,6 +164,24 @@ public interface Manager {
     public void setMaxInactiveInterval(int interval);
 
 
+    /**
+     * Gets the session id length (in bytes) of Sessions created by
+     * this Manager.
+     *
+     * @return The session id length
+     */
+    public int getSessionIdLength();
+
+
+    /**
+     * Sets the session id length (in bytes) for Sessions created by this
+     * Manager.
+     *
+     * @param sessionIdLength The session id length
+     */
+    public void setSessionIdLength(int idLength);
+
+
     // --------------------------------------------------------- Public Methods
 
 
