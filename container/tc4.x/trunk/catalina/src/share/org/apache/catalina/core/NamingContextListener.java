@@ -733,7 +733,8 @@ public class NamingContextListener
             try {
                 Reference ref = new TransactionRef();
                 compCtx.bind("UserTransaction", ref);
-                addAdditionalParameters(ref, "UserTransaction");
+                addAdditionalParameters
+                    (namingResources, ref, "UserTransaction");
             } catch (NamingException e) {
                 log(sm.getString("naming.bindFailed", e));
             }
@@ -755,13 +756,13 @@ public class NamingContextListener
     /**
      * Set the specified EJBs in the naming context.
      */
-    private void addEjb(ContextEjb ejb) {
+    public void addEjb(ContextEjb ejb) {
 
         // Create a reference to the EJB.
         Reference ref = new EjbRef
             (ejb.getType(), ejb.getHome(), ejb.getRemote(), ejb.getLink());
         // Adding the additional parameters, if any
-        addAdditionalParameters(ref, ejb.getName());
+        addAdditionalParameters(ejb.getNamingResources(), ref, ejb.getName());
         try {
             createSubcontexts(envCtx, ejb.getName());
             envCtx.bind(ejb.getName(), ref);
@@ -775,7 +776,7 @@ public class NamingContextListener
     /**
      * Set the specified environment entries in the naming context.
      */
-    private void addEnvironment(ContextEnvironment env) {
+    public void addEnvironment(ContextEnvironment env) {
 
         Object value = null;
         // Instantiating a new instance of the correct object type, and
@@ -859,7 +860,7 @@ public class NamingContextListener
     /**
      * Set the specified local EJBs in the naming context.
      */
-    private void addLocalEjb(ContextLocalEjb localEjb) {
+    public void addLocalEjb(ContextLocalEjb localEjb) {
 
 
 
@@ -869,14 +870,15 @@ public class NamingContextListener
     /**
      * Set the specified resources in the naming context.
      */
-    private void addResource(ContextResource resource) {
+    public void addResource(ContextResource resource) {
 
         // Create a reference to the resource.
         Reference ref = new ResourceRef
             (resource.getType(), resource.getDescription(),
              resource.getScope(), resource.getAuth());
         // Adding the additional parameters, if any
-        addAdditionalParameters(ref, resource.getName());
+        addAdditionalParameters(resource.getNamingResources(), ref, 
+                                resource.getName());
         try {
             if (debug >= 2) {
                 log("  Adding resource ref " + resource.getName());
@@ -894,12 +896,12 @@ public class NamingContextListener
     /**
      * Set the specified resources in the naming context.
      */
-    private void addResourceEnvRef(String name, String type) {
+    public void addResourceEnvRef(String name, String type) {
 
         // Create a reference to the resource env.
         Reference ref = new ResourceEnvRef(type);
         // Adding the additional parameters, if any
-        addAdditionalParameters(ref, name);
+        addAdditionalParameters(null, ref, name);
         try {
             if (debug >= 2)
                 log("  Adding resource env ref " + name);
@@ -915,13 +917,14 @@ public class NamingContextListener
     /**
      * Set the specified resource link in the naming context.
      */
-    private void addResourceLink(ContextResourceLink resourceLink) {
+    public void addResourceLink(ContextResourceLink resourceLink) {
 
         // Create a reference to the resource.
         Reference ref = new ResourceLinkRef
             (resourceLink.getType(), resourceLink.getGlobal());
         // Adding the additional parameters, if any
-        addAdditionalParameters(ref, resourceLink.getName());
+        addAdditionalParameters(resourceLink.getNamingResources(), ref, 
+                                resourceLink.getName());
         try {
             if (debug >= 2)
                 log("  Adding resource link " + resourceLink.getName());
@@ -937,7 +940,7 @@ public class NamingContextListener
     /**
      * Set the specified EJBs in the naming context.
      */
-    private void removeEjb(String name) {
+    public void removeEjb(String name) {
 
         try {
             envCtx.unbind(name);
@@ -951,7 +954,7 @@ public class NamingContextListener
     /**
      * Set the specified environment entries in the naming context.
      */
-    private void removeEnvironment(String name) {
+    public void removeEnvironment(String name) {
 
         try {
             envCtx.unbind(name);
@@ -965,7 +968,7 @@ public class NamingContextListener
     /**
      * Set the specified local EJBs in the naming context.
      */
-    private void removeLocalEjb(String name) {
+    public void removeLocalEjb(String name) {
 
         try {
             envCtx.unbind(name);
@@ -979,7 +982,7 @@ public class NamingContextListener
     /**
      * Set the specified resources in the naming context.
      */
-    private void removeResource(String name) {
+    public void removeResource(String name) {
 
         try {
             envCtx.unbind(name);
@@ -993,7 +996,7 @@ public class NamingContextListener
     /**
      * Set the specified resources in the naming context.
      */
-    private void removeResourceEnvRef(String name) {
+    public void removeResourceEnvRef(String name) {
 
         try {
             envCtx.unbind(name);
@@ -1007,7 +1010,7 @@ public class NamingContextListener
     /**
      * Set the specified resources in the naming context.
      */
-    private void removeResourceLink(String name) {
+    public void removeResourceLink(String name) {
 
         try {
             envCtx.unbind(name);
@@ -1044,9 +1047,12 @@ public class NamingContextListener
     /**
      * Add additional parameters to the reference.
      */
-    private void addAdditionalParameters(Reference ref, String name) {
-        ResourceParams resourceParameters =
-            namingResources.findResourceParams(name);
+    private void addAdditionalParameters(NamingResources resources, 
+                                         Reference ref, String name) {
+        if (resources == null) {
+            resources = namingResources;
+        }
+        ResourceParams resourceParameters = resources.findResourceParams(name);
         if (debug >= 2)
             log("  Resource parameters for " + name + " = " +
                 resourceParameters);
