@@ -79,6 +79,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tomcat.util.compat.JdkCompat;
+
 import org.apache.catalina.Container;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
@@ -319,20 +322,20 @@ public class ErrorReportValve
         sb.append("</u></p>");
 
         if (throwable != null) {
-            StringWriter stackTrace = new StringWriter();
-            throwable.printStackTrace(new PrintWriter(stackTrace));
+            String stackTrace = JdkCompat.getJdkCompat()
+                .getPartialServletStackTrace(throwable);
             sb.append("<p><b>");
             sb.append(sm.getString("errorReportValve.exception"));
             sb.append("</b> <pre>");
-            sb.append(stackTrace.toString());
+            sb.append(stackTrace);
             sb.append("</pre></p>");
             while (rootCause != null) {
-                stackTrace = new StringWriter();
-                rootCause.printStackTrace(new PrintWriter(stackTrace));
+                stackTrace = JdkCompat.getJdkCompat()
+                    .getPartialServletStackTrace(rootCause);
                 sb.append("<p><b>");
                 sb.append(sm.getString("errorReportValve.rootCause"));
                 sb.append("</b> <pre>");
-                sb.append(stackTrace.toString());
+                sb.append(stackTrace);
                 sb.append("</pre></p>");
 
                 /* In case root cause is somehow heavily nested */
