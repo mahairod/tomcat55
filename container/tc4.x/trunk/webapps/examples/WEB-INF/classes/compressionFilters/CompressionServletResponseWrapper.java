@@ -277,10 +277,7 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
             System.out.println("stream is set to "+stream+" in getWriter");
         }
         String charset = getCharsetFromContentType(contentType);
-        if (charset == null) {
-            charset = "windows-1250";
-        }
-        writer = new PrintWriter(new OutputStreamWriter(stream, charset));
+        writer = new PrintWriter((charset == null)? new OutputStreamWriter(stream) : new OutputStreamWriter(stream, charset));
         return (writer);
 
     }
