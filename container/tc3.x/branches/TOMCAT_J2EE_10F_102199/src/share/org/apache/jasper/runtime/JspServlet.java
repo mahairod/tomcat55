@@ -335,7 +335,7 @@ public class JspServlet extends HttpServlet {
                 System.err.println("\t     ServletPath: "+request.getServletPath());
                 System.err.println("\t        PathInfo: "+request.getPathInfo());
 		System.err.println("\t        RealPath: "
-                                   +getServletConfig().getServletContext().getRealPath(request.getRequestURI()));
+                                   +getServletConfig().getServletContext().getRealPath(jspUri));
                 System.err.println("\t      RequestURI: "+request.getRequestURI());
                 System.err.println("\t     QueryString: "+request.getQueryString());
                 System.err.println("\t  Request Params: ");
