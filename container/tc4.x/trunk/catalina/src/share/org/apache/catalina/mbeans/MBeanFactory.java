@@ -78,6 +78,7 @@ import org.apache.catalina.Host;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
+import org.apache.catalina.Valve;
 import org.apache.catalina.authenticator.SingleSignOn;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
@@ -98,6 +99,7 @@ import org.apache.catalina.valves.AccessLogValve;
 import org.apache.catalina.valves.RemoteAddrValve;
 import org.apache.catalina.valves.RemoteHostValve;
 import org.apache.catalina.valves.RequestDumperValve;
+import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.modeler.BaseModelMBean;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
@@ -885,6 +887,54 @@ public class MBeanFactory extends BaseModelMBean {
 
 
     /**
+     * Remove an existing Connector.
+     *
+     * @param name MBean Name of the comonent to remove
+     *
+     * @param serviceName Service name of the connector to remove
+     *
+     * @exception Exception if a component cannot be removed
+     */
+    public void removeConnector(String name, String serviceName) throws Exception {
+
+        // Acquire a reference to the component to be removed
+        ObjectName oname = new ObjectName(name);
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(serviceName);
+        String port = oname.getKeyProperty("port");
+        String address = oname.getKeyProperty("address");
+        Connector conns[] = (Connector[]) service.findConnectors();
+
+        for (int i = 0; i < conns.length; i++) {
+            if (conns[i] instanceof
+                    org.apache.catalina.connector.http10.HttpConnector) {
+                String addr =
+                    ((org.apache.catalina.connector.http10.HttpConnector)conns[i]).getAddress();
+                int p = ((org.apache.catalina.connector.http10.HttpConnector)conns[i]).getPort();
+                Integer portInt = new Integer(p);
+                if (address.equals(addr) &&
+                    port.equals(portInt.toString())) {
+                    // Remove this component from its parent component
+                    service.removeConnector(conns[i]);
+                }
+            } else if (conns[i] instanceof
+                    org.apache.catalina.connector.http.HttpConnector) {
+                String addr =
+                    ((org.apache.catalina.connector.http.HttpConnector)conns[i]).getAddress();
+                int p = ((org.apache.catalina.connector.http.HttpConnector)conns[i]).getPort();
+                Integer portInt = new Integer(p);
+                if (address.equals(addr) &&
+                    port.equals(portInt.toString())) {
+                    // Remove this component from its parent component
+                    service.removeConnector(conns[i]);
+                }
+            }
+        }
+
+    }
+
+
+    /**
      * Remove an existing Context.
      *
      * @param name MBean Name of the comonent to remove
@@ -897,7 +947,7 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName oname = new ObjectName(name);
         String serviceName = oname.getKeyProperty("service");
         String hostName = oname.getKeyProperty("host");
-        String contextName = oname.getKeyProperty("context");
+        String contextName = oname.getKeyProperty("path");
         Server server = ServerFactory.getServer();
         Service service = server.findService(serviceName);
         Engine engine = (Engine) service.getContainer();
@@ -954,5 +1004,78 @@ public class MBeanFactory extends BaseModelMBean {
 
     }
 
+
+    /**
+     * Remove an existing Valve.
+     *
+     * @param name MBean Name of the comonent to remove
+     *
+     * @exception Exception if a component cannot be removed
+     */
+    public void removeValve(String name) throws Exception {
+
+        // Acquire a reference to the component to be removed
+        ObjectName oname = new ObjectName(name);
+        String serviceName = oname.getKeyProperty("service");
+        String hostName = oname.getKeyProperty("host");
+        String path = oname.getKeyProperty("path");
+        String sequence = oname.getKeyProperty("sequence");
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(serviceName);
+        StandardEngine engine = (StandardEngine) service.getContainer();
+        if (hostName == null) {             // if valve's container is Engine
+            Valve [] valves = engine.getValves();
+            for (int i = 0; i < valves.length; i++) {
+                Container container = ((ValveBase)valves[i]).getContainer();
+                if (container instanceof StandardEngine) {
+                    String sname =
+                        ((StandardEngine)container).getService().getName();
+                    Integer sequenceInt = new Integer(valves[i].hashCode());
+                    if (sname.equals(serviceName) &&
+                        sequence.equals(sequenceInt.toString())){
+                        engine.removeValve(valves[i]);
+                    }
+                }
+            }
+        } else if (path == null) {      // if valve's container is Host
+            StandardHost host = (StandardHost) engine.findChild(hostName);
+            Valve [] valves = host.getValves();
+            for (int i = 0; i < valves.length; i++) {
+                Container container = ((ValveBase)valves[i]).getContainer();
+                if (container instanceof StandardHost) {
+                    String hn = ((StandardHost)container).getName();
+                    StandardEngine se =
+                        (StandardEngine) ((StandardHost)container).getParent();
+                    String sname = se.getService().getName();
+                    Integer sequenceInt = new Integer(valves[i].hashCode());
+                    if ((sname.equals(serviceName) && hn.equals(hostName)) &&
+                        sequence.equals(sequenceInt.toString())){
+                        host.removeValve(valves[i]);
+                    }
+                }
+            }
+        } else {                // valve's container is Context
+            StandardHost host = (StandardHost) engine.findChild(hostName);
+            StandardContext context = (StandardContext) host.findChild(path);
+            Valve [] valves = context.getValves();
+            for (int i = 0; i < valves.length; i++) {
+                Container container = ((ValveBase)valves[i]).getContainer();
+                if (container instanceof StandardContext) {
+                    String pathName = ((StandardContext)container).getName();
+                    StandardHost sh =
+                        (StandardHost)((StandardContext)container).getParent();
+                    String hn = sh.getName();;
+                    StandardEngine se = (StandardEngine)sh.getParent();
+                    String sname = se.getService().getName();
+                    Integer sequenceInt = new Integer(valves[i].hashCode());
+                    if (((sname.equals(serviceName) && hn.equals(hostName)) &&
+                        pathName.equals(path)) &&
+                        sequence.equals(sequenceInt.toString())){
+                        context.removeValve(valves[i]);
+                    }
+                }
+            }
+        }
+    }
 
 }

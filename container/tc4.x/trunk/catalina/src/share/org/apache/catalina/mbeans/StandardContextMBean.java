@@ -118,26 +118,5 @@ public class StandardContextMBean extends BaseModelMBean {
 
     // ------------------------------------------------------------- Operations
 
-
-    /**
-     * Remove the specified Valve from those associated this Context
-     *
-     * @param valve MBean Name of the Valve to be removed
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void removeValve(String valve)
-        throws Exception {
-
-        StandardContext context = (StandardContext) this.resource;
-        ObjectName oname = new ObjectName(valve);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Valve valveObj = null;
-        if (obj instanceof Valve) {
-            valveObj = (Valve) obj;
-        }
-        context.removeValve(valveObj);
-
-    }
-
+    
 }

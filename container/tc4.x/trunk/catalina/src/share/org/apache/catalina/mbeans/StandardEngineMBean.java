@@ -122,26 +122,4 @@ public class StandardEngineMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Operations
 
 
-    /**
-     * Remove the specified Valve from those assoicated with this Engine
-     *
-     * @param valve MBean Name of the Valve to be removed
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public void removeValve(String valve)
-        throws Exception {
-
-        StandardEngine engine = (StandardEngine) this.resource;
-        ObjectName oname = new ObjectName(valve);
-        Object obj = mserver.getAttribute(oname, "managedResource");
-        Valve valveObj = null;
-        if (obj instanceof Valve) {
-            valveObj = (Valve) obj;
-        }
-        engine.removeValve(valveObj);
-
-    }
-
-
 }

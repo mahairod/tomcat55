@@ -832,7 +832,7 @@
                         username"
                  type="java.lang.String"/>
 
-    <attribute   name="userRoleTable"
+    <attribute   name="userRoleTable"remove
           description="The table that holds the relation between user's and
                         roles"
                  type="java.lang.String"/>
@@ -1254,6 +1254,18 @@
     <!-- components to be stopped (if necessary) and removed, and the       -->
     <!-- corresponding MBeans to be destroyed.                              -->
 
+    <operation   name="removeConnector"
+          description="Remove an existing Connector"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="name"
+          description="MBean Name of the component to be removed"
+                 type="java.lang.String"/>
+      <parameter name="serviceName"
+          description="Service name of the connector to remove"
+                 type="java.lang.String"/>
+    </operation>
+
     <operation   name="removeContext"
           description="Remove an existing Context"
                impact="ACTION"
@@ -1274,6 +1286,15 @@
 
     <operation   name="removeService"
           description="Remove an existing Service"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="name"
+          description="MBean Name of the component to be removed"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeValve"
+          description="Remove an existing Valve"
                impact="ACTION"
            returnType="void">
       <parameter name="name"
