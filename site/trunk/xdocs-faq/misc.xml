@@ -8,6 +8,7 @@
 
   <properties>
     <author email="funkman@apache.org">Tim Funk</author>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
     <title>Miscellaneous Questions</title>
   </properties>
 
@@ -23,7 +24,7 @@
   </em>
 </p>
 <p>
- In Tomcat 5 - there has been issues with respect to character encoding.
+ In Tomcat 5 - there have been issues with respect to character encoding.
  ( Usually of the the form "<tt>request.setCharacterEncoding(String) doesn't work</tt>" )
  Odds are, its not a bug. Before filing a bug report, see these bug reports as well
     as any bug reports linked to these bug reports:
@@ -274,6 +275,11 @@
             </a>
           </li>
         </ul>
+
+      <br /><br />
+      For another explanation of the invoker servlet, why it's evil,
+      and what to do about it, see
+      <a href="http://faq.javaranch.com/wiki/view?InvokerServlet">JavaRanch FAQ</a>.
     </answer>
 
 
@@ -321,6 +327,11 @@
         scheme of your webapp.
       </li>
     </ul>
+
+    <br /><br />
+    For another explanation of the invoker servlet, why it's evil,
+    and what to do about it, see
+    <a href="http://faq.javaranch.com/wiki/view?InvokerServlet">JavaRanch FAQ</a>.
   </answer>
 
 
