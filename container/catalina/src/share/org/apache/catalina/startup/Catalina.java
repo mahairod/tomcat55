@@ -489,7 +489,8 @@ public class Catalina extends Embedded {
             digester.parse(inputSource);
             inputStream.close();
         } catch (Exception e) {
-            System.out.println("Catalina.start: " + e);
+            System.out.println("Catalina.start using "
+                               + getConfigFile() + ": " + e);
             e.printStackTrace(System.out);
             return;
         }
