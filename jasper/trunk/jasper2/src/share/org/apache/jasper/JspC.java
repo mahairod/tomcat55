@@ -1023,8 +1023,11 @@ public class JspC implements Options {
                 for (int i = 0; i < libs.length; i++) {
                     if( libs[i].length() <5 ) continue;
                     String ext=libs[i].substring( libs[i].length() - 4 );
-                    if( ! ".jar".equalsIgnoreCase( ext )) {
-                        System.out.println("XXX bad jar " + libs[i]);
+                    if (! ".jar".equalsIgnoreCase(ext)) {
+                        if (".tld".equalsIgnoreCase(ext)) {
+                            log.warn("TLD files should not be placed in "
+                                     + "/WEB-INF/lib");
+                        }
                         continue;
                     }
                     try {
