@@ -70,6 +70,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import javax.naming.Context;
+import javax.naming.CommunicationException;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -97,6 +98,10 @@ import org.apache.catalina.util.StringManager;
  * <li>Each user that can be authenticated is represented by an individual
  *     element in the top level <code>DirContext</code> that is accessed
  *     via the <code>connectionURL</code> property.</li>
+ *
+ * <li>If a socket connection can not be made to the <code>connectURL</code>
+ *     an attempt will be made to use the <code>alternateURL</code> if it
+ *     exists.</li>
  *
  * <li>Each user element has a distinguished name that can be formed by
  *     substituting the presented username into a pattern configured by the
@@ -337,6 +342,16 @@ public class JNDIRealm extends RealmBase {
      */
     protected boolean roleSubtree = false;
 
+    /** 
+     * An alternate URL, to which, we should connect if connectionURL fails.
+     */
+    protected String alternateURL;  
+    
+    /**
+     * The number of connection attempts.  If greater than zero we use the
+     * alternate url.
+     */
+    protected int connectionAttempt = 0;
 
     // ------------------------------------------------------------- Properties
 
@@ -716,6 +731,28 @@ public class JNDIRealm extends RealmBase {
 
     }
 
+    /**
+     * Getter for property alternateURL.
+     *
+     * @return Value of property alternateURL.
+     */
+    public String getAlternateURL() {
+        
+        return this.alternateURL;
+        
+    }    
+
+    /**
+     * Setter for property alternateURL.
+     *
+     * @param alternateURL New value of property alternateURL.
+     */
+    public void setAlternateURL(String alternateURL) {
+        
+        this.alternateURL = alternateURL;
+        
+    }
+    
 
     // ---------------------------------------------------------- Realm Methods
 
@@ -736,15 +773,41 @@ public class JNDIRealm extends RealmBase {
     public Principal authenticate(String username, String credentials) {
 
         DirContext context = null;
+        Principal principal = null;
 
         try {
 
             // Ensure that we have a directory context available
             context = open();
-
-            // Authenticate the specified username if possible
-            Principal principal = authenticate(context,
-                                               username, credentials);
+            
+            // Occassionally the directory context will timeout.  Try one more
+            // time before giving up.
+            try {
+                
+                // Authenticate the specified username if possible
+                principal = authenticate(context, username, credentials);
+                
+            } catch (CommunicationException e) {
+                
+                // If not a "Socket closed." error then rethrow.
+                if (e.getMessage().indexOf("Socket closed") < 0)                    
+                    throw(e);
+                
+                // log the exception so we know it's there.
+                log(sm.getString("jndiRealm.exception"), e);
+                
+                // close the connection so we know it will be reopened.
+                if (context != null)
+                    close(context);
+                
+                // open a new directory context.
+                context = open();
+                
+                // Try the authentication again.
+                principal = authenticate(context, username, credentials);
+                
+            }
+                
 
             // Release this context
             release(context);
@@ -1358,17 +1421,54 @@ public class JNDIRealm extends RealmBase {
         if (context != null)
             return (context);
 
-        // Establish a connection and retrieve the initial context
-        if (debug >= 1)
-            log("Connecting to URL " + connectionURL);
+        try {
+            
+            // Ensure that we have a directory context available
+            context = new InitialDirContext(getDirectoryContextEnvironment());
+                
+        } catch (NamingException e) {
+                
+            connectionAttempt = 1;
+                
+            // log the first exception.
+            log(sm.getString("jndiRealm.exception"), e);
+                
+            // Try connecting to the alternate url.
+            context = new InitialDirContext(getDirectoryContextEnvironment());
+        
+            // reset it in case the connection times out.
+            // the primary may come back.
+            connectionAttempt = 0;
+    
+        }
+        
+        return (context);
+
+    }
+    
+    /**
+     * Create our directory context configuration.
+     *
+     * @return java.util.Hashtable the configuration for the directory context.
+     */
+    protected Hashtable getDirectoryContextEnvironment() {
+        
         Hashtable env = new Hashtable();
+
+        // Configure our directory context environment.
+        if (debug >= 1 && connectionAttempt == 0)
+            log("Connecting to URL " + connectionURL);
+        else if (debug >= 1 && connectionAttempt > 0)
+            log("Connecting to URL " + alternateURL);
         env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactory);
         if (connectionName != null)
             env.put(Context.SECURITY_PRINCIPAL, connectionName);
         if (connectionPassword != null)
             env.put(Context.SECURITY_CREDENTIALS, connectionPassword);
-        if (connectionURL != null)
+        if (connectionURL != null && connectionAttempt == 0)
             env.put(Context.PROVIDER_URL, connectionURL);
+        else if (alternateURL != null && connectionAttempt > 0)
+            env.put(Context.PROVIDER_URL, alternateURL);
         if (authentication != null)
             env.put(Context.SECURITY_AUTHENTICATION, authentication);
         if (protocol != null)
@@ -1376,9 +1476,8 @@ public class JNDIRealm extends RealmBase {
         if (referrals != null)
             env.put(Context.REFERRAL, referrals);   
     
-        context = new InitialDirContext(env);
-        return (context);
-
+        return env;
+        
     }
 
 
@@ -1433,7 +1532,7 @@ public class JNDIRealm extends RealmBase {
         close(this.context);
 
     }
-
+    
 
 }
 

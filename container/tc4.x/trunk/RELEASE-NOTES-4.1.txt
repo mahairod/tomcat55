@@ -111,6 +111,11 @@ Catalina New Features:
          A new Realm implementation which can use a JNDI named JDBC
          DataSource has been added.
 
+[4.1.19] JNDIRealm:
+         Added support for using an alternateURL if a socket connection
+         can not be made to the provider at the connectionURL.
+
+
 -------------------
 Jasper New Features:
 -------------------
