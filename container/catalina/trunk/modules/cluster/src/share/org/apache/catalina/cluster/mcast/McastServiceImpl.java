@@ -117,6 +117,11 @@ public class McastServiceImpl
     throws IOException {
         if ( bind != null) socket = new MulticastSocket(new java.net.InetSocketAddress(bind,port));
         else socket = new MulticastSocket(port);
+        if ( bind != null ) {
+            log.info("Setting multihome multicast interface to:"+bind);
+            socket.setInterface(bind);
+            log.info("Done setting interface for multicast.");
+        }//end if
         this.member = member;
         address = mcastAddress;
         this.port = port;
