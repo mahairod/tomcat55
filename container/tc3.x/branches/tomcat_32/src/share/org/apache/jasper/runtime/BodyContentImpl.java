@@ -105,7 +105,7 @@ public class BodyContentImpl extends BodyContent {
 
     private void reAllocBuff (int len) {
         //Need to re-allocate the buffer since it is to be
-	//unbounded according to the updated spec..
+ 	//unbounded according to the updated spec..
 
         char[] tmp = null;
 
