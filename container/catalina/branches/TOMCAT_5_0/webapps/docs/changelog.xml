@@ -22,6 +22,9 @@
 
   <subsection name="Catalina">
     <changelog>
+      <fix>
+        <bug>31273</bug>: Add support for derefaliases in JNDIRealm. (markt)
+      </fix>
     </changelog>
   </subsection>
 
