@@ -616,9 +616,14 @@
       <exclude name="org/apache/naming/factory/SendMailFactory.java"/>
       <exclude name="org/apache/catalina/launcher/**"/>
     </javac>
-
+    <tstamp>
+        <format property="TODAY" pattern="MMM d yyyy" locale="en"/>
+        <format property="TSTAMP" pattern="hh:mm:ss"/>        
+    </tstamp>    
     <!-- Copy static resource files -->
     <filter token="VERSION" value="${version}"/>
+    <filter token="VERSION_NUMBER" value="${version.number}"/>
+    <filter token="VERSION_BUILT" value="${TODAY} ${TSTAMP}"/>
     <copy todir="${classes.dir}" filtering="true" encoding="ISO-8859-1">
       <fileset dir="src/share">
         <exclude name="**/*.java"/>
