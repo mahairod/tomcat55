@@ -100,6 +100,14 @@
     <a href="http://www.webperformanceinc.com/library/ServletReport/">Web Performance, Inc.'s
     comparison.</a>
   </div><br>
-</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
-        Copyright &copy; 1999-2003, Apache Software Foundation
+</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><td align="center" colspan="2"><form action="http://www.google.com/search" onsubmit="return t_search()" name="searchForm" method="GET"><input value="UTF-8" name="ie" type="hidden"><input value="UTF-8" name="oe" type="hidden"><table bgcolor="#FFFFFF"><tr><td><a href="http://www.google.com/"><img align="absmiddle" alt="Google" border="0" src="http://www.google.com/logos/Logo_40wht.gif"></a><input value="" maxlength="255" size="25" name="q" type="text"><input value="Google Search" name="btnG" type="submit"></td></tr></table><script>
+				/* Append inurl:tomcat/faq site:jakarta.apache.org */
+				function t_search() {
+					if(!document.searchForm.q.value.match(/inurl:tomcat\/faq/)) {
+						document.searchForm.q.value = document.searchForm.q.value + " inurl:tomcat/faq site:jakarta.apache.org";
+					}
+					return true;
+				}
+				</script></form></td></tr><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
+        Copyright &copy; 1999-2005, Apache Software Foundation
         </em></font></div></td></tr></table></body></html>

@@ -34,7 +34,7 @@
     </li>
     <li>
       <a href="#rd-netbeans">
-        How do I remotely debug Tomcat using NetBeans?
+        How do I remotely debug Tomcat using NetBeans IDE?
       </a>
     </li>
   </ul>
@@ -99,44 +99,38 @@
     </p>
   </answer>
   <question>
-    <a name="rd-netbeans">How do I remotely debug Tomcat using NetBeans?</a>
+    <a name="rd-netbeans">How do I remotely debug Tomcat using NetBeans IDE?</a>
   </question>
   <answer>
     <p>
-    This answer assumes that you have a project set up with all of the fixings
-    and have some idea of what you're doing in this respect.  If not then 
-    thats really outside the scope of this topic and more in the scope of 
-    you needing to go to <a href="http://www.netbeans.org">netbeans.org</a> and
-    read up on how to use your ide, and maybe practice a little bit before 
-    you come back to this.  We're also going to assume you have some idea of
-    what a debugger is and how to use one.
-    </p>
-    <p>
-    Make sure tomcat is started and that your app is deployed and the
-    sources, etc are all defined as resources in your app. If you have a
-    servlet or something, set a breakpoint where its sure to hit on the next
-    request. Go to "Debug-&gt;Start Session-&gt;Attach". A dialog should pop up and
-    use following options:
-    <ul>
-      <li><strong>Debugger Type</strong>: Default Debugger (JPDA)</li>
-      <li><strong>Connector</strong>: SocketAttach</li>
-      <li><strong>Host</strong>: The ip address of the host your Tomcat installation
-          is running on (127.0.0.1 if it is your machine).</li>
-      <li><strong>Port</strong>: The port of your tomcat debugging interface, which
-          should be 8000 if you've followed the instructions above.</li>
-    </ul>
-    </p>
-    <p>
-    Then press ok and you should have a debugging connection very similar to
-    local debugging. (you can set breakpoints inspect variables etc.)
-    </p>
-    <p>
-    Netbeans however has a second option, you can debug JSP files and
-    servlets locally. Nothing really exciting happens
-    there, an integrated Tomcat server is started and a remote connection is
-    opened. Note however that the integrated
-    Netbeans Tomcat usually is a few versions behind the current
-    Jakarta/Apache version.
+This answer assumes that you have correctly set up a NetBeans IDE project and
+that you know how to use its debugger. If not, please go to
+http://www.netbeans.org/kb/using-netbeans/40/debug.html and read up on how to
+use NetBeans IDE and its debugger.
+</p>
+<p>
+Make sure that Tomcat is started, that your application is deployed, and that
+the sources are all defined as resources in your application. If you have a
+servlet or JSP file, set a breakpoint where its sure to hit on the next request.
+Go to "Run->Attach Debugger". A dialog pops up to let you specify the following
+options:
+<ul>
+    <li> Debugger: JPDA Debugger </li>
+    <li> Connector: SocketAttach </li>
+    <li> Host: The IP address of the host your Tomcat installation is running on
+(127.0.0.1 if it is your local machine). </li>
+    <li> Port: The port of your Tomcat debugging interface, which should be 8000 if
+you've followed the instructions above. </li>
+</ul>
+</p>
+<p>
+When you press OK, you have a debugging connection very similar to local debugging.
+</p>
+<p>
+Note that NetBeans IDE has a second option -- you can debug JSP files and
+servlets locally using a Tomcat server that is bundled with the IDE. The bundled
+Tomcat server can be started in debug mode (its default port number is 11555)
+and you can open a remote connection to it from NetBeans IDE as described above.
     </p>
   </answer>
 </p>
