@@ -107,6 +107,12 @@ public interface ContextInterceptor {
      */
     public void contextInit(Context ctx) throws TomcatException;
 
+    /** Reload notification - called whenever a reload is done.
+	This can be used to serialize sessions, log the event,
+	remove any resource that was class-loader dependent.
+     */
+    public void reload( Context ctx) throws TomcatException;
+
 
     /** Called when a context is stoped, before removeContext. You must free all resources.
      * XXX  - do we need this or removeContext is enough ?? ( will be removed from 3.1 if

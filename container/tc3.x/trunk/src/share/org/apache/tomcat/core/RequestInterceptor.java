@@ -114,7 +114,14 @@ public interface RequestInterceptor {
      */
     public int preService(Request request, Response response);
 
-    
+    /** New Session notification - called when the servlet
+	asks for a new session. You can do all kind of stuff with
+	this notification - the most important is create a session
+	object. This will be the base for controling the
+	session allocation.
+    */
+    public int newSessionRequest( Request request, Response response);
+
     /** Called before the first body write, and before sending
      *  the headers. The interceptor have a chance to change the
      *  output headers. 

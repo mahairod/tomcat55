@@ -231,12 +231,12 @@ final class StandardSession
     public void setId(String id) {
 
 	if ((this.id != null) && (manager != null))
-	    ((StandardManager) manager).remove(this);
+	    manager.remove(this);
 
 	this.id = id;
 
 	if ((manager != null) )
-	    ((StandardManager) manager).add(this);
+	    manager.add(this);
 
     }
 
@@ -355,8 +355,8 @@ final class StandardSession
     public void expire() {
 
 	// Remove this session from our manager's active sessions
-	if ((manager != null) && (manager instanceof StandardManager))
-	    ((StandardManager) manager).remove(this);
+	if (manager != null) 
+	    manager.remove(this);
 
 	// Unbind any objects associated with this session
 	Vector results = new Vector();
@@ -394,8 +394,8 @@ final class StandardSession
 	isValid = false;
 
 	// Tell our Manager that this Session has been recycled
-	if ((manager != null) && (manager instanceof StandardManager))
-	    ((StandardManager) manager).recycle(this);
+	if (manager != null)
+	    manager.recycle(this);
 
     }
 

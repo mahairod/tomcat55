@@ -71,10 +71,6 @@ import java.util.Vector;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import org.apache.tomcat.util.*;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.apache.tomcat.core.*;
-
 
 /**
  * Standard implementation of the <b>Manager</b> interface that provides
@@ -107,7 +103,7 @@ import org.apache.tomcat.core.*;
  * @author <a href="mailto:jon@latchkey.com">Jon S. Stevens</a>
  * @version $Revision$ $Date$
  */
-public final class StandardManager implements Runnable, SessionManager {
+public final class StandardManager implements Runnable  {
     // ----------------------------------------------------- Instance Variables
     /**
      * The distributable flag for Sessions created by this Manager.  If this
@@ -291,7 +287,10 @@ public final class StandardManager implements Runnable, SessionManager {
     public HttpSession findSession(String id) {
 	if (id == null)
 	    return (null);
-	return ((HttpSession) sessions.get(id));
+	HttpSession s=((HttpSession) sessions.get(id));
+	if( s==null ) return s;
+	access( s );
+	return s;
     }
 
     /**
