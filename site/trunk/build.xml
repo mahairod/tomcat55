@@ -34,7 +34,7 @@
                 destdir="${faq.dest}"
                 extension=".html"
                 style="${faq.src}/tomcat-faq.xsl"
-                excludes="project.xml"
+                excludes="project.xml,build.xml"
                 includes="*.xml">
             <param name="relative-path" expression=".."/>
         </style>
@@ -43,7 +43,7 @@
                 destdir="${faq.dest}/printer"
                 extension=".html"
                 style="${faq.src}/tomcat-faq.xsl"
-                excludes="project.xml"
+                excludes="project.xml,build.xml"
                 includes="*.xml">
             <param name="relative-path" expression="../.."/>
             <param name="project-menu" expression="nomenu"/>
