@@ -260,14 +260,6 @@
         disclosure, among other security problems.</b></p>
       </attribute>
 
-      <attribute name="managerChecksFrequency" required="false">
-        <p>Frequency of the session expiration, and related manager operations.
-        Manager operations will be done once for the specified amount of
-        backgrondProcess calls (ie, the lower the amount, the most often the
-        checks will occur). The minimum value is 1, and the default value is 6.
-        </p>
-      </attribute>
-
       <attribute name="processTlds" required="false">
         <p>Whether the context should process TLDs on startup.  The default
         is true.  The false setting is intended for special cases

@@ -288,7 +288,7 @@ public class HostConfig
      */
     public void lifecycleEvent(LifecycleEvent event) {
 
-        if (event.getType().equals("check"))
+        if (event.getType().equals(Lifecycle.PERIODIC_EVENT))
             check();
 
         // Identify the host we are associated with

@@ -125,6 +125,15 @@ public interface Realm {
      */
     public Principal authenticate(X509Certificate certs[]);
     
+    
+    /**
+     * Execute a periodic task, such as reloading, etc. This method will be
+     * invoked inside the classloading context of this container. Unexpected
+     * throwables will be caught and logged.
+     */
+    public void backgroundProcess();
+
+
     /**
      * Return the SecurityConstraints configured to guard the request URI for
      * this request, or <code>null</code> if there is no such constraint.
@@ -133,6 +142,8 @@ public interface Realm {
      */
     public SecurityConstraint [] findSecurityConstraints(Request request,
                                                      Context context);
+    
+    
     /**
      * Perform access control based on the specified authorization constraint.
      * Return <code>true</code> if this constraint is satisfied and processing
