@@ -614,46 +614,22 @@ public class HostConfig
                     (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
                 addWatchedResources(deployedApp, expandedDocBase.getAbsolutePath(), context);
             } else {
-                if (context.getDocBase() != null) {
-                    // If the context is outside of the Host appBase, removing the xml
-                    // should remove the webapp
-                    boolean external = false;
-                    File docBase = new File(context.getDocBase());
-                    if (!docBase.isAbsolute()) {
-                        docBase = new File(appBase(), context.getDocBase());
-                    }
-                    try {
-                        docBase = docBase.getCanonicalFile();
-                        if (!docBase.getAbsolutePath().startsWith(appBase().getAbsolutePath())) {
-                            external = true;
-                            deployedApp.redeployResources.put
-                                (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
-                        }
-                    } catch (IOException e) {
-                        // Ignore
-                    }
-                    if (!external) {
-                        // Find an existing matching war and expanded folder
-                        if (warDocBase.exists()) {
-                            deployedApp.redeployResources.put(warDocBase.getAbsolutePath(),
-                                    new Long(warDocBase.lastModified()));
-                        }
-                        if (expandedDocBase.exists()) {
-                            deployedApp.redeployResources.put(expandedDocBase.getAbsolutePath(),
-                                    new Long(expandedDocBase.lastModified()));
-                            addWatchedResources(deployedApp, 
-                                    expandedDocBase.getAbsolutePath(), context);
-                        }
-                        // Add the context XML to the list of files which should trigger a redeployment
-                        deployedApp.redeployResources.put
-                            (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
-                    }
+                // Find an existing matching war and expanded folder
+                if (warDocBase.exists()) {
+                    deployedApp.redeployResources.put(warDocBase.getAbsolutePath(),
+                            new Long(warDocBase.lastModified()));
+                }
+                if (expandedDocBase.exists()) {
+                    deployedApp.redeployResources.put(expandedDocBase.getAbsolutePath(),
+                            new Long(expandedDocBase.lastModified()));
+                    addWatchedResources(deployedApp, 
+                            expandedDocBase.getAbsolutePath(), context);
                 } else {
-                    // Add the context XML to the list of files which should trigger a redeployment
-                    deployedApp.redeployResources.put
-                        (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
                     addWatchedResources(deployedApp, null, context);
                 }
+                // Add the context XML to the list of files which should trigger a redeployment
+                deployedApp.redeployResources.put
+                    (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
             }
         } catch (Throwable t) {
             log.error(sm.getString("hostConfig.deployDescriptor.error",
