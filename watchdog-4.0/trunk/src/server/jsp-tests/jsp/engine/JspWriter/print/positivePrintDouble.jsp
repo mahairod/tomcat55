@@ -7,7 +7,11 @@
 */
 %>
 <!-- this is to test if print(double d) method works -->
-<%! double d=234567; %>
-<% out.print(d); %>
+<%! double d=0.0; %>
+<% 
+    out.print(d); 
+    out.print(Double.MIN_VALUE);
+    out.print(Double.MAX_VALUE);
+%>
 </body>
 </html>
