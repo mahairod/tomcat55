@@ -2531,7 +2531,7 @@ class Generator {
 	    }
 
 	    Node.JspAttribute[] attrs = n.getJspAttributes();
-	    for (int i=0; i<attrs.length; i++) {
+	    for (int i=0; attrs != null && i<attrs.length; i++) {
 		String attrValue = evaluateAttribute(handlerInfo, attrs[i],
 						n, tagHandlerVar);
 		

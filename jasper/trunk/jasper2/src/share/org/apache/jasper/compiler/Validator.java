@@ -150,7 +150,7 @@ class Validator {
 
 	    // JSP.2.10.1
 	    Attributes attrs = n.getAttributes();
-	    for (int i = 0; i < attrs.getLength(); i++) {
+	    for (int i = 0; attrs != null && i < attrs.getLength(); i++) {
 		String attr = attrs.getQName(i);
 		String value = attrs.getValue(i);
 
@@ -287,7 +287,7 @@ class Validator {
             // This method does additional processing to collect page info
             
 	    Attributes attrs = n.getAttributes();
-	    for (int i = 0; i < attrs.getLength(); i++) {
+	    for (int i = 0; attrs != null && i < attrs.getLength(); i++) {
 		String attr = attrs.getQName(i);
 		String value = attrs.getValue(i);
 
@@ -683,18 +683,20 @@ class Validator {
             }
 
 	    Attributes attrs = n.getAttributes();
-	    int attrSize = attrs.getLength();
-	    Node.JspAttribute[] jspAttrs = new Node.JspAttribute[attrSize];
-	    for (int i=0; i < attrSize; i++) {
-		jspAttrs[i] = getJspAttribute(attrs.getQName(i),
-					      attrs.getURI(i),
-					      attrs.getLocalName(i),
-					      attrs.getValue(i),
-					      java.lang.Object.class,
-					      n,
-					      false);
+	    if (attrs != null) {
+		int attrSize = attrs.getLength();
+		Node.JspAttribute[] jspAttrs = new Node.JspAttribute[attrSize];
+		for (int i=0; i < attrSize; i++) {
+		    jspAttrs[i] = getJspAttribute(attrs.getQName(i),
+						  attrs.getURI(i),
+						  attrs.getLocalName(i),
+						  attrs.getValue(i),
+						  java.lang.Object.class,
+						  n,
+						  false);
+		}
+		n.setJspAttributes(jspAttrs);
 	    }
-	    n.setJspAttributes(jspAttrs);
 
 	    visitBody(n);
         }
@@ -727,10 +729,13 @@ class Validator {
 	    String customActionUri = n.getURI();
 	    Attributes attrs = n.getAttributes();
 	    for (int i=0; i<tldAttrs.length; i++) {
-		String attr = attrs.getValue(tldAttrs[i].getName());
-		if (attr == null) {
-		    attr = attrs.getValue(customActionUri,
-					  tldAttrs[i].getName());
+		String attr = null;
+		if (attrs != null) {
+		    attr = attrs.getValue(tldAttrs[i].getName());
+		    if (attr == null) {
+			attr = attrs.getValue(customActionUri,
+					      tldAttrs[i].getName());
+		    }
 		}
 		Node.NamedAttribute na =
 			n.getNamedAttributeNode(tldAttrs[i].getName());
@@ -746,12 +751,25 @@ class Validator {
 	    }
 
             Node.Nodes naNodes = n.getNamedAttributeNodes();
-	    Node.JspAttribute[] jspAttrs
-		= new Node.JspAttribute[attrs.getLength() + naNodes.size()];
-	    Hashtable tagDataAttrs = new Hashtable(attrs.getLength());
+	    int jspAttrsSize = naNodes.size();
+	    if (attrs != null) {
+		jspAttrsSize += attrs.getLength();
+	    }
+	    Node.JspAttribute[] jspAttrs = null;
+	    if (jspAttrsSize > 0) {
+		jspAttrs = new Node.JspAttribute[jspAttrsSize];
+	    }
+	    Hashtable tagDataAttrs = null;
+	    if (attrs != null) {
+		tagDataAttrs = new Hashtable(attrs.getLength());
+	    } else {
+		tagDataAttrs = new Hashtable(0);
+	    }
 
 	    checkXmlAttributes(n, jspAttrs, tagDataAttrs);
-            checkNamedAttributes(n, jspAttrs, attrs.getLength(), tagDataAttrs);
+            checkNamedAttributes(n, jspAttrs,
+				 (attrs!=null) ? attrs.getLength():0,
+				 tagDataAttrs);
 
 	    TagData tagData = new TagData(tagDataAttrs);
 
@@ -776,10 +794,11 @@ class Validator {
 	public void visit(Node.JspElement n) throws JasperException {
 
 	    Attributes attrs = n.getAttributes();
-	    int xmlAttrLen = attrs.getLength();
-	    if (xmlAttrLen == 0) {
+	    if (attrs == null) {
 		err.jspError(n, "jsp.error.jspelement.missing.name");
 	    }
+	    int xmlAttrLen = attrs.getLength();
+
             Node.Nodes namedAttrs = n.getNamedAttributeNodes();
 
 	    // XML-style 'name' attribute, which is mandatory, must not be
@@ -909,7 +928,7 @@ class Validator {
 	    TagAttributeInfo[] tldAttrs = tagInfo.getAttributes();
 	    Attributes attrs = n.getAttributes();
 
-	    for (int i=0; i<attrs.getLength(); i++) {
+	    for (int i=0; attrs != null && i<attrs.getLength(); i++) {
 		boolean found = false;
 		for (int j=0; tldAttrs != null && j<tldAttrs.length; j++) {
 		    if (attrs.getLocalName(i).equals(tldAttrs[j].getName())

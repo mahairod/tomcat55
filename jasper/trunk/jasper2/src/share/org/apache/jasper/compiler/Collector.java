@@ -176,7 +176,7 @@ class Collector {
             if( n instanceof Node.CustomTag ) {
                 Node.CustomTag ct = (Node.CustomTag)n;
                 Node.JspAttribute[] attrs = ct.getJspAttributes();
-                for (int i = 0; i < attrs.length; i++) {
+                for (int i = 0; attrs != null && i < attrs.length; i++) {
                     if (attrs[i].isExpression()) {
                         scriptingElementSeen = true;
                         break;
