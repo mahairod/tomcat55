@@ -30,18 +30,9 @@ referenced in these elements must be defined in an application-server-specific c
 
 <p>For Tomcat 5, these entries in per-web-application 
 <code>InitialContext</code> are configured in the 
-<code><strong>&lt;Context&gt;</strong></code> or 
-<code><strong>&lt;DefaultContext&gt;</strong></code>
-elements of the 
-<a href="config/server.html"><code><strong>&lt;Server&gt;</strong></code></a>
-element. 
-
-The <code><strong>&lt;Context&gt;</strong></code> element can be specified 
+<code><strong>&lt;Context&gt;</strong></code> elements that can be specified 
 in either <code>$CATALINA_HOME/conf/server.xml</code> or, preferably, 
-the per-web-application context XML file.
-
-<code><strong>&lt;DefaultContext&gt;</strong></code> must be specified in 
-<code>$CATALINA_HOME/conf/server.xml</code>.
+the per-web-application context XML file (either <code>META-INF/context.xml</code>).
 </p>
 
 <p>Tomcat 5 maintains a separate namespace of global resources for the 
@@ -124,13 +115,6 @@ following elements in the <code><strong>&lt;Context&gt;</strong></code> or
     application (equivalent to the inclusion of a
     <code>&lt;resource-ref&gt;</code> element in the web application
     deployment descriptor).</li>
-
-<li>
-    <a href="config/context.html#Resource Parameters">&lt;ResourceParams&gt;</a> -
-    Configure the Java class name of the resource factory implementation to be
-    used, as well as JavaBeans properties used to configure that resource
-    factory.</li>
-
 <li><a href="config/context.html#Resource Links">&lt;ResourceLink&gt;</a> -
     Add a link to a resource defined in the global JNDI context. Use resource 
     links to give a web application access to a resource defined in 
@@ -142,10 +126,7 @@ following elements in the <code><strong>&lt;Context&gt;</strong></code> or
 
 <p>Any number of these elements may be nested inside a
 <a href="config/context.html">&lt;Context&gt;</a> element (to be associated
-only with that particular web application) or inside a
-<a href="config/defaultcontext.html">&lt;DefaultContext&gt;</a> element
-(used to set the default configuration characteristics for automatically
-deloyed applications).</p>
+only with that particular web application).</p>
 
 <p>In addition, the names and values of all <code>&lt;env-entry&gt;</code>
 elements included in the web application deployment descriptor
@@ -282,24 +263,14 @@ writer.println("foo = " + bean.getFoo() + ", bar = " +
 
     <p>To configure Tomcat's resource factory, add an elements like this to the
     <code>$CATALINA_HOME/conf/server.xml</code> file, nested inside the
-    <code>Context</code> element for this web application (or nested inside
-    a <code>DefaultContext</code> element for the surrounding
-    <code>&lt;Host&gt;</code> or <code>&lt;Engine&gt;</code> element.</p>
+    <code>Context</code> element for this web application.</p>
 <source>
 &lt;Context ...&gt;
   ...
   &lt;Resource name="bean/MyBeanFactory" auth="Container"
-            type="com.mycompany.MyBean"/&gt;
-  &lt;ResourceParams name="bean/MyBeanFactory"&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;factory&lt;/name&gt;
-      &lt;value&gt;org.apache.naming.factory.BeanFactory&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;bar&lt;/name&gt;
-      &lt;value&gt;23&lt;/value&gt;
-    &lt;/parameter&gt;
-  &lt;/ResourceParams&gt;
+            type="com.mycompany.MyBean"
+            factory="org.apache.naming.factory.BeanFactory"
+            bar="23"/&gt;
   ...
 &lt;/Context&gt;
 </source>
@@ -397,20 +368,13 @@ Transport.send(message);
 
     <p>To configure Tomcat's resource factory, add an elements like this to the
     <code>$CATALINA_HOME/conf/server.xml</code> file, nested inside the
-    <code>Context</code> element for this web application (or nested inside
-    a <code>DefaultContext</code> element for the surrounding
-    <code>&lt;Host&gt;</code> or <code>&lt;Engine&gt;</code> element.</p>
+    <code>Context</code> element for this web application.</p>
 <source>
 &lt;Context ...&gt;
   ...
   &lt;Resource name="mail/Session" auth="Container"
-            type="javax.mail.Session"/&gt;
-  &lt;ResourceParams name="mail/Session"&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;mail.smtp.host&lt;/name&gt;
-      &lt;value&gt;localhost&lt;/value&gt;
-    &lt;/parameter&gt;
-  &lt;/ResourceParams&gt;
+            type="javax.mail.Session"
+            mail.smtp.host="localhost"/&gt;
   ...
 &lt;/Context&gt;
 </source>
@@ -538,40 +502,18 @@ conn.close();
 
     <p>To configure Tomcat's resource factory, add an elements like this to the
     <code>$CATALINA_HOME/conf/server.xml</code> file, nested inside the
-    <code>Context</code> element for this web application (or nested inside
-    a <code>DefaultContext</code> element for the surrounding
-    <code>&lt;Host&gt;</code> or <code>&lt;Engine&gt;</code> element.</p>
+    <code>Context</code> element for this web application.</p>
 <source>
 &lt;Context ...&gt;
   ...
   &lt;Resource name="jdbc/EmployeeDB" auth="Container"
-            type="javax.sql.DataSource"/&gt;
-  &lt;ResourceParams name="jdbc/EmployeeDB"&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;username&lt;/name&gt;
-      &lt;value&gt;dbusername&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;password&lt;/name&gt;
-      &lt;value&gt;dbpassword&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;driverClassName&lt;/name&gt;
-      &lt;value&gt;org.hsql.jdbcDriver&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;url&lt;/name&gt;
-      &lt;value&gt;jdbc:HypersonicSQL:database&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;maxActive&lt;/name&gt;
-      &lt;value&gt;8&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;maxIdle&lt;/name&gt;
-      &lt;value&gt;4&lt;/value&gt;
-    &lt;/parameter&gt;
-  &lt;/ResourceParams&gt;
+            type="javax.sql.DataSource"
+            username="dbusername"
+            password="dbpassword"
+            driverClassName="org.hsql.jdbcDriver"
+            url="jdbc:HypersonicSQL:database"
+            maxActive="8"
+            maxIdle="4"/&gt;
   ...
 &lt;/Context&gt;
 </source>
@@ -586,7 +528,7 @@ conn.close();
 
     <p>The configuration properties for Tomcat's standard data source
     resource factory
-    (<code>org.apache.naming.factory.DbcpDataSourceFactory</code>) are
+    (<code>org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory</code>) are
     as follows:</p>
     <ul>
     <li><strong>driverClassName</strong> - Fully qualified Java class name
@@ -610,6 +552,7 @@ conn.close();
         application.  If specified, this query MUST be an SQL SELECT
         statement that returns at least one row.</li>
     </ul>
+    <p>For more details, please refer to the commons-dbcp documentation.</p>
 
   </subsection>
 
@@ -769,24 +712,14 @@ writer.println("foo = " + bean.getFoo() + ", bar = " +
 
     <p>To configure Tomcat's resource factory, add an elements like this to the
     <code>$CATALINA_HOME/conf/server.xml</code> file, nested inside the
-    <code>Context</code> element for this web application (or nested inside
-    a <code>DefaultContext</code> element for the surrounding
-    <code>&lt;Host&gt;</code> or <code>&lt;Engine&gt;</code> element.</p>
+    <code>Context</code> element for this web application.</p>
 <source>
 &lt;Context ...&gt;
   ...
   &lt;Resource name="bean/MyBeanFactory" auth="Container"
-            type="com.mycompany.MyBean"/&gt;
-  &lt;ResourceParams name="bean/MyBeanFactory"&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;factory&lt;/name&gt;
-      &lt;value&gt;com.mycompany.MyBeanFactory&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;bar&lt;/name&gt;
-      &lt;value&gt;23&lt;/value&gt;
-    &lt;/parameter&gt;
-  &lt;/ResourceParams&gt;
+            type="com.mycompany.MyBean"
+            factory="com.mycompany.MyBeanFactory"
+            bar="23"/&gt;
   ...
 &lt;/Context&gt;
 </source>
