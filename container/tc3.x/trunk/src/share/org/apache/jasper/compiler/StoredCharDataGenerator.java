@@ -107,13 +107,13 @@ public class StoredCharDataGenerator
             writer.popIndent();
             writer.println("} catch (Exception ex) {");
             writer.pushIndent();
-            writer.println("throw new JasperException(\"Unable to open data file\");");
+            writer.println("throw new org.apache.jasper.JasperException(\"Unable to open data file\");");
             writer.popIndent();
             writer.println("} finally {");
             writer.pushIndent();
             writer.println("if (oin != null)");
             writer.pushIndent();
-            writer.println("try { oin.close(); } catch (IOException ignore) { }");
+            writer.println("try { oin.close(); } catch (java.io.IOException ignore) { }");
             writer.popIndent();
             writer.popIndent();
             writer.println("}");

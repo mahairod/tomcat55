@@ -345,11 +345,11 @@ public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase,
 	writer.pushIndent ();
 	if (beanRT == false)
 	    writer.println(varname+" = ("+ convert + 
-			   ") Beans.instantiate(this.getClass().getClassLoader(), "+
+			   ") java.beans.Beans.instantiate(this.getClass().getClassLoader(), "+
 			   writer.quoteString(clsname) +");");
 	else
 	    writer.println(varname+" = ("+ convert + 
-			   ") Beans.instantiate(this.getClass().getClassLoader(), "+
+			   ") java.beans.Beans.instantiate(this.getClass().getClassLoader(), "+
 			   clsname +");");
 	writer.popIndent ();
 	writer.println ("} catch (Exception exc) {");

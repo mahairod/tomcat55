@@ -103,7 +103,7 @@ public class SetPropertyGenerator
 		}
 		
 		// Set all the properties using name-value pairs in the request.
-		writer.println("JspRuntimeLibrary.introspect(pageContext.findAttribute(" +
+		writer.println("org.apache.jasper.runtime.JspRuntimeLibrary.introspect(pageContext.findAttribute(" +
 			       "\"" + name + "\"), request);");		
 		
 	    } else {
@@ -113,7 +113,7 @@ public class SetPropertyGenerator
 		    // Parameter name specified. If not same as property.
 		    if (param == null) param = property;
 		    
-		    writer.println("JspRuntimeLibrary.introspecthelper(pageContext." +
+		    writer.println("org.apache.jasper.runtime.JspRuntimeLibrary.introspecthelper(pageContext." +
 				   "findAttribute(\"" + name + "\"), \"" + property +
 				   "\", request.getParameter(\"" + param + "\"), " +
 				   "request, \"" + param + "\", false);");
@@ -121,7 +121,7 @@ public class SetPropertyGenerator
 		    
 		    // value is a constant.
 		    if (!JspUtil.isExpression (value)) {
-			writer.println("JspRuntimeLibrary.introspecthelper(pageContext." +
+			writer.println("org.apache.jasper.runtime.JspRuntimeLibrary.introspecthelper(pageContext." +
 				       "findAttribute(\"" + name + "\"), \"" + property +
 				       "\",\"" + JspUtil.escapeQueryString(value) +
 				       "\",null,null, false);");
@@ -129,7 +129,7 @@ public class SetPropertyGenerator
 			
 			// This requires some careful handling.
 			// int, boolean, ... are not Object(s).
-			writer.println("JspRuntimeLibrary.handleSetProperty(pageContext." +
+			writer.println("org.apache.jasper.runtime.JspRuntimeLibrary.handleSetProperty(pageContext." +
 				       "findAttribute(\"" + name + "\"), \"" + property +
 				       "\"," + JspUtil.getExpr(value) + ");");
 		    }
