@@ -872,6 +872,7 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         Server server = ServerFactory.getServer();
         server.addService(service);
+        engine.start();
         Vector onames = new Vector();
         // FIXME service & engine.getObjectName
         //ObjectName oname = engine.getObjectName();
@@ -1261,7 +1262,7 @@ public class MBeanFactory extends BaseModelMBean {
 
         ObjectName oname = new ObjectName(name);
         // Acquire a reference to the component to be removed
-        ContainerBase container = getParentContainerFromChild(oname);     
+        ContainerBase container = getParentContainerFromChild(oname); 
         container.setRealm(null);
     }
 
