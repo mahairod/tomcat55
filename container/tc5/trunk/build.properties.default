@@ -205,11 +205,11 @@ nsis.nsexec.dll=${nsis.home}/Plugins/nsExec.dll
 nsis.loc=${base-sf.loc}/nsis/nsis20.exe
 
 
-# ----- Struts, version 1.1 or later -----
-struts.home=${base.path}/jakarta-struts-1.1
+# ----- Struts, version 1.2.4 or later -----
+struts.home=${base.path}/jakarta-struts-1.2.4
 struts.lib=${struts.home}/lib
 struts.jar=${struts.lib}/struts.jar
-struts.loc=${base-jakarta.loc}/struts/binaries/jakarta-struts-1.1.tar.gz
+struts.loc=${base-jakarta.loc}/../struts/binaries/jakarta-struts-1.2.4.tar.gz
 
 
 # --------------------------------------------------
