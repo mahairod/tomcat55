@@ -482,8 +482,9 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
                 return (null);
 
             // Return the current session if it exists and is valid
-            if (session != null)
+            if (session != null && session.isValid()) {
                 return (session.getSession());
+	    }
 
             HttpSession other = super.getSession(false);
             if (create && (other == null)) {
@@ -500,7 +501,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
                 } catch (IOException e) {
                     // Ignore
                 }
-                if (localSession == null) {
+                if (localSession == null && create) {
                     localSession = context.getManager().createEmptySession();
                     localSession.setNew(true);
                     localSession.setValid(true);
@@ -509,9 +510,11 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
                         (context.getManager().getMaxInactiveInterval());
                     localSession.setId(other.getId());
                 }
-                localSession.access();
-                session = localSession;
-                return session.getSession();
+                if (localSession != null) {
+                    localSession.access();
+                    session = localSession;
+                    return session.getSession();
+                }
             }
             return null;
 
