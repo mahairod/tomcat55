@@ -136,18 +136,19 @@ public class McastMembership
      * @return the list of expired members
      */
     public synchronized McastMember[] expire(long maxtime) {
-        Iterator i = map.keySet().iterator();
+        MbrEntry[] members = getMemberEntries();
         java.util.ArrayList list = new java.util.ArrayList();
-        while ( i.hasNext() ) {
-            MbrEntry entry = (MbrEntry)map.get(i.next());
+        for (int i=0; i<members.length; i++) {
+            MbrEntry entry = members[i];
             if ( entry.hasExpired(maxtime) ) {
                 list.add(entry.getMember());
-                map.remove(entry.getMember().getName());
             }//end if
         }//while
         McastMember[] result = new McastMember[list.size()];
         list.toArray(result);
+        for ( int j=0; j<result.length; j++) map.remove(result[j].getName());
         return result;
+
     }//expire
 
     /**
@@ -156,12 +157,23 @@ public class McastMembership
      */
     public synchronized McastMember[] getMembers() {
         McastMember[] result = new McastMember[map.size()];
-        java.util.Iterator i = map.keySet().iterator();
+        java.util.Iterator i = map.entrySet().iterator();
         int pos = 0;
         while ( i.hasNext() )
-            result[pos++] = ((MbrEntry)map.get(i.next())).getMember();
+            result[pos++] = ((MbrEntry)((java.util.Map.Entry)i.next()).getValue()).getMember();
         return result;
     }
+
+    protected synchronized MbrEntry[] getMemberEntries()
+    {
+        MbrEntry[] result = new MbrEntry[map.size()];
+        java.util.Iterator i = map.entrySet().iterator();
+        int pos = 0;
+        while ( i.hasNext() )
+            result[pos++] = ((MbrEntry)((java.util.Map.Entry)i.next()).getValue());
+        return result;
+    }
+
 
     /**
      * Inner class that represents a member entry
