@@ -74,6 +74,7 @@ import org.apache.tools.ant.Task;
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
+ * @deprecated Replaced by UndeployTask
  */
 public class RemoveTask extends AbstractCatalinaTask {
 

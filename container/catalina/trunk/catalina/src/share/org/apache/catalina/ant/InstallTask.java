@@ -75,6 +75,7 @@ import org.apache.tools.ant.Task;
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  * @since 4.1
+ * @deprecated Replaced by DeployTask
  */
 public class InstallTask extends AbstractCatalinaTask {
 
