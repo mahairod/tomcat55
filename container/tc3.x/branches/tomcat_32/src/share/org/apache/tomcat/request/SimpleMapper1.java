@@ -329,6 +329,24 @@ public class SimpleMapper1 extends  BaseInterceptor  {
 	// is _allways_ called after contextMap ( it was asserted in  all
 	// implementations).
 	
+        // Security check -- disallow any access under WEB-INF or META-INF
+        String contextPath = null;
+        Context context = req.getContext();
+        if (context != null)
+            contextPath = context.getPath();
+        if (contextPath == null)
+            contextPath = "";
+        String requestURI = req.getRequestURI();
+        if (requestURI == null)
+            requestURI = "";
+        String relativePath =
+            requestURI.substring(contextPath.length()).toUpperCase();
+        if (relativePath.equals("/META-INF") ||
+            relativePath.equals("/WEB-INF") ||
+            relativePath.startsWith("/META-INF/") ||
+            relativePath.startsWith("/WEB-INF/"))
+            return 404;
+
 	return OK;
     }
 

@@ -1,9 +1,9 @@
 $Id$
 
-                           Release Notes for:
-                           ==================
-                           TOMCAT Version 3.2
-                           ==================
+                            Release Notes for:
+                           ====================
+                           TOMCAT Version 3.2.1
+                           ====================
 
 
 0.  TABLE OF CONTENTS:
@@ -78,48 +78,12 @@ for the Servlet 2.3 and JSP 1.2 specifications.
 =============================================================================
 5.  NEW FEATURES IN THIS RELEASE
 
-Tomcat 3.2 is mainly a performance tune-up release, although a few new
-features have been added.
+Tomcat 3.2.1 is a maintenance and bug fix release, based on the Tomcat 3.2
+(final) code base.  The following changes are included:
 
-- Support for mod_jk, which is a replacement to the elderly mod_jserv, has
-  had several bugs fixed and has received much more testing.  It is now
-  recommended that all users use mod_jk instead of mod_jserv.
-
-- Support JAXP-based XML parser independence.
-
-- New and often requested "how-to" documents covering the following topics:
-     - Configuring workers.properties
-     - IIS and Netscape configuration
-     - Running tomcat inside an IIS or Netscape process
-     - Running Tomcat as a Windows NT service
-     - Configuring a JDBC realm
-     - Configuring mod_jk
-
-- First round of policy-based security support intended for running untrusted
-  code inside of Tomcat.  Interested users should test this support and post
-  feedback to the Tomcat users mailing list.
-
-- SSL support for standalone Tomcat. (Preliminary support first appeared in
-  3.1, but the support in 3.2 has received more testing and documentation
-  support.
-
-- Thread reuse is now enabled by default. The thread pool support code was part
-  of 3.1, but not enabled since it was new.
-
-- Support for plug-able session managers.  Unfortunately, no how-to documents
-  that support this functionality exist (yet). For the adventurous, be aware
-  that the interface that allows administrators to plug session managers is
-  the normal Interceptor interface.
-
-- An almost total rewrite of the HTTP request handling now results in improved
-  performance when running Tomcat stand-alone.
-
-- Significantly reduced garbage collection.
-
-- The code has undergone a refactoring effort resulting in (we hope) improved
-  readability.
-
-- And of course, hundreds of miscellaneous improvements and fixes.
+- Disallowed requesting JSP pages under the WEB-INF directory
+  (/WEB-INF/dummy.jsp).  Previously, only requests for static files
+  were being disallowed.
 
 
 =============================================================================
