@@ -34,6 +34,10 @@
                     path="/dumpRegistry.jsp"
                 redirect="false"/>
 
+    <forward        name="Dump Server Results"
+                    path="/dumpServer.jsp"
+                redirect="false"/>
+
     <forward        name="Main Menu"
                     path="/index.jsp"
                 redirect="false"/>
@@ -48,6 +52,10 @@
     <!-- Dump registry information (debugging) -->
     <action    path="/dumpRegistry"
                type="org.apache.webapp.admin.DumpRegistryAction"/>
+
+    <!-- Dump MBean server information (debugging) -->
+    <action    path="/dumpServer"
+               type="org.apache.webapp.admin.DumpServerAction"/>
 
     <!-- Log out of the application -->
     <action    path="/logOut"
