@@ -137,6 +137,8 @@ public final class ForEach implements TagPlugin {
 
         ctxt.generateJavaSource("else if (" + itemsV + " instanceof Collection)");
         ctxt.generateJavaSource(iterV + "=((Collection)" + itemsV + ").iterator();");
+        ctxt.generateJavaSource("else if (" + itemsV + " instanceof Iterator)");
+        ctxt.generateJavaSource(iterV + "=(Iterator)" + itemsV + ";");
 
 	if (hasBegin) {
             String tV = ctxt.getTemporaryVariableName();
