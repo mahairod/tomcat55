@@ -671,9 +671,10 @@ public class JspInterceptor extends BaseInterceptor {
 	    try {
 		javaC=compiler.createJavaCompiler(pageInfo,
 						  JspInterceptor.JIKES);
+		log( "Created " + javaC );
 		compiler.prepareCompiler( javaC, pageInfo );
 		status = javaC.compile( javaFile );
-
+		log( "Compiled  " + status + " " + javaC.getCompilerMessage() );
 		// remove java file if !keepgenerated, etc
 		compiler.postCompile(pageInfo);
 		
@@ -729,7 +730,8 @@ public class JspInterceptor extends BaseInterceptor {
 	File depFile=new File(getJspFilePath(ctx.getAbsolutePath(),
 					     pageInfo));
 	dep.setOrigin( depFile );
-	System.out.println("XXX " + depFile + " " + depFile.lastModified());
+	if(debug>0 )
+	    log("Create dependency " + depFile + " " + depFile.lastModified());
 	dep.setTarget( handler );
 	//dep.setLocal( true );
 	File f=new File( pageInfo.getMangler().getClassFileName() );
@@ -737,7 +739,8 @@ public class JspInterceptor extends BaseInterceptor {
 	    // it has a previous version
 	    dep.setLastModified(f.lastModified());
 	    // update the "expired" variable
-	    System.out.println("XXY " + f + " " + f.lastModified());
+	    if(debug>0 )
+		log("SetLastModified " + f + " " + f.lastModified());
 	    dep.checkExpiry();
 	} else {
 	    dep.setLastModified( -1 );

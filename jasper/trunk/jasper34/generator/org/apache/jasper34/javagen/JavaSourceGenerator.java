@@ -84,7 +84,10 @@ public class JavaSourceGenerator {
     
     // The sink writer:
     private PrintWriter writer;
-    
+
+    private Vector sourceFiles=new Vector();
+    private int lineMappings[][];
+
     public JavaSourceGenerator(PrintWriter writer) {
 	this.writer = writer;
     }
