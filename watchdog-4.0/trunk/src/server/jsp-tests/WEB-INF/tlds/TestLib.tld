@@ -16,9 +16,6 @@
   <description>
 	A simple tab library for JSP tests
   </description>
-<validator>
-  <validator-class>validator.TestLibValidator</validator-class>
-</validator>
 
   <!-- general validator tag -->
   <tag>
@@ -233,6 +230,14 @@
       <name>iteration</name>
       <required>true</required>
     </attribute>
+    <attribute>
+      <name>setget</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>tagid</name>
+      <required>false</required>
+    </attribute>
 </tag>
 
 <tag>
@@ -280,5 +285,47 @@
       <rtexprvalue>true</rtexprvalue>
     </attribute>
 </tag>
+
+<tag>
+    <name>firstWinner</name>
+    <tag-class>tags.TagSupport.firstPrizeTag</tag-class>
+    <description>
+    A tag that sets the First prize winner and also returns it to a 
+    nested tag  
+    </description>
+    <attribute>
+      <name>winner</name>
+      <required>true</required>
+    </attribute>
+</tag>
+
+<tag>
+    <name>secondWinner</name>
+    <tag-class>tags.TagSupport.secondPrizeTag</tag-class>
+    <description>
+    A tag that sets the second prize winner and also returns it to a   
+    nested tag
+    </description>
+    <attribute>
+      <name>winner</name>
+      <required>true</required>
+    </attribute>
+</tag>
+
+<tag>
+    <name>thirdWinner</name>
+    <tag-class>tags.TagSupport.thirdPrizeTag</tag-class>
+    <description>
+    A tag that sets the third prize winner and also returns it to a   
+    nested tag
+    </description>
+    <attribute>
+      <name>winner</name>
+      <required>true</required>
+    </attribute>
+</tag>
+
+
+
 
 </taglib>

@@ -16,6 +16,20 @@
   <description>
 	A simple tab library for testing computation of TLD Resource Path 
   </description>
+<validator>
+  <validator-class>tags.TagLibraryValidator.Validator</validator-class>
+<init-param>
+    <param-name>usa</param-name>
+    <param-value>Washington</param-value>
+    <description>Capital</description>
+</init-param>
+<init-param>
+    <param-name>india</param-name>
+    <param-value>New Delhi</param-value>
+    <description>Capital</description>
+</init-param>
+</validator>
+
 
   <!-- general validator tag -->
   <tag>
