@@ -429,7 +429,7 @@ public class StatusTransformer {
                     writer.write("" + mBeanServer.getAttribute
                                  (pName, "requestBytesSent"));
                 } else {
-                    writer.write("&#63;");
+                    writer.write("0");
                 }
                 writer.write("\"");
                 writer.write(" requestBytesReceived=\"");
@@ -437,7 +437,7 @@ public class StatusTransformer {
                     writer.write("" + mBeanServer.getAttribute
                                  (pName, "requestBytesReceived"));
                 } else {
-                    writer.write("&#63;");
+                    writer.write("0");
                 }
                 writer.write("\"");
                 writer.write(" remoteAddr=\"" 
@@ -473,9 +473,9 @@ public class StatusTransformer {
                     writer.write(" protocol=\"&#63;\"");
                 }
             } else {
-                writer.write(" requestProcessingTime=\"&#63;\"");
-                writer.write(" requestBytesSent=\"&#63;\"");
-                writer.write(" requestBytesRecieved=\"&#63;\"");
+                writer.write(" requestProcessingTime=\"0\"");
+                writer.write(" requestBytesSent=\"0\"");
+                writer.write(" requestBytesRecieved=\"0\"");
                 writer.write(" remoteAddr=\"&#63;\"");
                 writer.write(" virtualHost=\"&#63;\"");
                 writer.write(" method=\"&#63;\"");
