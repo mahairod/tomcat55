@@ -82,6 +82,7 @@ public class UninterpretedTagEndGenerator
     	writer.print("out.write(\"");
         sb.append("</").append(tag).append(">");
 	writer.print(sb.toString());
-	writer.println("\");");
+        writer.print("\");");
+        writer.println();
     }
 }
