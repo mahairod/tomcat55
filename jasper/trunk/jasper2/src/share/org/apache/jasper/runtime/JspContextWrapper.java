@@ -163,15 +163,23 @@ public class JspContextWrapper
 	return invokingJspCtxt.getAttribute(name, scope);
     }
 
-    public void setAttribute(String name, Object attribute) {
-	pageAttributes.put(name, attribute);
+    public void setAttribute(String name, Object value) {
+	if (value != null) {
+	    pageAttributes.put(name, value);
+	} else {
+	    removeAttribute(name, PAGE_SCOPE);
+	}
     }
 
-    public void setAttribute(String name, Object o, int scope) {
+    public void setAttribute(String name, Object value, int scope) {
 	if (scope == PAGE_SCOPE) {
-	    pageAttributes.put(name, o);
+	    if (value != null) {
+		pageAttributes.put(name, value);
+	    } else {
+		removeAttribute(name, PAGE_SCOPE);
+	    }
 	} else {
-	    invokingJspCtxt.setAttribute(name, o, scope);
+	    invokingJspCtxt.setAttribute(name, value, scope);
 	}
     }
 
