@@ -1652,7 +1652,11 @@ public class WebappClassLoader
 
                 String fullPath = repositories[i] + path;
 
-                resource = (Resource) resources.lookup(fullPath);
+                Object lookupResult = resources.lookup(fullPath);
+                if (!(lookupResult instanceof Resource))
+                    continue;
+
+                resource = (Resource) lookupResult;
 
                 // Note : Not getting an exception here means the resource was
                 // found
