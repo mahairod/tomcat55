@@ -318,22 +318,28 @@ public class MBeanUtils {
         ObjectName name = null;
         if (connector instanceof HttpConnector) {
             HttpConnector httpConnector = (HttpConnector) connector;
-            name = new ObjectName(domain + ":type=Connector,port=" +
-                                  httpConnector.getPort() + ",address=" +
-                                  httpConnector.getAddress());
+            name = new ObjectName(domain + ":type=Connector" +
+                                  ",service=" +
+                                  httpConnector.getService().getName() +
+                                  ",port=" + httpConnector.getPort() +
+                                  ",address=" + httpConnector.getAddress());
             return (name);
         } else if (connector instanceof org.apache.catalina.connector.http10.HttpConnector) {
             org.apache.catalina.connector.http10.HttpConnector httpConnector =
                 (org.apache.catalina.connector.http10.HttpConnector) connector;
-            name = new ObjectName(domain + ":type=Connector,port=" +
-                                  httpConnector.getPort() + ",address=" +
-                                  httpConnector.getAddress());
+            name = new ObjectName(domain + ":type=Connector" +
+                                  ",service=" +
+                                  httpConnector.getService().getName() +
+                                  ",port=" + httpConnector.getPort() +
+                                  ",address=" + httpConnector.getAddress());
             return (name);
         } else if (connector instanceof WarpConnector) {
             WarpConnector warpConnector = (WarpConnector) connector;
-            name = new ObjectName(domain + ":type=Connector,port=" +
-                                  warpConnector.getPort() + ",address=" +
-                                  warpConnector.getAddress());
+            name = new ObjectName(domain + ":type=Connector" +
+                                  ",service=" +
+                                  warpConnector.getService().getName() +
+                                  ",port=" + warpConnector.getPort() +
+                                  ",address=" + warpConnector.getAddress());
             return (name);
         } else {
             throw new MalformedObjectNameException
