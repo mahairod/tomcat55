@@ -191,7 +191,7 @@ public class DeltaManager
 
     /** Number of session creations that failed due to maxActiveSessions
      *
-     * @return
+     * @return The count
      */
     public int getRejectedSessions() {
         return rejectedSessions;
@@ -203,7 +203,7 @@ public class DeltaManager
 
     /** Number of sessions that expired.
      *
-     * @return
+     * @return The count
      */
     public int getExpiredSessions() {
         return expiredSessions;

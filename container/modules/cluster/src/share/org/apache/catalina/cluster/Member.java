@@ -33,22 +33,18 @@ package org.apache.catalina.cluster;
 public interface Member {
     /**
      * Return implementation specific properties about this cluster node.
-     * @return
      */
     public java.util.HashMap getMemberProperties();
     /**
      * Returns the name of this node, should be unique within the cluster.
-     * @return
      */
     public String getName();
     /**
      * Returns the TCP listen host for the TCP implementation
-     * @return
      */
     public String getHost();
     /**
      * Returns the TCP listen portfor the TCP implementation
-     * @return
      */
     public int getPort();
 

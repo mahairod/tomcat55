@@ -61,7 +61,7 @@ public class SchemaResolver implements EntityResolver {
     /**
      * Create a new <code>EntityResolver</code> that will redirect
      * all remote dtds and schema to a locat destination.
-     * @param schemaLocation the XML Schema used to validate xml instance.
+     * @param digester The digester instance.
      */
     public SchemaResolver(Digester digester) {
         this.digester = digester;

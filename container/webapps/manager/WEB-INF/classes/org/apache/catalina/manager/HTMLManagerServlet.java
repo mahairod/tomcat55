@@ -277,7 +277,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
      * Render a HTML list of the currently active Contexts in our virtual host,
      * and memory and server status information.
      *
-     * @param writer Writer to render to
+     * @param request The request
+     * @param response The response
      * @param message a message to display
      */
     public void list(HttpServletRequest request,

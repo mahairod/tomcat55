@@ -109,7 +109,6 @@ public class McastMembership
 
     /**
      * Returning a list of all the members in the membership
-     * @return
      */
     public synchronized McastMember[] getMembers() {
         McastMember[] result = new McastMember[map.size()];
@@ -150,7 +149,6 @@ public class McastMembership
         }
         /**
          * Return the actual McastMember object
-         * @return
          */
         public McastMember getMember() {
             return mbr;
@@ -158,8 +156,7 @@ public class McastMembership
 
         /**
          * Check if this dude has expired
-         * @param maxtime
-         * @return
+         * @param maxtime The time threshold
          */
         public boolean hasExpired(long maxtime) {
             long delta = System.currentTimeMillis() - lastHeardFrom;

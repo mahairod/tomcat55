@@ -213,8 +213,8 @@ public abstract class ValveBase
 
     /** From the name, extract the parent object name
      *
-     * @param valveName
-     * @return
+     * @param valveName The valve name
+     * @return ObjectName The parent name
      */
     public ObjectName getParentName( ObjectName valveName ) {
 

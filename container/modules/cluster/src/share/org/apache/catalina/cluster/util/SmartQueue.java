@@ -85,7 +85,6 @@ public class SmartQueue {
     
     /**
      * Blocks forever until an element has been added to the queue
-     * @return
      */
     public SmartEntry remove() {
         return remove(0);

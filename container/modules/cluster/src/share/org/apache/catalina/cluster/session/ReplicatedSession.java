@@ -139,7 +139,6 @@ implements org.apache.catalina.cluster.ClusterSession{
      * <code>Realm.authenticate()</code> calls on every request.
      *
      * @param principal The new Principal, or <code>null</code> if none
-     * @param jgnotify notify the other nodes in the cluster? (true/false)
      */
     public void setPrincipal(Principal principal) {
         super.setPrincipal(principal);
@@ -202,7 +201,6 @@ implements org.apache.catalina.cluster.ClusterSession{
     /**
      * returns true if this session is the primary session, if that is the
      * case, the manager can expire it upon timeout.
-     * @return
      */
     public boolean isPrimarySession() {
         return isPrimarySession;
@@ -210,7 +208,7 @@ implements org.apache.catalina.cluster.ClusterSession{
 
     /**
      * Sets whether this is the primary session or not.
-     * @param primarySession
+     * @param primarySession Flag value
      */
     public void setPrimarySession(boolean primarySession) {
         this.isPrimarySession=primarySession;

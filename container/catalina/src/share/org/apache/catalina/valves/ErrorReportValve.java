@@ -176,7 +176,7 @@ public class ErrorReportValve
      *
      * @param request The request being processed
      * @param response The response being generated
-     * @param exception The exception that occurred (which possibly wraps
+     * @param throwable The exception that occurred (which possibly wraps
      *  a root cause exception
      */
     protected void report(Request request, Response response,
