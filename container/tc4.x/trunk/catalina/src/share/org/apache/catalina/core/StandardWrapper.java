@@ -675,9 +675,11 @@ public final class StandardWrapper
 	if (instance != null)
 	    return;
 
-        // If this "servlet" is really a JSP file, get the right class
-        // FIXME - This still does not solve all the problems, but it is
-        // pretty close to what Tomcat 3.x does
+        // If this "servlet" is really a JSP file, get the right class.
+        // HOLD YOUR NOSE - this is a kludge that avoids having to do special
+        // case Catalina-specific code in Jasper - it also requires that the
+        // servlet path be replaced by the <jsp-file> element content in
+        // order to be completely effective
         String actualClass = servletClass;
         if ((actualClass == null) && (jspFile != null)) {
             Wrapper jspWrapper = (Wrapper)

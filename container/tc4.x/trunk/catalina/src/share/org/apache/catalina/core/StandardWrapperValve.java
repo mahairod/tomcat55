@@ -163,6 +163,23 @@ final class StandardWrapperValve
 	if (sres instanceof HttpServletResponse)
 	    hres = (HttpServletResponse) sres;
 
+        // HOLD YOUR NOSE - Kludge to deal with <jsp-file> servlets.
+        // Modify the request paths for a servlet that was defined
+        // with a <jsp-file> element instead of a <servlet-class>.
+        String jspFile = wrapper.getJspFile();
+        if ((hreq != null) && (hres != null) && (jspFile != null)) {
+            StringBuffer sb = new StringBuffer();
+            String contextPath = hreq.getContextPath();
+            if (contextPath != null)
+                sb.append(contextPath);
+            sb.append(jspFile);
+            String pathInfo = hreq.getPathInfo();
+            if (pathInfo != null)
+                sb.append(pathInfo);
+            ((HttpRequest) request).setRequestURI(sb.toString());
+            ((HttpRequest) request).setServletPath(jspFile);
+        }
+
 	// Check for the servlet being marked unavailable
 	if (wrapper.isUnavailable()) {
 	    log(sm.getString("standardWrapper.isUnavailable",
