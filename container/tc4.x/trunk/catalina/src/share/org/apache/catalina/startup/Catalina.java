@@ -348,29 +348,12 @@ public class Catalina {
 		       ("addLifecycleListener",
 			"org.apache.catalina.LifecycleListener"));
 
-	mapper.addRule("Server/Service/Engine/Host/Loader", mapper.objectCreate
-		       ("org.apache.catalina.core.StandardLoader",
-			"className"));
-	mapper.addRule("Server/Service/Engine/Host/Loader",
-                       mapper.setProperties());
-	mapper.addRule("Engine/Service/Engine/Host/Loader", mapper.addChild
-		       ("setLoader", "org.apache.catalina.Loader"));
-
 	mapper.addRule("Server/Service/Engine/Host/Logger", mapper.objectCreate
 		       (null, "className"));
 	mapper.addRule("Server/Service/Engine/Host/Logger",
                        mapper.setProperties());
 	mapper.addRule("Server/Service/Engine/Host/Logger", mapper.addChild
 		       ("setLogger", "org.apache.catalina.Logger"));
-
-	mapper.addRule("Server/Service/Engine/Host/Manager",
-                       mapper.objectCreate
-		       ("org.apache.catalina.session.StandardManager",
-			"className"));
-	mapper.addRule("Server/Service/Engine/Host/Manager",
-                       mapper.setProperties());
-	mapper.addRule("Server/Service/Engine/Host/Manager", mapper.addChild
-		       ("setManager", "org.apache.catalina.Manager"));
 
 	mapper.addRule("Server/Service/Engine/Host/Realm", mapper.objectCreate
 		       (null, "className"));
@@ -403,26 +386,11 @@ public class Catalina {
 		       ("addLifecycleListener",
 			"org.apache.catalina.LifecycleListener"));
 
-	mapper.addRule("Server/Service/Engine/Loader", mapper.objectCreate
-		       ("org.apache.catalina.core.StandardLoader",
-			"className"));
-	mapper.addRule("Server/Service/Engine/Loader", mapper.setProperties());
-	mapper.addRule("Server/Service/Engine/Loader", mapper.addChild
-		       ("setLoader", "org.apache.catalina.Loader"));
-
 	mapper.addRule("Server/Service/Engine/Logger", mapper.objectCreate
 		       (null, "className"));
 	mapper.addRule("Server/Service/Engine/Logger", mapper.setProperties());
 	mapper.addRule("Server/Service/Engine/Logger", mapper.addChild
 		       ("setLogger", "org.apache.catalina.Logger"));
-
-	mapper.addRule("Server/Service/Engine/Manager", mapper.objectCreate
-		       ("org.apache.catalina.session.StandardManager",
-			"className"));
-	mapper.addRule("Server/Service/Engine/Manager",
-                       mapper.setProperties());
-	mapper.addRule("Server/Service/Engine/Manager", mapper.addChild
-		       ("setManager", "org.apache.catalina.Manager"));
 
 	mapper.addRule("Server/Service/Engine/Realm", mapper.objectCreate
 		       (null, "className"));
@@ -513,7 +481,7 @@ public class Catalina {
 
 	mapper.addRule(prefix + "/Loader",
 		       mapper.objectCreate
-		       ("org.apache.catalina.core.StandardLoader",
+		       ("org.apache.catalina.loader.StandardLoader",
 			"className"));
 	mapper.addRule(prefix + "/Loader",
 		       mapper.setProperties());
