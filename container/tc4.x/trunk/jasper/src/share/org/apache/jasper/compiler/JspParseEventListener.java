@@ -356,14 +356,13 @@ public class JspParseEventListener extends BaseJspListener {
 
     private void generateFooter() throws JasperException {
 	writer.popIndent();
-	//writer.println("} catch (Throwable t) {");
-	writer.println("} catch (Exception ex) {");
+	writer.println("} catch (Throwable t) {");
 	writer.pushIndent();
         writer.println("if (out.getBufferSize() != 0)");
         writer.pushIndent();
 	writer.println("out.clearBuffer();");
 	writer.popIndent();
-	writer.println("pageContext.handlePageException(ex);");
+	writer.println("pageContext.handlePageException(t);");
 	writer.popIndent();
 	writer.println("} finally {");
 	writer.pushIndent();
