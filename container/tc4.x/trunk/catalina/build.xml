@@ -33,7 +33,9 @@
   <target name="build-static" depends="build-prepare,copy-jaxp-jar">
 
     <!-- Executable Commands -->
-    <copydir src="src/bin"  dest="${catalina.build}/bin"/>
+    <copy todir="${catalina.build}/bin">
+      <fileset dir="src/bin" />
+    </copy>
     <fixcrlf srcdir="${catalina.build}/bin" includes="*.sh" cr="remove"/>
     <fixcrlf srcdir="${catalina.build}/bin" includes="*.bat" cr="add"/>
     <chmod perm="+x" file="${catalina.build}/bin/catalina.sh"/>
@@ -41,27 +43,31 @@
     <chmod perm="+x" file="${catalina.build}/bin/shutdown.sh"/>
 
     <!-- Configuration Files -->
-    <copydir src="src/conf" dest="${catalina.build}/conf"/>
+    <copy todir="${catalina.build}/conf">
+      <fileset dir="src/conf" />
+    </copy>
 
     <!-- Shared Extensions -->
     <!--   All applications need the servlet API classes -->
-    <copyfile src="${servlet.jar}" dest="${catalina.build}/bin/servlet.jar"/>
+    <copy file="${servlet.jar}" tofile="${catalina.build}/bin/servlet.jar" />
 
     <!-- Server Components -->
     <!--   Catalina needs JAXP compliant XML parser -->
-    <copyfile src="${parser.jar}"  dest="${catalina.build}/server/${catalina.jaxp.parser.jar}"/>
+    <copy file="${parser.jar}" 
+     tofile="${catalina.build}/server/${catalina.jaxp.parser.jar}" />
     <!--   Catalina needs the regular expression library -->
-    <copyfile src="${regexp.jar}"  dest="${catalina.build}/server/regexp.jar"/>
+    <copy file="${regexp.jar}" 
+     tofile="${catalina.build}/server/regexp.jar"/>
     <!--   Catalina needs the JSSE packages -->
 <!--
-    <copyfile src="${jcert.jar}"  dest="${catalina.build}/server/jcert.jar"/>
-    <copyfile src="${jnet.jar}"  dest="${catalina.build}/server/jnet.jar"/>
-    <copyfile src="${jsse.jar}"  dest="${catalina.build}/server/jsse.jar"/>
+    <copy file="${jcert.jar}" tofile="${catalina.build}/server/jcert.jar"/>
+    <copy file="${jnet.jar}" tofile="${catalina.build}/server/jnet.jar"/>
+    <copy file="${jsse.jar}" tofile="${catalina.build}/server/jsse.jar"/>
 -->
   </target>
 
   <target name="copy-jaxp-jar" if="jaxp.jar.present" >
-    <copyfile src="${jaxp.jar}"  dest="${catalina.build}/server/jaxp.jar"/>
+    <copy file="${jaxp.jar}" tofile="${catalina.build}/server/jaxp.jar"/>
   </target>    
 
 
@@ -91,9 +97,11 @@
     </javac>
 
     <!-- Copy static resource files -->
-    <copydir  src="src/share"    dest="${catalina.build}/classes">
-      <include name="**/*.properties"/>
-    </copydir>
+    <copy todir="${catalina.build}/classes">
+      <fileset dir="src/share">
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy>
 
     <!-- Construct bootstrap JAR file -->
     <jar   jarfile="${catalina.build}/bin/bootstrap.jar"
@@ -114,7 +122,7 @@
 
   <!-- ================ BUILD: Create Catalina Javadocs =================== -->
   <target name="javadoc" depends="build-main">
-    <deltree dir="${catalina.build}/javadoc"/>
+    <delete dir="${catalina.build}/javadoc"/>
     <mkdir dir="${catalina.build}/javadoc"/>
     <javadoc packagenames="org.apache.catalina.*,org.apache.naming.*"
              classpath="${parser.jar}:${jaxp.jar}:${jcert.jar}:${jsse.jar}:${jnet.jar}:${regexp.jar}:${jmxri.jar}:${servlet.jar}:${catalina.build}/classes"
@@ -131,7 +139,7 @@
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
   <target name="build-clean">
-    <deltree dir="${catalina.build}"/>
+    <delete dir="${catalina.build}"/>
   </target>
 
 
@@ -155,7 +163,9 @@
   <target name="deploy-static" depends="build-main,deploy-prepare">
 
     <!-- Executable Commands -->
-    <copydir src="${catalina.build}/bin"  dest="${catalina.deploy}/bin"/>
+    <copy todir="${catalina.deploy}/bin">
+      <fileset dir="${catalina.build}/bin" />
+    </copy>
     <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.sh" cr="remove"/>
     <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.bat" cr="add"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/catalina.sh"/>
@@ -163,13 +173,19 @@
     <chmod perm="+x" file="${catalina.deploy}/bin/shutdown.sh"/>
 
     <!-- Configuration Files -->
-    <copydir src="${catalina.build}/conf"   dest="${catalina.deploy}/conf"/>
+    <copy todir="${catalina.deploy}/conf">
+      <fileset dir="${catalina.build}/conf" />
+    </copy>
 
     <!-- Shared Extensions -->
-    <copydir src="${catalina.build}/lib"    dest="${catalina.deploy}/lib"/>
+    <copy todir="${catalina.deploy}/lib">
+      <fileset dir="${catalina.build}/lib" />
+    </copy>
 
     <!-- Server Components -->
-    <copydir src="${catalina.build}/server" dest="${catalina.deploy}/server"/>
+    <copy todir="${catalina.deploy}/server">
+      <fileset dir="${catalina.build}/server" />
+    </copy>
 
   </target>
 
@@ -188,7 +204,7 @@
 
   <!-- ====================== DEPLOY: Clean Directories =================== -->
   <target name="deploy-clean">
-    <deltree dir="${catalina.deploy}"/>
+    <delete dir="${catalina.deploy}"/>
   </target>
 
 
@@ -196,20 +212,28 @@
   <target name="dist" depends="build-main">
 
     <mkdir dir="${catalina.dist}/bin"/>
-    <copydir src="${catalina.build}/bin" dest="${catalina.dist}/bin"/>
+    <copy todir="${catalina.dist}/bin">
+      <fileset dir="${catalina.build}/bin" />
+    </copy>
     <fixcrlf srcdir="${catalina.dist}/bin" includes="*.sh" cr="remove"/>
     <fixcrlf srcdir="${catalina.dist}/bin" includes="*.bat" cr="add"/>
     <chmod perm="+x" file="${catalina.dist}/bin/catalina.sh"/>
     <chmod perm="+x" file="${catalina.dist}/bin/jspc.sh"/>
 
     <mkdir dir="${catalina.dist}/conf"/>
-    <copydir src="${catalina.build}/conf"   dest="${catalina.dist}/conf"/>
+    <copy todir="${catalina.dist}/conf">
+      <fileset dir="${catalina.build}/conf" />
+    </copy>
 
     <mkdir dir="${catalina.dist}/lib"/>
-    <copydir src="${catalina.build}/lib"    dest="${catalina.dist}/lib"/>
+    <copy todir="${catalina.dist}/lib">
+      <fileset dir="${catalina.build}/lib" />
+    </copy>
 
     <mkdir dir="${catalina.dist}/server"/>
-    <copydir src="${catalina.build}/server" dest="${catalina.dist}/server"/>
+    <copy todir="${catalina.dist}/server">
+      <fileset dir="${catalina.build}/server" />
+    </copy>
     <jar  jarfile="${catalina.dist}/server/catalina.jar"
           basedir="${catalina.build}/classes" 
           excludes="**/org/apache/naming/**" />
@@ -219,7 +243,7 @@
 
   <!-- ======================== DIST: Clean Directory ===================== -->
   <target name="dist-clean">
-    <deltree dir="${catalina.dist}"/>
+    <delete dir="${catalina.dist}"/>
   </target>
 
 

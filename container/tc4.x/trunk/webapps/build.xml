@@ -46,7 +46,7 @@
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
   <target name="build-clean">
-    <deltree dir="${webapps.build}"/>
+    <delete dir="${webapps.build}"/>
   </target>
 
 
@@ -57,7 +57,9 @@
   <!-- ================= DEPLOY: Deploy Webapps Projects ================== -->
   <target name="deploy" depends="dist">
     <mkdir dir="${webapps.deploy}/webapps"/>
-    <copydir src="${webapps.build}" dest="${webapps.deploy}/webapps"/>
+    <copy todir="${webapps.deploy}/webapps">
+      <fileset dir="${webapps.build}" />
+    </copy>
   </target>
 
 
@@ -67,7 +69,7 @@
 
   <!-- ======================= DIST: Clean Directory ====================== -->
   <target name="dist-clean">
-    <deltree dir="${webapps.dist}"/>
+    <delete dir="${webapps.dist}"/>
   </target>
 
 

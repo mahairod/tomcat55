@@ -28,7 +28,7 @@
 
   <!-- ====================== COMBO: Clean All Directories ================ -->
   <target name="clean">
-    <deltree dir="${tomcat.build}"/>
+    <delete dir="${tomcat.build}"/>
     <ant dir="./catalina" target="clean"/>
     <ant dir="./jasper"   target="clean"/>
     <ant dir="./webapps"  target="clean"/>
@@ -60,16 +60,26 @@
   <!-- ====================== DIST: Copy Static Files ===================== -->
   <target name="dist-static" depends="dist-prepare">
 
-    <copydir src="."                      dest="${tomcat.dist}">
-      <include name="LICENSE"/>
-      <include name="NEW_SPECS.txt"/>
-      <include name="RELEASE*"/>
-    </copydir>
+    <copy todir="${tomcat.dist}">
+      <fileset dir=".">
+        <include name="LICENSE"/>
+        <include name="NEW_SPECS.txt"/>
+        <include name="RELEASE*"/>
+      </fileset>
+    </copy>
 
-    <copydir src="${tomcat.build}/bin"     dest="${tomcat.dist}/bin"/>
-    <copydir src="${tomcat.build}/conf"    dest="${tomcat.dist}/conf"/>
-    <copydir src="${tomcat.build}/lib"     dest="${tomcat.dist}/lib"/>
-    <copydir src="${tomcat.build}/server"  dest="${tomcat.dist}/server"/>
+    <copy todir="${tomcat.dist}/bin">
+      <fileset dir="${tomcat.build}/bin" />
+    </copy>
+    <copy todir="${tomcat.dist}/conf">
+      <fileset dir="${tomcat.build}/conf" />
+    </copy>
+    <copy todir="${tomcat.dist}/lib">
+      <fileset dir="${tomcat.build}/lib" />
+    </copy>
+    <copy todir="${tomcat.dist}/server">
+      <fileset dir="${tomcat.build}/server" />
+    </copy>
     <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.sh" cr="remove"/>
     <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.bat" cr="add"/>
     <chmod      dir="${tomcat.dist}/bin"   includes="*.sh" perm="+x"/>
@@ -80,19 +90,24 @@
   <!-- ====================== DIST: Create Javadoc ======================== -->
   <target name="dist-javadoc">
     <ant dir="./catalina" target="javadoc"/>
-    <copydir src="${catalina.build}/javadoc"
-            dest="${tomcat.build}/webapps/ROOT/catalina-javadoc"/>
+    <copy todir="${tomcat.build}/webapps/ROOT/catalina-javadoc">
+      <fileset dir="${catalina.build}/javadoc" />
+    </copy>
     <ant dir="./jasper" target="javadoc"/>
-    <copydir src="${jasper.build}/javadoc"
-            dest="${tomcat.build}/webapps/ROOT/jasper-javadoc"/>
-    <copydir src="${servletapi.home}/docs/api"
-            dest="${tomcat.build}/webapps/ROOT/servletapi-javadoc"/>
+    <copy todir="${tomcat.build}/webapps/ROOT/jasper-javadoc">
+      <fileset dir="${jasper.build}/javadoc" />
+    </copy>
+    <copy todir="${tomcat.build}/webapps/ROOT/servletapi-javadoc">
+      <fileset dir="${servletapi.home}/docs/api" />
+    </copy>
   </target>
 
   <!-- ====================== DIST: Copy Source Code ====================== -->
   <target name="dist-source">
     <mkdir dir="${tomcat.dist}/src"/>
-    <copydir src="." dest="${tomcat.dist}/src"/>
+    <copy todir="${tomcat.dist}/src">
+      <fileset dir="." />
+    </copy>
   </target>
 
 
@@ -108,13 +123,15 @@
     <jar jarfile="${tomcat.dist}/webapps/webdav.war"
          basedir="${tomcat.build}/webapps/webdav" includes="**"/>
 -->
-    <copydir src="${tomcat.build}/webapps" dest="${tomcat.dist}/webapps"/>
+    <copy todir="${tomcat.dist}/webapps">
+      <fileset dir="${tomcat.build}/webapps" />
+    </copy>
   </target>
 
 
   <!-- ====================== DIST: Clean Directory ======================= -->
   <target name="dist-clean">
-    <deltree dir="${tomcat.dist}"/>
+    <delete dir="${tomcat.dist}"/>
   </target>
 
 

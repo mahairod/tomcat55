@@ -22,8 +22,11 @@
 
   <!-- ================ BUILD: Copy Static Files ========================== -->
   <target name="build-static" depends="build-prepare">
-    <copydir src="." dest="${build.dir}/${webapp.name}"
-             excludes="build.*"/>
+    <copy todir="${build.dir}/${webapp.name}">
+      <fileset dir=".">
+        <exclude name="build.*"/>
+      </fileset>
+    </copy>
   </target>
 
 
@@ -37,7 +40,7 @@
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
   <target name="build-clean">
-    <deltree dir="${build.dir}/${webapp.name}"/>
+    <delete dir="${build.dir}/${webapp.name}"/>
   </target>
 
 
@@ -56,7 +59,7 @@
 
   <!-- ======================= DIST: Clean Directory ====================== -->
   <target name="dist-clean">
-    <deltree dir="${dist.dir}/${webapp.name}"/>
+    <delete dir="${dist.dir}/${webapp.name}"/>
   </target>
 
 
