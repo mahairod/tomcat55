@@ -618,9 +618,9 @@
 
     <!-- Add XML declarations for admin and manager -->
     <copy file="${tomcat.build}/server/webapps/manager/manager.xml"
-         todir="${tomcat.build}/webapps" />
+         todir="${tomcat.build}/conf/Catalina/localhost" />
     <copy file="${tomcat.build}/server/webapps/admin/admin.xml"
-         todir="${tomcat.build}/webapps" />
+         todir="${tomcat.build}/conf/Catalina/localhost" />
 
   </target>
 
