@@ -167,7 +167,7 @@ public class SmapUtil {
     // Installation logic (from Robert Field, JSR-045 spec lead)
     private static class SDEInstaller {
 
-	static final boolean verbose = true; 
+	static final boolean verbose = false; 
         static final String nameSDE = "SourceDebugExtension";
 
         byte[] orig;
