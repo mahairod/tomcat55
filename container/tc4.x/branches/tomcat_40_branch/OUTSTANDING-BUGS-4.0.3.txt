@@ -36,4 +36,7 @@ acceptable to delay their resolution.
                    in JSP.B of the JSP 1.2 specification
 6443    jasper     Jasper doesn't follow the spec in regards to the xml-view 
                    of a JSP page and whitespace handling semantics
+6464    jasper     Jspc generates bad package names on Windows NT
+
+
 

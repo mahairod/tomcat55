@@ -98,6 +98,7 @@ Bugzilla Bugs Resolved:
       when the Oracle 8.1.7 JDBC driver classes are added to this shared 
       class loader directory
 6400  Tag Libraries not deploying in 4.0.2 final
+6468  Content-type not set for errors
 
 
 ============================
@@ -105,7 +106,6 @@ KNOWN ISSUES IN THIS RELEASE:
 ============================
 
 * Tomcat 4.0 and Apache
-* Tomcat 4.0 and AJP 1.3
 * Tomcat 4.0 and JNI Based Applications
 * Tomcat 4.0 Standard APIs Available
 * Tomcat 4.0 and XML Parsers
@@ -151,24 +151,6 @@ inside Apache 1.3.  The current state of this support is summarized as follows:
   tests in the "jakarta-watchdog-4.0" suite.
 
 The WARP connector for Tomcat 4.0 does not support load balancing at this time.
-
-----------------------
-Tomcat 4.0 and AJP 1.3:
-----------------------
-
-Tomcat 4.0 now includes support for the AJP 1.3 protocol, which the 
-mod_jk collection of native webserver modules implements.
-
-The AJP connector is not enabled by default. To enable it, uncomment 
-the following section in $CATALINA_HOME/conf/server.xml:
-
-    <!--
-    <Connector className="org.apache.ajp.tomcat4.Ajp13Connector"
-               port="8009" minProcessors="5" maxProcessors="75"
-               acceptCount="10" debug="0"/>
-    -->
-
-The AJP connector for Tomcat 4.0 does not support load balancing at this time.
 
 
 -------------------------------------
