@@ -28,6 +28,11 @@ echo The tomcat.exe was not found...
 echo The CATALINA_HOME environment variable is not defined correctly.
 echo This environment variable is needed to run this program
 goto end
+rem Make sure prerequisite environment variables are set
+if not "%JAVA_HOME%" == "" goto okHome
+echo The JAVA_HOME environment variable is not defined
+echo This environment variable is needed to run this program
+goto end 
 :okHome
 if not "%CATALINA_BASE%" == "" goto gotBase
 set CATALINA_BASE=%CATALINA_HOME%
@@ -65,7 +70,7 @@ set PR_DISPLAYNAME=Apache Tomcat
 set PR_DESCRIPTION=Apache Tomcat Server - http://jakarta.apache.org/tomcat
 set PR_INSTALL=%EXECUTABLE%
 set PR_LOGPATH=%CATALINA_HOME%\logs
-set PR_CLASSPATH=%CATALINA_HOME%\bin\bootstrap.jar
+set PR_CLASSPATH=%JAVA_HOME%\lib\tools.jar;%CATALINA_HOME%\bin\bootstrap.jar
 "%EXECUTABLE%" //IS//%SERVICE_NAME% --Jvm auto --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop
 rem Clear the environment variables. They are not needed any more.
 set PR_DISPLAYNAME=
