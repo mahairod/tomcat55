@@ -945,7 +945,7 @@ public class MBeanUtils {
         String localName= "//" +
                 ((host.getName()==null)? "DEFAULT" : host.getName()) + path;
         name = new ObjectName(domain + ":j2eeType=WebModule,name=" +
-                              localName + ",j2eeApplication=none,j2eeServer=none");
+                              localName + ",J2EEApplication=none,J2EEServer=none");
         return (name);
     }
 
@@ -977,7 +977,7 @@ public class MBeanUtils {
         String webMod="//" + ((hostName==null)? "DEFAULT" :hostName ) + path;
         name = new ObjectName(domain + ":j2eeType=Servlet,name=" +
                 sname + ",WebModule=" +
-                webMod + ",j2eeApplication=none,J2EEServer=none");
+                webMod + ",J2EEApplication=none,J2EEServer=none");
 
         return (name);
 
