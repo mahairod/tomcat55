@@ -263,6 +263,9 @@
       <fix>
         <bug>33538</bug>: Ignore example and tag-extension elements in TagLibraryInfoImpl. (yoavs)
       </fix>
+      <fix>
+        <bug>33539</bug>: Better error message when an unknown element is encountered in the tag file. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   
