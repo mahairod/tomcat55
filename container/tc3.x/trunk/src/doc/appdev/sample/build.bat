@@ -19,6 +19,7 @@ set CLASSPATH=%CLASSPATH%;%TOMCAT_HOME%\lib\ant.jar
 set CLASSPATH=%CLASSPATH%;%TOMCAT_HOME%\lib\jasper.jar
 set CLASSPATH=%CLASSPATH%;%TOMCAT_HOME%\lib\servlet.jar
 set CLASSPATH=%CLASSPATH%;%TOMCAT_HOME%\lib\webserver.jar
+set CLASSPATH=%CLASSPATH%;%JAVA_HOME%\lib\tools.jar
 
 rem Execute ANT to perform the requested build target
 java org.apache.tools.ant.Main -Dtomcat.home=%TOMCAT_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
