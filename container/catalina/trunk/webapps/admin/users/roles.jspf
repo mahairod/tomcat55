@@ -11,18 +11,19 @@
           &nbsp;
         </td>
       </logic:present>
-      <th scope="col" width="20%"><div align="left" class="table-header-text">
+      <td width="20%"><div align="left" class="table-header-text">
         <bean:message key="users.list.rolename"/>
-      </div></th>
-      <th scope="col"><div align="left" class="table-header-text">
+      </div></td>
+      <td><div align="left" class="table-header-text">
         <bean:message key="users.list.description"/>
-      </div></th>
+      </div></td>
     </tr>
+    <logic:present name="rolesForm">
     <logic:iterate name="rolesForm" property="roles"
                      id="role" type="java.lang.String">
       <tr class="line-row">
         <logic:present name="checkboxes">
-          <td scope="row"><div align="center" class="table-normal-text">
+          <td><div align="center" class="table-normal-text">
             <logic:present name="groupForm">
               <label for="roles"></label>
               <html:multibox property="roles" value="<%= role %>" styleId="roles"/>
@@ -40,7 +41,7 @@
             </logic:notPresent>
           </td>
         </logic:present>
-        <td scope="row"><div align="left" class="table-normal-text">&nbsp;
+        <td><div align="left" class="table-normal-text">&nbsp;
           <html:link page='<%= "/users/setUpRole.do?objectName=" + 
                                URLEncoder.encode(role) +
                                "&databaseName=" +
@@ -48,11 +49,12 @@
             <controls:attribute name="role" attribute="rolename"/>
           </html:link>
         </div></td>
-        <td scope="row"><div align="left" class="table-normal-text">&nbsp;
+        <td><div align="left" class="table-normal-text">&nbsp;
           <controls:attribute name="role" attribute="description"/>
         </div></td>
       </tr>
     </logic:iterate>
+    </logic:present>
   </table>
 
 </td></tr></table>
