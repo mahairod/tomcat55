@@ -20,7 +20,6 @@ import org.apache.catalina.cluster.ClusterDeployer;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.Deployer;
 import java.io.File;
 import java.net.URL;
 import java.io.IOException;
@@ -51,7 +50,6 @@ public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
         org.apache.commons.logging.LogFactory.getLog(FarmWarDeployer.class);
     /*--Instance Variables--------------------------------------*/
     protected CatalinaCluster cluster = null;
-    protected Deployer deployer = null;
     protected boolean started = false; //default 5 seconds
     protected HashMap fileFactories = new HashMap();
     protected String deployDir;
@@ -108,6 +106,8 @@ public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
                         name = name + ".war";
                     File deployable = new File(getDeployDir(), name);
                     factory.getFile().renameTo(deployable);
+                    // FIXME
+                    /*
                     try {
                         if (getDeployer().findDeployedApp(fmsg.getContextPath()) != null)
                             getDeployer().remove(fmsg.getContextPath(), true);
@@ -118,13 +118,17 @@ public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
                     }
                     getDeployer().install(fmsg.getContextPath(),
                                           deployable.toURL());
+                                          */
                     removeFactory(fmsg);
                 } //end if
             } else if (msg instanceof UndeployMessage && msg != null) {
                 UndeployMessage umsg = (UndeployMessage) msg;
+                // FIXME
+                /*
                 if (getDeployer().findDeployedApp(umsg.getContextPath()) != null)
                     getDeployer().remove(umsg.getContextPath(),
                                          umsg.getUndeploy());
+                                         */
             } //end if
         } catch (java.io.IOException x) {
             log.error("Unable to read farm deploy file message.", x);
@@ -190,10 +194,13 @@ public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
      *  during installation
      */
     public void install(String contextPath, URL war) throws IOException {
+    	// FIXME
+    	/*
         if (getDeployer().findDeployedApp(contextPath) != null)
             getDeployer().remove(contextPath, true);
             //step 1. Install it locally
         getDeployer().install(contextPath, war);
+        */
         //step 2. Send it to each member in the cluster
         Member[] members = getCluster().getMembers();
         Member localMember = getCluster().getLocalMember();
@@ -231,8 +238,11 @@ public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
     public void remove(String contextPath, boolean undeploy) throws IOException {
         log.info("Cluster wide remove of web app " + contextPath);
         //step 1. Remove it locally
+        // FIXME
+        /*
         if (getDeployer().findDeployedApp(contextPath) != null)
             getDeployer().remove(contextPath, undeploy);
+            */
             //step 2. Send it to each member in the cluster
         Member[] members = getCluster().getMembers();
         Member localMember = getCluster().getLocalMember();
@@ -284,10 +294,6 @@ public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
         this.cluster = cluster;
     }
 
-    public void setDeployer(Deployer deployer) {
-        this.deployer = deployer;
-    }
-
     public boolean equals(Object listener) {
         return super.equals(listener);
     }
@@ -310,10 +316,6 @@ public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
 
     public void setTempDir(String tempDir) {
         this.tempDir = tempDir;
-    }
-
-    public Deployer getDeployer() {
-        return deployer;
     }
 
     public String getWatchDir() {

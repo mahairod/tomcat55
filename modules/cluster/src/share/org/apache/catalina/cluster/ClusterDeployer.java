@@ -24,7 +24,6 @@ package org.apache.catalina.cluster;
  * @version $Revision$, $Date$
  */
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.Deployer;
 import java.io.IOException;
 import java.net.URL;
 
@@ -61,7 +60,8 @@ public interface ClusterDeployer extends MessageListener {
      * Sets the deployer for this cluster deployer to use.
      * @param deployer Deployer
      */
-    public void setDeployer(Deployer deployer);
+    // FIXME
+    //public void setDeployer(Deployer deployer);
 
     /**
      * Install a new web application, whose web application archive is at the
