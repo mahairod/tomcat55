@@ -32,6 +32,9 @@
       <update>
         <bug>32235</bug>: Sync conf/web.xml MIME types with Apache httpd. (yoavs)
       </update>
+      <fix>
+        <bug>31132</bug>: Better -x/-r support for OS/400 in startup scripts. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
