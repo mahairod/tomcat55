@@ -590,8 +590,8 @@ public abstract class RealmBase
      *
      * @param request Request we are processing
      * @param response Response we are creating
-     * @param constraint Security constraint we are enforcing
-     * @param The Context to which client of this class is attached.
+     * @param constraints Security constraint we are enforcing
+     * @param context The Context to which client of this class is attached.
      *
      * @exception IOException if an input/output error occurs
      */
@@ -724,7 +724,7 @@ public abstract class RealmBase
      *
      * @param request Request we are processing
      * @param response Response we are creating
-     * @param constraint Security constraint being checked
+     * @param constraints Security constraint being checked
      *
      * @exception IOException if an input/output error occurs
      */

@@ -1143,7 +1143,7 @@ public class JNDIRealm extends RealmBase {
      * retrieved from the directory.
      *
      * @param context The directory context
-     * @param user The User to be authenticated
+     * @param info The User to be authenticated
      * @param credentials Authentication credentials
      *
      * @exception NamingException if a directory server error occurs
@@ -1640,7 +1640,7 @@ public class JNDIRealm extends RealmBase {
      *     \  -> \5c
      *     \0 -> \00
      * @param inString string to escape according to RFC 2254 guidelines
-     * @return
+     * @return String the escaped/encoded result
      */
     protected String doRFC2254Encoding(String inString) {
         StringBuffer buf = new StringBuffer(inString.length());
