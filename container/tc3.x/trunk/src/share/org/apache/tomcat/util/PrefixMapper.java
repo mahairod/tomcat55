@@ -64,6 +64,8 @@
 
 package org.apache.tomcat.util;
 
+import org.apache.tomcat.util.collections.*;
+
 import java.net.URL;
 import java.io.File;
 import java.net.MalformedURLException;

@@ -57,7 +57,7 @@
  *
  */ 
 
-package org.apache.tomcat.util;
+package org.apache.tomcat.util.collections;
 
 import java.util.*;
 
