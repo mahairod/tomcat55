@@ -127,6 +127,14 @@ public class XmlOutputter {
         }
     }
 
+    /**
+     * Add a namespace entry for every taglib in the <jsp:root> tag.
+     */
+     void addRootNamespaces(String prefix, String uri) {
+	 rootAttrs.addAttribute("", "localname", "xmlns:" + prefix, "CDATA", uri);
+     }
+
+
     /*
      * Only put the </jsp:root> tag when we're dealing
      * with the top level 'container' page.
@@ -212,7 +220,7 @@ public class XmlOutputter {
      * Append the end tag to the xml stream.
      */
     void append(String tag) {
-        sb.append("</").append(tag).append(">");
+        sb.append("</").append(tag).append(">\n");
     }
 
     //*********************************************************************
@@ -227,8 +235,11 @@ public class XmlOutputter {
         buff.append(PROLOG);
         append("jsp:root", rootAttrs, buff);
 	buff.append(sb.toString());
+        buff.append("</jsp:root>");
 	InputStream is = 
 	    new ByteArrayInputStream(buff.toString().getBytes());
+//DELETE
+System.out.println("getPageData: \n" + buff.toString());
 	PageData pageData = new PageDataImpl(is);
         return pageData;
     }

@@ -752,9 +752,12 @@ public class JspParseEventListener implements ParseEventListener {
 	    String uri = attrs.getValue("uri");
 	    String prefix = attrs.getValue("prefix");
             processTaglibDirective(uri, prefix);
+
+            //Add xmlns to root element for each taglib
+            xo.addRootNamespaces(prefix, uri);
         }
 
-	if (directive.equals("include")) {
+	else if (directive.equals("include")) {
 	    String file = attrs.getValue("file");
 	    if (file == null)
 		throw new CompileException(start,
@@ -781,7 +784,8 @@ public class JspParseEventListener implements ParseEventListener {
 					   ex.getMessage());
 	    }
 	}
-	if (!directive.equals("include")) {
+
+	else if (!directive.equals("include")) {
 	    xo.append("jsp:directive." + directive, attrs);
 	}
     }

@@ -1063,8 +1063,10 @@ public class Parser {
 
     void flushCharData(Mark start, Mark stop) throws JasperException {
         char[] array = caw.toCharArray();
-        if (array.length != 0) // Avoid unnecessary out.write("") statements...
-            listener.handleCharData(start, stop, caw.toCharArray());
+        // Avoid unnecessary out.write("") statements...
+        if (array.length != 0) {
+            listener.handleJspCdata(start, stop, caw.toCharArray());
+        }
         caw = new CharArrayWriter();
     }
 

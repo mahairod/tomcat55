@@ -238,6 +238,8 @@ final class DelegatingListener implements ParseEventListener {
         throws JasperException {}
 
     public void handleJspCdata(Mark start, Mark stop, char[] data)
-        throws JasperException {}
+        throws JasperException {
+        delegate.handleJspCdata(start, stop, data);
+    }
 }
 
