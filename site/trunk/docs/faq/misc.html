@@ -223,7 +223,7 @@ Questions that were not categorized.
 
     <br><br>
 
-    Evil because
+    Evil because:
     <ul>
       <li>Security risk ... see links above</li>
       <li>
@@ -247,7 +247,7 @@ Questions that were not categorized.
         has a hole in it, bad things happen.
       </li>
       <li>
-        Configuration hiding - its important enough to say twice. Explicit
+        Configuration hiding - it's important enough to say twice. Explicit
         declaration while a PITA, will be more helpful in the maintenance
         scheme of your webapp.
       </li>
@@ -331,7 +331,7 @@ Questions that were not categorized.
   <div style="padding-left : 20px;">
     No. It was an experiment, it failed. (YMMV) The original purpose
     of LE was because jdk1.4 provides a LOT of standard functionality
-    that Tomcat uses that was not in jdk 1.3. So to save some space
+    that Tomcat uses that was not in jdk1.3. So to save some space
     two distributions were made to save some bandwidth. Since then,
     it has been an exercise in confusion. (Flame me if you disagree)
     <a href="http://marc.theaimsgroup.com/?l=tomcat-user&=105341005928071&w=2">
@@ -400,7 +400,7 @@ Questions that were not categorized.
       </a>
   </b>
   <div style="padding-left : 20px;">
-    This is done in TOMCAT_HOME/conf/web.xml by changing <code>listings</code>
+    This is done in TOMCAT_HOME/conf/web.xml by changing the <code>listings</code>
     property for the <code>default</code> servlet.
   </div><br>
 
@@ -493,8 +493,8 @@ Questions that were not categorized.
       </a>
   </b>
   <div style="padding-left : 20px;">
-    There are the most commong reasons you can get an
-    <code>java.lang.IllegalStateException</code>.
+    These are the most common reasons how you can get an
+    <code>java.lang.IllegalStateException</code>:
 
     <ul>
       <li>Calling <code>setBufferSize</code> and content has been written.</li>
@@ -520,8 +520,9 @@ Questions that were not categorized.
       </li>
     </ul>
 
-    Remember that if that when you call <code>forward()</code> or
-    <code>sendRedirect()</code>, any lines of code will still execute. For example:
+    Remember that if you call <code>forward()</code> or
+    <code>sendRedirect()</code>, any following lines of code will still execute.
+    For example:
     <div align="left"><table border="0" cellpadding="0" cellspacing="4"><tr><td height="1" width="1" bgcolor="#023264"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../images/void.gif"></td><td height="1" bgcolor="#023264"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../images/void.gif"></td><td height="1" width="1" bgcolor="#023264"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../images/void.gif"></td></tr><tr><td width="1" bgcolor="#023264"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../images/void.gif"></td><td height="1" bgcolor="#ffffff"><pre>
         {
             ...
