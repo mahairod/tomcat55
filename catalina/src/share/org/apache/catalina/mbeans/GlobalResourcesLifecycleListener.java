@@ -202,7 +202,7 @@ public class GlobalResourcesLifecycleListener
         while (roles.hasNext()) {
             Role role = (Role) roles.next();
             if (debug >= 3) {
-                log.error("  Creating Role MBean for role " + role);
+                log.debug("  Creating Role MBean for role " + role);
             }
             if (MBeanUtils.createMBean(role) == null) {
                 throw new IllegalArgumentException
