@@ -494,17 +494,17 @@ public interface HttpServletRequest extends ServletRequest {
      * The web container does not decode this String.
      * For example:
      *
-     * <blockquote>
+     * 
+
      * <table>
-     * <tr align=left><th>First line of HTTP request<th>
-     * <th>Returned Value
+     * <tr align=left><th>First line of HTTP request      </th>
+     * <th>     Returned Value</th>
      * <tr><td>POST /some/path.html HTTP/1.1<td><td>/some/path.html
      * <tr><td>GET http://foo.bar/a.html HTTP/1.0
      * <td><td>/a.html
      * <tr><td>HEAD /xyz?a=b HTTP/1.1<td><td>/xyz
      * </table>
-     * </blockquote>
-     *
+     *      
      * <p>To reconstruct an URL with a scheme and host, use
      * {@link HttpUtils#getRequestURL}.
      *
