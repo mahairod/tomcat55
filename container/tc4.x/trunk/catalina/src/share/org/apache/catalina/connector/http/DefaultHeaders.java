@@ -65,67 +65,45 @@
 package org.apache.catalina.connector.http;
 
 
-import java.io.IOException;
-import java.net.InetAddress;
-import javax.servlet.ServletInputStream;
-import org.apache.catalina.connector.HttpRequestBase;
-
-
 /**
- * HTTP request line enum type.
+ * HTTP default headers and header names.
  *
  * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
-final class HttpRequestLine {
+final class DefaultHeaders {
 
 
     // -------------------------------------------------------------- Constants
 
 
-    public static final int INITIAL_METHOD_SIZE = 8;
-    public static final int INITIAL_URI_SIZE = 64;
-    public static final int INITIAL_PROTOCOL_SIZE = 8;
-    public static final int MAX_METHOD_SIZE = 128;
-    public static final int MAX_URI_SIZE = 4096;
-    public static final int MAX_PROTOCOL_SIZE = 32;
+    static final char[] AUTHORIZATION_NAME = "authorization".toCharArray();
+    static final char[] ACCEPT_LANGUAGE_NAME = "accept-language".toCharArray();
+    static final char[] COOKIE_NAME = "cookie".toCharArray();
+    static final char[] CONTENT_LENGTH_NAME = "content-length".toCharArray();
+    static final char[] CONTENT_TYPE_NAME = "content-type".toCharArray();
+    static final char[] HOST_NAME = "host".toCharArray();
+    static final char[] CONNECTION_NAME = "connection".toCharArray();
+    static final char[] CONNECTION_CLOSE_VALUE = "close".toCharArray();
+    static final char[] EXPECT_NAME = "expect".toCharArray();
+    static final char[] EXPECT_100_VALUE = "100-continue".toCharArray();
+    static final char[] TRANSFER_ENCODING_NAME = 
+        "transfer-encoding".toCharArray();
+
+
+    static final HttpHeader CONNECTION_CLOSE = 
+        new HttpHeader("connection", "close");
+    static final HttpHeader EXPECT_CONTINUE = 
+        new HttpHeader("expect", "100-continue");
+    static final HttpHeader TRANSFER_ENCODING_CHUNKED =
+        new HttpHeader("transfer-encoding", "chunked");
 
 
     // ----------------------------------------------------------- Constructors
 
 
-    public HttpRequestLine() {
-
-        this(new char[INITIAL_METHOD_SIZE], 0, new char[INITIAL_URI_SIZE], 0, 
-             new char[INITIAL_URI_SIZE], 0);
-
-    }
-
-
-    public HttpRequestLine(char[] method, int methodEnd, 
-                           char[] uri, int uriEnd,
-                           char[] protocol, int protocolEnd) {
-
-        this.method = method;
-        this.methodEnd = methodEnd;
-        this.uri = uri;
-        this.uriEnd = uriEnd;
-        this.protocol = protocol;
-        this.protocolEnd = protocolEnd;
-
-    }
-
-
     // ----------------------------------------------------- Instance Variables
-
-
-    public char[] method;
-    public int methodEnd;
-    public char[] uri;
-    public int uriEnd;
-    public char[] protocol;
-    public int protocolEnd;
 
 
     // ------------------------------------------------------------- Properties
@@ -134,83 +112,7 @@ final class HttpRequestLine {
     // --------------------------------------------------------- Public Methods
 
 
-    /**
-     * Release all object references, and initialize instance variables, in
-     * preparation for reuse of this object.
-     */
-    public void recycle() {
-
-        methodEnd = 0;
-        uriEnd = 0;
-        protocolEnd = 0;
-
-    }
-
-
-    /**
-     * Test if the uri includes the given char array.
-     */
-    public int indexOf(char[] buf) {
-        return indexOf(buf, buf.length);
-    }
-
-
-    /**
-     * Test if the value of the header includes the given char array.
-     */
-    public int indexOf(char[] buf, int end) {
-        char firstChar = buf[0];
-        int pos = 0;
-        while (pos < uriEnd) {
-            pos = indexOf(firstChar, pos);
-            if (pos == -1)
-                return -1;
-            if ((uriEnd - pos) < end)
-                return -1;
-            for (int i = 0; i < end; i++) {
-                if (uri[i + pos] != buf[i])
-                    break;
-                if (i == (end-1))
-                    return pos;
-            }
-            pos++;
-        }
-        return -1;
-    }
-
-
-    /**
-     * Test if the value of the header includes the given string.
-     */
-    public int indexOf(String str) {
-        return indexOf(str.toCharArray(), str.length());
-    }
-
-
-    /**
-     * Returns the index of a character in the value.
-     */
-    public int indexOf(char c, int start) {
-        for (int i=start; i<uriEnd; i++) {
-            if (uri[i] == c)
-                return i;
-        }
-        return -1;
-    }
-
-
     // --------------------------------------------------------- Object Methods
-
-
-    public int hashCode() {
-        // FIXME
-        return 0;
-    }
-
-
-    public boolean equals(Object obj) {
-        return false;
-    }
 
 
 }

@@ -67,19 +67,38 @@ package org.apache.catalina.connector.http;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import javax.servlet.ServletInputStream;
 import org.apache.catalina.connector.HttpRequestBase;
+import org.apache.catalina.util.Enumerator;
 
 
 /**
  * Implementation of <b>HttpRequest</b> specific to the HTTP connector.
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
 final class HttpRequestImpl
     extends HttpRequestBase {
+
+
+    // -------------------------------------------------------------- Constants
+
+
+    /**
+     * Initial pool size.
+     */
+    protected static final int INITIAL_POOL_SIZE = 10;
+
+
+    /**
+     * Pool size increment.
+     */
+    protected static final int POOL_SIZE_INCREMENT = 5;
 
 
     // ----------------------------------------------------- Instance Variables
@@ -96,6 +115,30 @@ final class HttpRequestImpl
      */
     protected static final String info =
 	"org.apache.catalina.connector.http.HttpRequestImpl/1.0";
+
+
+    /**
+     * Headers pool.
+     */
+    protected HttpHeader[] headerPool = new HttpHeader[INITIAL_POOL_SIZE];
+
+
+    /**
+     * Position of the next available header in the pool.
+     */
+    protected int nextHeader = 0;
+
+
+    /**
+     * Connection header.
+     */
+    protected HttpHeader connectionHeader = null;
+
+
+    /**
+     * Transfer encoding header.
+     */
+    protected HttpHeader transferEncodingHeader = null;
 
 
     // ------------------------------------------------------------- Properties
@@ -148,6 +191,8 @@ final class HttpRequestImpl
 
 	super.recycle();
 	inet = null;
+        nextHeader = 0;
+        connectionHeader = null;
 
     }
 
@@ -163,6 +208,84 @@ final class HttpRequestImpl
     public ServletInputStream createInputStream() throws IOException {
 
 	return (new HttpRequestStream(this, (HttpResponseImpl) response));
+
+    }
+
+
+    /**
+     * Allocate new header.
+     * 
+     * @return an HttpHeader buffer allocated from the pool
+     */
+    HttpHeader allocateHeader() {
+        if (nextHeader == headerPool.length) {
+            // Grow the pool
+            HttpHeader[] newHeaderPool = 
+                new HttpHeader[headerPool.length + POOL_SIZE_INCREMENT];
+            for (int i = 0; i < nextHeader; i++) {
+                newHeaderPool[i] = headerPool[i];
+            }
+            headerPool = newHeaderPool;
+        }
+        if (headerPool[nextHeader] == null)
+            headerPool[nextHeader] = new HttpHeader();
+        return headerPool[nextHeader++];
+    }
+
+
+    /**
+     * Add a Header to the set of Headers associated with this Request.
+     *
+     * @param name The new header name
+     * @param value The new header value
+     * @deprecated Don't use
+     */
+    public void addHeader(String name, String value) {
+
+        if (nextHeader == headerPool.length) {
+            // Grow the pool
+            HttpHeader[] newHeaderPool = 
+                new HttpHeader[headerPool.length + POOL_SIZE_INCREMENT];
+            for (int i = 0; i < nextHeader; i++) {
+                newHeaderPool[i] = headerPool[i];
+            }
+            headerPool = newHeaderPool;
+        }
+        headerPool[nextHeader++] = new HttpHeader(name, value);
+
+    }
+
+
+    /**
+     * Return the first value of the specified header, if any; otherwise,
+     * return <code>null</code>
+     *
+     * @param header Header we want to retrieve
+     */
+    public HttpHeader getHeader(HttpHeader header) {
+
+        for (int i = 0; i < nextHeader; i++) {
+            if (headerPool[i].equals(header))
+                return headerPool[i];
+        }
+        return null;
+
+    }
+
+
+    /**
+     * Return the first value of the specified header, if any; otherwise,
+     * return <code>null</code>
+     *
+     * @param headerName Name of the requested header
+     */
+    public HttpHeader getHeader(char[] headerName) {
+
+        for (int i = 0; i < nextHeader; i++) {
+            if (headerPool[i].equals(headerName))
+                return headerPool[i];
+        }
+        return null;
 
     }
 
@@ -193,6 +316,64 @@ final class HttpRequestImpl
 
 
     // --------------------------------------------- HttpServletRequest Methods
+
+
+    /**
+     * Return the first value of the specified header, if any; otherwise,
+     * return <code>null</code>
+     *
+     * @param name Name of the requested header
+     */
+    public String getHeader(String name) {
+
+	name = name.toLowerCase();
+        for (int i = 0; i < nextHeader; i++) {
+            if (headerPool[i].equals(name))
+                return new String(headerPool[i].value, 0,
+                                  headerPool[i].valueEnd);
+        }
+        return null;
+
+
+    }
+
+
+    /**
+     * Return all of the values of the specified header, if any; otherwise,
+     * return an empty enumeration.
+     *
+     * @param name Name of the requested header
+     */
+    public Enumeration getHeaders(String name) {
+
+        ArrayList tempArrayList = new ArrayList();
+	name = name.toLowerCase();
+        for (int i = 0; i < nextHeader; i++) {
+            if (headerPool[i].equals(name))
+                tempArrayList.add(new String(headerPool[i].value, 0,
+                                             headerPool[i].valueEnd));
+        }
+        return new Enumerator(tempArrayList);
+
+    }
+
+
+    /**
+     * Return the names of all headers received with this request.
+     */
+    public Enumeration getHeaderNames() {
+
+        ArrayList tempArrayList = new ArrayList();
+        for (int i = 0; i < nextHeader; i++) {
+            tempArrayList.add(new String(headerPool[i].name, 0,
+                                         headerPool[i].nameEnd));
+        }
+        return new Enumerator(tempArrayList);
+
+    }
+
+
+
 
 
 }
