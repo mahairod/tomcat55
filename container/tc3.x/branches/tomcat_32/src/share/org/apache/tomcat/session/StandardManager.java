@@ -396,8 +396,13 @@ public final class StandardManager implements Runnable  {
      *  started
      */
     public void start() {
+
+	// Cause the context's PRNG to be initialized
+	 String sDummy = SessionUtil.generateSessionId(null);
+
 	// Start the background reaper thread
 	threadStart();
+
     }
 
 
