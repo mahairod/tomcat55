@@ -1823,7 +1823,8 @@ public class StandardDefaultContext
         nresources.addEnvironment(env);
 
         // Return the corresponding MBean name
-        ManagedBean managed = Registry.getRegistry().findManagedBean("ContextEnvironment");
+        ManagedBean managed = Registry.getRegistry(null, null)
+            .findManagedBean("ContextEnvironment");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), env);
         return (oname.toString());
@@ -1854,7 +1855,8 @@ public class StandardDefaultContext
         nresources.addResource(resource);
 
         // Return the corresponding MBean name
-        ManagedBean managed = Registry.getRegistry().findManagedBean("ContextResource");
+        ManagedBean managed = Registry.getRegistry(null, null)
+            .findManagedBean("ContextResource");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), resource);
 
@@ -1888,7 +1890,8 @@ public class StandardDefaultContext
         nresources.addResourceLink(resourceLink);
 
         // Return the corresponding MBean name
-        ManagedBean managed = Registry.getRegistry().findManagedBean("ContextResourceLink");
+        ManagedBean managed = Registry.getRegistry(null, null)
+            .findManagedBean("ContextResourceLink");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), resourceLink);
         return (oname.toString());

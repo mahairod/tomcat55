@@ -1640,7 +1640,7 @@ public class MBeanUtils {
     public synchronized static Registry createRegistry() {
 
         if (registry == null) {
-            registry = Registry.getRegistry();
+            registry = Registry.getRegistry(null, null);
             ClassLoader cl=ServerLifecycleListener.class.getClassLoader();
 
             registry.loadDescriptors("org.apache.catalina.mbeans",  cl);
@@ -1697,7 +1697,7 @@ public class MBeanUtils {
             try {
                 //Trace.parseTraceProperties();
                 //mserver = MBeanServerFactory.createMBeanServer();
-                mserver = Registry.getServer();
+                mserver = Registry.getRegistry(null, null).getMBeanServer();
             } catch (Throwable t) {
                 t.printStackTrace(System.out);
                 System.exit(1);

@@ -1610,7 +1610,7 @@ public class StandardWrapper
         }
         
         if( oname != null ) {
-            Registry.getRegistry().unregisterComponent(oname);
+            Registry.getRegistry(null, null).unregisterComponent(oname);
             
             // Send j2ee.object.deleted notification 
             Notification notification = 
@@ -1635,7 +1635,8 @@ public class StandardWrapper
             
             oname=new ObjectName(onameStr);
             controller=oname;
-            Registry.getRegistry().registerComponent(this, oname, null );
+            Registry.getRegistry(null, null)
+                .registerComponent(this, oname, null );
             
             // Send j2ee.object.created notification 
             if (this.getObjectName() != null) {

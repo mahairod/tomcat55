@@ -653,7 +653,7 @@ public class WebappLoader
                     }   
                     oname=new ObjectName(ctx.getEngineName() + ":type=Loader,path=" +
                                 path + ",host=" + ctx.getParent().getName());
-                    Registry.getRegistry().registerComponent(this, oname, null);
+                    Registry.getRegistry(null, null).registerComponent(this, oname, null);
                     controller=oname;
                 } catch (Exception e) {
                     log.error("Error registering loader", e );
@@ -671,7 +671,7 @@ public class WebappLoader
     public void destroy() {
         if( controller==oname ) {
             // Self-registration, undo it
-            Registry.getRegistry().unregisterComponent(oname);
+            Registry.getRegistry(null, null).unregisterComponent(oname);
             oname = null;
         }
         initialized = false;

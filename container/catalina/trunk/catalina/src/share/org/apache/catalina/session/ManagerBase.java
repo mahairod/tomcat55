@@ -612,7 +612,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
     public void destroy() {
         if( oname != null )
-            Registry.getRegistry().unregisterComponent(oname);
+            Registry.getRegistry(null, null).unregisterComponent(oname);
         initialized=false;
         oname = null;
     }
@@ -633,7 +633,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
                 }   
                 oname=new ObjectName(domain + ":type=Manager,path="
                 + path + ",host=" + hst.getName());
-                Registry.getRegistry().registerComponent(this, oname, null );
+                Registry.getRegistry(null, null).registerComponent(this, oname, null );
             } catch (Exception e) {
                 log.error("Error registering ",e);
             }

@@ -1103,7 +1103,8 @@ public class StandardHost
                 log.debug( "Register " + domain );
                 oname=new ObjectName(domain + ":type=Host,host=" +
                         this.getName());
-                Registry.getRegistry().registerComponent(this, oname, null);
+                Registry.getRegistry(null, null)
+                    .registerComponent(this, oname, null);
             } catch( Throwable t ) {
                 log.info("Error registering ", t );
             }

@@ -533,7 +533,7 @@ public class LoggerBase
         if ( getObjectName()==null ) {   
             ObjectName oname = createObjectName();   
             try {   
-                Registry.getRegistry().registerComponent(this, oname, null); 
+                Registry.getRegistry(null, null).registerComponent(this, oname, null); 
                 log.debug( "registering logger " + oname );   
             } catch( Exception ex ) {   
                 log.error( "Can't register logger " + oname, ex);   
@@ -557,7 +557,7 @@ public class LoggerBase
         if ( getObjectName()!=null ) {   
             ObjectName oname = createObjectName();   
             try {   
-                Registry.getRegistry().unregisterComponent(oname); 
+                Registry.getRegistry(null, null).unregisterComponent(oname); 
                 log.info( "unregistering logger " + oname );   
             } catch( Exception ex ) {   
                 log.error( "Can't unregister logger " + oname, ex);   

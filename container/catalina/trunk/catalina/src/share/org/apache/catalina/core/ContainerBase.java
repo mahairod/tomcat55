@@ -1092,7 +1092,8 @@ public abstract class ContainerBase
             if( lb.getObjectName()==null ) {
                 ObjectName lname=lb.createObjectName();
                 try {
-                    Registry.getRegistry().registerComponent(lb, lname, null);
+                    Registry.getRegistry(null, null)
+                        .registerComponent(lb, lname, null);
                 } catch( Exception ex ) {
                     log.error( "Can't register logger " + lname, ex);
                 }
@@ -1206,7 +1207,8 @@ public abstract class ContainerBase
             LoggerBase lb=(LoggerBase)logger;
             if( lb.getObjectName()!=null ) {
                 try {
-                    Registry.getRegistry().unregisterComponent(lb.getObjectName());
+                    Registry.getRegistry(null, null)
+                        .unregisterComponent(lb.getObjectName());
                 } catch( Exception ex ) {
                     log.error( "Can't unregister logger " + lb.getObjectName(), ex);
                 }
@@ -1259,7 +1261,8 @@ public abstract class ContainerBase
         if ( oname != null ) {
             try {
                 if( controller == oname ) {
-                    Registry.getRegistry().unregisterComponent(oname);
+                    Registry.getRegistry(null, null)
+                        .unregisterComponent(oname);
                     log.debug("unregistering " + oname);
                 }
             } catch( Throwable t ) {

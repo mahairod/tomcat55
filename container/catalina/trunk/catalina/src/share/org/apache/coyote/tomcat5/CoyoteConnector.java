@@ -1364,7 +1364,8 @@ public class CoyoteConnector
                 String addSuffix=(getAddress()==null) ?"": ",address=" + encodedAddr;
                 oname=new ObjectName(cb.getName() + ":type=Connector,port="+
                         getPort() + addSuffix);
-                Registry.getRegistry().registerComponent(this, oname, null);
+                Registry.getRegistry(null, null)
+                    .registerComponent(this, oname, null);
                 controller=oname;
             } catch (Exception e) {
                 log.error( "Error registering connector ", e);
@@ -1528,10 +1529,9 @@ public class CoyoteConnector
         if ( this.oname != null ) {
             // We are registred - register the adapter as well.
             try {
-                Registry.getRegistry().registerComponent
-                    (protocolHandler, this.domain, "protocolHandler",
-                     "type=protocolHandler,className="
-                     + protocolHandlerClassName);
+                Registry.getRegistry(null, null).registerComponent
+                    (protocolHandler, this.domain + ":type=protocolHandler,className="
+                     + protocolHandlerClassName, "protocolHandler");
             } catch (Exception ex) {
                 log.error(sm.getString
                           ("coyoteConnector.protocolRegistrationFailed"), ex);
@@ -1554,9 +1554,8 @@ public class CoyoteConnector
             //mapperListener.setEngine( service.getContainer().getName() );
             mapperListener.init();
             try {
-                Registry.getRegistry().registerComponent
-                        (mapper, this.domain, "Mapper",
-                                "type=Mapper");
+                Registry.getRegistry(null, null).registerComponent
+                    (mapper, this.domain + ":type=Mapper", "Mapper");
             } catch (Exception ex) {
                 log.error(sm.getString
                         ("coyoteConnector.protocolRegistrationFailed"), ex);
@@ -1582,10 +1581,12 @@ public class CoyoteConnector
         started = false;
 
         try {
-            Registry.getRegistry().unregisterComponent(new ObjectName(domain,"type", "Mapper"));
-            Registry.getRegistry().unregisterComponent(new ObjectName(domain
-                    + ":type=protocolHandler,className="
-                    + protocolHandlerClassName));
+            Registry.getRegistry(null, null).unregisterComponent
+                (new ObjectName(domain,"type", "Mapper"));
+            Registry.getRegistry(null, null).unregisterComponent
+                (new ObjectName(domain
+                 + ":type=protocolHandler,className="
+                 + protocolHandlerClassName));
         } catch (MalformedObjectNameException e) {
             log.info( "Error unregistering mapper ", e);
         }
@@ -1897,7 +1898,7 @@ public class CoyoteConnector
     public void destroy() throws Exception {
         if( oname!=null && controller==oname ) {
             log.debug("Unregister itself " + oname );
-            Registry.getRegistry().unregisterComponent(oname);
+            Registry.getRegistry(null, null).unregisterComponent(oname);
         }
         if( getService() == null)
             return;

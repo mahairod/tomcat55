@@ -148,7 +148,7 @@ public class MapperListener
 
         try {
 
-            mBeanServer = Registry.getServer();
+            mBeanServer = Registry.getRegistry(null, null).getMBeanServer();
 
             registerEngine();
 

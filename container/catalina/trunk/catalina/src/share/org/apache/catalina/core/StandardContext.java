@@ -3867,7 +3867,7 @@ public class StandardContext
                     new ObjectName(this.getDomain() + ":type=Cache,host=" 
                                    + getHostname() + ",path=" 
                                    + (("".equals(getPath()))?"/":getPath()));
-                Registry.getRegistry().registerComponent
+                Registry.getRegistry(null, null).registerComponent
                     (proxyDirContext.getCache(), resourcesName, null);
             }
             this.resources = proxyDirContext;
@@ -3904,7 +3904,8 @@ public class StandardContext
                                        + getHostname() + ",path=" 
                                        + (("".equals(getPath()))?"/"
                                           :getPath()));
-                    Registry.getRegistry().unregisterComponent(resourcesName);
+                    Registry.getRegistry(null, null)
+                        .unregisterComponent(resourcesName);
                 }
             }
         } catch (Throwable t) {
@@ -3999,10 +4000,10 @@ public class StandardContext
         preRegisterJMX();
 
         if ((oname != null) && 
-            (Registry.getRegistry().getMBeanServer().isRegistered(oname))) {
+            (Registry.getRegistry(null, null).getMBeanServer().isRegistered(oname))) {
             // As things depend on the JMX registration, the context
             // must be reregistered again once properly initialized
-            Registry.getRegistry().unregisterComponent(oname);
+            Registry.getRegistry(null, null).unregisterComponent(oname);
         }
 
         // Notify our interested LifecycleListeners
@@ -5108,7 +5109,8 @@ public class StandardContext
         nresources.addEnvironment(env);
 
         // Return the corresponding MBean name
-        ManagedBean managed = Registry.getRegistry().findManagedBean("ContextEnvironment");
+        ManagedBean managed = Registry.getRegistry(null, null)
+            .findManagedBean("ContextEnvironment");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), env);
         return (oname.toString());
@@ -5139,7 +5141,8 @@ public class StandardContext
         nresources.addResource(resource);
 
         // Return the corresponding MBean name
-        ManagedBean managed = Registry.getRegistry().findManagedBean("ContextResource");
+        ManagedBean managed = Registry.getRegistry(null, null)
+            .findManagedBean("ContextResource");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), resource);
         return (oname.toString());
@@ -5172,7 +5175,8 @@ public class StandardContext
         nresources.addResourceLink(resourceLink);
 
         // Return the corresponding MBean name
-        ManagedBean managed = Registry.getRegistry().findManagedBean("ContextResourceLink");
+        ManagedBean managed = Registry.getRegistry(null, null)
+            .findManagedBean("ContextResourceLink");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), resourceLink);
         return (oname.toString());
@@ -5271,9 +5275,11 @@ public class StandardContext
             if (log.isDebugEnabled()) {
                 log.debug("Checking for " + oname );
             }
-            if(! Registry.getRegistry().getMBeanServer().isRegistered(oname)) {
+            if(! Registry.getRegistry(null, null)
+                .getMBeanServer().isRegistered(oname)) {
                 controller = oname;
-                Registry.getRegistry().registerComponent(this, oname, null);
+                Registry.getRegistry(null, null)
+                    .registerComponent(this, oname, null);
                 
                 // Send j2ee.object.created notification 
                 if (this.getObjectName() != null) {
@@ -5338,7 +5344,8 @@ public class StandardContext
                 StandardHost host=new StandardHost();
                 host.setName(hostName);
                 host.setAutoDeploy(false);
-                Registry.getRegistry().registerComponent(host, parentName, null);
+                Registry.getRegistry(null, null)
+                    .registerComponent(host, parentName, null);
                 mserver.invoke(parentName, "init", new Object[] {}, new String[] {} );
             }
             ContextConfig config = new ContextConfig();

@@ -966,7 +966,7 @@ public abstract class RealmBase
         // unregister this realm
         if ( oname!=null ) {   
             try {   
-                Registry.getRegistry().unregisterComponent(oname); 
+                Registry.getRegistry(null, null).unregisterComponent(oname); 
                 log.debug( "unregistering realm " + oname );   
             } catch( Exception ex ) {   
                 log.error( "Can't unregister realm " + oname, ex);   
@@ -1236,7 +1236,7 @@ public abstract class RealmBase
             try {
                 ContainerBase cb=(ContainerBase)container;
                 oname=new ObjectName(cb.getDomain()+":type=Realm" + cb.getContainerSuffix());
-                Registry.getRegistry().registerComponent(this, oname, null );
+                Registry.getRegistry(null, null).registerComponent(this, oname, null );
                 log.debug("Register Realm "+oname);
             } catch (Throwable e) {
                 log.error( "Can't register " + oname, e);
