@@ -63,7 +63,6 @@
 
 
 package org.apache.tomcat.core;
-import javax.servlet.Servlet;
 
 /**
  * Notifications for all context events. 
