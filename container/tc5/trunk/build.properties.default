@@ -10,16 +10,6 @@
 # -----------------------------------------------------------------------------
 
 
-# ----- Proxy to download subproject -----
-#proxy.host=proxy.domain
-#proxy.port=8080
-#proxy.use=on
-
-
-# ----- CVS root for the jakarta repositories -----
-cvsroot=":pserver:anoncvs@cvs.apache.org:/home/cvspublic"
-
-
 # ----- Compile Control Flags -----
 compile.debug=on
 compile.deprecation=off
@@ -37,16 +27,15 @@ compile.optimize=on
 #Hide configuration flags display
 #flags.hide=on
 
-#Version number
-version=5.0
 
-# ----- CVS setup
+# ----- CVS setup -----
 #Proxy to download subproject
 #proxy.host=proxy.domain
 #proxy.port=8080
 #proxy.use=on
 
-#CVS root for the jakarta repositories.
+
+# ----- CVS root for the jakarta repositories ------
 cvsroot=":pserver:anoncvs@cvs.apache.org:/home/cvspublic"
 
 

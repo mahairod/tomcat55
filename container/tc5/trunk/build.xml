@@ -512,13 +512,13 @@
       <param name="sourcefile" value="${xerces.loc}"/>
       <param name="destfile" value="${xmlParserAPIs.jar}"/>
     </antcall>
-    <!-- commons- daemons/dbcp/pool need something different. -->
 
-    <antcall target="cvsbuild">
+    <antcall target="downloadgz">
       <param name="location" value="${commons-daemon.loc}"/>
       <param name="subdir" value="${commons-daemon.home}"/>
-      <param name="destfile" value="${commons-daemon.jar}"/>
     </antcall>
+
+    <!-- commons-dbcp/pool need something different. -->
     <!-- Pool 1.0 -->
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-pool.loc}"/>
