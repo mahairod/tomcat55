@@ -505,6 +505,7 @@ final class ApplicationDispatcher
 	} catch (IOException e) {
 	    log(sm.getString("applicationDispatcher.serviceException",
 			     wrapper.getName()), e);
+	    throwable = e;
 	} catch (UnavailableException e) {
 	    log(sm.getString("applicationDispatcher.serviceException",
 			     wrapper.getName()), e);
