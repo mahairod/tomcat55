@@ -11,7 +11,7 @@
 <%@ include file="../users/header.jsp" %>
 
 <!-- Body -->
-<body bgcolor="white">
+<body bgcolor="white" background="../images/PaperTexture.gif">
 
 <!--Form -->
 

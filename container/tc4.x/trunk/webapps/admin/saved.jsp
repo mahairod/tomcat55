@@ -7,7 +7,7 @@
 
 <html:html locale="true">
 
-  <body bgcolor="white">
+  <body bgcolor="white" background="images/PaperTexture.gif">
 
     <%-- Cause our tree control to refresh itself --%>
     <script language="JavaScript">

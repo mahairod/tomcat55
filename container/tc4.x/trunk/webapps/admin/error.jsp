@@ -13,7 +13,7 @@
 
 <!-- Body -->
 
-<body bgcolor="white">
+<body bgcolor="white" background="images/PaperTexture.gif">
 
 <center>
 

@@ -11,7 +11,7 @@
 <%@ include file="../users/header.jsp" %>
 
 <!-- Body -->
-<body bgcolor="white">
+<body bgcolor="white" background="../images/PaperTexture.gif">
 
 <!--Form -->
 
@@ -22,6 +22,8 @@
   <bean:define id="serviceName" name="serviceForm" property="serviceName"/>
   <bean:define id="thisObjectName" type="java.lang.String"
                name="serviceForm" property="objectName"/>
+  <bean:define id="thisServiceName" type="java.lang.String"
+               name="serviceForm" property="serviceName"/>
   <html:hidden property="adminAction"/>
   <html:hidden property="objectName"/>
   <html:hidden property="engineObjectName"/>
@@ -51,22 +53,22 @@
             </controls:action>
             <logic:notEqual name="serviceForm" property="adminAction" value="Create">
               <controls:action url='<%= "/AddConnector.do?serviceName=" +
-                                        serviceName %>'>  
+                                        URLEncoder.encode(thisServiceName) %>'>  
                 <bean:message key="actions.connectors.create"/>
               </controls:action>              
               <controls:action url='<%= "/DeleteConnector.do?serviceName=" +
-                        serviceName %>'> 
+                                        URLEncoder.encode(thisServiceName)%>'> 
                 <bean:message key="actions.connectors.deletes"/>
               </controls:action>
               <controls:action>
                 -------------------------------------
               </controls:action>
               <controls:action url='<%= "/AddHost.do?serviceName=" +
-                                        serviceName %>'>  
+                                        URLEncoder.encode(thisServiceName) %>'>  
                 <bean:message key="actions.hosts.create"/>
               </controls:action>              
               <controls:action url='<%= "/DeleteHost.do?serviceName=" +
-                                        serviceName %>'>
+                                        URLEncoder.encode(thisServiceName) %>'>
                 <bean:message key="actions.hosts.deletes"/> 
               </controls:action>
               <controls:action disabled="true">
@@ -153,7 +155,6 @@
             </controls:label>
             <controls:data>
               <logic:equal name="serviceForm" property="adminAction" value="Create">
-
                 <html:text property="serviceName" size="24" maxlength="24"/>
               </logic:equal>
               <logic:equal name="serviceForm" property="adminAction" value="Edit">
