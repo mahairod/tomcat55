@@ -47,6 +47,10 @@ Catalina New Features:
 Jasper New Features:
 -------------------
 
+Compiling JSP servlets with class debugging information is now possible
+by adding a "classdebuginfo" init parameter set to "true" in the JspSerlvet
+configuration.  This may be done in "conf/web.xml", or in the web.xml of
+a specific web application by adding a JspServlet configuration.
 
 --------------------
 Webapps New Features:
