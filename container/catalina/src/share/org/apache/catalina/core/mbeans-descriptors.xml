@@ -110,6 +110,10 @@
     <attribute name="engineName"
                description="Name of the engine domain, if different from the context domain"
                type="java.lang.String"/>
+
+    <attribute name="objectName"
+               description="Name of the object"
+               type="java.lang.String"/>
       
     <attribute name="privileged"
                description="Access to tomcat internals"
