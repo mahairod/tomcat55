@@ -216,9 +216,11 @@ mail.lib=${mail.home}
 mail.jar=${mail.lib}/mail.jar
 
 
-# ----- NSIS, version 1.90 or later -----
+# ----- NSIS, version 2.0a6 or later -----
 nsis.home=${base.path}/nsis
-nsis.loc=http://www.nullsoft.com/free/nsis/nsis198.exe
+nsis.exe=${nsis.home}/makensis.exe
+nsis.installoptions=${nsis.home}/Bin/InstallOptions.dll
+nsis.loc=http://telia.dl.sourceforge.net/sourceforge/nsis2k/nsis20a6.exe
 
 
 # ----- PureTLS Extension, version 0.9 or later -----
