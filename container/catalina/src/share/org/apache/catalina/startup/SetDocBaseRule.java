@@ -133,6 +133,9 @@ public class SetDocBaseRule extends Rule {
         if (!((StandardHost) host).isUnpackWARs()) {
             return;
         }
+        if ("false".equals(attributes.getValue("unpackWAR"))) {
+            return;
+        }
 
         File canonicalAppBase = 
             new File(System.getProperty("catalina.base"), appBase)
