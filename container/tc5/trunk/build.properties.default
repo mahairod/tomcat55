@@ -116,13 +116,6 @@ ldap.jar=${jndi.lib}/ldap.jar
 jaas.jar=${jndi.lib}/jaas.jar
 
 
-# ----- Jakarta Regular Expressions Library, version 1.2 or later -----
-regexp.home=${base.path}/jakarta-regexp-1.3
-regexp.lib=${regexp.home}
-regexp.jar=${regexp.lib}/jakarta-regexp-1.3.jar
-regexp.loc=${base-jakarta.loc}/regexp/binaries/jakarta-regexp-1.3.tar.gz
-
-
 # ----- Xerces XML Parser, version 2.6.2 -----
 xerces.home=${base.path}/xerces-2_6_2
 xerces.lib=${xerces.home}
