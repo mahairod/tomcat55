@@ -74,7 +74,7 @@ import org.xml.sax.*;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
-
+import org.apache.jasper.logging.Logger;
 
 /**
  * A container for all tag libraries that are defined "globally"
@@ -142,10 +142,12 @@ public class TagLibrariesGlobal {
     {
         // Parse web.xml
 	InputStream is = ctxt.getResourceAsStream(WEB_XML);
+
 	if (is == null) {
-	    throw new JasperException(
-		Constants.getString("jsp.error.internal.filenotfound", 
-				    new Object[]{WEB_XML}));
+	    Constants.message("jsp.error.internal.filenotfound", 
+			      new Object[]{WEB_XML},
+			      Logger.WARNING);
+	    return;
 	}
 	Document webtld =
 	    JspUtil.parseXMLDoc(WEB_XML, is);
@@ -271,8 +273,12 @@ public class TagLibrariesGlobal {
     {
 	Document tld = JspUtil.parseXMLDoc(resourcePath, in);
         NodeList list = tld.getElementsByTagName("taglib");
-        if (list.getLength() != 1)
-            throw new JasperException(Constants.getString("jsp.error.more.than.one.taglib"));
+        if (list.getLength() != 1) {
+	    Constants.message("jsp.error.more.than.one.taglib",
+			      new Object[]{resourcePath},
+			      Logger.ERROR);
+	    return null;
+	}
 
         Element elem = (Element)list.item(0);
         list = elem.getChildNodes();

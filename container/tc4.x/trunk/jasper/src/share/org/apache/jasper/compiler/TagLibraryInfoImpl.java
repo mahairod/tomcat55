@@ -267,7 +267,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         NodeList list = tld.getElementsByTagName("taglib");
 
         if (list.getLength() != 1)
-            throw new JasperException(Constants.getString("jsp.error.more.than.one.taglib"));
+            throw new JasperException(
+                Constants.getString("jsp.error.more.than.one.taglib",
+                                    new Object[]{uri}));
 
         Element elem = (Element) list.item(0);
         list = elem.getChildNodes();
