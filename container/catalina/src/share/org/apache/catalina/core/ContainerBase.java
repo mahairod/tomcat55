@@ -159,7 +159,6 @@ import org.apache.commons.modeler.Registry;
  * class comments of the implementation class.
  *
  * @author Craig R. McClanahan
- * @version $Revision$ $Date$
  */
 
 public abstract class ContainerBase
@@ -1210,6 +1209,24 @@ public abstract class ContainerBase
                 }
             }
         }
+        // If we are registered and the valve is not - create a default name
+        Valve valves[]=getValves();
+        for( int i=0; i<valves.length; i++ ) {
+            Valve valve=valves[i];
+            //log.info("Valve: " + this + " " + valve + " " + domain  );
+            if( valve instanceof ValveBase &&
+                    ((ValveBase)valve).getObjectName()==null ) {
+                try {
+                    ObjectName vname=((ValveBase)valve).createObjectName(getDomain(),
+                            this.getObjectName());
+                    ((ValveBase)valve).setObjectName(vname);
+                    Registry.getRegistry().registerComponent(valve, vname, valve.getClass().getName());
+                    ((ValveBase)valve).setController(oname);
+                } catch( Throwable t ) {
+                    log.info( "Can't register valve " + valve , t );
+                }
+            }
+        }
         
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
@@ -1348,20 +1365,13 @@ public abstract class ContainerBase
     public synchronized void addValve(Valve valve) {
 
         pipeline.addValve(valve);
-        // If we are registered and the valve is not - create a default name
-        if( domain != null && valve instanceof ValveBase &&
-                ((ValveBase)valve).getObjectName()==null ) {
-            try {
-                ObjectName vname=((ValveBase)valve).createObjectName(domain, this.getObjectName());
-                Registry.getRegistry().registerComponent(valve, vname, valve.getClass().getName());
-                ((ValveBase)valve).setController(oname);
-            } catch( Throwable t ) {
-                log.info( "Can't register valve " + valve , t );
-            }
-        }
         fireContainerEvent(ADD_VALVE_EVENT, valve);
     }
 
+    public ObjectName[] getValveNames() {
+        return ((StandardPipeline)pipeline).getValveNames();
+    }
+    
     /**
      * <p>Return the Valve instance that has been distinguished as the basic
      * Valve for this Pipeline (if any).
@@ -1394,13 +1404,12 @@ public abstract class ContainerBase
     public synchronized void removeValve(Valve valve) {
 
         pipeline.removeValve(valve);
-        if( domain != null &&
-                valve instanceof ValveBase ) {
+        if( valve instanceof ValveBase ) {
             try {
                 ValveBase vb=(ValveBase)valve;
                 if( vb.getController()!=null &&
                         vb.getController() == oname ) {
-
+                    
                     ObjectName vname=vb.getObjectName();
                     Registry.getRegistry().getMBeanServer().unregisterMBean(vname);
                 }
@@ -1546,6 +1555,16 @@ public abstract class ContainerBase
     }
 
     public String getDomain() {
+        if( domain==null ) {
+            Container parent=this;
+            while( parent != null &&
+                    !( parent instanceof StandardEngine) ) {
+                parent=parent.getParent();
+            }
+            if( parent instanceof StandardEngine ) {
+                domain=((StandardEngine)parent).getName();
+            } 
+        }
         return domain;
     }
 
@@ -1610,5 +1629,37 @@ public abstract class ContainerBase
         return null;
     }
 
+    public String getContainerSuffix() {
+        Container container=this;
+        Container context=null;
+        Container host=null;
+        Container servlet=null;
+        
+        StringBuffer suffix=new StringBuffer();
+        
+        if( container instanceof StandardHost ) {
+            host=container;
+        } else if( container instanceof StandardContext ) {
+            host=container.getParent();
+            context=container;
+        } else if( container instanceof StandardWrapper ) {
+            context=container.getParent();
+            host=context.getParent();
+            servlet=container;
+        }
+        if( host!=null ) suffix.append(",host=").append( host.getName() );
+        if( context!=null ) {
+            String path=((StandardContext)context).getPath();
+            suffix.append(",path=").append((path=="") ? "//" : path);
+        } 
+        if( servlet != null ) {
+            String name=container.getName();
+            suffix.append(",servlet=");
+            suffix.append((name=="") ? "/" : name);
+        }
+        return suffix.toString();
+    }
+
+    
 }
 
