@@ -170,15 +170,13 @@ public final class SaveResourceLinkAction extends Action {
         // Perform an "Add ResourceLink" transaction
         if (objectName == null) {
 
-            String signature[] = new String[3];
+            String signature[] = new String[2];
             signature[0] = "java.lang.String";
             signature[1] = "java.lang.String";
-            signature[2] = "java.lang.String";
 
-            Object params[] = new Object[3];
+            Object params[] = new Object[2];
             params[0] = resourceLinkForm.getName();
             params[1] = resourceLinkForm.getType();   
-            params[2] = resourceLinkForm.getGlobal();
             
             String resourcetype = resourceLinkForm.getResourcetype();
             String path = resourceLinkForm.getPath();
