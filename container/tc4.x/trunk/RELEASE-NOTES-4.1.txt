@@ -62,6 +62,9 @@ General New Features:
 [4.1.19] Documentation:
          Added printer friendly versions of the documents.
 
+[4.1.19] Administration Webapp:
+         Complete the accessibility requirements to pass section 508.
+
 ---------------------
 Catalina New Features:
 ---------------------
