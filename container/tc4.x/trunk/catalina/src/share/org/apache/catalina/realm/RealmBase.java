@@ -516,7 +516,7 @@ public abstract class RealmBase
 
         // Validate and update our current component state
         if (started)
-            throw new IllegalStateException
+            throw new LifecycleException
                 (sm.getString("realmBase.alreadyStarted"));
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
@@ -549,7 +549,7 @@ public abstract class RealmBase
 
         // Validate and update our current component state
         if (!started)
-            throw new IllegalStateException
+            throw new LifecycleException
                 (sm.getString("realmBase.notStarted"));
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         started = false;
