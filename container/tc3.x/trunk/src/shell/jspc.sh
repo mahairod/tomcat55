@@ -7,4 +7,4 @@
 
 BASEDIR=`dirname $0`
 
-$BASEDIR/tomcat.sh jspc "$@"
+$BASEDIR/tomcat jspc "$@"

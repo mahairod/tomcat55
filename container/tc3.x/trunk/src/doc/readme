@@ -112,7 +112,7 @@ include the following:
   change can be accomplished by executing the command from the TOMCAT_HOME
   directory with JAVA_HOME set:
 
-	./bin/tomcat.sh enableAdmin    <-- Unix
+	./bin/tomcat enableAdmin       <-- Unix
 	bin\tomcat enableAdmin         <-- Windows
 
   Start or restart Tomcat 3.3 and invoke the following URL in your browser:

@@ -66,12 +66,12 @@ then change httpd.conf to read
    Include TOMCAT_HOME/conf/mod_jk.conf
 
 Note that Tomcat must be started *before* Apache for mod_jk to
-initialize correctly.  Since "tomcat.sh start" launches Tomcat in the
+initialize correctly.  Since "tomcat start" launches Tomcat in the
 background, you may have to do something like the following in your
 startup script:
 
 	cd $TOMCAT_HOME/bin
-	./tomcat.sh start
+	./tomcat start
 	sleep 4
 	$APACHE_HOME/bin/apachectl start
 

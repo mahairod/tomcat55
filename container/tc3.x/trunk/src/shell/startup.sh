@@ -6,4 +6,4 @@
 
 BASEDIR=`dirname $0`
 
-$BASEDIR/tomcat.sh start $@
+$BASEDIR/tomcat start $@
