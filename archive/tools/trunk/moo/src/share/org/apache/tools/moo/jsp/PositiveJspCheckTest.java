@@ -135,21 +135,18 @@ extends JspCheckTest {
                     result.append("  " + token);
                 }
                 
-                          
             }
             
-            
-
             // Get the expected result from the "golden" file.
             StringBuffer expResult = getExpectedResult (getGoldenFileName());
 
             // Compare the results and set the status
-            String diff = null;
-            boolean status = compare(result.toString(), expResult.toString(), diff);
+            boolean status = compare(result.toString(), expResult.toString());
             testResult.setStatus(status);
 
             // Set the message (Check with SCheck.
-            testResult.setMessage(diff);
+            if (status == false)
+                testResult.setMessage("COMPARISION_FAILED");
 
             // Now free the connection.
             connection.disconnect();
@@ -163,38 +160,30 @@ extends JspCheckTest {
     public StringBuffer getExpectedResult(String goldenFile)
     throws IOException{
 
-        URL url;
-        HttpURLConnection con;
         StringBuffer expResult = new StringBuffer();
 
-        String mapResource = this.getClass().getName();
-
+        BufferedReader in = null;
         try {
-
-            String gfURL = mapManager.getGoldenfilePrefix(mapResource, goldenFile);
-            url = URLHelper.getURL(gfURL);
-            out.println("url = " + url.toString());
+            String golden = goldenFile.substring(goldenFile.lastIndexOf("/") + 1, 
+                                goldenFile.length());
             
-            con = (HttpURLConnection) url.openConnection();
-            con.setUseCaches(false);
-
-            BufferedReader in = new BufferedReader
-                                (new InputStreamReader(con.getInputStream()));
+            in = new BufferedReader
+                         (new InputStreamReader(
+                             this.getClass().getResourceAsStream(golden))); 
 
             String line = null;
-
             while ((line = in.readLine()) != null ) {
                 StringTokenizer tok = new StringTokenizer(line);
                 while (tok.hasMoreTokens()) {
                     String token = tok.nextToken();
                     expResult.append("  " + token);
                 }
-                
-            
             }
 
         } catch (Exception ex) {
             out.println (ex.getMessage());
+        } finally {
+            in.close();
         }
 
         return expResult;
@@ -202,7 +191,7 @@ extends JspCheckTest {
 
     // Compare the actual result and the expected result.
     // Should employ a more sophasticated mechanism for comparison.
-    public boolean compare(String str1, String str2, String diff) {
+    public boolean compare(String str1, String str2) {
 
         StringTokenizer st1=new StringTokenizer(str1);
         StringTokenizer st2=new StringTokenizer(str2);
@@ -219,13 +208,11 @@ extends JspCheckTest {
                     // eat the exception.
                 }
 
-                diff = "COMPARISON_FAIL";
                 return false;
             }
         }
 
         if (st1.hasMoreTokens() || st2.hasMoreTokens()) {
-            diff = "COMPARISON_FAIL";
             return false;
         } else {
             return true;
