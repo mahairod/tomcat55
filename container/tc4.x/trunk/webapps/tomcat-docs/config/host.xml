@@ -247,7 +247,8 @@
     started, if the <code>autoDeploy</code> property is set to
     <code>true</code> (which is the default value:</p>
     <ul>
-    <li>Any XML file in this directory is assumed to contain a
+    <li>Any XML file in the directory defined by appBase
+        (<em>Application Base</em> directory) is assumed to contain a
         <a href="context.html">Context</a> element (and its associated
         subelements) for a single web application.  The <code>docBase</code>
         attribute of this <code>&lt;Context&gt;</code> element will typically
@@ -260,7 +261,7 @@
         is set to <code>false</code>.  If you redeploy an updated WAR file,
         be sure to delete the expanded directory when restarting Tomcat, so
         that the updated WAR file will be re-expanded.</li>
-    <li>Any subdirectory within the <em>application base directory</em>
+    <li>Any subdirectory within the <em>Application Base</em> directory
         that appears to be an unpacked web application (that is, it contains
         a <code>/WEB-INF/web.xml</code> file) will receive an automatically
         generated <a href="context.html">Context</a> element, even if this
