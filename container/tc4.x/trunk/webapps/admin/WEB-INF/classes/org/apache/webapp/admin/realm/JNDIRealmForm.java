@@ -67,7 +67,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import java.net.InetAddress;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.LabelValueBean;
@@ -83,17 +83,21 @@ public final class JNDIRealmForm extends ActionForm {
     
     // ----------------------------------------------------- Instance Variables
     
+   /**
+     * The administrative action represented by this form.
+     */
+    private String adminAction = "Edit";
+
+    /**
+     * The object name of the Realm this bean refers to.
+     */
+    private String objectName = null;
+
     /**
      * The text for the debug level.
      */
     private String debugLvl = "0";
-    
-    /**
-     * The text for the realm name, used to retrieve
-     * the corresponding realm mBean.
-     */
-    private String realmName = null;
-    
+        
     /**
      * The text for the realm type.
      * Specifies if it is a JNDI, JNDI or MemoryRealm.
@@ -163,30 +167,48 @@ public final class JNDIRealmForm extends ActionForm {
     /**
      * Set of valid values for debug level.
      */
-    private ArrayList debugLvlVals = null;
+    private List debugLvlVals = null;
     
     /**
      * Set of valid values for search subtrees(true/false).
      */
-    private ArrayList searchVals = null;
+    private List searchVals = null;
     
     // ------------------------------------------------------------- Properties
     
-    /**
-     * Return the Realm Name.
+       /**
+     * Return the administrative action represented by this form.
      */
-    public String getRealmName() {
+    public String getAdminAction() {
+
+        return this.adminAction;
+
+    }
+
+    /**
+     * Set the administrative action represented by this form.
+     */
+    public void setAdminAction(String adminAction) {
+
+        this.adminAction = adminAction;
+
+    }
+
+    /**
+     * Return the Object Name.
+     */
+    public String getObjectName() {
         
-        return this.realmName;
+        return this.objectName;
         
     }
     
     /**
-     * Set the Realm Name.
+     * Set the Object Name.
      */
-    public void setRealmName(String realmName) {
+    public void setObjectName(String objectName) {
         
-        this.realmName = realmName;
+        this.objectName = objectName;
         
     }
     
@@ -211,7 +233,7 @@ public final class JNDIRealmForm extends ActionForm {
     /**
      * Return the debugVals.
      */
-    public ArrayList getDebugLvlVals() {
+    public List getDebugLvlVals() {
         
         return this.debugLvlVals;
         
@@ -220,7 +242,7 @@ public final class JNDIRealmForm extends ActionForm {
     /**
      * Set the debugVals.
      */
-    public void setDebugLvlVals(ArrayList debugLvlVals) {
+    public void setDebugLvlVals(List debugLvlVals) {
         
         this.debugLvlVals = debugLvlVals;
         
@@ -229,7 +251,7 @@ public final class JNDIRealmForm extends ActionForm {
     /**
      * Return the search Vals.
      */
-    public ArrayList getSearchVals() {
+    public List getSearchVals() {
         
         return this.searchVals;
         
@@ -238,7 +260,7 @@ public final class JNDIRealmForm extends ActionForm {
     /**
      * Set the search Vals.
      */
-    public void setSearchVals(ArrayList searchVals) {
+    public void setSearchVals(List searchVals) {
         
         this.searchVals = searchVals;
         
@@ -491,6 +513,7 @@ public final class JNDIRealmForm extends ActionForm {
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         
+        this.objectName = null;
         this.debugLvl = "0";
         this.search="false";
         
@@ -508,6 +531,46 @@ public final class JNDIRealmForm extends ActionForm {
         this.contextFactory = null;
     }
     
+       /**
+     * Render this object as a String.
+     */
+    public String toString() {
+
+        StringBuffer sb = new StringBuffer("UserDatabaseRealmForm[adminAction=");
+        sb.append(adminAction);
+        sb.append(",debugLvl=");
+        sb.append(debugLvl);
+        sb.append(",search=");
+        sb.append(search);
+        sb.append(",digest=");
+        sb.append(digest);
+        sb.append("',roleAttribute='");
+        sb.append(roleAttribute);
+        sb.append("',connectionName=");
+        sb.append(connectionName);
+        sb.append(",connectionPassword=");
+        sb.append(connectionPassword);
+        sb.append("',connectionURL='");
+        sb.append(connectionURL);
+        sb.append("',rolePattern=");
+        sb.append(rolePattern);
+        sb.append(",roleBase=");
+        sb.append(roleBase);
+        sb.append("',userPassword='");
+        sb.append(userPassword);
+        sb.append("',userPattern=");
+        sb.append(userPattern);
+        sb.append(",contextFactory=");
+        sb.append(contextFactory);
+        sb.append("',objectName='");
+        sb.append(objectName);
+        sb.append("',realmType=");
+        sb.append(realmType);
+        sb.append("]");
+        return (sb.toString());
+
+    }
+
     /**
      * Validate the properties that have been set from this HTTP request,
      * and return an <code>ActionErrors</code> object that encapsulates any

@@ -31,23 +31,6 @@
     <form-bean      name="setLocaleForm"
                     type="org.apache.webapp.admin.SetLocaleForm"/>
 
-    <!-- JDBC Realm form bean -->
-    <form-bean      name="jdbcRealmForm"
-                    type="org.apache.webapp.admin.realm.JDBCRealmForm"/>
-
-    <!-- JNDI Realm form bean -->
-    <form-bean      name="jndiRealmForm"
-                    type="org.apache.webapp.admin.realm.JNDIRealmForm"/>
-
-    <!-- Memory Realm form bean -->
-    <form-bean      name="memoryRealmForm"
-                    type="org.apache.webapp.admin.realm.MemoryRealmForm"/>
-
-    <!-- UserDB Realm form bean -->
-    <form-bean      name="userdbRealmForm"
-                    type="org.apache.webapp.admin.realm.UserDBRealmForm"/>
-
-
     <!-- ============= Service Module ============= -->
 
     <form-bean      name="serviceForm"
@@ -71,6 +54,20 @@
                     
     <form-bean      name="loggersForm"
                     type="org.apache.webapp.admin.logger.LoggersForm"/>
+
+    <!-- ============= Realm Module ============= -->
+
+    <form-bean      name="jdbcRealmForm"
+                    type="org.apache.webapp.admin.realm.JDBCRealmForm"/>
+
+    <form-bean      name="jndiRealmForm"
+                    type="org.apache.webapp.admin.realm.JNDIRealmForm"/>
+
+    <form-bean      name="memoryRealmForm"
+                    type="org.apache.webapp.admin.realm.MemoryRealmForm"/>
+
+    <form-bean      name="userDatabaseRealmForm"
+                    type="org.apache.webapp.admin.realm.UserDatabaseRealmForm"/>
 
     <!-- ========== User Database Module ========== -->
 
@@ -145,22 +142,6 @@
                     path="/user.jsp"
                 redirect="false"/>
 
-    <forward        name="JDBCRealm"
-                    path="/realm/jdbcRealm.jsp"
-                redirect="false"/>
-                
-    <forward        name="JNDIRealm"
-                    path="/realm/jndiRealm.jsp"
-                redirect="false"/>
-                
-    <forward        name="MemoryRealm"
-                    path="/realm/memoryRealm.jsp"
-                redirect="false"/>
-
-    <forward        name="UserDBRealm"
-                    path="/realm/userDBRealm.jsp"
-                redirect="false"/>
-
     <!-- ============ Service Module ============== -->
 
     <forward        name="Service"
@@ -191,7 +172,24 @@
                     path="/logger/loggers.jsp"
                 redirect="false"/>
 
-            
+    <!-- ============ Logger Module ============== -->
+
+    <forward        name="JDBCRealm"
+                    path="/realm/jdbcRealm.jsp"
+                redirect="false"/>
+                
+    <forward        name="JNDIRealm"
+                    path="/realm/jndiRealm.jsp"
+                redirect="false"/>
+                
+    <forward        name="MemoryRealm"
+                    path="/realm/memoryRealm.jsp"
+                redirect="false"/>
+
+    <forward        name="UserDatabaseRealm"
+                    path="/realm/userDatabaseRealm.jsp"
+                redirect="false"/>
+        
     <!-- ========== User Database Module ========== -->
 
     <forward        name="Group"
@@ -289,34 +287,6 @@
                scope="session">
     </action>
     
-    <!-- Set up Memory Realm datastructure -->
-    <action    path="/setUpMemoryRealm"
-               type="org.apache.webapp.admin.realm.SetUpMemoryRealmAction"
-               name="memoryRealmForm"
-               scope="session">
-    </action>
-
-   <!-- Set up JDBC Realm datastructure -->
-    <action    path="/setUpJDBCRealm"
-               type="org.apache.webapp.admin.realm.SetUpJDBCRealmAction"
-               name="jdbcRealmForm"
-               scope="session">
-    </action>
-        
-   <!-- Set up JNDI Realm datastructure -->
-    <action    path="/setUpJNDIRealm"
-               type="org.apache.webapp.admin.realm.SetUpJNDIRealmAction"
-               name="jndiRealmForm"
-               scope="session">
-    </action>
-        
-    <!-- Set up User darabase Realm datastructure -->
-    <action    path="/setUpUserDBRealm"
-               type="org.apache.webapp.admin.realm.SetUpUserDBRealmAction"
-               name="userdbRealmForm"
-               scope="session">
-    </action>
-    
     <!-- Log out of the application -->
     <action    path="/logOut"
                type="org.apache.webapp.admin.LogOutAction">
@@ -359,34 +329,6 @@
     <!-- Tree control test action -->
     <action    path="/treeControlTest"
                type="org.apache.webapp.admin.TreeControlTestAction"/>
-
-    <!-- JDBC realm action -->
-    <action    path="/JDBCRealm"
-               type="org.apache.webapp.admin.realm.JDBCRealmAction"
-               name="jdbcRealmForm"
-               scope="session"               
-               input="/realm/jdbcRealm.jsp"/>
-
-    <!-- JNDI realm action -->
-    <action    path="/JNDIRealm"
-               type="org.apache.webapp.admin.realm.JNDIRealmAction"
-               name="jndiRealmForm"
-               scope="session"               
-               input="/realm/jndiRealm.jsp"/>
-
-    <!-- Memory realm action -->
-    <action    path="/MemoryRealm"
-               type="org.apache.webapp.admin.realm.MemoryRealmAction"                        
-               name="memoryRealmForm"
-               scope="session"
-               input="/realm/memoryRealm.jsp"/>
-               
-    <!-- UserDB realm action -->
-    <action    path="/UserDBRealm"
-               type="org.apache.webapp.admin.realm.UserDBRealmAction"             
-               name="userdbRealmForm"
-               scope="session"
-               input="/realm/userDBRealm.jsp"/>
 
     <!-- ============= Service Module ============== -->
 
@@ -450,6 +392,58 @@
               input="/host/host.jsp"
                scope="session"/>
 
+    <!-- ============= Realm Module ============== -->
+
+    <!-- Set up Add Realm transaction -->
+    <action    path="/AddRealm"
+               type="org.apache.webapp.admin.realm.AddRealmAction">
+    </action>
+
+    <!-- Set up Delete Realms transaction -->
+    <action    path="/DeleteRealm"
+               type="org.apache.webapp.admin.realm.DeleteRealmAction"
+               name="realmsForm"
+               scope="request"/>
+
+    <!-- Perform Delete Realms transaction -->
+    <action    path="/DeleteRealms"
+               type="org.apache.webapp.admin.realm.DeleteRealmsAction"
+               name="realmsForm"
+               scope="request"/>
+
+    <!-- Set up Edit Realm transaction (generic) -->
+    <action    path="/EditRealm"
+               type="org.apache.webapp.admin.realm.EditRealmAction">
+    </action>
+
+    <!-- Perform Save UserDatabase Realm transaction -->
+    <action    path="/SaveUserDatabaseRealm"
+               type="org.apache.webapp.admin.realm.SaveUserDatabaseRealmAction"
+               name="userDatabaseRealmForm"
+              input="/realm/userDatabaseRealm.jsp"
+               scope="session"/>
+
+   <!-- Perform Save JDBC Realm transaction -->
+    <action    path="/SaveJDBCRealm"
+               type="org.apache.webapp.admin.realm.SaveJDBCRealmAction"
+               name="jdbcRealmForm"
+              input="/realm/jdbcRealm.jsp"
+               scope="session"/>
+
+    <!-- Perform Save JNDI Realm transaction -->
+    <action    path="/SaveJNDIRealm"
+               type="org.apache.webapp.admin.realm.SaveJNDIRealmAction"
+               name="jndiRealmForm"
+              input="/realm/jndiRealm.jsp"
+               scope="session"/>
+
+    <!-- Perform Save Memory transaction -->
+    <action    path="/SaveMemoryRealm"
+               type="org.apache.webapp.admin.realm.SaveMemoryRealmAction"
+               name="memoryRealmForm"
+              input="/realm/memoryRealm.jsp"
+               scope="session"/>
+               
     <!-- ============= Logger Module ============== -->
 
     <!-- Set up Add Logger transaction -->

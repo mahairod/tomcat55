@@ -15,12 +15,16 @@
 
 <html:errors/>
 
-<html:form method="POST" action="/JDBCRealm">
+<html:form method="POST" action="/SaveJDBCRealm">
+
+  <bean:define id="thisObjectName" type="java.lang.String"
+               name="userDatabaseRealmForm" property="objectName"/>
+  <html:hidden property="adminAction"/>
+  <html:hidden property="objectName"/>
+
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%">
-        <html:hidden property="realmName"/>
-        <html:hidden property="realmType"/>
        <div class="page-title-text" align="left"> 
           <bean:write name="jdbcRealmForm" property="nodeLabel" scope="session"/>
        </div>

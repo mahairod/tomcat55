@@ -31,11 +31,17 @@
         <div align="right">
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
-            <controls:action> --------------------------------- </controls:action>
-           <%--
-            <controls:action url="">  <bean:message key="actions.logger.create"/> </controls:action>
-            <controls:action url="">  <bean:message key="actions.logger.delete"/> </controls:action>
-            <controls:action> ------------------------------------- </controls:action>
+            <controls:action disabled="true"> --------------------------------- </controls:action>
+            <%--
+            <controls:action url='<%= "/AddLogger.do?parent=" + 
+                                  URLEncoder.encode(thisObjectName) %>'>
+                <bean:message key="actions.loggers.create"/>
+            </controls:action>              
+            <controls:action url='<%= "/DeleteLogger.do?parent=" + 
+                                  URLEncoder.encode(thisObjectName) %>'> 
+                <bean:message key="actions.loggers.deletes"/> 
+            </controls:action>
+            <controls:action disabled="true"> ------------------------------------- </controls:action>
             <controls:action url="">  <bean:message key="actions.requestfilter.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.requestfilter.delete"/> </controls:action>
             <controls:action> ------------------------------------- </controls:action>

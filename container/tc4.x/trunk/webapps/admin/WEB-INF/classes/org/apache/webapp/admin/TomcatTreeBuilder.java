@@ -87,9 +87,6 @@ import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
 
-import org.apache.webapp.admin.logger.SetUpLoggerAction;
-import org.apache.webapp.admin.realm.SetUpUserDBRealmAction;
-
 /**
  * <p> Implementation of TreeBuilder interface for Tomcat Tree Controller
  *     to build plugin components into the tree
@@ -377,17 +374,15 @@ public class TomcatTreeBuilder implements TreeBuilder{
                 new TreeControlNode(realmName,
                                     "folder_16_pad.gif",
                                     nodeLabel,
-                                    "setUpRealm.do?select=" +
+                                    "EditRealm.do?select=" +
                                     URLEncoder.encode(realmName) +
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
                                     "content",
                                     false);
-            // FIXME - Need a generic SetUpRealmAction for all types
-            // containerNode.addChild(realmNode);
+            containerNode.addChild(realmNode);
         }
 
     }
-
     
 }

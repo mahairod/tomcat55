@@ -19,9 +19,9 @@
 
 <html:form method="POST" action="/SaveLogger">
 
-  <bean:define id="loggerName" name="loggerForm" property="loggerName"/>
   <bean:define id="thisObjectName" type="java.lang.String"
                name="loggerForm" property="objectName"/>
+  <html:hidden property="parentObjectName"/>
   <html:hidden property="adminAction"/>
   <html:hidden property="objectName"/>
   <html:hidden property="loggerType"/>
@@ -43,11 +43,10 @@
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action disabled="true"> --------------------------------- </controls:action>
-            <%--
             <controls:action url='<%= "/DeleteLogger.do?select=" +
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.loggers.delete"/> 
-            </controls:action>            --%>
+            </controls:action>            
        </controls:actions>   
          </div>
       </td>
@@ -69,8 +68,15 @@
       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="connector.type"/>:</controls:label>
             <controls:data>
-              <bean:write name="loggerForm" property="loggerType" 
-                    scope="session"/>
+                 <logic:equal name="loggerForm" property="adminAction" value="Create">
+                    <html:select property="loggerType" onchange="IA_jumpMenu('self',this)">
+                     <bean:define id="loggerTypeVals" name="loggerForm" property="loggerTypeVals"/>
+                     <html:options collection="loggerTypeVals" property="value" labelProperty="label"/>
+                    </html:select>
+                </logic:equal>
+                <logic:equal name="loggerForm" property="adminAction" value="Edit">
+                  <bean:write name="loggerForm" property="loggerType" scope="session"/>
+                </logic:equal>
             </controls:data>
         </controls:row>
         
@@ -86,7 +92,7 @@
         </controls:row>
  
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
-            <controls:label>Verbosity Level:</controls:label>
+            <controls:label><bean:message key="logger.verbositylevel"/>:</controls:label>
             <controls:data>
                <html:select property="verbosityLvl">
                      <bean:define id="verbosityLvlVals" name="loggerForm" property="verbosityLvlVals"/>

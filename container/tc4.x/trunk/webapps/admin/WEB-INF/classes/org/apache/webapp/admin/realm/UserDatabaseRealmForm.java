@@ -73,17 +73,17 @@ import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.LabelValueBean;
 
 /**
- * Form bean for the jdbc realm page.
+ * Form bean for the User Database realm page.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public final class JDBCRealmForm extends ActionForm {
+public final class UserDatabaseRealmForm extends ActionForm {
     
     // ----------------------------------------------------- Instance Variables
     
-   /**
+    /**
      * The administrative action represented by this form.
      */
     private String adminAction = "Edit";
@@ -97,16 +97,10 @@ public final class JDBCRealmForm extends ActionForm {
      * The text for the debug level.
      */
     private String debugLvl = "0";
-    
-    /**
-     * The text for the realm name, used to retrieve
-     * the corresponding realm mBean.
-     */
-    private String realmName = null;
-    
+        
     /**
      * The text for the realm type.
-     * Specifies if it is a JNDI, JDBC or MemoryRealm.
+     * Specifies if it is a JNDI, JDBC, Userdatabase or Memory Realm.
      */
     private String realmType = null;
     
@@ -116,58 +110,18 @@ public final class JDBCRealmForm extends ActionForm {
     private List debugLvlVals = null;
     
     /**
-     * The text for the digest.
+     * The text for the resource name.
      */
-    private String digest = null;
-    
-    /**
-     * The text for the roleNameCol.
-     */
-    private String roleNameCol = null;
-    
-    /**
-     * The text for the passwordCol.
-     */
-    private String passwordCol = null;
-    
-    /**
-     * The text for the driver.
-     */
-    private String driver = null;
+    private String resource = null;
     
     /**
      * The text for the node label.
      */
     private String nodeLabel = null;
     
-    /**
-     * The text for the role table.
-     */
-    private String roleTable = null;
-    
-    /**
-     * The text for the user table.
-     */
-    private String userTable = null;
-        
-    /**
-     * The text for the connection user name.
-     */
-    private String connectionName = null;
-    
-    /**
-     * The text for the connection Password.
-     */
-    private String connectionPassword = null;
-    
-    /**
-     * The text for the connection URL.
-     */
-    private String connectionURL = null;
-    
     // ------------------------------------------------------------- Properties
-
-       /**
+    
+     /**
      * Return the administrative action represented by this form.
      */
     public String getAdminAction() {
@@ -258,91 +212,20 @@ public final class JDBCRealmForm extends ActionForm {
     }
     
     /**
-     * Return the digest.
+     * Return the resource Name.
      */
-    public String getDigest() {
+    public String getResource() {
         
-        return this.digest;
+        return this.resource;
         
     }
     
     /**
-     * Set the digest.
+     * Set the resource Name.
      */
-    public void setDigest(String digest) {
+    public void setResource(String resource) {
         
-        this.digest = digest;
-        
-    }
-    
-    /**
-     * Return the roleNameCol.
-     */
-    public String getRoleNameCol() {
-        
-        return this.roleNameCol;
-        
-    }
-    
-    /**
-     * Set the roleNameCol.
-     */
-    public void setRoleNameCol(String roleNameCol) {
-        
-        this.roleNameCol = roleNameCol;
-        
-    }
-    /**
-     * Return the driver.
-     */
-    public String getDriver() {
-        
-        return this.driver;
-        
-    }
-    
-    /**
-     * Set the driver.
-     */
-    public void setDriver(String driver) {
-        
-        this.driver = driver;
-        
-    }
-    
-    /**
-     * Return the role table.
-     */
-    public String getRoleTable() {
-        
-        return this.roleTable;
-        
-    }
-    
-    /**
-     * Set the roleTable.
-     */
-    public void setRoleTable(String roleTable) {
-        
-        this.roleTable = roleTable;
-        
-    }
-    
-    /**
-     * Return the user table.
-     */
-    public String getUserTable() {
-        
-        return this.userTable;
-        
-    }
-    
-    /**
-     * Set the user Table.
-     */
-    public void setUserTable(String userTable) {
-        
-        this.userTable = userTable;
+        this.resource = resource;
         
     }
     
@@ -364,81 +247,6 @@ public final class JDBCRealmForm extends ActionForm {
         
     }
     
-    /**
-     * Return the passwordCol.
-     */
-    public String getPasswordCol() {
-        
-        return this.passwordCol;
-        
-    }
-    
-    /**
-     * Set the passwordCol.
-     */
-    public void setPasswordCol(String passwordCol) {
-        
-        this.passwordCol = passwordCol;
-        
-    }
-    
-    
-    /**
-     * Return the connection name.
-     */
-    public String getConnectionName() {
-        
-        return this.connectionName;
-        
-    }
-    
-    /**
-     * Set the connectionName.
-     */
-    public void setConnectionName(String connectionName) {
-        
-        this.connectionName = connectionName;
-        
-    }
-    
-    
-    /**
-     * Return the connection password.
-     */
-    public String getConnectionPassword() {
-        
-        return this.connectionPassword;
-        
-    }
-    
-    /**
-     * Set the connection password.
-     */
-    public void setConnectionPassword(String connectionPassword) {
-        
-        this.connectionPassword = connectionPassword;
-        
-    }
-    
-    
-    /**
-     * Return the connection URL.
-     */
-    public String getConnectionURL() {
-        
-        return this.connectionURL;
-        
-    }
-    
-    /**
-     * Set the connectionURL.
-     */
-    public void setConnectionURL(String connectionURL) {
-        
-        this.connectionURL = connectionURL;
-        
-    }
-    
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -451,22 +259,11 @@ public final class JDBCRealmForm extends ActionForm {
         
         this.objectName = null;
         this.debugLvl = "0";
-        
-        this.digest = null;
-        this.driver = null;
-        
-        this.roleNameCol = null;
-        this.passwordCol = null;
-        this.userTable = null;
-        this.roleTable = null;
-        
-        this.connectionName = null;
-        this.connectionPassword = null;
-        this.connectionURL = null;
+        this.resource = null;
         
     }
     
-    /**
+   /**
      * Render this object as a String.
      */
     public String toString() {
@@ -475,24 +272,8 @@ public final class JDBCRealmForm extends ActionForm {
         sb.append(adminAction);
         sb.append(",debugLvl=");
         sb.append(debugLvl);
-        sb.append(",digest=");
-        sb.append(digest);
-        sb.append("',driver='");
-        sb.append(driver);
-        sb.append("',roleNameCol=");
-        sb.append(roleNameCol);
-        sb.append(",passwordCol=");
-        sb.append(passwordCol);
-        sb.append("',userTable='");
-        sb.append(userTable);
-        sb.append("',roleTable=");
-        sb.append(roleTable);
-        sb.append(",connectionName=");
-        sb.append(connectionName);        
-        sb.append("',connectionPassword=");
-        sb.append(connectionPassword);
-        sb.append(",connectionURL=");
-        sb.append(connectionURL);
+        sb.append(",resource=");
+        sb.append(resource);
         sb.append("',objectName='");
         sb.append(objectName);
         sb.append("',realmType=");
@@ -501,7 +282,7 @@ public final class JDBCRealmForm extends ActionForm {
         return (sb.toString());
 
     }
-    
+
     /**
      * Validate the properties that have been set from this HTTP request,
      * and return an <code>ActionErrors</code> object that encapsulates any
@@ -519,53 +300,17 @@ public final class JDBCRealmForm extends ActionForm {
         ActionErrors errors = new ActionErrors();
         
         String submit = request.getParameter("submit");
-        String type = request.getParameter("realmType");
         
-        // front end validation when save is clicked.        
-         if (submit != null) {
-             // the following fields are required.
-            
-            if ((driver == null) || (driver.length() < 1)) {
-                errors.add("driver",
-                new ActionError("error.driver.required"));
-            }
-         
-            if ((roleNameCol == null) || (roleNameCol.length() < 1)) {
-                errors.add("roleNameCol",
-                new ActionError("error.roleNameCol.required"));
-            }
-         
-             if ((passwordCol == null) || (passwordCol.length() < 1)) {
-                errors.add("passwordCol",
-                new ActionError("error.passwordCol.required"));
-            }
-            
-            if ((userTable == null) || (userTable.length() < 1)) {
-                errors.add("userTable",
-                new ActionError("error.userTable.required"));
-            }
-            
-            if ((roleTable == null) || (roleTable.length() < 1)) {
-                errors.add("roleTable",
-                new ActionError("error.roleTable.required"));
-            }
-            
-            if ((connectionName == null) || (connectionName.length() < 1)) {
-                errors.add("connectionName",
-                new ActionError("error.connectionName.required"));
-            }
-            
-            if ((connectionPassword == null) || (connectionPassword.length() < 1)) {
-                errors.add("connectionPassword",
-                new ActionError("error.connectionPassword.required"));
-            }
-            
-             if ((connectionURL == null) || (connectionURL.length() < 1)) {
-                errors.add("connectionURL",
-                new ActionError("error.connectionURL.required"));
+        // front end validation when save is clicked.
+        if (submit != null) {
+            if ((resource == null) || (resource.length() < 1)) {
+                errors.add("resource",
+                new ActionError("error.resource.required"));
+            } else if (!resource.startsWith("java:")) {
+                errors.add("resource",
+                new ActionError("error.resource.javaprefix"));
             }
         }
-                 
         return errors;
     }
 }
