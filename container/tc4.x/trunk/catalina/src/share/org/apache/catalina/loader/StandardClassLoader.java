@@ -667,7 +667,9 @@ public class StandardClassLoader
             if (debug >= 4)
                 log("      super.findClass(" + name + ")");
             try {
-                clazz = super.findClass(name);
+                synchronized (this) {
+                    clazz = super.findClass(name);
+                }
             } catch(AccessControlException ace) {
                 throw new ClassNotFoundException(name);
             } catch (RuntimeException e) {
