@@ -112,7 +112,7 @@ public class StandardEngine
         } catch(Exception ex) {
         }
         // By default, the engine will hold the reloading thread
-        executeDelay = 10;
+        backgroundProcessorDelay = 10;
 
     }
 
@@ -595,4 +595,3 @@ public class StandardEngine
     }
     
 }
-                                                          

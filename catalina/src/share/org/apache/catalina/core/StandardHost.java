@@ -779,7 +779,7 @@ public class StandardHost
      * invoked inside the classloading context of this container. Unexpected
      * throwables will be caught and logged.
      */
-    public void execute() {
+    public void backgroundProcess() {
         lifecycle.fireLifecycleEvent("check", null);
     }
 
