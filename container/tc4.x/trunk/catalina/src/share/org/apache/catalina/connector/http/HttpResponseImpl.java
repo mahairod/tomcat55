@@ -247,6 +247,29 @@ final class HttpResponseImpl
     }
 
 
+    /**
+     * Has stream been created ?
+     */
+    public boolean isStreamInitialized() {
+        return (responseStream != null);
+    }
+
+
+    /**
+     * Perform whatever actions are required to flush and close the output
+     * stream or writer, in a single operation.
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    public void finishResponse() throws IOException {
+
+        if (!isStreamInitialized())
+            setContentLength(0);
+        super.finishResponse();
+
+    }
+
+
     // -------------------------------------------- HttpServletResponse Methods
 
 
