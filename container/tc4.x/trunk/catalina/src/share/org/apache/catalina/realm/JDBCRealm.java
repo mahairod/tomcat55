@@ -396,13 +396,13 @@ public class JDBCRealm
 	    boolean found = false;
 	    if (rs1.next()) {
                 if( digest.equals("") || digest.equalsIgnoreCase("No")){
-                    if(credentials.equals(rs1.getString(1))) {
+                    if(credentials.equals(rs1.getString(1).trim())) {
                         if(debug >= 2)
                             log(sm.getString("jdbcRealm.authenticateSuccess",
                                              username));
                         found = true;
                     }else if (credentials.equals(
-                                Digest(rs1.getString(1),digest))) {
+                                Digest(rs1.getString(1).trim(),digest))) {
                         if (debug >= 2)
                             log(sm.getString("jdbcRealm.authenticateSuccess",
                                      username));
@@ -424,7 +424,7 @@ public class JDBCRealm
 	    preparedRoles.setString(1, username);
 	    ResultSet rs2 = preparedRoles.executeQuery();
 	    while (rs2.next()) {
-		principal.addRole(rs2.getString(1));
+		principal.addRole(rs2.getString(1).trim());
 	    }
 	    rs2.close();
 	    return (principal);
