@@ -91,6 +91,12 @@ public class HttpServletRequestFacade implements HttpServletRequest {
     public Request getRealRequest() {
 	// XXX In JDK1.2, call a security class to see if the code has
 	// the right permission !!!
+	Context ctx=request.getContext();
+	if( ctx==null || ! ctx.isTrusted() ) {
+	    // you are not allowed to access internal tomcat objects.
+	    // finer control with a security manager...
+	    //	    throw new SecurityException("Attempt to access internal objects");
+	}
 	return request;
     }
 

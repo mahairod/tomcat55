@@ -618,7 +618,7 @@ public class RequestImpl  implements Request {
 	// about security
 	remoteAddr="127.0.0.1";
 	remoteHost="localhost";
-
+	for( int i=0; i<ACCOUNTS; i++ ) accTable[i]=0;
     }
 
     public MimeHeaders getMimeHeaders() {
