@@ -76,7 +76,7 @@ Bug No.  Description
          configurable and the Admin app internal test page, test.jsp, has
          been updated to make use of this.  With appropriate input settings,
          the tests can be run against Tomcat standalone, Apache, IIS, and
-         Netscape (v4.1) without and failures.
+         Netscape (v4.1) without any failures.
 
          Japanese resource strings were added and StaticInterceptor and
          ErrorHandler modules were updated to take advantage of them.  In
@@ -233,6 +233,10 @@ Bug No.  Description
 
 6234	 Recycle the Writer in the ResponseFacade if it is the error state when
 	 the facade is recycled.
+
+6348     Fix problem with getNamedDispatcher() when used with a JSP mapped
+         in the web.xml.
+
 
 Configuration:
 
