@@ -13,6 +13,155 @@
 
 <body>
 
+<section name="Tomcat 5.0.25 (yoavs)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <fix>
+      Fix some manifests (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <docs>
+      javadocs correction: getMaxActive() actually returns max number of
+      sessions that have been active at the same time, as opposed to
+      (StandardManager.)getMaxActiveSessions(), which returns the limit (or -1)
+      (luehe)
+      </docs>
+      <fix>
+      Make those classes in deploy non final so it is possible to customized 
+      them (jfarcand)
+      </fix>
+      <fix>
+      Regression: the sever cookies should be parsed after the context 
+      is mapped, otherwise, the session cookie is never considered valid, and 
+      it will use the last one (remm)
+      </fix>
+      <fix>
+      <bug>28959</bug>: Fix again mark/reset functionality, and minimize 
+      the size of the allocated buffer (remm)
+      </fix>
+      <fix>
+      Make SingleSignOnEntry constructor public from package protected, 
+      submitted by Brian Stansberry (remm)
+      </fix>
+      <fix>
+      <bug>22176</bug>: Allow username and/or password to start and/or end in 
+      a space when using BASIC authentication (markt)
+      </fix>
+      <fix>
+      <bug>22413</bug>: response.encodeURL(response.encodeURL("xxx.jsp") now 
+      works correctly in root context (markt)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <fix>
+      <bug>28850</bug>: Enable parsing error messages in the given Locale 
+      by using MessageFormat.setLocale (billbarker, luehe)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      Fix a bug where the out-dated version of TagInfo instance of a tag file
+      is used when compiling the tag file (kinman)
+      </fix>
+      <fix>
+      Small-icon and large-icon values are not retrieved (luehe)
+      </fix>
+      <fix>
+      When fragment element is used, type and rtexprvalue are not set correctly
+      (luehe)
+      </fix>
+      <fix>
+      <bug>28603</bug>: JspC Ant task does not detect errors on a
+      second compile (luehe)
+      </fix>
+      <fix>
+      <bug>28840</bug>: NPE when using an Iterator for items in a JSTL forEach
+      tag, and add support for java.util.Map and java.util.Enumeration (luehe)
+      </fix>
+      <update>
+      Refactoring of Mark (luehe)
+      </update>
+      <fix>
+      <bug>28696</bug>: xsi:schemaLocation should be a valid attribute 
+      for jsp:root (kinman)
+      </fix>
+      <fix>
+      <bug>28604</bug>: If compiling from JspC, the absolute (instead of 
+      context-relative) path of the JSP that caused the error is now printed 
+      (when compiling from JspServlet, we continue to print only the 
+      context-relative path of the JSP) (luehe)
+      </fix>
+      <fix>
+      Fixed error messages for jsp.error.variable.both/alias (luehe)
+      </fix>
+      <fix>
+      Added setter for xpoweredBy in JSPc (luehe)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Cluster">
+
+    <changelog>
+
+      <update>
+      Refactored the session message to be an interface, so that all
+      base classes are interfaces implemented by the different modules (fhanik)
+      </update>
+      <update>
+      Supporting TTL and so time out settings for multicast sockets (fhanik)
+      </update>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <fix>
+      <bug>21502</bug>: Obtain number of active sessions directly, submitted by
+      Angus Mezick (markt)
+      </fix>
+      <fix>
+      <bug>21790</bug>: Modify noshade references to align with XHTML 
+      reference guide, submitted by Henning Schmiedehausen (markt)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.24 (remm)">
 
   <subsection name="General">
