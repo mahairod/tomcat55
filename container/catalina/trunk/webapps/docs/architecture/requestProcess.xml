@@ -31,7 +31,7 @@ TODO
 
 <subsection name="diagram">
 <p>
-A UML sequence diagram of the startup procedure is available
+A UML sequence diagram of the request process is available
 <a href="requestProcess/requestProcess.pdf">here.</a>
 </p>
 </subsection>
