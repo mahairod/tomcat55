@@ -349,8 +349,6 @@ public abstract class AuthenticatorBase
      *
      * @param request Request to be processed
      * @param response Response to be processed
-     * @param context The valve context used to invoke the next valve
-     *  in the current processing pipeline
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if thrown by a processing element

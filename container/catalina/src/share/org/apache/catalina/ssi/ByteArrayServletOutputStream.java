@@ -44,9 +44,6 @@ public class ByteArrayServletOutputStream extends ServletOutputStream {
 
     /**
      * Write our stream to the <code>OutputStream</code> provided.
-     *
-     * @param out the OutputStream to write this stream to
-     * @exception IOException if an input/output error occurs
      */
     public byte[] toByteArray() {
         return _buf.toByteArray();

@@ -121,8 +121,6 @@ public class Embedded  extends StandardService implements Lifecycle {
     /**
      * Construct a new instance of this class with specified properties.
      *
-     * @param logger Logger implementation to be inherited by all components
-     *  (unless overridden further down the container hierarchy)
      * @param realm Realm implementation to be inherited by all components
      *  (unless overridden further down the container hierarchy)
      */

@@ -304,7 +304,7 @@ public class StandardContextMBean extends BaseModelMBean {
     /**
      * Remove any environment entry with the specified name.
      *
-     * @param name Name of the environment entry to remove
+     * @param envName Name of the environment entry to remove
      */
     public void removeEnvironment(String envName) {
 
@@ -346,7 +346,7 @@ public class StandardContextMBean extends BaseModelMBean {
     /**
      * Remove any resource link with the specified name.
      *
-     * @param resourceName Name of the resource reference to remove
+     * @param resourceLinkName Name of the resource reference to remove
      */
     public void removeResourceLink(String resourceLinkName) {
 

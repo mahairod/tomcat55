@@ -45,7 +45,7 @@ public final class InstanceSupport {
      * Construct a new InstanceSupport object associated with the specified
      * Instance component.
      *
-     * @param lifecycle The Instance component that will be the source
+     * @param wrapper The component that will be the source
      *  of events that we fire
      */
     public InstanceSupport(Wrapper wrapper) {

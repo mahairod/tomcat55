@@ -571,8 +571,9 @@ public final class StandardServer
 
     }
     
-    /** @jmx:attribute List services
-    */
+    /** 
+     * Return the JMX service names.
+     */
     public ObjectName[] getServiceNames() {
         ObjectName onames[]=new ObjectName[ services.length ];
         for( int i=0; i<services.length; i++ ) {

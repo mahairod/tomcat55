@@ -137,7 +137,7 @@ public class Response
     /**
      * Set the Coyote response.
      * 
-     * @param response The Coyote response
+     * @param coyoteResponse The Coyote response
      */
     public void setCoyoteResponse(org.apache.coyote.Response coyoteResponse) {
         this.coyoteResponse = coyoteResponse;

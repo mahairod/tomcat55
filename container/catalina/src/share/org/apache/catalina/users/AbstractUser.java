@@ -121,7 +121,7 @@ public abstract class AbstractUser implements User {
 
     /**
      * Return the logon username of this user, which must be unique
-     * within the scope of a {@link UserDatabase}.
+     * within the scope of a {@link org.apache.catalina.UserDatabase}.
      */
     public String getUsername() {
 
@@ -132,7 +132,7 @@ public abstract class AbstractUser implements User {
 
     /**
      * Set the logon username of this user, which must be unique within
-     * the scope of a {@link UserDatabase}.
+     * the scope of a {@link org.apache.catalina.UserDatabase}.
      *
      * @param username The new logon username
      */

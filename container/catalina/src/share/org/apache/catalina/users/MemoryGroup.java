@@ -26,7 +26,7 @@ import org.apache.catalina.UserDatabase;
 
 
 /**
- * <p>Concrete implementation of {@link Group} for the
+ * <p>Concrete implementation of {@link org.apache.catalina.Group} for the
  * {@link MemoryUserDatabase} implementation of {@link UserDatabase}.</p>
  *
  * @author Craig R. McClanahan
@@ -100,7 +100,7 @@ public class MemoryGroup extends AbstractGroup {
 
 
     /**
-     * Return the set of {@link User}s that are members of this group.
+     * Return the set of {@link org.apache.catalina.User}s that are members of this group.
      */
     public Iterator getUsers() {
 
