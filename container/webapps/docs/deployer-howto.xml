@@ -80,7 +80,32 @@ created unless one exists already.
 <section name="Deploying on a running Tomcat server">
 
 <p>If the host "autoDeploy" property is true, the host will attempt to deploy 
-and update web applications dynamically, as needed.</p>
+and update web applications dynamically, as needed. The host will need to
+have background processing enabled for automatic reloading to work, which
+is the default.</p>
+
+<p>This includes:
+<ul>
+    <li>Deployment of WARs which are copied to the host appBase.</li>
+    <li>Deployment of expanded web applications which are copied to the host
+        appBase.</li>
+    <li>Redeployment of a web application which has been deployed from a WAR
+        when the WAR is updated: the expanded web application is removed, 
+        and the WAR is expanded again. This will not happen if the host is
+        configured so that WARs are not expanded, in which case the webapp
+        will be simply redeployed.</li>
+    <li>Redeployment of the web application if the /WEB-INF/web.xml file is
+        updated.</li>
+    <li>Redeployment of the web application if the context XML file from which
+        the web application has been deployed is updated.</li>
+    <li>Redeployment of the web application if a context XML file (with a
+        name corresponding to the context path of the previously deployed
+        application) is added in the 
+        <code>$CATALINA_HOME/conf/[enginename]/[hostname]/</code> folder.</li>
+</ul>
+Note: Web application reloading can also be configured in the loader, in which
+case loaded classes will be tracked for changes.
+</p>
 
 </section>
 
@@ -96,6 +121,12 @@ compiler for JSP compilation before deployment, as well as a task which
 validates the webapp's deployment descriptor. The validator task (class
 <code>org.apache.catalina.ant.ValidatorTask</code>) allows only one parameter:
 the base path of an expanded web application.</p>
+
+<p>The deployer uses an unpacked web application as input (see the list of the
+properties used by the deployer below). A web application which 
+is programatically deployed with the deployer may include Tomcat specific 
+deployment configuration, by including a Context configuration XML file in 
+<code>/META-INF/context.xml</code>.</p>
 
 <p>The deployer package includes a ready to use Ant script, with the following
 targets:
