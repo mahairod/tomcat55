@@ -227,13 +227,17 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      * request.
      */
     public Enumeration getAttributeNames() {
-
-        Set keySet = attributes.keySet();
+        
+        HashMap clone = (HashMap)attributes.clone();
         Enumeration enum = getRequest().getAttributeNames();
+        Object key;
         while(enum.hasMoreElements()){
-            keySet.add(enum.nextElement());
+            key = enum.nextElement();
+            if (!clone.containsKey(key)){
+                clone.put(key, getRequest().getAttribute(key.toString()));
+            }
         }
-        return (new Enumerator(keySet));
+        return (new Enumerator(clone.keySet()));
 
     }
 
