@@ -281,12 +281,12 @@ public class DefaultServlet
     protected String getRelativePath(HttpServletRequest request) {
 
         // Are we being processed by a RequestDispatcher.include()?
-        if (request.getAttribute("javax.servlet.include.request_uri")!=null) {
-            String result = (String)
-                request.getAttribute("javax.servlet.include.path_info");
+        if (request.getAttribute(Globals.INCLUDE_REQUEST_URI_ATTR) != null) {
+            String result = (String) request.getAttribute(
+                                            Globals.INCLUDE_PATH_INFO_ATTR);
             if (result == null)
-                result = (String)
-                    request.getAttribute("javax.servlet.include.servlet_path");
+                result = (String) request.getAttribute(
+                                            Globals.INCLUDE_SERVLET_PATH_ATTR);
             if ((result == null) || (result.equals("")))
                 result = "/";
             return (result);
@@ -651,8 +651,15 @@ public class DefaultServlet
         CacheEntry cacheEntry = resources.lookupCache(path);
 
         if (!cacheEntry.exists) {
+            // Check if we're included so we can return the appropriate 
+            // missing resource name in the error
+            String requestUri = (String) request.getAttribute(
+                                            Globals.INCLUDE_REQUEST_URI_ATTR);
+            if (requestUri == null) {
+                requestUri = request.getRequestURI();
+            }
             response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                               request.getRequestURI());
+                               requestUri);
             return;
         }
 
@@ -660,8 +667,15 @@ public class DefaultServlet
         // ends with "/" or "\", return NOT FOUND
         if (cacheEntry.context == null) {
             if (path.endsWith("/") || (path.endsWith("\\"))) {
+                // Check if we're included so we can return the appropriate 
+                // missing resource name in the error
+                String requestUri = (String) request.getAttribute(
+                                            Globals.INCLUDE_REQUEST_URI_ATTR);
+                if (requestUri == null) {
+                    requestUri = request.getRequestURI();
+                }
                 response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                                   request.getRequestURI());
+                                   requestUri);
                 return;
             }
         }

@@ -237,7 +237,6 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void sendError(int sc) throws IOException {
 
-        if (!included)
             ((HttpServletResponse) getResponse()).sendError(sc);
 
     }
@@ -253,7 +252,6 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      */
     public void sendError(int sc, String msg) throws IOException {
 
-        if (!included)
             ((HttpServletResponse) getResponse()).sendError(sc, msg);
 
     }
