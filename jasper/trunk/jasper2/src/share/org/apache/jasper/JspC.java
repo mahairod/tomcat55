@@ -179,6 +179,12 @@ public class JspC implements Options {
     private Vector extensions;
     private Vector pages = new Vector();
 
+    /**
+     * The java file encoding.  Default
+     * is UTF-8.  Added per bugzilla 19622.
+     */
+    private String javaEncoding = "UTF-8";
+
     // Generation of web.xml fragments
     private String webxmlFile;
     private int webxmlLevel;
@@ -416,8 +422,24 @@ public class JspC implements Options {
 	return tldLocationsCache;
     }
 
+    /**
+     * Returns the encoding to use for
+     * java files.  The default is UTF-8.
+     *
+     * @return String The encoding
+     */
     public String getJavaEncoding() {
-	return "UTF-8";
+	return javaEncoding;
+    }
+
+    /**
+     * Sets the encoding to use for
+     * java files.
+     *
+     * @param encodingName The name, e.g. "UTF-8" 
+     */
+    public void setJavaEncoding(String encodingName) {
+      javaEncoding = encodingName;
     }
 
     public boolean getFork() {
