@@ -191,8 +191,6 @@
         <exclude name="**/*.java"/>
       </fileset>
     </copy>
-    <copy tofile="${webapps.build}/${webapp.name}/WEB-INF/classes/org/apache/webapp/admin/ApplicationResources.properties" file="${webapps.build}/${webapp.name}/WEB-INF/classes/org/apache/webapp/admin/ApplicationResources_en.properties">
-    </copy>
   </target>
 
 
