@@ -31,6 +31,8 @@ JSP 1.2 specifications from Java Software.  It includes the following contents:
                               included with Tomcat 4.0
   work/                       Scratch directory used by Tomcat for holding
                               temporary files and directories
+  temp/                       Directory used by JVM for temporary files
+                              (java.io.tmpdir)
 
 If you wish to build the Tomcat server from a source distribution,
 please consult the documentation in "BUILDING.txt".

@@ -46,6 +46,7 @@ Section "Tomcat (required)"
   File /r logs
   File /r server
   File /r work
+  File /r temp
   SetOutPath $INSTDIR\webapps
   File webapps\*.xml
   File /r webapps\ROOT
@@ -335,6 +336,7 @@ Section Uninstall
   RMDir /r "$INSTDIR\webapps\webdav"
   RMDir "$INSTDIR\webapps"
   RMDir /r "$INSTDIR\work"
+  RMDir /r "$INSTDIR\temp"
   RMDir /r "$INSTDIR\src"
   RMDir "$INSTDIR"
 
