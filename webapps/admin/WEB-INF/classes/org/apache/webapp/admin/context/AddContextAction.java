@@ -129,10 +129,12 @@ public class AddContextAction extends Action {
         contextFm.setObjectName("");
         String parent = request.getParameter("parent");
         contextFm.setParentObjectName(parent);
+        int i = parent.indexOf(":");
+        String domain = parent.substring(0, i);
         int position = parent.indexOf(",");
-        String loader = TomcatTreeBuilder.LOADER_TYPE + 
+        String loader = domain + TomcatTreeBuilder.LOADER_TYPE + 
                 parent.substring(position, parent.length());
-        String manager = TomcatTreeBuilder.MANAGER_TYPE + 
+        String manager = domain + TomcatTreeBuilder.MANAGER_TYPE + 
                 parent.substring(position, parent.length());
         contextFm.setLoaderObjectName(loader);
         contextFm.setManagerObjectName(manager); 

@@ -90,6 +90,7 @@ import org.apache.webapp.admin.ApplicationServlet;
  * </ul>
  *
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  * @since 4.1
  */
@@ -148,7 +149,7 @@ public class ListDataSourcesAction extends Action {
         String resourcetype = request.getParameter("resourcetype");
         String path = request.getParameter("path");
         String host = request.getParameter("host");
-        String service = request.getParameter("service");
+        String domain = request.getParameter("domain");
         
         if (resourcetype != null) {
             resourcetype = URLDecoder.decode(resourcetype);
@@ -159,8 +160,8 @@ public class ListDataSourcesAction extends Action {
         if (host != null) {
             host = URLDecoder.decode(host);
         }
-        if (service != null) {
-            service = URLDecoder.decode(service);
+        if (domain != null) {
+            domain = URLDecoder.decode(domain);
         }
         
         // Create a form bean containing the requested MBean Names
@@ -168,7 +169,7 @@ public class ListDataSourcesAction extends Action {
         try {
               dataSourcesForm = 
                 ResourceUtils.getDataSourcesForm(mserver, resourcetype,
-                                        path, host, service);
+                                        path, host, domain);
         } catch (Exception e) {
             getServlet().log(resources.getMessage
                              (locale,

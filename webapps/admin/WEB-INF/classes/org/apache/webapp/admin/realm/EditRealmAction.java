@@ -451,7 +451,8 @@ public class EditRealmAction extends Action {
         String adminHost = request.getServerName();
         String adminContext = request.getContextPath();
 
-        String thisService = rname.getKeyProperty("service");
+        //String thisService = rname.getKeyProperty("service");
+        String domain = rname.getDomain();
         String thisHost = rname.getKeyProperty("host");
         String thisContext = rname.getKeyProperty("path");
 
@@ -462,8 +463,10 @@ public class EditRealmAction extends Action {
             // realm is under host
             retVal = !(thisHost.equalsIgnoreCase(adminHost));
         } else {
+            // XXX FIXME
             // realm is under service
-            retVal = !(thisService.equalsIgnoreCase(adminService));
+            return "false";
+            //retVal = !(thisService.equalsIgnoreCase(adminService));
         }
 
      } catch (Exception e) {

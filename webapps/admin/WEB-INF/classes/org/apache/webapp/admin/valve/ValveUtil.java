@@ -178,9 +178,9 @@ public final class ValveUtil {
             }
             */
             
+            String domain = pname.getDomain();
             // Look up our MBeanFactory MBean
-            ObjectName fname =
-            new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
+            ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
             
             // Create a new StandardValve object
             values = new String[1];            
@@ -211,7 +211,7 @@ public final class ValveUtil {
                     "&nodeLabel=" + URLEncoder.encode(nodeLabel) +
                     "&parent=" + URLEncoder.encode(parentNodeName),
                     "content",
-                    true);
+                    true, domain);
                     parentNode.addChild(childNode);
                     // FIXME - force a redisplay
                 } else {

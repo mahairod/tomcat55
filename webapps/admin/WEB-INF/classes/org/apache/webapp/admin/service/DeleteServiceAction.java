@@ -154,12 +154,17 @@ public class DeleteServiceAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
+        String select = request.getParameter("select");
         String adminService = null;
+        ObjectName oname = null;
+        String domain = null;
         // Get the service name the admin app runs on
         // this service cannot be deleted from the admin tool
         try {
+            oname = new ObjectName(select);
+            domain = oname.getDomain();
             adminService = Lists.getAdminAppService(
-                                  mBServer, "Catalina" ,request);
+                                  mBServer, domain ,request);
          } catch (Exception e) {
             String message =
                 resources.getMessage("error.serviceName.bad",
@@ -173,7 +178,6 @@ public class DeleteServiceAction extends Action {
         // Set up a form bean containing the currently selected
         // objects to be deleted
         ServicesForm servicesForm = new ServicesForm();
-        String select = request.getParameter("select");
         if (select != null) {
             String services[] = new String[1];
             services[0] = select;
@@ -184,7 +188,7 @@ public class DeleteServiceAction extends Action {
         // Accumulate a list of all available services
         ArrayList list = new ArrayList();
         try {
-            String pattern = TomcatTreeBuilder.SERVICE_TYPE +
+            String pattern = domain + TomcatTreeBuilder.SERVICE_TYPE +
                 TomcatTreeBuilder.WILDCARD;
             Iterator items =
                 mBServer.queryNames(new ObjectName(pattern), null).iterator();

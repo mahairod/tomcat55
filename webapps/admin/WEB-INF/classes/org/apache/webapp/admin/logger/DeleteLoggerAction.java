@@ -211,26 +211,21 @@ public class DeleteLoggerAction extends Action {
         
         // Form the pattern that gets the logger for this particular
         // service, host or context.
-        StringBuffer sb = new StringBuffer(MBeanType);
         ObjectName poname = new ObjectName(parent);
+        String domain = poname.getDomain();
+        StringBuffer sb = new StringBuffer(domain+MBeanType);
         String type = poname.getKeyProperty("type");
         if ("Context".equalsIgnoreCase(type)) { // container is context            
             sb.append(",path=");
             sb.append(poname.getKeyProperty("path"));
             sb.append(",host=");
             sb.append(poname.getKeyProperty("host"));
-            sb.append(",service=");
-            sb.append(poname.getKeyProperty("service"));
         }
         if ("Host".equalsIgnoreCase(type)) {    // container is host
             sb.append(",host=");
             sb.append(poname.getKeyProperty("host"));
-            sb.append(",service=");
-            sb.append(poname.getKeyProperty("service"));
         }
         if ("Service".equalsIgnoreCase(type)) {  // container is service
-            sb.append(",service=");
-            sb.append(poname.getKeyProperty("name"));
         }
         return sb.toString();  
     }

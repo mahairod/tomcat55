@@ -186,32 +186,9 @@ public final class SaveResourceLinkAction extends Action {
             ObjectName oname = null;
 
             try {
-
-                if (resourcetype!=null) {
-                    // Construct the MBean Name for the naming source
-                    if (resourcetype.equals("Global")) {
-                        oname = 
-                            new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
-                            ResourceUtils.GLOBAL_TYPE);
-                    } else if (resourcetype.equals("Context")) {            
-                        oname = 
-                            new ObjectName (ResourceUtils.NAMINGRESOURCES_TYPE + 
-                            ResourceUtils.CONTEXT_TYPE + ",path=" + path + 
-                            ",host=" + host + ",service=" + service);
-                    } else if (resourcetype.equals("DefaultContext")) {
-                        if (host.length() > 0) {
-                            oname = 
-                                new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
-                                ResourceUtils.HOST_DEFAULTCONTEXT_TYPE + ",host=" + 
-                                host + ",service=" + service);
-                        } else {
-                            oname = 
-                                new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
-                                ResourceUtils.SERVICE_DEFAULTCONTEXT_TYPE + ",service=" + 
-                                service);
-                        }
-                    }
-                }
+                String domain = (new ObjectName(objectName)).getDomain();
+                oname = ResourceUtils.getNamingResourceObjectName(domain,
+                            resourcetype, path, host);
                 // Create the new object and associated MBean
                 objectName = (String) mserver.invoke(oname, "addResourceLink",
                                                      params, signature);

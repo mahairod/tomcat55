@@ -179,31 +179,7 @@ public final class DeleteEnvEntriesAction extends Action {
 
         // Perform "Delete EnvEntry" transactions as required
         try {
-            
             ObjectName dname = null;
-            if (resourcetype!=null) {
-                // Construct the MBean Name for the naming source
-                if (resourcetype.equals("Global")) {
-                    dname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
-                                                    ResourceUtils.GLOBAL_TYPE);
-                } else if (resourcetype.equals("Context")) {            
-                    dname = new ObjectName (ResourceUtils.NAMINGRESOURCES_TYPE + 
-                            ResourceUtils.CONTEXT_TYPE + ",path=" + path + 
-                            ",host=" + host + ",service=" + service);
-                } else if (resourcetype.equals("DefaultContext")) {
-                    if (host.length() > 0) {
-                        dname = 
-                            new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
-                            ResourceUtils.HOST_DEFAULTCONTEXT_TYPE + ",host=" + 
-                            host + ",service=" + service);
-                    } else {
-                        dname = 
-                            new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
-                            ResourceUtils.SERVICE_DEFAULTCONTEXT_TYPE + ",service=" + 
-                            service);
-                    }
-                }
-            }
             
             String signature[] = new String[1];
             signature[0] = "java.lang.String";
@@ -211,6 +187,9 @@ public final class DeleteEnvEntriesAction extends Action {
 
             for (int i = 0; i < envEntries.length; i++) {
                 ObjectName oname = new ObjectName(envEntries[i]);
+                String domain = oname.getDomain();
+                dname = ResourceUtils.getNamingResourceObjectName(domain,
+                            resourcetype, path, host);
                 params[0] = oname.getKeyProperty("name");
                 mserver.invoke(dname, "removeEnvironment",
                                params, signature);

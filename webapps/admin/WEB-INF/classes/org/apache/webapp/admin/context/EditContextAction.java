@@ -175,8 +175,6 @@ public class EditContextAction extends Action {
             sb.append(cname.getKeyProperty("path"));
             sb.append(",host=");
             sb.append(cname.getKeyProperty("host"));
-            sb.append(",service=");
-            sb.append(cname.getKeyProperty("service"));
             lname = new ObjectName(sb.toString());
          } catch (Exception e) {
             String message =
@@ -196,8 +194,6 @@ public class EditContextAction extends Action {
             sb.append(cname.getKeyProperty("path"));
             sb.append(",host=");
             sb.append(cname.getKeyProperty("host"));
-            sb.append(",service=");
-            sb.append(cname.getKeyProperty("service"));
             mname = new ObjectName(sb.toString());
         } catch (Exception e) {
             String message =

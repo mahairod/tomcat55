@@ -148,7 +148,7 @@ public class ListMailSessionsAction extends Action {
         String resourcetype = request.getParameter("resourcetype");
         String path = request.getParameter("path");
         String host = request.getParameter("host");
-        String service = request.getParameter("service");
+        String domain = request.getParameter("domain");
         
         if (resourcetype != null) {
             resourcetype = URLDecoder.decode(resourcetype);
@@ -159,8 +159,8 @@ public class ListMailSessionsAction extends Action {
         if (host != null) {
             host = URLDecoder.decode(host);
         }
-        if (service != null) {
-            service = URLDecoder.decode(service);
+        if (domain != null) {
+            domain = URLDecoder.decode(domain);
         }
         
         // Create a form bean containing the requested MBean Names
@@ -168,7 +168,7 @@ public class ListMailSessionsAction extends Action {
         try {
               mailSessionsForm = 
                 ResourceUtils.getMailSessionsForm(mserver, resourcetype,
-                                        path, host, service);
+                                        path, host, domain);
         } catch (Exception e) {
             getServlet().log(resources.getMessage
                              (locale,

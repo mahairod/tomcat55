@@ -175,6 +175,7 @@ public final class SaveHostAction extends Action {
         HostForm hform = (HostForm) form;
         String adminAction = hform.getAdminAction();
         String hObjectName = hform.getObjectName();
+        ObjectName honame = null;
 
         // Perform a "Create Host" transaction (if requested)
         if ("Create".equals(adminAction)) {
@@ -183,14 +184,14 @@ public final class SaveHostAction extends Action {
             Object values[] = null;
 
             try {
-
+                honame = new ObjectName(hObjectName);
                 String serviceName = hform.getServiceName();
-
+                String domain = honame.getDomain();
                 // Ensure that the requested host name is unique
                 ObjectName oname =
-                    new ObjectName(TomcatTreeBuilder.HOST_TYPE +
-                                   ",host=" + hform.getHostName() +
-                                   ",service=" + serviceName);
+                    new ObjectName(domain + 
+                                   TomcatTreeBuilder.HOST_TYPE +
+                                   ",host=" + hform.getHostName());
                 if (mBServer.isRegistered(oname)) {
                     ActionErrors errors = new ActionErrors();
                     errors.add("hostName",
@@ -200,13 +201,11 @@ public final class SaveHostAction extends Action {
                 }
 
                 // Look up our MBeanFactory MBean
-                ObjectName fname =
-                    new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
+                ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
 
                 // Create a new StandardHost object
                 values = new Object[9];
-                values[0] =
-                    TomcatTreeBuilder.ENGINE_TYPE + ",service=" + serviceName;
+                values[0] = domain + TomcatTreeBuilder.ENGINE_TYPE;
                 values[1] = hform.getHostName();
                 values[2] = hform.getAppBase();
                 values[3] = new Boolean(hform.getAutoDeploy());
@@ -226,7 +225,7 @@ public final class SaveHostAction extends Action {
                 TreeControl control = (TreeControl)
                     session.getAttribute("treeControlTest");
                 if (control != null) {
-                    String parentName =
+                    String parentName = domain +
                           TomcatTreeBuilder.SERVICE_TYPE + ",name=" + serviceName;
                     TreeControlNode parentNode = control.findNode(parentName);
                     if (parentNode != null) {
@@ -241,7 +240,7 @@ public final class SaveHostAction extends Action {
                                                 "EditHost.do?select=" +
                                                 encodedName,
                                                 "content",
-                                                true);
+                                                true, domain);
                         parentNode.addChild(childNode);
                         // FIXME - force a redisplay
                     } else {
@@ -271,7 +270,7 @@ public final class SaveHostAction extends Action {
         String attribute = null;
         try {
 
-            ObjectName honame = new ObjectName(hObjectName);
+            honame = new ObjectName(hObjectName);
 
             attribute = "debug";
             int debug = 0;
