@@ -15,7 +15,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,Lifecycle,RequestDispatcher,Resources,ServletContext,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest,CGITest"/>
+  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,JspParams,Lifecycle,RequestDispatcher,Resources,ServletContext,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest,CGITest"/>
 
 
   <target name="ROOT">
@@ -493,6 +493,21 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedJndi02" debug="${debug}"
       outContent="Jndi02 PASSED"/>
+
+  </target>
+
+
+  <target name="JspParams">
+
+    <!-- ========== <jsp:params> not legal in <jsp:include/forward> ======= -->
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/JspParams01" debug="${debug}"
+          status="500"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/JspParams02" debug="${debug}"
+          status="500"/>
 
   </target>
 
