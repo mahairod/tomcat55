@@ -71,10 +71,18 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.tomcat.util.buf.CharChunk;
+import org.apache.tomcat.util.buf.MessageBytes;
+import org.apache.tomcat.util.http.mapper.Mapper;
+import org.apache.tomcat.util.http.mapper.MappingData;
+
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Realm;
@@ -90,6 +98,7 @@ import org.apache.commons.logging.LogFactory;
  * Authentication, as described in the Servlet API Specification, Version 2.2.
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
@@ -193,7 +202,8 @@ public class FormAuthenticator
         if (matchRequest(request)) {
             session = getSession(request, true);
             if (log.isDebugEnabled())
-                log.debug("Restore request from session '" + session.getId() + "'");
+                log.debug("Restore request from session '" + session.getId() 
+                          + "'");
             principal = (Principal)
                 session.getNote(Constants.FORM_PRINCIPAL_NOTE);
             register(request, response, principal, Constants.FORM_METHOD,
@@ -215,30 +225,12 @@ public class FormAuthenticator
         }
 
         // Acquire references to objects we will need to evaluate
+        MessageBytes uriMB = MessageBytes.newInstance();
+        CharChunk uriCC = uriMB.getCharChunk();
+        uriCC.setLimit(-1);
         String contextPath = hreq.getContextPath();
         String requestURI = request.getDecodedRequestURI();
         response.setContext(request.getContext());
-
-        // Is this a request for the login page itself?  Test here to avoid
-        // displaying it twice (from the user's perspective) -- once because
-        // of the "save and redirect" and once because of the "restore and
-        // redirect" performed below.
-        String loginURI = contextPath + config.getLoginPage();
-        if (requestURI.equals(loginURI)) {
-            if (log.isDebugEnabled())
-                log.debug("Requesting login page normally");
-            return (true);      // Display the login page in the usual manner
-        }
-
-        // Is this a request for the error page itself?  Test here to avoid
-        // an endless loop (back to the login page) if the error page is
-        // within the protected area of our security constraint
-        String errorURI = contextPath + config.getErrorPage();
-        if (requestURI.equals(errorURI)) {
-            if (log.isDebugEnabled())
-                log.debug("Requesting error page normally");
-            return (true);      // Display the error page in the usual manner
-        }
 
         // Is this the action request from the login page?
         boolean loginAction =
@@ -251,9 +243,15 @@ public class FormAuthenticator
             if (log.isDebugEnabled())
                 log.debug("Save request in session '" + session.getId() + "'");
             saveRequest(request, session);
-            if (log.isDebugEnabled())
-                log.debug("Redirect to login page '" + loginURI + "'");
-            hres.sendRedirect(hres.encodeRedirectURL(loginURI));
+            RequestDispatcher disp =
+                context.getServletContext().getRequestDispatcher
+                (config.getLoginPage());
+            try {
+                disp.forward(hreq, hres);
+                response.finishResponse();
+            } catch (Throwable t) {
+                log.warn("Unexpected error forwarding to login page", t);
+            }
             return (false);
         }
 
@@ -266,9 +264,14 @@ public class FormAuthenticator
             log.debug("Authenticating username '" + username + "'");
         principal = realm.authenticate(username, password);
         if (principal == null) {
-            if (log.isDebugEnabled())
-                log.debug("Redirect to error page '" + errorURI + "'");
-            hres.sendRedirect(hres.encodeRedirectURL(errorURI));
+            RequestDispatcher disp =
+                context.getServletContext().getRequestDispatcher
+                (config.getErrorPage());
+            try {
+                disp.forward(hreq, hres);
+            } catch (Throwable t) {
+                log.warn("Unexpected error forwarding to error page", t);
+            }
             return (false);
         }
 
