@@ -44,7 +44,6 @@ public class JasperLoader extends URLClassLoader {
     private String className;
     private ClassLoader parent;
     private SecurityManager securityManager;
-    private PrivilegedLoadClass privLoadClass;
 
     public JasperLoader(URL[] urls, ClassLoader parent,
 			PermissionCollection permissionCollection,
@@ -53,7 +52,6 @@ public class JasperLoader extends URLClassLoader {
 	this.permissionCollection = permissionCollection;
 	this.codeSource = codeSource;
 	this.parent = parent;
-        this.privLoadClass = new PrivilegedLoadClass();
 	this.securityManager = System.getSecurityManager();
     }
 
@@ -127,29 +125,10 @@ public class JasperLoader extends URLClassLoader {
             }                              
         }
 
-	// Class is in a package, delegate to thread context class loader
 	if( !name.startsWith(Constants.JSP_PACKAGE_NAME) ) {
-	    if (securityManager != null) {
-                final ClassLoader classLoader = (ClassLoader)AccessController.doPrivileged(privLoadClass);
-                try{
-                    clazz = (Class)AccessController.doPrivileged(new PrivilegedExceptionAction(){
-                        public Object run() throws Exception{
-                            return classLoader.loadClass(name);
-                        }
-                    });
-                } catch(PrivilegedActionException ex){
-                    Exception rootCause = ex.getException();
-                    if (rootCause instanceof ClassNotFoundException) {
-                        throw (ClassNotFoundException) rootCause;
-                    } else {
-                        throw new ClassNotFoundException("JasperLoader",
-                                                         rootCause);
-                    }
-                }
-            } else {
-                clazz = parent.loadClass(name);
-            }
-            
+            // Class is not in org.apache.jsp, therefore, have our
+            // parent load it
+            clazz = parent.loadClass(name);            
 	    if( resolve )
 		resolveClass(clazz);
 	    return clazz;
@@ -192,12 +171,5 @@ public class JasperLoader extends URLClassLoader {
      */
     public final PermissionCollection getPermissions(CodeSource codeSource) {
         return permissionCollection;
-    }
-
-    private class PrivilegedLoadClass implements PrivilegedAction {
-
-        public Object run() {
-            return Thread.currentThread().getContextClassLoader();
-        }
     }
 }
