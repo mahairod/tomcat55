@@ -59,31 +59,46 @@ package org.apache.tester;
 
 
 import java.io.*;
+import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+
 /**
- * Test getting the servlet input stream after we have retrieved the reader.
- * This should throw an IllegalStateException.
+ * Negative test for ServletResponse.setBufferSize().
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class GetInputStream01 extends GenericServlet {
+public class SetBufferSize01 extends GenericServlet {
 
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Process a servlet request and create the corresponding response.
+     *
+     * @param request The request we are processing
+     * @param response The response we are creating
+     *
+     * @exception IOException if an input/output error occurs
+     * @exception ServletException if a servlet error occurs
+     */
     public void service(ServletRequest request, ServletResponse response)
         throws IOException, ServletException {
 
         response.setContentType("text/plain");
         PrintWriter writer = response.getWriter();
-        BufferedReader reader = request.getReader();
         try {
-            ServletInputStream sis = request.getInputStream();
-            writer.println("GetInputStream01 FAILED - Did not throw " +
-                           "IllegalStateException");
+            writer.println("TEST");
+            response.setBufferSize(100);
+            response.reset();
+            writer.println("SetBufferSize01 FAILED - Did not throw IllegalStateException");
         } catch (IllegalStateException e) {
-            writer.println("GetInputStream01 PASSED");
+            response.reset();
+            writer.println("SetBufferSize01 PASSED");
         }
         while (true) {
             String message = StaticLogger.read();
@@ -94,5 +109,6 @@ public class GetInputStream01 extends GenericServlet {
         StaticLogger.reset();
 
     }
+
 
 }

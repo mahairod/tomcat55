@@ -59,40 +59,118 @@ package org.apache.tester;
 
 
 import java.io.*;
+import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
- * Test getting the servlet input stream after we have retrieved the reader.
- * This should throw an IllegalStateException.
+ * Tester response wrapper that logs all calls to the configured logger,
+ * before passing them on to the underlying response.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class GetInputStream01 extends GenericServlet {
+public class TesterServletResponseWrapper extends ServletResponseWrapper {
 
-    public void service(ServletRequest request, ServletResponse response)
-        throws IOException, ServletException {
 
-        response.setContentType("text/plain");
-        PrintWriter writer = response.getWriter();
-        BufferedReader reader = request.getReader();
-        try {
-            ServletInputStream sis = request.getInputStream();
-            writer.println("GetInputStream01 FAILED - Did not throw " +
-                           "IllegalStateException");
-        } catch (IllegalStateException e) {
-            writer.println("GetInputStream01 PASSED");
-        }
-        while (true) {
-            String message = StaticLogger.read();
-            if (message == null)
-                break;
-            writer.println(message);
-        }
-        StaticLogger.reset();
+    // ------------------------------------------------------------ Constructor
+
+
+    /**
+     * Configure a new response wrapper.
+     *
+     * @param response The response we are wrapping
+     */
+    public TesterServletResponseWrapper(ServletResponse response) {
+
+        super(response);
 
     }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    // For each public method, log the call and pass it to the wrapped response
+
+
+    public void flushBuffer() throws IOException {
+        StaticLogger.write("TesterServletResponseWrapper.flushBuffer()");
+        getResponse().flushBuffer();
+    }
+
+
+    public int getBufferSize() {
+        StaticLogger.write("TesterServletResponseWrapper.getBufferSize()");
+        return (getResponse().getBufferSize());
+    }
+
+
+    public String getCharacterEncoding() {
+        StaticLogger.write("TesterServletResponseWrapper.getCharacterEncoding()");
+        return (getResponse().getCharacterEncoding());
+    }
+
+
+    public Locale getLocale() {
+        StaticLogger.write("TesterServletResponseWrapper.getLocale()");
+        return (getResponse().getLocale());
+    }
+
+
+    public ServletOutputStream getOutputStream() throws IOException {
+        StaticLogger.write("TesterServletResponseWrapper.getOutputStream()");
+        return (getResponse().getOutputStream());
+    }
+
+
+    public PrintWriter getWriter() throws IOException {
+        StaticLogger.write("TesterServletResponseWrapper.getWriter()");
+        return (getResponse().getWriter());
+    }
+
+
+    public boolean isCommitted() {
+        StaticLogger.write("TesterServletResponseWrapper.isCommitted()");
+        return (getResponse().isCommitted());
+    }
+
+
+    public void reset() {
+        StaticLogger.write("TesterServletResponseWrapper.reset()");
+        getResponse().reset();
+    }
+
+
+    public void resetBuffer() {
+        StaticLogger.write("TesterServletResponseWrapper.resetBuffer()");
+        getResponse().resetBuffer();
+    }
+
+
+    public void setBufferSize(int size) {
+        StaticLogger.write("TesterServletResponseWrapper.setBufferSize()");
+        getResponse().setBufferSize(size);
+    }
+
+
+    public void setContentLength(int len) {
+        StaticLogger.write("TesterServletResponseWrapper.setContentLength()");
+        getResponse().setContentLength(len);
+    }
+
+
+    public void setContentType(String type) {
+        StaticLogger.write("TesterServletResponseWrapper.setContentType()");
+        getResponse().setContentType(type);
+    }
+
+
+    public void setLocale(Locale locale) {
+        StaticLogger.write("TesterServletResponseWrapper.setLocale()");
+        getResponse().setLocale(locale);
+    }
+
 
 }

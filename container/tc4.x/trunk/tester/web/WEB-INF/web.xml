@@ -8,6 +8,64 @@
 
 <web-app>
 
+    <!-- ========== Filter Definitions ==================================== -->
+
+    <filter>
+        <filter-name>GenericFilter</filter-name>
+        <filter-class>org.apache.tester.WrapperFilter</filter-class>
+        <init-param>
+            <param-name>request</param-name>
+            <param-value>generic</param-value>
+        </init-param>
+        <init-param>
+            <param-name>response</param-name>
+            <param-value>generic</param-value>
+        </init-param>
+    </filter>
+
+
+    <filter>
+        <filter-name>HttpFilter</filter-name>
+        <filter-class>org.apache.tester.WrapperFilter</filter-class>
+        <init-param>
+            <param-name>request</param-name>
+            <param-value>http</param-value>
+        </init-param>
+        <init-param>
+            <param-name>response</param-name>
+            <param-value>http</param-value>
+        </init-param>
+    </filter>
+
+
+    <!-- ========== Filter Mappings ======================================= -->
+
+    <filter-mapping>
+        <filter-name>GenericFilter</filter-name>
+        <url-pattern>/WrappedGetInputStream01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>GenericFilter</filter-name>
+        <url-pattern>/WrappedGetParameter01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>GenericFilter</filter-name>
+        <url-pattern>/WrappedGetParameterMap00</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>GenericFilter</filter-name>
+        <url-pattern>/WrappedSetBufferSize01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedGetQueryString01</url-pattern>
+    </filter-mapping>
+
+
     <!-- ========== Servlet Definitions =================================== -->
 
     <servlet>
@@ -40,6 +98,10 @@
         <servlet-class>org.apache.tester.GetQueryString01</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>SetBufferSize01</servlet-name>
+        <servlet-class>org.apache.tester.SetBufferSize01</servlet-class>
+    </servlet>
 
     <!-- ========== Servlet Mappings ====================================== -->
 
@@ -59,8 +121,23 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>GetInputStream01</servlet-name>
+        <url-pattern>/WrappedGetInputStream01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetParameter01</servlet-name>
+        <url-pattern>/WrappedGetParameter01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>GetParameter01</servlet-name>
         <url-pattern>/GetParameter01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetParameter01</servlet-name>
+        <url-pattern>/WrappedGetParameter01</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -69,8 +146,28 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>GetParameterMap00</servlet-name>
+        <url-pattern>/WrappedGetParameterMap00</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>GetQueryString01</servlet-name>
         <url-pattern>/GetQueryString01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetQueryString01</servlet-name>
+        <url-pattern>/WrappedGetQueryString01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SetBufferSize01</servlet-name>
+        <url-pattern>/SetBufferSize01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SetBufferSize01</servlet-name>
+        <url-pattern>/WrappedSetBufferSize01</url-pattern>
     </servlet-mapping>
 
 

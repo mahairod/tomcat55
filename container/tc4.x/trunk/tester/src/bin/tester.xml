@@ -8,7 +8,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,CaseSensitive,ServletRequest"/>
+  <target name="all" depends="ROOT,CaseSensitive,ServletRequest,ServletResponse"/>
 
 
   <target name="ROOT">
@@ -99,10 +99,27 @@
          request="${context.path}/GetParameter01?foo=1"
       outContent="GetParameter01 PASSED"/>
 
+    <tester host="${host}" port="${port}" debug="0"
+         request="${context.path}/WrappedGetParameter01?foo=1"
+      outContent="GetParameter01 PASSED"/>
+
+    <tester host="${host}" port="${port}"
+         request="${context.path}/GetParameterMap00?BestLanguage=Java&amp;BestJSP=Java2"
+      outContent="GetParameterMap00 PASSED"/>
+
+    <tester host="${host}" port="${port}" debug="0"
+         request="${context.path}/WrappedGetParameterMap00?BestLanguage=Java&amp;BestJSP=Java2"
+      outContent="GetParameterMap00 PASSED"/>
+
     <tester host="${host}" port="${port}"
          request="${context.path}/GetQueryString01?foo=1"
       outContent="GetQueryString01 PASSED"/>
 
+<!--
+    <tester host="${host}" port="${port}" debug="0"
+         request="${context.path}/WrappedGetQueryString01?foo=1"
+      outContent="GetQueryString01 PASSED"/>
+-->
 
     <!-- ========== Other ServletRequest Tests ============================ -->
 
@@ -114,8 +131,8 @@
       outContent="GetInputStream01 PASSED"/>
 
     <tester host="${host}" port="${port}"
-         request="${context.path}/GetParameterMap00?BestLanguage=Java&amp;BestJSP=Java2"
-      outContent="GetParameterMap00 PASSED"/>
+         request="${context.path}/WrappedGetInputStream01"
+      outContent="GetInputStream01 PASSED"/>
 
 
     <!-- ========== Authentication ======================================== -->
@@ -135,6 +152,23 @@
          request="${context.path}/protected/Authentication02"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
       outContent="Authentication02 PASSED"/>
+
+
+  </target>
+
+
+  <target name="ServletResponse">
+
+
+    <!-- ========== Other ServletResponse Tests =========================== -->
+
+    <tester host="${host}" port="${port}"
+         request="${context.path}/SetBufferSize01"
+      outContent="SetBufferSize01 PASSED"/>
+
+    <tester host="${host}" port="${port}" debug="0"
+         request="${context.path}/WrappedSetBufferSize01"
+      outContent="SetBufferSize01 PASSED"/>
 
 
   </target>

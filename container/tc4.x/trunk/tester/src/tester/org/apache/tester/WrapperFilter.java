@@ -59,40 +59,111 @@ package org.apache.tester;
 
 
 import java.io.*;
+import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
- * Test getting the servlet input stream after we have retrieved the reader.
- * This should throw an IllegalStateException.
+ * Configurable filter that will wrap the request and/or response objects
+ * it passes on with either generic or HTTP-specific wrappers.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class GetInputStream01 extends GenericServlet {
+public class WrapperFilter implements Filter {
 
-    public void service(ServletRequest request, ServletResponse response)
+
+    // ----------------------------------------------------------- Constructors
+
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * The filter configuration object for this filter.
+     */
+    protected FilterConfig config = null;
+
+
+    /**
+     * The type of wrapper for each request ("none", "generic", "http").
+     */
+    protected String requestWrapper = "none";
+
+
+    /**
+     * The type of wrapper for each response ("none", "generic", "http").
+     */
+    protected String responseWrapper = "none";
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Wrap this request and/or response as configured and pass it on.
+     */
+    public void doFilter(ServletRequest inRequest, ServletResponse inResponse,
+                         FilterChain chain)
         throws IOException, ServletException {
 
-        response.setContentType("text/plain");
-        PrintWriter writer = response.getWriter();
-        BufferedReader reader = request.getReader();
-        try {
-            ServletInputStream sis = request.getInputStream();
-            writer.println("GetInputStream01 FAILED - Did not throw " +
-                           "IllegalStateException");
-        } catch (IllegalStateException e) {
-            writer.println("GetInputStream01 PASSED");
+        // Create the appropriate wrappers
+        ServletRequest outRequest = inRequest;
+        ServletResponse outResponse = inResponse;
+        if (requestWrapper.equals("generic")) {
+            outRequest = new TesterServletRequestWrapper(inRequest);
+        } /* else if (requestWrapper.equals("http")) {
+            outRequest = new TesterHttpServletRequestWrapper(inRequest);
         }
-        while (true) {
-            String message = StaticLogger.read();
-            if (message == null)
-                break;
-            writer.println(message);
+        */
+        if (responseWrapper.equals("generic")) {
+            outResponse = new TesterServletResponseWrapper(inResponse);
+        } else if (responseWrapper.equals("http")) {
+            outResponse = new TesterHttpServletResponseWrapper
+                ((HttpServletResponse) inResponse);
         }
+
+        // Reset our logger and perform this request
         StaticLogger.reset();
+        chain.doFilter(outRequest, outResponse);
 
     }
+
+
+    /**
+     * Return the filter configuration object for this filter.
+     */
+    public FilterConfig getFilterConfig() {
+
+        return (this.config);
+
+    }
+
+
+    /**
+     * Set the filter configuration object for this filter.
+     *
+     * @param config The new filter configuration object
+     */
+    public void setFilterConfig(FilterConfig config) {
+
+        this.config = config;
+        if (config == null) {
+            requestWrapper = "none";
+            responseWrapper = "none";
+        } else {
+            String value = null;
+            value = config.getInitParameter("request");
+            if (value != null)
+                requestWrapper = value;
+            value = config.getInitParameter("response");
+            if (value != null)
+                responseWrapper = value;
+        }
+
+    }
+
 
 }

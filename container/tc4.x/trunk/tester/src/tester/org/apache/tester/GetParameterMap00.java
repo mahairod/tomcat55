@@ -71,9 +71,9 @@ import javax.servlet.http.*;
  * @version $Revision$ $Date$
  */
 
-public class GetParameterMap00 extends HttpServlet {
+public class GetParameterMap00 extends GenericServlet {
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void service(ServletRequest request, ServletResponse response)
         throws IOException, ServletException {
 
         response.setContentType("text/plain");
@@ -114,6 +114,13 @@ public class GetParameterMap00 extends HttpServlet {
         else {
             writer.println("GetParameterMap00 FAILED:" + errors);
         }
+        while (true) {
+            String message = StaticLogger.read();
+            if (message == null)
+                break;
+            writer.println(message);
+        }
+        StaticLogger.reset();
 
     }
 

@@ -342,6 +342,7 @@ public class TestClient extends Task {
 
             // Acquire the response data, if there is any
             String outData = "";
+            String outText = "";
             boolean eol = false;
             InputStream is = conn.getInputStream();
             if (is != null) {
@@ -354,6 +355,8 @@ public class TestClient extends Task {
                         eol = true;
                     if (!eol)
                         outData += ch;
+                    else
+                        outText += ch;
                 }
                 is.close();
             }
@@ -370,6 +373,8 @@ public class TestClient extends Task {
                     System.out.println("HEAD: " + name + ": " + value);
                 }
                 System.out.println("DATA: " + outData);
+                if (outText.length() > 2)
+                    System.out.println("TEXT: " + outText);
             }
 
             // Validate the response against our criteria

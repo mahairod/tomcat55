@@ -85,6 +85,13 @@ public class GetQueryString01 extends HttpServlet {
             writer.println("GetQueryString01 FAILED - Received '" + result +
                            "' instead of '" + expected + "'");
         }
+        while (true) {
+            String message = StaticLogger.read();
+            if (message == null)
+                break;
+            writer.println(message);
+        }
+        StaticLogger.reset();
 
     }
 

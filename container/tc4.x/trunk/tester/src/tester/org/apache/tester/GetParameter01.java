@@ -70,9 +70,9 @@ import javax.servlet.http.*;
  * @version $Revision$ $Date$
  */
 
-public class GetParameter01 extends HttpServlet {
+public class GetParameter01 extends GenericServlet {
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void service(ServletRequest request, ServletResponse response)
         throws IOException, ServletException {
 
         response.setContentType("text/plain");
@@ -85,6 +85,13 @@ public class GetParameter01 extends HttpServlet {
             writer.println("GetParameter01 FAILED - Received '" + result +
                            "' instead of '" + expected + "'");
         }
+        while (true) {
+            String message = StaticLogger.read();
+            if (message == null)
+                break;
+            writer.println(message);
+        }
+        StaticLogger.reset();
 
     }
 

@@ -59,40 +59,84 @@ package org.apache.tester;
 
 
 import java.io.*;
+import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+
 /**
- * Test getting the servlet input stream after we have retrieved the reader.
- * This should throw an IllegalStateException.
+ * Logger that uses a static message buffer to facilitate intra-web-app
+ * recording and retrieval of log messages.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class GetInputStream01 extends GenericServlet {
+public class StaticLogger {
 
-    public void service(ServletRequest request, ServletResponse response)
-        throws IOException, ServletException {
 
-        response.setContentType("text/plain");
-        PrintWriter writer = response.getWriter();
-        BufferedReader reader = request.getReader();
-        try {
-            ServletInputStream sis = request.getInputStream();
-            writer.println("GetInputStream01 FAILED - Did not throw " +
-                           "IllegalStateException");
-        } catch (IllegalStateException e) {
-            writer.println("GetInputStream01 PASSED");
+    // ----------------------------------------------------------- Constructors
+
+
+    // ------------------------------------------------------- Static Variables
+
+
+    /**
+     * The set of messages that have been logged.
+     */
+    protected static ArrayList messages = new ArrayList();
+
+
+    /**
+     * The index of the next message that will be retrieved by a read() call.
+     */
+    protected static int position = 0;
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return the next message that has been logged, or <code>null</code>
+     * if there are no more messages.
+     */
+    public static String read() {
+
+        synchronized (messages) {
+            if (position < messages.size())
+                return ((String) messages.get(position++));
+            else
+                return (null);
         }
-        while (true) {
-            String message = StaticLogger.read();
-            if (message == null)
-                break;
-            writer.println(message);
-        }
-        StaticLogger.reset();
 
     }
+
+
+    /**
+     * Reset the messages buffer and position.
+     */
+    public static void reset() {
+
+        synchronized (messages) {
+            messages.clear();
+            position = 0;
+        }
+
+    }
+
+
+    /**
+     * Write a new message to the end of the messages buffer.
+     *
+     * @param message The message to be added
+     */
+    public static void write(String message) {
+
+        synchronized (messages) {
+            messages.add(message);
+        }
+
+    }
+
 
 }
