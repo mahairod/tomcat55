@@ -106,7 +106,7 @@
 </section>
 
 
-<section name="Nested Elements">
+<section name="Nested Components">
 
   <p><strong>FIXME</strong> - Document any use of a nested <code>Factory</code>
   element for communicating with <code>mod_webapp</code> over SSL.</p>

@@ -64,9 +64,9 @@
 </section>
 
 
-<section name="Nested Elements">
+<section name="Nested Components">
 
-  <p>No nested elements may be embedded inside a <strong>Server</strong>,
+  <p>No nested components may be embedded inside a <strong>Server</strong>,
   element, except for one or more <strong>Connector</strong> elements
   followed by a single <a href="engine.html">Engine</a> element.
   </p>

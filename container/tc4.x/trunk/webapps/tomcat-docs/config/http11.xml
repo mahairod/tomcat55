@@ -195,7 +195,7 @@
 </section>
 
 
-<section name="Nested Elements">
+<section name="Nested Components">
 
   <p>The only element that may be embedded inside a <strong>Connector</strong>
   element is a <strong>Factory</strong> element, which is used to configure

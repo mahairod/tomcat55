@@ -32,7 +32,7 @@
         <item name="Host"                  href="host.html"/>
     </menu>
 
-    <menu name="Nested Elements">
+    <menu name="Nested Components">
         <item name="Default Context"       href="defaultcontext.html"/>
         <item name="Loader"                href="loader.html"/>
         <item name="Logger"                href="logger.html"/>
