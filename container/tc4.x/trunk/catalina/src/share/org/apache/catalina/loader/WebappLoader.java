@@ -816,7 +816,6 @@ public class WebappLoader
         File workDir =
             (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
         if (workDir != null) {
-            /*
             try {
                 String workDirPath = workDir.getCanonicalPath();
                 classLoader.addPermission
@@ -827,7 +826,6 @@ public class WebappLoader
             } catch (IOException e) {
                 // Ignore
             }
-            */
         }
 
         try {
