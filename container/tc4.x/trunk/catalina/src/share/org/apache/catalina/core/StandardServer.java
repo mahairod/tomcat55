@@ -253,7 +253,7 @@ public final class StandardServer
 		socket.setSoTimeout(10 * 1000);  // Ten seconds
 		stream = socket.getInputStream();
             } catch (AccessControlException ace) {
-                log("socket accept security exception: " + ace.getMessage());
+                System.err.println("StandardServer.accept security exception: " + ace.getMessage());
                 continue;
 	    } catch (IOException e) {
 	        System.err.println("StandardServer.await: accept: " + e);
