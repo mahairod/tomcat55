@@ -127,10 +127,8 @@ public class ErrorReportValve
                 ;
             }
 
-            ServletResponse sresponse = (ServletResponse) response;
-            if (sresponse instanceof HttpServletResponse)
-                ((HttpServletResponse) sresponse).sendError
-                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         }
 

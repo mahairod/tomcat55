@@ -29,11 +29,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.Lifecycle;
@@ -786,13 +782,8 @@ public final class AccessLogValve
 
         String value = null;
 
-        ServletRequest req = request.getRequest();
-        HttpServletRequest hreq = (HttpServletRequest) req;
-        ServletResponse res = response.getResponse();
-        HttpServletResponse hres = (HttpServletResponse) res;
-
         if (pattern == 'a') {
-            value = req.getRemoteAddr();
+            value = request.getRemoteAddr();
         } else if (pattern == 'A') {
             try {
                 value = InetAddress.getLocalHost().getHostAddress();
@@ -808,54 +799,54 @@ public final class AccessLogValve
         } else if (pattern == 'B') {
             value = "" + response.getContentLength();
         } else if (pattern == 'h') {
-            value = req.getRemoteHost();
+            value = request.getRemoteHost();
         } else if (pattern == 'H') {
-            value = req.getProtocol();
+            value = request.getProtocol();
         } else if (pattern == 'l') {
             value = "-";
         } else if (pattern == 'm') {
-            if (hreq != null)
-                value = hreq.getMethod();
+            if (request != null)
+                value = request.getMethod();
             else
                 value = "";
         } else if (pattern == 'p') {
-            value = "" + req.getServerPort();
+            value = "" + request.getServerPort();
         } else if (pattern == 'D') {
                     value = "" + time;
         } else if (pattern == 'q') {
             String query = null;
-            if (hreq != null)
-                query = hreq.getQueryString();
+            if (request != null)
+                query = request.getQueryString();
             if (query != null)
                 value = "?" + query;
             else
                 value = "";
         } else if (pattern == 'r') {
             StringBuffer sb = new StringBuffer();
-            if (hreq != null) {
-                sb.append(hreq.getMethod());
+            if (request != null) {
+                sb.append(request.getMethod());
                 sb.append(space);
-                sb.append(hreq.getRequestURI());
-                if (hreq.getQueryString() != null) {
+                sb.append(request.getRequestURI());
+                if (request.getQueryString() != null) {
                     sb.append('?');
-                    sb.append(hreq.getQueryString());
+                    sb.append(request.getQueryString());
                 }
                 sb.append(space);
-                sb.append(hreq.getProtocol());
+                sb.append(request.getProtocol());
             } else {
                 sb.append("- - ");
-                sb.append(req.getProtocol());
+                sb.append(request.getProtocol());
             }
             value = sb.toString();
         } else if (pattern == 'S') {
-            if (hreq != null)
-                if (hreq.getSession(false) != null)
-                    value = hreq.getSession(false).getId();
+            if (request != null)
+                if (request.getSession(false) != null)
+                    value = request.getSession(false).getId();
                 else value = "-";
             else
                 value = "-";
         } else if (pattern == 's') {
-            if (hres != null)
+            if (response != null)
                 value = "" + response.getStatus();
             else
                 value = "-";
@@ -875,17 +866,17 @@ public final class AccessLogValve
         } else if (pattern == 'T') {
             value = timeTakenFormatter.format(time/1000d);
         } else if (pattern == 'u') {
-            if (hreq != null)
-                value = hreq.getRemoteUser();
+            if (request != null)
+                value = request.getRemoteUser();
             if (value == null)
                 value = "-";
         } else if (pattern == 'U') {
-            if (hreq != null)
-                value = hreq.getRequestURI();
+            if (request != null)
+                value = request.getRequestURI();
             else
                 value = "-";
         } else if (pattern == 'v') {
-            value = req.getServerName();
+            value = request.getServerName();
         } else {
             value = "???" + pattern + "???";
         }
@@ -911,13 +902,10 @@ public final class AccessLogValve
 
         Object value = null;
 
-        ServletRequest req = request.getRequest();
-        HttpServletRequest hreq = (HttpServletRequest) req;
-
         switch (type) {
             case 'i':
-                if (null != hreq)
-                    value = hreq.getHeader(header);
+                if (null != request)
+                    value = request.getHeader(header);
                 else
                     value= "??";
                 break;
@@ -927,7 +915,7 @@ public final class AccessLogValve
                 break;
 */
             case 'c':
-                 Cookie[] c = hreq.getCookies();
+                 Cookie[] c = request.getCookies();
                  for (int i=0; c != null && i < c.length; i++){
                      if (header.equals(c[i].getName())){
                          value = c[i].getValue();
@@ -936,14 +924,14 @@ public final class AccessLogValve
                  }
                 break;
             case 'r':
-                if (null != hreq)
-                    value = hreq.getAttribute(header);
+                if (null != request)
+                    value = request.getAttribute(header);
                 else
                     value= "??";
                 break;
             case 's':
-                if (null != hreq) {
-                    HttpSession sess = hreq.getSession(false);
+                if (null != request) {
+                    HttpSession sess = request.getSession(false);
                     if (null != sess)
                         value = sess.getAttribute(header);
                 }

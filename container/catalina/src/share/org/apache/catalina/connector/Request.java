@@ -45,7 +45,6 @@ import javax.servlet.ServletRequestAttributeEvent;
 import javax.servlet.ServletRequestAttributeListener;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.tomcat.util.buf.B2CConverter;
@@ -2249,7 +2248,7 @@ public class Request
             Cookie cookie = new Cookie(Globals.SESSION_COOKIE_NAME,
                                        session.getId());
             configureSessionCookie(cookie);
-            ((HttpServletResponse) response).addCookie(cookie);
+            response.addCookie(cookie);
         }
 
         if (session != null) {
