@@ -114,8 +114,10 @@ public class StandardContextMBean extends BaseModelMBean {
                     MBeanUtils.createObjectName(managed.getDomain(), envs[i]);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
-                throw new IllegalArgumentException
+                IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for environment " + envs[i]);
+                iae.initCause(e);
+                throw iae;
             }
         }
         return ((String[]) results.toArray(new String[results.size()]));
@@ -137,8 +139,10 @@ public class StandardContextMBean extends BaseModelMBean {
                     MBeanUtils.createObjectName(managed.getDomain(), resources[i]);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
-                throw new IllegalArgumentException
+                IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for resource " + resources[i]);
+                iae.initCause(e);
+                throw iae;
             }
         }
         return ((String[]) results.toArray(new String[results.size()]));
@@ -160,8 +164,10 @@ public class StandardContextMBean extends BaseModelMBean {
                     MBeanUtils.createObjectName(managed.getDomain(), links[i]);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
-                throw new IllegalArgumentException
+                IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for resource " + links[i]);
+                iae.initCause(e);
+                throw iae;
             }
         }
         return ((String[]) results.toArray(new String[results.size()]));
