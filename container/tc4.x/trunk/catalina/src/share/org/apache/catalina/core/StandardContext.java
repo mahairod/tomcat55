@@ -2209,6 +2209,17 @@ public class StandardContext
 	    }
 	}
 
+        // Create and register the associated naming context, if internal 
+        // naming is used
+        if (isUseNaming()) {
+            try {
+                createNamingContext();
+            } catch (NamingException e) {
+                log(sm.getString("standardContext.namingInitFailed",
+                                 getName()));
+            }
+        }
+
         // Restart our application event listeners and filters
         listenerStart();
         filterStart();
@@ -3244,12 +3255,12 @@ public class StandardContext
         Hashtable contextEnv = new Hashtable();
         javax.naming.Context namingContext = 
             new NamingContext(contextEnv, getName());
-        ContextAccessController.setSecurityToken(this, this);
+        ContextAccessController.setSecurityToken(getName(), this);
         ContextBindings.bindContext(this, namingContext, this);
         ContextBindings.bindThread(this, this);
 
         // Setting the context in read/write mode
-        ContextAccessController.setWritable(this, this);
+        ContextAccessController.setWritable(getName(), this);
 
         // Creating the comp subcontext
         javax.naming.Context compCtx = namingContext.createSubcontext("comp");
