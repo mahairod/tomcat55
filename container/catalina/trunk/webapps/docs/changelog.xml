@@ -47,7 +47,7 @@
         Decouple usage of the scheme and secure attributes from enabling SSL. (remm)
       </fix>
       <fix>
-        <bug>32502: memory leak in DigestAuthenticator. (yoavs)
+        <bug>32502</bug>: memory leak in DigestAuthenticator. (yoavs)
       </fix>
     </changelog>
   </subsection>
