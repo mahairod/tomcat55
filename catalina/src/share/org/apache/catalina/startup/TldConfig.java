@@ -230,7 +230,7 @@ public final class TldConfig  {
      * @param xmlValidation true to enable xml instance validation
      */
     public void setXmlValidation(boolean xmlValidation){
-        this.xmlValidation = xmlValidation;
+        TldConfig.xmlValidation = xmlValidation;
     }
 
     /**
@@ -258,7 +258,7 @@ public final class TldConfig  {
      * @param xmlNamespaceAware true to enable namespace awareness
      */
     public void setXmlNamespaceAware(boolean xmlNamespaceAware){
-        this.xmlNamespaceAware=xmlNamespaceAware;
+        TldConfig.xmlNamespaceAware = xmlNamespaceAware;
     }    
 
 

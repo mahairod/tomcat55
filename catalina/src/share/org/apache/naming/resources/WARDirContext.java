@@ -497,7 +497,7 @@ public class WARDirContext extends BaseDirContext {
         if (!zipEntry.isDirectory())
             attrs.setResourceType("");
         attrs.setContentLength(zipEntry.getSize());
-        attrs.setLastModified(new Date(zipEntry.getTime()));
+        attrs.setLastModified(zipEntry.getTime());
         
         return attrs;
         

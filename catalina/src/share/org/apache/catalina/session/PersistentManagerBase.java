@@ -416,7 +416,7 @@ public abstract class PersistentManagerBase
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

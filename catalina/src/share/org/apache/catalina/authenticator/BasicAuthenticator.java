@@ -97,12 +97,6 @@ public class BasicAuthenticator
 
 
     /**
-     * The Base64 helper object for this class.
-     */
-    protected static final Base64 base64Helper = new Base64();
-
-
-    /**
      * Descriptive information about this implementation.
      */
     protected static final String info =
@@ -117,7 +111,7 @@ public class BasicAuthenticator
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 
@@ -220,7 +214,7 @@ public class BasicAuthenticator
 
         // Decode and parse the authorization credentials
         String unencoded =
-          new String(base64Helper.decode(authorization.getBytes()));
+            new String(Base64.decode(authorization.getBytes()));
         int colon = unencoded.indexOf(':');
         if (colon < 0)
             return (null);
@@ -247,7 +241,7 @@ public class BasicAuthenticator
 
         // Decode and parse the authorization credentials
         String unencoded =
-          new String(base64Helper.decode(authorization.getBytes()));
+          new String(Base64.decode(authorization.getBytes()));
         int colon = unencoded.indexOf(':');
         if (colon < 0)
             return (null);

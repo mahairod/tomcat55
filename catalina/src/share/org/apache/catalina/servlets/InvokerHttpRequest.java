@@ -198,7 +198,7 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

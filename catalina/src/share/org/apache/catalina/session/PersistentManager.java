@@ -107,7 +107,7 @@ public final class PersistentManager extends PersistentManagerBase {
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 
