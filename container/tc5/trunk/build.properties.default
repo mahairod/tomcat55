@@ -79,10 +79,10 @@ commons-daemon.cvs.loc=jakarta-commons-sandbox/daemon
 
 
 # ----- Commons Digester, version 1.4 or later -----
-commons-digester.home=${base.path}/commons-digester-1.4
+commons-digester.home=${base.path}/commons-digester-1.4.1
 commons-digester.lib=${commons-digester.home}
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
-commons-digester.loc=http://www.apache.org/dist/jakarta/commons/digester/binaries/commons-digester-1.4.tar.gz
+commons-digester.loc=http://www.apache.org/dist/jakarta/commons/digester/binaries/commons-digester-1.4.1.tar.gz
 
 
 # ----- Commons Expression Language (EL) -----
