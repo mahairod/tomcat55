@@ -367,7 +367,7 @@ public final class ContextConfig
             if (context instanceof ContainerBase) {
                 Pipeline pipeline = ((ContainerBase) context).getPipeline();
                 if (pipeline != null) {
-                    pipeline.addValve(authenticator);
+                    ((ContainerBase) context).addValve(authenticator);
                     log(sm.getString("contextConfig.authenticatorConfigured",
                                      loginConfig.getAuthMethod()));
                 }
@@ -413,7 +413,7 @@ public final class ContextConfig
             if (context instanceof ContainerBase) {
                 Pipeline pipeline = ((ContainerBase) context).getPipeline();
                 if (pipeline != null) {
-                    pipeline.addValve(certificates);
+                    ((ContainerBase) context).addValve(certificates);
                     log(sm.getString
                         ("contextConfig.certificatesConfig.added"));
                 }

@@ -159,14 +159,6 @@ public class MBeanUtils {
     private static MBeanServer mserver = createServer();
 
 
-    /**
-     * The sequence number for Valve
-     */
-    private static int contextValveSequence = 0;
-    private static int hostValveSequence = 0;
-    private static int engineValveSequence = 0;
-
-
     // --------------------------------------------------------- Static Methods
 
 
@@ -1172,21 +1164,15 @@ public class MBeanUtils {
 
         if (container instanceof Engine) {
             Service service = ((Engine)container).getService();
-            Integer sequenceInt = new Integer(engineValveSequence);
-            String sequenceStr = sequenceInt.toString();
             name = new ObjectName(domain + ":type=Valve,sequence=" +
-                                sequenceStr + ",service=" +
-                                service.getName());
-            engineValveSequence++;
+                                  valve.hashCode() + ",service=" +
+                                  service.getName());
         } else if (container instanceof Host) {
             Service service = ((Engine)container.getParent()).getService();
-            Integer sequenceInt = new Integer(hostValveSequence);
-            String sequenceStr = sequenceInt.toString();
             name = new ObjectName(domain + ":type=Valve,sequence=" +
-                                sequenceStr + ",host=" +
-                                container.getName() + ",service=" +
-                                service.getName());
-            hostValveSequence++;
+                                  valve.hashCode() + ",host=" +
+                                  container.getName() + ",service=" +
+                                  service.getName());
         } else if (container instanceof Context) {
             String path = ((Context)container).getPath();
             if (path.length() < 1) {
@@ -1194,14 +1180,11 @@ public class MBeanUtils {
             }
             Host host = (Host) container.getParent();
             Service service = ((Engine) host.getParent()).getService();
-            Integer sequenceInt = new Integer(contextValveSequence);
-            String sequenceStr = sequenceInt.toString();
             name = new ObjectName(domain + ":type=Valve,sequence=" +
-                                sequenceStr + ",path=" +
-                                path + ",host=" +
-                                host.getName() + ",service=" +
-                                service.getName());
-            contextValveSequence++;
+                                  valve.hashCode() + ",path=" +
+                                  path + ",host=" +
+                                  host.getName() + ",service=" +
+                                  service.getName());
         }
 
         return (name);

@@ -270,6 +270,7 @@ public class ServerLifecycleListener
         if (debug >= 4)
             log("Creating MBean for Context " + context);
         MBeanUtils.createMBean(context);
+        context.addContainerListener(this);
         if (context instanceof StandardContext) {
             ((StandardContext) context).addPropertyChangeListener(this);
             ((StandardContext) context).addLifecycleListener(this);
@@ -581,6 +582,9 @@ public class ServerLifecycleListener
             
         }
 
+        // Deregister ourselves as a ContainerListener
+        context.removeContainerListener(this);
+
     }
 
 
@@ -630,6 +634,9 @@ public class ServerLifecycleListener
         for (int k = 0; k < contexts.length; k++) {
             destroyMBeans((Context) contexts[k]);
         }
+
+        // Deregister ourselves as a ContainerListener
+        host.removeContainerListener(this);
 
     }
 
