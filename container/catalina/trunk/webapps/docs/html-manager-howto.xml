@@ -27,7 +27,7 @@ Tomcat.  This document is for the HTML web interface to the web application
       help.</li>
   <li><strong>Applications</strong> - List of web applications and
       commands.</li>
-  <li><strong>Install</strong> - Installing web applications.</li>
+  <li><strong>Deploy</strong> - Deploying web applications.</li>
   <li><strong>Server Information</strong> - Information about the Tomcat
       server.</li>
 </ul>
@@ -91,7 +91,7 @@ the following is displayed:
         <li><strong>Reload</strong> - Reload the web application so that new
             ".jar" files in <code>/WEB-INF/lib/</code> or new classes in
             <code>/WEB-INF/classes/</code> can be used.</li>
-        <li><strong>Remove</strong> - Stop and then remove this web
+        <li><strong>Undeploy</strong> - Stop and then remove this web
              application from the server.</li>
       </ul>
   </li>
@@ -127,7 +127,7 @@ error message.  Possible causes for problems include:
     </blockquote></li>       
 <li><em>No context exists for path /foo</em>
     <blockquote>             
-    <p>There is no deployed or installed application on the context path
+    <p>There is no deployed application on the context path
     that you specified.</p>  
     </blockquote></li>       
 <li><em>No context path was specified</em>
@@ -142,7 +142,7 @@ error message.  Possible causes for problems include:
 <subsection name="Stop">
 
 <p>Signal an existing application to make itself unavailable, but leave it
-deployed or installed.  Any request that comes in while an application is
+deployed.  Any request that comes in while an application is
 stopped will see an HTTP error 404, and this application will show as
 "stopped" on a list applications command.</p>
                              
@@ -167,7 +167,7 @@ error message.  Possible causes for problems include:
     </blockquote></li>       
 <li><em>No context exists for path /foo</em>
     <blockquote>             
-    <p>There is no deployed or installed application on the context path
+    <p>There is no deployed application on the context path
     that you specified.</p>  
     </blockquote></li>       
 <li><em>No context path was specified</em>
@@ -215,7 +215,7 @@ error message.  Possible causes for problems include:
     </blockquote></li>       
 <li><em>No context exists for path /foo</em>
     <blockquote>             
-    <p>There is no deployed or installed application on the context path
+    <p>There is no deployed application on the context path
     that you specified.</p>  
     </blockquote></li>       
 <li><em>No context path was specified</em>
@@ -226,17 +226,18 @@ error message.  Possible causes for problems include:
     <blockquote>             
     Currently, application reloading (to pick up changes to the classes or
     <code>web.xml</code> file) is not supported when a web application is
-    installed directly from a WAR file.  It only works when the web application
-    is installed from an unpacked directory.  If you are using a WAR file,
-    you should <code>remove</code> and then <code>install</code> the
-    application again to pick up your changes.
+    installed directly from a WAR file, which happens when the host is 
+    configured to not unpack WAR files. As it only works when the web 
+    application is installed from an unpacked directory, if you are using 
+    a WAR file, you should <code>undeploy</code> and then <code>deploy</code> 
+    the application again to pick up your changes.
     </blockquote></li>       
 </ul>
 </p>
 
 </subsection>
 
-<subsection name="Remove">
+<subsection name="Undeploy">
 
 <p><strong><font color="red">WARNING</font> - This command will delete the
 contents of the web application directory and/or ".war" file if it exists within
@@ -248,11 +249,12 @@ you simply want to take an application out of service, you should use the
 <p>Signal an existing application to gracefully shut itself down, and then
 remove it from Tomcat (which also makes this context path available for
 reuse later).  This command is the logical opposite of the
-<code>/install</code> command.</p>
+<code>/deploy</code> Ant command, and the related deploy features available 
+in the HTML manager.</p>
                              
 <p>If this command succeeds, you will see a Message like this:</p>
 <source>                     
-OK - Removed application at context path /examples
+OK - Undeployed application at context path /examples
 </source>                    
                              
 <p>Otherwise, the Message will start with <code>FAIL</code> and include an
@@ -260,8 +262,8 @@ error message.  Possible causes for problems include:
 <ul>                         
 <li><em>Encountered exception</em>
     <blockquote>             
-    <p>An exception was encountered trying to remove the web application.
-    Check the Tomcat 4 logs for the details.</p>
+    <p>An exception was encountered trying to undeploy the web application.
+    Check the Tomcat logs for the details.</p>
     </blockquote></li>       
 <li><em>Invalid context path was specified</em>
     <blockquote>             
@@ -271,7 +273,7 @@ error message.  Possible causes for problems include:
     </blockquote></li>       
 <li><em>No context exists for path /foo</em>
     <blockquote>             
-    <p>There is no deployed or installed application on the context path
+    <p>There is no deployed application on the context path
     that you specified.</p>  
     </blockquote></li>       
 <li><em>No context path was specified</em>
@@ -285,9 +287,9 @@ error message.  Possible causes for problems include:
 
 </section>
 
-<section name="Install">
+<section name="Deploy">
 
-<p>Web applications can be installed using files or directories located
+<p>Web applications can be deployed using files or directories located
 on the Tomcat server or you can upload a web application archive (WAR)
 file to the server.</p>
 
@@ -295,15 +297,15 @@ file to the server.</p>
 of install you want to do and then submit it using the <i>Install</i>
 button.</p>
 
-<subsection name="Install directory or WAR file located on server">
+<subsection name="Deploy directory or WAR file located on server">
 
-<p>Install and start a new web application, attached to the specified <i>Context
+<p>Deploy and start a new web application, attached to the specified <i>Context
 Path:</i> (which must not be in use by any other web application).
-This command is the logical opposite of the <em>Remove</em> command.</p>
+This command is the logical opposite of the <em>Undeploy</em> command.</p>
 
-<p>There are a number of different ways the install command can be used.</p>
+<p>There are a number of different ways the deploy command can be used.</p>
 
-<h3>Install a Directory or WAR by URL</h3>
+<h3>Deploy a Directory or WAR by URL</h3>
 
 <p>Install a web application directory or ".war" file located on the Tomcat
 server. If no <i>Context Path</i> is specified, the directory name or the
@@ -316,7 +318,7 @@ refer to the entire WAR file.</p>
 
 <p>In this example the web application located in the directory
 <code>C:\path\to\foo</code> on the Tomcat server (running on Windows)
-is installed as the web application context named <code>/footoo</code>.
+is deployed as the web application context named <code>/footoo</code>.
 <source>
 Context Path: /footoo
 WAR or Directory URL: file:C:/path/to/foo
@@ -324,7 +326,7 @@ WAR or Directory URL: file:C:/path/to/foo
 </p>
 
 <p>In this example the ".war" file <code>/path/to/bar.war</code> on the
-Tomcat server (running on Unix) is installed as the web application
+Tomcat server (running on Unix) is deployed as the web application
 context named <code>/bar</code>. Notice that there is no <code>path</code>
 parameter so the context path defaults to the name of the web application
 archive file without the ".war" extension.
@@ -333,7 +335,7 @@ WAR or Directory URL: jar:file:/path/to/bar.war!/
 </source>
 </p>
 
-<h3>Install a Directory or War from the Host appBase</h3>
+<h3>Deploy a Directory or War from the Host appBase</h3>
 
 <p>Install a web application directory or ".war" file located in your Host
 appBase directory. If no <i>Context Path</i> is specified the directory name
@@ -341,7 +343,7 @@ or the war file name without the ".war" extension is used as the path.</p>
 
 <p>In this example the web application located in a subdirectory named
 <code>foo</code> in the Host appBase directory of the Tomcat server is
-installed as the web application context named <code>/foo</code>. Notice
+deployed as the web application context named <code>/foo</code>. Notice
 that there is no <code>path</code> parameter so the context path defaults
 to the name of the web application directory.
 <source>
@@ -350,7 +352,7 @@ WAR or Directory URL: foo
 </p>
 
 <p>In this example the ".war" file <code>bar.war</code> located in your
-Host appBase directory on the Tomcat server is installed as the web
+Host appBase directory on the Tomcat server is deployed as the web
 application context named <code>/bartoo</code>.
 <source>
 Context Path: /bartoo
@@ -358,7 +360,7 @@ WAR or Directory URL: bar.war
 </source>
 </p>
 
-<h3>Install using a Context configuration ".xml" file</h3>
+<h3>Deploy using a Context configuration ".xml" file</h3>
 
 <p>If the Host deployXML flag is set to true, you can install a web
 application using a Context configuration ".xml" file and an optional
@@ -427,7 +429,7 @@ including a Context configuration XML file in
 <li><em>War file already exists on server</em>
     <blockquote>
     <p>If a war file of the same name already exists in your Host's
-    appBase the upload will fail. Either remove the existing war file
+    appBase the upload will fail. Either undeploy the existing war file
     from your Host's appBase or upload the new war file using a different
     name.</p>
     </blockquote></li>
@@ -444,13 +446,13 @@ including a Context configuration XML file in
 
 </subsection>
 
-<subsection name="Installation Notes">
+<subsection name="Deployment Notes">
 
 <p>If the Host is configured with unpackWARs=true and you install a war
 file, the war will be unpacked into a directory in your Host appBase
 directory.</p>
 
-<p>If the application war or directory is installed in your Host appBase
+<p>If the application war or directory is deployed in your Host appBase
 directory and either the Host is configured with autoDeploy=true or
 liveDeploy=true, the Context path must match the directory name or
 war file name without the ".war" extension.</p>
@@ -463,12 +465,12 @@ files located outside of their Host appBase.</p>
 
 </subsection>
 
-<subsection name="Install Message">
+<subsection name="Deploy Message">
 
-<p>If installation and startup is successful, you will receive a Message
+<p>If deployment and startup is successful, you will receive a Message
 like this:</p>
 <source>
-OK - Installed application at context path /foo
+OK - Deployed application at context path /foo
 </source>
 
 <p>Otherwise, the Message will start with <code>FAIL</code> and include an
@@ -477,7 +479,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Application already exists at path /foo</em>
     <blockquote>
     <p>The context paths for all currently running web applications must be
-    unique.  Therefore, you must either remove or undeploy the existing web
+    unique.  Therefore, you must either undeploy the existing web
     application using this context path, or choose a different context path
     for the new one.</p>
     </blockquote></li>
@@ -511,13 +513,13 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>Context path must match the directory or WAR file name:</em>
     <blockquote>
-    If the application war or directory is installed in your Host appBase
+    If the application war or directory is deployed in your Host appBase
     directory and either the Host is configured with autoDeploy=true or
     liveDeploy=true, the Context path must match the directory name or
     war file name without the ".war" extension.
     </blockquote></li>
 <li><em>Only web applications in the Host web application directory can
-     be installed</em>
+     be deployed</em>
      <blockquote>
      If the Host deployXML flag is set to false this error will happen
      if an attempt is made to install a web application directory or
