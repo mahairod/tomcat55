@@ -740,15 +740,14 @@ public class JspC implements Options {
                 rootCause = ((JasperException) rootCause).getRootCause();
             }
             log.error(Localizer.getMessage("jspc.error.generalException",
-                       file),
-              rootCause);
+                      file), rootCause);
             throw je;
 
         } catch (Exception e) {
-        if ((e instanceof FileNotFoundException) && log.isWarnEnabled()) {
-        log.warn(Localizer.getMessage("jspc.error.fileDoesNotExist",
-                          e.getMessage()));
-        }
+            if ((e instanceof FileNotFoundException) && log.isWarnEnabled()) {
+                log.warn(Localizer.getMessage("jspc.error.fileDoesNotExist",
+                                              e.getMessage()));
+            }
             throw new JasperException(e);
         }
     }
