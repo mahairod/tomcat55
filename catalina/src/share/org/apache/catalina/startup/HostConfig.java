@@ -1055,6 +1055,7 @@ public class HostConfig
             if ((!resource.exists() && lastModified != 0L) 
                 || (resource.lastModified() != lastModified)) {
                 // Reload application
+                log.info(sm.getString("hostConfig.reload", app.name));
                 Container context = host.findChild(app.name);
                 try {
                     ((Lifecycle) context).stop();
