@@ -123,7 +123,7 @@ goto end
 :doDebug
 shift
 set _EXECJAVA=%_RUNJDB%
-set DEBUG_OPTS=-sourcepath "%CATALINA_HOME%\..\..\jakarta-tomcat-4.0\catalina\src\share"
+set DEBUG_OPTS=-sourcepath "%CATALINA_HOME%\..\..\jakarta-tomcat-catalina\catalina\src\share"
 if not ""%1"" == ""-security"" goto execCmd
 shift
 echo Using Security Manager
