@@ -204,8 +204,10 @@ public class NamingResourcesMBean extends BaseModelMBean {
      * Add an environment entry for this web application.
      *
      * @param envName New environment entry name
+     * @param type The type of the new environment entry
+     * @param value The value of the new environment entry 
      */
-    public String addEnvironment(String envName, String type) 
+    public String addEnvironment(String envName, String type, String value) 
         throws MalformedObjectNameException {
 
         NamingResources nresources = (NamingResources) this.resource;
@@ -220,6 +222,7 @@ public class NamingResourcesMBean extends BaseModelMBean {
         env = new ContextEnvironment();
         env.setName(envName);
         env.setType(type);
+        env.setValue(value);
         nresources.addEnvironment(env);
         
         // Return the corresponding MBean name
@@ -235,6 +238,7 @@ public class NamingResourcesMBean extends BaseModelMBean {
      * Add a resource reference for this web application.
      *
      * @param resourceName New resource reference name
+     * @param type New resource reference type
      */
     public String addResource(String resourceName, String type) 
         throws MalformedObjectNameException {
@@ -264,10 +268,12 @@ public class NamingResourcesMBean extends BaseModelMBean {
     /**
      * Add a resource link reference for this web application.
      *
+     * @param global New resource link reference global name
      * @param resourceLinkName New resource link reference name
+     * @param type New resource link reference type
      */
-    public String addResourceLink(String resourceLinkName, String type, 
-                            String global) throws MalformedObjectNameException {
+    public String addResourceLink(String global, String resourceLinkName, 
+                            String type) throws MalformedObjectNameException {
         
         NamingResources nresources = (NamingResources) this.resource;
         if (nresources == null) {

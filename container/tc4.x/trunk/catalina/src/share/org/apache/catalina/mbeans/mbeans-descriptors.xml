@@ -128,7 +128,7 @@
 
 
   <mbean         name="ContextEnvironment"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
+            className="org.apache.catalina.mbeans.ContextEnvironmentMBean"
           description="Representation of an application environment entry"
                domain="Catalina"
                 group="Resources"
@@ -194,7 +194,7 @@
 
 
    <mbean         name="ContextResourceLink"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
+            className="org.apache.catalina.mbeans.ContextResourceLinkMBean"
           description="Representation of a resource link for a web application"
                domain="Catalina"
                 group="Resources"
@@ -1619,6 +1619,12 @@
       <parameter name="envName"
           description="New environment entry name"
                  type="java.lang.String"/>
+      <parameter name="type"
+          description="New environment entry type"
+                 type="java.lang.String"/>
+      <parameter name="value"
+          description="New environment entry value"
+                 type="java.lang.String"/>
     </operation>
 
     <operation   name="addResource"
@@ -1628,14 +1634,23 @@
       <parameter name="resourceName"
           description="New resource reference name"
                  type="java.lang.String"/>
+      <parameter name="type"
+          description="New resource reference type"
+                 type="java.lang.String"/>
     </operation>
 
     <operation   name="addResourceLink"
           description="Add a resource link reference for this web application"
                impact="ACTION"
            returnType="void">
+      <parameter name="global"
+          description="New resource reference global name"
+                 type="java.lang.String"/>
       <parameter name="resourceLinkName"
           description="New resource reference name"
+                 type="java.lang.String"/>
+      <parameter name="type"
+          description="New resource reference type"
                  type="java.lang.String"/>
     </operation>
 
