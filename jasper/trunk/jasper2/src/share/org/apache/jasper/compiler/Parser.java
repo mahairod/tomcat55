@@ -1702,7 +1702,8 @@ class Parser {
                     reader.skipSpaces();
                 }
                 parseBody(namedAttributeNode, "jsp:attribute", 
-			  TagInfo.BODY_CONTENT_JSP);
+			  getAttributeBodyType(parent,
+					       attrs.getValue("name")));
                 if (namedAttributeNode.isTrim()) {
                     Node.Nodes subElems = namedAttributeNode.getBody();
 		    if (subElems != null) {
