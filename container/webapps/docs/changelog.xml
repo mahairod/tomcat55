@@ -97,6 +97,14 @@
       <fix>
       <bug>28131</bug>: Fix expiration of delta sessions (fhanik)
       </fix>
+      <fix>
+      access() on a session should not set isNew false (fhanik)
+      </fix>
+      <fix>
+      <bug>28259</bug>: fixed the blocking interestOps(), although 
+      selector.select() still doesn't wakeup when a new request comes in
+      (fhanik)
+      </fix>
 
     </changelog>
 
