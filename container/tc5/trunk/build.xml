@@ -1354,10 +1354,12 @@
         <include name="bin/shutdown.sh" />
         <include name="bin/tool-wrapper.sh" />
       </tarfileset>
+      <tarfileset dir="${tomcat.dist}" mode="600" prefix="${final.name}">
+        <include name="conf/**" />
+      </tarfileset>
       <tarfileset dir="${tomcat.dist}" prefix="${final.name}">
         <include name="bin/**" />
         <include name="common/**" />
-        <include name="conf/**" />
         <include name="logs/**" />
         <include name="server/**" />
         <include name="shared/**" />
@@ -1377,6 +1379,7 @@
         <exclude name="bin/startup.sh" />
         <exclude name="bin/shutdown.sh" />
         <exclude name="bin/tool-wrapper.sh" />
+        <exclude name="conf/**" />
         <exclude name="src/**" />
       </tarfileset>
     </tar>
