@@ -65,6 +65,12 @@
       By default, DNS lookups are enabled.</p>
     </attribute>
 
+    <attribute name="maxPostSize" required="false">
+      <p>The maximum size in bytes of the POST which will be handled by 
+      the container FORM URL parameter parsing. If not specified, 
+      this attribute is set to 2097152 (2 megabytes).</p>
+    </attribute>
+
     <attribute name="redirectPort" required="false">
       <p>If this <strong>Connector</strong> is supporting non-SSL
       requests, and a request is received for which a matching
@@ -86,6 +92,12 @@
       calls to <code>request.isSecure()</code> to return <code>true</code>
       for requests received by this Connector (you would want this on an
       SSL Connector).  The default value is <code>false</code>.</p>
+    </attribute>
+
+    <attribute name="URIEncoding" required="false">
+      <p>This specifies the character encoding used to decode the URI bytes,
+      after %xx decoding the URL. If not specified, ISO-8859-1 will be used.
+      </p>
     </attribute>
 
   </attributes>
@@ -166,12 +178,6 @@
       disable HTTP/1.0 keep-alive, as well as HTTP/1.1 keep-alive and 
       pipelining. If
       not specified, this attribute is set to 100.</p>
-    </attribute>
-
-    <attribute name="maxPostSize" required="false">
-      <p>The maximum size in bytes of the POST which will be handled by 
-      the container FORM URL parameter parsing. If not specified, 
-      this attribute is set to 2097152 (2 megabytes).</p>
     </attribute>
 
     <attribute name="maxSpareThreads" required="false">
