@@ -312,9 +312,7 @@ public class JAASRealm
                 (appName, new JAASCallbackHandler(this, username,
                                                   credentials));
         } catch (Throwable e) {
-            log.debug("Error initializing JAAS: " +  e.toString());
-
-            log.debug(sm.getString("jaasRealm.loginException", username), e);
+            log.error(sm.getString("jaasRealm.unexpectedError"), e);
             return (null);
         } finally {
             Thread.currentThread().setContextClassLoader(ocl);
@@ -346,10 +344,10 @@ public class JAASRealm
                 log.debug(sm.getString("jaasRealm.failedLogin", username));
             return (null);
         } catch (LoginException e) {
-            log.debug(sm.getString("jaasRealm.loginException", username), e);
+            log.warn(sm.getString("jaasRealm.loginException", username), e);
             return (null);
         } catch (Throwable e) {
-            log.debug("Unexpected error", e);
+            log.error(sm.getString("jaasRealm.unexpectedError"), e);
             return (null);
         }
 
