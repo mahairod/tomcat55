@@ -77,7 +77,7 @@ public final class ForEach implements TagPlugin {
 
 	boolean hasItems = ctxt.isAttributeSpecified("items");
 	if (hasItems) {
-	    // optimizations stubbed out for now
+	    doCollection(ctxt);
 	    return;
 	}
 
@@ -89,12 +89,9 @@ public final class ForEach implements TagPlugin {
 	// We must have a begin and end attributes
 	index = ctxt.getTemporaryVariableName();
 	ctxt.generateJavaSource("for (int " + index + " = ");
-	ctxt.generateJavaSource("Integer.parseInt(");
 	ctxt.generateAttribute("begin");
-	ctxt.generateJavaSource("); " + index + " <= ");
-	ctxt.generateJavaSource("Integer.parseInt(");
+	ctxt.generateJavaSource("; " + index + " <= ");
 	ctxt.generateAttribute("end");
-	ctxt.generateJavaSource(")");
 	if (hasStep) {
 	    ctxt.generateJavaSource("; " + index + "+=");
 	    ctxt.generateAttribute("step");
@@ -113,5 +110,95 @@ public final class ForEach implements TagPlugin {
 	}
 	ctxt.generateBody();
 	ctxt.generateJavaSource("}");
+    }
+
+    /**
+     * Generate codes for Collections
+     * The pseudo code is:
+     */
+    private void doCollection(TagPluginContext ctxt) {
+	boolean hasVar = ctxt.isAttributeSpecified("var");
+	boolean hasBegin = ctxt.isAttributeSpecified("begin");
+	boolean hasEnd = ctxt.isAttributeSpecified("end");
+	boolean hasStep = ctxt.isAttributeSpecified("step");
+
+	ctxt.generateImport("java.util.*");
+
+        String itemsV = ctxt.getTemporaryVariableName();
+        ctxt.generateJavaSource("Object " + itemsV + "= ");
+        ctxt.generateAttribute("items");
+        ctxt.generateJavaSource(";");
+	
+	String indexV=null, beginV=null, endV=null, stepV=null;
+	if (hasBegin) {
+	    beginV = ctxt.getTemporaryVariableName();
+	    ctxt.generateJavaSource("int " + beginV + " = ");
+	    ctxt.generateAttribute("begin");
+	    ctxt.generateJavaSource(";");
+	}
+	if (hasEnd) {
+	    indexV = ctxt.getTemporaryVariableName();
+	    ctxt.generateJavaSource("int " + indexV + " = 0;");
+	    endV = ctxt.getTemporaryVariableName();
+	    ctxt.generateJavaSource("int " + endV + " = ");
+	    ctxt.generateAttribute("end");
+	    ctxt.generateJavaSource(";");
+	}
+	if (hasStep) {
+	    stepV = ctxt.getTemporaryVariableName();
+	    ctxt.generateJavaSource("int " + stepV + " = ");
+	    ctxt.generateAttribute("step");
+	    ctxt.generateJavaSource(";");
+	}
+
+        ctxt.generateJavaSource("if (" + itemsV + " instanceof Collection) {");
+        String iterV = ctxt.getTemporaryVariableName();
+        ctxt.generateJavaSource("Iterator " + iterV + " = ");
+	ctxt.generateJavaSource("((Collection)" + itemsV + ").iterator();");
+
+	if (hasBegin) {
+            String tV = ctxt.getTemporaryVariableName();
+	    ctxt.generateJavaSource("for (int " + tV + "=" + beginV + ";" +
+			tV + ">0 && " + iterV + ".hasNext(); " +
+			tV + "--)");
+	    ctxt.generateJavaSource(iterV + ".next();");
+	}
+
+	ctxt.generateJavaSource("while (" + iterV + ".hasNext()){");
+        String nextV = ctxt.getTemporaryVariableName();
+	ctxt.generateJavaSource("Object " + nextV + " = " + iterV + ".next();");
+	if (hasVar) {
+	    ctxt.generateJavaSource("pageContext.setAttribute(");
+	    ctxt.generateAttribute("var");
+	    ctxt.generateJavaSource(", " + nextV + ");");
+	}
+
+	ctxt.generateBody();
+
+	if (hasStep) {
+	    String tV = ctxt.getTemporaryVariableName();
+	    ctxt.generateJavaSource("for (int " + tV + "=" + stepV + "-1;" +
+			tV + ">0 && " + iterV + ".hasNext(); " +
+			tV + "--)");
+	    ctxt.generateJavaSource(iterV + ".next();");
+	}
+	if (hasEnd) {
+	    if (hasStep) {
+		ctxt.generateJavaSource(indexV + "+=" + stepV + ";");
+	    }
+	    else {
+		ctxt.generateJavaSource(indexV + "++;");
+	    }
+	    if (hasBegin) {
+		ctxt.generateJavaSource("if(" + beginV + "+" + indexV +
+			">"+ endV + ")");
+	    }
+	    else {
+		ctxt.generateJavaSource("if(" + indexV + ">" + endV + ")");
+	    }
+	    ctxt.generateJavaSource("break;");
+	}
+	ctxt.generateJavaSource("}");	// while
+	ctxt.generateJavaSource("}");	// if
     }
 }

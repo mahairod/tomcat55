@@ -87,12 +87,25 @@ public interface TagPluginContext {
     String getTemporaryVariableName();
 
     /**
+     * Generate an import statement
+     * @param importName Name of the import class, '*' allowed.
+     */
+    void generateImport(String s);
+
+    /**
      * Generate Java source codes
      */
     void generateJavaSource(String s);
 
     /**
-     * Generate Attribute value of a attribute in the custom tag
+     * @return true if the attribute is specified and its value is a
+     *         translation-time constant.
+     */
+    boolean isConstantAttribute(String attribute);
+
+    /**
+     * Generate codesto evaluate value of a attribute in the custom tag
+     * The codes is a Java expression.
      * NOTE: Currently cannot handle attributes that are fragments.
      * @param attribute The specified attribute
      */

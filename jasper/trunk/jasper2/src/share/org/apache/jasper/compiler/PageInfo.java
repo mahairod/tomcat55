@@ -125,6 +125,10 @@ class PageInfo {
 	this.imports.addAll(imports);
     }
 
+    public void addImport(String imp) {
+	this.imports.add(imp);
+    }
+
     public List getImports() {
 	return imports;
     }

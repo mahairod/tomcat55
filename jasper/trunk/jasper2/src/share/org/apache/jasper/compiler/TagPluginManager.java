@@ -84,18 +84,21 @@ public class TagPluginManager {
     private boolean initialized = false;
     private Hashtable tagPlugins = null;
     private ServletContext ctxt;
+    private PageInfo pageInfo;
 
     public TagPluginManager(ServletContext ctxt) {
 	this.ctxt = ctxt;
     }
 
-    public void apply(Node.Nodes page, ErrorDispatcher err)
+    public void apply(Node.Nodes page, ErrorDispatcher err, PageInfo pageInfo)
 	    throws JasperException {
 
 	init(err);
 	if (tagPlugins == null || tagPlugins.size() == 0) {
 	    return;
 	}
+
+	this.pageInfo = pageInfo;
 
         page.visit(new Node.Visitor() {
             public void visit(Node.CustomTag n)
@@ -171,16 +174,18 @@ public class TagPluginManager {
 	    return;
 	}
 
-	TagPluginContext tagPluginContext = new TagPluginContextImpl(n);
+	TagPluginContext tagPluginContext = new TagPluginContextImpl(n, pageInfo);
 	tagPlugin.doTag(tagPluginContext);
     }
 
     static class TagPluginContextImpl implements TagPluginContext {
 	Node.CustomTag node;
 	Node.Nodes curNodes;
+	PageInfo pageInfo;
 
-	TagPluginContextImpl(Node.CustomTag n) {
+	TagPluginContextImpl(Node.CustomTag n, PageInfo pageInfo) {
 	    this.node = n;
+	    this.pageInfo = pageInfo;
 	    curNodes = new Node.Nodes();
 	    n.setAtETag(curNodes);
 	    curNodes = new Node.Nodes();
@@ -198,6 +203,10 @@ public class TagPluginManager {
 
 	public String getTemporaryVariableName() {
 	    return JspUtil.nextTemporaryVariableName();
+	}
+
+	public void generateImport(String imp) {
+	    pageInfo.addImport(imp);
 	}
 
 	public void generateJavaSource(String sourceCode) {
