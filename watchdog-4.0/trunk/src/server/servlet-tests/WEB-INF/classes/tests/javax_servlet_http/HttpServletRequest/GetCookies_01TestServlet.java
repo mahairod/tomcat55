@@ -85,7 +85,7 @@ public class GetCookies_01TestServlet extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		Cookie[] cook=request.getCookies();
 
-		if( (cook==null) || ( cook.length==0 ) ) {
+                if( cook==null ) {
 			out.println("GetCookies_01Test test PASSED");
 		}
 		else
