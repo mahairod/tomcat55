@@ -93,7 +93,7 @@ public class CatalinaProperties {
 
         if (is == null) {
             try {
-                File home = new File(getCatalinaHome());
+                File home = new File(getCatalinaBase());
                 File conf = new File(home, "conf");
                 File properties = new File(conf, "catalina.properties");
                 is = new FileInputStream(properties);
@@ -145,6 +145,14 @@ public class CatalinaProperties {
     private static String getCatalinaHome() {
         return System.getProperty("catalina.home",
                                   System.getProperty("user.dir"));
+    }
+    
+    
+    /**
+     * Get the value of the catalina.base environment variable.
+     */
+    private static String getCatalinaBase() {
+        return System.getProperty("catalina.base", getCatalinaHome());
     }
 
 
