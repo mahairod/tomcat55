@@ -9,6 +9,4 @@
 -->
 
 
-<Context path="/balancer" docBase="balancer" debug="0" privileged="true">
-
-</Context>
+<Context privileged="true" antiResourceLocking="false" antiJARLocking="false" />
