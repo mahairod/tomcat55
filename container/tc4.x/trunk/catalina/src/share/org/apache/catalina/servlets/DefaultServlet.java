@@ -71,6 +71,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.InputStreamReader;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Timestamp;
@@ -671,6 +674,54 @@ public class DefaultServlet
      * output stream, and ensure that both streams are closed before returning
      * (even in the face of an exception).
      *
+     * @param istream The input stream to read from
+     * @param writer The writer to write to
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    private void copy(ResourceInfo resourceInfo, PrintWriter writer)
+	throws IOException {
+
+        IOException exception = null;
+            
+        InputStream resourceInputStream = 
+            resourceInfo.resources.getResourceAsStream(resourceInfo.path);
+        // FIXME : i18n ?
+        Reader reader = new InputStreamReader(resourceInputStream);
+        
+        // Copy the input stream to the output stream
+        exception = copyRange(reader, writer);
+        
+        // Clean up the input and output streams
+        try {
+            reader.close();
+        } catch (Throwable t) {
+            ;
+        }
+        
+	try {
+	    writer.flush();
+	} catch (Throwable t) {
+	    ;
+	}
+	try {
+	    writer.close();
+	} catch (Throwable t) {
+	    ;
+	}
+
+	// Rethrow any exception that has occurred
+	if (exception != null)
+	    throw exception;
+
+    }
+
+
+    /**
+     * Copy the contents of the specified input stream to the specified
+     * output stream, and ensure that both streams are closed before returning
+     * (even in the face of an exception).
+     *
      * @param resourceInfo The ResourceInfo object
      * @param ostream The output stream to write to
      * @param range Range the client wanted to retrieve
@@ -701,6 +752,51 @@ public class DefaultServlet
 	}
 	try {
 	    ostream.close();
+	} catch (Throwable t) {
+	    ;
+	}
+
+	// Rethrow any exception that has occurred
+	if (exception != null)
+	    throw exception;
+        
+    }
+
+
+    /**
+     * Copy the contents of the specified input stream to the specified
+     * output stream, and ensure that both streams are closed before returning
+     * (even in the face of an exception).
+     *
+     * @param resourceInfo The ResourceInfo object
+     * @param writer The writer to write to
+     * @param range Range the client wanted to retrieve
+     * @exception IOException if an input/output error occurs
+     */
+    private void copy(ResourceInfo resourceInfo, PrintWriter writer, 
+                      Range range)
+	throws IOException {
+        
+        IOException exception = null;
+        
+        InputStream resourceInputStream = 
+            resourceInfo.resources.getResourceAsStream(resourceInfo.path);
+        Reader reader = new InputStreamReader(resourceInputStream);
+        exception = copyRange(reader, writer, range.start, range.end);
+        
+	// Clean up the input and output streams
+	try {
+	    reader.close();
+	} catch (Throwable t) {
+	    ;
+	}
+	try {
+	    writer.flush();
+	} catch (Throwable t) {
+	    ;
+	}
+	try {
+	    writer.close();
 	} catch (Throwable t) {
 	    ;
 	}
@@ -785,6 +881,73 @@ public class DefaultServlet
      * output stream, and ensure that both streams are closed before returning
      * (even in the face of an exception).
      *
+     * @param resourceInfo The ResourceInfo object
+     * @param writer The writer to write to
+     * @param ranges Enumeration of the ranges the client wanted to retrieve
+     * @param contentType Content type of the resource
+     * @exception IOException if an input/output error occurs
+     */
+    private void copy(ResourceInfo resourceInfo, PrintWriter writer,
+                      Enumeration ranges, String contentType)
+	throws IOException {
+        
+        IOException exception = null;
+        
+        while ( (exception == null) && (ranges.hasMoreElements()) ) {
+            
+            InputStream resourceInputStream = 
+                resourceInfo.resources.getResourceAsStream(resourceInfo.path);
+            Reader reader = new InputStreamReader(resourceInputStream);
+        
+            Range currentRange = (Range) ranges.nextElement();
+            
+            // Writing MIME header.
+            writer.println("--" + mimeSeparation);
+            if (contentType != null)
+                writer.println("Content-Type: " + contentType);
+            writer.println("Content-Range: bytes " + currentRange.start
+                           + "-" + currentRange.end + "/" 
+                           + currentRange.length);
+            writer.println();
+            
+            // Printing content
+            exception = copyRange(reader, writer, currentRange.start,
+                                  currentRange.end);
+            
+            try {
+                reader.close();
+            } catch (Throwable t) {
+                ;
+            }
+            
+        }
+        
+        writer.print("--" + mimeSeparation + "--");
+        
+	// Clean up the output streams
+	try {
+	    writer.flush();
+	} catch (Throwable t) {
+	    ;
+	}
+	try {
+	    writer.close();
+	} catch (Throwable t) {
+	    ;
+	}
+
+	// Rethrow any exception that has occurred
+	if (exception != null)
+	    throw exception;
+        
+    }
+
+
+    /**
+     * Copy the contents of the specified input stream to the specified
+     * output stream, and ensure that both streams are closed before returning
+     * (even in the face of an exception).
+     *
      * @param istream The input stream to read from
      * @param ostream The output stream to write to
      * @return Exception which occured during processing
@@ -802,6 +965,38 @@ public class DefaultServlet
                 if (len == -1)
                     break;
                 ostream.write(buffer, 0, len);
+	    } catch (IOException e) {
+		exception = e;
+		len = -1;
+                break;
+	    }
+	}
+        return exception;
+        
+    }
+
+
+    /**
+     * Copy the contents of the specified input stream to the specified
+     * output stream, and ensure that both streams are closed before returning
+     * (even in the face of an exception).
+     *
+     * @param reader The reader to read from
+     * @param writer The writer to write to
+     * @return Exception which occured during processing
+     */
+    private IOException copyRange(Reader reader, PrintWriter writer) {
+        
+	// Copy the input stream to the output stream
+	IOException exception = null;
+	char buffer[] = new char[input];
+	int len = buffer.length;
+	while (true) {
+	    try {
+                len = reader.read(buffer);
+                if (len == -1)
+                    break;
+                writer.write(buffer, 0, len);
 	    } catch (IOException e) {
 		exception = e;
 		len = -1;
@@ -847,6 +1042,54 @@ public class DefaultServlet
                     bytesToRead -= len; 
                 } else {
                     ostream.write(buffer, 0, (int) bytesToRead);
+                    bytesToRead = 0;
+                }
+	    } catch (IOException e) {
+		exception = e;
+		len = -1;
+	    }
+	    if (len < buffer.length)
+		break;
+	}
+        
+        return exception;
+        
+    }
+
+
+    /**
+     * Copy the contents of the specified input stream to the specified
+     * output stream, and ensure that both streams are closed before returning
+     * (even in the face of an exception).
+     *
+     * @param reader The reader to read from
+     * @param writer The writer to write to
+     * @param start Start of the range which will be copied
+     * @param end End of the range which will be copied
+     * @return Exception which occured during processing
+     */
+    private IOException copyRange(Reader reader, PrintWriter writer,
+                                  long start, long end) {
+        
+        try {
+            reader.skip(start);
+        } catch (IOException e) {
+            return e;
+        }
+        
+	IOException exception = null;
+        long bytesToRead = end - start + 1;
+        
+        char buffer[] = new char[input];
+	int len = buffer.length;
+	while ( (bytesToRead > 0) && (len >= buffer.length)) {
+	    try {
+                len = reader.read(buffer);
+                if (bytesToRead >= len) {
+                    writer.write(buffer, 0, len);
+                    bytesToRead -= len; 
+                } else {
+                    writer.write(buffer, 0, (int) bytesToRead);
                     bytesToRead = 0;
                 }
 	    } catch (IOException e) {
@@ -1036,6 +1279,28 @@ public class DefaultServlet
             response.setHeader("ETag", getETag(resourceInfo, true));
         }
         
+        ServletOutputStream ostream = null;
+        PrintWriter writer = null;
+        
+        if (content) {
+            
+            // Trying to retrieve the servlet output stream
+            
+            try {
+                ostream = response.getOutputStream();
+            } catch (IllegalArgumentException e) {
+                // If it fails, we try to get a Writer instead if we're 
+                // trying to serve a text file
+                if ( (contentType != null) 
+                     && (contentType.startsWith("text")) ) {
+                    writer = response.getWriter();
+                } else {
+                    throw e;
+                }
+            }
+            
+        }
+        
         if ( ((ranges == null) || (ranges.isEmpty())) 
              && (request.getHeader("Range") == null) ) {
             
@@ -1057,7 +1322,11 @@ public class DefaultServlet
             // Copy the input stream to our output stream (if requested)
             if (content) {
                 response.setBufferSize(output);
-                copy(resourceInfo, response.getOutputStream());
+                if (ostream != null) {
+                    copy(resourceInfo, ostream);
+                } else {
+                    copy(resourceInfo, writer);
+                }
             }
             
         } else {
@@ -1086,7 +1355,11 @@ public class DefaultServlet
                 
                 if (content) {
                     response.setBufferSize(output);
-                    copy(resourceInfo, response.getOutputStream(), range);
+                    if (ostream != null) {
+                        copy(resourceInfo, ostream, range);
+                    } else {
+                        copy(resourceInfo, writer, range);
+                    }
                 }
                 
             } else {
@@ -1096,8 +1369,13 @@ public class DefaultServlet
                 
                 if (content) {
                     response.setBufferSize(output);
-                    copy(resourceInfo, response.getOutputStream(), 
-                         ranges.elements(), contentType);
+                    if (ostream != null) {
+                        copy(resourceInfo, ostream, ranges.elements(), 
+                             contentType);
+                    } else {
+                        copy(resourceInfo, writer, ranges.elements(), 
+                             contentType);
+                    }
                 }
                 
             }
