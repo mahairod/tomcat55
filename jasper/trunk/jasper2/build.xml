@@ -157,6 +157,7 @@
         <include name="org/apache/jasper/compiler/Localizer.class" />
         <include name="org/apache/jasper/resources/**" />
         <include name="org/apache/jasper/runtime/**" />
+        <include name="org/apache/jasper/security/**" />
         <include name="org/apache/jasper/util/**" />
       </fileset>
     </jar>

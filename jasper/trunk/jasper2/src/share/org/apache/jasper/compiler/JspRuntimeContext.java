@@ -85,6 +85,7 @@ import org.apache.jasper.Constants;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Options;
 import org.apache.jasper.runtime.JspFactoryImpl;
+import org.apache.jasper.security.SecurityClassLoad;
 import org.apache.jasper.servlet.JspServletWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -113,43 +114,7 @@ public final class JspRuntimeContext implements Runnable {
      */
     static {
         JspFactoryImpl factory = new JspFactoryImpl();
-        if( System.getSecurityManager() != null ) {
-            String basePackage = "org.apache.jasper.";
-            try {
-                factory.getClass().getClassLoader().loadClass( basePackage +
-                    "runtime.JspFactoryImpl$PrivilegedGetPageContext");
-                factory.getClass().getClassLoader().loadClass( basePackage +
-                    "runtime.JspFactoryImpl$PrivilegedReleasePageContext");
-                factory.getClass().getClassLoader().loadClass( basePackage +
-                    "runtime.JspRuntimeLibrary");
-                factory.getClass().getClassLoader().loadClass( basePackage +
-                    "runtime.JspRuntimeLibrary$PrivilegedIntrospectHelper");
-                factory.getClass().getClassLoader().loadClass( basePackage +
-                    "runtime.ServletResponseWrapperInclude");
-                factory.getClass().getClassLoader().loadClass( basePackage +
-                    "runtime.TagHandlerPool");
-                factory.getClass().getClassLoader().loadClass( basePackage +
-                    "servlet.JspServletWrapper");
-                factory.getClass().getClassLoader().loadClass( basePackage +
-                    "runtime.JspFragmentHelper");
-                factory.getClass().getClassLoader().loadClass( basePackage +
-                    "runtime.ProtectedFunctionMapper");
-                factory.getClass().getClassLoader().loadClass( basePackage +
-                    "runtime.ProtectedFunctionMapper$1");
-                factory.getClass().getClassLoader().loadClass( basePackage +
-                    "runtime.ProtectedFunctionMapper$2");
-                factory.getClass().getClassLoader().loadClass( basePackage +
-                    "runtime.PageContextImpl");      
-                 factory.getClass().getClassLoader().loadClass( basePackage +
-                    "runtime.PageContextImpl$1");      
-                factory.getClass().getClassLoader().loadClass( basePackage +
-                    "runtime.JspContextWrapper");   
-            } catch (ClassNotFoundException ex) {
-                System.out.println(
-                    "Jasper JspRuntimeContext preload of class failed: " +
-                    ex.getMessage());
-            }
-        }
+        SecurityClassLoad.securityClassLoad(factory.getClass().getClassLoader());
         JspFactory.setDefaultFactory(factory);
     }
 
