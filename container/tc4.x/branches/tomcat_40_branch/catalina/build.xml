@@ -135,6 +135,7 @@
 
     <!-- JAR files availability flags -->
     <available property="tomcat-ajp.jar.present" file="${tomcat-ajp.jar}" />
+    <available property="tomcat-coyote.jar.present" file="${tomcat-coyote.jar}" />
     <condition property="javamail.jar.present">
       <and>
         <available file="${activation.jar}" />
@@ -214,6 +215,12 @@
       <or>
         <equals arg1="${full.dist}" arg2="on" />
         <equals arg1="${tomcat-ajp.jar.present}" arg2="true" />
+      </or>
+    </condition>
+    <condition property="copy.tomcat-coyote.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${tomcat-coyote.jar.present}" arg2="true" />
       </or>
     </condition>
     <condition property="copy.jdbc20ext.jar">
@@ -435,7 +442,7 @@
   <target name="copy-tomcat-ajp.jar" if="copy.tomcat-ajp.jar">
     <copy todir="${catalina.build}/server/lib" file="${tomcat-ajp.jar}"/>
   </target>
-  <target name="copy-tomcat-coyote.jar">
+  <target name="copy-tomcat-coyote.jar" if="copy.tomcat-coyote.jar">
     <copy todir="${catalina.build}/server/lib" file="${commons-logging.jar}"/>
     <copy todir="${catalina.build}/server/lib" file="${tomcat-coyote.jar}"/>
     <copy todir="${catalina.build}/server/lib" file="${tomcat-http11.jar}"/>
