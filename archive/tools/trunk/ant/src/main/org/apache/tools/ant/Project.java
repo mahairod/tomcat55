@@ -62,6 +62,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.text.StringCharacterIterator;
+import java.text.CharacterIterator;
 
 /**
  * Central representation of an Ant project. This class defines a
@@ -341,12 +343,39 @@ public class Project {
 	    return new File(file.getAbsolutePath());
 	}
     }
+    
+    /**
+        Translate a path into its native (platform specific)
+        path. This should be extremely fast, code is 
+        borrowed from ECS project.
+        <p>
+        All it does is translate the : into ; and / into \ 
+        if needed. In other words, it isn't perfect.
+        
+        @returns translated string or empty string if to_process is null or empty
+        @author Jon S. Stevens <a href="mailto:jon@clearink.com">jon@clearink.com</a>
+    */
+    public static String translatePath(String to_process) {
+        if ( to_process == null || to_process.length() == 0 )
+            return "";
+    
+        StringBuffer bs = new StringBuffer(to_process.length() + 50);
+        StringCharacterIterator sci = new StringCharacterIterator(to_process);
+        String path = System.getProperty("path.separator");
+        String file = System.getProperty("file.separator");
+        String tmp = null;
+        for (char c = sci.first(); c != CharacterIterator.DONE; c = sci.next()) {
+            tmp = String.valueOf(c);
+            
+            if (tmp.equals(":") || tmp.equals(";"))
+                tmp = path;
+            else if (tmp.equals("/") || tmp.equals ("\\"))
+                tmp = file;
+            bs.append(tmp);
+        }
+        return(bs.toString());
+    }
 }
-
-
-
-
-
 
 
 
