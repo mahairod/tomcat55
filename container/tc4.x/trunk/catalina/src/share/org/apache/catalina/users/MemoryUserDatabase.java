@@ -124,14 +124,6 @@ public class MemoryUserDatabase implements UserDatabase {
 
 
     /**
-     * The character encoding to be used when reading and writing our
-     * persistent storage file, or <code>null</code> for the platform
-     * default encoding.
-     */
-    protected String encoding = null;
-
-
-    /**
      * The set of {@link Group}s defined in this database, keyed by
      * group name.
      */
@@ -180,28 +172,6 @@ public class MemoryUserDatabase implements UserDatabase {
 
 
     // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the character encoding for our persistent storage file.
-     */
-    public String getEncoding() {
-
-        return (this.encoding);
-
-    }
-
-
-    /**
-     * Set the character encoding for our persistent storage file.
-     *
-     * @param encoding The new encoding
-     */
-    public void setEncoding(String encoding) {
-
-        this.encoding = encoding;
-
-    }
 
 
     /**
@@ -456,18 +426,11 @@ public class MemoryUserDatabase implements UserDatabase {
 
             // Configure our PrintWriter
             FileOutputStream fos = new FileOutputStream(fileNew);
-            OutputStreamWriter osw = null;
-            if (encoding == null) {
-                osw = new OutputStreamWriter(fos);
-            } else {
-                osw = new OutputStreamWriter(fos, encoding);
-            }
+            OutputStreamWriter osw = new OutputStreamWriter(fos);
             writer = new PrintWriter(osw);
 
             // Print the file prolog
-            writer.print("<?xml version='1.0' encoding='");
-            writer.print(osw.getEncoding());
-            writer.println("'?>");
+            writer.println("<?xml version='1.0'?>");
             writer.println("<tomcat-users>");
 
             // Print entries for each defined group and user

@@ -84,9 +84,6 @@ import javax.naming.spi.ObjectFactory;
  * <p>The <code>MemoryUserDatabase</code> instance is configured based
  * on the following parameter values:</p>
  * <ul>
- * <li><strong>encoding</strong> - The character encoding to use when
- *     saving the user information to the specified XML file.
- *     [Server platform default encoding]</li>
  * <li><strong>pathname</strong> - Absolute or relative (to the directory
  *     path specified by the <code>catalina.base</code> system property)
  *     pathname to the XML file from which our user information is loaded,
@@ -137,11 +134,6 @@ public class MemoryUserDatabaseFactory implements ObjectFactory {
         // RefAddr values associated with this Reference
         MemoryUserDatabase database = new MemoryUserDatabase(name.toString());
         RefAddr ra = null;
-
-        ra = ref.get("encoding");
-        if (ra != null) {
-            database.setEncoding(ra.getContent().toString());
-        }
 
         ra = ref.get("pathname");
         if (ra != null) {
