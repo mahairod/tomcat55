@@ -110,6 +110,12 @@ with AJP enabled</li>
       number specified here.</p>
     </attribute>
 
+    <attribute name="request.registerRequests" required="false">
+      <p>This attribute controls request registration for JMX monitoring
+      of the Connector.  It is enabled by default, but may be turned
+      it off to save a bit of memory.</p>
+    </attribute>
+
     <attribute name="scheme" required="false">
       <p>Set this attribute to the name of the protocol you wish to have
       returned by calls to <code>request.getScheme()</code>.  For
