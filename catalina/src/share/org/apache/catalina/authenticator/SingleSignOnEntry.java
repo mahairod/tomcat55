@@ -60,8 +60,8 @@ public class SingleSignOnEntry
      * @param username  the username (if any) used for the authentication
      * @param password  the password (if any) used for the authentication
      */
-    SingleSignOnEntry(Principal principal, String authType,
-                        String username, String password) {        
+    public SingleSignOnEntry(Principal principal, String authType,
+                             String username, String password) {
         super();
         updateCredentials(principal, authType, username, password);
     }
