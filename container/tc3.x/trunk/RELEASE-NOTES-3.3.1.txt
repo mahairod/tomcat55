@@ -109,6 +109,8 @@ Bug No.  Description
 	 Fixed the position of the ;jsessionid when Tomcat generates a 401 
 	 response.  Now it is before the query string instead of after.
 
+5497	 Ignore the If-Modified-Since header when including a static page.
+
 Configuration:
 
 Bug No.  Description
