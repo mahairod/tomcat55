@@ -1,5 +1,5 @@
 <!-- Standard Struts Entries -->
-<%@ page language="java" import="java.net.URLEncoder" %>
+<%@ page language="java" import="java.net.URLEncoder" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -27,7 +27,7 @@
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
-      <td width="81%"> 
+      <td width="81%">
        <div class="page-title-text" align="left">
           <logic:equal name="contextForm" property="adminAction" value="Create">
             <bean:message key="actions.contexts.create"/>
@@ -37,44 +37,44 @@
           </logic:equal>
        </div>
       </td>
-      <td width="19%"> 
+      <td width="19%">
         <div align="right">
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action disabled="true"> --------------------------------- </controls:action>
             <logic:notEqual name="contextForm" property="adminAction" value="Create">
-            <controls:action url='<%= "/AddLogger.do?parent=" + 
+            <controls:action url='<%= "/AddLogger.do?parent=" +
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.loggers.create"/>
-            </controls:action>              
-            <controls:action url='<%= "/DeleteLogger.do?parent=" + 
-                                  URLEncoder.encode(thisObjectName) %>'> 
-                <bean:message key="actions.loggers.deletes"/> 
+            </controls:action>
+            <controls:action url='<%= "/DeleteLogger.do?parent=" +
+                                  URLEncoder.encode(thisObjectName) %>'>
+                <bean:message key="actions.loggers.deletes"/>
             </controls:action>
             <%-- cannot delete or add the realm of the context of the admin app --%>
-            <logic:notEqual name="contextForm" property="path" 
+            <logic:notEqual name="contextForm" property="path"
                             value='<%= request.getContextPath() %>'>
             <controls:action disabled="true"> ------------------------------------- </controls:action>
-            <controls:action url='<%= "/AddRealm.do?parent=" + 
+            <controls:action url='<%= "/AddRealm.do?parent=" +
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.realms.create"/>
-            </controls:action>              
-            <controls:action url='<%= "/DeleteRealm.do?parent=" + 
-                                  URLEncoder.encode(thisObjectName) %>'> 
-                <bean:message key="actions.realms.deletes"/> 
+            </controls:action>
+            <controls:action url='<%= "/DeleteRealm.do?parent=" +
+                                  URLEncoder.encode(thisObjectName) %>'>
+                <bean:message key="actions.realms.deletes"/>
             </controls:action>
             </logic:notEqual>
             <controls:action disabled="true">  -------------------------------------  </controls:action>
-            <controls:action url='<%= "/AddValve.do?parent=" + 
+            <controls:action url='<%= "/AddValve.do?parent=" +
                                   URLEncoder.encode(thisObjectName) %>'>
-               <bean:message key="actions.valves.create"/> 
+               <bean:message key="actions.valves.create"/>
             </controls:action>
-            <controls:action url='<%= "/DeleteValve.do?parent=" + 
-                                  URLEncoder.encode(thisObjectName) %>'> 
-               <bean:message key="actions.valves.deletes"/> 
+            <controls:action url='<%= "/DeleteValve.do?parent=" +
+                                  URLEncoder.encode(thisObjectName) %>'>
+               <bean:message key="actions.valves.deletes"/>
             </controls:action>
             <%-- cannot delete the context of the admin app  from the tool --%>
-            <logic:notEqual name="contextForm" property="path" 
+            <logic:notEqual name="contextForm" property="path"
                             value='<%= request.getContextPath() %>'>
             <controls:action disabled="true">  -------------------------------------  </controls:action>
             <controls:action url='<%= "/DeleteContext.do?select=" +
@@ -83,7 +83,7 @@
             </controls:action>
             </logic:notEqual>
             </logic:notEqual>
-        </controls:actions>   
+        </controls:actions>
          </div>
       </td>
     </tr>
@@ -92,18 +92,18 @@
   <br>
 
  <%-- Context Properties table --%>
- 
+
  <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr> <td>  <div class="table-title-text">  
+    <tr> <td>  <div class="table-title-text">
             <bean:message key="context.properties"/>
     </div> </td> </tr>
   </table>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
-    <tr> 
-      <td> 
+    <tr>
+      <td>
        <controls:table tableStyle="front-table" lineStyle="line-row">
-            <controls:row header="true" 
+            <controls:row header="true"
                 labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label><bean:message key="service.property"/></controls:label>
             <controls:data><bean:message key="service.value"/></controls:data>
@@ -141,7 +141,7 @@
                 </html:select>
             </controls:data>
         </controls:row>
- 
+
 <%-- input only allowed on create transaction --%>
        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="context.docBase"/>:</controls:label>
@@ -221,21 +221,21 @@
   </tr>
 </table>
 
-<br> 
+<br>
 
 <%-- Loader Properties table --%>
 
  <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr> <td>  <div class="table-title-text">  
+    <tr> <td>  <div class="table-title-text">
             <bean:message key="context.loader.properties"/>
     </div> </td> </tr>
   </table>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
-    <tr> 
-      <td> 
+    <tr>
+      <td>
        <controls:table tableStyle="front-table" lineStyle="line-row">
-            <controls:row header="true" 
+            <controls:row header="true"
                 labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label><bean:message key="service.property"/></controls:label>
             <controls:data><bean:message key="service.value"/></controls:data>
@@ -277,16 +277,16 @@
 <BR>
 <%-- Session Manager Properties table --%>
  <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr> <td>  <div class="table-title-text">  
+    <tr> <td>  <div class="table-title-text">
             <bean:message key="context.sessionmgr.properties"/>
     </div> </td> </tr>
   </table>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
-    <tr> 
-      <td> 
+    <tr>
+      <td>
        <controls:table tableStyle="front-table" lineStyle="line-row">
-            <controls:row header="true" 
+            <controls:row header="true"
                 labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label><bean:message key="service.property"/></controls:label>
             <controls:data><bean:message key="service.value"/></controls:data>
@@ -309,7 +309,7 @@
                 </html:select>
             </controls:data>
         </controls:row>
- 
+
        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="context.sessionId"/>:</controls:label>
             <controls:data>
