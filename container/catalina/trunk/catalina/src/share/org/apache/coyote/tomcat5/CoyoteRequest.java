@@ -1538,7 +1538,8 @@ public class CoyoteRequest
      */
     public void addCookie(Cookie cookie) {
 
-        // For compatibility only
+        if (!cookiesParsed)
+            parseCookies();
 
         int size = 0;
         if (cookies != null) {
@@ -1595,6 +1596,7 @@ public class CoyoteRequest
      * Clear the collection of Cookies associated with this Request.
      */
     public void clearCookies() {
+        cookiesParsed = true;
         cookies = null;
     }
 
