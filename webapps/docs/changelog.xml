@@ -84,6 +84,9 @@
       <update>
         <bug>32938</bug>: Allow Salted SHA (SSHA) passwords in JNDIRealm. (yoavs)
       </update>
+      <update>
+        <bug>31288</bug>: Allow SMTP authentication for JNDI MailSessionFactory. (yoavs)
+      </update>
     </changelog>
    </subsection>
    
