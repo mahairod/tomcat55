@@ -267,14 +267,17 @@
     <attribute>
       <name>attr1</name>
       <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
       <name>attr2</name>
       <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
       <name>attr3</name>
       <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
     </attribute>
 </tag>
 
