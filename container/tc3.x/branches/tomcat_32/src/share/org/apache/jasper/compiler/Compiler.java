@@ -200,10 +200,8 @@ public class Compiler {
             "-encoding",
             javaEncoding,
             "-classpath",
-            System.getProperty("java.class.path")+ sep + classpath 
 	    System.getProperty("java.class.path")+ sep + classpath + sep +
-                System.getProperty("tc_path_add") + sep
-            + sep + ctxt.getOutputDir(),
+                System.getProperty("tc_path_add") + sep + ctxt.getOutputDir(),
             "-d", ctxt.getOutputDir(),
             javaFileName
         };
