@@ -168,7 +168,7 @@
             </controls:label>
             <controls:data>
               <logic:equal name="serviceForm" property="adminAction" value="Create">
-                <html:text property="serviceName" size="24" maxlength="24" styleId="serviceName"/>
+                <html:text property="serviceName" size="50" maxlength="50" styleId="serviceName"/>
               </logic:equal>
               <logic:equal name="serviceForm" property="adminAction" value="Edit">
                 <html:hidden property="serviceName"/>
@@ -212,7 +212,7 @@
             </controls:label>
             <controls:data>
               <logic:equal name="serviceForm" property="adminAction" value="Create">
-                <html:text property="engineName" size="24" maxlength="24" styleId="engineName"/>
+                <html:text property="engineName" size="50" maxlength="50" styleId="engineName"/>
               </logic:equal>
               <logic:equal name="serviceForm" property="adminAction" value="Edit">
                 <html:hidden property="engineName"/>

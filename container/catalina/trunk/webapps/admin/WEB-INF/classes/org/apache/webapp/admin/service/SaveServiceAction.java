@@ -87,6 +87,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.Lists;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 import org.apache.webapp.admin.TreeControl;
 import org.apache.webapp.admin.TreeControlNode;
@@ -296,6 +297,26 @@ public final class SaveServiceAction extends Action {
                                                 "content",
                                                 true, engineName);
                         parentNode.addChild(childNode);
+                        // update tree to display the newly added realm
+                        Iterator realmNames =
+                            Lists.getRealms(mBServer, sObjectName).iterator();
+                        while (realmNames.hasNext()) {
+                            String realmName = (String) realmNames.next();
+                            ObjectName objectName = new ObjectName(realmName);
+                            nodeLabel = "Realm for service (" + 
+                                                sform.getServiceName() + ")";
+                            TreeControlNode realmNode =
+                                new TreeControlNode(realmName,
+                                                    "Realm.gif",
+                                                    nodeLabel,
+                                                    "EditRealm.do?select=" +
+                                                    URLEncoder.encode(realmName) +
+                                                    "&nodeLabel=" +
+                                                    URLEncoder.encode(nodeLabel),
+                                                    "content",
+                                                    false, engineName);
+                            childNode.addChild(realmNode);               
+                        }         
                         // FIXME - force a redisplay
                     } else {
                         getServlet().log
