@@ -242,7 +242,7 @@ final class HttpProcessor
     /**
      * The thread synchronization object.
      */
-    private String threadSync = "";
+    private Object threadSync = new Object();
 
 
     /**
