@@ -125,6 +125,11 @@
         will process all requests not assigned to other Contexts.</p>
       </attribute>
 
+      <attribute name="privileged" required="false">
+        <p>Set to <code>true</code> to allow this context to use container
+        servlets, like the manager servlet.</p>
+      </attribute>
+
       <attribute name="reloadable" required="false">
         <p>Set to <code>true</code> if you want Catalina to monitor classes in
         <code>/WEB-INF/classes/</code> and <code>/WEB-INF/lib</code> for
