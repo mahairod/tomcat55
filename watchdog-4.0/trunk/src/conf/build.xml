@@ -1,0 +1,65 @@
+<project name="Run Watchdog Test Suite" default="all">
+
+
+  <!-- ================= Create Execution Classpath ===================== -->
+
+  <path id="execute.classpath">
+    <pathelement path="classes"/>
+    <fileset dir="lib" includes="*.jar"/>
+  </path>
+
+
+  <!-- ================= Test Execution Targets ========================= -->
+
+  <target name="all" depends="jsp-all,servlet"
+   description="All JSP and servlet tests (Default)"/>
+
+  <target name="jsp"
+   description="JSP-syntax tests">
+    <antcall target="execute">
+      <param   name="execute.build"   value="conf/jsp-gtest.xml"/>
+      <param   name="execute.target"  value="jsp-test"/>
+    </antcall>
+  </target>
+
+  <target name="jsp-all" depends="jsp,jsp-xml"
+   description="All JSP tests"/>
+
+  <target name="jsp-servlet" depends="jsp,servlet"
+   description="JSP-syntax and servlet tests"/>
+
+  <target name="jsp-xml"
+   description="XML-syntax tests">
+    <antcall target="execute">
+      <param   name="execute.build"   value="conf/jsp-gtest-xml.xml"/>
+      <param   name="execute.target"  value="jsp-test"/>
+    </antcall>
+  </target>
+
+  <target name="servlet"
+   description="All servlet tests">
+    <antcall target="execute">
+      <param   name="execute.build"   value="conf/servlet-gtest.xml"/>
+      <param   name="execute.target"  value="gtestservlet-test"/>
+    </antcall>
+  </target>
+
+  <target name="xml-servlet" depends="jsp-xml,servlet"
+   description="XML-syntax and servlet tests"/>
+
+
+  <!-- ================ Execution Subroutine Target ====================== -->
+
+  <target name="execute">
+
+    <java classname="org.apache.tools.ant.Main" fork="true">
+      <classpath refid="execute.classpath"/>
+      <arg value="-buildfile"/>
+      <arg value="${execute.build}"/>
+      <arg value="${execute.target}"/>
+    </java>
+
+  </target>
+
+
+</project>
