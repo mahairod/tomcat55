@@ -1164,15 +1164,15 @@ public class MBeanUtils {
 
         if (container instanceof Engine) {
             Service service = ((Engine)container).getService();
-            name = new ObjectName(domain + ":type=Valve,sequence=" +
-                                  valve.hashCode() + ",service=" +
-                                  service.getName());
+            name = new ObjectName(domain + ":type=Valve,service=" +
+                                  service.getName() + ",sequence=" +
+                                  valve.hashCode());
         } else if (container instanceof Host) {
             Service service = ((Engine)container.getParent()).getService();
-            name = new ObjectName(domain + ":type=Valve,sequence=" +
-                                  valve.hashCode() + ",host=" +
+            name = new ObjectName(domain + ":type=Valve,host=" +
                                   container.getName() + ",service=" +
-                                  service.getName());
+                                  service.getName() + ",sequence=" +
+                                  valve.hashCode());
         } else if (container instanceof Context) {
             String path = ((Context)container).getPath();
             if (path.length() < 1) {
@@ -1180,11 +1180,11 @@ public class MBeanUtils {
             }
             Host host = (Host) container.getParent();
             Service service = ((Engine) host.getParent()).getService();
-            name = new ObjectName(domain + ":type=Valve,sequence=" +
-                                  valve.hashCode() + ",path=" +
+            name = new ObjectName(domain + ":type=Valve,path=" +
                                   path + ",host=" +
                                   host.getName() + ",service=" +
-                                  service.getName());
+                                  service.getName() + ",sequence=" +
+                                  valve.hashCode());
         }
 
         return (name);

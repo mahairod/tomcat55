@@ -75,16 +75,16 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.util.MessageResources;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.JMException;
 
-import org.apache.struts.util.MessageResources;
-
-import org.apache.webapp.admin.LabelValueBean;
 import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.LabelValueBean;
+import org.apache.webapp.admin.Lists;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
@@ -109,10 +109,6 @@ public class EditServiceAction extends Action {
     private MessageResources resources = null;
     
 
-    private ArrayList debugLvlList = null;
-    private ArrayList hostNameList = null;
-    
-    
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -136,21 +132,6 @@ public class EditServiceAction extends Action {
                                  HttpServletResponse response)
         throws IOException, ServletException {
         
-        // Initialize our debug levels list
-        if (debugLvlList == null) {
-             debugLvlList = new ArrayList();
-             debugLvlList.add(new LabelValueBean("0", "0"));
-             debugLvlList.add(new LabelValueBean("1", "1"));
-             debugLvlList.add(new LabelValueBean("2", "2"));
-             debugLvlList.add(new LabelValueBean("3", "3"));
-             debugLvlList.add(new LabelValueBean("4", "4"));
-             debugLvlList.add(new LabelValueBean("5", "5"));
-             debugLvlList.add(new LabelValueBean("6", "6"));
-             debugLvlList.add(new LabelValueBean("7", "7"));
-             debugLvlList.add(new LabelValueBean("8", "8"));
-             debugLvlList.add(new LabelValueBean("9", "9"));
-        }
-        
         // Acquire the resources that we need
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
@@ -173,8 +154,9 @@ public class EditServiceAction extends Action {
         try {
             sname = new ObjectName(request.getParameter("select"));
         } catch (Exception e) {
-            String message = "Invalid service name '" +
-                request.getParameter("select") + "'";
+            String message =
+                resources.getMessage("error.serviceName.bad",
+                                     request.getParameter("select"));
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
             return (null);
@@ -185,10 +167,12 @@ public class EditServiceAction extends Action {
             sb.append(sname.getKeyProperty("name"));
             ename = new ObjectName(sb.toString());
         } catch (Exception e) {
-            String message = "Invalid engine name '" +
-                sb.toString() + "'";
+            String message =
+                resources.getMessage("error.engineName.bad",
+                                     sb.toString());
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+            return (null);
         }
 
         // Fill in the form values for display and editing
@@ -201,7 +185,7 @@ public class EditServiceAction extends Action {
         sb.append(sname.getKeyProperty("name"));
         sb.append(")");
         serviceFm.setNodeLabel(sb.toString());
-        serviceFm.setDebugLvlVals(debugLvlList);
+        serviceFm.setDebugLvlVals(Lists.getDebugLevels());
         String attribute = null;
         try {
 
@@ -220,21 +204,15 @@ public class EditServiceAction extends Action {
                 ((String) mBServer.getAttribute(ename, attribute));
 
             // Build the list of available hosts
-            ArrayList hosts = new ArrayList();
-            hosts.add(new LabelValueBean("---------",""));
             attribute = "hosts";
-            sb = new StringBuffer(TomcatTreeBuilder.HOST_TYPE);
-            sb.append(TomcatTreeBuilder.WILDCARD);
-            sb.append(",service=");
-            sb.append(sname.getKeyProperty("name"));
-            String search = sb.toString();
-            Iterator hnames =
-                mBServer.queryNames(new ObjectName(search), null).iterator();
-            while (hnames.hasNext()) {
-                ObjectName hname = (ObjectName) hnames.next();
-                String hostName =
-                    (String) mBServer.getAttribute(hname, "name");
-                hosts.add(new LabelValueBean(hostName, hostName));
+            ArrayList hosts = new ArrayList();
+            hosts.add(new LabelValueBean
+                      (resources.getMessage("list.none"), ""));
+            Iterator items = Lists.getHosts(mBServer, sname).iterator();
+            while (items.hasNext()) {
+                ObjectName hname = new ObjectName((String) items.next());
+                String name = hname.getKeyProperty("name");
+                hosts.add(new LabelValueBean(name, name));
             }
             serviceFm.setHostNameVals(hosts);
 

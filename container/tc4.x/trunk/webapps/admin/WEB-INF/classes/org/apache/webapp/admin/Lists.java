@@ -1,0 +1,268 @@
+/*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
+ * ====================================================================
+ *
+ * The Apache Software License, Version 1.1
+ *
+ * Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution, if
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowlegement may appear in the software itself,
+ *    if and wherever such third-party acknowlegements normally appear.
+ *
+ * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
+ *    Foundation" must not be used to endorse or promote products derived
+ *    from this software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache"
+ *    nor may "Apache" appear in their names without prior written
+ *    permission of the Apache Group.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
+
+package org.apache.webapp.admin;
+
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
+
+/**
+ * General purpose utility methods to create lists of objects that are
+ * commonly required in building the user interface.  In all cases, if there
+ * are no matching elements, a zero-length list (rather than <code>null</code>)
+ * is returned.
+ *
+ * @author Craig R. McClanahan
+ * @version $Revision$ $Date$
+ */
+
+public class Lists {
+
+
+    // ----------------------------------------------------------- Constructors
+
+
+    /**
+     * Protected constructor to prevent instantiation.
+     */
+    protected Lists() { }
+
+
+    // ------------------------------------------------------- Static Variables
+
+
+    /**
+     * Precomputed list of debug level labels and values.
+     */
+    private static List debugLevels = new ArrayList();
+
+    static {
+        debugLevels.add(new LabelValueBean("0", "0"));
+        debugLevels.add(new LabelValueBean("1", "1"));
+        debugLevels.add(new LabelValueBean("2", "2"));
+        debugLevels.add(new LabelValueBean("3", "3"));
+        debugLevels.add(new LabelValueBean("4", "4"));
+        debugLevels.add(new LabelValueBean("5", "5"));
+        debugLevels.add(new LabelValueBean("6", "6"));
+        debugLevels.add(new LabelValueBean("7", "7"));
+        debugLevels.add(new LabelValueBean("8", "8"));
+        debugLevels.add(new LabelValueBean("9", "9"));
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return a <code>List</code> of {@link LabelValueBean}s for the legal
+     * settings for <code>debug</code> properties.
+     */
+    public static List getDebugLevels() {
+
+        return (debugLevels);
+
+    }
+
+
+    /**
+     * Return a list of <code>Connector</code> object name strings
+     * for the specified <code>Service</code> object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param service Object name of the service for which to select connectors
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getConnectors(MBeanServer mbserver, ObjectName service)
+        throws Exception {
+
+        StringBuffer sb = new StringBuffer(service.getDomain());
+        sb.append(":type=Connector,service=");
+        sb.append(service.getKeyProperty("name"));
+        sb.append(",*");
+        ObjectName search = new ObjectName(sb.toString());
+        ArrayList connectors = new ArrayList();
+        Iterator names = mbserver.queryNames(search, null).iterator();
+        while (names.hasNext()) {
+            connectors.add(names.next().toString());
+        }
+        Collections.sort(connectors);
+        return (connectors);
+
+    }
+
+
+    /**
+     * Return a list of <code>Connector</code> object name strings
+     * for the specified <code>Service</code> object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param service Object name of the service for which to select connectors
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getConnectors(MBeanServer mbserver, String service)
+        throws Exception {
+
+        return (getConnectors(mbserver, new ObjectName(service)));
+
+    }
+
+
+    /**
+     * Return a list of <code>Context</code> object name strings
+     * for the specified <code>Host</code> object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param host Object name of the host for which to select contexts
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getContexts(MBeanServer mbserver, ObjectName host)
+        throws Exception {
+
+        StringBuffer sb = new StringBuffer(host.getDomain());
+        sb.append(":type=Context,host=");
+        sb.append(host.getKeyProperty("name"));
+        sb.append(",service=");
+        sb.append(host.getKeyProperty("service"));
+        sb.append(",*");
+        ObjectName search = new ObjectName(sb.toString());
+        ArrayList contexts = new ArrayList();
+        Iterator names = mbserver.queryNames(search, null).iterator();
+        while (names.hasNext()) {
+            contexts.add(names.next().toString());
+        }
+        Collections.sort(contexts);
+        return (contexts);
+
+    }
+
+
+    /**
+     * Return a list of <code>Context</code> object name strings
+     * for the specified <code>Host</code> object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param host Object name of the host for which to select contexts
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getContexts(MBeanServer mbserver, String host)
+        throws Exception {
+
+        return (getContexts(mbserver, new ObjectName(host)));
+
+    }
+
+
+    /**
+     * Return a list of <code>Host</code> object name strings
+     * for the specified <code>Service</code> object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param service Object name of the service for which to select hosts
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getHosts(MBeanServer mbserver, ObjectName service)
+        throws Exception {
+
+        StringBuffer sb = new StringBuffer(service.getDomain());
+        sb.append(":type=Host,service=");
+        sb.append(service.getKeyProperty("name"));
+        sb.append(",*");
+        ObjectName search = new ObjectName(sb.toString());
+        ArrayList hosts = new ArrayList();
+        Iterator names = mbserver.queryNames(search, null).iterator();
+        while (names.hasNext()) {
+            hosts.add(names.next().toString());
+        }
+        Collections.sort(hosts);
+        return (hosts);
+
+    }
+
+
+    /**
+     * Return a list of <code>Host</code> object name strings
+     * for the specified <code>Service</code> object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param service Object name of the service for which to select hosts
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getHosts(MBeanServer mbserver, String service)
+        throws Exception {
+
+        return (getHosts(mbserver, new ObjectName(service)));
+
+    }
+
+
+}

@@ -73,7 +73,9 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.LabelValueBean;
+import org.apache.webapp.admin.Lists;
 
 /**
  * The <code>Action</code> that sets up <em>Add Service</em> transactions.
@@ -84,8 +86,12 @@ import org.apache.webapp.admin.LabelValueBean;
 
 public class AddServiceAction extends Action {
         
-    private ArrayList debugLvlList = null;
-        
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
+    
+
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -109,24 +115,15 @@ public class AddServiceAction extends Action {
                                  HttpServletResponse response)
         throws IOException, ServletException {
 
-        // Initialize our debug levels list
-        if (debugLvlList == null) {
-            debugLvlList = new ArrayList();
-            debugLvlList.add(new LabelValueBean("0", "0"));
-            debugLvlList.add(new LabelValueBean("1", "1"));
-            debugLvlList.add(new LabelValueBean("2", "2"));
-            debugLvlList.add(new LabelValueBean("3", "3"));
-            debugLvlList.add(new LabelValueBean("4", "4"));
-            debugLvlList.add(new LabelValueBean("5", "5"));
-            debugLvlList.add(new LabelValueBean("6", "6"));
-            debugLvlList.add(new LabelValueBean("7", "7"));
-            debugLvlList.add(new LabelValueBean("8", "8"));
-            debugLvlList.add(new LabelValueBean("9", "9"));
+        // Acquire the resources that we need
+        HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        if (resources == null) {
+            resources = getServlet().getResources();
         }
         
         // Fill in the form values for display and editing
         ServiceForm serviceFm = new ServiceForm();
-        HttpSession session = request.getSession();
         session.setAttribute("serviceForm", serviceFm);
         serviceFm.setAdminAction("Create");
         serviceFm.setObjectName("");
@@ -135,9 +132,10 @@ public class AddServiceAction extends Action {
         serviceFm.setEngineName("");
         serviceFm.setDebugLvl("0");
         serviceFm.setDefaultHost("localhost");
-        serviceFm.setDebugLvlVals(debugLvlList);
+        serviceFm.setDebugLvlVals(Lists.getDebugLevels());
         ArrayList hosts = new ArrayList();
-        hosts.add(new LabelValueBean("----------", ""));
+        hosts.add(new LabelValueBean
+                  (resources.getMessage("list.none"), ""));
         serviceFm.setHostNameVals(hosts);
         
         // Forward to the service display page

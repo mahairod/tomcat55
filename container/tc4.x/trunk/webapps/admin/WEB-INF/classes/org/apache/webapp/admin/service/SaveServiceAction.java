@@ -277,6 +277,9 @@ public final class SaveServiceAction extends Action {
         String attribute = null;
         try {
 
+            ObjectName soname = new ObjectName(sObjectName);
+            ObjectName eoname = new ObjectName(eObjectName);
+
             attribute = "debug";
             int debug = 0;
             try {
@@ -284,10 +287,18 @@ public final class SaveServiceAction extends Action {
             } catch (Throwable t) {
                 debug = 0;
             }
-            mBServer.setAttribute(new ObjectName(sObjectName),
+            mBServer.setAttribute(soname,
                                   new Attribute("debug", new Integer(debug)));
-            mBServer.setAttribute(new ObjectName(eObjectName),
+            mBServer.setAttribute(eoname,
                                   new Attribute("debug", new Integer(debug)));
+
+            attribute = "defaultHost";
+            String defaultHost = sform.getDefaultHost();
+            if ("".equals(defaultHost)) {
+                defaultHost = null;
+            }
+            mBServer.setAttribute(eoname,
+                                  new Attribute("defaultHost", defaultHost));
 
         } catch (Exception e) {
 

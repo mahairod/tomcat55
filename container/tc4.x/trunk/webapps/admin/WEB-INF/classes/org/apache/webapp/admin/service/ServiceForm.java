@@ -67,7 +67,7 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Form bean for the service page.
@@ -120,13 +120,14 @@ public final class ServiceForm extends ActionForm {
      */
     private String debugLvl = "0";
         
+
     /**
      * The text for the defaultHost Name.
      */
-    private String defaultHost = "";
+    private String defaultHost = null;
     
-    private ArrayList debugLvlVals = null;
-    private ArrayList hostNameVals = null;
+    private List debugLvlVals = null;
+    private List hostNameVals = null;
 
 
     // ------------------------------------------------------------- Properties
@@ -213,7 +214,7 @@ public final class ServiceForm extends ActionForm {
     /**
      * Return the debugVals.
      */
-    public ArrayList getDebugLvlVals() {
+    public List getDebugLvlVals() {
         
         return this.debugLvlVals;
         
@@ -222,7 +223,7 @@ public final class ServiceForm extends ActionForm {
     /**
      * Set the debugVals.
      */
-    public void setDebugLvlVals(ArrayList debugLvlVals) {
+    public void setDebugLvlVals(List debugLvlVals) {
         
         this.debugLvlVals = debugLvlVals;
         
@@ -232,7 +233,7 @@ public final class ServiceForm extends ActionForm {
     /**
      * Return the host name values.
      */
-    public ArrayList getHostNameVals() {
+    public List getHostNameVals() {
         
         return this.hostNameVals;
         
@@ -241,7 +242,7 @@ public final class ServiceForm extends ActionForm {
     /**
      * Set the hostName values.
      */
-    public void setHostNameVals(ArrayList hostNameVals) {
+    public void setHostNameVals(List hostNameVals) {
         
         this.hostNameVals = hostNameVals;
         
@@ -319,11 +320,7 @@ public final class ServiceForm extends ActionForm {
      */
     public void setDefaultHost(String defaultHost) {
 
-        if (defaultHost == null) {
-            this.defaultHost = "";
-        } else {
-            this.defaultHost = defaultHost;
-        }
+        this.defaultHost = defaultHost;
 
     }
 
@@ -343,9 +340,10 @@ public final class ServiceForm extends ActionForm {
         this.serviceName = null;
         this.engineName = null;
         this.debugLvl = "0";
-        this.defaultHost = "";
+        this.defaultHost = null;
     }
     
+
     /**
      * Render this object as a String.
      */
