@@ -59,7 +59,9 @@ package javax.servlet.jsp.tagext;
  * Tag information for a tag in a Tag Library;
  * This class is instantiated from the Tag Library Descriptor file (TLD)
  * and is available only at translation time.
- */
+ *
+ * 
+*/
 
 public class TagInfo {
 
@@ -83,7 +85,7 @@ public class TagInfo {
     public static final String BODY_CONTENT_EMPTY = "EMPTY";
 
     /**
-     * Constructor for TagInfo.
+     * Constructor for TagInfo from data in the JSP 1.1 format for TLD.
      * This class is to be instantiated only from the TagLibrary code
      * under request from some JSP code that is parsing a
      * TLD (Tag Library Descriptor).
@@ -117,6 +119,57 @@ public class TagInfo {
 	this.tagLibrary    = taglib;
 	this.tagExtraInfo  = tagExtraInfo;
 	this.attributeInfo = attributeInfo;
+
+	if (tagExtraInfo != null)
+            tagExtraInfo.setTagInfo(this);
+    }
+			 
+    /**
+     * Constructor for TagInfo from data in the JSP 1.2 format for TLD.
+     * This class is to be instantiated only from the TagLibrary code
+     * under request from some JSP code that is parsing a
+     * TLD (Tag Library Descriptor).
+     *
+     * Note that, since TagLibibraryInfo reflects both TLD information
+     * and taglib directive information, a TagInfo instance is
+     * dependent on a taglib directive.  This is probably a
+     * design error, which may be fixed in the future.
+     *
+     * @param tagName The name of this tag
+     * @param tagClassName The name of the tag handler class
+     * @param bodycontent Information on the body content of these tags
+     * @param infoString The (optional) string information for this tag
+     * @param taglib The instance of the tag library that contains us.
+     * @param tagExtraInfo The instance providing extra Tag info.  May be null
+     * @param attributeInfo An array of AttributeInfo data from descriptor.
+     * May be null;
+     * @param displayName A short name to be displayed by tools
+     * @param smallIcon Path to a small icon to be displayed by tools
+     * @param largeIcon Path to a large icon to be displayed by tools
+     * @param tagVariableInfo An array of a TagVariableInfo (or null)
+     */
+    public TagInfo(String tagName,
+	    String tagClassName,
+	    String bodycontent,
+	    String infoString,
+	    TagLibraryInfo taglib,
+	    TagExtraInfo tagExtraInfo,
+	    TagAttributeInfo[] attributeInfo,
+	    String displayName,
+	    String smallIcon,
+	    String largeIcon,
+	    TagVariableInfo[] tvi) {
+	this.tagName       = tagName;
+	this.tagClassName  = tagClassName;
+	this.bodyContent   = bodycontent;
+	this.infoString    = infoString;
+	this.tagLibrary    = taglib;
+	this.tagExtraInfo  = tagExtraInfo;
+	this.attributeInfo = attributeInfo;
+	this.displayName = displayName;
+	this.smallIcon = smallIcon;
+	this.largeIcon = largeIcon;
+	this.tagVariableInfo = tvi;
 
 	if (tagExtraInfo != null)
             tagExtraInfo.setTagInfo(this);
@@ -180,6 +233,16 @@ public class TagInfo {
        }
        return tei.isValid(data);
    }
+
+
+    /**
+     * Set the instance for extra tag information
+     * 
+     * @param tei the TagExtraInfo instance
+     */
+    public void setTagExtraInfo(TagExtraInfo tei) {
+	tagExtraInfo = tei;
+    }
 
 
     /**
@@ -255,6 +318,51 @@ public class TagInfo {
     }
 
 
+    // ============== JSP 1.2 TLD Information ========
+
+
+    /**
+     * Get the displayName
+     *
+     * @return A short name to be displayed by tools
+     */
+
+    public String getDisplayName() {
+	return displayName;
+    }
+
+    /**
+     * Get the path to the small icon
+     *
+     * @return Path to a small icon to be displayed by tools
+     */
+
+    public String getSmallIcon() {
+	return smallIcon;
+    }
+
+    /**
+     * Get the path to the large icon
+     *
+     * @return Path to a large icon to be displayed by tools
+     */
+
+    public String getLargeIcon() {
+	return largeIcon;
+    }
+
+    /**
+     * Get TagVariableInfo objects associated with this TagInfo
+     *
+     * @return A TagVariableInfo object associated with this 
+     */
+
+    public TagVariableInfo[] getTagVariableInfos() {
+	return tagVariableInfo;
+    }
+
+    // ============== Probably does not belong here =======
+
     /**
      * Stringify for debug purposes...
      */
@@ -272,7 +380,7 @@ public class TagInfo {
     }
 
     /*
-     * private fields
+     * private fields for 1.1 info
      */
 
     private String             tagName; // the name of the tag
@@ -282,4 +390,12 @@ public class TagInfo {
     private TagLibraryInfo     tagLibrary;
     private TagExtraInfo       tagExtraInfo; // instance of TagExtraInfo
     private TagAttributeInfo[] attributeInfo;
+
+    /*
+     * private fields for 1.2 info
+     */
+    private String             displayName;
+    private String             smallIcon;
+    private String             largeIcon;
+    private TagVariableInfo[]    tagVariableInfo;
 }
