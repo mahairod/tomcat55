@@ -95,7 +95,7 @@ Tomcat-Apache plugin that handles the communication between Tomcat and Apache</p
  request was made via HTTP or HTTPS. mod_jk can, using the newer Ajpv13 protocol.</li>
 </ul>
 <hr>
-<h2><a name=s4>What does it means to me?</a></h2>
+<h2><a name=s4>What does it mean to me?</a></h2>
 
 <p>You will need to get to know a new simplified configuration mechanism. The
 advantage is that learning this mechanism will give you a head start if you
@@ -239,11 +239,13 @@ menu.</p>
 <ol>
  <li>Make sure you have Perl 5 installed. The <tt>apxs</tt> script used to build the module is written in Perl.
  <li>Change directory to <tt>jakarta-tomcat/src/native/apache1.3</tt> (or <tt>apache2.0</tt>).
-  <li>Run the <tt>apxs</tt> command that came with your apache distribution (hint: look in /usr/local/apache/bin, or wherever you intalled apache).<BR><BR>
+  <li>Run the <tt>apxs</tt> command that came with your apache distribution (hint: look in /usr/local/apache/bin, /usr/sbin, or wherever you intalled apache). Type the command all on one line.<BR><BR>
   For Solaris:<BR>
   <blockquote><tt>apxs -o mod_jk.so -DSOLARIS -I../jk -I/usr/java/include -I/usr/java/include/solaris -c *.c ../jk/*.c</tt></blockquote>
+  <i>On some systems, this will build the module correctly, but will fail at runtime with a </i>"<tt>symbol "fdatasync" not found</tt>"<i>. To fix, add </i><tt>-lposix4</tt><i> just before the </i><tt>-c</tt><i> in the above command.</i><BR><BR>
   For Linux:
-  <blockquote><tt>apxs -o mod_jk.so -DLINUX -I../jk -I/usr/local/jdk/include -I/usr/local/jdk/include/linux -c *.c ../jk/*.c</tt></blockquote>
+  <blockquote><tt>apxs -o mod_jk.so -I../jk -I/usr/local/jdk/include -I/usr/local/jdk/include/linux -c *.c ../jk/*.c</tt></blockquote>
+  <i>Your build may fail because the object files from the <tt>../jk</tt> directory have been compiled to the current directory, rather than their source directory. Running </i><tt>gcc -shared -o mod_jk.so *.o</tt><i> should finish the build.</i><BR><BR>
   (If you've installed Java in another directory, adjust accordingly). For other *nixes you should be able to work it out, but remember that <b>the order of the arguments to <tt>apxs</tt> is important!</b>.
   </li>
  <li>Copy mod_jk.so to Apache's libexec directory</li>
