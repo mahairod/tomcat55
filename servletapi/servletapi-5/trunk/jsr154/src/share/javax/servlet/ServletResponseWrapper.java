@@ -120,6 +120,8 @@ public class ServletResponseWrapper implements ServletResponse {
     /**
      * The default behavior of this method is to call setCharacterEncoding(String charset)
      * on the wrapped response object.
+     *
+     * @since 2.4
      */
 
     public void setCharacterEncoding(String charset) {
@@ -176,6 +178,8 @@ public class ServletResponseWrapper implements ServletResponse {
     /**
      * The default behavior of this method is to return getContentType()
      * on the wrapped response object.
+     *
+     * @since 2.4
      */
 
     public String getContentType() {

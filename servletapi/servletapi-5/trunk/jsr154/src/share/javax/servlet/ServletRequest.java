@@ -592,6 +592,8 @@ public interface ServletRequest {
     /**
      * Returns the Internet Protocol (IP) source port of the client
      * or last proxy that sent the request.
+     *
+     * @since 2.4
      */    
     public int getRemotePort();
 
@@ -602,6 +604,8 @@ public interface ServletRequest {
      *
      * @return	a <code>String</code> containing the host
      *		name of the IP on which the request was received.
+     *
+     * @since 2.4
      */
     public String getLocalName();
 
@@ -612,6 +616,8 @@ public interface ServletRequest {
      * @return	a <code>String</code> containing the
      *		IP address on which the request was received. 
      *
+     * @since 2.4
+     *
      */       
     public String getLocalAddr();
 
@@ -621,6 +627,8 @@ public interface ServletRequest {
      * on which the request was received.
      *
      * @return an integer specifying the port number
+     *
+     * @since 2.4
      */
     public int getLocalPort();
 
