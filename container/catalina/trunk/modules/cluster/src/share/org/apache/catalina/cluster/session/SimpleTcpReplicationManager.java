@@ -74,6 +74,7 @@ import org.apache.catalina.cluster.tcp.IDataSender;
 import org.apache.catalina.cluster.tcp.SocketSender;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
+import org.apache.catalina.cluster.SessionMessage;
 
 
 

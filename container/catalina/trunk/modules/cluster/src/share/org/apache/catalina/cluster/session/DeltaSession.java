@@ -100,6 +100,7 @@ import org.apache.catalina.util.StringManager;
 
 import org.apache.catalina.session.ManagerBase;
 import org.apache.catalina.session.Constants;
+import org.apache.catalina.cluster.ClusterSession;
 
 /**
  *
