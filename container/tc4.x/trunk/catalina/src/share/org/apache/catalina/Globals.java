@@ -164,7 +164,7 @@ public final class Globals {
      * indirectly instead of through a servlet mapping.
      */
     public static final String INVOKED_ATTR =
-        "org.apache.ctalina.INVOKED";
+        "org.apache.catalina.INVOKED";
 
 
     /**
