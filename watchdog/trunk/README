@@ -117,7 +117,7 @@ procedures to test your own container.  The steps are as follows:
   deployed, but the server name and port can be added as arguments.
 
 	cd $JAKARTA_HOME/dist/watchdog/bin
-	./watchdog.sh serlvet [hostname] [port]	<-- Unix
+	./watchdog.sh servlet [hostname] [port]	<-- Unix
 	watchdog servlet [hostname] [port]	<-- Windows
 
 * Execute the JSP test suite.  The default scripts assume you are running
