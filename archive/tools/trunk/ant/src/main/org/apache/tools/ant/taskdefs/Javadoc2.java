@@ -173,10 +173,10 @@ public class Javadoc2 extends Task {
     public void setClasspath(String src) {
         classpath = Project.translatePath(src);
     }
-    public void setBootClasspath(String src) {
+    public void setBootclasspath(String src) {
         bootclasspath = Project.translatePath(src);
     }
-    public void setExtDirs(String src) {
+    public void setExtdirs(String src) {
         extdirs = src;
     }
     public void setVerbose(String src) {
@@ -197,13 +197,13 @@ public class Javadoc2 extends Task {
     public void setAuthor(String src) {
         author = new Boolean(src).booleanValue();
     }
-    public void setSplitIndex(String src) {
+    public void setSplitindex(String src) {
         splitindex = new Boolean(src).booleanValue();
     }
-    public void setWindowTitle(String src) {
+    public void setWindowtitle(String src) {
         windowtitle = src;
     }
-    public void setDocTitle(String src) {
+    public void setDoctitle(String src) {
         doctitle = src;
     }
     public void setHeader(String src) {
@@ -218,34 +218,34 @@ public class Javadoc2 extends Task {
     public void setLink(String src) {
         link = src;
     }
-    public void setLinkOffline(String src) {
+    public void setLinkoffline(String src) {
         linkoffline = src;
     }
     public void setGroup(String src) {
         group = src;
     }
-    public void setNoDeprecated(String src) {
+    public void setNodeprecated(String src) {
         nodeprecated = new Boolean(src).booleanValue();
     }
-    public void setNoDeprecatedList(String src) {
+    public void setNodeprecatedlist(String src) {
         nodeprecatedlist = new Boolean(src).booleanValue();
     }
-    public void setNoTree(String src) {
+    public void setNotree(String src) {
         notree = new Boolean(src).booleanValue();
     }
-    public void setNoIndex(String src) {
+    public void setNoindex(String src) {
         noindex = new Boolean(src).booleanValue();
     }
-    public void setNoHelp(String src) {
+    public void setNohelp(String src) {
         nohelp = new Boolean(src).booleanValue();
     }
-    public void setNoNavbar(String src) {
+    public void setNonavbar(String src) {
         nonavbar = new Boolean(src).booleanValue();
     }
-    public void setStyleSheetFile(String src) {
+    public void setStylesheetfile(String src) {
         stylesheetfile = project.resolveFile(src);
     }
-    public void setDocEncoding(String src) {
+    public void setDocencoding(String src) {
         docencoding = src;
     }
 
