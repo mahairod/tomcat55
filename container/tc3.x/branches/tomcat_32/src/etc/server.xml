@@ -89,12 +89,17 @@
          Specifying "java.util.Random" will speed up Tomcat startup, 
          but it will cause sessions to be less secure.
 
-         You can specify the "showStackTraces" attribute to control
-         whether stack traces are displayed in the default response
-         for exceptions.  The default is "true", so you must specify
-         "false" to prevent stack traces from appearing.
+         You can specify the "showDebugInfo" attribute to control whether
+         debugging information is displayed in Tomcat's default responses.
+         This debugging information includes:
+             1. Stack traces for exceptions
+             2. Request URI's that cause status codes >= 400
+         The default is "true", so you must specify "false" to prevent
+         the debug information from appearing.  Since the debugging
+         information reveals internal details about what Tomcat is serving,
+         set showDebugInfo="false" if you wish increased security.
       -->
-    <ContextManager debug="0" workDir="work" showStackTraces="true" >
+    <ContextManager debug="0" workDir="work" showDebugInfo="true" >
 
       <!-- ==================== Interceptors ==================== -->
 

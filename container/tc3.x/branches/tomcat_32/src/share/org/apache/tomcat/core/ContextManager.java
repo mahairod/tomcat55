@@ -171,7 +171,7 @@ public class ContextManager {
     /** The setting which controls display of stack traces
      *  in the default exception handling
      */
-    boolean showStackTraces = true;
+    boolean showDebugInfo = true;
     
     /** Default work dir, relative to home
      */
@@ -331,18 +331,18 @@ public class ContextManager {
         System.setProperty("tomcat.sessionid.randomclass", randomClass);
     }
 
-    /** Get the showStackTraces property to be used for controlling the display of
-     *  stack traces in the default response for exceptions.
+    /** Get the showDebugInfo property to be used for controlling the display of
+     *  debugging information in default responses.
      **/
-    public boolean getShowStackTraces() {
-	return showStackTraces;
+    public boolean getShowDebugInfo() {
+	return showDebugInfo;
     }
     
-    /** Sets the showStackTraces property used for controlling the display of
-     *  stack traces in the default response for exceptions.
+    /** Sets the showDebugInfo property used for controlling the display of
+     *  debugging information in default responses.
      */
-    public void setShowStackTraces(boolean showStackTraces) {
-	this.showStackTraces = showStackTraces;
+    public void setShowDebugInfo(boolean showDebugInfo) {
+	this.showDebugInfo = showDebugInfo;
     }
 	
 

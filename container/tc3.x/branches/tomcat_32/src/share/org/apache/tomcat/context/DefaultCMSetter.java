@@ -166,9 +166,24 @@ class NotFoundHandler extends ServletWrapper {
 	    .append("</title></head>\r\n");
 	buf.append("<body><h1>")
 	    .append(sm.getString("defaulterrorpage.notfound404"))
-	    .append("</h1>\r\n");
+	    .append("</h1>\r\n<b>");
 	buf.append(sm.getString("defaulterrorpage.originalrequest"))
+	    .append("</b> ")
 	    .append( requestURI );
+
+	if (contextM.getShowDebugInfo()) {
+	    if (res.isIncluded()) {
+		requestURI = (String)req.
+		    getAttribute("javax.servlet.include.request_uri");
+	    }
+	    if (requestURI != null) {
+		buf.append("<br><br>\r\n<b>")
+		    .append(sm.getString("defaulterrorpage.notfoundrequest"))
+		    .append("</b> ")
+		    .append( requestURI );
+	    }
+	}
+
 	buf.append("</body>\r\n");
 
 	String body = buf.toString();
@@ -228,13 +243,23 @@ class ExceptionHandler extends ServletWrapper {
 	// More info - where it happended"
 	buf.append("<h2>")
 	    .append(sm.getString("defaulterrorpage.location"))
+	    .append(" ")
 	    .append(req.getRequestURI())
 	    .append("</h2>");
+
+	if ( res.isIncluded() && contextM.getShowDebugInfo()) {
+	    buf.append("\r\n<h2>")
+		.append(sm.getString("defaulterrorpage.errorlocation"))
+		.append(" ")
+		.append((String)req.
+			getAttribute("javax.servlet.include.request_uri"))
+		.append("</h2>");
+	}
 
 	buf.append("<b>")
 	    .append(sm.getString("defaulterrorpage.internalservleterror"));
 
-	if (contextM.getShowStackTraces()) {
+	if (contextM.getShowDebugInfo()) {
 	    buf.append("</b><br>");
 
 	    buf.append("<pre>");
@@ -247,9 +272,9 @@ class ExceptionHandler extends ServletWrapper {
 
 	    buf.append("</pre>\r\n");
 	} else {
-	    buf.append("</b>")
+	    buf.append("</b> ")
     	        .append(e.getMessage())
-		.append("<br>\r\n");
+		.append("<br><br>\r\n");
 	}
 
         if (e instanceof ServletException) {
@@ -258,7 +283,7 @@ class ExceptionHandler extends ServletWrapper {
 		buf.append("<b>")
 		    .append(sm.getString("defaulterrorpage.rootcause"));
 
-		if (contextM.getShowStackTraces()) {
+		if (contextM.getShowDebugInfo()) {
 		    buf.append("</b>\r\n");
 
 		    buf.append("<pre>");
@@ -270,9 +295,8 @@ class ExceptionHandler extends ServletWrapper {
 
 		    buf.append("</pre>\r\n");
 		} else {
-		    buf.append("</b>")
-			.append(cause.getMessage())
-			.append("\r\n");
+		    buf.append("</b> ")
+			.append(cause.getMessage());
 		}
 	    }
 	}
@@ -326,7 +350,8 @@ class StatusHandler extends ServletWrapper {
 
 	buf.append("<h1>");
 	if( res.isIncluded() ) {
-	    buf.append(sm.getString("defaulterrorpage.includedservlet") );
+	    buf.append(sm.getString("defaulterrorpage.includedservlet") )
+		.append(" ");
 	}  else {
 	    buf.append("Error: ");
 	}
@@ -337,8 +362,18 @@ class StatusHandler extends ServletWrapper {
 	// More info - where it happended"
 	buf.append("<h2>")
 	    .append(sm.getString("defaulterrorpage.location"))
+	    .append(" ")
 	    .append(req.getRequestURI())
 	    .append("</h2>");
+
+	if ( sc >= 400 && res.isIncluded() && contextM.getShowDebugInfo()) {
+	    buf.append("\r\n<h2>")
+		.append(sm.getString("defaulterrorpage.errorlocation"))
+		.append(" ")
+		.append((String)req.
+			getAttribute("javax.servlet.include.request_uri"))
+		.append("</h2>");
+	}
 
 	buf.append("<b>")
 	    .append(msg)
