@@ -46,17 +46,17 @@ base.path=/usr/local
 
 
 # ----- Commons Beanutils, version 1.4 or later -----
-commons-beanutils.home=${base.path}/commons-beanutils-1.4.1
+commons-beanutils.home=${base.path}/commons-beanutils-1.5
 commons-beanutils.lib=${commons-beanutils.home}
 commons-beanutils.jar=${commons-beanutils.lib}/commons-beanutils.jar
-commons-beanutils.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-beanutils/v1.4.1/commons-beanutils-1.4.1.tar.gz
+commons-beanutils.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-beanutils/v1.5/commons-beanutils-1.5.tar.gz
 
 
 # ----- Commons Collections, version 2.0 or later -----
-commons-collections.home=${base.path}/commons-collections-2.0
+commons-collections.home=${base.path}/commons-collections-2.1
 commons-collections.lib=${commons-collections.home}
 commons-collections.jar=${commons-collections.lib}/commons-collections.jar
-commons-collections.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-collections/v2.0/commons-collections-2.0.tar.gz
+commons-collections.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-collections/v2.1/commons-collections-2.1.tar.gz
 
 
 # ----- Commons Launcher, version 20021012 or later -----
@@ -118,10 +118,10 @@ activation.lib=${activation.home}
 activation.jar=${activation.lib}/activation.jar
 
 # ----- Log4j -----
-log4j.home=${base.path}/jakarta-log4j-1.2.6
+log4j.home=${base.path}/jakarta-log4j-1.2.7
 log4j.lib=${log4j.home}
-log4j.jar=${log4j.lib}/dist/lib/log4j-1.2.6.jar
-log4j.loc=http://jakarta.apache.org/log4j/jakarta-log4j-1.2.6.tar.gz
+log4j.jar=${log4j.lib}/dist/lib/log4j-1.2.7.jar
+log4j.loc=http://jakarta.apache.org/log4j/jakarta-log4j-1.2.7.tar.gz
 
 # ----- LogKit -----
 logkit.home=${base.path}/LogKit-1.1
