@@ -13,7 +13,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest"/>
+  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest"/>
 
 
   <target name="ROOT">
@@ -755,6 +755,42 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedXerces02" debug="${debug}"
       outContent="Xerces02 PASSED"/>
+
+  </target>
+
+<target name="SSITest">
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIInclude01.shtml" debug="${debug}"
+          golden="${golden.path}/SSIInclude01.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIInclude02.shtml" debug="${debug}"
+          golden="${golden.path}/SSIInclude02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIInclude03.shtml" debug="${debug}"
+          golden="${golden.path}/SSIInclude02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIInclude04.shtml" debug="${debug}"
+          golden="${golden.path}/SSIInclude02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIInclude05.shtml" debug="${debug}"
+          golden="${golden.path}/SSIInclude02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIInclude06.shtml" debug="${debug}"
+          golden="${golden.path}/SSIInclude02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIInclude07.shtml" debug="${debug}"
+          golden="${golden.path}/SSIInclude02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIInclude08.shtml" debug="${debug}"
+          golden="${golden.path}/SSIInclude02.txt"/>
 
   </target>
 
