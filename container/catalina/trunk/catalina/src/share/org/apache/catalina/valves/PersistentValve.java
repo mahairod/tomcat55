@@ -203,9 +203,8 @@ public class PersistentValve
         }
         log("sessionId: " + sessionId);
 
-        // Ask this Context to process this request
-        context.invoke(request, response);
-        // ? valveContext.invokeNext(request, response);
+        // Ask the next valve to process the request.
+        valveContext.invokeNext(request, response);
 
         // Read the sessionid after the response.
         // HttpSession hsess = hreq.getSession(false);
