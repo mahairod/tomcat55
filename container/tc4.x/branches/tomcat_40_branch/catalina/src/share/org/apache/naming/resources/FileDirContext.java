@@ -175,13 +175,17 @@ public class FileDirContext extends BaseDirContext {
 		(sm.getString("resources.null"));
 
 	// Calculate a File object referencing this document base directory
-	File base = new File(docBase);
+        base = new File(docBase);
+        try {
+            base = base.getCanonicalFile();
+        } catch (IOException e) {
+            // Ignore
+        }
 
 	// Validate that the document base is an existing directory
 	if (!base.exists() || !base.isDirectory() || !base.canRead())
 	    throw new IllegalArgumentException
 		(sm.getString("fileResources.base", docBase));
-	this.base = base;
         this.absoluteBase = normalize(base.getAbsolutePath());
         super.setDocBase(docBase);
 
