@@ -29,7 +29,7 @@
 
   <xsd:annotation>
     <xsd:documentation>
-      XML Schema for JSP 1.2.
+      XML Schema for JSP 2.0.
 
       This schema is based upon the recent (May 5th, 2001)
       W3C recommendation for XML Schema.
@@ -210,7 +210,7 @@
   <xsd:simpleType name = "ContentType">
     <xsd:annotation>
       <xsd:documentation>
-        Contetn Type for this page
+        Content type and character encoding for this page.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base = "xsd:string">
@@ -221,7 +221,7 @@
   <xsd:simpleType name = "PageEncoding">
     <xsd:annotation>
       <xsd:documentation>
-        Page Encoding for this page.  Default is that of ContentType.
+        Page Encoding for this page.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base = "xsd:string">
@@ -291,7 +291,7 @@
     <xsd:complexType>
       <xsd:complexContent>
         <xsd:extension base = "Body">
-          <xsd:attribute name = "version" fixed = "1.2" type = "xsd:string"/>
+          <xsd:attribute name = "version" fixed = "2.0" type = "xsd:string"/>
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>
@@ -301,10 +301,6 @@
     <xsd:annotation>
       <xsd:documentation>
         directive.page is the "page directive".
-        The contentType default is not relevant for XML views of
-        JSP pages since it differs depending on the originating
-        syntax (text/html;ISO-8859-1 for JSP Pages in standard syntax, or
-        text/xml;UTF-8 for JSP Documents in XML syntax.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
@@ -320,8 +316,7 @@
       <xsd:attribute name = "info" type = "xsd:string"/>
       <xsd:attribute name = "errorPage" type = "RelativeURL"/>
       <xsd:attribute name = "isErrorPage" default = "false" type = "Bool"/>
-      <xsd:attribute name = "isScriptingEnabled" default = "true" type = "Bool"/>
-      <xsd:attribute name = "isELEnabled" type = "Bool"/>
+      <xsd:attribute name = "isELIgnored" type = "Bool"/>
     </xsd:complexType>
   </xsd:element>
   

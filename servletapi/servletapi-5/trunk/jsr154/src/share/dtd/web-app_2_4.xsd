@@ -8,7 +8,7 @@
      version="2.4">
 <xsd:annotation>
 <xsd:documentation>
-@(#)web-app_2_4.xsds	1.45 02/10/04
+@(#)web-app_2_4.xsds	1.46 02/10/30
 </xsd:documentation>
 </xsd:annotation>
 
@@ -1033,6 +1033,25 @@ Used in: security-constraint
                      type="j2ee:transport-guaranteeType"/>
     </xsd:sequence>
     <xsd:attribute name="id" type="xsd:ID"/>
+</xsd:complexType>
+
+<!-- **************************************************** -->
+
+<xsd:complexType name="war-pathType">
+<xsd:annotation>
+<xsd:documentation>
+
+The elements that use this type designate a path starting
+with a "/" and interpreted relative to the root of a WAR
+file.
+
+</xsd:documentation>
+</xsd:annotation>
+    <xsd:simpleContent>
+        <xsd:restriction base="j2ee:string">
+            <xsd:pattern value="/.*"/>
+        </xsd:restriction>
+    </xsd:simpleContent>
 </xsd:complexType>
 
 <!-- **************************************************** -->

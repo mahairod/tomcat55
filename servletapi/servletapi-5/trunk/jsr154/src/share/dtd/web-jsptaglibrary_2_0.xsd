@@ -10,7 +10,7 @@
 
 <xsd:annotation>
 <xsd:documentation>
-@(#)web-jsptaglibrary_2_0.xsds	1.21 10/15/02
+@(#)web-jsptaglibrary_2_0.xsds	1.24 11/01/02
 </xsd:documentation>
 </xsd:annotation>
 <xsd:annotation>
@@ -842,10 +842,6 @@ declare                  Whether the variable is declared
 scope                    The scope of the scripting varaible
                          defined.  NESTED is default.
 
-fragment		 The fragment to which the variable
-			 is scoped. (incompatible with scope
-			 attribute)
-
 </xsd:documentation>
 </xsd:annotation>
 
@@ -892,51 +888,31 @@ fragment		 The fragment to which the variable
 
         </xsd:element>
 
-	<xsd:choice>
-	    <xsd:sequence>
-		<xsd:element name="declare"
-			     type="j2ee:generic-booleanType"
-			     minOccurs="0">
+	<xsd:element name="declare"
+		     type="j2ee:generic-booleanType"
+		     minOccurs="0">
 
-		<xsd:annotation>
-		<xsd:documentation>
+	<xsd:annotation>
+	<xsd:documentation>
 
-		Whether the scripting variable is to be defined
-		or not.  See TagExtraInfo for details.  This
-		element is optional and "true" is the default.
+	Whether the scripting variable is to be defined
+	or not.  See TagExtraInfo for details.  This
+	element is optional and "true" is the default.
 
-		</xsd:documentation>
-		</xsd:annotation>
-		</xsd:element>
-		<xsd:element name="scope"
-			     type="j2ee:variable-scopeType"
-			     minOccurs="0">
-		<xsd:annotation>
-		<xsd:documentation>
+	</xsd:documentation>
+	</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="scope"
+		     type="j2ee:variable-scopeType"
+		     minOccurs="0">
+	<xsd:annotation>
+	<xsd:documentation>
 
-		The element is optional and "NESTED" is the default.
+	The element is optional and "NESTED" is the default.
 
-		</xsd:documentation>
-		</xsd:annotation>
-		</xsd:element>
-	    </xsd:sequence>
-	    <xsd:element name="fragment"
-			 type="j2ee:java-identifierType"
-			 minOccurs="0">
-		<xsd:annotation>
-		<xsd:documentation>
-
-		Must match the value of a name attribute in an
-		attribute element whose fragment attribute is
-		set to "true".  If so specified, this variable's
-		scope is restricted to that fragment invocation.
-		If not specified, the default is declare="true"
-		and scope="NESTED"
-
-		</xsd:documentation>
-		</xsd:annotation>
-	    </xsd:element>
-        </xsd:choice>
+	</xsd:documentation>
+	</xsd:annotation>
+	</xsd:element>
     </xsd:sequence>
     <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
