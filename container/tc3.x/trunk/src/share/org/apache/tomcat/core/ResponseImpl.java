@@ -192,6 +192,7 @@ public class ResponseImpl implements Response {
 	    request.getContextManager().doAfterBody(request, this);
 	    return;
 	}
+	out.flush();
 	out.reallyFlush();
 	request.getContextManager().doAfterBody(request, this);
 	out.close();
@@ -230,7 +231,7 @@ public class ResponseImpl implements Response {
 	// it already did all the checkings
 	
 	started = true;
-
+	usingWriter = true;
 	
 	writer = new ServletWriterFacade( getConverter(outs), this);
 	return writer;
