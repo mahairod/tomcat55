@@ -848,6 +848,7 @@ public abstract class AuthenticatorBase
                     long update = ((byte) entropy[i]) << ((i % 8) * 8);
                     seed ^= update;
                 }
+                this.random.setSeed(seed);
             } catch (Exception e) {
                 this.random = new java.util.Random();
             }
