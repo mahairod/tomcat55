@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import org.apache.catalina.loader.StandardClassLoader;
+import org.apache.tomcat.util.compat.JdkCompat;
 
 
 /**
@@ -56,6 +57,12 @@ public final class ClassLoaderFactory {
     private static int debug = 0;
 
 
+    /**
+     * JDK compatibility support
+     */
+    private static final JdkCompat jdkCompat = JdkCompat.getJdkCompat();
+    
+    
     // ------------------------------------------------------ Static Properties
 
 
@@ -170,7 +177,18 @@ public final class ClassLoaderFactory {
                         log("  Including jar file " + file.getAbsolutePath());
                     URL url = new URL("file", null,
                                       file.getCanonicalPath());
-                    list.add(url.toString());
+                    
+                    if (ClassLoaderFactory.jdkCompat.isJava15()) {
+                        if (url.toString().endsWith("xml-apis.jar") ||
+                            url.toString().endsWith("xercesImpl.jar")) {
+                            // Do not load xml-apis.jar & xercesImpl.jar
+                            // if JDK 5.0 is used
+                        } else {
+                            list.add(url.toString());
+                        }
+                    } else {
+                        list.add(url.toString());
+                    }    
                 }
             }
         }
