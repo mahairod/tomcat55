@@ -156,7 +156,7 @@ public final class StandardServer
         { "org.apache.catalina.core.StandardContext", "publicId" },
         { "org.apache.catalina.core.StandardContext", "replaceWelcomeFiles" },
         { "org.apache.catalina.core.StandardContext", "sessionTimeout" },
-        { "org.apache.catalina.core.StandardContext", "workDir" },
+        //{ "org.apache.catalina.core.StandardContext", "workDir" },
         { "org.apache.catalina.session.StandardManager", "distributable" },
         { "org.apache.catalina.session.StandardManager", "entropy" },
     };
