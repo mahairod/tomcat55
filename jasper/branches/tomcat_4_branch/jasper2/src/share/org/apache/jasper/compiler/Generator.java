@@ -1445,10 +1445,6 @@ public class Generator {
 	    // Synchronize AT_BEGIN scripting variables
 	    syncScriptingVars(n, VariableInfo.AT_BEGIN);
 
-	    // Declare and synchronize AT_END scripting variables
-	    declareScriptingVars(n, VariableInfo.AT_END);
-	    syncScriptingVars(n, VariableInfo.AT_END);
-
 	    // TryCatchFinally
 	    if (n.implementsTryCatchFinally()) {
                 out.popIndent(); // try
@@ -1472,8 +1468,13 @@ public class Generator {
 
 	    if (n.implementsTryCatchFinally()) {
                 out.popIndent();
-                out.println("}");
+                out.printil("}");
 	    }
+
+	    // Declare and synchronize AT_END scripting variables (must do this
+	    // outside the try/catch/finally block)
+	    declareScriptingVars(n, VariableInfo.AT_END);
+	    syncScriptingVars(n, VariableInfo.AT_END);
 
 	    restoreScriptingVars(n, VariableInfo.AT_BEGIN);
 
