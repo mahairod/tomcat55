@@ -97,7 +97,12 @@
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="realm.resource"/>:</controls:label>
             <controls:data>
-                <html:text property="resource" size="25" maxlength="25"/>
+                <logic:equal name="userDatabaseRealmForm" property="adminAction" value="Create">
+                    <html:text property="resource" size="25" maxlength="25"/>
+                </logic:equal>
+                <logic:equal name="userDatabaseRealmForm" property="adminAction" value="Edit">
+                    <bean:write name="userDatabaseRealmForm" property="resource" scope="session"/>
+                </logic:equal>
             </controls:data>
         </controls:row>
     
