@@ -801,12 +801,24 @@ public final class StandardLoader
         if (classesURL != null) {
             // Work around JDK 1.3 problem on Windows
             String classesURLString = classesURL.toString();
+            if (classesURLString.indexOf('\\') >= 0)
+                classesURLString = classesURLString.replace('\\', '/');
+            // Resolve occurrences of "/./" in the normalized path
             while (true) {
-                int index = classesURLString.indexOf("\\.\\");
+                int index = classesURLString.indexOf("/./");
                 if (index < 0)
                     break;
                 classesURLString = classesURLString.substring(0, index) +
-                    '\\' + classesURLString.substring(index + 3);
+                    classesURLString.substring(index + 2);
+            }
+            // Resolve occurrences of "/../" in the normalized path
+            while (true) {
+                int index = classesURLString.indexOf("/../");
+                if (index <= 0)
+                    break;
+                int index2 = classesURLString.lastIndexOf('/', index - 1);
+                classesURLString = classesURLString.substring(0, index2) +
+                    classesURLString.substring(index + 3);
             }
             addRepository(classesURLString + "/");
         }
