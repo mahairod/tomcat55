@@ -54,5 +54,5 @@ fi
 
 # ----- Execute The Requested Build -------------------------------------------
 
-java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dant.home=$ANT_HOME -Dxerces.home=$XERCES_HOME -Dservletapi.home=$SERVLETAPI_HOME "$@"
+java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dant.home=$ANT_HOME -Dxerces.home=$XERCES_HOME -Dservletapi.home=$SERVLETAPI_HOME -Djava.home=$JAVA_HOME "$@"
 

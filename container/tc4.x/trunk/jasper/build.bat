@@ -56,7 +56,7 @@ set CLASSPATH=%CLASSPATH%;%ANT_HOME%\lib\ant.jar;%JAVA_HOME%\lib\tools.jar;%XERC
 
 rem ----- Execute The Requested Build -----------------------------------------
 
-java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home=%ANT_HOME% -Dxerces.home="%XERCES_HOME%" -Dservletapi.home=%SERVLETAPI_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
+java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home="%ANT_HOME%" -Dxerces.home="%XERCES_HOME%" -Dservletapi.home="%SERVLETAPI_HOME%" -Djava.home="%JAVA_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 
 rem ----- Restore Environment Variables ---------------------------------------
