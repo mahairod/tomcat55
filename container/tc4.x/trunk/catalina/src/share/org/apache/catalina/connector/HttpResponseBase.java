@@ -447,6 +447,9 @@ public class HttpResponseBase
      **/
     private boolean isEncodeable(String location) {
 
+        if (location == null)
+            return (false);
+
         // Is this an intra-document reference?
         if (location.startsWith("#"))
             return (false);
