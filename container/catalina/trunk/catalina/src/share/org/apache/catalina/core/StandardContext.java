@@ -280,8 +280,13 @@ public class StandardContext
 
 
     /** 
-     * Override the default web xml location. ContextConfig is not configurable
-     * so the setter is not used.
+     * Override the default context xml location.
+     */
+    private String defaultContextXml;
+
+
+    /** 
+     * Override the default web xml location.
      */
     private String defaultWebXml;
 
@@ -1044,15 +1049,29 @@ public class StandardContext
 
     }
 
+    public String getDefaultContextXml() {
+        return defaultContextXml;
+    }
+
+    /** 
+     * Set the location of the default context xml that will be used.
+     * If not absolute, it'll be made relative to the engine's base dir
+     * ( which defaults to catalina.base system property ).
+     *
+     * @param defaultWebXml The default web xml 
+     */
+    public void setDefaultContextXml(String defaultContextXml) {
+        this.defaultContextXml = defaultContextXml;
+    }
+
     public String getDefaultWebXml() {
         return defaultWebXml;
     }
 
-    /** Set the location of the default web xml that will be used.
+    /** 
+     * Set the location of the default web xml that will be used.
      * If not absolute, it'll be made relative to the engine's base dir
      * ( which defaults to catalina.base system property ).
-     *
-     * XXX If a file is not found - we can attempt a getResource()
      *
      * @param defaultWebXml The default web xml 
      */

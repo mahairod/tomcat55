@@ -31,7 +31,10 @@ public final class Constants {
     public static final String Package = "org.apache.catalina.startup";
 
     public static final String ApplicationWebXml = "/WEB-INF/web.xml";
+    public static final String DefaultContextXml = "conf/context.xml";
     public static final String DefaultWebXml = "conf/web.xml";
+    public static final String HostContextXml = "context.xml.default";
+    public static final String HostWebXml = "web.xml.default";
 
     public static final String TldDtdPublicId_11 =
         "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN";
@@ -87,9 +90,5 @@ public final class Constants {
             "j2ee_web_services_client_1_1.xsd";
     public static final String J2eeWebServiceClientSchemaResourcePath_11 =
             "/javax/servlet/resources/j2ee_web_services_client_1_1.xsd";
-    
-    
-    
-    
 
 }
