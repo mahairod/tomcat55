@@ -10,8 +10,7 @@
   <project name="jakarta-tomcat-catalina">
     <package>org.apache.catalina</package>
 
-    <ant target="deploy">
-      <property name="catalina.target" value="deploy-catalina" />
+    <ant target="deploy-catalina">
       <property name="jtc.home" project="jakarta-tomcat-connectors"
             reference="home"/> 
       <property name="catalina.home" project="jakarta-tomcat-catalina"
