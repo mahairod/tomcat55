@@ -939,7 +939,7 @@ public final class StandardWrapper
                 }
                 
                 // Invoke jspInit on JSP pages
-                if ((loadOnStartup > 0) && (jspFile != null)) {
+                if ((loadOnStartup >= 0) && (jspFile != null)) {
                     // Invoking jspInit
                     HttpRequestBase req = new HttpRequestBase();
                     HttpResponseBase res = new HttpResponseBase();
