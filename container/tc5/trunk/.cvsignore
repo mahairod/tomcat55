@@ -1,4 +1,5 @@
 build
+embed
 dist
 release
 build.properties
