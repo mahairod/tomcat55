@@ -742,9 +742,13 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 						   functionMap);
                     }
                 });
-            } catch( PrivilegedActionException ex ) {
-                Exception e = ex.getException();
-                throw new ELException( e );
+            } catch (PrivilegedActionException ex) {
+                Exception realEx = ex.getException();
+		if (realEx instanceof ELException) {
+		    throw (ELException) realEx;
+		} else {
+		    throw new ELException(realEx);
+		}
             }
         } else {
 	    retValue = elExprEval.evaluate(expression,
