@@ -64,10 +64,9 @@ fi
 for i in "$JASPER_HOME"/lib/*.jar; do
   CLASSPATH="$CLASSPATH":"$i"
 done
-for i in "$JASPER_HOME"/shared/lib/*.jar; do
+for i in "$JASPER_HOME"/common/lib/*.jar; do
   CLASSPATH="$CLASSPATH":"$i"
 done
-CLASSPATH="$CLASSPATH":"$JASPER_HOME"/common/lib/servlet.jar
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
