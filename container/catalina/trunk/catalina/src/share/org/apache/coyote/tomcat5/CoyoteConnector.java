@@ -798,7 +798,7 @@ public class CoyoteConnector
     public void setMaxPostSize(int maxPostSize) {
 
         this.maxPostSize = maxPostSize;
-
+        setProperty("maxPostSize", String.valueOf(maxPostSize));
     }
 
 
