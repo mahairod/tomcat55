@@ -18,6 +18,7 @@ import org.apache.tools.ant.Task;
 public class GTest extends Task {
 
     private static final String ZEROS        = "00000000";
+    private static final String CRLF         = "\r\n";
     private static final int SHORTPADSIZE    = 4;
     private static final int BYTEPADSIZE     = 2;
     private static final int CARRIAGE_RETURN = 13;
@@ -424,7 +425,6 @@ public class GTest extends Task {
             }
 
             dispatch( request, requestHeaders );
-            //dispatch(request, null);
 
             boolean result = checkResponse( magnitude );
 
@@ -497,44 +497,44 @@ public class GTest extends Task {
 	if ( responseLine != null ) {
         // If returnCode doesn't match
 	    if ( responseLine.indexOf( "HTTP/1." ) > -1 ) {
-		
-		if ( !returnCode.equals( "" ) ) {
-		    boolean resCode = ( responseLine.indexOf( returnCode ) > -1 );
-		    boolean resMsg  = ( responseLine.indexOf( returnCodeMsg ) > -1 );
 
-		    if ( returnCodeMsg.equals( "" ) ) {
-			match = resCode;
-		    } else {
-			match = ( resCode && resMsg );
+		    if ( !returnCode.equals( "" ) ) {
+		        boolean resCode = ( responseLine.indexOf( returnCode ) > -1 );
+		        boolean resMsg  = ( responseLine.indexOf( returnCodeMsg ) > -1 );
+
+		        if ( returnCodeMsg.equals( "" ) ) {
+			        match = resCode;
+		        } else {
+			        match = ( resCode && resMsg );
+		        }
+
+		        if ( match != testCondition ) {
+			        System.out.println( " Error in: " + request );
+			        System.out.println( "    Expected Status-Line with one or all of the following values:" );
+			        System.out.println( "    Status-Code: " + returnCode );
+			        System.out.println( "    Reason-Phrase: " + returnCodeMsg );
+			        System.out.println( "    Received: " + responseLine );
+
+			        if ( resultOut != null ) {
+			            String expectedStatusCode = "<expectedStatusCode>" + returnCode + "</expectedReturnCode>\n";
+			            String expectedReasonPhrase = "<expectedReasonPhrase>" + returnCodeMsg + "</expectedReasonPhrase>";
+			            actualString = "<actualStatusLine>" + responseLine + "</actualStatusLine>\n";
+			            resultOut.write( expectedStatusCode.getBytes() );
+			            resultOut.write( expectedReasonPhrase.getBytes() );
+			            resultOut.write( actualString.getBytes() );
+			        }
+			        return false;
+		        } else {
+			        if ( debug > 0 ) {
+			            System.out.println( " Expected values found in Status-Line" );
+			        }
+		        }
 		    }
-
-		    if ( match != testCondition ) {
-			System.out.println( " Error in: " + request );
-			System.out.println( "    Expected Status-Line with one or all of the following values:" );
-			System.out.println( "    Status-Code: " + returnCode );
-			System.out.println( "    Reason-Phrase: " + returnCodeMsg );
-			System.out.println( "    Received: " + responseLine );
-
-			if ( resultOut != null ) {
-			    String expectedStatusCode = "<expectedStatusCode>" + returnCode + "</expectedReturnCode>\n";
-			    String expectedReasonPhrase = "<expectedReasonPhrase>" + returnCodeMsg + "</expectedReasonPhrase>";
-			    actualString = "<actualStatusLine>" + responseLine + "</actualStatusLine>\n";
-			    resultOut.write( expectedStatusCode.getBytes() );
-			    resultOut.write( expectedReasonPhrase.getBytes() );
-			    resultOut.write( actualString.getBytes() );
-			}
-			return false;
-		    } else {
-			if ( debug > 0 ) {
-			    System.out.println( " Expected values found in Status-Line" );
-			}
-		    }
-		}
 	    } else {
-		System.out.println( "  Error:  Received invalid HTTP version in response header from target Server" );
-		System.out.println( "         Target server must support HTTP 1.0 or HTTP 1.1" );
-		System.out.println( "         Response from server: " + responseLine );
-		return false;
+		    System.out.println( "  Error:  Received invalid HTTP version in response header from target Server" );
+		    System.out.println( "         Target server must support HTTP 1.0 or HTTP 1.1" );
+		    System.out.println( "         Response from server: " + responseLine );
+		    return false;
 	    }
 	} else {
 	    System.out.println( " Error in: " + request );
@@ -787,17 +787,20 @@ public class GTest extends Task {
         // XXX headers are ignored
         Socket socket = new Socket( host, port );
 
-        InputStream is = new CRBufferedInputStream( socket.getInputStream() );
+        InputStream in = new CRBufferedInputStream( socket.getInputStream() );
 
         // Write the request
         socket.setSoLinger( true, 1000 );
 
-        PrintWriter pw = new PrintWriter(
-			     new BufferedWriter(
-			         new OutputStreamWriter( socket.getOutputStream() ) ) );
-
+        OutputStream out = new BufferedOutputStream( 
+                               socket.getOutputStream() );
+        StringBuffer reqbuf = new StringBuffer( 128 ); 
         try {
-            pw.println( request );
+            if ( debug > 0 ) {
+                System.out.println( " REQUEST: " + request );
+            }
+            reqbuf.append( request );
+            reqbuf.append( CRLF );
 
             // Now sending any specified request headers
             if ( !requestHeaders.isEmpty() ) {
@@ -808,13 +811,12 @@ public class GTest extends Task {
 		            ArrayList values = (ArrayList) requestHeaders.get( headerKey );
 		            String[] value = (String[]) values.toArray( new String[ values.size() ] );
 		            for ( int i = 0; i < value.length; i++ ) {
-			            StringBuffer sb = new StringBuffer( 25 );
-			            sb.append( headerKey );
-			            sb.append( ": " );
-			            sb.append( value[ i ] );
-			            pw.println( sb.toString() );
+			            reqbuf.append( headerKey );
+			            reqbuf.append( ": " );
+			            reqbuf.append( value[ i ] );
+                        reqbuf.append( CRLF );
 			            if ( debug > 0 ) {
-			                System.out.println( " REQUEST HEADER: " + sb.toString() );
+			                System.out.println( " REQUEST HEADER: " + headerKey + ": " + value[ i ] );
 			            }
 		            }
                 }
@@ -828,25 +830,23 @@ public class GTest extends Task {
                     String releventCookieString = cookieController.applyRelevantCookies( requestURL );
 
                     if ( ( releventCookieString != null ) && ( !releventCookieString.trim().equals( "" ) ) ) {
-                        String cookieHeader = "Cookie : " + releventCookieString ;
+                        reqbuf.append( "Cookie: " );
+                        reqbuf.append( releventCookieString );
+                        reqbuf.append( CRLF );
 
                         if ( debug > 0 ) {
-                            System.out.println( " Sending Cookie Header:: " + cookieHeader );
+                            System.out.println( " Sending Cookie Header:: Cookie: " + releventCookieString );
                         }
-
-                        pw.println( cookieHeader );
                     }
                 }
-
             }
 
             /*
 
-            if ( ( testSession != null ) && ( sessionHash.get( testSession ) != null ) )
-        {
-            System.out.println("Sending Session Id : " + (String)sessionHash.get( testSession ) );
-            pw.println("JSESSIONID:" + (String)sessionHash.get( testSession) );
-        }
+            if ( ( testSession != null ) && ( sessionHash.get( testSession ) != null ) ) {
+                System.out.println("Sending Session Id : " + (String)sessionHash.get( testSession ) );
+                pw.println("JSESSIONID:" + (String)sessionHash.get( testSession) );
+            }
 
             */
 
@@ -855,55 +855,66 @@ public class GTest extends Task {
                 if ( debug > 0 ) {
                     System.out.println( " REQUEST HEADER: Content-Length: " + length );
                 }
-                pw.println( "Content-Length: " + length );
+                reqbuf.append( "Content-Length: " );
+                reqbuf.append( length );
+                reqbuf.append( CRLF );
             }
 
-            if ( request.indexOf( "HTTP/1." ) > -1 )
-                pw.println( "" );
+            if ( request.indexOf( "HTTP/1." ) > -1 ) {
+                reqbuf.append( "" );
+                reqbuf.append( CRLF );
+            }
 
             if ( content != null ) {
-                pw.print( content );
-                // XXX no /n at the end -see HTTP specs!
+                reqbuf.append( content );
+                // XXX no CRLF at the end -see HTTP specs!
             }
-
-            pw.flush();
+            byte[] reqbytes = reqbuf.toString().getBytes();
+            out.write( reqbytes, 0, reqbytes.length );
+            out.flush();
         } catch ( Exception ex1 ) {
             System.out.println( " Error writing request " + ex1 );
-	    if ( debug > 0 ) {
-		System.out.println( "Message: " + ex1.getMessage() );
-		ex1.printStackTrace();
-	    }
+	        if ( debug > 0 ) {
+		        System.out.println( "Message: " + ex1.getMessage() );
+		        ex1.printStackTrace();
+	        }
+        } finally {
+            out.close();
+            out = null;
+            reqbuf = null;
         }
 
         try {
   
-	    responseLine = read( is );
+	        responseLine = read( in );
 
-	    if ( debug > 0 ) {
-		System.out.println( " RESPONSE STATUS-LINE: " + responseLine );
-	    }
+	        if ( debug > 0 ) {
+		        System.out.println( " RESPONSE STATUS-LINE: " + responseLine );
+	        }
 
-	    headers = parseHeaders( is );
+	        headers = parseHeaders( in );
            
-            byte[] result = readBody( is );
+            byte[] result = readBody( in );
 
             if ( result != null ) {
                 responseBody = result;
-		if ( debug > 0 ) {
-		    System.out.println( " RESPONSE BODY:\n" + new String( responseBody ) );
-		}
-	    }
+		        if ( debug > 0 ) {
+		            System.out.println( " RESPONSE BODY:\n" + new String( responseBody ) );
+		        }
+	        }
 		
         } catch ( SocketException ex ) {
             System.out.println( " Socket Exception: " + ex );
             ex.printStackTrace();
         } finally {
-	    if ( debug > 0 ) {
-		System.out.println( " closing socket" );
+	        if ( debug > 0 ) {
+		        System.out.println( " closing socket" );
+	        }
+            in.close();
+	        socket.close();
+            in = null;
+	        socket = null;
 	    }
-	    socket.close();
-	    socket = null;
-	}
     }
 
     
