@@ -1707,7 +1707,7 @@ public class CGIServlet extends HttpServlet {
                             contentStream.write(lineSep.getBytes());
                             contentLength = lineSep.length() + lenRead;
                         }
-                        env.put("CONTENT_LENGTH", new Integer(contentLength));
+                        env.put("CONTENT_LENGTH", Integer.toString(contentLength));
                     }
                 }
 
