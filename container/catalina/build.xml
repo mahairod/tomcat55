@@ -518,7 +518,18 @@
     <copy todir="${catalina.build}/common/lib" file="${commons-pool.jar}"/>
   </target>
   <target name="copy-tomcat-util.jar">
+  	<!--
     <copy todir="${catalina.build}/server/lib" file="${tomcat-util.jar}"/>
+    -->
+	<jar jarfile="${tomcat-util.jar}"
+             index="true">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/tomcat/util/**"/>
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
+     </fileset>
+    </jar>
   </target>
   <target name="copy-xerces2.jars">
     <copy todir="${catalina.build}/common/endorsed" file="${xercesImpl.jar}"/>
@@ -558,7 +569,9 @@
           file="src/temp/README.txt"/>
 
     <!-- Catalina Server Libraries -->
+  	<!--
     <copy todir="${catalina.build}/server/lib" file="${regexp.jar}"/>
+    -->
 
   </target>
 
@@ -655,8 +668,10 @@
       <property name="jmx.jar" value="${jmx.jar}"/>
     </ant>
 
+  	<!--
     <copy todir="${catalina.deploy}/server/lib"
            file="${tomcat-coyote.jar}"/>
+    -->
 
   </target>
 
@@ -671,8 +686,10 @@
       <property name="jmx.jar" value="${jmx.jar}"/>
     </ant>
 
+  	<!--
     <copy tofile="${catalina.deploy}/server/lib/tomcat-ajp.jar"
             file="${tomcat-jk2.jar}"/>
+    -->
     <copy todir="${catalina.deploy}/conf"
            file="${jk2.properties}"/>
 
@@ -687,9 +704,10 @@
       <property name="commons-modeler.jar" value="${commons-modeler.jar}"/>
       <property name="jmx.jar" value="${jmx.jar}"/>
     </ant>
-
+  	<!--
     <copy todir="${catalina.deploy}/server/lib"
            file="${tomcat-http11.jar}"/>
+    -->
 
   </target>
 
@@ -805,6 +823,7 @@
     <mkdir dir="${catalina.deploy}/logs"/>
     <mkdir dir="${catalina.deploy}/common/classes"/>
     <mkdir dir="${catalina.deploy}/common/endorsed"/>
+    <mkdir dir="${catalina.deploy}/common/i18n"/>
     <mkdir dir="${catalina.deploy}/common/lib"/>
     <mkdir dir="${catalina.deploy}/server/classes"/>
     <mkdir dir="${catalina.deploy}/server/lib"/>
@@ -878,6 +897,10 @@
         <include name="org/apache/catalina/launcher/CatalinaLaunchFilter.class" />
         <include name="org/apache/naming/JndiPermission.class" />
         <include name="org/apache/tomcat/util/compat/*" />
+
+      	<!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
       </fileset>
     </jar>
 
@@ -889,7 +912,8 @@
       <fileset dir="${classes.dir}">
 
         <include name="org/apache/catalina/**" />
-        <include name="org/apache/coyote/tomcat5/**" />
+        <include name="org/apache/catalina/servlets/Constants.class" />
+        <include name="org/apache/catalina/servlets/LocalStrings.properties" />
 
         <!-- Javadoc and i18n exclusions -->
         <exclude name="**/package.html" />
@@ -965,31 +989,24 @@
         <include name="org/apache/catalina/valves/RequestDumperValve.class" />
         <include name="org/apache/catalina/valves/RequestFilterValve.class" />
 
-      </fileset>
-    </jar>
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
 
-    <!-- i18n JARs -->
-    <jar jarfile="${catalina.deploy}/server/lib/catalina-i18n-es.jar">
-      <fileset dir="${classes.dir}">
-        <include name="**/LocalStrings_es.properties" />
-      </fileset>
-    </jar>
-    <jar jarfile="${catalina.deploy}/server/lib/catalina-i18n-fr.jar">
-      <fileset dir="${classes.dir}">
-        <include name="**/LocalStrings_fr.properties" />
-      </fileset>
-    </jar>
-    <jar jarfile="${catalina.deploy}/server/lib/catalina-i18n-ja.jar">
-      <fileset dir="${classes.dir}">
-        <include name="**/LocalStrings_ja.properties" />
       </fileset>
     </jar>
 
     <!-- Catalina Ant Tasks JAR File -->
     <jar jarfile="${catalina.deploy}/server/lib/catalina-ant.jar">
       <fileset dir="${classes.dir}">
-        <include name="org/apache/catalina/ant/**" />
+        
+      	<include name="org/apache/catalina/ant/**" />
         <include name="org/apache/catalina/util/Base64.class" />
+
+      	<!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
+      	
       </fileset>
     </jar>
 
@@ -1004,6 +1021,11 @@
 <!--
         <exclude name="org/apache/naming/JndiPermission.class" />
 -->
+
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
+
       </fileset>
     </jar>
 
@@ -1012,6 +1034,9 @@
     <jar jarfile="${catalina.deploy}/common/lib/naming-java.jar" index="true">
       <fileset dir="${classes.dir}">
         <include name="org/apache/naming/java/*" />
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
       </fileset>
     </jar>
 
@@ -1022,21 +1047,24 @@
         <include name="org/apache/naming/factory/**" />
         <exclude name="org/apache/naming/factory/Constants.class" />
         <exclude name="org/apache/naming/factory/ResourceLinkFactory.class" />
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
       </fileset>
     </jar>
 
     <!-- Naming - Resources JAR File -->
     <jar jarfile="${catalina.deploy}/common/lib/naming-resources.jar" index="true">
       <fileset dir="${classes.dir}">
+      	<include name="org/apache/naming/NameParserImpl.class" />
+      	<include name="org/apache/naming/NamingContextBindingsEnumeration.class" />
+      	<include name="org/apache/naming/NamingContextEnumeration.class" />
+      	<include name="org/apache/naming/NamingEntry.class" />
+      	<include name="org/apache/naming/StringManager.class" />
         <include name="org/apache/naming/resources/*" />
-      </fileset>
-    </jar>
-
-    <!-- Servlets - Common Files -->
-    <jar  jarfile="${catalina.deploy}/server/lib/servlets-common.jar" index="true">
-      <fileset dir="${classes.dir}">
-        <include name="org/apache/catalina/servlets/Constants.class" />
-        <include name="org/apache/catalina/servlets/*.properties" />
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
       </fileset>
     </jar>
 
@@ -1065,6 +1093,9 @@
     <jar jarfile="${catalina.deploy}/server/lib/servlets-ssi.renametojar" index="true">
       <fileset dir="${classes.dir}">
         <include name="org/apache/catalina/ssi/**" />
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
       </fileset>
     </jar>
 
