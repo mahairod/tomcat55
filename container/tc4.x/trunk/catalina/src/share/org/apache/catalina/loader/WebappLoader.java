@@ -788,8 +788,7 @@ public class WebappLoader
      */
     private void notifyContext() {
 
-        WebappContextNotifier notifier =
-            new WebappContextNotifier((Context) container);
+        WebappContextNotifier notifier = new WebappContextNotifier();
         (new Thread(notifier)).start();
 
     }
@@ -1294,47 +1293,29 @@ public class WebappLoader
     }
 
 
-}
-
-
-// ------------------------------------------------------------ Private Classes
-
-
-/**
- * Private thread class to notify our associated Context that we have
- * recognized the need for a reload.
- */
-
-final class WebappContextNotifier implements Runnable {
+    // -------------------------------------- WebappContextNotifier Inner Class
 
 
     /**
-     * The Context we will notify.
+     * Private thread class to notify our associated Context that we have
+     * recognized the need for a reload.
      */
-    private Context context = null;
+    protected class WebappContextNotifier implements Runnable {
 
 
-    /**
-     * Construct a new instance of this class.
-     *
-     * @param context The Context to be notified
-     */
-    public WebappContextNotifier(Context context) {
+        /**
+         * Perform the requested notification.
+         */
+        public void run() {
 
-        super();
-        this.context = context;
+            ((Context) container).reload();
 
-    }
+        }
 
-
-    /**
-     * Perform the requested notification.
-     */
-    public void run() {
-
-        context.reload();
 
     }
 
 
 }
+
+
