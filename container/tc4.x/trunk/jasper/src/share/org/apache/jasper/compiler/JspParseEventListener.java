@@ -296,7 +296,7 @@ public class JspParseEventListener implements ParseEventListener {
         writer.println("private static boolean _jspx_inited = false;");
         writer.println();
 
-        writer.println("public final void _jspx_init() throws org.apache.jasper.JasperException {");
+        writer.println("public final void _jspx_init() throws org.apache.jasper.runtime.JspException {");
         writer.pushIndent();
 	generateAll(InitMethodPhase.class);
         writer.popIndent();
