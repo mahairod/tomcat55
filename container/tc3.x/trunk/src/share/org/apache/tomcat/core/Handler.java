@@ -212,7 +212,6 @@ public class Handler {
 	    
 	    if( ! internal )
 		contextM.doPreServletInit( context, (ServletWrapper)this);
-
 	    doInit();
 
 	    // if an exception is thrown in init, no end interceptors will
@@ -340,6 +339,19 @@ public class Handler {
 
     public long getAccount( int pos ) {
 	return accTable[pos];
+    }
+
+    // -------------------- Notes
+    Object notes[]=new Object[ContextManager.MAX_NOTES];
+
+    /** See ContextManager comments.
+     */
+    public void setNote( int pos, Object value ) {
+	notes[pos]=value;
+    }
+
+    public Object getNote( int pos ) {
+	return notes[pos];
     }
 
 }
