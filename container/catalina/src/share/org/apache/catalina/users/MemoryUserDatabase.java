@@ -552,7 +552,7 @@ public class MemoryUserDatabase implements UserDatabase {
         }
 
         // Perform the required renames to permanently save this file
-        File fileOld = new File(pathnameNew);
+        File fileOld = new File(pathnameOld);
         if (!fileOld.isAbsolute()) {
             fileOld =
                 new File(System.getProperty("catalina.base"), pathnameOld);
