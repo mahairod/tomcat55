@@ -3,7 +3,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,7 +11,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -19,15 +19,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -55,7 +55,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.tomcat.session;
@@ -80,7 +80,7 @@ import org.apache.tomcat.core.*;
  * By using standard tomcat interceptor mechanisms you can plug in one or
  * many session managers per context or context manager ( or even per
  * URL - but that's not standard API feature ).
- * 
+ *
  * It must be inserted after SessionInterceptor, which does common
  * session stuff ( cookie, rewrite, etc)
  *
@@ -88,7 +88,8 @@ import org.apache.tomcat.core.*;
  */
 public final class StandardSessionInterceptor  extends BaseInterceptor {
     int manager_note;
-    
+    static final char SESSIONID_ROUTE_SEP = '.';
+
     public StandardSessionInterceptor() {
     }
 
@@ -109,51 +110,53 @@ public final class StandardSessionInterceptor  extends BaseInterceptor {
 
     /**
      *  StandardManager will set the HttpSession if one is found.
-     *  
+     *
      */
     public int requestMap(Request request ) {
 	String sessionId = null;
+	HttpSession sess = null;
 	Context ctx=request.getContext();
+	StandardManager sM = getManager( ctx );
 	if( ctx==null ) {
 	    log( "Configuration error in StandardSessionInterceptor - no context " + request );
-	    return 0;
 	}
 
-	// "access" it and set HttpSession if valid
-	sessionId=request.getRequestedSessionId();
 
-	if (sessionId != null && sessionId.length()!=0) {
-	    // GS, We are in a problem here, we may actually get
-	    // multiple Session cookies (one for the root
-	    // context and one for the real context... or old session
-	    // cookie. We must check for validity in the current context.
-	    StandardManager sM = getManager( ctx );    
-	    HttpSession sess= sM.findSession( sessionId );
-	    if(null != sess) {
-		//		log( "Found session");
-		// set it only if nobody else did !
-		if( null == request.getSession( false ) ) {
-		    request.setSession( sess );
-		    //    log("Session set ");
-		}
-	    }
-	    return 0;
+	// PF, loop across all cookies named JSESSIONID checking to see if any of them are valid.
+	// There should in most cases be a maximum of 2, and normally there will only be one. The
+	// first valid session cookie is set as the session ID in the request.
+	int count=request.getCookieCount();
+	for( int i=0; i<count; i++ ) {
+		Cookie cookie = request.getCookie(i);
+
+		if (cookie.getName().equals("JSESSIONID")) {
+			sessionId = cookie.getValue();
+			sessionId = fixSessionId( request, sessionId );
+                        if (debug > 0) log("Found session id cookie " + sessionId);
+                        request.setRequestedSessionId( sessionId );
+                        request.setSessionIdSource( Request.SESSIONID_FROM_COOKIE );
+                        sess = sM.findSession(sessionId);
+                        if (sess != null)
+                            request.setSession(sess);
+                        break;
+                }
+
 	}
-	//	log( "No session ");
+
 	return 0;
     }
-    
+
     public void reload( Request req, Context ctx ) {
 	ClassLoader newLoader = ctx.getServletLoader().getClassLoader();
-	StandardManager sM = getManager( ctx );    
+	StandardManager sM = getManager( ctx );
 	sM.handleReload(req, newLoader);
     }
-    
+
     public int newSessionRequest( Request request, Response response) {
 	Context ctx=request.getContext();
 	if( ctx==null ) return 0;
-	
-	StandardManager sM = getManager( ctx );    
+
+	StandardManager sM = getManager( ctx );
 
 	if( request.getSession( false ) != null )
 	    return 0; // somebody already set the session
@@ -169,26 +172,26 @@ public final class StandardSessionInterceptor  extends BaseInterceptor {
      */
     public int postService(  Request rrequest, Response response ) {
 	Context ctx=rrequest.getContext();
-	if( ctx==null ) return 0; 
+	if( ctx==null ) return 0;
 
 	StandardManager sm= getManager( ctx );
 	HttpSession sess=rrequest.getSession(false);
 	if( sess == null ) return 0;
-	
+
 	sm.release( sess );
 	return 0;
     }
 
 
-    
+
     //--------------------  Tomcat context events --------------------
-    
-    /** Init session management stuff for this context. 
+
+    /** Init session management stuff for this context.
      */
     public void contextInit(Context ctx) throws TomcatException {
 	// Defaults !!
 	StandardManager sm= getManager( ctx );
-	
+
 	if( sm == null ) {
 	    sm=new StandardManager();
 	    setManager(ctx, sm);
@@ -204,10 +207,10 @@ public final class StandardSessionInterceptor  extends BaseInterceptor {
 	    throw new TomcatException( ex );
 	}
     }
-    
+
     /** Notification of context shutdown.
      *  We should clean up any resources that are used by our
-     *  session management code. 
+     *  session management code.
      */
     public void contextShutdown( Context ctx )
 	throws TomcatException
@@ -221,4 +224,19 @@ public final class StandardSessionInterceptor  extends BaseInterceptor {
 	    throw new TomcatException( ex );
 	}
     }
+
+    private String fixSessionId(Request request, String sessionId){
+	// GS, We piggyback the JVM id on top of the session cookie
+	// Separate them ...
+
+	if( debug>0 ) cm.log(" Orig sessionId  " + sessionId );
+	if (null != sessionId) {
+	    int idex = sessionId.lastIndexOf(SESSIONID_ROUTE_SEP);
+	    if(idex > 0) {
+		sessionId = sessionId.substring(0, idex);
+	    }
+	}
+	return sessionId;
+    }
+
 }

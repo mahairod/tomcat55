@@ -82,7 +82,7 @@ public class SessionInterceptor extends  BaseInterceptor
     // GS, separates the session id from the jvm route
     static final char SESSIONID_ROUTE_SEP = '.';
     ContextManager cm;
-    
+
     public SessionInterceptor() {
     }
 
@@ -109,49 +109,21 @@ public class SessionInterceptor extends  BaseInterceptor
 	int foundAt=-1;
 	String uri=request.getRequestURI();
 	String sessionId;
-	
+
 	if ((foundAt=uri.indexOf(sig))!=-1){
 	    sessionId=uri.substring(foundAt+sig.length());
 	    // I hope the optimizer does it's job:-)
 	    sessionId = fixSessionId( request, sessionId );
-	    
+
 	    // rewrite URL, do I need to do anything more?
 	    request.setRequestURI(uri.substring(0, foundAt));
 
 	    // No validate now - we just note that this is what the user
-	    // requested. 
+	    // requested.
 	    request.setSessionIdSource( Request.SESSIONID_FROM_URL);
 	    request.setRequestedSessionId( sessionId );
 	}
 	return 0;
-    }
-
-    /** This happens after context map, so we know the context.
-     *  We can probably do it later too.
-     */
-    public int requestMap(Request request ) {
-	String sessionId = null;
-
-	int count=request.getCookieCount();
-	
-	// Give priority to cookies. I don't know if that's part
-	// of the spec - XXX
-	for( int i=0; i<count; i++ ) {
-	    Cookie cookie = request.getCookie(i);
-	    
-	    if (cookie.getName().equals("JSESSIONID")) {
-		sessionId = cookie.getValue();
-		sessionId = fixSessionId( request, sessionId );
-
-		// XXX what if we have multiple session cookies ?
-		// right now only the first is used
-		request.setRequestedSessionId( sessionId );
-		request.setSessionIdSource( Request.SESSIONID_FROM_COOKIE);
-		break;
-	    }
-	}
-
- 	return 0;
     }
 
     /** Fix the session id. If the session is not valid return null.
@@ -178,7 +150,7 @@ public class SessionInterceptor extends  BaseInterceptor
 	if( reqSessionId==null)
 	    return 0;
 
-	
+
         // GS, set the path attribute to the cookie. This way
         // multiple session cookies can be used, one for each
         // context.
@@ -188,11 +160,9 @@ public class SessionInterceptor extends  BaseInterceptor
         }
 
         // GS, piggyback the jvm route on the session id.
-        if(!sessionPath.equals("/")) {
-            String jvmRoute = rrequest.getJvmRoute();
-            if(null != jvmRoute) {
-                reqSessionId = reqSessionId + SESSIONID_ROUTE_SEP + jvmRoute;
-            }
+        String jvmRoute = rrequest.getJvmRoute();
+        if(null != jvmRoute) {
+            reqSessionId = reqSessionId + SESSIONID_ROUTE_SEP + jvmRoute;
         }
 
 	Cookie cookie = new Cookie("JSESSIONID",
@@ -206,10 +176,9 @@ public class SessionInterceptor extends  BaseInterceptor
     	cookie.setVersion(0);
 	response.addHeader( CookieTools.getCookieHeaderName(cookie),
 			    CookieTools.getCookieHeaderValue(cookie));
-	
+
     	return 0;
     }
 
 
 }
-
