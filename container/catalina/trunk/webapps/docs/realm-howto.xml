@@ -411,7 +411,10 @@ attributes are supported by this implementation:</p>
   </attribute>
 
   <attribute name="dataSourceName" required="true">
-    <p>The JNDI named JDBC DataSource for your database.</p>
+    <p>The JNDI named JDBC DataSource for your database. If the DataSource is
+    local to the context, the name is relative to <code>java:/comp/env</code>,
+    and otherwise the name should match the name used to define the global
+    DataSource.</p>
   </attribute>
 
   <attribute name="debug" required="false">
