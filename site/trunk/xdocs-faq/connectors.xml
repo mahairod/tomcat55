@@ -122,6 +122,14 @@
      what's wrong?
       </a>
     </li>
+
+    <li>
+      <a href="#generated">
+      Is there any way to control the content of automatically generated
+      <code>mod_jk.conf-auto</code>? I need my own specific commands added to it.
+      </a>
+    </li>
+
   </ul>
 </p>
 </section>
@@ -289,7 +297,19 @@
   </answer>
 
 
-
+  <question>
+    <a name="generated">
+    Is there any way to control the content of automatically generated
+    <code>mod_jk.conf-auto</code>? I need my own specific commands added
+    to it.
+    </a>
+  </question>
+  <answer>
+    There really is no need to. Just copy the automatically generated
+    <code>mod_jk.conf-auto</code> and edit it manually to your preference.
+    None of production tomcat installations really use <code>mod_jk.conf-auto</code>
+    as it is.
+  </answer>
 
 
 </section>

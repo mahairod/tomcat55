@@ -108,6 +108,14 @@
      what's wrong?
       </a>
     </li>
+
+    <li>
+      <a href="#generated">
+      Is there any way to control the content of automatically generated
+      <code>mod_jk.conf-auto</code>? I need my own specific commands added to it.
+      </a>
+    </li>
+
   </ul>
 </p>
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
@@ -272,7 +280,19 @@
   </div><br>
 
 
-
+  <b style="font-size: larger">
+    <a name="generated">
+    Is there any way to control the content of automatically generated
+    <code>mod_jk.conf-auto</code>? I need my own specific commands added
+    to it.
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    There really is no need to. Just copy the automatically generated
+    <code>mod_jk.conf-auto</code> and edit it manually to your preference.
+    None of production tomcat installations really use <code>mod_jk.conf-auto</code>
+    as it is.
+  </div><br>
 
 
 </blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
