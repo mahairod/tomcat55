@@ -118,7 +118,11 @@
     <attribute name="debug"
                description="The debugging detail level for this component"
                type="int"/>
-      
+               
+    <attribute name="deploymentDescriptor"
+               description="String deployment descriptor "
+               type="java.lang.String"/>
+                     
     <attribute name="docBase"
                description="The document root for this web application"
                type="java.lang.String"/>

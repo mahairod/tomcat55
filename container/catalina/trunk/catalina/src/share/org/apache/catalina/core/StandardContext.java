@@ -63,6 +63,9 @@ package org.apache.catalina.core;
 
 
 import java.io.File;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -1235,11 +1238,11 @@ public class StandardContext
     public void setSessionTimeout(int timeout) {
 
         int oldSessionTimeout = this.sessionTimeout;
-	/*
-	 * SRV.13.4 ("Deployment Descriptor"):
-	 * If the timeout is 0 or less, the container ensures the default
-	 * behaviour of sessions is never to time out.
-	 */
+    /*
+     * SRV.13.4 ("Deployment Descriptor"):
+     * If the timeout is 0 or less, the container ensures the default
+     * behaviour of sessions is never to time out.
+     */
         this.sessionTimeout = (timeout == 0) ? -1 : timeout;
         support.firePropertyChange("sessionTimeout",
                                    new Integer(oldSessionTimeout),
@@ -4841,7 +4844,41 @@ public class StandardContext
             MBeanUtils.createObjectName(managed.getDomain(), resourceLink);
         return (oname.toString());
     }
+    
+    
+    /** JSR77 deploymentDescriptor attribute
+     *
+     * @return string deployment descriptor 
+     */
+    public String getDeploymentDescriptor() {
+    
+        InputStream stream = null;
+        ServletContext servletContext = getServletContext();
+        if (servletContext != null) {
+            stream = servletContext.getResourceAsStream(
+                org.apache.catalina.startup.Constants.ApplicationWebXml);
+        }
+        if (stream == null) {
+            return null;
+        }
+        BufferedReader br = new BufferedReader(
+                                new InputStreamReader(stream));
+        StringBuffer sb = new StringBuffer();
+        String strRead = "";
+        try {
+            while (strRead != null) {
+                sb.append(strRead);
+                strRead = br.readLine();
+            }
+        } catch (IOException e) {
+            return null;
+        }
 
+        return sb.toString(); 
+    
+    }
+    
+    
     /** JSR77 servlets attribute
      *
      * @return list of all servlets ( we know about )
@@ -4854,6 +4891,7 @@ public class StandardContext
         }
         return result;
     }
+    
 
     public ObjectName createObjectName(String domain, ObjectName parentName)
             throws MalformedObjectNameException

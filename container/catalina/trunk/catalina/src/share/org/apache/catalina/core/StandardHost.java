@@ -1039,7 +1039,8 @@ public class StandardHost
         if( getParent() == null ) {
             try {
                 // Register with the Engine
-                ObjectName serviceName=new ObjectName(domain + ":type=Engine");
+                ObjectName serviceName=new ObjectName(domain + 
+                                        ":type=Engine,name="+parent.getName());
                 
                 if( mserver.isRegistered( serviceName )) {
                     log.info("Registering with the Engine");
