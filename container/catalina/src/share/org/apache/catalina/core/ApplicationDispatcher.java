@@ -441,6 +441,8 @@ final class ApplicationDispatcher
             }
 
             processRequest(request,response);
+
+            wrequest.recycle();
             unwrapRequest();
 
         }
@@ -582,6 +584,8 @@ final class ApplicationDispatcher
                                              new Integer(ApplicationFilterFactory.INCLUDE));
             wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
             invoke(outerRequest, outerResponse);
+
+            wrequest.recycle();
             unwrapRequest();
             unwrapResponse();
 
@@ -628,6 +632,8 @@ final class ApplicationDispatcher
                                              new Integer(ApplicationFilterFactory.INCLUDE));
             wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
             invoke(outerRequest, outerResponse);
+
+            wrequest.recycle();
             unwrapRequest();
             unwrapResponse();
 
