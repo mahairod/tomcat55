@@ -24,6 +24,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -467,7 +468,9 @@ public class Compiler {
                 ctxt.incrementRemoved();
                 return false;
             }
-            jspRealLastModified = jspUrl.openConnection().getLastModified();
+            URLConnection uc = jspUrl.openConnection();
+            jspRealLastModified = uc.getLastModified();
+            uc.getInputStream().close();
         } catch (Exception e) {
             e.printStackTrace();
             return true;
