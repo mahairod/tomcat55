@@ -336,7 +336,7 @@ tests that are part of the Tomcat 4.0 source base.
 NOTE:  This step is only required if you wish to build the Config/Admin
 web application.
 
-* Download a binary distribution of version 20011026 or later from:
+* Download a binary distribution of version 20020117 or later from:
 
     http://jakarta.apache.org/builds/jakarta-commons/nightly/commons-modeler
 

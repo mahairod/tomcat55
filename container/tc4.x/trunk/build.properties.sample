@@ -62,7 +62,7 @@ commons-logging.lib=${commons-logging.home}
 commons-logging.jar=${commons-logging.lib}/commons-logging.jar
 
 
-# ----- Commons Modeler, version 20011026 or later -----
+# ----- Commons Modeler, version 20020117 or later -----
 commons-modeler.home=${base.path}/commons-modeler
 commons-modeler.lib=${commons-modeler.home}
 commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
