@@ -19,12 +19,6 @@ echo Building with classpath $CLASSPATH
 
 java org.apache.tools.ant.Main $*
 
-if [[ $1 != clean ]]; then
-  echo chmoding ...
-  chmod 775 build/runTest
-  chmod 775 build/runClient
-fi
-
 if [[ $1 == dist ]]; then
   chmod 775 dist/runTest
   chmod 775 dist/runClient

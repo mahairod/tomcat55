@@ -29,6 +29,9 @@
       <copydir src="src/bin" dest="${dest}"/>
       <copydir src="src/conf" dest="${dest}/conf" />
       <copydir src="src/props" dest="${dest}/props"/>
+
+      <chmod src="${dest}/runClient.sh" perm="+x"/>
+      <chmod src="${dest}/runTest.ksh" perm="+x"/> 
      
       <javac srcdir="src/clients" destdir="${dest}/clients" />    
 
