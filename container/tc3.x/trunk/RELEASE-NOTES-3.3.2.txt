@@ -23,6 +23,9 @@ Bug No.  Description
 
          Removed '.sh' extension from Unix shell scripts.
 
+	 (Re-) Open the log files with "append", so that log rotation can
+	 be configured to be other than daily.
+
 Server:
 
 Bug No.  Description
