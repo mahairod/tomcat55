@@ -208,7 +208,7 @@ public final class MemoryRealm
         boolean validated = false;
         if (principal != null) {
             if (hasMessageDigest()) {
-                // Hex hashes should be compared care-insensitive
+                // Hex hashes should be compared case-insensitive
                 validated = (digest(credentials)
                              .equalsIgnoreCase(principal.getPassword()));
             } else {
