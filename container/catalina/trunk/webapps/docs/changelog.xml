@@ -150,6 +150,10 @@
         <bug>28867</bug>: Correct manager documentation to document correct way to
         reference the ROOT context. Submitted by Stephane Bailliez. (markt)
       </fix>
+      <fix>
+        <bug>33085</bug>: Add support for setting privileged attribute of context
+        to admin webapp. (markt)
+      </fix>
     </changelog>
   </subsection>
 </section>
