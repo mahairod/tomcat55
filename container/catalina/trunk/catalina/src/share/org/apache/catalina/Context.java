@@ -545,7 +545,7 @@ public interface Context extends Container {
     /**
      * Add a resource link for this web application.
      *
-     * @param resource New resource link
+     * @param resourceLink New resource link
      */
     public void addResourceLink(ContextResourceLink resourceLink);
 
@@ -1167,7 +1167,7 @@ public interface Context extends Container {
     /**
      * Set the validation feature of the XML parser used when
      * parsing tlds files. 
-     * @param tldXmlValidation true to enable xml instance validation
+     * @param tldValidation true to enable xml instance validation
      */
     public void setTldValidation(boolean tldValidation);
 
@@ -1190,7 +1190,7 @@ public interface Context extends Container {
     /**
      * Set the namespace aware feature of the XML parser used when
      * parsing xml instances.
-     * @param xmlNamespaceAware true to enable namespace awareness
+     * @param tldNamespaceAware true to enable namespace awareness
      */
     public void setTldNamespaceAware(boolean tldNamespaceAware);
 
