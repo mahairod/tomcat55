@@ -52,6 +52,11 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedDecoding01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedErrorPage01</url-pattern>
     </filter-mapping>
 
@@ -220,6 +225,11 @@
             <role-name>alias</role-name>
             <role-link>tomcat</role-link>
         </security-role-ref>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Decoding01</servlet-name>
+        <servlet-class>org.apache.tester.Decoding01</servlet-class>
     </servlet>
 
     <servlet>
@@ -403,6 +413,16 @@
     <servlet-mapping>
         <servlet-name>Authentication03</servlet-name>
         <url-pattern>/protected/Authentication03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Decoding01</servlet-name>
+        <url-pattern>/Decoding01/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Decoding01</servlet-name>
+        <url-pattern>/WrappedDecoding01/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

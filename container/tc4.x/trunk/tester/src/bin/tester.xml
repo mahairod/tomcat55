@@ -12,7 +12,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,Authentication,CaseSensitive,ErrorPage,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest"/>
+  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest"/>
 
 
   <target name="ROOT">
@@ -133,6 +133,53 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/Examples/servlet/HelloWorldExample" debug="${debug}"
           status="404"/>
+
+  </target>
+
+
+  <target name="Decoding">
+
+    <!-- ========== URL Decoding Tests ==================================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Decoding01?servlet=/Decoding01"
+      outContent="Decoding01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Decoding01/extra?servlet=/Decoding01&amp;path=/extra"
+      outContent="Decoding01 PASSED"/>
+ 
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Decoding0%31?servlet=/Decoding01"
+      outContent="Decoding01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Decoding01/extr%61?servlet=/Decoding01&amp;path=/extra"
+      outContent="Decoding01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Decoding0%31/extr%61?servlet=/Decoding01&amp;path=/extra"
+      outContent="Decoding01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedDecoding01?servlet=/WrappedDecoding01"
+      outContent="Decoding01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedDecoding01/extra?servlet=/WrappedDecoding01&amp;path=/extra"
+      outContent="Decoding01 PASSED"/>
+ 
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedDecoding0%31?servlet=/WrappedDecoding01"
+      outContent="Decoding01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedDecoding01/extr%61?servlet=/WrappedDecoding01&amp;path=/extra"
+      outContent="Decoding01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedDecoding0%31/extr%61?servlet=/WrappedDecoding01&amp;path=/extra"
+      outContent="Decoding01 PASSED"/>
 
   </target>
 
@@ -521,7 +568,6 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedGetInputStream01" debug="${debug}"
       outContent="GetInputStream01 PASSED"/>
-
 
   </target>
 
