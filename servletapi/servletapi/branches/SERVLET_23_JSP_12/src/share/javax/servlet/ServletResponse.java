@@ -127,7 +127,11 @@ public interface ServletResponse {
     /**
      * Returns a {@link ServletOutputStream} suitable for writing binary 
      * data in the response. The servlet container does not encode the
-     * binary data.  Either this method or {@link #getWriter} may 
+     * binary data.  
+     
+     * <p> Calling flush() on the ServletOutputStream commits the response.
+     
+     * Either this method or {@link #getWriter} may 
      * be called to write the body, not both.
      *
      * @return				a {@link ServletOutputStream} for writing binary data	
@@ -155,6 +159,8 @@ public interface ServletResponse {
      *
      * <p>If necessary, the MIME type of the response is 
      * modified to reflect the character encoding used.
+     *
+     * <p> Calling flush() on the PrintWriter commits the response.
      *
      * <p>Either this method or {@link #getOutputStream} may be called
      * to write the body, not both.
