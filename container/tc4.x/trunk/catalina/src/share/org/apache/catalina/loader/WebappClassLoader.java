@@ -69,13 +69,9 @@ import java.io.FilePermission;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLConnection;
-import java.net.URLStreamHandlerFactory;
-import java.net.URLStreamHandler;
 import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.CodeSource;
@@ -83,7 +79,6 @@ import java.security.Permission;
 import java.security.PermissionCollection;
 import java.security.Policy;
 import java.security.PrivilegedAction;
-import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -91,7 +86,6 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.jar.JarFile;
 import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
@@ -102,9 +96,9 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NameClassPair;
 
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.util.URLEncoder;
 
 import org.apache.naming.JndiPermission;
 import org.apache.naming.resources.ResourceAttributes;
@@ -1326,7 +1320,7 @@ public class WebappClassLoader
         // Don't load classes if class loader is stopped
         if (!started) {
             log("Lifecycle error : CL stopped");
-            Thread.currentThread().dumpStack();
+            Thread.dumpStack();
             throw new ClassNotFoundException(name);
         }
 
@@ -2062,8 +2056,21 @@ public class WebappClassLoader
         }
 
         //return new URL("file:" + realFile.getPath());
-        return realFile.toURL();
+        URLEncoder urlEncoder = new URLEncoder();
+        urlEncoder.addSafeCharacter(',');
+        urlEncoder.addSafeCharacter(':');
+        urlEncoder.addSafeCharacter('-');
+        urlEncoder.addSafeCharacter('_');
+        urlEncoder.addSafeCharacter('.');
+        urlEncoder.addSafeCharacter('*');
+        urlEncoder.addSafeCharacter('/');
+        urlEncoder.addSafeCharacter('!');
+        urlEncoder.addSafeCharacter('~');
+        urlEncoder.addSafeCharacter('\'');
+        urlEncoder.addSafeCharacter('(');
+        urlEncoder.addSafeCharacter(')');
 
+        return new URL(urlEncoder.encode(realFile.toURL().toString()));
     }
 
 
