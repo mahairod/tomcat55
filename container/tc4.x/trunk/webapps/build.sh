@@ -11,10 +11,10 @@
 #
 #   JAVA_HOME        Must point at your Java Development Kit [REQUIRED]
 #
-#   JAXP_HOME        Must point at your JAXP installation
+#   XERCES_HOME      Must point at your XERCES installation [REQUIRED]
 #
 #   SERVLETAPI_HOME  Must point at your "jakarta-servletapi" installation.
-#                    [../../jakarta-servletapi]
+#                    [REQUIRED]
 #
 # $Id$
 # -----------------------------------------------------------------------------
@@ -36,13 +36,14 @@ if [ "$JAVA_HOME" = "" ] ; then
 fi
 
 if [ "$SERVLETAPI_HOME" = "" ] ; then
-  SERVLETAPI_HOME=../../jakarta-servletapi
+  echo You must set SERVLETAPI_HOME to your Servlet API distribution that includes the Servlet 2.3 and JSP 1.2 API classes.
+  exit 1
 fi
 
 
 # ----- Set Up The Runtime Classpath ------------------------------------------
 
-CP=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar
+CP=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar:$XERCES_HOME\xerces.jar
 if [ "$CLASSPATH" != "" ] ; then
   CP=$CLASSPATH:$CP
 fi
@@ -50,5 +51,5 @@ fi
 
 # ----- Execute The Requested Build -------------------------------------------
 
-java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dant.home=$ANT_HOME -Djaxp.home=$JAXP_HOME -Dservletapi.home=$SERVLETAPI_HOME "$@"
+java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dant.home=$ANT_HOME -Dxerces.home=$XERCES_HOME -Dservletapi.home=$SERVLETAPI_HOME "$@"
 

@@ -11,10 +11,10 @@ rem                    that executes Ant [NONE]
 rem
 rem   JAVA_HOME        Must point at your Java Development Kit [REQUIRED]
 rem
-rem   JAXP_HOME        Must point at your JAXP installation 
+rem   XERCES_HOME      Must point at your XERCES installation [REQUIRED]
 rem
 rem   SERVLETAPI_HOME  Must point at your "jakarta-servletapi" installation.
-rem                    [../../jakarta-servletapi]
+rem                    [REQUIRED]
 rem
 rem $Id$
 rem ---------------------------------------------------------------------------
@@ -24,7 +24,6 @@ rem ----- Save Environment Variables ------------------------------------------
 
 set _ANT_HOME=%ANT_HOME%
 set _CLASSPATH=%CLASSPATH%
-set _SERVLETAPI_HOME=%SERVLETAPI_HOME%
 
 
 rem ----- Verify and Set Required Environment Variables -----------------------
@@ -39,26 +38,25 @@ set ANT_HOME=../../jakarta-ant
 :gotAntHome
 
 if not "%SERVLETAPI_HOME%" == "" goto gotServletapiHome
-set SERVLETAPI_HOME=../../jakarta-servletapi
+echo You must set SERVLETAPI_HOME to your Servlet API distribution that includes the Servlet 2.3 and JSP 1.2 API classes.
+goto cleanup
 :gotServletapiHome
 
 
 rem ----- Set Up The Runtime Classpath ----------------------------------------
 
 if not "%CLASSPATH%" == "" set CLASSPATH=%CLASSPATH%;
-set CLASSPATH=%CLASSPATH%;%ANT_HOME%\lib\ant.jar;%JAVA_HOME%\lib\tools.jar
+set CLASSPATH=%CLASSPATH%;%ANT_HOME%\lib\ant.jar;%JAVA_HOME%\lib\tools.jar;%XERCES_HOME%\xerces.jar
 
 
 rem ----- Execute The Requested Build -----------------------------------------
 
-java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home=%ANT_HOME% -Djaxp.home="%JAXP_HOME%" -Dservletapi.home=%SERVLETAPI_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
+java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home=%ANT_HOME% -Dxerces.home="%XERCES_HOME%" -Dservletapi.home=%SERVLETAPI_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 
 rem ----- Restore Environment Variables ---------------------------------------
 
 :cleanup
-set SERVLETAPI_HOME=%_SERVLETAPIHOME%
-set _SERVLETAPIHOME=
 set CLASSPATH=%_CLASSPATH%
 set _CLASSPATH=
 set ANT_HOME=%_ANT_HOME%

@@ -67,14 +67,17 @@ which you are installing all of the required Jakarta distributions.
   subdirectory, which will be used when building Tomcat.
 
 * Download and install the Regular Expressions distribution (module
-  "jakarta-regexp") into a directory named
-  "$JAKARTA_HOME/jakarta-regexp".  If you have downloaded the source
-  distribution, you will need to build the library by executing the
-  following commands:
+  "jakarta-regexp"). Assuming an install directory <install-dir>:
 
-	cd $JAKARTA_HOME/jakarta-regexp/build
-	./build-regexp.sh	<-- Unix
-	build-regexp		<-- Windows
+  Binary distribution
+    Set the REGEXP_HOME env variable to point to <install-dir>
+
+  Source distribution
+    Build the library by executing the following commands:
+        cd <install-dir>/build
+        ./build-regexp.sh       <-- Unix
+        build-regexp            <-- Windows
+    Set the REGEXP_HOME env variable to point to <install-dir>/bin
 
 * Download and install the Servletapi distribution that includes the
   Servlet 2.3 and JSP 1.2 API classes.  A link is available on the Jakarta

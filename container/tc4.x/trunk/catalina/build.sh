@@ -51,17 +51,19 @@ if [ "$JSSE_HOME" = "" ] ; then
 fi
 
 if [ "$REGEXP_HOME" = "" ] ; then
-  REGEXP_HOME=../../jakarta-regexp
+  echo You must set REGEXP_HOME to point at your Regular Expressions distribution install
+  exit 1
 fi
 
 if [ "$SERVLETAPI_HOME" = "" ] ; then
-  SERVLETAPI_HOME=../../jakarta-servletapi
+  echo You must set SERVLETAPI_HOME to your Servlet API distribution that includes the Servlet 2.3 and JSP 1.2 API classes.
+  exit 1
 fi
 
 
 # ----- Set Up The Runtime Classpath ------------------------------------------
 
-CP=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar
+CP=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar:$XERCES_HOME\xerces.jar
 if [ "$CLASSPATH" != "" ] ; then
   CP=$CLASSPATH:$CP
 fi

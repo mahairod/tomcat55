@@ -18,11 +18,12 @@
   <property name="jcert.jar"       value="${jsse.home}/lib/jcert.jar"/>
   <property name="jnet.jar"        value="${jsse.home}/lib/jnet.jar"/>
   <property name="jsse.jar"        value="${jsse.home}/lib/jsse.jar"/>
-  <property name="regexp.jar"      value="${regexp.home}/bin/jakarta-regexp-1.1.jar"/>
+  <property name="regexp.jar"      value="${regexp.home}/jakarta-regexp-1.1.jar"/>
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
+  <echo message="regexp.jar = ${regexp.jar}"/>
     <mkdir dir="${catalina.build}"/>
     <mkdir dir="${catalina.build}/bin"/>
     <mkdir dir="${catalina.build}/classes"/>
