@@ -770,6 +770,9 @@ public final class ConnectorForm extends ActionForm {
         this.enableLookups = "false";
         this.minProcessorsText = null;
         this.maxProcessorsText = null;
+        this.uriEncodingText = null;
+        this.useBodyEncodingForURI = "false";
+        this.allowTrace = "false";
         this.portText = null;
         this.redirectPortText = null;
         this.proxyName = null;
