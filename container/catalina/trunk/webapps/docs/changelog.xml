@@ -118,6 +118,10 @@
       Use out.print(expr) instead of out.write(String.valueOf(expr)) 
       for outputting expressions in template texts (kinman)
       </fix>
+      <fix>
+      Fix SMAPping for small text strings with genStrAsCharArray=false 
+      (ecarmich)
+      </fix>
 
     </changelog>
 
@@ -135,6 +139,10 @@
       <bug>21933</bug>: Add header possibly ignored if buffer is too large,
       submitted by Chris Kessel (funkman)
       </fix>
+      <docs>
+      Update the application development documentation for changes in Tomcat 5
+      (remm)
+      </docs>
 
     </changelog>
 
