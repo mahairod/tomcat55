@@ -367,19 +367,29 @@ public class JspCompilationContext {
      * derived package name directly mirrors the file heirachy of the JSP page.
      */
     public String getServletPackageName() {
-        String dPackageName = getDerivedPackageName();
-	if (dPackageName.length() == 0) {
-            return basePackageName;
+        if (isTagFile()) {
+            String className = tagInfo.getTagClassName();
+            int lastIndex = className.lastIndexOf('.');
+            String pkgName = "";
+            if (lastIndex != -1) {
+                pkgName = className.substring(0, lastIndex);
+            }
+            return pkgName;
+        } else {
+            String dPackageName = getDerivedPackageName();
+            if (dPackageName.length() == 0) {
+                return basePackageName;
+            }
+            return basePackageName + '.' + getDerivedPackageName();
         }
-        return basePackageName + '.' + getDerivedPackageName();
     }
 
     private String getDerivedPackageName() {
-	if (derivedPackageName == null) {
+        if (derivedPackageName == null) {
             int iSep = jspUri.lastIndexOf('/');
             derivedPackageName = (iSep > 0) ?
-                JspUtil.makeJavaPackage(jspUri.substring(1,iSep)) : "";
-         }
+                    JspUtil.makeJavaPackage(jspUri.substring(1,iSep)) : "";
+        }
         return derivedPackageName;
     }
 	    
