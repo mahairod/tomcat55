@@ -13,7 +13,6 @@ fi
 if [ -d ${BUILD_DIR}/ws ]; then
   rm -rf ${BUILD_DIR}/ws/jakarta-tomcat  
   rm -rf ${BUILD_DIR}/ws/jakarta-watchdog
-  rm -rf ${BUILD_DIR}/build
   rm -rf ${BUILD_DIR}/dist
 fi
 

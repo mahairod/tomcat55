@@ -26,5 +26,8 @@ sed -e "s%Port 8080%Port 8000%" \
 # Replace with location-independent file
 cp ${SCRIPT_DIR}/files/apachectl ${APACHE_HOME}/bin
 
+cd ${SRC_DIR}/jakarta-tomcat/src/native/apache/jserv
+${APACHE_HOME}/bin/apxs -c mod_jserv.c jserv*.c 
+
 echo "</build>"
 

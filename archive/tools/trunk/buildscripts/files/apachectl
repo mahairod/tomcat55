@@ -30,7 +30,7 @@ fi
 PIDFILE=${APACHE_HOME}/logs/httpd.pid
 #
 # the path to your httpd binary, including options if necessary
-HTTPD="${APACHE_HOME}/bin/httpd -R ${APACHE_HOME}/libexec -d ${APACHE_HOME} -C \"ServerName `hostname`\""
+HTTPD="${APACHE_HOME}/bin/httpd -R ${APACHE_HOME}/libexec -d ${APACHE_HOME}"
 #
 # a command that outputs a formatted text version of the HTML at the
 # url given on the command line.  Designed for lynx, however other
