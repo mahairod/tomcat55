@@ -18,12 +18,17 @@ package org.apache.catalina.storeconfig;
 
 import java.io.PrintWriter;
 
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Pipeline;
 import org.apache.catalina.Valve;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterDeployer;
 import org.apache.catalina.cluster.ClusterReceiver;
 import org.apache.catalina.cluster.ClusterSender;
 import org.apache.catalina.cluster.MembershipService;
+import org.apache.catalina.cluster.MessageListener;
+import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -88,6 +93,21 @@ public class CatalinaClusterSF extends StoreFactoryBase {
                     elementFactory.store(aWriter, indent, valve);
                 }
             }
+            // Store nested <Valve> pipeline elements
+            /*           if (aCluster instanceof SimpleTcpCluster) {
+                           Valve valves[] = ((Pipeline) ((SimpleTcpCluster)cluster).getValves();
+                           storeElementArray(aWriter, indent, valves);
+                       }
+           */
+            if (aCluster instanceof SimpleTcpCluster) {
+                // Store nested <Listener> elements
+                LifecycleListener listeners[] = ((SimpleTcpCluster)cluster).findLifecycleListeners();
+                storeElementArray(aWriter, indent, listeners);
+                // Store nested <ClusterListener> elements
+                MessageListener mlisteners[] = ((SimpleTcpCluster)cluster).findClusterListeners();
+                storeElementArray(aWriter, indent, mlisteners);
+            }
+            
         }
     }
 }

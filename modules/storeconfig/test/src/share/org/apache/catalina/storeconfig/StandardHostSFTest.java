@@ -25,6 +25,7 @@ import org.apache.catalina.Valve;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.deploy.FarmWarDeployer;
 import org.apache.catalina.cluster.mcast.McastService;
+import org.apache.catalina.cluster.session.JvmRouteSessionIDBinderListener;
 import org.apache.catalina.cluster.tcp.ReplicationListener;
 import org.apache.catalina.cluster.tcp.ReplicationTransmitter;
 import org.apache.catalina.cluster.tcp.ReplicationValve;
@@ -32,9 +33,6 @@ import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.realm.JAASRealm;
-import org.apache.catalina.storeconfig.StandardHostSF;
-import org.apache.catalina.storeconfig.StoreDescription;
-import org.apache.catalina.storeconfig.StoreRegistry;
 
 /**
  * @author Peter Rossbach
@@ -230,6 +228,8 @@ public class StandardHostSFTest extends TestCase {
         deployer.setWatchEnabled(false);
         cluster.setClusterDeployer(deployer);
         standardHost.setCluster(cluster);
+        cluster.addLifecycleListener(new InfoLifecycleListener());
+        cluster.addClusterListener(new JvmRouteSessionIDBinderListener());
         // DeltaManager is default!
         String aspectedResult = "<Host"
                 + LF.LINE_SEPARATOR
@@ -274,6 +274,10 @@ public class StandardHostSFTest extends TestCase {
                 + "    <Valve className=\"org.apache.catalina.cluster.tcp.ReplicationValve\""
                 + LF.LINE_SEPARATOR
                 + "      filter=\".*\\.gif;.*\\.js;.*\\.jpg;.*\\.jpeg;.*\\.htm;.*\\.html;.*\\.txt;\"/>"
+                + LF.LINE_SEPARATOR
+                + "    <Listener className=\"org.apache.catalina.storeconfig.InfoLifecycleListener\"/>"
+                + LF.LINE_SEPARATOR
+                + "    <ClusterListener className=\"org.apache.catalina.cluster.session.JvmRouteSessionIDBinderListener\"/>"
                 + LF.LINE_SEPARATOR + "  </Cluster>" + LF.LINE_SEPARATOR
                 + "</Host>" + LF.LINE_SEPARATOR;
         check(aspectedResult);
