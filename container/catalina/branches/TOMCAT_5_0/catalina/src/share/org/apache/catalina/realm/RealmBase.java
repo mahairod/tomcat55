@@ -21,6 +21,7 @@ package org.apache.catalina.realm;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
@@ -90,6 +91,12 @@ public abstract class RealmBase
      * be performed.
      */
     protected String digest = null;
+
+    /**
+     * The digest encoding charset.  Null (the default)
+     * means use the platform default encoding.
+     */
+    protected String digestEncoding = null;
 
 
     /**
@@ -217,6 +224,24 @@ public abstract class RealmBase
 
     }
 
+    /**
+     * Returns the digest encoding charset.
+     *
+     * @return The digest (null means platform default)
+     */
+    public String getDigestEncoding() {
+        return digestEncoding;
+    }
+
+    /**
+     * Sets the digest encoding charset.
+     *
+     * @param charset The charset (null means platform default)
+     */
+    public void setDigestEncoding(String charset) {
+        digestEncoding = charset;
+    }
+
 
     /**
      * Return descriptive information about this Realm implementation and
@@ -342,9 +367,21 @@ public abstract class RealmBase
             return null;
         String serverDigestValue = md5a1 + ":" + nOnce + ":" + nc + ":"
             + cnonce + ":" + qop + ":" + md5a2;
+
+        byte[] valueBytes = null;
+        if(getDigestEncoding() == null) {
+            valueBytes = serverDigestValue.getBytes();
+        } else {
+            try {
+                valueBytes = serverDigestValue.getBytes(getDigestEncoding());
+            } catch (UnsupportedEncodingException uee) {
+                uee.printStackTrace();
+                throw new IllegalArgumentException("Illegal encoding: " + getDigestEncoding());
+            }
+        }
+
         String serverDigest =
-            md5Encoder.encode(md5Helper.digest(serverDigestValue.getBytes()));
-        //System.out.println("Server digest : " + serverDigest);
+            md5Encoder.encode(md5Helper.digest(valueBytes));
 
         if (serverDigest.equals(clientDigest))
             return getPrincipal(username);
@@ -1019,7 +1056,15 @@ public abstract class RealmBase
         synchronized (this) {
             try {
                 md.reset();
-                md.update(credentials.getBytes());
+
+                byte[] bytes = null;
+                if(getDigestEncoding() == null) {
+                    bytes = credentials.getBytes();
+                } else {
+                    bytes = credentials.getBytes(getDigestEncoding());
+                }
+
+                md.update(bytes);
                 return (HexUtils.convert(md.digest()));
             } catch (Exception e) {
                 log.error(sm.getString("realmBase.digest"), e);
@@ -1047,8 +1092,21 @@ public abstract class RealmBase
         }
         String digestValue = username + ":" + realmName + ":"
             + getPassword(username);
+
+        byte[] valueBytes = null;
+        if(getDigestEncoding() == null) {
+            valueBytes = digestValue.getBytes();
+        } else {
+            try {
+                valueBytes = digestValue.getBytes(getDigestEncoding());
+            } catch (UnsupportedEncodingException uee) {
+                uee.printStackTrace();
+                throw new IllegalArgumentException("Illegal encoding: " + getDigestEncoding());
+            }
+        }
+
         byte[] digest =
-            md5Helper.digest(digestValue.getBytes());
+            md5Helper.digest(valueBytes);
         return md5Encoder.encode(digest);
     }
 
@@ -1137,8 +1195,11 @@ public abstract class RealmBase
             // Obtain a new message digest with "digest" encryption
             MessageDigest md =
                 (MessageDigest) MessageDigest.getInstance(algorithm).clone();
+
             // encode the credentials
+            // Should use digestEncoding but this is a static method
             md.update(credentials.getBytes());
+
             // Digest the credentials and return as hexadecimal
             return (HexUtils.convert(md.digest()));
         } catch(Exception ex) {

@@ -31,6 +31,9 @@
       <fix>
         <bug>31623</bug>: Better OS400 support in setclasspath.sh. (yoavs)
       </fix>
+      <fix>
+        <bug>31592</bug>: Allow specification of digest encoding for realms. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 

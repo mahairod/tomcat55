@@ -111,6 +111,11 @@
         to encode user passwords stored in the database.  If not specified,
         user passwords are assumed to be stored in clear-text.</p>
       </attribute>
+ 
+      <attribute name="digestEncoding" required="false">
+        <p>The charset to use when encoding digests.  If not specified,
+        the platform default encoding is used.</p>
+      </attribute>
 
       <attribute name="driverName" required="true">
         <p>Fully qualified Java class name of the JDBC driver to be
