@@ -131,12 +131,13 @@
              goldenFile="${gdir}/IncludeFile.txt" 
        />
 
+      <!-- Order of query parameters depends on JDK
       <gtest host="${host}" port="${port}"  description="ForwardWithQuery"
              request="GET /test/servlet/dispatch.ForwardWithQueryServlet?name=Sun%20Microsystems&amp;age=100000&amp;city=Cupertino HTTP/1.0"
              returnCode="${http.protocol} 200"
              expectHeaders="Content-Type:text/funky" 
              goldenFile="${gdir}/ForwardWithQuery.txt" 
-       />
+       / -->
 
     
 
