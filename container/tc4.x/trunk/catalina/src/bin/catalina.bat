@@ -83,6 +83,7 @@ set CP=%CP%;%CATALINA_HOME%\lib\parser.jar
 set CP=%CP%;%CATALINA_HOME%\lib\servlet.jar
 
 :installClasspath
+set CP=%CP%;%JAVA_HOME%\lib\tools.jar
 set CLASSPATH=%CP%
 echo Using CLASSPATH: %CLASSPATH%
 
