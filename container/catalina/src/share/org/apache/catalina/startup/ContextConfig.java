@@ -300,7 +300,7 @@ public final class ContextConfig
                     if (context instanceof StandardContext) {
                         ((StandardContext) context).setReplaceWelcomeFiles(true);
                     }
-                    webDigester.setUseContextClassLoader(true);
+                    webDigester.setUseContextClassLoader(false);
                     webDigester.push(context);
                     webDigester.parse(is);
                 } else {
@@ -497,12 +497,31 @@ public final class ContextConfig
             webDigester = patchXerces(webDigester);
         }
         
-        url = ContextConfig.class.getResource(Constants.WebSchemaResourcePath_24);
+        url = ContextConfig.class.
+                    getResource(Constants.WebSchemaResourcePath_24);
+
         SchemaResolver webEntityResolver = new SchemaResolver(url.toString(),
                                                               webDigester);
 
         if (validation) {
-            webDigester.setSchema(url.toString());
+            if (webDigester.getFactory().getClass()
+                            .getName().indexOf("xerces")!=-1) {
+                try{
+                    webDigester.setFeature(
+                        "http://apache.org/xml/features/validation/dynamic",
+                        true);
+                    webDigester.setFeature(
+                        "http://apache.org/xml/features/validation/schema",
+                        true);
+                } catch(ParserConfigurationException e){
+                        // log("contextConfig.registerLocalSchema", e);
+                } catch(SAXNotRecognizedException e){
+                        // log("contextConfig.registerLocalSchema", e);
+                } catch(SAXNotSupportedException e){
+                        // log("contextConfig.registerLocalSchema", e);
+                }
+
+            }
         }
         
         url = ContextConfig.class.getResource(Constants.WebDtdResourcePath_22);
