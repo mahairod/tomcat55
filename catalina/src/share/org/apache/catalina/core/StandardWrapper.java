@@ -1607,7 +1607,6 @@ public class StandardWrapper
                           ",WebModule=" + webMod + ",J2EEApplication=" +
                           ctx.getJ2EEApplication() + ",J2EEServer=" +
                           ctx.getJ2EEServer();
-
         try {
             oname=new ObjectName(onameStr);
             controller=oname;
@@ -1628,11 +1627,11 @@ public class StandardWrapper
 
         if (isJspServlet) {
             // Register JSP monitoring mbean
+            onameStr = domain + ":type=JspMonitor,WebModule=" + webMod +
+                       ",J2EEApplication=" + ctx.getJ2EEApplication() +
+                       ",J2EEServer=" + ctx.getJ2EEServer();
             try {
-                jspMonitorON = new ObjectName(domain +
-                                              ":type=JspMonitor,path=" +
-                                              parentName + ",host=" +
-                                              hostName);
+                jspMonitorON = new ObjectName(onameStr);
                 Registry.getRegistry(null, null)
                     .registerComponent(instance, jspMonitorON, null);
             } catch( Exception ex ) {
