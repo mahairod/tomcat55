@@ -840,7 +840,7 @@ public class WebappClassLoader
      *
      * @param name Name of the resource to be found
      */
-    public URL findResource(String name) {
+    public URL findResource(final String name) {
 
         if (debug >= 3)
             log("    findResource(" + name + ")");
@@ -849,7 +849,16 @@ public class WebappClassLoader
 
         ResourceEntry entry = (ResourceEntry) resourceEntries.get(name);
         if (entry == null) {
-            entry = findResourceInternal(name, name);
+            if (securityManager != null) {
+                entry = (ResourceEntry) AccessController.doPrivileged
+                    (new PrivilegedAction() {
+                            public Object run() {
+                                return findResourceInternal(name, name);
+                            }
+                        }, accessController);
+            } else {
+                entry = findResourceInternal(name, name);
+            }
         }
         if (entry != null) {
             url = entry.source;
