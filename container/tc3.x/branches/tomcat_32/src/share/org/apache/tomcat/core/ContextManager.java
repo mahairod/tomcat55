@@ -1015,6 +1015,15 @@ public class ContextManager {
 	Context ctx = req.getContext();
 	if(ctx==null) ctx=getContext("");
 
+	if(ctx == null){
+		// The request didn't map into any context so send a 404 error.
+		try{
+			handleContextNotFound(req, res);
+		}catch(IOException e){
+		}
+		return;
+	}
+
 	// don't log normal cases ( redirect and need_auth ), they are not
 	// error
 	// XXX this log was intended to debug the status code generation.
@@ -1182,6 +1191,63 @@ public class ContextManager {
 	return false;
     }
 
+	 /**
+	  *  Called if the request does not map into any context.  This code
+	  * was lifted from DefaultCMSetter.NotFoundHandler becuase without
+	  * a valid context we really can't execute that servlet.
+	  */
+	 private void  handleContextNotFound(Request req, Response res) throws IOException
+	 {
+		 StringManager sm=StringManager.getManager("org.apache.tomcat.resources");
+		 res.setContentType("text/html");	// ISO-8859-1 default
+
+		 String requestURI = (String)req.
+			  getAttribute("javax.servlet.include.request_uri");
+
+		 if (requestURI == null || res.isIncluded()) {
+			  requestURI = req.getRequestURI();
+		 }
+
+		 StringBuffer buf = new StringBuffer();
+		 buf.append("<head><title>")
+			  .append(sm.getString("defaulterrorpage.notfound404"))
+			  .append("</title></head>\r\n");
+		 buf.append("<body><h1>")
+			  .append(sm.getString("defaulterrorpage.notfound404"))
+			  .append("</h1>\r\n<b>");
+		 buf.append(sm.getString("defaulterrorpage.originalrequest"))
+			  .append("</b> ")
+			  .append( requestURI );
+
+		 if (getShowDebugInfo()) {
+			  if (res.isIncluded()) {
+			 requestURI = (String)req.
+				  getAttribute("javax.servlet.include.request_uri");
+			  }
+			  if (requestURI != null) {
+			 buf.append("<br><br>\r\n<b>")
+				  .append(sm.getString("defaulterrorpage.notfoundrequest"))
+				  .append("</b> ")
+				  .append( requestURI );
+			  }
+		 }
+
+		 buf.append("</body>\r\n");
+
+		 String body = buf.toString();
+
+		 res.setContentLength(body.length());
+
+		 if( res.isUsingStream() ) {
+			  ServletOutputStream out = res.getOutputStream();
+			  out.print(body);
+			  out.flush();
+		 } else {
+			  PrintWriter out = res.getWriter();
+			  out.print(body);
+			  out.flush();
+		 }
+	  }
 
     // -------------------- Support for notes --------------------
 
