@@ -273,6 +273,7 @@ public final class InvokerServlet
         String inPathInfo = null;
         boolean included =
             (request.getAttribute(Globals.REQUEST_URI_ATTR) != null);
+
         if (included) {
             inRequestURI =
                 (String) request.getAttribute(Globals.REQUEST_URI_ATTR);
@@ -422,6 +423,13 @@ public final class InvokerServlet
             context.removeChild(wrapper);
             throw new ServletException
                 (sm.getString("invokerServlet.allocate", inRequestURI), e);
+        }
+
+        // After loading the wrapper, restore some of the fields when including
+        if (included) {
+            wrequest.setRequestURI(request.getRequestURI());
+            wrequest.setPathInfo(request.getPathInfo());
+            wrequest.setServletPath(request.getServletPath());
         }
 
         // Invoke the service() method of the allocated servlet
