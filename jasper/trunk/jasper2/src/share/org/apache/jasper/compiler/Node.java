@@ -62,7 +62,7 @@ package org.apache.jasper.compiler;
 
 import java.util.*;
 import java.io.CharArrayWriter;
-import javax.servlet.jsp.tagext.TagData;
+import javax.servlet.jsp.tagext.*;
 import org.xml.sax.Attributes;
 import org.apache.jasper.JasperException;
 
@@ -670,13 +670,19 @@ public abstract class Node {
 	private boolean hasIncludeAction;
 	private boolean hasSetProperty;
 	private String tagHandlerPoolName;
+	private TagInfo tagInfo;
+	private VariableInfo[] varInfos;
+	private int nestingLevel;
 
 	public CustomTag(Attributes attrs, Mark start, String name,
-			 String prefix, String shortName, Node parent) {
+			 String prefix, String shortName,
+			 TagInfo tagInfo, Node parent) {
 	    super(attrs, start, parent);
 	    this.name = name;
 	    this.prefix = prefix;
 	    this.shortName = shortName;
+	    this.tagInfo = tagInfo;
+	    this.nestingLevel = computeCustomNestingLevel();
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -714,6 +720,7 @@ public abstract class Node {
 	
 	public void setTagData(TagData tagData) {
 	    this.tagData = tagData;
+	    this.varInfos = tagInfo.getVariableInfo(tagData);
 	}
 
 	public TagData getTagData() {
@@ -752,14 +759,68 @@ public abstract class Node {
 	    return hasSetProperty;
 	}
 
-	public String getTagHandlerPoolName() {
-	    return tagHandlerPoolName;
-	}
-
 	public void setTagHandlerPoolName(String s) {
 	    tagHandlerPoolName = s;
 	}
 
+	public String getTagHandlerPoolName() {
+	    return tagHandlerPoolName;
+	}
+
+	public TagInfo getTagInfo() {
+	    return tagInfo;
+	}
+
+	public TagVariableInfo[] getTagVariableInfos() {
+	    return tagInfo.getTagVariableInfos();
+ 	}
+ 
+	public VariableInfo[] getVariableInfos() {
+	    return varInfos;
+	}
+
+	/*
+	 * Gets this custom tag's nesting level.
+	 */
+	public int getCustomNestingLevel() {
+	    return nestingLevel;
+	}
+
+	/*
+	 * Computes this custom tag's nesting level, which corresponds to the
+	 * number of times this custom tag is nested inside itself.
+	 *
+	 * Example:
+	 * 
+	 *  <g:h>
+	 *    <a:b> -- nesting level 0
+	 *      <c:d>
+	 *        <e:f>
+	 *          <a:b> -- nesting level 1
+	 *            <a:b> -- nesting level 2
+	 *            </a:b>
+	 *          </a:b>
+	 *          <a:b> -- nesting level 1
+	 *          </a:b>
+	 *        </e:f>
+	 *      </c:d>
+	 *    </a:b>
+	 *  </g:h>
+	 * 
+	 * @return Custom tag's nesting level
+	 */
+	private int computeCustomNestingLevel() {
+	    int n = 0;
+	    Node p = parent;
+	    while (p != null) {
+		if ((p instanceof Node.CustomTag)
+		        && name.equals(((Node.CustomTag) p).name)) {
+		    n++;
+		}
+		p = p.parent;
+	    }
+	    return n;
+	}
     }
 
     /**

@@ -704,7 +704,8 @@ public class Parser {
 	    reader.reset(start);
 	    return false;
 	}
-        if (tagLibInfo.getTag(shortTagName) == null) {
+	TagInfo tagInfo = tagLibInfo.getTag(shortTagName);
+	if (tagInfo == null) {
 	    err.jspError(start, "jsp.error.bad_tag", shortTagName, prefix);
 	}
 
@@ -716,7 +717,7 @@ public class Parser {
 	if (reader.matches("/>")) {
 	    // EmptyElemTag ::= '<' Name ( S Attribute )* S? '/>'#
 	    new Node.CustomTag(attrs, start, tagName, prefix, shortTagName,
-			       parent);
+			       tagInfo, parent);
 	    return true;
 	}
 	
@@ -729,10 +730,10 @@ public class Parser {
 	// Looking for a body, it still can be empty; but if there is a
 	// a tag body, its syntax would be dependent on the type of
 	// body content declared in TLD.
-	String bc = ((TagLibraryInfo) taglibs.get(prefix)).getTag(shortTagName).getBodyContent();
+	String bc = tagInfo.getBodyContent();
 
 	Node tagNode = new Node.CustomTag(attrs, start, tagName, prefix,
-					  shortTagName, parent);
+					  shortTagName, tagInfo, parent);
 	// There are 3 body content types: empty, jsp, or tag-dependent.
 	if (bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_EMPTY)) {
 	    if (!reader.matchesETag(tagName)) {

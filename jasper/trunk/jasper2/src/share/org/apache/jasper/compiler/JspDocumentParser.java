@@ -62,7 +62,7 @@ package org.apache.jasper.compiler;
 
 import java.io.*;
 import java.util.Hashtable;
-import javax.servlet.jsp.tagext.TagLibraryInfo;
+import javax.servlet.jsp.tagext.*;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -401,13 +401,14 @@ public class JspDocumentParser extends DefaultHandler
         if (tagLibInfo == null) {
             return null;
 	}
-        if (tagLibInfo.getTag(shortName) == null) {
+	TagInfo tagInfo = tagLibInfo.getTag(shortName);
+	if (tagInfo == null) {
 	    throw new SAXException(err.getString("jsp.error.bad_tag",
 						 shortName, prefix));
 	}
        
 	return new Node.CustomTag(attrs, start, qName, prefix, shortName,
-				  parent);
+				  tagInfo, parent);
     }
 
     /*
