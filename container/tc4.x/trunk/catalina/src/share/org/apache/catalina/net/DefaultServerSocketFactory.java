@@ -73,7 +73,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.KeyManagementException;
 import java.security.cert.CertificateException;
-import org.apache.catalina.ServerSocketFactory;
+import org.apache.catalina.net.ServerSocketFactory;
 
 
 /**
