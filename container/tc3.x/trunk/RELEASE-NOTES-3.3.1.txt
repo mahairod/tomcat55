@@ -32,6 +32,8 @@ Bug No.  Description
          if you have Apache forwarding SSL requests to a Tomcat that doesn't
          have JSSE installed.
 
+	 Fixed logic for response.encodeURL() so that it will work correctly 
+	 if the input URL includes an anchor tag.
 
 Server:
 
