@@ -33,7 +33,8 @@
         Add installer for mod_jk on IIS. (mturk)
       </add>
       <add>
-        New store config module for better server.xml saving support (pero)
+        New store config module for better server.xml saving support.<br/> 
+		Add &lt;Listener className="org.apache.catalina.storeconfig.StoreConfigLifecycleListener" /&gt; to your server.xml (pero)
       </add>
       <update>
         <bug>32081</bug>: Remove the JDK requirement from the Unix scripts, submitted
