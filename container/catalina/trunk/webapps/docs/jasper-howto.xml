@@ -106,6 +106,9 @@ performed in a seperate JVM from Tomcat? <code>true</code> or
 <li><strong>javaEncoding</strong> - Java file encoding to use for generating
 java source files. Default <code>UTF8</code>.</li>
 
+<li><strong>genStrAsCharArray</strong> - Should text strings be generated as char
+arrays, to improve performance in some cases? Default <code>false</code>.</li>
+
 <li><strong>keepgenerated</strong> - Should we keep the generated Java source
 code for each page instead of deleting it? <code>true</code> or
 <code>false</code>, default <code>true</code>.</li>
@@ -135,19 +138,10 @@ making the following changes from the default configuration.
 <ul>
 <li><strong>development</strong> - To disable on access checks for JSP
 pages compilation set this to <code>false</code>.</li>
-<li><strong>fork</strong> - The internal JVM javac compiler used by Ant
-has a known memory leak. And Ant requires that java compiles be synchronized,
-i.e. only one JSP page can be compiled at a time.  Set fork to
-<code>true</code> or do not define it (it is the default value) so that Ant 
-compiles JSP pages in a seperate JVM.
-This removes the synchronization of JSP page compiles and prevents
-all the javac classes from being instantiated and subsequently garbage
-collected by the JVM Tomcat is running in. This also works around known 
-issues with javac, including memory leaking, as well as JAR file locking
-on Windows.</li>
-<li><strong>reloading</strong> - To disable background compilation of JSP
-pages, which uses one thread per web application, set this to 
-<code>false</code>.</li>
+<li><strong>genStrAsCharArray</strong> - To generate slightly more efficient 
+char arrays, set this to <code>true</code>.</li>
+<li><strong>trimSpaces</strong> - To remove useless bytes from the response,
+set this to <code>true</code>.</li>
 </ul>
 </p>
 
