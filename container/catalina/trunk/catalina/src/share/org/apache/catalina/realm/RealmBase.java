@@ -819,7 +819,7 @@ public abstract class RealmBase
         if ( oname!=null ) {   
             try {   
                 Registry.getRegistry().unregisterComponent(oname); 
-                log.info( "unregistering realm " + oname );   
+                log.debug( "unregistering realm " + oname );   
             } catch( Exception ex ) {   
                 log.error( "Can't unregister realm " + oname, ex);   
             }      
@@ -1073,7 +1073,7 @@ public abstract class RealmBase
                             host + path);
                 }
                 if( mserver.isRegistered(parent ))  {
-                    log.info("Register with " + parent);
+                    log.debug("Register with " + parent);
                     mserver.invoke(parent, "setRealm", new Object[] {this},
                             new String[] {"org.apache.catalina.Realm"});
                 }
@@ -1088,7 +1088,7 @@ public abstract class RealmBase
                 ContainerBase cb=(ContainerBase)container;
                 oname=new ObjectName(cb.getDomain()+":type=Realm" + cb.getContainerSuffix());
                 Registry.getRegistry().registerComponent(this, oname, null );
-                log.info("Register Realm "+oname);
+                log.debug("Register Realm "+oname);
             } catch (Throwable e) {
                 log.error( "Can't register " + oname, e);
             }

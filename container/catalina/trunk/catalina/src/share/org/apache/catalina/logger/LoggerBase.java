@@ -274,7 +274,7 @@ public class LoggerBase
      *  written to the log file
      */
     public void log(String msg) {
-        log.info(msg);
+        log.debug(msg);
     }
 
 
@@ -421,7 +421,7 @@ public class LoggerBase
                     cname=new ObjectName(domain +":j2eeType=WebModule,name=//" +
                             host + "/" + path);
                 }
-                log.info("Register with " + cname);
+                log.debug("Register with " + cname);
                 mserver.invoke(cname, "setLogger", new Object[] {this},
                         new String[] {"org.apache.catalina.Logger"});
             } catch (Exception e) {
@@ -536,7 +536,7 @@ public class LoggerBase
             ObjectName oname = createObjectName();   
             try {   
                 Registry.getRegistry().registerComponent(this, oname, null); 
-                log.info( "registering logger " + oname );   
+                log.debug( "registering logger " + oname );   
             } catch( Exception ex ) {   
                 log.error( "Can't register logger " + oname, ex);   
             }      

@@ -408,7 +408,7 @@ public class StandardEngine
                 if (domain==null) {
                     domain=getName();
                 }
-                log.info( "Register " + domain );
+                log.debug( "Register " + domain );
                 oname=new ObjectName(domain + ":type=Engine,name="+getName());
                 controller=oname;
                 Registry.getRegistry().registerComponent(this, oname, null);

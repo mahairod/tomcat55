@@ -24,7 +24,7 @@
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
- *
+ *catalina run
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
  *    from this software without prior written permission. For written
@@ -1059,7 +1059,7 @@ public class StandardHost
                                         ":type=Engine");
                 
                 if( mserver.isRegistered( serviceName )) {
-                    log.info("Registering with the Engine");
+                    log.debug("Registering with the Engine");
                     mserver.invoke( serviceName, "addChild",
                             new Object[] { this },
                             new String[] { "org.apache.catalina.Container" } );
@@ -1074,7 +1074,7 @@ public class StandardHost
             try {
                 StandardEngine engine=(StandardEngine)parent;
                 domain=engine.getName();
-                log.info( "Register " + domain );
+                log.debug( "Register " + domain );
                 oname=new ObjectName(domain + ":type=Host,host=" +
                         this.getName());
                 Registry.getRegistry().registerComponent(this, oname, null);
