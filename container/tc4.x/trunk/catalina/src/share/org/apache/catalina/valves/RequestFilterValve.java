@@ -306,6 +306,18 @@ public abstract class RequestFilterValve
                            ValveContext context)
         throws IOException, ServletException {
 
+        // Default to deny request if property is null
+        if (property == null) {
+            ServletResponse sres = response.getResponse();
+            if (sres instanceof HttpServletResponse) {
+                HttpServletResponse hres = (HttpServletResponse) sres;
+                hres.sendError(HttpServletResponse.SC_FORBIDDEN);
+            }
+            Exception e = new IllegalArgumentException();
+            getContainer().getLogger().log(e,"Request Denied, no property to filter on");
+            return;
+        }
+
         // Check the deny patterns, if any
         for (int i = 0; i < denies.length; i++) {
             if (denies[i].match(property)) {
