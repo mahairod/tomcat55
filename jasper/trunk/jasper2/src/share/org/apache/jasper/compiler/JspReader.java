@@ -350,6 +350,22 @@ public class JspReader {
 	return false;
     }
 
+    public boolean matchesETagWithoutLessThan(String tagName)
+        throws JasperException
+    {
+       Mark mark = mark();
+
+       if (!matches("/" + tagName))
+           return false;
+       skipSpaces();
+       if (nextChar() == '>')
+           return true;
+
+       reset(mark);
+       return false;
+    }
+
+
     /**
      * Looks ahead to see if there are optional spaces followed by
      * the given String.  If so, true is returned and those spaces and

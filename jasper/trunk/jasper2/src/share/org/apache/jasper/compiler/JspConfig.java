@@ -76,9 +76,9 @@ import org.apache.jasper.xmlparser.TreeNode;
 
 /**
  * Handles the jsp-config element in WEB_INF/web.xml.  This is used
- * for specifying the JSP configuration informantion on a JSP page
+ * for specifying the JSP configuration information on a JSP page
  *
- * @authro Kin-man Chung
+ * @author Kin-man Chung
  */
 
 public class JspConfig {
@@ -124,7 +124,7 @@ public class JspConfig {
 	    TreeNode element = (TreeNode) jspPropertyList.next();
 	    Iterator list = element.findChildren();
 
-	    String urlPattern = null;
+            Vector urlPatterns = new Vector();
 	    String pageEncoding = null;
 	    String scriptingEnabled = null;
 	    String elEnabled = null;
@@ -138,7 +138,7 @@ public class JspConfig {
 		String tname = element.getName();
 
 		if ("url-pattern".equals(tname))
-		    urlPattern = element.getBody();
+                    urlPatterns.addElement( element.getBody() );
 		else if ("page-encoding".equals(tname))
 		    pageEncoding = element.getBody();
 		else if ("is-xml".equals(tname))
@@ -152,51 +152,56 @@ public class JspConfig {
 		else if ("include-coda".equals(tname))
 		    includeCoda.addElement(element.getBody());
 	    }
-	    
-	    String path = null;
-	    String extension = null;
 
-	    if (urlPattern == null) {
-		continue;
-	    }
+             if (urlPatterns.size() == 0) {
+                 continue;
+             }
+ 
+             // Add one JspPropertyGroup for each URL Pattern.  This makes
+             // the matching logic easier.
+             for( int p = 0; p < urlPatterns.size(); p++ ) {
+                 String urlPattern = (String)urlPatterns.elementAt( p );
+                 String path = null;
+                 String extension = null;
+ 
+                 if (urlPattern.indexOf('*') < 0) {
+                     // Exact match
+                     path = urlPattern;
+                 } else {
+                     int i = urlPattern.lastIndexOf('/');
+                     String file;
+                     if (i >= 0) {
+                         path = urlPattern.substring(0,i+1);
+                         file = urlPattern.substring(i+1);
+                     } else {
+                         file = urlPattern;
+                     }
+ 
+                     // pattern must be "*", or of the form "*.jsp"
+                     if (file.equals("*")) {
+                         extension = "*";
+                     } else if (file.startsWith("*.")) {
+                         extension = file.substring(file.indexOf('.')+1);
+                     } else {
+                         Constants.message(
+                             "jsp.warning.bad.urlpattern.propertygroup",
+                             new Object[] {urlPattern},
+                             Logger.WARNING);
+                         continue;
+                     }
+                 }
+ 
+                 JspProperty property = new JspProperty(isXml,
+                                                        elEnabled,
+                                                        scriptingEnabled,
+                                                        pageEncoding,
+                                                        includePrelude,
+                                                        includeCoda);
+                 JspPropertyGroup propertyGroup =
+                     new JspPropertyGroup(path, extension, property);
 
-	    if (urlPattern.indexOf('*') < 0) {
-		// Exact match
-		path = urlPattern;
-	    } else {
-		int i = urlPattern.lastIndexOf('/');
-		String file;
-		if (i >= 0) {
-		    path = urlPattern.substring(0,i+1);
-		    file = urlPattern.substring(i+1);
-		} else {
-		    file = urlPattern;
-		}
-
-		// pattern must be "*", or of the form "*.jsp"
-		if (file.equals("*")) {
-		    extension = "*";
-		} else if (file.startsWith("*.")) {
-		    extension = file.substring(file.indexOf('.')+1);
-		} else {
-		    Constants.message(
-			"jsp.warning.bad.urlpattern.propertygroup",
-			new Object[] {urlPattern},
-			Logger.WARNING);
-		    continue;
-		}
-	    }
-
-	    JspProperty property = new JspProperty(isXml,
-						   elEnabled,
-						   scriptingEnabled,
-						   pageEncoding,
-						   includePrelude,
-						   includeCoda);
-	    JspPropertyGroup propertyGroup =
-		new JspPropertyGroup(path, extension, property);
-
-	    jspProperties.addElement(propertyGroup);
+                 jspProperties.addElement(propertyGroup);
+             }
 	}
     }
 
@@ -243,85 +248,89 @@ public class JspConfig {
 	    JspPropertyGroup jpg = (JspPropertyGroup) iter.next();
 	    JspProperty jp = jpg.getJspProperty();
 
-	    if (jpg.getExtension() == null) {
-
-		// exact match pattern: /a/foo.jsp
-		if (!uri.equals(jpg.getPath())) {
-		    // not matched;
-		    continue;
-		}
-
-		// Add include-preludes and include-codas
-		if (jp.getIncludePrelude() != null) {
-		    includePreludes.addAll(jp.getIncludePrelude());
-		}
-		if (jp.getIncludeCoda() != null) {
-		    includeCodas.addAll(jp.getIncludeCoda());
-		}
-
-		// For other attributes, keep the best match.
-		if (jp.isXml() != null) {
-		    isXmlMatch = jpg;
-		}
-		if (jp.isELEnabled() != null) {
-		    elEnabledMatch = jpg;
-		}
-		if (jp.isScriptingEnabled() != null) {
-		    scriptingEnabledMatch = jpg;
-		}
-		if (jp.getPageEncoding() != null) {
-		    pageEncodingMatch = jpg;
-		}
-	    } else {
-
-		// Possible patterns are *, *.ext, /p/*, and /p/*.ext
-
-		if (jpg.getPath() != null && !jpg.getPath().equals(uriPath)) {
-		    // not matched
-		    continue;
-		}
-		if (!jpg.getExtension().equals("*") &&
-				!jpg.getExtension().equals(uriExtension)) {
-		    // not matched
-		    continue;
-		}
-
-		// We have a match
-		// Add include-preludes and include-codas
-		if (jp.getIncludePrelude() != null) {
-		    includePreludes.addAll(jp.getIncludePrelude());
-		}
-		if (jp.getIncludeCoda() != null) {
-		    includeCodas.addAll(jp.getIncludeCoda());
-		}
-
-		// If there is a previous match, and the current match is
-		// more restrictive, use the current match.
-		if (jp.isXml() != null &&
-			(isXmlMatch == null ||
-				(isXmlMatch.getExtension() != null &&
-				 isXmlMatch.getExtension().equals("*")))) {
-			isXmlMatch = jpg;
-		}
-		if (jp.isELEnabled() != null &&
-			(elEnabledMatch == null ||
-			    (elEnabledMatch.getExtension() != null &&
-			     elEnabledMatch.getExtension().equals("*")))) {
-		    elEnabledMatch = jpg;
-		}
-		if (jp.isScriptingEnabled() != null &&
-			(scriptingEnabledMatch == null ||
-			    (scriptingEnabledMatch.getExtension() != null &&
-			     scriptingEnabledMatch.getExtension().equals("*")))) {
-		    scriptingEnabledMatch = jpg;
-		}
-		if (jp.getPageEncoding() != null &&
-			(pageEncodingMatch == null ||
-			    (pageEncodingMatch.getExtension() != null &&
-			     pageEncodingMatch.getExtension().equals("*")))) {
-		    pageEncodingMatch = jpg;
-		}
-	    }
+             // (arrays will be the same length)
+             String extension = jpg.getExtension();
+             String path = jpg.getPath();
+ 
+             if (extension == null) {
+ 
+                 // exact match pattern: /a/foo.jsp
+                 if (!uri.equals(path)) {
+                     // not matched;
+                     continue;
+                 }
+ 
+                 // Add include-preludes and include-codas
+                 if (jp.getIncludePrelude() != null) {
+                     includePreludes.addAll(jp.getIncludePrelude());
+                 }
+                 if (jp.getIncludeCoda() != null) {
+                     includeCodas.addAll(jp.getIncludeCoda());
+                 }
+ 
+                 // For other attributes, keep the best match.
+                 if (jp.isXml() != null) {
+                     isXmlMatch = jpg;
+                 }
+                 if (jp.isELEnabled() != null) {
+                     elEnabledMatch = jpg;
+                 }
+                 if (jp.isScriptingEnabled() != null) {
+                     scriptingEnabledMatch = jpg;
+                 }
+                 if (jp.getPageEncoding() != null) {
+                     pageEncodingMatch = jpg;
+                 }
+             } else {
+ 
+                 // Possible patterns are *, *.ext, /p/*, and /p/*.ext
+ 
+                 if (path != null && !path.equals(uriPath)) {
+                     // not matched
+                     continue;
+                 }
+                 if (!extension.equals("*") &&
+                                 !extension.equals(uriExtension)) {
+                     // not matched
+                     continue;
+                 }
+ 
+                 // We have a match
+                 // Add include-preludes and include-codas
+                 if (jp.getIncludePrelude() != null) {
+                     includePreludes.addAll(jp.getIncludePrelude());
+                 }
+                 if (jp.getIncludeCoda() != null) {
+                     includeCodas.addAll(jp.getIncludeCoda());
+                 }
+ 
+                 // If there is a previous match, and the current match is
+                 // more restrictive, use the current match.
+                 if (jp.isXml() != null &&
+                         (isXmlMatch == null ||
+                                 (isXmlMatch.getExtension() != null &&
+                                  isXmlMatch.getExtension().equals("*")))) {
+                         isXmlMatch = jpg;
+                 }
+                 if (jp.isELEnabled() != null &&
+                         (elEnabledMatch == null ||
+                             (elEnabledMatch.getExtension() != null &&
+                              elEnabledMatch.getExtension().equals("*")))) {
+                     elEnabledMatch = jpg;
+                 }
+                 if (jp.isScriptingEnabled() != null &&
+                         (scriptingEnabledMatch == null ||
+                             (scriptingEnabledMatch.getExtension() != null &&
+                              scriptingEnabledMatch.getExtension().equals("*")))) {
+                     scriptingEnabledMatch = jpg;
+                 }
+                 if (jp.getPageEncoding() != null &&
+                         (pageEncodingMatch == null ||
+                             (pageEncodingMatch.getExtension() != null &&
+                              pageEncodingMatch.getExtension().equals("*")))) {
+                     pageEncodingMatch = jpg;
+                 }
+             }
 	}
 
 

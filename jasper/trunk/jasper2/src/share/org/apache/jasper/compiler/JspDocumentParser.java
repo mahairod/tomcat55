@@ -185,21 +185,20 @@ public class JspDocumentParser extends DefaultHandler
 	    rootAttrs.addAttribute("", "", "version", "CDATA", "2.0");
 	    node = new Node.JspRoot(rootAttrs, null, current, true);
 	    current = node;
+            rootSeen = true;
 	}
 
-	if (!rootSeen) {
-	    rootSeen = true;
-            // XXX - As of JSP 2.0, xmlns: can appear on the top node (either
-            // <jsp:root> or another top node.  The spec needs clarification 
-            // here.
-            try {
-                attrsCopy = addCustomTagLibraries(attrs);
-            } catch (JasperException je) {
-                throw new SAXException(je);
-            }
-        }
-        else {
-            attrsCopy = new AttributesImpl(attrs);
+        // XXX - As of JSP 2.0, xmlns: can appear in any node (not just
+        // <jsp:root>).  The spec still needs clarification here.
+        // What we implement is that it can appear in any node and
+        // is valid from that point forward.  Redefinitions cause an
+        // error.  This isn't quite consistent with how xmlns: normally
+        // works.
+        try {
+            attrsCopy = addCustomTagLibraries(attrs);
+        } catch (JasperException je) {
+            throw new SAXParseException( err.getString(
+                "jsp.error.could.not.add.taglibraries" ), locator, je );
         }
 
 	if (qName.equals(JSP_ROOT)) {
@@ -548,8 +547,16 @@ public class JspDocumentParser extends DefaultHandler
                     tl = new TagLibraryInfoImpl(ctxt, parserController, prefix,
 						uri, location, err);
                 }
-		taglibs.put(prefix, tl);
-                result.removeAttribute( i );
+                if( taglibs.containsKey( prefix ) ) {
+                    // Prefix already in taglib map.
+                    throw new JasperException( err.getString(
+                        "jsp.error.xmlns.redefinition.notimplemented",
+                        prefix ) );
+                }
+                else {
+                    taglibs.put(prefix, tl);
+                    result.removeAttribute( i );
+                }
 	    }
         }
         return result;

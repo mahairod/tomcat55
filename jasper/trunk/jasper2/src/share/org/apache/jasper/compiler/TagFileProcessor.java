@@ -142,7 +142,6 @@ public class TagFileProcessor {
 
         private Vector attributeVector = new Vector();
         private Vector variableVector = new Vector();
-        private Vector fragmentAttributeVector = new Vector();
         private Map fragmentAttributesMap = new Hashtable();
 
         public TagFileVisitor(Compiler compiler, TagLibraryInfo tagLibInfo,

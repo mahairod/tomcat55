@@ -3146,7 +3146,8 @@ public class Generator {
 	if (attrInfos != null) {
 	    for (int i=0; i<attrInfos.length; i++) {
 		String attrName = attrInfos[i].getName();
-		out.printin("pageContext.setAttribute(");
+                out.println("if( " + toGetterMethod(attrName) + " != null ) " );
+                out.print("pageContext.setAttribute(");
 		out.print(quote(attrName));
 		out.print(", ");
 		out.print(toGetterMethod(attrName));

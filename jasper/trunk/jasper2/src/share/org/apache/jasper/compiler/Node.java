@@ -447,13 +447,40 @@ public abstract class Node {
      * Represents a tag directive
      */
     public static class TagDirective extends Node {
+        private Vector imports;
 
 	public TagDirective(Attributes attrs, Mark start, Node parent) {
 	    super(attrs, start, parent);
+            imports = new Vector();
 	}
 
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
+        }
+ 
+        /**
+         * Parses the comma-separated list of class or package names in the
+         * given attribute value and adds each component to this
+         * PageDirective's vector of imported classes and packages.
+         * @param value A comma-separated string of imports.
+         */
+        public void addImport(String value) {
+            int start = 0;
+            int index;
+            while ((index = value.indexOf(',', start)) != -1) {
+                imports.add(value.substring(start, index).trim());
+                start = index + 1;
+            }
+            if (start == 0) {
+                // No comma found
+                imports.add(value.trim());
+            } else {
+                imports.add(value.substring(start).trim());
+            }
+        }
+ 
+        public List getImports() {
+            return imports;
 	}
     }
 

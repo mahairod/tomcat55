@@ -270,9 +270,11 @@ public class Validator {
 	}
 
 	public void visit(Node.TagDirective n) throws JasperException {
-	    // Do nothing, since this tag directive has already been validated
-	    // by TagFileProcessor when it created a TagInfo object from the
-	    // tag file in which the directive appeared
+            // Note: Most of the validation is done in TagFileProcessor
+            // when it created a TagInfo object from the
+            // tag file in which the directive appeared.
+        
+            // This method does additional processing to collect page info
 	}
 
 	public void visit(Node.AttributeDirective n) throws JasperException {

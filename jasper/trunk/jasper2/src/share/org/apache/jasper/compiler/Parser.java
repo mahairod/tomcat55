@@ -487,12 +487,94 @@ public class Parser {
     }
 	
     /*
+     * Parses a directive with the following syntax:
+     *
+     *   XMLJSPDirectiveBody ::= S? (   ( 'page' PageDirectiveAttrList
+     *                                    S? ( '/>' | ( '>' S? ETag ) )
+     *                               | ( 'include' IncludeDirectiveAttrList
+     *                                    S? ( '/>' | ( '>' S? ETag ) )
+     *                           | <TRANSLATION_ERROR>
+     *
+     *   XMLTagDefDirectiveBody ::= (   ( 'tag' TagDirectiveAttrList
+     *                                    S? ( '/>' | ( '>' S? ETag ) )
+     *                                | ( 'include' IncludeDirectiveAttrList
+     *                                    S? ( '/>' | ( '>' S? ETag ) )
+     *                                | ( 'attribute' AttributeDirectiveAttrList
+     *                                    S? ( '/>' | ( '>' S? ETag ) )
+     *                                | ( 'variable' VariableDirectiveAttrList
+     *                                    S? ( '/>' | ( '>' S? ETag ) )
+     *                              )
+     *                            | <TRANSLATION_ERROR>
+     */
+    private void parseXMLDirective(Node parent) throws JasperException {
+       reader.skipSpaces();
+
+        String eTag = null;
+       if (reader.matches("page")) {
+            eTag = "jsp:directive.page";
+           if (isTagFile) {
+               err.jspError(reader.mark(), "jsp.error.directive.istagfile",
+                                           "&lt;" + eTag);
+           }
+           parsePageDirective(parent);
+       } else if (reader.matches("include")) {
+            eTag = "jsp:directive.include";
+           parseIncludeDirective(parent);
+       } else if (reader.matches("tag")) {
+            eTag = "jsp:directive.tag";
+           if (!isTagFile) {
+               err.jspError(reader.mark(), "jsp.error.directive.isnottagfile",
+                                           "&lt;" + eTag);
+           }
+           parseTagDirective(parent);
+       } else if (reader.matches("attribute")) {
+            eTag = "jsp:directive.attribute";
+           if (!isTagFile) {
+               err.jspError(reader.mark(), "jsp.error.directive.isnottagfile",
+                                           "&lt;" + eTag);
+           }
+           parseAttributeDirective(parent);
+       } else if (reader.matches("variable")) {
+            eTag = "jsp:directive.variable";
+           if (!isTagFile) {
+               err.jspError(reader.mark(), "jsp.error.directive.isnottagfile",
+                                           "&lt;" + eTag);
+           }
+           parseVariableDirective(parent);
+       } else {
+           err.jspError(reader.mark(), "jsp.error.invalid.directive");
+       }
+
+       reader.skipSpaces();
+        if( reader.matches( ">" ) ) {
+            reader.skipSpaces();
+            if( !reader.matchesETag( eTag ) ) {
+                err.jspError(start, "jsp.error.unterminated", "&lt;" + eTag );
+            }
+        }
+        else if( !reader.matches( "/>" ) ) {
+            err.jspError(start, "jsp.error.unterminated", "&lt;" + eTag );
+        }
+    }
+
+    /*
      * Parses a tag directive with the following syntax:
      *   PageDirective ::= ( S Attribute)*
      */
     private void parseTagDirective(Node parent) throws JasperException {
 	Attributes attrs = parseAttributes();
 	Node.TagDirective n = new Node.TagDirective(attrs, start, parent);
+
+        /*
+         * A page directive may contain multiple 'import' attributes, each of
+         * which consists of a comma-separated list of package names.
+         * Store each list with the node, where it is parsed.
+         */
+        for (int i = 0; i < attrs.getLength(); i++) {
+            if ("import".equals(attrs.getQName(i))) {
+                n.addImport(attrs.getValue(i));
+            }
+        }
     }
 
     /*
@@ -543,6 +625,32 @@ public class Parser {
     }
 
     /*
+     * XMLDeclarationBody ::=   ( S? '/>' )
+     *                        | ( S? '>' (Char* - (char* '<')) ETag )
+     *                        | <TRANSLATION_ERROR>
+     */
+    private void parseXMLDeclaration(Node parent) throws JasperException {
+        reader.skipSpaces();
+        if( !reader.matches( "/>" ) ) {
+            if( !reader.matches( ">" ) ) {
+                err.jspError(start, "jsp.error.unterminated",
+                        "&lt;jsp:declaration&gt;");
+            }
+            start = reader.mark();
+            Mark stop = reader.skipUntil("<");
+            if ((stop == null) || !reader.matchesETagWithoutLessThan(
+                "jsp:declaration" ) )
+            {
+                err.jspError(start, "jsp.error.unterminated",
+                        "&lt;jsp:declaration&gt;");
+            }
+
+            new Node.Declaration(parseScriptText(reader.getText(start, stop)),
+                               start, parent);
+        }
+    }
+
+    /*
      * ExpressionBody ::= (Char* - (char* '%>')) '%>'
      */
     private void parseExpression(Node parent) throws JasperException {
@@ -554,6 +662,32 @@ public class Parser {
 
 	new Node.Expression(parseScriptText(reader.getText(start, stop)),
 				start, parent);
+    }
+
+    /*
+     * XMLExpressionBody ::=   ( S? '/>' )
+     *                       | ( S? '>' (Char* - (char* '<')) ETag )
+     *                       | <TRANSLATION_ERROR>
+     */
+    private void parseXMLExpression(Node parent) throws JasperException {
+        reader.skipSpaces();
+        if( !reader.matches( "/>" ) ) {
+            if( !reader.matches( ">" ) ) {
+                err.jspError(start, "jsp.error.unterminated",
+                    "&lt;jsp:expression&gt;");
+            }
+            start = reader.mark();
+            Mark stop = reader.skipUntil("<");
+            if ((stop == null) || !reader.matchesETagWithoutLessThan(
+                "jsp:expression" ))
+            {
+                err.jspError(start, "jsp.error.unterminated",
+                    "&lt;jsp:expression&gt;");
+            }
+
+            new Node.Expression(parseScriptText(reader.getText(start, stop)),
+                                    start, parent);
+        }
     }
 
     /*
@@ -588,7 +722,7 @@ public class Parser {
     }
 
     /*
-     * Scriptlet ::= (Char* - (char* '%>')) '%>'
+     * ScriptletBody ::= (Char* - (char* '%>')) '%>'
      */
     private void parseScriptlet(Node parent) throws JasperException {
 	start = reader.mark();
@@ -599,6 +733,32 @@ public class Parser {
 
 	new Node.Scriptlet(parseScriptText(reader.getText(start, stop)),
 				start, parent);
+    }
+
+    /*
+     * XMLScriptletBody ::=   ( S? '/>' )
+     *                      | ( S? '>' (Char* - (char* '<')) ETag )
+     *                      | <TRANSLATION_ERROR>
+     */
+    private void parseXMLScriptlet(Node parent) throws JasperException {
+        reader.skipSpaces();
+        if( !reader.matches( "/>" ) ) {
+            if( !reader.matches( ">" ) ) {
+                err.jspError(start, "jsp.error.unterminated",
+                    "&lt;jsp:scriptlet&gt;");
+            }
+            start = reader.mark();
+            Mark stop = reader.skipUntil("<");
+            if ((stop == null) || !reader.matchesETagWithoutLessThan(
+                "jsp:scriptlet" ))
+            {
+                err.jspError(start, "jsp.error.unterminated",
+                    "&lt;jsp:scriptlet&gt;");
+            }
+
+            new Node.Scriptlet(parseScriptText(reader.getText(start, stop)),
+                                    start, parent );
+        }
     }
 	
     /**
@@ -1119,14 +1279,91 @@ public class Parser {
     }
     
     /*
-     * AllBody ::=	  ( '<%--' JSPCommentBody )
-     *			| ( '<%@' DirectiveBody )
-     *			| ( '<%!' DeclarationBody )
-     *			| ( '<%=' ExpressionBody )
-     *                  | ( '${' ELExpressionBody )
-     *			| ( '<%' ScriptletBody )
-     *			| ( '<jsp:' StandardAction )
-     *			| ( '<' CustomAction CustomActionBody )
+     * XMLTemplateText ::=   ( S? '/>' )
+     *                     | ( S? '>'
+     *                         ( ( Char* - ( Char* ( '<' | '${' ) ) )
+     *                           ( '${' ELExpressionBody )?
+     *                         )* ETag
+     *                       )
+     *                     | <TRANSLATION_ERROR>
+     */
+    private void parseXMLTemplateText(Node parent) throws JasperException {
+        reader.skipSpaces();
+        if( !reader.matches( "/>" ) ) {
+            if( !reader.matches( ">" ) ) {
+                err.jspError(start, "jsp.error.unterminated",
+                    "&lt;jsp:text&gt;" );
+            }
+            CharArrayWriter ttext = new CharArrayWriter();
+            int lastCh = 0;
+            do {
+                int ch = reader.nextChar();
+                if( ch == -1 ) {
+                    err.jspError(start, "jsp.error.unterminated",
+                        "&lt;jsp:text&gt;" );
+                    break;
+                }
+                if( ch == '<' ) break;
+                if( (lastCh == '$') && (ch == '{') ) {
+                    // Create a template text node
+                    new Node.TemplateText( ttext.toCharArray(), start, parent);
+
+                    // Mark and parse the EL expression and create its node:
+                    start = reader.mark();
+                    parseELExpression(parent);
+
+                    // Go back to parsing template text, unless next
+                    // char is '<':
+                    if( reader.peekChar() == '<' ) {
+                        reader.nextChar();
+                        ttext = null;
+                        break;
+                    }
+                    start = reader.mark();
+                    ttext = new CharArrayWriter();
+                }
+                else {
+                    if( (lastCh == '$') && (ch != '{') ) {
+                        ttext.write( '$' );
+                    }
+                    if( ch != '$' ) {
+                        ttext.write( ch );
+                    }
+                }
+                lastCh = ch;
+            } while( true );
+
+            if( ttext != null ) {
+                if( lastCh == '$' ) {
+                    ttext.write( '$' );
+                }
+                // This could happen if we parsed an EL expression and then
+                // there was no more template text (see above).
+                new Node.TemplateText( ttext.toCharArray(), start, parent );
+            }
+
+            if( !reader.matchesETagWithoutLessThan( "jsp:text" ) ) {
+                err.jspError( start, "jsp.error.unterminated",
+                    "&lt;jsp:text&gt;" );
+            }
+        }
+    }
+
+    /*
+     * AllBody ::=       ( '<%--'              JSPCommentBody     )
+     *                 | ( '<%@'               DirectiveBody      )
+     *                 | ( '<jsp:directive.'   XMLDirectiveBody   )
+     *                 | ( '<%!'               DeclarationBody    )
+     *                 | ( '<jsp:declaration'  XMLDeclarationBody )
+     *                 | ( '<%='               ExpressionBody     )
+     *                 | ( '<jsp:expression'   XMLExpressionBody  )
+     *                  | ( '${'                ELExpressionBody   )
+     *                 | ( '<%'                ScriptletBody      )
+     *                 | ( '<jsp:scriptlet'    XMLScriptletBody   )
+     *                  | ( '<jsp:text'         XMLTemplateText    )
+     *                 | ( '<jsp:'             StandardAction     )
+     *                 | ( '<'                 CustomAction
+     *                                          CustomActionBody   )
      *			| TemplateText
      */
     private void parseElements(Node parent) 
@@ -1145,12 +1382,22 @@ public class Parser {
 	    parseComment(parent);
 	} else if (reader.matches("<%@")) {
 	    parseDirective(parent);
+        } else if (reader.matches("<jsp:directive.")) {
+            parseXMLDirective(parent);
 	} else if (reader.matches("<%!")) {
 	    parseDeclaration(parent);
-	} else if (reader.matches("<%=")) {
-	    parseExpression(parent);
+        } else if (reader.matches("<jsp:declaration")) {
+            parseXMLDeclaration(parent);
+        } else if (reader.matches("<%=")) {
+            parseExpression(parent);
+        } else if (reader.matches("<jsp:expression")) {
+            parseXMLExpression(parent);
 	} else if (reader.matches("<%")) {
 	    parseScriptlet(parent);
+        } else if (reader.matches("<jsp:scriptlet")) {
+            parseXMLScriptlet(parent);
+        } else if (reader.matches("<jsp:text")) {
+            parseXMLTemplateText(parent);
         } else if (reader.matches("${")) {
             parseELExpression(parent);
 	} else if (reader.matches("<jsp:")) {
@@ -1161,14 +1408,20 @@ public class Parser {
     }
 
     /*
-     * ScriptlessBody ::=   ( '<%--' JSPCommentBody )
-     *			  | ( '<%@' DirectiveBody )
-     *			  | ( '<%!' <TRANSLATION_ERROR> )
-     *			  | ( '<%=' <TRANSLATION_ERROR> )
-     *			  | ( '<%' <TRANSLATION_ERROR> )
-     *                    | ( '${' ELExpressionBody )
-     *	  		  | ( '<jsp:' StandardAction )
-     *			  | ( '<' CustomAction CustomActionBody )
+     * ScriptlessBody ::=   ( '<%--'              JSPCommentBody      )
+     *                   | ( '<%@'               DirectiveBody       )
+     *                    | ( '<jsp:directive.'   XMLDirectiveBody    )
+     *                   | ( '<%!'               <TRANSLATION_ERROR> )
+     *                    | ( '<jsp:declaration'  <TRANSLATION_ERROR> )
+     *                   | ( '<%='               <TRANSLATION_ERROR> )
+     *                   | ( '<jsp:expression'   <TRANSLATION_ERROR> )
+     *                   | ( '<%'                <TRANSLATION_ERROR> )
+     *                   | ( '<jsp:scriptlet'    <TRANSLATION_ERROR> )
+     *                    | ( '<jsp:text'         XMLTemplateText     )
+     *                    | ( '${'                ELExpressionBody    )
+     *                   | ( '<jsp:'             StandardAction      )
+     *                   | ( '<'                 CustomAction
+     *                                            CustomActionBody    )
      *			  | TemplateText
      */
     private void parseElementsScriptless(Node parent) 
@@ -1183,12 +1436,22 @@ public class Parser {
 	    parseComment(parent);
 	} else if (reader.matches("<%@")) {
 	    parseDirective(parent);
+        } else if (reader.matches("<jsp:directive.")) {
+            parseXMLDirective(parent);
 	} else if (reader.matches("<%!")) {
 	    err.jspError( reader.mark(), "jsp.error.no.scriptlets" );
+        } else if (reader.matches("<jsp:declaration")) {
+            err.jspError( reader.mark(), "jsp.error.no.scriptlets" );
 	} else if (reader.matches("<%=")) {
 	    err.jspError( reader.mark(), "jsp.error.no.scriptlets" );
+        } else if (reader.matches("<jsp:expression")) {
+            err.jspError( reader.mark(), "jsp.error.no.scriptlets" );
 	} else if (reader.matches("<%")) {
 	    err.jspError( reader.mark(), "jsp.error.no.scriptlets" );
+        } else if (reader.matches("<jsp:scriptlet")) {
+            err.jspError( reader.mark(), "jsp.error.no.scriptlets" );
+        } else if (reader.matches("<jsp:text")) {
+            parseXMLTemplateText(parent);
 	} else if (reader.matches("${")) {
 	    parseELExpression(parent);
 	} else if (reader.matches("<jsp:")) {
@@ -1201,13 +1464,18 @@ public class Parser {
     }
     
     /*
-     * TemplateTextBody ::=   ( '<%--' JSPCommentBody )
-     *                      | ( '<%@' DirectiveBody )
-     *                      | ( '<%!' <TRANSLATION_ERROR> )
-     *                      | ( '<%=' <TRANSLATION_ERROR> )
-     *                      | ( '<%' <TRANSLATION_ERROR> )
-     *                      | ( '${' <TRANSLATION_ERROR> )
-     *                      | ( '<jsp:' <TRANSLATION_ERROR> )
+     * TemplateTextBody ::=   ( '<%--'              JSPCommentBody      )
+     *                      | ( '<%@'               DirectiveBody       )
+     *                      | ( '<jsp:directive.'   XMLDirectiveBody    )
+     *                      | ( '<%!'               <TRANSLATION_ERROR> )
+     *                      | ( '<jsp:declaration'  <TRANSLATION_ERROR> )
+     *                      | ( '<%='               <TRANSLATION_ERROR> )
+     *                      | ( '<jsp:expression'   <TRANSLATION_ERROR> )
+     *                      | ( '<%'                <TRANSLATION_ERROR> )
+     *                      | ( '<jsp:scriptlet'    <TRANSLATION_ERROR> )
+     *                      | ( '<jsp:text'         <TRANSLATION_ERROR> )
+     *                      | ( '${'                <TRANSLATION_ERROR> )
+     *                      | ( '<jsp:'             <TRANSLATION_ERROR> )
      *                      | TemplateText
      */
     private void parseElementsTemplateText(Node parent)
@@ -1218,12 +1486,22 @@ public class Parser {
             parseComment(parent);
         } else if (reader.matches("<%@")) {
             parseDirective(parent);
+        } else if (reader.matches("<jsp:directive.")) {
+            parseXMLDirective(parent);
         } else if (reader.matches("<%!")) {
+            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+        } else if (reader.matches("<jsp:declaration")) {
             err.jspError( reader.mark(), "jsp.error.not.in.template" );
         } else if (reader.matches("<%=")) {
             err.jspError( reader.mark(), "jsp.error.not.in.template" );
+        } else if (reader.matches("<jsp:expression")) {
+            err.jspError( reader.mark(), "jsp.error.not.in.template" );
         } else if (reader.matches("<%")) {
             err.jspError( reader.mark(), "jsp.error.not.in.template" );
+            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+        } else if (reader.matches("<jsp:scriptlet")) {
+            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+        } else if (reader.matches("<jsp:text")) {
         } else if (reader.matches("${")) {
             err.jspError( reader.mark(), "jsp.error.not.in.template" );
         } else if (reader.matches("<jsp:")) {
