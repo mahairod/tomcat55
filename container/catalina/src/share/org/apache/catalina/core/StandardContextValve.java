@@ -67,10 +67,15 @@ package org.apache.catalina.core;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.naming.NamingException;
+
+import org.apache.tomcat.util.buf.CharChunk;
+import org.apache.tomcat.util.buf.MessageBytes;
+
 import org.apache.naming.ContextBindings;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.catalina.Container;
@@ -156,15 +161,31 @@ final class StandardContextValve
         }
 
         // Disallow any direct access to resources under WEB-INF or META-INF
-        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
-        String contextPath = hreq.getContextPath();
-        String requestURI = ((HttpRequest) request).getDecodedRequestURI();
-        String relativeURI =
-            requestURI.substring(contextPath.length()).toUpperCase();
-        if (relativeURI.equals("/META-INF") ||
-            relativeURI.equals("/WEB-INF") ||
-            relativeURI.startsWith("/META-INF/") ||
-            relativeURI.startsWith("/WEB-INF/")) {
+        HttpRequest hreq = (HttpRequest) request;
+        MessageBytes contextPathMB = hreq.getContextPathMB();
+        int length = contextPathMB.getLength();
+        MessageBytes decodedURIMB = hreq.getDecodedRequestURIMB();
+        decodedURIMB.toChars();
+        CharChunk decodedURIBC = decodedURIMB.getCharChunk();
+        int bcLength = decodedURIBC.getLength();
+        boolean notFound = false;
+        if (decodedURIBC.startsWithIgnoreCase("/META-INF", length)) {
+            if ((decodedURIBC.getLength() == ("/META-INF".length() + length)) 
+                || (decodedURIBC.getBuffer()["/META-INF".length() + length] 
+                    == '/')) {
+                notFound = true;
+            }
+        }
+        if (decodedURIBC.startsWithIgnoreCase("/WEB-INF", length)) {
+            if ((decodedURIBC.getLength() == ("/WEB-INF".length() + length)) 
+                || (decodedURIBC.getBuffer()["/WEB-INF".length() + length] 
+                    == '/')) {
+                System.out.println("Not found");
+                notFound = true;
+            }
+        }
+        if (notFound) {
+            String requestURI = hreq.getDecodedRequestURI();
             notFound(requestURI, (HttpServletResponse) response.getResponse());
             return;
         }
@@ -176,11 +197,13 @@ final class StandardContextValve
         try {
             wrapper = (Wrapper) context.map(request, true);
         } catch (IllegalArgumentException e) {
+            String requestURI = hreq.getDecodedRequestURI();
             badRequest(requestURI, 
                        (HttpServletResponse) response.getResponse());
             return;
         }
         if (wrapper == null) {
+            String requestURI = hreq.getDecodedRequestURI();
             notFound(requestURI, (HttpServletResponse) response.getResponse());
             return;
         }
