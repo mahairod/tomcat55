@@ -60,4 +60,12 @@ public interface ErrorHandler {
      */
     public void javacError(JavacErrorDetail[] details)
 	throws JasperException;
+
+    /**
+     * Processes the given javac compilation exception.
+     *
+     * @param exception Compilation exception
+     */
+    public void javacError(Exception exception)
+        throws JasperException;
 }

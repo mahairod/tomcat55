@@ -58,29 +58,38 @@ class DefaultErrorHandler implements ErrorHandler {
      */
     public void javacError(JavacErrorDetail[] details) throws JasperException {
 
+        if (details == null) {
+            return;
+        }
+
 	Object[] args = null;
         StringBuffer buf = new StringBuffer();
-	
-        if ((details.length == 1) 
-            && (details[0].getJavaLineNumber() == -1)) {
-            // Special case: No Java compiler found
-            buf.append(Localizer.getMessage("jsp.error.nojavac"));
+
+        for (int i=0; i < details.length; i++) {
+            args = new Object[] {
+                        new Integer(details[i].getJspBeginLineNumber()), 
+                        details[i].getJspFileName() };
+            buf.append(Localizer.getMessage("jsp.error.single.line.number",
+                                            args));
+            buf.append(Localizer.getMessage("jsp.error.corresponding.servlet"));
+            buf.append(details[i].getErrorMessage());
             buf.append('\n');
-        } else {
-            for (int i=0; i < details.length; i++) {
-                args = new Object[] {
-                    new Integer(details[i].getJspBeginLineNumber()), 
-                    details[i].getJspFileName()
-                };
-                buf.append(Localizer.getMessage("jsp.error.single.line.number",
-                                                args));
-                buf.append(Localizer.getMessage("jsp.error.corresponding.servlet"));
-                buf.append(details[i].getErrorMessage());
-                buf.append('\n');
-            }
         }
 
 	throw new JasperException(Localizer.getMessage("jsp.error.unable.compile")
 				  + buf);
     }
+
+    /**
+     * Processes the given javac compilation exception.
+     *
+     * @param exception Compilation exception
+     */
+    public void javacError(Exception exception)
+            throws JasperException {
+
+ 	throw new JasperException(
+            Localizer.getMessage("jsp.error.unable.compile"), exception);
+    }
+
 }

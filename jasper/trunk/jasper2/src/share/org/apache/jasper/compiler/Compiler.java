@@ -308,7 +308,6 @@ public class Compiler {
         String sep = System.getProperty("path.separator");
 
         StringBuffer errorReport = new StringBuffer();
-        boolean success = true;
 
         StringBuffer info=new StringBuffer();
         info.append("Compile: javaFileName=" + javaFileName + "\n" );
@@ -373,6 +372,8 @@ public class Compiler {
         includes.setName(ctxt.getJavaPath());
         info.append("    include="+ ctxt.getJavaPath() + "\n" );
 
+        BuildException be = null;
+
         try {
             if (ctxt.getOptions().getFork()) {
                 javac.execute();
@@ -382,9 +383,9 @@ public class Compiler {
                 }
             }
         } catch (BuildException e) {
+            be = e;
             log.error( "Javac exception ", e);
             log.error( "Env: " + info.toString());
-            success = false;
         }
 
         errorReport.append(logger.getReport());
@@ -401,9 +402,16 @@ public class Compiler {
             javaFile.delete();
         }
 
-        if (!success) {
-            log.error( "Error compiling file: " + javaFileName + " " + errorReport);
-            errDispatcher.javacError(errorReport.toString(), javaFileName, pageNodes);
+        if (be != null) {
+            log.error("Error compiling file: " + javaFileName + " "
+                      + errorReport);
+            JavacErrorDetail[] javacErrors = errDispatcher.parseJavacErrors(
+                        errorReport.toString(), javaFileName, pageNodes);
+            if (javacErrors != null) {
+                errDispatcher.javacError(javacErrors);
+            } else {
+                errDispatcher.javacError(be);
+            }
         }
 
         long t2=System.currentTimeMillis();
