@@ -280,3 +280,18 @@ content.  The web server could serve a static page with mismatched case in the
 URL. If that static page contains relative links to resources served by
 Tomcat, then invoking those links would carry the mismatched case to Tomcat
 where it cause the resource not to be found.
+
+6.8 Container Managed Security Constraints
+
+Due to the way that Tomcat 3.2 is implemented, container managed security
+constraints are imposed both on the original request URI *and* on subrequests
+initiated to handle RequestDispatcher.forward() or RequestDispatcher.include()
+calls.  Whether or not this should actually be done was not defined in the
+Servlet 2.2 Specification, but has been clarified in 2.3 -- security
+constraints should only be applied on the original request URI.
+
+For future compatibility, you should be aware of this issue as you design your
+security constraint architecture, to avoid portability problems if you ever
+migrate to a different Servlet 2.2 container (which might implement this
+differently), or to a Servlet 2.3 container at a later date.
+
