@@ -67,16 +67,25 @@ public class Property extends Task {
     String value;
     String file;
     String resource;
-    
+
+    // needs to be set at XML-reading time,
+    // no runtime action
     public void execute() throws BuildException {
+    }
+
+    // XXX ugly - needs to be fixed
+    /** Called after each setter, will set the property at read-time
+     */
+    private void initTimeSetProperty()  {
 	try {
-	    if(name!=null) {
+	    if((name!=null) && (value!=null) ) {
 		String value1= ProjectHelper.replaceProperties(value, project.getProperties());
 		project.setProperty( name,value1);
 	    }
 				
 	    if( file!=null)
 		loadFile( file );
+	    
 	    if( resource!=null)
 		loadResource( resource );
 	} catch (Exception ex) {
@@ -86,18 +95,22 @@ public class Property extends Task {
 
     public void setName( String name) {
 	this.name=name;
+	initTimeSetProperty();
     }
 
     public void setValue(String v) {
 	value=v;
+	initTimeSetProperty();
     }
 
     public void setFile(String v) {
 	file=v;
+	initTimeSetProperty();
     }
 
     public void setResource(String v) {
 	resource=v;
+	initTimeSetProperty();
     }
     
     private void loadFile( String name ) {

@@ -14,13 +14,13 @@ if [ "$ANT_HOME" = "" ] ; then
   PRG=$0
   progname=`basename $0`
   
-  while [ -L "$PRG" ]; do
-    ls=`/bin/ls -ld "$PRG"`
-    link=`/usr/bin/expr "$ls" : '.*-> \(.*\)$'`
-    if /usr/bin/expr "$link" : '/' > /dev/null; then
+  while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '.*/.*' > /dev/null; then
 	PRG="$link"
     else
-	PRG="`/usr/bin/dirname $PRG`/$link"
+	PRG="`dirname $PRG`/$link"
     fi
   done
   
@@ -28,8 +28,15 @@ if [ "$ANT_HOME" = "" ] ; then
 
 fi
 
+# Use the original tools.jar if available
+if [ ! "$JAVA_HOME" = "" ] ; then
+   CLASSPATH=${JAVA_HOME}/lib/tools.jar:$CLASSPATH
+else
+   CLASSPATH=${ANT_HOME}/lib/javac.jar:$CLASSPATH
+fi
 
 
 CLASSPATH=${ANT_HOME}/lib/ant.jar:${ANT_HOME}/lib/xml.jar:$CLASSPATH
+export CLASSPATH
 
 java -Dant.home=${ANT_HOME} org.apache.tools.ant.Main $@

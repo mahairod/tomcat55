@@ -28,6 +28,7 @@
      <mkdir dir="${dist.dir}/ant/docs"/>
      <jar jarfile="${dist.dir}/ant/lib/ant.jar" basedir="${build.dir}" items="org" manifest="${manifest}"/>
      <copyfile src="../projectx-tr2.jar" dest="${dist.dir}/ant/lib/xml.jar"/>
+     <copyfile src="../javac.jar" dest="${dist.dir}/ant/lib/javac.jar"/>
      <copyfile src="build.xml" dest="${dist.dir}/ant/lib/build.xml"/>
      <copydir src="src/bin" dest="${dist.dir}/ant/bin"/>
      <copydir src="docs" dest="${dist.dir}/ant/docs"/>
@@ -43,6 +44,8 @@
     <deltree dir="${build.dir}"/>
     <deltree dir="${dist.dir}/ant"/>
   </target>
+
+  
   
 </project>
 

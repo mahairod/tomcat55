@@ -76,9 +76,11 @@ public class Deltree extends Task {
 
 	if (dir.exists()) {
 	    if (!dir.isDirectory()) {
-		String msg = "Given dir: " + dir.getAbsolutePath() +
-		    " is not a dir";
-		throw new BuildException(msg);
+		dir.delete();
+		return;
+		// String msg = "Given dir: " + dir.getAbsolutePath() +
+		// " is not a dir";
+		// throw new BuildException(msg);
 	    }
             try {
                 removeDir(dir);
