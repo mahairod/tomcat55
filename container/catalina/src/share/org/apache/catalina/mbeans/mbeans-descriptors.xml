@@ -65,15 +65,6 @@
                  type="java.lang.String"/>
     </operation>
 
-    <operation   name="createDefaultContext"
-          description="Create a new DefaultContext"
-               impact="ACTION"
-           returnType="java.lang.String">
-      <parameter name="parent"
-          description="MBean Name of the associated parent component"
-                 type="java.lang.String"/>
-    </operation>
-
     <operation   name="createFileLogger"
           description="Create a new FileLogger"
                impact="ACTION"
