@@ -256,6 +256,9 @@ public class RequestImpl  implements Request {
     public String getPathInfo() {
         return pathInfo;
     }
+    public void setRemoteUser(String s) {
+	remoteUser=s;
+    }
 
     public String getRemoteUser() {
 	if( remoteUser!=null)
