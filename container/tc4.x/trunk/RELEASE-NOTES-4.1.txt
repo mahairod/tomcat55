@@ -91,6 +91,9 @@ Catalina New Features:
 [4.1.8] BootstrapService:
         Allow passing parameters to the BootstrapService.
 
+[4.1.15] JNDIRealm:
+         Add support for SSL with the JNDIRealm.
+
 
 -------------------
 Jasper New Features:
