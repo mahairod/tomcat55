@@ -100,7 +100,6 @@ import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.xml.SaxContext;
 import org.apache.catalina.util.xml.XmlAction;
 import org.apache.catalina.util.xml.XmlMapper;
-import org.apache.catalina.valves.CertificatesValve;
 import org.apache.catalina.valves.ValveBase;
 
 
@@ -325,7 +324,9 @@ public final class ContextConfig
         // Instantiate a new CertificatesValve if possible
         Valve certificates = null;
         try {
-            certificates = new CertificatesValve();
+            Class clazz =
+                Class.forName("org.apache.catalina.valves.CertificatesValve");
+            certificates = (Valve) clazz.newInstance();
         } catch (Throwable t) {
             return;     // Probably JSSE classes not present
         }
