@@ -105,6 +105,11 @@ public final class HostForm extends ActionForm {
      * The object name of the service this host belongs to.
      */
     private String serviceName = null;
+    
+    /**
+     * The object name of the engine this host belongs to.
+     */
+    private String engine = null;
 
     /**
      * The directory for the appBase.
@@ -225,7 +230,28 @@ public final class HostForm extends ActionForm {
         this.serviceName = serviceName;
 
     }
+    
 
+    /**
+     * Return the object name of the engine this host belongs to.
+     */
+    public String getEngine() {
+
+        return this.engine;
+
+    }
+
+
+    /**
+     * Set the object name of the engine this host belongs to.
+     */
+    public void setEngine(String engine) {
+
+        this.engine = engine;
+
+    }
+    
+    
     /**
      * Return the label of the node that was clicked.
      */

@@ -134,6 +134,7 @@ public class AddRealmAction extends Action {
         realmTypes[3] = "JDBCRealm";
 
         String parent = request.getParameter("parent");
+        String engine = request.getParameter("engine");
         String type = request.getParameter("type");
         if (type == null)
             type = "UserDatabaseRealm";    // default type is UserDatabaseRealm
@@ -142,37 +143,38 @@ public class AddRealmAction extends Action {
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,
                 "AddRealm.do?parent=" + URLEncoder.encode(parent)
-                + "&type=" + type));
+                + "&type=" + type + "&engine=" + URLEncoder.encode(engine)));   
         for (int i=0; i< realmTypes.length; i++) {
             if (!type.equalsIgnoreCase(realmTypes[i])) {
                 types.add(new LabelValueBean(realmTypes[i],
                 "AddRealm.do?parent=" + URLEncoder.encode(parent)
-                + "&type=" + realmTypes[i]));
+                + "&type=" + realmTypes[i] + "&engine=" + URLEncoder.encode(engine)));   
             }
         }
 
         if ("UserDatabaseRealm".equalsIgnoreCase(type)) {
-            createUserDatabaseRealm(session, parent);
+            createUserDatabaseRealm(session, parent, engine);
         } else if ("JNDIRealm".equalsIgnoreCase(type)) {
-            createJNDIRealm(session, parent);
+            createJNDIRealm(session, parent, engine);
         } else if ("MemoryRealm".equalsIgnoreCase(type)) {
-            createMemoryRealm(session, parent);
+            createMemoryRealm(session, parent, engine);
         } else {
             //JDBC
-            createJDBCRealm(session, parent);
+            createJDBCRealm(session, parent, engine);
         }
         // Forward to the realm display page
         return (mapping.findForward(type));
 
     }
 
-    private void createUserDatabaseRealm(HttpSession session, String parent) {
+    private void createUserDatabaseRealm(HttpSession session, String parent, String engine) {
 
         UserDatabaseRealmForm realmFm = new UserDatabaseRealmForm();
         session.setAttribute("userDatabaseRealmForm", realmFm);
         realmFm.setAdminAction("Create");
         realmFm.setObjectName("");
         realmFm.setParentObjectName(parent);
+        realmFm.setEngineObjectName(engine);
         String realmType = "UserDatabaseRealm";
         realmFm.setNodeLabel("Realm (" + realmType + ")");
         realmFm.setRealmType(realmType);
@@ -182,13 +184,14 @@ public class AddRealmAction extends Action {
         realmFm.setRealmTypeVals(types);
     }
 
-    private void createJNDIRealm(HttpSession session, String parent) {
+    private void createJNDIRealm(HttpSession session, String parent, String engine) {
 
         JNDIRealmForm realmFm = new JNDIRealmForm();
         session.setAttribute("jndiRealmForm", realmFm);
         realmFm.setAdminAction("Create");
         realmFm.setObjectName("");
         realmFm.setParentObjectName(parent);
+        realmFm.setEngineObjectName(engine);
         String realmType = "JNDIRealm";
         realmFm.setNodeLabel("Realm (" + realmType + ")");
         realmFm.setRealmType(realmType);
@@ -213,13 +216,14 @@ public class AddRealmAction extends Action {
         realmFm.setRealmTypeVals(types);
     }
 
-    private void createMemoryRealm(HttpSession session, String parent) {
+    private void createMemoryRealm(HttpSession session, String parent, String engine) {
 
         MemoryRealmForm realmFm = new MemoryRealmForm();
         session.setAttribute("memoryRealmForm", realmFm);
         realmFm.setAdminAction("Create");
         realmFm.setObjectName("");
         realmFm.setParentObjectName(parent);
+        realmFm.setEngineObjectName(engine);
         String realmType = "MemoryRealm";
         realmFm.setNodeLabel("Realm (" + realmType + ")");
         realmFm.setRealmType(realmType);
@@ -229,13 +233,14 @@ public class AddRealmAction extends Action {
         realmFm.setRealmTypeVals(types);
     }
 
-    private void createJDBCRealm(HttpSession session, String parent) {
+    private void createJDBCRealm(HttpSession session, String parent, String engine) {
 
         JDBCRealmForm realmFm = new JDBCRealmForm();
         session.setAttribute("jdbcRealmForm", realmFm);
         realmFm.setAdminAction("Create");
         realmFm.setObjectName("");
         realmFm.setParentObjectName(parent);
+        realmFm.setEngineObjectName(engine);
         String realmType = "JDBCRealm";
         realmFm.setNodeLabel("Realm (" + realmType + ")");
         realmFm.setRealmType(realmType);

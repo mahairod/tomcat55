@@ -161,10 +161,12 @@ public class EditServiceAction extends Action {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
             return (null);
         }
-        try {
-            sb = new StringBuffer(sname.getDomain());
-            sb.append(":type=Engine");
-            ename = new ObjectName(sb.toString());
+        try {   
+            Iterator engineNames = 
+                Lists.getEngines(mBServer, sname).iterator();
+            // single engine should exist
+            String engineName = (String) engineNames.next();
+            ename = new ObjectName(engineName);
         } catch (Exception e) {
             String message =
                 resources.getMessage("error.engineName.bad",
