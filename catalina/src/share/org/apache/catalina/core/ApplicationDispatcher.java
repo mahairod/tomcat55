@@ -180,6 +180,7 @@ final class ApplicationDispatcher
         this.wrapper = wrapper;
         this.context = (Context) wrapper.getParent();
         this.servletPath = servletPath;
+        this.origServletPath = servletPath;
         this.pathInfo = pathInfo;
         this.queryString = queryString;
         this.name = name;
@@ -281,7 +282,8 @@ final class ApplicationDispatcher
      */
     private String servletPath = null;
 
-
+    private String origServletPath = null;
+    
     /**
      * The StringManager for this package.
      */
@@ -401,7 +403,7 @@ final class ApplicationDispatcher
             if (request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR) != null){
                 Integer disInt = (Integer)request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR);
                 if (disInt.intValue() != ApplicationFilterFactory.ERROR) {
-                    request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, servletPath);
+                    request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
                     request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
                 }
             }
@@ -420,7 +422,7 @@ final class ApplicationDispatcher
             if (request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR) != null){
                 Integer disInt = (Integer)request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR);
                 if (disInt.intValue() != ApplicationFilterFactory.ERROR) {
-                    request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, servletPath);
+                    request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
                     request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
                 }
             }
@@ -460,7 +462,7 @@ final class ApplicationDispatcher
             if (wrequest.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR) != null){
                 Integer disInt = (Integer)request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR);
                 if (disInt.intValue() != ApplicationFilterFactory.ERROR) {
-                    wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, servletPath);
+                    wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
                     wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
                 }
             }
@@ -539,7 +541,6 @@ final class ApplicationDispatcher
     private void doInclude(ServletRequest request, ServletResponse response)
         throws ServletException, IOException
     {
-
         // Set up to handle the specified request and response
         setup(request, response, true);
 
@@ -553,9 +554,9 @@ final class ApplicationDispatcher
 
             if ( log.isDebugEnabled() )
                 log.debug(" Non-HTTP Include");
-             request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
+            request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
                                              new Integer(ApplicationFilterFactory.INCLUDE));
-             request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, servletPath);
+            request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
             invoke(request, outerResponse);
             unwrapResponse();
 
@@ -574,7 +575,7 @@ final class ApplicationDispatcher
                 wrequest.setServletPath(servletPath);
             wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
                                              new Integer(ApplicationFilterFactory.INCLUDE));
-            wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, servletPath);
+            wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
             invoke(outerRequest, outerResponse);
             unwrapRequest();
             unwrapResponse();
@@ -617,7 +618,7 @@ final class ApplicationDispatcher
             
             wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
                                              new Integer(ApplicationFilterFactory.INCLUDE));
-            wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, servletPath);
+            wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
             invoke(outerRequest, outerResponse);
             unwrapRequest();
             unwrapResponse();
@@ -716,8 +717,7 @@ final class ApplicationDispatcher
         // Get the FilterChain Here
         ApplicationFilterFactory factory = ApplicationFilterFactory.getInstance();
         ApplicationFilterChain filterChain = factory.createFilterChain(request,
-                                                                                                         wrapper,
-                                                                                                         servlet);
+                                                                wrapper,servlet);
         // Call the service() method for the allocated servlet instance
         try {
             String jspFile = wrapper.getJspFile();
