@@ -142,6 +142,23 @@
       <mapper type="glob" from="*.java" to="*.java.txt"/>
     </copy>
 
+    <copy todir="${jsp-api.build}/examples/cal">
+      <fileset dir="examples/WEB-INF/classes/cal">
+        <include name="Entries.java"/>
+        <include name="Entry.java"/>
+        <include name="JspCalendar.java"/>
+        <include name="TableBean.java"/>
+      </fileset>
+      <mapper type="glob" from="*.java" to="*.java.txt"/>
+    </copy>
+
+    <copy todir="${jsp-api.build}/examples/jsptoserv">
+      <fileset dir="examples/WEB-INF/classes">
+        <include name="servletToJsp.java"/>
+      </fileset>
+      <mapper type="glob" from="*.java" to="*.java.txt"/>
+    </copy>
+
     <copy todir="${jsp-api.build}/examples/jsp2/el">
       <fileset dir="examples/WEB-INF/classes/jsp2/examples/el">
         <include name="Functions.java"/>
@@ -154,6 +171,30 @@
         <include name="EchoAttributesTag.java"/>
       </fileset>
       <mapper type="glob" from="*.java" to="*.java.txt"/>
+    </copy>
+
+    <copy todir="${jsp-api.build}/examples/jsp2/tagfiles">
+      <fileset dir="examples/WEB-INF/tags"/>
+      <mapper type="glob" from="*.tag" to="*.tag.txt"/>
+    </copy>
+
+    <copy todir="${jsp-api.build}/examples">
+      <fileset dir="examples">
+        <exclude name="error/errorpge.jsp"/>
+        <exclude name="forward/one.jsp"/>
+        <exclude name="include/foo.jsp"/>
+        <exclude name="jsptoserv/hello.jsp"/>
+        <exclude name="security/protected/error.jsp"/>
+        <exclude name="security/protected/index.jsp"/>
+        <exclude name="security/protected/login.jsp"/>
+        <exclude name="source.jsp"/>
+      </fileset>
+      <mapper type="glob" from="*.jsp" to="*.jsp.txt"/>
+    </copy>
+
+    <copy todir="${jsp-api.build}/examples">
+      <fileset dir="examples"/>
+      <mapper type="glob" from="*.jspf" to="*.jspf.txt"/>
     </copy>
 
     <javac   srcdir="examples/WEB-INF/classes" 
