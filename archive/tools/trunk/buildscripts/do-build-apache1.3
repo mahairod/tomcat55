@@ -17,8 +17,14 @@ make install
 
 
 # Fix configuration files, from helpers/binbuild
+# Default port will be 8000 ( so non-root can start it )
+# All paths are relative ( 
 sed -e "s%Port 8080%Port 8000%" \
+    -e "s%${APACHE_HOME}/%%" \
     ${APACHE_HOME}/conf/httpd.conf.default > ${APACHE_HOME}/conf/httpd.conf
+
+# Replace with location-independent file
+cp ${SCRIPT_DIR}/files/apachectl ${APACHE_HOME}/bin
 
 echo "</build>"
 
