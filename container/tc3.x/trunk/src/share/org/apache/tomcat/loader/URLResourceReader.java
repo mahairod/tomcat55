@@ -61,7 +61,7 @@
  *
  */ 
 
-package org.apache.tomcat.util;
+package org.apache.tomcat.loader;
 
 import java.util.zip.*;
 import java.net.*;
