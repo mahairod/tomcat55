@@ -263,10 +263,10 @@ public class AdaptiveClassLoader extends ClassLoader {
         }
 
        // Install the SecurityManager if not already installed
-       if( generationCounter == 0 && sm == null ) {
-           sm = System.getSecurityManager();
-	   //	   System.out.println("XXX AdaptiveClassLoader: " + sm );
-       }
+	//        if( generationCounter == 0 && sm == null ) {
+	//            sm = System.getSecurityManager();
+	// 	   //	   System.out.println("XXX AdaptiveClassLoader: " + sm );
+	//        }
 
         // Store the class repository for use
         this.repository = classRepository;
@@ -319,8 +319,11 @@ public class AdaptiveClassLoader extends ClassLoader {
      * @param className The name of the class to check for modification.
      */
     public synchronized boolean shouldReload(String classname) {
+	return checkExpired( classname );
+    }
 
-        ClassCacheEntry entry = (ClassCacheEntry) cache.get(classname);
+    protected boolean checkExpired(String classname ) {
+	ClassCacheEntry entry = (ClassCacheEntry) cache.get(classname);
 
         if (entry == null) {
             // class wasn't even loaded

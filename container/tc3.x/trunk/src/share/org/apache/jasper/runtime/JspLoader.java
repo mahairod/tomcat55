@@ -105,7 +105,7 @@ import javax.servlet.http.*;
 public class JspLoader extends ClassLoader {
     ClassLoader parent;
     Options options;
-    
+    Object pd;
 
     /*
      * This should be factoried out
@@ -123,6 +123,10 @@ public class JspLoader extends ClassLoader {
 	this.options = options;
     }
 
+    public void setProtectionDomain( Object pd ) {
+	this.pd=pd;
+    }
+    
     protected synchronized Class loadClass(String name, boolean resolve)
 	throws ClassNotFoundException
     {
