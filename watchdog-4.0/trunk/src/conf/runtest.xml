@@ -1,21 +1,28 @@
-<project name="runtest" default="main">
+<project name="Watchdog Test Runs" default="main">
 
-   <target name="jsp-test">
-     <ant antfile="${watchdog.home}/conf/jsp-gtest.xml" target="jsp-test"/>
+   <!-- JSP - JSP Syntax Tests -->
+   <target name="jsp">
+     <ant antfile="${watchdog.home}/conf/jsp-gtest.xml"
+           target="jsp-test"/>
    </target>
 
-   <target name="servlet-test">
-     <ant antfile="${watchdog.home}/conf/servlet-moo.xml" target="servlet-test"/>
+   <!-- JSP - XML Syntax Tests -->
+   <!-- No test executions defined yet -->
+   <target name="jsp-xml"/>
+
+   <!-- JSP - All JSP Tests -->
+   <target name="jsp-all" depends="jsp,jsp-xml"/>
+
+   <!-- SERVLET - All Servlet Tests -->
+   <target name="servlet">
+     <ant antfile="${watchdog.home}/conf/servlet-gtest.xml"
+           target="gtestservlet-test"/>
    </target>
 
-   <target name="startup">
-     <java classname="org.apache.tomcat.startup.Tomcat" args=""
-        jvmargs="-Dtomcat.home=${tomcat.home}" />
-   </target>
+   <!-- ALL TESTS -->
+   <target name="all" depends="jsp-all,servlet"/>
 
-   <target name="shutdown">
-     <java classname="org.apache.tomcat.startup.Tomcat" args="-stop" />
-   </target>
+   <!-- Default Target == ALL TESTS -->
+   <target name="main" depends="all"/>
 
 </project>
-
