@@ -496,7 +496,6 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
                 try {
                     localSession =
                         context.getManager().findSession(other.getId());
-                    localSession.access();
                 } catch (IOException e) {
                     // Ignore
                 }
@@ -508,6 +507,8 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
                     localSession.setMaxInactiveInterval
                         (context.getManager().getMaxInactiveInterval());
                     localSession.setId(other.getId());
+                } else {
+                    localSession.access();
                 }
                 session = localSession;
                 return session.getSession();
