@@ -14,7 +14,6 @@ KNOWN ISSUES IN THIS RELEASE:
 * Dependency Changes
 * JNI Based Applications
 * Bundled APIs
-* XML Parsers
 * Web application reloading and static fields in shared libraries
 * JAVAC leaking memory
 * Tomcat on Linux
@@ -30,21 +29,21 @@ KNOWN ISSUES IN THIS RELEASE:
 Dependency Changes:
 ===================
 Tomcat 5.5 is designed to run on J2SE 5.0 and later, and requires
-configuration to run on J2SE versions 1.3 and 1.4.  Make sure to 
-read the "RUNNING.txt" file in this directory if you are using
-J2SE version 1.3 or 1.4.
+configuration to run on J2SE 1.4.  Make sure to read the "RUNNING.txt" 
+file in this directory if you are using J2SE 1.4.
 
-In addition, Tomcat 5.5 depends on the Eclipse JDT for compiling
+In addition, Tomcat 5.5 uses the Eclipse JDT Java compiler for compiling
 JSP pages.  This means you no longer need to have the complete
 Java Development Kit (JDK) to run Tomcat, but a Java Runtime Environment
-(JRE) is sufficient.  The Eclipse JDT is bundled with the binary
-Tomcat distributions.
+(JRE) is sufficient.  The Eclipse JDT Java compiler is bundled with the 
+binary Tomcat distributions.  Tomcat can also be configured to use the
+compiler from the JDK to compile JSPs, or any other Java compiler supported 
+by Apache Ant.
 
 
 =======================
 JNI Based Applications:
 =======================
-
 Applications that require native libraries must ensure that the libraries have
 been loaded prior to use.  Typically, this is done with a call like:
 
@@ -66,7 +65,6 @@ during the lifetime of a particular JVM.
 =============
 Bundled APIs:
 =============
-
 A standard installation of Tomcat 5.5 makes all of the following APIs available
 for use by web applications (by placing them in "common/lib" or "shared/lib"):
 * commons-el.jar (Commons Expression Language 1.0)
@@ -82,7 +80,8 @@ for use by web applications (by placing them in "common/lib" or "shared/lib"):
 * naming-resources.jar (JNDI DirContext implementations)
 * servlet-api.jar (Servlet 2.4 API)
 
-Installing the compatibility package will add the following to the list:
+Installing the compatibility package will add the following to the list, which are
+needed when running on J2SE 1.4:
 * jmx.jar (Java Management Extensions API 1.2 or later)
 * xercesImpl.jar (Xerces XML Parser, version 2.6.2 or later)
 
@@ -90,32 +89,14 @@ You can make additional APIs available to all of your web applications by
 putting unpacked classes into a "classes" directory (not created by default),
 or by placing them in JAR files in the "lib" directory.
 
-To override the XML parser implementation or interfaces, see the section below.
-
-Please note that the JMX API is required by Tomcat while starting up, and thus
-is in Tomcat's bootstrap classpath and placed in the $CATALINA_HOME/bin directory.
-
-
-============
-XML Parsers:
-============
-
-As described above, Tomcat 5.5 makes an XML parser (and many other standard
-APIs) available to web applications.  This parser is also used internally
-to parse web.xml files and the server.xml configuration file.  If you wish,
-you may replace the "xercesImpl.jar" file in "common/endorsed" with another
-XML parser, as long as it is compatible with the JAXP 1.2 APIs.
-
-On a related note, JDK 1.4 includes Xalan.  If you run into Xalan-related
-problems, try downloading the latest Xalan version (from 
-http://xml.apache.org/xalan-j/index.html) and placing the Xalan jar file
-in the common/endorsed directory.
+To override the XML parser implementation or interfaces, use the endorsed
+mechanism of the JVM. The default configuration defines JARs located in 
+"common/endorsed" as endorsed.
 
 
 ================================================================
 Web application reloading and static fields in shared libraries:
 ================================================================
-
 Some shared libraries (many are part of the JDK) keep references to objects
 instantiated by the web application. To avoid class loading related problems
 (ClassCastExceptions, messages indicating that the classloader
@@ -130,7 +111,6 @@ and putting them in the shared classloader instead (JARs should be put in the
 =====================
 JAVAC leaking memory:
 =====================
-
 The Java compiler leaks memory each time a class is compiled. Web applications
 containing hundreds of JSP files may as a result trigger out of memory errors
 once a significant number of pages have been accessed. The memory can only be
@@ -144,26 +124,17 @@ Note: This issue has been fixed in Sun JDK 1.4.x.
 ================
 Tomcat on Linux:
 ================
-
-Virtual machine crashes can be experienced when using certain combinations of
-kernel / glibc under Linux with Sun Hotspot 1.2 to 1.3. The crashes were
-reported to occur mostly on startup. Sun JDK 1.4 does not exhibit the problems,
-and neither does IBM JDK for Linux.
-
-The problems can be fixed by reducing the default stack size. At bash shell,
-do "ulimit -s 2048"; use "limit stacksize 2048" for tcsh.
-
-GLIBC 2.2 / Linux 2.4 users may also define an environment variable:
+GLIBC 2.2 / Linux 2.4 users should define an environment variable:
 export LD_ASSUME_KERNEL=2.2.5
 
-Additionally, Redhat Linux 9.0 users should use the same setting, to avoid
-stability problems.
+Redhat Linux 9.0 users should use the following setting to avoid
+stability problems:
+export LD_ASSUME_KERNEL=2.4.1
 
 
 =============================
 Enabling SSI and CGI Support:
 =============================
-
 Because of the security risks associated with CGI and SSI available
 to web applications, these features are disabled by default.  
 
@@ -175,7 +146,6 @@ To enable and configue SSI support, please see the ssi-howto.html page.
 ======================
 Security manager URLs:
 ======================
-
 In order to grant security permissions to JARs located inside the
 web application repository, use URLs of of the following format
 in your policy file:
@@ -186,7 +156,6 @@ file:${catalina.home}/webapps/examples/WEB-INF/lib/driver.jar
 ============================
 Symlinking static resources:
 ============================
-
 By default, Unix symlinks will not work when used in a web application to link
 resources located outside the web application root directory.
 
@@ -197,7 +166,6 @@ the check.
 =========================
 Enabling invoker servlet:
 =========================
-
 Starting with Tomcat 4.1.12, the invoker servlet is no longer available by
 default in all webapps. Enabling it for all webapps is possible by editing
 $CATALINA_HOME/conf/web.xml to uncomment the "/servlet/*" servlet-mapping
@@ -211,13 +179,11 @@ http://jakarta.apache.org/tomcat/faq/misc.html#invoker.
 ==============================
 Viewing the Tomcat Change Log:
 ==============================
-
 See changelog.html in this directory.
 
 
 ====================
 When all else fails:
 ====================
-
 See the FAQ
 http://jakarta.apache.org/tomcat/faq/
