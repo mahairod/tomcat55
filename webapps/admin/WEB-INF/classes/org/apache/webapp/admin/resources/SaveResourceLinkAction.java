@@ -204,12 +204,12 @@ public final class SaveResourceLinkAction extends Action {
                         if (host.length() > 0) {
                             oname = 
                                 new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
-                                ResourceUtils.DEFAULTCONTEXT_TYPE + ",host=" + 
+                                ResourceUtils.HOST_DEFAULTCONTEXT_TYPE + ",host=" + 
                                 host + ",service=" + service);
                         } else {
                             oname = 
                                 new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
-                                ResourceUtils.DEFAULTCONTEXT_TYPE + ",service=" + 
+                                ResourceUtils.SERVICE_DEFAULTCONTEXT_TYPE + ",service=" + 
                                 service);
                         }
                     }
