@@ -1,0 +1,577 @@
+<project name="TestRun" default="main">
+
+   <property name="host" value="localhost" />
+   <property name="port" value="8080" />
+
+   <taskdef name="gtest" classname="org.apache.tomcat.task.GTest" />
+   <property name="wgdir" value="${watchdog.home}/lib/jsp-golden" />
+
+   <target name="main" depends="jsp-test" />
+
+  <!-- ==================== Watchdog JSP tests ==================== -->
+   
+   <target name="jsp-test">
+      <gtest request="GET /jsp-tests/jsp/HelloWorld.jsp HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+           goldenFile="${wgdir}/HelloWorld.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBeanNameClass.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBeanNameClass.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBeanNameRes.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBeanNameRes.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBodyExists.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBodyExists.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBodyNew.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBodyNew.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDPage1.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDPage1.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDPage2.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDPage2.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDRequest1.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDRequest1.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDRequest2.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDRequest2.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveNoBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveNoBody.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positivePageScope.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positivePageScope.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveTypeAssignable.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveTypeAssignable.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveSessionScope.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 200 OK" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupID.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupIDSession1.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeInvalidClass.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeNoBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropParam.jsp?Name=MANGO HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropParam.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropNoParam.jsp?str=SAPPOTA HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropNoParam.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropValue.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropValue.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropSingleQuotes.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropSingleQuotes.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveUseBeanInit.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveUseBeanInit.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveUseBeanNext.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveUseBeanNext.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetLongPrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetLongPrim.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetLongObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetLongObj.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIntPrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIntPrim.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIntObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIntObj.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIndexedProp.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIndexedProp.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetFloatObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetFloatObj.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetFloatPrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetFloatPrim.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetDoublePrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetDoublePrim.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetDoubleObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetDoubleObj.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetCharPrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetCharPrim.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetCharObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetCharObj.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBooleanObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBooleanObj.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBooleanPrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBooleanPrim.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetByteObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetByteObj.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBytePrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBytePrim.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/positiveGetProps.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/getProperty/positiveGetProps.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkSession.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkSession.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkConfig.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkConfig.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkException.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkException.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkOut.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkOut.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkPage.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkPage.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkPageContext.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkPageContext.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkRequest.jsp?Years=2 HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkRequest.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkResponse.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkResponse.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkApplication.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkApplication.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/declaration/positiveDeclaration.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/declaration/positiveDeclaration.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExpr.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExpr.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprBean.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprBean.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprComment.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprComment.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprSyntax.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprSyntax.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptlet.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptlet.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletComment.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletComment.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletMultiline.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletMultiline.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletMultiline2.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletMultiline2.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletUseBean.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletUseBean.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/forward/positiveDoubleQuotes.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/forward/positiveDoubleQuotes.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/forward/positiveForwardRelHtml.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/forward/positiveForwardRelHtml.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/include/positiveIncludeRel.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/include/positiveIncludeRel.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/content/positiveContenttype.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/content/positiveContenttype.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/errorpage/positiveErrorPage.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/errorpage/positiveErrorPage.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/extend/positiveExtends.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/extend/positiveExtends.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/positiveImport.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/positiveImport.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/info/positiveInfo.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/info/positiveInfo.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/language/positiveLang.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/language/positiveLang.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/session/positiveSession.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 200 OK"
+           responseMatch="got true" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/session/positiveSessionDefault.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 200 OK"
+           responseMatch="got true" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffAutoflush.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 200 OK"
+           responseMatch="5999" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffCreate.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 200 OK"
+           responseMatch="999" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveGetDefaultFactory.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspFactory/positiveGetDefaultFactory.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveSetDefaultFactory.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspFactory/positiveSetDefaultFactory.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveGetPageContext.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspFactory/positiveGetPageContext.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveReleasePageContext.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspFactory/positiveReleasePageContext.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/HttpJspPage/positiveJSPInitJSP.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/HttpJspPage/positiveJSPInitJSP.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/HttpJspPage/positiveJSPInitExtends.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/HttpJspPage/positiveJSPInitExtends.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveForward.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveForward.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeAvbl.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeAvbl.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeNotAvbl.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeNotAvbl.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeNamesInScope.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeNamesInScope.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeScope.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeScope.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetSession.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetSession.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetResponse.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetResponse.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetRequest.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetRequest.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetServletContext.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetServletContext.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetServletConfig.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetServletConfig.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetOut.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetOut.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveInclude.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveInclude.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveRemoveAttribute.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveRemoveAttribute.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveSetAttribute.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveSetAttribute.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveSetAttributeInScope.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveSetAttributeInScope.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteCharArray1.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteCharArray1.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteCharArray2.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteCharArray2.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteInt.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteInt.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteStr.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteStr.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteStrOffset.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteStrOffset.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteIntExt.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteIntExt.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteIntMaxValue.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteIntMaxValue.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteIntLowBit.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteIntLowBit.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintBoolean.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintBoolean.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintChar.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintChar.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintCharArray.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintCharArray.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintDouble.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintDouble.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintFloat.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintFloat.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintInt.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintInt.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintLong.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintLong.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintObj.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintStr.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintStr.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintln.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintln.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnBoolean.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnBoolean.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnChar.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnChar.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnCharArray.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnCharArray.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnDouble.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnDouble.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnFloat.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnFloat.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnInt.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnInt.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnLong.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnLong.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnObj.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnStr.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnStr.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintDoubleMaxBound.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintDoubleMaxBound.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintDoubleMinBound.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintDoubleMinBound.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintFloatMaxBound.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintFloatMaxBound.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintFloatMinBound.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintFloatMinBound.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintIntMaxBound.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintIntMaxBound.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintIntMinBound.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintIntMinBound.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintLongMaxBound.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintLongMaxBound.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintLongMinBound.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintLongMinBound.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveClear.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveClear.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveFlush.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveFlush.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetBufferSize.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetBufferSize.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetRemaining.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetRemaining.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetRemainingBufferUnset.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetRemainingBufferUnset.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveIsAutoFlush.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveIsAutoFlush.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportLang.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportLang.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportJsp.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportJsp.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportServlet.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportServlet.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportHttp.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportHttp.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupID.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupIDSession1.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeInvalidClass.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeNoBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativeSetPropNotWrite.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativeSetPropNotProperty.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativePropSyntax.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetPropNotRead.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetPropNotProperty.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetProps.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/declaration/negativeDeclarationSyn.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/taglib/positiveTagLib.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/taglib/positiveTagLib.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportLang.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportLang.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportJsp.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportJsp.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportServlet.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportServlet.html" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportHttp.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportHttp.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetValues.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveGetValues.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetValue.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveGetValue.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveRemoveValue.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveRemoveValue.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveSetValue.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveSetValue.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetParent.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveGetParent.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetEnclosingWriter.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyContent/positiveGetEnclosingWriter.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetReader.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyContent/positiveGetReader.html" />
+       <gtest request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetString.jsp HTTP/1.0"       
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyContent/positiveGetString.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoInitBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoInitBody.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoAfterBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoAfterBody.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoEndTag.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoEndTag.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveRelease.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveRelease.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/TagData/positiveTagGetAttribute.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagData/positiveTagGetAttribute.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/TagData/positiveTagSetAttribute.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagData/positiveTagSetAttribute.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/TagData/positiveTagGetAttributeString.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagData/positiveTagGetAttributeString.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/TagInfo/positiveGetAttributesWithNoInfo.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagInfo/positiveGetAttributesWithNoInfo.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/TagInfo/positiveGetBodyContent.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagInfo/positiveGetBodyContent.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/TagInfo/positiveGetInfoString.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagInfo/positiveGetInfoString.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/TagInfo/positiveGetTagClassName.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagInfo/positiveGetTagClassName.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/TagInfo/positiveGetTagName.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagInfo/positiveGetTagName.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positivePopBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positivePopBody.html" />
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positivePushBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positivePushBody.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetVarName.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetVarName.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetScope.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetScope.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetDeclare.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetDeclare.html" />
+      <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetClassName.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetClassName.html" />
+   </target>
+
+<!-- sample of all the various test options allowed
+    <gtest description="Content Type Test"
+           request="GET /test/binaries/image1.gif HTTP/1.0"
+           goldenFile="${gdir}/image1.gif"
+           responseMatch="PreInclude"
+           expectHeaders="Content-Type:image/gif" />
+           exactMatch="true"  />
+-->
+
+
+</project>
+

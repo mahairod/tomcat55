@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE Server
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Servlet Server 1.0//EN"
+    "file:./etc/server.dtd">
+
+<!--
+
+This is the configuration file for the JSWDK server.
+Following is a brief overview of the JSWDK server
+configuration options. Please review the following
+file for complete configuration information:
+
+    etc/server.dtd
+
+-->
+
+<Server>
+    <ContextManager>
+        <Context path="/" docBase="foo"/>
+        <Context path="/servlet-tests" docBase="servlet-tests.war"/>
+        <Context path="/jsp-tests" docBase="jsp-tests.war"/>
+        <Connector className="tomcat"/>
+    </ContextManager>
+</Server>

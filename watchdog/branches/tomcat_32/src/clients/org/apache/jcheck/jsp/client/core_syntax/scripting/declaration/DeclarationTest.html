@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+
+<HTML>
+
+  <HEAD>
+
+    <TITLE>
+        DeclarationTest
+
+      </TITLE>
+
+  </HEAD>
+
+
+
+  <BODY>
+
+      <H1>
+
+         DeclarationTest
+      </H1>
+
+      
+      
+
+      <H3>
+
+        Summary
+
+      </H3>
+
+      Declarations are used to declare variables and methods in the scripting 
+      language used in the JSP page. Declarations do not produce any output
+      into the current "out" stream.Declarations are initialised when the
+      JSP page is initialised and made available to other declarations, 
+      scriptlets and expressions.
+      
+
+      <H3> Positive Tests </H3>
+      
+
+      <p><b>positiveDeclaration Test: </b> Create a JSP page with a valid Java declaration element. Use the declared variable in the page in a scriptlet.
+ </p>
+
+      <A NAME="positiveDeclaration"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>DeclarationTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="DeclarationTest.java">DeclarationTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.scripting.declaration.DeclarationTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID positiveDeclaration -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive  extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+      
+      <H3> Negative Tests </H3>
+      <p><b> negativeDeclarationSyn Test: </b> Create a JSP page which has a syntax error in the declaration statement. Try to use the declared variable in the rest of the page.</p>
+
+      <A NAME="negativeDeclarationSyn"></A>
+      <TABLE BORDER CLASS="TestDescription">
+
+    <TR>
+
+    <TD><B>title</B></TD>
+
+    <TD>DeclarationTest</TD>
+
+    </TR>
+
+
+    <TR>
+    <TD><B>source</B></TD>
+
+    <TD>
+    <A HREF="DeclarationTest.java">DeclarationTest.java</A>
+    
+    </TR>
+
+    <TR>
+
+    <TD><B>executeClass</B></TD>
+
+    <TD>core_syntax.scripting.declaration.DeclarationTest</TD> 
+
+    </TR>
+
+    <TR>
+
+    <TD><B>executeArgs</B></TD>
+
+    <TD>-TestCaseID negativeDeclarationSyn -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+      </TR>
+
+
+
+    <TR>
+
+    <TD><B>keywords</B></TD>
+
+    <TD>positive extensionAPI</TD>
+
+      </TR>
+
+      </TABLE>
+
+
+      </BODY>
+
+</HTML>
