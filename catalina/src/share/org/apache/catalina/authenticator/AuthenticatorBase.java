@@ -365,7 +365,7 @@ public abstract class AuthenticatorBase
         if (cache) {
             Principal principal = request.getUserPrincipal();
             if (principal == null) {
-                Session session = request.getSessionInternal();
+                Session session = request.getSessionInternal(false);
                 if (session != null) {
                     principal = session.getPrincipal();
                     if (principal != null) {
