@@ -249,11 +249,11 @@ public final class TldConfig  {
          * files, to be processed
          */
         Set resourcePaths = tldScanResourcePaths();
-        Map globalJarPaths = getGlobalJarPaths();
+        Map jarPaths = getJarPaths();
 
         // Check to see if we can use cached listeners
         if (tldCache != null && tldCache.exists()) {
-            long lastModified = getLastModified(resourcePaths, globalJarPaths);
+            long lastModified = getLastModified(resourcePaths, jarPaths);
             if (lastModified < tldCache.lastModified()) {
                 processCache(tldCache);
                 return;
@@ -270,8 +270,8 @@ public final class TldConfig  {
                 tldScanTld(path);
             }
         }
-        if (globalJarPaths != null) {
-            paths = globalJarPaths.values().iterator();
+        if (jarPaths != null) {
+            paths = jarPaths.values().iterator();
             while (paths.hasNext()) {
                 tldScanJar((File) paths.next());
             }
@@ -310,11 +310,11 @@ public final class TldConfig  {
      * Returns the last modification date of the given sets of resources.
      *
      * @param resourcePaths
-     * @param globalJarPaths
+     * @param jarPaths
      *
      * @return Last modification date
      */
-    private long getLastModified(Set resourcePaths, Map globalJarPaths)
+    private long getLastModified(Set resourcePaths, Map jarPaths)
             throws Exception {
 
         long lastModified = 0;
@@ -334,8 +334,8 @@ public final class TldConfig  {
             }
         }
 
-        if (globalJarPaths != null) {
-            paths = globalJarPaths.values().iterator();
+        if (jarPaths != null) {
+            paths = jarPaths.values().iterator();
             while (paths.hasNext()) {
                 File jarFile = (File) paths.next();
                 long lastM = jarFile.lastModified();
@@ -650,7 +650,6 @@ public final class TldConfig  {
         DirContext resources = context.getResources();
         if (resources != null) {
             tldScanResourcePathsWebInf(resources, "/WEB-INF", resourcePaths);
-            tldScanResourcePathsWebInfLibJars(resources, resourcePaths);
         }
 
         // Return the completed set
@@ -705,55 +704,23 @@ public final class TldConfig  {
         }
     }
 
-    /*
-     * Adds any JARs in the /WEB-INF/lib subdirectory of the web application
-     * to the given set of resource paths.
-     *
-     * @param resources The web application's resources
-     * @param resourcePaths The set of resource paths to add to
-     */
-    private void tldScanResourcePathsWebInfLibJars(DirContext resources,
-                                                   Set resourcePaths)
-            throws IOException {
-
-        if (log.isTraceEnabled()) {
-            log.trace("  Scanning JARs in /WEB-INF/lib subdirectory");
-        }
-
-        try {
-            NamingEnumeration items = resources.list("/WEB-INF/lib");
-            while (items.hasMoreElements()) {
-                NameClassPair item = (NameClassPair) items.nextElement();
-                String resourcePath = "/WEB-INF/lib/" + item.getName();
-                if (!resourcePath.endsWith(".jar")) {
-                    continue;
-                }
-                if (log.isTraceEnabled()) {
-                    log.trace("   Adding path '" + resourcePath + "'");
-                }
-                resourcePaths.add(resourcePath);
-            }
-        } catch (NamingException e) {
-            ; // Silent catch: it's valid that no /WEB-INF/lib directory exists
-        }
-    }
-
     /**
-     * Returns the paths to all JAR files accessible to all parent
-     * classloaders of the web application class loader.
+     * Returns a map of the paths to all JAR files accessible to the webapp.
      *
-     * This is a Tomcat-specific extension to the TLD search order defined in
-     * the JSP spec, which will allow tag libraries packaged as JAR
+     * The map includes the JARs under WEB-INF/lib as well as those in the
+     * classloader delegation chain of the webapp's classloader.
+     *
+     * The latter constitutes a Tomcat-specific extension to the TLD search
+     * order defined in the JSP spec. It allows tag libraries packaged as JAR
      * files to be shared by web applications by simply dropping them in a 
      * location that all web applications have access to (e.g.,
      * <CATALINA_HOME>/common/lib).
      *
-     * @return Map of paths to all JAR files accessible to all parent class
-     *         loaders of the web application class loader
+     * @return Map of JAR file paths
      */
-    private Map getGlobalJarPaths() {
+    private Map getJarPaths() {
 
-        HashMap globalJarPaths = null;
+        HashMap jarPathMap = null;
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         while (loader != null) {
@@ -773,11 +740,11 @@ public final class TldConfig  {
                     if (file.exists()) {
                         String path = file.getAbsolutePath();
                         if (path.endsWith(".jar")) {
-                            if (globalJarPaths == null) {
-                                globalJarPaths = new HashMap();
-                                globalJarPaths.put(path, file);
-                            } else if (!globalJarPaths.containsKey(path)) {
-                                globalJarPaths.put(path, file);
+                            if (jarPathMap == null) {
+                                jarPathMap = new HashMap();
+                                jarPathMap.put(path, file);
+                            } else if (!jarPathMap.containsKey(path)) {
+                                jarPathMap.put(path, file);
                             }
                         }
                     }
@@ -786,6 +753,6 @@ public final class TldConfig  {
             loader = loader.getParent();
         }
 
-        return globalJarPaths;
+        return jarPathMap;
     }
 }
