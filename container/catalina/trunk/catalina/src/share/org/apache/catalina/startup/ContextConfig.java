@@ -459,8 +459,6 @@ public final class ContextConfig
         try{
             digester.setFeature(
                 "http://apache.org/xml/features/allow-java-encodings", true);
-            digester.setFeature(
-                "http://apache.org/xml/features/validation/schema", true);
         } catch(ParserConfigurationException e){
                 // log("contextConfig.registerLocalSchema", e);
         } catch(SAXNotRecognizedException e){
@@ -492,7 +490,6 @@ public final class ContextConfig
                                                 boolean validation) {
         URL url = null;
         Digester webDigester = new Digester();
-        webDigester.setUseContextClassLoader(false);
         webDigester.setNamespaceAware(namespaceAware);
         webDigester.setValidating(validation);
        
@@ -507,7 +504,7 @@ public final class ContextConfig
         if (validation) {
             webDigester.setSchema(url.toString());
         }
-
+        
         url = ContextConfig.class.getResource(Constants.WebDtdResourcePath_22);
         webEntityResolver.register(Constants.WebDtdPublicId_22,
                                    url.toString());
