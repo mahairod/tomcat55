@@ -191,21 +191,15 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
                 }
             } else {
                 // Tag library is packaged in JAR file
-                ZipEntry jarEntry = null;
-                JarURLConnection conn = null;
                 try {
                     URL url = new URL("jar:" + location[0] + "!/");
-                    conn = (JarURLConnection) url.openConnection();
-                    conn.connect(); //@@@ necessary???
+                    JarURLConnection conn = (JarURLConnection) url.openConnection();
+		    conn.setUseCaches(false);
+                    conn.connect();
                     jarFile = conn.getJarFile();
-                    jarEntry = jarFile.getEntry(location[1]);
+                    ZipEntry jarEntry = jarFile.getEntry(location[1]);
                     in = jarFile.getInputStream(jarEntry);
                     parseTLD(ctxt, location[0], in, jarFile);
-                    // FIXME @@@
-                    // -- it seems that the JarURLConnection class caches JarFile 
-                    // objects for particular URLs, and there is no way to get 
-                    // it to release the cached entry, so
-                    // there's no way to redeploy from the same JAR file.  Wierd.
                 } catch (Exception ex) {
                     err.jspError("jsp.error.tld.unable_to_read", location[0],
                                  location[1], ex.toString());
