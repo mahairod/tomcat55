@@ -22,9 +22,9 @@
   <!-- Set user configurable properties -->
   <property name="jsse.home" location="${catalina.home}"/>
   <property name="catalina.base" location="${catalina.home}"/>
-  <property name="catalina.tmpdir" location="${catalina.home}/temp"/>
-  <property name="catalina.out" location="${catalina.home}/logs/catalina.out"/>
-  <property name="catalina.policy" location="${catalina.home}/conf/catalina.policy"/>
+  <property name="catalina.tmpdir" location="${catalina.base}/temp"/>
+  <property name="catalina.out" location="${catalina.base}/logs/catalina.out"/>
+  <property name="catalina.policy" location="${catalina.base}/conf/catalina.policy"/>
   <property name="catalina.jvm.args" value=""/>
   <property name="catalina.source.path" value="${catalina.home}/../../jakarta-servletapi-5/src/share:${catalina.home}/../../jakarta-tomcat-jasper/jasper2/src/share:${catalina.home}/../../jakarta-tomcat-connectors/coyote/src/java:${catalina.home}/../../jakarta-tomcat-catalina/catalina/src/share"/>
 
