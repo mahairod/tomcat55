@@ -64,6 +64,8 @@
 
 package org.apache.catalina.deploy;
 
+import java.io.Serializable;
+
 
 /**
  * Representation of an application environment entry, as represented in
@@ -73,7 +75,7 @@ package org.apache.catalina.deploy;
  * @version $Revision$ $Date$
  */
 
-public final class ContextEnvironment {
+public final class ContextEnvironment implements Serializable {
 
 
     // ------------------------------------------------------------- Properties
