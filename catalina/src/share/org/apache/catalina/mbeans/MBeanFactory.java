@@ -181,7 +181,7 @@ public class MBeanFactory extends BaseModelMBean {
 
     }
 
-    
+
     /**
      * Little convenience method to remove redundant code
      * when retrieving the path string
@@ -196,7 +196,7 @@ public class MBeanFactory extends BaseModelMBean {
         return t;
     }
 
-    
+
     /**
      * Create a new AccessLoggerValve.
      *
@@ -373,8 +373,8 @@ public class MBeanFactory extends BaseModelMBean {
         return (oname.toString());
 
     }
-    
-    
+
+
     /**
      * Create a new HttpConnector
      *
@@ -429,7 +429,7 @@ public class MBeanFactory extends BaseModelMBean {
 
     }
 
-    
+
     /**
      * Create a new HttpsConnector
      *
@@ -480,12 +480,12 @@ public class MBeanFactory extends BaseModelMBean {
             Object arglist4[] = new Object[1];
             arglist4[0] = new Boolean(true);
             meth4.invoke(retobj, arglist4);
-            // Set factory 
-            Class serverSocketFactoryCls = 
+            // Set factory
+            Class serverSocketFactoryCls =
                 Class.forName("org.apache.catalina.net.ServerSocketFactory");
-            Class coyoteServerSocketFactoryCls = 
+            Class coyoteServerSocketFactoryCls =
                 Class.forName("org.apache.coyote.tomcat4.CoyoteServerSocketFactory");
-            Constructor factoryConst = 
+            Constructor factoryConst =
                             coyoteServerSocketFactoryCls.getConstructor(null);
             Object factoryObj = factoryConst.newInstance(null);
             Class partypes5 [] = new Class[1];
@@ -506,12 +506,12 @@ public class MBeanFactory extends BaseModelMBean {
             service.addConnector((Connector)retobj);
         } catch (Exception e) {
             // FIXME
-            // disply error message 
+            // disply error message
             // the user needs to use keytool to configure SSL first
             // addConnector will fail otherwise
             return null;
         }
-        
+
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("CoyoteConnector");
         ObjectName oname =
@@ -882,7 +882,9 @@ public class MBeanFactory extends BaseModelMBean {
      * @exception Exception if an MBean cannot be created or registered
      */
     public String createStandardHost(String parent, String name,
-                                     String appBase, boolean unpackWARs)
+                                     String appBase, boolean unpackWARs,
+                                     boolean xmlNamespaceAware,
+                                     boolean xmlValidation)
         throws Exception {
 
         // Create a new StandardHost instance
@@ -890,6 +892,8 @@ public class MBeanFactory extends BaseModelMBean {
         host.setName(name);
         host.setAppBase(appBase);
         host.setUnpackWARs(unpackWARs);
+        host.setXmlNamespaceAware(xmlNamespaceAware);
+        host.setXmlValidation(xmlValidation);
 
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
@@ -987,7 +991,7 @@ public class MBeanFactory extends BaseModelMBean {
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (type.equals("Context")) {        
+        if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             String pathStr = getPathStr(pname.getKeyProperty("path"));
             Context context = (Context) host.findChild(pathStr);
@@ -1046,7 +1050,7 @@ public class MBeanFactory extends BaseModelMBean {
         return (oname.toString());
     }
 
-    
+
     /**
      * Create a new  UserDatabaseRealm.
      *
@@ -1085,10 +1089,10 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), realm);
         return (oname.toString());
-        
+
     }
 
-    
+
     /**
      * Create a new Web Application Loader.
      *
@@ -1139,7 +1143,7 @@ public class MBeanFactory extends BaseModelMBean {
         Service service = server.findService(serviceName);
         String port = oname.getKeyProperty("port");
         String address = oname.getKeyProperty("address");
-        
+
         Connector conns[] = (Connector[]) service.findConnectors();
 
         for (int i = 0; i < conns.length; i++) {
@@ -1149,7 +1153,7 @@ public class MBeanFactory extends BaseModelMBean {
             String connAddress = null;
             if (addrObj != null) {
                 connAddress = addrObj.toString();
-            } 
+            }
             Method getPortMeth = cls.getMethod("getPort", null);
             Object portObj = getPortMeth.invoke(conns[i], null);
             String connPort = new String();
@@ -1163,7 +1167,7 @@ public class MBeanFactory extends BaseModelMBean {
                 // Remove this component from its parent component
                 service.removeConnector(conns[i]);
                 break;
-            } 
+            }
         }
 
     }
@@ -1232,7 +1236,7 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName oname = new ObjectName(name);
         String serviceName = oname.getKeyProperty("service");
         String hostName = oname.getKeyProperty("host");
-        
+
         String path = oname.getKeyProperty("path");
         Server server = ServerFactory.getServer();
         Service service = server.findService(serviceName);
@@ -1333,7 +1337,7 @@ public class MBeanFactory extends BaseModelMBean {
 
     }
 
-    
+
     /**
      * Remove an existing Realm.
      *
@@ -1395,7 +1399,7 @@ public class MBeanFactory extends BaseModelMBean {
         }
     }
 
-    
+
     /**
      * Remove an existing Service.
      *
