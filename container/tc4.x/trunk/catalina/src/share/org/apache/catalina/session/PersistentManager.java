@@ -153,6 +153,12 @@ public final class PersistentManager
     private int maxIdleSwap = -1;
 
 
+    /**
+     * The descriptive name of this Manager implementation (for logging).
+     */
+    protected static String name = "PersistentManager";
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -271,6 +277,16 @@ public final class PersistentManager
     }
     
     
+    /**
+     * Return the descriptive short name of this Manager implementation.
+     */
+    public String getName() {
+
+        return (name);
+
+    }
+
+
     /**
      * Indicates whether sessions are saved when the Manager is shut down
      * properly. This requires the unload() method to be called.

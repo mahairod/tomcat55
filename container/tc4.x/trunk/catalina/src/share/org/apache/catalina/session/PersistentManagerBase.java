@@ -141,6 +141,12 @@ public abstract class PersistentManagerBase
 
 
     /**
+     * The descriptive name of this Manager implementation (for logging).
+     */
+    protected static String name = "PersistentManagerBase";
+
+
+    /**
      * Has this component been started yet?
      */
     private boolean started = false;
@@ -261,6 +267,16 @@ public abstract class PersistentManagerBase
         support.firePropertyChange("maxActiveSessions",
                                    new Integer(oldMaxActiveSessions),
                                    new Integer(this.maxActiveSessions));
+
+    }
+
+
+    /**
+     * Return the descriptive short name of this Manager implementation.
+     */
+    public String getName() {
+
+        return (name);
 
     }
 

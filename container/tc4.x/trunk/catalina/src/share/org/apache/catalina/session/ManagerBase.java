@@ -165,6 +165,12 @@ public abstract class ManagerBase implements Manager {
 
 
     /**
+     * The descriptive name of this Manager implementation (for logging).
+     */
+    protected static String name = "ManagerBase";
+
+
+    /**
      * A random number generator to use when generating session identifiers.
      */
     protected Random random = null;
@@ -401,6 +407,16 @@ public abstract class ManagerBase implements Manager {
         support.firePropertyChange("maxInactiveInterval",
                                    new Integer(oldMaxInactiveInterval),
                                    new Integer(this.maxInactiveInterval));
+
+    }
+
+
+    /**
+     * Return the descriptive short name of this Manager implementation.
+     */
+    public String getName() {
+
+        return (name);
 
     }
 
@@ -656,13 +672,13 @@ public abstract class ManagerBase implements Manager {
         if (container != null)
             logger = container.getLogger();
         if (logger != null)
-            logger.log("Manager[" + container.getName() + "]: "
+            logger.log(getName() + "[" + container.getName() + "]: "
                        + message);
         else {
             String containerName = null;
             if (container != null)
                 containerName = container.getName();
-            System.out.println("Manager[" + containerName
+            System.out.println(getName() + "[" + containerName
                                + "]: " + message);
         }
 
@@ -681,13 +697,13 @@ public abstract class ManagerBase implements Manager {
         if (container != null)
             logger = container.getLogger();
         if (logger != null)
-            logger.log("Manager[" + container.getName() + "] "
+            logger.log(getName() + "[" + container.getName() + "] "
                        + message, throwable);
         else {
             String containerName = null;
             if (container != null)
                 containerName = container.getName();
-            System.out.println("Manager[" + containerName
+            System.out.println(getName() + "[" + containerName
                                + "]: " + message);
             throwable.printStackTrace(System.out);
         }

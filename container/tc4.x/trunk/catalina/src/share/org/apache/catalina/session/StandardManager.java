@@ -141,6 +141,12 @@ public class StandardManager
 
 
     /**
+     * The descriptive name of this Manager implementation (for logging).
+     */
+    protected static String name = "StandardManager";
+
+
+    /**
      * Path name of the disk file in which active sessions are saved
      * when we stop, and from which these sessions are loaded when we start.
      * A <code>null</code> value indicates that no persistence is desired.
@@ -271,6 +277,16 @@ public class StandardManager
 
 
     /**
+     * Return the descriptive short name of this Manager implementation.
+     */
+    public String getName() {
+
+        return (name);
+
+    }
+
+
+    /**
      * Return the session persistence pathname, if any.
      */
     public String getPathname() {
@@ -355,10 +371,16 @@ public class StandardManager
                 loader = container.getLoader();
             if (loader != null)
                 classLoader = loader.getClassLoader();
-            if (classLoader != null)
+            if (classLoader != null) {
+                if (debug >= 1)
+                    log("Creating custom object input stream for class loader "
+                        + classLoader);
                 ois = new CustomObjectInputStream(bis, classLoader);
-            else
+            } else {
+                if (debug >= 1)
+                    log("Creating standard object input stream");
                 ois = new ObjectInputStream(bis);
+            }
         } catch (FileNotFoundException e) {
             if (debug >= 1)
                 log("No persisted data file found");
