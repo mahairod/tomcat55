@@ -360,7 +360,6 @@ final class ApplicationDispatcher
     private void doForward(ServletRequest request, ServletResponse response)
         throws ServletException, IOException
     {
-
         // Reset any output that has been buffered, but keep headers/cookies
         if (response.isCommitted()) {
             if (debug >= 1)
@@ -392,8 +391,18 @@ final class ApplicationDispatcher
 
             if (debug >= 1)
                 log(" Non-HTTP Forward");
-            invoke(request, response, ApplicationFilterFactory.FORWARD);
-
+            // only set the Dispatcher Type to Forward if it has not been set. It will have
+            // been set by the ErrorDispatcherValue in the case of an ERROR
+            // it will be REQUEST coming in from the StandardWrapperValue and 
+            // ERROR coming from the ErrorDispatcherValue
+            if (request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR) != null){
+                Integer disInt = (Integer)request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR);
+                if (disInt.intValue() != ApplicationFilterFactory.ERROR) {
+                    request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, servletPath);
+                    request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
+                }
+            }
+            invoke(request, response);
         }
 
         // Handle an HTTP named dispatcher forward
@@ -401,7 +410,18 @@ final class ApplicationDispatcher
 
             if (debug >= 1)
                 log(" Named Dispatcher Forward");
-            invoke(request, response, ApplicationFilterFactory.FORWARD);
+            // only set the Dispatcher Type to Forward if it has not been set. It will have
+            // been set by the ErrorDispatcherValue in the case of an ERROR
+            // it will be REQUEST coming in from the StandardWrapperValue and 
+            // ERROR coming from the ErrorDispatcherValue
+            if (request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR) != null){
+                Integer disInt = (Integer)request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR);
+                if (disInt.intValue() != ApplicationFilterFactory.ERROR) {
+                    request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, servletPath);
+                    request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
+                }
+            }
+            invoke(request, response);
 
         }
 
@@ -429,7 +449,19 @@ final class ApplicationDispatcher
                 wrequest.setQueryString(queryString);
                 wrequest.mergeParameters(queryString);
             }
-            invoke(outerRequest, response, ApplicationFilterFactory.FORWARD);
+
+            // only set the Dispatcher Type to Forward if it has not been set. It will have
+            // been set by the ErrorDispatcherValue in the case of an ERROR
+            // it will be REQUEST coming in from the StandardWrapperValue and 
+            // ERROR coming from the ErrorDispatcherValue
+            if (wrequest.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR) != null){
+                Integer disInt = (Integer)request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR);
+                if (disInt.intValue() != ApplicationFilterFactory.ERROR) {
+                    wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, servletPath);
+                    wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
+                }
+            }
+            invoke(outerRequest, response);
             unwrapRequest();
 
         }
@@ -516,7 +548,10 @@ final class ApplicationDispatcher
 
             if (debug >= 1)
                 log(" Non-HTTP Include");
-            invoke(request, outerResponse, ApplicationFilterFactory.INCLUDE);
+             request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
+                                             new Integer(ApplicationFilterFactory.INCLUDE));
+             request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, servletPath);
+            invoke(request, outerResponse);
             unwrapResponse();
 
         }
@@ -532,7 +567,10 @@ final class ApplicationDispatcher
             wrequest.setAttribute(Globals.NAMED_DISPATCHER_ATTR, name);
             if (servletPath != null)
                 wrequest.setServletPath(servletPath);
-            invoke(outerRequest, outerResponse, ApplicationFilterFactory.INCLUDE);
+            wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
+                                             new Integer(ApplicationFilterFactory.INCLUDE));
+            wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, servletPath);
+            invoke(outerRequest, outerResponse);
             unwrapRequest();
             unwrapResponse();
 
@@ -571,8 +609,11 @@ final class ApplicationDispatcher
                                       queryString);
                 wrequest.mergeParameters(queryString);
             }
-            // invoke(wrequest, wresponse);
-            invoke(outerRequest, outerResponse, ApplicationFilterFactory.INCLUDE);
+            
+            wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
+                                             new Integer(ApplicationFilterFactory.INCLUDE));
+            wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, servletPath);
+            invoke(outerRequest, outerResponse);
             unwrapRequest();
             unwrapResponse();
 
@@ -599,8 +640,8 @@ final class ApplicationDispatcher
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    private void invoke(ServletRequest request, ServletResponse response,
-        int dispatcherMapping) throws IOException, ServletException {
+    private void invoke(ServletRequest request, ServletResponse response)
+            throws IOException, ServletException {
 
         // Checking to see if the context classloader is the current context
         // classloader. If it's not, we're saving it, and setting the context
@@ -669,9 +710,9 @@ final class ApplicationDispatcher
         }
         // Get the FilterChain Here
         ApplicationFilterFactory factory = ApplicationFilterFactory.getInstance();
-        ApplicationFilterChain filterChain = factory.createFilterChain(request, wrapper, servlet, dispatcherMapping);
-
-
+        ApplicationFilterChain filterChain = factory.createFilterChain(request,
+                                                                                                         wrapper,
+                                                                                                         servlet);
         // Call the service() method for the allocated servlet instance
         try {
             String jspFile = wrapper.getJspFile();
@@ -681,24 +722,11 @@ final class ApplicationDispatcher
                 request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.BEFORE_DISPATCH_EVENT,
                                       servlet, request, response);
-            // Added by Greg Murray for filter chaining
             // for includes/forwards
             if ((servlet != null) && (filterChain != null)) {
                filterChain.doFilter(request, response);
              }
-            // Greg Murray additions complete
-            /* Servlet Service Method is called by the FilterChain
-
-            if (servlet != null) {
-                //                if (debug >= 2)
-                //                    log("  Calling service(), jspFile=" + jspFile);
-                if ((hrequest != null) && (hresponse != null)) {
-                    servlet.service((HttpServletRequest) request,
-                                    (HttpServletResponse) response);
-                } else {
-                    servlet.service(request, response);
-                }
-            }*/
+            // Servlet Service Method is called by the FilterChain
             request.removeAttribute(Globals.JSP_FILE_ATTR);
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
@@ -733,7 +761,6 @@ final class ApplicationDispatcher
             runtimeException = e;
         }
 
-        // Addtions by Greg Murray for Filter Chaining
         // Release the filter chain (if any) for this request
         try {
             if (filterChain != null)
@@ -743,13 +770,10 @@ final class ApplicationDispatcher
                              wrapper.getName()), e);
           //FIXME Exception handling needs to be simpiler to what is in the StandardWrapperValue
         }
-        // End Greg Murray additions
 
         // Deallocate the allocated servlet instance
         try {
             if (servlet != null) {
-                //                if (debug >= 2)
-                //                    log("  Deallocating servlet instance");
                 wrapper.deallocate(servlet);
             }
         } catch (ServletException e) {
