@@ -714,6 +714,11 @@ Catalina Bug Fixes:
          Session Manager StoreBase
          Fix a NPE bug when the background thread expires sessions.
 
+[4.1.22] #17775
+         WebappClassLoader
+         Grant web applications a FilePermission to read the web application
+         context directory in addition to its contents.
+
 ----------------
 Coyote Bug Fixes:
 ----------------
@@ -1179,6 +1184,10 @@ Jasper Bug Fixes:
 [4.1.22] JspC:
          Add documentation.
 
+[4.1.22] #17775
+         JspRuntimeContext
+         Grant web applications JSP pages a FilePermission to read the web application
+         context directory in addition to its contents.
 
 ============================
 KNOWN ISSUES IN THIS RELEASE:
