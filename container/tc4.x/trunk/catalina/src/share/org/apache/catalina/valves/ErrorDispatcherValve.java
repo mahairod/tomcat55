@@ -229,6 +229,9 @@ public class ErrorDispatcherValve
             response.setAppCommitted(false);
             ServletRequest sreq = request.getRequest();
             ServletResponse sresp = response.getResponse();
+            sreq.setAttribute
+                (Globals.STATUS_CODE_ATTR,
+                 new Integer(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
             sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
                               throwable.getMessage());
             sreq.setAttribute(Globals.EXCEPTION_ATTR,
