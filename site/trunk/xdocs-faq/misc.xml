@@ -177,6 +177,11 @@
         How do I configure commons-logging and log4j in tomcat 5?
       </a>
     </li>
+    <li>
+      <a href="#threadDeath">
+        I'm getting java.lang.ThreadDeath exceptions when reloading my webapp.
+      </a>
+    </li>
   </ul>
 </p>
 
@@ -766,6 +771,15 @@
   </question>
   <answer>
     See <a href="logging.html">the Logging section of the FAQ.</a>
+  </answer>
+
+  <question>
+      <a href="#threadDeath">
+        I'm getting java.lang.ThreadDeath exceptions when reloading my webapp.
+      </a>
+  </question>
+  <answer>
+    See <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=26372">Bugzilla discussion of this</a>.
   </answer>
 </section>
 
