@@ -297,10 +297,19 @@ final class ApplicationDispatcher
         throws ServletException, IOException
     {
 	// Reset any output that has been buffered, but keep headers/cookies
-	if (response.isCommitted())
+        if (response.isCommitted()) {
+            if (debug >= 1)
+                log("  Forward on committed response --> ISE");
 	    throw new IllegalStateException
 		(sm.getString("applicationDispatcher.forward.ise"));
-        response.resetBuffer();
+        }
+        try {
+            response.resetBuffer();
+        } catch (IllegalStateException e) {
+            if (debug >= 1)
+                log("  Forward resetBuffer() returned ISE: " + e);
+            throw e;
+        }
 
 	// Identify the HTTP-specific request and response objects (if any)
 	HttpServletRequest hrequest = null;
