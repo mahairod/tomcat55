@@ -1,6 +1,7 @@
 
 ; Tomcat 4 script for Nullsoft Installer
 ; $Id$
+!include "MUI.nsh"
 
 Name "Apache Tomcat 4.1"
 OutFile tomcat4.exe
@@ -9,38 +10,31 @@ SetCompress force
 SetCompressor lzma
 SetDatablockOptimize on
 
-BGGradient 000000 800000 FFFFFF
-InstallColors FF8080 000000
-InstProgressFlags smooth colored
-
 !include "StrFunc.nsh"
 ${StrRep}
 
-PageEx license
-  LicenseText "You must read the following license before installing:"
-  LicenseData INSTALLLICENSE
-PageExEnd
+!define MUI_COMPONENTSPAGE_SMALLDESC
 
-PageEx components
-  ComponentText "This will install the Apache Tomcat 4.1 servlet container on your computer:"
-PageExEnd
+!insertmacro MUI_PAGE_LICENSE "INSTALLLICENSE"
 
-PageEx directory
-  DirText "Please select a location to install Tomcat 4.1 (or use the default):"
-PageExEnd
+!define MUI_COMPONENTSPAGE_TEXT_TOP "This will install the Apache Tomcat 4.1 servlet container on your computer:"
+!insertmacro MUI_PAGE_COMPONENTS
 
-Page instfiles
+!define MUI_DIRECTORYPAGE_TEXT_TOP "Please select a location to install Tomcat 4.1 (or use the default):"
+!insertmacro MUI_PAGE_DIRECTORY
+
+!insertmacro MUI_PAGE_INSTFILES
+
 Page custom configure "" ": Basic settings"
 
-UninstPage uninstConfirm
-UninstPage instfiles
- 
-Icon main.ico
-UninstallIcon uninst.ico 
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+
+!insertmacro MUI_LANGUAGE "English"
 
 InstType Normal
 InstType Minimum
-InstType "Full (w/ Source Code)"
+InstType "Full (with source code)"
 AutoCloseWindow false
 ShowInstDetails show
 SetOverwrite on
@@ -49,10 +43,14 @@ SetDateSave on
 InstallDir "$PROGRAMFILES\Apache Group\Tomcat 4.1"
 InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\4.1" ""
 
-SubSection /e "Main"
-  Section "Tomcat (required)"
+ReserveFile "config.ini"
+!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+!insertmacro MUI_RESERVEFILE_LANGDLL
 
-    SectionIn 1 2 3
+SubSection /e "Main" Section1
+  Section "Tomcat (required)" Section2
+
+    SectionIn 1 2 3 RO
 
     SetOutPath $INSTDIR
     File tomcat.ico
@@ -78,7 +76,7 @@ SubSection /e "Main"
 
   SectionEnd
 
-  Section "NT Service (NT/2k/XP only)"
+  Section "NT Service (NT/2k/XP only)" Section3
 
     SectionIn 3
 
@@ -94,7 +92,7 @@ SubSection /e "Main"
 
   SectionEnd
 
-  Section "JSP Development Shell Extensions"
+  Section "JSP Development Shell Extensions" Section4
 
     SectionIn 1 2 3
     ; back up old value of .jsp
@@ -113,7 +111,7 @@ SubSection /e "Main"
 
   SectionEnd
 
-  Section "Tomcat Start Menu Group"
+  Section "Tomcat Start Menu Group" Section5
 
     SectionIn 1 2 3
 
@@ -144,8 +142,8 @@ SubSection /e "Main"
   SectionEnd
 SubSectionEnd
 
-SubSection "Documentation and Examples"
-  Section "Tomcat Documentation"
+SubSection "Documentation and Examples" Section6
+  Section "Tomcat Documentation" Section7
 
     SectionIn 1 3
     SetOutPath $INSTDIR\webapps
@@ -162,7 +160,7 @@ SubSection "Documentation and Examples"
 
   SectionEnd
 
-  Section "Example Web Applications"
+  Section "Example Web Applications" Section8
 
     SectionIn 1 3
 
@@ -177,9 +175,9 @@ SubSection "Documentation and Examples"
   SectionEnd
 
 SubSEctionEnd
-SubSection "Developer Resources"
+SubSection "Developer Resources" Section9
 
-  Section "Tomcat Source Code"
+  Section "Tomcat Source Code" Section10
 
     SectionIn 3
     SetOutPath $INSTDIR
@@ -189,6 +187,30 @@ SubSection "Developer Resources"
   SectionEnd
 
 SubSectionEnd
+
+LangString DESC_Section1 ${LANG_ENGLISH} "The core Tomcat components."
+LangString DESC_Section2 ${LANG_ENGLISH} "The Tomcat servlet container."
+LangString DESC_Section3 ${LANG_ENGLISH} "Additional files and configuration to enable Tomcat to be run as a Windows service."
+LangString DESC_Section4 ${LANG_ENGLISH} "Configure NotePad as the default editor for JSP files."
+LangString DESC_Section5 ${LANG_ENGLISH} "Add Tomcat icons to the Start menu."
+LangString DESC_Section6 ${LANG_ENGLISH} "Optional web applications."
+LangString DESC_Section7 ${LANG_ENGLISH} "Deploys the documentation web aplication."
+LangString DESC_Section8 ${LANG_ENGLISH} "Deploys the JSP & servlets examples web application and the WebDAV example web application."
+LangString DESC_Section9 ${LANG_ENGLISH} "Optional resource for developers."
+LangString DESC_Section10 ${LANG_ENGLISH} "Places the Tomcat and Tomcat Connector source code as ZIP files in the Tomcat installation directory."
+
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section1} $(DESC_Section1)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section2} $(DESC_Section2)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section3} $(DESC_Section3)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section4} $(DESC_Section4)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section5} $(DESC_Section5)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section6} $(DESC_Section6)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section7} $(DESC_Section7)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section8} $(DESC_Section8)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section9} $(DESC_Section9)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section10} $(DESC_Section10)
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Function .onInit
 
