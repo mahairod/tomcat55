@@ -19,7 +19,6 @@
 
   !define MUI_UNINSTALLER
 
-  !define MUI_WINDOWTITLE
   !define MUI_CUSTOMPAGECOMMANDS
 
   !define TEMP1 $R0
@@ -83,7 +82,7 @@
   !insertmacro MUI_UNPAGECOMMAND_CONFIRM
   !insertmacro MUI_UNPAGECOMMAND_INSTFILES
 
-  ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
+  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
   ReserveFile "jvm.ini"
   ReserveFile "config.ini"
 
