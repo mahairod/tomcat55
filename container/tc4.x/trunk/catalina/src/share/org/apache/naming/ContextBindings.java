@@ -332,10 +332,26 @@ public class ContextBindings {
      * @param token Security token
      */
     public static void unbindClassLoader(Object name, Object token) {
+        unbindClassLoader(name, token, 
+                          Thread.currentThread().getContextClassLoader());
+    }
+
+
+    /**
+     * Unbinds a naming context to a class loader.
+     * 
+     * @param name Name of the context
+     * @param token Security token
+     */
+    public static void unbindClassLoader(Object name, Object token, 
+                                         ClassLoader classLoader) {
         if (ContextAccessController.checkSecurityToken(name, token)) {
-            clBindings.remove(Thread.currentThread().getContextClassLoader());
-            clNameBindings.remove
-                (Thread.currentThread().getContextClassLoader());
+            Object cl = clBindings.get(name);
+            if (cl != classLoader) {
+                return;
+            }
+            clBindings.remove(classLoader);
+            clNameBindings.remove(classLoader);
         }
     }
 
