@@ -470,7 +470,8 @@ public class JspC implements Options {
             }
             return true;
         } catch (JasperException je) {
-            //je.printStackTrace(log);
+            System.out.println("Error compiling " + file );
+            je.printStackTrace();
             Constants.message("jspc.error.jasperException", 
                     new Object[] {file, je}, Logger.ERROR);
             if (dieLevel != NO_DIE_LEVEL) {
