@@ -617,7 +617,7 @@ public class ManagerServlet
         Context context =  deployer.findDeployedApp(path);
         if (update) {
             if (context != null) {
-                undeploy(writer, path);
+                undeploy(writer, displayPath);
             }
             context =  deployer.findDeployedApp(path);
         }
@@ -735,7 +735,7 @@ public class ManagerServlet
         // Check if app already exists, or undeploy it if updating
         Context context =  deployer.findDeployedApp(path);
         if (context != null) {
-            undeploy(writer, path);
+            undeploy(writer, displayPath);
         }
 
         // Copy WAR and XML to the host base
@@ -912,7 +912,7 @@ public class ManagerServlet
             Context context =  deployer.findDeployedApp(path);
             if (update) {
                 if (context != null) {
-                    undeploy(writer, path);
+                    undeploy(writer, displayPath);
                 }
                 context =  deployer.findDeployedApp(path);
             }
@@ -1599,7 +1599,7 @@ public class ManagerServlet
      * specified file location.
      *
      * @param request The servlet request we are processing
-     * @param file The file into which we should store the uploaded WAR
+     * @param war The file into which we should store the uploaded WAR
      *
      * @exception IOException if an I/O error occurs during processing
      */
