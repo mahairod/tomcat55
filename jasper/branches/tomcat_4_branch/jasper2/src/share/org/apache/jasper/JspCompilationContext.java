@@ -227,12 +227,12 @@ public class JspCompilationContext {
      *         as an InputStream.
      */
     public java.io.InputStream getResourceAsStream(String res) {
-        return context.getResourceAsStream(res);
+        return context.getResourceAsStream(canonicalURI(res));
     }
 
 
     public URL getResource(String res) throws MalformedURLException {
-        return context.getResource(res);
+        return context.getResource(canonicalURI(res));
     }
 
     /** 
