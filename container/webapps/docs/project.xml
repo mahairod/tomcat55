@@ -2,7 +2,7 @@
 <project name="Tomcat Documentation - Top Level Directory"
         href="http://jakarta.apache.org/tomcat/">
 
-    <title>The Tomcat 4 Servlet/JSP Container</title>
+    <title>The Tomcat 5 Servlet/JSP Container</title>
 
     <logo href="/images/tomcat.gif">
       The Tomcat Servlet/JSP Container

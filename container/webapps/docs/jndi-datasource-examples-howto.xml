@@ -53,7 +53,7 @@ only adds <code>$CATALINA_HOME/common/lib/*.jar</code> to the classpath</li>
     <p>Starting with the correct sotftware is manifestly important, so here's a list of
     what we've found to work. Let us know of your success stories with other versions.</p>
     <ul>
-    <li>Tomcat 4.0.3</li>
+    <li>Tomcat 5</li>
     <li>mySQL 4.0.1alpha</li>
     <li>mm.mysql 2.0.14 (JDBC Driver)</li>
     </ul>
@@ -250,7 +250,7 @@ Add this in between the <code>&lt;/Context&gt;</code> tag of the examples contex
 by default, Tomcat will only use <code>*.jar</code> files installed in <code>$CATALINA_HOME/common/lib</code>
  therefore <code>classes111.zip</code> or <code>classes12.zip</code> will need to be renamed with a <code>.jar</code> 
 extension. Since jarfiles are zipfiles, there is no need to unzip and jar these files - a simple rename will suffice.
-Also, you should be aware that some (early) versions of Tomcat 4.0 when used with JDK 1.4 will not load classes12.zip unless
+Also, you should be aware that some (early) versions of Tomcat 5 when used with JDK 1.4 will not load classes12.zip unless
 you unzip the file, remove the <code>javax.sql.*</code> class heirarchy and rejar.</p>
 <h3>1.    server.xml configuration</h3>
 <p>In a similar manner to the mysql config above, you will need to define your Datasource in your server.xml
@@ -392,7 +392,7 @@ than testing!) or some other pooling technology.
 <subsection name="Introduction">
 
 <p>
-Tomcat 4.1 provides transaction management and resource configuration support through the use of 
+Tomcat 5 provides transaction management and resource configuration support through the use of 
 <a href="http://tyrex.exolab.org/">Tyrex</a> 1.0. This allows the user to obtain JTA/JCA resources
 from the JNDI namespace, as well as the standard <code>javax.transaction.UserTransaction</code>.
 </p>

@@ -67,7 +67,7 @@ import javax.servlet.http.*;
 
 /**
  * Test aggregation of query string and POST parameters.  According to
- * Servlet 2.3 PFD, Section 4.1, all such parameters should be aggregated,
+ * Servlet 2.4 PFD, Section 4.1, all such parameters should be aggregated,
  * and if there are duplicate parameter names from both sources, the
  * parameter value(s) from the query string should appear first in the
  * values returned by request.getParameterValues().
