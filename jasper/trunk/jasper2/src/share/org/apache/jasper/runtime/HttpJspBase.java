@@ -36,7 +36,13 @@ import org.apache.jasper.compiler.Localizer;
 public abstract class HttpJspBase 
     extends HttpServlet 
     implements HttpJspPage 
+        
+    
 {
+    
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( HttpJspBase.class );
+    
     static {
         if( JspFactory.getDefaultFactory() == null ) {
             JspFactoryImpl factory = new JspFactoryImpl();
@@ -56,9 +62,8 @@ public abstract class HttpJspBase
                     factory.getClass().getClassLoader().loadClass( basePackage +
                                                                    "servlet.JspServletWrapper");
                 } catch (ClassNotFoundException ex) {
-                    System.out.println(
-                                       "Jasper JspRuntimeContext preload of class failed: " +
-                                       ex.getMessage());
+                    log.error("Jasper JspRuntimeContext preload of class failed: " +
+                                       ex.getMessage(), ex);
                 }
             }
             JspFactory.setDefaultFactory(factory);

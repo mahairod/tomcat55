@@ -43,6 +43,9 @@ import org.apache.jasper.JspCompilationContext;
  */
 public class SmapUtil {
 
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( SmapUtil.class );
+    
     private static final boolean verbose = false;
 
     //*********************************************************************
@@ -284,7 +287,8 @@ public class SmapUtil {
             int constantPoolCountPos = genPos;
             int constantPoolCount = readU2();
             if (verbose) {
-                System.out.println("constant pool count: " + constantPoolCount);
+                if (log.isDebugEnabled())
+                    log.debug("constant pool count: " + constantPoolCount);
             }
             writeU2(constantPoolCount);
 
@@ -300,13 +304,15 @@ public class SmapUtil {
                 randomAccessWriteU2(constantPoolCountPos, constantPoolCount);
 
                 if (verbose) {
-                    System.out.println(
+                    if (log.isDebugEnabled())
+                        log.debug(
                         "SourceDebugExtension not found, installed at: "
                             + sdeIndex);
                 }
             } else {
                 if (verbose) {
-                    System.out.println(
+                    if (log.isDebugEnabled())
+                        log.debug(
                         "SourceDebugExtension found at: " + sdeIndex);
                 }
             }
@@ -314,7 +320,8 @@ public class SmapUtil {
             int interfaceCount = readU2();
             writeU2(interfaceCount);
             if (verbose) {
-                System.out.println("interfaceCount: " + interfaceCount);
+                if (log.isDebugEnabled())
+                    log.debug("interfaceCount: " + interfaceCount);
             }
             copy(interfaceCount * 2);
             copyMembers(); // fields
@@ -323,7 +330,8 @@ public class SmapUtil {
             int attrCount = readU2();
             writeU2(attrCount);
             if (verbose) {
-                System.out.println("class attrCount: " + attrCount);
+                if (log.isDebugEnabled())
+                    log.debug("class attrCount: " + attrCount);
             }
             // copy the class attributes, return true if SDE attr found (not copied)
             if (!copyAttrs(attrCount)) {
@@ -331,7 +339,8 @@ public class SmapUtil {
                 ++attrCount;
                 randomAccessWriteU2(attrCountPos, attrCount);
                 if (verbose) {
-                    System.out.println("class attrCount incremented");
+                    if (log.isDebugEnabled())
+                        log.debug("class attrCount incremented");
                 }
             }
             writeAttrForSDE(sdeIndex);
@@ -341,14 +350,16 @@ public class SmapUtil {
             int count = readU2();
             writeU2(count);
             if (verbose) {
-                System.out.println("members count: " + count);
+                if (log.isDebugEnabled())
+                    log.debug("members count: " + count);
             }
             for (int i = 0; i < count; ++i) {
                 copy(6); // access, name, descriptor
                 int attrCount = readU2();
                 writeU2(attrCount);
                 if (verbose) {
-                    System.out.println("member attr count: " + attrCount);
+                    if (log.isDebugEnabled())
+                        log.debug("member attr count: " + attrCount);
                 }
                 copyAttrs(attrCount);
             }
@@ -362,7 +373,8 @@ public class SmapUtil {
                 if (nameIndex == sdeIndex) {
                     sdeFound = true;
                     if (verbose) {
-                        System.out.println("SDE attr found");
+                        if (log.isDebugEnabled())
+                            log.debug("SDE attr found");
                     }
                 } else {
                     writeU2(nameIndex); // name
@@ -370,7 +382,8 @@ public class SmapUtil {
                     writeU4(len);
                     copy(len);
                     if (verbose) {
-                        System.out.println("attr len: " + len);
+                        if (log.isDebugEnabled())
+                            log.debug("attr len: " + len);
                     }
                 }
             }
@@ -451,7 +464,8 @@ public class SmapUtil {
                     case 7 : // Class
                     case 8 : // String
                         if (verbose) {
-                            System.out.println(i + " copying 2 bytes");
+                            if (log.isDebugEnabled())
+                                log.debug(i + " copying 2 bytes");
                         }
                         copy(2);
                         break;
@@ -462,14 +476,16 @@ public class SmapUtil {
                     case 4 : // Float
                     case 12 : // NameAndType
                         if (verbose) {
-                            System.out.println(i + " copying 4 bytes");
+                            if (log.isDebugEnabled())
+                                log.debug(i + " copying 4 bytes");
                         }
                         copy(4);
                         break;
                     case 5 : // Long
                     case 6 : // Double
                         if (verbose) {
-                            System.out.println(i + " copying 8 bytes");
+                            if (log.isDebugEnabled())
+                                log.debug(i + " copying 8 bytes");
                         }
                         copy(8);
                         i++;
@@ -480,7 +496,8 @@ public class SmapUtil {
                         byte[] utf8 = readBytes(len);
                         String str = new String(utf8, "UTF-8");
                         if (verbose) {
-                            System.out.println(
+                            if (log.isDebugEnabled())
+                                log.debug(
                                 i + " read class attr -- '" + str + "'");
                         }
                         if (str.equals(nameSDE)) {

@@ -104,9 +104,6 @@ public final class SecurityClassLoad {
             loader.loadClass( basePackage +
                 "runtime.JspWriterImpl$1");
         } catch (ClassNotFoundException ex) {
-            System.out.println(
-                "Jasper SecurityClassLoad preload of class failed: " +
-                ex.getMessage());
             log.error("SecurityClassLoad", ex);
         }
     }
