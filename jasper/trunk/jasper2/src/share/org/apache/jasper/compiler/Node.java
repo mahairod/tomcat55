@@ -669,6 +669,7 @@ public abstract class Node {
 	private boolean hasUsebean;
 	private boolean hasIncludeAction;
 	private boolean hasSetProperty;
+	private boolean hasScriptingVars;
 	private String tagHandlerPoolName;
 	private TagInfo tagInfo;
 	private VariableInfo[] varInfos;
@@ -757,6 +758,14 @@ public abstract class Node {
 
 	public boolean isHasSetProperty() {
 	    return hasSetProperty;
+	}
+
+	public void setHasScriptingVars(boolean s) {
+	    hasScriptingVars = s;
+	}
+
+	public boolean hasScriptingVars() {
+	    return hasScriptingVars;
 	}
 
 	public void setTagHandlerPoolName(String s) {

@@ -1101,18 +1101,11 @@ public class Generator {
 	    // to a method.
 	    ServletWriter outSave = null;
 	    MethodsBuffer methodsBufferSave = null;
-	    boolean generateTagMethod = false;
-	    if (n.isScriptless() && n.getVariableInfos() == null &&
-			(n.getTagVariableInfos() == null
-			 || n.getTagVariableInfos().length == 0)) {
+	    if (n.isScriptless() && !n.hasScriptingVars()) {
 		// The tag handler and its body code can reside in a separate
 		// method if it is scriptless and does not have any scripting
 		// variable defined.
-		// For some reason, varInfos is null when var is not defined
-		// in TEI, but tagVarInfos is empty array when var is not
-		// defined in tld.
 
-		generateTagMethod = true;
 		String tagMethod = "_jspx_meth_" + baseVar;
 
 		// Generate a call to this method
@@ -1177,7 +1170,7 @@ public class Generator {
 	    generateCustomEnd(n, handlerInfo.getTagHandlerClass(),
 			      tagHandlerVar, tagEvalVar);
 
-	    if (generateTagMethod) {
+	    if (n.isScriptless() && !n.hasScriptingVars()) {
 		// Generate end of method
 		if (methodNesting > 0) {
 		    out.printil("return false;");

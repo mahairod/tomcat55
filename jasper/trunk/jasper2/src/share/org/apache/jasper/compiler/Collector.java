@@ -88,6 +88,7 @@ public class Collector {
 	private boolean usebeanSeen = false;
 	private boolean includeActionSeen = false;
 	private boolean setPropertySeen = false;
+	private boolean hasScriptingVars = false;
 
 	public void visit(Node.ParamAction n) throws JasperException {
 	    if (n.getValue().isExpression()) {
@@ -151,6 +152,8 @@ public class Collector {
 	    includeActionSeen = false;
 	    boolean setPropertySeenSave = setPropertySeen;
 	    setPropertySeen = false;
+	    boolean hasScriptingVarsSave = hasScriptingVars;
+	    hasScriptingVars = false;
 
 	    // Scan attribute list for expressions
 	    Node.JspAttribute[] attrs = n.getJspAttributes();
@@ -163,17 +166,28 @@ public class Collector {
 
             visitBody(n);
 
+	    if (!hasScriptingVars) {
+		// For some reason, varInfos is null when var is not defined
+		// in TEI, but tagVarInfos is empty array when var is not
+		// defined in tld.
+		hasScriptingVars = n.getVariableInfos() != null || 
+			(n.getTagVariableInfos() != null
+			 && n.getTagVariableInfos().length > 0);
+	    }
+
 	    // Record if the tag element and its body contains any scriptlet.
 	    n.setScriptless(! scriptingElementSeen);
 	    n.setHasUsebean(usebeanSeen);
 	    n.setHasIncludeAction(includeActionSeen);
 	    n.setHasSetProperty(setPropertySeen);
+	    n.setHasScriptingVars(hasScriptingVars);
 
 	    // Propagate value of scriptingElementSeen up.
 	    scriptingElementSeen = scriptingElementSeen || scriptingElementSeenSave;
 	    usebeanSeen = usebeanSeen || usebeanSeenSave;
 	    setPropertySeen = setPropertySeen || setPropertySeenSave;
 	    includeActionSeen = includeActionSeen || includeActionSeenSave;
+	    hasScriptingVars = hasScriptingVars || hasScriptingVarsSave;
 
             curTagNesting--;
         }
