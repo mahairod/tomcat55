@@ -110,6 +110,7 @@ public class MapperListener
 
     // It should be null - and fail if not set
     private String domain="*";
+    private String engine="*";
 
     // ----------------------------------------------------------- Constructors
 
@@ -132,6 +133,14 @@ public class MapperListener
         this.domain = domain;
     }
 
+    public String getEngine() {
+        return engine;
+    }
+
+    public void setEngine(String engine) {
+        this.engine = engine;
+    }
+
     /**
      * Initialize associated mapper.
      */
@@ -141,8 +150,7 @@ public class MapperListener
 
             mBeanServer = Registry.getServer();
 
-            // FIXME
-            registerHosts(null);
+            registerEngine();
 
             // Query hosts
             String onStr = domain + ":type=Host,*";
@@ -260,13 +268,14 @@ public class MapperListener
 
     // ------------------------------------------------------ Protected Methods
 
-    private void registerHosts(ObjectName objectName)
+    private void registerEngine()
         throws Exception
     {
-        ObjectName engineName=new ObjectName(domain + ":type=Engine");
-        if( ! mBeanServer.isRegistered(engineName)) return;
-        //if (container instanceof Engine) {
-        String defaultHost = (String)mBeanServer.getAttribute(engineName, "defaultHost");
+        ObjectName engineName = new ObjectName
+            (domain + ":type=Engine,name=" + engine);
+        if ( ! mBeanServer.isRegistered(engineName)) return;
+        String defaultHost = 
+            (String) mBeanServer.getAttribute(engineName, "defaultHost");
         // This should probablt be called later 
         if( defaultHost != null ) {
             mapper.setDefaultHostName(defaultHost);
