@@ -46,6 +46,8 @@
       <fileset dir="src/doc"/>
     </copy>
     <copy tofile="${tomcat.build}/LICENSE" file="LICENSE"/>
+    <copy tofile="${tomcat.build}/RELEASE-NOTES" file="RELEASE-NOTES"/>
+    <copy tofile="${tomcat.build}/KEYS" file="KEYS"/>
 
     <!-- Copy library JAR files -->
     <copy tofile="${tomcat.build}/lib/ant.jar"
