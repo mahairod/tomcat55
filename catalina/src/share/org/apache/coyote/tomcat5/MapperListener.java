@@ -235,7 +235,7 @@ public class MapperListener
                     try {
                         registerHost(objectName);
                     } catch (Exception e) {
-                        e.printStackTrace();  
+                        log.warn("Error registering Host " + objectName, e);  
                     }
                 }
     
@@ -261,7 +261,7 @@ public class MapperListener
                     try {
                         unregisterHost(objectName);
                     } catch (Exception e) {
-                        e.printStackTrace();  
+                        log.warn("Error unregistering Host " + objectName,e);  
                     }
                 }
  
