@@ -26,6 +26,7 @@
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xmlParserAPIs.jar}"/>
+    <pathelement location="${commons-collections.jar}"/>
     <pathelement location="${jasper.build}/shared/classes"/>
   </path>
 

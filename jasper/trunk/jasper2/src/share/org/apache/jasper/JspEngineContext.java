@@ -94,53 +94,57 @@ import org.apache.jasper.logging.Logger;
  * @author Pierre Delisle
  */
 public class JspEngineContext implements JspCompilationContext {
-    JspReader reader;
-    ServletWriter writer;
-    ServletContext context;
-    URLClassLoader loader;
-    Compiler jspCompiler;
-    String classpath; // for compiling JSPs.
-    boolean isErrPage;
-    String jspFile;
-    String outDir;
-    String servletClassName;
-    String servletPackageName = Constants.JSP_PACKAGE_NAME;
-    String servletJavaFileName;
-    String contentType;
-    Options options;
-    HttpServletRequest req;
-    HttpServletResponse res;
-    
+    private JspReader reader;
+    private ServletWriter writer;
+    private ServletContext context;
+    private URLClassLoader loader;
+    private Compiler jspCompiler;
+    private String classpath; // for compiling JSPs.
+    private boolean isErrPage;
+    private String jspUri;
+    private String baseURI;
+    private String outDir;
+    private String servletClassName;
+    private String servletPackageName = Constants.JSP_PACKAGE_NAME;
+    private String servletJavaFileName;
+    private String contentType;
+    private Options options;
 
     public JspEngineContext(URLClassLoader loader, String classpath, 
-                            ServletContext context, String jspFile, String outDir,
-                            boolean isErrPage, Options options,
-                            HttpServletRequest req, HttpServletResponse res) 
+                            ServletContext context, String jspUri,
+                            boolean isErrPage, Options options)
     {
         this.loader = loader;
         this.classpath = classpath;
         this.context = context;
-        this.jspFile = jspFile;
-	this.outDir = outDir;
+        this.jspUri = jspUri;
+        baseURI = jspUri.substring(0, jspUri.lastIndexOf('/'));
         this.isErrPage = isErrPage;
         this.options = options;
-        this.req = req;
-        this.res = res;
+        createOutdir();
     }
 
-    /**
-     * Get the http request we are servicing now...
-     */
-    public HttpServletRequest getRequest() {
-        return req;
-    }
-    
-
-    /**
-     * Get the http response we are using now...
-     */
-    public HttpServletResponse getResponse() {
-        return res;
+    private void createOutdir() {
+        File outDir = null;      
+        try {
+            URL outURL = options.getScratchDir().toURL();
+            String outURI = outURL.toString();           
+            if( outURI.endsWith("/") )                   
+                outURI = outURI +             
+                         jspUri.substring(1,jspUri.lastIndexOf("/")+1);
+            else                                                       
+                outURI = outURI +                                      
+                         jspUri.substring(0,jspUri.lastIndexOf("/")+1);;
+            outURL = new URL(outURI);                                   
+            outDir = new File(outURL.getFile());                        
+            if( !outDir.exists() ) {
+                outDir.mkdirs();
+            }
+            this.outDir = outDir.toString() + File.separator;
+        } catch(Exception e) {
+            throw new IllegalStateException("No output directory: " +
+                                            e.getMessage());
+        }   
     }
 
     /**
@@ -224,7 +228,7 @@ public class JspEngineContext implements JspCompilationContext {
      * the context rooted URI of the JSP file. 
      */
     public String getJspFile() {
-        return jspFile;
+        return jspUri;
     }
     
     /**
@@ -347,12 +351,7 @@ public class JspEngineContext implements JspCompilationContext {
         {
             return uri;
         }
-        else
-        {
-            String actURI =  req.getServletPath();
-            String baseURI = actURI.substring(0, actURI.lastIndexOf('/'));
-            return baseURI + '/' + uri;
-        }
+        return baseURI + '/' + uri;
     }    
 
     /**

@@ -59,18 +59,12 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.SingleThreadModel;
-import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.HttpJspPage;
 import javax.servlet.jsp.JspFactory;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
 import java.io.File;
-import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.FilePermission;
@@ -78,23 +72,20 @@ import java.lang.RuntimePermission;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.MalformedURLException;
-import java.security.AccessController;
 import java.security.CodeSource;
 import java.security.PermissionCollection;
 import java.security.Policy;
-import java.security.PrivilegedAction;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.apache.commons.collections.FastHashMap;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.Options;
 import org.apache.jasper.EmbededServletOptions;
-import org.apache.jasper.JspCompilationContext;
-import org.apache.jasper.JspEngineContext;
-import org.apache.jasper.compiler.Mangler;
 import org.apache.jasper.runtime.*;
-
-import org.apache.jasper.compiler.Compiler;
-import org.apache.jasper.compiler.TldLocationsCache;
 
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.logging.DefaultLogger;
@@ -114,155 +105,23 @@ import org.apache.jasper.logging.JasperLogger;
  * @author Harish Prabandham
  * @author Remy Maucherat
  * @author Kin-man Chung
+ * @author Glenn Nielsen
  */
 public class JspServlet extends HttpServlet {
 
-    Logger.Helper loghelper;
+    private Logger.Helper loghelper;
 
-    class JspServletWrapper {
-        Servlet theServlet;
-	String jspUri;
-	boolean isErrorPage;
-	// ServletWrapper will set this 
-	Class servletClass;
-	URLClassLoader loader = null;
-        JspCompilationContext ctxt = null;
-        String outDir = null;
-        long available = 0L;
-	
-	JspServletWrapper(String jspUri, boolean isErrorPage) {
-	    this.jspUri = jspUri;
-	    this.isErrorPage = isErrorPage;
-	    this.theServlet = null;
-            createOutdir();
-	}
-	
-        private void createOutdir() {
-            File outDir = null;
-            try {
-                URL outURL = options.getScratchDir().toURL();
-                String outURI = outURL.toString();
-                if( outURI.endsWith("/") )
-                    outURI = outURI + jspUri.substring(1,jspUri.lastIndexOf("/")+1);
-                else
-                    outURI = outURI + jspUri.substring(0,jspUri.lastIndexOf("/")+1);;
-                outURL = new URL(outURI);
-                outDir = new File(outURL.getFile());
-                if( !outDir.exists() ) {
-                    outDir.mkdirs();
-                }
-                this.outDir = outDir.toString() + File.separator;
-            } catch(Exception e) {
-                throw new IllegalStateException("No output directory: " + e.getMessage());
-            }
-        }
-
-	private void load() throws JasperException, ServletException {
-	    try {
-		// This is to maintain the original protocol.
-		destroy();
-
-		theServlet = (Servlet) servletClass.newInstance();
-	    } catch (Exception ex) {
-		throw new JasperException(ex);
-	    }
-	    theServlet.init(JspServlet.this.config);
-	}
-
-	public void service(HttpServletRequest request, 
-			    HttpServletResponse response,
-			    boolean precompile)
-	    throws ServletException, IOException, FileNotFoundException 
-	{
-            try {
-
-                if ((available > 0L) && (available < Long.MAX_VALUE)) {
-                    response.setDateHeader("Retry-After", available);
-                    response.sendError
-                        (HttpServletResponse.SC_SERVICE_UNAVAILABLE,
-                         Constants.getString("jsp.error.unavailable"));
-                }
-
-                if (loadJSP(this, jspUri, classpath,
-                            isErrorPage, request, response)
-                        || theServlet == null) {
-                    load();
-                }
-
-		// If a page is to only to be precompiled return.
-		if (precompile)
-		    return;
-
-		if (theServlet instanceof SingleThreadModel) {
-		    // sync on the wrapper so that the freshness
-		    // of the page is determined right before servicing
-		    synchronized (this) {
-			theServlet.service(request, response);
-		    }
-		} else {
-		    theServlet.service(request, response);
-		}
-
-            } catch (UnavailableException ex) {
-                String includeRequestUri = (String)
-                    request.getAttribute("javax.servlet.include.request_uri");
-                if (includeRequestUri != null) {
-                    // This file was included. Throw an exception as
-                    // a response.sendError() will be ignored by the
-                    // servlet engine.
-                    throw ex;
-                } else {
-                    int unavailableSeconds = ex.getUnavailableSeconds();
-                    if (unavailableSeconds <= 0)
-                        unavailableSeconds = 60;        // Arbitrary default
-                    available = System.currentTimeMillis() +
-                        (unavailableSeconds * 1000L);
-                    response.sendError
-                        (HttpServletResponse.SC_SERVICE_UNAVAILABLE, 
-                         ex.getMessage());
-		}
-            } catch (FileNotFoundException ex) {
-                String includeRequestUri = (String)
-                    request.getAttribute("javax.servlet.include.request_uri");
-                if (includeRequestUri != null) {
-                    // This file was included. Throw an exception as
-                    // a response.sendError() will be ignored by the
-                    // servlet engine.
-                    throw new ServletException(ex);
-                } else {
-                    try {
-			response.sendError(HttpServletResponse.SC_NOT_FOUND, 
-					   ex.getMessage());
-		    } catch (IllegalStateException ise) {
-			Constants.jasperLog.log(Constants.getString
-						("jsp.error.file.not.found",
-						 new Object[] {
-						     ex.getMessage()
-						 }), ex,
-						Logger.ERROR);
-		    }
-		    return;
-		}
-	    }
-	}
-
-	public void destroy() {
-	    if (theServlet != null)
-		theServlet.destroy();
-	}
-    }
-	
-	
-    protected ServletContext context = null;
-    protected Hashtable jsps = new Hashtable();
-    protected ServletConfig config;
-    protected Options options;
-    protected URLClassLoader parentClassLoader;
-    protected ServletEngine engine;
-    protected String serverInfo;
+    private ServletContext context = null;
+    private Map jsps = new FastHashMap();
+    private ServletConfig config;
+    private Options options;
+    private URLClassLoader parentClassLoader;
+    private ServletEngine engine;
+    private String serverInfo;
     private PermissionCollection permissionCollection;
     private CodeSource codeSource;
     private String classpath;
+
     static boolean firstTime = true;
 
     public void init(ServletConfig config)
@@ -283,6 +142,8 @@ public class JspServlet extends HttpServlet {
 	loghelper = new Logger.Helper("JASPER_LOG", "JspServlet");
 
 	options = new EmbededServletOptions(config, context);
+
+        ((FastHashMap)jsps).setFast(true);
 
         // Get the classpath to use for compiling
         classpath = (String) context.getAttribute(Constants.SERVLET_CLASSPATH);
@@ -376,7 +237,7 @@ public class JspServlet extends HttpServlet {
                     parentClassLoader.loadClass( basePackage +
 			"runtime.ServletResponseWrapperInclude");
 		    this.getClass().getClassLoader().loadClass( basePackage +
-                        "servlet.JspServlet$JspServletWrapper");
+                        "servlet.JspServletWrapper");
 		} catch (ClassNotFoundException ex) {
 		    System.out.println(
 			"Jasper JspServlet preload of class failed: " +
@@ -398,18 +259,20 @@ public class JspServlet extends HttpServlet {
 	throws ServletException, IOException
     {
 
-	// First check if the requested JSP page exists, to avoid creating
-	// unnecessary directories and files.
-	if (context.getResourceAsStream(jspUri) == null)
-	    throw new FileNotFoundException(jspUri);
-
-	boolean isErrorPage = exception != null;
-	
 	JspServletWrapper wrapper;
 	synchronized (this) {
 	    wrapper = (JspServletWrapper) jsps.get(jspUri);
 	    if (wrapper == null) {
-		wrapper = new JspServletWrapper(jspUri, isErrorPage);
+                // First check if the requested JSP page exists, to avoid
+                // creating unnecessary directories and files.
+                if (context.getResourceAsStream(jspUri) == null)
+                    throw new FileNotFoundException(jspUri);
+                boolean isErrorPage = exception != null;
+		wrapper = new JspServletWrapper(config, options, jspUri,
+                                                isErrorPage, classpath,
+                                                parentClassLoader,
+                                                permissionCollection,
+                                                codeSource);
 		jsps.put(jspUri, wrapper);
 	    }
 	}
@@ -517,169 +380,15 @@ public class JspServlet extends HttpServlet {
 	    throw new ServletException(e);
 	}
 
-	// It's better to throw the exception - we don't
-	// know if we can deal with sendError ( buffer may be
-	// commited )
-	// catch (Throwable t) {
-	// 	    unknownException(response, t);
-	// 	}
     }
 
     public void destroy() {
 	if (Constants.jasperLog != null)
 	    Constants.jasperLog.log("JspServlet.destroy()", Logger.INFORMATION);
 
-	Enumeration servlets = jsps.elements();
-	while (servlets.hasMoreElements()) 
-	    ((JspServletWrapper) servlets.nextElement()).destroy();
+	Iterator servlets = jsps.values().iterator();
+	while (servlets.hasNext()) 
+	    ((JspServletWrapper) servlets.next()).destroy();
     }
 
-
-    /*  Check if we need to reload a JSP page.
-     *
-     *  Side-effect: re-compile the JSP page.
-     *
-     *  @param classpath explicitly set the JSP compilation path.
-     *  @return true if JSP files is newer
-     */
-    boolean loadJSP(String jspUri, String classpath, 
-	boolean isErrorPage, HttpServletRequest req, HttpServletResponse res) 
-	throws JasperException, FileNotFoundException 
-    {
-
-	JspServletWrapper jsw=(JspServletWrapper) jsps.get(jspUri);
-	if( jsw==null ) {
-	    throw new JasperException("Can't happen - JspServletWrapper=null");
-	}
-        return loadJSP(jsw, jspUri, classpath, isErrorPage, req, res);
-        
-    }
-
-
-    /*  Check if we need to reload a JSP page.
-     *
-     *  Side-effect: re-compile the JSP page.
-     *
-     *  @param classpath explicitly set the JSP compilation path.
-     *  @return true if JSP files is newer
-     */
-    boolean loadJSP(JspServletWrapper jsw, String jspUri, String classpath, 
-	boolean isErrorPage, HttpServletRequest req, HttpServletResponse res) 
-	throws JasperException, FileNotFoundException 
-    {
-
-	boolean firstTime = jsw.servletClass == null;
-        if (jsw.ctxt == null) {
-            jsw.ctxt = new JspEngineContext
-                (parentClassLoader, classpath, context, jspUri, 
-                 jsw.outDir, isErrorPage, options,
-                 req, res);
-        }
-        JspCompilationContext ctxt = jsw.ctxt;
-	boolean outDated = false; 
-        Compiler compiler = ctxt.createCompiler();
-        
-        if (options.getReloading() || (jsw.servletClass == null)) {
-            try {
-                synchronized (jsw) {
-
-                    // Synchronizing on jsw enables simultaneous 
-                    // compilations of different pages, but not the 
-                    // same page.
-                    outDated = compiler.isOutDated();
-                    if (outDated)
-                        compiler.compile();
-
-                    if ((jsw.servletClass == null) || outDated) {
-                        URL [] urls = new URL[1];
-			File outputDir = 
-                            new File(normalize(ctxt.getOutputDir()));
-			urls[0] = outputDir.toURL();
-			jsw.loader = new JasperLoader
-                            (urls,ctxt.getServletClassName(),
-                             parentClassLoader, permissionCollection,
-                             codeSource);
-			jsw.servletClass = jsw.loader.loadClass
-                            (Constants.JSP_PACKAGE_NAME + "." 
-                             + ctxt.getServletClassName());
-                    }
-
-                }
-            } catch (FileNotFoundException ex) {
-                compiler.removeGeneratedFiles();
-                throw ex;
-            } catch (ClassNotFoundException cex) {
-		throw new JasperException(
-		    Constants.getString("jsp.error.unable.load"),cex);
-	    } catch (MalformedURLException mue) {
-                throw new JasperException(
-		    Constants.getString("jsp.error.unable.load"),mue);
-	    } catch (JasperException ex) {
-                throw ex;
-            } catch (Exception ex) {
-                throw new JasperException
-                    (Constants.getString("jsp.error.unable.compile"), ex);
-            }
-        }
-
-	return outDated;
-    }
-
-
-    /**
-     * Return a context-relative path, beginning with a "/", that represents
-     * the canonical version of the specified path after ".." and "." elements
-     * are resolved out.  If the specified path attempts to go outside the
-     * boundaries of the current context (i.e. too many ".." path elements
-     * are present), return <code>null</code> instead.
-     *
-     * @param path Path to be normalized
-     */
-    protected String normalize(String path) {
-
-        if (path == null)
-            return null;
-
-        String normalized = path;
-        
-	// Normalize the slashes and add leading slash if necessary
-	if (normalized.indexOf('\\') >= 0)
-	    normalized = normalized.replace('\\', '/');
-	if (!normalized.startsWith("/"))
-	    normalized = "/" + normalized;
-
-	// Resolve occurrences of "//" in the normalized path
-	while (true) {
-	    int index = normalized.indexOf("//");
-	    if (index < 0)
-		break;
-	    normalized = normalized.substring(0, index) +
-		normalized.substring(index + 1);
-	}
-
-	// Resolve occurrences of "/./" in the normalized path
-	while (true) {
-	    int index = normalized.indexOf("/./");
-	    if (index < 0)
-		break;
-	    normalized = normalized.substring(0, index) +
-		normalized.substring(index + 2);
-	}
-
-	// Resolve occurrences of "/../" in the normalized path
-	while (true) {
-	    int index = normalized.indexOf("/../");
-	    if (index < 0)
-		break;
-	    if (index == 0)
-		return (null);	// Trying to go outside our context
-	    int index2 = normalized.lastIndexOf('/', index - 1);
-	    normalized = normalized.substring(0, index2) +
-		normalized.substring(index + 3);
-	}
-
-	// Return the normalized path that we have completed
-	return (normalized);
-
-    }
 }
