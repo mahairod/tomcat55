@@ -160,7 +160,10 @@
   <!--   trimSpaces          Should white spaces in template text between   -->
   <!--                       actions or directives be trimmed?  [false]     -->
   <!--                                                                      -->
-  <!--   reloading           Should Jasper check for modified JSPs? [false] -->
+  <!--   reloading           Should Jasper check for and reload modified    -->
+  <!--                       JSPs in deployment mode (development is set to -->
+  <!--                       false)? If true, background compiles are       -->
+  <!--                       enabled every checkInterval seconds. [false]   -->
   <!--                                                                      -->
   <!--   suppressSmap        Should the generation of SMAP info for JSR45   -->
   <!--                       debugging be suppressed?  [false]              -->
