@@ -98,6 +98,56 @@ public final class HTMLManagerServlet extends ManagerServlet {
     // --------------------------------------------------------- Public Methods
 
     /**
+     * Process a GET request for the specified resource.
+     *
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are creating
+     *
+     * @exception IOException if an input/output error occurs
+     * @exception ServletException if a servlet-specified error occurs
+     */
+    public void doGet(HttpServletRequest request,
+                      HttpServletResponse response)
+        throws IOException, ServletException {
+
+        // Identify the request parameters that we need
+        String command = request.getPathInfo();
+
+        String path = request.getParameter("path");
+        String war = request.getParameter("war");
+        
+        // Prepare our output writer to generate the response message
+        response.setContentType("text/html");
+        PrintWriter writer = response.getWriter();
+        
+        // Process the requested command
+        if (command == null) {
+            response.sendRedirect(request.getRequestURI()+"/list");
+        } else if (command.equals("/install")) {
+            install(writer, path, war);
+        } else if (command.equals("/list")) {
+            list(writer);
+        } else if (command.equals("/reload")) {
+            reload(writer, path);
+        } else if (command.equals("/remove")) {
+            remove(writer, path);
+        } else if (command.equals("/sessions")) {
+            sessions(writer, path);
+        } else if (command.equals("/start")) {
+            start(writer, path);
+        } else if (command.equals("/stop")) {
+            stop(writer, path);
+        } else {
+            writer.println(sm.getString("managerServlet.unknownCommand",
+                                        command));
+        }
+        
+        // Finish up the response
+        writer.flush();
+        writer.close();
+    }
+
+    /**
      * Render a HTML list of the currently
      * active Contexts in our virtual host.
      *
