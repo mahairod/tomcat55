@@ -93,7 +93,7 @@ depends on which <code>Realm</code> implementation you are using:</p>
     <code>&lt;user&gt;</code> for each individual user, which might
     look something like this:
 <source>
-&lt;user name="craigmcc" password="secret" roles="standard,admin"&gt;
+&lt;user name="craigmcc" password="secret" roles="standard,manager"&gt;
 </source>
     which defines the username and password used by this individual to
     log on, and the role names he or she is associated with.  You can
