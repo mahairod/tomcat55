@@ -127,9 +127,15 @@ public interface CatalinaCluster
     
     public void setClusterSender(ClusterSender sender);
     
+    public ClusterSender getClusterSender();
+    
     public void setClusterReceiver(ClusterReceiver receiver);
     
+    public ClusterReceiver getClusterReceiver();
+    
     public void setMembershipService(MembershipService service);
+    
+    public MembershipService getMembershipService();
     
     public void addValve(Valve valve);
     

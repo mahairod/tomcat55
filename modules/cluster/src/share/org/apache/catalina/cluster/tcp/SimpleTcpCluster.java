@@ -88,7 +88,6 @@ import org.apache.catalina.Host;
 
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.CatalinaCluster;
-import org.apache.catalina.cluster.MembershipFactory;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MembershipService;
 import org.apache.commons.beanutils.MethodUtils;
@@ -161,7 +160,7 @@ public class SimpleTcpCluster
     /**
      * Name for logging purpose
      */
-    protected String clusterImpName = "SimpleTcpCluster2";
+    protected String clusterImpName = "SimpleTcpCluster";
 
 
     /**
