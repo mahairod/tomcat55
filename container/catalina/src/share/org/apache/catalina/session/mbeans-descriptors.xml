@@ -52,6 +52,11 @@
                        created by this Manager"
                  type="int"/>
 
+    <attribute   name="sessionIdLength"
+          description="The session id length (in bytes) of Sessions
+                       created by this Manager"
+                 type="int"/>
+
     <attribute   name="name"
           description="The descriptive name of this Manager implementation
                        (for logging)"
@@ -175,6 +180,11 @@
 
     <attribute   name="maxInactiveInterval"
           description="The default maximum inactive interval for Sessions
+                       created by this Manager"
+                 type="int"/>
+
+    <attribute   name="sessionIdLength"
+          description="The session id length (in bytes) of Sessions
                        created by this Manager"
                  type="int"/>
 
