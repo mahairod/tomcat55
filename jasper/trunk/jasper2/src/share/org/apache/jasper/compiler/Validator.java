@@ -265,6 +265,9 @@ public class Validator {
 	private PageInfo pageInfo;
 	private ErrorDispatcher err;
 
+	private static final JspUtil.ValidAttribute[] jspRootAttrs = {
+	    new JspUtil.ValidAttribute("version", true) };
+
 	private static final JspUtil.ValidAttribute[] includeDirectiveAttrs = {
 	    new JspUtil.ValidAttribute("file", true) };
 
@@ -321,6 +324,12 @@ public class Validator {
 	ValidateVisitor(Compiler compiler) {
 	    this.pageInfo = compiler.getPageInfo();
 	    this.err = compiler.getErrorDispatcher();
+	}
+
+	public void visit(Node.JspRoot n) throws JasperException {
+	    JspUtil.checkAttributes("Jsp:root", n.getAttributes(),
+				    jspRootAttrs, n.getStart(), err);
+	    visitBody(n);
 	}
 
 	public void visit(Node.IncludeDirective n) throws JasperException {
