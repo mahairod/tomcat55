@@ -64,6 +64,7 @@ package org.apache.catalina.core;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -164,7 +165,7 @@ import org.apache.commons.modeler.Registry;
  */
 
 public abstract class ContainerBase
-    implements Container, Lifecycle, Pipeline, MBeanRegistration {
+    implements Container, Lifecycle, Pipeline, MBeanRegistration, Serializable {
 
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( ContainerBase.class );
@@ -1580,10 +1581,14 @@ public abstract class ContainerBase
     protected String suffix;
     protected ObjectName oname;
     protected ObjectName controller;
-    protected MBeanServer mserver;
+    protected transient MBeanServer mserver;
 
-    public ObjectName getObjectName() {
+    public ObjectName getJmxName() {
         return oname;
+    }
+    
+    public String getObjectName() {
+        return oname.toString();
     }
 
     public String getDomain() {
@@ -1651,7 +1656,7 @@ public abstract class ContainerBase
         while( it.hasNext() ) {
             Object next=it.next();
             if( next instanceof ContainerBase ) {
-                result[i++]=((ContainerBase)next).getObjectName();
+                result[i++]=((ContainerBase)next).getJmxName();
             }
         }
         return result;

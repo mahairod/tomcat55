@@ -355,11 +355,11 @@ public class StandardPipeline
                 }
                 ObjectName vname=((ValveBase)valve).createObjectName(
                         domain,
-                        ((ContainerBase)container).getObjectName());
+                        ((ContainerBase)container).getJmxName());
                 if( vname != null ) {
                     ((ValveBase)valve).setObjectName(vname);
                     Registry.getRegistry().registerComponent(valve, vname, valve.getClass().getName());
-                    ((ValveBase)valve).setController(((ContainerBase)container).getObjectName());
+                    ((ValveBase)valve).setController(((ContainerBase)container).getJmxName());
                 }
             } catch( Throwable t ) {
                 log.info( "Can't register valve " + valve , t );
@@ -373,7 +373,7 @@ public class StandardPipeline
                 ValveBase vb=(ValveBase)valve;
                 if( vb.getController()!=null &&
                         vb.getController() == 
-                        ((ContainerBase)container).getObjectName() ) {
+                        ((ContainerBase)container).getJmxName() ) {
                     
                     ObjectName vname=vb.getObjectName();
                     Registry.getRegistry().getMBeanServer().unregisterMBean(vname);

@@ -221,7 +221,7 @@ public class StandardService
 
     public ObjectName getContainerName() {
         if( container instanceof ContainerBase ) {
-            return ((ContainerBase)container).getObjectName();
+            return ((ContainerBase)container).getJmxName();
         }
         return null;
     }
@@ -351,7 +351,7 @@ public class StandardService
         for( int i=0; i<results.length; i++ ) {
             // if it's a coyote connector
             //if( connectors[i] instanceof CoyoteConnector ) {
-            //    results[i]=((CoyoteConnector)connectors[i]).getObjectName();
+            //    results[i]=((CoyoteConnector)connectors[i]).getJmxName();
             //}
         }
         return results;
