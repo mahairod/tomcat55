@@ -764,6 +764,9 @@ Catalina Bug Fixes:
 [4.1.25] StandardSession:
          Clone enumerated list to allow mutating.
 
+[4.1.27] AuthenticatorBase:
+         Don't set the no-caching headers on protected POSTed pages, so that
+         the browser's "back" button works as expected.
 
 ----------------
 Coyote Bug Fixes:
