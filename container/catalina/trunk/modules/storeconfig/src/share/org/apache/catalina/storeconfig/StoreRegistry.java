@@ -30,6 +30,7 @@ import org.apache.catalina.cluster.ClusterDeployer;
 import org.apache.catalina.cluster.ClusterReceiver;
 import org.apache.catalina.cluster.ClusterSender;
 import org.apache.catalina.cluster.MembershipService;
+import org.apache.catalina.cluster.MessageListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -55,7 +56,7 @@ public class StoreRegistry {
             ClusterSender.class, ClusterReceiver.class,
             MembershipService.class, ClusterDeployer.class, Realm.class,
             Manager.class, DirContext.class, LifecycleListener.class,
-            Valve.class };
+            Valve.class, MessageListener.class };
 
     /**
      * @return Returns the name.

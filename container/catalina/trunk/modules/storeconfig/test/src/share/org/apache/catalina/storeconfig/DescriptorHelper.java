@@ -20,6 +20,7 @@ import org.apache.catalina.cluster.ClusterDeployer;
 import org.apache.catalina.cluster.ClusterReceiver;
 import org.apache.catalina.cluster.ClusterSender;
 import org.apache.catalina.cluster.MembershipService;
+import org.apache.catalina.cluster.MessageListener;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextLocalEjb;
@@ -27,9 +28,6 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceEnvRef;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.storeconfig.IStoreFactory;
-import org.apache.catalina.storeconfig.StoreDescription;
-import org.apache.catalina.storeconfig.StoreRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -171,6 +169,10 @@ public class DescriptorHelper {
                 false);
         registerDescriptor(clusterDesc, registry, ClusterDeployer.class
                 .getName(), "Deployer", ClusterDeployer.class.getName(),
+                "org.apache.catalina.storeconfig.StoreFactoryBase", false,
+                false);
+        registerDescriptor(clusterDesc, registry, MessageListener.class
+                .getName(), "ClusterListener", MessageListener.class.getName(),
                 "org.apache.catalina.storeconfig.StoreFactoryBase", false,
                 false);
         return clusterDesc;

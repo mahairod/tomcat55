@@ -327,5 +327,12 @@
 		tagClass="org.apache.catalina.cluster.ClusterDeployer"
         storeFactoryClass="org.apache.catalina.storeconfig.StoreFactoryBase">
      </Description> 
+     <Description
+	    tag="ClusterListener"
+		standard="false"
+		default="false" 
+		tagClass="org.apache.catalina.cluster.MessageListener"
+        storeFactoryClass="org.apache.catalina.storeconfig.StoreFactoryBase">
+     </Description>
 </Registry>
 
