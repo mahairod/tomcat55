@@ -155,6 +155,22 @@ public interface Context extends Container {
 
 
     /**
+     * Return the "correctly configured" flag for this Context.
+     */
+    public boolean getConfigured();
+
+
+    /**
+     * Set the "correctly configured" flag for this Context.  This can be
+     * set to false by startup listeners that detect a fatal configuration
+     * error to avoid the application from being made available.
+     *
+     * @param configured The new correctly configured flag
+     */
+    public void setConfigured(boolean configured);
+
+
+    /**
      * Return the "use cookies for session ids" flag.
      */
     public boolean getCookies();

@@ -208,6 +208,12 @@ public class StandardContext
 
 
     /**
+     * The "correctly configured" flag for this Context.
+     */
+    private boolean configured = false;
+
+
+    /**
      * The security constraints for this web application.
      */
     private SecurityConstraint constraints[] = new SecurityConstraint[0];
@@ -621,6 +627,34 @@ public class StandardContext
         this.charsetMapper = mapper;
         support.firePropertyChange("charsetMapper", oldCharsetMapper,
                                    this.charsetMapper);
+
+    }
+
+
+    /**
+     * Return the "correctly configured" flag for this Context.
+     */
+    public boolean getConfigured() {
+
+        return (this.configured);
+
+    }
+
+
+    /**
+     * Set the "correctly configured" flag for this Context.  This can be
+     * set to false by startup listeners that detect a fatal configuration
+     * error to avoid the application from being made available.
+     *
+     * @param configured The new correctly configured flag
+     */
+    public void setConfigured(boolean configured) {
+
+        boolean oldConfigured = this.configured;
+        this.configured = configured;
+        support.firePropertyChange("configured",
+                                   new Boolean(oldConfigured),
+                                   new Boolean(this.configured));
 
     }
 
@@ -3226,7 +3260,10 @@ public class StandardContext
 
         if (debug >= 1)
             log("Starting");
+        if (debug >= 1)
+            log("Processing start(), current available=" + getAvailable());
         setAvailable(false);
+        setConfigured(false);
         boolean ok = true;
 
         // Add missing components as necessary
@@ -3261,6 +3298,8 @@ public class StandardContext
         if (debug >= 1)
             log("Processing standard container startup");
         super.start();
+        if (!getConfigured())
+            ok = false;
 
         // Reading the "catalina.useNaming" environment variable
         String useNamingProperty = System.getProperty("catalina.useNaming");
@@ -3271,7 +3310,7 @@ public class StandardContext
 
         // Create and register the associated naming context, if internal
         // naming is used
-        if (isUseNaming()) {
+        if (ok && isUseNaming()) {
             try {
                 createNamingContext();
             } catch (NamingException e) {
@@ -3282,8 +3321,9 @@ public class StandardContext
         }
 
         // We put the resources into the servlet context
-        getServletContext().setAttribute
-            (Globals.RESOURCES_ATTR, getResources());
+        if (ok)
+            getServletContext().setAttribute
+                (Globals.RESOURCES_ATTR, getResources());
 
         // Binding thread
         ClassLoader oldCCL = bindThread();
@@ -3306,7 +3346,8 @@ public class StandardContext
         }
 
         // Load and initialize all "load on startup" servlets
-        loadOnStartup(findChildren());
+        if (ok)
+            loadOnStartup(findChildren());
 
         // Unbinding thread
         unbindThread(oldCCL);

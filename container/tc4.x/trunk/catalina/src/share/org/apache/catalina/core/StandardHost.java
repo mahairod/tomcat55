@@ -755,7 +755,6 @@ public class StandardHost
         log("standardHost.start " + contextPath);
         try {
             ((Lifecycle) context).start();
-            context.setAvailable(true);
         } catch (LifecycleException e) {
             log("standardHost.start " + contextPath + ": ", e);
             throw new IllegalStateException

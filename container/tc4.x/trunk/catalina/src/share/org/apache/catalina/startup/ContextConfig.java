@@ -799,6 +799,7 @@ public final class ContextConfig
 
         if (debug > 0)
             log(sm.getString("contextConfig.start"));
+        context.setConfigured(false);
         ok = true;
 
         // Set properties based on DefaultContext
@@ -847,10 +848,10 @@ public final class ContextConfig
 
         // Make our application available if no problems were encountered
         if (ok)
-            context.setAvailable(true);
+            context.setConfigured(true);
         else {
             log(sm.getString("contextConfig.unavailable"));
-            context.setAvailable(false);
+            context.setConfigured(false);
         }
 
     }
