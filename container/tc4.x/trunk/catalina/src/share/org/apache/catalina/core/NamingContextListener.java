@@ -266,7 +266,6 @@ public class NamingContextListener
             namingResources = ((Context) container).getNamingResources();
         } else if (container instanceof Server) {
             namingResources = ((Server) container).getGlobalNamingResources();
-            namingResources.addPropertyChangeListener(this);
         } else {
             return;
         }
@@ -308,6 +307,7 @@ public class NamingContextListener
             }
 
             if (container instanceof Server) {
+                namingResources.addPropertyChangeListener(this);
                 org.apache.naming.factory.ResourceLinkFactory.setGlobalContext
                     (namingContext);
                 try {
@@ -873,6 +873,7 @@ public class NamingContextListener
             createSubcontexts(envCtx, resource.getName());
             envCtx.bind(resource.getName(), ref);
         } catch (NamingException e) {
+            e.printStackTrace();
             log(sm.getString("naming.bindFailed", e));
         }
 
