@@ -2246,10 +2246,12 @@ public class CoyoteRequest
             ((HttpServletResponse) response).addCookie(cookie);
         }
 
-        if (session != null)
+        if (session != null) {
+            session.access();
             return (session.getSession());
-        else
+        } else {
             return (null);
+        }
 
     }
 
