@@ -4059,6 +4059,7 @@ public class StandardContext
 
         if (ok) {
 
+            boolean mainOk = false;
             try {
 
                 started = true;
@@ -4084,7 +4085,7 @@ public class StandardContext
 
                 // Set JMX object name for proper pipeline registration
                 preRegisterJMX();
-
+                
                 // Start our child containers, if any
                 Container children[] = findChildren();
                 for (int i = 0; i < children.length; i++) {
@@ -4123,9 +4124,16 @@ public class StandardContext
                 // Start ContainerBackgroundProcessor thread
                 super.threadStart();
 
+                mainOk = true;
+
             } finally {
                 // Unbinding thread
                 unbindThread(oldCCL);
+                if (!mainOk) {
+                    // An exception occurred
+                    // Register with JMX anyway, to allow management
+                    registerJMX();
+                }
             }
 
         }
@@ -4190,9 +4198,9 @@ public class StandardContext
         }
 
         // JMX registration
-        if (ok) {
-            registerJMX();
+        registerJMX();
 
+        if (ok) {
             // Notify our interested LifecycleListeners
             lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
         }
@@ -4206,11 +4214,16 @@ public class StandardContext
                                 sequenceNumber++);
             broadcaster.sendNotification(notification);
         }
-        
+
         // Close all JARs right away to avoid always opening a peak number 
         // of files on startup
         if (getLoader() instanceof WebappLoader) {
             ((WebappLoader) getLoader()).closeJARs(true);
+        }
+
+        // Reinitializing if something went wrong
+        if (!ok && started) {
+            stop();
         }
 
         //cacheContext();
@@ -4403,6 +4416,13 @@ public class StandardContext
      * 
      */ 
     public void destroy() throws Exception {
+        if( oname != null ) { 
+            // Send j2ee.object.deleted notification 
+            Notification notification = 
+                new Notification("j2ee.object.deleted", this.getObjectName(), 
+                                sequenceNumber++);
+            broadcaster.sendNotification(notification);
+        } 
         super.destroy();
     }
     
@@ -4411,17 +4431,6 @@ public class StandardContext
         // If you extend this - override this method and make sure to clean up
         children=new HashMap();
         log.debug("resetContext " + oname + " " + mserver);
-        if( oname != null ) { 
-            Registry.getRegistry().unregisterComponent(oname);
-            
-            // Send j2ee.object.deleted notification 
-            Notification notification = 
-                new Notification("j2ee.object.deleted", this.getObjectName(), 
-                                sequenceNumber++);
-            broadcaster.sendNotification(notification);
-            oname = null;
-        } 
-        
     }
 
     /**
@@ -5233,8 +5242,13 @@ public class StandardContext
             this.addLifecycleListener(config);
 
             log.debug( "AddChild " + parentName + " " + this);
-            mserver.invoke(parentName, "addChild", new Object[] { this },
-                    new String[] {"org.apache.catalina.Container"});
+            try {
+                mserver.invoke(parentName, "addChild", new Object[] { this },
+                               new String[] {"org.apache.catalina.Container"});
+            } catch (Exception e) {
+                destroy();
+                throw e;
+            }
         }
         super.init();
         
