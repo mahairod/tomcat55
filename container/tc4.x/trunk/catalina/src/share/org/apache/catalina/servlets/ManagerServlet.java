@@ -405,6 +405,17 @@ public class ManagerServlet
                                         command));
         }
 
+        // Saving configuration
+        Server server = ServerFactory.getServer();
+        if ((server != null) && (server instanceof StandardServer)) {
+            try {
+                ((StandardServer) server).store();
+            } catch (Exception e) {
+                writer.println(sm.getString("managerServlet.saveFail",
+                                            e.getMessage()));
+            }
+        }
+
         // Finish up the response
         writer.flush();
         writer.close();
