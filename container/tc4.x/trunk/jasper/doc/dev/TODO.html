@@ -46,7 +46,9 @@ to re-architect Jasper into phases, and to provide an additional parser that
 accepts input in the XML syntax.
 <p>
 Two parsers now need to coexist in our implementation, and our "generators" will also need to support the production of an input stream in XML syntax which is then passed to the new Validator class for validation against tag libraries.
-
+<p>
+First implementation committed 2000/09/18. 
+<a href="ModifsForXJsp.html">Summary of Changes</a>.<p>
 <h3>PropertyEditor.setAsText() can now be used to convert from a literal string attribute value</h3>
 From the spec: 
 <quote>
@@ -55,6 +57,9 @@ String constants and request parameter values can be used to assign values to an
 <h3>New ValidatorClass and JspPage classes for validation against tag libraries</h3>
 This is the infrastructure added in the tag libraries to support the validation 
 phase introduced with the support of the XML syntax (see "Made the XML view of a JSP page available for input, and for validation" above).
+<p>
+First implementation committed 2000/09/18. 
+<a href="ModifsForXJsp.html">Summary of Changes</a>.<p>
 
 <h3>New IteratorTag interface to support iteration without BodyContent</h3>
 In JSP 1.1, your custom tag must implement BodyTag if it wants to support
