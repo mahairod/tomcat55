@@ -35,6 +35,9 @@
       <fix>
         <bug>33351</bug>: Fix silent uninstallation. (remm)
       </fix>
+      <fix>
+        <bug>33489</bug>: Missing space in uninstaller message. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
