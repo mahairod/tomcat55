@@ -472,11 +472,10 @@
     <echo message="--- Distribution flags ---" />
     <echo message="copy.dbcp.jar=${copy.dbcp.jar}" />
     <echo message="copy.jmx.jar=${copy.jmx.jar}" />
-    <echo message="copy.launcher.jar=${copy.launcher.jar}" />
+    <echo message="copy.launcher.jars=${copy.launcher.jars}" />
     <echo message="copy.logging.jar=${copy.logging.jar}" />
     <echo message="copy.modeler.jar=${copy.modeler.jar}" />
     <echo message="copy.pool.jar=${copy.pool.jar}" />
-    <echo message="copy.xerces2.jars=${copy.xerces2.jars}"/>
 
   </target>
 
