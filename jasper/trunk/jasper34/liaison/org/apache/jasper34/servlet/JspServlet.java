@@ -273,10 +273,10 @@ public class JspServlet extends HttpServlet {
 	if( loader==null ) {
 	    if( jdk12 ) {
 		try {
-		    Class ld=Class.forName("org.apache.jasper.servlet.JasperLoader12");
+		    Class ld=Class.forName("org.apache.jasper34.servlet.JasperLoader12");
 		    loader=(JasperLoader)ld.newInstance();
 		} catch(Throwable t ) {
-		    loghelper.log("Loading org.apache.jasper.servlet.JasperLoader12", t);
+		    loghelper.log("Loading org.apache.jasper34.servlet.JasperLoader12", t);
 		}
 	    }
 	    if( loader==null )

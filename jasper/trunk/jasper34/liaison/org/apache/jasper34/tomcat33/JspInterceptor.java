@@ -98,7 +98,7 @@ import org.apache.tomcat.facade.*;
  * @author Costin Manolache
  */
 public class JspInterceptor extends BaseInterceptor {
-    static final String JIKES="org.apache.jasper.compiler.JikesJavaCompiler";
+    static final String JIKES="org.apache.jasper34.javacompiler.JikesJavaCompiler";
     static final String JSP_SERVLET="org.apache.jasper34.servlet.JspServlet";
     
     Properties args=new Properties(); // args for jasper
@@ -213,7 +213,7 @@ public class JspInterceptor extends BaseInterceptor {
 	if( "jikes".equals( type ) )
 	    type=JIKES;
 	if( "javac".equals( type ) )
-	    type="org.apache.jasper.compiler.SunJavaCompiler";
+	    type="org.apache.jasper34.javacompiler.SunJavaCompiler";
 		
 	args.put( "jspCompilerPlugin", type );
     }
@@ -725,7 +725,7 @@ final class JasperLiaison {
 	    try {
 
 		jspCompilerPlugin=Class.
-		    forName("org.apache.jasper.compiler.JikesJavaCompiler");
+		    forName(JspInterceptor.JIKES);
 		JavaCompiler javaC=createJavaCompiler( jspCompilerPlugin );
 		
 		prepareCompiler( javaC, options, ctxt );

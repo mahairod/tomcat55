@@ -86,7 +86,7 @@ public class ServletEngine {
             if (tomcat == null) {
                 try {
                     tomcat = (ServletEngine)
-                        Class.forName("org.apache.jasper.runtime.TomcatServletEngine").newInstance();
+                        Class.forName("org.apache.jasper34.servlet.TomcatServletEngine").newInstance();
                 } catch (Exception ex) {
                     return null;
                 }

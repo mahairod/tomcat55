@@ -145,6 +145,10 @@ public class JasperOptionsImpl implements Options {
         return args.getProperty( "jspCompilerPath" );
     }
 
+    public boolean getGenerateCommentMapping() {
+	return false;
+    }
+
     // -------------------- Setters --------------------
 
     public void setProtectionDomain( Object pd ) {

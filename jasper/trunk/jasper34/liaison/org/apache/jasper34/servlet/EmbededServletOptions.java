@@ -226,6 +226,10 @@ public final class EmbededServletOptions implements Options {
 	return javaEncoding;
     }
 
+    public boolean getGenerateCommentMapping() {
+	return false;
+    }
+
     /**
      * Create an EmbededServletOptions object using data available from
      * ServletConfig and ServletContext. 

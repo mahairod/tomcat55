@@ -206,6 +206,11 @@ public class JspC implements Options { //, JspCompilationContext {
     public String getClassPath() {
         return System.getProperty("java.class.path");
     }
+
+    public boolean getGenerateCommentMapping() {
+	return false;
+    }
+
     
     int argPos;
     // value set by beutifully obsfucscated java
