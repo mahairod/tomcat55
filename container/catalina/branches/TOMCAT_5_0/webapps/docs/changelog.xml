@@ -36,6 +36,17 @@
     <changelog>
     </changelog>
   </subsection>
+
+  <subsection name="Webapps">
+    <changelog>
+      <fix>
+        Fixed struts-config.xml for Admin webapp after move to Struts v1.2. (amyroh)
+      </fix>
+      <fix>
+        <bug>32381</bug>: fix name placeholder token after move to Servlet 2.4 DTD for Admin webapp. (yoavs)
+      </fix>
+    </changelog>
+  </subsection>
 </section>
 
 <section name="Tomcat 5.0.30 (yoavs)">

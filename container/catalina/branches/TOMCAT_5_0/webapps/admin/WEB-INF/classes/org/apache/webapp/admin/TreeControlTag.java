@@ -88,7 +88,7 @@ public class TreeControlTag extends TagSupport {
 
     /**
      * The hyperlink to be used for submitting requests to expand and
-     * contract tree nodes.  The placeholder "<code>${name}</code>" will
+     * contract tree nodes.  The placeholder "<code>{name}</code>" will
      * be replaced by the <code>name</code> property of the current
      * tree node.
      */
@@ -350,11 +350,11 @@ public class TreeControlTag extends TagSupport {
         // character in parameter values. 
         String encodedNodeName = URLEncoder.encode(node.getName());
 
-        String action = replace(getAction(), "${name}", encodedNodeName);
+        String action = replace(getAction(), "{name}", encodedNodeName);
 
         
         String updateTreeAction =
-            replace(getAction(), "tree=${name}", "select=" + encodedNodeName);
+            replace(getAction(), "tree={name}", "select=" + encodedNodeName);
         updateTreeAction =
             ((HttpServletResponse) pageContext.getResponse()).
             encodeURL(updateTreeAction);
