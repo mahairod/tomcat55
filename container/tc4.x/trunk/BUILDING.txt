@@ -26,29 +26,25 @@ following:
 
 (1) Download and Install the Ant Binary Distribution
 
-NOTE:  These instructions assume that you are using the Ant 1.3 release.
-Procedures for Ant 1.4 and later versions should be similar, but have not
-been tested.
+* Download a binary distribution of Ant 1.4 from:
 
-* Download a binary distribution of Ant 1.3 from:
-
-    http://jakarta.apache.org/builds/jakarta-ant/release/v1.3/bin/
+    http://jakarta.apache.org/builds/jakarta-ant/release/v1.4/bin/
 
   On a Windows platform, you will need:
-    jakarta-ant-1.3-bin.zip
-    jakarta-ant-1.3-optional.jar
+    jakarta-ant-1.4-bin.zip
+    jakarta-ant-1.4-optional.jar
 
   On a Unix platform, you will need:
-    jakarta-ant-1.3-bin.tar.gz
-    jakarta-ant-1.3-optional.jar
+    jakarta-ant-1.4-bin.tar.gz
+    jakarta-ant-1.4-optional.jar
 
 * Unpack the binary distribution into a convenient location so that the
   Ant release resides in its own directory (conventionally named
-  "jakarta-ant-1.3").  For the purposes of the remainder of this document,
+  "jakarta-ant-1.4").  For the purposes of the remainder of this document,
   the symbolic name "${ant.home}" is used to refer to the full pathname of
   the release directory.
 
-* Copy the file "jakarta-ant-1.3-optional.jar", downloaded above, into
+* Copy the file "jakarta-ant-1.4-optional.jar", downloaded above, into
   the directory "${ant.home}/lib".  This makes available several Ant
   extension commands that are commonly required when building Jakarta
   based projects.
@@ -70,15 +66,8 @@ been tested.
   symbolic name "${jaxp.home}" is used to refer to the full pathname of
   the release directory.
 
-* Make the JAR files of this distribution ("crimson.jar", "jaxp.jar", and
-  "xalan.jar") available for use by performing ONE of the following options:
-
-  - Remove the existing "jaxp.jar" and "parser.jar" files found in the
-    "${ant.home}/lib" directory, and copy these JAR files into the
-    "${ant.home}/lib" directory (prefered option).
-
-  - Add these files to your CLASSPATH environment variable when you
-    execute the build process.
+* Make the "xalan.jar" file of this distribution available to Ant (so that
+  it can be used with the <style> tag) by copying it to "${ant.home}/lib".
 
 
 (3) Download and Install Subproject Source Code
@@ -162,27 +151,7 @@ pool implementation for JNDI-accessed data sources.
   in its own subdirectory.
 
 
-(7) Download and Install JavaMail and Java Activation Framework (OPTIONAL)
-
-NOTE:  This step is required only if you plan to build the resource object
-factories for creating mail-related JNDI resources.
-
-* Download the JavaMail Reference Implementation (version 1.2 or later) from:
-
-    http://java.sun.com/products/javamail/
-
-* Unpack the reference implementation into a convenient location so that
-  it resides in its own subdirectory.
-
-* Download the "JavaBeans Activation Framework" (version 1.0.1 or later) from:
-
-    http://java.sun.com/products/javabeans/glasgow/jaf.html
-
-* Unpack the framework into a convenient location so that it resides
-  in its own subdirectory.
-
-
-(8) Download and Install the JMX 1.0 Reference Implementation
+(7) Download and Install the JMX 1.0 Reference Implementation
 
 * Download the JMX Instrumentation and Agent Reference Implementation
   (version 1.0 or later) from
@@ -193,7 +162,7 @@ factories for creating mail-related JNDI resources.
   it resides in its own subdirectory.
 
 
-(9) Download and Install the JNDI 1.2.1 Reference Implementation
+(8) Download and Install the JNDI 1.2.1 Reference Implementation
 
 NOTE:  This step is required to build Tomcat 4.0, even when you are running
 a JDK 1.3 (or later) platform that includes the JNDI classes.  This is because
@@ -208,7 +177,7 @@ the Tomcat build process includes "jndi.jar" into the binary distribution.
   it resides in its own subdirectory.
 
 
-(10) Download and Install the Java Activation Framework 1.0.1
+(9) Download and Install the Java Activation Framework 1.0.1
 
 * Download the Java Activation Framework package (version 1.0.1 or later) from
 
@@ -217,7 +186,7 @@ the Tomcat build process includes "jndi.jar" into the binary distribution.
 * Unpack the package into a convenient location so that it
   resised in its own subdirectory.
 
-(11) Download and Install JavaMail 1.2
+(10) Download and Install JavaMail 1.2
 
 * Download the JavaMail package (version 1.2 or later) from
 
@@ -227,7 +196,7 @@ the Tomcat build process includes "jndi.jar" into the binary distribution.
   it resides in its own subdirectory.
 
 
-(12) Download and Install the JSSE 1.0.2 Reference Implementation
+(11) Download and Install the JSSE 1.0.2 Reference Implementation
 
 * Download the Java Secure Sockets Extension (JSSE) package,
   (version 1.0.2 or later) from
@@ -238,7 +207,7 @@ the Tomcat build process includes "jndi.jar" into the binary distribution.
   it resides in its own subdirectory.
 
 
-(13) Download and Install the Java Transaction APIs (OPTIONAL)
+(12) Download and Install the Java Transaction APIs (OPTIONAL)
 
 NOTE:  This step is only required if you wish to build the Tyrex connection
 pool implementation for JNDI-accessed data sources.
@@ -251,7 +220,7 @@ pool implementation for JNDI-accessed data sources.
   own subdirectory.
 
 
-(14) Download and Install the JUnit Testing Package (OPTIONAL)
+(13) Download and Install the JUnit Testing Package (OPTIONAL)
 
 NOTE:  This step is only required if you wish to build and execute the unit
 tests that are part of the Tomcat 4.0 source base.
@@ -264,7 +233,7 @@ tests that are part of the Tomcat 4.0 source base.
   own subdirectory.
 
 
-(15) Download and Install the Tyrex Data Source Package (OPTIONAL)
+(14) Download and Install the Tyrex Data Source Package (OPTIONAL)
 
 NOTE:  This step is only required if you wish to build the Tyrex connection
 pool implementation for JNDI-accessed data sources.
@@ -277,7 +246,7 @@ pool implementation for JNDI-accessed data sources.
   own subdirectory.
 
 
-(16) Customize Build Properties For This Subproject
+(15) Customize Build Properties For This Subproject
 
 Most Jakarta subprojects allow you to customize Ant properties (with default
 values defined in the "build.xml" file.  This is done by creating a text file
