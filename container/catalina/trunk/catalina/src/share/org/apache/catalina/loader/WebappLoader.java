@@ -1185,7 +1185,8 @@ public class WebappLoader
                 return (String)o;
             return null;
         } catch( Exception ex ) {
-            log.info("getClasspath ", ex);
+            if (log.isDebugEnabled())
+                log.debug("getClasspath ", ex);
         }
         return null;
     }
