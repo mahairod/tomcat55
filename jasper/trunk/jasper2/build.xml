@@ -92,6 +92,31 @@
       </fileset>
     </copy>
 
+   <!-- Jasper Compiler JAR File -->
+   <jar  jarfile="${jasper.build}/shared/lib/jasper-compiler.jar">
+      <fileset dir="${jasper.build}/shared/classes">
+        <include name="org/apache/jasper/compiler/**" />
+        <include name="org/apache/jasper/xmlparser/**" />
+        <include name="org/apache/jasper/servlet/**" />
+        <exclude name="org/apache/jasper/Constants.class" />
+        <exclude name="org/apache/jasper/JasperException.class" />
+        <include name="org/apache/jasper/*.class" />
+      </fileset>
+    </jar>
+
+    <!-- Jasper Runtime JAR File -->
+    <jar  jarfile="${jasper.build}/shared/lib/jasper-runtime.jar">
+      <fileset dir="${jasper.build}/shared/classes">
+        <include name="org/apache/jasper/Constants.class" />
+        <include name="org/apache/jasper/JasperException.class" />
+        <include name="org/apache/jasper/logging/**" />
+        <include name="org/apache/jasper/resources/**" />
+        <include name="org/apache/jasper/runtime/**" />
+        <include name="org/apache/jasper/util/**" />
+      </fileset>
+    </jar>
+
+
   </target>
 
 
@@ -178,30 +203,13 @@
   <!-- ====================== DEPLOY: Create Jasper JARs ================== -->
   <target name="deploy" depends="deploy-static,build-main"
    description="Build and deploy Jasper component">
- 
-   <!-- Jasper Compiler JAR File -->
-   <jar  jarfile="${jasper.deploy}/common/lib/jasper-compiler.jar">
-      <fileset dir="${jasper.build}/shared/classes">
-        <include name="org/apache/jasper/compiler/**" />
-        <include name="org/apache/jasper/xmlparser/**" />
-        <include name="org/apache/jasper/servlet/**" />
-        <exclude name="org/apache/jasper/Constants.class" />
-        <exclude name="org/apache/jasper/JasperException.class" />
-        <include name="org/apache/jasper/*.class" />
-      </fileset>
-    </jar>
+    <echo message="Deploy to ${jasper.deploy}/common/lib" /> 
+    <!-- Jasper Compiler JAR File -->
+    <copy file="${jasper.build}/shared/lib/jasper-compiler.jar"
+          tofile="${jasper.deploy}/common/lib/jasper-compiler.jar" />
 
-    <!-- Jasper Runtime JAR File -->
-    <jar  jarfile="${jasper.deploy}/common/lib/jasper-runtime.jar">
-      <fileset dir="${jasper.build}/shared/classes">
-        <include name="org/apache/jasper/Constants.class" />
-        <include name="org/apache/jasper/JasperException.class" />
-        <include name="org/apache/jasper/logging/**" />
-        <include name="org/apache/jasper/resources/**" />
-        <include name="org/apache/jasper/runtime/**" />
-        <include name="org/apache/jasper/util/**" />
-      </fileset>
-    </jar>
+    <copy file="${jasper.build}/shared/lib/jasper-runtime.jar"
+          tofile="${jasper.deploy}/common/lib/jasper-runtime.jar" />
 
     <!-- Copy Ant JAR -->
     <copy todir="${jasper.deploy}/common/lib" file="${ant.jar}"/>
