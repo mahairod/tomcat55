@@ -73,6 +73,7 @@ import org.apache.jasper.compiler.CommandLineCompiler;
 import org.apache.jasper.compiler.TldLocationsCache;
 
 import org.apache.jasper.servlet.JasperLoader;
+import org.apache.jasper.servlet.JspCServletContext;
 
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.logging.JasperLogger;
@@ -351,7 +352,7 @@ public class JspC implements Options { //, JspCompilationContext {
                 File classes = new File(clctxt.getRealPath("/WEB-INF/classes"));
                 try {
                      if (classes.exists()) {
-                         urls.add(classes.toURL());
+                         urls.add(classes.getCanonicalFile().toURL());
                     }
                 } catch (IOException ioe) {
                     // failing a toCanonicalPath on a file that
@@ -367,7 +368,7 @@ public class JspC implements Options { //, JspCompilationContext {
 			    File libFile = new File(lib.toString()
                                     + File.separator
                                     + libs[i]);
-			    urls.add(libFile.toURL());
+			    urls.add(libFile.getCanonicalFile().toURL());
                         } catch (IOException ioe) {
                             // failing a toCanonicalPath on a file that
                             // exists() should be a JVM regression test,
@@ -377,9 +378,25 @@ public class JspC implements Options { //, JspCompilationContext {
                     }
                 }
             }
-	    URLClassLoader loader = new URLClassLoader(
-		(URL[])(urls.toArray(new URL[urls.size()])),null);
-	    clctxt.setClassLoader(loader);
+            StringTokenizer tokenizer = new StringTokenizer
+                (clctxt.getClassPath(), File.pathSeparator);
+            while (tokenizer.hasMoreTokens()) {
+                String path = tokenizer.nextToken();
+                try {
+                    File libFile = new File(path);
+                    urls.add(libFile.toURL());
+                } catch (IOException ioe) {
+                    // Failing a toCanonicalPath on a file that
+                    // exists() should be a JVM regression test,
+                    // therefore we have permission to freak uot
+                    throw new RuntimeException(ioe.toString());
+                }
+            }
+            urls.add(new File
+                     (clctxt.getRealPath("/")).getCanonicalFile().toURL());
+            URLClassLoader loader = new URLClassLoader
+                ((URL[])(urls.toArray(new URL[urls.size()])));
+            clctxt.setClassLoader(loader);
             CommandLineCompiler clc = new CommandLineCompiler(clctxt);
 
             clc.compile();
@@ -628,6 +645,16 @@ public class JspC implements Options { //, JspCompilationContext {
                     mappingout = null;
                 }
 
+                try {
+                    JspCServletContext context =
+                        new JspCServletContext
+                        (new PrintWriter(System.out),
+                         new URL("file:" + ubase.replace('\\','/') + "/"));
+                    tldLocationsCache = new TldLocationsCache(context);
+                } catch (MalformedURLException me) {
+                    System.out.println("**" + me);
+                }
+                                                                       
                 Enumeration e = pages.elements();
                 while (e.hasMoreElements())
                 {
