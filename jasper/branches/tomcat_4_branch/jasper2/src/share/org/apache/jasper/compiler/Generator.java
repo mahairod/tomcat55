@@ -563,7 +563,7 @@ public class Generator {
 
 	    if (attr.isExpression()) {
 		if (encode) {
-		    return "java.net.URLEncoder.encode(" + v + ")";
+		    return "java.net.URLEncoder.encode(\"\" + " + v + ")";
 		}
 		return v;
 	    } else {
