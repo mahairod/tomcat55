@@ -301,6 +301,10 @@ public class SingleSignOn
         if (ssoId == null)
             return;
 
+        deregister(ssoId);
+        // FIXME: There's no way right now to specify per application or
+        // global logout
+        /*
         if ( event.getData() != null 
              && "logout".equals( event.getData().toString() )) {
             // logout of all applications
@@ -309,6 +313,7 @@ public class SingleSignOn
             // invalidate just one session
             deregister(ssoId, session);
         }
+        */
 
     }
 
