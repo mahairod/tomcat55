@@ -595,6 +595,10 @@
          request="${context.path}/JspDoc01.jsp" debug="${debug}"
           golden="${golden.path}/JspDoc01.txt"/>
 
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/JspDoc02.jsp" debug="${debug}"
+          golden="${golden.path}/JspDoc02.txt"/>
+
     <echo message="----- jsp:forward -----"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
