@@ -1198,6 +1198,14 @@ public class StandardContext
         support.firePropertyChange("distributable",
                                    new Boolean(oldDistributable),
                                    new Boolean(this.distributable));
+
+        // Bugzilla 32866
+        if(log.isDebugEnabled()) {
+            log.debug("Propagating distributable=" + distributable + " to manager");
+        }
+        if(getManager() != null) {
+            getManager().setDistributable(distributable);
+        }
     }
 
 
