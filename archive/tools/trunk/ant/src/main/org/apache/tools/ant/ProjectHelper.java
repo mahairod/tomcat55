@@ -60,9 +60,6 @@ import java.io.IOException;
 import java.lang.reflect.*;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import com.sun.xml.parser.Resolver;
-import com.sun.xml.tree.XmlDocument;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.w3c.dom.*;
     
@@ -80,15 +77,12 @@ class ProjectHelper {
     {
 
 	// XXX
-	// need to make this a bit more parser independent...
 	// need to get rid of the DOM layer and use SAX
 	
-	InputSource input;
-	XmlDocument doc;
+	Document doc;
 
 	try {
-	    input = Resolver.createInputSource(buildFile);
-	    doc = XmlDocument.createXmlDocument(input, false);
+	    doc=Parser.getParser(project).parse(buildFile);
 	} catch (IOException ioe) {
 	    String msg = "Can't open config file: " + buildFile +
 		" due to: " + ioe;
