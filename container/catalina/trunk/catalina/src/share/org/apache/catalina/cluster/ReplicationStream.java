@@ -74,9 +74,9 @@ import java.io.ObjectStreamClass;
  * class loader for this web application.  This allows classes defined only
  * with the web application to be found correctly.
  *
- * @@author Craig R. McClanahan
- * @@author Bip Thelin
- * @@version $Revision$, $Date$
+ * @author Craig R. McClanahan
+ * @author Bip Thelin
+ * @version $Revision$, $Date$
  */
 
 public final class ReplicationStream
@@ -88,13 +88,14 @@ public final class ReplicationStream
      */
     private ClassLoader classLoader = null;
 
+
     /**
      * Construct a new instance of CustomObjectInputStream
      *
-     * @@param stream The input stream we will read from
-     * @@param classLoader The class loader used to instantiate objects
+     * @param stream The input stream we will read from
+     * @param classLoader The class loader used to instantiate objects
      *
-     * @@exception IOException if an input/output error occurs
+     * @exception IOException if an input/output error occurs
      */
     public ReplicationStream(InputStream stream,
                              ClassLoader classLoader)
@@ -102,26 +103,27 @@ public final class ReplicationStream
 
         super(stream);
         this.classLoader = classLoader;
+
     }
+
 
     /**
      * Load the local class equivalent of the specified stream class
      * description, by using the class loader assigned to this Context.
      *
-     * @@param classDesc Class description from the input stream
+     * @param classDesc Class description from the input stream
      *
-     * @@exception ClassNotFoundException if this class cannot be found
-     * @@exception IOException if an input/output error occurs
+     * @exception ClassNotFoundException if this class cannot be found
+     * @exception IOException if an input/output error occurs
      */
     public Class resolveClass(ObjectStreamClass classDesc)
         throws ClassNotFoundException, IOException {
-        try
-        {
+        try {
             return (classLoader.loadClass(classDesc.getName()));
-        }
-        catch ( Exception x )
-        {
+        } catch (Exception x) {
             return getClass().getClassLoader().loadClass(classDesc.getName());
         }
     }
+
+
 }

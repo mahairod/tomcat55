@@ -72,64 +72,80 @@ import org.apache.catalina.Manager;
 import org.apache.catalina.SessionListener;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.session.StandardSession;
+import org.apache.catalina.util.StringManager;
 
 /**
  * Title:        Tomcat Session Replication for Tomcat 4.0 <BR>
  * Description:  A very simple straight forward implementation of 
  *               session replication of servers in a cluster.<BR>
  *               This session replication is implemented "live". By live
- *               I mean, when a session attribute is added into a session on Node A
- *               a message is broadcasted to other messages and setAttribute is called on the replicated 
- *               sessions.<BR>
+ *               I mean, when a session attribute is added into a session on 
+ *               Node A a message is broadcasted to other messages 
+ *               and setAttribute is called on the replicated sessions.<BR>
  *               A full description of this implementation can be found under
- *               <href="http://www.filip.net/tomcat/">Filip's Tomcat Page</a><BR>            
+ *               <href="http://www.filip.net/tomcat/">Filip's Tomcat 
+ *               Page</a><BR>            
  *               
- * Copyright:    See apache license
- * Company:      www.filip.net
- * @author  <a href="mailto:mail@filip.net">Filip Hanik</a>
- * @version 1.0 for TC 4.0
  * Description:<BR>
- * The ReplicatedSession class is a simple extension of the StandardSession class
- * It overrides a few methods (setAttribute, removeAttribute, expire, access) and has 
- * hooks into the JGManager to broadcast and receive events from the cluster.<BR>
- * This class inherits the readObjectData and writeObject data methods from the StandardSession
- * and does not contain any serializable elements in addition to the inherited ones from the StandardSession
+ * The ReplicatedSession class is a simple extension of the StandardSession 
+ * class. It overrides a few methods (setAttribute, removeAttribute, expire, 
+ * access) and has hooks into the JGManager to broadcast and receive events 
+ * from the cluster.<BR>
+ * This class inherits the readObjectData and writeObject data methods from 
+ * the StandardSession and does not contain any serializable elements 
+ * in addition to the inherited ones from the StandardSession.
  * 
+ * @author Filip Hanik
  */
 public class ReplicatedSession
     extends StandardSession {
-    
-    private transient Manager mManager = null;
-    
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * The string manager for this package.
+     */
+    protected StringManager sm = StringManager.getManager(Constants.Package);
+
+
+    private transient Manager manager = null;
+
+
+    // ------------------------------------------------------------ Constructor
+
+
     public ReplicatedSession(Manager manager) {
         super(manager);
-        mManager = manager;
+        this.manager = manager;
     }
-    
+
+
+    // --------------------------------------------------------- Public Methods
+
+
     /**
      * Update the accessed time information for this session.  This method
      * should be called by the context when a request comes in for a particular
      * session, even if the application does not reference it.
+     * 
      * @param notify - if true the other cluster nodes will be notified 
      */
     public void access(boolean notify) {
 
         super.access();
-        //notify javagroups that session has been accessed
-        if ( notify )
-        {
+        // Notify javagroups that session has been accessed
+        if (notify) {
             SessionMessage msg = new SessionMessage
-                (mManager.getContainer().getName(), 
+                (manager.getContainer().getName(), 
                  SessionMessage.EVT_SESSION_ACCESSED,
-                                                              null,
-                                                              this.getId(),
-                                                              null,
-                                                              null,
-                                                              null);
+                 null, this.getId(), null, null, null);
             sendMessage(msg);
         }
-        //log("Access has been called in the session");
+
     }
+
 
     /**
      * Update the accessed time information for this session.  This method
@@ -139,13 +155,12 @@ public class ReplicatedSession
     public void access() {
         access(true);
     }
-    
 
-    
-    
+
     /**
      * Perform the internal processing required to invalidate this session,
      * without triggering an exception if the session has already expired.
+     * 
      * @param notify - the inherited notify from StandardSession
      * @param jgnotify - if true other nodes in the cluster will be notified
      */
@@ -153,22 +168,19 @@ public class ReplicatedSession
         
         String id = getId();
         super.expire();
-        //notify javagroups about the expiration
-        if ( jgnotify )
-        {
-            int event = notify ? SessionMessage.EVT_SESSION_EXPIRED_WNOTIFY : SessionMessage.EVT_SESSION_EXPIRED_WONOTIFY; 
-            SessionMessage msg = 
-                new SessionMessage(mManager.getContainer().getName(), event,
-                                  null,
-                                  id,
-                                  null,
-                                  null,
-                                  null);
+        // Notify javagroups about the expiration
+        if (jgnotify) {
+            int event = notify ? SessionMessage.EVT_SESSION_EXPIRED_WNOTIFY 
+                : SessionMessage.EVT_SESSION_EXPIRED_WONOTIFY; 
+            SessionMessage msg = new SessionMessage
+                (manager.getContainer().getName(), event,
+                 null, id, null, null, null);
             sendMessage(msg);
         }
-        log("Expire called on session with jgnotify="+jgnotify+ " and notify="+notify);
-    }//expire
-    
+
+    }
+
+
     /**
      * Perform the internal processing required to invalidate this session,
      * without triggering an exception if the session has already expired.
@@ -176,16 +188,17 @@ public class ReplicatedSession
     public void expire() {
         expire(true,true);
     }
-    
-   /**
+
+
+    /**
      * Perform the internal processing required to invalidate this session,
      * without triggering an exception if the session has already expired.
      */
     public void expire(boolean notify) {
         expire(notify,true);
     }
-    
-    
+
+
     /**
      * Remove the object bound with the specified name from this session.  If
      * the session does not have an object bound with this name, this method
@@ -202,31 +215,31 @@ public class ReplicatedSession
      * @exception IllegalStateException if this method is called on an
      *  invalidated session
      */
-    public void removeAttribute(String name, boolean notify, boolean jgnotify) {
+    public void removeAttribute(String name, boolean notify, 
+                                boolean jgnotify) {
+
         super.removeAttribute(name);
-        if ( jgnotify )
-        {
-            SessionMessage msg = 
-                new SessionMessage(mManager.getContainer().getName(), notify?SessionMessage.EVT_ATTRIBUTE_REMOVED_WNOTIFY:SessionMessage.EVT_ATTRIBUTE_REMOVED_WONOTIFY,
-                                                              null,
-                                                              getId(),
-                                                              name,
-                                                              null,
-                                                              null);
+        if (jgnotify) {
+            SessionMessage msg = new SessionMessage
+                (manager.getContainer().getName(), 
+                 notify ? SessionMessage.EVT_ATTRIBUTE_REMOVED_WNOTIFY 
+                 : SessionMessage.EVT_ATTRIBUTE_REMOVED_WONOTIFY,
+                 null, getId(), name, null, null);
             sendMessage(msg);
         }
-        
+
     }
-    
+
+
     /**
-     * see parent description,
+     * See parent description,
      * plus we also notify other nodes in the cluster
      */
     public void removeAttribute(String name, boolean notify) {
         removeAttribute(name,notify,true);
     }
-    
-    
+
+
     /**
      * Bind an object to this session, using the specified name.  If an object
      * of the same name is already bound to this session, the object is
@@ -246,46 +259,43 @@ public class ReplicatedSession
      * @excpetion IllegalArgumentException if the value is not serializable
      */
     public void setAttribute(String name, Object value, boolean notify) {
-        if (!(value instanceof java.io.Serializable))
-        {
-            throw new java.lang.IllegalArgumentException("Attribute["+name+"] is not serializable.");
-        } 
+
+        if (!(value instanceof java.io.Serializable)) {
+            throw new IllegalArgumentException
+                (sm.getString("clusterSession.attributeNotSerializable",
+                              name));
+        }
         super.setAttribute(name,value);
-        //notify javagroups
-        if ( notify)
-        {
-            SessionMessage msg = 
-                new SessionMessage(mManager.getContainer().getName(), SessionMessage.EVT_ATTRIBUTE_ADDED,
-                                                              null,
-                                                              getId(),
-                                                              name,
-                                                              value,
-                                                              null);
+        // Notify javagroups
+        if (notify) {
+            SessionMessage msg = new SessionMessage
+                (manager.getContainer().getName(), 
+                 SessionMessage.EVT_ATTRIBUTE_ADDED,
+                 null, getId(), name, value, null);
             sendMessage(msg);
         }
+
     }
-    
+
+
     /**
      * Sets an attribute and notifies the other nodes in the cluster
      */
-    public void setAttribute(String name, Object value)
-    {
-        setAttribute(name,value,true);
+    public void setAttribute(String name, Object value) {
+        setAttribute(name, value, true);
     }
-    
 
-    
+
     /**
      * Sets the manager for this session
      * @param mgr - the servers JGManager 
      */
-    public void setManager(JGManager mgr)
-    {
-        mManager = mgr;
+    public void setManager(JGManager mgr) {
+        manager = mgr;
         super.setManager(mgr);
     }
-    
-    
+
+
     /**
      * Set the authenticated Principal that is associated with this Session.
      * This provides an <code>Authenticator</code> with a means to cache a
@@ -296,27 +306,24 @@ public class ReplicatedSession
      * @param jgnotify notify the other nodes in the cluster? (true/false)
      */
     public void setPrincipal(Principal principal) {
-        setPrincipal(principal,true);
+        setPrincipal(principal, true);
     }
-    
+
+
     public void setPrincipal(Principal principal, boolean jgnotify) {
-        //log("setPrincipal called in the ReplicatedSession");
         super.setPrincipal(principal);
-        if ( jgnotify)
-        {
-            //log("Sending message");
-            SessionMessage msg = 
-                new SessionMessage(mManager.getContainer().getName(), SessionMessage.EVT_SET_USER_PRINCIPAL,
-                                                              null,
-                                                              getId(),
-                                                              null,
-                                                              null,
-                                                              SerializablePrincipal.createPrincipal((GenericPrincipal)principal));
+        if (jgnotify) {
+            SessionMessage msg = new SessionMessage
+                (manager.getContainer().getName(), 
+                 SessionMessage.EVT_SET_USER_PRINCIPAL,
+                 null, getId(), null, null,
+                 SerializablePrincipal.createPrincipal
+                 ((GenericPrincipal) principal));
             sendMessage(msg);
         }
-    }   
-    
-    
+    }
+
+
     /**
      * Remove any object bound to the specified name in the internal notes
      * for this session.
@@ -325,25 +332,22 @@ public class ReplicatedSession
      */
     public void removeNote(String name, boolean jgnotify) {
         super.removeNote(name);
-        if ( jgnotify)
-        {
-            SessionMessage msg = 
-                new SessionMessage(mManager.getContainer().getName(), SessionMessage.EVT_REMOVE_SESSION_NOTE,
-                                                              null,
-                                                              getId(),
-                                                              name,
-                                                              null,
-                                                              null);
+        if (jgnotify) {
+            SessionMessage msg = new SessionMessage
+                (manager.getContainer().getName(), 
+                 SessionMessage.EVT_REMOVE_SESSION_NOTE,
+                 null, getId(), name, null, null);
             sendMessage(msg);
         }
     }
+
+
     public void removeNote(String name) {
-        //disable replication of notes
-        removeNote(name,false);
-        //removeNote(name,true);
+        // Disable replication of notes
+        removeNote(name, false);
     }
-    
-    
+
+
     /**
      * Bind an object to a specified name in the internal notes associated
      * with this session, replacing any existing binding for this name.
@@ -354,39 +358,35 @@ public class ReplicatedSession
     public void setNote(String name, Object value, boolean jgnotify) {
         
         super.setNote(name,value);
-        if ( jgnotify )
-        {
-            SessionMessage msg = 
-                new SessionMessage(mManager.getContainer().getName(), SessionMessage.EVT_SET_SESSION_NOTE,
-                                                              null,
-                                                              getId(),
-                                                              name,
-                                                              value,
-                                                              null);
+        if (jgnotify) {
+            SessionMessage msg = new SessionMessage
+                (manager.getContainer().getName(), 
+                 SessionMessage.EVT_SET_SESSION_NOTE,
+                 null, getId(), name, value, null);
             sendMessage(msg);
         }
 
     }
+
+
     public void setNote(String name, Object value) {
         //for now disable replication of notes
-        setNote(name,value,false);
-        //setNote(name,value,true);
+        setNote(name, value, false);
     }
 
 
+    // -------------------------------------------------------- Private Methods
+
+
     /**
-     * Uses the manager to send a message to the other nodes
+     * Uses the manager to send a message to the other nodes.
      */
-    private void sendMessage(SessionMessage msg )
-    {
-        if ( this.mManager != null && this.mManager instanceof JGManager )
-        {
-            JGManager transport = (JGManager) mManager;
+    private void sendMessage(SessionMessage msg) {
+        if ((this.manager != null) && (this.manager instanceof JGManager)) {
+            JGManager transport = (JGManager) manager;
             transport.sendSessionEvent(msg);
-        }
-        else
-        {
-            log("Not sending session event through javagroups - invalid manager="+mManager);
+        } else {
+            log(sm.getString("clusterSession.invalidManager"));
         }
     }
 

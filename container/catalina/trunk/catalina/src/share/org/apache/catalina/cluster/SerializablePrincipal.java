@@ -76,8 +76,9 @@ import org.apache.catalina.realm.GenericPrincipal;
 /**
  * Generic implementation of <strong>java.security.Principal</strong> that
  * is available for use by <code>Realm</code> implementations.
- * The GenericPrincipal does NOT implement serializable and I didn't want to change that implementation
- * hence I implemented this one instead.
+ * The GenericPrincipal does NOT implement serializable and I didn't want 
+ * to change that implementation hence I implemented this one instead.
+ * 
  * @author Filip Hanik
  * @version $Revision$ $Date$
  */
@@ -87,10 +88,12 @@ public class SerializablePrincipal
 
     // ----------------------------------------------------------- Constructors
 
-    public SerializablePrincipal()
-    {
+
+    public SerializablePrincipal() {
         super();
     }
+
+
     /**
      * Construct a new Principal, associated with the specified Realm, for the
      * specified username and password.
@@ -100,9 +103,7 @@ public class SerializablePrincipal
      * @param password Credentials used to authenticate this user
      */
     public SerializablePrincipal(Realm realm, String name, String password) {
-
         this(realm, name, password, null);
-
     }
 
 
@@ -117,7 +118,7 @@ public class SerializablePrincipal
      * @param roles List of roles (must be Strings) possessed by this user
      */
     public SerializablePrincipal(Realm realm, String name, String password,
-                            List roles) {
+                                 List roles) {
 
         super();
         this.realm = realm;
@@ -171,8 +172,6 @@ public class SerializablePrincipal
     }
     
 
-
-
     /**
      * The set of roles associated with this user.
      */
@@ -186,8 +185,6 @@ public class SerializablePrincipal
     // --------------------------------------------------------- Public Methods
 
 
- 
-
     /**
      * Return a String representation of this object, which exposes only
      * information that should be public.
@@ -200,19 +197,26 @@ public class SerializablePrincipal
         return (sb.toString());
 
     }
-    
-    public static SerializablePrincipal createPrincipal(GenericPrincipal principal)
-    {
-        if ( principal==null) return null;
-        return new SerializablePrincipal(principal.getRealm(),
-                                         principal.getName(),
-                                         principal.getPassword(),
-                                         principal.getRoles()!=null?Arrays.asList(principal.getRoles()):null);
+
+
+    public static SerializablePrincipal createPrincipal
+        (GenericPrincipal principal) {
+
+        if (principal == null)
+            return null;
+
+        return new SerializablePrincipal
+            (principal.getRealm(), principal.getName(),
+             principal.getPassword(),
+             principal.getRoles() != null 
+             ? Arrays.asList(principal.getRoles()) : null);
     }
-    
-    public GenericPrincipal getPrincipal( Realm realm )
-    {
-        return new GenericPrincipal(realm,name,password,getRoles()!=null?Arrays.asList(getRoles()):null);
+
+
+    public GenericPrincipal getPrincipal(Realm realm) {
+        return new GenericPrincipal(realm, name, password, getRoles() != null
+                                    ? Arrays.asList(getRoles()) 
+                                    : null);
     }
 
 
