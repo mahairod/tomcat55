@@ -111,7 +111,10 @@ public class Tomcat3Adapter implements Adapter {
         } else {
             resA=(Tomcat3Response)reqA.getResponse();
         }
-        
+
+        if( reqA.scheme().isNull() ) {
+	    reqA.scheme().setString("http");
+	}
 	try {
 	    cm.service( reqA, resA );
 	} finally {
