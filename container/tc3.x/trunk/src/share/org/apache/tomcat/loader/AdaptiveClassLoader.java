@@ -203,7 +203,7 @@ public class AdaptiveClassLoader extends ClassLoader {
         while(e.hasMoreElements()) {
             Object o = e.nextElement();
             File file;
-            File[] files;
+            String[] files;
             int i;
 
             // Check to see if element is a File instance.
@@ -219,7 +219,7 @@ public class AdaptiveClassLoader extends ClassLoader {
             {
                 for (i=0;i<files.length;i++)
                 {
-                    file=files[i];
+                    file=new File(files[i]);
                     // Check to see if we have proper access.
                     if (!file.exists()) {
                         throw new IllegalArgumentException("Repository "
