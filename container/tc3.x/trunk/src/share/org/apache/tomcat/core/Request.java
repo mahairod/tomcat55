@@ -400,8 +400,8 @@ public class Request  {
 // 		    ServerSessionManager.getManager()
 // 		    .getServerSession(this, response, create);
 // 		serverSession.accessed();
-		serverSession =ServerSessionManager.getManager()
- 		    .getSession(this, response, create);
+		SessionManager sM=getContext().getSessionManager();
+		serverSession =sM.getSession(this, response, create);
  		
 	    }
 	}

@@ -1,10 +1,6 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
- *
+ * 
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 1999 The Apache Software Foundation.  All rights 
@@ -62,8 +58,9 @@
  */ 
 
 
-package org.apache.tomcat.core;
+package org.apache.tomcat.session;
 
+import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.StringManager;
 import java.io.*;
 import java.net.*;
@@ -72,64 +69,42 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
- * Core implementation of a server session
+ * Core implementation of an application level session
  *
  * @author James Duncan Davidson [duncan@eng.sun.com]
+ * @author Jason Hunter [jch@eng.sun.com]
  * @author James Todd [gonzo@eng.sun.com]
  */
 
-public class ServerSession {
+public class ApplicationSession implements HttpSession {
 
     private StringManager sm =
         StringManager.getManager(Constants.Package);
     private Hashtable values = new Hashtable();
-    private Hashtable appSessions = new Hashtable();
     private String id;
+    private ServerSession serverSession;
+    private Context context;
     private long creationTime = System.currentTimeMillis();;
     private long thisAccessTime = creationTime;
     private long lastAccessed = creationTime;
     private int inactiveInterval = -1;
-    
-    ServerSession(String id) {
-	this.id = id;
+    private boolean valid = true;
+
+    ApplicationSession(String id, ServerSession serverSession,
+        Context context) {
+        this.serverSession = serverSession;
+	this.context = context;
+        this.id = id;
+
+	this.inactiveInterval = context.getSessionTimeOut();
+
+        if (this.inactiveInterval != -1) {
+            this.inactiveInterval *= 60;
+        }
     }
 
-    public String getId() {
-	return id;
-    }
-
-    public long getCreationTime() {
-	return creationTime;
-    }
-
-    public long getLastAccessedTime() {
-	return lastAccessed;
-    }
-    
-    public ApplicationSession getApplicationSession(Context context,
-        boolean create) {
-	ApplicationSession appSession =
-	    (ApplicationSession)appSessions.get(context);
-
-	if (appSession == null && create) {
-
-	    // XXX
-	    // sync to ensure valid?
-	    
-	    appSession = new ApplicationSession(id, this, context);
-	    appSessions.put(context, appSession);
-	}
-
-	// XXX
-	// make sure that we haven't gone over the end of our
-	// inactive interval -- if so, invalidate and create
-	// a new appSession
-	
-	return appSession;
-    }
-    
-    void removeApplicationSession(Context context) {
-	appSessions.remove(context);
+    ServerSession getServerSession() {
+	return serverSession;
     }
 
     /**
@@ -140,57 +115,142 @@ public class ServerSession {
     void accessed() {
         // set last accessed to thisAccessTime as it will be left over
 	// from the previous access
-
 	lastAccessed = thisAccessTime;
 	thisAccessTime = System.currentTimeMillis();
-	
+
+	validate();
     }
 
     void validate() {
-	// if we have an inactive interval, check to see if
-        // we've exceeded it
-
+	// if we have an inactive interval, check to see if we've exceeded it
 	if (inactiveInterval != -1) {
 	    int thisInterval =
 		(int)(System.currentTimeMillis() - lastAccessed) / 1000;
 
 	    if (thisInterval > inactiveInterval) {
 		invalidate();
-
-		ServerSessionManager ssm =
-                    ServerSessionManager.getManager();
-
-		ssm.removeSession(this);
 	    }
 	}
     }
+    
+    // HTTP SESSION IMPLEMENTATION METHODS
+    
+    public String getId() {
+	if (valid) {
+	    return id;
+	} else {
+	    String msg = sm.getString("applicationSession.session.ise");
 
-    synchronized void invalidate() {
-	Enumeration enum = appSessions.keys();
+	    throw new IllegalStateException(msg);
+	}
+    }
 
-	while (enum.hasMoreElements()) {
-	    Object key = enum.nextElement();
-	    ApplicationSession appSession =
-		(ApplicationSession)appSessions.get(key);
+    public long getCreationTime() {
+	if (valid) {
+	    return creationTime;
+	} else {
+	    String msg = sm.getString("applicationSession.session.ise");
 
-	    appSession.invalidate();
+	    throw new IllegalStateException(msg);
 	}
     }
     
+    /**
+     *
+     * @deprecated
+     */
+
+    public HttpSessionContext getSessionContext() {
+	return new SessionContextImpl();
+    }
+    
+    public long getLastAccessedTime() {
+	if (valid) {
+	    return lastAccessed;
+	} else {
+	    String msg = sm.getString("applicationSession.session.ise");
+
+	    throw new IllegalStateException(msg);
+	}
+    }
+
+    public void invalidate() {
+	serverSession.removeApplicationSession(context);
+
+	// remove everything in the session
+
+	Enumeration enum = values.keys();
+	while (enum.hasMoreElements()) {
+	    String name = (String)enum.nextElement();
+	    removeValue(name);
+	}
+
+	valid = false;
+    }
+
+    public boolean isNew() {
+	if (! valid) {
+	    String msg = sm.getString("applicationSession.session.ise");
+
+	    throw new IllegalStateException(msg);
+	}
+
+	if (thisAccessTime == creationTime) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+    
+    /**
+     * @deprecated
+     */
+
     public void putValue(String name, Object value) {
+	setAttribute(name, value);
+    }
+
+    public void setAttribute(String name, Object value) {
+        if (! valid) {
+	    String msg = sm.getString("applicationSession.session.ise");
+
+	    throw new IllegalStateException(msg);
+	}
+
 	if (name == null) {
-            String msg = sm.getString("serverSession.value.iae");
+	    String msg = sm.getString("applicationSession.value.iae");
 
 	    throw new IllegalArgumentException(msg);
 	}
 
 	removeValue(name);  // remove any existing binding
+
+	if (value != null && value instanceof HttpSessionBindingListener) {
+	    HttpSessionBindingEvent e =
+                new HttpSessionBindingEvent(this, name);
+
+	    ((HttpSessionBindingListener)value).valueBound(e);
+	}
+
 	values.put(name, value);
     }
 
+    /**
+     * @deprecated
+     */
     public Object getValue(String name) {
+	return getAttribute(name);
+    }
+
+    public Object getAttribute(String name) {
+	if (! valid) {
+	    String msg = sm.getString("applicationSession.session.ise");
+
+	    throw new IllegalStateException(msg);
+	}
+
 	if (name == null) {
-            String msg = sm.getString("serverSession.value.iae");
+	    String msg = sm.getString("applicationSession.value.iae");
 
 	    throw new IllegalArgumentException(msg);
 	}
@@ -198,36 +258,87 @@ public class ServerSession {
 	return values.get(name);
     }
 
-    public Enumeration getValueNames() {
-	return values.keys();
+    /**
+     * @deprecated
+     */
+    public String[] getValueNames() {
+	Enumeration e = getAttributeNames();
+	Vector names = new Vector();
+
+	while (e.hasMoreElements()) {
+	    names.addElement(e.nextElement());
+	}
+
+	String[] valueNames = new String[names.size()];
+
+	names.copyInto(valueNames);
+
+	return valueNames;
+	
     }
 
+    public Enumeration getAttributeNames() {
+	if (! valid) {
+	    String msg = sm.getString("applicationSession.session.ise");
+
+	    throw new IllegalStateException(msg);
+	}
+
+	Hashtable valuesClone = (Hashtable)values.clone();
+
+	return (Enumeration)valuesClone.keys();
+    }
+
+    /**
+     * @deprecated
+     */
+
     public void removeValue(String name) {
+	removeAttribute(name);
+    }
+
+    public void removeAttribute(String name) {
+	if (! valid) {
+	    String msg = sm.getString("applicationSession.session.ise");
+
+	    throw new IllegalStateException(msg);
+	}
+
+	if (name == null) {
+	    String msg = sm.getString("applicationSession.value.iae");
+
+	    throw new IllegalArgumentException(msg);
+	}
+
+	Object o = values.get(name);
+
+	if (o instanceof HttpSessionBindingListener) {
+	    HttpSessionBindingEvent e =
+                new HttpSessionBindingEvent(this,name);
+
+	    ((HttpSessionBindingListener)o).valueUnbound(e);
+	}
+
 	values.remove(name);
     }
 
     public void setMaxInactiveInterval(int interval) {
+	if (! valid) {
+	    String msg = sm.getString("applicationSession.session.ise");
+
+	    throw new IllegalStateException(msg);
+	}
+
 	inactiveInterval = interval;
     }
 
     public int getMaxInactiveInterval() {
-	return inactiveInterval;
-    }    
+	if (! valid) {
+	    String msg = sm.getString("applicationSession.session.ise");
 
-    // XXX
-    // sync'd for safty -- no other thread should be getting something
-    // from this while we are reaping. This isn't the most optimal
-    // solution for this, but we'll determine something else later.
-    
-    synchronized void reap() {
-	Enumeration enum = appSessions.keys();
-
-	while (enum.hasMoreElements()) {
-	    Object key = enum.nextElement();
-	    ApplicationSession appSession =
-		(ApplicationSession)appSessions.get(key);
-
-	    appSession.validate();
+	    throw new IllegalStateException(msg);
 	}
+
+	return inactiveInterval;
     }
 }
