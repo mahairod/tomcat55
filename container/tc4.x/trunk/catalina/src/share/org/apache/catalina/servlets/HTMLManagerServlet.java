@@ -94,7 +94,7 @@ import org.apache.commons.fileupload.FileUploadException;
 * application deployment descriptor.  However, this requirement can be
 * relaxed during testing.
 * <p>
-* The difference between this <code>ManagerServlet</code> and this
+* The difference between the <code>ManagerServlet</code> and this
 * Servlet is that this Servlet prints out a HTML interface which
 * makes it easier to administrate.
 * <p>
@@ -105,6 +105,7 @@ import org.apache.commons.fileupload.FileUploadException;
 *
 * @author Bip Thelin
 * @author Malcolm Edgar
+* @author Glenn L. Nielsen
 * @version $Revision$, $Date$
 * @see ManagerServlet
 */
@@ -165,7 +166,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
     }
 
     /**
-     * Process a GET request for the specified resource.
+     * Process a POST request for the specified resource.
      *
      * @param request The servlet request we are processing
      * @param response The servlet response we are creating
@@ -225,15 +226,25 @@ public final class HTMLManagerServlet extends ManagerServlet {
             }
             while(true) {
                 if (warUpload == null) {
-                    message = sm.getString("htmlManagerServlet.installUploadNoFile");
+                    message = sm.getString
+                        ("htmlManagerServlet.installUploadNoFile");
                     break;
                 }
                 war = warUpload.getName();
                 if (!war.toLowerCase().endsWith(".war")) {
-                    message = sm.getString("htmlManagerServlet.installUploadNotWar",war);
+                    message = sm.getString
+                        ("htmlManagerServlet.installUploadNotWar",war);
                     break;
                 }
-                // Identify the appBase of the owning Host of this Context (if any)
+                // Get the filename if uploaded name includes a path
+                if (war.lastIndexOf('\\') >= 0) {
+                    war = war.substring(war.lastIndexOf('\\') + 1);
+                }
+                if (war.lastIndexOf('/') >= 0) {
+                    war = war.substring(war.lastIndexOf('/') + 1);
+                }
+                // Identify the appBase of the owning Host of this Context
+                // (if any)
                 String appBase = null;
                 File appBaseDir = null;
                 appBase = ((Host) context.getParent()).getAppBase();
@@ -244,7 +255,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 }
                 File file = new File(appBaseDir,war);
                 if (file.exists()) {
-                    message = sm.getString("htmlManagerServlet.installUploadWarExists",war);
+                    message = sm.getString
+                        ("htmlManagerServlet.installUploadWarExists",war);
                     break;
                 }
                 warUpload.write(file.getCanonicalPath());
@@ -261,6 +273,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         } catch(Exception e) {
             message = sm.getString
                 ("htmlManagerServlet.installUploadFail", e.getMessage());
+            log(message, e);
         } finally {
             if (warUpload != null) {
                 warUpload.delete();
@@ -387,7 +400,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 }
                 args[2] = new Boolean(context.getAvailable());
                 args[3] = response.encodeURL
-                    (request.getContextPath() + "/html/sessions?path=" + displayPath);
+                    (request.getContextPath() +
+                     "/html/sessions?path=" + displayPath);
                 args[4] =
                     new Integer(context.getManager().findSessions().length);
                 writer.print
@@ -395,16 +409,20 @@ public final class HTMLManagerServlet extends ManagerServlet {
 
                 args = new Object[8];
                 args[0] = response.encodeURL
-                    (request.getContextPath() + "/html/start?path=" + displayPath);
+                    (request.getContextPath() +
+                     "/html/start?path=" + displayPath);
                 args[1] = appsStart;
                 args[2] = response.encodeURL
-                    (request.getContextPath() + "/html/stop?path=" + displayPath);
+                    (request.getContextPath() +
+                     "/html/stop?path=" + displayPath);
                 args[3] = appsStop;
                 args[4] = response.encodeURL
-                    (request.getContextPath() + "/html/reload?path=" + displayPath);
+                    (request.getContextPath() +
+                     "/html/reload?path=" + displayPath);
                 args[5] = appsReload;
                 args[6] = response.encodeURL
-                    (request.getContextPath() + "/html/remove?path=" + displayPath);
+                    (request.getContextPath() +
+                     "/html/remove?path=" + displayPath);
                 args[7] = appsRemove;
                 if (context.getPath().equals(this.context.getPath())) {
                     writer.print(MessageFormat.format(
@@ -508,7 +526,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
      *
      * @see ManagerServlet#sessions(PrintWriter, String)
      *
-     * @param path Context path of the application to list session information for
+     * @param path Context path of the application to list session information
      * @return message String
      */
     public String sessions(String path) {
@@ -644,7 +662,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
         "<hr size=\"1\" noshade\"\">\n" +
         "<table cellspacing=\"4\" width=\"100%\" border=\"0\">\n" +
         " <tr>\n" +
-        "  <td class=\"page-title\" bordercolor=\"#000000\" align=\"left\" nowrap>\n" +
+        "  <td class=\"page-title\" bordercolor=\"#000000\" " +
+        "align=\"left\" nowrap>\n" +
         "   <font size=\"+2\">{1}</font>\n" +
         "  </td>\n" +
         " </tr>\n" +
@@ -655,7 +674,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
     private static final String MESSAGE_SECTION =
         "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n" +
         " <tr>\n" +
-        "  <td class=\"row-left\" width=\"10%\"><small><b>{0}</b></small>&nbsp;</td>\n" +
+        "  <td class=\"row-left\" width=\"10%\">" +
+        "<small><b>{0}</b></small>&nbsp;</td>\n" +
         "  <td class=\"row-left\"><pre>{1}</pre></td>\n" +
         " </tr>\n" +
         "</table>\n" +
@@ -788,7 +808,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
         "</tr>\n" +
         "<tr>\n" +
         " <td colspan=\"2\">\n" +
-        "<form action=\"{1}\" method=\"post\" enctype=\"multipart/form-data\">\n" +
+        "<form action=\"{1}\" method=\"post\" " +
+        "enctype=\"multipart/form-data\">\n" +
         "<table cellspacing=\"0\" cellpadding=\"3\">\n" +
         "<tr>\n" +
         " <td class=\"row-right\">\n" +
