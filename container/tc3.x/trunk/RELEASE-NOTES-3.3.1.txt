@@ -112,6 +112,8 @@ Bug No.  Description
 4826     Fixed AutoWebApp so the dir attribute can be an absolute path on
          Windows systems.
 
+5390	 Fixed the behavior of LoadOnStartup servlets when the servlet is
+	 actually a JSP page.
 
 Documentation:
 
