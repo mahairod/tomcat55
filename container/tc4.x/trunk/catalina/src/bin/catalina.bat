@@ -21,6 +21,7 @@ rem ----- Save Environment Variables That May Change --------------------------
 set _BP=%BP%
 set _CATALINA_HOME=%CATALINA_HOME%
 set _CLASSPATH=%CLASSPATH%
+set _CP=%CP%
 
 
 rem ----- Verify and Set Required Environment Variables -----------------------
@@ -33,10 +34,26 @@ goto cleanup
 if not "%CATALINA_HOME%" == "" goto gotCatalinaHome
 set CATALINA_HOME=.
 :gotCatalinaHome
+if exist "%CATALINA_HOME%\server\catalina.jar" goto okCatalinaHome
+echo Unable to locate catalina.jar, check the value of CATALINA_HOME
+goto cleanup
+:okCatalinaHome
+
+
+rem ----- Prepare Appropriate Java Execution Commands -------------------------
+
+if not "%OS%" == "Windows_NT" goto noTitle
+set _STARTJAVA=start "Catalina" "%JAVA_HOME%\bin\java"
+set _RUNJAVA="%JAVA_HOME%\bin\java"
+goto setBootpath
+:noTitle
+set _STARTJAVA=start "%JAVA_HOME%\bin\java"
+set _RUNJAVA="%JAVA_HOME%\bin\java"
 
 
 rem ----- Set Up The Bootstrap Classpath --------------------------------------
 
+:setBootpath
 set BP=%CATALINA_HOME%\bin\bootstrap.jar;%JAVA_HOME%\jre\lib\i18n.jar;%JAVA_HOME%\jre\lib\rt.jar;%JAVA_HOME%\lib\tools.jar
 
 echo Using BOOT PATH: %BP%
@@ -44,8 +61,38 @@ echo Using BOOT PATH: %BP%
 
 rem ----- Set Up The Runtime Classpath ----------------------------------------
 
-set CLASSPATH=%CATALINA_HOME%\dummy
+set CP=%CATALINA_HOME%\dummy
+rem Try to determine if CATALINA_HOME contains spaces
+if exist %CATALINA_HOME%\server\catalina.jar goto dynClasspath
+echo Your CATALINA_HOME appears to contain spaces.
+echo Unable to set CLASSPATH dynamically.
+goto staticClasspath
+
+:dynClasspath
+set _LIBJARS=
 for %%i in (%CATALINA_HOME%\lib\*.jar) do call %CATALINA_HOME%\bin\cpappend.bat %%i
+if not "%_LIBJARS%" == "" goto gotLibJars
+echo Unable to set CLASSPATH dynamically.
+if "%OS%" == "Windows_NT" goto staticClasspath
+echo NOTE: To set CLASSPATH dynamically on Win9x systems
+echo       only DOS 8.3 names may be used in CATALINA_HOME!
+goto staticClasspath
+
+:gotLibJars
+echo Including all JARs in %CATALINA_HOME%\lib in your CLASSPATH.
+rem NOTE: _LIBJARS already contains a leading semicolon
+set CP=%CP%%_LIBJARS%
+goto installClasspath
+
+:staticClasspath
+echo Setting your CLASSPATH statically.
+set CP=%CP%;%CATALINA_HOME%\lib\jasper.jar
+set CP=%CP%;%CATALINA_HOME%\lib\jaxp.jar
+set CP=%CP%;%CATALINA_HOME%\lib\parser.jar
+set CP=%CP%;%CATALINA_HOME%\lib\servlet.jar
+
+:installClasspath
+set CLASSPATH=%CP%
 echo Using CLASSPATH: %CLASSPATH%
 
 
@@ -70,23 +117,23 @@ goto finish
 
 :doRun
 if "%2" == "-security" goto doRunSecure
-java %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
+%_RUNJAVA% %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 :doRunSecure
-java %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_HOME%/conf/catalina.policy" -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
+%_RUNJAVA% %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_HOME%/conf/catalina.policy" -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 
 :doStart
 if "%2" == "-security" goto doStartSecure
-start java %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
+%_STARTJAVA% %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 :doStartSecure
 echo Using Security Manager
-start java %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_HOME%/conf/catalina.policy" -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
+%_STARTJAVA% %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_HOME%/conf/catalina.policy" -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 
 :doStop
-java %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home=%CATALINA_HOME% org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 stop
+%_RUNJAVA% %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home=%CATALINA_HOME% org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 stop
 goto cleanup
 
 
@@ -100,4 +147,8 @@ set CATALINA_HOME=%_CATALINA_HOME%
 set _CATALINA_HOME=
 set CLASSPATH=%_CLASSPATH%
 set _CLASSPATH=
+set CP=%_CP%
+set _LIBJARS=
+set _RUNJAVA=
+set _STARTJAVA=
 :finish

@@ -1,1 +1,2 @@
-set CLASSPATH=%CLASSPATH%;%1
+set CP=%CP%;%1
+set _LIBJARS=%_LIBJARS%;%1

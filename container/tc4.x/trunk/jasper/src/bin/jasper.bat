@@ -29,9 +29,9 @@ goto cleanup
 if not "%JASPER_HOME%" == "" goto gotJasperHome
 set JASPER_HOME=.
 :gotJasperHome
-if exist %JASPER_HOME%\bin\cpappend.bat goto jasperHomeOk
+if exist %JASPER_HOME%\bin\jpappend.bat goto jasperHomeOk
 echo Using JASPER_HOME: %JASPER_HOME%
-echo JASPER_HOME/bin/cpappend.bat does not exist. Please specify JASPER_HOME properly.
+echo JASPER_HOME/bin/jpappend.bat does not exist. Please specify JASPER_HOME properly.
 goto cleanup
 :jasperHomeOk
 
@@ -40,7 +40,7 @@ rem ----- Set Up The Runtime Classpath ----------------------------------------
 rem FIXME set CLASSPATH=%JASPER_HOME%\dummy
 rem FIXME below
 set CLASSPATH=%JASPER_HOME%\classes
-for %%i in (%JASPER_HOME%\lib\*.jar) do call %JASPER_HOME%\bin\cpappend.bat %%i
+for %%i in (%JASPER_HOME%\lib\*.jar) do call %JASPER_HOME%\bin\jpappend.bat %%i
 echo Using CLASSPATH: %CLASSPATH%
 
 rem ----- Execute The Requested Command ---------------------------------------
