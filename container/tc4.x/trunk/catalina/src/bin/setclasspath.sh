@@ -27,7 +27,10 @@ if [ ! -r "$BASEDIR"/bin/setclasspath.sh ]; then
 fi
 
 # Set the default -Djava.endorsed.dirs argument
-JAVA_ENDORSED_DIRS="$BASEDIR"/bin:"$BASEDIR"/common/endorsed
+JAVA_ENDORSED_DIRS="$BASEDIR"/common/endorsed
+
+# Set the default -Djava.ext.dirs argument
+JAVA_EXT_DIRS=
 
 # Set standard CLASSPATH
 CLASSPATH="$JAVA_HOME"/lib/tools.jar

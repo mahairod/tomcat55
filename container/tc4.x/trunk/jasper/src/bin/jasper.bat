@@ -46,6 +46,7 @@ rem Add on extra jar files to CLASSPATH
 for %%i in ("%JASPER_HOME%\common\lib\*.jar") do call "%JASPER_HOME%\bin\cpappend.bat" %%i
 for %%i in ("%JASPER_HOME%\shared\lib\*.jar") do call "%JASPER_HOME%\bin\cpappend.bat" %%i
 set CLASSPATH=%CLASSPATH%;%JASPER_HOME%\shared\classes
+for %%i in ("%JAVA_HOME%\jre\lib\ext\*.jar") do call "%JASPER_HOME%\bin\cpappend.bat" %%i
 
 rem Parse arguments
 if ""%1"" == ""jspc"" goto doJspc
@@ -65,6 +66,6 @@ shift
 goto setArgs
 :doneSetArgs
 
-%_RUNJAVA% %JAVA_OPTS% %JASPER_OPTS% -Djava.endorsed.dirs="%JAVA_ENDORSED_DIRS%" -classpath "%CLASSPATH%" -Djasper.home="%JASPER_HOME%" org.apache.jasper.JspC %CMD_LINE_ARGS%
+%_RUNJAVA% %JAVA_OPTS% %JASPER_OPTS% -Djava.endorsed.dirs="%JAVA_ENDORSED_DIRS%" -Djava.ext.dirs="%JAVA_EXT_DIRS%" -classpath "%CLASSPATH%" -Djasper.home="%JASPER_HOME%" org.apache.jasper.JspC %CMD_LINE_ARGS%
 
 :end
