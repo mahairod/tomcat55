@@ -997,16 +997,20 @@
 
 
     <!-- Map CGI Gateway Service for this Web App -->
+<!--
     <servlet-mapping>
         <servlet-name>cgi</servlet-name>
         <url-pattern>/cgi-bin/*</url-pattern>
     </servlet-mapping>
+-->
 
     <!-- Map SSI Service for this Web App -->
+<!--
     <servlet-mapping>
         <servlet-name>ssi</servlet-name>
         <url-pattern>*.shtml</url-pattern>
     </servlet-mapping>
+-->
 
     <servlet-mapping>
         <servlet-name>Aggregate01</servlet-name>

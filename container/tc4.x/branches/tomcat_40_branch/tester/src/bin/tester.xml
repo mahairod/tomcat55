@@ -15,7 +15,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,Jsp,Lifecycle,RequestDispatcher,Resources,ServletContext,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest,CGITest"/>
+  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,Jsp,Lifecycle,RequestDispatcher,Resources,ServletContext,ServletRequest,ServletResponse,HttpSession,XercesTest"/>
 
 
   <target name="ROOT">
@@ -1596,6 +1596,8 @@
 
   </target>
 
+<!--
+
 <target name="SSITest">
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
@@ -1671,7 +1673,10 @@
           golden="${golden.path}/SSIFsize02.txt"/>
 
   </target>
+-->
 
+
+<!--
   <target name="CGITest">
 
   <tester host="${host}" port="${port}" protocol="${protocol}"
@@ -1731,5 +1736,6 @@
         golden="${golden.path}/modifyall.txt"/>
 
   </target>
+-->
 
 </project>
