@@ -1,0 +1,37 @@
+This file contains the PGP keys of various Apache developers.
+Please don't use them for email unless you have to. Their main
+purpose is code signing.
+
+Apache users: pgp < KEYS
+Apache developers: pgp -kxa <your name> and append it to this file.
+
+
+Type bits      keyID      Date       User ID
+DSS  1024/1024 0x45ABB45D 2001/05/25 *** DEFAULT SIGNING KEY ***
+                                     Marc A. Saegesser <marcsaeg@apache.org>
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: PGP 6.5.1i
+
+mQGiBDsOvmIRBADIvYRrT070txKtdOCNdG1FjenIbg19mqI7O2RpN7NCYJIuJgvC
+si9QMNd2oze1TPIeld1NV9ZRe3dHTthZo9iDMMP6k99ILhXtVlRpgfqEyTCrG95+
+/VERllaC90OBISR5vj0ZOxO3294Ev25JSfnO2xgOkXFdWgrwLSGXDEUHFQCg/2Pj
+4Ni6T4bbd9zcN1bKAqjQzD0EAIrzihO26+ihk8odli1uFZpRWSNYfmW1oMF0boXE
+3UVIUGcOqqKSXaeWlpRJC502bTRsArSE+/bhhLJE8XjB5kxfil5SA7g5Q6esnFga
+eqiutPWMn7cxYTm3PgpoigPwt+nq5RHicw1HBdJrYQq0nXKYdM0xwSO9YpwhvOUn
+xkwbA/4x/SbZT+a6jRoHvC7dB5T3f5c6waRmCTWWpZ6LAl6SN98muCLO8o6JC+Wn
+uH0JITJoDznWeJp1hm32LCiRvRqQkpEobEPYZXiGXJDokb3ufF9prcoz0nQL7dpa
+83UGSSLPEPQN3NVkx8gAQbSxdGy2dexy8hXzviIFt2dJD36VXbQnTWFyYyBBLiBT
+YWVnZXNzZXIgPG1hcmNzYWVnQGFwYWNoZS5vcmc+iQBOBBARAgAOBQI7Dr5iBAsD
+AQICGQEACgkQ84G/8kWrtF0xoACbBQrJLmJkHqdZUB3Z27j+o7FJ5ZYAoO4xu/wB
+D6VwieNqB/0+qc98crURuQENBDsOvmYQBADj4lY9BW8Q+98bOh+IOH8Cqe8aKg71
+lx474O/f6eE4lkJKyR9bT3sXs7wVhjEWs0LjrgyKTEjdf3T0Gn7z6uLEZZ7+N51i
+fH3yQM2hXHVdACtfNZMeOSRdbrZyZfyuU4dDGTkJC7zSd9vMjV2IYT8iKQ+utQ/F
++5kggtHewOLlXQACAgP+MFGz1X4Wra09ETpcmcrmKEdQmy1AFov0ubYISc+/bm+x
+tsWUngkf+zU46Z2DtMuC0t9BMx2hfy+wY2SdPO2+wi+LC0pY4r9OwnzsVwfU+ETA
+VyLLrNBZk1FqAuOMN4ob22SyNkeJd4RxHghG9FIduxIGG19mXb9TlOnAsunV6kKJ
+AEYEGBECAAYFAjsOvmYACgkQ84G/8kWrtF3ZRgCgi4XhVWMENBw0tUDPW0sojaf1
+NhMAoP4IJ3DF2N+IsL46tHviT+jQQvCx
+=3OGr
+-----END PGP PUBLIC KEY BLOCK-----
+
