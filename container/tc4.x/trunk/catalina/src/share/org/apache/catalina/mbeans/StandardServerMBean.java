@@ -66,22 +66,21 @@ package org.apache.catalina.mbeans;
 
 import javax.management.MBeanException;
 import javax.management.RuntimeOperationsException;
-import org.apache.catalina.Connector;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
-import org.apache.catalina.connector.http.HttpConnector;
+import org.apache.catalina.core.StandardService;
 import org.apache.commons.modeler.BaseModelMBean;
 
 
 /**
  * <p>A <strong>ModelMBean</strong> implementation for the
- * <code>org.apache.catalina.core.StandardService</code> component.</p>
+ * <code>org.apache.catalina.core.StandardServer</code> component.</p>
  *
  * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
-public class StandardServiceMBean extends BaseModelMBean {
+public class StandardServerMBean extends BaseModelMBean {
 
 
     // ----------------------------------------------------------- Constructors
@@ -96,7 +95,7 @@ public class StandardServiceMBean extends BaseModelMBean {
      * @exception RuntimeOperationsException if an IllegalArgumentException
      *  occurs
      */
-    public StandardServiceMBean()
+    public StandardServerMBean()
         throws MBeanException, RuntimeOperationsException {
 
         super();
@@ -107,45 +106,20 @@ public class StandardServiceMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Attributes
 
 
-    /**
-     * Return the parent (Server) that owns this Service.
-     */
-    public Server getParent() {
-
-        if (this.resource == null)
-            return (null);
-        Service service = (Service) this.resource;
-        return (service.getServer());
-
-    }
 
 
     // ------------------------------------------------------------- Operations
 
-
     /**
-     * Create a new Connector.
+     * Create a new child Service.
      */
-    public Connector createConnector(String scheme, int acceptCount, String address,
-        int connectionTimeout, int debug, boolean enableLookups, int maxProcessors,
-        int minProcessors, int port, String proxyName) {
+    public Service createService(String name) {
 
-        HttpConnector connector = new HttpConnector();
-        
-        connector.setScheme(scheme);
-        connector.setAcceptCount(acceptCount);
-        connector.setAddress(address);
-        connector.setConnectionTimeout(connectionTimeout);
-        connector.setDebug(debug);
-        connector.setEnableLookups(enableLookups);
-        connector.setMaxProcessors(maxProcessors);
-        connector.setMinProcessors(minProcessors);
-        connector.setPort(port);
-        connector.setProxyName(proxyName);
-
-        return connector;
+        StandardService service = new StandardService();
+        service.setName(name);
+        return service;
 
     }
 
-
+    
 }

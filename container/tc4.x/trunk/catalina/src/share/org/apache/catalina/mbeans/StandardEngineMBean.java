@@ -67,7 +67,14 @@ package org.apache.catalina.mbeans;
 import javax.management.MBeanException;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
 import org.apache.catalina.Service;
+import org.apache.catalina.Valve;
+import org.apache.catalina.core.StandardHost;
+import org.apache.catalina.valves.AccessLogValve;
+import org.apache.catalina.valves.RemoteAddrValve;
+import org.apache.catalina.valves.RemoteHostValve;
+import org.apache.catalina.valves.RequestDumperValve;
 import org.apache.commons.modeler.BaseModelMBean;
 
 
@@ -119,6 +126,68 @@ public class StandardEngineMBean extends BaseModelMBean {
 
 
     // ------------------------------------------------------------- Operations
+
+
+    /**
+     * Create a new AccessLogger.
+     */
+    public AccessLogValve createAccessLogger(int debug, String directory,
+        String pattern, String prefix, boolean resolveHosts, String suffix) {
+
+        AccessLogValve accessLogger = new AccessLogValve();
+
+        //accessLogger.setDebug(debug); FIX ME - no debug property existS
+        accessLogger.setDirectory(directory);
+        accessLogger.setPattern(pattern);
+        accessLogger.setPrefix(prefix);
+        accessLogger.setResolveHosts(resolveHosts);
+        accessLogger.setSuffix(suffix);
+
+        return accessLogger;
+
+    }
+
+
+    /**
+     * Create a new Host.
+     */
+    public Host createHost(String appBase, int debug, String name,
+                                                        boolean unpackWARs) {
+
+        StandardHost host = new StandardHost();
+
+        host.setAppBase(appBase);
+        host.setDebug(debug);
+        host.setName(name);
+        host.setUnpackWARs(unpackWARs);
+
+        return host;
+
+    }
+
+
+    /**
+     * Create a new RequestFilterValve.
+     */
+    public Valve createRequestFilterValve(String type, String allow,
+                                                    int debug, String deny) {
+
+        Valve valve = null;
+        if (type.equals("RemoteAddrValve")) {
+            valve = new RemoteAddrValve();
+            ((RemoteAddrValve)valve).setAllow(allow);
+            ((RemoteAddrValve)valve).setDeny(deny);
+        } else if (type.equals("RemostHostValve")) {
+            valve = new RemoteHostValve();
+            ((RemoteHostValve)valve).setAllow(allow);
+            ((RemoteHostValve)valve).setDeny(deny);
+        } else if (type.equals("RequestDumperValve")) {
+            valve = new RequestDumperValve();
+        }
+
+        return valve;
+
+    }
 
 
 }

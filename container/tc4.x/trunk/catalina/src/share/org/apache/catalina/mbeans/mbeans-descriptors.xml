@@ -174,12 +174,12 @@
           description="The 'enable DNS lookups' flag for this Connector"
                  type="boolean"/>
 
-    <attribute   name="minProcessors"
-          description="The minimum number of processors to start at initialization time"
-                 type="int"/>
-
     <attribute   name="maxProcessors"
           description="The maximum number of processors allowed"
+                 type="int"/>
+
+    <attribute   name="minProcessors"
+          description="The minimum number of processors to start at initialization time"
                  type="int"/>
 
     <attribute   name="parent"
@@ -260,12 +260,12 @@
           description="The 'enable DNS lookups' flag for this Connector"
                  type="boolean"/>
 
-    <attribute   name="minProcessors"
-          description="The minimum number of processors to start at initialization time"
-                 type="int"/>
-
     <attribute   name="maxProcessors"
           description="The maximum number of processors allowed"
+                 type="int"/>
+
+    <attribute   name="minProcessors"
+          description="The minimum number of processors to start at initialization time"
                  type="int"/>
 
     <attribute   name="parent"
@@ -563,7 +563,7 @@
           description="Parent (Container) that owns this Valve"
                  type="org.apache.catalina.Container"
             writeable="false"/>
-            
+
     <constructor name="SingleSignOn"/>
 
   </mbean>
@@ -946,6 +946,7 @@
 
 
   <mbean         name="StandardServer"
+            className="org.apache.catalina.mbeans.StandardServerMBean"
           description="Standard Server Component"
                domain="Catalina"
                 group="Server"
@@ -968,6 +969,15 @@
       <parameter name="service"
           description="The Service to be added"
                  type="org.apache.catalina.Service"/>
+    </operation>
+
+    <operation   name="createService"
+          description="Create a new child Service"
+               impact="ACTION"
+           returnType="org.apache.catalina.Service">
+      <parameter name="name"
+          description="The new Service's name"
+                 type="java.lang.String"/>
     </operation>
 
     <operation   name="findServices"
@@ -1024,6 +1034,42 @@
                  type="org.apache.catalina.Connector"/>
     </operation>
 
+    <operation   name="createConnector"
+          description="Create a new Connector"
+               impact="ACTION"
+           returnType="org.apache.catalina.Connector">
+      <parameter name="scheme"
+          description="The new Service's name"
+                 type="java.lang.String"/>
+      <parameter name="acceptCount"
+          description="The accept count for this Connector"
+                 type="int"/>
+      <parameter name="address"
+          description="The IP address on which to bind"
+                 type="java.lang.String"/>
+      <parameter name="connectionTimeout"
+          description="Timeout value on the incoming connection"
+                 type="int"/>
+      <parameter name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+      <parameter name="enableLookups"
+          description="The 'enable DNS lookups' flag for this Connector"
+                 type="boolean"/>
+      <parameter name="maxProcessors"
+          description="The maximum number of processors allowed"
+                 type="int"/>
+      <parameter name="minProcessors"
+          description="The minimum number of processors to start at initialization time"
+                 type="int"/>
+      <parameter name="port"
+          description="TCP port number to listen on"
+                 type="int"/>
+      <parameter name="proxyName"
+          description="The server name to which we should pretend requests to this Connector were directed"
+                 type="java.lang.String"/>
+    </operation>
+
     <operation   name="findConnectors"
           description="Return all associated Connectors"
                impact="ACTION"
@@ -1057,7 +1103,7 @@
           description="Parent (Container) that owns this logger"
                  type="org.apache.catalina.Container"
             writeable="false"/>
-            
+
     <attribute   name="verbosity"
           description="The verbosity level for above which log messages may be filtered"
                  type="int"/>
