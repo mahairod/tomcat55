@@ -781,8 +781,7 @@ class JspDocumentParser extends DefaultHandler
 		isPlainUri = true;
 	    }
 
-	    TldLocationsCache cache = ctxt.getOptions().getTldLocationsCache();
-	    String[] location = cache.getLocation(uri);
+	    String[] location = ctxt.getTldLocation(uri);
 	    if (location != null || !isPlainUri) {
 		/*
 		 * If the uri value is a plain uri, a translation error must

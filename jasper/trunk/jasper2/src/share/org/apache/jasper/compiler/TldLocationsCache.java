@@ -127,7 +127,9 @@ public class TldLocationsCache {
     public static final int NOROOT_REL_URI = 2;
 
     private static final String WEB_XML = "/WEB-INF/web.xml";
-    
+    private static final String FILE_PROTOCOL = "file:";
+    private static final String JAR_FILE_SUFFIX = ".jar";
+
     /**
      * The mapping of the 'global' tag library URI to the location (resource
      * path) of the TLD associated with that tag library. The location is
@@ -204,7 +206,7 @@ public class TldLocationsCache {
         }
     }
 
-    private void init() {
+    private void init() throws JasperException {
         if (initialized) return;
         try {
             processWebDotXml();
@@ -213,14 +215,15 @@ public class TldLocationsCache {
 	    processTldsInGlobalJars();
             initialized = true;
         } catch (Exception ex) {
-            log.error(Localizer.getMessage("jsp.error.internal.tldinit"), ex);
+            throw new JasperException(Localizer.getMessage("jsp.error.internal.tldinit",
+							   ex.getMessage()));
         }
     }
 
     /*
      * Populates taglib map described in web.xml.
      */    
-    private void processWebDotXml() throws JasperException {
+    private void processWebDotXml() throws Exception {
 
         // Acquire an input stream to the web application deployment descriptor
         InputStream is = ctxt.getResourceAsStream(WEB_XML);
@@ -235,7 +238,7 @@ public class TldLocationsCache {
         // Parse the web application deployment descriptor
         TreeNode webtld = new ParserUtils().parseXMLDocument(WEB_XML, is);
 
-	// Allow taglib be an element of the root or jsp-config (JSP2.0)
+	// Allow taglib to be an element of the root or jsp-config (JSP2.0)
 	TreeNode jspConfig = webtld.findChild("jsp-config");
 	if (jspConfig != null) {
 	    webtld = jspConfig;
@@ -260,9 +263,11 @@ public class TldLocationsCache {
             if (uriType(tagLoc) == NOROOT_REL_URI)
                 tagLoc = "/WEB-INF/" + tagLoc;
             String tagLoc2 = null;
-            if (tagLoc.endsWith(".jar"))
+            if (tagLoc.endsWith(JAR_FILE_SUFFIX)) {
+		tagLoc = ctxt.getResource(tagLoc).toString();
                 tagLoc2 = "META-INF/taglib.tld";
-            mappings.put(tagUri, new String[] {tagLoc, tagLoc2});
+	    }
+            mappings.put(tagUri, new String[] { tagLoc, tagLoc2 });
         }
     }
 
@@ -277,7 +282,7 @@ public class TldLocationsCache {
             Iterator it = libSet.iterator();
             while (it.hasNext()) {
                 String resourcePath = (String) it.next();
-                if (resourcePath.endsWith(".jar")) {
+                if (resourcePath.endsWith(JAR_FILE_SUFFIX)) {
 		    URL url = ctxt.getResource(resourcePath);
 		    if (url == null)
 			return;
@@ -440,7 +445,8 @@ public class TldLocationsCache {
 			processTldsInJar((JarURLConnection) conn);
 		    } else {
 			String urlStr = urls[i].toString();
-			if (urlStr.startsWith("file:") && urlStr.endsWith(".jar")) {
+			if (urlStr.startsWith(FILE_PROTOCOL)
+			            && urlStr.endsWith(JAR_FILE_SUFFIX)) {
 			    URL jarURL = new URL("jar:" + urlStr + "!/");
 			    processTldsInJar((JarURLConnection)
 					     jarURL.openConnection());

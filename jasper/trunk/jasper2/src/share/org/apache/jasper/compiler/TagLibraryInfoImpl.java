@@ -167,8 +167,8 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
         boolean relativeURL = false;
 
 	if (location == null) {
-	    // The URI points to the TLD itself or to a jar
-	    // file where the TLD is located
+	    // The URI points to the TLD itself or to a jar file where the TLD
+	    // is stored
 	    int uriType = TldLocationsCache.uriType(uri);
 	    if (uriType == TldLocationsCache.ABS_URI) {
 		err.jspError("jsp.error.taglibDirective.absUriCannotBeResolved",
@@ -232,7 +232,8 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 		    } catch (Throwable t) {}
 		}
 		*/
-		throw new JasperException(ex);
+		err.jspError("jsp.error.tld.unable_to_read", location[0],
+			     location[1], ex.toString());
 	    }
 	}
     }

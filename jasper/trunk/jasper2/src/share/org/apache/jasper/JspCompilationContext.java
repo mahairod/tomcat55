@@ -517,18 +517,13 @@ public class JspCompilationContext {
     }
 
     /**
-     * Get the 'location' of the TLD associated with 
-     * a given taglib 'uri'.
+     * Gets the 'location' of the TLD associated with the given taglib 'uri'.
      * 
-     * @return An array of two Strings. The first one is
-     * real path to the TLD. If the path to the TLD points
-     * to a jar file, then the second string is the
-     * name of the entry for the TLD in the jar file.
-     * Returns null if the uri is not associated to
-     * a tag library 'exposed' in the web application.
-     * A tag library is 'exposed' either explicitely in 
-     * web.xml or implicitely via the uri tag in the TLD 
-     * of a taglib deployed in a jar file (WEB-INF/lib).
+     * @return An array of two Strings: The first element denotes the real
+     * path to the TLD. If the path to the TLD points to a jar file, then the
+     * second element denotes the name of the TLD entry in the jar file.
+     * Returns null if the given uri is not associated with any tag library
+     * 'exposed' in the web application.
      */
     public String[] getTldLocation(String uri) throws JasperException {
         String[] location = 
@@ -553,7 +548,6 @@ public class JspCompilationContext {
         }
         removed++;
     }
-
 
     public boolean isRemoved() {
         if (removed > 1 ) {
@@ -597,8 +591,7 @@ public class JspCompilationContext {
             if (isTagFile()) {
                 name = tagInfo.getTagClassName();
             } else {
-                name = getServletPackageName() + "." +
-                            getServletClassName();
+                name = getServletPackageName() + "." + getServletClassName();
             }
             servletClass = jspLoader.loadClass(name);
         } catch (ClassNotFoundException cex) {

@@ -126,7 +126,7 @@ public class JspServlet extends HttpServlet {
 
 	if (log.isDebugEnabled()) {
 	    log.debug(Localizer.getMessage("jsp.message.scratch.dir.is",
-					  options.getScratchDir().toString()));
+					   options.getScratchDir().toString()));
 	    log.debug(Localizer.getMessage("jsp.message.dont.modify.servlets"));
 	}
     }
