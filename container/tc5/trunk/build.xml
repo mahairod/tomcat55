@@ -289,7 +289,7 @@
 
     <javac destdir="${ROOT.base}/WEB-INF/classes"
            optimize="off"
-           debug="on"
+           debug="on" failonerror="false"
            srcdir="${ROOT.base}/WEB-INF/src" >
       <classpath>
         <pathelement location="${java.home}/../lib/tools.jar"/>
@@ -309,7 +309,7 @@
 
     <javac destdir="${jsp-examples.base}/WEB-INF/classes"
            optimize="off"
-           debug="on"
+           debug="on" failonerror="false"
            srcdir="${jsp-examples.base}/WEB-INF/src" >
       <classpath>
         <pathelement location="${java.home}/../lib/tools.jar"/>
@@ -329,7 +329,7 @@
 
     <javac destdir="${admin.base}/WEB-INF/classes"
            optimize="off"
-           debug="on"
+           debug="on" failonerror="false"
            srcdir="${admin.base}/WEB-INF/src" >
       <classpath>
         <pathelement location="${java.home}/../lib/tools.jar"/>
