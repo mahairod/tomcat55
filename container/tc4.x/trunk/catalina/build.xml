@@ -15,6 +15,7 @@
 
   <!-- ================== Derived Property Values ========================= -->
   <property name="jaxp.jar"        value="${jaxp.home}/jaxp.jar"/>
+  <property name="jcert.jar"       value="${jsse.home}/lib/jcert.jar"/>
   <property name="jnet.jar"        value="${jsse.home}/lib/jnet.jar"/>
   <property name="jsse.jar"        value="${jsse.home}/lib/jsse.jar"/>
   <property name="parser.jar"      value="${jaxp.home}/parser.jar"/>
@@ -57,9 +58,6 @@
     <copyfile src="${parser.jar}"  dest="${catalina.build}/server/parser.jar"/>
     <!--   Catalina needs the regular expression library -->
     <copyfile src="${regexp.jar}"  dest="${catalina.build}/server/regexp.jar"/>
-    <!--   Catalina needs JSSE for SSL support -->
-    <copyfile src="${jnet.jar}"    dest="${catalina.build}/server/jnet.jar"/>
-    <copyfile src="${jsse.jar}"    dest="${catalina.build}/server/jsse.jar"/>
 
   </target>
 
@@ -69,7 +67,7 @@
 
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${catalina.build}/classes"
-          classpath="${regexp.jar}:${servlet.jar}:${jnet.jar}:${jsse.jar}"
+          classpath="${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}"
         deprecation="off" debug="on" optimize="off"
            excludes="**/CVS/**"/>
 

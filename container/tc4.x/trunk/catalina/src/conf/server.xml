@@ -14,22 +14,28 @@
             Uncomment this for SSL support. 
             You _need_ to set up a server certificate if you want this
             to work, and you need JSSE.
-            1. Add JSSE jars to CLASSPATH 
-            2. Edit java.home/jre/lib/security/java.security
-               Add:
+            1. Add JSSE jars as system extensions by placing them in
+               "$JAVA_HOME/jre/lib/ext".
+            2. Edit "$JAVA_HOME/jre/lib/security/java.security" and add
+
                security.provider.2=com.sun.net.ssl.internal.ssl.Provider
+
+               in the appropriate place in this file.
             3. Do: keytool -genkey -alias tomcat -keyalg RSA
                RSA is essential to work with Netscape and IIS.
                Use "changeit" as password. ( or add keypass attribute )
                You don't need to sign the certificate.
-  
+            4. Adjust the port number and other parameters as needed.
+               On Unix, you will not be able to listen on port 443 unless
+               you run as root.  
+
             You can set parameter keystore and keypass if you want 
             to change the default ( user.home/.keystore with changeit )
   -->
   <!--
   <Connector className="org.apache.catalina.connector.http.HttpConnector"
-             port="443" minProcessors="5" maxProcessors="75"
-	     acceptCount="10" debug="99" scheme="https" secure="true"
+             port="8443" minProcessors="5" maxProcessors="75"
+	     acceptCount="10" debug="0" scheme="https" secure="true"
              socketFactory="org.apache.catalina.net.SSLSocketFactory" />
   -->
 

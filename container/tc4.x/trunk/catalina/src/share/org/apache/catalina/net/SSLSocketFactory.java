@@ -58,12 +58,15 @@
  */ 
 package org.apache.catalina.net;
 
-import java.io.*;
-import java.net.*;
-
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.security.KeyStore;
-
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
+import java.security.cert.CertificateException;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
@@ -71,180 +74,361 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.HandshakeCompletedEvent;
 
-/*
-  1. Add Jsse's jars into jre/lib/ext
-  2. Edit java.security, add
-       security.provider.2=com.sun.net.ssl.internal.ssl.Provider
-  3. keytool -genkey -alias tomcat -keyalg RSA
-     Use "changeit" as password ( this is the default we use )
- */
+import com.sun.net.ssl.KeyManagerFactory;
+import com.sun.net.ssl.SSLContext;
+import com.sun.net.ssl.TrustManagerFactory;
+
 
 /**
- * SSL server socket factory. It _requires_ a valid RSA key and
- * JSSE. 
+ * Socket factory for SSL sockets, using the Java Server Sockets Extension
+ * (JSSE) reference implementation support classes.  Besides the usual
+ * configuration mechanism based on setting JavaBeans properties, this
+ * component may also be configured by passing a series of attributes set
+ * with calls to <code>setAttribute()</code>.  The following attribute
+ * names are recognized, with default values in square brackets:
+ * <ul>
+ * <li><strong>algorithm</strong> - Certificate encoding algorithm
+ *     to use. [SunX509]</li>
+ * <li><strong>clientAuth</strong> - Require client authentication if
+ *     set to <code>true</code>. [false]</li>
+ * <li><strong>keystoreFile</strong> - Pathname to the Key Store file to be
+ *     loaded. ["./keystore" in the user home directory]</li>
+ * <li><strong>keystorePass</strong> - Password for the Key Store file to be
+ *     loaded. ["changeit"]</li>
+ * <li><strong>keystoreType</strong> - Type of the Key Store file to be
+ *     loaded. ["JKS"]</li>
+ * <li><strong>protocol</strong> - SSL protocol to use. [TLS]</li>
+ * </ul>
  *
  * @author Harish Prabandham
  * @author Costin Manolache
+ * @author Craig McClanahan
  */
+
 public class SSLSocketFactory
-    extends org.apache.catalina.net.ServerSocketFactory
-{
-    private String keystoreType;
+    extends org.apache.catalina.net.ServerSocketFactory {
 
-    static String defaultKeystoreType = "JKS";
-    static String defaultProtocol = "TLS";
-    static String defaultAlgorithm = "SunX509";
-    static boolean defaultClientAuth = false;
 
-    private boolean clientAuth = false;
+    // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * The internal represenation of the key store file that contains
+     * our server certificate.
+     */
+    private KeyStore keyStore = null;
+
+
+    /**
+     * The configured socket factory.
+     */
     private SSLServerSocketFactory sslProxy = null;
-    
-    // defaults
-    static String defaultKeystoreFile=System.getProperty("user.home") +
-	"/.keystore";
-    static String defaultKeyPass="changeit";
 
-    
-    public SSLSocketFactory () {
+
+    /**
+     * The trust manager factory used with JSSE 1.0.1.
+     */
+    //    TrustManagerFactory trustManagerFactory = null;
+
+
+    // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Certificate encoding algorithm to be used.
+     */
+    private String algorithm = "SunX509";
+
+    public String getAlgorithm() {
+        return (this.algorithm);
     }
 
-    public ServerSocket createSocket (int port)
-	throws IOException
-    {
-	if( sslProxy == null ) initProxy();
-	ServerSocket socket = 
-	    sslProxy.createServerSocket(port);
-	initServerSocket(socket);
-	return socket;
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
     }
-    
-    public ServerSocket createSocket (int port, int backlog)
-	throws IOException
-    {
-	if( sslProxy == null ) initProxy();
-	ServerSocket socket = 
-	    sslProxy.createServerSocket(port, backlog);
-	initServerSocket(socket);
-	return socket;
+
+
+    /**
+     * Should we require client authentication?
+     */
+    private boolean clientAuth = false;
+
+    public boolean getClientAuth() {
+        return (this.clientAuth);
     }
-    
-    public ServerSocket createSocket (int port, int backlog,
-				      InetAddress ifAddress)
-	throws IOException
-    {	
-	if( sslProxy == null ) initProxy();
-	ServerSocket socket = 
-	    sslProxy.createServerSocket(port, backlog, ifAddress);
-	initServerSocket(socket);
-	return socket;
+
+    public void setClientAuth(boolean clientAuth) {
+        this.clientAuth = clientAuth;
     }
-    
-    
-    // -------------------- Internal methods
-    /** Read the keystore, init the SSL socket factory
+
+
+    /**
+     * Pathname to the key store file to be used.
+     */
+    private String keystoreFile =
+        System.getProperty("user.home") + "/.keystore";
+
+    public String getKeystoreFile() {
+        return (this.keystoreFile);
+    }
+
+    public void setKeystoreFile(String keystoreFile) {
+        this.keystoreFile = keystoreFile;
+    }
+
+
+    /**
+     * Password for accessing the key store file.
+     */
+    private String keystorePass = "changeit";
+
+    public String getKeystorePass() {
+        return (this.keystorePass);
+    }
+
+    public void setKeystorePass(String keystorePass) {
+        this.keystorePass = keystorePass;
+    }
+
+
+    /**
+     * Storeage type of the key store file to be used.
+     */
+    private String keystoreType = "JKS";
+
+    public String getKeystoreType() {
+        return (this.keystoreType);
+    }
+
+    public void setKeystoreType(String keystoreType) {
+        this.keystoreType = keystoreType;
+    }
+
+
+    /**
+     * SSL protocol variant to use.
+     */
+    private String protocol = "TLS";
+
+    public String getProtocol() {
+        return (this.protocol);
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return a server socket that uses all network interfaces on the host,
+     * and is bound to a specified port.  The socket is configured with the
+     * socket options (such as accept timeout) given to this factory.
+     *
+     * @param port Port to listen to
+     *
+     * @exception IOException if an input/output or network error occurs
+     * @exception InstantiationException if a construction error occurs
+     */
+    public ServerSocket createSocket(int port)
+        throws IOException, InstantiationException {
+
+        if (sslProxy == null)
+            initialize();
+        ServerSocket socket =
+            sslProxy.createServerSocket(port);
+        initServerSocket(socket);
+        return (socket);
+
+    }
+
+
+    /**
+     * Return a server socket that uses all network interfaces on the host,
+     * and is bound to a specified port, and uses the specified
+     * connection backlog.  The socket is configured with the
+     * socket options (such as accept timeout) given to this factory.
+     *
+     * @param port Port to listen to
+     * @param backlog Maximum number of connections to be queued
+     *
+     * @exception IOException if an input/output or network error occurs
+     * @exception InstantiationException if a construction error occurs
+     */
+    public ServerSocket createSocket(int port, int backlog)
+        throws IOException, InstantiationException {
+
+        if (sslProxy == null)
+            initialize();
+        ServerSocket socket =
+            sslProxy.createServerSocket(port, backlog);
+        initServerSocket(socket);
+        return (socket);
+
+    }
+
+
+    /**
+     * Return a server socket that uses the specified interface on the host,
+     * and is bound to a specified port, and uses the specified
+     * connection backlog.  The socket is configured with the
+     * socket options (such as accept timeout) given to this factory.
+     *
+     * @param port Port to listen to
+     * @param backlog Maximum number of connections to be queued
+     * @param ifAddress Address of the interface to be used
+     *
+     * @exception IOException if an input/output or network error occurs
+     * @exception InstantiationException if a construction error occurs
+     */
+    public ServerSocket createSocket(int port, int backlog,
+                                     InetAddress ifAddress)
+        throws IOException, InstantiationException {
+
+        if (sslProxy == null)
+            initialize();
+        ServerSocket socket =
+            sslProxy.createServerSocket(port, backlog, ifAddress);
+        initServerSocket(socket);
+        return (socket);
+
+    }
+
+
+    // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Initialize objects that will be required to create sockets.
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    private synchronized void initialize() throws IOException {
+
+        initProperties();
+        initKeyStore();
+        initProxy();
+
+    }
+
+
+    /**
+     * Initialize the internal representation of the key store file.
+     *
+     * @exception IOException if an input/output exception occurs
+     */
+    private void initKeyStore() throws IOException {
+
+        try {
+            keyStore = KeyStore.getInstance(keystoreType);
+            FileInputStream istream = new FileInputStream(keystoreFile);
+            keyStore.load(istream, keystorePass.toCharArray());
+            istream.close();
+        } catch (Exception e) {
+            // FIXME - send to an appropriate log file?
+            System.out.println("initKeyStore:  " + e);
+            e.printStackTrace(System.out);
+            throw new IOException(e.toString());
+        }
+
+    }
+
+
+    /**
+     * Initialize our configuration properties from the specified attributes
+     * (if any).
+     */
+    private void initProperties() {
+
+        String value = null;
+
+        value = (String) attributes.get("algorithm");
+        if (value != null)
+            setAlgorithm(value);
+
+        value = (String) attributes.get("keystoreFile");
+        if (value != null)
+            setKeystoreFile(value);
+
+        value = (String) attributes.get("keystorePass");
+        if (value != null)
+            setKeystorePass(value);
+
+        value = (String) attributes.get("keystoreType");
+        if (value != null)
+            setKeystoreType(value);
+
+        value = (String) attributes.get("protocol");
+        if (value != null)
+            setProtocol(value);
+
+    }
+
+
+    /**
+     * Initialize the SSL socket factory.
+     *
+     * @exception IOException if an input/output error occurs
      */
     private void initProxy() throws IOException {
-	try {
-	    /** You should have this in java.security, but
-		can't hurt to double check
-	    */
-	    Security.addProvider (new sun.security.provider.Sun());
-	    Security.addProvider (new com.sun.net.ssl.internal.ssl.Provider());
 
-	    // Please don't change the name of the attribute - other
-	    // software may depend on it ( j2ee for sure )
-	    String keystoreFile=(String)attributes.get("keystore");
-	    if( keystoreFile==null) keystoreFile=defaultKeystoreFile;
+        try {
 
-	    String keystoreType=(String)attributes.get("keystoreType");
-	    if( keystoreType==null) keystoreType=defaultKeystoreType;
+            /*
+            Security.addProvider(new sun.security.provider.Sun());
+            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+            */
 
-	    //determine whether we want client authentication
-	    // the presence of the attribute enables client auth
-	    clientAuth = null != (String)attributes.get("clientauth");
+            // Create an SSL context used to create an SSL socket factory
+            SSLContext context = SSLContext.getInstance(protocol);
 
-	    String keyPass=(String)attributes.get("keypass");
-	    if( keyPass==null) keyPass=defaultKeyPass;
+            // Create the key manager factory used to extract the server key
+            KeyManagerFactory keyManagerFactory =
+                KeyManagerFactory.getInstance(algorithm);
+            keyManagerFactory.init(keyStore, keystorePass.toCharArray());
 
-	    //protocol for the SSL ie - TLS, SSL v3 etc.
-	    String protocol = (String)attributes.get("protocol");
-	    if(protocol == null) protocol = defaultProtocol;
-	    
-	    //Algorithm used to encode the certificate ie - SunX509
-	    String algorithm = (String)attributes.get("algorithm");
-	    if(algorithm == null) algorithm = defaultAlgorithm;
-	    
-	    // You can't use ssl without a server certificate.
-	    // Create a KeyStore ( to get server certs )
-	    KeyStore kstore = initKeyStore( keystoreFile, keyPass );
-	    
-	    // Create a SSLContext ( to create the ssl factory )
-	    // This is the only way to use server sockets with JSSE 1.0.1
-	    com.sun.net.ssl.SSLContext context = 
-		com.sun.net.ssl.SSLContext.getInstance(protocol); //SSL
+            // Create the trust manager factory used for checking certificates
+            /*
+              trustManagerFactory = TrustManagerFactory.getInstance(algorithm);
+              trustManagerFactory.init(keyStore);
+            */
 
-	    // Key manager will extract the server key
-	    com.sun.net.ssl.KeyManagerFactory kmf = 
-		com.sun.net.ssl.KeyManagerFactory.getInstance(algorithm);
-	    kmf.init( kstore, keyPass.toCharArray());
+            // Initialize the context with the key managers
+            context.init(keyManagerFactory.getKeyManagers(), null,
+                         new java.security.SecureRandom());
 
-	    // XXX I don't know if this is needed
-//  	    com.sun.net.ssl.TrustManagerFactory tmf = 
-//  		com.sun.net.ssl.TrustManagerFactory.getInstance("SunX509");
-// 		tmf.init(kstore);
+            // Create the proxy and return
+            sslProxy = context.getServerSocketFactory();
 
-	    // init context with the key managers
-	    context.init(kmf.getKeyManagers(), null,
-			 new java.security.SecureRandom());
+        } catch (Exception e) {
+            // FIXME - send to an appropriate log file?
+            System.out.println("initProxy:  " + e);
+            e.printStackTrace(System.out);
+            throw new IOException(e.toString());
+        }
 
-	    // create proxy
-	    sslProxy = context.getServerSocketFactory();
-
-	    return;
-	} catch(Exception e) {
-	    if( e instanceof IOException )
-		throw (IOException)e;
-	    throw new IOException(e.getMessage());
-	}
     }
 
-    /** Set server socket properties ( accepted cipher suites, etc)
+
+    /**
+     * Set the requested properties for this server socket.
+     *
+     * @param ssocket The server socket to be configured
      */
     private void initServerSocket(ServerSocket ssocket) {
-	SSLServerSocket socket=(SSLServerSocket)ssocket;
 
-	// We enable all cipher suites when the socket is
-	// connected - XXX make this configurable 
-	String cipherSuites[] = socket.getSupportedCipherSuites();
-	socket.setEnabledCipherSuites(cipherSuites);
+        SSLServerSocket socket = (SSLServerSocket) ssocket;
 
-	// we don't know if client auth is needed -
-	// after parsing the request we may re-handshake
-	socket.setNeedClientAuth(clientAuth);
+        // Enable all available cipher suites when the socket is connected
+        String cipherSuites[] = socket.getSupportedCipherSuites();
+        socket.setEnabledCipherSuites(cipherSuites);
+
+        // Set client authentication if necessary
+        socket.setNeedClientAuth(clientAuth);
+
     }
 
-    private KeyStore initKeyStore( String keystoreFile,
-				   String keyPass)
-	throws IOException
-    {
-	InputStream istream = null;
-	try {
-	    KeyStore kstore=KeyStore.getInstance( keystoreType );
-	    istream = new FileInputStream(keystoreFile);
-	    kstore.load(istream, keyPass.toCharArray());
-	    return kstore;
-	}
-	catch (FileNotFoundException fnfe) {
-	    throw fnfe;
-	}
-	catch (IOException ioe) {
-	    throw ioe;	    
-	}
-	catch(Exception ex) {
-	    throw new IOException( "Exception trying to load keystore " +
-				   keystoreFile + ": " + ex.getMessage() );
-	}
-    }
 
-    
 }

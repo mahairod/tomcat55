@@ -97,7 +97,9 @@ public final class Bootstrap {
     public static void main(String args[]) {
 
 	// Construct a new class loader for our internal classes
-	FileClassLoader loader = new FileClassLoader();
+        Bootstrap dummy = new Bootstrap();
+	FileClassLoader loader =
+            new FileClassLoader(dummy.getClass().getClassLoader());
 
 	// Add the "classes" subdirectory underneath "catalina.home"
 	File classes = new File(System.getProperty("catalina.home"),
