@@ -80,51 +80,53 @@ import java.util.Properties;
  */
 
 public abstract class NegativeJspCheckTest
-    extends JspCheckTest {
-    
+extends JspCheckTest {
+
     // HTTP error code that you expect.
     int errorCode;
-    
+
     public int getErrorCode() {
-	return errorCode;
+        return errorCode;
     }
-    
+
     // To be invoked by the actual clients.
     public void setErrorCode(int code) {
-	this.errorCode = code;
+        this.errorCode = code;
     }
-    
+
     // This method overrides the getTestResult of the super class.
     // Will check the error code with the expected error code.
-    
+
     public TestResult getTestResult(HttpURLConnection connection)
-	throws Exception {
-	
-	TestResult testResult = new TestResult();
-	
-	//handle HTTP codes here
-	int code = connection.getResponseCode();
-	Thread.currentThread().dumpStack();
-	    
-	//http response in 400s signifies Client Request Incomplete/Doc Not found
-	//http response in 500s signifies servlet error
-	
-	out.println("HTTP code" + code);
-	    
-	if (code != getErrorCode()) {
-	    testResult.setStatus(false);
-	    testResult.setMessage("CODE_MISMATCH " + getErrorCode() + "/" + code);
-	}
-	else { //assume request was OK
-	    
-	    testResult.setStatus(true);
-	    testResult.setMessage("PASSED");
-	}
-	
-	// Disconnet.
-	connection.disconnect();
-	
-	return testResult;
+    throws Exception {
+
+        TestResult testResult = new TestResult();
+
+        //handle HTTP codes here
+        int code = connection.getResponseCode();
+        if (this.useCookie == true)
+            saveCookies(connection);
+        Thread.currentThread().dumpStack();
+
+        //http response in 400s signifies Client Request Incomplete/Doc Not found
+        //http response in 500s signifies servlet error
+
+        out.println("HTTP code" + code);
+
+        if (code != getErrorCode()) {
+            testResult.setStatus(false);
+            testResult.setMessage("CODE_MISMATCH " + getErrorCode() + "/" + code);
+        }
+        else { //assume request was OK
+
+            testResult.setStatus(true);
+            testResult.setMessage("PASSED");
+        }
+
+        // Disconnet.
+        connection.disconnect();
+
+        return testResult;
     }
 }
 

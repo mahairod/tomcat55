@@ -63,21 +63,21 @@ package org.apache.tools.moo.jsp;
 public class Constants {
 
     public static class
-    Config {
-      //how exactly are these used?
+        Config {
+        //how exactly are these used?
         public static final String Name = "jcheck.properties";
-	public static final String mapFile = "jsp-tests.properties";
-	public static final String propDir = "/org/apache/jcheck/props/";
-	public static final String ResourceBase = "resourceBase";
+        public static final String mapFile = "jsp-tests.properties";
+        public static final String propDir = "/org/apache/jcheck/props/";
+        public static final String ResourceBase = "resourceBase";
     }
 
-  /**
-   * The server responds by sending a properties file.  Listed below
-   * are various keys to the properties file, which the client can 
-   * look up to examine the properties of the test.
-   */
+    /**
+     * The server responds by sending a properties file.  Listed below
+     * are various keys to the properties file, which the client can 
+     * look up to examine the properties of the test.
+     */
     public static class
-    Response {
+        Response {
         public static final String Title = "Title";
         public static final String TestClass = "TestClass";
         public static final String Description = "Description";

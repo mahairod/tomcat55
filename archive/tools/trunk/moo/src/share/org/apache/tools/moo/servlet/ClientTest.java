@@ -85,70 +85,70 @@ import java.io.PrintWriter;
  * They need to override runTest() as well as the description field
  */
 public abstract class ClientTest
-    implements Testable {
+implements Testable {
 
-	private MapManager mapManager = null;
-	URL url = null;
+    private MapManager mapManager = null;
+    URL url = null;
     boolean useCookie = false;
 
-    
+
     /**
      * returns a description of the client test.
      * This method needs to be overridden by the specific test
      */
     public abstract String
-	getDescription();
-    
+    getDescription();
+
     /**
      * returns the results of running the compatibility test in the form of a 
      * TestResult object.  
      * This method needs to be overridden by the client
      */
     public abstract TestResult
-	runTest();
-    
+    runTest();
+
     /**
      * establishes and returns an HTTP Connection (HTTP GET).
      * This method does not set any headers nor a query string
      */
     public HttpURLConnection
-	getConnection()
-	throws Exception {
-	return getConnection(null, null, null, null);
+    getConnection()
+    throws Exception {
+        return getConnection(null, null, null, null);
     }
-    
+
     /**
      * establishes and returns an HTTP Connection (HTTP GET).
      * This method does not set any headers nor a query string
      */
     public HttpURLConnection
-	getConnection(boolean useCookie)
-	throws Exception {
-	this.useCookie = useCookie;
-	return getConnection(null, null, null, null);
+    getConnection(boolean useCookie)
+    throws Exception {
+        this.useCookie = useCookie;
+        return getConnection(null, null, null, null);
     }
-    
+
     /**
      * establishes and returns an HTTP Connection with the HTTP method
      * set to method.  There are no user-defined headers, nor a query string
      */
     public HttpURLConnection
-	getConnection(String method) 
-	throws Exception {
-	return getConnection(null, null, null, method);
+    getConnection(String method)
+    throws Exception {
+        return getConnection(null, null, null, method);
     }
-    
+
     /**
      * establishes and returns an HTTP Connection with the HTTP method
      * set to method.  There are no user-defined headers, nor a query string
      */
     public HttpURLConnection
-	getConnection(String method, boolean useCookie) 
-	throws Exception {
-	this.useCookie = useCookie;
-	return getConnection(null, null, null, method);
+    getConnection(String method, boolean useCookie)
+    throws Exception {
+        this.useCookie = useCookie;
+        return getConnection(null, null, null, method);
     }
-    
+
     /**
      * establishes and returns an HTTP Connection (HTTP GET).
      * The headers arg should be set up with the keys as HTTP headers fields and 
@@ -156,8 +156,8 @@ public abstract class ClientTest
      * This method does not set the query string
      */
     public HttpURLConnection
-	getConnection (Hashtable headers)
-	throws Exception {
+    getConnection (Hashtable headers)
+    throws Exception {
         return getConnection(headers, null, null, null);
     }
 
@@ -168,19 +168,19 @@ public abstract class ClientTest
      * This method does not set the query string
      */
     public HttpURLConnection
-	getConnection (Hashtable headers, boolean useCookie)
-	throws Exception {
-	this.useCookie = useCookie;
+    getConnection (Hashtable headers, boolean useCookie)
+    throws Exception {
+        this.useCookie = useCookie;
         return getConnection(headers, null, null, null);
     }
-    
-    
+
+
     public HttpURLConnection
-	getConnection(Hashtable headers, String query, String pathInfo, String method, boolean useCookie)
-	throws Exception {
-	    this.useCookie = useCookie;
-	    return getConnection(headers, query, pathInfo, method);
-	}
+    getConnection(Hashtable headers, String query, String pathInfo, String method, boolean useCookie)
+    throws Exception {
+        this.useCookie = useCookie;
+        return getConnection(headers, query, pathInfo, method);
+    }
     /**
      * establishes and returns an HTTP Connection.
      * This connects to the value in the MapManager
@@ -192,8 +192,8 @@ public abstract class ClientTest
      * this returns a connection with an HTTP GET
      * it must be one of the following strings: GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE
      */
-    
-    
+
+
     /**
      * This is the less-prefered method, but allows you to input query
      * string arguments as a string (allowing a key without a corresponding
@@ -211,89 +211,89 @@ public abstract class ClientTest
      * this returns a connection with an HTTP GET
      * it must be one of the following strings: GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE
      */
-    
+
     /**
      * Grandaddy of all calls
      * query is passed in as a query String (without the prepended ?)
      */
     public HttpURLConnection
-	getConnection(Hashtable headers, String query, String pathInfo, String method)
-	throws Exception {
-	
+    getConnection(Hashtable headers, String query, String pathInfo, String method)
+    throws Exception {
+
         HttpURLConnection connection = null;
-	String mapResource = this.getClass().getName();
-	
-	mapManager = MapManagerImpl.getMapManager();
+        String mapResource = this.getClass().getName();
 
-	String testResource = mapManager.get(mapResource);
-	//associated server-side class for the client
+        mapManager = MapManagerImpl.getMapManager();
 
-	if (testResource == null) {
-	    throw new NullPointerException("bad resource: " + mapResource
-					   + ".  Can't map client test to server test");
-	}
-	
-	//opens an http connection to the server specified by the property
-	//Main.hostName at the port specified by Main.portName to the file
-	//located at testResource with the query-string query
-	String queryAndPath = (pathInfo!=null ? "/"+pathInfo : "") +
-	    (query!=null ? "?" + query : "");
-	
-	String toConnect = testResource + queryAndPath;
-	
-	url = URLHelper.getURL(toConnect);
-	String host = url.getHost();
-	String port = String.valueOf(url.getPort());
-	String protocol = url.getProtocol();
-	String file = url.getFile();	
-	
-	try {	  
-	    connection = (HttpURLConnection)url.openConnection();
-	} catch (IOException e) {
-	    out.println("Could not retrieve file " + file + " on " + host
-			+ " on port number " + port + " via " + protocol + " protocol");
-	    throw e;
-	}
-	
-	//set the request method
-	if (method != null) {
-	    try {
-		connection.setRequestMethod(method);
-	    }catch (ProtocolException e) {
-		out.println("Method: " + method + " not valid for " + protocol);
-		throw e;
-	    }//end catch
-	} //end if	    
-	
-	//set cookie header
-	if (this.useCookie == true)
-	    setCookieHeader(connection);
-	
-	//establish the headers
-	doHeaders(headers, connection);
-	
-	//set general properties
-	connection.setDoOutput(true);
-	connection.setDoInput(true);
-	connection.setUseCaches(false);
-	connection.setFollowRedirects(false);
-	
-	//establish connection
-	try {
-	    connection.connect();
-	}catch (IOException e) {
-	    out.println("Could not establish a connection to file " + file
-			+ " on " + host + " on port number " + port + " via "
-			+ protocol + " protocol");	  
-	    throw e;
-	} //end catch
-	
-	out.println("Connected to "+ url.toString());
-		
-	return connection;
+        String testResource = mapManager.get(mapResource);
+        //associated server-side class for the client
+
+        if (testResource == null) {
+            throw new NullPointerException("bad resource: " + mapResource
+                                           + ".  Can't map client test to server test");
+        }
+
+        //opens an http connection to the server specified by the property
+        //Main.hostName at the port specified by Main.portName to the file
+        //located at testResource with the query-string query
+        String queryAndPath = (pathInfo!=null ? "/"+pathInfo : "") +
+                              (query!=null ? "?" + query : "");
+
+        String toConnect = testResource + queryAndPath;
+
+        url = URLHelper.getURL(toConnect);
+        String host = url.getHost();
+        String port = String.valueOf(url.getPort());
+        String protocol = url.getProtocol();
+        String file = url.getFile();
+
+        try {
+            connection = (HttpURLConnection)url.openConnection();
+        } catch (IOException e) {
+            out.println("Could not retrieve file " + file + " on " + host
+                        + " on port number " + port + " via " + protocol + " protocol");
+            throw e;
+        }
+
+        //set the request method
+        if (method != null) {
+            try {
+                connection.setRequestMethod(method);
+            }catch (ProtocolException e) {
+                out.println("Method: " + method + " not valid for " + protocol);
+                throw e;
+            }//end catch
+        } //end if
+
+        //set cookie header
+        if (this.useCookie == true)
+            setCookieHeader(connection);
+
+        //establish the headers
+        doHeaders(headers, connection);
+
+        //set general properties
+        connection.setDoOutput(true);
+        connection.setDoInput(true);
+        connection.setUseCaches(false);
+        connection.setFollowRedirects(false);
+
+        //establish connection
+        try {
+            connection.connect();
+        }catch (IOException e) {
+            out.println("Could not establish a connection to file " + file
+                        + " on " + host + " on port number " + port + " via "
+                        + protocol + " protocol");
+            throw e;
+        } //end catch
+
+        out.println("Connected to "+ url.toString());
+
+        return connection;
     }
-    
-    
+
+
     /**
      * Takes in a hashtable, where the keys are the names of HTTP form fields
      * (must be in a java.lang.String object) 
@@ -306,62 +306,62 @@ public abstract class ClientTest
      * if queryString is null, this returns the empty string, ""
      */
     public String doQueryString(Hashtable queryString) {
-	if (queryString == null) return "";
-	
-	// assert: queryString not null
-	// hold the querystring to be generated in sb
-	StringBuffer sb = new StringBuffer();
-	Enumeration keys = queryString.keys();
-	
-	while (keys.hasMoreElements()) {
-	    String key = (String)keys.nextElement();      
-	    Object val = queryString.get(key);
-	    boolean isString = val instanceof String;
-	    boolean isVector = val instanceof Vector;
-	    String value;
-	    
-	    if (isString) {
-		value = (String)val;
-		sb.append( URLEncoder.encode(key) );
-		sb.append( "=" );
-		sb.append( URLEncoder.encode(value) );
-	    }
-	    
-	    else if (isVector) {
-		Enumeration vals = ((Vector)val).elements();
-		while (vals.hasMoreElements()) {
-		    value = (String)vals.nextElement();
-		    sb.append(URLEncoder.encode(key));
-		    sb.append("=");
-		    sb.append(URLEncoder.encode(value));	  
-		}
-	    } //end else
-	    else continue;
-	    //next iteration -- don't really need this as this is the end of the while loop
-	} //end while (keys ...
-	
-	return sb.toString();
-	
+        if (queryString == null) return "";
+
+        // assert: queryString not null
+        // hold the querystring to be generated in sb
+        StringBuffer sb = new StringBuffer();
+        Enumeration keys = queryString.keys();
+
+        while (keys.hasMoreElements()) {
+            String key = (String)keys.nextElement();
+            Object val = queryString.get(key);
+            boolean isString = val instanceof String;
+            boolean isVector = val instanceof Vector;
+            String value;
+
+            if (isString) {
+                value = (String)val;
+                sb.append( URLEncoder.encode(key) );
+                sb.append( "=" );
+                sb.append( URLEncoder.encode(value) );
+            }
+
+            else if (isVector) {
+                Enumeration vals = ((Vector)val).elements();
+                while (vals.hasMoreElements()) {
+                    value = (String)vals.nextElement();
+                    sb.append(URLEncoder.encode(key));
+                    sb.append("=");
+                    sb.append(URLEncoder.encode(value));
+                }
+            } //end else
+            else continue;
+            //next iteration -- don't really need this as this is the end of the while loop
+        } //end while (keys ...
+
+        return sb.toString();
+
     }
-    
- 
-	private void setCookieHeader(HttpURLConnection connection) {
-        String savedCookies = 
-	        mapManager.getCookieJar().applyRelevantCookies(this.url);
+
+
+    private void setCookieHeader(HttpURLConnection connection) {
+        String savedCookies =
+          mapManager.getCookieJar().applyRelevantCookies(this.url);
         if (savedCookies != null) {
             connection.setRequestProperty("Cookie", savedCookies);
         }
-	}
+    }
 
     private void saveCookies(HttpURLConnection connection) {
         String recvCookies = connection.getHeaderField("Set-Cookie");
         if (recvCookies != null) {
             Vector receivedCookies = new Vector();
             receivedCookies.addElement(recvCookies);
-	        mapManager.getCookieJar().recordAnyCookies(receivedCookies, this.url);
+            mapManager.getCookieJar().recordAnyCookies(receivedCookies, this.url);
         }
     }
-    
+
     /**
      * adds the headers from the headers Hashtable 
      * (key=HTTP header, value=HTTP value)
@@ -372,23 +372,23 @@ public abstract class ClientTest
      * modifies: connection 
      */
     private void doHeaders(Hashtable headers, HttpURLConnection connection) {
-	if (headers != null) {
-	    Enumeration enum = headers.keys();
-	    
-	    while (enum.hasMoreElements()) {
-		String key = (String)enum.nextElement();
-		String value = (String)headers.get(key);
-		
-		if (key != null &
-		    value != null) {
-		    connection.setRequestProperty(key, value);
-		} //end if
-	    } //end while
-	} //end if
+        if (headers != null) {
+            Enumeration enum = headers.keys();
+
+            while (enum.hasMoreElements()) {
+                String key = (String)enum.nextElement();
+                String value = (String)headers.get(key);
+
+                if (key != null &
+                        value != null) {
+                    connection.setRequestProperty(key, value);
+                } //end if
+            } //end while
+        } //end if
     } //end doHeaders
-    
-    
-    
+
+
+
     /**
      * runs another test (ie a precursor to the current test)
      * this is used for example to set state on the server, then test
@@ -409,26 +409,26 @@ public abstract class ClientTest
      * was established by the first test.
      *
      */
-    
-    protected TestResult runAnotherTest(String testName) 
-	throws ClassNotFoundException, ClassCastException      
+
+    protected TestResult runAnotherTest(String testName)
+    throws ClassNotFoundException, ClassCastException
     {
-	Class c = Class.forName(testName);
-	try {
-	    Testable test = (Testable)c.newInstance();
-	    return test.runTest();
-	} 
-	catch (java.lang.IllegalAccessException e) {
-	    e.printStackTrace(new PrintStream(Logger.getLogger().getOutputStream()));
-	    return new TestResult(false, e.toString());
-	}
-	catch (java.lang.InstantiationException e) {
-	    e.printStackTrace(new PrintStream(Logger.getLogger().getOutputStream()));
-	    return new TestResult(false, e.toString());
-	}    
+        Class c = Class.forName(testName);
+        try {
+            Testable test = (Testable)c.newInstance();
+            return test.runTest();
+        }
+        catch (java.lang.IllegalAccessException e) {
+            e.printStackTrace(new PrintStream(Logger.getLogger().getOutputStream()));
+            return new TestResult(false, e.toString());
+        }
+        catch (java.lang.InstantiationException e) {
+            e.printStackTrace(new PrintStream(Logger.getLogger().getOutputStream()));
+            return new TestResult(false, e.toString());
+        }
     }
-    
-    
+
+
     /**
      * requires: that the corresponding server returns a response in the
      * form of a properties file.  Additionally, there must be a key in the
@@ -443,45 +443,45 @@ public abstract class ClientTest
      * this should be called by the subclass client test's runTest() method.
      */
     public TestResult
-	getTestResult (HttpURLConnection connection)
-	throws Exception {
+    getTestResult (HttpURLConnection connection)
+    throws Exception {
         TestResult testResult = new TestResult();
-	Properties props = new Properties();
-	
-	//handle HTTP codes here
-	int code = connection.getResponseCode();
-	String message = connection.getResponseMessage();
+        Properties props = new Properties();
 
-	if (this.useCookie == true)
-        saveCookies(connection);
+        //handle HTTP codes here
+        int code = connection.getResponseCode();
+        String message = connection.getResponseMessage();
 
-	//http response in 400s signifies Client Request Incomplete/Doc Not found ...
-	//http response in 500s signifies servlet error
+        if (this.useCookie == true)
+            saveCookies(connection);
 
-	if (code >= 400) {
-	    testResult.setStatus(false);
-	    testResult.setMessage(message);
-	}
-	else { //assume request was OK
-	    
-	  props.load(connection.getInputStream());
-	  connection.disconnect();
-	  
-	  String statusStr =
-	      props.getProperty(Constants.Response.Status, "false");
-	  
-	  out.println("Response Status = " + statusStr);
-	  if(statusStr.equals("false"))
-	      out.println("Message: " + props.getProperty(Constants.Response.Message,""));
-	  
-	  testResult.setStatus(Boolean.valueOf(statusStr).booleanValue());
-	  testResult.setMessage(
-				props.getProperty(Constants.Response.Message, ""));
-	} //end else
-	
-	return testResult;
+        //http response in 400s signifies Client Request Incomplete/Doc Not found ...
+        //http response in 500s signifies servlet error
+
+        if (code >= 400) {
+            testResult.setStatus(false);
+            testResult.setMessage(message);
+        }
+        else { //assume request was OK
+
+            props.load(connection.getInputStream());
+            connection.disconnect();
+
+            String statusStr =
+              props.getProperty(Constants.Response.Status, "false");
+
+            out.println("Response Status = " + statusStr);
+            if(statusStr.equals("false"))
+                out.println("Message: " + props.getProperty(Constants.Response.Message,""));
+
+            testResult.setStatus(Boolean.valueOf(statusStr).booleanValue());
+            testResult.setMessage(
+              props.getProperty(Constants.Response.Message, ""));
+        } //end else
+
+        return testResult;
     }
-    
+
     /**
      * this is called if the test results in an exception.
      * this should be called by the subclass client test' runTest() method.
@@ -489,24 +489,24 @@ public abstract class ClientTest
      * modifies: the status and message properties of testResult
      */
     public TestResult
-	getTestResult (TestResult testResult, Exception e) {
-        if (testResult == null) { 
-	    testResult = new TestResult(); 
-	} 
-	
-	testResult.setStatus(false);
-	testResult.setMessage(this.getClass().getName() +
-			      " exception: " + e);
-	
-	e.printStackTrace(new PrintWriter(out.getOutputStream()));
-    
-	return testResult;
+    getTestResult (TestResult testResult, Exception e) {
+        if (testResult == null) {
+            testResult = new TestResult();
+        }
+
+        testResult.setStatus(false);
+        testResult.setMessage(this.getClass().getName() +
+                              " exception: " + e);
+
+        e.printStackTrace(new PrintWriter(out.getOutputStream()));
+
+        return testResult;
     }
-    
+
     public void setStream (OutputStream err) {
-	out.setOutputStream(err);
+        out.setOutputStream(err);
     }
-    
+
     protected Logger out = Logger.getLogger();
-    
+
 }

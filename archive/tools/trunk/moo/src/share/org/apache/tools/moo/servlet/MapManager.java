@@ -81,73 +81,73 @@ import java.lang.NullPointerException;
 public class MapManager {
 
     private CookieJar cookieJar = new CookieJar();
-    
+
     //maps is a hashtable from client test (key) to server test (value)
     private Hashtable maps = new Hashtable();
-    
-    //offers some configurability options such as the base directory of 
+
+    //offers some configurability options such as the base directory of
     // server resources (ie server-side tests)
     private static final String ConfigFile = Constants.Config.propDir +  Constants.Config.Name;
-    
+
     public
-	MapManager() {
+    MapManager() {
 
-	String defaultResourceBase = "/servlet-tests";
-	Properties props = new Properties();
-	Properties tests = new Properties();
-	
-	props.put(Constants.Config.ResourceBase,
-		  defaultResourceBase);
-	
-	try {
-	    
-	    //load configuration properties
-        InputStream in =
-		    this.getClass().getResourceAsStream(ConfigFile);
-		if (in == null)
-	        throw new Exception();
-	    props.load(in);
-	} catch (Exception e) {
-	    System.out.println("Exception: can't find config file " +
-			       ConfigFile);
-	}
-	
-	String propFile = Constants.Config.propDir +  Constants.Config.mapFile;
-	
-	try {	  
-	    
-        InputStream in =
-		    this.getClass().getResourceAsStream(propFile);
-		if (in == null)
-	        throw new FileNotFoundException();
-	    tests.load(in);
-	    maps = (Hashtable)tests;
-	} catch(FileNotFoundException e) {
-	    System.out.println("Servlet Could not find file: " + propFile);
-	} catch (SecurityException e) {
-	    System.out.println("Security Exception while opening: " + propFile);
-	} catch (IOException e) {
-	    System.out.println("Error loading properties file: " + propFile);
-	}	
+        String defaultResourceBase = "/servlet-tests";
+        Properties props = new Properties();
+        Properties tests = new Properties();
 
-	Enumeration e = maps.keys();
-	String prefix = props.getProperty(Constants.Config.ResourceBase) + "/";
-	while (e.hasMoreElements()) {
-	  String key = (String)e.nextElement();
-	  String value = prefix + maps.get(key);	  
-	  maps.put(key, value); //replace the old value
-	}
-	
+        props.put(Constants.Config.ResourceBase,
+                  defaultResourceBase);
+
+        try {
+
+            //load configuration properties
+            InputStream in =
+              this.getClass().getResourceAsStream(ConfigFile);
+            if (in == null)
+                throw new Exception();
+            props.load(in);
+        } catch (Exception e) {
+            System.out.println("Exception: can't find config file " +
+                               ConfigFile);
+        }
+
+        String propFile = Constants.Config.propDir +  Constants.Config.mapFile;
+
+        try {
+
+            InputStream in =
+              this.getClass().getResourceAsStream(propFile);
+            if (in == null)
+                throw new FileNotFoundException();
+            tests.load(in);
+            maps = (Hashtable)tests;
+        } catch(FileNotFoundException e) {
+            System.out.println("Servlet Could not find file: " + propFile);
+        } catch (SecurityException e) {
+            System.out.println("Security Exception while opening: " + propFile);
+        } catch (IOException e) {
+            System.out.println("Error loading properties file: " + propFile);
+        }
+
+        Enumeration e = maps.keys();
+        String prefix = props.getProperty(Constants.Config.ResourceBase) + "/";
+        while (e.hasMoreElements()) {
+            String key = (String)e.nextElement();
+            String value = prefix + maps.get(key);
+            maps.put(key, value); //replace the old value
+        }
+
     }
-    
+
     /**
      * returns the server-equivalent test for a client-test.  
      * The client test needs to be fully-qualified.
      * if not, or if it is not a valid name, this method will return null i believe
      */
     public String
-	get(String testName) {
-	return (String)maps.get(testName);
+    get(String testName) {
+        return (String)maps.get(testName);
     }
 
     public CookieJar getCookieJar() {

@@ -79,106 +79,107 @@ import java.lang.NullPointerException;
  * This class handles the mapping of client tests to server tests
  */
 public class MapManager {
-    
+
     private CookieJar cookieJar = new CookieJar();
 
     //maps is a hashtable from client test (key) to server test (value)
     private Hashtable maps = new Hashtable();
-    
-    //offers some configurability options such as the base directory of 
+
+    //offers some configurability options such as the base directory of
     // server resources (ie server-side tests)
-    private static final String ConfigFile =  Constants.Config.propDir + Constants.Config.Name;
-    
+    private static final String ConfigFile =  Constants.Config.propDir +
+            Constants.Config.Name;
+
     public String resourceBase;
-    
+
     public
-	MapManager() {
-	
-	String defaultResourceBase = "/jsp-tests";
-	Properties props = new Properties();
-	Properties tests = new Properties();
-	
-	props.put(Constants.Config.ResourceBase,
-		  defaultResourceBase);
-	
-	try {
-	    
-	    //load configuration properties
-        InputStream in =
-		    this.getClass().getResourceAsStream(ConfigFile);
-		if (in == null)
-		    throw new Exception();
-	    props.load(in);
-	} catch (Exception e) {
-	    System.out.println("Exception: can't find config file " +
-			       ConfigFile);
-	}
-	
-	String propFile =  Constants.Config.propDir + Constants.Config.mapFile;
-	
-	try {	  
-	    InputStream in =
-		    this.getClass().getResourceAsStream(propFile);
-		if (in == null)
-		    throw new FileNotFoundException();
-	    tests.load(in); 
-	    maps = (Hashtable)tests;
-	}
-	catch (FileNotFoundException e) {
-	    System.out.println("Could not find file: " + propFile);
-	}
-	catch (SecurityException e) {
-	    System.out.println("Security Exception while opening: " + propFile);
-	}
-	catch (IOException e) {
-	    System.out.println("Error loading properties file: " + propFile);
-	}	
-	catch (NullPointerException e) {
-	    System.out.println("Error loading properties file: " + propFile);
-	}	
-	
-	
-	//now we need to add the resource base to each of the servlets
-	//ie: /jsp/
-	Enumeration e = maps.keys();
-	
-	this.resourceBase = (props.getProperty(Constants.Config.ResourceBase) != null) ?
-	    props.getProperty(Constants.Config.ResourceBase) : defaultResourceBase;
-	
-	String prefix = this.resourceBase + "/jsp/";
-	
-	while (e.hasMoreElements()) {
-	    String key = (String)e.nextElement();
-	    String value = prefix + maps.get(key);	  
-	    maps.put(key, value); //replace the old value
-	}
+    MapManager() {
+
+        String defaultResourceBase = "/jsp-tests";
+        Properties props = new Properties();
+        Properties tests = new Properties();
+
+        props.put(Constants.Config.ResourceBase,
+                  defaultResourceBase);
+
+        try {
+
+            //load configuration properties
+            InputStream in =
+              this.getClass().getResourceAsStream(ConfigFile);
+            if (in == null)
+                throw new Exception();
+            props.load(in);
+        } catch (Exception e) {
+            System.out.println("Exception: can't find config file " +
+                               ConfigFile);
+        }
+
+        String propFile =  Constants.Config.propDir + Constants.Config.mapFile;
+
+        try {
+            InputStream in =
+              this.getClass().getResourceAsStream(propFile);
+            if (in == null)
+                throw new FileNotFoundException();
+            tests.load(in);
+            maps = (Hashtable)tests;
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("Could not find file: " + propFile);
+        }
+        catch (SecurityException e) {
+            System.out.println("Security Exception while opening: " + propFile);
+        }
+        catch (IOException e) {
+            System.out.println("Error loading properties file: " + propFile);
+        }
+        catch (NullPointerException e) {
+            System.out.println("Error loading properties file: " + propFile);
+        }
+
+
+        //now we need to add the resource base to each of the servlets
+        //ie: /jsp/
+        Enumeration e = maps.keys();
+
+        this.resourceBase = (props.getProperty(Constants.Config.ResourceBase) != null) ?
+                            props.getProperty(Constants.Config.ResourceBase) : defaultResourceBase;
+
+        String prefix = this.resourceBase + "/jsp/";
+
+        while (e.hasMoreElements()) {
+            String key = (String)e.nextElement();
+            String value = prefix + maps.get(key);
+            maps.put(key, value); //replace the old value
+        }
     }
-    
+
     /**
      * returns the server-equivalent test for a client-test.  
      * The client test needs to be fully-qualified.
      * if not, or if it is not a valid name, this method will return null i believe
      */
     public String get (String testName) {
-	return (String)maps.get(testName);
+        return (String)maps.get(testName);
     }
-    
+
     /**
      * return the URL prefix for the golden file.
      */
     public String getGoldenfilePrefix(String mapResource, String goldenFile)
-	throws FileNotFoundException {
-	String toConnect = get(mapResource);
-	int index = toConnect.lastIndexOf(this.resourceBase);
-	
-	if (index == -1)
-	    throw new FileNotFoundException("GoldenFile URL incorrect");
-	
-	return  toConnect.substring(0,index) + this.resourceBase + "/golden-files/" +
-	    goldenFile; 
+    throws FileNotFoundException {
+        String toConnect = get(mapResource);
+        int index = toConnect.lastIndexOf(this.resourceBase);
+
+        if (index == -1)
+            throw new FileNotFoundException("GoldenFile URL incorrect");
+
+        return  toConnect.substring(0,index) + this.resourceBase + "/golden-files/" +
+                goldenFile;
     }
 
-    
+
     public CookieJar getCookieJar() {
         return this.cookieJar;
     }
