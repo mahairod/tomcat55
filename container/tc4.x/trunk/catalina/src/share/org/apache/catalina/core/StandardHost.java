@@ -706,14 +706,23 @@ public final class StandardHost
                 (sm.getString("standardHost.docBase",
                               docBase.getAbsolutePath()));
         docBase.mkdir();
+        if (debug >= 2)
+            log("  Have created expansion directory " +
+                docBase.getAbsolutePath());
 
         // Expand the WAR into the new document base directory
         JarFile jarFile =
             ((JarURLConnection) war.openConnection()).getJarFile();
+        if (debug >= 2)
+            log("  Have opened JAR file successfully");
         Enumeration jarEntries = jarFile.entries();
+        if (debug >= 2)
+            log("  Have retrieved entries enumeration");
         while (jarEntries.hasMoreElements()) {
             JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
             String name = jarEntry.getName();
+            if (debug >= 2)
+                log("  Am processing entry " + name);
             int last = name.lastIndexOf("/");
             if (last >= 0) {
                 File parent = new File(docBase,
@@ -728,8 +737,9 @@ public final class StandardHost
                 log("  Creating expanded file " + name);
             InputStream input = jarFile.getInputStream(jarEntry);
             expand(input, docBase, name);
+            input.close();
         }
-        jarFile.close();
+        jarFile.close();        // FIXME - doesn't remove from cache!!!
 
         // Return the absolute path to our new document base directory
         return (docBase.getAbsolutePath());
@@ -761,7 +771,6 @@ public final class StandardHost
             output.write(buffer, 0, n);
         }
         output.close();
-        input.close();
 
     }
 
