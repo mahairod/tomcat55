@@ -38,10 +38,6 @@ General New Features:
         Complete development of the initial version of the administration web
         application.
 
-[4.1.2] Administration Webapp:
-        Fix problems with limiting the length of the driverClassName field, as
-        well as set default values.
-
 
 ---------------------
 Catalina New Features:
@@ -69,6 +65,13 @@ BUG FIXES AND IMPROVEMENTS:
 Generic Bug Fixes:
 ------------------
 
+[4.1.2] Administration Webapp:
+        Fix problems with limiting the length of the driverClassName field, as
+        well as set default values, and add missing JNDI name field.
+
+[4.1.2] Administration Webapp:
+        Many cosmetic fixes.
+
 
 ------------------
 Catalina Bug Fixes:
@@ -82,6 +85,13 @@ Catalina Bug Fixes:
         JAR file which point to the JAR, intead of using a nested jar: URL.
         This change will affect security manager policy files.
 
+[4.1.2] ErrorReportValve:
+        Made it so the valve will only generate status reports for status codes
+        over 300.
+
+[4.1.2] DbcpDataSourceFactory:
+        maxIdle attribute couldn't be set.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -93,6 +103,10 @@ Jasper Bug Fixes:
         This workaround for a JDK bug (BugParade Id: 4414162) introduces 
         a massive performance improvement when using pages containing 
         lots of tags.
+
+[4.1.2] Generator:
+        Fixes various problems introduced by the patch which removes 
+        the try/catch tag nesting.
 
 
 ============================
