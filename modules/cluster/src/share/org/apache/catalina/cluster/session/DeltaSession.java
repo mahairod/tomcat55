@@ -1,3 +1,4 @@
+
 /*
  * $Header$
  * $Revision$
@@ -330,6 +331,13 @@ public class DeltaSession
      * 
      */
     private transient DeltaRequest deltaRequest = null;
+    
+    
+    /**
+     * Last time the session was replicatd, used for distributed 
+     * expiring of session
+     */
+    private transient long lastTimeReplicated = System.currentTimeMillis();
     
     // ----------------------------------------------------- Session Properties
 
@@ -1469,7 +1477,6 @@ public class DeltaSession
             }
         }
         isValid = isValidSave;
-
     }
 
 
@@ -1647,6 +1654,14 @@ public class DeltaSession
             return (attributes.get(name));
         }
 
+    }
+    
+    protected long getLastTimeReplicated() {
+        return lastTimeReplicated;
+    }
+    
+    protected void setLastTimeReplicated(long lastTimeReplicated) {
+        this.lastTimeReplicated = lastTimeReplicated;
     }
 
 }
