@@ -217,6 +217,11 @@
 
     <constructor name="HttpConnector"/>
 
+    <operation   name="getParent"
+          description="Return the parent (Server) that owns this Connector"
+               impact="INFO"
+           returnType="org.apache.catalina.Server"/>
+           
   </mbean>
 
 
@@ -304,6 +309,11 @@
 
     <constructor name="HttpConnector"/>
 
+    <operation   name="getParent"
+          description="Return the parent (Server) that owns this Connector"
+               impact="INFO"
+           returnType="org.apache.catalina.Server"/>
+
   </mbean>
 
 
@@ -369,6 +379,11 @@
                  type="java.lang.String"/>
 
     <constructor name="JDBCRealm"/>
+
+    <operation   name="getParent"
+          description="Return the parent (Container) that owns this Realm"
+               impact="INFO"
+           returnType="org.apache.catalina.Container"/>
 
   </mbean>
 
@@ -628,6 +643,11 @@
 
     <constructor name="StandardContext"/>
 
+    <operation   name="getParent"
+          description="Return the parent (Host) that owns this Context"
+               impact="INFO"
+           returnType="org.apache.catalina.Host"/>
+           
     <operation   name="addValve"
           description="Add a new Valve to the end of the pipeline associated with this Container"
                impact="ACTION"
@@ -689,6 +709,11 @@
 
     <constructor name="StandardEngine"/>
 
+    <operation   name="getParent"
+          description="Return the parent (Service) that owns this Engine"
+               impact="INFO"
+           returnType="org.apache.catalina.Servive"/>
+           
     <operation   name="createAccessLogger"
           description="Create a new AccessLogger"
                impact="ACTION"
@@ -814,6 +839,11 @@
                  type="boolean"/>
 
     <constructor name="StandardHost"/>
+
+    <operation   name="getParent"
+          description="Return the parent (Engine) that owns this Host"
+               impact="INFO"
+           returnType="org.apache.catalina.Engine"/>
 
     <operation   name="addAlias"
           description="Add an alias name that should be mapped to this same Host"
@@ -1097,10 +1127,16 @@
                impact="ACTION"
            returnType="org.apache.catalina.Connector[]"/>
 
+    <operation   name="getParent"
+          description="Return the parent (Server) that owns this Service"
+               impact="INFO"
+           returnType="org.apache.catalina.Server"/>
+
     <operation   name="removeConnector"
           description="Remove an existing associated Connector"
                impact="ACTION"
            returnType="void">
+
       <parameter name="connector"
           description="The Connector to be removed"
                  type="org.apache.catalina.Connector"/>
