@@ -388,7 +388,7 @@ public class JDBCStore
      */
     public String[] keys() throws IOException {
         String keysSql =
-            "SELECT COUNT(s."+sessionIdCol+"), s."+sessionIdCol+
+            "SELECT COUNT(s."+sessionIdCol+"), c."+sessionIdCol+
             " FROM "+sessionTable+" s, "+sessionTable+" c"+
             " GROUP BY c."+sessionIdCol;
 
