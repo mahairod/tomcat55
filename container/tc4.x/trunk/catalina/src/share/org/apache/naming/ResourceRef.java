@@ -64,136 +64,119 @@
 
 package org.apache.naming;
 
-import javax.naming.RefAddr;
+import java.util.Hashtable;
+import javax.naming.Reference;
+import javax.naming.Context;
+import javax.naming.StringRefAddr;
 
 /**
- * Represents a reference address to an EJB.
+ * Represents a reference address to a resource.
  *
  * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
-public class EjbRefAddr
-    extends RefAddr {
+public class ResourceRef
+    extends Reference {
 
 
     // -------------------------------------------------------------- Constants
 
 
     /**
-     * Ref address type.
+     * Default factory for this reference.
      */
-    public static final String TYPE = "ejb-ref";
+    public static final String DEFAULT_FACTORY = 
+        org.apache.naming.factory.Constants.DEFAULT_RESOURCE_FACTORY;
+
+
+    /**
+     * Description address type.
+     */
+    public static final String DESCRIPTION = "description";
+
+
+    /**
+     * Scope address type.
+     */
+    public static final String SCOPE = "scope";
+
+
+    /**
+     * Auth address type.
+     */
+    public static final String AUTH = "auth";
 
 
     // ----------------------------------------------------------- Constructors
 
 
     /**
-     * EJB Reference.
+     * Resource Reference.
      * 
-     * @param ejbType EJB type
-     * @param home Home interface classname
-     * @param remote Remote interface classname
-     * @param link EJB link
-     * @param runAs Run As
+     * @param resourceClass Resource class
+     * @param scope Resource scope
+     * @param auth Resource authetication
      */
-    public EjbRefAddr(String ejbType, String home, String remote, String link,
-                      String runAs) {
-        super(TYPE);
-        this.ejbType = ejbType;
-        this.home = home;
-        this.remote = remote;
-        this.link = link;
-        this.runAs = runAs;
+    public ResourceRef(String resourceClass, String description, 
+                       String scope, String auth) {
+        this(resourceClass, description, scope, auth, null, null);
+    }
+
+
+    /**
+     * Resource Reference.
+     * 
+     * @param resourceClass Resource class
+     * @param scope Resource scope
+     * @param auth Resource authetication
+     */
+    public ResourceRef(String resourceClass, String description, 
+                       String scope, String auth, String factory,
+                       String factoryLocation) {
+        super(resourceClass, factory, factoryLocation);
+        StringRefAddr refAddr = null;
+        if (description != null) {
+            refAddr = new StringRefAddr(DESCRIPTION, description);
+            add(refAddr);
+        }
+        if (scope != null) {
+            refAddr = new StringRefAddr(SCOPE, scope);
+            add(refAddr);
+        }
+        if (auth != null) {
+            refAddr = new StringRefAddr(AUTH, auth);
+            add(refAddr);
+        }
     }
 
 
     // ----------------------------------------------------- Instance Variables
 
 
-    /**
-     * EJB type.
-     */
-    protected String ejbType;
+    // ------------------------------------------------------ Reference Methods
 
 
     /**
-     * Home interface.
+     * Retrieves the class name of the factory of the object to which this 
+     * reference refers.
      */
-    protected String home;
-
-
-    /**
-     * Remote interface.
-     */
-    protected String remote;
-
-
-    /**
-     * Link.
-     */
-    protected String link;
-
-
-    /**
-     * Run as.
-     */
-    protected String runAs;
-
-
-    // -------------------------------------------------------- RefAddr Methods
-
-
-    /**
-     * Returns the contents of the address.
-     */
-    public Object getContent() {
-        return this.home;
+    public String getFactoryClassName() {
+        String factory = super.getFactoryClassName();
+        if (factory != null) {
+            return factory;
+        } else {
+            factory = System.getProperty(Context.OBJECT_FACTORIES);
+            if (factory != null) {
+                return null;
+            } else {
+                return DEFAULT_FACTORY;
+            }
+        }
     }
 
 
     // ------------------------------------------------------------- Properties
-
-
-    /**
-     * EJB type accessor.
-     */
-    public String getEjbType() {
-	return (this.ejbType);
-    }
-
-
-    /**
-     * Home accessor.
-     */
-    public String getHome() {
-	return (this.home);
-    }
-
-
-    /**
-     * Remote accessor.
-     */
-    public String getRemote() {
-	return (this.remote);
-    }
-
-
-    /**
-     * Link accessor.
-     */
-    public String getLink() {
-	return (this.link);
-    }
-
-
-    /**
-     * RunAs accessor.
-     */
-    public String getRunAs() {
-	return (this.runAs);
-    }
 
 
 }

@@ -26,6 +26,12 @@
     <mkdir dir="${catalina.build}/conf"/>
     <mkdir dir="${catalina.build}/lib"/>
     <mkdir dir="${catalina.build}/server"/>
+
+    <!-- =================== Conditional Compilation Falgs ================ -->
+    <available property="tyrex.present"
+     classname="tyrex.jdbc.ServerDataSource" />
+    <available property="jta.present"
+     classname="javax.transaction.UserTransaction" />
   </target>
 
 
@@ -72,7 +78,14 @@
     <javac   srcdir="src/share" destdir="${catalina.build}/classes"
              classpath="${parser.jar}:${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}"
              deprecation="off" debug="on" optimize="off" target="1.2"
-             excludes="**/CVS/**"/>
+             excludes="**/CVS/**">
+      <exclude name="**/factory/TyrexDataSourceFactory.java" 
+       unless="tyrex.present" />
+      <exclude name="**/factory/TyrexTransactionFactory.java" 
+       unless="tyrex.present" />
+      <exclude name="**/factory/TransactionFactory.java" 
+       unless="jta.present" />
+    </javac>
 
     <!-- Copy static resource files -->
     <copydir  src="src/share"    dest="${catalina.build}/classes">
@@ -87,6 +100,11 @@
     <jar   jarfile="${catalina.build}/bin/naming.jar"
            basedir="${catalina.build}/classes"
            includes="**/org/apache/naming/**" 
+           excludes="**/org/apache/naming/factory/**"
+           />
+    <jar   jarfile="${catalina.build}/lib/namingfactory.jar"
+           basedir="${catalina.build}/classes"
+           includes="**/org/apache/naming/factory/**"
            />
 
   </target>

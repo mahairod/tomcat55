@@ -90,9 +90,10 @@ import javax.naming.StringRefAddr;
 import org.apache.naming.NamingContext;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.ContextAccessController;
-import org.apache.naming.EjbRefAddr;
-import org.apache.naming.ResourceRefAddr;
-import org.apache.naming.ResourceEnvRefAddr;
+import org.apache.naming.EjbRef;
+import org.apache.naming.ResourceRef;
+import org.apache.naming.ResourceEnvRef;
+import org.apache.naming.TransactionRef;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
@@ -3015,10 +3016,9 @@ public final class StandardContext
         while (ejbsList.hasNext()) {
             ContextEjb ejb = (ContextEjb) ejbsList.next();
             // Create a reference to the EJB.
-            EjbRefAddr ejbRefAddr = new EjbRefAddr
+            Reference ref = new EjbRef
                 (ejb.getType(), ejb.getHome(), ejb.getRemote(), ejb.getLink(),
                  ejb.getRunAs());
-            Reference ref = new Reference(ejb.getType(), ejbRefAddr);
             // Adding the additional parameters, if any
             addAdditionalParameters(envCtx, ref, ejb.getName());
             try {
@@ -3036,10 +3036,9 @@ public final class StandardContext
         while (resourcesList.hasNext()) {
             ContextResource resource = (ContextResource) resourcesList.next();
             // Create a reference to the resource.
-            ResourceRefAddr resourceRefAddr = new ResourceRefAddr
+            Reference ref = new ResourceRef
                 (resource.getType(), resource.getDescription(),
                  resource.getScope(), resource.getAuth());
-            Reference ref = new Reference(resource.getType(), resourceRefAddr);
             // Adding the additional parameters, if any
             addAdditionalParameters(envCtx, ref, resource.getName());
             try {
@@ -3058,9 +3057,7 @@ public final class StandardContext
             String key = (String) resourceEnvsKeyList.next();
             String type = (String) resourceEnvRefs.get(key);
             // Create a reference to the resource env.
-            Reference ref = new Reference(type);
-            ref.add(new StringRefAddr("name", key));
-            ref.add(new StringRefAddr("type", type));
+            Reference ref = new ResourceEnvRef(type);
             // Adding the additional parameters, if any
             addAdditionalParameters(envCtx, ref, key);
             try {
@@ -3070,6 +3067,14 @@ public final class StandardContext
                 log(sm.getString("standardContext.bindFailed", e));
             }
 
+        }
+
+        // Binding a User Transaction reference
+        try {
+            Reference ref = new TransactionRef();
+            compCtx.bind("UserTransaction", ref);
+        } catch (NamingException e) {
+            log(sm.getString("standardContext.bindFailed", e));
         }
 
         // Setting the context in read only mode

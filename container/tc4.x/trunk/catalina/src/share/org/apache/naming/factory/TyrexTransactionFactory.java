@@ -62,122 +62,78 @@
  */ 
 
 
-package org.apache.naming;
+package org.apache.naming.factory;
 
 import java.util.Hashtable;
+import javax.naming.Name;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.Reference;
 import javax.naming.RefAddr;
+import javax.naming.spi.ObjectFactory;
+import org.apache.naming.TransactionRef;
+import tyrex.tm.Tyrex;
 
 /**
- * Represents a reference address to a resource.
- *
+ * Object factory for Tyrex User transactions.
+ * 
  * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
-public class ResourceRefAddr
-    extends RefAddr {
-
-
-    // -------------------------------------------------------------- Constants
-
-
-    /**
-     * Ref address type.
-     */
-    public static final String TYPE = "resource-ref";
+public class TyrexTransactionFactory
+    implements ObjectFactory {
 
 
     // ----------------------------------------------------------- Constructors
 
 
-    /**
-     * Resource Reference.
-     * 
-     * @param resourceClass Resource class
-     * @param scope Resource scope
-     * @param auth Resource authetication
-     */
-    public ResourceRefAddr(String resourceClass, String description, 
-                           String scope, String auth) {
-        super(TYPE);
-        this.resourceClass = resourceClass;
-        this.description = description;
-        this.scope = scope;
-        this.auth = auth;
-    }
+    // -------------------------------------------------------------- Constants
 
 
     // ----------------------------------------------------- Instance Variables
 
 
-    /**
-     * Resource class.
-     */
-    protected String resourceClass;
+    // --------------------------------------------------------- Public Methods
+
+
+    // -------------------------------------------------- ObjectFactory Methods
 
 
     /**
-     * Description.
+     * Crete a new User transaction instance.
+     * 
+     * @param obj The reference object describing the DataSource
      */
-    protected String description;
-
-
-    /**
-     * Scope.
-     */
-    protected String scope;
-
-
-    /**
-     * Authentication type.
-     */
-    protected String auth;
-
-
-    // -------------------------------------------------------- RefAddr Methods
-
-
-    /**
-     * Returns the contents of the address.
-     */
-    public Object getContent() {
-        return this.resourceClass;
-    }
-
-
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Resource class accessor.
-     */
-    public String getResourceClass() {
-	return (this.resourceClass);
-    }
-
-
-    /**
-     * Description accessor.
-     */
-    public String getDescription() {
-	return (this.description);
-    }
-
-
-    /**
-     * Scope accessor.
-     */
-    public String getScope() {
-	return (this.scope);
-    }
-
-
-    /**
-     * Auth accessor.
-     */
-    public String getAuth() {
-	return (this.auth);
+    public Object getObjectInstance(Object obj, Name name, Context nameCtx,
+                                    Hashtable environment)
+        throws NamingException {
+        
+        if (obj instanceof TransactionRef) {
+            Reference ref = (Reference) obj;
+            if (ref.getClassName()
+                .equals("javax.transaction.UserTransaction")) {
+                
+                try {
+                    
+                    return Tyrex.getUserTransaction();
+                    
+                } catch (Throwable t) {
+                    // TEMP
+                    t.printStackTrace();
+                    // END TEMP
+                    // Another factory could handle this, so just give up
+                    return null;
+                }
+                
+            }
+            
+        }
+        
+        return null;
+        
     }
 
 
 }
+

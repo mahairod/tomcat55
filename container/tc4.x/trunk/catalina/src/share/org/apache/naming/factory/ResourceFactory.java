@@ -62,73 +62,70 @@
  */ 
 
 
-package org.apache.naming;
+package org.apache.naming.factory;
 
+import java.util.Hashtable;
+import javax.naming.Name;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.Reference;
 import javax.naming.RefAddr;
+import javax.naming.spi.ObjectFactory;
+import org.apache.naming.ResourceRef;
 
 /**
- * Represents a reference address to a resource environment.
- *
+ * Object factory for Resources.
+ * 
  * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
-public class ResourceEnvRefAddr
-    extends RefAddr {
-
-
-    // -------------------------------------------------------------- Constants
-
-
-    /**
-     * Ref address type.
-     */
-    public static final String TYPE = "resource-env-ref";
+public class ResourceFactory
+    implements ObjectFactory {
 
 
     // ----------------------------------------------------------- Constructors
 
 
-    /**
-     * Resource env reference.
-     * 
-     * @param type Type
-     */
-    public ResourceEnvRefAddr(String resourceType) {
-        super(TYPE);
-        this.resourceType = resourceType;
-    }
+    // -------------------------------------------------------------- Constants
 
 
     // ----------------------------------------------------- Instance Variables
 
 
-    /**
-     * Resource environment reference type.
-     */
-    protected String resourceType;
+    // --------------------------------------------------------- Public Methods
 
 
-    // -------------------------------------------------------- RefAddr Methods
+    // -------------------------------------------------- ObjectFactory Methods
 
 
     /**
-     * Returns the contents of the address.
+     * Crete a new DataSource instance.
+     * 
+     * @param obj The reference object describing the DataSource
      */
-    public Object getContent() {
-        return this.resourceType;
-    }
+    public Object getObjectInstance(Object obj, Name name, Context nameCtx,
+                                    Hashtable environment)
+        throws NamingException {
+        
+        if (obj instanceof ResourceRef) {
+            Reference ref = (Reference) obj;
+            if (ref.getClassName().equals("javax.sql.DataSource")) {
+                // Checking the different known resource factories
+                if ((ref.get(TyrexDataSourceFactory.DRIVER_CLASS_NAME) != null)
+                    && (ref.get(TyrexDataSourceFactory.DRIVER_NAME) != null)) {
+                    return (new TyrexDataSourceFactory())
+                        .getObjectInstance(obj, name, nameCtx, environment);
+                }
+                throw new NamingException
+                    ("Cannot create resource instance : Missing parameters");
+            }
+        }
 
+        return null;
 
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Resource type accessor.
-     */
-    public String getResourceType() {
-        return resourceType;
     }
 
 
 }
+
