@@ -393,51 +393,5 @@ public class XByteBuffer
 
     }
 
-    // FIXME: extract this to test code!
-    public static void main(String[] args) throws Exception {
-       log.info("Before="+Integer.MAX_VALUE);
-       byte[] d = toBytes(Integer.MAX_VALUE);
-       log.info("After="+toInt(d,0));
-
-
-       log.info("Before="+Long.MAX_VALUE);
-       d = toBytes(Long.MAX_VALUE);
-       log.info("After="+toLong(d,0));
-
-       log.info("Before=" + 4564564);
-       d = toBytes((long)4564564);
-       log.info("After=" + toLong(d, 0));
-
-       byte[] d1 = createDataPackage(new byte[] {1},true);
-       byte[] d2 = createDataPackage(new byte[] {2},true);
-       byte[] d3 = createDataPackage(new byte[] {3},true);
-       byte[] test = new byte[d1.length+d2.length+d3.length+5];
-       System.arraycopy(d1,0,test,0,d1.length);
-       System.arraycopy(d2,0,test,d1.length,d2.length);
-       System.arraycopy(d3,0,test,d2.length+d1.length,d3.length);
-       printBuf(d1);
-       printBuf(d2);
-       printBuf(d3);
-       printBuf(test);
-       XByteBuffer b = new XByteBuffer();
-       b.append(test,0,test.length);
-       int s = b.countPackages();
-       log.info("Nr of packages="+s);
-       while ( s > 0 ) {
-           d = b.extractPackage(true);
-           log.info("Package d1=");
-           printBuf(d);
-           s--;
-       }//while
-
-    }
-
-    public static void printBuf(byte[] b) {
-        StringBuffer buf = new StringBuffer();
-        for ( int i=0; i<b.length; i++ ) {
-            buf.append(b[i] + " ");
-        }
-        log.info(buf);
-    }
 
 }
