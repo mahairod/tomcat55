@@ -357,7 +357,6 @@ public class StandardEngine
 
     }
 
-
     /**
      * Disallow any attempt to set a parent for this Container, since an
      * Engine is supposed to be at the top of the Container hierarchy.
@@ -372,15 +371,12 @@ public class StandardEngine
     }
 
 
-    /**
-     * Start this Engine component.
-     *
-     * @exception LifecycleException if a startup error occurs
-     */
-    public void start() throws LifecycleException {
-        if( started ) {
-            return;
-        }
+    private boolean initialized=false;
+    
+    public void init() {
+        if( initialized ) return;
+        initialized=true;
+
         if( oname==null ) {
             // not registered in JMX yet - standalone mode
             try {
@@ -392,6 +388,34 @@ public class StandardEngine
             }
         }
 
+        if( service==null ) {
+            // for consistency...
+            try {
+                service=new StandardService();
+                service.initialize();
+                service.setContainer( this );
+            } catch( Throwable t ) {
+                t.printStackTrace();
+            }
+        }
+        
+    }
+    
+    public void destroy() {
+        if( ! initialized ) return;
+        initialized=false;
+        
+    }
+    
+    /**
+     * Start this Engine component.
+     *
+     * @exception LifecycleException if a startup error occurs
+     */
+    public void start() throws LifecycleException {
+        if( started ) {
+            return;
+        }
         // Log our server identification information
         //System.out.println(ServerInfo.getServerInfo());
         log.info( "Starting Servlet Engine: " + ServerInfo.getServerInfo());
