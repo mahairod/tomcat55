@@ -54,7 +54,7 @@ import org.apache.jasper.logging.DefaultLogger;
  */
 public class JspServlet extends HttpServlet {
 
-    private Logger.Helper loghelper;
+    private Logger logger;
 
     private ServletContext context;
     private ServletConfig config;
@@ -69,22 +69,20 @@ public class JspServlet extends HttpServlet {
         this.context = config.getServletContext();
         
         // Setup logging 
-        Constants.jasperLog = new DefaultLogger(this.context);
-        Constants.jasperLog.setName("JASPER_LOG");
-        Constants.jasperLog.setTimestamp("false");
-        Constants.jasperLog.setVerbosityLevel(
+        logger = new DefaultLogger(this.context);
+        logger.setTimestamp("false");
+        logger.setVerbosityLevel(
             config.getInitParameter("logVerbosityLevel"));
-        loghelper = new Logger.Helper("JASPER_LOG", "JspServlet");
 
         options = new EmbededServletOptions(config, context);
 
         // Initialize the JSP Runtime Context
         rctxt = new JspRuntimeContext(context,options);
 
-        Constants.message("jsp.message.scratch.dir.is", 
-            new Object[] { options.getScratchDir().toString() },
+        logger.log(Constants.getString("jsp.message.scratch.dir.is",
+            new Object[] { options.getScratchDir().toString() } ), 
             Logger.INFORMATION );
-        Constants.message("jsp.message.dont.modify.servlets",
+        logger.log(Constants.getString("jsp.message.dont.modify.servlets"),
             Logger.INFORMATION);
     }
 
@@ -164,28 +162,25 @@ public class JspServlet extends HttpServlet {
 
             boolean precompile = preCompile(request);
 
-            Logger jasperLog = Constants.jasperLog;
-            
-            if (jasperLog != null
-                    && jasperLog.matchVerbosityLevel(Logger.INFORMATION))
+            if (logger.matchVerbosityLevel(Logger.INFORMATION))
                 {
-                    jasperLog.log("JspEngine --> "+jspUri);
-                    jasperLog.log("\t     ServletPath: " +
-                                  request.getServletPath());
-                    jasperLog.log("\t        PathInfo: " +
-                                  request.getPathInfo());
-                    jasperLog.log("\t        RealPath: " +
-                                  context.getRealPath(jspUri));
-                    jasperLog.log("\t      RequestURI: " +
-                                  request.getRequestURI());
-                    jasperLog.log("\t     QueryString: " +
-                                  request.getQueryString());
-                    jasperLog.log("\t  Request Params: ");
+                    logger.log("JspEngine --> "+jspUri);
+                    logger.log("\t     ServletPath: " +
+                               request.getServletPath());
+                    logger.log("\t        PathInfo: " +
+                               request.getPathInfo());
+                    logger.log("\t        RealPath: " +
+                               context.getRealPath(jspUri));
+                    logger.log("\t      RequestURI: " +
+                               request.getRequestURI());
+                    logger.log("\t     QueryString: " +
+                               request.getQueryString());
+                    logger.log("\t  Request Params: ");
                     Enumeration e = request.getParameterNames();
                     while (e.hasMoreElements()) {
                         String name = (String) e.nextElement();
-                        jasperLog.log("\t\t " + name + " = " +
-                                      request.getParameter(name));
+                        logger.log("\t\t " + name + " = " +
+                                   request.getParameter(name));
                     }
                 }
             serviceJspFile(request, response, jspUri, null, precompile);
@@ -203,8 +198,7 @@ public class JspServlet extends HttpServlet {
 
     public void destroy() {
 
-        if (Constants.jasperLog != null)
-            Constants.jasperLog.log("JspServlet.destroy()", Logger.INFORMATION);
+        logger.log("JspServlet.destroy()", Logger.INFORMATION);
 
         rctxt.destroy();
     }

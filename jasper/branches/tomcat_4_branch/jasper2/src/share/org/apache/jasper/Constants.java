@@ -29,6 +29,14 @@ import org.apache.jasper.logging.Logger;
  * @author Harish Prabandham
  */
 public class Constants {
+    
+    public static Logger jasperLog = null;
+
+    static {
+        jasperLog = Logger.getDefaultLogger();
+        jasperLog.setName("JASPER_LOG");
+    }
+
     /**
      * The base class of the generated servlets. 
      */
@@ -248,6 +256,5 @@ public class Constants {
         }
     }
 
-    public static Logger jasperLog = null;
 }
 
