@@ -98,6 +98,16 @@ public class AdaptiveClassLoader12 extends AdaptiveClassLoader {
 	// 	}
     }
 
+    protected URL findResource(String name)
+    {
+        return findResourceInternal(name);
+    }
+
+    protected Enumeration findResources(String name) throws IOException
+    {
+      return findResourcesInternal(name, false).elements();
+    }
+
     public boolean shouldReload( String classname ) {
 	final String classnameF=classname;
 	Boolean b = (Boolean)AccessController.doPrivileged(new

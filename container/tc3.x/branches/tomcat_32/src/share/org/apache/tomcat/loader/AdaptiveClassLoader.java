@@ -15,24 +15,24 @@
  *
  * 3. All advertising materials mentioning features or use of this
  *    software must display the following acknowledgment:
- *    "This product includes software developed by the Java Apache 
+ *    "This product includes software developed by the Java Apache
  *    Project for use in the Apache JServ servlet engine project
  *    <http://java.apache.org/>."
  *
- * 4. The names "Apache JServ", "Apache JServ Servlet Engine" and 
- *    "Java Apache Project" must not be used to endorse or promote products 
+ * 4. The names "Apache JServ", "Apache JServ Servlet Engine" and
+ *    "Java Apache Project" must not be used to endorse or promote products
  *    derived from this software without prior written permission.
  *
  * 5. Products derived from this software may not be called "Apache JServ"
- *    nor may "Apache" nor "Apache JServ" appear in their names without 
+ *    nor may "Apache" nor "Apache JServ" appear in their names without
  *    prior written permission of the Java Apache Project.
  *
  * 6. Redistributions of any form whatsoever must retain the following
  *    acknowledgment:
- *    "This product includes software developed by the Java Apache 
+ *    "This product includes software developed by the Java Apache
  *    Project for use in the Apache JServ servlet engine project
  *    <http://java.apache.org/>."
- *    
+ *
  * THIS SOFTWARE IS PROVIDED BY THE JAVA APACHE PROJECT "AS IS" AND ANY
  * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -123,7 +123,7 @@ import java.security.*;
  */
 public class AdaptiveClassLoader extends ClassLoader {
     private static final int debug=0;
-    
+
     /**
      * Instance of the SecurityManager installed.
      */
@@ -163,7 +163,7 @@ public class AdaptiveClassLoader extends ClassLoader {
      * compatibility, we'll duplicate the 1.2 private member var.
      */
     protected ClassLoader parent;
-    
+
     /**
      * Private class used to maintain information about the classes that
      * we loaded.
@@ -194,7 +194,7 @@ public class AdaptiveClassLoader extends ClassLoader {
             return origin == null;
         }
     }
-    
+
     //------------------------------------------------------- Constructors
 
     /**
@@ -215,7 +215,7 @@ public class AdaptiveClassLoader extends ClassLoader {
 	cache = new Hashtable();
     }
 
-    public void setRepository( Vector classRepository ) 
+    public void setRepository( Vector classRepository )
 	throws IllegalArgumentException
     {
 	// Verify that all the repository are valid.
@@ -275,7 +275,7 @@ public class AdaptiveClassLoader extends ClassLoader {
     void log( String s ) {
 	System.out.println("AdaptiveClassLoader: " + s );
     }
-    
+
     //------------------------------------------------------- Methods
 
     /**
@@ -326,7 +326,7 @@ public class AdaptiveClassLoader extends ClassLoader {
             return false;
         } else {
             return (entry.origin.lastModified() != entry.lastModified);
-        
+
         }
     }
 
@@ -348,7 +348,7 @@ public class AdaptiveClassLoader extends ClassLoader {
 	    if( debug>5 )
 		log( "cache entry: " + entry.loadedClass.getName());
 	    if (entry.isSystemClass()) continue;
-	    
+
             // XXX: Because we want the classloader to be an accurate
             // reflection of the contents of the repository, we also
             // reload if a class origin file is now missing.  This
@@ -381,7 +381,7 @@ public class AdaptiveClassLoader extends ClassLoader {
      */
     public AdaptiveClassLoader reinstantiate() {
         AdaptiveClassLoader cl=new AdaptiveClassLoader();
-	cl.setParent(parent); 
+	cl.setParent(parent);
 	cl.setRepository(repository);
 	return cl;
     }
@@ -435,7 +435,7 @@ public class AdaptiveClassLoader extends ClassLoader {
         if (sm != null) {
             int i = name.lastIndexOf('.');
             if (i >= 0) {
-                sm.checkPackageAccess(name.substring(0,i)); 
+                sm.checkPackageAccess(name.substring(0,i));
                 sm.checkPackageDefinition(name.substring(0,i));
 	    }
 	}
@@ -502,10 +502,10 @@ public class AdaptiveClassLoader extends ClassLoader {
                 classCache.lastModified = classCache.origin.lastModified();
 		if( debug>0) log( "Add to cache() " + name + " " + classCache);
 		cache.put(name, classCache);
-		
+
 		if( debug>0) log( "Before define class " + name);
 		try {
-		    classCache.loadedClass = 
+		    classCache.loadedClass =
 			doDefineClass(name, classData,
 				      cp.getProtectionDomain());
 		} catch(Throwable t ) {
@@ -529,7 +529,7 @@ public class AdaptiveClassLoader extends ClassLoader {
     {
 	return  defineClass(name, classData, 0, classData.length);
     }
-    
+
     /**
      * Load a class using the system classloader.
      *
@@ -782,50 +782,70 @@ public class AdaptiveClassLoader extends ClassLoader {
         }
 
         // Third, check our own repositories
-        Enumeration repEnum = repository.elements();
-        while (repEnum.hasMoreElements()) {
-            ClassRepository cp = (ClassRepository) repEnum.nextElement();
-            File file = cp.getFile();
-            // Construct a file://-URL if the repository is a directory
-            if (file.isDirectory()) {
-                String fileName = name.replace('/', File.separatorChar);
-                File resFile = new File(file, fileName);
-                if (resFile.exists()) {
-                    // Build a file:// URL form the file name
-                    try {
-                        return new URL("file", null, resFile.getAbsolutePath());                    	
-                    } catch(java.net.MalformedURLException badurl) {
-                        badurl.printStackTrace();
-                        return null;
-                    }
-                }
-            }
-            else {
-                // a jar:-URL *could* change even between minor releases, but
-                // didn't between JVM's 1.1.6 and 1.3beta. Tested on JVM's from
-                // IBM, Blackdown, Microsoft, Sun @ Windows and Sun @ Solaris
-                try {
-                    ZipFile zf = new ZipFile(file.getAbsolutePath());
-                    ZipEntry ze = zf.getEntry(name);
-                    zf.close();
-
-                    if (ze != null) {
-                        try {
-                            return new URL("jar:file:" + file.getAbsolutePath() + "!/" + name);
-                        } catch(java.net.MalformedURLException badurl) {
-                            badurl.printStackTrace();
-                            return null;
-                        }
-                    }
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                    return null;
-                }
-            }   
+        u = findResourceInternal(name);
+        if ( u != null ) {
+            return u;
         }
-
         // Not found
         return null;
+    }
+
+    protected URL findResourceInternal(String name) {
+      try {
+        return (URL) findResourcesInternal(name, true).elementAt(0);
+      } catch( IOException e ) {
+        return null;
+      } catch(ArrayIndexOutOfBoundsException e){
+          return null;
+      }
+    }
+
+    protected Vector findResourcesInternal(String name, boolean justOne) throws IOException {
+      Vector urls = new Vector( repository.size() );
+      Enumeration repEnum = repository.elements();
+      while (repEnum.hasMoreElements()) {
+          ClassRepository cp = (ClassRepository) repEnum.nextElement();
+          File file = cp.getFile();
+          // Construct a file://-URL if the repository is a directory
+          if (file.isDirectory()) {
+              String fileName = name.replace('/', File.separatorChar);
+              File resFile = new File(file, fileName);
+              if (resFile.exists()) {
+                  // Build a file:// URL form the file name
+                  try {
+                      urls.add( new URL("file", null, resFile.getAbsolutePath()) );
+                      if(justOne) return urls;
+                  } catch(java.net.MalformedURLException badurl) {
+                      badurl.printStackTrace();
+                      return null;
+                  }
+              }
+          }
+          else {
+              // a jar:-URL *could* change even between minor releases, but
+              // didn't between JVM's 1.1.6 and 1.3beta. Tested on JVM's from
+              // IBM, Blackdown, Microsoft, Sun @ Windows and Sun @ Solaris
+              try {
+                  ZipFile zf = new ZipFile(file.getAbsolutePath());
+                  ZipEntry ze = zf.getEntry(name);
+                  zf.close();
+
+                  if (ze != null) {
+                      try {
+                          urls.add( new URL("jar:file:" + file.getAbsolutePath() + "!/" + name) );
+                          if(justOne) return urls;
+                      } catch(java.net.MalformedURLException badurl) {
+                          badurl.printStackTrace();
+                          return null;
+                      }
+                  }
+              } catch (IOException ioe) {
+                  ioe.printStackTrace();
+                  return null;
+              }
+          }
+      }
+      return urls;
     }
 
     public String toString() {
