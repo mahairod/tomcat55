@@ -586,7 +586,7 @@ public class Parser {
     }
 
     /*
-     * JspParams ::=  S? '>' Params+ </jsp:params' S? '>'
+     * JspParams ::=  S? '>' S? Params+ </jsp:params' S? '>'
      */
     private void parseJspParams(Node parent) throws JasperException {
 
@@ -595,6 +595,7 @@ public class Parser {
 	    err.jspError(reader.mark(), "jsp.error.params.notclosed");
 	}
 
+	reader.skipSpaces();
 	Node jspParamsNode = new Node.ParamsAction(start, parent);
 	parseParams(jspParamsNode, "jsp:params");
     }

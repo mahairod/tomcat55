@@ -944,7 +944,7 @@ public class Generator {
 	    // First compose the runtime output string 
 	    String s0 = "<OBJECT classid=\"" + ctxt.getOptions().getIeClassId()+
 			"\"" + makeAttr("name", name);
-	    String s1="", s2="";
+	    String s1, s2;
 	    if (width != null) {
 		if (width.isExpression()) {
 		    s1 = quote(s0 + " width=\"") + " + " + width.getValue() +
@@ -952,6 +952,8 @@ public class Generator {
 		} else {
 		    s1 = quote(s0 + makeAttr("width", width.getValue()));
 		}
+	    } else {
+		s1 = quote(s0);
 	    }
 	    if (height != null) {
 		if (height.isExpression()) {
@@ -960,6 +962,8 @@ public class Generator {
 		} else {
 		    s2 = quote(makeAttr("height", height.getValue()));
 		}
+	    } else {
+		s2 = "\"\"";
 	    }
 	    String s3 = quote(makeAttr("hspace", hspace) +
 				makeAttr("vspace", vspace) +
@@ -1029,7 +1033,7 @@ public class Generator {
 		    s2 = quote(makeAttr("height", height.getValue()));
 		}
 	    } else {
-		s2 = "";
+		s2 = "\"\"";
 	    }
 
 	    s3 = quote(makeAttr("hspace", hspace) +
