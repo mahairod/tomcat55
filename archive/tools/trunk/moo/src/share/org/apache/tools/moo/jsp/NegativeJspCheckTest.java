@@ -108,10 +108,10 @@ extends JspCheckTest {
         int code = connection.getResponseCode();
         
         
-       if (this.useCookie == true)
-         saveCookies(connection);
+        if (this.useCookie == true)
+            saveCookies(connection);
              
-         Thread.currentThread().dumpStack();
+        //Thread.currentThread().dumpStack();
 
         //http response in 400s signifies Client Request Incomplete/Doc Not found
         //http response in 500s signifies servlet error
