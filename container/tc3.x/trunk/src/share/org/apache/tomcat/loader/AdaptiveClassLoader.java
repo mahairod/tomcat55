@@ -618,6 +618,7 @@ public class AdaptiveClassLoader extends ClassLoader {
                     s = loadResourceFromDirectory(file, name);
                 }
                 else if(name.endsWith(".initArgs")) {
+		    // XXX XXX XXX What is this ?
                     File dir = new File(file.getParent());
                     s = loadResourceFromDirectory(dir, name);
                 } else {

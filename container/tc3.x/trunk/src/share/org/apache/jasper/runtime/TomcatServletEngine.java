@@ -72,6 +72,6 @@ import org.apache.tomcat.core.ServletContextFacade;
  */
 public class TomcatServletEngine extends ServletEngine {
     public ClassLoader getClassLoader(ServletContext ctx) {
-        return ((ServletContextFacade) ctx).getRealContext().getClassLoader();
+        return null;// XXX (ClassLoader)((ServletContextFacade) ctx).getRealContext().getLoader();
     }
 }
