@@ -78,7 +78,9 @@ import org.apache.jasper.compiler.tagplugin.TagPluginContext;
 
 public class TagPluginManager {
 
-    static private final String plugInsXml = "tagPlugins.xml";
+    private static final String TAG_PLUGINS_XML = "/WEB-INF/tagPlugins.xml";
+    private static final String TAG_PLUGINS_ROOT_ELEM = "tag-plugins";
+
     private boolean initialized = false;
     private Hashtable tagPlugins = null;
     private ServletContext ctxt;
@@ -87,9 +89,10 @@ public class TagPluginManager {
 	this.ctxt = ctxt;
     }
 
-    public void apply(Node.Nodes page) throws JasperException {
+    public void apply(Node.Nodes page, ErrorDispatcher err)
+	    throws JasperException {
 
-	init();
+	init(err);
 	if (tagPlugins == null || tagPlugins.size() == 0) {
 	    return;
 	}
@@ -101,31 +104,28 @@ public class TagPluginManager {
 	});
     }
  
-    private void init() {
+    private void init(ErrorDispatcher err) throws JasperException {
 	if (initialized)
 	    return;
 
 	initialized = true;
-	InputStream is = ctxt.getResourceAsStream(plugInsXml);
+	InputStream is = ctxt.getResourceAsStream(TAG_PLUGINS_XML);
 	if (is == null)
 	    return;
 
-	TreeNode root = null;
-	try {
-	    root = (new ParserUtils()).parseXMLDocument(plugInsXml, is);
-	} catch (JasperException ex) {
+	TreeNode root = (new ParserUtils()).parseXMLDocument(TAG_PLUGINS_XML,
+							     is);
+	if (root == null) {
+	    return;
 	}
-	if (root == null)
-	    return;
 
-	TreeNode tagPluginsNode = root.findChild("tag-plugins");
-	if (tagPluginsNode == null) {
-	    // Error
-	    return;
+	if (!TAG_PLUGINS_ROOT_ELEM.equals(root.getName())) {
+	    err.jspError("jsp.error.plugin.wrongRootElement", TAG_PLUGINS_XML,
+			 TAG_PLUGINS_ROOT_ELEM);
 	}
 
 	tagPlugins = new Hashtable();
-	Iterator pluginList = tagPluginsNode.findChildren("tag-plugin");
+	Iterator pluginList = root.findChildren("tag-plugin");
 	while (pluginList.hasNext()) {
 	    TreeNode pluginNode = (TreeNode) pluginList.next();
             TreeNode tagClassNode = pluginNode.findChild("tag-class");
@@ -145,9 +145,8 @@ public class TagPluginManager {
 	    try {
 		Class pluginClass = Class.forName(pluginClassStr);
 		tagPlugin = (TagPlugin) pluginClass.newInstance();
-	    } catch (ClassNotFoundException e) {
-	    } catch (InstantiationException e) {
-	    } catch (IllegalAccessException e) {
+	    } catch (Exception e) {
+		throw new JasperException(e);
 	    }
 	    if (tagPlugin == null) {
 		return;
@@ -157,8 +156,10 @@ public class TagPluginManager {
     }
 
     /**
-     * Invoke tag plugin if it exists.  The node n will be modified by
-     * the plugin if that applies
+     * Invoke tag plugin for the given custom tag, if a plugin exists for 
+     * the custom tag's tag handler.
+     *
+     * The given custom tag node will be manipulated by the plugin.
      */
     private void invokePlugin(Node.CustomTag n) {
 	TagPlugin tagPlugin = (TagPlugin)
@@ -196,12 +197,15 @@ public class TagPluginManager {
 	    return JspUtil.nextTemporaryVariableName();
 	}
 
-	public void generateJavaSource(String s) {
-	    curNodes.add(new Node.Scriptlet(node.getStart(), null));
+	public void generateJavaSource(String sourceCode) {
+	    curNodes.add(new Node.Scriptlet(sourceCode, node.getStart(),
+					    null));
 	}
 
-	public void generateAttribute(String attribute) {
-	    curNodes.add(new Node.GenAttribute(node.getStart(), attribute, node));
+	public void generateAttribute(String attributeName) {
+	    curNodes.add(new Node.AttributeGenerator(node.getStart(),
+						     attributeName,
+						     node));
 	}
 
 	public void dontUseTagPlugin() {

@@ -134,6 +134,7 @@
         <include name="org/apache/jasper/compiler/**" />
         <include name="org/apache/jasper/xmlparser/**" />
         <include name="org/apache/jasper/servlet/**" />
+        <include name="org/apache/jasper/tagplugins/**" />
         <exclude name="org/apache/jasper/Constants.class" />
         <exclude name="org/apache/jasper/JasperException.class" />
         <include name="org/apache/jasper/*.class" />

@@ -291,7 +291,7 @@ public class Compiler {
 
 	// Optimizations by Tag Plugins
 	TagPluginManager tagPluginManager = options.getTagPluginManager();
-	tagPluginManager.apply(pageNodes);
+	tagPluginManager.apply(pageNodes, errDispatcher);
 
 	// generate servlet .java file
 	Generator.generate(writer, this, pageNodes);

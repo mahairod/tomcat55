@@ -1280,15 +1280,16 @@ abstract class Node {
 	    return n;
 	}
     }
-    /**
-     * Represents a attribute value of a Custom tag.  Used only by tag plugins
-     * to indicate generated codes for the specified attribute.
-     */
-    public static class GenAttribute extends Node {
-	String name;	// name of the attribute
-	CustomTag tag;	// The tag this attribute belongs
 
-	public GenAttribute(Mark start, String name, CustomTag tag) {
+    /**
+     * Used as a placeholder for the evaluation code of a custom action
+     * attribute (used by the tag plugin machinery only).
+     */
+    public static class AttributeGenerator extends Node {
+	String name;	// name of the attribute
+	CustomTag tag;	// The tag this attribute belongs to
+
+	public AttributeGenerator(Mark start, String name, CustomTag tag) {
 	    super(start, null);
 	    this.name = name;
 	    this.tag = tag;
@@ -1794,7 +1795,7 @@ abstract class Node {
 	    doVisit(n);
 	}
 
-	public void visit(GenAttribute n) throws JasperException {
+	public void visit(AttributeGenerator n) throws JasperException {
 	    doVisit(n);
 	}
     }
