@@ -70,7 +70,6 @@ import java.net.*;
 import java.util.*;
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.*;
-import org.apache.tomcat.logging.*;
 
 class TcpConnector implements MsgConnector 
 {
