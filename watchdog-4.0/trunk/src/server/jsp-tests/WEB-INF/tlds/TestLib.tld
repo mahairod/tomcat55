@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib
+        PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+        "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+
+<!-- a tab library descriptor -->
+
+<taglib>
+  <!-- after this the default space is
+	"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd"
+   -->
+
+  <tlibversion>1.0</tlibversion>
+  <jspversion>1.1</jspversion>
+  <shortname>tests</shortname>
+  <info>
+	A simple tab library for JSP tests
+  </info>
+
+  <!-- general validator tag -->
+  <tag>
+    <name>count</name>
+    <tagclass>tags.Count</tagclass>
+    <info>
+	A simple nestable tag that validates transitions.
+	It also counts invocations.
+    </info>
+
+    <attribute>
+      <name>att1</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>att2</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>includeBody</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>skipPage</name>
+      <required>false</required>
+    </attribute>
+  </tag>
+
+  <!-- several checks on a count tag -->
+  <tag>
+    <name>checkCount</name>
+    <tagclass>tags.CheckCount</tagclass>
+    <info>
+	Several checks on a count tag
+    </info>
+
+    <attribute>
+      <name>nested</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>start</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>end</name>
+      <required>false</required>
+    </attribute>
+
+  </tag>
+
+  <!-- silly arguments to test isValid -->
+  <tag>
+    <name>silly</name>
+    <tagclass>tags.SillyArgs</tagclass>
+    <teiclass>tags.SillyArgsExtraInfo</teiclass>
+    <info>
+       takes three arguments: a, b, and c, they must satisfy a+b==c
+       The optional argument testLibInfo is ignored at runtime but
+       forces a check at translation time for tagInfo data.
+    </info>
+
+    <attribute>
+      <name>a</name>
+      <required>true</required>
+    </attribute>
+    <attribute>
+      <name>b</name>
+      <required>true</required>
+    </attribute>
+    <attribute>
+      <name>c</name>
+      <required>true</required>
+    </attribute>
+   
+    <attribute>
+      <name>testLibInfo</name>
+      <required>false</required>
+    </attribute>
+  </tag>
+
+  <!-- define an object -->
+  <tag>
+    <name>define</name>
+    <tagclass>tags.Define</tagclass>
+    <teiclass>tags.DefineExtraInfo</teiclass>
+    <info>
+      required arguments:
+	the id of the Integer that will be defined.
+	the scope where it will be recorded
+	the life of the scripting variable that will be introduced
+      optional arguments:
+        whether to declare the variable
+	value after start tag
+	value after end tag
+	value before first BODY evaluation
+	increment value after each BODY evaluation
+	count of how many iterations to do
+    </info>
+
+    <!-- mandatory attributes -->
+    <attribute>
+      <name>id</name>
+      <required>true</required>
+    </attribute>
+    <attribute>
+      <name>scope</name>
+      <required>true</required>
+    </attribute>
+    <attribute>
+      <name>life</name>
+      <required>true</required>
+    </attribute>
+
+    <!-- optional attributes -->
+    <attribute>
+      <name>declare</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>startValue</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>endValue</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>initBodyValue</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>afterBodyIncrement</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>iterationCount</name>
+      <required>false</required>
+    </attribute>
+  </tag>
+
+
+  <!-- aTag is a simple Tag that does not extend TagSupport -->
+  <tag>
+    <name>aTag</name>
+    <tagclass>tags.ATag</tagclass>
+    <info>A simple action handler that does not extend TagSupport</info>
+
+    <attribute>
+      <name>att</name>
+      <required>true</required>
+    </attribute>
+  </tag>
+
+  <!-- bTag is a simple BodyTag that does not extend BodyTagSupport -->
+  <tag>
+    <name>bTag</name>
+    <tagclass>tags.BTag</tagclass>
+    <info>A simple action handler that does not extend BodyTagSupport</info>
+
+    <attribute>
+      <name>att</name>
+      <required>true</required>
+    </attribute>
+  </tag>
+
+
+  <!-- STILL TO BE DONE -->
+  <!-- verbatim tag using different mechanisms -->
+  <tag>
+    <name>verbatim</name>
+    <tagclass>tags.Verbatim</tagclass>
+    <info>
+       Emits the body verbatim unprocessed (after scripts and the such, of
+       course).
+       The how attribute indicates what mechanism to use.  The value can be:
+       "reader", "string", and "writeOut"
+    </info>
+
+    <attribute>
+      <name>how</name>
+      <required>true</required>
+    </attribute>
+  </tag>
+
+
+
+</taglib>
