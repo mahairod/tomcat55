@@ -96,6 +96,7 @@ import org.apache.webapp.admin.logger.DeleteLoggerAction;
  * <em>Edit Realm</em> transactions for JNDI realm.
  *
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -272,6 +273,34 @@ public final class SaveJNDIRealmAction extends Action {
 
             ObjectName roname = new ObjectName(rObjectName);
 
+            attribute = "connectionName";
+            String connectionName = rform.getConnectionName();
+            if ((connectionName != null) && (connectionName.length()>0)) {
+                mBServer.setAttribute(roname,
+                        new Attribute("connectionName",  connectionName));
+            }
+
+            attribute = "connectionPassword";
+            String connectionPassword = rform.getConnectionPassword();
+            if ((connectionPassword != null) && (connectionPassword.length()>0)) {
+                mBServer.setAttribute(roname,
+                        new Attribute("connectionPassword",  connectionPassword));
+            }
+
+            attribute = "connectionURL";
+            String connectionURL = rform.getConnectionURL();
+            if ((connectionURL != null) && (connectionURL.length()>0)) {
+                mBServer.setAttribute(roname,
+                        new Attribute("connectionURL",  connectionURL));
+            }
+
+            attribute = "contextFactory";
+            String contextFactory = rform.getContextFactory();
+            if ((contextFactory != null) && (contextFactory.length()>0)) {
+                mBServer.setAttribute(roname,
+                        new Attribute("contextFactory",  contextFactory));
+            }
+
             attribute = "debug";
             int debug = 0;
             try {
@@ -280,67 +309,84 @@ public final class SaveJNDIRealmAction extends Action {
                 debug = 0;
             }
             mBServer.setAttribute(roname,
-                                  new Attribute("debug", new Integer(debug)));
+                            new Attribute("debug", new Integer(debug)));
 
             attribute = "digest";
-            mBServer.setAttribute(roname,
-                                  new Attribute("digest",  rform.getDigest()));
-
-            attribute = "roleSearch";
-            mBServer.setAttribute(roname,
-                                  new Attribute("roleSearch",  rform.getRolePattern()));
-
-            attribute = "roleName";
-            mBServer.setAttribute(roname,
-                                  new Attribute("roleName",  rform.getRoleName()));
-
-            attribute = "userRoleName";
-            mBServer.setAttribute(roname,
-                                  new Attribute("userRoleName",  rform.getUserRoleName()));
-
-            attribute = "contextFactory";
-            mBServer.setAttribute(roname,
-                                  new Attribute("contextFactory",  rform.getContextFactory()));
-
-            attribute = "userSubtree";
-            mBServer.setAttribute(roname,
-                                  new Attribute("userSubtree",  new Boolean(rform.getUserSubtree())));
-
-            attribute = "roleSubtree";
-            mBServer.setAttribute(roname,
-                                  new Attribute("roleSubtree",  new Boolean(rform.getRoleSubtree())));
+            String digest = rform.getDigest();
+            if ((digest != null) && (digest.length()>0)) {
+                mBServer.setAttribute(roname,
+                                        new Attribute("digest", digest));
+            }
 
             attribute = "roleBase";
-            mBServer.setAttribute(roname,
-                                  new Attribute("roleBase",  rform.getRoleBase()));
+            String roleBase = rform.getRoleBase();
+            if ((roleBase != null) && (roleBase.length()>0)) {
+                mBServer.setAttribute(roname,
+                        new Attribute("roleBase",  roleBase));
+            }
 
-            attribute = "userPassword";
-            mBServer.setAttribute(roname,
-                                  new Attribute("userPassword",  rform.getUserPassword()));
+            attribute = "roleName";
+            String roleName = rform.getRoleName();
+            if ((roleName != null) && (roleName.length()>0)) {
+                mBServer.setAttribute(roname,
+                        new Attribute("roleName",  roleName));
+            }
+
+            attribute = "rolePattern";
+            String rolePattern = rform.getRolePattern();
+            if ((rolePattern != null) && (rolePattern.length()>0)) {
+                mBServer.setAttribute(roname,
+                        new Attribute("rolePattern",  rolePattern));
+            }
+
+            attribute = "roleSubtree";
+            String roleSubtree = rform.getRoleSubtree();
+            if ((roleSubtree != null) && (roleSubtree.length()>0)) {
+                mBServer.setAttribute(roname,
+                    new Attribute("roleSubtree",  new Boolean(roleSubtree)));
+            }
 
             attribute = "userBase";
-            mBServer.setAttribute(roname,
-                                  new Attribute("userBase",  rform.getUserBase()));
+            String userBase = rform.getUserBase();
+            if ((userBase != null) && (userBase.length()>0)) {
+                mBServer.setAttribute(roname,
+                        new Attribute("userBase",  userBase));
+            }
+
+            attribute = "userPassword";
+            String userPassword = rform.getUserPassword();
+            if ((userPassword != null) && (userPassword.length()>0)) {
+                mBServer.setAttribute(roname,
+                        new Attribute("userPassword",  userPassword));
+            }
 
             attribute = "userPattern";
-            mBServer.setAttribute(roname,
-                                  new Attribute("userPattern",  rform.getUserPattern()));
+            String userPattern = rform.getUserPattern();
+            if ((userPattern != null) && (userPattern.length()>0)) {
+                mBServer.setAttribute(roname,
+                        new Attribute("userPattern",  userPattern));
+            }
+
+            attribute = "userRoleName";
+            String userRoleName = rform.getUserRoleName();
+            if ((userRoleName != null) && (userRoleName.length()>0)) {
+                mBServer.setAttribute(roname,
+                        new Attribute("userRoleName",  userRoleName));
+            }
 
             attribute = "userSearch";
-            mBServer.setAttribute(roname,
-                                  new Attribute("userSearch",  rform.getUserSearch()));
+            String userSearch = rform.getUserSearch();
+            if ((userSearch != null) && (userSearch.length()>0)) {
+                mBServer.setAttribute(roname,
+                        new Attribute("userSearch",  userSearch));
+            }
 
-            attribute = "connectionName";
-            mBServer.setAttribute(roname,
-                                  new Attribute("connectionName",  rform.getConnectionName()));
-
-            attribute = "connectionURL";
-            mBServer.setAttribute(roname,
-                                  new Attribute("connectionURL",  rform.getConnectionURL()));
-
-            attribute = "connectionPassword";
-            mBServer.setAttribute(roname,
-                                  new Attribute("connectionPassword",  rform.getConnectionPassword()));
+            attribute = "userSubtree";
+            String userSubtree = rform.getUserSubtree();
+            if ((userSubtree != null) && (userSubtree.length()>0)) {
+                mBServer.setAttribute(roname,
+                    new Attribute("userSubtree",  new Boolean(userSubtree)));
+            }
 
         } catch (Exception e) {
 
