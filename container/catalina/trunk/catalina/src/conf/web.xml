@@ -89,7 +89,7 @@
   <!-- following initialization parameters (default values are in square    -->
   <!-- brackets):                                                           -->
   <!--                                                                      -->
-  <!--   checkInterval       If development is false and relaoding is true, -->
+  <!--   checkInterval       If development is false and reloading is true, -->
   <!--                       background compiles are enabled. checkInterval -->
   <!--                       is the time in seconds between checks to see   -->
   <!--                       if a JSP page needs to be recompiled. [300]    -->
