@@ -35,7 +35,7 @@
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
- *    nor may "Apache" appear in their names without prior written
+ *    nor may "Apache" appear in their names Torstenwithout prior written
  *    permission of the Apache Group.
  *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
@@ -118,8 +118,13 @@ public class SetDocBaseRule extends Rule {
 
         Context child = (Context) digester.peek(0);
         Deployer parent = (Deployer) digester.peek(1);
-        Method method = parent.getClass().getMethod("getHost", null);
-        Host host = (Host) method.invoke(parent, null);
+        Host host = null;
+        if (!(parent instanceof StandardHost)) {
+            Method method = parent.getClass().getMethod("getHost", null);
+            host = (Host) method.invoke(parent, null);
+        } else {
+            host = (Host) parent;
+        }
         String appBase = host.getAppBase();
 
         if (!(host instanceof StandardHost)) {
