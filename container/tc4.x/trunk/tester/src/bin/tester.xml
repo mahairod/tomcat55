@@ -15,7 +15,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,Jsp,Lifecycle,RequestDispatcher,Resources,ServletContext,ServletRequest,ServletResponse,HttpSession,XercesTest"/>
+  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,Jsp,Lifecycle,RequestDispatcher,Resources,Security,ServletContext,ServletRequest,ServletResponse,HttpSession,XercesTest"/>
 
 
   <target name="ROOT">
@@ -31,11 +31,6 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${examples.path}/.." debug="${debug}"
           status="302"/>
-
-    <!-- Should not be able to use relative path above document root -->
-    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
-         request="${examples.path}/../.." debug="${debug}"
-          status="404"/>
 
     <!-- Should be able to successfully retrieve a golden file -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
@@ -210,11 +205,6 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${examples.path}/jsp/snp/snoop.jsp"
           status="200"/>
-
-    <!-- DefaultServlet should not decode the path again -->
-    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
-         request="${examples.path}/jsp/snp/snoop%252ejsp"
-          status="400"/>
 
   </target>
 
@@ -1380,6 +1370,29 @@
            debug="${debug}"
          request="${context.path}/Resources06?path=/WEB-INF"
       outContent="Resources06 PASSED"/>
+
+  </target>
+
+
+  <target name="Security">
+
+    <!-- ========== Security Tests ======================================== -->
+
+    <!-- Should not be able to use relative path above document root -->
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${examples.path}/../.." debug="${debug}"
+          status="400"/>
+
+    <!-- Should not be able to use specially crafted URLs to get around 
+         security constraints -->
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${examples.path}/jsp/security//protected/index.jsp" 
+         debug="${debug}" status="302"/>
+
+    <!-- DefaultServlet should not decode the path again -->
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${examples.path}/jsp/snp/snoop%252ejsp"
+          status="404"/>
 
   </target>
 
