@@ -76,12 +76,12 @@ import org.apache.jasper.JasperException;
 
 public abstract class Node {
     
-    private Attributes attrs;
-    private Nodes body;
-    private char[] text;
-    private Mark startMark;
-    private int beginJavaLine;
-    private int endJavaLine;
+    protected Attributes attrs;
+    protected Nodes body;
+    protected char[] text;
+    protected Mark startMark;
+    protected int beginJavaLine;
+    protected int endJavaLine;
     protected Node parent;
 
     /**
