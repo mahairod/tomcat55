@@ -580,9 +580,7 @@ public class Validator {
         }
 
 	public void visit(Node.CustomTag n) throws JasperException {
-	    TagLibraryInfo tagLibInfo = (TagLibraryInfo)
-		pageInfo.getTagLibraries().get(n.getPrefix());
-	    TagInfo tagInfo = tagLibInfo.getTag(n.getShortName());
+	    TagInfo tagInfo = n.getTagInfo();
 	    if (tagInfo == null) {
 		err.jspError(n, "jsp.error.missing.tagInfo", n.getName());
 	    }
@@ -830,9 +828,7 @@ public class Validator {
 	}
 
 	public void visit(Node.CustomTag n) throws JasperException {
-	    TagLibraryInfo tagLibInfo = (TagLibraryInfo)
-		pageInfo.getTagLibraries().get(n.getPrefix());
-	    TagInfo tagInfo = tagLibInfo.getTag(n.getShortName());
+	    TagInfo tagInfo = n.getTagInfo();
 	    if (tagInfo == null) {
 		err.jspError(n, "jsp.error.missing.tagInfo", n.getName());
 	    }

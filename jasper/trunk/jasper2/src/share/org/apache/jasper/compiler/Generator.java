@@ -2723,7 +2723,17 @@ public class Generator {
      */
     public static void generate(ServletWriter out, Compiler compiler,
 				Node.Nodes page) throws JasperException {
+
 	Generator gen = new Generator(out, compiler);
+
+	if (gen.ctxt.isTagFile()) {
+	    TagInfo tagInfo = gen.ctxt.getTagInfo();
+	    gen.generateTagHandlerPreamble(tagInfo);
+	    page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer, null,
+					   tagInfo));
+	    gen.generateTagHandlerPostamble();
+	    return;
+	}
 
 	if (gen.ctxt.getOptions().isPoolingEnabled()) {
 	    gen.compileTagHandlerPoolList(page);
@@ -2733,21 +2743,6 @@ public class Generator {
 	page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer, 
 					   gen.fragmentHelperClass, null));
 	gen.generatePostamble(page);
-    }
-
-    /**
-     * XXX
-     */
-    public static void generateTagHandler(ServletWriter out,
-					  Compiler compiler,
-					  Node.Nodes page,
-					  TagInfo tagInfo)
-	                throws JasperException {
-	Generator gen = new Generator(out, compiler);
-	gen.generateTagHandlerPreamble(tagInfo);
-	page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer, null,
-					   tagInfo));
-	gen.generateTagHandlerPostamble();
     }
 
     /*

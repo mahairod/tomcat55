@@ -68,6 +68,7 @@ import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.tagext.TagInfo;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
@@ -106,6 +107,7 @@ public class JspServletWrapper {
     private Servlet theServlet;
     private String jspUri;
     private Class servletClass;
+    private Class tagHandlerClass;
     private JspCompilationContext ctxt;
     private long available = 0L;
     private ServletConfig config;
@@ -121,6 +123,20 @@ public class JspServletWrapper {
         ctxt = new JspCompilationContext( jspUri, isErrorPage,
                                           options,
                                           config.getServletContext(),
+                                          this, rctxt);
+        ctxt.createOutdir();
+    }
+
+    public JspServletWrapper(ServletContext servletContext, Options options,
+                      String tagfile, TagInfo tagInfo, JspRuntimeContext rctxt)
+            throws JasperException {
+
+        this.config = null;	// not used
+        this.options = options;
+        this.jspUri = tagfile;
+        ctxt = new JspCompilationContext( tagfile, tagInfo,
+                                          options,
+                                          servletContext,
                                           this, rctxt);
         ctxt.createOutdir();
     }
@@ -158,6 +174,33 @@ public class JspServletWrapper {
 
     public ServletContext getServletContext() {
         return config.getServletContext();
+    }
+
+    public Class loadTagFile() throws JasperException {
+
+        try {
+            if (ctxt.isRemoved()) {
+                throw new FileNotFoundException(jspUri);
+            }
+            if (options.getDevelopment()) {
+                synchronized (this) {
+                    ctxt.compile();
+                }
+            }
+            if (ctxt.isReload()) {
+                synchronized (this) {
+                    if (ctxt.isReload()) {
+                        tagHandlerClass = ctxt.load();
+                    }
+                }
+            }
+        } catch (FileNotFoundException ex) {
+                throw new JasperException(ex);
+        } catch (JasperException ex) {
+            throw ex;
+	}
+
+	return tagHandlerClass;
     }
 
     public void service(HttpServletRequest request, 

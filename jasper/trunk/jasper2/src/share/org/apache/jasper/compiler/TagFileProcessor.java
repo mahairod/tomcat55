@@ -65,9 +65,13 @@ package org.apache.jasper.compiler;
 import java.util.*;
 import java.io.FileNotFoundException;
 
+import javax.servlet.ServletException;
 import javax.servlet.jsp.tagext.*;
 
+import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
+import org.apache.jasper.JspCompilationContext;
+import org.apache.jasper.servlet.JspServletWrapper;
 
 /**
  * Processes and extracts the directive info in a tag file.
@@ -88,7 +92,7 @@ public class TagFileProcessor {
         private String name = null;
         private String tagclass = null;
         private TagExtraInfo tei = null;
-        private String bodycontent = "JSP"; // Default body content is JSP
+        private String bodycontent = null;
         private String description = null;
         private String displayName = null;
         private String smallIcon = null;
@@ -139,6 +143,7 @@ public class TagFileProcessor {
 
         public TagFileVisitor(Compiler compiler, TagLibraryInfo tagLibInfo) {
             err = compiler.getErrorDispatcher();
+	    this.tagLibInfo = tagLibInfo;
         }
 
         public void visit(Node.TagDirective n) throws JasperException {
@@ -146,8 +151,18 @@ public class TagFileProcessor {
             JspUtil.checkAttributes("Tag directive", n,
                                     tagDirectiveAttrs, err);
 
-	    name = n.getAttributeValue("name");
+	    String tname = n.getAttributeValue("name");
+	    if (tname != null && name != null && !tname.equals(name)) {
+		err.jspError("jsp.error.tagfile.tld.name", name, tname);
+	    }
             bodycontent = n.getAttributeValue("body-content");
+            if (bodycontent != null &&
+                    !bodycontent.equals(TagInfo.BODY_CONTENT_EMPTY) &&
+                    !bodycontent.equals(TagInfo.BODY_CONTENT_TAG_DEPENDENT) &&
+                    !bodycontent.equals(TagInfo.BODY_CONTENT_SCRIPTLESS)) {
+                err.jspError("jsp.error.tagdirective.badbodycontent",
+                             bodycontent);
+            }
             dynamicAttributes= JspUtil.booleanValue(
 			n.getAttributeValue("dynamic-attributes"));
             smallIcon = n.getAttributeValue("small-icon");
@@ -201,7 +216,7 @@ public class TagFileProcessor {
             String scopeStr = n.getAttributeValue("scope");
             if (scopeStr != null) {
                 if ("NESTED".equals(scopeStr)) {
-                    scope = VariableInfo.NESTED;
+                    // Already the default
                 } else if ("AT_BEGIN".equals(scopeStr)) {
                     scope = VariableInfo.AT_BEGIN;
                 } else if ("AT_END".equals(scopeStr)) {
@@ -225,9 +240,9 @@ public class TagFileProcessor {
             boolean required = JspUtil.booleanValue(n.getAttributeValue("required"));
             // Find the attribute node with matching name
             Node.AttributeDirective attributeDirective =
-                (Node.AttributeDirective) fragmentAttributesMap.get(name);
+                (Node.AttributeDirective) fragmentAttributesMap.get(fragment);
             if (attributeDirective == null) {
-                err.jspError(n, "jsp.error.nomatching.fragment", name);
+                err.jspError(n, "jsp.error.nomatching.fragment", fragment);
             }
             attributeDirective.getFragmentInputs().addElement(
                         new TagFragmentAttributeInfo.FragmentInput(name, type,
@@ -235,6 +250,16 @@ public class TagFileProcessor {
         }
 
         public TagInfo getTagInfo() {
+
+            if (name == null) {
+                // XXX Get it from tag file name
+	    }
+
+            if (bodycontent == null) {
+                bodycontent = TagInfo.BODY_CONTENT_SCRIPTLESS;
+            }
+
+            tagclass = Constants.JSP_PACKAGE_NAME + "." + name;
 
             TagVariableInfo[] tagVariableInfos
                     = new TagVariableInfo[variableVector.size()];
@@ -280,9 +305,22 @@ public class TagFileProcessor {
         }
     }
 
-    public static TagInfo parseTagFile(ParserController pc, String tagfile,
+    /**
+     * Parses the tag file, and collects information on the directives included
+     * in it.  The method is used to obtain the info on the tag file, when the 
+     * handler that it represents is referenced.  The tag file is not compiled
+     * here.
+     * @param pc the current ParserController used in this compilation
+     * @param tagile the path for the tagfile
+     * @param tagLibInfo the TaglibraryInfo object associated with this TagInfo
+     * @return a TagInfo object assembled from the directives in the tag file.
+     */
+    public static TagInfo parseTagFile(ParserController pc,
+                                       String name,
+                                       String tagfile,
 				       TagLibraryInfo tagLibInfo)
                 throws JasperException {
+
 
         Node.Nodes page = null;
 	try {
@@ -294,9 +332,66 @@ public class TagFileProcessor {
 
         TagFileVisitor tagFileVisitor = new TagFileVisitor(pc.getCompiler(),
 							   tagLibInfo);
+	tagFileVisitor.name = name;
         page.visit(tagFileVisitor);
 
         return tagFileVisitor.getTagInfo();
     }
+
+    /**
+     * Compiles and loads a tagfile.
+     */
+    public static Class loadTagFile(JspCompilationContext ctxt,
+				          String tagFile, TagInfo tagInfo)
+	throws JasperException {
+
+	JspRuntimeContext rctxt = ctxt.getRuntimeContext();
+        JspServletWrapper wrapper =
+		(JspServletWrapper) rctxt.getWrapper(tagFile);
+	if (wrapper == null) {
+	    synchronized(rctxt) {
+		wrapper = (JspServletWrapper) rctxt.getWrapper(tagFile);
+		if (wrapper == null) {
+		    wrapper = new JspServletWrapper(ctxt.getServletContext(),
+						    ctxt.getOptions(),
+						    tagFile,
+                                                    tagInfo,
+						    ctxt.getRuntimeContext());
+		}
+	    }
+	}
+	return wrapper.loadTagFile();
+    }
+
+    /*
+     * A visitor that scan the page, looking for tag handlers that are tag
+     * files and compile (if necessary) and load them.
+     */ 
+
+    static class TagFileLoaderVisitor extends Node.Visitor {
+
+	private JspCompilationContext ctxt;
+
+	TagFileLoaderVisitor(JspCompilationContext ctxt) {
+	    this.ctxt = ctxt;
+	}
+
+        public void visit(Node.CustomTag n) throws JasperException {
+	    TagFileInfo tagFileInfo = n.getTagFileInfo();
+	    if (tagFileInfo != null) {
+		String tagFile = tagFileInfo.getPath();
+		Class c = loadTagFile(ctxt, tagFile, n.getTagInfo());
+		n.setTagHandlerClass(c);
+	    }
+	}
+    }
+
+    public static void loadTagFiles(Compiler compiler, Node.Nodes page)
+		throws JasperException {
+
+	JspCompilationContext ctxt = compiler.getCompilationContext();
+	page.visit(new TagFileLoaderVisitor(ctxt));
+    }
+	
 }
 

@@ -247,6 +247,7 @@ public class ParserController {
 	}
 
 	newEncoding = null;
+	isTagFile = false;
 
 	// Figure out the encoding of the page
 	// FIXME: We assume xml parser will take care of
@@ -255,8 +256,9 @@ public class ParserController {
 	    jspReader.reset(startMark);
 	    while (jspReader.skipUntil("<%@") != null) {
 		jspReader.skipSpaces();
-		isTagFile = jspReader.matches("tag ");
-		if (isTagFile || jspReader.matches("page")) {
+		boolean tIsTagFile = jspReader.matches("tag ");
+		if (tIsTagFile || jspReader.matches("page")) {
+		    isTagFile = tIsTagFile;
 		    jspReader.skipSpaces();
 		    Attributes attrs = Parser.parseAttributes(this, jspReader);
 		    String attribute = "pageEncoding";

@@ -886,6 +886,7 @@ public abstract class Node {
 	private TagData tagData;
 	private String tagHandlerPoolName;
 	private TagInfo tagInfo;
+	private TagFileInfo tagFileInfo;
 	private Class tagHandlerClass;
 	private VariableInfo[] varInfos;
 	private VariableInfo[] nestedVarInfos;
@@ -899,26 +900,39 @@ public abstract class Node {
 
 	public CustomTag(Attributes attrs, Mark start, String name,
 			 String prefix, String shortName,
-			 TagInfo tagInfo, Class tagHandlerClass, Node parent) {
+			 TagInfo tagInfo, TagFileInfo tagFileInfo,
+			 Class tagHandlerClass, Node parent) {
 	    super(attrs, start, parent);
 	    this.name = name;
 	    this.prefix = prefix;
 	    this.shortName = shortName;
 	    this.tagInfo = tagInfo;
+	    this.tagFileInfo = tagFileInfo;
 	    this.tagHandlerClass = tagHandlerClass;
 	    this.customNestingLevel = computeCustomNestingLevel();
             this.childInfo = new ChildInfo();
 
-	    this.implementsIterationTag = 
-		IterationTag.class.isAssignableFrom(tagHandlerClass);
-	    this.implementsBodyTag =
-		BodyTag.class.isAssignableFrom(tagHandlerClass);
-	    this.implementsTryCatchFinally = 
-		TryCatchFinally.class.isAssignableFrom(tagHandlerClass);
-	    this.implementsSimpleTag = 
-		SimpleTag.class.isAssignableFrom(tagHandlerClass);
-	    this.implementsDynamicAttributes = 
-		DynamicAttributes.class.isAssignableFrom(tagHandlerClass);
+	    if (tagHandlerClass != null) {
+		this.implementsIterationTag = 
+		    IterationTag.class.isAssignableFrom(tagHandlerClass);
+		this.implementsBodyTag =
+		    BodyTag.class.isAssignableFrom(tagHandlerClass);
+		this.implementsTryCatchFinally = 
+		    TryCatchFinally.class.isAssignableFrom(tagHandlerClass);
+		this.implementsSimpleTag = 
+		    SimpleTag.class.isAssignableFrom(tagHandlerClass);
+		this.implementsDynamicAttributes = 
+		    DynamicAttributes.class.isAssignableFrom(tagHandlerClass);
+	    }
+	    else if (tagFileInfo != null) {
+		// get the info from tag file
+		this.implementsIterationTag = false;
+		this.implementsBodyTag = false;
+		this.implementsTryCatchFinally = false;
+		this.implementsSimpleTag = true;
+		this.implementsDynamicAttributes =
+                        tagInfo.hasDynamicAttributes();
+	    }
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -980,8 +994,16 @@ public abstract class Node {
 	    return tagInfo;
 	}
 
+	public TagFileInfo getTagFileInfo() {
+	    return tagFileInfo;
+	}
+
 	public Class getTagHandlerClass() {
 	    return tagHandlerClass;
+	}
+
+	public void setTagHandlerClass(Class hc) {
+	    tagHandlerClass = hc;
 	}
 
 	public boolean implementsIterationTag() {

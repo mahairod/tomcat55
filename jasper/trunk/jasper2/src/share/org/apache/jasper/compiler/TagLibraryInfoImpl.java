@@ -112,6 +112,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         for(int i = 0; i < tags.length; i++)
             out.println(tags[i].toString());
         
+        for(int i = 0; i < tagFiles.length; i++)
+            out.println(tagFiles[i].toString());
+        
         for(int i = 0; i < functions.length; i++)
             out.println(functions[i].toString());
         
@@ -249,6 +252,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         throws JasperException
     {
         Vector tagVector = new Vector();
+        Vector tagFileVector = new Vector();
         Vector functionVector = new Vector();
 
         // Create an iterator over the child elements of our <taglib> element
@@ -282,7 +286,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             else if ("tag".equals(tname))
                 tagVector.addElement(createTagInfo(element));
             else if ("tag-file".equals(tname))
-                tagVector.addElement(createTagInfoFromTagFile(element));
+                tagFileVector.addElement(createTagFileInfo(element));
             else if ("function".equals(tname))          // JSP2.0
                 functionVector.addElement(createFunctionInfo(element));
             else if ("display-name".equals(tname) ||    // Ignored elements
@@ -301,6 +305,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 
         this.tags = new TagInfo[tagVector.size()];
         tagVector.copyInto (this.tags);
+
+        this.tagFiles = new TagFileInfo[tagFileVector.size()];
+        tagFileVector.copyInto (this.tagFiles);
 
         this.functions = new FunctionInfo[functionVector.size()];
         functionVector.copyInto (this.functions);
@@ -431,25 +438,32 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
      *
      * @return TagInfo correspoding to tag file directives
      */
-    private TagInfo createTagInfoFromTagFile(TreeNode elem)
+    private TagFileInfo createTagFileInfo(TreeNode elem)
 	        throws JasperException {
 
-	TagInfo tagInfo = null;
+	String name = null;
+	String path = null;
 
         Iterator list = elem.findChildren();
         while (list.hasNext()) {
             TreeNode child = (TreeNode) list.next();
             String tname = child.getName();
-            if ("path".equals(tname)) {
-		String tagFilePath = child.getBody();
-		tagInfo = TagFileProcessor.parseTagFile(parserController,
-							tagFilePath,
-							this);
-		break;
-	    }
+	    if ("name".equals(tname)) {
+		name = child.getBody();
+            } else if ("path".equals(tname)) {
+		path = child.getBody();
+	    } else {
+                Constants.message("jsp.warning.unknown.element.in.attribute", 
+                                  new Object[] {tname},
+                                  Logger.WARNING
+                                  );
+            }
 	}
 
-	return tagInfo;
+	TagInfo tagInfo = TagFileProcessor.parseTagFile(parserController,
+							name, path,
+							this);
+	return new TagFileInfo(name, path, tagInfo);
     }
 
     TagAttributeInfo createAttribute(TreeNode elem) {

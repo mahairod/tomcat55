@@ -464,21 +464,27 @@ public class JspDocumentParser extends DefaultHandler
             return null;
 	}
 	TagInfo tagInfo = tagLibInfo.getTag(shortName);
-	if (tagInfo == null) {
+        TagFileInfo tagFileInfo = tagLibInfo.getTagFile(shortName);
+	if (tagInfo == null && tagFileInfo == null) {
 	    throw new SAXException(err.getString("jsp.error.bad_tag",
 						 shortName, prefix));
 	}
 	Class tagHandlerClass = null;
-	try {
-	    tagHandlerClass
-		= ctxt.getClassLoader().loadClass(tagInfo.getTagClassName());
-	} catch (Exception e) {
-	    throw new SAXException(err.getString("jsp.error.unable.loadclass",
+	if (tagFileInfo == null) {
+	    try {
+	        tagHandlerClass
+		    = ctxt.getClassLoader().loadClass(tagInfo.getTagClassName());
+	    } catch (Exception e) {
+	        throw new SAXException(err.getString(
+						"jsp.error.unable.loadclass",
 						 shortName, prefix));
-	}
+	    }
+	} else {
+            tagInfo = tagFileInfo.getTagInfo();
+        }
        
 	return new Node.CustomTag(attrs, start, qName, prefix, shortName,
-				  tagInfo, tagHandlerClass, parent);
+				  tagInfo, tagFileInfo, tagHandlerClass, parent);
     }
 
     /*

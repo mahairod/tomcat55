@@ -65,6 +65,8 @@ import java.io.*;
 import java.net.*;
 import java.util.Set;
 import javax.servlet.ServletContext;
+import javax.servlet.jsp.tagext.TagInfo;
+
 import org.apache.jasper.compiler.JspRuntimeContext;
 import org.apache.jasper.compiler.JspReader;
 import org.apache.jasper.compiler.ServletWriter;
@@ -116,6 +118,9 @@ public class JspCompilationContext {
     protected URL [] outUrls = new URL[1];
     protected Class servletClass;
 
+    protected boolean isTagFile;
+    protected TagInfo tagInfo;
+
     // jspURI _must_ be relative to the context
     public JspCompilationContext(String jspUri, boolean isErrPage, Options options,
                                  ServletContext context, JspServletWrapper jsw,
@@ -139,6 +144,17 @@ public class JspCompilationContext {
             baseURI += '/';
         }
         this.rctxt=rctxt;
+    }
+
+    public JspCompilationContext(String tagfile, TagInfo tagInfo, 
+                                 Options options,
+                                 ServletContext context, JspServletWrapper jsw,
+                                 JspRuntimeContext rctxt) {
+
+        this(tagfile, false, options, context, jsw, rctxt);
+        this.isTagFile = true;
+        this.tagInfo = tagInfo;
+        return;
     }
 
     /* ==================== Methods to override ==================== */
@@ -304,6 +320,14 @@ public class JspCompilationContext {
         this.isErrPage = isErrPage;
     }
 
+    public boolean isTagFile() {
+	return isTagFile;
+    }
+
+    public TagInfo getTagInfo() {
+	return tagInfo;
+    }
+
     /**
      * Package name for the generated class.
      */
@@ -349,6 +373,14 @@ public class JspCompilationContext {
      */
     public Options getOptions() {
         return options;
+    }
+
+    public ServletContext getServletContext() {
+	return context;
+    }
+
+    public JspRuntimeContext getRuntimeContext() {
+	return rctxt;
     }
 
     /**
@@ -503,8 +535,14 @@ public class JspCompilationContext {
                  rctxt.getPermissionCollection(),
                  rctxt.getCodeSource());
             
-            servletClass = jspLoader.loadClass(
-                 getServletPackageName() + "." + getServletClassName());
+            String className;
+            if (isTagFile()) {
+                className = tagInfo.getTagClassName();
+            } else {
+                className = getServletPackageName() + "." +
+                            getServletClassName();
+            }
+            servletClass = jspLoader.loadClass(className);
         } catch (FileNotFoundException ex) {
             jspCompiler.removeGeneratedFiles();
             throw ex;

@@ -65,6 +65,7 @@ import java.io.CharArrayWriter;
 import java.util.Hashtable;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
+import javax.servlet.jsp.tagext.TagFileInfo;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 import org.apache.jasper.Constants;
@@ -415,41 +416,41 @@ public class Parser {
 
 	String directive = null;
 	if (reader.matches("page")) {
-	    directive = "<%@ page";
+	    directive = "&lt;%@ page";
 	    if (isTagFile) {
 		err.jspError(reader.mark(), "jsp.error.directive.istagfile",
 					    directive);
 	    }
 	    parsePageDirective(parent);
 	} else if (reader.matches("include")) {
-	    directive = "<%@ include";
+	    directive = "&lt;%@ include";
 	    parseIncludeDirective(parent);
 	} else if (reader.matches("taglib")) {
-	    directive = "<%@ taglib";
+	    directive = "&lt;%@ taglib";
 	    parseTaglibDirective(parent);
 	} else if (reader.matches("tag")) {
-	    directive = "<%@ tag";
+	    directive = "&lt;%@ tag";
 	    if (!isTagFile) {
 		err.jspError(reader.mark(), "jsp.error.directive.isnottagfile",
 					    directive);
 	    }
 	    parseTagDirective(parent);
 	} else if (reader.matches("attribute")) {
-	    directive = "<%@ attribute";
+	    directive = "&lt;%@ attribute";
 	    if (!isTagFile) {
 		err.jspError(reader.mark(), "jsp.error.directive.isnottagfile",
 					    directive);
 	    }
 	    parseAttributeDirective(parent);
 	} else if (reader.matches("variable")) {
-	    directive = "<%@ variable";
+	    directive = "&lt;%@ variable";
 	    if (!isTagFile) {
 		err.jspError(reader.mark(), "jsp.error.directive.isnottagfile",
 					    directive);
 	    }
 	    parseVariableDirective(parent);
 	} else if (reader.matches("fragment-input")) {
-	    directive = "<%@ fragment-input";
+	    directive = "&lt;%@ fragment-input";
 	    if (!isTagFile) {
 		err.jspError(reader.mark(), "jsp.error.directive.isnottagfile",
 					    directive);
@@ -512,7 +513,7 @@ public class Parser {
 	start = reader.mark();
 	Mark stop = reader.skipUntil("--%>");
 	if (stop == null) {
-	    err.jspError(start, "jsp.error.unterminated", "<%--");
+	    err.jspError(start, "jsp.error.unterminated", "&lt;%--");
 	}
 
 	new Node.Comment(reader.getText(start, stop), start, parent);
@@ -525,7 +526,7 @@ public class Parser {
 	start = reader.mark();
 	Mark stop = reader.skipUntil("%>");
 	if (stop == null) {
-	    err.jspError(start, "jsp.error.unterminated", "<%!");
+	    err.jspError(start, "jsp.error.unterminated", "&lt;%!");
 	}
 
 	new Node.Declaration(parseScriptText(reader.getText(start, stop)),
@@ -539,7 +540,7 @@ public class Parser {
 	start = reader.mark();
 	Mark stop = reader.skipUntil("%>");
 	if (stop == null) {
-	    err.jspError(start, "jsp.error.unterminated", "<%=");
+	    err.jspError(start, "jsp.error.unterminated", "&lt;%=");
 	}
 
 	new Node.Expression(parseScriptText(reader.getText(start, stop)),
@@ -584,7 +585,7 @@ public class Parser {
 	start = reader.mark();
 	Mark stop = reader.skipUntil("%>");
 	if (stop == null) {
-	    err.jspError(start, "jsp.error.unterminated", "<%");
+	    err.jspError(start, "jsp.error.unterminated", "&lt;%");
 	}
 
 	new Node.Scriptlet(parseScriptText(reader.getText(start, stop)),
@@ -596,7 +597,7 @@ public class Parser {
      */
     private void parseParam(Node parent) throws JasperException {
 	if (!reader.matches("<jsp:param")) {
-	    err.jspError(reader.mark(), "jsp.error.paramexpectedonly");
+	    err.jspError(reader.mark(), "jsp.error.paramexpected");
 	}
 	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
@@ -718,17 +719,17 @@ public class Parser {
                     // Body not allowed
                     err.jspError(reader.mark(),
                         "jsp.error.jspbody.emptybody.only",
-                        "<" + tag );
+                        "&lt;" + tag );
                 }
             }
             else {
                 err.jspError(reader.mark(), "jsp.error.jspbody.emptybody.only",
-                    "<" + tag );
+                    "&lt;" + tag );
             }
         }
         else {
 	    err.jspError(reader.mark(), "jsp.error.unterminated",
-                "<" + tag );
+                "&lt;" + tag );
         }
     }
 
@@ -782,7 +783,7 @@ public class Parser {
 
 	if (!reader.matches(">")) {
 	    err.jspError(reader.mark(), "jsp.error.unterminated",
-			 "<" + tag );
+			 "&lt;" + tag );
 	}
         
         if( reader.matchesETag( tag ) ) {
@@ -829,7 +830,7 @@ public class Parser {
             reader.skipSpaces();
             if( !reader.matchesETag( tag ) ) {
                 err.jspError(reader.mark(), "jsp.error.unterminated", 
-                    "<" + tag );
+                    "&lt;" + tag );
             }
             
             result = true;
@@ -838,7 +839,7 @@ public class Parser {
             // If we have <jsp:attribute> but something other than
             // <jsp:body> or the end tag, translation error.
             err.jspError(reader.mark(), "jsp.error.jspbody.required", 
-                "<" + tag );
+                "&lt;" + tag );
         }
         
         return result;
@@ -859,7 +860,7 @@ public class Parser {
         }
         else {
             err.jspError(reader.mark(), "jsp.error.unterminated",
-                "<jsp:params" );
+                "&lt;jsp:params" );
         }
     }
 
@@ -879,14 +880,14 @@ public class Parser {
             Mark bodyEnd = reader.skipUntilETag("jsp:fallback");
             if (bodyEnd == null) {
                 err.jspError(start, "jsp.error.unterminated", 
-                    "<jsp:fallback");
+                    "&lt;jsp:fallback");
             }
             char[] text = reader.getText(bodyStart, bodyEnd);
             new Node.FallBackAction(start, text, parent);
         }
         else {
             err.jspError( reader.mark(), "jsp.error.unterminated",
-                "<jsp:fallback" );
+                "&lt;jsp:fallback" );
         }
     }
 
@@ -956,14 +957,14 @@ public class Parser {
 	    if (!isTagFile) {
 		err.jspError(reader.mark(),
 			     "jsp.error.invalid.action.isnottagfile",
-			     "<jsp:invoke");
+			     "&lt;jsp:invoke");
 	    }
 	    parseInvoke(parent);
 	} else if (reader.matches("doBody")) {
 	    if (!isTagFile) {
 		err.jspError(reader.mark(),
 			     "jsp.error.invalid.action.isnottagfile",
-			     "<jsp:doBody");
+			     "&lt;jsp:doBody");
 	    }
 	    parseDoBody(parent);
 	} else if (reader.matches("getProperty")) {
@@ -1028,16 +1029,23 @@ public class Parser {
 	    return false;
 	}
 	TagInfo tagInfo = tagLibInfo.getTag(shortTagName);
-	if (tagInfo == null) {
+	TagFileInfo tagFileInfo = tagLibInfo.getTagFile(shortTagName);
+	if (tagInfo == null && tagFileInfo == null) {
 	    err.jspError(start, "jsp.error.bad_tag", shortTagName, prefix);
 	}
 	Class tagHandlerClass = null;
-	try {
-	    tagHandlerClass
-		= ctxt.getClassLoader().loadClass(tagInfo.getTagClassName());
-	} catch (Exception e) {
-	    err.jspError(start, "jsp.error.unable.loadclass", shortTagName,
+	if (tagFileInfo == null) {
+	    // Must be a classic tag, load it here.
+	    // tag files will be loaded later, in TagFileProcessor
+	    try {
+	        tagHandlerClass
+		    = ctxt.getClassLoader().loadClass(tagInfo.getTagClassName());
+	    } catch (Exception e) {
+	        err.jspError(start, "jsp.error.unable.loadclass", shortTagName,
 			 prefix);
+	    }
+	} else {
+	    tagInfo = tagFileInfo.getTagInfo();
 	}
 
         // Parse 'CustomActionBody' production:
@@ -1051,8 +1059,7 @@ public class Parser {
         // Parse 'CustomActionEnd' production:
 	if (reader.matches("/>")) {
 	    new Node.CustomTag(attrs, start, tagName, prefix, shortTagName,
-			       tagInfo, tagHandlerClass, parent);
-	    return true;
+			       tagInfo, tagFileInfo, tagHandlerClass, parent);
 	}
 	
         // Now we parse one of 'CustomActionTagDependent', 
@@ -1062,11 +1069,18 @@ public class Parser {
 	// Looking for a body, it still can be empty; but if there is a
 	// a tag body, its syntax would be dependent on the type of
 	// body content declared in TLD.
-	String bc = ((TagLibraryInfo)taglibs.get(prefix)).getTag(
-            shortTagName).getBodyContent();
+	TagLibraryInfo taglib = (TagLibraryInfo)taglibs.get(prefix);
+	String bc;
+	if (taglib.getTag(shortTagName) != null) {
+	    bc = taglib.getTag(shortTagName).getBodyContent();
+	} else if (taglib.getTagFile(shortTagName) != null) {
+	    bc = TagInfo.BODY_CONTENT_SCRIPTLESS;
+	} else {
+	    bc = TagInfo.BODY_CONTENT_EMPTY;
+	}
 
 	Node tagNode = new Node.CustomTag(attrs, start, tagName, prefix,
-					  shortTagName, tagInfo,
+					  shortTagName, tagInfo, tagFileInfo,
 					  tagHandlerClass, parent);
 	parseOptionalBody( tagNode, tagName, bc );
 
@@ -1181,7 +1195,7 @@ public class Parser {
 	Mark bodyStart = reader.mark();
 	Mark bodyEnd = reader.skipUntilETag(tag);
 	if (bodyEnd == null) {
-	    err.jspError(start, "jsp.error.unterminated", "<"+tag );
+	    err.jspError(start, "jsp.error.unterminated", "&lt;"+tag );
 	}
 	new Node.TemplateText(reader.getText(bodyStart, bodyEnd), bodyStart,
 			      parent);
@@ -1214,7 +1228,7 @@ public class Parser {
                 // Body was empty.  This is illegal, according to the grammar.
                 err.jspError(reader.mark(),
                     "jsp.error.empty.body.not.allowed",
-                    "<jsp:body>" );
+                    "&lt;jsp:body&gt;" );
             }
             else {
                 parseBody( bodyNode, "jsp:body", bodyType );
@@ -1230,7 +1244,7 @@ public class Parser {
             {
                 err.jspError(reader.mark(), 
                     "jsp.error.jspbody.body.not.allowed.with.value",
-                    "<jsp:body>" );
+                    "&lt;jsp:body&gt;" );
             }
         }
     }
@@ -1257,7 +1271,7 @@ public class Parser {
             parsePluginTags(parent);
             if( !reader.matchesETag( tag ) ) {
                 err.jspError( reader.mark(), "jsp.error.unterminated",
-                    "<" + tag  );
+                    "&lt;" + tag  );
             }
         }
         else if( bodyType.equalsIgnoreCase( TagInfo.BODY_CONTENT_JSP ) ||
@@ -1284,7 +1298,7 @@ public class Parser {
                     parseParam( parent );
                 }
             }
-            err.jspError(start, "jsp.error.unterminated", "<"+tag );
+            err.jspError(start, "jsp.error.unterminated", "&lt;"+tag );
         }
         else {
 	    err.jspError(start, "jasper.error.bad.bodycontent.type");
@@ -1311,17 +1325,17 @@ public class Parser {
             if( reader.matches( "/>" ) ) {
                 // Body was empty.  This is illegal, according to the grammar.
                 err.jspError(reader.mark(), "jsp.error.empty.body.not.allowed", 
-                    "<jsp:attribute" );
+                    "&lt;jsp:attribute" );
             }
             else if( !reader.matches( ">" ) ) {
                 err.jspError(reader.mark(), "jsp.error.unterminated",
-                    "<jsp:attribute");
+                    "&lt;jsp:attribute");
             }
 
             if( reader.matches( "</jsp:attribute" ) ) {
                 // Body was empty.  This is illegal, according to the grammar.
                 err.jspError(reader.mark(), "jsp.error.empty.body.not.allowed", 
-                    "<jsp:attribute" );
+                    "&lt;jsp:attribute" );
             }
             else {
                 if( namedAttributeNode.isTrim() ) {
