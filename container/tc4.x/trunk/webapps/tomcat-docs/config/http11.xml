@@ -19,6 +19,12 @@
   <p><b>IMPORTANT NOTE: The HTTP/1.1 connector is now deprecated. Use
   the Coyote HTTP/1.1 connector instead.</b></p>
 
+  <p><b>IMPORTANT NOTE: This connector MUST NOT be used in conjunction
+  with any <a href="context.html">Context</a> element that has the
+  <code>allowLinking</code> attribute set to <code>true</code>. In this
+  configuration it is possible for a mal-formed request to result in source
+  code exposure of JSPs.</b></p>
+
   <p>The <strong>HTTP/1.1 Connector</strong> element represents a
   <strong>Connector</strong> component that supports the HTTP/1.1 protocol.
   It enables Catalina to function as a stand-alone web server, in addition

@@ -178,6 +178,11 @@
         (or any other OS which does not have a case sensitive filesystem),
         as it will disable case sensitivity checks, allowing JSP source code
         disclosure, among other security problems.</b></p>
+        <p><b>NOTE: This flag MUST NOT be set to true when using the deprecated
+        <a href="http11.html">HTTP 1.1</a> connector as it will disable checks
+        that protect against mal-formed requests resulting in JSP source code
+        disclosure.</b></p>
+
       </attribute>
 
       <attribute name="cacheTTL" required="false">
