@@ -78,7 +78,7 @@
               <bean:message key="resources.datasrc.url"/>:
             </controls:label>
             <controls:data>
-                <html:text property="url" size="40" maxlength="64"/>
+                <html:text property="url" size="56" maxlength="64"/>
             </controls:data>
           </controls:row>
 
@@ -88,7 +88,7 @@
               <bean:message key="resources.datasrc.jdbcclass"/>:
             </controls:label>
             <controls:data>
-              <html:text property="driverClass" size="40" maxlength="64"/>
+              <html:text property="driverClass" size="56" maxlength="256"/>
             </controls:data>
           </controls:row>
 
