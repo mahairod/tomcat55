@@ -452,11 +452,19 @@ public class PageContextImpl extends PageContext {
         return out;
     }
 
-    public void handlePageException(Exception e)
-    throws IOException, ServletException {
+    public void handlePageException(Exception ex)
+        throws IOException, ServletException 
+    {
+	// Should never be called since handleException() called with a
+	// Throwable in the generated servlet.
+	handlePageException((Throwable) ex);
+    }
 
-	// set the request attribute with the exception.
-	request.setAttribute("javax.servlet.jsp.jspException", e);
+    public void handlePageException(Throwable t)
+        throws IOException, ServletException 
+    {
+        // set the request attribute with the Throwable.
+	request.setAttribute("javax.servlet.jsp.jspException", t);
 
 	if (errorPageURL != null && !errorPageURL.equals("")) {
             try {
@@ -464,38 +472,14 @@ public class PageContextImpl extends PageContext {
             } catch (IllegalStateException ise) {
                 include(errorPageURL);
             }
-	} // Otherwise throw the exception wrapped inside a ServletException.
-	else {
+	} else {
+            // Otherwise throw the exception wrapped inside a ServletException.
 	    // Set the exception as the root cause in the ServletException
 	    // to get a stack trace for the real problem
-	    if( e instanceof IOException )
-		throw (IOException)e;
-	    if( e instanceof ServletException )
-		throw (ServletException) e;
-	    throw new ServletException(e);
+	    if (t instanceof IOException) throw (IOException)t;
+	    if (t instanceof ServletException) throw (ServletException)t;
+	    throw new ServletException(t);
 	}
-
-    }
-
-    public void handlePageException(Throwable e)
-    throws IOException, ServletException {
-
-	// set the request attribute with the exception.
-	request.setAttribute("javax.servlet.jsp.jspException", e);
-
-	if (errorPageURL != null && !errorPageURL.equals("")) {
-	    forward(errorPageURL);
-	} // Otherwise throw the exception wrapped inside a ServletException.
-	else {
-	    // Set the exception as the root cause in the ServletException
-	    // to get a stack trace for the real problem
-	    if( e instanceof IOException )
-		throw (IOException)e;
-	    if( e instanceof ServletException )
-		throw (ServletException) e;
-	    throw new ServletException(e);
-	}
-
     }
 
     protected JspWriter _createOut(int bufferSize, boolean autoFlush)
