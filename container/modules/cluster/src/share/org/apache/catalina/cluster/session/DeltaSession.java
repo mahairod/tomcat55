@@ -757,50 +757,6 @@ public class DeltaSession
 
 
     /**
-     * Perform the internal processing required to passivate
-     * this session.
-     */
-    public void passivate() {
-
-        // Notify ActivationListeners
-        HttpSessionEvent event = null;
-        String keys[] = keys();
-        for (int i = 0; i < keys.length; i++) {
-            Object attribute = getAttributeInternal(keys[i]);
-            if (attribute instanceof HttpSessionActivationListener) {
-                if (event == null)
-                    event = new HttpSessionEvent(this);
-                // FIXME: Should we catch throwables?
-                ((HttpSessionActivationListener)attribute).sessionWillPassivate(event);
-            }
-        }
-
-    }
-
-
-    /**
-     * Perform internal processing required to activate this
-     * session.
-     */
-    public void activate() {
-
-        // Notify ActivationListeners
-        HttpSessionEvent event = null;
-        String keys[] = keys();
-        for (int i = 0; i < keys.length; i++) {
-            Object attribute = getAttributeInternal(keys[i]);
-            if (attribute instanceof HttpSessionActivationListener) {
-                if (event == null)
-                    event = new HttpSessionEvent(this);
-                // FIXME: Should we catch throwables?
-                ((HttpSessionActivationListener)attribute).sessionDidActivate(event);
-            }
-        }
-
-    }
-
-
-    /**
      * Return the object bound with the specified name to the internal notes
      * for this session, or <code>null</code> if no such binding exists.
      *
@@ -1304,6 +1260,10 @@ public class DeltaSession
         if (value == null) {
             removeAttribute(name);
             return;
+        }
+
+        if ( ! (value instanceof java.io.Serializable) ) {
+            throw new IllegalArgumentException("Attribute ["+name+"] is not serializable");
         }
 
         // Validate our current state
