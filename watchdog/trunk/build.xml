@@ -81,6 +81,11 @@
       <javac srcdir="src/clients" destdir="${watchdog.build}/clients" 
              classpath="${watchdog-classpath}" 
              deprecation="off" />    
+
+      <copydir src="src/clients" dest="${watchdog.build}/clients">
+          <include name="**/MANIFEST.MF" />
+          <include name="**/*.properties" />
+      </copydir>
         
       <jar jarfile="${watchdog.build}/lib/client.jar"
            basedir="${watchdog.build}/clients" 
