@@ -69,6 +69,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.security.Principal;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
@@ -151,6 +152,7 @@ public final class MemoryRealm
      */
     private boolean started = false;
 
+
     // ------------------------------------------------------------- Properties
 
 
@@ -189,8 +191,8 @@ public final class MemoryRealm
      */
     public Principal authenticate(String username, String credentials) {
 
-	MemoryRealmPrincipal principal =
-	    (MemoryRealmPrincipal) principals.get(username);
+	GenericPrincipal principal =
+	    (GenericPrincipal) principals.get(username);
 	if ((principal != null) &&
 	    (credentials.equals(principal.getPassword()))) {
 	    if (debug > 1)
@@ -216,10 +218,12 @@ public final class MemoryRealm
     public boolean hasRole(Principal principal, String role) {
 
 	if ((principal == null) || (role == null) ||
-	    !(principal instanceof MemoryRealmPrincipal))
+	    !(principal instanceof GenericPrincipal))
 	    return (false);
-
-	boolean result = ((MemoryRealmPrincipal) principal).hasRole(role);
+        GenericPrincipal gp = (GenericPrincipal) principal;
+        if (!(gp.getRealm() == this))
+            return (false);
+	boolean result = gp.hasRole(role);
 	if (debug > 1) {
 	    String name = principal.getName();
 	    if (result)
@@ -244,19 +248,22 @@ public final class MemoryRealm
      */
     void addUser(String username, String password, String roles) {
 
-	MemoryRealmPrincipal principal =
-	    new MemoryRealmPrincipal(username, password);
-	principals.put(username, principal);
-
-	roles += ",";
+        // Accumulate the list of roles for this user
+        ArrayList list = new ArrayList();
+        roles += ",";
 	while (true) {
 	    int comma = roles.indexOf(",");
 	    if (comma < 0)
 		break;
 	    String role = roles.substring(0, comma).trim();
-	    principal.addRole(role);
+            list.add(role);
 	    roles = roles.substring(comma + 1);
 	}
+
+        // Construct and cache the Principal for this user
+	GenericPrincipal principal =
+	    new GenericPrincipal(this, username, password, list);
+	principals.put(username, principal);
 
     }
 
@@ -268,8 +275,8 @@ public final class MemoryRealm
      * Return the password associated with the given principal's user name.
      */
     protected String getPassword(String username) {
-	MemoryRealmPrincipal principal =
-	    (MemoryRealmPrincipal) principals.get(username);
+	GenericPrincipal principal =
+	    (GenericPrincipal) principals.get(username);
 	if (principal != null) {
 	    return (principal.getPassword());
 	} else {
@@ -285,6 +292,9 @@ public final class MemoryRealm
 	return (Principal) principals.get(username);
     }
 
+
+
+    // ------------------------------------------------------ Lifecycle Methods
 
 
     /**
@@ -352,111 +362,6 @@ public final class MemoryRealm
 
 
 /**
- * Private class representing an individual user's Principal object.
- */
-
-final class MemoryRealmPrincipal implements Principal {
-
-
-    /**
-     * The password for this Principal.
-     */
-    private String password = null;
-
-
-    /**
-     * The role names possessed by this Principal.
-     */
-    private String roles[] = new String[0];
-
-
-    /**
-     * The username for this Principal.
-     */
-    private String username = null;
-
-
-    /**
-     * Construct a new MemoryRealmPrincipal instance.
-     *
-     * @param username The username for this Principal
-     * @param password The password for this Principal
-     */
-    public MemoryRealmPrincipal(String username, String password) {
-
-	this.username = username;
-	this.password = password;
-
-    }
-
-
-    /**
-     * Add a new role name to the set possessed by this Principal.
-     *
-     * @param role The role to be added
-     */
-    public void addRole(String role) {
-
-	if (role == null)
-	    return;
-
-	for (int i = 0; i < roles.length; i++) {
-	    if (role.equals(roles[i]))
-		return;
-	}
-
-	String results[] = new String[roles.length + 1];
-	for (int i = 0; i < roles.length; i++)
-	    results[i] = roles[i];
-	results[roles.length] = role;
-
-        roles = results;
-
-    }
-
-
-    /**
-     * Return the name of this Principal.
-     */
-    public String getName() {
-
-	return (username);
-
-    }
-
-
-    /**
-     * Return the password of this Principal.
-     */
-    public String getPassword() {
-
-	return (password);
-
-    }
-
-
-    /**
-     * Does this Principal possess the specified role?
-     *
-     * @param role Role to be checked
-     */
-    public boolean hasRole(String role) {
-
-	if (role == null)
-	    return (false);
-        for (int i = 0; i < roles.length; i++) {
-            if (role.equals(roles[i]))
-		return (true);
-	}
-	return (false);
-
-    }
-
-
-}
-
-
-/**
  * Private class used when parsing the XML database file.
  */
 final class MemoryRealmUserAction extends XmlAction {
@@ -479,4 +384,6 @@ final class MemoryRealmUserAction extends XmlAction {
 	realm.addUser(username, password, roles);
 
     }
+
+
 }
