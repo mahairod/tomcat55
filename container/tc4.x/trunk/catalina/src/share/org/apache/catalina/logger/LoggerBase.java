@@ -71,6 +71,7 @@ import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import org.apache.catalina.Container;
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Logger;
 
 
@@ -260,15 +261,15 @@ abstract class LoggerBase
 	PrintWriter writer = new PrintWriter(buf);
 	writer.println(msg);
 	throwable.printStackTrace(writer);
-	if (throwable instanceof ServletException) {
-	    Throwable rootCause =
-		((ServletException) throwable).getRootCause();
-	    if (rootCause != null) {
-		writer.println("----- Root Cause -----");
-		rootCause.printStackTrace(writer);
-	    }
+        Throwable rootCause = null;
+        if (throwable instanceof LifecycleException)
+            rootCause = ((LifecycleException) throwable).getThrowable();
+        else if (throwable instanceof ServletException)
+            rootCause = ((ServletException) throwable).getRootCause();
+	if (rootCause != null) {
+            writer.println("----- Root Cause -----");
+            rootCause.printStackTrace(writer);
 	}
-
 	log(buf.toString());
 
     }
