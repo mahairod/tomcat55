@@ -109,7 +109,6 @@ public class Compiler {
     // ----------------------------------------------------- Instance Variables
 
 
-    protected Mangler mangler;
     protected JspCompilationContext ctxt;
 
     private ErrorDispatcher errDispatcher;
@@ -328,22 +327,6 @@ public class Compiler {
 
     
     /**
-     * Set java compiler info
-     */
-    public void setJavaCompiler(JavaCompiler javac) {
-    }
-
-
-    /**
-     * Set Mangler which will be used as part of compile().
-     */
-    public void setMangler(Mangler mangler) {
-        //this.mangler = mangler;
-        //ctxt.setServletJavaFileName(mangler.getJavaFileName());
-    }
-
-
-    /**
      * Gets the error dispatcher.
      */
     public ErrorDispatcher getErrorDispatcher() {
@@ -407,7 +390,7 @@ public class Compiler {
      */
     public void removeGeneratedFiles() {
         try {
-            String classFileName = mangler.getClassFileName();
+            String classFileName = ctxt.getServletClassName();
             if (classFileName != null) {
                 File classFile = new File(classFileName);
                 classFile.delete();
@@ -416,7 +399,7 @@ public class Compiler {
             // Remove as much as possible, ignore possible exceptions
         }
         try {
-            String javaFileName = mangler.getJavaFileName();
+            String javaFileName = ctxt.getServletJavaFileName();
             if (javaFileName != null) {
                 File javaFile = new File(javaFileName);
                 javaFile.delete();

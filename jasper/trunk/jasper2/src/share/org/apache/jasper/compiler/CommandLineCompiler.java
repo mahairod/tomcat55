@@ -71,7 +71,7 @@ import org.apache.jasper.CommandLineContext;
  * Overrides some methods so that we get the desired effects.
  *@author Danno Ferrin
  */
-public class CommandLineCompiler extends Compiler implements Mangler {
+public class CommandLineCompiler extends Compiler /*implements Mangler*/ {
 
     String javaFileName;
     String classFileName;
@@ -88,7 +88,6 @@ public class CommandLineCompiler extends Compiler implements Mangler {
         outputDir =  ctxt.getOptions().getScratchDir().getAbsolutePath();
 	packageName = ctxt.getServletPackageName();
 	pkgName = packageName;
-        setMangler(this);
 
         className = getBaseClassName();
         // yes this is kind of messed up ... but it works

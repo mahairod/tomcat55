@@ -87,7 +87,6 @@ import org.apache.jasper.compiler.JspReader;
 import org.apache.jasper.compiler.JspRuntimeContext;
 import org.apache.jasper.compiler.ServletWriter;
 import org.apache.jasper.compiler.Compiler;
-import org.apache.jasper.compiler.JavaCompiler;
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.servlet.JasperLoader;
 import org.apache.jasper.servlet.JspServletWrapper;
