@@ -280,16 +280,10 @@ public class JspServlet extends HttpServlet {
                 if (wrapper == null) {
                     // Check if the requested JSP page exists, to avoid
                     // creating unnecessary directories and files.
-                    InputStream resourceStream =
-                        context.getResourceAsStream(jspUri);
-                    if (resourceStream == null) {
+                    if (null == context.getResource(jspUri)) {
                         response.sendError(HttpServletResponse.SC_NOT_FOUND,
                                            jspUri);
                         return;
-                    } else {
-                        try {
-                            resourceStream.close();
-                        } catch(IOException e) { /* ignore */ }
                     }
                     boolean isErrorPage = exception != null;
                     wrapper = new JspServletWrapper(config, options, jspUri,
