@@ -14,8 +14,6 @@ InstProgressFlags smooth colored
 
 Icon main.ico
 UninstallIcon uninst.ico 
-EnabledBitmap tickyes.bmp 
-DisabledBitmap tickno.bmp
 
 LicenseText "You must read the following license before installing:"
 LicenseData INSTALLLICENSE
@@ -115,17 +113,15 @@ Section "Tomcat Start Menu Group"
 
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Start Tomcat.lnk" \
                  "$2\bin\java.exe" \
-                 '-jar -Duser.dir="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" start' \
+                 '-Duser.dir="$INSTDIR\bin" LauncherBootstrap -launchfile catalina.xml catalina start' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Stop Tomcat.lnk" \
                  "$2\bin\java.exe" \
-                 '-jar -Duser.dir="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" stop' \
+                 '-Duser.dir="$INSTDIR\bin" LauncherBootstrap -launchfile catalina.xml catalina stop' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
 
 SectionEnd
-
-SectionDivider " documentation and examples "
 
 Section "Tomcat Documentation"
 
@@ -153,12 +149,10 @@ Section "Example Web Applications"
   File conf\server.xml
   SetOverwrite on
   SetOutPath $INSTDIR\webapps
-  File /r webapps\examples
-  File /r webapps\webdav
+;*** TEMP
+;  File /r webapps\examples
 
 SectionEnd
-
-SectionDivider " developer resources "
 
 Section "Tomcat Source Code"
 

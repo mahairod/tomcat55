@@ -280,14 +280,12 @@
     <copy todir="${tomcat.dist}">
       <fileset dir="resources" />
     </copy>
-    <copy file="${nsis.home}/InstallOptions.dll" 
-     todir="${tomcat.dist}" />
-    <copy file="${javaservice.home}/bin/JavaService.exe" 
-     tofile="${tomcat.dist}/bin/tomcat.exe" />
+    <copy file="${nsis.installoptions.dll}" todir="${tomcat.dist}" />
+    <copy file="${javaservice.exe}" tofile="${tomcat.dist}/bin/tomcat.exe" />
     <filter token="VERSION" value="${version}"/>
     <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" 
      filtering="true"/>
-    <exec dir="${tomcat.dist}" executable="${nsis.home}\makensis-bz2.exe">
+    <exec dir="${tomcat.dist}" executable="${nsis.exe}">
       <arg value="tomcat.nsi" />
     </exec>
     <move file="${tomcat.dist}/tomcat-installer.exe" 
@@ -336,8 +334,9 @@
     <condition property="execute.installer">
       <and>
         <os family="windows" />
-        <available file="${javaservice.home}/bin/JavaService.exe" />
-        <available file="${nsis.home}/makensis-bz2.exe" />
+        <available file="${javaservice.exe}" />
+        <available file="${nsis.exe}" />
+        <available file="${nsis.installoptions.dll}" />
       </and>
     </condition>
   </target>
@@ -586,7 +585,7 @@
     </antcall>
     <antcall target="downloadzip">
       <param name="sourcefile" value="${javaservice.loc}"/>
-      <param name="destfile" value="${javaservice.home}/bin/JavaService.exe"/>
+      <param name="destfile" value="${javaservice.exe}"/>
       <param name="destdir" value="${javaservice.home}"/>
     </antcall>
     <antcall target="downloadgz">
@@ -600,7 +599,7 @@
     </antcall>
     <antcall target="downloadfile">
       <param name="sourcefile" value="${nsis.loc}"/>
-      <param name="destfile" value="${nsis.home}/nsis198.exe"/>
+      <param name="destfile" value="${nsis.home}/nsis.exe"/>
       <param name="destdir" value="${nsis.home}"/>
     </antcall>
     <antcall target="downloadgz">

@@ -83,4 +83,4 @@
     -->
 
     <!-- Define a non-SSL Coyote HTTP/1.1 Connector on port 8081 -->
-    <Connector className="org.apache.coyote.tomcat4.CoyoteConnector"
+    <Connector className="org.apache.coyote.tomcat5.CoyoteConnector"
