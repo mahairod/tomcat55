@@ -1,0 +1,152 @@
+/*
+ * The Apache Software License, Version 1.1
+ *
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer. 
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution, if
+ *    any, must include the following acknowlegement:  
+ *       "This product includes software developed by the 
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowlegement may appear in the software itself,
+ *    if and wherever such third-party acknowlegements normally appear.
+ *
+ * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
+ *    Foundation" must not be used to endorse or promote products derived
+ *    from this software without prior written permission. For written 
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache"
+ *    nor may "Apache" appear in their names without prior written
+ *    permission of the Apache Group.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ *
+ */ 
+
+package org.apache.jasper34.core;
+
+import java.util.ResourceBundle;
+import java.util.MissingResourceException;
+import java.text.MessageFormat;
+
+import org.apache.tomcat.util.log.Log;
+import org.apache.tomcat.util.res.StringManager;
+
+// XXX Not used yet - will replace part of Constants and JspCompilationCtx
+
+
+/**
+ * The container can override this to provide services to jasper.
+ *
+ *
+ * @author Anil K. Vijendran
+ * @author Harish Prabandham
+ * @author Costin Manolache
+ */
+public abstract class ContainerLiaison {
+
+    static ContainerLiaison liaison;
+
+    public static ContainerLiaison getContainerLiaison() {
+	return liaison;
+    }
+
+    public static void setContainerLiaison( ContainerLiaison l ) {
+	liaison=l;
+    }
+
+    // --------------------  resource access --------------------
+
+    /** 
+     * Get the full value of a URI relative to this compilations context
+     */
+    public abstract String resolveRelativeUri(String uri);
+
+    /**
+     * Gets a resource as a stream, relative to the meanings of this
+     * context's implementation.
+     *@returns a null if the resource cannot be found or represented 
+     *         as an InputStream.
+     */
+    public abstract java.io.InputStream getResourceAsStream(String res);
+
+    /** 
+     * Gets the actual path of a URI relative to the context of
+     * the compilation.
+     */
+    public abstract String getRealPath(String path);
+
+    // -------------------- messages --------------------
+    /**
+     * Get hold of a "message" or any string from our resources
+     * database. 
+     */
+    public String getString(String key) {
+        return getString(key, null);
+    }
+
+    /**
+     * Format the string that is looked up using "key" using "args". 
+     */
+    public abstract String getString(String key, Object[] args);
+
+    
+    /** 
+     * Print a message into standard error with a certain verbosity
+     * level. 
+     * 
+     * @param key is used to look up the text for the message (using
+     *            getString()). 
+     * @param verbosityLevel is used to determine if this output is
+     *                       appropriate for the current verbosity
+     *                       level. 
+     */
+    public abstract void message(String key, int verbosityLevel);
+
+
+    /**
+     * Print a message into standard error with a certain verbosity
+     * level after formatting it using "args". 
+     *
+     * @param key is used to look up the message. 
+     * @param args is used to format the message. 
+     * @param verbosityLevel is used to determine if this output is
+     *                       appropriate for the current verbosity
+     *                       level. 
+     */
+    public abstract void message(String key, Object[] args,
+				 int verbosityLevel);
+    
+}
+
