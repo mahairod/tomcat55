@@ -445,9 +445,22 @@ public interface HttpServletResponse extends ServletResponse {
      * Status code (302) indicating that the resource has temporarily
      * moved to another location, but that future references should
      * still use the original URI to access the resource.
+     *
+     * This definition is being retained for backwards compatibility.
+     * SC_FOUND is now the preferred definition.
      */
 
     public static final int SC_MOVED_TEMPORARILY = 302;
+
+    /**
+    * Status code (302) indicating that the resource reside
+    * temporarily under a different URI. Since the redirection might
+    * be altered on occasion, the client should continue to use the
+    * Request-URI for future requests.(HTTP/1.1) To represent the
+    * status code (302), it is recommended to use this variable.
+    */
+
+    public static final int SC_FOUND = 302;
 
     /**
      * Status code (303) indicating that the response to the request
