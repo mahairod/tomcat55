@@ -646,9 +646,6 @@ public class WebappLoader
             throw new LifecycleException("start: ", t);
         }
 
-        // Validate that all required packages are actually available
-        validatePackages();
-
         // Start our background thread if we are reloadable
         if (reloadable) {
             log.info(sm.getString("webappLoader.reloading"));
@@ -1282,46 +1279,6 @@ public class WebappLoader
         }
 
         thread = null;
-
-    }
-
-
-    /**
-     * Validate that the required optional packages for this application
-     * are actually present.
-     *
-     * @exception LifecycleException if a required package is not available
-     */
-    private void validatePackages() throws LifecycleException {
-
-        ClassLoader classLoader = getClassLoader();
-        if (classLoader instanceof WebappClassLoader) {
-
-            Extension available[] =
-                ((WebappClassLoader) classLoader).findAvailable();
-            Extension required[] =
-                ((WebappClassLoader) classLoader).findRequired();
-            if (log.isDebugEnabled())
-                log.debug("Optional Packages:  available=" +
-                    available.length + ", required=" +
-                    required.length);
-
-            for (int i = 0; i < required.length; i++) {
-                if (log.isDebugEnabled())
-                    log.debug("Checking for required package " + required[i]);
-                boolean found = false;
-                for (int j = 0; j < available.length; j++) {
-                    if (available[j].isCompatibleWith(required[i])) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                    throw new LifecycleException
-                        ("Missing optional package " + required[i]);
-            }
-
-        }
 
     }
 

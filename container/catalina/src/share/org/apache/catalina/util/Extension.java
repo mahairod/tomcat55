@@ -62,7 +62,7 @@
  */
 
 
-package org.apache.catalina.loader;
+package org.apache.catalina.util;
 
 
 import java.util.ArrayList;
@@ -90,7 +90,9 @@ import java.util.jar.Manifest;
  * Java2 Standard Edition package, in file
  * <code>guide/extensions/versioning.html</code>.
  *
- * @author Craig R. McClanahan
+ * @author Craig McClanahan
+ * @author Justyna Horwat
+ * @author Greg Murray
  * @version $Revision$ $Date$
  */
 
@@ -104,6 +106,7 @@ public final class Extension {
      * The name of the optional package being made available, or required.
      */
     private String extensionName = null;
+    
 
     public String getExtensionName() {
         return (this.extensionName);
@@ -113,6 +116,13 @@ public final class Extension {
         this.extensionName = extensionName;
     }
 
+    /**
+     * UniqueId created by combining the extension name and implementation
+     * version. 
+     */
+    public String getUniqueId() {
+        return this.extensionName + this.implementationVersion;
+    }
 
     /**
      * The URL from which the most recent version of this optional package
@@ -204,8 +214,21 @@ public final class Extension {
     }
 
 
-    // --------------------------------------------------------- Public Methods
+    /**
+     * fulfilled is true if all the required extension dependencies have been
+     * satisfied
+     */
+    private boolean fulfilled = false;
 
+    public void setFulfilled(boolean fulfilled) {
+        this.fulfilled = fulfilled;
+    }
+    
+    public boolean isFulfilled() {
+        return fulfilled;
+    }
+
+    // --------------------------------------------------------- Public Methods
 
     /**
      * Return <code>true</code> if the specified <code>Extension</code>
@@ -214,7 +237,7 @@ public final class Extension {
      * optional package that is already installed.  Otherwise, return
      * <code>false</code>.
      *
-     * @param required Description of the required optional package
+     * @param required Extension of the required optional package
      */
     public boolean isCompatibleWith(Extension required) {
 
@@ -242,7 +265,6 @@ public final class Extension {
         return (true);
 
     }
-
 
     /**
      * Return a String representation of this object.
@@ -281,160 +303,8 @@ public final class Extension {
     }
 
 
-    // --------------------------------------------------------- Static Methods
-
-
-    /**
-     * Return the set of <code>Extension</code> objects representing optional
-     * packages that are available in the JAR file associated with the
-     * specified <code>Manifest</code>.  If there are no such optional
-     * packages, a zero-length list is returned.
-     *
-     * @param manifest Manifest to be parsed
-     */
-    public static List getAvailable(Manifest manifest) {
-
-        ArrayList results = new ArrayList();
-        if (manifest == null)
-            return (results);
-        Extension extension = null;
-
-        Attributes attributes = manifest.getMainAttributes();
-        if (attributes != null) {
-            extension = getAvailable(attributes);
-            if (extension != null)
-                results.add(extension);
-        }
-
-        Map entries = manifest.getEntries();
-        Iterator keys = entries.keySet().iterator();
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            attributes = (Attributes) entries.get(key);
-            extension = getAvailable(attributes);
-            if (extension != null)
-                results.add(extension);
-        }
-
-        return (results);
-
-    }
-
-
-    /**
-     * Return the set of <code>Extension</code> objects representing optional
-     * packages that are required by the application contained in the JAR
-     * file associated with the specified <code>Manifest</code>.  If there
-     * are no such optional packages, a zero-length list is returned.
-     *
-     * @param manifest Manifest to be parsed
-     */
-    public static List getRequired(Manifest manifest) {
-
-        ArrayList results = new ArrayList();
-
-        Attributes attributes = manifest.getMainAttributes();
-        if (attributes != null) {
-            Iterator required = getRequired(attributes).iterator();
-            while (required.hasNext())
-                results.add(required.next());
-        }
-
-        Map entries = manifest.getEntries();
-        Iterator keys = entries.keySet().iterator();
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            attributes = (Attributes) entries.get(key);
-            Iterator required = getRequired(attributes).iterator();
-            while (required.hasNext())
-                results.add(required.next());
-        }
-
-        return (results);
-
-    }
-
-
     // -------------------------------------------------------- Private Methods
 
-
-    /**
-     * If the specified manifest attributes entry represents an available
-     * optional package, construct and return an <code>Extension</code>
-     * instance representing this package; otherwise return <code>null</code>.
-     *
-     * @param attributes Manifest attributes to be parsed
-     */
-    private static Extension getAvailable(Attributes attributes) {
-
-        String name = attributes.getValue("Extension-Name");
-        if (name == null)
-            return (null);
-        Extension extension = new Extension();
-        extension.setExtensionName(name);
-
-        extension.setImplementationVendor
-            (attributes.getValue("Implementation-Vendor"));
-        extension.setImplementationVendorId
-            (attributes.getValue("Implementation-Vendor-Id"));
-        extension.setImplementationVersion
-            (attributes.getValue("Implementation-Version"));
-        extension.setSpecificationVendor
-            (attributes.getValue("Specification-Vendor"));
-        extension.setSpecificationVersion
-            (attributes.getValue("Specification-Version"));
-
-        return (extension);
-
-    }
-
-
-    /**
-     * Return the set of required optional packages defined in the specified
-     * attributes entry, if any.  If no such optional packages are found,
-     * a zero-length list is returned.
-     *
-     * @param attributes Attributes to be parsed
-     */
-    private static List getRequired(Attributes attributes) {
-
-        ArrayList results = new ArrayList();
-        String names = attributes.getValue("Extension-List");
-        if (names == null)
-            return (results);
-        names += " ";
-
-        while (true) {
-
-            int space = names.indexOf(' ');
-            if (space < 0)
-                break;
-            String name = names.substring(0, space).trim();
-            names = names.substring(space + 1);
-
-            String value =
-                attributes.getValue(name + "-Extension-Name");
-            if (value == null)
-                continue;
-            Extension extension = new Extension();
-            extension.setExtensionName(value);
-
-            extension.setImplementationURL
-                (attributes.getValue(name + "-Implementation-URL"));
-            extension.setImplementationVendorId
-                (attributes.getValue(name + "-Implementation-Vendor-Id"));
-            extension.setImplementationVersion
-                (attributes.getValue(name + "-Implementation-Version"));
-            extension.setSpecificationVersion
-                (attributes.getValue(name + "-Specification-Version"));
-
-            results.add(extension);
-
-        }
-
-        return (results);
-
-    }
 
 
     /**
