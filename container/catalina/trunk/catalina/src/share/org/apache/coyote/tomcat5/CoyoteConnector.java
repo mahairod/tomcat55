@@ -795,7 +795,7 @@ public final class CoyoteConnector
     public void setMaxProcessors(int maxProcessors) {
 
         this.maxProcessors = maxProcessors;
-        setProperty("maxProcessors", String.valueOf(maxProcessors));
+        setProperty("maxThreads", String.valueOf(maxProcessors));
 
     }
 
