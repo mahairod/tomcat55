@@ -373,7 +373,9 @@ class TcpWorkerThread implements Runnable {
 
     public void run() {
 	    while(endpoint.running) {
+		//		System.out.println("XXX accept socket");
 	        Socket s = endpoint.acceptSocket();
+		//		System.out.println("XXX accepted " + s );
 	        if(null != s) {
 	            // Continue accepting on another thread...
 	            endpoint.tp.runIt(this);
@@ -397,10 +399,11 @@ class TcpWorkerThread implements Runnable {
                     con.recycle();
                     connectionCache.addElement(con);
                 }
-
+		    //		System.out.println("XXX done " + s  );
                 break;
 	        }
 	    }
+	    //	    System.out.println("End thread "   );
     }
 }
 

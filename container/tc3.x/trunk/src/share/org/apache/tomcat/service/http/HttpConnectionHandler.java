@@ -108,16 +108,14 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	    socket=connection.getSocket();
 	    InputStream in=socket.getInputStream();
 	    OutputStream out=socket.getOutputStream();
-	    //	    RequestImpl request=new RequestImpl();
+
 	    HttpRequestAdapter reqA=new HttpRequestAdapter();
 	    reqA.setContextManager( contextM );
-	    //	    ResponseImpl response=new ResponseImpl();
+
 	    HttpResponseAdapter resA=new HttpResponseAdapter();
 	    
 	    resA.setRequest(reqA);
 	    reqA.setResponse( resA );
-	    //	    request.setRequestAdapter( reqA );
-	    //	    res.setResponseAdapter( resA );
 	    
 	    reqA.setSocket( socket );
 	    resA.setOutputStream( out );
@@ -143,7 +141,6 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
              }
     
 	    contextM.service( reqA, resA );
-
 	    try {
                InputStream is = socket.getInputStream();
                int available = is.available ();
