@@ -250,7 +250,7 @@ implements ServletContext {
 	// this could use a once over - after war perhaps
 
         URL docBase = context.getDocumentBase();
-	LookupResult lr =
+	Request lr =
 	    getRealContext().getContainer().lookupServlet(path);
 	String mappedPath = path;
 
