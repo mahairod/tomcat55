@@ -131,6 +131,9 @@
       <fix>
         <bug>32867</bug>: Reset distributable attribute in context for clean reload handling (yoavs)
       </fix>
+      <update>
+          Fix some RealmBase/JNDIRealm log.isXXXEnabled (pero)
+      </update>
     </changelog>
    </subsection>
    

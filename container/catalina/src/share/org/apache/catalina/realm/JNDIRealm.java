@@ -1065,7 +1065,8 @@ public class JNDIRealm extends RealmBase {
 
         // Check no further entries were found
         if (results.hasMore()) {
-            containerLog.info("username " + username + " has multiple entries");
+            if(containerLog.isInfoEnabled())
+                containerLog.info("username " + username + " has multiple entries");
             return (null);
         }
 

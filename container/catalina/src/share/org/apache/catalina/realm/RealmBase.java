@@ -741,10 +741,12 @@ public abstract class RealmBase
                     response.sendError
                         (HttpServletResponse.SC_FORBIDDEN,
                          sm.getString("realmBase.forbidden"));
-                    if( log.isDebugEnabled() ) log.debug("No roles ");
+                    if( log.isDebugEnabled() )
+                        log.debug("No roles ");
                     return (false); // No listed roles means no access at all
                 } else {
-                    log.debug("Passing all access");
+                    if(log.isDebugEnabled())
+                        log.debug("Passing all access");
                     return (true);
                 }
             } else if (principal == null) {
@@ -793,7 +795,8 @@ public abstract class RealmBase
 
         GenericPrincipal gp = (GenericPrincipal) principal;
         if (!(gp.getRealm() == this)) {
-            log.debug("Different realm " + this + " " + gp.getRealm());//    return (false);
+            if(log.isDebugEnabled())
+                log.debug("Different realm " + this + " " + gp.getRealm());//    return (false);
         }
         boolean result = gp.hasRole(role);
         if (log.isDebugEnabled()) {
@@ -956,7 +959,8 @@ public abstract class RealmBase
 
         // Validate and update our current component state
         if (started) {
-            log.info(sm.getString("realmBase.alreadyStarted"));
+            if(log.isInfoEnabled())
+                log.info(sm.getString("realmBase.alreadyStarted"));
             return;
         }
         if( !initialized ) {
@@ -992,7 +996,8 @@ public abstract class RealmBase
 
         // Validate and update our current component state
         if (!started) {
-            log.info(sm.getString("realmBase.notStarted"));
+            if(log.isInfoEnabled())
+                log.info(sm.getString("realmBase.notStarted"));
             return;
         }
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
@@ -1011,7 +1016,8 @@ public abstract class RealmBase
         if ( oname!=null ) {   
             try {   
                 Registry.getRegistry(null, null).unregisterComponent(oname); 
-                log.debug( "unregistering realm " + oname );   
+                if(log.isDebugEnabled())
+                    log.debug( "unregistering realm " + oname );   
             } catch( Exception ex ) {   
                 log.error( "Can't unregister realm " + oname, ex);   
             }      
@@ -1161,7 +1167,7 @@ public abstract class RealmBase
             // Digest the credentials and return as hexadecimal
             return (HexUtils.convert(md.digest()));
         } catch(Exception ex) {
-            ex.printStackTrace();
+            log.error(ex);
             return credentials;
         }
 
@@ -1268,11 +1274,12 @@ public abstract class RealmBase
                             host + path);
                 }
                 if( mserver.isRegistered(parent ))  {
-                    log.debug("Register with " + parent);
+                    if(log.isDebugEnabled())
+                        log.debug("Register with " + parent);
                     mserver.setAttribute(parent, new Attribute("realm", this));
                 }
             } catch (Exception e) {
-                log.info("Parent not available yet: " + parent);  
+                log.error("Parent not available yet: " + parent);  
             }
         }
         
@@ -1282,7 +1289,8 @@ public abstract class RealmBase
                 ContainerBase cb=(ContainerBase)container;
                 oname=new ObjectName(cb.getDomain()+":type=Realm" + cb.getContainerSuffix());
                 Registry.getRegistry(null, null).registerComponent(this, oname, null );
-                log.debug("Register Realm "+oname);
+                if(log.isDebugEnabled())
+                    log.debug("Register Realm "+oname);
             } catch (Throwable e) {
                 log.error( "Can't register " + oname, e);
             }
