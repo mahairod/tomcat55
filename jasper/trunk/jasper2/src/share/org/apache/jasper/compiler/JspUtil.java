@@ -756,6 +756,12 @@ public class JspUtil {
     /**
      * Gets the fully-qualified class name of the tag handler corresponding to
      * the given tag file path.
+     *
+     * @param path Tag file path
+     * @param err Error dispatcher
+     *
+     * @return Fully-qualified class name of the tag handler corresponding to 
+     * the given tag file path
      */
     public static String getTagHandlerClassName(String path,
 						ErrorDispatcher err)
