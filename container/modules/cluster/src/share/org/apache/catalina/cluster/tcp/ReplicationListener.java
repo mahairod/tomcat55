@@ -229,8 +229,11 @@ public class ReplicationListener extends Thread
             // thread becomes available.  This design could
             // be improved.
             return;
+        } else {
+            // invoking this wakes up the worker thread then returns
+            worker.serviceChannel(key, synchronous);
+            return;
         }
-        // invoking this wakes up the worker thread then returns
-        worker.serviceChannel (key,synchronous);
     }
+
 }

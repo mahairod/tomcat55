@@ -128,7 +128,7 @@ public class XByteBuffer
      * Returns the bytes in the buffer, in its exact length
      * @return
      */
-    public synchronized byte[] getBytes() {
+    public byte[] getBytes() {
         byte[] b = new byte[bufSize];
         System.arraycopy(buf,0,b,0,bufSize);
         return b;
@@ -137,7 +137,7 @@ public class XByteBuffer
     /**
      * Resets the buffer
      */
-    public synchronized void clear() {
+    public void clear() {
         bufSize = 0;
     }
 
@@ -149,7 +149,7 @@ public class XByteBuffer
      * @param len - the number of bytes to append.
      * @return true if the data was appended correctly. Returns false if the package is incorrect, ie missing header or something, or the length of data is 0
      */
-    public synchronized boolean append(byte[] b, int off, int len) {
+    public boolean append(byte[] b, int off, int len) {
         if ((off < 0) || (off > b.length) || (len < 0) ||
             ((off + len) > b.length) || ((off + len) < 0))  {
             throw new IndexOutOfBoundsException();
@@ -180,7 +180,7 @@ public class XByteBuffer
      * within the buffer
      * @return - true if a complete package (header,size,data,footer) exists within the buffer
      */
-    protected synchronized int packageExists()
+    protected int packageExists()
     {
         int pos = START_DATA.length;
         //first check start header
@@ -204,7 +204,7 @@ public class XByteBuffer
      * Method to check if a package exists in this byte buffer.
      * @return - true if a complete package (header,size,data,footer) exists within the buffer
      */
-    public synchronized boolean doesPackageExist()  {
+    public boolean doesPackageExist()  {
         return (packageExists()>0);
     }//doesPackageExist
 
@@ -214,7 +214,7 @@ public class XByteBuffer
      * @param clearFromBuffer - if true, the package will be removed from the byte buffer
      * @return - returns the actual message bytes (header, size and footer not included).
      */
-    public synchronized byte[] extractPackage(boolean clearFromBuffer) throws java.io.IOException {
+    public byte[] extractPackage(boolean clearFromBuffer) throws java.io.IOException {
         int size = packageExists();
         if ( size == 0 ) throw new java.lang.IllegalStateException("No package exists in XByteBuffer");
         byte[] data = new byte[size];

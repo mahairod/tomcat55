@@ -71,12 +71,12 @@ public class WorkerThread extends Thread
     protected ThreadPool pool;
     protected boolean doRun = true;
 
-   
+
     public void setPool(ThreadPool pool) {
-        this.pool = pool;        
+        this.pool = pool;
     }
 
-    public synchronized void close()
+    public void close()
     {
         doRun = false;
         notify();
