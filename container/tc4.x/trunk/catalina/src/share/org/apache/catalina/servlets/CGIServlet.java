@@ -62,18 +62,13 @@
 
 package org.apache.catalina.servlets;
 
-import java.lang.Process;
 import java.io.File;
-import java.io.Writer;
-import java.io.Reader;
-import java.io.PrintWriter;
+import java.io.FileOutputStream;
 import java.io.BufferedWriter;
 import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -93,9 +88,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Cookie;
-import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
-import org.apache.catalina.Wrapper;
+import org.apache.catalina.util.IOTools;
 // import org.apache.catalina.util.StringManager;
 
 
@@ -317,10 +311,13 @@ public class CGIServlet extends HttpServlet {
      */
     private String cgiPathPrefix = null;
 
-
     /** the executable to use with the script */
     private String cgiExecutable = "perl";
     
+    /** object used to ensure multiple threads don't try to expand same file */
+    static Object expandFileLock = new Object();
+
+
     /**
      * Sets instance variables.
      * <P>
@@ -731,6 +728,9 @@ public class CGIServlet extends HttpServlet {
         /** real file system directory of the enclosing servlet's web app */
         private String webAppRootDir = null;
 
+        /** tempdir for context - used to expand scripts in unexpanded wars */
+        private File tmpDir = null;
+
         /** derived cgi environment */
         private Hashtable env = null;
 
@@ -792,6 +792,7 @@ public class CGIServlet extends HttpServlet {
         protected void setupFromContext(ServletContext context) {
             this.context = context;
             this.webAppRootDir = context.getRealPath("/");
+            this.tmpDir = (File) context.getAttribute(Globals.WORK_DIR_ATTR);
         }
 
 
@@ -944,10 +945,7 @@ public class CGIServlet extends HttpServlet {
                     + ", scriptname=" + scriptname + ", cginame=" + cginame);
             }
             return new String[] { path, scriptname, cginame, name };
-
         }
-
-
 
         /**
          * Constructs the CGI environment to be supplied to the invoked CGI
@@ -992,6 +990,12 @@ public class CGIServlet extends HttpServlet {
             sPathTranslatedOrig =
                 sPathTranslatedOrig == null ? "" : sPathTranslatedOrig;
 
+            if (webAppRootDir == null ) {
+                // The app has not been deployed in exploded form
+                webAppRootDir = tmpDir.toString();
+                expandCGIScript();
+            } 
+            
             sCGINames = findCGI(sPathInfoOrig,
                                 webAppRootDir,
                                 contextPath,
@@ -1131,6 +1135,85 @@ public class CGIServlet extends HttpServlet {
 
         }
 
+        /**
+         * Extracts requested resource from web app archive to context work 
+         * directory to enable CGI script to be executed.
+         */
+        protected void expandCGIScript() {
+            StringBuffer srcPath = new StringBuffer();
+            StringBuffer destPath = new StringBuffer();
+            InputStream is = null;
+
+            // paths depend on mapping
+            if (cgiPathPrefix == null ) {
+                srcPath.append(pathInfo);
+                is = context.getResourceAsStream(srcPath.toString());
+                destPath.append(tmpDir);
+                destPath.append(pathInfo);
+            } else {
+                // essentially same search algorithm as findCGI()
+                srcPath.append(cgiPathPrefix);
+                StringTokenizer pathWalker =
+                        new StringTokenizer (pathInfo, "/");
+                // start with first element
+                while (pathWalker.hasMoreElements() && (is == null)) {
+                    srcPath.append("/");
+                    srcPath.append(pathWalker.nextElement());
+                    is = context.getResourceAsStream(srcPath.toString());
+                }
+                destPath.append(tmpDir);
+                destPath.append("/");
+                destPath.append(srcPath);
+            }
+
+            if (is == null) {
+                // didn't find anything, give up now
+                if (debug >= 2) {
+                    log("expandCGIScript: source '" + srcPath + "' not found");
+                }
+                 return;
+            }
+
+            File f = new File(destPath.toString());
+            if (f.exists()) {
+                // Don't need to expand if it already exists
+                return;
+            } 
+
+            // create directories
+            String dirPath = new String (destPath.toString().substring(
+                    0,destPath.toString().lastIndexOf("/")));
+            File dir = new File(dirPath);
+            dir.mkdirs();
+
+            try {
+                synchronized (expandFileLock) {
+                    // make sure file doesn't exist
+                    if (f.exists()) {
+                        return;
+                    }
+
+                    // create file
+                    if (!f.createNewFile()) {
+                        return;
+                    }
+                    FileOutputStream fos = new FileOutputStream(f);
+
+                    // copy data
+                    IOTools.flow(is, fos);
+                    is.close();
+                    fos.close();
+                    if (debug >= 2) {
+                        log("expandCGIScript: expanded '" + srcPath + "' to '" + destPath + "'");
+                    }
+                }
+            } catch (IOException ioe) {
+                // delete in case file is corrupted 
+                if (f.exists()) {
+                    f.delete();
+                }
+            }
+        }
 
 
         /**
