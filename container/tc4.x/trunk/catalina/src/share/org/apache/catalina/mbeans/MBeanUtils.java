@@ -97,6 +97,7 @@ import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Valve;
 import org.apache.catalina.connector.http.HttpConnector;
+import org.apache.catalina.core.StandardService;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
@@ -542,7 +543,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Service service)
+    public static ModelMBean createMBean(StandardService service)
         throws Exception {
 
         String mname = createManagedName(service);

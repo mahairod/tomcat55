@@ -70,6 +70,7 @@ import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
+import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.core.StandardService;
 import org.apache.commons.modeler.BaseModelMBean;
 
@@ -128,12 +129,12 @@ public class StandardServerMBean extends BaseModelMBean {
     public void addService(String service)
         throws Exception {
 
-        Server server = (Server) this.resource;
+        StandardServer server = (StandardServer) this.resource;
         ObjectName oname = new ObjectName(service);
         Object obj = mserver.getAttribute(oname, "managedResource");
-        Service serviceObj = null;
-        if (obj instanceof Service) {
-            serviceObj = (Service) obj;
+        StandardService serviceObj = null;
+        if (obj instanceof StandardService) {
+            serviceObj = (StandardService) obj;
         }
         server.addService(serviceObj);
 

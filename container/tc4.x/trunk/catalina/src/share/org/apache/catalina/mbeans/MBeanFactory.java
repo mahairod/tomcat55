@@ -76,6 +76,8 @@ import org.apache.catalina.Server;
 import org.apache.catalina.Service;
 import org.apache.catalina.authenticator.SingleSignOn;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.core.StandardService;
 import org.apache.catalina.core.StandardDefaultContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
@@ -648,14 +650,14 @@ public class MBeanFactory extends BaseModelMBean {
             domain = mserver.getDefaultDomain();
         ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
-        Service service = null;
-        if (obj instanceof Service) {
-            service = (Service) obj;
+        StandardService service = null;
+        if (obj instanceof StandardService) {
+            service = (StandardService) obj;
         }
         StandardEngine engine = new StandardEngine();
         engine.setService(service);
         ObjectName oname = MBeanUtils.createObjectName(domain, service);
-        MBeanUtils.createMBean(service);
+        MBeanUtils.createMBean(engine);
         engine.setService(null);
 
         return (oname.toString());
@@ -739,7 +741,7 @@ public class MBeanFactory extends BaseModelMBean {
      * Create a new StandardService.
      *
      * @param parent MBean Name of the associated parent component
-     * @param name Unique name of this Service
+     * @param name Unique name of this StandardService
      *
      * @exception Exception if an MBean cannot be created or registered
      */
@@ -755,9 +757,9 @@ public class MBeanFactory extends BaseModelMBean {
             domain = mserver.getDefaultDomain();
         ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
-        Server server = null;
-        if (obj instanceof Server) {
-            server = (Server) obj;
+        StandardServer server = null;
+        if (obj instanceof StandardServer) {
+            server = (StandardServer) obj;
         }
         StandardService service = new StandardService();
         service.setName(name);
