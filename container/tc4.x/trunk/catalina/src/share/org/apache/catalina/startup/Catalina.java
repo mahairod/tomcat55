@@ -350,6 +350,9 @@ public class Catalina {
         mapper.addRule("Server/Service/Engine/Host", mapper.addChild
                        ("addChild", "org.apache.catalina.Container"));
 
+        mapper.addRule("Server/Service/Engine/Host/Alias",
+                       mapper.methodSetter("addAlias", 0));
+
         mapper.addRule("Server/Service/Engine/Host/Cluster",
                        mapper.objectCreate(null, "className"));
         mapper.addRule("Server/Service/Engine/Host/Cluster",
