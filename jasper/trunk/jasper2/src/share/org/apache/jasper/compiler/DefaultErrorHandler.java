@@ -66,18 +66,23 @@ class DefaultErrorHandler implements ErrorHandler {
         StringBuffer buf = new StringBuffer();
 
         for (int i=0; i < details.length; i++) {
-            args = new Object[] {
+            if (details[i].getJspBeginLineNumber() >= 0) {
+                args = new Object[] {
                         new Integer(details[i].getJspBeginLineNumber()), 
                         details[i].getJspFileName() };
-            buf.append(Localizer.getMessage("jsp.error.single.line.number",
-                                            args));
-            buf.append(Localizer.getMessage("jsp.error.corresponding.servlet"));
+                buf.append(Localizer.getMessage("jsp.error.single.line.number",
+                                                args));
+                buf.append("\n"); 
+            }
+
+            buf.append(
+                Localizer.getMessage("jsp.error.corresponding.servlet"));
             buf.append(details[i].getErrorMessage());
-            buf.append('\n');
+            buf.append("\n\n");
         }
 
-	throw new JasperException(Localizer.getMessage("jsp.error.unable.compile")
-				  + buf);
+	throw new JasperException(
+            Localizer.getMessage("jsp.error.unable.compile") + "\n\n" + buf);
     }
 
     /**

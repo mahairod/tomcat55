@@ -28,7 +28,25 @@ public class JavacErrorDetail {
     private int javaLineNum;
     private String jspFileName;
     private int jspBeginLineNum;
-    private String errMsg;
+    private StringBuffer errMsg;
+
+    /**
+     * Constructor.
+     *
+     * @param javaFileName The name of the Java file in which the 
+     * compilation error occurred
+     * @param javaLineNum The compilation error line number
+     * @param errMsg The compilation error message
+     */
+    public JavacErrorDetail(String javaFileName,
+			    int javaLineNum,
+			    StringBuffer errMsg) {
+
+	this.javaFileName = javaFileName;
+	this.javaLineNum = javaLineNum;
+	this.errMsg = errMsg;
+        this.jspBeginLineNum = -1;
+    }
 
     /**
      * Constructor.
@@ -46,12 +64,11 @@ public class JavacErrorDetail {
 			    int javaLineNum,
 			    String jspFileName,
 			    int jspBeginLineNum,
-			    String errMsg) {
-	this.javaFileName = javaFileName;
-	this.javaLineNum = javaLineNum;
+			    StringBuffer errMsg) {
+
+        this(javaFileName, javaLineNum, errMsg);
 	this.jspFileName = jspFileName;
 	this.jspBeginLineNum = jspBeginLineNum;
-	this.errMsg = errMsg;
     }
 
     /**
@@ -100,6 +117,6 @@ public class JavacErrorDetail {
      * @return Compilation error message
      */
     public String getErrorMessage() {
-	return this.errMsg;
+	return this.errMsg.toString();
     }
 }

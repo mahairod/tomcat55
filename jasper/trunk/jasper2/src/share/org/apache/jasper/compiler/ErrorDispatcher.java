@@ -431,9 +431,9 @@ public class ErrorDispatcher {
 	        throws IOException, JasperException {
 
 	Vector errVec = new Vector();
-	StringBuffer partialErrMsg = new StringBuffer();
+	StringBuffer errMsgBuf = null;
 	int lineNum = -1;
-	Node errNode = null;
+        JavacErrorDetail javacError = null;
 
         BufferedReader reader = new BufferedReader(new StringReader(errMsg));
 
@@ -453,16 +453,11 @@ public class ErrorDispatcher {
             int beginColon = line.indexOf(':', 2); 
             int endColon = line.indexOf(':', beginColon + 1);
             if ((beginColon >= 0) && (endColon >= 0)) {
-		if (errNode != null) {
-		    // add previous error to error vector
-		    errVec.add(new JavacErrorDetail(
-		        fname,
-			lineNum,
-			errNode.getStart().getFile(),
-			errNode.getStart().getLineNumber(),
-			partialErrMsg.toString()));
-		    partialErrMsg = new StringBuffer();
+                if (javacError != null) {
+                    // add previous error to error vector
+                    errVec.add(javacError);
 		}
+
 		String lineNumStr = line.substring(beginColon + 1, endColon);
                 try {
                     lineNum = Integer.parseInt(lineNumStr);
@@ -470,29 +465,53 @@ public class ErrorDispatcher {
                     // XXX
                 }
 
-		// Map servlet line number to corresponding node in JSP page
+                errMsgBuf = new StringBuffer();
+
+                // Attempt to map javac error line number to line in JSP page
 		ErrorVisitor errVisitor = new ErrorVisitor(lineNum);
 		page.visit(errVisitor);
-		errNode = errVisitor.getJspSourceNode();
-            }
-
-            // Ignore messages preceding first error
-            if (errNode != null) {
-                partialErrMsg.append(line);
-                partialErrMsg.append('\n');
-            }
-        }
-
-        reader.close();
-
-        // Add last error to error vector
-        if (errNode != null) {
-            errVec.add(new JavacErrorDetail(fname,
+                Node errNode = errVisitor.getJspSourceNode();
+                if ((errNode != null) && (errNode.getStart() != null)) {
+                    javacError = new JavacErrorDetail(
+                                            fname,
                                             lineNum,
                                             errNode.getStart().getFile(),
                                             errNode.getStart().getLineNumber(),
-                                            partialErrMsg.toString()));
+                                            errMsgBuf);
+                } else {
+                    /*
+                     * javac error line number cannot be mapped to JSP page
+                     * line number. For example, this is the case if a 
+                     * scriptlet is missing a closing brace, which causes
+                     * havoc with the try-catch-finally block that the code
+                     * generator places around all generated code: As a result
+                     * of this, the javac error line numbers will be outside
+                     * the range of begin and end java line numbers that were
+                     * generated for the scriptlet, and therefore cannot be
+                     * mapped to the start line number of the scriptlet in the
+                     * JSP page.
+                     * Include just the javac error info in the error detail.
+                     */
+                    javacError = new JavacErrorDetail(
+                                            fname,
+                                            lineNum,
+                                            errMsgBuf);
+                }
+            }
+
+            // Ignore messages preceding first error
+            if (errMsgBuf != null) {
+                errMsgBuf.append(line);
+                errMsgBuf.append("\n");
+            }
         }
+
+        // Add last error to error vector
+        if (javacError != null) {
+            errVec.add(javacError);
+        } 
+
+        reader.close();
 
 	JavacErrorDetail[] errDetails = null;
 	if (errVec.size() > 0) {
