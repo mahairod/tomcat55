@@ -805,10 +805,10 @@
    </target>
 
 
-   <target name="client" depends="file-tomcat,dispatch-tomcat,get-tomcat,requestMap,post,jsp-tomcat,wrong_request,unavailable,restricted">
+   <target name="client" depends="init,file-tomcat,dispatch-tomcat,get-tomcat,requestMap,post,jsp-tomcat,wrong_request,unavailable,restricted">
    </target>
 
-   <target name="client-apache" depends="file-apache,dispatch-apache,get-apache,post,jsp-apache,wrong_request,unavailable,restricted">
+   <target name="client-apache" depends="init,file-apache,dispatch-apache,get-apache,post,jsp-apache,wrong_request,unavailable,restricted">
    </target>
 
    <target name="shutdown">
