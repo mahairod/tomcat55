@@ -173,7 +173,15 @@ public class MessageBytes extends Ascii {
      * Returns the message bytes as a String object.
      */
     public String toString() {
-	return bytes != null ? new String(bytes, offset, length) : null;
+        if (null == bytes) {
+            return null;
+        }
+
+        try {
+            return new String(bytes, offset, length, Constants.CharacterEncoding.Default);
+        } catch (java.io.UnsupportedEncodingException e) {
+            return null;        // could return something - but why?
+        }
     }
 
     /**
