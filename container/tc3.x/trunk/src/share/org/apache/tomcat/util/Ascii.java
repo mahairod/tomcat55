@@ -72,6 +72,8 @@ package org.apache.tomcat.util;
  */
 
 public class Ascii {
+    static StringManager sm =
+	StringManager.getManager("org.apache.tomcat.util");
     /*
      * Character translation tables.
      */
@@ -192,10 +194,7 @@ public class Ascii {
         int c;
 
 	if (b == null || len <= 0 || !isDigit(c = b[off++])) {
-            StringManager sm =
-                StringManager.getManager("org.apache.tomcat.util");
             String msg = sm.getString("ascii.parseInit.nfe", b);
-
 	    throw new NumberFormatException(msg);
 	}
 
@@ -209,10 +208,40 @@ public class Ascii {
 
 		throw new NumberFormatException(msg);
 	    }
-
 	    n = n * 10 + c - '0';
 	}
 
 	return n;
     }
+
+    /**
+     * Compares this message string to the specified subarray of bytes.
+     * Case is ignored in the comparison.
+     * @param b the bytes to compare
+     * @param off the start offset of the bytes
+     * @param len the length of the bytes
+     * @return true if the comparison succeeded, false otherwise
+     */
+    public static boolean equalsIgnoreCase(String str, MessageBytes mB ) {
+	byte[] b=mB.getBytes();
+	int off=mB.getOffset();
+	int len=mB.getLength();
+	if (str != null) {
+	    String s = str;
+	    if (len != s.length()) {
+		return false;
+	    }
+	    for (int i = 0; i < len; i++) {
+		if (Ascii.toLower(b[off++]) != Ascii.toLower(s.charAt(i))) {
+		    return false;
+		}
+	    }
+	    return true;
+	}
+	return false;
+    }
+
+
+    
+
 }
