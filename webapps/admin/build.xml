@@ -19,6 +19,9 @@
   <!-- Dependent JARs and files -->
   <property name="servlet-api.jar" value="${api.home}/jsr154/dist/lib/servlet-api.jar"/>
   <property name="jsp-api.jar"     value="${api.home}/jsr152/dist/lib/jsp-api.jar"/>
+  <property name="struts-core.jar" value="${struts.jar}" />
+  <property name="struts-taglib.jar" value="${struts.jar}" />
+  <property name="struts-taglib.lib" value="${struts.lib}" />
 
   <!-- Construct Admin classpath -->
   <path id="admin.classpath">
@@ -26,7 +29,7 @@
     <pathelement location="${jmx.jar}"/>
     <pathelement location="${servlet-api.jar}"/>
     <pathelement location="${jsp-api.jar}"/>
-    <pathelement location="${struts.jar}"/>
+    <pathelement location="${struts-core.jar}"/>
     <pathelement location="${commons-beanutils.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
@@ -69,7 +72,7 @@
      classpath="${jsp-api.jar}" />
     <available property="struts.present"
      classname="org.apache.struts.action.ActionForm"
-     classpath="${struts.jar}" />
+     classpath="${struts-core.jar}" />
     <available property="beanutils.present"
      classname="org.apache.commons.beanutils.PropertyUtils"
      classpath="${commons-beanutils.jar}" />
@@ -80,7 +83,7 @@
     <available property="modeler.jar.present" file="${commons-modeler.jar}" />
     <available property="servlet-api.jar.present" file="${servlet-api.jar}" />
     <available property="jsp-api.jar.present" file="${jsp-api.jar}" />
-    <available property="struts.jar.present"  file="${struts.jar}" />
+    <available property="struts.jar.present"  file="${struts-core.jar}" />
     <available property="beanutils.jar.present" file="${commons-beanutils.jar}" />
 
     <!-- Conditional compilation flags (determined from the flags above) -->
@@ -91,9 +94,6 @@
           <equals arg1="${struts.present}" arg2="true" />
           <equals arg1="${jmx.present}" arg2="true" />
           <equals arg1="${modeler.present}" arg2="true" />
-          <available file="${struts.lib}/struts-bean.tld" />
-          <available file="${struts.lib}/struts-html.tld" />
-          <available file="${struts.lib}/struts-logic.tld" />
         </and>
       </or>
     </condition>
@@ -159,10 +159,14 @@
 
   <!-- ======================== BUILD: Copy JARs ========================== -->
   <target name="copy-struts.jar" if="struts.present">
-    <copy todir="${webapps.build}/${webapp.name}/WEB-INF/lib" file="${struts.jar}"/>
-    <copy todir="${webapps.build}/${webapp.name}/WEB-INF" file="${struts.lib}/struts-bean.tld"/>
-    <copy todir="${webapps.build}/${webapp.name}/WEB-INF" file="${struts.lib}/struts-html.tld"/>
-    <copy todir="${webapps.build}/${webapp.name}/WEB-INF" file="${struts.lib}/struts-logic.tld"/>
+    <copy todir="${webapps.build}/${webapp.name}/WEB-INF/lib" file="${struts-core.jar}"/>
+    <copy todir="${webapps.build}/${webapp.name}/WEB-INF/lib" file="${struts-taglib.jar}" />
+    <copy todir="${webapps.build}/${webapp.name}/WEB-INF" file="${struts-taglib.lib}/struts-bean.tld"
+        failonerror="false" />
+    <copy todir="${webapps.build}/${webapp.name}/WEB-INF" file="${struts-taglib.lib}/struts-html.tld" 
+        failonerror="false" />
+    <copy todir="${webapps.build}/${webapp.name}/WEB-INF" file="${struts-taglib.lib}/struts-logic.tld"
+        failonerror="false" />
   </target>
 
 
