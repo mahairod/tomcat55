@@ -2478,6 +2478,43 @@ class Generator {
 	    return attrValue;
 	}
 
+	/**
+	 * Generate code to create a map for the alias variables
+	 * @return the name of the map
+	 */
+	private String generateAliasMap(Node.CustomTag n, String tagHandlerVar)
+		throws JasperException {
+
+	    TagInfo tagInfo = n.getTagInfo();
+	    TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
+	    String aliasMapVar = "null";
+
+	    boolean aliasSeen = false;
+	    for (int i=0; i<tagVars.length; i++) {
+
+		String nameFrom = tagVars[i].getNameFromAttribute();
+		if (nameFrom != null) {
+		    String aliaseName = n.getAttributeValue(nameFrom);
+		    if (aliaseName == null) continue;
+
+		    if ( ! aliasSeen ) {
+			out.printin("java.util.HashMap ");
+			aliasMapVar = tagHandlerVar+"_aliasMap";
+			out.print(aliasMapVar);
+		        out.println(" = new java.util.HashMap();");
+		        aliasSeen = true;
+		    }
+		    out.printin(aliasMapVar);
+		    out.print(".put(");
+		    out.print(quote(tagVars[i].getNameGiven()));
+		    out.print(", ");
+		    out.print(quote(aliaseName));
+		    out.println(");");
+		}
+	    }
+	    return aliasMapVar;
+	}
+
 	private void generateSetters(Node.CustomTag n,
 				     String tagHandlerVar,
 				     TagHandlerInfo handlerInfo,
@@ -2485,10 +2522,15 @@ class Generator {
 	            throws JasperException {
 
 	    // Set context
-	    out.printin(tagHandlerVar);
 	    if (simpleTag) {
-		out.println(".setJspContext(pageContext);");
+		// Generate alias map 
+		String aliasMapVar= generateAliasMap(n, tagHandlerVar);
+		out.printin(tagHandlerVar);
+		out.print(".setJspContext(pageContext, ");
+		out.print(aliasMapVar);
+		out.println(");");
 	    } else {
+		out.printin(tagHandlerVar);
 		out.println(".setPageContext(pageContext);");
 	    }
 
@@ -3132,7 +3174,12 @@ class Generator {
      * sync AT_BEGIN and AT_END scripting variables.
      */
     private void generateSetJspContext(TagInfo tagInfo) {
-        out.printil("public void setJspContext( JspContext ctx ) {");
+
+	boolean nestedSeen = false;
+	boolean atBeginSeen = false;
+	boolean atEndSeen = false;
+
+        out.printil("public void setJspContext(JspContext ctx, java.util.Map aliasMap) {");
         out.pushIndent();
         out.printil("super.setJspContext(ctx);");
 	TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
@@ -3144,26 +3191,26 @@ class Generator {
 
 	    switch(tagVars[i].getScope()) {
 	    case VariableInfo.NESTED:
-		out.printil("if (_jspx_nested == null)");
-		out.pushIndent();
-		out.printil("_jspx_nested = new java.util.ArrayList();");
-		out.popIndent();
+		if ( ! nestedSeen ) {
+		    out.printil("_jspx_nested = new java.util.ArrayList();");
+		    nestedSeen = true;
+		}
 		out.printin("_jspx_nested.add(");
 		break;
 
 	    case VariableInfo.AT_BEGIN:
-		out.printil("if (_jspx_at_begin == null)");
-		out.pushIndent();
-		out.printil("_jspx_at_begin = new java.util.ArrayList();");
-		out.popIndent();
+		if ( ! atBeginSeen ) {
+		    out.printil("_jspx_at_begin = new java.util.ArrayList();");
+		    atBeginSeen = true;
+		}
 		out.printin("_jspx_at_begin.add(");
 		break;
 
 	    case VariableInfo.AT_END:
-		out.printil("if (_jspx_at_end == null)");
-		out.pushIndent();
-		out.printil("_jspx_at_end = new java.util.ArrayList();");
-		out.popIndent();
+		if ( ! atEndSeen ) {
+		    out.printil("_jspx_at_end = new java.util.ArrayList();");
+		    atEndSeen = true;
+		}
 		out.printin("_jspx_at_end.add(");
 		break;
 	    } // switch
@@ -3171,7 +3218,7 @@ class Generator {
 	    out.print(quote(tagVars[i].getNameGiven()));
 	    out.println(");");
 	}
-	out.printil("this.jspContext = new org.apache.jasper.runtime.JspContextWrapper(ctx, _jspx_nested, _jspx_at_begin, _jspx_at_end);");
+	out.printil("this.jspContext = new org.apache.jasper.runtime.JspContextWrapper(ctx, _jspx_nested, _jspx_at_begin, _jspx_at_end, aliasMap);");
 	out.popIndent();
         out.printil("}");
         out.println();

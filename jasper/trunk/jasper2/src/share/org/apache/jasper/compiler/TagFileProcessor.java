@@ -113,7 +113,9 @@ class TagFileProcessor {
 	};
 
 	private static final JspUtil.ValidAttribute[] variableDirectiveAttrs = {
-	    new JspUtil.ValidAttribute("name-given", true),
+	    new JspUtil.ValidAttribute("name-given"),
+	    new JspUtil.ValidAttribute("name-from-attribute"),
+	    new JspUtil.ValidAttribute("alias"),
 	    new JspUtil.ValidAttribute("variable-class"),
 	    new JspUtil.ValidAttribute("scope"),
 	    new JspUtil.ValidAttribute("declare"),
@@ -210,6 +212,21 @@ class TagFileProcessor {
                                     variableDirectiveAttrs, err);
 
             String nameGiven = n.getAttributeValue("name-given");
+            String nameFromAttribute = n.getAttributeValue("name-from-attribute");
+	    if (nameGiven == null && nameFromAttribute == null) {
+		err.jspError("jsp.variable.either.name");
+	    }
+
+	    if (nameGiven != null && nameFromAttribute != null) {
+		err.jspError("jsp.variable.both.name");
+	    }
+
+	    String alias = n.getAttributeValue("alias");
+	    if (nameFromAttribute != null && alias == null ||
+		nameFromAttribute == null && alias != null) {
+		err.jspError("jsp.variable.alias");
+	    }
+
             String className = n.getAttributeValue("variable-class");
             if (className == null)
                 className = "java.lang.String";
@@ -231,11 +248,19 @@ class TagFileProcessor {
                 }
             }
 
-	    variableVector.addElement(new TagVariableInfo(nameGiven,
-							  null,
-							  className,
-							  declare,
-							  scope));
+	    if (nameFromAttribute != null) {
+		// An alias has been specified.  We use nameGiven to
+		// hold the value of alias, and nameFromAttribute to
+		// hold what its alias
+		nameGiven = alias;
+	    }
+		
+	    variableVector.addElement(new TagVariableInfo(
+						nameGiven,
+						nameFromAttribute,
+						className,
+						declare,
+						scope));
         }
 
 	/*
@@ -323,8 +348,13 @@ class TagFileProcessor {
         page.visit(tagFileVisitor);
 
 	/*
-	 * It is illegal to have a variable.name-given equal to an
-	 * attribute.name in the same tag file translation unit.
+	 * TODO: need to check for uniqueness of attribute name, variable
+	 * name-given, and vraibale alias.
+	 */
+
+	/*
+	 * It is illegal to have a variable.name-given or variable.alias equal
+         * to an attribute.name in the same tag file translation unit.
 	 */
 	Iterator attrsIter = tagFileVisitor.getAttributesVector().iterator();
 	while (attrsIter.hasNext()) {
@@ -332,9 +362,36 @@ class TagFileProcessor {
 	    Iterator varsIter = tagFileVisitor.getVariablesVector().iterator();
 	    while (varsIter.hasNext()) {
 		TagVariableInfo varInfo = (TagVariableInfo) varsIter.next();
-		if (attrInfo.getName().equals(varInfo.getNameGiven())) {
+		String attrName = attrInfo.getName();
+		if (attrName.equals(varInfo.getNameGiven())) {
 		    err.jspError("jsp.error.tagfile.var_name_given_equals_attr_name",
-				 path, attrInfo.getName());
+				 path, attrName);
+		}
+	    }
+	}
+	/*
+	 * It is illegal to have a variable.name-given equal another
+	 * variable.alias the same tag file translation unit.
+	 */
+	Iterator varsIter = tagFileVisitor.getVariablesVector().iterator();
+	while (varsIter.hasNext()) {
+	    TagVariableInfo varsInfo = (TagVariableInfo) varsIter.next();
+	    if (varsInfo.getNameFromAttribute() == null) {
+		// Only interested in aliases.
+		continue;
+	    }
+	    String nameGiven = varsInfo.getNameGiven();
+
+	    Iterator varsIter2 = tagFileVisitor.getVariablesVector().iterator();
+	    while (varsIter2.hasNext()) {
+		TagVariableInfo varsInfo2 = (TagVariableInfo) varsIter2.next();
+		if (varsInfo2.getNameFromAttribute() != null) {
+		    // Only interest in non-aliases
+		    continue;
+		}
+		if (nameGiven.equals(varsInfo2.getNameGiven())) {
+		    err.jspError("jsp.error.tagfile.nameGiven_equals.alias",
+				path, nameGiven);
 		}
 	    }
 	}

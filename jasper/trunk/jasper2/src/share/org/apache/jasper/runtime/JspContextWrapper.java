@@ -68,6 +68,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -115,15 +116,20 @@ public class JspContextWrapper
     // ArrayList of AT_END scripting variables
     private ArrayList atEndVars;
 
+    private Map aliases;
+
     private Hashtable originalNestedVars;
 
     public JspContextWrapper(JspContext jspContext, ArrayList nestedVars,
-			     ArrayList atBeginVars, ArrayList atEndVars) {
+			     ArrayList atBeginVars, ArrayList atEndVars,
+			     Map aliases) {
         this.invokingJspCtxt = (PageContext) jspContext;
 	this.nestedVars = nestedVars;
 	this.atBeginVars = atBeginVars;
 	this.atEndVars = atEndVars;
 	this.pageAttributes = new Hashtable(16);
+	this.aliases = aliases;
+
 	if (nestedVars != null) {
 	    this.originalNestedVars = new Hashtable(nestedVars.size());
 	}
@@ -338,7 +344,9 @@ public class JspContextWrapper
 
 	while ((iter != null) && iter.hasNext()) {
 	    String varName = (String) iter.next();
-	    Object obj = invokingJspCtxt.getAttribute(varName);
+	    String aliasName = findAlias(varName);
+
+	    Object obj = invokingJspCtxt.getAttribute(aliasName);
 	    if (obj != null) {
 		setAttribute(varName, obj);
 	    }
@@ -375,6 +383,7 @@ public class JspContextWrapper
 	while ((iter != null) && iter.hasNext()) {
 	    String varName = (String) iter.next();
 	    Object obj = getAttribute(varName);
+	    varName = findAlias(varName);
 	    if (obj != null) {
 		invokingJspCtxt.setAttribute(varName, obj);
 	    } else {
@@ -392,6 +401,7 @@ public class JspContextWrapper
 	    Iterator iter = nestedVars.iterator();
 	    while (iter.hasNext()) {
 		String varName = (String) iter.next();
+		varName = findAlias(varName);
 		Object obj = invokingJspCtxt.getAttribute(varName);
 		if (obj != null) {
 		    originalNestedVars.put(varName, obj);
@@ -409,6 +419,7 @@ public class JspContextWrapper
 	    Iterator iter = nestedVars.iterator();
 	    while (iter.hasNext()) {
 		String varName = (String) iter.next();
+		varName = findAlias(varName);
 		Object obj = originalNestedVars.get(varName);
 		if (obj != null) {
 		    invokingJspCtxt.setAttribute(varName, obj);
@@ -417,6 +428,21 @@ public class JspContextWrapper
 		}
 	    }
 	}
+    }
+
+    /**
+     * Find the attribute that variable is alised to.
+     * @param varName a variable
+     * @return if varName is an alias, then the aliased variable
+     *         otherwise varName
+     */
+    private String findAlias(String varName) {
+
+	String alias = (String) aliases.get(varName);
+	if (alias == null) {
+	    return varName;
+	}
+	return alias;
     }
 }
 
