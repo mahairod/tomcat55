@@ -91,8 +91,7 @@ import org.apache.webapp.admin.TreeControlNode;
 import org.apache.webapp.admin.logger.DeleteLoggerAction;
 
 /**
- * The <code>Action</code> that completes <em>Add Valve</em> and
- * <em>Edit Valve</em> transactions for Remote Addr valve.
+ * A utility class that contains methods common across valves.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
@@ -165,10 +164,9 @@ public final class ValveUtil {
             if (mBServer.isRegistered(oname)) {
                 ActionErrors errors = new ActionErrors();
                 errors.add("valveName",
-                new ActionError("error.valveName.exists"));
+                    new ActionError("error.valveName.exists"));
                 String message =
-                resources.getMessage("error.valveName.exists",
-                sb.toString());
+                    resources.getMessage("error.valveName.exists", sb.toString());
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);                
                 //saveErrors(request, errors);
                 return (new ActionForward(mapping.getInput()));
@@ -181,10 +179,9 @@ public final class ValveUtil {
             // Create a new StandardValve object
             values = new String[1];
             values[0] = parent;
-            operation = "createValve";
+            operation = "create" + valveType;
             String vObjectName = (String)
-            mBServer.invoke(fname, operation,
-            values, createStandardValveTypes);
+                        mBServer.invoke(fname, operation, values, createStandardValveTypes);
             
             // Add the new Valve to our tree control node
             TreeControl control = (TreeControl)
@@ -193,7 +190,7 @@ public final class ValveUtil {
                 TreeControlNode parentNode = control.findNode(parent);
                 if (parentNode != null) {
                     String nodeLabel =
-                    "Valve (" + valveType + ")";
+                    "Valve for " + parentNode.getLabel();
                     String encodedName =
                     URLEncoder.encode(vObjectName);
                     TreeControlNode childNode =
