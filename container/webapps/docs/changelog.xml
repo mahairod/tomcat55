@@ -278,6 +278,9 @@
       <fix>
         <bug>33539</bug>: Better error message when an unknown element is encountered in the tag file. (yoavs)
       </fix>
+      <fix>
+        <bug>33219</bug>: Minor JspServletWrapper code cleanup. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   
