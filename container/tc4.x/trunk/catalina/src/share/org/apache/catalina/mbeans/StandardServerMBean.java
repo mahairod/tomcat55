@@ -595,61 +595,59 @@ public class StandardServerMBean extends BaseModelMBean {
         
         // Store nested <Resources> element
         ContextResource[] resources = context.findResources();
-         for (int i = 0; i < resources.length; i++) {
+        for (int i = 0; i < resources.length; i++) {
             for (int j = 0; j < indent + 2; j++) {
                 writer.print(' ');
             }
             writer.print("<Resource");
             storeAttributes(writer, false, resources[i]);
             writer.println("/>");
-        }           
         
-        // Store nested <ResourceParams> elements
-        NamingResources namingResources = context.getNamingResources();
-        ResourceParams[] params = namingResources.findResourceParams();            
-        for (int i = 0; i < indent + 2; i++) {
-            writer.print(' ');
-        }
-        if (params.length > 0) {
-            writer.print("<ResourceParams ");
-        }
-        for (int i = 0; i < params.length; i++) {
-            storeAttributes(writer, false, params[i]);
-        }
-        writer.println(">");
- 
-        for (int i = 0; i < params.length; i++) {
-            Hashtable resourceParams = params[i].getParameters();
-            Enumeration nameEnum = resourceParams.keys();
-            Enumeration valueEnum = resourceParams.elements();
-            while ((nameEnum.hasMoreElements()) && (valueEnum.hasMoreElements())) {      
-                for (int j = 0; j < indent + 4; j++) {
-                    writer.print(' ');
-                }                
-                writer.println("<parameter>");
-                for (int j = 0; j < indent + 6; j++) {
-                    writer.print(' ');
-                }               
-                writer.print("<name>");
-                writer.print(nameEnum.nextElement());
-                writer.println("</name>"); 
-                for (int j = 0; j < indent + 6; j++) {
-                    writer.print(' ');
-                }               
-                writer.print("<value>"); 
-                writer.print(valueEnum.nextElement());
-                writer.println("</value>");         
-                for (int j = 0; j < indent + 4; j++) {
-                    writer.print(' ');
-                }               
-                writer.println("</parameter>");      
+            // Store nested <ResourceParams> elements
+            NamingResources namingResources = context.getNamingResources();
+            ResourceParams[] params = namingResources.findResourceParams();  
+            for (int j = 0; j < params.length; j++ ) {
+                if (resources[i].getName().equals(params[j].getName())) {
+                    for (int k = 0; k < indent + 2; k++) {
+                        writer.print(' ');
+                    }
+                    writer.print("<ResourceParams ");
+                    storeAttributes(writer, false, params[j]);
+                    writer.println(">");
+                    Hashtable resourceParams = params[j].getParameters();
+                    Enumeration nameEnum = resourceParams.keys();
+                    Enumeration valueEnum = resourceParams.elements();
+                    while ((nameEnum.hasMoreElements()) && 
+                                    (valueEnum.hasMoreElements())) {      
+                        for (int k = 0; k < indent + 4; k++) {
+                            writer.print(' ');
+                        }                
+                        writer.println("<parameter>");
+                        for (int k = 0; k < indent + 6; k++) {
+                            writer.print(' ');
+                        }               
+                        writer.print("<name>");
+                        writer.print(nameEnum.nextElement());
+                        writer.println("</name>"); 
+                        for (int k = 0; k < indent + 6; k++) {
+                            writer.print(' ');
+                        }               
+                        writer.print("<value>"); 
+                        writer.print(valueEnum.nextElement());
+                        writer.println("</value>");         
+                        for (int k = 0; k < indent + 4; k++) {
+                            writer.print(' ');
+                        }               
+                        writer.println("</parameter>");      
+                    }
+                    for (int k = 0; k < indent + 2; k++) {
+                        writer.print(' ');
+                    }          
+                    writer.println("</ResourceParams>");
+                }
             }
         }
         
-        for (int i = 0; i < indent + 2; i++) {
-            writer.print(' ');
-        }          
-        writer.println("</ResourceParams>");      
         
         // Store nested <ResourceLink> elements
         ContextResourceLink[] resourceLinks = context.findResourceLinks();
@@ -840,69 +838,63 @@ public class StandardServerMBean extends BaseModelMBean {
             storeAttributes(writer, false, envs[i]);
         }
         writer.println("/>");
-
-        for (int i = 0; i < indent + 2; i++) {
-            writer.print(' ');
-        }                
+                
         // Store nested <Resource> elements
         ContextResource[] resources = globalNamingResources.findResources();
-        if (resources.length > 0) {
-            writer.print("<Resource");
-        }
         for (int i = 0; i < resources.length; i++) {
+            for (int j = 0; j < indent + 2; j++) {
+                writer.print(' ');
+            }
+            writer.print("<Resource");
             storeAttributes(writer, false, resources[i]);
-        }
-        writer.println(">");
-        for (int i = 0; i < indent + 2; i++) {
-            writer.print(' ');
-        }          
-        writer.println("</Resource>");
-        
-        for (int i = 0; i < indent + 2; i++) {
-            writer.print(' ');
-        }          
-        // Store nested <ResourceParams> elements
-        ResourceParams[] params = globalNamingResources.findResourceParams();
-        if (params.length > 0) {
-            writer.print("<ResourceParams ");
-        }
-        for (int i = 0; i < params.length; i++) {
-            storeAttributes(writer, false, params[i]);
-        }
-        writer.println(">");
- 
-        for (int i = 0; i < params.length; i++) {
-            Hashtable resourceParams = params[i].getParameters();
-            Enumeration nameEnum = resourceParams.keys();
-            Enumeration valueEnum = resourceParams.elements();
-            while ((nameEnum.hasMoreElements()) && (valueEnum.hasMoreElements())) {      
-                for (int j = 0; j < indent + 4; j++) {
-                    writer.print(' ');
-                }                
-                writer.println("<parameter>");
-                for (int j = 0; j < indent + 6; j++) {
-                    writer.print(' ');
-                }               
-                writer.print("<name>");
-                writer.print(nameEnum.nextElement());
-                writer.println("</name>"); 
-                for (int j = 0; j < indent + 6; j++) {
-                    writer.print(' ');
-                }               
-                writer.print("<value>"); 
-                writer.print(valueEnum.nextElement());
-                writer.println("</value>");         
-                for (int j = 0; j < indent + 4; j++) {
-                    writer.print(' ');
-                }               
-                writer.println("</parameter>");      
+            writer.println(">");
+            for (int j = 0; j < indent + 2; j++) {
+                writer.print(' ');
+            }          
+            writer.println("</Resource>");
+            
+            // Store nested <ResourceParams> elements
+            ResourceParams[] params = globalNamingResources.findResourceParams();
+            for (int j = 0; j < params.length; j++) {
+                if (resources[i].getName().equals(params[j].getName())) {        
+                    for (int k = 0; k < indent + 2; k++) {
+                        writer.print(' ');
+                    }
+                    writer.print("<ResourceParams");
+                    storeAttributes(writer, false, params[j]);
+                    writer.println(">");
+                    Hashtable resourceParams = params[j].getParameters();
+                    Enumeration nameEnum = resourceParams.keys();
+                    Enumeration valueEnum = resourceParams.elements();
+                    while ((nameEnum.hasMoreElements()) && (valueEnum.hasMoreElements())) {      
+                        for (int k = 0; k < indent + 4; k++) {
+                            writer.print(' ');
+                        }                
+                        writer.println("<parameter>");
+                        for (int k = 0; k < indent + 6; k++) {
+                            writer.print(' ');
+                        }               
+                        writer.print("<name>");
+                        writer.print(nameEnum.nextElement());
+                        writer.println("</name>"); 
+                        for (int k = 0; k < indent + 6; k++) {
+                            writer.print(' ');
+                        }               
+                        writer.print("<value>"); 
+                        writer.print(valueEnum.nextElement());
+                        writer.println("</value>");         
+                        for (int k = 0; k < indent + 4; k++) {
+                            writer.print(' ');
+                        }               
+                        writer.println("</parameter>");      
+                    }
+                    for (int k = 0; k < indent + 2; k++) {
+                        writer.print(' ');
+                    }          
+                    writer.println("</ResourceParams>");
+                }
             }
         }
-        
-        for (int i = 0; i < indent + 2; i++) {
-            writer.print(' ');
-        }          
-        writer.println("</ResourceParams>");
         
         // Store the ending of this element
         for (int i = 0; i < indent; i++) {
