@@ -66,7 +66,9 @@ package org.apache.catalina.cluster.session;
 
 /**
  * This class is used to track the series of actions that happens when
- * a request is executed. These actions will then
+ * a request is executed. These actions will then translate into invokations of methods 
+ * on the actual session.
+ * This class is NOT thread safe. One DeltaRequest per session
  * @author <a href="mailto:fhanik@apache.org">Filip Hanik</a>
  * @version 1.0
  */
@@ -95,6 +97,8 @@ public class DeltaRequest implements Externalizable {
 
     private String sessionId;
     private LinkedList actions = new LinkedList();
+    private LinkedList actionPool = new LinkedList();
+    
     private boolean recordAllActions = false;
 
     public DeltaRequest() {
@@ -140,7 +144,13 @@ public class DeltaRequest implements Externalizable {
                              int action,
                              String name,
                              Object value) {
-        AttributeInfo info = new AttributeInfo(type,action,name,value);
+        AttributeInfo info = null;
+        if ( this.actionPool.size() > 0 ) {
+            info = (AttributeInfo)actionPool.removeFirst();
+            info.init(type,action,name,value);
+        } else {
+            info = new AttributeInfo(type, action, name, value);
+        }
         //if we have already done something to this attribute, make sure
         //we don't send multiple actions across the wire
         if ( !recordAllActions) actions.remove(info);
@@ -148,25 +158,25 @@ public class DeltaRequest implements Externalizable {
         actions.addLast(info);
     }
 
-    public void execute(ClusterSession session) {
+    public void execute(DeltaSession session) {
         if ( !this.sessionId.equals( session.getId() ) )
             throw new java.lang.IllegalArgumentException("Session id mismatch, not executing the delta request");
         for ( int i=0; i<actions.size(); i++ ) {
             AttributeInfo info = (AttributeInfo)actions.get(i);
             switch ( info.getType() ) {
                 case TYPE_ATTRIBUTE: {
-                    if ( info.getAction() == ACTION_SET )
-                        session.setAttribute(info.getName(),info.getValue());
-                    else
-                        session.removeAttribute(info.getName());
+                    if ( info.getAction() == ACTION_SET ) {
+                        session.setAttribute(info.getName(), info.getValue(),false);
+                    }  else
+                        session.removeAttribute(info.getName(),true,false);
                     break;
                 }//case
                 case TYPE_ISNEW: {
-                    session.setNew(((Boolean)info.getValue()).booleanValue());
+                    session.setNew(((Boolean)info.getValue()).booleanValue(),false);
                     break;
                 }//case
                 case TYPE_MAXINTERVAL: {
-                    session.setMaxInactiveInterval(((Integer)info.getValue()).intValue());
+                    session.setMaxInactiveInterval(((Integer)info.getValue()).intValue(),false);
                     break;
                 }//case
                 case TYPE_PRINCIPAL: {
@@ -175,7 +185,7 @@ public class DeltaRequest implements Externalizable {
                         SerializablePrincipal sp = (SerializablePrincipal)info.getValue();
                         p = (Principal)sp.getPrincipal(session.getManager().getContainer().getRealm());
                     }
-                    session.setPrincipal(p);
+                    session.setPrincipal(p,false);
                     break;
                 }//case
                 default : throw new java.lang.IllegalArgumentException("Invalid attribute info type="+info);
@@ -184,8 +194,14 @@ public class DeltaRequest implements Externalizable {
     }
 
     public void reset() {
+        while ( actions.size() > 0 ) {
+            AttributeInfo info = (AttributeInfo)actions.removeFirst();
+            info.recycle();
+            actionPool.addLast(info);
+        }
         actions.clear();
     }
+    
     public String getSessionId() {
         return sessionId;
     }
@@ -199,21 +215,29 @@ public class DeltaRequest implements Externalizable {
         return actions.size();
     }
     
-    public void readExternal(java.io.ObjectInput in ) throws java.io.IOException,
-    java.lang.ClassNotFoundException {
-    //sessionId - String
-    //recordAll - boolean
-    //size - int
-    //AttributeInfo - in an array
+    public void readExternal(java.io.ObjectInput in) throws java.io.IOException,
+        java.lang.ClassNotFoundException {
+        //sessionId - String
+        //recordAll - boolean
+        //size - int
+        //AttributeInfo - in an array
+        reset();
         sessionId = in.readUTF();
         recordAllActions = in.readBoolean();
         int cnt = in.readInt();
-        if ( actions == null )
+        if (actions == null)
             actions = new LinkedList();
         else
             actions.clear();
         for (int i = 0; i < cnt; i++) {
-            AttributeInfo info = (AttributeInfo)in.readObject();
+            AttributeInfo info = null;
+            if (this.actionPool.size() > 0) {
+                info = (AttributeInfo) actionPool.removeFirst();
+            }
+            else {
+                info = new AttributeInfo(-1,-1,null,null);
+            }
+            info.readExternal(in);
             actions.addLast(info);
         }//for
     }
@@ -230,7 +254,7 @@ public class DeltaRequest implements Externalizable {
         out.writeInt(getSize());
         for ( int i=0; i<getSize(); i++ ) {
             AttributeInfo info = (AttributeInfo)actions.get(i);
-            out.writeObject(info);
+            info.writeExternal(out);
         }
     }
 
@@ -239,11 +263,21 @@ public class DeltaRequest implements Externalizable {
         private Object value = null;
         private int action;
         private int type;
+
         public AttributeInfo() {}
+
         public AttributeInfo(int type,
                              int action,
                              String name,
                              Object value) {
+            super();
+            init(type,action,name,value);
+        }
+
+        public void init(int type,
+                         int action,
+                         String name,
+                         Object value) {
             this.name = name;
             this.value = value;
             this.action = action;
@@ -267,6 +301,13 @@ public class DeltaRequest implements Externalizable {
 
         public String getName() {
             return name;
+        }
+        
+        public void recycle() {
+            name = null;
+            value = null;
+            type=-1;
+            action=-1;
         }
 
         public boolean equals(Object o) {
@@ -298,7 +339,14 @@ public class DeltaRequest implements Externalizable {
             out.writeUTF(getName());
             out.writeObject(getValue());
         }
-
+        
+        public String toString() {
+            StringBuffer buf = new StringBuffer("AttributeInfo[type=");
+            buf.append(getType()).append(", action=").append(getAction());
+            buf.append(", name=").append(getName()).append(", value=").append(getValue());
+            buf.append(", addr=").append(super.toString()).append("]");
+            return buf.toString();
+        }
 
     }
 
