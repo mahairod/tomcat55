@@ -131,6 +131,9 @@
       <fix>
         Enable Connector.findLifecycleListener that we can listen start/stop Connector events and save the listener to xml. (pero)
       </fix>
+      <update>
+        Remove Watchdog references, as it is no longer used. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
