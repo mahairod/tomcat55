@@ -147,6 +147,17 @@
             </controls:data>
         </controls:row>
 
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="privileged">
+            <controls:label><bean:message key="context.privileged"/>:</controls:label>
+            <controls:data>
+                <html:select property="privileged" styleId="privileged">
+                     <bean:define id="booleanVals" name="contextForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
 <%-- input only allowed on create transaction --%>
        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="path">
             <controls:label><bean:message key="context.path"/>:</controls:label>
