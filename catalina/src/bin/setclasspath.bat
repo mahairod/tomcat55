@@ -52,6 +52,6 @@ set _RUNJAVAC="%JAVA_HOME%\bin\javac"
 goto end
 
 :exit
-exit
+exit /b 1
 
 :end
