@@ -130,7 +130,7 @@
     <!-- Construct bootstrap JAR file -->
     <jar   jarfile="${catalina.build}/bin/bootstrap.jar"
            basedir="${catalina.build}/classes"
-           includes="org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/loader/**" 
+           includes="org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class" 
            />
     <jar   jarfile="${catalina.build}/common/lib/naming.jar"
            basedir="${catalina.build}/classes"
@@ -227,7 +227,7 @@
   <target name="deploy-main" depends="deploy-static">
     <jar  jarfile="${catalina.deploy}/server/lib/catalina.jar"
           basedir="${catalina.build}/classes" 
-          excludes="**/org/apache/naming/**,**/connector/warp/**" />
+          excludes="**/org/apache/naming/**,**/connector/warp/**,org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class" />
     <jar  jarfile="${catalina.deploy}/server/lib/warp.jar"
           basedir="${catalina.build}/classes" 
           includes="**/connector/warp/**" />
