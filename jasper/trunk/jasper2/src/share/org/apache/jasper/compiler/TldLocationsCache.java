@@ -348,7 +348,6 @@ public class TldLocationsCache {
 		    }
                 }
             }
-	    throw new JasperException(ex);
         } finally {
             if (redeployMode) {
                 // if in redeploy mode, always close the jar
