@@ -113,6 +113,8 @@ public class Jar extends Task {
 		zOut.putNextEntry(ze);
 		String s = "/org/apache/tools/ant/defaultManifest.mf";
 		InputStream in = this.getClass().getResourceAsStream(s);
+        if ( in == null )
+            throw new BuildException ( "Could not find: " + s );
 		jarFile(in, zOut, "META-INF/MANIFEST.MF");
 	    }
 	    
