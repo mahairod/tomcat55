@@ -1227,13 +1227,16 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if a component cannot be removed
      */
-    public void removeContext(String name) throws Exception {
+    public void removeContext(String name, String pname) throws Exception {
 
         // Acquire a reference to the component to be removed
         ObjectName oname = new ObjectName(name);
-        String serviceName = oname.getKeyProperty("service");
-        String hostName = oname.getKeyProperty("host");
-        String contextName = getPathStr(oname.getKeyProperty("path"));
+        ObjectName poname = new ObjectName(pname);
+        String serviceName = poname.getKeyProperty("service");
+        String hostName = poname.getKeyProperty("host");
+        String pathname = oname.getKeyProperty("name");
+        String path = pathname.substring(pathname.lastIndexOf('/'));
+        String contextName = getPathStr(path);
         Server server = ServerFactory.getServer();
         Service service = server.findService(serviceName);
         Engine engine = (Engine) service.getContainer();

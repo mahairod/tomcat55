@@ -367,6 +367,7 @@ public class ServerLifecycleListener
 
         try {
 
+            setJsr77Names(true);
             MBeanFactory factory = new MBeanFactory();
             createMBeans(factory);
             createMBeans(ServerFactory.getServer());
