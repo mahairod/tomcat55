@@ -2529,11 +2529,11 @@ class Generator {
                 for (int i = 0; i < varInfos.length; i++) {
                     if (varInfos[i].getScope() != scope)
                         continue;
-                    String varName = varInfos[i].getVarName();
                     // If the scripting variable has been declared, skip codes
                     // for saving and restoring it.
                     if (n.getScriptingVars(scope).contains(varInfos[i]))
                         continue;
+                    String varName = varInfos[i].getVarName();
                     String tmpVarName =
                         "_jspx_" + varName + "_" + n.getCustomNestingLevel();
                     out.printin(varName);
