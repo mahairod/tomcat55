@@ -77,7 +77,7 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
     /**
      * The descriptive information about this implementation.
      */
-    protected static final String info = "org.apache.catalina.session.JvmRouteBinderValve/1.1";
+    protected static final String info = "org.apache.catalina.cluster.session.JvmRouteBinderValve/1.1";
 
     /*--Instance Variables--------------------------------------*/
 
