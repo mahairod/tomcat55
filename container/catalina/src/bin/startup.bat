@@ -12,7 +12,6 @@ set PRG=%0
 if exist %PRG%\..\setenv.bat goto gotCmdPath
 rem %0 must have been found by DOS using the %PATH% so we assume that
 rem setenv.bat will also be found in the %PATH%
-call setenv.bat
 goto doneSetenv
 :gotCmdPath
 call %PRG%\..\setenv.bat
