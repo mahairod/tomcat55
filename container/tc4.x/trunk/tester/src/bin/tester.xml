@@ -823,6 +823,104 @@
          request="${context.path}/servlet/Forward08"
       outContent="Forward08b PASSED" debug="${debug}"/>
 
+    <!-- ========== ServletRequest.getRequestDispatcher() ================= -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward09?path=/Forward00a"
+      outContent="Forward00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward09?path=/Forward00a"
+      outContent="Forward00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward09?path=/Forward00b"
+      outContent="Forward00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward09?path=/Forward00b"
+      outContent="Forward00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward09?path=/Forward00c.jsp"
+      outContent="Forward00c PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward09?path=/Forward00c.jsp"
+      outContent="Forward00c PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward09?path=Forward00a"
+      outContent="Forward00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward09?path=Forward00a"
+      outContent="Forward00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward09?path=Forward00b"
+      outContent="Forward00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward09?path=Forward00b"
+      outContent="Forward00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward09?path=Forward00c.jsp"
+      outContent="Forward00c PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward09?path=Forward00c.jsp"
+      outContent="Forward00c PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include09?path=/Include00a"
+      outContent="Include00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude09?path=/Include00a"
+      outContent="Include00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include09?path=/Include00b"
+      outContent="Include00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude09?path=/Include00b"
+      outContent="Include00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include09?path=/Include00c.jsp"
+      outContent="Include00c PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude09?path=/Include00c.jsp"
+      outContent="Include00c PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include09?path=Include00a"
+      outContent="Include00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude09?path=Include00a"
+      outContent="Include00a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include09?path=Include00b"
+      outContent="Include00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude09?path=Include00b"
+      outContent="Include00b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include09?path=Include00c.jsp"
+      outContent="Include00c PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude09?path=Include00c.jsp"
+      outContent="Include00c PASSED" debug="${debug}"/>
+
     <!-- ========== Response Wrapping ===================================== -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"

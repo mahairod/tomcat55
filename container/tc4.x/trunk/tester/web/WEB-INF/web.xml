@@ -220,6 +220,11 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedForward09</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedGetHeaders01</url-pattern>
     </filter-mapping>
 
@@ -281,6 +286,11 @@
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedInclude04</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedInclude09</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
@@ -657,6 +667,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>Forward09</servlet-name>
+        <servlet-class>org.apache.tester.Forward09</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>GetHeaders01</servlet-name>
         <servlet-class>org.apache.tester.GetHeaders01</servlet-class>
     </servlet>
@@ -784,6 +799,11 @@
     <servlet>
         <servlet-name>Include07c</servlet-name>
         <servlet-class>org.apache.tester.Include07c</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include09</servlet-name>
+        <servlet-class>org.apache.tester.Include09</servlet-class>
     </servlet>
 
     <servlet>
@@ -1243,6 +1263,16 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>Forward09</servlet-name>
+        <url-pattern>/Forward09</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward09</servlet-name>
+        <url-pattern>/WrappedForward09</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>GetHeaders01</servlet-name>
         <url-pattern>/GetHeaders01</url-pattern>
     </servlet-mapping>
@@ -1435,6 +1465,16 @@
     <servlet-mapping>
         <servlet-name>Include07c</servlet-name>
         <url-pattern>/Include07c</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include09</servlet-name>
+        <url-pattern>/Include09</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include09</servlet-name>
+        <url-pattern>/WrappedInclude09</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
