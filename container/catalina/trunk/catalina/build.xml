@@ -557,7 +557,9 @@
     <chmod perm="+x" dir="${catalina.build}/bin" includes="*.sh"/>
 
     <!-- Common Extensions -->
+<!--
     <copy todir="${catalina.build}/common/lib" file="${servlet-api.jar}"/>
+-->
     <copy todir="${catalina.build}/common/lib"
            file="${commons-collections.jar}"/>
 
@@ -900,7 +902,7 @@
 
 
   <!-- ====================== DEPLOY: Create Catalina JARs ================ -->
-  <target name="catalina-jars" depends="deploy-prepare,flags,flags.display,build-catalina"
+  <target name="catalina-jars" depends="build-static,deploy-prepare,flags,flags.display,build-catalina"
           description="Build catalina jars">
 
     <!-- Catalina Bootstrap JAR File -->
