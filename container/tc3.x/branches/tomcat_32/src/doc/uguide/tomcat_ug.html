@@ -855,9 +855,9 @@ ApJServDefaultPort 8007
 # Mounting a single smart context:
 #
 # (1) Make Apache know about the context location.
-Alias /examples D:\tomcat\webapps\examples
+Alias /examples c:/jakarta-tomcat/webapps/examples
 # (2) Optional, customize Apache context service.
-&lt;Directory "D:\tomcat\webapps\examples"&gt;
+&lt;Directory "c:/jakarta-tomcat/webapps/examples"&gt;
     Options Indexes FollowSymLinks
 # (2a) No directory indexing for the context root.
 #    Options -Indexes
