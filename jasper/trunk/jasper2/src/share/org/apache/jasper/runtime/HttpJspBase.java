@@ -115,6 +115,7 @@ public abstract class HttpJspBase
     {
         super.init(config);
 	jspInit();
+        _jspInit();
     }
     
     public String getServletInfo() {
@@ -137,7 +138,10 @@ public abstract class HttpJspBase
     
     public void jspInit() {
     }
-    
+
+    public void _jspInit() {
+    }
+
     public void jspDestroy() {
     }
 
