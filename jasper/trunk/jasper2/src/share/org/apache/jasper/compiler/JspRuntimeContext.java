@@ -191,7 +191,9 @@ public final class JspRuntimeContext implements Runnable {
 	    return;
 	}
 
-        initSecurity();
+        if (System.getSecurityManager() != null) {
+            initSecurity();
+        }
 
         // If this web application context is running from a
         // directory, start the background compilation thread
