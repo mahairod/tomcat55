@@ -1831,17 +1831,22 @@ class Generator {
 	    String varAttr = n.getTextAttribute("var");
 	    if (varReaderAttr != null || varAttr != null) {
 		out.printil("_jspx_sout = new java.io.StringWriter();");
-		out.printin(toGetterMethod(n.getTextAttribute("fragment")));
-		out.println(".invoke(_jspx_sout);");
 	    } else {
-		out.printin(toGetterMethod(n.getTextAttribute("fragment")));
-		out.println(".invoke(null);");
+		out.printil("_jspx_sout = null;");
 	    }
-
+	    out.printil("try {");
+	    out.pushIndent();
+	    out.printin(toGetterMethod(n.getTextAttribute("fragment")));
+	    out.println(".invoke(_jspx_sout);");
+	    out.popIndent();
+	    out.printil( "} finally {" );
+	    out.pushIndent();
 	    // Copy page scope of invoking page back to virtual page scope of
 	    // tag file
 	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
 	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
+	    out.popIndent();
+	    out.printil("}");
 
 	    // Store varReader in appropriate scope
 	    if (varReaderAttr != null || varAttr != null) {
@@ -1874,15 +1879,21 @@ class Generator {
 	    String varAttr = n.getTextAttribute("var");
 	    if (varReaderAttr != null || varAttr != null) {
 		out.printil("_jspx_sout = new java.io.StringWriter();");
-		out.printil("getJspBody().invoke(_jspx_sout);");
 	    } else {
-		out.printil("getJspBody().invoke(null);");
+		out.printil("_jspx_sout = null;");
 	    }
-
+	    out.printil("try {");
+	    out.pushIndent();
+	    out.printil("getJspBody().invoke(_jspx_sout);");
+	    out.popIndent();
+	    out.printil( "} finally {" );
+	    out.pushIndent();
 	    // Copy page scope of invoking page back to virtual page scope of
 	    // tag file
 	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
 	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
+	    out.popIndent();
+	    out.printil("}");
 
 	    // Store varReader in appropriate scope
 	    if (varReaderAttr != null || varAttr != null) {
@@ -2941,11 +2952,7 @@ class Generator {
 	out.pushIndent();
     }
 
-    private void generateTagHandlerPostamble( TagInfo tagInfo ) {
-	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
-	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_END);");
-	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).restoreNestedVariables();");
-        
+    private void generateTagHandlerPostamble( TagInfo tagInfo ) {        
         out.popIndent();
         
         // Have to catch Throwable because a classic tag handler
@@ -2960,8 +2967,14 @@ class Generator {
         out.printil( "    throw (javax.servlet.jsp.JspException) t;" );
         out.printil("throw new javax.servlet.jsp.JspException(t);" );
         out.popIndent();
+        out.printil( "} finally {" );
+        out.pushIndent();
+	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
+	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_END);");
+	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).restoreNestedVariables();");
+        out.popIndent();
         out.printil( "}" );
-        
+
         // Close the doTag method
         out.popIndent();
         out.printil("}");
