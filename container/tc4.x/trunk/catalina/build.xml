@@ -60,6 +60,9 @@
     <copyfile src="${parser.jar}"  dest="${catalina.build}/server/parser.jar"/>
     <!--   Catalina needs the regular expression library -->
     <copyfile src="${regexp.jar}"  dest="${catalina.build}/server/regexp.jar"/>
+    <!--   Catalina needs JSSE for SSL support -->
+    <copyfile src="${jnet.jar}"    dest="${catalina.build}/server/jnet.jar"/>
+    <copyfile src="${jsse.jar}"    dest="${catalina.build}/server/jsse.jar"/>
 
   </target>
 
