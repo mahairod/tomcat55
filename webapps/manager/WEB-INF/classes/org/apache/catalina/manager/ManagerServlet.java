@@ -1389,10 +1389,9 @@ public class ManagerServlet
                 docBaseDir = new File(appBaseDir, docBase);
             }
             String docBasePath = docBaseDir.getCanonicalPath();
+            boolean deleteDir = true;
             if (!docBasePath.startsWith(deployedPath)) {
-                writer.println(sm.getString("managerServlet.noDocBase",
-                                            displayPath));
-                return;
+                deleteDir = false;
             }
 
             // Remove this web application and its associated docBase
@@ -1406,14 +1405,16 @@ public class ManagerServlet
             }
             boolean dir = docBaseDir.isDirectory();
             deployer.remove(path, true);
-            if (dir) {
-                undeployDir(docBaseDir);
-                // Delete the WAR file
-                File docBaseWar = new File(docBasePath + ".war");
-                docBaseWar.delete();
-            } else {
-                // Delete the WAR file
-                docBaseDir.delete();
+            if (deleteDir) {
+                if (dir) {
+                    undeployDir(docBaseDir);
+                    // Delete the WAR file
+                    File docBaseWar = new File(docBasePath + ".war");
+                    docBaseWar.delete();
+                } else {
+                    // Delete the WAR file
+                    docBaseDir.delete();
+                }
             }
             File docBaseXml = new File(context.getConfigFile());
             docBaseXml.delete();
