@@ -2981,6 +2981,8 @@ public class StandardContext
         getServletContext().setAttribute
             (Globals.RESOURCES_ATTR, getResources());
 
+        DirContextURLStreamHandler.bind(getResources());
+
         // Configure and call application event listeners and filters
         listenerStart();
         filterStart();
@@ -3021,7 +3023,6 @@ public class StandardContext
         }
 
         // Load the collected "load on startup" servlets
-        DirContextURLStreamHandler.bind(getResources());
         if (debug >= 1)
             log("Loading " + map.size() + " load-on-startup servlets");
         Iterator keys = map.keySet().iterator();
@@ -3039,6 +3040,7 @@ public class StandardContext
                 }
             }
         }
+
         DirContextURLStreamHandler.unbind();
 
         if (debug >= 1)
