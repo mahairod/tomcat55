@@ -74,6 +74,12 @@ package org.apache.catalina;
 
 public final class Globals {
 
+    /**
+     * The servlet context attribute under which we store the alternate
+     * deployment descriptor for this web application 
+     */
+    public static final String ALT_DD_ATTR = 
+        "org.apache.catalina.deploy.alt_dd";
 
     /**
      * The request attribute under which we store the array of X509Certificate
