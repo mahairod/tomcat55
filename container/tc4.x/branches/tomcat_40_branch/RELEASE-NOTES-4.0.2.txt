@@ -71,6 +71,9 @@ Generic Bug Fixes:
 Catalina Bug Fixes:
 ------------------
 
+WebappClassLoader: Cleanup source URLs generation.
+
+WebappClassLoader: Add support for external repositories.
 
 
 ----------------
@@ -92,6 +95,8 @@ Webapps Bug Fixes:
 Bugzilla Bugs Resolved:
 ----------------------
 
+4830  Catalina class loader throws exception while getting a directory's 
+      URL using Class.getResource()
 5330  JNDI ENC context problem
 5471  jspc -webapp option is broken due to namespace collisions
 5644  JspC produces badly formed classnames if first char is a digit
@@ -107,6 +112,7 @@ Bugzilla Bugs Resolved:
 6115  URL encoding of session id doesn't work correctly with anchors/fragments
 6130  [PATCH] Improving BindException error reporting
 6151  Manager servlet behaves bad in IE without an "Expires: -1" http header
+6248  Using xerces in webapp causes class cast exception
 
 
 ============================
