@@ -42,6 +42,11 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedForward01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedGetHeaders01</url-pattern>
     </filter-mapping>
 
@@ -63,6 +68,11 @@
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedGetQueryString01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedInclude01</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
@@ -94,6 +104,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>Forward01</servlet-name>
+        <servlet-class>org.apache.tester.Forward01</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>GetHeaders01</servlet-name>
         <servlet-class>org.apache.tester.GetHeaders01</servlet-class>
     </servlet>
@@ -116,6 +131,11 @@
     <servlet>
         <servlet-name>GetQueryString01</servlet-name>
         <servlet-class>org.apache.tester.GetQueryString01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include01</servlet-name>
+        <servlet-class>org.apache.tester.Include01</servlet-class>
     </servlet>
 
     <servlet>
@@ -143,6 +163,16 @@
     <servlet-mapping>
         <servlet-name>Authentication02</servlet-name>
         <url-pattern>/protected/Authentication02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward01</servlet-name>
+        <url-pattern>/Forward01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forward01</servlet-name>
+        <url-pattern>/WrappedForward01</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -198,6 +228,16 @@
     <servlet-mapping>
         <servlet-name>GetQueryString01</servlet-name>
         <url-pattern>/WrappedGetQueryString01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include01</servlet-name>
+        <url-pattern>/Include01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include01</servlet-name>
+        <url-pattern>/WrappedInclude01</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

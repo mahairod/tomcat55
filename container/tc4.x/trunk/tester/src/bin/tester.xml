@@ -10,7 +10,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,CaseSensitive,ServletRequest,ServletResponse"/>
+  <target name="all" depends="ROOT,CaseSensitive,RequestDispatcher,ServletRequest,ServletResponse"/>
 
 
   <target name="ROOT">
@@ -89,6 +89,29 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="/Examples/servlet/HelloWorldExample"
           status="404"/>
+
+  </target>
+
+
+  <target name="RequestDispatcher">
+
+    <!-- ========== Forward and Include to Static Resource ================ -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Forward01"
+      outContent="Forward01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedForward01"
+      outContent="Forward01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include01"
+      outContent="Include01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude01"
+      outContent="Include01 PASSED"/>
 
   </target>
 
