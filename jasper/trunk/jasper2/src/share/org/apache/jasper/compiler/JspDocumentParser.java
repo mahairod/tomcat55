@@ -87,6 +87,7 @@ class JspDocumentParser extends DefaultHandler
     private static final String XMLNS_JSP = "xmlns:jsp";
     private static final String JSP_VERSION = "version";
     private static final String URN_JSPTLD = "urn:jsptld:";
+    private static final String URN_JSPTAGDIR = "urn:jsptagdir:";
     private static final String LEXICAL_HANDLER_PROPERTY
 	= "http://xml.org/sax/properties/lexical-handler";
 
@@ -505,7 +506,8 @@ class JspDocumentParser extends DefaultHandler
         }
        
 	return new Node.CustomTag(attrs, start, qName, prefix, shortName,
-				  tagInfo, tagFileInfo, tagHandlerClass, parent);
+				  tagInfo, tagFileInfo, tagHandlerClass,
+				  parent);
     }
 
     /*
@@ -533,35 +535,58 @@ class JspDocumentParser extends DefaultHandler
 		    continue;
 		}
 
-		// get the uri
-		String uri = attrs.getValue(i);
-		if (uri.startsWith(URN_JSPTLD)) {
-		    // uri value is of the form "urn:jsptld:path"
-		    uri = uri.substring(URN_JSPTLD.length());
-		}
-
-                TldLocationsCache cache
-		    = ctxt.getOptions().getTldLocationsCache();
-                TagLibraryInfo tl = cache.getTagLibraryInfo(uri);
-                if (tl == null) {
-                    // get the location
-                    String[] location = ctxt.getTldLocation(uri);
-                
-                    tl = new TagLibraryInfoImpl(ctxt, parserController, prefix,
-						uri, location, err);
-                }
                 if( taglibs.containsKey( prefix ) ) {
                     // Prefix already in taglib map.
                     throw new JasperException( err.getString(
                         "jsp.error.xmlns.redefinition.notimplemented",
                         prefix ) );
                 }
-                else {
-                    taglibs.put(prefix, tl);
-                    result.removeAttribute( i );
-                }
+
+		// get the uri
+		String uri = attrs.getValue(i);
+
+		TagLibraryInfo tagLibInfo = null;
+		if (uri.startsWith(URN_JSPTAGDIR)) {
+		    /*
+		     * uri references tag file directory
+		     * (is of the form "urn:jsptagdir:path")
+		     */
+		    String tagdir = uri.substring(URN_JSPTAGDIR.length());
+		    tagLibInfo = new ImplicitTagLibraryInfo(ctxt,
+							    parserController,
+							    prefix, 
+							    tagdir,
+							    err);
+		} else {
+		    /*
+		     * uri references TLD file
+		     */
+		    if (uri.startsWith(URN_JSPTLD)) {
+			// uri is of the form "urn:jsptld:path"
+			uri = uri.substring(URN_JSPTLD.length());
+		    }
+
+		    TldLocationsCache cache
+			= ctxt.getOptions().getTldLocationsCache();
+		    tagLibInfo = cache.getTagLibraryInfo(uri);
+		    if (tagLibInfo == null) {
+			// get the location
+			String[] location = ctxt.getTldLocation(uri);
+                
+			tagLibInfo = new TagLibraryInfoImpl(ctxt,
+							    parserController,
+							    prefix,
+							    uri,
+							    location,
+							    err);
+		    }
+		}
+                
+		taglibs.put(prefix, tagLibInfo);
+		result.removeAttribute( i );
 	    }
         }
+
         return result;
     }
 
