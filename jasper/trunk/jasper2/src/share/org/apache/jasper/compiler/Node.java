@@ -889,7 +889,6 @@ public abstract class Node {
 	private TagFileInfo tagFileInfo;
 	private Class tagHandlerClass;
 	private VariableInfo[] varInfos;
-	private TagVariableInfo[] nestedTagVarInfos;
 	private int customNestingLevel;
         private ChildInfo childInfo;
 	private boolean implementsIterationTag;
