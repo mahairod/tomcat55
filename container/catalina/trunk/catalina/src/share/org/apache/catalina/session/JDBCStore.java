@@ -469,6 +469,7 @@ public class JDBCStore
                     keys = (String[]) tmpkeys.toArray(new String[tmpkeys.size()]);
                 } catch (SQLException e) {
                     log(sm.getString(getStoreName() + ".SQLException", e));
+                    keys = new String[0];
                     // Close the connection so that it gets reopened next time
                     if (dbConnection != null)
                         close(dbConnection);
