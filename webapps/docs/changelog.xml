@@ -50,6 +50,9 @@
       <fix>
         <bug>32371</bug>: outdated introduction.xml page. (yoavs)
       </fix>
+      <fix> 
+        <bug>32373</bug>: outdated installation.xml page. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
