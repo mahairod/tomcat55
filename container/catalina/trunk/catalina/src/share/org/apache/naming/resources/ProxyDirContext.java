@@ -783,7 +783,7 @@ public class ProxyDirContext implements DirContext {
     public Name composeName(Name name, Name prefix)
         throws NamingException {
         prefix = (Name) name.clone();
-	return prefix.addAll(name);
+    return prefix.addAll(name);
     }
 
 
@@ -1684,8 +1684,9 @@ public class ProxyDirContext implements DirContext {
      * Remove entry from cache.
      */
     protected boolean cacheUnload(String name) {
-        if (cache == null)
+        if ((cache == null) || (cache.length==0)) {
             return false;
+        }
         synchronized (this) {
             CacheEntry[] newCache = new CacheEntry[cache.length - 1];
             CacheEntry removedEntry = removeMap(cache, newCache, name);
@@ -1904,4 +1905,3 @@ public class ProxyDirContext implements DirContext {
 
 
 }
-
