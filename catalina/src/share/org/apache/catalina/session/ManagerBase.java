@@ -517,8 +517,8 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
      *  - so use it if available.
      */
     public void setRandomFile( String s ) {
-	// as a hack, you can use a static file - and genarate the same
-	// session ids ( good for strange debugging )
+    // as a hack, you can use a static file - and genarate the same
+    // session ids ( good for strange debugging )
         if (System.getSecurityManager() != null){
                 randomIS = (DataInputStream)AccessController.doPrivileged(new PrivilegedSetRandomFile());          
             } else {
@@ -624,9 +624,12 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
                 Engine eng=(Engine)ctx.getParent().getParent();
                 domain=eng.getName();
                 StandardHost hst=(StandardHost)ctx.getParent();
-                
+                String path = ctx.getPath();
+                if (path.equals("")) {
+                    path = "/";
+                }   
                 oname=new ObjectName(domain + ":type=Manager,path="
-                + ctx.getPath() + ",host=" + hst.getName());
+                + path + ",host=" + hst.getName());
                 Registry.getRegistry().registerComponent(this, oname, null );
             } catch (Exception e) {
                 log.error("Error registering ",e);
