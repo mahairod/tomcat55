@@ -823,27 +823,42 @@ public final class ContextConfig
 
         }
 
-        // Second, scan tag libraries defined in JAR files
-        // FIXME - Yet another dependence on files
+        DirContext resources = context.getResources();
+
+        // Second, scan tag libraries defined in tld files in /WEB-INF
+        if (debug >= 1)
+            log("Scanning TLD files in /WEB-INF");
+        String webinfName = "/WEB-INF";
+        // Looking up directory /WEB-INF in the context
+        try {
+            NamingEnumeration enum = resources.list(webinfName);
+            while (enum.hasMoreElements()) {
+                NameClassPair ncPair = (NameClassPair) enum.nextElement();
+                String filename = webinfName + "/" + ncPair.getName();
+                if (!filename.endsWith(".tld"))
+                    continue;
+                tldConfigTld(filename, digester);
+            }
+        } catch (NamingException e) {
+            // Silent catch: it's valid that no /WEB-INF directory exists
+        }
+
+        // Third, scan tag libraries defined in JAR files
         if (debug >= 1)
             log("Scanning library JAR files");
-        DirContext resources = context.getResources();
         String libName = "/WEB-INF/lib";
-        DirContext libDir = null;
         // Looking up directory /WEB-INF/lib in the context
         try {
             NamingEnumeration enum = resources.list(libName);
             while (enum.hasMoreElements()) {
-                NameClassPair ncPair =
-                    (NameClassPair) enum.nextElement();
+                NameClassPair ncPair = (NameClassPair) enum.nextElement();
                 String filename = libName + "/" + ncPair.getName();
                 if (!filename.endsWith(".jar"))
                     continue;
                 tldConfigJar(filename, digester);
             }
         } catch (NamingException e) {
-            // Silent catch: it's valid that no /WEB-INF/lib directory
-            //exists
+            // Silent catch: it's valid that no /WEB-INF/lib directory exists
         }
 
     }
