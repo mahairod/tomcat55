@@ -22,9 +22,11 @@
 #                    requirements of ant
 #                    [$JAXP_HOME/$JAXP_PARSER_JAR:$JAXP_HOME/jaxp.jar]
 # 
-#   JSSE_HOME        Must point at your JSSE installation [REQUIRED]
-#
 #   JMX_HOME         Must point at your JMX installation [REQUIRED]
+#
+#   JNDI_HOME        Must point at your JNDI installation [REQUIRED]
+#
+#   JSSE_HOME        Must point at your JSSE installation [REQUIRED]
 #
 #   REGEXP_HOME      Must point at your Regexp installation [REQUIRED]
 #
@@ -50,13 +52,18 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 
-if [ "$JSSE_HOME" = "" ] ; then
-  echo You must set JSSE_HOME to point at your Java Security Extensions install
+if [ "$JMX_HOME" = "" ] ; then
+  echo You must set JMX_HOME to point at your Java Management Extensions install
   exit 1
 fi
 
-if [ "$JMX_HOME" = "" ] ; then
-  echo You must set JMX_HOME to point at your Java Management Extensions install
+if [ "$JNDI_HOME" = "" ] ; then
+  echo You must set JNDI_HOME to point at your Java Naming and Directory Interface install
+  exit 1
+fi
+
+if [ "$JSSE_HOME" = "" ] ; then
+  echo You must set JSSE_HOME to point at your Java Security Extensions install
   exit 1
 fi
 
@@ -118,4 +125,4 @@ fi
 
 # ----- Execute The Requested Build -------------------------------------------
 
-$JAVA_HOME/bin/java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dcatalina.jaxp.home=$CATALINA_JAXP_HOME -Dcatalina.jaxp.parser.jar=$CATALINA_JAXP_PARSER_JAR -Djsse.home=$JSSE_HOME -Djmx.home=$JMX_HOME -Dregexp.home=$REGEXP_HOME -Dservletapi.home=$SERVLETAPI_HOME -Djava.home=$JAVA_HOME "$@"
+$JAVA_HOME/bin/java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dcatalina.jaxp.home=$CATALINA_JAXP_HOME -Dcatalina.jaxp.parser.jar=$CATALINA_JAXP_PARSER_JAR -Djsse.home=$JSSE_HOME -Djmx.home=$JMX_HOME -Djndi.home=$JNDI_HOME -Dregexp.home=$REGEXP_HOME -Dservletapi.home=$SERVLETAPI_HOME -Djava.home=$JAVA_HOME "$@"

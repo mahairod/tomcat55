@@ -14,6 +14,7 @@
   <property name="jaxp.jar"        value="${catalina.jaxp.home}/jaxp.jar"/>
   <property name="parser.jar"      value="${catalina.jaxp.home}/${catalina.jaxp.parser.jar}"/>
   <property name="jcert.jar"       value="${jsse.home}/lib/jcert.jar"/>
+  <property name="jndi.jar"        value="${jndi.home}/lib/jndi.jar"/>
   <property name="jnet.jar"        value="${jsse.home}/lib/jnet.jar"/>
   <property name="jsse.jar"        value="${jsse.home}/lib/jsse.jar"/>
   <property name="jmxri.jar"       value="${jmx.home}/lib/jmxri.jar"/>
@@ -57,6 +58,8 @@
     <!-- Shared Extensions -->
     <!--   All applications need the servlet API classes -->
     <copy file="${servlet.jar}" tofile="${catalina.build}/bin/servlet.jar" />
+    <!--   Copy the JNDI JAR file for use under JDK 1.2.2 -->
+    <copy file="${jndi.jar}"    tofile="${catalina.build}/bin/jndi.jar" />
 
     <!-- Server Components -->
     <!--   Catalina needs JAXP compliant XML parser -->

@@ -41,11 +41,10 @@ which you are installing all of the required Jakarta distributions.
   JDK 1.2 environment). None of the JNDI providers are required, unless you
   need to use them in your own applications.
 
-* Download and install the Java API for XML Processing 1.1
-  from <http://java.sun.com/xml/download.html>. Set an
-  environment variable "JAXP_HOME" pointing at the directory to which you
-  installed this distribution.  
-  [Other XML parsers may also be used. See below for details]
+* Download and install the Java Naming and Directory Interface (JNDI) package,
+  version 1.2.1 or later, from <http://java.sun.com/products/jndi>.  Set an
+  environment variable "JNDI_HOME" pointing at the directory to which you
+  installed the distribution.
 
 * Download and install the Java Secure Sockets Extension (JSSE) implementation
   (current version number is 1.0.1) from <http://java.sun.com/products/jsse>.

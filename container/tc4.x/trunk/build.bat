@@ -20,9 +20,11 @@ rem                    Jar files added to the classpath for the XML parsing
 rem                    requirements of ant
 rem                    [%JAXP_HOME%\%JAXP_PARSER_JAR%;%JAXP_HOME%\jaxp.jar]
 rem 
-rem   JSSE_HOME        Must point at your JSSE installation [REQUIRED]
-rem
 rem   JMX_HOME         Must point at your JMX installation [REQUIRED]
+rem
+rem   JNDI_HOME        Must point at your JNDI installation [REQUIRED]
+rem
+rem   JSSE_HOME        Must point at your JSSE installation [REQUIRED]
 rem
 rem   REGEXP_HOME      Must point at your Regexp installation [REQUIRED]
 rem
@@ -113,15 +115,20 @@ if not "%ANT_HOME%" == "" goto gotAntHome
 set ANT_HOME=../jakarta-ant
 :gotAntHome
 
-if not "%JSSE_HOME%" == "" goto gotJsseHome
-echo You must set JSSE_HOME to point at your Java Security Extensions install
-goto cleanup
-:gotJsseHome
-
 if not "%JMX_HOME%" == "" goto gotJmxHome
 echo You must set JMX_HOME to point at your Java Management Extensions install
 goto cleanup
 :gotJmxHome
+
+if not "%JNDI_HOME%" == "" goto gotJndiHome
+echo You must set JNDI_HOME to point at your Java Naming and Directory Interface install
+goto cleanup
+:gotJndiHome
+
+if not "%JSSE_HOME%" == "" goto gotJsseHome
+echo You must set JSSE_HOME to point at your Java Security Extensions install
+goto cleanup
+:gotJsseHome
 
 if not "%REGEXP_HOME%" == "" goto gotRegexpHome
 echo You must set REGEXP_HOME to point at your Regular Expressions distribution install
@@ -143,7 +150,7 @@ rem @@@ %JMX_HOME%\lib\jmxri.jar
 
 rem ----- Execute The Requested Build -----------------------------------------
 
-%JAVA_HOME%\bin\java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home=%ANT_HOME% -Dcatalina.jaxp.home="%CATALINA_JAXP_HOME%" -Dcatalina.jaxp.parser.jar="%CATALINA_JAXP_PARSER_JAR%" -Djasper.jaxp.home="%JASPER_JAXP_HOME%" -Djasper.jaxp.parser.jar="%JASPER_JAXP_PARSER_JAR%" -Djsse.home="%JSSE_HOME%" -Djmx.home="%JMX_HOME%" -Dregexp.home="%REGEXP_HOME%" -Dservletapi.home="%SERVLETAPI_HOME%" -Djava.home="%JAVA_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
+%JAVA_HOME%\bin\java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home=%ANT_HOME% -Dcatalina.jaxp.home="%CATALINA_JAXP_HOME%" -Dcatalina.jaxp.parser.jar="%CATALINA_JAXP_PARSER_JAR%" -Djasper.jaxp.home="%JASPER_JAXP_HOME%" -Djasper.jaxp.parser.jar="%JASPER_JAXP_PARSER_JAR%" -Djsse.home="%JSSE_HOME%" -Djmx.home="%JMX_HOME%" -Djndi.home="%JNDI_HOME%" -Dregexp.home="%REGEXP_HOME%" -Dservletapi.home="%SERVLETAPI_HOME%" -Djava.home="%JAVA_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 
 rem ----- Restore Environment Variables ---------------------------------------
