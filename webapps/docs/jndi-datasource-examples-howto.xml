@@ -47,6 +47,14 @@ Tomcat 5.0.x and Tomcat 5.5.x.</b>  You will most likely need to modify your JND
 resource configurations to match the syntax in the example below in order
 to make them work in Tomcat 5.5.x.
 </p>
+
+<p>
+Also, please note that JNDI DataSource configuration in general, and this 
+tutorial in particular, assumes that you have read and understood the 
+<a href="config/context.html">Context</a> and 
+<a href="config/host.html">Host</a> configuration references, including
+the section about Automatic Application Deployment in the latter reference.
+</p>
 </section>
 
 <section name="Database Connection Pool (DBCP) Configurations">
@@ -189,7 +197,13 @@ mysql&gt;
 <p>Configure the JNDI DataSource in Tomcat by adding a declaration for your
 resource to <code>$CATALINA_HOME/conf/server.xml</code>.</p>
 <p>Add this in between the <code>&lt;/Context&gt;</code> tag of the examples
-context and the <code>&lt;/Host&gt;</code> tag closing the localhost definition.<source>
+context and the <code>&lt;/Host&gt;</code> tag closing the localhost definition.
+If there is no such tag, you can add one as illustrated in the 
+<a href="config/context.html">Context</a> and
+<a href="config/host.html">Host</a> configuration references, and repeated below
+for your convenience.
+
+<source>
 &lt;Context path="/DBTest" docBase="DBTest"
         debug="5" reloadable="true" crossContext="true"&gt;
 
