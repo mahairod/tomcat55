@@ -68,6 +68,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.jasper.compiler.TldLocationsCache;
 import org.apache.jasper.compiler.JspConfig;
+import org.apache.jasper.compiler.TagPluginManager;
 
 /**
  * A class to hold all init parameters specific to the JSP engine. 
@@ -172,4 +173,9 @@ public interface Options {
      * Obtain JSP configuration informantion specified in web.xml.  
      */
     public JspConfig getJspConfig();
+
+    /**
+     * Obtain a Tag Plugin Manager
+     */
+    public TagPluginManager getTagPluginManager();
 }

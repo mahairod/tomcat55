@@ -997,6 +997,14 @@ abstract class Node {
 	private Vector nestedScriptingVars;
 	private Node.CustomTag customTagParent;
 	private Integer numCount;
+	private boolean useTagPlugin;
+	/**
+	 * The following two fields are use for holding the Java
+	 * scriptlets that the tag plugins may generate.  Meaningful
+	 * only if useTagPlugin is true;
+	 */
+	private Nodes atSTag;
+	private Nodes atETag;
 
 	public CustomTag(Attributes attrs, Mark start, String name,
 			 String prefix, String shortName,
@@ -1213,6 +1221,30 @@ abstract class Node {
             
             return result;
         }
+
+	public void setUseTagPlugin(boolean use) {
+	    useTagPlugin = use;
+	}
+
+	public boolean getUseTagPlugin() {
+	    return useTagPlugin;
+	}
+
+	public void setAtSTag(Nodes sTag) {
+	    atSTag = sTag;
+	}
+
+	public Nodes getAtSTag() {
+	    return atSTag;
+	}
+        
+	public void setAtETag(Nodes eTag) {
+	    atETag = eTag;
+	}
+
+	public Nodes getAtETag() {
+	    return atETag;
+	}
         
 	/*
 	 * Computes this custom tag's custom nesting level, which corresponds
@@ -1248,6 +1280,25 @@ abstract class Node {
 		p = p.parent;
 	    }
 	    return n;
+	}
+    }
+    /**
+     * Represents a attribute value of a Custom tag.  Used only by tag plugins
+     * to indicate generated codes for the specified attribute.
+     */
+    public static class GenAttribute extends Node {
+	String attribute;
+
+	public GenAttribute(Mark start, String attribute) {
+	    super(start, null);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+
+	public String getAttribute() {
+	    return attribute;
 	}
     }
 
@@ -1742,6 +1793,10 @@ abstract class Node {
 	}
 
 	public void visit(JspOutput n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(GenAttribute n) throws JasperException {
 	    doVisit(n);
 	}
     }

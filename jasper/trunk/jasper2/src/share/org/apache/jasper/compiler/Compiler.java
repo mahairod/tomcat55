@@ -289,6 +289,10 @@ public class Compiler {
 	// Determine which custom tag needs to declare which scripting vars
 	ScriptingVariabler.set(pageNodes, errDispatcher);
 
+	// Optimizations by Tag Plugins
+	TagPluginManager tagPluginManager = options.getTagPluginManager();
+	tagPluginManager.apply(pageNodes);
+
 	// generate servlet .java file
 	Generator.generate(writer, this, pageNodes);
         writer.close();

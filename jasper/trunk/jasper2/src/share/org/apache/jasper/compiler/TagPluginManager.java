@@ -63,12 +63,12 @@ package org.apache.jasper.compiler;
 
 import java.util.*;
 import java.io.*;
+import javax.servlet.ServletContext;
+
 import org.apache.jasper.JasperException;
 import org.apache.jasper.xmlparser.ParserUtils;
 import org.apache.jasper.xmlparser.TreeNode;
-import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.compiler.tagplugin.TagPlugin;
-import org.apache.jasper.compiler.tagplugin.TagPluginFactory;
 import org.apache.jasper.compiler.tagplugin.TagPluginContext;
 
 /**
@@ -81,18 +81,31 @@ public class TagPluginManager {
     static private final String plugInsXml = "tagPlugins.xml";
     private boolean initialized = false;
     private Hashtable tagPlugins = null;
-    private JspCompilationContext ctxt;
+    private ServletContext ctxt;
 
-
-    TagPluginManager(JspCompilationContext ctxt) {
+    public TagPluginManager(ServletContext ctxt) {
 	this.ctxt = ctxt;
-	init();
     }
 
+    public void apply(Node.Nodes page) throws JasperException {
+
+	init();
+	if (tagPlugins == null || tagPlugins.size() == 0) {
+	    return;
+	}
+
+	page.visit(new Node.Visitor() {
+            public void visit(Node.CustomTag n) {
+		invokePlugin(n);
+            }
+	});
+    }
+ 
     private void init() {
 	if (initialized)
 	    return;
 
+	initialized = true;
 	InputStream is = ctxt.getResourceAsStream(plugInsXml);
 	if (is == null)
 	    return;
@@ -111,6 +124,7 @@ public class TagPluginManager {
 	    return;
 	}
 
+	tagPlugins = new Hashtable();
 	Iterator pluginList = tagPluginsNode.findChildren("tag-plugin");
 	while (pluginList.hasNext()) {
 	    TreeNode pluginNode = (TreeNode) pluginList.next();
@@ -142,44 +156,70 @@ public class TagPluginManager {
 	}
     }
 
-    public TagPlugin getPlugInClass(Node.CustomTag n, ServletWriter out) {
-
-	if (tagPlugins == null) {
-	    return null;
-	}
-
-	TagPluginFactory tagPluginFactory = (TagPluginFactory)
+    /**
+     * Invoke tag plugin if it exists.  The node n will be modified by
+     * the plugin if that applies
+     */
+    private void invokePlugin(Node.CustomTag n) {
+	TagPlugin tagPlugin = (TagPlugin)
 		tagPlugins.get(n.getTagHandlerClass().getName());
-	if (tagPluginFactory == null) {
-	    return null;
+	if (tagPlugin == null) {
+	    return;
 	}
 
-	TagPluginContext tagPluginContext = new TagPluginContextImpl(n, out);
-	return tagPluginFactory.createTagPlugin(n.getName(), tagPluginContext);
+	TagPluginContext tagPluginContext = new TagPluginContextImpl(n);
+	tagPlugin.doTag(tagPluginContext);
     }
 
     static class TagPluginContextImpl implements TagPluginContext {
 	Node.CustomTag node;
-	ServletWriter out;
+	Node.Nodes curNodes;
 
-	TagPluginContextImpl(Node.CustomTag n, ServletWriter out) {
+	TagPluginContextImpl(Node.CustomTag n) {
 	    this.node = n;
-	    this.out = out;
+	    curNodes = new Node.Nodes();
+	    n.setAtETag(curNodes);
+	    curNodes = new Node.Nodes();
+	    n.setAtSTag(curNodes);
+	    n.setUseTagPlugin(true);
 	}
 
-	public ServletWriter getServletWriter() {
-	    return out;
+	public String getTagName() {
+	    return node.getName();
 	}
 
 	public boolean isScriptless() {
 	    return node.getChildInfo().isScriptless();
 	}
 
-	public String getAttributeValue(String attribute) {
+	public boolean isAttributeSpecified(String attribute) {
+	    return getAttribute(attribute) != null;
+	}
+
+	public void generateJavaSource(String s) {
+	    curNodes.add(new Node.Scriptlet(node.getStart(), null));
+	}
+
+	public void generateAttribute(String attribute) {
+	    curNodes.add(new Node.GenAttribute(node.getStart(), null));
+	}
+
+	public void dontUseTagPlugin() {
+	    node.setUseTagPlugin(false);
+	}
+
+	public void generateBody() {
+	    // Since we'll generate the body anyway, this is really a nop, 
+	    // except for the fact that it let us put the Java sources the
+	    // plugins produce in the correct order (w.r.t the body).
+	    curNodes = node.getAtETag();
+	}
+
+	private Node.JspAttribute getAttribute(String attribute) {
 	    Node.JspAttribute[] attrs = node.getJspAttributes();
 	    for (int i=0; i < attrs.length; i++) {
 		if (attrs[i].getName().equals(attribute)) {
-//		    return attrs[i].getProcessedValue();
+		    return attrs[i];
 		}
 	    }
 	    return null;

@@ -70,13 +70,8 @@ package org.apache.jasper.compiler.tagplugin;
 public interface TagPlugin {
 
     /**
-     * Invoked to generate Java codes at the start of a custom tag.
+     * Invoked to generate codes a custom tag.
      */
-    void atSTag();
-
-    /**
-     * Invoked to generate Java codes at the end of a custom tag.
-     */
-    void atETag();
+    void doTag(TagPluginContext c);
 }
 

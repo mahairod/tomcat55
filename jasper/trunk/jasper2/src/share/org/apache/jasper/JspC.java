@@ -74,6 +74,8 @@ import org.apache.jasper.servlet.JspCServletContext;
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.logging.JasperLogger;
 import org.apache.jasper.compiler.JspConfig;
+import org.apache.jasper.compiler.JspConfig;
+import org.apache.jasper.compiler.TagPluginManager;
 
 /**
  * Shell for the jspc compiler.  Handles all options associated with the 
@@ -196,6 +198,9 @@ public class JspC implements Options {
      * Cache for the TLD locations
      */
     private TldLocationsCache tldLocationsCache = null;
+
+    private JspConfig jspConfig = null;
+    private TagPluginManager tagPluginManager = null;
 
     private boolean listErrors = false;
     private boolean showSuccess = false;
@@ -737,6 +742,8 @@ public class JspC implements Options {
         } catch (MalformedURLException me) {
             System.out.println("**" + me);
         }
+	jspConfig = new JspConfig(context);
+	tagPluginManager = new TagPluginManager(context);
     }
     
 
@@ -945,10 +952,12 @@ public class JspC implements Options {
      * Obtain JSP configuration informantion specified in web.xml.
      */
     public JspConfig getJspConfig() {
-        // XXX - Stubbed out so Jasper compiles.
-        initServletContext();
-        return new JspConfig( context );
+	return jspConfig;
     }    
+
+    public TagPluginManager getTagPluginManager() {
+        return tagPluginManager;
+    }
 
 }
 

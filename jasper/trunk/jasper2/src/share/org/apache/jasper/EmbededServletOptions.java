@@ -70,6 +70,7 @@ import org.apache.jasper.logging.Logger;
 
 import org.apache.jasper.compiler.TldLocationsCache;
 import org.apache.jasper.compiler.JspConfig;
+import org.apache.jasper.compiler.TagPluginManager;
 import org.apache.jasper.xmlparser.ParserUtils;
 
 import java.util.*;
@@ -173,6 +174,11 @@ public final class EmbededServletOptions implements Options {
      * Jsp config information
      */
     private JspConfig jspConfig = null;
+
+    /**
+     * TagPluginManager
+     */
+    private TagPluginManager tagPluginManager = null;
 
     /**
      * Java platform encoding to generate the JSP
@@ -299,6 +305,10 @@ public final class EmbededServletOptions implements Options {
 
     public JspConfig getJspConfig() {
 	return jspConfig;
+    }
+
+    public TagPluginManager getTagPluginManager() {
+	return tagPluginManager;
     }
 
     /**
@@ -475,6 +485,8 @@ public final class EmbededServletOptions implements Options {
 	// Setup the jsp config info for this web app.
 	jspConfig = new JspConfig(context);
 
+	// Create a Tag plugin instance
+	tagPluginManager = new TagPluginManager(context);
     }
 
 }

@@ -65,25 +65,50 @@ import org.apache.jasper.compiler.ServletWriter;
 
 /**
  * This interface allows the plugin author to query about the properties
- * of the current tag, and to use Jasper resources, such as ServletWriter.
+ * of the current tag, and to use Jasper resources to generate more
+ * efficient implementation for the tag handler under some conditions.
  */
 
 public interface TagPluginContext {
+    /**
+     * @return The name for the current tag
+     */
+    String getTagName();
+
     /**
       * @return true if the body of the tag is scriptless.
       */
     boolean isScriptless();
 
     /**
-     * Get the evaluated value of the given attribute for the current tag
-     * @return null if the attribute is not specified, or a java expression
-     *              that when evaluateed, represent the attribute value
+     * @param attribute Name of the attribute
+     * @return true if the attribute is specified in the tag
      */
-    String getAttributeValue(String attribute);
+    boolean isAttributeSpecified(String attribute);
 
     /**
-     * Used for outputting Java fragments to the output stream.
+     * Generate Java source codes
      */
-    ServletWriter getServletWriter();
+    void generateJavaSource(String s);
+
+    /**
+     * Generate Attribute value of a attribute in the custom tag
+     * NOTE: Currently cannot handle attributes that are fragments.
+     * @param attribute The specified attribute
+     */
+    void generateAttribute(String attribute);
+
+    /*
+     * Generate codes for the body of the custom tag
+     */
+    void generateBody();
+
+    /**
+     * Abandon optimization for this tag handler, and instruct the
+     * Jaser to generate the tag handler calls, as usual.
+     * Should be invoked if errors are detected, or that the tag body is
+     * too compilicated for optimization.
+     */
+    void dontUseTagPlugin();
 }
 
