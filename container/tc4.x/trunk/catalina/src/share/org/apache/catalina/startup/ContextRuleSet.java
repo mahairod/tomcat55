@@ -64,12 +64,9 @@ package org.apache.catalina.startup;
 
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Loader;
-import org.apache.catalina.Wrapper;
-import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
 import org.apache.commons.digester.RuleSetBase;
@@ -162,6 +159,8 @@ public class ContextRuleSet extends RuleSetBase {
             digester.addSetNext(prefix + "Context",
                                 "addChild",
                                 "org.apache.catalina.Container");
+            digester.addRule(prefix + "Context",
+                             new ContextValidatorRule(digester));
         } else {
             digester.addSetNext(prefix + "Context",
                                 "addDefaultContext",
@@ -339,3 +338,38 @@ final class CreateLoaderRule extends Rule {
 
 
 }
+
+
+// -----------------------------------------------------------------------------
+
+
+/**
+ * Rule that makes sure that <strong>path</strong> and <strong>docBase</strong> 
+ * are set for the Context.
+ */
+
+final class ContextValidatorRule extends Rule {
+
+    public ContextValidatorRule(Digester digester) {
+
+        super(digester);
+    }
+
+    public void end() throws Exception {
+        Context context = (Context) digester.peek();
+
+      if (null == context.getPath())
+      {
+          throw new Exception("Context does not have path set");
+      }
+
+      if (null == context.getDocBase())
+      {
+          throw new Exception("Context does not have docBase set");
+      }
+
+      super.end();
+
+    }
+}
+
