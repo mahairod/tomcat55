@@ -1504,8 +1504,8 @@ public class WebdavServlet
             return false;
         }
 
-        destinationPath = 
-            normalize(RequestUtil.URLDecode(destinationPath, "UTF8"));
+        // Remove url encoding from destination
+        destinationPath = RequestUtil.URLDecode(destinationPath, "UTF8");
 
         int protocolIndex = destinationPath.indexOf("://");
         if (protocolIndex >= 0) {
@@ -1539,6 +1539,9 @@ public class WebdavServlet
                 }
             }
         }
+
+        // Normalise destination path (remove '.' and '..')
+        destinationPath = normalize(destinationPath);
 
         String contextPath = req.getContextPath();
         if ((contextPath != null) &&
