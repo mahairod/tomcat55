@@ -41,9 +41,9 @@ import org.apache.catalina.connector.Request;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
-import org.apache.commons.digester.Digester;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.util.digester.Digester;
 
 
 /**
