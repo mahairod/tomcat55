@@ -66,6 +66,8 @@ package org.apache.catalina.servlets;
 
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -76,6 +78,7 @@ import java.io.InputStreamReader;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Enumeration;
@@ -95,16 +98,19 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.naming.NamingException;
+import javax.naming.InitialContext;
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.NameClassPair;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import org.apache.naming.resources.Resource;
+import org.apache.naming.resources.ResourceAttributes;
 import org.apache.catalina.Globals;
-import org.apache.catalina.Resources;
-import org.apache.catalina.core.ApplicationContext;
-import org.apache.catalina.resources.ResourceBean;
-import org.apache.catalina.resources.DirectoryBean;
 import org.apache.catalina.util.MD5Encoder;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.util.xml.SaxContext;
-import org.apache.catalina.util.xml.XmlAction;
-import org.apache.catalina.util.xml.XmlMapper;
 
 
 /**
@@ -201,6 +207,12 @@ public class DefaultServlet
 
 
     /**
+     * JNDI resources name.
+     */
+    protected static final String RESOURCES_JNDI_NAME = "java:/comp/Resources";
+
+
+    /**
      * The string manager for this package.
      */
     protected static StringManager sm =
@@ -292,6 +304,38 @@ public class DefaultServlet
 
 
     // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Get resources. This method will try to retrieve the resources through
+     * JNDI first, then in the servlet context if JNDI has failed (it could be
+     * disabled). It will return null.
+     * 
+     * @return A JNDI DirContext, or null.
+     */
+    protected DirContext getResources() {
+
+        // First : try JNDI
+        try {
+            return 
+                (DirContext) new InitialContext().lookup(RESOURCES_JNDI_NAME);
+        } catch (NamingException e) {
+            // Failed
+        } catch (ClassCastException e) {
+            // Failed : Not the right type
+        }
+
+        // If it has failed, try the servlet context
+        try {
+            return (DirContext) getServletContext()
+                .getAttribute(Globals.RESOURCES_ATTR);
+        } catch (ClassCastException e) {
+            // Failed : Not the right type
+        }
+
+        return null;
+
+    }
 
 
     /**
@@ -408,7 +452,7 @@ public class DefaultServlet
         if ((result == null) || (result.equals(""))) {
             result = "/";
         }
-        return result;
+        return normalize(result);
         
     }
 
@@ -494,13 +538,29 @@ public class DefaultServlet
             resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
         }
         
-        // Retrieve the Catalina context
-        ApplicationContext context = (ApplicationContext) getServletContext();
-        Resources resources = context.getResources();
+        // Retrieve the resources
+        DirContext resources = getResources();
         
-        boolean exists = resources.exists(path);
+        if (resources == null) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
         
-        boolean result = resources.setResource(path, req.getInputStream());
+        boolean exists = true;
+        try {
+            resources.lookup(path);
+        } catch (NamingException e) {
+            exists = false;
+        }
+        
+        boolean result = true;
+        try {
+            Resource newResource = new Resource(req.getInputStream());
+            // FIXME: Add attributes
+            resources.bind(path, newResource);
+        } catch(NamingException e) {
+            result = false;
+        }
         
         if (result) {
             if (exists) {
@@ -535,13 +595,28 @@ public class DefaultServlet
         String path = getRelativePath(req);
         
         // Retrieve the Catalina context
-        ApplicationContext context = (ApplicationContext) getServletContext();
-        Resources resources = context.getResources();
+        // Retrieve the resources
+        DirContext resources = getResources();
         
-        boolean exists = resources.exists(path);
+        if (resources == null) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+        
+        boolean exists = true;
+        try {
+            resources.lookup(path);
+        } catch (NamingException e) {
+            exists = false;
+        }
         
         if (exists) {
-            boolean result = resources.deleteResource(path);
+            boolean result = true;
+            try {
+                resources.unbind(path);
+            } catch (NamingException e) {
+                result = false;
+            }
             if (result) {
                 resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
             } else {
@@ -744,6 +819,9 @@ public class DefaultServlet
      */
     protected String normalize(String path) {
 
+        if (path == null)
+            return null;
+
 	String normalized = path;
 
 	// Resolve encoded characters in the normalized path,
@@ -818,6 +896,29 @@ public class DefaultServlet
     }
 
 
+    /**
+     * URL rewriter.
+     * 
+     * @param path Path which has to be rewiten
+     */
+    protected String rewriteUrl(String path) {
+        
+        String normalized = path;
+        
+	// Replace " " with "%20"
+        while (true) {
+	    int index = normalized.indexOf(" ");
+	    if (index < 0)
+		break;
+	    normalized = normalized.substring(0, index) + "%20"
+		+ normalized.substring(index + 1);
+	}
+        
+        return normalized;
+        
+    }
+    
+    
     // -------------------------------------------------------- Private Methods
 
 
@@ -837,8 +938,7 @@ public class DefaultServlet
         IOException exception = null;
             
         // FIXME : i18n ?
-        InputStream resourceInputStream = 
-            resourceInfo.resources.getResourceAsStream(resourceInfo.path);
+        InputStream resourceInputStream = resourceInfo.getStream();
         InputStream istream = new BufferedInputStream
             (resourceInputStream, input);
         
@@ -874,8 +974,7 @@ public class DefaultServlet
 
         IOException exception = null;
             
-        InputStream resourceInputStream = 
-            resourceInfo.resources.getResourceAsStream(resourceInfo.path);
+        InputStream resourceInputStream = resourceInfo.getStream();
         // FIXME : i18n ?
         Reader reader = new InputStreamReader(resourceInputStream);
         
@@ -912,8 +1011,7 @@ public class DefaultServlet
         
         IOException exception = null;
         
-        InputStream resourceInputStream = 
-            resourceInfo.resources.getResourceAsStream(resourceInfo.path);
+        InputStream resourceInputStream = resourceInfo.getStream();
         InputStream istream =
             new BufferedInputStream(resourceInputStream, input);
         exception = copyRange(istream, ostream, range.start, range.end);
@@ -948,8 +1046,7 @@ public class DefaultServlet
         
         IOException exception = null;
         
-        InputStream resourceInputStream = 
-            resourceInfo.resources.getResourceAsStream(resourceInfo.path);
+        InputStream resourceInputStream = resourceInfo.getStream();
         Reader reader = new InputStreamReader(resourceInputStream);
         exception = copyRange(reader, writer, range.start, range.end);
         
@@ -986,8 +1083,7 @@ public class DefaultServlet
         
         while ( (exception == null) && (ranges.hasMoreElements()) ) {
             
-            InputStream resourceInputStream = 
-                resourceInfo.resources.getResourceAsStream(resourceInfo.path);
+            InputStream resourceInputStream = resourceInfo.getStream();
             InputStream istream =	// FIXME: internationalization???????
                 new BufferedInputStream(resourceInputStream, input);
         
@@ -1042,8 +1138,7 @@ public class DefaultServlet
         
         while ( (exception == null) && (ranges.hasMoreElements()) ) {
             
-            InputStream resourceInputStream = 
-                resourceInfo.resources.getResourceAsStream(resourceInfo.path);
+            InputStream resourceInputStream = resourceInfo.getStream();
             Reader reader = new InputStreamReader(resourceInputStream);
         
             Range currentRange = (Range) ranges.nextElement();
@@ -1262,7 +1357,7 @@ public class DefaultServlet
      * @param pathname Pathname of the file to be served
      */
     private ResourceInfo checkWelcomeFiles(String pathname, 
-                                           Resources resources) {
+                                           DirContext resources) {
         
         String collectionName = pathname;
         if (!pathname.endsWith("/")) {
@@ -1323,17 +1418,15 @@ public class DefaultServlet
 
 	// Exclude any resource in the /WEB-INF and /META-INF subdirectories
 	// (the "toUpperCase()" avoids problems on Windows systems)
-        String normalizedPath = normalize(path);
-	if ((normalizedPath == null) ||
-            normalizedPath.toUpperCase().startsWith("/WEB-INF") ||
-	    normalizedPath.toUpperCase().startsWith("/META-INF")) {
+	if ((path == null) ||
+            path.toUpperCase().startsWith("/WEB-INF") ||
+	    path.toUpperCase().startsWith("/META-INF")) {
 	    response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
 	    return;
 	}
 
         // Retrieve the Catalina context and Resources implementation
-        ApplicationContext context = (ApplicationContext) getServletContext();
-        Resources resources = context.getResources();
+        DirContext resources = getResources();
         ResourceInfo resourceInfo = new ResourceInfo(path, resources);
 
         if (!resourceInfo.exists) {
@@ -1366,18 +1459,12 @@ public class DefaultServlet
                 if ((contextPath != null) && (!contextPath.equals("/"))) {
                     redirectPath = contextPath + redirectPath;
                 }
-                response.sendRedirect(redirectPath);
+                response.sendRedirect(rewriteUrl(redirectPath));
                 return;
             }
             
         }
         
-	if (!resourceInfo.exists()) {
-	    response.sendError(HttpServletResponse.SC_NOT_FOUND, 
-                               resourceInfo.path);
-	    return;
-	}
-
         // Checking If headers
         if ( !checkIfHeaders(request, response, resourceInfo) ) {
             return;
@@ -1402,17 +1489,19 @@ public class DefaultServlet
         // Parse range specifier
         Vector ranges = null;
         if (!resourceInfo.collection) {
+            
             ranges = parseRange(request, response, resourceInfo);
-        
-            // Last-Modified header
-            if (debug > 0)
-                log("DefaultServlet.serveFile:  lastModified='" +
-                    (new Timestamp(resourceInfo.date)).toString() + "'");
-            response.setDateHeader("Last-Modified", resourceInfo.date);
             
             // ETag header
             response.setHeader("ETag", getETag(resourceInfo, true));
+            
         }
+        
+        // Last-Modified header
+        if (debug > 0)
+            log("DefaultServlet.serveFile:  lastModified='" +
+                (new Timestamp(resourceInfo.date)).toString() + "'");
+        response.setDateHeader("Last-Modified", resourceInfo.date);
         
         ServletOutputStream ostream = null;
         PrintWriter writer = null;
@@ -1436,8 +1525,9 @@ public class DefaultServlet
 
         }
         
-        if ( ((ranges == null) || (ranges.isEmpty())) 
-             && (request.getHeader("Range") == null) ) {
+        if ( (resourceInfo.collection) || 
+             ( ((ranges == null) || (ranges.isEmpty())) 
+               && (request.getHeader("Range") == null) ) ) {
             
             // Set the appropriate output headers
             if (contentType != null) {
@@ -1452,6 +1542,16 @@ public class DefaultServlet
                     log("DefaultServlet.serveFile:  contentLength=" +
                         contentLength);
                 response.setContentLength((int) contentLength);
+            }
+            
+            if (resourceInfo.collection) {
+                
+                if (content) {
+                    // Serve the directory browser
+                    resourceInfo.setStream
+                        (render(request.getContextPath(), resourceInfo));
+                }
+                
             }
             
             // Copy the input stream to our output stream (if requested)
@@ -1667,6 +1767,184 @@ public class DefaultServlet
     }
 
 
+    /**
+     * Return an InputStream to an HTML representation of the contents
+     * of this directory.
+     *
+     * @param contextPath Context path to which our internal paths are
+     *  relative
+     */
+    private InputStream render(String contextPath, ResourceInfo resourceInfo) {
+
+        String name = resourceInfo.path;
+
+	// Number of characters to trim from the beginnings of filenames
+	int trim = name.length();
+	if (!name.endsWith("/"))
+	    trim += 1;
+	if (name.equals("/"))
+	    trim = 1;
+
+	// Prepare a writer to a buffered area
+	ByteArrayOutputStream stream = new ByteArrayOutputStream();
+	PrintWriter writer = new PrintWriter(stream);
+
+	// FIXME - Currently pays no attention to the user's Locale
+
+	// Render the page header
+	writer.print("<html>\r\n");
+	writer.print("<head>\r\n");
+	writer.print("<title>");
+	writer.print(sm.getString("directory.title", name));
+	writer.print("</title>\r\n</head>\r\n");
+	writer.print("<body bgcolor=\"white\">\r\n");
+	writer.print("<table width=\"90%\" cellspacing=\"0\"" +
+		     " cellpadding=\"5\" align=\"center\">\r\n");
+
+	// Render the in-page title
+	writer.print("<tr><td colspan=\"3\"><font size=\"+2\">\r\n<strong>");
+	writer.print(sm.getString("directory.title", name));
+	writer.print("</strong>\r\n</font></td></tr>\r\n");
+
+	// Render the link to our parent (if required)
+        String parentDirectory = name;
+        if (parentDirectory.endsWith("/")) {
+            parentDirectory = 
+                parentDirectory.substring(0, parentDirectory.length() - 1);
+        }
+	int slash = parentDirectory.lastIndexOf("/");
+	if (slash >= 0) {
+	    String parent = name.substring(0, slash);
+	    writer.print("<tr><td colspan=\"3\" bgcolor=\"#ffffff\">\r\n");
+	    writer.print("<a href=\"");
+	    writer.print(rewriteUrl(contextPath));
+            if (parent.equals(""))
+                parent = "/";
+            //if (contextPath.endsWith("/"))
+            //parent = parent.substring(1);
+	    writer.print(rewriteUrl(parent));
+            writer.print("\">");
+	    writer.print(sm.getString("directory.parent", parent));
+	    writer.print("</a>\r\n");
+	    writer.print("</td></tr>\r\n");
+	}
+
+	// Render the column headings
+	writer.print("<tr bgcolor=\"#cccccc\">\r\n");
+	writer.print("<td align=\"left\"><font size=\"+1\"><strong>");
+	writer.print(sm.getString("directory.filename"));
+	writer.print("</strong></font></td>\r\n");
+	writer.print("<td align=\"center\"><font size=\"+1\"><strong>");
+	writer.print(sm.getString("directory.size"));
+	writer.print("</strong></font></td>\r\n");
+	writer.print("<td align=\"right\"><font size=\"+1\"><strong>");
+	writer.print(sm.getString("directory.lastModified"));
+	writer.print("</strong></font></td>\r\n");
+	writer.print("</tr>\r\n");
+
+        try {
+
+            // Render the directory entries within this directory
+            DirContext directory = resourceInfo.directory;
+            NamingEnumeration enum = 
+                resourceInfo.resources.list(resourceInfo.path);
+            boolean shade = false;
+            while (enum.hasMoreElements()) {
+
+                NameClassPair ncPair = (NameClassPair) enum.nextElement();
+                String resourceName = ncPair.getName();
+                ResourceInfo childResourceInfo = 
+                    new ResourceInfo(resourceName, directory);
+
+                String trimmed = resourceName/*.substring(trim)*/;
+                if (trimmed.equalsIgnoreCase("WEB-INF") ||
+                    trimmed.equalsIgnoreCase("META-INF"))
+                    continue;
+
+                writer.print("<tr");
+                if (shade)
+                    writer.print(" bgcolor=\"eeeeee\"");
+                writer.print(">\r\n");
+                shade = !shade;
+
+                writer.print("<td align=\"left\">&nbsp;&nbsp;\r\n");
+                writer.print("<a href=\"");
+                writer.print(rewriteUrl(contextPath));
+                resourceName = rewriteUrl(name + resourceName);
+                writer.print(resourceName);
+                writer.print("\"><tt>");
+                writer.print(trimmed);
+
+                if (childResourceInfo.collection)
+                    writer.print("/");
+                writer.print("</tt></a></td>\r\n");
+
+                writer.print("<td align=\"right\"><tt>");
+                if (childResourceInfo.collection)
+                    writer.print("&nbsp;");
+                else
+                    writer.print(renderSize(childResourceInfo.length));
+                writer.print("</tt></td>\r\n");
+
+                writer.print("<td align=\"right\"><tt>");
+                writer.print(renderLastModified(childResourceInfo.date));
+                writer.print("</tt></td>\r\n");
+
+                writer.print("</tr>\r\n");
+            }
+
+        } catch (NamingException e) {
+            // Something went wrong
+            e.printStackTrace();
+        }
+
+	// Render the page footer
+	writer.print("<tr><td colspan=\"3\">&nbsp;</td></tr>\r\n");
+	writer.print("<tr><td colspan=\"3\" bgcolor=\"#cccccc\">");
+	writer.print("<font size=\"-1\">");
+	writer.print(Globals.SERVER_INFO);
+	writer.print("</font></td></tr>\r\n");
+	writer.print("</table>\r\n");
+	writer.print("</body>\r\n");
+	writer.print("</html>\r\n");
+
+	// Return an input stream to the underlying bytes
+	writer.flush();
+	return (new ByteArrayInputStream(stream.toByteArray()));
+
+    }
+
+
+    /**
+     * Render the last modified date and time for the specified timestamp.
+     *
+     * @param lastModified Last modified date and time, in milliseconds since
+     *  the epoch
+     */
+    private String renderLastModified(long lastModified) {
+
+	return (formats[0].format(new Date(lastModified)));
+
+    }
+
+
+    /**
+     * Render the specified file size (in bytes).
+     *
+     * @param size File size (in bytes)
+     */
+    private String renderSize(long size) {
+
+	long leftSide = size / 1024;
+	long rightSide = (size % 1024) / 103;	// Makes 1 digit
+	if ((leftSide == 0) && (rightSide == 0) && (size > 0))
+	    rightSide = 1;
+
+	return ("" + leftSide + "." + rightSide + " kb");
+
+    }
+
+
     // ------------------------------------------------------ Range Inner Class
 
 
@@ -1684,6 +1962,12 @@ public class DefaultServlet
                      && (start <= end) && (end < length) );
         }
         
+        public void recycle() {
+            start = 0;
+            end = 0;
+            length = 0;
+        }
+        
     }
 
 
@@ -1698,22 +1982,15 @@ public class DefaultServlet
          * 
          * @param pathname Path name of the file
          */
-        public ResourceInfo(String path, Resources resources) {
-            
-            this.path = path;
-            this.resources = resources;
-            this.exists = resources.exists(path);
-            if (exists) {
-                this.creationDate = resources.getResourceCreated(path);
-                this.date = resources.getResourceModified(path);
-                this.httpDate = formats[0].format(new Date(date));
-                this.length = resources.getResourceLength(path);
-                this.collection = resources.isCollection(path);
-            }
-
+        public ResourceInfo(String path, DirContext resources) {
+            set(path, resources);
         }
 
 
+        public Object object;
+        public DirContext directory;
+        public Resource file;
+        public Attributes attributes;
         public String path;
         public long creationDate;
         public String httpDate;
@@ -1721,7 +1998,75 @@ public class DefaultServlet
         public long length;
         public boolean collection;
         public boolean exists;
-        public Resources resources;
+        public DirContext resources;
+        protected InputStream is;
+
+
+        public void recycle() {
+            object = null;
+            directory = null;
+            file = null;
+            attributes = null;
+            path = null;
+            creationDate = 0;
+            httpDate = null;
+            date = 0;
+            length = -1;
+            collection = true;
+            exists = false;
+            resources = null;
+            is = null;
+        }
+
+
+        public void set(String path, DirContext resources) {
+            
+            recycle();
+            
+            this.path = path;
+            this.resources = resources;
+            exists = true;
+            try {
+                object = resources.lookup(path);
+                if (object instanceof Resource) {
+                    file = (Resource) object;
+                    collection = false;
+                } else if (object instanceof DirContext) {
+                    directory = (DirContext) object;
+                    collection = true;
+                } else {
+                    // Don't know how to serve another object type
+                    exists = false;
+                }
+            } catch (NamingException e) {
+                exists = false;
+            }
+            if (exists) {
+                try {
+                    attributes = resources.getAttributes(path);
+                    if (attributes instanceof ResourceAttributes) {
+                        ResourceAttributes tempAttrs =
+                            (ResourceAttributes) attributes;
+                        Date tempDate = tempAttrs.getCreationDate();
+                        if (tempDate != null)
+                            creationDate = tempDate.getTime();
+                        tempDate = tempAttrs.getLastModified();
+                        if (tempDate != null) {
+                            date = tempDate.getTime();
+                            httpDate = formats[0].format(tempDate);
+                        } else {
+                            httpDate = formats[0].format(new Date());
+                        }
+                        length = tempAttrs.getContentLength();
+                    }
+                } catch (NamingException e) {
+                    // Shouldn't happen, the implementation of the DirContext
+                    // is probably broken
+                    exists = false;
+                }
+            }
+            
+        }
 
 
         /**
@@ -1737,6 +2082,28 @@ public class DefaultServlet
          */
         public String toString() {
             return path;
+        }
+
+
+        /**
+         * Set IS.
+         */
+        public void setStream(InputStream is) {
+            this.is = is;
+        }
+
+
+        /**
+         * Get IS from resource.
+         */
+        public InputStream getStream()
+            throws IOException {
+            if (is != null)
+                return is;
+            if (file != null)
+                return (file.streamContent());
+            else
+                return null;
         }
 
 

@@ -88,6 +88,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
@@ -95,25 +100,23 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.catalina.Resources;
-import org.apache.catalina.core.ApplicationContext;
-import org.apache.catalina.resources.ResourceBean;
-import org.apache.catalina.resources.DirectoryBean;
+import javax.naming.NamingException;
+import javax.naming.InitialContext;
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.NameClassPair;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import org.apache.naming.resources.Resource;
+import org.apache.naming.resources.ResourceAttributes;
 import org.apache.catalina.util.MD5Encoder;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.XMLWriter;
 import org.apache.catalina.util.DOMWriter;
-import org.apache.catalina.util.xml.SaxContext;
-import org.apache.catalina.util.xml.XmlAction;
-import org.apache.catalina.util.xml.XmlMapper;
 
 
 /**
@@ -351,12 +354,23 @@ public class WebdavServlet
 	resp.addHeader("DAV", "1,2");
         String methodsAllowed = null;
         
-        // Retrieve the Catalina context
-        ApplicationContext context = (ApplicationContext) getServletContext();
+        // Retrieve the resources
+        DirContext resources = getResources();
         
-        Resources resources = context.getResources();
+        if (resources == null) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
         
-	if (!resources.exists(path)) {
+        boolean exists = true;
+        Object object = null;
+        try {
+            object = resources.lookup(path);
+        } catch (NamingException e) {
+            exists = false;
+        }
+
+	if (!exists) {
 	    methodsAllowed = "OPTIONS, MKCOL, PUT, LOCK";
             resp.addHeader("Allow", methodsAllowed);
             return;
@@ -364,7 +378,7 @@ public class WebdavServlet
         
         methodsAllowed = "OPTIONS, GET, HEAD, POST, DELETE, TRACE, " 
             + "PROPFIND, PROPPATCH, COPY, MOVE, LOCK, UNLOCK";
-        if (!resources.isCollection(path)) {
+        if (!(object instanceof DirContext)) {
             methodsAllowed += ", PUT";
         }
         
@@ -469,12 +483,23 @@ public class WebdavServlet
             
         }
         
-        // Retrieve the Catalina context
-        ApplicationContext context = (ApplicationContext) getServletContext();
-
-        Resources resources = context.getResources();
+        // Retrieve the resources
+        DirContext resources = getResources();
         
-	if (!resources.exists(path)) {
+        if (resources == null) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+        
+        boolean exists = true;
+        Object object = null;
+        try {
+            object = resources.lookup(path);
+        } catch (NamingException e) {
+            exists = false;
+        }
+        
+	if (!exists) {
 	    resp.sendError(HttpServletResponse.SC_NOT_FOUND, path);
 	    return;
 	}
@@ -488,7 +513,7 @@ public class WebdavServlet
         generatedXML.writeElement(null, "multistatus" 
                                   + generateNamespaceDeclarations(), 
                                   XMLWriter.OPENING);
-        
+
         if (depth == 0) {
             parseProperties(req, resources, generatedXML, path, type, 
                             properties);
@@ -506,14 +531,29 @@ public class WebdavServlet
                 parseProperties(req, resources, generatedXML, currentPath, 
                                 type, properties);
                 
-                if (resources.isCollection(currentPath)) {
-                    String[] children = 
-                        resources.getCollectionMembers(currentPath);
-                    
-                    if (children != null) {
-                        for (int i=0; i<children.length; i++) {
-                            stackBelow.push(children[i]);
+                try {
+                    object = resources.lookup(currentPath);
+                } catch (NamingException e) {
+                    continue;
+                }
+                if (object instanceof DirContext) {
+                    try {
+                        NamingEnumeration enum = resources.list(currentPath);
+                        while (enum.hasMoreElements()) {
+                            NameClassPair ncPair = 
+                                (NameClassPair) enum.nextElement();
+                            String newPath = currentPath;
+                            if (!newPath.equals("/"))
+                                newPath += "/";
+                            newPath += ncPair.getName();
+                            stackBelow.push(newPath);
                         }
+                    } catch (NamingException e) {
+                        e.printStackTrace();
+                        resp.sendError
+                            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                             path);
+                        return;
                     }
                     
                     if (depth > 0) {
@@ -543,7 +583,7 @@ public class WebdavServlet
                 
             }
         }
-        
+
         generatedXML.writeElement(null, "multistatus", 
                                   XMLWriter.CLOSING);
         
@@ -594,19 +634,35 @@ public class WebdavServlet
         
         String path = getRelativePath(req);
         
-        // Retrieve the Catalina context
-        ApplicationContext context = (ApplicationContext) getServletContext();
-
-        Resources resources = context.getResources();
+        // Retrieve the resources
+        DirContext resources = getResources();
         
+        if (resources == null) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+        
+        boolean exists = true;
+        Object object = null;
+        try {
+            object = resources.lookup(path);
+        } catch (NamingException e) {
+            exists = false;
+        }
+
 	// Can't create a collection if a resource already exists at the given
         // path
-	if (resources.exists(path)) {
+	if (exists) {
 	    resp.sendError(WebdavStatus.SC_METHOD_NOT_ALLOWED);
 	    return;
 	}
 
-        boolean result = resources.createCollection(path);
+        boolean result = true;
+        try {
+            resources.createSubcontext(path);
+        } catch (NamingException e) {
+            result = false;
+        }
         
         if (!result) {
             resp.sendError(WebdavStatus.SC_CONFLICT,
@@ -914,10 +970,21 @@ public class WebdavServlet
         
         lock.path = path;
         
-        // Retrieve the Catalina context
-        ApplicationContext context = (ApplicationContext) getServletContext();
+        // Retrieve the resources
+        DirContext resources = getResources();
         
-        Resources resources = context.getResources();
+        if (resources == null) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+        
+        boolean exists = true;
+        Object object = null;
+        try {
+            object = resources.lookup(path);
+        } catch (NamingException e) {
+            exists = false;
+        }
         
         Enumeration locksList = null;
         
@@ -932,7 +999,7 @@ public class WebdavServlet
             String lockToken = 
                 md5Encoder.encode(md5Helper.digest(lockTokenStr.getBytes()));
             
-            if ( (resources.exists(path)) && (resources.isCollection(path)) && 
+            if ( (exists) && (object instanceof DirContext) && 
                  (lock.depth == INFINITY) ) {
                 
                 // Locking a collection (and all its member resources)
@@ -1058,7 +1125,7 @@ public class WebdavServlet
                 LockInfo presentLock = (LockInfo) resourceLocks.get(lock.path);
                 if (presentLock != null) {
                     
-                    if ( (presentLock.isExclusive()) || (lock.isExclusive()) ) {
+                    if ((presentLock.isExclusive()) || (lock.isExclusive())) {
                         // If either lock is exclusive, the lock can't be 
                         // granted
                         resp.sendError(WebdavStatus.SC_PRECONDITION_FAILED);
@@ -1074,7 +1141,13 @@ public class WebdavServlet
                     resourceLocks.put(lock.path, lock);
                     
                     // Checking if a resource exists at this path
-                    if (!resources.exists(lock.path)) {
+                    exists = true;
+                    try {
+                        object = resources.lookup(path);
+                    } catch (NamingException e) {
+                        exists = false;
+                    }
+                    if (!exists) {
                         
                         // "Creating" a lock-null resource
                         int slash = lock.path.lastIndexOf('/');
@@ -1417,15 +1490,25 @@ public class WebdavServlet
         
         // Overwriting the destination
         
-        // Retrieve the Catalina context
-        ApplicationContext context = (ApplicationContext) getServletContext();
+        // Retrieve the resources
+        DirContext resources = getResources();
         
-        Resources resources = context.getResources();
+        if (resources == null) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return false;
+        }
+        
+        boolean exists = true;
+        try {
+            resources.lookup(destinationPath);
+        } catch (NamingException e) {
+            exists = false;
+        }
         
         if (overwrite) {
             
             // Delete destination resource, if it exists
-            if (resources.exists(destinationPath)) {
+            if (exists) {
                 if (!deleteResource(destinationPath, req, resp)) {
                     return false;
                 } else {
@@ -1438,7 +1521,7 @@ public class WebdavServlet
         } else {
             
             // If the destination exists, then it's a conflict
-            if (resources.exists(destinationPath)) {
+            if (exists) {
                 resp.sendError(WebdavStatus.SC_PRECONDITION_FAILED);
                 return false;
             }
@@ -1477,28 +1560,60 @@ public class WebdavServlet
      * @param source Path of the resource to be copied
      * @param dest Destination path
      */
-    private boolean copyResource(Resources resources, Hashtable errorList,
+    private boolean copyResource(DirContext resources, Hashtable errorList,
                                  String source, String dest) {
+
+        if (debug > 1)
+            System.out.println("Copy: " + source + " To: " + dest);
         
-        if (resources.isCollection(source)) {
+        Object object = null;
+        try {
+            object = resources.lookup(source);
+        } catch (NamingException e) {
+        }
+        
+        if (object instanceof DirContext) {
             
-            if (!resources.createCollection(dest)) {
+            try {
+                resources.createSubcontext(dest);
+            } catch (NamingException e) {
                 errorList.put
-                    (dest, 
-                     new Integer(WebdavStatus.SC_CONFLICT));
+                    (dest, new Integer(WebdavStatus.SC_CONFLICT));
                 return false;
             }
-            String[] members = resources.getCollectionMembers(source);
-            for (int i=0; i<members.length; i++) {
-                String childDest = dest + 
-                    members[i].substring(source.length());
-                copyResource(resources, errorList, members[i], childDest);
+            
+            try {
+                NamingEnumeration enum = resources.list(source);
+                while (enum.hasMoreElements()) {
+                    NameClassPair ncPair = (NameClassPair) enum.nextElement();
+                    String childDest = dest;
+                    if (!childDest.equals("/"))
+                        childDest += "/";
+                    childDest += ncPair.getName();
+                    String childSrc = source;
+                    if (!childSrc.equals("/"))
+                        childSrc += "/";
+                    childSrc += ncPair.getName();
+                    copyResource(resources, errorList, childSrc, childDest);
+                }
+            } catch (NamingException e) {
+                errorList.put
+                    (dest, new Integer(WebdavStatus.SC_INTERNAL_SERVER_ERROR));
+                return false;
             }
             
         } else {
             
-            InputStream is = resources.getResourceAsStream(source);
-            if (!resources.setResource(dest, is)) {
+            if (object instanceof Resource) {
+                try {
+                    resources.bind(dest, object);
+                } catch (NamingException e) {
+                    errorList.put
+                        (source, 
+                         new Integer(WebdavStatus.SC_INTERNAL_SERVER_ERROR));
+                    return false;
+                }
+            } else {
                 errorList.put
                     (source, 
                      new Integer(WebdavStatus.SC_INTERNAL_SERVER_ERROR));
@@ -1554,20 +1669,33 @@ public class WebdavServlet
             return false;
         }
         
-        // Retrieve the Catalina context
-        ApplicationContext context = (ApplicationContext) getServletContext();
-
-        Resources resources = context.getResources();
+        // Retrieve the resources
+        DirContext resources = getResources();
         
-	if (!resources.exists(path)) {
+        if (resources == null) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return false;
+        }
+        
+        boolean exists = true;
+        Object object = null;
+        try {
+            object = resources.lookup(path);
+        } catch (NamingException e) {
+            exists = false;
+        }
+        
+	if (!exists) {
             resp.sendError(WebdavStatus.SC_NOT_FOUND);
 	    return false;
 	}
         
-        boolean collection = resources.isCollection(path);
+        boolean collection = (object instanceof DirContext);
         
         if (!collection) {
-            if (!resources.deleteResource(path)) {
+            try {
+                resources.unbind(path);
+            } catch (NamingException e) {
                 resp.sendError(WebdavStatus.SC_INTERNAL_SERVER_ERROR);
                 return false;
             }
@@ -1576,7 +1704,12 @@ public class WebdavServlet
             Hashtable errorList = new Hashtable();
             
             deleteCollection(req, resources, path, errorList);
-            resources.deleteResource(path);
+            try {
+                resources.unbind(path);
+            } catch (NamingException e) {
+                errorList.put(path, new Integer
+                    (WebdavStatus.SC_INTERNAL_SERVER_ERROR));
+            }
             
             if (!errorList.isEmpty()) {
                 
@@ -1600,7 +1733,8 @@ public class WebdavServlet
      * @param path Path to the collection to be deleted
      * @param errorList Contains the list of the errors which occured
      */
-    private void deleteCollection(HttpServletRequest req, Resources resources, 
+    private void deleteCollection(HttpServletRequest req, 
+                                  DirContext resources, 
                                   String path, Hashtable errorList) {
         
         String ifHeader = req.getHeader("If");
@@ -1611,31 +1745,50 @@ public class WebdavServlet
         if (lockTokenHeader == null)
             lockTokenHeader = "";
         
-        String[] members = resources.getCollectionMembers(path);
+        Enumeration enum = null;
+        try {
+            enum = resources.list(path);
+        } catch (NamingException e) {
+            errorList.put(path, new Integer
+                (WebdavStatus.SC_INTERNAL_SERVER_ERROR));
+            return;
+        }
         
-        for (int i=0; i<members.length; i++) {
+        while (enum.hasMoreElements()) {
+            NameClassPair ncPair = (NameClassPair) enum.nextElement();
+            String childName = path;
+            if (!childName.equals("/"))
+                childName += "/";
+            childName += ncPair.getName();
             
-            if (isLocked(members[i], ifHeader + lockTokenHeader)) {
+            if (isLocked(childName, ifHeader + lockTokenHeader)) {
                 
-                errorList.put(members[i], new Integer(WebdavStatus.SC_LOCKED));
+                errorList.put(childName, new Integer(WebdavStatus.SC_LOCKED));
                 
             } else {
                 
-                if (resources.isCollection(members[i])) {
-                    deleteCollection(req, resources, members[i], errorList);
-                }
-                
-                boolean result = resources.deleteResource(members[i]);
-                if (!result) {
-                    if (!resources.isCollection(members[i])) {
-                        // If it's not a collection, then it's an unknown
-                        // error
-                        errorList.put
-                            (members[i], new Integer
-                                (WebdavStatus.SC_INTERNAL_SERVER_ERROR));
+                try {
+                    Object object = resources.lookup(childName);
+                    if (object instanceof DirContext) {
+                        deleteCollection(req, resources, childName, errorList);
                     }
+                    
+                    try {
+                        resources.unbind(childName);
+                    } catch (NamingException e) {
+                        if (!(object instanceof DirContext)) {
+                            // If it's not a collection, then it's an unknown
+                            // error
+                            errorList.put
+                                (childName, new Integer
+                                    (WebdavStatus.SC_INTERNAL_SERVER_ERROR));
+                        }
+                    }
+                } catch (NamingException e) {
+                    errorList.put
+                        (childName, new Integer
+                            (WebdavStatus.SC_INTERNAL_SERVER_ERROR));
                 }
-                
             }
             
         }
@@ -1711,7 +1864,7 @@ public class WebdavServlet
      * name, then this Vector contains those properties
      */
     private void parseProperties(HttpServletRequest req,
-                                 Resources resources, XMLWriter generatedXML,
+                                 DirContext resources, XMLWriter generatedXML,
                                  String path, int type, 
                                  Vector propertiesVector) {
         
@@ -1731,15 +1884,15 @@ public class WebdavServlet
         // Generating href element
         generatedXML.writeElement(null, "href", XMLWriter.OPENING);
         
-        String absoluteUri = req.getRequestURI();
-        String relativePath = normalize(getRelativePath(req));
-        String toAppend = path.substring(relativePath.length());
-        if ((!toAppend.startsWith("/")) && (!absoluteUri.endsWith("/")))
-            toAppend = "/" + toAppend;
-        if (toAppend.equals("/"))
-            toAppend = "";
+        String href = req.getContextPath();
+        if ((href.endsWith("/")) && (path.startsWith("/")))
+            href += path.substring(1);
+        else
+            href += path;
+        if ((resourceInfo.collection) && (!href.endsWith("/")))
+            href += "/";
         
-        generatedXML.writeText(absoluteUri + toAppend);
+        generatedXML.writeText(rewriteUrl(href));
         
         generatedXML.writeElement(null, "href", XMLWriter.CLOSING);
         
@@ -2004,9 +2157,9 @@ public class WebdavServlet
         if (!toAppend.startsWith("/"))
             toAppend = "/" + toAppend;
         
-        generatedXML.writeText(absoluteUri + toAppend);
+        generatedXML.writeText(rewriteUrl(absoluteUri + toAppend));
         
-        generatedXML.writeElement("d", "href", XMLWriter.CLOSING);
+        generatedXML.writeElement(null, "href", XMLWriter.CLOSING);
         
         switch (type) {
             
