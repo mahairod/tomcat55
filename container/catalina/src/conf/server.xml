@@ -294,7 +294,8 @@
         <Cluster className="org.apache.catalina.cluster.tcp.SimpleTcpCluster"
                  managerClassName="org.apache.catalina.cluster.session.DeltaManager"
                  expireSessionsOnShutdown="false"
-                 useDirtyFlag="true">
+                 useDirtyFlag="true"
+                 notifyListenersOnReplication="true">
 
             <Membership 
                 className="org.apache.catalina.cluster.mcast.McastService"
