@@ -244,7 +244,7 @@ elif [ "$1" = "start" ] ; then
 elif [ "$1" = "stop" ] ; then
 
   shift
-  exec "$_RUNJAVA" $JAVA_OPTS $CATALINA_OPTS \
+  "$_RUNJAVA" $JAVA_OPTS $CATALINA_OPTS \
     -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
     -Dcatalina.base="$CATALINA_BASE" \
     -Dcatalina.home="$CATALINA_HOME" \
