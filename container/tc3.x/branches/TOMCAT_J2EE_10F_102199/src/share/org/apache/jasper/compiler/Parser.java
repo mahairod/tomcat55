@@ -400,29 +400,6 @@ public class Parser {
     }
 
     /*
-     * HTML comments
-     */
-    static final class HtmlComment implements CoreElement {
-        
-        private static final String OPEN_COMMENT = "<!--";
-        private static final String CLOSE_COMMENT = "-->";
-        
-        public boolean accept(ParseEventListener listener, JspReader reader, Parser parser)
-            throws JasperException 
-        {
-            if (reader.matches(OPEN_COMMENT)) {
-                parser.parse(CLOSE_COMMENT, new Class[] { Expression.class });
-                return true;
-            } 
-            return false;
-        }
-    }
-    
-    static {
-        coreElements.addElement(new HtmlComment());
-    }
-            
-    /*
      * Scripting elements
      */
     
