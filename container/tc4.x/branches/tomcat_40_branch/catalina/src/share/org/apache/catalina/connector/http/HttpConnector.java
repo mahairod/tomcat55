@@ -66,6 +66,7 @@ package org.apache.catalina.connector.http;
 
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -943,14 +944,23 @@ public final class HttpConnector
         // If no address is specified, open a connection on all addresses
         if (address == null) {
             log(sm.getString("httpConnector.allAddresses"));
-            return (factory.createSocket(port, acceptCount));
+            try {
+                return (factory.createSocket(port, acceptCount));
+            } catch (BindException be) {
+                throw new BindException(be.getMessage() + ":" + port);
+            }
         }
 
         // Open a server socket on the specified address
         try {
             InetAddress is = InetAddress.getByName(address);
             log(sm.getString("httpConnector.anAddress", address));
-            return (factory.createSocket(port, acceptCount, is));
+            try {
+                return (factory.createSocket(port, acceptCount, is));
+            } catch (BindException be) {
+                throw new BindException(be.getMessage() + ":" + address
+                                        + ":" + port);
+            }
         } catch (Exception e) {
             log(sm.getString("httpConnector.noAddress", address));
             return (factory.createSocket(port, acceptCount));
