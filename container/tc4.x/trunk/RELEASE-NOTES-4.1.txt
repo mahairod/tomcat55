@@ -700,6 +700,10 @@ Coyote Bug Fixes:
          Reduce synchronization by using an array of threads instead of 
          a Vector.
 
+[4.1.17] #15239
+         NamingResourcesMBean:
+         Fix resource link creation.
+
 
 ----------------
 Jasper Bug Fixes:
