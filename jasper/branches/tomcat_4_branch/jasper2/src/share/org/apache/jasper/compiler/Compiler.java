@@ -80,6 +80,7 @@ import org.apache.jasper.Options;
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.util.SystemLogHandler;
 import org.apache.jasper.runtime.HttpJspBase;
+import org.apache.jasper.runtime.JspRuntimeLibrary;
 import org.apache.jasper.servlet.JspServletWrapper;
 
 /**
@@ -280,7 +281,8 @@ public class Compiler {
         path.setPath(System.getProperty("java.class.path"));
         StringTokenizer tokenizer = new StringTokenizer(classpath, sep);
         while (tokenizer.hasMoreElements()) {
-            String pathElement = tokenizer.nextToken();
+            String pathElement =
+                JspRuntimeLibrary.decode(tokenizer.nextToken());
             File repository = new File(pathElement);
             path.setLocation(repository);
             info.append("     cp=" + repository + "\n");
