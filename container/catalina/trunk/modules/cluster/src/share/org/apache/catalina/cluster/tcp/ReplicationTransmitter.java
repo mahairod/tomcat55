@@ -123,7 +123,7 @@ public class ReplicationTransmitter
         }//while
     }//stop
 
-    public synchronized IDataSender[] getSenders()
+    public IDataSender[] getSenders()
     {
         java.util.Iterator i = map.entrySet().iterator();
         java.util.Vector v = new java.util.Vector();
