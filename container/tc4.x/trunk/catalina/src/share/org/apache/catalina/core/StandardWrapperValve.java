@@ -227,6 +227,23 @@ final class StandardWrapperValve
             servlet = null;
         }
 
+        // Acknowlege the request
+        try {
+            response.sendAcknowledgement();
+        } catch (IOException e) {
+            sreq.removeAttribute(Globals.JSP_FILE_ATTR);
+            log(sm.getString("standardWrapper.acknowledgeException",
+                             wrapper.getName()), e);
+            throwable = e;
+            exception(request, response, e);
+        } catch (Throwable e) {
+            log(sm.getString("standardWrapper.acknowledgeException",
+                             wrapper.getName()), e);
+            throwable = e;
+            exception(request, response, e);
+            servlet = null;
+        }
+
         // Create the filter chain for this request
         ApplicationFilterChain filterChain =
             createFilterChain(request, servlet);

@@ -281,4 +281,13 @@ public interface Response {
     public void resetBuffer();
 
 
+    /**
+     * Send an acknowledgment of a request.
+     * 
+     * @exception IOException if an input/output error occurs
+     */
+    public void sendAcknowledgement()
+        throws IOException;
+
+
 }

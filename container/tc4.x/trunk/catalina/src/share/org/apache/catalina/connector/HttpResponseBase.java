@@ -1053,6 +1053,16 @@ public class HttpResponseBase
 
 
     /**
+     * Send an acknowledgment of a request.
+     * 
+     * @exception IOException if an input/output error occurs
+     */
+    public void sendAcknowledgement()
+        throws IOException {
+    }
+
+
+    /**
      * Send an error response with the specified status and a
      * default message.
      *
