@@ -149,21 +149,24 @@ public class AddConnectorAction extends Action {
         connectorFm.setRedirectPortText("-1");
         connectorFm.setMinProcessorsText("5");
         connectorFm.setMaxProcessorsText("20");
+
+        //supported only by HTTPS
         connectorFm.setClientAuthentication("false");
         connectorFm.setKeyStoreFileName("");
         connectorFm.setKeyStorePassword("");
                        
-        // supported by both JK2 and Coyote
+        // supported only by Coyote connectors
         connectorFm.setProxyName("");
         connectorFm.setProxyPortText("0");        
         
         connectorFm.setDebugLvlVals(Lists.getDebugLevels());
         connectorFm.setBooleanVals(Lists.getBooleanValues());                
         
-        String schemeTypes[]= new String[2];
+        String schemeTypes[]= new String[3];
         schemeTypes[0] = "HTTP";
-        schemeTypes[1] = "HTTPS";
-                
+        schemeTypes[1] = "HTTPS";                
+        schemeTypes[2] = "HTTP(AJP)";
+        
         ArrayList types = new ArrayList();    
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,

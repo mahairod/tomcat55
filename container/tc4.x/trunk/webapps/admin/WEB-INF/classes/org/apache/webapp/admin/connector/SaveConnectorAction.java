@@ -203,10 +203,13 @@ public final class SaveConnectorAction extends Action {
                 values[1] = cform.getAddress();
                 values[2] = new Integer(cform.getPortText());
 
+                // FIX ME -- fix all create operations
                 if ("HTTP".equalsIgnoreCase(connectorType)) {
-                        operation = "createCoyoteConnector"; // HTTP
-                } else { 
-                        operation = "createJK2Connector";   // HTTPS
+                        operation = "createHttp11Connector"; // HTTP
+                } else if ("HTTPS".equalsIgnoreCase(connectorType)) { 
+                        operation = "createCoyoteConnector";   // HTTPS
+                } else {
+                        operation = "createAjp13Connector";   // HTTP (AJP)                  
                 }
                 
                 cObjectName = (String)
@@ -334,21 +337,24 @@ public final class SaveConnectorAction extends Action {
             mBServer.setAttribute(coname,
                                   new Attribute("maxProcessors", new Integer(maxProcessors))); 
       
-            // proxy name and port exist for both Coyote and JK2 Connectors.
-            attribute = "proxyName";              
-            mBServer.setAttribute(coname,
-                              new Attribute("proxyName", cform.getProxyName()));            
-            attribute = "proxyPort";
-            int proxyPort = 0;
-            try {
-                proxyPort = Integer.parseInt(cform.getProxyPortText());
-            } catch (Throwable t) {
-                proxyPort = 0;
-            }
-            mBServer.setAttribute(coname,
+            // proxy name and port exist only for Coyote Connectors.
+            // and not for AJP connector
+            if (!("HTTP(AJP)".equalsIgnoreCase(connectorType))) {
+                attribute = "proxyName";              
+                mBServer.setAttribute(coname,
+                                  new Attribute("proxyName", cform.getProxyName()));            
+                attribute = "proxyPort";
+                int proxyPort = 0;
+                try {
+                    proxyPort = Integer.parseInt(cform.getProxyPortText());
+                } catch (Throwable t) {
+                    proxyPort = 0;
+                }
+                mBServer.setAttribute(coname,
                               new Attribute("proxyPort", new Integer(proxyPort))); 
-   
-            // HTTPS (JK2 connector) specific properties
+            }
+            
+            // HTTPS specific properties
             if("HTTPS".equalsIgnoreCase(connectorType)) {
                 attribute = "clientAuth";              
                 mBServer.setAttribute(coname,

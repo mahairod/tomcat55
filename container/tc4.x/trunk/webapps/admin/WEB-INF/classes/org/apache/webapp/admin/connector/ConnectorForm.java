@@ -776,9 +776,9 @@ public final class ConnectorForm extends ActionForm {
                 }
             }   
             
-            // supported by both Coyote and JK2 connectors
-            numberCheck("proxyPortText",  proxyPortText, true, 0, 65535);
-                                    
+            // supported by only HTTP and HTTPS connectors
+            if (!("HTTP(AJP)".equalsIgnoreCase(connectorType)))
+                numberCheck("proxyPortText",  proxyPortText, true, 0, 65535);            
         }
         
         return errors;

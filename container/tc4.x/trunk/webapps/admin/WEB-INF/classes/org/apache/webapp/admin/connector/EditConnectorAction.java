@@ -173,6 +173,7 @@ public class EditConnectorAction extends Action {
         connectorFm.setDebugLvlVals(Lists.getDebugLevels());               
         connectorFm.setBooleanVals(Lists.getBooleanValues());        
         
+        String scheme = null;
         String attribute = null;
         try {
 
@@ -186,8 +187,8 @@ public class EditConnectorAction extends Action {
             connectorFm.setConnectorType(connectorType);            
             
             attribute = "scheme";
-            connectorFm.setScheme
-                ((String) mBServer.getAttribute(cname, attribute));
+            scheme = (String) mBServer.getAttribute(cname, attribute);
+            connectorFm.setScheme(scheme);
             attribute = "acceptCount";
             connectorFm.setAcceptCountText
                 (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
@@ -223,15 +224,18 @@ public class EditConnectorAction extends Action {
             connectorFm.setMaxProcessorsText
                 (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
             
-            // Supported by Coyote and JK2 Connectors both.            
-            attribute = "proxyName";
-            connectorFm.setProxyName
-                ((String) mBServer.getAttribute(cname, attribute));
-            attribute = "proxyPort";
-            connectorFm.setProxyPortText
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
-                
-            if ("HTTPS".equalsIgnoreCase(connectorType)) {
+            // Supported by Coyote HTTP and HTTPS only
+            // FIX ME-- change this to use JK2 connector instead of Ajp13
+            if (!("Ajp13Connector".equalsIgnoreCase(connectorType))) {
+                attribute = "proxyName";
+                connectorFm.setProxyName
+                    ((String) mBServer.getAttribute(cname, attribute));
+                attribute = "proxyPort";
+                connectorFm.setProxyPortText
+                    (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
+            }
+            
+            if ("https".equalsIgnoreCase(scheme)) {
                 // Initialize rest of variables. 
                 // These are set only for SSL connectors.
                 attribute = "clientAuth";
