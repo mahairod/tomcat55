@@ -324,6 +324,9 @@ public class SimpleTcpCluster
      * throwables will be caught and logged.
      */
     public void backgroundProcess() {
+        if(clusterDeployer != null)
+            clusterDeployer.backgroundProcess();
+
     }
 
     
