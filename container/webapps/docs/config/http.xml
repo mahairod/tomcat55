@@ -57,16 +57,17 @@
 
   <attributes>
 
-    <attribute name="address" required="false">
-      <p>For servers with more than one IP address, this attribute
-      specifies which address will be used for listening on the specified
-      port.  By default, this port will be used on all IP addresses
-      associated with the server.</p>
-    </attribute>
-
     <attribute name="allowTrace" required="false">
       <p>A boolean value which can be used to enable or disable the TRACE
       HTTP method. If not specified, this attribute is set to false.</p>
+    </attribute>
+
+    <attribute name="emptySessionPath" required="false">
+      <p>If set to <code>true</code>, all paths for session cookies will be set
+      to <code>/</code>. This can be useful for portlet specification implementations,
+      but will greatly affect performance if many applications are accessed on a given
+      server by the client.
+      If not specified, this attribute is set to <code>false</code>.</p>
     </attribute>
 
     <attribute name="enableLookups" required="false">
@@ -83,6 +84,27 @@
       the container FORM URL parameter parsing. The feature can be disbled by
       setting this attribute to a value inferior or equal to 0.
       If not specified, this attribute is set to 2097152 (2 megabytes).</p>
+    </attribute>
+
+    <attribute name="protocol" required="false">
+      <p>This attribute value must be <code>HTTP/1.1</code> to use the HTTP
+      handler, which is the default.</p>
+    </attribute>
+
+    <attribute name="proxyName" required="false">
+      <p>If this <strong>Connector</strong> is being used in a proxy
+      configuration, configure this attribute to specify the server name
+      to be returned for calls to <code>request.getServerName()</code>.
+      See <a href="#Proxy Support">Proxy Support</a> for more
+      information.</p>
+    </attribute>
+
+    <attribute name="proxyPort" required="false">
+      <p>If this <strong>Connector</strong> is being used in a proxy
+      configuration, configure this attribute to specify the server port
+      to be returned for calls to <code>request.getServerPort()</code>.
+      See <a href="#Proxy Support">Proxy Support</a> for more
+      information.</p>
     </attribute>
 
     <attribute name="redirectPort" required="false">
@@ -124,6 +146,12 @@
       </p>
     </attribute>
 
+    <attribute name="xpoweredBy" required="false">
+      <p>Set this attribute to <code>true</code> to cause Tomcat to advertise
+      support for the Srevlet specification using the header recommended in the
+      specification.  The default value is <code>false</code>.</p>
+    </attribute>
+
   </attributes>
 
   </subsection>
@@ -143,6 +171,13 @@
       all possible request processing threads are in use.  Any requests
       received when the queue is full will be refused.  The default
       value is 10.</p>
+    </attribute>
+
+    <attribute name="address" required="false">
+      <p>For servers with more than one IP address, this attribute
+      specifies which address will be used for listening on the specified
+      port.  By default, this port will be used on all IP addresses
+      associated with the server.</p>
     </attribute>
 
     <attribute name="bufferSize" required="false">
@@ -240,27 +275,6 @@
       to a particular port number on a particular IP address.</p>
     </attribute>
 
-    <attribute name="protocol" required="false">
-      <p>This attribute value must be <code>HTTP/1.1</code> to use the HTTP
-      handler, which is the default.</p>
-    </attribute>
-
-    <attribute name="proxyName" required="false">
-      <p>If this <strong>Connector</strong> is being used in a proxy
-      configuration, configure this attribute to specify the server name
-      to be returned for calls to <code>request.getServerName()</code>.
-      See <a href="#Proxy Support">Proxy Support</a> for more
-      information.</p>
-    </attribute>
-
-    <attribute name="proxyPort" required="false">
-      <p>If this <strong>Connector</strong> is being used in a proxy
-      configuration, configure this attribute to specify the server port
-      to be returned for calls to <code>request.getServerPort()</code>.
-      See <a href="#Proxy Support">Proxy Support</a> for more
-      information.</p>
-    </attribute>
-
     <attribute name="restrictedUserAgents" required="false">
       <p>The value is a comma separated list of regular expressions matching
       user-agents of HTTP clients for which HTTP/1.1 or HTTP/1.0 keep alive
@@ -269,10 +283,26 @@
       The default value is an empty String (regexp matching disabled).</p>
     </attribute>
 
+    <attribute name="server" required="false">
+      <p>The Server header for the http response.
+         Unless your paranoid, you won't need this feature.
+      </p>
+    </attribute>
+
     <attribute name="socketBuffer" required="false">
       <p>The size (in bytes) of the buffer to be provided for socket
       output buffering. -1 can be specified to disable the use of a buffer.
       By default, a buffers of 9000 bytes will be used.</p>
+    </attribute>
+
+    <attribute name="strategy" required="false">
+      <p>The thread pooling strategy which will be used. The default strategy does 
+      not use a master thread, but a more conventional strategy using a 
+      master listener thread can be used by setting "ms" as this attribute's value. 
+      The master strategy will work significantly better using the threadPriority 
+      attribute, which will apply only to the thread which listens on the server socket.
+      This is set to <code>lf</code> by default.
+      </p>
     </attribute>
 
     <attribute name="tcpNoDelay" required="false">
@@ -286,22 +316,6 @@
       The default value is <code>java.lang.Thread#NORM_PRIORITY</code>.
       See the JavaDoc for the java.lang.Thread class for more details on
       what this priority means.
-      </p>
-    </attribute>
-
-    <attribute name="server" required="false">
-      <p>The Server header for the http response.
-         Unless your paranoid, you won't need this feature.
-      </p>
-    </attribute>
-
-    <attribute name="strategy" required="false">
-      <p>The thread pooling strategy which will be used. The default strategy does 
-      not use a master thread, but a more conventional strategy using a 
-      master listener thread can be used by setting "ms" as this attribute's value. 
-      The master strategy will work significantly better using the threadPriority 
-      attribute, which will apply only to the thread which listens on the server socket.
-      This is set to <code>lf</code> by default.
       </p>
     </attribute>
 
