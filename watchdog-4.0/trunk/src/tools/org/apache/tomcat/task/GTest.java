@@ -419,9 +419,6 @@ public class GTest  {
 	try {
 	    pw.println(request);
 	    
-	    if( content != null) {
-		pw.println("Content-Length: " + content.length());
-	    }
 	    // Now sending any specified request headers
 	    if ( requestHeaders != null )
 	    {
