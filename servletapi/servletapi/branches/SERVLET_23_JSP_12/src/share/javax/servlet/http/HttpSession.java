@@ -86,7 +86,9 @@ import java.util.Enumeration;
  * session, the session checks whether the object implements
  * {@link HttpSessionBindingListener}. If it does, 
  * the servlet notifies the object that it has been bound to or unbound 
- * from the session.
+ * from the session. Notifications are sent after the binding methods complete. 
+ * For session that are invalidated or expire, notifications are sent after
+ * the session has been invalidatd or expired.
  *
  * <p> When container migrates a session between VMs in a distributed container
  * setting, all session atributes implementing the {@link HttpSessionActivationListener}
@@ -410,8 +412,8 @@ public interface HttpSession {
 
     /**
      *
-     * Invalidates this session and unbinds any objects bound
-     * to it.
+     * Invalidates this session then unbinds any objects bound
+     * to it. 
      *
      * @exception IllegalStateException	if this method is called on an
      *					already invalidated session
