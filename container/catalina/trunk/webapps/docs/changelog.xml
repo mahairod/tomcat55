@@ -30,6 +30,9 @@
       <fix>
         <bug>28989</bug>: Added ant-launcher.jar to launcher classpath. (yoavs)
       </fix>
+      <fix>
+        <bug>24723</bug>: Corrected JNDI DataSources documentation and added explicit notes about a couple of common problems. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   
