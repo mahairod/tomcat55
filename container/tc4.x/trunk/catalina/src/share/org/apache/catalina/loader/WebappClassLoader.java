@@ -113,6 +113,29 @@ import org.apache.naming.resources.Resource;
 /**
  * Specialized web application class loader.
  * <p>
+ * This class loader is a full reimplementation of the 
+ * <code>URLClassLoader</code> from the JDK. It is desinged to be fully
+ * compatible with a normal <code>URLClassLoader</code>, although its internal
+ * behavior may be completely different.
+ * <p>
+ * <strong>IMPLEMENTATION NOTE</strong> - This class loader faithfully follows 
+ * the delegation model recommended in the specification. The system class 
+ * loader will be queried first, then the local repositories, and only then 
+ * delegation to the parent class loader will occur. This allows the web 
+ * application to override any shared class except the classes from J2SE.
+ * Special handling is provided from the JAXP XML parser interfaces, the JNDI
+ * interfaces, and the classes from the servlet API, which are never loaded 
+ * from the webapp repository.
+ * <p>
+ * <strong>IMPLEMENTATION NOTE</strong> - Due to limitations in Jasper 
+ * compilation technology, any repository which contains classes from 
+ * the servlet API will be ignored by the class loader.
+ * <p>
+ * <strong>IMPLEMENTATION NOTE</strong> - The class loader generates source
+ * URLs which include the full JAR URL when a class is loaded from a JAR file,
+ * which allows setting security permission at the class level, even when a
+ * class is contained inside a JAR.
+ * <p>
  * <strong>IMPLEMENTATION NOTE</strong> - Local repositories are searched in
  * the order they are added via the initial constructor and/or any subsequent
  * calls to <code>addRepository()</code> or <code>addJar()</code>.
