@@ -75,6 +75,7 @@ import javax.naming.Referenceable;
 import javax.naming.Reference;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.NameAlreadyBoundException;
 import javax.naming.NameNotFoundException;
 import javax.naming.NotContextException;
 import javax.naming.InitialContext;
@@ -899,7 +900,7 @@ public class NamingContext implements Context {
             }
         } else {
             if ((!rebind) && (entry != null)) {
-                throw new NamingException
+                throw new NameAlreadyBoundException
                     (sm.getString("namingContext.alreadyBound", name.get(0)));
             } else {
                 // Getting the type of the object and wrapping it within a new
