@@ -371,9 +371,6 @@ public class WebappClassLoader
      */
     public void setDebug(int debug) {
 
-        if (securityManager != null)
-            securityManager.checkPermission(allPermission);
-
         this.debug = debug;
 
     }
@@ -395,9 +392,6 @@ public class WebappClassLoader
      * @param delegate The new "delegate first" flag
      */
     public void setDelegate(boolean delegate) {
-
-        if (securityManager != null)
-            securityManager.checkPermission(allPermission);
 
         this.delegate = delegate;
 
@@ -441,7 +435,6 @@ public class WebappClassLoader
      */
     public void addPermission(Permission permission) {
         if ((securityManager != null) && (permission != null)) {
-            securityManager.checkPermission(allPermission);
             permissionList.add(permission);
         }
     }
@@ -462,9 +455,6 @@ public class WebappClassLoader
      */
     public void setJarPath(String jarPath) {
 
-        if (securityManager != null)
-            securityManager.checkPermission(allPermission);
-
         this.jarPath = jarPath;
 
     }
@@ -484,9 +474,6 @@ public class WebappClassLoader
      *  invalid or does not exist
      */
     public void addRepository(String repository) {
-
-        if (securityManager != null)
-            securityManager.checkPermission(allPermission);
 
         // Ignore any of the standard repositories, as they are set up using
         // either addJar or addRepository
@@ -517,9 +504,6 @@ public class WebappClassLoader
      *  invalid or does not exist
      */
     synchronized void addRepository(String repository, File file) {
-
-        if (securityManager != null)
-            securityManager.checkPermission(allPermission);
 
         // Note : There should be only one (of course), but I think we should
         // keep this a bit generic
@@ -553,9 +537,6 @@ public class WebappClassLoader
 
     synchronized void addJar(String jar, JarFile jarFile, File file)
         throws IOException {
-
-        if (securityManager != null)
-            securityManager.checkPermission(allPermission);
 
         if (jar == null)
             return;
@@ -1470,9 +1451,6 @@ public class WebappClassLoader
      */
     public void start() throws LifecycleException {
 
-        if (securityManager != null)
-            securityManager.checkPermission(allPermission);
-
         started = true;
 
     }
@@ -1484,9 +1462,6 @@ public class WebappClassLoader
      * @exception LifecycleException if a lifecycle error occurs
      */
     public void stop() throws LifecycleException {
-
-        if (securityManager != null)
-            securityManager.checkPermission(allPermission);
 
         started = false;
 
