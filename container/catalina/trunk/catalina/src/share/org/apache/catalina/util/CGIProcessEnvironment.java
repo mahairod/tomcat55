@@ -139,7 +139,7 @@ public class CGIProcessEnvironment extends ProcessEnvironment {
     /**
      * Constructs the CGI environment to be supplied to the invoked CGI
      * script; relies heavliy on Servlet API methods and findCGI
-     * @param    HttpServletRequest request associated with the CGI invokation
+     * @param    req request associated with the CGI invokation
      * @return   true if environment was set OK, false if there was a problem
      *           and no environment was set
      */

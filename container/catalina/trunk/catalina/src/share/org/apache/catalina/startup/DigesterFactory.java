@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 1999-2004 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -125,8 +125,6 @@ public class DigesterFactory{
     /**
      * Utilities used to force the parser to use local schema, when available,
      * instead of the <code>schemaLocation</code> XML element.
-     * @param The instance on which properties are set.
-     * @return an instance ready to parse XML schema.
      */
     protected static void registerLocalSchema(){
         // J2EE

@@ -42,8 +42,6 @@ public class SetDocBaseRule extends Rule {
 
     /**
      * Construct a new instance of this Rule.
-     *
-     * @param digester Digester we are associated with
      */
     public SetDocBaseRule() {
     }

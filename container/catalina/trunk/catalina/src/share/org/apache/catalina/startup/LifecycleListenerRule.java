@@ -39,7 +39,6 @@ public class LifecycleListenerRule extends Rule {
     /**
      * Construct a new instance of this Rule.
      *
-     * @param digester Digester we are associated with
      * @param listenerClass Default name of the LifecycleListener
      *  implementation class to be created
      * @param attributeName Name of the attribute that optionally
