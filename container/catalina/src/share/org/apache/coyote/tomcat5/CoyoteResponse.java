@@ -1423,8 +1423,7 @@ public class CoyoteResponse
 
         boolean leadingSlash = location.startsWith("/");
 
-        if (leadingSlash 
-            || (!leadingSlash && (location.indexOf("://") == -1))) {
+        if (leadingSlash || !hasScheme(location)) {
 
             redirectURLCC.recycle();
 
@@ -1487,6 +1486,22 @@ public class CoyoteResponse
 
     }
 
+
+    /**
+     * Determine if a URI string has a <code>scheme</code> component.
+     */
+    private boolean hasScheme(String uri) {
+        int len = uri.length();
+        for(int i=0; i < len ; i++) {
+            char c = uri.charAt(i);
+            if(c == ':') {
+                return i > 0;
+            } else if(!URL.isSchemeChar(c)) {
+                return false;
+            }
+        }
+        return false;
+    }
 
     /**
      * Return the specified URL with the specified session identifier
