@@ -83,7 +83,6 @@ import org.apache.catalina.util.HexUtils;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.MD5Encoder;
-import org.xml.sax.AttributeList;
 
 
 /**
