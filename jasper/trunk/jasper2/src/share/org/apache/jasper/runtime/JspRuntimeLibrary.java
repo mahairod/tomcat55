@@ -71,6 +71,7 @@ import java.lang.reflect.Method;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -946,8 +947,8 @@ public class JspRuntimeLibrary {
      * @exception IOException if thrown by the included servlet
      * @exception ServletException if thrown by the included servlet
      */
-    public static void include(HttpServletRequest request,
-                               HttpServletResponse response,
+    public static void include(ServletRequest request,
+                               ServletResponse response,
                                String relativePath,
                                Writer out,
                                boolean flush)
