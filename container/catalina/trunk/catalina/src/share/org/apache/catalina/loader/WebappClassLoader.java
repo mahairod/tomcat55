@@ -834,10 +834,12 @@ public class WebappClassLoader
         sb.append(delegate);
         sb.append("\r\n");
         sb.append("  repositories:\r\n");
-        for (int i = 0; i < repositories.length; i++) {
-            sb.append("    ");
-            sb.append(repositories[i]);
-            sb.append("\r\n");
+        if (repositories != null) {
+            for (int i = 0; i < repositories.length; i++) {
+                sb.append("    ");
+                sb.append(repositories[i]);
+                sb.append("\r\n");
+            }
         }
         if (this.parent != null) {
             sb.append("----------> Parent Classloader:\r\n");
@@ -1520,6 +1522,7 @@ public class WebappClassLoader
         lastModifiedDates = null;
         paths = null;
         hasExternalRepositories = false;
+        parent = null;
 
         permissionList.clear();
         loaderPC.clear();
@@ -1527,6 +1530,8 @@ public class WebappClassLoader
         if (loaderDir != null) {
             deleteDir(loaderDir);
         }
+
+        org.apache.commons.logging.LogFactory.release(this);
 
     }
 
