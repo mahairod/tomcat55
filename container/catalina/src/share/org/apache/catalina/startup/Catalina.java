@@ -70,13 +70,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Stack;
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
-import org.apache.catalina.Loader;
+import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.security.SecurityConfig;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
@@ -289,6 +287,7 @@ public class Catalina extends Embedded {
         if (debug>0)
             digester.setDebug(debug);
         digester.setValidating(false);
+        digester.setClassLoader(StandardServer.class.getClassLoader());
 
         // Configure the actions we will be using
         digester.addObjectCreate("Server",
