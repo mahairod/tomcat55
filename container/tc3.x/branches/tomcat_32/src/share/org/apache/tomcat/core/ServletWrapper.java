@@ -422,38 +422,44 @@ public class ServletWrapper extends Handler {
 	if( isReloadable ) {// && ! "invoker".equals( getServletName())) {
 	    ServletLoader loader=context.getServletLoader();
 	    if( loader!=null) {
-		// XXX no need to check after we remove the old loader
-		if( loader.shouldReload() ) {
-		    // workaround for destroy 
-		    try {
-			destroy();
-		    } catch(Exception ex ) {
-			context.log( "Error in destroy ", ex );
-		    }
-		    initialized=false;
-		    loader.reload();
-		    
-		    ContextManager cm=context.getContextManager();
-		    cm.doReload( req, context );
-		    
-		    servlet=null;
-		    servletClass=null;
-		    /* Initial attempt to shut down the context and sessions.
-		       
-		       String path=context.getPath();
-		       String docBase=context.getDocBase();
-		       // XXX all other properties need to be saved
-		       // or something else
-		       ContextManager cm=context.getContextManager();
-		       cm.removeContext(path);
-		       Context ctx=new Context();
-		       ctx.setPath( path );
-		       ctx.setDocBase( docBase );
-		       cm.addContext( ctx );
-		       context=ctx;
-		       // XXX shut down context, remove sessions, etc
-		    */
-		}
+                // We need to syncronize here so that multiple threads don't
+                // try and reload the class.  The first thread through will
+                // create the new loader which will make shouldReload return
+                // false for subsequent threads.
+                synchronized(this) {
+                    // XXX no need to check after we remove the old loader
+                    if( loader.shouldReload() ) {
+                        // workaround for destroy 
+                        try {
+                            destroy();
+                        } catch(Exception ex ) {
+                            context.log( "Error in destroy ", ex );
+                        }
+                        initialized=false;
+                        loader.reload();
+                        
+                        ContextManager cm=context.getContextManager();
+                        cm.doReload( req, context );
+                        
+                        servlet=null;
+                        servletClass=null;
+                        /* Initial attempt to shut down the context and sessions.
+                           
+                           String path=context.getPath();
+                           String docBase=context.getDocBase();
+                           // XXX all other properties need to be saved
+                           // or something else
+                           ContextManager cm=context.getContextManager();
+                           cm.removeContext(path);
+                           Context ctx=new Context();
+                           ctx.setPath( path );
+                           ctx.setDocBase( docBase );
+                           cm.addContext( ctx );
+                           context=ctx;
+                           // XXX shut down context, remove sessions, etc
+                        */
+                    }
+                }
 	    }
 	}
     }
