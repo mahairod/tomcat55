@@ -12,7 +12,7 @@
   <target name="main">
     <mkdir dir="build"/>
     <javac srcdir="src/main" destdir="build" classpath="lib/projectx-tr2.jar"
-     debug="on"/>
+     debug="on" deprecation="on"/>
   </target>
 
   <target name="dist" depends="main">

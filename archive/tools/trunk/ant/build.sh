@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ADDL_CLASSPATH=./../ant.jar:./../servlet-2.2.0.jar:./../projectx-tr2.jar
+ADDL_CLASSPATH=./../ant.jar:./../projectx-tr2.jar
 
 if [[ -n $CLASSPATH ]]; then
   export CLASSPATH=$ADDL_CLASSPATH:$CLASSPATH
