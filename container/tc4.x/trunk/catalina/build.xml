@@ -761,8 +761,10 @@
            file="${commons-beanutils.jar}"/>
     <copy todir="${catalina.build}/server/lib"
            file="${commons-digester.jar}"/>
-    <copy todir="${catalina.build}/common/lib"
+    <copy todir="${catalina.build}/server/lib"
            file="${commons-logging.jar}"/>
+    <copy todir="${catalina.build}/common/lib"
+           file="${commons-logging-api.jar}"/>
     <copy todir="${catalina.build}/server/lib" file="${regexp.jar}"/>
 
   </target>
