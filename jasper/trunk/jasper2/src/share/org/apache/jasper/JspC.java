@@ -194,8 +194,7 @@ public class JspC implements Options {
                     jspc.execute();
                 }
             } catch (JasperException je) {
-                System.err.print("error:");
-                je.printStackTrace();
+                System.err.println(je);
                 //System.err.println(je.getMessage());
                 if (die != NO_DIE_LEVEL) {
                     System.exit(die);
@@ -738,6 +737,11 @@ public class JspC implements Options {
             while (rootCause instanceof JasperException
                     && ((JasperException) rootCause).getRootCause() != null) {
                 rootCause = ((JasperException) rootCause).getRootCause();
+            }
+            if (rootCause != je) {
+                log.error(Localizer.getMessage("jspc.error.generalException",
+                                               file),
+                          rootCause);
             }
             throw je;
 
