@@ -330,6 +330,8 @@ public class NamingContextListener
             // Setting the context in read/write mode
             ContextAccessController.setWritable(getName(), container);
 
+            ContextBindings.unbindClassLoader(container, container);
+
             ContextAccessController.unsetSecurityToken(getName(), container);
 
             namingContext = null;
