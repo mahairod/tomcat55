@@ -53,6 +53,7 @@
       <param-name>treebuilders</param-name>
       <param-value>
         org.apache.webapp.admin.TomcatTreeBuilder,
+        org.apache.webapp.admin.resources.ResourcesTreeBuilder,        
         org.apache.webapp.admin.users.UsersTreeBuilder
     </param-value>
     </init-param>
