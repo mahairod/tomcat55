@@ -265,7 +265,7 @@ public class ResponseStream
 	int actual = len;
 	if ((length > 0) && ((count + len) >= length))
 	    actual = length - count;
-	((ResponseBase) response).write(b, 0, actual);
+	((ResponseBase) response).write(b, off, actual);
 	count += actual;
 	if (actual < len)
 	    throw new IOException(sm.getString("responseStream.write.count"));
