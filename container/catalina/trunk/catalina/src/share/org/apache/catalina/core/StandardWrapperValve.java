@@ -82,6 +82,7 @@ import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.tomcat.util.buf.MessageBytes;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -145,7 +146,7 @@ final class StandardWrapperValve
         HttpRequest hrequest = (HttpRequest) request;
         Servlet servlet = null;
         HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
-        HttpServletResponse hres = 
+        HttpServletResponse hres =
             (HttpServletResponse) response.getResponse();
 
         // Check for the application being marked unavailable
@@ -157,7 +158,7 @@ final class StandardWrapperValve
 
         // Check for the servlet being marked unavailable
         if (!unavailable && wrapper.isUnavailable()) {
-            log(sm.getString("standardWrapper.isUnavailable", 
+            log(sm.getString("standardWrapper.isUnavailable",
                              wrapper.getName()));
             if (hres == null) {
                 ;       // NOTE - Not much we can do generically
@@ -232,13 +233,13 @@ final class StandardWrapperValve
             (ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
              ApplicationFilterFactory.REQUEST_INTEGER);
         hreq.setAttribute
-            (ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, 
+            (ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR,
              requestPathMB);
         // Create the filter chain for this request
-        ApplicationFilterFactory factory = 
+        ApplicationFilterFactory factory =
             ApplicationFilterFactory.getInstance();
-        ApplicationFilterChain filterChain = 
-            factory.createFilterChain((ServletRequest) request, 
+        ApplicationFilterChain filterChain =
+            factory.createFilterChain((ServletRequest) request,
                                       wrapper, servlet);
 
         // Call the filter chain for this request
@@ -276,20 +277,33 @@ final class StandardWrapperValve
                 hres.sendError(HttpServletResponse.SC_NOT_FOUND,
                             sm.getString("standardWrapper.notFound",
                                         wrapper.getName()));
-            }            
+            }
             // Do not save exception in 'throwable', because we
             // do not want to do exception(request, response, e) processing
         } catch (ServletException e) {
             hreq.removeAttribute(Globals.JSP_FILE_ATTR);
             Throwable rootCause = e;
-            while (rootCause instanceof ServletException) {
-                Throwable t = ((ServletException) rootCause).getRootCause();
-                if (t != null) {
-                    rootCause = t;
-                } else {
-                    break;
+            Throwable rootCauseCheck = null;
+
+            // Extra aggressive rootCause finding
+            do {
+                try {
+                    rootCauseCheck = (Throwable)PropertyUtils.getProperty
+                                                (rootCause, "rootCause");
+                    if (rootCauseCheck!=null)
+                        rootCause = rootCauseCheck;
+
+                } catch (ClassCastException ex) {
+                    rootCauseCheck = null;
+                } catch (IllegalAccessException ex) {
+                    rootCauseCheck = null;
+                } catch (NoSuchMethodException ex) {
+                    rootCauseCheck = null;
+                } catch (java.lang.reflect.InvocationTargetException ex) {
+                    rootCauseCheck = null;
                 }
-            }
+            } while (rootCauseCheck != null);
+
             log(sm.getString("standardWrapper.serviceException",
                              wrapper.getName()), rootCause);
             throwable = e;
@@ -464,7 +478,7 @@ final class StandardWrapperValve
     }
 
     // Don't register in JMX
-    
+
     public ObjectName createObjectName(String domain, ObjectName parent)
             throws MalformedObjectNameException
     {
