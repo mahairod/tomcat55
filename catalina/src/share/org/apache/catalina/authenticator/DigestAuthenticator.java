@@ -25,7 +25,6 @@ import java.security.Principal;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
@@ -174,8 +173,7 @@ public class DigestAuthenticator
         throws IOException {
 
         // Have we already authenticated someone?
-        Principal principal =
-            ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+        Principal principal = request.getUserPrincipal();
         //String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
         if (principal != null) {
             if (log.isDebugEnabled())
@@ -214,13 +212,9 @@ public class DigestAuthenticator
         */
 
         // Validate any credentials already included with this request
-        HttpServletRequest hreq =
-            (HttpServletRequest) request.getRequest();
-        HttpServletResponse hres =
-            (HttpServletResponse) response.getResponse();
         String authorization = request.getAuthorization();
         if (authorization != null) {
-            principal = findPrincipal(hreq, authorization, context.getRealm());
+            principal = findPrincipal(request, authorization, context.getRealm());
             if (principal != null) {
                 String username = parseUsername(authorization);
                 register(request, response, principal,
@@ -234,10 +228,10 @@ public class DigestAuthenticator
 
         // Next, generate a nOnce token (that is a token which is supposed
         // to be unique).
-        String nOnce = generateNOnce(hreq);
+        String nOnce = generateNOnce(request);
 
-        setAuthenticateHeader(hreq, hres, config, nOnce);
-        hres.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        setAuthenticateHeader(request, response, config, nOnce);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         //      hres.flushBuffer();
         return (false);
 
@@ -257,7 +251,7 @@ public class DigestAuthenticator
      * @param authorization Authorization credentials from this request
      * @param realm Realm used to authenticate Principals
      */
-    protected static Principal findPrincipal(HttpServletRequest request,
+    protected static Principal findPrincipal(Request request,
                                              String authorization,
                                              Realm realm) {
 
@@ -395,7 +389,7 @@ public class DigestAuthenticator
      *
      * @param request HTTP Servlet request
      */
-    protected String generateNOnce(HttpServletRequest request) {
+    protected String generateNOnce(Request request) {
 
         long currentTime = System.currentTimeMillis();
 
@@ -439,8 +433,8 @@ public class DigestAuthenticator
      *              should be performed
      * @param nOnce nonce token
      */
-    protected void setAuthenticateHeader(HttpServletRequest request,
-                                         HttpServletResponse response,
+    protected void setAuthenticateHeader(Request request,
+                                         Response response,
                                          LoginConfig config,
                                          String nOnce) {
 
