@@ -108,6 +108,8 @@ class ParserController {
      */
     private boolean isTopFile = true;
 
+    private boolean isEncodingSpecifiedInProlog;
+
     private String sourceEnc;
 
     /*
@@ -192,31 +194,30 @@ class ParserController {
 	        throws FileNotFoundException, JasperException, IOException {
 
 	Node.Nodes parsedPage = null;
+	isEncodingSpecifiedInProlog = false;
 	String absFileName = resolveFileName(inFileName);
-
 	String jspConfigPageEnc = getJspConfigPageEncoding(absFileName);
 
 	// Figure out what type of JSP document and encoding type we are
 	// dealing with
-	determineSyntaxAndEncoding(absFileName, jarFile,
-				   jspConfigPageEnc);
+	determineSyntaxAndEncoding(absFileName, jarFile, jspConfigPageEnc);
 
-	if (isTopFile) {
-	    if (isXml && pageInfo.isEncodingSpecifiedInProlog()) {
-		/*
-		 * Make sure the encoding explicitly specified in the XML
-		 * prolog (if any) matches that in the JSP config element
-		 * (if any), treating "UTF-16", "UTF-16BE", and "UTF-16LE" as
-		 * identical.
-		 */
-		if (jspConfigPageEnc != null
-		        && !jspConfigPageEnc.equals(sourceEnc)
+	if (isXml && isEncodingSpecifiedInProlog) {
+	    /*
+	     * Make sure the encoding explicitly specified in the XML
+	     * prolog (if any) matches that in the JSP config element
+	     * (if any), treating "UTF-16", "UTF-16BE", and "UTF-16LE" as
+	     * identical.
+	     */
+	    if (jspConfigPageEnc != null && !jspConfigPageEnc.equals(sourceEnc)
 		        && (!jspConfigPageEnc.startsWith("UTF-16")
 			    || !sourceEnc.startsWith("UTF-16"))) {
-		    err.jspError("jsp.error.prolog_config_encoding_mismatch",
-				 sourceEnc, jspConfigPageEnc);
-		}
+		err.jspError("jsp.error.prolog_config_encoding_mismatch",
+			     sourceEnc, jspConfigPageEnc);
 	    }
+	}
+
+	if (isTopFile) {
 	    isTopFile = false;
 	} else {
 	    compiler.getPageInfo().addDependant(absFileName);
@@ -233,7 +234,8 @@ class ParserController {
 						     inStream, parent,
 						     isTagFile, directivesOnly,
 						     sourceEnc,
-						     jspConfigPageEnc);
+						     jspConfigPageEnc,
+						     isEncodingSpecifiedInProlog);
 	    } finally {
 		if (inStream != null) {
 		    try {
@@ -348,7 +350,7 @@ class ParserController {
 							   jarFile, ctxt, err);
 	    sourceEnc = (String) ret[0];
 	    if (((Boolean) ret[1]).booleanValue()) {
-		pageInfo.setIsEncodingSpecifiedInProlog(true);
+		isEncodingSpecifiedInProlog = true;
 	    }
 
 	    if (!isXml && sourceEnc.equals("UTF-8")) {

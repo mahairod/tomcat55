@@ -396,6 +396,14 @@ abstract class Node implements TagConstants {
 	private String jspConfigPageEnc;
 
 	/*
+	 * Indicates whether an encoding has been explicitly specified in the
+	 * page's XML prolog (only used for pages in XML syntax).
+	 * This information is used to decide whether a translation error must
+	 * be reported for encoding conflicts.
+	 */
+	private boolean isEncodingSpecifiedInProlog;
+
+	/*
 	 * Constructor.
 	 */
 	Root(Mark start, Node parent, boolean isXmlSyntax) {
@@ -441,6 +449,14 @@ abstract class Node implements TagConstants {
 
 	public String getPageEncoding() {
 	    return pageEnc;
+	}
+
+	public void setIsEncodingSpecifiedInProlog(boolean isSpecified) {
+	    isEncodingSpecifiedInProlog = isSpecified;
+	}
+
+	public boolean isEncodingSpecifiedInProlog() {
+	    return isEncodingSpecifiedInProlog;
 	}
 
 	/**

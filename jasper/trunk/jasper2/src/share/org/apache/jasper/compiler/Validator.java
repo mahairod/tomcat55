@@ -266,7 +266,7 @@ class Validator {
 		     * Report any encoding conflict, treating "UTF-16",
 		     * "UTF-16BE", and "UTF-16LE" as identical.
 		     */
-		    comparePageEncodings(value, n, pageInfo);
+		    comparePageEncodings(value, n);
 		}
 	    }
 
@@ -341,8 +341,7 @@ class Validator {
 	 * page, and throws an error in case of a mismatch.
 	 */
 	private void comparePageEncodings(String pageDirEnc,
-					  Node.PageDirective n,
-					  PageInfo pageInfo)
+					  Node.PageDirective n)
 	            throws JasperException {
 
 	    String configEnc = n.getRoot().getJspConfigPageEncoding();
@@ -355,7 +354,7 @@ class Validator {
 	    }
 
 	    if (n.getRoot().isXmlSyntax()
-		    && pageInfo.isEncodingSpecifiedInProlog()) {
+		    && n.getRoot().isEncodingSpecifiedInProlog()) {
 		String pageEnc = n.getRoot().getPageEncoding();
 		if (!pageDirEnc.equals(pageEnc) 
 		        && (!pageDirEnc.startsWith("UTF-16")

@@ -89,14 +89,6 @@ class PageInfo {
     private boolean isErrorPage = false;
     private String errorPage = null;
 
-    /*
-     * Indicates whether an encoding has been explicitly specified in the
-     * page's XML prolog (only used for pages in XML syntax).
-     * This information is used to decide whether a translation error must
-     * be reported for encoding conflicts.
-     */
-    private boolean isEncodingSpecifiedInProlog;
-
     private int maxTagNesting = 0;
     private boolean scriptless = false;
     private boolean scriptingInvalid = false;
@@ -252,14 +244,6 @@ class PageInfo {
 
     public void setIsErrorPage(boolean isErrorPage) {
 	this.isErrorPage = isErrorPage;
-    }
-
-    public void setIsEncodingSpecifiedInProlog(boolean isSpecified) {
-	this.isEncodingSpecifiedInProlog = isSpecified;
-    }
-
-    public boolean isEncodingSpecifiedInProlog() {
-	return this.isEncodingSpecifiedInProlog;
     }
 
     public int getMaxTagNesting() {

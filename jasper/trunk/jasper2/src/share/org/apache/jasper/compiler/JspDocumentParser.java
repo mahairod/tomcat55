@@ -146,7 +146,8 @@ class JspDocumentParser extends DefaultHandler
 				   boolean isTagFile,
 				   boolean directivesOnly,
 				   String pageEnc,
-				   String jspConfigPageEnc)
+				   String jspConfigPageEnc,
+				   boolean isEncodingSpecifiedInProlog)
 	        throws JasperException {
 
 	JspDocumentParser jspDocParser = new JspDocumentParser(pc, path,
@@ -173,6 +174,7 @@ class JspDocumentParser extends DefaultHandler
 	    Node.Root dummyRoot = new Node.Root(null, parent, true);
 	    dummyRoot.setPageEncoding(pageEnc);
 	    dummyRoot.setJspConfigPageEncoding(jspConfigPageEnc);
+	    dummyRoot.setIsEncodingSpecifiedInProlog(isEncodingSpecifiedInProlog);
 	    jspDocParser.current = dummyRoot;
 
 	    if (parent != null) {
