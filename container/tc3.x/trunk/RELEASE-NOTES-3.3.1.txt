@@ -129,6 +129,10 @@ Bug No.  Description
          name, such as aux.jsp.  Instead of potentially hanging the thread
          that services the request, these requests now return "404 Not Found".
 
+         DecodeInterceptor was updated to not convert '+' to space in the
+         path portion of the request URL.  RFC2396 allows '+' in the path
+         of a URL.
+
 1657     JSPs with tag names that contain '-' or '.' will now compile without
          an "Invalid expression" error
 
