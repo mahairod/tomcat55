@@ -91,6 +91,28 @@ and deploy a web application to a production or development server. It should
 be noted that this feature uses the Tomcat manager for automatic deployment.
 </p>
 
+<p>The deployer includes the Catalina manager Ant tasks, the Jasper page
+compiler for JSP compilation before deployment, as well as a task which
+validates the webapp's deployment descriptor. The validator task (class
+<code>org.apache.catalina.ant.ValidatorTask</code>) allows only one parameter:
+the base path of an expanded web application.</p>
+
+<p>The deployer package includes a ready to use Ant script, with the following
+targets:
+<ul>
+    <li>compile (default): compile and validate the web application</li>
+    <li>deploy: deploy a web application (compiled or not) to a Tomcat 
+                server</li>
+    <li>undeploy: undeploy a web application</li>
+    <li>start: start web application</li>
+    <li>reload: reload web application</li>
+    <li>stop: stop web application</li>
+</ul>
+The following properties can be specified, either as a system property, or by
+using a <code>deployer.properties</code> file located in the root folder of the
+deployer package:
+</p>
+
 </section>
 
 </body>

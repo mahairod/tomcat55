@@ -13,7 +13,71 @@
 
 <body>
 
-<section name="Tomcat 5.0.3 (remm)">
+<section name="Tomcat 5.0.4 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Deployer">
+
+    <changelog>
+
+
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
+<section name="Tomcat 5.0.3 Alpha (remm)">
 
   <subsection name="General">
 
@@ -570,6 +634,18 @@
     </changelog>
 
   </subsection>
+
+</section>
+
+<section name="Tomcat 4.1.7 Beta (remm)">
+
+  <changelog>
+
+    <scode>
+    Tomcat 5.0.x branch point based on the Tomcat 4.1.7 codebase (remm)
+    </scode>
+
+  </changelog>
 
 </section>
 
