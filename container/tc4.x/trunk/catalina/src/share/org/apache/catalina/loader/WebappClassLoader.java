@@ -158,10 +158,7 @@ public class WebappClassLoader
      * earlier versions.
      */
     private static final String[] triggers = {
-        "com.sun.jndi.ldap.LdapCtxFactory",      // LDAP      added in 1.3
-        "com.sun.net.ssl.internal.ssl.Provider", // JSSE      added in 1.4
-        "javax.security.auth.Subject",           // JAAS      added in 1.4
-        "javax.servlet.Servlet"                 // Servlet API
+        "javax.servlet.Servlet"                     // Servlet API
     };
 
 
@@ -170,16 +167,13 @@ public class WebappClassLoader
      * class loader.
      */
     private static final String[] packageTriggers = {
-        "javax.net",                                 // JSSE      added in 1.4
-        "javax.net.ssl",                             // JSSE      added in 1.4
-        "javax.security.cert",                       // JSSE      added in 1.4
-        "javax.naming",                              // JNDI      added in 1.3
-        "javax.naming.directory",                    // JNDI      added in 1.3
-        "javax.xml.parsers",                         // JAXP      added in 1.4
-        "org.xml.sax",
-        "org.xml.sax.ext",
-        "org.xml.sax.helpers",
-        "org.w3c.dom"
+        "javax.naming",                              // JNDI
+        "javax.naming.directory",                    // JNDI
+        "javax.xml.parsers",                         // JAXP
+        "org.xml.sax",                               // SAX 1 & 2
+        "org.xml.sax.ext",                           // SAX 1 & 2
+        "org.xml.sax.helpers",                       // SAX 1 & 2
+        "org.w3c.dom"                                // DOM 1 & 2
     };
 
 
@@ -1297,19 +1291,20 @@ public class WebappClassLoader
             return (clazz);
         }
 
-        // If a system class, use system class loader
-        if( name.startsWith("java.") ) {
-            ClassLoader loader = system;
-            clazz = loader.loadClass(name);
+        // (0.2) Try loading the class with the system class loader, to prevent
+        //       the webapp from overriding J2SE classes
+        try {
+            clazz = system.loadClass(name);
             if (clazz != null) {
                 if (resolve)
                     resolveClass(clazz);
                 return (clazz);
             }
-            throw new ClassNotFoundException(name);
+        } catch (ClassNotFoundException e) {
+            // Ignore
         }
 
-        // (.5) Permission to access this class when using a SecurityManager
+        // (0.5) Permission to access this class when using a SecurityManager
         if (securityManager != null) {
             int i = name.lastIndexOf('.');
             if (i >= 0) {
