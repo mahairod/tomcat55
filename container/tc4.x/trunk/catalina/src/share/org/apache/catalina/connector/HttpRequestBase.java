@@ -84,6 +84,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Realm;
@@ -744,8 +745,10 @@ public class HttpRequestBase
             return (context.getServletContext().getRequestDispatcher(path));
 
         // Convert a request-relative path to a context-relative one
-        String relative = getServletPath() + "/../" + path;
-        // FIXME -- Canonicalize any ".." directory references!
+        String servletPath = (String) getAttribute(Globals.SERVLET_PATH_ATTR);
+        if (servletPath == null)
+            servletPath = getServletPath();
+        String relative = RequestUtil.normalize(servletPath + "/../" + path);
         return (context.getServletContext().getRequestDispatcher(relative));
 
     }
