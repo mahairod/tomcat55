@@ -80,7 +80,7 @@ import javax.servlet.http.*;
 
 /**
  */
-public class HttpResponseAdapter extends  ResponseImpl {
+public class HttpResponseAdapter extends  Response {
     protected OutputStream sout;
 
     protected static final int DEFAULT_HEAD_BUFFER_SIZE = 1024;
@@ -107,7 +107,7 @@ public class HttpResponseAdapter extends  ResponseImpl {
     public void endHeaders()  throws IOException {
 	super.endHeaders();
 	
-	sendStatus( status, ResponseImpl.getMessage( status ));
+	sendStatus( status, Response.getMessage( status ));
 
 	int count=headers.size();
 	for( int i=0; i<count; i++ ) {

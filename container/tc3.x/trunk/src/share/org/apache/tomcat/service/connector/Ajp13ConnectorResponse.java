@@ -73,7 +73,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 
-public class Ajp13ConnectorResponse extends ResponseImpl 
+public class Ajp13ConnectorResponse extends Response 
 {
 	public static final int  MAX_SEND_SIZE = TcpConnector.MAX_PACKET_SIZE - 
 	                                         TcpConnector.H_SIZE - 

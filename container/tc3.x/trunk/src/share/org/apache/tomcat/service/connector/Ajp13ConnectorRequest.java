@@ -71,7 +71,7 @@ import org.apache.tomcat.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-public class Ajp13ConnectorRequest extends RequestImpl 
+public class Ajp13ConnectorRequest extends Request 
 {
 	public static final int  MAX_READ_SIZE = TcpConnector.MAX_PACKET_SIZE - 
 	                                         TcpConnector.H_SIZE - 

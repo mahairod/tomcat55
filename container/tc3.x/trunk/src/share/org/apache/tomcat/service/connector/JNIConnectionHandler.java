@@ -202,7 +202,7 @@ public class JNIConnectionHandler {
                      int cnt);
 }
 
-class JNIRequestAdapter extends RequestImpl {
+class JNIRequestAdapter extends Request {
     static StringManager sm = StringManager.getManager("org.apache.tomcat.resources");
     ContextManager contextM;
     boolean shutdown=false;
@@ -328,7 +328,7 @@ class JNIRequestAdapter extends RequestImpl {
 
 
 // Ajp use Status: instead of Status
-class JNIResponseAdapter extends ResponseImpl {
+class JNIResponseAdapter extends Response {
 
     JNIConnectionHandler h;
     long s;

@@ -73,7 +73,7 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-public class HttpRequestAdapter extends RequestImpl {
+public class HttpRequestAdapter extends Request {
     static StringManager sm = StringManager.getManager("org.apache.tomcat.resources");
     private Socket socket;
     private boolean moreRequests = false;
