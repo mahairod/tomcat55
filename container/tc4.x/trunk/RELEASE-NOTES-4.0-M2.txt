@@ -167,6 +167,21 @@ because the org.apache.catalina.session.StandardSession class was not visible
 to the web app class loader.  Sessions can now be saved and restored without
 requiring this capability.
 
+Catalina: Fixed a classloader bug that would cause the WEB-INF/classes
+directory to be ignored on Windows platforms if (a) you were running under
+JDK 1.3.0, and (b) you did not set the CATALINA_HOME environment variable
+to point at your Tomcat 4.0 install directory.
+
+All:  Save all "build.bat" files with DOS line endings.  (All of the other
+scripts have the correct line endings set when they are copied to their
+destination directories.)
+
+Catalina:  When the default file-serving servlet decides to serve a welcome
+file, it now issues a sendRedirect() to this file, rather than just serving
+it directly.  This preserves the semantics of relative links in the welcome
+file page, and also causes the welcome files themselves to be protected by
+security constraints (if they were not based on the original request URI).
+
 
 ==============================
 KNOWN PROBLEMS IN THIS RELEASE:

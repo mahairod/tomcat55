@@ -537,8 +537,12 @@ public abstract class AuthenticatorBase
 	String roles[] = constraint.findAuthRoles();
 	if (roles == null)
 	    roles = new String[0];
-	if (roles.length == 0)
-	    return (true);	// Authenticated user is sufficient
+	if (roles.length == 0) {
+            if (constraint.getAuthConstraint())
+                return (false); // No listed roles means no access at all
+            else
+                return (true);	// Authenticated user is sufficient
+        }
 	for (int i = 0; i < roles.length; i++) {
 	    if (realm.hasRole(principal, roles[i]))
 		return (true);
