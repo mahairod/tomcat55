@@ -184,6 +184,8 @@ public class SessionMessage
 //    private SerializablePrincipal mPrincipal;
     private Member mSrc;
     private String mContextName;
+    private long serializationTimestamp;
+    
 
     /**
      * Creates a session message. Depending on what event type you want this
@@ -249,6 +251,8 @@ public class SessionMessage
 
 //    public SerializablePrincipal getPrincipal() { return mPrincipal;}
 
+    public void setTimestamp(long time) {serializationTimestamp=time;}
+    public long getTimestamp() { return serializationTimestamp;}
     /**
      * @return the event type in a string representating, useful for debugging
      */
