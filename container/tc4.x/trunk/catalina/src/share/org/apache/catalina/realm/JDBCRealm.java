@@ -468,7 +468,7 @@ public class JDBCRealm
 	    ResultSet rs1 = preparedAuthenticate.executeQuery();
 	    boolean found = false;
 	    if (rs1.next()) {
-                if( digest=="" || digest.equalsIgnoreCase("No")){
+                if( digest.equals("") || digest.equalsIgnoreCase("No")){
                     if(credentials.equals(rs1.getString(1))) {
                         if(debug >= 2)
                             log(sm.getString("jdbcRealm.authenticateSuccess",
