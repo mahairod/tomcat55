@@ -2,15 +2,17 @@
 
   <!-- ========== Global Properties ======================================= -->
   <property name="catalina.home"  value="../../build/tomcat-4.0"/>
+  <property name="debug"          value="0"/>
   <property name="host"           value="localhost"/>
   <property name="port"           value="8080"/>
 <!--  <property name="protocol"       value="HTTP/1.0"/> -->
   <property name="protocol"       value=""/> <!-- Use HttpURLConnection -->
   <property name="context.path"   value="/tester"/>
+  <property name="manager.path"   value="/manager"/>
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,CaseSensitive,RequestDispatcher,ServletRequest,ServletResponse"/>
+  <target name="all" depends="ROOT,CaseSensitive,ErrorPage,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession"/>
 
 
   <target name="ROOT">
@@ -19,8 +21,18 @@
 
     <!-- Should be able to see the home page -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/index.html"
+         request="/index.html" debug="${debug}"
           status="200"/>
+
+    <!-- Should be able to use relative path to document root -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="/examples/.." debug="${debug}"
+          status="302"/>
+
+    <!-- Should not be able to use relative path above document root -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="/examples/../.." debug="${debug}"
+          status="404"/>
 
   </target>
 
@@ -31,64 +43,142 @@
 
     <!-- Make sure that static resources are matched case sensitively -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/index.HTML"
+         request="/index.HTML" debug="${debug}"
           status="404"/>
 
     <!-- Should be able to execute the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/dates/date.jsp"
+         request="/examples/jsp/dates/date.jsp" debug="${debug}"
           status="200"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/dates/date.Jsp"
+         request="/examples/jsp/dates/date.Jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/dates/Date.jsp"
+         request="/examples/jsp/dates/Date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/Dates/date.jsp"
+         request="/examples/jsp/Dates/date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/Jsp/dates/date.jsp"
+         request="/examples/Jsp/dates/date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/Examples/jsp/dates/date.jsp"
+         request="/Examples/jsp/dates/date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should be able to execute the HelloWorld servlet example -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/servlet/HelloWorldExample"
+         request="/examples/servlet/HelloWorldExample" debug="${debug}"
           status="200"/>
 
     <!-- Should not be able to execute HelloWorld with different cases -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/servlet/helloWorldExample"
+         request="/examples/servlet/helloWorldExample" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to execute HelloWorld with different cases -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/Servlet/HelloWorldExample"
+         request="/examples/Servlet/HelloWorldExample" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to execute HelloWorld with different cases -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/Examples/servlet/HelloWorldExample"
+         request="/Examples/servlet/HelloWorldExample" debug="${debug}"
           status="404"/>
+
+  </target>
+
+
+  <target name="ErrorPage">
+
+    <!-- ========== Error Code Mapping ==================================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ErrorPage01" debug="${debug}"
+      outContent="ErrorPage02 PASSED"/>
+
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedErrorPage01" debug="${debug}"
+      outContent="ErrorPage02 PASSED"/>
+
+
+    <!-- ========== Exception Mapping ===================================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ErrorPage03" debug="${debug}"
+      outContent="ErrorPage04 PASSED"/>
+
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedErrorPage03" debug="${debug}"
+      outContent="ErrorPage04 PASSED"/>
+
+
+  </target>
+
+
+  <target name="Jndi">
+
+    <!-- ========== JNDI Naming Context =================================== -->
+
+    <!-- Perform the tests before restarting the application -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Jndi01" debug="${debug}"
+      outContent="Jndi01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedJndi01" debug="${debug}"
+      outContent="Jndi01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Jndi02" debug="${debug}"
+      outContent="Jndi02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedJndi02" debug="${debug}"
+      outContent="Jndi02 PASSED"/>
+
+    <!-- Restart this web application -->
+    <!-- NOTE: Assign role "manager" to user "tomcat" for this to work -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+         request="${manager.path}/reload?path=${context.path}"
+      outContent="OK - Reloaded application at context path ${context.path}"/>
+
+    <!-- Repeat the tests to ensure the naming context is reinitialized -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Jndi01" debug="${debug}"
+      outContent="Jndi01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedJndi01" debug="${debug}"
+      outContent="Jndi01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Jndi02" debug="${debug}"
+      outContent="Jndi02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedJndi02" debug="${debug}"
+      outContent="Jndi02 PASSED"/>
 
   </target>
 
@@ -98,20 +188,167 @@
     <!-- ========== Forward and Include to Static Resource ================ -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/Forward01"
+         request="${context.path}/Forward01" debug="${debug}"
       outContent="Forward01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedForward01"
+         request="${context.path}/WrappedForward01" debug="${debug}"
       outContent="Forward01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/Include01"
+         request="${context.path}/Include01" debug="${debug}"
       outContent="Include01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedInclude01"
+         request="${context.path}/WrappedInclude01" debug="${debug}"
       outContent="Include01 PASSED"/>
+
+    <!-- ========== Included Servlet Throwing Exceptions ================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include02?exception=IOException"
+      outContent="Include02 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include02?exception=ServletException"
+      outContent="Include02 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include02?exception=NullPointerException"
+      outContent="Include02 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude02?exception=IOException"
+      outContent="Include02 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude02?exception=ServletException"
+      outContent="Include02 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude02?exception=NullPointerException"
+      outContent="Include02 PASSED" debug="${debug}"/>
+
+  </target>
+
+
+  <target name="Resources">
+
+    <!-- ========== Positive ServletContext.getResource() Tests =========== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources01?mode=context&amp;path=/WEB-INF/web.xml"
+      outContent="Resources01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources01?mode=context&amp;path=/Forward01.txt"
+      outContent="Resources01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources01?mode=context&amp;path=/Include01.txt"
+      outContent="Resources01 PASSED"/>
+
+    <!-- ========== Positive Class.getResource() Tests ==================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources01?mode=class&amp;path=/org/apache/tester/Resources01.txt"
+      outContent="Resources01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources01?mode=class&amp;path=/org/apache/tester/Unpacked01.txt"
+      outContent="Resources01 PASSED"/>
+
+    <!-- ========== Negative ServletContext.getResource() Tests =========== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources02?mode=context&amp;path=/WEB-INF/web.xml.bad"
+      outContent="Resources02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources02?mode=context&amp;path=/Forward02.txt.bad"
+      outContent="Resources02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources02?mode=context&amp;path=/Include02.txt.bad"
+      outContent="Resources02 PASSED"/>
+
+    <!-- ========== Negative Class.getResource() Tests ==================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources02?mode=class&amp;path=/org/apache/tester/Resources02.txt.bad"
+      outContent="Resources02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources02?mode=class&amp;path=/org/apache/tester/Unpacked02.txt.bad"
+      outContent="Resources02 PASSED"/>
+
+    <!-- ========== Positive ServletContext.getResourceAsStream() Tests === -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources03?mode=context&amp;path=/WEB-INF/web.xml"
+      outContent="&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources03?mode=context&amp;path=/Forward01.txt"
+      outContent="Forward01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources03?mode=context&amp;path=/Include01.txt"
+      outContent="Include01 PASSED"/>
+
+    <!-- ========== Positive Class.getResourceAsStream() Tests ============ -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources03?mode=class&amp;path=/org/apache/tester/Resources03.txt"
+      outContent="Resources03 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources03?mode=class&amp;path=/org/apache/tester/Unpacked03.txt"
+      outContent="Resources03 PASSED"/>
+
+    <!-- ========== Negative ServletContext.getResourceAsStream() Tests === -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources04?mode=context&amp;path=/WEB-INF/web.xml.bad"
+      outContent="Resources04 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources04?mode=context&amp;path=/Forward04.txt.bad"
+      outContent="Resources04 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources04?mode=context&amp;path=/Include04.txt.bad"
+      outContent="Resources04 PASSED"/>
+
+    <!-- ========== Negative Class.getResourceAsStream() Tests ============ -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources04?mode=class&amp;path=/org/apache/tester/Resources04.txt.bad"
+      outContent="Resources04 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources04?mode=class&amp;path=/org/apache/tester/Unpacked04.txt.bad"
+      outContent="Resources04 PASSED"/>
 
   </target>
 
@@ -121,28 +358,56 @@
     <!-- ========== Parameters and Query Strings ========================== -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/GetParameter01?foo=1"
+         request="${context.path}/GetParameter01?foo=1" debug="${debug}"
       outContent="GetParameter01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedGetParameter01?foo=1"
+         request="${context.path}/WrappedGetParameter01?foo=1" debug="${debug}"
       outContent="GetParameter01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/GetParameterMap00?BestLanguage=Java&amp;BestJSP=Java2"
-      outContent="GetParameterMap00 PASSED"/>
+      outContent="GetParameterMap00 PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedGetParameterMap00?BestLanguage=Java&amp;BestJSP=Java2"
-      outContent="GetParameterMap00 PASSED"/>
+      outContent="GetParameterMap00 PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/GetQueryString01?foo=1"
-      outContent="GetQueryString01 PASSED"/>
+      outContent="GetQueryString01 PASSED" debug="${debug}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedGetQueryString01?foo=1"
-      outContent="GetQueryString01 PASSED"/>
+      outContent="GetQueryString01 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}" method="POST"
+       inHeaders="Content-Type:application/x-www-form-urlencoded"
+       inContent="b=3&amp;a=2"
+         request="${context.path}/Aggregate01?a=1"
+      outContent="Aggregate01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}" method="POST"
+       inHeaders="Content-Type:application/x-www-form-urlencoded"
+       inContent="b=3&amp;a=2"
+         request="${context.path}/WrappedAggregate01?a=1"
+      outContent="Aggregate01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}" method="POST"
+       inHeaders="Content-Type:application/x-www-form-urlencoded"
+       inContent="b=3&amp;a=2"
+         request="${context.path}/Aggregate02?a=1"
+      outContent="Aggregate02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}" method="POST"
+       inHeaders="Content-Type:application/x-www-form-urlencoded"
+       inContent="b=3&amp;a=2"
+         request="${context.path}/WrappedAggregate02?a=1"
+      outContent="Aggregate02 PASSED"/>
 
     <!-- ========== Other ServletRequest Tests ============================ -->
 
@@ -154,21 +419,21 @@
          setting the protocol to "HTTP/1.0" -->
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
-         request="${context.path}/GetHeaders01"
+         request="${context.path}/GetHeaders01" debug="${debug}"
        inHeaders="Accept-Language:en-us##Accept-Language:en-gb"
       outContent="GetHeaders01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
-         request="${context.path}/WrappedGetHeaders01"
+         request="${context.path}/WrappedGetHeaders01" debug="${debug}"
        inHeaders="Accept-Language:en-us##Accept-Language:en-gb"
       outContent="GetHeaders01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/GetInputStream01"
+         request="${context.path}/GetInputStream01" debug="${debug}"
       outContent="GetInputStream01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedGetInputStream01"
+         request="${context.path}/WrappedGetInputStream01" debug="${debug}"
       outContent="GetInputStream01 PASSED"/>
 
 
@@ -181,11 +446,13 @@
     -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
+          debug="${debug}"
          request="${context.path}/protected/Authentication01"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
       outContent="Authentication01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
+          debug="${debug}"
          request="${context.path}/protected/Authentication02"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
       outContent="Authentication02 PASSED"/>
@@ -199,32 +466,81 @@
 
     <!-- ========== Other ServletResponse Tests =========================== -->
 
-    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
-         request="${context.path}/Reset01"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Reset01" debug="${debug}"
       outContent="Reset01 PASSED"/>
 
-    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
-         request="${context.path}/WrappedReset01"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedReset01" debug="${debug}"
       outContent="Reset01 PASSED"/>
 
-    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
-         request="${context.path}/SetBufferSize01"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SetBufferSize01" debug="${debug}"
       outContent="SetBufferSize01 PASSED"/>
 
-    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
-         request="${context.path}/WrappedSetBufferSize01"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedSetBufferSize01" debug="${debug}"
       outContent="SetBufferSize01 PASSED"/>
 
-    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
-         request="${context.path}/SetLocale01"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SetLocale01" debug="${debug}"
       outContent="SetLocale01 PASSED"
       outHeaders="Content-Language:en"/>
 
-    <tester host="${host}" port="${port}" protocol="${protocol}" debug="0"
-         request="${context.path}/WrappedSetLocale01"
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedSetLocale01" debug="${debug}"
       outContent="SetLocale01 PASSED"
       outHeaders="Content-Language:en"/>
 
+
+  </target>
+
+
+  <target name="HttpSession">
+
+    <!-- ========== Session Attribute Persistence ========================= -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Session01" debug="${debug}"
+      outContent="Session01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Session02" debug="${debug}"
+     joinSession="true"
+      outContent="Session02 PASSED"/>
+
+    <!-- NOTE: Assign role "manager" to user "tomcat" for this to work -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+         request="${manager.path}/reload?path=${context.path}"
+      outContent="OK - Reloaded application at context path ${context.path}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Session03" debug="${debug}"
+     joinSession="true"
+      outContent="Session03 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedSession01" debug="${debug}"
+      outContent="Session01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedSession02" debug="${debug}"
+     joinSession="true"
+      outContent="Session02 PASSED"/>
+
+    <!-- NOTE: Assign role "manager" to user "tomcat" for this to work -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+         request="${manager.path}/reload?path=${context.path}"
+      outContent="OK - Reloaded application at context path ${context.path}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedSession03" debug="${debug}"
+     joinSession="true"
+      outContent="Session03 PASSED"/>
 
   </target>
 

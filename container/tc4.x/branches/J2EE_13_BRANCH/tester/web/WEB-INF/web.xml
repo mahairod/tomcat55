@@ -42,6 +42,36 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedAggregate01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedAggregate02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedErrorPage01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedErrorPage02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedErrorPage03</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedErrorPage04</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedForward01</url-pattern>
     </filter-mapping>
 
@@ -76,8 +106,58 @@
     </filter-mapping>
 
     <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedInclude02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedJndi01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedJndi02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
         <filter-name>GenericFilter</filter-name>
         <url-pattern>/WrappedReset01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedResources01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedResources02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedResources03</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedResources04</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedSession01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedSession02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedSession03</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
@@ -94,6 +174,16 @@
     <!-- ========== Servlet Definitions =================================== -->
 
     <servlet>
+        <servlet-name>Aggregate01</servlet-name>
+        <servlet-class>org.apache.tester.Aggregate01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Aggregate02</servlet-name>
+        <servlet-class>org.apache.tester.Aggregate02</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>Authentication01</servlet-name>
         <servlet-class>org.apache.tester.Authentication01</servlet-class>
     </servlet>
@@ -101,6 +191,26 @@
     <servlet>
         <servlet-name>Authentication02</servlet-name>
         <servlet-class>org.apache.tester.Authentication02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ErrorPage01</servlet-name>
+        <servlet-class>org.apache.tester.ErrorPage01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ErrorPage02</servlet-name>
+        <servlet-class>org.apache.tester.ErrorPage02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ErrorPage03</servlet-name>
+        <servlet-class>org.apache.tester.ErrorPage03</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ErrorPage04</servlet-name>
+        <servlet-class>org.apache.tester.ErrorPage04</servlet-class>
     </servlet>
 
     <servlet>
@@ -139,8 +249,63 @@
     </servlet>
 
     <servlet>
+        <servlet-name>Include02</servlet-name>
+        <servlet-class>org.apache.tester.Include02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include02a</servlet-name>
+        <servlet-class>org.apache.tester.Include02a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Jndi01</servlet-name>
+        <servlet-class>org.apache.tester.Jndi01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Jndi02</servlet-name>
+        <servlet-class>org.apache.tester.Jndi02</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>Reset01</servlet-name>
         <servlet-class>org.apache.tester.Reset01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Resources01</servlet-name>
+        <servlet-class>org.apache.tester.Resources01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Resources02</servlet-name>
+        <servlet-class>org.apache.tester.Resources02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Resources03</servlet-name>
+        <servlet-class>org.apache.tester.Resources03</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Resources04</servlet-name>
+        <servlet-class>org.apache.tester.Resources04</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Session01</servlet-name>
+        <servlet-class>org.apache.tester.Session01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Session02</servlet-name>
+        <servlet-class>org.apache.tester.Session02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Session03</servlet-name>
+        <servlet-class>org.apache.tester.Session03</servlet-class>
     </servlet>
 
     <servlet>
@@ -153,7 +318,28 @@
         <servlet-class>org.apache.tester.SetLocale01</servlet-class>
     </servlet>
 
+
     <!-- ========== Servlet Mappings ====================================== -->
+
+    <servlet-mapping>
+        <servlet-name>Aggregate01</servlet-name>
+        <url-pattern>/Aggregate01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Aggregate01</servlet-name>
+        <url-pattern>/WrappedAggregate01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Aggregate02</servlet-name>
+        <url-pattern>/Aggregate02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Aggregate02</servlet-name>
+        <url-pattern>/WrappedAggregate02</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>Authentication01</servlet-name>
@@ -163,6 +349,46 @@
     <servlet-mapping>
         <servlet-name>Authentication02</servlet-name>
         <url-pattern>/protected/Authentication02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage01</servlet-name>
+        <url-pattern>/ErrorPage01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage01</servlet-name>
+        <url-pattern>/WrappedErrorPage01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage02</servlet-name>
+        <url-pattern>/ErrorPage02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage02</servlet-name>
+        <url-pattern>/WrappedErrorPage02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage03</servlet-name>
+        <url-pattern>/ErrorPage03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage03</servlet-name>
+        <url-pattern>/WrappedErrorPage03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage04</servlet-name>
+        <url-pattern>/ErrorPage04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage04</servlet-name>
+        <url-pattern>/WrappedErrorPage04</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -241,6 +467,46 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>Include02</servlet-name>
+        <url-pattern>/Include02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include02</servlet-name>
+        <url-pattern>/WrappedInclude02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include02a</servlet-name>
+        <url-pattern>/Include02a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include02a</servlet-name>
+        <url-pattern>/WrappedInclude02a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Jndi01</servlet-name>
+        <url-pattern>/Jndi01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Jndi01</servlet-name>
+        <url-pattern>/WrappedJndi01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Jndi02</servlet-name>
+        <url-pattern>/Jndi02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Jndi02</servlet-name>
+        <url-pattern>/WrappedJndi02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>Reset01</servlet-name>
         <url-pattern>/Reset01</url-pattern>
     </servlet-mapping>
@@ -248,6 +514,76 @@
     <servlet-mapping>
         <servlet-name>Reset01</servlet-name>
         <url-pattern>/WrappedReset01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources01</servlet-name>
+        <url-pattern>/Resources01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources01</servlet-name>
+        <url-pattern>/WrappedResources01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources02</servlet-name>
+        <url-pattern>/Resources02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources02</servlet-name>
+        <url-pattern>/WrappedResources02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources03</servlet-name>
+        <url-pattern>/Resources03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources03</servlet-name>
+        <url-pattern>/WrappedResources03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources04</servlet-name>
+        <url-pattern>/Resources04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Resources04</servlet-name>
+        <url-pattern>/WrappedResources04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session01</servlet-name>
+        <url-pattern>/Session01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session01</servlet-name>
+        <url-pattern>/WrappedSession01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session02</servlet-name>
+        <url-pattern>/Session02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session02</servlet-name>
+        <url-pattern>/WrappedSession02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session03</servlet-name>
+        <url-pattern>/Session03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Session03</servlet-name>
+        <url-pattern>/WrappedSession03</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -271,6 +607,19 @@
     </servlet-mapping>
 
 
+    <!-- ========== Error Page Mappings =================================== -->
+
+    <error-page>
+        <error-code>412</error-code>  <!-- SC_PRECONDITION_FAILED -->
+        <location>/ErrorPage02</location>
+    </error-page>
+
+    <error-page>
+        <exception-type>org.apache.tester.TesterException</exception-type>
+        <location>/ErrorPage04</location>
+    </error-page>
+
+
     <!-- ========== Security Constraints ================================== -->
 
     <security-constraint>
@@ -287,6 +636,51 @@
         <auth-method>BASIC</auth-method>
         <realm-name>Authentication Servlet</realm-name>
     </login-config>
+
+
+    <!-- ========== Environment Entries =================================== -->
+
+    <env-entry>
+        <env-entry-name>booleanEntry</env-entry-name>
+        <env-entry-value>true</env-entry-value>
+        <env-entry-type>java.lang.Boolean</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <env-entry-name>byteEntry</env-entry-name>
+        <env-entry-value>123</env-entry-value>
+        <env-entry-type>java.lang.Byte</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <env-entry-name>doubleEntry</env-entry-name>
+        <env-entry-value>123.45</env-entry-value>
+        <env-entry-type>java.lang.Double</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <env-entry-name>floatEntry</env-entry-name>
+        <env-entry-value>54.32</env-entry-value>
+        <env-entry-type>java.lang.Float</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <env-entry-name>integerEntry</env-entry-name>
+        <env-entry-value>12345</env-entry-value>
+        <env-entry-type>java.lang.Integer</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <env-entry-name>longEntry</env-entry-name>
+        <env-entry-value>54321</env-entry-value>
+        <env-entry-type>java.lang.Long</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <env-entry-name>stringEntry</env-entry-name>
+        <env-entry-value>String Value</env-entry-value>
+        <env-entry-type>java.lang.String</env-entry-type>
+    </env-entry>
 
 
 </web-app>

@@ -194,6 +194,21 @@ public class TestClient extends Task {
 
 
     /**
+     * Should we join the session whose session identifier was returned
+     * on the previous request.
+     */
+    protected boolean joinSession = false;
+
+    public boolean getJoinSession() {
+        return (this.joinSession);
+    }
+
+    public void setJoinSession(boolean joinSession) {
+        this.joinSession = true;
+    }
+
+
+    /**
      * The HTTP response message to be expected in the response.
      */
     protected String message = null;
@@ -308,6 +323,17 @@ public class TestClient extends Task {
     }
 
 
+    // ------------------------------------------------------- Static Variables
+
+
+    /**
+     * The session identifier returned by the most recent request, or
+     * <code>null</code> if the previous request did not specify a session
+     * identifier.
+     */
+    protected static String sessionId = null;
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -355,12 +381,24 @@ public class TestClient extends Task {
             conn.setDoInput(true);
             if (inContent != null) {
                 conn.setDoOutput(true);
-                inContent += "\r\n";
                 conn.setRequestProperty("Content-Length",
                                         "" + inContent.length());
+                if (debug >= 1)
+                    System.out.println("INPH: Content-Length: " +
+                                       inContent.length());
             } else {
                 conn.setDoOutput(false);
             }
+
+            // Send the session id cookie (if any)
+            if (joinSession && (sessionId != null)) {
+                conn.setRequestProperty("Cookie",
+                                        "JSESSIONID=" + sessionId);
+                if (debug >= 1)
+                    System.out.println("INPH: Cookie: JSESSIONID=" +
+                                       sessionId);
+            }
+
             conn.setFollowRedirects(false);
             conn.setRequestMethod(method);
             if (inHeaders != null) {
@@ -381,12 +419,16 @@ public class TestClient extends Task {
                     String name = header.substring(0, colon).trim();
                     String value = header.substring(colon + 1).trim();
                     conn.setRequestProperty(name, value);
+                    if (debug >= 1)
+                        System.out.println("INPH: " + name + ": " + value);
                 }
             }
 
             // Connect to the server and send our output if necessary
             conn.connect();
             if (inContent != null) {
+                if (debug >= 1)
+                    System.out.println("INPD: " + inContent);
                 OutputStream os = conn.getOutputStream();
                 for (int i = 0; i < inContent.length(); i++)
                     os.write(inContent.charAt(i));
@@ -426,6 +468,8 @@ public class TestClient extends Task {
                 if (debug >= 1)
                     System.out.println("HEAD: " + name + ": " + value);
                 save(name, value);
+                if ("Set-Cookie".equals(name))
+                    parseSession(value);
             }
             if (debug >= 1) {
                 System.out.println("DATA: " + outData);
@@ -528,9 +572,17 @@ public class TestClient extends Task {
             pw.print(command + "\r\n");
             if (inContent != null) {
                 if (debug >= 1)
-                    System.out.println("HEAD: " + "Content-Length: " +
+                    System.out.println("INPH: " + "Content-Length: " +
                                        inContent.length());
                 pw.print("Content-Length: " + inContent.length() + "\r\n");
+            }
+
+            // Send the session id cookie (if any)
+            if (joinSession && (sessionId != null)) {
+                pw.println("Cookie: JSESSIONID=" + sessionId);
+                if (debug >= 1)
+                    System.out.println("INPH: Cookie: JSESSIONID=" +
+                                       sessionId);
             }
 
             // Send the specified headers (if any)
@@ -552,7 +604,7 @@ public class TestClient extends Task {
                     String name = header.substring(0, colon).trim();
                     String value = header.substring(colon + 1).trim();
                     if (debug >= 1)
-                        System.out.println("HEAD: " + name + ": " + value);
+                        System.out.println("INPH: " + name + ": " + value);
                     pw.print(name + ": " + value + "\r\n");
                 }
             }
@@ -561,12 +613,9 @@ public class TestClient extends Task {
             // Send our content (if any)
             if (inContent != null) {
                 if (debug >= 1)
-                    System.out.print("DATA: ");
-                for (int i = 0; i < inContent.length(); i++) {
-                    if (debug >= 1)
-                        System.out.print(inContent.charAt(i));
+                    System.out.println("INPD: " + inContent);
+                for (int i = 0; i < inContent.length(); i++)
                     pw.print(inContent.charAt(i));
-                }
             }
             pw.flush();
 
@@ -619,6 +668,8 @@ public class TestClient extends Task {
                         System.out.println("HEAD: " + headerName + ": " +
                                            headerValue);
                     save(headerName, headerValue);
+                    if ("Set-Cookie".equals(headerName))
+                        parseSession(headerValue);
                 }
             }
 
@@ -711,6 +762,30 @@ public class TestClient extends Task {
             if (throwable != null)
                 throwable.printStackTrace(System.out);
         }
+
+    }
+
+
+    /**
+     * Parse the session identifier from the specified Set-Cookie value.
+     *
+     * @param value The Set-Cookie value to parse
+     */
+    protected void parseSession(String value) {
+
+        if (value == null)
+            return;
+        int equals = value.indexOf("JSESSIONID=");
+        if (equals < 0)
+            return;
+        value = value.substring(equals + "JSESSIONID=".length());
+        int semi = value.indexOf(";");
+        if (semi >= 0)
+            value = value.substring(0, semi);
+
+        if (debug >= 1)
+            System.out.println("SESSION ID: " + value);
+        sessionId = value;
 
     }
 
