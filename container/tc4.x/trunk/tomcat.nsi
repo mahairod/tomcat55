@@ -115,7 +115,7 @@ Section "Tomcat Start Menu Group"
 
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Start Tomcat.lnk" \
                  "$2\bin\java.exe" \
-                 '-jar -Duser.dir="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" start' \
+                 '-jar -Duser.dir="$INSTDIR" -Djava.endorsed.dirs="$INSTDIR\common\endorsed" "$INSTDIR\bin\bootstrap.jar" start' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Stop Tomcat.lnk" \
