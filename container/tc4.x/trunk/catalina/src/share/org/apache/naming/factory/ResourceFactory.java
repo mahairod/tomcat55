@@ -106,19 +106,29 @@ public class ResourceFactory
      */
     public Object getObjectInstance(Object obj, Name name, Context nameCtx,
                                     Hashtable environment)
-        throws NamingException {
+        throws Exception {
         
         if (obj instanceof ResourceRef) {
             Reference ref = (Reference) obj;
             if (ref.getClassName().equals("javax.sql.DataSource")) {
                 // Checking the different known resource factories
-                if ((ref.get(TyrexDataSourceFactory.DRIVER_CLASS_NAME) != null)
-                    && (ref.get(TyrexDataSourceFactory.DRIVER_NAME) != null)) {
-                    return (new TyrexDataSourceFactory())
-                        .getObjectInstance(obj, name, nameCtx, environment);
+                ObjectFactory factory = null;
+                String javaxSqlDataSourceFactoryClassName =
+                    System.getProperty("javax.sql.DataSource.Factory",
+                                       Constants.TYREX_DATASOURCE_FACTORY);
+                try {
+                    factory = (ObjectFactory) 
+                        Class.forName(javaxSqlDataSourceFactoryClassName)
+                        .newInstance();
+                } catch(Throwable t) {
                 }
-                throw new NamingException
-                    ("Cannot create resource instance : Missing parameters");
+                if (factory != null) {
+                    return factory.getObjectInstance
+                        (obj, name, nameCtx, environment);
+                } else {
+                    throw new NamingException
+                        ("Cannot create resource instance");
+                }
             }
         }
 

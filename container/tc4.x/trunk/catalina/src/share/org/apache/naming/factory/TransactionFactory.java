@@ -106,16 +106,31 @@ public class TransactionFactory
      */
     public Object getObjectInstance(Object obj, Name name, Context nameCtx,
                                     Hashtable environment)
-        throws NamingException {
+        throws Exception {
         
         if (obj instanceof TransactionRef) {
             Reference ref = (Reference) obj;
-            return (new TyrexTransactionFactory())
-                .getObjectInstance(obj, name, nameCtx, environment);
+            ObjectFactory factory = null;
+            String javaxTransactionUserTransactionFactoryClassName =
+                System.getProperty("javax.transaction.UserTransaction.Factory",
+                                   Constants.TYREX_TRANSACTION_FACTORY);
+            try {
+                factory = (ObjectFactory) Class.forName
+                    (javaxTransactionUserTransactionFactoryClassName)
+                    .newInstance();
+            } catch(Throwable t) {
+            }
+            if (factory != null) {
+                return factory.getObjectInstance
+                    (obj, name, nameCtx, environment);
+            } else {
+                throw new NamingException
+                    ("Cannot create resource instance");
+            }
         }
-
+        
         return null;
-
+        
     }
 
 
