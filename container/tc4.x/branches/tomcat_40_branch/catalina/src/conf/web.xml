@@ -157,7 +157,11 @@
   <!--                       Should "virtual" paths be interpreted as       -->
   <!--                       relative to the context root, instead of       -->
   <!--                       the server root?  (0=false, 1=true) [0]        -->
-
+  <!--                                                                      -->
+  <!--   ignoreUnsupportedDirective                                         -->
+  <!--                       Should unknown or misspelled Ssi directives    -->
+  <!--                       be ignored and no errors shown?                -->
+  <!--                       (0=false, 1=true) [1]                          -->
   <!-- IMPORTANT: To use the CGI servlet, you also need to rename the       -->
   <!--            $CATALINA_HOME/server/lib/servlets-ssi.renametojar file   -->
   <!--            to $CATALINA_HOME/server/lib/servlets-ssi.jar             -->
@@ -181,6 +185,10 @@
     <init-param>
       <param-name>isVirtualWebappRelative</param-name>
       <param-value>0</param-value>
+    </init-param>
+    <init-param>
+      <param-name>ignoreUnsupportedDirective</param-name>
+      <param-value>1</param-value>
     </init-param>
     <load-on-startup>4</load-on-startup>
   </servlet>
