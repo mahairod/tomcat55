@@ -901,7 +901,24 @@ public final class CoyoteConnector
 
 
     /**
-     * Return the maximum number of Keep-Alive requests to honor per connection.
+     * Return the Keep-Alive policy for the connection.
+     */
+    public boolean getKeepAlive() {
+        return ((maxKeepAliveRequests != 0) && (maxKeepAliveRequests != 1));
+    }
+
+    /**
+     * Set the keep-alive policy for this connection.
+     */
+    public void setKeepAlive(boolean keepAlive) {
+        if (!keepAlive) {
+            maxKeepAliveRequests = 1;
+        }
+    }
+
+    /**
+     * Return the maximum number of Keep-Alive requests to honor 
+     * per connection.
      */
     public int getMaxKeepAliveRequests() {
         return maxKeepAliveRequests;
