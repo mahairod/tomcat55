@@ -810,8 +810,6 @@ public abstract class PersistentManagerBase
      * component.  This method should be called after <code>configure()</code>,
      * and before any of the public methods of the component are utilized.
      *
-     * @exception IllegalStateException if this component has already been
-     *  started
      * @exception LifecycleException if this component detects a fatal error
      *  that prevents this component from being used
      */
@@ -850,7 +848,6 @@ public abstract class PersistentManagerBase
      * component.  This method should be the last one called on a given
      * instance of this component.
      *
-     * @exception IllegalStateException if this component has not been started
      * @exception LifecycleException if this component detects a fatal error
      *  that needs to be reported
      */

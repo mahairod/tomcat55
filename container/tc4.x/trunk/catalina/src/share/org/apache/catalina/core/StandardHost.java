@@ -713,8 +713,6 @@ public class StandardHost
     /**
      * Start this host.
      *
-     * @exception IllegalStateException if this component has already been
-     *  started
      * @exception LifecycleException if this component detects a fatal error
      *  that prevents it from being started
      */

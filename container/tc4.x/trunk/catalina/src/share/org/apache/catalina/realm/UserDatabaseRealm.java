@@ -291,8 +291,6 @@ public class UserDatabaseRealm
     /**
      * Prepare for active use of the public methods of this Component.
      *
-     * @exception IllegalStateException if this component has already been
-     *  started
      * @exception LifecycleException if this component detects a fatal error
      *  that prevents it from being started
      */
@@ -321,7 +319,6 @@ public class UserDatabaseRealm
     /**
      * Gracefully shut down active use of the public methods of this Component.
      *
-     * @exception IllegalStateException if this component has not been started
      * @exception LifecycleException if this component detects a fatal error
      *  that needs to be reported
      */

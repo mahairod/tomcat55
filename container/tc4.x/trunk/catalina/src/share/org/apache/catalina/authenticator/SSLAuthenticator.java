@@ -183,8 +183,6 @@ public class SSLAuthenticator
      * Initialize the database we will be using for client verification
      * and certificate validation (if any).
      *
-     * @exception IllegalStateException if this component has already been
-     *  started
      * @exception LifecycleException if this component detects a fatal error
      *  that prevents this component from being used
      */
@@ -199,8 +197,6 @@ public class SSLAuthenticator
      * Finalize the database we used for client verification and
      * certificate validation (if any).
      *
-     * @exception IllegalStateException if this component has already been
-     *  stopped
      * @exception LifecycleException if this component detects a fatal error
      *  that prevents this component from being used
      */
