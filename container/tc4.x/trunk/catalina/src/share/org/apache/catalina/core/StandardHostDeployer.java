@@ -478,16 +478,25 @@ public class StandardHostDeployer implements Deployer {
     
                 // Determine if directory/war to remove is in the host appBase
                 boolean isAppBase = false;
+
                 File appBase = new File(host.getAppBase());
                 if (!appBase.isAbsolute())
                     appBase = new File(System.getProperty("catalina.base"),
                                        host.getAppBase());
+
                 File contextFile = new File(context.getDocBase());
+
+                if (!contextFile.isAbsolute()) {
+                    // Must be relative to appBase
+                    contextFile = new File(appBase.getAbsolutePath(),
+                                           contextFile.getPath());
+                } 
+                
                 File baseDir = contextFile.getParentFile();
                 if (appBase.getCanonicalPath().equals(baseDir.getCanonicalPath())) {
                     isAppBase = true;
                 }
-    
+                
                 boolean isWAR = false;
                 if (contextFile.getName().toLowerCase().endsWith(".war")) {
                     isWAR = true;
