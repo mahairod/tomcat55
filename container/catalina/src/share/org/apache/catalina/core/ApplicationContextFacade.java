@@ -326,20 +326,14 @@ public final class ApplicationContextFacade
             }
             
             return executeMethod(method,appContext,params);
-        } catch (Throwable ex){
-            Throwable exception;
+        } catch (Exception ex){
             if (ex instanceof InvocationTargetException){
-                exception = ((InvocationTargetException)ex).getTargetException();
+                return ((InvocationTargetException)ex).getTargetException();
             } else if (ex instanceof PrivilegedActionException){
-                exception = ((PrivilegedActionException)ex).getException();
+                return ((PrivilegedActionException)ex).getException();
             } else {
-                exception = ex;
+               return ex;
             }   
-            
-            if (log.isErrorEnabled()){
-                log.error("doPrivileged", exception);
-            }
-            throw new RuntimeException(ex.getMessage());
         }
     }
     
@@ -358,20 +352,14 @@ public final class ApplicationContextFacade
             Method method = context.getClass()
                     .getMethod(methodName, (Class[])clazz);
             return executeMethod(method,context,params);
-        } catch (Throwable ex){
-            Throwable exception;
+        } catch (Exception ex){
             if (ex instanceof InvocationTargetException){
-                exception = ((InvocationTargetException)ex).getTargetException();
+                return ((InvocationTargetException)ex).getTargetException();
             } else if (ex instanceof PrivilegedActionException){
-                exception = ((PrivilegedActionException)ex).getException();
+                return ((PrivilegedActionException)ex).getException();
             } else {
-                exception = ex;
+               return ex;
             }   
-            
-            if (log.isErrorEnabled()){
-                log.error("doPrivileged", exception);
-            }
-            throw new RuntimeException(ex.getMessage());
         }
     }
     
