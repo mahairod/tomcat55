@@ -484,11 +484,11 @@ public abstract class RealmBase
                 }
             }
         }
-        /*
+
         if(found) {
             return resultsToArray(results);
         }
-        */
+
         int longest = -1;
 
         for (i = 0; i < constraints.length; i++) {
@@ -534,11 +534,11 @@ public abstract class RealmBase
                 }
             }
         }
-        /*
+
         if(found) {
             return  resultsToArray(results);
         }
-        */
+
         for (i = 0; i < constraints.length; i++) {
             SecurityCollection [] collection = constraints[i].findCollections();
             
@@ -576,11 +576,11 @@ public abstract class RealmBase
                 }
             }
         }
-        /*
+
         if(found) {
             return resultsToArray(results);
         }
-        */
+
         for (i = 0; i < constraints.length; i++) {
             SecurityCollection [] collection = constraints[i].findCollections();
             
@@ -605,7 +605,7 @@ public abstract class RealmBase
                 }
             }
         }
-                
+
         if(results == null) {
             // No applicable security constraint was found
             if (log.isDebugEnabled())
