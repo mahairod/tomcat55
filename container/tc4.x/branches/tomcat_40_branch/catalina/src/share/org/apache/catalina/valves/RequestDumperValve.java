@@ -251,7 +251,8 @@ public class RequestDumperValve
     public String toString() {
 
         StringBuffer sb = new StringBuffer("RequestDumperValve[");
-        sb.append(container.getName());
+        if (container != null)
+            sb.append(container.getName());
         sb.append("]");
         return (sb.toString());
 
