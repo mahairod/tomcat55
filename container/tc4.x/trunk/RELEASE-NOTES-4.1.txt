@@ -735,6 +735,7 @@ Catalina Bug Fixes:
          AuthenticatorBase
          Redirect for trailing slash prior to auth challenge for root contexts 
 
+
 ----------------
 Coyote Bug Fixes:
 ----------------
@@ -1208,8 +1209,12 @@ Jasper Bug Fixes:
 
 [4.1.22] #17775
          JspRuntimeContext
-         Grant web applications JSP pages a FilePermission to read the web application
-         context directory in addition to its contents.
+         Grant web applications JSP pages a FilePermission to read 
+         the web application context directory in addition to its contents.
+
+[4.1.23] Compiler:
+         Avoid NPE when using JSPC using the built-in compiler.
+
 
 ============================
 KNOWN ISSUES IN THIS RELEASE:
@@ -1255,10 +1260,10 @@ Tomcat 4.1 Standard APIs Available:
 A standard installation of Tomcat 4 makes all of the following APIs available
 for use by web applications (by placing them in "common/lib" or "shared/lib"):
 * activation.jar (Java Activation Framework)
-* ant.jar (Apache Ant 1.5)
-* commons-collections.jar (Commons Collections 2.0)
+* ant.jar (Apache Ant 1.5.1)
+* commons-collections.jar (Commons Collections 2.1)
 * commons-dbcp.jar (Commons DBCP 1.0)
-* commons-logging-api.jar (Commons Logging 1.0.1)
+* commons-logging-api.jar (Commons Logging 1.0.2)
 * commons-pool.jar (Commons Pool 1.0)
 * jasper-compiler.jar (Jasper 2 Compiler)
 * jasper-runtime.jar (Jasper 2 Runtime)
@@ -1388,3 +1393,14 @@ definition.
 
 Using the invoker servlet in a production environment is not recommended and
 is unsupported.
+
+
+-----------------------------
+Using the JSP Compiler (JSPC):
+-----------------------------
+
+Using the command line script is not recommended when using JSPC. Instead, 
+using Ant is supported and encouraged. Please see the Jasper documentation
+in the Tomcat documentation bundle for more instructions as well as 
+a build script.
+
