@@ -10,6 +10,12 @@
 
 <section name="News &amp; Status">
 
+<h3>14 October 2001 - Tomcat 4.0.1 Final Released</h3>
+<p>This is the final release of Tomcat 4.0.1, which is a maintenance release
+of Tomcat 4.0. Download it 
+<a href="http://www.apache.org/dist/jakarta/jakarta-tomcat-4.0/release/v4.0.1/">here</a>.</p>
+<hr size="1" noshade=""/>
+
 <h3>17 September 2001 - Apache Tomcat 4.0 Final Released</h3>
 
 <p>It's official!  The Servlet 2.3 and JSP 1.2 specifications are now final,
