@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="status.html">
+
+  &project;
+
+  <properties>
+    <author email="remm@apache.org">Remy Maucherat</author>
+    <title>Project Status</title>
+  </properties>
+
+<body>
+
+  <section name="How to read the report">
+    
+    <p>
+      The columns in this report contain the following information:
+    <ul>
+      <li><b>Priority</b> - A sense of how important it is to address this 
+        issue in the short term.</li>
+      <li><b>Action Item</b> - Concise description of the action item
+        to be completed.  Where relevant, Java package names of the
+        primary classes involved are listed in [square brackets]</li>
+      <li><b>Volunteers</b> - Login of those developers who
+        have volunteered to assist in the design, implementation, testing, and
+        documentation of this action item's changes to Tomcat.</li>
+    </ul>
+      Developers can nominate
+      themselves to work on particular action items by asking a Committer to 
+      add their name address to those items.  The developers 
+      working on each item should discuss and agree upon the approach to be 
+      used for implementing the item's changes to the project source code 
+      and documentation, prior to completing those changes.  Such discussions 
+      should take place on the tomcat-dev mailing list so that everyone can 
+      stay apprised of what is going on, or chime in if they want to 
+      contribute ideas and suggestions.
+    </p>
+    
+  </section>
+
+  <section name="TODO List">
+
+    <status>
+      <item priority="High" owner="remm">
+        Deployer refactoring.
+      </item>
+      <item priority="High" owner="remm">
+        Documentation updates for new user guide book.
+      </item>
+      <item priority="Medium" owner="remm">
+        Split main catalina.jar.
+      </item>
+      <item priority="Medium" owner="---">
+        Tag plugins for JSTL.
+      </item>
+      <item priority="Medium" owner="remm">
+        Optimization of BASIC authentication handling.
+      </item>
+      <item priority="Low" owner="---">
+        Optimization of DIGEST authentication handling.
+      </item>
+      <item priority="Low" owner="---">
+        Realm / auth refactoring (one of the goals would be to add better 
+        support for DIGEST).
+      </item>
+      <item priority="Low" owner="---">
+        GUI for the deployer.
+      </item>
+      <item priority="Low" owner="---">
+        Stack size reduction (removal of valves to improve runtime 
+        performance and ease debugging).
+      </item>
+      <item priority="Low" owner="---">
+        Java load balancer / cache (?) for use with Tomcat clustering, or
+        with session affinity.
+      </item>
+    </status>
+
+  </section>
+
+</body>
+</document>
