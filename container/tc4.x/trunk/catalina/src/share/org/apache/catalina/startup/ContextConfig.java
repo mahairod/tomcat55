@@ -83,6 +83,10 @@ import java.util.Stack;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import javax.servlet.ServletContext;
+import javax.naming.NamingException;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
+import javax.naming.directory.DirContext;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.catalina.Authenticator;
 import org.apache.catalina.Context;
@@ -861,29 +865,24 @@ public final class ContextConfig
         // FIXME - Yet another dependence on files
         if (debug >= 1)
             log("Scanning library JAR files");
-	ServletContext servletContext = context.getServletContext();
-        URL libURL = null;
+        DirContext resources = context.getResources();
+        String libName = "/WEB-INF/lib";
+        DirContext libDir = null;
+        // Looking up directory /WEB-INF/lib in the context
         try {
-            libURL = servletContext.getResource("/WEB-INF/lib");
-        } catch (MalformedURLException e) {
-            ;
+            NamingEnumeration enum = resources.list(libName);
+            while (enum.hasMoreElements()) {
+                NameClassPair ncPair = 
+                    (NameClassPair) enum.nextElement();
+                String filename = libName + "/" + ncPair.getName();
+                if (!filename.endsWith(".jar"))
+                    continue;
+                tldConfigJar(filename, mapper);
+            }
+        } catch (NamingException e) {
+            // Silent catch: it's valid that no /WEB-INF/lib directory 
+            //exists
         }
-
-	if ((libURL != null) && "file".equals(libURL.getProtocol())) {
-	    File libFile = new File(libURL.getFile());
-	    if (libFile.exists() && libFile.canRead() &&
-	        libFile.isDirectory()) {
-		String filenames[] = libFile.list();
-		for (int i = 0; i < filenames.length; i++) {
-		    if (!filenames[i].endsWith(".jar"))
-		        continue;
-                    String resourcePath = "/WEB-INF/lib/" + filenames[i];
-                    if (debug >= 2)
-                        log("  Trying '" + resourcePath + "'");
-                    tldConfigJar("/WEB-INF/lib/" + filenames[i], mapper);
-		}
-	    }
-	}
 
     }
 
