@@ -136,9 +136,9 @@
         </controls:row>
 
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
-            <controls:label><bean:message key="realm.Attribute"/>:</controls:label>
+            <controls:label><bean:message key="realm.roleName"/>:</controls:label>
             <controls:data>
-                <html:text property="roleAttribute" size="30"/>
+                <html:text property="roleName" size="30"/>
             </controls:data>
         </controls:row>
 
@@ -158,6 +158,13 @@
                         labelProperty="label"/>
                 </html:select>
               </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.user.roleName"/>:</controls:label>
+            <controls:data>
+                <html:text property="userRoleName" size="30"/>
+            </controls:data>
         </controls:row>
 
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">

@@ -389,8 +389,11 @@ public class EditRealmAction extends Action {
             attribute = "roleSubtree";
             realmFm.setRoleSubtree
                     (((Boolean) mBServer.getAttribute(rname, attribute)).toString());
+            attribute = "userRoleName";
+            realmFm.setUserRoleName
+                ((String) mBServer.getAttribute(rname, attribute));
             attribute = "roleName";
-            realmFm.setRoleAttribute
+            realmFm.setRoleName
                 ((String) mBServer.getAttribute(rname, attribute));
             attribute = "roleBase";
             realmFm.setRoleBase

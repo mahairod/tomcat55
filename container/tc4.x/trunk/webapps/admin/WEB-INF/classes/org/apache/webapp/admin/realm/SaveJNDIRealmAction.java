@@ -292,7 +292,11 @@ public final class SaveJNDIRealmAction extends Action {
 
             attribute = "roleName";
             mBServer.setAttribute(roname,
-                                  new Attribute("roleName",  rform.getRoleAttribute()));
+                                  new Attribute("roleName",  rform.getRoleName()));
+
+            attribute = "userRoleName";
+            mBServer.setAttribute(roname,
+                                  new Attribute("userRoleName",  rform.getUserRoleName()));
 
             attribute = "contextFactory";
             mBServer.setAttribute(roname,

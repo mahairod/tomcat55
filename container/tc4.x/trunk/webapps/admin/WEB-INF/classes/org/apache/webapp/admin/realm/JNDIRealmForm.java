@@ -104,9 +104,14 @@ public final class JNDIRealmForm extends RealmForm {
     private String roleBase = null;
     
     /**
-     * The text for the role Attribute.
+     * The text for the user role name.
      */
-    private String roleAttribute = null;
+    private String userRoleName = null;
+
+    /**
+     * The text for the role name.
+     */
+    private String roleName = null;
     
     /**
      * The text for the role Pattern.
@@ -242,20 +247,38 @@ public final class JNDIRealmForm extends RealmForm {
     }
   
     /**
-     * Return the role Attribute .
+     * Return the role name.
      */
-    public String getRoleAttribute() {
+    public String getRoleName() {
         
-        return this.roleAttribute ;
+        return this.roleName ;
         
     }
     
     /**
-     * Set the role Attribute .
+     * Set the role name Attribute .
      */
-    public void setRoleAttribute(String roleAttribute ) {
+    public void setRoleName(String roleName) {
         
-        this.roleAttribute  = roleAttribute ;
+        this.roleName  = roleName ;
+        
+    }
+    
+    /**
+     * Return the user role name.
+     */
+    public String getUserRoleName() {
+        
+        return this.userRoleName ;
+        
+    }
+    
+    /**
+     * Set the user role name Attribute .
+     */
+    public void setUserRoleName(String userRoleName) {
+        
+        this.userRoleName  = userRoleName ;
         
     }
     
@@ -403,7 +426,8 @@ public final class JNDIRealmForm extends RealmForm {
         this.userSubtree="false";
         
         this.digest = null;
-        this.roleAttribute = null;
+        this.roleName = null;
+        this.userRoleName = null;
         
         this.connectionName = null;
         this.connectionPassword = null;
@@ -431,8 +455,10 @@ public final class JNDIRealmForm extends RealmForm {
         sb.append(roleSubtree);
         sb.append(",digest=");
         sb.append(digest);
-        sb.append("',roleAttribute='");
-        sb.append(roleAttribute);
+        sb.append("',userRoleName='");
+        sb.append(userRoleName);
+        sb.append("',roleName='");
+        sb.append(roleName);
         sb.append("',connectionName=");
         sb.append(connectionName);
         sb.append(",connectionPassword=");
@@ -485,11 +511,16 @@ public final class JNDIRealmForm extends RealmForm {
                 new ActionError("error.digest.required"));
             }
              
-            if ((roleAttribute == null) || (roleAttribute.length() < 1)) {
-                errors.add("roleAttribute",
-                new ActionError("error.roleAttribute.required"));
+            if ((roleName == null) || (roleName.length() < 1)) {
+                errors.add("roleName",
+                new ActionError("error.roleName.required"));
             }
             
+            if ((userRoleName == null) || (userRoleName.length() < 1)) {
+                errors.add("userRoleName",
+                new ActionError("error.userRoleName.required"));
+            }
+   
             if ((rolePattern == null) || (rolePattern.length() < 1)) {
                 errors.add("rolePattern",
                 new ActionError("error.rolePattern.required"));
