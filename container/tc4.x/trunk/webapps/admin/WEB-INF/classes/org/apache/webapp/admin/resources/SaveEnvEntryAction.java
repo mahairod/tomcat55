@@ -178,9 +178,9 @@ public final class SaveEnvEntryAction extends Action {
 
             Object params[] = new Object[3];
             params[0] = envEntryForm.getName();
-            params[1] = envEntryForm.getValue();
-            params[2] = envEntryForm.getDescription();
-
+            params[1] = envEntryForm.getEntryType();            
+            params[2] = envEntryForm.getValue();
+            
             ObjectName oname = null;
 
             try {
@@ -196,7 +196,7 @@ public final class SaveEnvEntryAction extends Action {
 
                 getServlet().log
                     (resources.getMessage(locale, "users.error.invoke",
-                                          "createUser"), e);
+                                          "addEnvironment"), e);
                 response.sendError
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                      resources.getMessage(locale, "users.error.invoke",
