@@ -188,7 +188,7 @@ public class Compiler {
 
 
     /** 
-     * Compile the jsp file from the current engine context
+     * Compile the jsp file into equivalent servlet in .java file
      * @return a smap for the current JSP page, if one is generated,
      *         null otherwise
      */
@@ -249,10 +249,6 @@ public class Compiler {
 	    return null;
 	}
 
-	// Generate FunctionMapper (used for validation of EL expressions and
-	// code generation)
-	// pageInfo.setFunctionMapper(new FunctionMapperImpl(this));
-
 	// Validate and process attributes
 	Validator.validate(this, pageNodes);
 
@@ -294,7 +290,7 @@ public class Compiler {
                       (t4-t1) + " generate=" + ( t4-t3 ) + " validate=" + ( t2-t1 ));
         }
         
-        //JSR45 Support - note this needs to be checked by a JSR45 guru
+        // JSR45 Support
         if (! options.isSmapSuppressed()) {
             smapStr = SmapUtil.generateSmap(ctxt, pageNodes);
         }
@@ -311,7 +307,7 @@ public class Compiler {
     }
 
     /** 
-     * Compile the jsp file from the current engine context
+     * Compile the servlet from .java file to .class file
      */
     private void generateClass(String smap)
         throws FileNotFoundException, JasperException, Exception {
@@ -431,7 +427,7 @@ public class Compiler {
 	    return;
 	}
 
-        //JSR45 Support - note this needs to be checked by a JSR45 guru
+        // JSR45 Support
         if (! options.isSmapSuppressed()) {
             SmapUtil.installSmap(ctxt.getClassFileName(), smap);
         }
@@ -447,7 +443,10 @@ public class Compiler {
     }
 
     /**
-     * Compile the jsp file from the current engine context
+     * Compile the jsp file from the current engine context.  As an side-
+     * effect, tag files that are referenced by this page are also compiled.
+     * @param compileClass If true, generate both .java and .class file
+     *                     If false, generate only .java file
      */
     public void compile(boolean compileClass)
         throws FileNotFoundException, JasperException, Exception
@@ -492,10 +491,13 @@ public class Compiler {
     }
 
     /**
-     * This is a protected method intended to be overridden by 
-     * subclasses of Compiler. This is used by the compile method
-     * to do all the compilation.
-     * @param checkClass Verify the class file if true, only the .java file if false.
+     * Determine if a compilation is necessary by checking the time stamp
+     * of the JSP page with that of the corresponding .class or .java file.
+     * If the page has dependencies, the check is also extended to its
+     * dependeants, and so on.
+     * This method can by overidden by a subclasses of Compiler.
+     * @param checkClass If true, check against .class file,
+     *                   if false, check against .java file.
      */
     public boolean isOutDated(boolean checkClass) {
 
