@@ -201,9 +201,13 @@ public class JspServlet extends HttpServlet {
             options = new Options(config, context);
 
             parentClassLoader = engine.getClassLoader(context);
-            if (parentClassLoader == null) {
+            if (parentClassLoader == null)
                 parentClassLoader = this.getClass().getClassLoader();
-            }
+            
+            Constants.message("jsp.message.parent_class_loader_is", 
+                              new Object[] {
+                                  parentClassLoader.toString()
+                              }, Constants.MED_VERBOSITY);
 
             this.loader = new JspLoader(context, 
                                         parentClassLoader, 
