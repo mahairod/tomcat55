@@ -294,27 +294,40 @@
 
 
   <!-- Define an Apache-Connector Service -->
+<!--
   <Service name="Tomcat-Apache">
+-->
 
+<!--
     <Connector className="org.apache.catalina.connector.warp.WarpConnector"
      port="8008" minProcessors="5" maxProcessors="75"
      acceptCount="10" debug="0"/>
+-->
 
     <!-- Replace "localhost" with what your Apache "ServerName" is set to -->
+<!--
     <Engine className="org.apache.catalina.connector.warp.WarpEngine"
      name="Apache" defaultHost="localhost" debug="0" appBase="webapps">
+-->
 
       <!-- Global logger unless overridden at lower levels -->
+<!--
       <Logger className="org.apache.catalina.logger.FileLogger"
               prefix="apache_log." suffix=".txt"
               timestamp="true"/>
+-->
 
       <!-- Because this Realm is here, an instance will be shared globally -->
+<!--
       <Realm className="org.apache.catalina.realm.MemoryRealm" />
+-->
 
+<!--
     </Engine>
+-->
 
+<!--
   </Service>
-
+-->
 
 </Server>
