@@ -70,6 +70,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import javax.management.MBeanException;
 import javax.management.ObjectName;
+import com.sun.jdmk.comm.AuthInfo;
 import com.sun.jdmk.comm.HtmlAdaptorServer;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
@@ -142,6 +143,36 @@ public class ServerLifecycleListener
     }
 
 
+    /**
+     * The login used for the authentication by the 
+     * <code>HtmlAdaptorServer</code>.
+     */
+    protected String login = null;
+
+    public String getLogin() {
+        return (this.login);
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+
+    /**
+     * The password used for the authentication by the 
+     * <code>HtmlAdaptorServer</code>.
+     */
+    protected String password = null;
+
+    public String getPassword() {
+        return (this.password);
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
     // ---------------------------------------------- ContainerListener Methods
 
 
@@ -204,6 +235,10 @@ public class ServerLifecycleListener
 
         try {
             adaptor = new HtmlAdaptorServer(port);
+            if (login != null) {
+                adaptor.addUserAuthenticationInfo
+                    (new AuthInfo(getLogin(), getPassword()));
+            }
             ObjectName name =
                 new ObjectName("Adaptor:name=html,port=" + port);
             MBeanUtils.createServer().registerMBean(adaptor, name);

@@ -16,7 +16,7 @@
   <!-- Uncomment this entry to enable JMX MBeans support -->
 <!--
   <Listener className="org.apache.catalina.mbeans.ServerLifecycleListener"
-                debug="0" port="-1"/>
+                debug="0" port="-1" login="admin" password="admin"/>
 -->
 
 
