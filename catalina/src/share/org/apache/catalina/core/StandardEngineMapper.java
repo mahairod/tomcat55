@@ -177,6 +177,10 @@ public class StandardEngineMapper
      */
     public Container map(Request request, boolean update) {
 
+        // Has this request already been mapped?
+        if (update && (request.getHost() != null))
+            return (request.getHost());
+
         int debug = engine.getDebug();
 
         // Extract the requested server name
