@@ -1724,7 +1724,7 @@ public class Generator {
 	    class ParamVisitor extends Node.Visitor {
 
                 public void visit(Node.ParamAction n) throws JasperException {
-		    out.printin("params.put(");
+		    out.printin("_jspx_params.put(");
 		    out.print(quote(n.getAttributeValue("name")));
 		    out.print(", ");
 		    out.print(attributeValue(n.getValue(), false,
@@ -1734,7 +1734,7 @@ public class Generator {
 	    }
 
 	    // Assemble parameter map
-	    out.printil("params = new java.util.HashMap();");
+	    out.printil("_jspx_params = new java.util.HashMap();");
 	    if (n.getBody() != null) {
 		prepareParams(n);
 		n.getBody().visit(new ParamVisitor());
@@ -1746,10 +1746,10 @@ public class Generator {
 	    if (varReaderAttr != null || varAttr != null) {
 		out.printil("_jspx_sout = new java.io.StringWriter();");
 		out.print(toGetterMethod(n.getAttributeValue("fragment")));
-		out.println(".invoke(_jspx_sout, params);");
+		out.println(".invoke(_jspx_sout, _jspx_params);");
 	    } else {
 		out.print(toGetterMethod(n.getAttributeValue("fragment")));
-		out.println(".invoke(null, params);");
+		out.println(".invoke(null, _jspx_params);");
 	    }
 
 	    // Store varReader in appropriate scope
@@ -1779,7 +1779,7 @@ public class Generator {
 	    class ParamVisitor extends Node.Visitor {
 
                 public void visit(Node.ParamAction n) throws JasperException {
-		    out.printin("params.put(");
+		    out.printin("_jspx_params.put(");
 		    out.print(quote(n.getAttributeValue("name")));
 		    out.print(", ");
 		    out.print(attributeValue(n.getValue(), false,
@@ -1789,7 +1789,7 @@ public class Generator {
 	    }
 
 	    // Assemble parameter map
-	    out.printil("params = new java.util.HashMap();");
+	    out.printil("_jspx_params = new java.util.HashMap();");
 	    if (n.getBody() != null) {
 		prepareParams(n);
 		n.getBody().visit(new ParamVisitor());
@@ -1804,7 +1804,7 @@ public class Generator {
 			    && scope != VariableInfo.NESTED) {
 			continue;
 		    }
-		    out.printin("params.put(");
+		    out.printin("_jspx_params.put(");
 		    String name = tagVars[i].getNameGiven();
 		    if (name != null) {
 			out.print(quote(name));
@@ -1826,9 +1826,9 @@ public class Generator {
 	    String varAttr = n.getAttributeValue("var");
 	    if (varReaderAttr != null || varAttr != null) {
 		out.printil("_jspx_sout = new java.io.StringWriter();");
-		out.printil("getJspBody().invoke(_jspx_sout, params);");
+		out.printil("getJspBody().invoke(_jspx_sout, _jspx_params);");
 	    } else {
-		out.printil("getJspBody().invoke(null, params);");
+		out.printil("getJspBody().invoke(null, _jspx_params);");
 	    }
 
 	    // Store varReader in appropriate scope
@@ -2822,7 +2822,7 @@ public class Generator {
 	out.pushIndent();
 	out.printil("PageContext pageContext = new JspContextWrapper(getJspContext());");
 	// Declare parameter map for fragment/body invocation
-	out.printil("java.util.Map params = null;");
+	out.printil("java.util.Map _jspx_params = null;");
 
 	// Declare writer used for storing result of fragment/body invocation
 	// if 'varReader' or 'var' attribute is specified
