@@ -134,7 +134,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             new Main(args);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             System.out.println("can't instantiate : Main");
             e.printStackTrace();
 	}
