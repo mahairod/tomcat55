@@ -63,14 +63,21 @@
 
 package org.apache.tomcat.modules.server;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import org.apache.tomcat.core.*;
-import org.apache.tomcat.util.net.*;
-import org.apache.tomcat.util.*;
-import org.apache.tomcat.util.log.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.Properties;
+
+import org.apache.tomcat.core.ContextManager;
+import org.apache.tomcat.core.Request;
+import org.apache.tomcat.core.Response;
+import org.apache.tomcat.core.TomcatException;
 import org.apache.tomcat.util.io.FileUtil;
+import org.apache.tomcat.util.log.Log;
+import org.apache.tomcat.util.net.TcpConnection;
+import org.apache.tomcat.util.net.TcpConnectionHandler;
 
 /* Frozen, bug fixes only: all active development goes in
      jakarta-tomcat-connectors/jk/org/apache/ajp/Ajp14*

@@ -61,16 +61,17 @@
 
 package org.apache.tomcat.modules.aaa;
 
-import org.apache.tomcat.core.*;
-import org.apache.tomcat.util.aaa.*;
-import java.security.*;
 import java.security.Principal;
-
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Vector;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.sql.*;
+
+import org.apache.tomcat.core.Context;
+import org.apache.tomcat.core.TomcatException;
+import org.apache.tomcat.util.aaa.SimplePrincipal;
 
 /**
  * Implmentation of <b>Realm</b> that works with any JDBC supported database.
