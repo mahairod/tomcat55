@@ -12,14 +12,14 @@
     <body>
 
     <menu name="Links">
-        <item name="Docs Home"             href="../index.html"/>
+        <item name="Docs Home"             href="../index.html" />
     </menu>
 
     <menu name="Contents">
-        <item name="Contents"              href="index.html"/>
-        <item name="Overview"              href="overview.html"/>
-        <item name="Server Startup"        href="startup.html">
-        <item name="Request Process"       href="requestProcess.html"/>
+        <item name="Contents"              href="index.html" />
+        <item name="Overview"              href="overview.html" />
+        <item name="Server Startup"        href="startup.html" />
+        <item name="Request Process"       href="requestProcess.html" />
     </menu>
 
     </body>
