@@ -75,6 +75,9 @@ Bug No.  Description
 	 Fix problem where the AccessLog was printing the content-length of the
 	 Request instead of the Response.
 
+24123    Fix problem where the AccessLog wasn't logging request that produce
+         no output.  Also log the Request's content length for PUT requests.
+
 Jasper:
 
 Bug No.  Description
