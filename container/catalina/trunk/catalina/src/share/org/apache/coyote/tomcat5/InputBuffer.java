@@ -171,6 +171,7 @@ public class InputBuffer extends Reader
         bb.setByteInputChannel(this);
         cb = new CharChunk(size);
         cb.setLimit(size);
+        cb.setOptimizedWrite(false);
         cb.setCharInputChannel(this);
         cb.setCharOutputChannel(this);
 
