@@ -87,6 +87,10 @@ import java.util.Enumeration;
  * {@link HttpSessionBindingListener}. If it does, 
  * the servlet notifies the object that it has been bound to or unbound 
  * from the session.
+ *
+ * <p> When container migrates a session between VMs in a distributed container
+ * setting, all session atributes implementing the {@link HttpSessionActivationListener}
+ * interface are notified.
  * 
  * <p>A servlet should be able to handle cases in which
  * the client does not choose to join a session, such as when cookies are
