@@ -255,12 +255,6 @@ public class JSSESocketFactory
 	// We enable all cipher suites when the socket is
 	// connected - XXX make this configurable 
 	String cipherSuites[] = socket.getSupportedCipherSuites();
-	if(logger.isDebugEnabled()) {
-	    StringBuffer sb = new StringBuffer();
-	    for(int ii=0; ii < cipherSuites.length; ii++)
-		sb.append(cipherSuites[ii]).append(':');
-	    logger.debug("CipherSuites: " + sb);
-	}
 	socket.setEnabledCipherSuites(cipherSuites);
 
 	// we don't know if client auth is needed -
