@@ -665,7 +665,7 @@ public class ApplicationContext
 
         Logger logger = context.getLogger();
         if (logger != null)
-            logger.log(message);
+            logger.log(context.logName() + message);
 
     }
 
@@ -683,7 +683,7 @@ public class ApplicationContext
         
         Logger logger = context.getLogger();
         if (logger != null)
-            logger.log(exception, message);
+            logger.log(exception, context.logName() + message);
 
     }
 
@@ -698,7 +698,7 @@ public class ApplicationContext
         
         Logger logger = context.getLogger();
         if (logger != null)
-            logger.log(message, throwable);
+            logger.log(context.logName() + message, throwable);
 
     }
 
