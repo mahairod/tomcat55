@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<server>
+  <classpath codebase="tomcat5.sar/lib/" archives="*"/>
+  <classpath codebase="tomcat5.sar/" archives="tomcat41-service.jar"/>
+ 
+  <mbean code="org.apache.commons.modeler.BaseModelMBean"
+         name="Catalina:type=Engine" >
+    <constructor>
+        <arg type="java.lang.String" value="org.apache.catalina.core.StandardEngine" />
+    </constructor>
+    <attribute name="name">Catalina</attribute>
+    <attribute name="baseDir">/ws/50/embed</attribute>
+    <attribute name="defaultHost">localhost</attribute>
+  </mbean>
+
+  <mbean code="org.apache.commons.modeler.BaseModelMBean"
+         name="Catalina:type=Realm" >
+    <constructor>
+        <arg type="java.lang.String" value="org.apache.catalina.realm.JAASRealm" />
+    </constructor>
+  </mbean>
+
+<!--
+  <mbean code="org.apache.commons.modeler.BaseModelMBean"
+         name="Catalina:type=Connector,port=9080" >
+    <constructor>
+        <arg type="java.lang.String" value="org.apache.coyote.tomcat5.CoyoteConnector" />
+    </constructor>
+    <attribute name="protocolHandlerClassName"
+              value="org.apache.jk.server.JkCoyoteHandler" />
+   </mbean>
+-->
+
+
+  <mbean code="org.apache.commons.modeler.BaseModelMBean"
+         name="Catalina:type=Connector,port=9080" >
+    <constructor>
+        <arg type="java.lang.String" value="org.apache.coyote.tomcat5.CoyoteConnector" />
+    </constructor>
+    <attribute name="port">9080</attribute>
+  </mbean>
+ 
+  <mbean code="org.jboss.web.catalina.Tomcat5"
+         name="jboss.web:service=EmbeddedCatalina5" >
+  </mbean>
+
+</server>
+
