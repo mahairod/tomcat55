@@ -739,8 +739,6 @@ public class JspC implements Options {
                     && ((JasperException) rootCause).getRootCause() != null) {
                 rootCause = ((JasperException) rootCause).getRootCause();
             }
-            log.error(Localizer.getMessage("jspc.error.generalException",
-                      file), rootCause);
             throw je;
 
         } catch (Exception e) {
@@ -863,7 +861,9 @@ public class JspC implements Options {
                     && ((JasperException) rootCause).getRootCause() != null) {
                 rootCause = ((JasperException) rootCause).getRootCause();
             }
-            rootCause.printStackTrace();
+            if (rootCause != je) {
+                rootCause.printStackTrace();
+            }
             throw je;
         }
     }
