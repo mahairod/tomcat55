@@ -99,6 +99,7 @@ public class JspC implements Options { //, JspCompilationContext {
     public static final String SWITCH_FILE_WEBAPP = "-webapp";
     public static final String SWITCH_WEBAPP_INC = "-webinc";
     public static final String SWITCH_WEBAPP_XML = "-webxml";
+    public static final String SWITCH_MAPPED = "-mapped";
 
     public static final int NO_WEBXML = 0;
     public static final int INC_WEBXML = 10;
@@ -109,6 +110,7 @@ public class JspC implements Options { //, JspCompilationContext {
   
     
     boolean largeFile = false;
+	boolean mappedFile = false;
 
     int jspVerbosityLevel = Logger.INFORMATION;
 
@@ -143,6 +145,13 @@ public class JspC implements Options { //, JspCompilationContext {
     public boolean getLargeFile() {
         return largeFile;
     }
+
+    /**
+     * Are we supporting HTML mapped servlets?
+     */
+    public boolean getMappedFile() {
+		return mappedFile;
+	}
     
     public boolean getSendErrorToClient() {
         // implied send to System.err
@@ -270,6 +279,8 @@ public class JspC implements Options { //, JspCompilationContext {
                 if (webxmlFile != null) {
                     webxmlLevel = ALL_WEBXML;
                 };
+            } else if (tok.equals(SWITCH_MAPPED)) {
+                mappedFile = true;
             } else {
                 pushBackArg();
                 // Not a recognized Option?  Start treting them as JSP Pages
