@@ -57,6 +57,8 @@
       <copyfile src="../jakarta-ant/lib/xml.jar"
                 dest="${watchdog.build}/lib/xml.jar"/>
 
+      <mkdir dir="${watchdog.dist}/lib/jsp-golden"/>
+      <copydir src="src/clients/org/apache/jcheck/jsp/client" dest="${watchdog.dist}/lib/jsp-golden"/>
 
       <copydir src="src/bin" dest="${watchdog.build}"/>
       <copydir src="src/conf" dest="${watchdog.build}/conf" />
