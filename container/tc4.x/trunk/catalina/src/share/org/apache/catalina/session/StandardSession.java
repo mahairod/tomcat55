@@ -768,7 +768,6 @@ class StandardSession
         expiring = false;
         id = null;
         lastAccessedTime = 0L;
-        manager = null;
         maxInactiveInterval = -1;
         notes.clear();
         setPrincipal(null);
@@ -778,6 +777,8 @@ class StandardSession
         // Tell our Manager that this Session has been recycled
         if ((manager != null) && (manager instanceof ManagerBase))
             ((ManagerBase) manager).recycle(this);
+
+        manager = null;
 
     }
 
