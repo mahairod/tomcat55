@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.catalina.cluster.io;
+
+import java.nio.ByteBuffer;
+import java.nio.channels.Selector;
+import java.nio.channels.SocketChannel;
 
 /**
  * The object reader object is an object used in conjunction with
@@ -26,59 +29,92 @@ package org.apache.catalina.cluster.io;
  * for message encoding and decoding.
  *
  * @author Filip Hanik
+ * @author Peter Rossbach
  * @version $Revision$, $Date$
  */
+public class ObjectReader {
 
-import java.nio.channels.SocketChannel;
-import java.nio.channels.Selector;
-import java.nio.ByteBuffer;
-import org.apache.catalina.cluster.io.XByteBuffer;
-public class ObjectReader
-{
     private SocketChannel channel;
+
     private Selector selector;
+
     private ListenCallback callback;
+
     private XByteBuffer buffer;
 
-    public ObjectReader( SocketChannel channel,
-                         Selector selector,
-                         ListenCallback callback )  {
+    /**
+     * Create XByteBuffer and store parameter
+     * @param channel
+     * @param selector
+     * @param callback
+     */
+    public ObjectReader(SocketChannel channel, Selector selector, ListenCallback callback, boolean isCompressed) {
         this.channel = channel;
         this.selector = selector;
         this.callback = callback;
-        this.buffer = new XByteBuffer();
+        this.buffer = new XByteBuffer(isCompressed);
     }
 
+    /**
+     * get the current SimpleTcpCluster
+     * @return Returns the callback.
+     */
+    public ListenCallback getCallback() {
+        return callback;
+    }
 
-    public SocketChannel getChannel()  {
+    /**
+     * Get underlying NIO channel
+     * @return
+     */
+    public SocketChannel getChannel() {
         return this.channel;
     }
 
-    public int append(byte[] data,int off,int len) throws java.io.IOException {
-        boolean result = false;
+    /**
+     * Append new bytes to buffer. 
+     * @see XByteBuffer#countPackages()
+     * @param data new transfer buffer
+     * @param off offset
+     * @param len length in buffer
+     * @return number of messages that sended to callback
+     * @throws java.io.IOException
+     */
+     public int append(byte[] data,int off,int len) throws java.io.IOException {
         buffer.append(data,off,len);
         int pkgCnt = buffer.countPackages();
         return pkgCnt;
     }
 
+    /**
+     * Send buffer to cluster listener (callback)
+     * Is message complete receiver send message to callback
+     * @see org.apache.catalina.cluster.tcp.SimpleTcpCluster#messageDataReceived(byte[])
+     * @see XByteBuffer#doesPackageExist()
+     * @see XByteBuffer#extractPackage()
+     * @return number of received packages/messages
+     * @throws java.io.IOException
+     */
     public int execute() throws java.io.IOException {
         int pkgCnt = 0;
         boolean pkgExists = buffer.doesPackageExist();
         while ( pkgExists ) {
             byte[] b = buffer.extractPackage(true);
-            callback.messageDataReceived(b);
+            getCallback().messageDataReceived(b);
             pkgCnt++;
             pkgExists = buffer.doesPackageExist();
-        }//end if
+        }
         return pkgCnt;
     }
-
-    public int write(ByteBuffer buf)
-       throws java.io.IOException {
+    
+    /**
+     * Write Ack to sender
+     * @param buf
+     * @return
+     * @throws java.io.IOException
+     */
+    public int write(ByteBuffer buf) throws java.io.IOException {
         return getChannel().write(buf);
     }
-
-
-
 
 }

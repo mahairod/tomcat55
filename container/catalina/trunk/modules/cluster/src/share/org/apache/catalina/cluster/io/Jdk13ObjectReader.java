@@ -16,6 +16,10 @@
 
 package org.apache.catalina.cluster.io;
 
+
+import java.net.Socket;
+import org.apache.catalina.cluster.io.XByteBuffer;
+
 /**
  * The object reader object is an object used in conjunction with
  * java.nio TCP messages. This object stores the message bytes in a
@@ -26,24 +30,41 @@ package org.apache.catalina.cluster.io;
  * for message encoding and decoding.
  *
  * @author Filip Hanik
+ * @author Peter Rossbach
  * @version $Revision$, $Date$
  */
-
-import java.net.Socket;
-import org.apache.catalina.cluster.io.XByteBuffer;
 public class Jdk13ObjectReader
 {
     private Socket socket;
     private ListenCallback callback;
     private XByteBuffer buffer;
 
+    /**
+     * use this socket and callback to receive messages
+     * @param socket listener socket
+     * @param callback SimpleTcpCluster listener
+     * @param compress is send message data compress or flat.
+     */
     public Jdk13ObjectReader( Socket socket,
-                               ListenCallback callback )  {
+                               ListenCallback callback, boolean compress)  {
         this.socket = socket;
         this.callback = callback;
-        this.buffer = new XByteBuffer();
+        this.buffer = new XByteBuffer(compress);
     }
 
+    
+    /**
+     * Append new bytes to buffer. 
+     * Is message complete receiver send message to callback
+     * @see org.apache.catalina.cluster.tcp.SimpleTcpCluster#messageDataReceived(byte[])
+     * @see XByteBuffer#doesPackageExist()
+     * @see XByteBuffer#extractPackage(boolean)
+     * @param data new transfer buffer
+     * @param off offset
+     * @param len length in buffer
+     * @return number of messages that sended to callback
+     * @throws java.io.IOException
+     */
     public int append(byte[] data,int off,int len) throws java.io.IOException {
         boolean result = false;
         buffer.append(data,off,len);
@@ -54,22 +75,32 @@ public class Jdk13ObjectReader
             callback.messageDataReceived(b);
             pkgCnt++;
             pkgExists = buffer.doesPackageExist();
-        }//end if
+        }
         return pkgCnt;
     }
 
+    
+    /**
+     * send message to callback
+     * @see Jdk13ObjectReader#append(byte[], int, int)
+     * @return
+     * @throws java.io.IOException
+     */
     public int execute() throws java.io.IOException {
         return append(new byte[0],0,0);
     }
 
+    /**
+     * write data to socket (ack)
+     * @see org.apache.catalina.cluster.tcp.Jdk13ReplicationListener#sendAck
+     * @param data
+     * @return
+     * @throws java.io.IOException
+     */
     public int write(byte[] data)
        throws java.io.IOException {
        socket.getOutputStream().write(data);
        return 0;
 
     }
-
-
-
-
 }
