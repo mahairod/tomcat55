@@ -82,7 +82,7 @@ public class HttpServletRequestWrapperGetRequestURITestServlet extends HttpServl
         sl.resetLog();
 
 
-        String expectedResult = "/servlet-tests/hsreqw/HttpServletRequestWrapperGetRequestURITest";
+        String expectedResult = getServletConfig().getInitParameter("expectedResult");
         String result = request.getRequestURI();
         //not null value expected
         if ( result != null ) {

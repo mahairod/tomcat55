@@ -4262,6 +4262,11 @@
     
     <servlet-class>tests.javax_servlet_http.HttpServletRequestWrapper.HttpServletRequestWrapperGetRequestURITestServlet</servlet-class>
     
+    <init-param>
+      <param-name>expectedResult</param-name>
+      <param-value>/servlet-tests/tests/javax_servlet_http/HttpServletRequestWrapper/filtered/HttpServletRequestWrapperGetRequestURITestServlet</param-value>
+    </init-param>
+    
     <load-on-startup>0</load-on-startup>
     
   
