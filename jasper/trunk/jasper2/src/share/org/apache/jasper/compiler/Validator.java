@@ -1248,6 +1248,7 @@ class Validator {
 			err.jspError(n, "jsp.error.noFunction", function);
 		    }
 		    // Skip TLD function uniqueness check.  Done by Schema ?
+		    func.setUri(uri);
 		    func.setFunctionInfo(funcInfo);
 		    processSignature(func);
 		}

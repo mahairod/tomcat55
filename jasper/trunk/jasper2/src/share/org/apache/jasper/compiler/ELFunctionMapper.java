@@ -96,6 +96,12 @@ public class ELFunctionMapper {
 
     class ELFunctionVisitor extends Node.Visitor {
 	
+	/**
+	 * Use a global name map to facilitate reuse of function maps.
+	 * The key used is prefix:function:uri.
+	 */
+	private HashMap gMap = new HashMap();
+
 	public void visit(Node.ParamAction n) throws JasperException {
 	    doMap(n.getValue());
 	}
@@ -174,8 +180,15 @@ public class ELFunctionMapper {
 		return;
 	    }
 
+	    // Reuse a previous map if possible
+	    String decName = matchMap(functions);
+	    if (decName != null) {
+		el.setMapName(decName);
+		return;
+	    }
+	
 	    // Generate declaration for the map statically
-	    String decName = getMapName();
+	    decName = getMapName();
 	    ss.append("static private org.apache.jasper.runtime.ProtectedFunctionMapper " + decName + ";\n");
 	    ds.append("  " + decName + " = org.apache.jasper.runtime.ProtectedFunctionMapper.getInstance();\n");
 
@@ -195,8 +208,31 @@ public class ELFunctionMapper {
 		    ds.append(params[k] + ".class");
 		}
 		ds.append("});\n");
+		// Put the current name in the global function map
+		gMap.put(f.getPrefix() + ':' + f.getName() + ':' + f.getUri(),
+			 decName);
 	    }
 	    el.setMapName(decName);
+	}
+
+	private String matchMap(ArrayList functions) {
+
+	    String mapName = null;
+	    for (int i = 0; i < functions.size(); i++) {
+		ELNode.Function f = (ELNode.Function)functions.get(i);
+		String temName = (String) gMap.get(f.getPrefix() + ':' +
+					f.getName() + ':' + f.getUri());
+		if (temName != null) {
+		    if (mapName == null) {
+			mapName = temName;
+		    }
+		    else if (! temName.equals(mapName)) {
+			// If not all in the previous match, then no match.
+			return null;
+		    }
+		}
+	    }
+	    return mapName;
 	}
 
 	private String getMapName() {

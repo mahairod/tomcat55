@@ -145,6 +145,7 @@ abstract class ELNode {
 
 	private String prefix;
 	private String name;
+	private String uri;
 	private FunctionInfo functionInfo;
 	private String methodName;
 	private String[] parameters;
@@ -164,6 +165,14 @@ abstract class ELNode {
 
 	public String getName() {
 	    return name;
+	}
+
+	public void setUri(String uri) {
+	    this.uri = uri;
+	}
+
+	public String getUri() {
+	    return uri;
 	}
 
 	public void setFunctionInfo(FunctionInfo f) {
