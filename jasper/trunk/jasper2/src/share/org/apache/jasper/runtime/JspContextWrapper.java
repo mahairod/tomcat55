@@ -84,8 +84,12 @@ import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 
 /**
- * A wrapper class for PageContext class used for providing a tempory
- * page scope for invoking a fragment
+ * Implementation of a JSP Context Wrapper.
+ *
+ * The JSP Context Wrapper is a JspContext created and maintained by a tag
+ * handler implementation. It wraps the Invoking JSP Context, that is, the
+ * JspContext instance passed to the tag handler by the invoking page via
+ * setJspContext().
  *
  * @author Kin-man Chung
  */
