@@ -246,8 +246,8 @@ public final class RequestUtil {
 	    name = parser.extract(nameStart, nameEnd);
 	    value = parser.extract(valueStart, valueEnd);
 
-	    // A zero-length name or value means we are done
-	    if ((name.length() < 1) || (value.length() < 1))
+	    // A zero-length name means we are done
+	    if (name.length() < 1)
 	        break;
 
 	    // Create or update the array of values for this name
