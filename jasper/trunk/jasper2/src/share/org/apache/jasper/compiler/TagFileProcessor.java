@@ -87,7 +87,6 @@ public class TagFileProcessor {
     static class TagFileVisitor extends Node.Visitor {
 
         private static final JspUtil.ValidAttribute[] tagDirectiveAttrs = {
-            new JspUtil.ValidAttribute("name"),
             new JspUtil.ValidAttribute("display-name"),
             new JspUtil.ValidAttribute("body-content"),
             new JspUtil.ValidAttribute("dynamic-attributes"),
@@ -146,9 +145,11 @@ public class TagFileProcessor {
         private Vector fragmentAttributeVector = new Vector();
         private Map fragmentAttributesMap = new Hashtable();
 
-        public TagFileVisitor(Compiler compiler, TagLibraryInfo tagLibInfo) {
+        public TagFileVisitor(Compiler compiler, TagLibraryInfo tagLibInfo,
+			      String name) {
             err = compiler.getErrorDispatcher();
 	    this.tagLibInfo = tagLibInfo;
+	    this.name = name;
         }
 
         public void visit(Node.TagDirective n) throws JasperException {
@@ -156,14 +157,6 @@ public class TagFileProcessor {
             JspUtil.checkAttributes("Tag directive", n, tagDirectiveAttrs,
 				    err);
 
-	    String tname = n.getAttributeValue("name");
-	    if (tname != null) {
-                if (name == null) {
-		    name = tname;
-                } else if (!tname.equals(name)) {
-		    err.jspError("jsp.error.tagfile.tld.name", name, tname);
-                }
-	    }
             bodycontent = n.getAttributeValue("body-content");
             if (bodycontent != null &&
                     !bodycontent.equals(TagInfo.BODY_CONTENT_EMPTY) &&
@@ -185,7 +178,7 @@ public class TagFileProcessor {
             JspUtil.checkAttributes("Attribute directive", n,
                                     attributeDirectiveAttrs, err);
 
-            String name = n.getAttributeValue("name");
+            String attrName = n.getAttributeValue("name");
             boolean required = JspUtil.booleanValue(
 					n.getAttributeValue("required"));
             boolean rtexprvalue = JspUtil.booleanValue(
@@ -194,7 +187,7 @@ public class TagFileProcessor {
 					n.getAttributeValue("fragment"));
 	    String type = n.getAttributeValue("type");
             if (fragment) {
-                fragmentAttributesMap.put(name, n);
+                fragmentAttributesMap.put(attrName, n);
                 if (type != null) {
                     err.jspError("jsp.error.fragmentwithtype");
                 }
@@ -204,7 +197,7 @@ public class TagFileProcessor {
 	    }
 
 	    attributeVector.addElement(
-                    new TagAttributeInfo(name, required, type, rtexprvalue,
+                    new TagAttributeInfo(attrName, required, type, rtexprvalue,
 					 fragment));
         }
 
@@ -319,8 +312,7 @@ public class TagFileProcessor {
 	}
 
         TagFileVisitor tagFileVisitor = new TagFileVisitor(pc.getCompiler(),
-							   tagLibInfo);
-	tagFileVisitor.name = name;
+							   tagLibInfo, name);
         page.visit(tagFileVisitor);
 
         return tagFileVisitor.getTagInfo();

@@ -322,14 +322,4 @@ public class ParserController {
 				    new Object[]{encoding}));
 	}
     }
-
-    private void p(String s) {
-        System.out.println("[ParserController] " + s);
-    }
-
-    private void p(String s, Throwable ex) {
-        p(s);
-        p(ex.getMessage());
-        ex.printStackTrace();
-    }
 }

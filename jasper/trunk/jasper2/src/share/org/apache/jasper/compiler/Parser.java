@@ -376,12 +376,11 @@ public class Parser {
 	    } else {
 		String tagdir = attrs.getValue("tagdir");
 		if (tagdir != null) {
-		    tagLibInfo = ImplicitTagLibraryInfo.getTabLibraryInfo(
-                                                    ctxt,
-						    parserController,
-						    prefix, 
-						    tagdir,
-						    err);
+		    tagLibInfo = new ImplicitTagLibraryInfo(ctxt,
+							    parserController,
+							    prefix, 
+							    tagdir,
+							    err);
 		}
 	    }
 	    if (tagLibInfo != null) {

@@ -77,13 +77,10 @@ import org.apache.jasper.JasperException;
 public class ImplicitTagLibraryInfo extends TagLibraryInfo {
 
     private static final String WEB_INF_TAGS = "/WEB-INF/tags/";
-    private static final String TLD_SUFFIX = ".tld";
     private static final String TAG_FILE_SUFFIX = ".tag";
     private static final String TAGS_SHORTNAME = "tags";
     private static final String TLIB_VERSION = "1.0";
     private static final String JSP_VERSION = "2.0";
-
-    private String tldFile;
 
     /**
      * Constructor.
@@ -117,10 +114,7 @@ public class ImplicitTagLibraryInfo extends TagLibraryInfo {
 	    Iterator it = dirList.iterator();
 	    while (it.hasNext()) {
 		String path = (String) it.next();
-		if (path.endsWith(TLD_SUFFIX)) {
-		    tldFile = path;
-		    break;
-		} else if (path.endsWith(TAG_FILE_SUFFIX)) {
+		if (path.endsWith(TAG_FILE_SUFFIX)) {
 		    // use the filename of the tag file, without the .tag
 		    // extension, as the <name> subelement of the "imaginary"
 		    // <tag-file> element
@@ -138,26 +132,5 @@ public class ImplicitTagLibraryInfo extends TagLibraryInfo {
 	    this.tagFiles = new TagFileInfo[vec.size()];
 	    vec.copyInto(this.tagFiles);
 	}
-    }
-
-    public static TagLibraryInfo getTabLibraryInfo(JspCompilationContext ctxt,
-						   ParserController pc,
-						   String prefix, 
-						   String tagdir,
-						   ErrorDispatcher err)
-	    throws JasperException {
-
-	TagLibraryInfo tagLibInfo = new ImplicitTagLibraryInfo(ctxt, pc,
-							       prefix, tagdir,
-							       err);
-	if (((ImplicitTagLibraryInfo) tagLibInfo).tldFile != null) {
-	    // tagdir contains TLD file
-	    String[] location = new String[2];
-	    location[0] = ((ImplicitTagLibraryInfo) tagLibInfo).tldFile;
-	    tagLibInfo = new TagLibraryInfoImpl(ctxt, pc, prefix, tagdir,
-						location, err);
-	}
-	
-	return tagLibInfo;
     }
 }
