@@ -140,25 +140,7 @@ public class ResourceLinkFactory
         if (refAddr != null) {
             globalName = refAddr.getContent().toString();
             Object result = null;
-            try {
-                result = globalContext.lookup(globalName);
-            } catch (NamingException e) {
-                // Ignore
-            }
-            if ((result == null) && (!globalName.startsWith("/comp"))) {
-                try {
-                    result = globalContext.lookup("/comp/" + globalName);
-                } catch (NamingException e) {
-                    // Ignore
-                }
-            }
-            if ((result == null) && (!globalName.startsWith("/comp/env"))) {
-                try {
-                    result = globalContext.lookup("/comp/env/" + globalName);
-                } catch (NamingException e) {
-                    // Ignore
-                }
-            }
+            result = globalContext.lookup(globalName);
             // FIXME: Check type
             return result;
         }
