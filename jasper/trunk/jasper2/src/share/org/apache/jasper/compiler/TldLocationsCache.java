@@ -293,49 +293,59 @@ public class TldLocationsCache {
      */    
     private void processWebDotXml() throws Exception {
 
-        // Acquire an input stream to the web application deployment descriptor
-        InputStream is = ctxt.getResourceAsStream(WEB_XML);
-        if (is == null) {
-            if (log.isWarnEnabled()) {
-                log.warn(Localizer.getMessage("jsp.error.internal.filenotfound",
-                                              WEB_XML));
+        InputStream is = null;
+
+        try {
+            // Acquire input stream to web application deployment descriptor
+            is = ctxt.getResourceAsStream(WEB_XML);
+            if (is == null) {
+                if (log.isWarnEnabled()) {
+                    log.warn(Localizer.getMessage("jsp.error.internal.filenotfound",
+                                                  WEB_XML));
+                }
+                return;
             }
-            return;
-        }
 
-        // Parse the web application deployment descriptor
-        TreeNode webtld = new ParserUtils().parseXMLDocument(WEB_XML, is);
+            // Parse the web application deployment descriptor
+            TreeNode webtld = new ParserUtils().parseXMLDocument(WEB_XML, is);
 
-        // Allow taglib to be an element of the root or jsp-config (JSP2.0)
-        TreeNode jspConfig = webtld.findChild("jsp-config");
-        if (jspConfig != null) {
-            webtld = jspConfig;
-        }
-        Iterator taglibs = webtld.findChildren("taglib");
-        while (taglibs.hasNext()) {
-
-            // Parse the next <taglib> element
-            TreeNode taglib = (TreeNode) taglibs.next();
-            String tagUri = null;
-            String tagLoc = null;
-            TreeNode child = taglib.findChild("taglib-uri");
-            if (child != null)
-                tagUri = child.getBody();
-            child = taglib.findChild("taglib-location");
-            if (child != null)
-                tagLoc = child.getBody();
-
-            // Save this location if appropriate
-            if (tagLoc == null)
-                continue;
-            if (uriType(tagLoc) == NOROOT_REL_URI)
-                tagLoc = "/WEB-INF/" + tagLoc;
-            String tagLoc2 = null;
-            if (tagLoc.endsWith(JAR_FILE_SUFFIX)) {
-                tagLoc = ctxt.getResource(tagLoc).toString();
-                tagLoc2 = "META-INF/taglib.tld";
+            // Allow taglib to be an element of the root or jsp-config (JSP2.0)
+            TreeNode jspConfig = webtld.findChild("jsp-config");
+            if (jspConfig != null) {
+                webtld = jspConfig;
             }
-            mappings.put(tagUri, new String[] { tagLoc, tagLoc2 });
+            Iterator taglibs = webtld.findChildren("taglib");
+            while (taglibs.hasNext()) {
+
+                // Parse the next <taglib> element
+                TreeNode taglib = (TreeNode) taglibs.next();
+                String tagUri = null;
+                String tagLoc = null;
+                TreeNode child = taglib.findChild("taglib-uri");
+                if (child != null)
+                    tagUri = child.getBody();
+                child = taglib.findChild("taglib-location");
+                if (child != null)
+                    tagLoc = child.getBody();
+
+                // Save this location if appropriate
+                if (tagLoc == null)
+                    continue;
+                if (uriType(tagLoc) == NOROOT_REL_URI)
+                    tagLoc = "/WEB-INF/" + tagLoc;
+                String tagLoc2 = null;
+                if (tagLoc.endsWith(JAR_FILE_SUFFIX)) {
+                    tagLoc = ctxt.getResource(tagLoc).toString();
+                    tagLoc2 = "META-INF/taglib.tld";
+                }
+                mappings.put(tagUri, new String[] { tagLoc, tagLoc2 });
+            }
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Throwable t) {}
+            }
         }
     }
 
