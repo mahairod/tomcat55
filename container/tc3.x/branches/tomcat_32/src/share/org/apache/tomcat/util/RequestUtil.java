@@ -184,10 +184,23 @@ public class RequestUtil {
                     
                     String name = token.substring(0, i).trim();
                     String value = token.substring(i+1, token.length()).trim();
-		    // RFC 2109 and bug 
-		    value=stripQuote( value );
-                    Cookie cookie = new Cookie(name, value);
-                    cookies.addElement(cookie);
+                    // RFC 2109 and bug 
+                    value=stripQuote( value );
+
+                    // Wrap the cookie creation in a try/catch to prevent bad
+                    // cookie names from killing the request -- Bug #1141
+                    try {
+                        Cookie cookie = new Cookie(name, value);
+                        cookies.addElement(cookie);
+                    }
+                    catch ( java.lang.IllegalArgumentException iae ) {
+                        
+                        // Log the original cookie header string, so we
+                        // can see what is causing this
+                        System.err.println(iae.getMessage() + "\n" +
+                                           "Cookie Header: " + cookieString);
+                    }
+
                 } else {
                     // we have a bad cookie.... just let it go
                 }
