@@ -70,8 +70,13 @@ compile ahead of time the JSP pages that comprise your application.  Finally,
 version 3.1 also focused on reorganizing the code (modularization, cleanup, 
 refactoring, removal of dead code, and separation of J2EE-specific code).
 
-- Tomcat 3.2 is the first performance tune-up, and also adds a few new 
-features (see next section).
+- Tomcat 3.2 was the first performance tune-up, and also added a few new 
+features.
+
+- Tomcat 3.2.1 was a security update.  See section 7.3 for details.
+
+- Tomcat 3.2.2 is a bug fix release.  Section 7.1 describes the issues
+that have been fixed in the version.
 
 - Tomcat 4.0 is separate development from Tomcat 3.x.  It is based on the
 Catalina architecture, which is very different from the architecture of
@@ -281,6 +286,15 @@ The path passed to javax.servlet.Context.getResource() and
 javax.servlet.Context.getResrouceAsStream() cannot contain URL escapes of
 the form %HH.  Paths containing any URL escapes will return null.
 
+6.11 AJP12 and SSL
+
+The AJP12 protocol does not provide a mechanism for identifying requests
+that arrived on a secure transport (e.g. SSL).  Tomcat assumes that any
+request that arrived on server port 443 is secure and sets the URL scheme
+to HTTPS.  Requests on any other port are assumed to be non-secure and
+will indicate a URL scheme of HTTP.  The AJP13 protocol does not suffer
+from this problem.
+
 ===============================================================================
 7.  FIXES AND ENHANCEMENTS IN UPDATES
 
@@ -318,6 +332,8 @@ Servlet
   -  HttpServletRequest.encodeURL() now properly encodes URLs that contain
      an anchor but no query string.  (#1182)
   -  Error pages now work in virtual hosts.
+  -  ServletRequest.getRemoteHost() now returns the remote IP address
+     if the remote host name isn't known.  (#208)
 
 Jasper
   -  Fix for UnsupportedEncodingException due to UTF8 instead of UTF-8.  (#269)
