@@ -137,18 +137,6 @@ public class TransactionFactory
                     } catch(Throwable t) {
                     }
                 }
-            } else {
-                // Defaults to Tyrex
-                String javaxTransactionUserTransactionFactoryClassName =
-                    System.getProperty
-                    ("javax.transaction.UserTransaction.Factory",
-                     Constants.TYREX_TRANSACTION_FACTORY);
-                try {
-                    factory = (ObjectFactory) Class.forName
-                        (javaxTransactionUserTransactionFactoryClassName)
-                        .newInstance();
-                } catch(Throwable t) {
-                }
             }
             if (factory != null) {
                 return factory.getObjectInstance
