@@ -124,7 +124,7 @@ public class RequestImpl  implements Request {
     // Session
     // set by interceptors - the session id
     protected String reqSessionId;
-    protected boolean sessionIdFromCookie=true;
+    protected boolean sessionIdFromCookie=false;
     protected boolean sessionIdFromURL=false;
     // cache- avoid calling SessionManager for each getSession()
     protected HttpSession serverSession;
@@ -351,6 +351,13 @@ public class RequestImpl  implements Request {
 	return sessionIdFromURL;
     }
 
+    public void setRequestedSessionIdFromCookie(boolean newState){
+	sessionIdFromCookie=true;
+    }
+ 
+    public void setRequestedSessionIdFromURL(boolean newState) {
+	sessionIdFromURL=newState;
+    }
 
     public void setContext(Context context) {
 	this.context = context;
