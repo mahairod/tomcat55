@@ -155,7 +155,7 @@ public class Compiler {
             logger.setMessageOutputLevel( Project.MSG_INFO );
         }
         project.addBuildListener( logger );
-	if (System.getProperty("catalina.home") != null) {
+        if (System.getProperty("catalina.home") != null) {
             project.setBasedir( System.getProperty("catalina.home"));
         }
 
@@ -197,43 +197,43 @@ public class Compiler {
     public void generateJava()
         throws FileNotFoundException, JasperException, Exception
     {
-	// Setup page info area
-	pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader()));
+        // Setup page info area
+        pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader()));
 
         String javaFileName = ctxt.getServletJavaFileName();
 
         // Setup the ServletWriter
         String javaEncoding = ctxt.getOptions().getJavaEncoding();
 
-	OutputStreamWriter osw = null; 
-	try {
-	    osw = new OutputStreamWriter(new FileOutputStream(javaFileName),
-					 javaEncoding);
-	} catch (UnsupportedEncodingException ex) {
-	    errDispatcher.jspError("jsp.error.needAlternateJavaEncoding", javaEncoding);
-	}
+        OutputStreamWriter osw = null; 
+        try {
+            osw = new OutputStreamWriter(new FileOutputStream(javaFileName),
+                                         javaEncoding);
+        } catch (UnsupportedEncodingException ex) {
+            errDispatcher.jspError("jsp.error.needAlternateJavaEncoding", javaEncoding);
+        }
 
-	ServletWriter writer = new ServletWriter(new PrintWriter(osw));
+        ServletWriter writer = new ServletWriter(new PrintWriter(osw));
         ctxt.setWriter(writer);
 
-	// Parse the file
-	ParserController parserCtl = new ParserController(ctxt, this);
-	pageNodes = parserCtl.parse(ctxt.getJspFile());
+        // Parse the file
+        ParserController parserCtl = new ParserController(ctxt, this);
+        pageNodes = parserCtl.parse(ctxt.getJspFile());
 
-	// Validate and process attributes
-	Validator.validate(this, pageNodes);
+        // Validate and process attributes
+        Validator.validate(this, pageNodes);
 
-	// Dump out the page (for debugging)
-	// Dumper.dump(pageNodes);
+        // Dump out the page (for debugging)
+        // Dumper.dump(pageNodes);
 
-	// Collect page info
-	Collector.collect(this, pageNodes);
+        // Collect page info
+        Collector.collect(this, pageNodes);
 
-	// Determine which custom tag needs to declare which scripting vars
-	ScriptingVariabler.set(pageNodes);
+        // Determine which custom tag needs to declare which scripting vars
+        ScriptingVariabler.set(pageNodes);
 
-	// generate servlet .java file
-	Generator.generate(writer, this, pageNodes);
+        // generate servlet .java file
+        Generator.generate(writer, this, pageNodes);
         writer.close();
         // The writer is only used during the compile, dereference
         // it in the JspCompilationContext when done to allow it
@@ -481,7 +481,7 @@ public class Compiler {
      * Gets the error dispatcher.
      */
     public ErrorDispatcher getErrorDispatcher() {
-	return errDispatcher;
+        return errDispatcher;
     }
 
 
@@ -489,12 +489,12 @@ public class Compiler {
      * Gets the info about the page under compilation
      */
     public PageInfo getPageInfo() {
-	return pageInfo;
+        return pageInfo;
     }
 
 
     public JspCompilationContext getCompilationContext() {
-	return ctxt;
+        return ctxt;
     }
 
 
