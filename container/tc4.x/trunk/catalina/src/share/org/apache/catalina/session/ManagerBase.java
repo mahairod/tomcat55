@@ -560,6 +560,38 @@ public abstract class ManagerBase implements Manager {
     public Session createSession() {
 
         // Recycle or create a Session instance
+        Session session = createEmptySession();
+
+        // Initialize the properties of the new session and return it
+        session.setNew(true);
+        session.setValid(true);
+        session.setCreationTime(System.currentTimeMillis());
+        session.setMaxInactiveInterval(this.maxInactiveInterval);
+        String sessionId = generateSessionId();
+        String jvmRoute = getJvmRoute();
+        // @todo Move appending of jvmRoute generateSessionId()???
+        if (jvmRoute != null) {
+            sessionId += '.' + jvmRoute;
+        }
+        /*
+        synchronized (sessions) {
+            while (sessions.get(sessionId) != null)        // Guarantee uniqueness
+                sessionId = generateSessionId();
+        }
+        */
+        session.setId(sessionId);
+
+        return (session);
+
+    }
+
+
+    /**
+     * Get a session from the recycled ones or create a new empty one.
+     * The PersistentManager manager does not need to create session data
+     * because it reads it from the Store.
+     */
+    public Session createEmptySession() {
         Session session = null;
         synchronized (recycled) {
             int size = recycled.size();
@@ -572,29 +604,7 @@ public abstract class ManagerBase implements Manager {
             session.setManager(this);
         else
             session = new StandardSession(this);
-
-        // Initialize the properties of the new session and return it
-        session.setNew(true);
-        session.setValid(true);
-        session.setCreationTime(System.currentTimeMillis());
-        session.setMaxInactiveInterval(this.maxInactiveInterval);
-        String sessionId = generateSessionId();
-        String jvmRoute = getJvmRoute();
-        // @todo Move appending of jvmRoute generateSessionId()???
-        if (jvmRoute != null) {
-            sessionId += '.' + jvmRoute;
-            session.setId(sessionId);
-        }
-        /*
-        synchronized (sessions) {
-            while (sessions.get(sessionId) != null)        // Guarantee uniqueness
-                sessionId = generateSessionId();
-        }
-        */
-        session.setId(sessionId);
-
-        return (session);
-
+        return(session);
     }
 
 
