@@ -894,28 +894,24 @@
     <!-- Excluding files from here is worse than duplicating them - a loader that uses the
          package name as index and includes both bootstrap and catalina will be confused -->
 
-    <jar jarfile="${catalina.deploy}/server/lib/catalina.jar"
-         index="true">
+    <jar jarfile="${catalina.deploy}/server/lib/catalina.jar">
       <fileset dir="${classes.dir}">
+
         <include name="org/apache/catalina/**" />
         <include name="org/apache/coyote/tomcat5/**" />
-        <exclude name="org/apache/catalina/ant/**" />
-        <exclude name="org/apache/catalina/launcher/**" />
-        <exclude name="org/apache/naming/**" />
-        <exclude name="org/apache/catalina/startup/Bootstrap.class" />
-<!--
-        <exclude name="org/apache/catalina/startup/catalina.properties" />
-        <exclude name="org/apache/catalina/startup/CatalinaProperties.class" />
-        <exclude name="org/apache/catalina/startup/ClassLoaderFactory.class" />
-        <exclude name="org/apache/catalina/startup/Tool.class" />
-        <exclude name="org/apache/catalina/startup/SecurityClassLoad.class" />
-        <exclude name="org/apache/catalina/loader/StandardClassLoader*.class" />
-        <exclude name="org/apache/catalina/loader/Extension.class" />
-        <exclude name="org/apache/catalina/loader/Reloader.class" />
--->
-        <exclude name="org/apache/catalina/ssi/**" />
+
+        <!-- Javadoc and i18n exclusions -->
         <exclude name="**/package.html" />
         <exclude name="**/LocalStrings_*" />
+
+        <!-- Modules -->
+        <exclude name="org/apache/catalina/ant/**" />
+        <exclude name="org/apache/catalina/cluster/**" />
+        <exclude name="org/apache/catalina/launcher/**" />
+        <exclude name="org/apache/catalina/servlets/**" />
+        <exclude name="org/apache/catalina/startup/Bootstrap.class" />
+        <exclude name="org/apache/catalina/ssi/**" />
+        <exclude name="org/apache/naming/**" />
 
         <!-- Catalina-optional classes -->
         <exclude name="org/apache/catalina/realm/DataSourceRealm.class" />
