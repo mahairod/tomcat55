@@ -191,6 +191,12 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
 
     /**
+     * The query parameters for the current request.
+     */
+    private String queryParamString = null;
+
+
+    /**
      * Have the parameters for this request already been parsed?
      */
     private boolean parsedParams = false;
@@ -544,6 +550,17 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     }
 
 
+    /**
+     * Save query parameters for this request.
+     *
+     * @param queryString The query string containing parameters for this
+     *                    request
+     */
+    void setQueryParams(String queryString) {
+        this.queryParamString = queryString;
+    }
+
+
     // ------------------------------------------------------ Protected Methods
 
 
@@ -613,7 +630,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     private void mergeParameters() {
 
-        if ((queryString == null) || (queryString.length() < 1))
+        if ((queryParamString == null) || (queryParamString.length() < 1))
             return;
 
         HashMap queryParameters = new HashMap();
@@ -622,7 +639,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
             encoding = "ISO-8859-1";
         try {
             RequestUtil.parseParameters
-                (queryParameters, queryString, encoding);
+                (queryParameters, queryParamString, encoding);
         } catch (Exception e) {
             ;
         }
