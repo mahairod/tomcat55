@@ -278,7 +278,7 @@ public class TagFileProcessor {
     }
 
     public static TagInfo parseTagFile(ParserController pc, String tagfile)
-                throws FileNotFoundException, JasperException, Exception {
+                throws FileNotFoundException, JasperException {
 
         Node.Nodes page = pc.parse(tagfile);
         TagFileVisitor tagFileVisitor = new TagFileVisitor(pc.getCompiler());
