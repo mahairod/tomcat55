@@ -241,7 +241,7 @@ Function findJavaPath
 
   IfErrors 0 NoAbort
     MessageBox MB_OK "Couldn't find a Java Development Kit installed on this \
-computer. Please download one from http://java.sun.com."
+computer. Please download one from http://java.sun.com. If there is already \ a JDK installed on this computer, set an environment variable JAVA_HOME to the \ pathname of the directory where it is installed."
     Abort
 
   NoAbort:
