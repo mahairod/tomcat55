@@ -6066,7 +6066,7 @@ END EXCLUDE SendError_StringTest -->
 
     <target name="HttpServletRequestWrapperGetRequestURLTest">
         <watchdog request="GET /servlet-tests/hsreqw/HttpServletRequestWrapperGetRequestURLTest HTTP/1.0"
-            testName="HttpServletRequestWrapperGetRequestURLTest" debug="1"
+            testName="HttpServletRequestWrapperGetRequestURLTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             requestHeaders="prefix:http|server:${host}|port:${port}|servletpath:_servlet-tests_hsreqw_HttpServletRequestWrapperGetRequestURLTest"
             goldenFile="${wgdir}/javax_servlet_http/HttpServletRequestWrapper/HttpServletRequestWrapperGetRequestURLTest.html"
