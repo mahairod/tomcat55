@@ -71,15 +71,15 @@ package org.apache.catalina.cluster.session;
  * @version 1.0
  */
 
-import java.util.Vector;
+import java.util.LinkedList;
 import javax.servlet.http.HttpSession;
-import java.io.Serializable;
+import java.io.Externalizable;
 import java.security.Principal;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.cluster.ClusterSession;
 
 
-public class DeltaRequest implements Serializable {
+public class DeltaRequest implements Externalizable {
 
     public static final int TYPE_ATTRIBUTE = 0;
     public static final int TYPE_PRINCIPAL = 1;
@@ -94,8 +94,12 @@ public class DeltaRequest implements Serializable {
     public static final String NAME_ISNEW = "__SET__ISNEW__";
 
     private String sessionId;
-    private Vector actions = new Vector();
+    private LinkedList actions = new LinkedList();
     private boolean recordAllActions = false;
+
+    public DeltaRequest() {
+        
+    }
 
     public DeltaRequest(String sessionId, boolean recordAllActions) {
         this.recordAllActions=recordAllActions;
@@ -141,7 +145,7 @@ public class DeltaRequest implements Serializable {
         //we don't send multiple actions across the wire
         if ( !recordAllActions) actions.remove(info);
         //add the action
-        actions.addElement(info);
+        actions.addLast(info);
     }
 
     public void execute(ClusterSession session) {
@@ -194,13 +198,48 @@ public class DeltaRequest implements Serializable {
     public int getSize() {
         return actions.size();
     }
+    
+    public void readExternal(java.io.ObjectInput in ) throws java.io.IOException,
+    java.lang.ClassNotFoundException {
+    //sessionId - String
+    //recordAll - boolean
+    //size - int
+    //AttributeInfo - in an array
+        sessionId = in.readUTF();
+        recordAllActions = in.readBoolean();
+        int cnt = in.readInt();
+        if ( actions == null )
+            actions = new LinkedList();
+        else
+            actions.clear();
+        for (int i = 0; i < cnt; i++) {
+            AttributeInfo info = (AttributeInfo)in.readObject();
+            actions.addLast(info);
+        }//for
+    }
+        
 
-    public static class AttributeInfo implements java.io.Serializable {
+
+    public void writeExternal(java.io.ObjectOutput out ) throws java.io.IOException {
+        //sessionId - String
+        //recordAll - boolean
+        //size - int
+        //AttributeInfo - in an array
+        out.writeUTF(getSessionId());
+        out.writeBoolean(recordAllActions);
+        out.writeInt(getSize());
+        for ( int i=0; i<getSize(); i++ ) {
+            AttributeInfo info = (AttributeInfo)actions.get(i);
+            out.writeObject(info);
+        }
+    }
+
+    public static class AttributeInfo implements java.io.Externalizable {
         private String name = null;
         private Object value = null;
         private int action;
         private int type;
-
+        public AttributeInfo() {}
         public AttributeInfo(int type,
                              int action,
                              String name,
@@ -235,6 +274,31 @@ public class DeltaRequest implements Serializable {
             AttributeInfo other =  (AttributeInfo)o;
             return other.getName().equals(this.getName());
         }
+        
+        public void readExternal(java.io.ObjectInput in ) throws java.io.IOException,
+            java.lang.ClassNotFoundException {
+            //type - int
+            //action - int
+            //name - String
+            //value - object
+            type = in.readInt();
+            action = in.readInt();
+            name = in.readUTF();
+            value = in.readObject();
+        }
+
+        public void writeExternal(java.io.ObjectOutput out) throws java.io.
+            IOException {
+            //type - int
+            //action - int
+            //name - String
+            //value - object
+            out.writeInt(getType());
+            out.writeInt(getAction());
+            out.writeUTF(getName());
+            out.writeObject(getValue());
+        }
+
 
     }
 

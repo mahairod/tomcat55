@@ -83,6 +83,7 @@ public class ThreadPool
      */
 
     List idle = new LinkedList();
+    Object mutex = new Object();
 
     ThreadPool (int poolSize, Class threadClass) throws Exception {
         // fill up the pool with worker threads
@@ -107,9 +108,19 @@ public class ThreadPool
     {
         WorkerThread worker = null;
 
-        synchronized (idle) {
-            if (idle.size() > 0) {
-                worker = (WorkerThread) idle.remove (0);
+        
+        synchronized (mutex) {
+            while ( worker == null ) {
+                if (idle.size() > 0) {
+                    try {
+                        worker = (WorkerThread) idle.remove(0);
+                    } catch (java.util.NoSuchElementException x) {
+                        //this means that there are no available workers
+                        worker = null;
+                    }
+                } else {
+                    try { mutex.wait(); } catch ( java.lang.InterruptedException x ) {}
+                }
             }
         }
 
@@ -122,8 +133,9 @@ public class ThreadPool
      */
     void returnWorker (WorkerThread worker)
     {
-        synchronized (idle) {
+        synchronized (mutex) {
             idle.add (worker);
+            mutex.notify();
         }
     }
 }

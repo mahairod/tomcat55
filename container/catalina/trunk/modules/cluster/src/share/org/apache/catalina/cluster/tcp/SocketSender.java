@@ -85,7 +85,7 @@ public class SocketSender implements IDataSender
     private Socket sc = null;
     private boolean isSocketConnected = false;
     private boolean suspect;
-    private long ackTimeout = 150*1000;  //15 seconds socket read timeout (for acknowledgement)
+    private long ackTimeout = 15*1000;  //15 seconds socket read timeout (for acknowledgement)
     private long keepAliveTimeout = 60*1000; //keep socket open for no more than one min
     private int keepAliveMaxRequestCount = 100; //max 100 requests before reconnecting
     private long keepAliveConnectTime = 0;

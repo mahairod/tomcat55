@@ -68,6 +68,7 @@ import java.net.Socket;
 import java.io.IOException;
 import org.apache.catalina.cluster.util.SmartQueue;
 public class AsyncSocketSender implements IDataSender {
+    private static int threadCounter=1;
     private InetAddress address;
     private int port;
     private Socket sc = null;
@@ -153,8 +154,10 @@ public class AsyncSocketSender implements IDataSender {
     
     private class QueueThread extends Thread {
         AsyncSocketSender sender;
+
         public QueueThread(AsyncSocketSender sender) {
             this.sender = sender;
+            setName("Cluster-AsyncSocketSender-"+(threadCounter++));
         }
         
         public void run() {
