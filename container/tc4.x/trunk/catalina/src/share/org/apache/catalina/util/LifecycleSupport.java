@@ -137,6 +137,17 @@ public final class LifecycleSupport {
 
 
     /**
+     * Get the lifecycle listeners associated with this lifecycle. If this 
+     * Lifecycle has no listeners registered, a zero-length array is returned.
+     */
+    public LifecycleListener[] findLifecycleListeners() {
+
+        return listeners;
+
+    }
+
+
+    /**
      * Notify all lifecycle event listeners that a particular event has
      * occurred for this Container.  The default implementation performs
      * this notification synchronously using the calling thread.

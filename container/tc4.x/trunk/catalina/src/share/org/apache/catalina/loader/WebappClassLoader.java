@@ -1446,6 +1446,15 @@ public class WebappClassLoader
 
 
     /**
+     * Get the lifecycle listeners associated with this lifecycle. If this 
+     * Lifecycle has no listeners registered, a zero-length array is returned.
+     */
+    public LifecycleListener[] findLifecycleListeners() {
+        return new LifecycleListener[0];
+    }
+
+
+    /**
      * Remove a lifecycle event listener from this component.
      *
      * @param listener The listener to remove

@@ -480,6 +480,17 @@ public abstract class RealmBase
 
 
     /**
+     * Get the lifecycle listeners associated with this lifecycle. If this 
+     * Lifecycle has no listeners registered, a zero-length array is returned.
+     */
+    public LifecycleListener[] findLifecycleListeners() {
+
+        return lifecycle.findLifecycleListeners();
+
+    }
+
+
+    /**
      * Remove a lifecycle event listener from this component.
      *
      * @param listener The listener to remove

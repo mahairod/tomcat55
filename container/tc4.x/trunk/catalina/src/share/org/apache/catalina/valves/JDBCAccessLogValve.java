@@ -511,7 +511,20 @@ public final class JDBCAccessLogValve
      * @param listener The listener to add.
      */  
     public void addLifecycleListener(LifecycleListener listener) {
+
         lifecycle.addLifecycleListener(listener);
+
+    }
+
+
+    /**
+     * Get the lifecycle listeners associated with this lifecycle. If this 
+     * Lifecycle has no listeners registered, a zero-length array is returned.
+     */
+    public LifecycleListener[] findLifecycleListeners() {
+
+        return lifecycle.findLifecycleListeners();
+
     }
 
 
@@ -521,7 +534,9 @@ public final class JDBCAccessLogValve
      * @param listener The listener to remove.
      */
     public void removeLifecycleListener(LifecycleListener listener) {
+
         lifecycle.removeLifecycleListener(listener);
+
     }
 
 
