@@ -30,7 +30,7 @@ java org.apache.tools.ant.Main -Dport %PORT% -Dhost %HOST% -Dwatchdog.home %WATC
 if "%1"=="jsp" goto restore
 
 :servlet
-java org.apache.tools.ant.Main -Dtest.port %PORT% -Dtest.hostname %HOST% -Dwatchdog.home %WATCHDOG_HOME% -f %WATCHDOG_HOME%/conf/servlet.xml servlet-test
+java org.apache.tools.ant.Main -Dport %PORT% -Dhost %HOST% -Dwatchdog.home %WATCHDOG_HOME% -f %WATCHDOG_HOME%/conf/servlet.xml servlet-test
 
 
 :restore
