@@ -514,7 +514,9 @@ public abstract class AuthenticatorBase
         // or browsers as caching can provide a security hole
         HttpServletRequest hsrequest = (HttpServletRequest)hrequest.getRequest();
         if (disableProxyCaching && 
-            !hsrequest.isSecure() &&
+            // FIXME: Disabled for Mozilla FORM support over SSL 
+            // (improper caching issue)
+            //!hsrequest.isSecure() &&
             !"POST".equalsIgnoreCase(hsrequest.getMethod())) {
             HttpServletResponse sresponse = 
                 (HttpServletResponse) response.getResponse();
