@@ -21,7 +21,7 @@ developers and deployers must make about where to place class and resource
 files to make them available to web applications:</p>
 <ul>
 <li>For classes and resources specific to a particular web application,
-    place unpacked classes and resources under <code>/WEB-INF/classe</code>
+    place unpacked classes and resources under <code>/WEB-INF/classes</code>
     of your web application archive, or place JAR files containing those
     classes and resources under <code>/WEB-INF/lib</code> of your web
     application archive.</li>
