@@ -102,6 +102,14 @@ public final class Globals {
 
 
     /**
+     * The JNDI directory context which is associated with the context. This
+     * context can be used to manipulate static files.
+     */
+    public static final String RESOURCES_ATTR =
+	"org.apache.catalina.resources";
+
+
+    /**
      * The servlet context attribute under which we store the class path
      * for our application class loader (as an object of type String),
      * delimited with the appropriate path delimiter for this platform.
@@ -193,7 +201,7 @@ public final class Globals {
     /**
      * The descriptive information about this server and version.
      */
-    public static final String SERVER_INFO = "Apache Tomcat/4.0-b1";
+    public static final String SERVER_INFO = "Apache Tomcat/4.0-dev";
 
 
 
