@@ -233,8 +233,11 @@ class ConnectionHandler extends Thread {
 	    }
 	    socket.close();
 	   }catch(NullPointerException npe) {
-	   // Added to make the Thread quite on Solaris.. - Costin talk to me 
-	   // before you change this code - Harish/AKV
+	       // do nothing - we are just cleaning up, this is
+	       // a workaround for Netscape \n\r in POST - it is supposed
+	       // to be ignored
+	   } catch(java.net.SocketException ex) {
+	       // do nothing - same
 	   }
 	} catch (Exception e) {
             // XXX
