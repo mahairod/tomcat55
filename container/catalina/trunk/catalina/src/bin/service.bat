@@ -51,6 +51,7 @@ set PR_DISPLAYNAME=Apache Tomcat %2
 :setServiceName
 if %1 == install goto doInstall
 if %1 == remove goto doRemove
+if %1 == uninstall goto doRemove
 echo Unknown parameter "%1"
 :displayUsage
 echo 
@@ -100,8 +101,9 @@ set PR_JVM=
 rem Set extra parameters
 "%EXECUTABLE%" //US//%SERVICE_NAME% --JvmOptions "-Dcatalina.base=%CATALINA_BASE%;-Dcatalina.home=%CATALINA_HOME%;-Djava.endorsed.dirs=%CATALINA_HOME%\common\endorsed" --StartMode jvm --StopMode jvm
 rem More extra parameters
-set PR_STDOUTPUT=%CATALINA_HOME%\logs\stdout.log
-set PR_STDERROR=%CATALINA_HOME%\logs\stderr.log
+set PR_LOGPATH=%CATALINA_HOME%\logs
+set PR_STDOUTPUT=auto
+set PR_STDERROR=auto
 "%EXECUTABLE%" //US//%SERVICE_NAME% ++JvmOptions "-Djava.io.tmpdir=%CATALINA_BASE%\temp" --JvmMs 128 --JvmMx 256
 echo The service '%SERVICE_NAME%' has been installed.
 
