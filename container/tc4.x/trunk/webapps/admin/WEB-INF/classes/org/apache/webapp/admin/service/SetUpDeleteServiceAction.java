@@ -29,7 +29,7 @@
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
- * 4. The names "The Jakarta Project", "Struts", and "Apache Software
+ * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
  *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -60,19 +60,25 @@
  */
 
 
-package org.apache.webapp.admin;
+package org.apache.webapp.admin.service;
 
-import java.util.Iterator;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.TreeSet;
+import java.util.Set;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import javax.management.Attribute;
+
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.QueryExp;
@@ -80,25 +86,23 @@ import javax.management.Query;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
 import org.apache.struts.util.MessageResources;
 
+import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.TomcatTreeBuilder;
+
 /**
- * Implementation of <strong>Action</strong> that validates
- * actions on a Service.
+ * Test <code>Action</code> that handles events to delete services.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public final class ServiceAction extends Action {
+public class SetUpDeleteServiceAction extends Action {
     
     private static MBeanServer mBServer = null;
     
     // --------------------------------------------------------- Public Methods
-    
     
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -121,80 +125,35 @@ public final class ServiceAction extends Action {
     HttpServletResponse response)
     throws IOException, ServletException {
         
-        try{
-            
-            // front end validation and checking.
-            // ===================================================
-            MessageResources messages = getResources();
-            
-            // Validate the request parameters specified by the user
-            ActionErrors errors = new ActionErrors();
-            
-            // Report any errors we have discovered back to the original form
-            if (!errors.empty()) {
-                saveErrors(request, errors);
-                return (new ActionForward(mapping.getInput()));
-            }
-            
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
-            }
-            
-            String serviceName = request.getParameter("serviceName");
-            
-            Iterator serviceItr =
-            mBServer.queryMBeans(new ObjectName(
-            TomcatTreeBuilder.ENGINE_TYPE +
-            ",service=" + serviceName),
-            null).iterator();
-            
-            ObjectName serviceObjName =
-            ((ObjectInstance)serviceItr.next()).getObjectName();
-            
-            String engineName = request.getParameter("engineName");
-            String debugLvlText = request.getParameter("debugLvl");
-            String defaultHost = request.getParameter("defaultHost");
-            
-            if (engineName != null) {
-                
-                mBServer.setAttribute(serviceObjName,
-                new Attribute(SetUpServiceAction.NAME_PROP_NAME,
-                engineName));
-            }
-            
-            if(debugLvlText != null) {
-                Integer debugLvl = new Integer(debugLvlText);
-                mBServer.setAttribute(serviceObjName,
-                new Attribute(SetUpServiceAction.DEBUG_PROP_NAME,
-                debugLvl));
-            }
-            
-            if(defaultHost != null) {
-                
-            /*
-                if ((" ").equals(defaultHost)) {
-                 // no default host value set.
-                // remove this attribute.
-                 TBD: FIX ME - if needed.
-                }
-             */
-                mBServer.setAttribute(serviceObjName,
-                new Attribute(SetUpServiceAction.HOST_PROP_NAME,
-                defaultHost));
-                
-            }
-            
-        }catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+        HttpSession session = request.getSession();
+        
+        // Acquire a reference to the MBeanServer containing our MBeans
+        try {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBeanServer reference", t);
         }
         
-        if (servlet.getDebug() >= 1)
-            servlet.log(" Forwarding to success page");
-        // Forward back to the test page
-        return (mapping.findForward("Save Successful"));
+        // Acquire the set of service MBean names to be listed
+        String pattern = TomcatTreeBuilder.SERVICE_TYPE +
+        TomcatTreeBuilder.WILDCARD;
+        Set results = null;
+        try {
+            results = mBServer.queryNames(new ObjectName(pattern), null);
+        } catch (Throwable t) {
+            throw new ServletException("queryNames(" + pattern + ")", t);
+        }
         
+        TreeSet services = new TreeSet();
+        Iterator names = results.iterator();
+        while (names.hasNext()) {
+            ObjectName name = (ObjectName) names.next();
+            services.add(name);
+        }
+        
+        // Forward the Set as a request attribute
+        request.setAttribute("services", services);
+        return (mapping.findForward("Delete Service"));
     }
-    
 }

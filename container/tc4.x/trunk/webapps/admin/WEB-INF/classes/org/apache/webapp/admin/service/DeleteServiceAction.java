@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
- * 4. The names "The Jakarta Project", "Struts", and "Apache Software
+ * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
  *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -60,42 +60,38 @@
  */
 
 
-package org.apache.webapp.admin;
+package org.apache.webapp.admin.service;
 
-import java.util.Iterator;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.management.ObjectInstance;
+import javax.management.modelmbean.ModelMBean;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import javax.management.Attribute;
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
 import javax.management.QueryExp;
-import javax.management.Query;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
-import org.apache.struts.util.MessageResources;
+
+import org.apache.webapp.admin.ApplicationServlet;
 
 /**
- * Implementation of <strong>Action</strong> that validates
- * actions on a Service.
+ * Delete services that are selected to be deleted.
+ * Also, deregister their mBeans from the mBeanServer.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public final class ServiceAction extends Action {
+public class DeleteServiceAction extends Action {
     
-    private static MBeanServer mBServer = null;
     
     // --------------------------------------------------------- Public Methods
     
@@ -121,80 +117,44 @@ public final class ServiceAction extends Action {
     HttpServletResponse response)
     throws IOException, ServletException {
         
-        try{
+        
+        // Acquire a reference to the MBeanServer containing our MBeans
+        MBeanServer mBServer = null;
+        try {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBeanServer reference", t);
+        }
+
+        // selected services to be deleted
+        String[] selected  = request.getParameterValues("checkbox");
+        
+        // process delete action
+        for (int index=0; index <selected.length; index++) {
+            String pattern = selected[index];
+
+            Iterator names = null;
             
-            // front end validation and checking.
-            // ===================================================
-            MessageResources messages = getResources();
-            
-            // Validate the request parameters specified by the user
-            ActionErrors errors = new ActionErrors();
-            
-            // Report any errors we have discovered back to the original form
-            if (!errors.empty()) {
-                saveErrors(request, errors);
-                return (new ActionForward(mapping.getInput()));
+            try {
+                names = mBServer.queryNames(new ObjectName(pattern), null).iterator();
+            } catch (Throwable t) {
+                throw new ServletException("queryNames(" + pattern + ")", t);
             }
             
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
-            }
-            
-            String serviceName = request.getParameter("serviceName");
-            
-            Iterator serviceItr =
-            mBServer.queryMBeans(new ObjectName(
-            TomcatTreeBuilder.ENGINE_TYPE +
-            ",service=" + serviceName),
-            null).iterator();
-            
-            ObjectName serviceObjName =
-            ((ObjectInstance)serviceItr.next()).getObjectName();
-            
-            String engineName = request.getParameter("engineName");
-            String debugLvlText = request.getParameter("debugLvl");
-            String defaultHost = request.getParameter("defaultHost");
-            
-            if (engineName != null) {
-                
-                mBServer.setAttribute(serviceObjName,
-                new Attribute(SetUpServiceAction.NAME_PROP_NAME,
-                engineName));
-            }
-            
-            if(debugLvlText != null) {
-                Integer debugLvl = new Integer(debugLvlText);
-                mBServer.setAttribute(serviceObjName,
-                new Attribute(SetUpServiceAction.DEBUG_PROP_NAME,
-                debugLvl));
-            }
-            
-            if(defaultHost != null) {
-                
-            /*
-                if ((" ").equals(defaultHost)) {
-                 // no default host value set.
-                // remove this attribute.
-                 TBD: FIX ME - if needed.
+            while (names.hasNext()) {
+                try {
+                    ObjectName oName = (ObjectName) names.next();
+                    // delete this mBean
+                    mBServer.unregisterMBean(oName);
+                } catch (Throwable t) {
+                    throw new ServletException("Exception while deleting", t);
                 }
-             */
-                mBServer.setAttribute(serviceObjName,
-                new Attribute(SetUpServiceAction.HOST_PROP_NAME,
-                defaultHost));
-                
             }
-            
-        }catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
         }
         
-        if (servlet.getDebug() >= 1)
-            servlet.log(" Forwarding to success page");
-        // Forward back to the test page
+        //Fix me -- need to refresh the tree?
         return (mapping.findForward("Save Successful"));
-        
     }
     
 }

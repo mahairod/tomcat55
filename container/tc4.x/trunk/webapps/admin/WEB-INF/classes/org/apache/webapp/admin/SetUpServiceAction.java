@@ -79,18 +79,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.QueryExp;
-import javax.management.Query;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
-
-import javax.management.modelmbean.ModelMBean;
-import javax.management.modelmbean.ModelMBeanInfo;
 
 import org.apache.struts.util.MessageResources;
 
@@ -139,6 +130,15 @@ public class SetUpServiceAction extends Action {
         
         HttpSession session = request.getSession();
         
+        // Acquire a reference to the MBeanServer containing our MBeans
+        try {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBeanServer reference", t);
+        }
+        
+        // fill in the form values for display and editing
         if (form == null) {
             getServlet().log(" Creating new ServiceForm bean under key "
             + mapping.getAttribute());
@@ -148,17 +148,12 @@ public class SetUpServiceAction extends Action {
                 request.setAttribute(mapping.getAttribute(), form);
             else
                 session.setAttribute(mapping.getAttribute(), form);
-            
         }
-        
-        // The message resources for this package.
-        //    MessageResources messages = getResources();
-        //    Locale locale = (Locale)session.getAttribute(Action.LOCALE_KEY);
         
         String selectedName = request.getParameter("select");
         // label of the node that was clicked on.
         String nodeLabel = request.getParameter("nodeLabel");
-        
+                    
         ServiceForm serviceFm = (ServiceForm) form;
         
         if(debugLvlList == null) {
@@ -183,11 +178,6 @@ public class SetUpServiceAction extends Action {
         
         try{
             
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
-            }
-            
             Iterator serviceItr =
             mBServer.queryMBeans(new
             ObjectName(selectedName), null).iterator();
@@ -195,19 +185,13 @@ public class SetUpServiceAction extends Action {
             ObjectInstance objInstance = (ObjectInstance)serviceItr.next();
             ObjectName serviceObjName = (objInstance).getObjectName();
             
-            /*
-            System.out.println("There are " + mBServer.getMBeanCount().intValue() +
-            " registered MBeans");
-            Iterator instances = mBServer.queryMBeans(null, null).iterator();
-            while (instances.hasNext()) {
-                ObjectInstance instance = (ObjectInstance) instances.next();
-                System.out.println("  objectName=" + instance.getObjectName() +
-                ", className=" + instance.getClassName());
-             }
-             */
-            
             serviceName = (String) mBServer.getAttribute(serviceObjName,
             NAME_PROP_NAME);
+            
+            // FIX-ME
+            // nodelabel might be null in case of returning from delete screen
+            if (nodeLabel == null)
+                nodeLabel = "Service (" + serviceName + ")";
             
             String search =  TomcatTreeBuilder.ENGINE_TYPE +
             ",service=" + serviceName;
@@ -252,7 +236,6 @@ public class SetUpServiceAction extends Action {
                 // the pulldown menu..
                 hostNameList.add(new LabelValueBean(hostName, hostName));
             }
-            
             
         }catch(Throwable t){
             t.printStackTrace(System.out);

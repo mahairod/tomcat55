@@ -32,7 +32,7 @@
             <controls:action> --------------------------------- </controls:action>
             <!-- will add the urls later once those screens get implemented -->
             <controls:action url="">  <bean:message key="actions.services.create"/> </controls:action>
-            <controls:action url="">  <bean:message key="actions.services.delete"/> </controls:action>
+            <controls:action url="setUpDeleteService.do">  <bean:message key="actions.services.delete"/> </controls:action>
         </controls:actions>
         </div>
       </td>

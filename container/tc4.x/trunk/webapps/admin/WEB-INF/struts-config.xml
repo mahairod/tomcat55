@@ -22,6 +22,10 @@
     <!-- Service form bean -->
     <form-bean      name="serviceForm"
                     type="org.apache.webapp.admin.ServiceForm"/>
+                    
+    <!-- Service form bean -->
+    <form-bean      name="deleteServiceForm"
+                    type="org.apache.webapp.admin.service.DeleteServiceForm"/>
 
     <!-- Connector form bean -->
     <form-bean      name="connectorForm"
@@ -84,6 +88,10 @@
 
     <forward        name="Service"
                     path="/service.jsp"
+                redirect="false"/>
+
+    <forward        name="Delete Service"
+                    path="/deleteService.jsp"
                 redirect="false"/>
 
     <forward        name="Connector"
@@ -169,6 +177,15 @@
                   redirect="true"/>
     </action>
 
+   <!-- Set up Delete Service datastructure -->
+    <action    path="/setUpDeleteService"
+               type="org.apache.webapp.admin.service.SetUpDeleteServiceAction"
+               name="deleteServiceForm"
+               scope="session">
+      <forward        name="SetUpDeleteService"
+                      path="/deleteService.jsp"
+                  redirect="true"/>
+    </action>
     
    <!-- Set up Connector datastructure -->
     <action    path="/setUpConnector"
@@ -298,7 +315,13 @@
               scope="request"
                type="org.apache.webapp.admin.SaveUserAction"/>
 
-  </action-mappings>
-  
+                 <!-- Save user action -->
+    <action    path="/deleteService"
+              input="/deleteService.jsp"
+               name="deleteServiceForm"
+              scope="request"
+               type="org.apache.webapp.admin.service.DeleteServiceAction"/>
+               
+  </action-mappings>  
     
 </struts-config>
