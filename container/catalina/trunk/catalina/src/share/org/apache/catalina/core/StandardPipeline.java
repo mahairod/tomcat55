@@ -377,6 +377,7 @@ public class StandardPipeline
                     
                     ObjectName vname=vb.getObjectName();
                     Registry.getRegistry().getMBeanServer().unregisterMBean(vname);
+                    ((ValveBase)valve).setObjectName(null);
                 }
             } catch( Throwable t ) {
                 log.info( "Can't unregister valve " + valve , t );
