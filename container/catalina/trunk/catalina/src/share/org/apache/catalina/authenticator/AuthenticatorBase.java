@@ -760,31 +760,23 @@ public abstract class AuthenticatorBase
 
         boolean reauthenticated = false;
 
-        SingleSignOnEntry entry = sso.lookup(ssoId);
-        if (entry != null && entry.getCanReauthenticate()) {
-            Principal reauthPrincipal = null;
             Container parent = getContainer();
             if (parent != null) {
-                Realm realm = getContainer().getRealm();
-                String username = entry.getUsername();
-                if (realm != null && username != null) {
-                    reauthPrincipal =
-                        realm.authenticate(username, entry.getPassword());
+            Realm realm = parent.getRealm();
+            if (realm != null) {
+                reauthenticated = sso.reauthenticate(ssoId, realm, request);
                 }
             }
 
-            if (reauthPrincipal != null) {
+        if (reauthenticated) {
                 associate(ssoId, getSession(request, true));
-                request.setAuthType(entry.getAuthType());
-                request.setUserPrincipal(reauthPrincipal);
 
-                reauthenticated = true;
                 if (log.isDebugEnabled()) {
+                HttpServletRequest hreq = 
+                        (HttpServletRequest) request.getRequest();
                     log.debug(" Reauthenticated cached principal '" +
-                              entry.getPrincipal().getName() +
-                              "' with auth type '" +
-                              entry.getAuthType() + "'");
-                }
+                          hreq.getUserPrincipal().getName() +
+                          "' with auth type '" +  hreq.getAuthType() + "'");
             }
         }
 
