@@ -715,15 +715,15 @@
   <target name="javadoc" unless="docs.uptodate" >
     <delete dir="${catalina.build}/javadoc"/>
     <mkdir dir="${catalina.build}/javadoc"/>
-    <javadoc packagenames="org.apache.catalina.*,org.apache.naming.*"
+    <javadoc packagenames="org.apache.*"
       classpathref="catalina.classpath"
       sourcepathref="javadoc.sourcepath"
       destdir="${catalina.build}/javadoc"
       author="true"
       version="true"
-      windowtitle="Catalina Internal API Documentation"
-      doctitle="Catalina API"
-      bottom="Copyright &#169; 2000-2002 Apache Software Foundation.  All Rights Reserved."
+      windowtitle="Tomcat API Documentation"
+      doctitle="Tomcat API"
+      bottom="Copyright &#169; 2000-2003 Apache Software Foundation.  All Rights Reserved."
     />
   </target>
 
