@@ -990,9 +990,7 @@ public class StandardContext
         }
         super.setResources(resources);
         if (started)
-            // We put the resources into the servlet context
-            getServletContext().setAttribute
-                (Globals.RESOURCES_ATTR, getResources());
+            postResources(); // As a servlet context attribute
 
     }
 
@@ -2393,6 +2391,10 @@ public class StandardContext
             }
         }
 
+        // Restore the "Welcome Files" and "Resources" context attributes
+        postResources();
+        postWelcomeFiles();
+
         // Set the context class loader to the old class loader
         if (classLoader != null) {
             Thread.currentThread().setContextClassLoader(oldCtxClassLoader);
@@ -3737,6 +3739,18 @@ public class StandardContext
     private boolean getPaused() {
 
 	return (this.paused);
+
+    }
+
+
+    /**
+     * Post a copy of our web application resources as a servlet context
+     * attribute.
+     */
+    private void postResources() {
+
+        getServletContext().setAttribute
+            (Globals.RESOURCES_ATTR, getResources());
 
     }
 
