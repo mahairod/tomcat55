@@ -111,17 +111,18 @@ public class JspUtil {
 	= new ExpressionEvaluatorImpl();
 
     public static char[] removeQuotes(char []chars) {
-	CharArrayWriter caw = new CharArrayWriter();
-	for (int i = 0; i < chars.length; i++) {
-	    if (chars[i] == '%' && chars[i+1] == '\\' &&
-		chars[i+2] == '\\' && chars[i+3] == '>') {
-		caw.write('%');
-		caw.write('>');
-		i = i + 3;
-	    }
-	    else caw.write(chars[i]);
-	}
-	return caw.toCharArray();
+        CharArrayWriter caw = new CharArrayWriter();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '%' && chars[i+1] == '\\' &&
+                chars[i+2] == '>') {
+                caw.write('%');
+                caw.write('>');
+                i = i + 2;
+            } else {
+                caw.write(chars[i]);
+            }
+        }
+        return caw.toCharArray();
     }
 
     public static char[] escapeQuotes (char []chars) {
@@ -238,7 +239,7 @@ public class JspUtil {
     public static void checkScope(String scope, Node n, ErrorDispatcher err)
             throws JasperException {
 	if (scope != null && !scope.equals("page") && !scope.equals("request")
-	        && !scope.equals("session") && !scope.equals("application")) {
+		&& !scope.equals("session") && !scope.equals("application")) {
 	    err.jspError(n, "jsp.error.invalid.scope", scope);
 	}
     }
@@ -253,7 +254,7 @@ public class JspUtil {
 				       Node n,
 				       ValidAttribute[] validAttributes,
 				       ErrorDispatcher err)
-	                        throws JasperException {
+				throws JasperException {
         Attributes attrs = n.getAttributes();
         Mark start = n.getStart();
 	boolean valid = true;
@@ -301,8 +302,8 @@ public class JspUtil {
 	    int attrPos;    
 	    if (validAttributes[i].mandatory) {
                 attrPos = temp.indexOf(validAttributes[i].name);
-	        if (attrPos != -1) {
-	            temp.remove(attrPos);
+		if (attrPos != -1) {
+		    temp.remove(attrPos);
 		    valid = true;
 		} else {
 		    valid = false;
@@ -329,13 +330,13 @@ public class JspUtil {
 	    valid = false;
 	    attribute = (String) temp.elementAt(j);
 	    for (int i = 0; i < validAttributes.length; i++) {
-	        if (attribute.equals(validAttributes[i].name)) {
+		if (attribute.equals(validAttributes[i].name)) {
 		    valid = true;
 		    break;
 		}
 	    }
 	    if (!valid)
-	        err.jspError(start, "jsp.error.invalid.attribute", typeOfTag,
+		err.jspError(start, "jsp.error.invalid.attribute", typeOfTag,
 			     attribute);
 	}
 	// XXX *could* move EL-syntax validation here... (sb)
@@ -411,7 +412,7 @@ public class JspUtil {
     }
 
     public static class ValidAttribute {
-   	String name;
+	String name;
 	boolean mandatory;
 	boolean rtexprvalue;	// not used now
 
@@ -510,46 +511,46 @@ public class JspUtil {
 	else
 	    jspCtxt = "pageContext";
 
- 	/*
+	/*
          * Determine whether to use the expected type's textual name
- 	 * or, if it's a primitive, the name of its correspondent boxed
- 	 * type.
+	 * or, if it's a primitive, the name of its correspondent boxed
+	 * type.
          */
- 	String targetType = expectedType.getName();
- 	String primitiveConverterMethod = null;
- 	if (expectedType.isPrimitive()) {
- 	    if (expectedType.equals(Boolean.TYPE)) {
- 	        targetType = Boolean.class.getName();
- 		primitiveConverterMethod = "booleanValue";
- 	    } else if (expectedType.equals(Byte.TYPE)) {
- 	        targetType = Byte.class.getName();
- 		primitiveConverterMethod = "byteValue";
- 	    } else if (expectedType.equals(Character.TYPE)) {
- 	        targetType = Character.class.getName();
- 		primitiveConverterMethod = "charValue";
- 	    } else if (expectedType.equals(Short.TYPE)) {
- 	        targetType = Short.class.getName();
- 		primitiveConverterMethod = "shortValue";
- 	    } else if (expectedType.equals(Integer.TYPE)) {
- 	        targetType = Integer.class.getName();
- 		primitiveConverterMethod = "intValue";
- 	    } else if (expectedType.equals(Long.TYPE)) {
- 	        targetType = Long.class.getName();
- 		primitiveConverterMethod = "longValue";
- 	    } else if (expectedType.equals(Float.TYPE)) {
- 	        targetType = Float.class.getName();
- 		primitiveConverterMethod = "floatValue";
- 	    } else if (expectedType.equals(Double.TYPE)) { 
- 	        targetType = Double.class.getName();
- 		primitiveConverterMethod = "doubleValue";
- 	    }
- 	}
+	String targetType = expectedType.getName();
+	String primitiveConverterMethod = null;
+	if (expectedType.isPrimitive()) {
+	    if (expectedType.equals(Boolean.TYPE)) {
+		targetType = Boolean.class.getName();
+		primitiveConverterMethod = "booleanValue";
+	    } else if (expectedType.equals(Byte.TYPE)) {
+		targetType = Byte.class.getName();
+		primitiveConverterMethod = "byteValue";
+	    } else if (expectedType.equals(Character.TYPE)) {
+		targetType = Character.class.getName();
+		primitiveConverterMethod = "charValue";
+	    } else if (expectedType.equals(Short.TYPE)) {
+		targetType = Short.class.getName();
+		primitiveConverterMethod = "shortValue";
+	    } else if (expectedType.equals(Integer.TYPE)) {
+		targetType = Integer.class.getName();
+		primitiveConverterMethod = "intValue";
+	    } else if (expectedType.equals(Long.TYPE)) {
+		targetType = Long.class.getName();
+		primitiveConverterMethod = "longValue";
+	    } else if (expectedType.equals(Float.TYPE)) {
+		targetType = Float.class.getName();
+		primitiveConverterMethod = "floatValue";
+	    } else if (expectedType.equals(Double.TYPE)) { 
+		targetType = Double.class.getName();
+		primitiveConverterMethod = "doubleValue";
+	    }
+	}
  
 	if (primitiveConverterMethod != null) {
 	    XmlEscape = false;
 	}
 
- 	/*
+	/*
          * Build up the base call to the interpreter.
          */
         // XXX - We use a proprietary call to the interpreter for now
@@ -563,7 +564,7 @@ public class JspUtil {
         // Note that PageContextImpl implements VariableResolver and
         // the generated Servlet/SimpleTag implements FunctionMapper, so
         // that machinery is already in place (mroth).
- 	StringBuffer call = new StringBuffer(
+	StringBuffer call = new StringBuffer(
              "(" + targetType + ") "
                + "org.apache.jasper.runtime.PageContextImpl.proprietaryEvaluate"
                + "(" + Generator.quote(expression) + ", "
@@ -575,15 +576,15 @@ public class JspUtil {
 	       + ", " + XmlEscape
                + ")");
  
- 	/*
+	/*
          * Add the primitive converter method if we need to.
          */
- 	if (primitiveConverterMethod != null) {
- 	    call.insert(0, "(");
- 	    call.append(")." + primitiveConverterMethod + "()");
- 	}
+	if (primitiveConverterMethod != null) {
+	    call.insert(0, "(");
+	    call.append(")." + primitiveConverterMethod + "()");
+	}
  
- 	return call.toString();
+	return call.toString();
     }
 
     /**
@@ -946,7 +947,7 @@ public class JspUtil {
     public static InputStream getInputStream(String fname, JarFile jarFile,
 					     JspCompilationContext ctxt,
 					     ErrorDispatcher err)
-	        throws JasperException, IOException {
+		throws JasperException, IOException {
 
         InputStream in = null;
 
@@ -1017,7 +1018,7 @@ public class JspUtil {
 				       JarFile jarFile,
 				       JspCompilationContext ctxt,
 				       ErrorDispatcher err)
-	        throws JasperException, IOException {
+		throws JasperException, IOException {
 
         InputStreamReader reader = null;
 	InputStream in = getInputStream(fname, jarFile, ctxt, err);
