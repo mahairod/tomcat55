@@ -8,13 +8,119 @@
 
     <properties>
         <author email="yoavs@apache.org">Yoav Shapira</author>
+        <author>Remy Maucherat</author>
+        <author>Andy Oliver</author>
         <title>Load Balancer HOW-TO</title>
     </properties>
 
 <body>
 
+<section name="Table of Contents">
+<p>
+<a href="#Using the JK native connector">
+Using the JK native connector</a><br />
+<a href="#Using Apache 2 with mod_proxy and mod_rewrite">
+Using Apache 2 with mod_proxy and mod_rewrite</a><br />
+<a href="#Using the balancer webapp">Using the balancer webapp</a><br />
+</p>
+</section>
 
-<section name="Overview">
+<section name="Using the JK native connector">
+
+Please refer to the JK documentation.
+
+</section>
+
+<section name="Using Apache 2 with mod_proxy and mod_rewrite">
+
+<subsection name="Overview">
+
+<p>
+It is possible to use Apache 2, with mod_proxy and mod_rewrite, to load balance
+requests to a set of Tomcat servers, using the HTTP protocol rather than AJP.
+Although it does not have any advanced load balancing or failover strategies,
+it is very easy to setup.
+</p>
+
+<p>
+Thanks to Pier Fumagalli for helping document this method. 
+</p>
+
+</subsection>
+
+<subsection name="Configuring Tomcat">
+
+<p>
+Edit <code>$CATALINA_HOME/conf/server.xml</code>, and find the Engine element 
+and add an attribute called jvmRoute. Set its value to LB1.
+</p>
+
+<source>
+&lt;Engine name="MainEngine" defaultHost="localhost" jvmRoute="LB1"&gt;
+</source>
+
+<p>
+Do the same for each server in the group, giving each a different ID: LB2, 
+LB3, ...
+</p>
+
+</subsection>
+
+<subsection name="Apache 2 configuration">
+
+<p>
+First we must create a rewrite map (for mod_rewrite) (balancing.conf):
+</p>
+
+<source>
+LB1  tomcat1.foo.com:8080
+LB2  tomcat2.foo.com:8080
+LB3  tomcat3.foo.com:8888
+ALL  tomcat1.foo.com:8080|tomcat2.foo.com:8080|tomcat3.foo.com:8888
+</source>
+
+<p>
+This means each worker is associated with a specific server and port. The name
+associated with each node <strong>must</strong> match the one used for the 
+jvmRoute attribute specified on the Engine element of each node's server.xml.
+</p>
+
+<p>
+In <code>httpd.conf</code>:
+</p>
+
+<source>RewriteMap SERVERS rnd:/usr/local/httpd/conf/servers.conf
+
+&lt;Location /webapp&gt;
+    RewriteEngine On
+
+    RewriteCond "%{HTTP_COOKIE}"                  "(^|;\s*)jsessionid=\w*\.(\w+)($|;)"
+    RewriteRule "(.*)"                            "http://${SERVERS:%2}%{REQUEST_URI}"  [P,L]
+    RewriteRule "^.*;jsessionid=\w*\.(\w+)($|;)"  "http://${SERVERS:$1}%{REQUEST_URI}"  [P,L]
+    RewriteRule "(.*)"                            "http://${SERVERS:ALL}%{REQUEST_URI}" [P,L]
+&lt;/Location&gt;
+</source>
+
+<p>
+The first entry means that we want to load the server map which we
+created. The "ALL" entry in the server map will affect those users who
+do not yet have a session ID. Meaning the session cookie which Tomcat
+creates will have the LBx id in it, the other entries will govern which
+host we're directed to.
+</p>
+
+<p>The rewrite rules govern those users with a cookie. Apache will
+rewrite the URL and point you to one of the instances of Tomcat. This
+is vodoo but it should work.
+</p>
+
+</subsection>
+
+</section>
+
+<section name="Using the balancer webapp">
+
+<subsection name="Overview">
 
 <p>
 Tomcat 5.0.15 and later ships with a webapp named balancer.  This is
@@ -30,9 +136,9 @@ requires a Servlet Specification 2.3 or later container if you wish
 to use a filter to redirect traffic.  If you wish to redirect traffic
 using a servlet, you may use any servlet container.
 </p>
-</section>
+</subsection>
 
-<section name="Sample Configuration">
+<subsection name="Sample Configuration">
 <p>
 The default balancer installation uses a single filter, BalancerFilter,
 mapped to all requests (url-pattern /*).  The filter reads its rules
@@ -53,9 +159,9 @@ http://www.cnn.com.  The request for
 http://localhost:8080/balancer/BlahBlah?paramName=paramValue will
 be redirected to http://www.yahoo.com.
 </p>
-</section>
+</subsection>
 
-<section name="Balancer Rules">
+<subsection name="Balancer Rules">
 <p>
 A <i>Rule</i> in the balancer system is a combination of
 a request matching criterion and a redirection URL for
@@ -85,9 +191,9 @@ desired, using the full filter mapping possibilities defined
 in the Servlet Specification.  Each filter will have
 its own RuleChain.
 </p>
-</section>
+</subsection>
 
-<section name="How it Works">
+<subsection name="How it Works">
 <p>
 <ol>
   <li>You write a rules configuration file containing various
@@ -104,13 +210,15 @@ evaluation and cause the request to be redirected.</li>
 </ol>
 </p>
 
-</section>
+</subsection>
 
-<section name="Comments">
+<subsection name="Comments">
 <p>
 Please direct questions, comments, suggestions, etc. to the
 tomcat-user mailing list.  Thank you.
 </p>
+</subsection>
+
 </section>
 
 </body>
