@@ -128,7 +128,7 @@
       <fileset dir="${tomcat.build}/conf" />
     </copy>
     <copy todir="${tomcat.dist}/jasper">
-      <fileset dir="${tomcat.build}/jasper" />
+      <fileset dir="${jasper.build}" />
     </copy>
     <copy todir="${tomcat.dist}/common/lib">
       <fileset dir="${tomcat.build}/common/lib" />
