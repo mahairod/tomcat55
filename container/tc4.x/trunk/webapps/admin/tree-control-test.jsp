@@ -4,7 +4,7 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="/WEB-INF/tree-control.tld" prefix="tree" %>
+<%@ taglib uri="/WEB-INF/controls.tld" prefix="controls" %>
 
 <html:html locale="true">
 
@@ -19,11 +19,11 @@
 <!-- Tree Component -->
 
 <td width="200">
-  <tree:render tree="treeControlTest"
-             action="treeControlTest.do?tree=${name}"
-              style="tree-control"
-      styleSelected="tree-control-selected"
-    styleUnselected="tree-control-unselected"
+  <controls:tree tree="treeControlTest"
+               action="treeControlTest.do?tree=${name}"
+                style="tree-control"
+        styleSelected="tree-control-selected"
+      styleUnselected="tree-control-unselected"
   />
 
 </body>
