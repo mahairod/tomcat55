@@ -5,20 +5,23 @@
     <property name="ws.dir" value="${user.home}/ws" />
     <!-- keep it in sync with jakarta-apache.xml -->
     <property name="nightly.url" value="http://jakarta.apache.org/builds/tomcat/nightly" />
-    <property name="tomcat.home" value="${user.home}/opt/tomcat" />
     <property name="dist.dir" value="${user.home}/opt" />
+    <property name="tomcat.home" value="${dist.dir}/tomcat" />
     <property name="package.dir" value="${user.home}/public_html" />
     <!-- Allow user to override any of the hardcoded directories -->
     <property file="${user.home}/.ant.properties" />
    </target>
 
-  <target name="clean.src" depends="init">
-     <deltree dir="${ws.dir}/jakarta-tomcat" />
-     <deltree dir="${ws.dir}/jakarta-watchdog" />
-     <deltree dir="${ws.dir}/jakarta-tools" />
+  <target name="clean.zip" depends="init">
      <deltree dir="${ws.dir}/jakarta-tomcat.src.zip" />
      <deltree dir="${ws.dir}/jakarta-tools.src.zip" />
      <deltree dir="${ws.dir}/jakarta-watchdog.src.zip" />
+  </target>
+
+  <target name="clean.src" depends="clean.zip">
+     <deltree dir="${ws.dir}/jakarta-tomcat" />
+     <deltree dir="${ws.dir}/jakarta-watchdog" />
+     <deltree dir="${ws.dir}/jakarta-tools" />
   </target>
 
   <target name="clean" depends="init">
@@ -31,16 +34,19 @@
    <!-- ******************** Getting sources ******************** -->
   <target name="tomcat.get" depends="init">
     <get src="${nightly.url}/src/jakarta-tomcat.src.zip" dest="${ws.dir}/jakarta-tomcat.src.zip" />
+    <deltree dir="${ws.dir}/jakarta-tomcat" />
     <expand src="${ws.dir}/jakarta-tomcat.src.zip" dest="${ws.dir}" />
   </target>
   
   <target name="tools.get" depends="init">
     <get src="${nightly.url}/src/jakarta-tools.src.zip" dest="${ws.dir}/jakarta-tools.src.zip" />
+    <deltree dir="${ws.dir}/jakarta-tools" />
     <expand src="${ws.dir}/jakarta-tools.src.zip" dest="${ws.dir}" />
   </target>
 
   <target name="watchdog.get" depends="init">
     <get src="${nightly.url}/src/jakarta-watchdog.src.zip" dest="${ws.dir}/jakarta-watchdog.src.zip" />
+    <deltree dir="${ws.dir}/jakarta-watchdog" />
     <expand src="${ws.dir}/jakarta-watchdog.src.zip" dest="${ws.dir}" />
   </target>
 
@@ -56,9 +62,14 @@
 
   <target name="ant" depends="init">
      <ant dir="${ws.dir}/jakarta-tools/ant" antfile="${ws.dir}/jakarta-tools/ant/build.xml" target="dist" /> 
+     <mkdir dir="${package.dir}/ant"/>
      <zip zipfile="${package.dir}/ant/ant.zip" basedir="${dist.dir}" items="ant"/>
      <copyfile src="${package.dir}/ant/ant.zip" dest="${package.dir}/ant/ant-${os.name}-${DSTAMP}.zip" />
      <copyfile src="${package.dir}/ant/ant.zip" dest="${package.dir}/ant/ant-${DSTAMP}.zip" />
+   </target>
+
+  <target name="moo" depends="init">
+     <ant dir="${ws.dir}/jakarta-tools/moo" antfile="${ws.dir}/jakarta-tools/moo/build.xml" target="dist" /> 
    </target>
 
    <target name="test-build" depends="init">
@@ -122,10 +133,10 @@
   </target>
 
    <!-- ******************** Agregate targets  ******************** -->
-  <target name="get.all" depends="init,clean.src,tomcat.get,tools.get,watchdog.get">
+  <target name="get.all" depends="init,clean.zip,tomcat.get,tools.get,watchdog.get">
   </target>
 
-  <target name="build" depends="init,tomcat,ant,tomcat,ant,test-build,watchdog">
+  <target name="build" depends="init,ant,moo,tomcat,test-build,watchdog">
   </target>
 
   <target name="all" depends="init,clean,get.all,build">
