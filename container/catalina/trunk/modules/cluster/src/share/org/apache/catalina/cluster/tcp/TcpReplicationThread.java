@@ -15,26 +15,28 @@
  */
 
 package org.apache.catalina.cluster.tcp;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
-import java.io.IOException;
 import java.nio.channels.SocketChannel;
+
 import org.apache.catalina.cluster.io.ObjectReader;
 
 /**
-     * A worker thread class which can drain channels and echo-back
-     * the input.  Each instance is constructed with a reference to
-     * the owning thread pool object. When started, the thread loops
-     * forever waiting to be awakened to service the channel associated
-     * with a SelectionKey object.
-     * The worker is tasked by calling its serviceChannel() method
-     * with a SelectionKey object.  The serviceChannel() method stores
-     * the key reference in the thread object then calls notify()
-     * to wake it up.  When the channel has been drained, the worker
-     * thread returns itself to its parent pool.
-     */
-public class TcpReplicationThread extends WorkerThread
-{
+ * A worker thread class which can drain channels and echo-back the input. Each
+ * instance is constructed with a reference to the owning thread pool object.
+ * When started, the thread loops forever waiting to be awakened to service the
+ * channel associated with a SelectionKey object. The worker is tasked by
+ * calling its serviceChannel() method with a SelectionKey object. The
+ * serviceChannel() method stores the key reference in the thread object then
+ * calls notify() to wake it up. When the channel has been drained, the worker
+ * thread returns itself to its parent pool.
+ * 
+ * @author Filip Hanik
+ * @version $Revision$, $Date$
+ */
+public class TcpReplicationThread extends WorkerThread {
+    private static final byte[] ACK_COMMAND = new byte[] {6, 2, 3};
     private static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
     private ByteBuffer buffer = ByteBuffer.allocate (1024);
@@ -53,7 +55,8 @@ public class TcpReplicationThread extends WorkerThread
                 // sleep and release object lock
                 this.wait();
             } catch (InterruptedException e) {
-                log.info("TCP worker thread interrupted in cluster",e);
+                if(log.isInfoEnabled())
+                    log.info("TCP worker thread interrupted in cluster",e);
                 // clear interrupt status
                 Thread.interrupted();
             }
@@ -119,16 +122,16 @@ public class TcpReplicationThread extends WorkerThread
         // loop while data available, channel is non-blocking
         while ((count = channel.read (buffer)) > 0) {
             buffer.flip();		// make buffer readable
-            int pkgcnt = reader.append(buffer.array(),0,count);
+            reader.append(buffer.array(),0,count);
             buffer.clear();		// make buffer empty
         }
         //check to see if any data is available
         int pkgcnt = reader.execute();
-        while ( pkgcnt > 0 ) {
-            if (waitForAck) {
+        if (waitForAck) {
+            while ( pkgcnt > 0 ) {
                 sendAck(key,channel);
-            } //end if
-            pkgcnt--;
+                pkgcnt--;
+            }
         }
         
         if (count < 0) {
@@ -149,10 +152,15 @@ public class TcpReplicationThread extends WorkerThread
         
     }
 
+    /**
+     * send a reply-acknowledgement (6,2,3)
+     * @param key
+     * @param channel
+     */
     private void sendAck(SelectionKey key, SocketChannel channel) {
-        //send a reply-acknowledgement
+        
         try {
-            channel.write(ByteBuffer.wrap(new byte[] {6, 2, 3}));
+            channel.write(ByteBuffer.wrap(ACK_COMMAND));
         } catch ( java.io.IOException x ) {
             log.warn("Unable to send ACK back through channel, channel disconnected?: "+x.getMessage());
         }
