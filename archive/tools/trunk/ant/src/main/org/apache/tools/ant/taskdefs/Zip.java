@@ -66,7 +66,7 @@ import java.util.zip.*;
  * Same as the Jar task, but creates .zip files without the MANIFEST 
  * stuff that .jar files have.
  *
- * @author duncan@x180.com
+ * @author James Davidson <a href="mailto:duncan@x180.com">duncan@x180.com</a>
  * @author Jon S. Stevens <a href="mailto:jon@clearink.com">jon@clearink.com</a>
  */
 
@@ -77,20 +77,43 @@ public class Zip extends Task {
     private Vector items = new Vector();
     private File manifest;    
     private Vector ignoreList = new Vector();
+    private boolean allItems = false;
     
+    /**
+        This is the name/location of where to 
+        create the .zip file.
+    */
     public void setZipfile(String zipFilename) {
-    zipFile = project.resolveFile(zipFilename);
+        zipFile = project.resolveFile(zipFilename);
     }
-
+    /**
+        This is the base directory to look in for 
+        things to zip.
+    */
     public void setBasedir(String baseDirname) {
-    baseDir = project.resolveFile(baseDirname);
+        baseDir = project.resolveFile(baseDirname);
     }
 
+    /**
+        Set this to be the items in the base directory 
+        that you want to include in the zip archive. 
+        (ie: items="foo, bar, ack.html, f.java").
+        You can also specify "*" for the items (ie: items="*") 
+        and it will include all the items in the base directory.
+        Do not try to have items="*, foo". Also note that 
+        you can specify items to ignore with setIgnore and they 
+        will still be ignored if you choose "*". Sometimes 
+        ignore lists are easier than include lists. ;-)
+    */
     public void setItems(String itemString) {
-    StringTokenizer tok = new StringTokenizer(itemString, ",", false);
-    while (tok.hasMoreTokens()) {
-        items.addElement(tok.nextToken().trim());
-    }
+        if ( itemString.equals("*") ) {
+            allItems = true;
+        } else {
+            StringTokenizer tok = new StringTokenizer(itemString, ",", false);
+            while (tok.hasMoreTokens()) {
+                items.addElement(tok.nextToken().trim());
+            }
+        }
     }
     /**
         List of filenames and directory names to not 
@@ -123,6 +146,13 @@ public class Zip extends Task {
             ZipOutputStream zOut = new ZipOutputStream(new FileOutputStream(zipFile));
             zOut.setMethod(ZipOutputStream.DEFLATED);
             
+            if ( allItems ) {
+                String[] lst = baseDir.list();
+                for (int i=0;i<lst.length;i++) {
+                    items.addElement(lst[i]);
+                }
+            }
+
             // add items
             Enumeration e = items.elements();
             while (e.hasMoreElements()) {
@@ -191,7 +221,3 @@ public class Zip extends Task {
         fIn.close();
     }
 }
-
-
-
-
