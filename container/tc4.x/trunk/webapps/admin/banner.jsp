@@ -21,7 +21,7 @@
         <div class="masthead-title-text" align="left"><img src="images/TomcatBanner.jpg" width="430" height="120"></div>
       </td>
       <form method='post' action='/admin/commitChanges.do' target='_self'>
-      <td align="left" valign="middle"> 
+      <td align="right" valign="middle"> 
         <html:submit>
           <bean:message key="button.commit"/>
         </html:submit>
@@ -31,10 +31,13 @@
         <div class="table-normal-text" align="left">&nbsp </div>
       </td>
     <form method='post' action='/admin/logOut.do' target='_top'>
-      <td align="left" valign="middle"> 
+      <td align="right" valign="middle"> 
         <html:submit>
           <bean:message key="button.logout"/>
         </html:submit>
+      </td>
+      <td width="1%">
+        <div class="table-normal-text" align="left">&nbsp </div>
       </td>
     </form>
   </tr>
@@ -45,7 +48,7 @@
 
 <h2><bean:message key="login.changeLanguage"/></h2>
 
-<html:form action="/setLocale" method="POST">
+<html:form action="/setLocale" method="POST" target="_self">
   <table border="0" cellspacing="5">
     <tr>
       <td align="right">
