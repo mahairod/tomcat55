@@ -250,7 +250,9 @@ public final class StandardServer
         // Set up a server socket to wait on
         ServerSocket serverSocket = null;
         try {
-            serverSocket = new ServerSocket(port, 1);
+            serverSocket =
+                new ServerSocket(port, 1,
+                                 InetAddress.getByName("127.0.0.1"));
         } catch (IOException e) {
             System.err.println("StandardServer.await: create: " + e);
             e.printStackTrace();
@@ -291,7 +293,9 @@ public final class StandardServer
 
             // Read a set of characters from the socket
             StringBuffer command = new StringBuffer();
-            int expected = shutdown.length();
+            int expected = 1024; // Cut off to avoid DoS attack
+            while (expected < shutdown.length())
+                expected += 1024;
             while (expected > 0) {
                 int ch = -1;
                 try {
