@@ -430,7 +430,7 @@
     <copy todir="${catalina.build}/common/lib" file="${jdbc20ext.jar}"/>
   </target>
   <target name="copy-jmxri.jar" if="copy.jmxri.jar">
-    <copy todir="${catalina.build}/server/lib" file="${jmxri.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${jmxri.jar}"/>
   </target>
   <target name="copy-jndi.jar" if="copy.jndi.jar">
     <copy todir="${catalina.build}/common/lib" file="${jndi.jar}"/>
