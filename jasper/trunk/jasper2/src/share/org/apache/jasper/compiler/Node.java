@@ -1226,7 +1226,7 @@ abstract class Node {
 	    useTagPlugin = use;
 	}
 
-	public boolean getUseTagPlugin() {
+	public boolean useTagPlugin() {
 	    return useTagPlugin;
 	}
 
@@ -1287,18 +1287,25 @@ abstract class Node {
      * to indicate generated codes for the specified attribute.
      */
     public static class GenAttribute extends Node {
-	String attribute;
+	String name;	// name of the attribute
+	CustomTag tag;	// The tag this attribute belongs
 
-	public GenAttribute(Mark start, String attribute) {
+	public GenAttribute(Mark start, String name, CustomTag tag) {
 	    super(start, null);
+	    this.name = name;
+	    this.tag = tag;
 	}
 
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
 	}
 
-	public String getAttribute() {
-	    return attribute;
+	public String getName() {
+	    return name;
+	}
+
+	public CustomTag getTag() {
+	    return tag;
 	}
     }
 

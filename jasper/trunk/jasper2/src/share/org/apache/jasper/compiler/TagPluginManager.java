@@ -184,10 +184,6 @@ public class TagPluginManager {
 	    n.setUseTagPlugin(true);
 	}
 
-	public String getTagName() {
-	    return node.getName();
-	}
-
 	public boolean isScriptless() {
 	    return node.getChildInfo().isScriptless();
 	}
@@ -201,7 +197,7 @@ public class TagPluginManager {
 	}
 
 	public void generateAttribute(String attribute) {
-	    curNodes.add(new Node.GenAttribute(node.getStart(), null));
+	    curNodes.add(new Node.GenAttribute(node.getStart(), attribute, node));
 	}
 
 	public void dontUseTagPlugin() {

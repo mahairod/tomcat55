@@ -1483,20 +1483,13 @@ class Generator {
 
         public void visit(Node.CustomTag n) throws JasperException {
 
-	    Hashtable handlerInfosByShortName = (Hashtable)
-		handlerInfos.get(n.getPrefix());
-	    if (handlerInfosByShortName == null) {
-		handlerInfosByShortName = new Hashtable();
-		handlerInfos.put(n.getPrefix(), handlerInfosByShortName);
+	    // Use plugin to generate more efficient code if there is one.
+	    if (n.useTagPlugin()) {
+		generateTagPlugin(n);
+		return;
 	    }
-	    TagHandlerInfo handlerInfo = (TagHandlerInfo)
-		handlerInfosByShortName.get(n.getShortName());
-	    if (handlerInfo == null) {
-		handlerInfo = new TagHandlerInfo(n,
-						 n.getTagHandlerClass(),
-						 err);
-		handlerInfosByShortName.put(n.getShortName(), handlerInfo);
-	    }
+
+	    TagHandlerInfo handlerInfo = getTagHandlerInfo(n);
 
 	    // Create variable names
 	    String baseVar = createTagVarName(n.getName(), n.getPrefix(),
@@ -1876,6 +1869,48 @@ class Generator {
 		    out.print(getScopeConstant(scopeName));
 		}
 		out.println(");");
+	    }
+	}
+
+	public void visit(Node.GenAttribute n) throws JasperException {
+	    Node.CustomTag tag = n.getTag();
+            Node.JspAttribute[] attrs = tag.getJspAttributes();
+            for (int i=0; i<attrs.length; i++) {
+		if (attrs[i].getName() == n.getName()) {
+	            out.print(evaluateAttribute(getTagHandlerInfo(tag),
+				attrs[i], tag, null));
+		    break;
+		}
+	    }
+	}
+
+	private TagHandlerInfo getTagHandlerInfo(Node.CustomTag n)
+			throws JasperException {
+            Hashtable handlerInfosByShortName = (Hashtable)
+                handlerInfos.get(n.getPrefix());
+            if (handlerInfosByShortName == null) {
+                handlerInfosByShortName = new Hashtable();
+                handlerInfos.put(n.getPrefix(), handlerInfosByShortName);
+            }
+            TagHandlerInfo handlerInfo = (TagHandlerInfo)
+                handlerInfosByShortName.get(n.getShortName());
+            if (handlerInfo == null) {
+                handlerInfo = new TagHandlerInfo(n,
+                                                 n.getTagHandlerClass(),
+                                                 err);
+                handlerInfosByShortName.put(n.getShortName(), handlerInfo);
+            }
+	    return handlerInfo;
+	}
+
+	private void generateTagPlugin(Node.CustomTag n)
+				throws JasperException {
+	    if (n.getAtSTag() != null) {
+		n.getAtSTag().visit(this);
+	    }
+	    visitBody(n);
+	    if (n.getAtETag() != null) {
+		n.getAtETag().visit(this);
 	    }
 	}
 
@@ -2336,6 +2371,70 @@ class Generator {
 	    }
 	}
 
+	private String evaluateAttribute(TagHandlerInfo handlerInfo,
+				         Node.JspAttribute attr,
+					 Node.CustomTag n,
+					 String tagHandlerVar)
+			throws JasperException {
+
+	    String attrValue = attr.getValue();
+	    if (attrValue == null) {
+                if(attr.isNamedAttribute()) {
+                    if(n.checkIfAttributeIsJspFragment(attr.getName())) {
+                        // XXX - no need to generate temporary variable here
+                        attrValue = generateNamedAttributeJspFragment( 
+                                attr.getNamedAttributeNode(),
+                                tagHandlerVar );
+                    }
+                    else {
+                        attrValue = generateNamedAttributeValue( 
+                            attr.getNamedAttributeNode());
+                    }
+                } 
+                else {
+                    return null;
+                }
+            }
+
+	    String attrName = attr.getName();
+
+	    Method m = null;
+	    Class[] c = null;
+	    if (attr.isDynamic()) {
+		c = OBJECT_CLASS;
+            } else {
+		m = handlerInfo.getSetterMethod(attrName);
+		if (m == null) {
+		    err.jspError(n, "jsp.error.unable.to_find_method",
+				     attrName);
+		}
+		c = m.getParameterTypes();
+		// XXX assert(c.length > 0)
+	    }
+
+	    if (attr.isExpression()) {
+	        // Do nothing
+	    } else if (attr.isNamedAttribute()) {
+		if (!n.checkIfAttributeIsJspFragment(attr.getName())
+			    && !attr.isDynamic()) {
+		    attrValue = convertString(
+                                c[0], attrValue, attrName,
+				handlerInfo.getPropertyEditorClass(attrName),
+				false);
+		}
+	    } else if (attr.isELInterpreterInput()) {
+                // run attrValue through the expression interpreter
+                attrValue = JspUtil.interpreterCall(this.isTagFile,
+                         attrValue, c[0], n.getPrefix(), "_jspx_fnmap", false );
+            } else {
+		attrValue = convertString(
+                                c[0], attrValue, attrName,
+				handlerInfo.getPropertyEditorClass(attrName),
+				true);
+	    }
+	    return attrValue;
+	}
+
 	private void generateSetters(Node.CustomTag n,
 				     String tagHandlerVar,
 				     TagHandlerInfo handlerInfo,
@@ -2390,63 +2489,8 @@ class Generator {
 
 	    Node.JspAttribute[] attrs = n.getJspAttributes();
 	    for (int i=0; i<attrs.length; i++) {
-		String attrValue = attrs[i].getValue();
-		if (attrValue == null) {
-                    if( attrs[i].isNamedAttribute() ) {
-                        if( n.checkIfAttributeIsJspFragment( 
-                            attrs[i].getName() ) ) 
-                        {
-                            // XXX - no need to generate temporary variable 
-                            // here
-                            attrValue = generateNamedAttributeJspFragment( 
-                                attrs[i].getNamedAttributeNode(),
-                                tagHandlerVar );
-                        }
-                        else {
-                            attrValue = generateNamedAttributeValue( 
-                                attrs[i].getNamedAttributeNode() );
-                        }
-                    } 
-                    else {
-                        continue;
-                    }
-		}
-		String attrName = attrs[i].getName();
-
-		Method m = null;
-		Class[] c = null;
-		if (attrs[i].isDynamic()) {
-		    c = OBJECT_CLASS;
-		} else {
-		    m = handlerInfo.getSetterMethod(attrName);
-		    if (m == null) {
-			err.jspError(n, "jsp.error.unable.to_find_method",
-				     attrName);
-		    }
-		    c = m.getParameterTypes();
-		    // XXX assert(c.length > 0)
-		}
-
-		if (attrs[i].isExpression()) {
-		    // Do nothing
-		} else if (attrs[i].isNamedAttribute()) {
-		    if (!n.checkIfAttributeIsJspFragment(attrs[i].getName())
-			    && !attrs[i].isDynamic()) {
-			attrValue = convertString(
-                                c[0], attrValue, attrName,
-				handlerInfo.getPropertyEditorClass(attrName),
-				false);
-		    }
-		} else if (attrs[i].isELInterpreterInput()) {
-                    // run attrValue through the expression interpreter
-                    attrValue = JspUtil.interpreterCall(this.isTagFile,
-                        attrValue, c[0], n.getPrefix(), "_jspx_fnmap", false );
-                } else {
-		    attrValue = convertString(
-                                c[0], attrValue, attrName,
-				handlerInfo.getPropertyEditorClass(attrName),
-				true);
-		}
+		String attrValue = evaluateAttribute(handlerInfo, attrs[i],
+						n, tagHandlerVar);
 		
 		if (attrs[i].isDynamic()) {
 		    out.printin(tagHandlerVar);
@@ -2467,7 +2511,7 @@ class Generator {
 		} else {
 		    out.printin(tagHandlerVar);
 		    out.print(".");
-		    out.print(m.getName());
+		    out.print(handlerInfo.getSetterMethod(attrs[i].getName()).getName());
 		    out.print("(");
 		    out.print(attrValue);
 		    out.println(");");

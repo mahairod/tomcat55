@@ -71,11 +71,6 @@ import org.apache.jasper.compiler.ServletWriter;
 
 public interface TagPluginContext {
     /**
-     * @return The name for the current tag
-     */
-    String getTagName();
-
-    /**
       * @return true if the body of the tag is scriptless.
       */
     boolean isScriptless();
