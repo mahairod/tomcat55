@@ -106,7 +106,7 @@
                 <html:hidden property="name"/>
               </logic:present>
               <logic:notPresent name="envEntryForm" property="objectName">
-                <html:text property="name" size="24" maxlength="32" styleId="name"/>
+                <html:text property="name" size="24" styleId="name"/>
               </logic:notPresent>
             </controls:data>
           </controls:row>
@@ -131,7 +131,7 @@
               <bean:message key="service.value"/>:
             </controls:label>
             <controls:data>
-              <html:text property="value" size="24" maxlength="64" styleId="value"/>
+              <html:text property="value" size="24" styleId="value"/>
             </controls:data>
           </controls:row>
 
@@ -151,7 +151,7 @@
               <bean:message key="users.prompt.description"/>
             </controls:label>
             <controls:data>
-              <html:text property="description" size="30" maxlength="64" styleId="description"/>
+              <html:text property="description" size="30" styleId="description"/>
             </controls:data>
           </controls:row>
 

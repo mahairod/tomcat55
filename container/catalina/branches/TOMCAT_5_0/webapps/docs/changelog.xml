@@ -99,6 +99,9 @@
       <update>
         <bug>31656</bug>: Make admin webapp build on Struts 1.2. (yoavs)
       </update>
+      <update>
+        <bug>32019</bug>: Remove maxlength=64 on env entry value in admin webapp. (yoavs)
+      </update>
     </changelog>
   </subsection>
 </section>
