@@ -1,5 +1,6 @@
 
 ; Tomcat 4 script for Nullsoft Installer
+; $Id$
 
 Name "jakarta-tomcat-4.0"
 Caption "Jakarta Tomcat 4.0"
@@ -10,10 +11,14 @@ SetDatablockOptimize on
 
 BGGradient 000000 800000 FFFFFF
 InstallColors FF8080 000000
-Icon tomcat.ico
+
+Icon main.ico
+UninstallIcon uninst.ico 
+EnabledBitmap tickyes.bmp 
+DisabledBitmap tickno.bmp
 
 LicenseText "You must read the following license before installing:"
-LicenseData LICENSE
+LicenseData INSTALLLICENSE
 ComponentText "This will install the Jakarta Tomcat 4.0 servlet container on your computer:"
 InstType Normal
 InstType Minimum
@@ -183,11 +188,18 @@ Section -post
 
 SectionEnd
 
+Function .onInit
+
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "If not done already, you need to set the JAVA_HOME \
+environment variable and have it point to your JDK installation directory. \
+Answer No to quit the installer if your environment is not properly set." IDYES NoAbort
+      Abort ; causes installer to quit.
+  NoAbort:
+
+FunctionEnd
+
 Function .onInstSuccess
 
-    MessageBox MB_OK|MB_ICONEXCLAMATION \
-      "If not done already, you need to set the JAVA_HOME environment\
- variable and have it point to your JDK installation directory."
   MessageBox MB_YESNO|MB_ICONQUESTION \
              "Setup has completed. View readme file now?" \
              IDNO NoReadme
