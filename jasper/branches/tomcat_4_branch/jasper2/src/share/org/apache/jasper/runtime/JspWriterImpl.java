@@ -207,8 +207,6 @@ public class JspWriterImpl extends JspWriter {
         flushBuffer();
         if (out != null) {
             out.flush();
-            // Also flush the response buffer.
-            response.flushBuffer();
         }
     }
 
