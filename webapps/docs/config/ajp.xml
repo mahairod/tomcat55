@@ -84,6 +84,14 @@
       </p>
     </attribute>
 
+    <attribute name="useBodyEncodingForURI" required="false">
+      <p>This specifies if the encoding specified in contentType should be used
+      for URI parameters, instead of using the URIEncoding. This setting is 
+      present for compatibility with Tomcat 4.1.x.
+      The default value is <code>false</code>.
+      </p>
+    </attribute>
+
   </attributes>
 
   </subsection>
