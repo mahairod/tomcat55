@@ -71,8 +71,6 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import org.apache.commons.daemon.Daemon;
-import org.apache.commons.daemon.DaemonContext;
 import org.apache.catalina.loader.StandardClassLoader;
 
 
@@ -88,8 +86,7 @@ import org.apache.catalina.loader.StandardClassLoader;
  * @version $Revision$ $Date$
  */
 
-public final class BootstrapService 
-    implements Daemon {
+public final class BootstrapService {
 
 
     // ------------------------------------------------------- Static Variables
@@ -98,7 +95,7 @@ public final class BootstrapService
     /**
      * Service object used by main.
      */
-    private static Daemon service = null;
+    private static BootstrapService service = null;
 
 
     /**
@@ -119,19 +116,14 @@ public final class BootstrapService
     /**
      * Load the Catalina Service.
      */
-    public void init(DaemonContext context)
+    public void init(String[] arguments)
         throws Exception {
 
-        String arguments[] = null;
-
-        /* Read the arguments from the Daemon context */
-        if (context!=null) {
-            arguments = context.getArguments();
-            if (arguments!=null) {
-                for (int i = 0; i < arguments.length; i++) {
-                    if (arguments[i].equals("-debug")) {
-                        debug = 1;
-                    }
+        // Read the arguments
+        if (arguments != null) {
+            for (int i = 0; i < arguments.length; i++) {
+                if (arguments[i].equals("-debug")) {
+                    debug = 1;
                 }
             }
         }
