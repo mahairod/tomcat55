@@ -452,11 +452,11 @@ public class JDBCStore
                 }
                 try {
                     if (preparedKeysSql == null) {
-						String keysSql =
-							"SELECT " + sessionIdCol + " FROM " + sessionTable +
-							" WHERE " + sessionAppCol + " = ?";
+                        String keysSql = "SELECT " + sessionIdCol + " FROM "
+                                + sessionTable + " WHERE " + sessionAppCol
+                                + " = ?";
                         preparedKeysSql = _conn.prepareStatement(keysSql);
-                    }
+					}
 
                     preparedKeysSql.setString(1, getName());
                     rst = preparedKeysSql.executeQuery();
@@ -513,11 +513,11 @@ public class JDBCStore
 
                 try {
                     if (preparedSizeSql == null) {
-						String sizeSql =
-							"SELECT COUNT(" + sessionIdCol + ") FROM " + sessionTable +
-							" WHERE " + sessionAppCol + " = ?";
+                        String sizeSql = "SELECT COUNT(" + sessionIdCol
+                                + ") FROM " + sessionTable + " WHERE "
+                                + sessionAppCol + " = ?";
                         preparedSizeSql = _conn.prepareStatement(sizeSql);
-                    }
+					}
 
                     preparedSizeSql.setString(1, getName());
                     rst = preparedSizeSql.executeQuery();
@@ -573,11 +573,11 @@ public class JDBCStore
 
                 try {
                     if (preparedLoadSql == null) {
-						String loadSql =
-								"SELECT " + sessionIdCol + ", " + sessionDataCol + " FROM " +
-								sessionTable + " WHERE " + sessionIdCol + " = ? AND " +
-								sessionAppCol + " = ?";
-                       preparedLoadSql = _conn.prepareStatement(loadSql);
+                        String loadSql = "SELECT " + sessionIdCol + ", "
+                                + sessionDataCol + " FROM " + sessionTable
+                                + " WHERE " + sessionIdCol + " = ? AND "
+                                + sessionAppCol + " = ?";
+                        preparedLoadSql = _conn.prepareStatement(loadSql);
                     }
 
                     preparedLoadSql.setString(1, id);
@@ -660,9 +660,9 @@ public class JDBCStore
 
                 try {
                     if (preparedRemoveSql == null) {
-						String removeSql =
-							"DELETE FROM " + sessionTable + " WHERE " + sessionIdCol +
-							" = ?  AND " + sessionAppCol + " = ?";
+                        String removeSql = "DELETE FROM " + sessionTable
+                                + " WHERE " + sessionIdCol + " = ?  AND "
+                                + sessionAppCol + " = ?";
                         preparedRemoveSql = _conn.prepareStatement(removeSql);
                     }
 
@@ -702,8 +702,8 @@ public class JDBCStore
 
                 try {
                     if (preparedClearSql == null) {
-						String clearSql =
-							"DELETE FROM " + sessionTable + " WHERE " + sessionAppCol + " = ?";
+                        String clearSql = "DELETE FROM " + sessionTable
+                             + " WHERE " + sessionAppCol + " = ?";
                         preparedClearSql = _conn.prepareStatement(clearSql);
                     }
 
@@ -759,15 +759,14 @@ public class JDBCStore
                     in = new BufferedInputStream(bis, size);
 
                     if (preparedSaveSql == null) {
-						String saveSql =
-							"INSERT INTO " + sessionTable + " (" + sessionIdCol + ", " +
-							sessionAppCol + ", " +
-							sessionDataCol + ", " +
-							sessionValidCol + ", " +
-							sessionMaxInactiveCol + ", " +
-							sessionLastAccessedCol + ") VALUES (?, ?, ?, ?, ?, ?)";
-                        preparedSaveSql = _conn.prepareStatement(saveSql);
-                    }
+                        String saveSql = "INSERT INTO " + sessionTable + " ("
+                           + sessionIdCol + ", " + sessionAppCol + ", "
+                           + sessionDataCol + ", " + sessionValidCol
+                           + ", " + sessionMaxInactiveCol + ", "
+                           + sessionLastAccessedCol
+                           + ") VALUES (?, ?, ?, ?, ?, ?)";
+                       preparedSaveSql = _conn.prepareStatement(saveSql);
+					}
 
                     preparedSaveSql.setString(1, session.getId());
                     preparedSaveSql.setString(2, getName());
