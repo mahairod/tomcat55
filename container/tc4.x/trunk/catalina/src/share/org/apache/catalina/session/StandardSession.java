@@ -1237,7 +1237,7 @@ class StandardSession
         if ((manager != null) && manager.getDistributable() &&
           !(value instanceof Serializable))
             throw new IllegalArgumentException
-                (sm.getString("standardSession.setAttribute.ise"));
+                (sm.getString("standardSession.setAttribute.iae"));
 
         // Replace or add this attribute
         Object unbound = null;
