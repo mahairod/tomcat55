@@ -76,7 +76,7 @@ public final class SecurityConfig{
     
     private final static String PACKAGE_ACCESS =  "sun.,"
                                                 + "org.apache.catalina." 
-                                                + ",org.apache.jsp."
+                                                + ",org.apache.jasper."
                                                 + ",org.apache.coyote."
                                                 + ",org.apache.tomcat.";
     
@@ -84,7 +84,7 @@ public final class SecurityConfig{
                                                 + ",org.apache.catalina." 
                                                 + ",org.apache.coyote."
                                                 + ",org.apache.tomcat."
-                                                + ",org.apache.jsp.";
+                                                + ",org.apache.jasper.";
     /**
      * List of protected package from conf/catalina.properties
      */
