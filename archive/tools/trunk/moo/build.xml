@@ -25,7 +25,7 @@
     <copydir src="build" dest="dist"/>
 
     <!-- create jars for the classes -->
-    <jar jarfile="../moo.jar" basedir="dist/classes" items="org"/>
+    <jar jarfile="../moo.jar" basedir="dist/classes" includes="org/**"/>
 
     <!-- remove stuff from dist -->
     <deltree dir="dist" />
