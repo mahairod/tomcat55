@@ -1548,12 +1548,12 @@ public class Generator {
         out.popIndent();
         out.printil("} catch (Throwable t) {");
         out.pushIndent();
-/*
+
         out.printil("if (out != null && out.getBufferSize() != 0)");
         out.pushIndent();
         out.printil("out.clearBuffer();");
         out.popIndent();
-*/
+
         out.printil("if (pageContext != null) pageContext.handlePageException(t);");
         out.popIndent();
         out.printil("} finally {");
