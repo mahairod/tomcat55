@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -66,26 +62,18 @@ package org.apache.catalina.core;
 
 
 import java.io.IOException;
-import java.net.JarURLConnection;
 import java.net.URL;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.management.ObjectName;
+import javax.management.MBeanServer;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Deployer;
-import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Host;
-import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
 import org.apache.catalina.valves.ErrorDispatcherValve;
+import org.apache.catalina.valves.ValveBase;
 
 
 /**
@@ -160,7 +148,7 @@ public class StandardHost
      * The <code>Deployer</code> to whom we delegate application
      * deployment requests.
      */
-    private Deployer deployer = new StandardHostDeployer(this);
+    private Deployer deployer = null;
 
 
     /**
@@ -175,7 +163,6 @@ public class StandardHost
      */
     private String errorReportValveClass =
         "org.apache.catalina.valves.ErrorReportValve";
-
 
     /**
      * The descriptive information string for this implementation.
@@ -335,7 +322,6 @@ public class StandardHost
     public DefaultContext getDefaultContext() {
         return (this.defaultContext);
     }
-
 
     /**
      * Return the Java class name of the Context implementation class
@@ -665,14 +651,14 @@ public class StandardHost
      */
     public Context map(String uri) {
 
-        if (debug > 0)
-            log("Mapping request URI '" + uri + "'");
+        if (log.isDebugEnabled())
+            log.debug("Mapping request URI '" + uri + "'");
         if (uri == null)
             return (null);
 
         // Match on the longest possible context path prefix
-        if (debug > 1)
-            log("  Trying the longest context path prefix");
+        if (log.isTraceEnabled())
+            log.trace("  Trying the longest context path prefix");
         Context context = null;
         String mapuri = uri;
         while (true) {
@@ -687,8 +673,8 @@ public class StandardHost
 
         // If no Context matches, select the default Context
         if (context == null) {
-            if (debug > 1)
-                log("  Trying the default context");
+            if (log.isTraceEnabled())
+                log.trace("  Trying the default context");
             context = (Context) findChild("");
         }
 
@@ -699,8 +685,8 @@ public class StandardHost
         }
 
         // Return the mapped Context (if any)
-        if (debug > 0)
-            log(" Mapped to context '" + context.getPath() + "'");
+        if (log.isDebugEnabled())
+            log.debug(" Mapped to context '" + context.getPath() + "'");
         return (context);
 
     }
@@ -822,7 +808,7 @@ public class StandardHost
      */
     public void install(String contextPath, URL war) throws IOException {
 
-        deployer.install(contextPath, war);
+        getDelegateDeployer().install(contextPath, war);
 
     }
 
@@ -853,7 +839,7 @@ public class StandardHost
      */
     public synchronized void install(URL config, URL war) throws IOException {
 
-        deployer.install(config, war);
+        getDelegateDeployer().install(config, war);
 
     }
 
@@ -867,7 +853,7 @@ public class StandardHost
      */
     public Context findDeployedApp(String contextPath) {
 
-        return (deployer.findDeployedApp(contextPath));
+        return (getDelegateDeployer().findDeployedApp(contextPath));
 
     }
 
@@ -879,7 +865,7 @@ public class StandardHost
      */
     public String[] findDeployedApps() {
 
-        return (deployer.findDeployedApps());
+        return (getDelegateDeployer().findDeployedApps());
 
     }
 
@@ -902,7 +888,7 @@ public class StandardHost
      */
     public void remove(String contextPath) throws IOException {
 
-        deployer.remove(contextPath);
+        getDelegateDeployer().remove(contextPath);
 
     }
 
@@ -927,7 +913,7 @@ public class StandardHost
      */
     public void remove(String contextPath, boolean undeploy) throws IOException {
 
-        deployer.remove(contextPath,undeploy);
+        getDelegateDeployer().remove(contextPath,undeploy);
 
     }
 
@@ -947,7 +933,7 @@ public class StandardHost
      */
     public void start(String contextPath) throws IOException {
 
-        deployer.start(contextPath);
+        getDelegateDeployer().start(contextPath);
 
     }
 
@@ -967,7 +953,7 @@ public class StandardHost
      */
     public void stop(String contextPath) throws IOException {
 
-        deployer.stop(contextPath);
+        getDelegateDeployer().stop(contextPath);
 
     }
 
@@ -987,5 +973,64 @@ public class StandardHost
 
     }
 
+    private Deployer getDelegateDeployer() {
+        if( deployer!= null )
+            return deployer;
+        deployer=new StandardHostDeployer(this);
+        return deployer;
+    }
 
+    // -------------------- JMX  --------------------
+    /**
+      * Return the MBean Names of the Valves assoicated with this Host
+      *
+      * @exception Exception if an MBean cannot be created or registered
+      */
+     public String [] getValveNames()
+         throws Exception
+    {
+         Valve [] valves = this.getValves();
+         String [] mbeanNames = new String[valves.length];
+         for (int i = 0; i < valves.length; i++) {
+             if( valves[i] == null ) continue;
+             if( ((ValveBase)valves[i]).getObjectName() == null ) continue;
+             mbeanNames[i] = ((ValveBase)valves[i]).getObjectName().toString();
+         }
+
+         return mbeanNames;
+
+     }
+
+    public ObjectName[] getValveObjectNames()
+        throws Exception
+    {
+        Valve [] valves = this.getValves();
+        ObjectName [] mbeanNames = new ObjectName[valves.length];
+        for (int i = 0; i < valves.length; i++) {
+            mbeanNames[i] = ((ValveBase)valves[i]).getObjectName();
+        }
+
+        return mbeanNames;
+    }
+
+    public String[] getAliases() {
+        return aliases;
+    }
+
+    public void init() throws Exception {
+        if( getParent() != null ) return;
+
+        ObjectName serviceName=new ObjectName(domain +
+                ":type=Engine,name=Tomcat-Standalone");
+        if( mserver.isRegistered( serviceName )) {
+            log.info("Registering with the Engine");
+            try {
+                mserver.invoke( serviceName, "addChild",
+                        new Object[] { this },
+                    new String[] { "org.apache.catalina.Container" } );
+            } catch( Exception ex ) {
+                ex.printStackTrace();
+            }
+        }
+    }
 }
