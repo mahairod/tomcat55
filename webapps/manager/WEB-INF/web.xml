@@ -128,6 +128,7 @@
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>HTMLManger and Manager command</web-resource-name>
+      <url-pattern>/jmxproxy/*</url-pattern>
       <url-pattern>/html/*</url-pattern>
       <url-pattern>/list</url-pattern>
       <url-pattern>/sessions</url-pattern>
