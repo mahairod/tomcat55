@@ -52,6 +52,69 @@
   </mbean>
 
 
+  <mbean         name="Ajp13Connector"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
+          description="Implementation of an Ajp13 connector"
+               domain="Catalina"
+                group="Connector"
+                 type="org.apache.ajp.tomcat4.Ajp13Connector">
+
+    <attribute   name="acceptCount"
+          description="The accept count for this Connector"
+                 type="int"/>
+
+    <attribute   name="address"
+          description="The IP address on which to bind"
+                 type="java.lang.String"/>
+
+    <attribute   name="bufferSize"
+          description="The input buffer size we should create on input streams"
+                 type="int"/>
+
+    <attribute   name="className"
+          description="Fully qualified class name of the managed object"
+                 type="java.lang.String"
+            writeable="false"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="connectionTimeout"
+          description="Timeout value on the incoming connection"
+                 type="int"/>
+
+    <attribute   name="enableLookups"
+          description="The 'enable DNS lookups' flag for this Connector"
+                 type="boolean"/>
+
+    <attribute   name="maxProcessors"
+          description="The maximum number of processors allowed"
+                 type="int"/>
+
+    <attribute   name="minProcessors"
+          description="The minimum number of processors to start at initialization time"
+                 type="int"/>
+
+    <attribute   name="port"
+          description="The port number on which we listen for ajp13 requests"
+                 type="int"/>
+
+    <attribute   name="redirectPort"
+          description="The redirect port for non-SSL to SSL redirects"
+                 type="int"/>
+
+    <attribute   name="scheme"
+          description="Protocol name for this Connector (http, https)"
+                 type="java.lang.String"/>
+
+    <attribute   name="secure"
+          description="Is this a secure (SSL) Connector?"
+                 type="boolean"/>
+
+  </mbean>
+
+
   <mbean         name="DefaultContext"
               className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Used to store the default configuration a Host will use when creating a Context"
