@@ -41,6 +41,9 @@
       <update>
         Removed classic compiler directives from Ant build, as we use modern anyways. (yoavs)
       </update>
+      <update>
+        Modified RELEASE-PLAN-5.0.html to indicate status given start of work on Tomcat 5.next. (yoavs)
+	</update>
     </changelog>
   </subsection>
 
@@ -82,6 +85,9 @@
       <fix>
         <bug>29668</bug>: NPE in HostConfig, directory created for deployed WAR instead of xml file. (yoavs)
       </fix>
+      <fix>
+        <bug>30179</bug>: Improved Bootstrap catalina.properties handling. (yoavs)
+	</fix>
     </changelog>
   </subsection>
 
