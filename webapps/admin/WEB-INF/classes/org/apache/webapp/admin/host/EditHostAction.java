@@ -109,7 +109,7 @@ public class EditHostAction extends Action {
             hname = new ObjectName(request.getParameter("select"));
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.hostName.bad",
+                resources.getMessage(locale, "error.hostName.bad",
                                      request.getParameter("select"));
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
@@ -125,7 +125,7 @@ public class EditHostAction extends Action {
                                   mBServer, domain ,request);
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.hostName.bad",
+                resources.getMessage(locale, "error.hostName.bad",
                                         adminHost);
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
@@ -138,7 +138,9 @@ public class EditHostAction extends Action {
         session.setAttribute("hostForm", hostFm);
         hostFm.setAdminAction("Edit");
         hostFm.setObjectName(hname.toString());
-        sb = new StringBuffer("Host (");
+        sb = new StringBuffer();
+        sb.append(resources.getMessage(locale, "server.service.treeBuilder.host"));
+        sb.append(" (");
         sb.append(hname.getKeyProperty("host"));
         sb.append(")");
         hostFm.setNodeLabel(sb.toString());

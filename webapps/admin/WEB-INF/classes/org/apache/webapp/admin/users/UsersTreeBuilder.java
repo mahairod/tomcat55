@@ -18,7 +18,9 @@ package org.apache.webapp.admin.users;
 
 
 import java.net.URLEncoder;
+import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
@@ -60,7 +62,9 @@ public class UsersTreeBuilder implements TreeBuilder {
 
         MessageResources resources = (MessageResources)
             servlet.getServletContext().getAttribute(Action.MESSAGES_KEY);
-        addSubtree(treeControl.getRoot(), resources);
+        HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        addSubtree(treeControl.getRoot(), resources, locale);
 
     }
 
@@ -76,7 +80,7 @@ public class UsersTreeBuilder implements TreeBuilder {
      *  messages
      */
     protected void addSubtree(TreeControlNode root,
-                              MessageResources resources) {
+                              MessageResources resources, Locale locale) {
 
         String databaseName = URLEncoder.encode
           ("Users:type=UserDatabase,database=UserDatabase");
@@ -84,14 +88,14 @@ public class UsersTreeBuilder implements TreeBuilder {
         TreeControlNode subtree = new TreeControlNode
             ("Global User and Group Administration",
              "folder_16_pad.gif",
-             resources.getMessage("users.treeBuilder.subtreeNode"),
+             resources.getMessage(locale, "users.treeBuilder.subtreeNode"),
              null,
              "content",
              true, "Users");
         TreeControlNode groups = new TreeControlNode
             ("Global Administer Groups",
              "Groups.gif",
-             resources.getMessage("users.treeBuilder.groupsNode"),
+             resources.getMessage(locale, "users.treeBuilder.groupsNode"),
              "users/listGroups.do?databaseName=" +
              URLEncoder.encode(databaseName) +
              "&forward=" +
@@ -101,7 +105,7 @@ public class UsersTreeBuilder implements TreeBuilder {
         TreeControlNode roles = new TreeControlNode
             ("Global Administer Roles",
              "Roles.gif",
-             resources.getMessage("users.treeBuilder.rolesNode"),
+             resources.getMessage(locale, "users.treeBuilder.rolesNode"),
              "users/listRoles.do?databaseName=" +
              URLEncoder.encode(databaseName) +
              "&forward=" +
@@ -111,7 +115,7 @@ public class UsersTreeBuilder implements TreeBuilder {
         TreeControlNode users = new TreeControlNode
             ("Global Administer Users",
              "Users.gif",
-             resources.getMessage("users.treeBuilder.usersNode"),
+             resources.getMessage(locale, "users.treeBuilder.usersNode"),
              "users/listUsers.do?databaseName=" +
              URLEncoder.encode(databaseName) +
              "&forward=" +

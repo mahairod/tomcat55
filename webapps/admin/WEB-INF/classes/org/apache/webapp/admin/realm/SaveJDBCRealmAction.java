@@ -151,7 +151,7 @@ public final class SaveJDBCRealmAction extends Action {
                     }
                 } catch (Exception e) {
                     String message =
-                        resources.getMessage("error.engineName.bad",
+                        resources.getMessage(locale, "error.engineName.bad",
                                          sb.toString());
                     getServlet().log(message);
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);

@@ -115,7 +115,7 @@ public class EditContextAction extends Action {
             cname = new ObjectName(request.getParameter("select"));
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.contextName.bad",
+                resources.getMessage(locale, "error.contextName.bad",
                                      request.getParameter("select"));
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
@@ -135,7 +135,7 @@ public class EditContextAction extends Action {
             lname = new ObjectName(sb.toString());
          } catch (Exception e) {
             String message =
-                resources.getMessage("error.managerName.bad",
+                resources.getMessage(locale, "error.managerName.bad",
                                  sb.toString());
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
@@ -166,7 +166,9 @@ public class EditContextAction extends Action {
         contextFm.setObjectName(cname.toString());
         contextFm.setLoaderObjectName(lname.toString());
         contextFm.setManagerObjectName(mname.toString());
-        sb = new StringBuffer("Context (");
+        sb = new StringBuffer();
+        sb.append(resources.getMessage(locale, "server.service.treeBuilder.context"));
+        sb.append(" (");
         sb.append(path);
         sb.append(")");
         contextFm.setNodeLabel(sb.toString());

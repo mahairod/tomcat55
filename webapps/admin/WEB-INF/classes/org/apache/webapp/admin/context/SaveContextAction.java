@@ -228,7 +228,7 @@ public final class SaveContextAction extends Action {
                 
                 // Add the new Context to our tree control node
                 addToTreeControlNode(oname, cObjectName, parentName, 
-                                    resources, session);                     
+                                    resources, session, locale);                     
 
             } catch (Exception e) {
                 getServlet().log
@@ -434,7 +434,7 @@ public final class SaveContextAction extends Action {
      */
     public void addToTreeControlNode(ObjectName oname, String containerName, 
                                     String parentName, MessageResources resources, 
-                                    HttpSession session) 
+                                    HttpSession session, Locale locale) 
         throws Exception {
                               
         String domain = oname.getDomain();
@@ -452,7 +452,9 @@ public final class SaveContextAction extends Action {
                     host = name.substring(0,i);
                     path = name.substring(i); 
                 }
-                String nodeLabel = "Context (" + path + ")";
+                String nodeLabel = 
+                    resources.getMessage(locale, "server.service.treeBuilder.context") + 
+                    " (" + path + ")";
                 String encodedName = URLEncoder.encode(oname.toString());
                 TreeControlNode childNode = 
                     new TreeControlNode(oname.toString(),
@@ -468,7 +470,7 @@ public final class SaveContextAction extends Action {
                 TreeControlNode subtree = new TreeControlNode
                     ("Context Resource Administration " + containerName,
                     "folder_16_pad.gif",
-                    resources.getMessage("resources.treeBuilder.subtreeNode"),
+                    resources.getMessage(locale, "resources.treeBuilder.subtreeNode"),
                     null,
                     "content",
                     true, domain);        
@@ -476,7 +478,7 @@ public final class SaveContextAction extends Action {
                 TreeControlNode datasources = new TreeControlNode
                     ("Context Data Sources " + containerName,
                     "Datasource.gif",
-                    resources.getMessage("resources.treeBuilder.datasources"),
+                    resources.getMessage(locale, "resources.treeBuilder.datasources"),
                     "resources/listDataSources.do?resourcetype=" + 
                     URLEncoder.encode(type) + "&path=" +
                     URLEncoder.encode(path) + "&host=" + 
@@ -487,7 +489,7 @@ public final class SaveContextAction extends Action {
                 TreeControlNode mailsessions = new TreeControlNode
                     ("Context Mail Sessions " + containerName,
                     "Mailsession.gif",
-                    resources.getMessage("resources.treeBuilder.mailsessions"),
+                    resources.getMessage(locale, "resources.treeBuilder.mailsessions"),
                     "resources/listMailSessions.do?resourcetype=" + 
                     URLEncoder.encode(type) + "&path=" +
                     URLEncoder.encode(path) + "&host=" + 
@@ -498,7 +500,7 @@ public final class SaveContextAction extends Action {
                 TreeControlNode resourcelinks = new TreeControlNode
                     ("Resource Links " + containerName,
                     "ResourceLink.gif",
-                    resources.getMessage("resources.treeBuilder.resourcelinks"),
+                    resources.getMessage(locale, "resources.treeBuilder.resourcelinks"),
                     "resources/listResourceLinks.do?resourcetype=" + 
                     URLEncoder.encode(type) + "&path=" +
                     URLEncoder.encode(path) + "&host=" + 
@@ -509,7 +511,7 @@ public final class SaveContextAction extends Action {
                 TreeControlNode envs = new TreeControlNode
                     ("Context Environment Entries "+ containerName,
                     "EnvironmentEntries.gif",
-                    resources.getMessage("resources.env.entries"),
+                    resources.getMessage(locale ,"resources.env.entries"),
                     "resources/listEnvEntries.do?resourcetype=" + 
                     URLEncoder.encode(type) + "&path=" +
                     URLEncoder.encode(path) + "&host=" + 

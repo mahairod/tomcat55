@@ -271,9 +271,9 @@ public final class SaveServiceAction extends Action {
                                             TomcatTreeBuilder.SERVER_TYPE;
                     TreeControlNode parentNode = control.findNode(parentName);
                     if (parentNode != null) {
-                        String nodeLabel =
-                            "Service (" + soname.getKeyProperty("serviceName") 
-                                    + ")";
+                        String nodeLabel = resources.getMessage(locale, 
+                            "server.service.treeBuilder.subtreeNode") +" (" +
+                            soname.getKeyProperty("serviceName") + ")";
                         String encodedName =
                             URLEncoder.encode(sObjectName);
                         TreeControlNode childNode =

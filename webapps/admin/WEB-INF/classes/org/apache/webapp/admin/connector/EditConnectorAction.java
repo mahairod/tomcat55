@@ -109,7 +109,7 @@ public class EditConnectorAction extends Action {
             cname = new ObjectName(request.getParameter("select"));
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.connectorName.bad",
+                resources.getMessage(locale, "error.connectorName.bad",
                                      request.getParameter("select"));
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
@@ -121,7 +121,9 @@ public class EditConnectorAction extends Action {
         session.setAttribute("connectorForm", connectorFm);
         connectorFm.setAdminAction("Edit");
         connectorFm.setObjectName(cname.toString());
-        sb = new StringBuffer("Connector (");
+        sb = new StringBuffer();
+        sb.append(resources.getMessage(locale, "server.service.treeBuilder.connector"));
+        sb.append(" (");
         sb.append(cname.getKeyProperty("port"));
         sb.append(")");
         connectorFm.setNodeLabel(sb.toString());
