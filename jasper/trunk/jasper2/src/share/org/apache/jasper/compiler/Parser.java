@@ -1501,9 +1501,11 @@ class Parser implements TagConstants {
 
             new Node.TemplateText( ttext.toString(), start, parent );
 
-            if( !reader.matchesETagWithoutLessThan( "jsp:text" ) ) {
+	    if (! reader.hasMoreInput()) {
                 err.jspError( start, "jsp.error.unterminated",
                     "&lt;jsp:text&gt;" );
+	    } else if( !reader.matchesETagWithoutLessThan( "jsp:text" ) ) {
+                err.jspError( start, "jsp.error.jsptext.badcontent");
             }
         }
     }
