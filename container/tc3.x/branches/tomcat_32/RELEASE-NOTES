@@ -1,6 +1,6 @@
                             Release Notes for:
                            ====================
-                           TOMCAT Version 3.2.1
+                           TOMCAT Version 3.2.2
                            ====================
 
 
@@ -74,62 +74,20 @@ of J2EE-specific code).
 - Tomcat 3.2 is the first performance tune-up, and also adds a few new
 features (see next section).
 
+- Tomcat 3.2.2 is a bug fix release that collects the fixes that have 
+been applied since version 3.2.1 was released.
+
 - It is expected that Tomcat 3.3 will feature additional major performance
 improvements resulting from changes in data representation and algorithms.
 Version 3.3 will also undergo a major review of security  (to be able to
 trust that "untrusted" code runs safely), and support for I18N character
 sets.
 
-- Tomcat 3.4 will likely focus on scalability and advanced load balancing.
-It will also support version 2.3 of the Java Servlet specification.
-(First-round support for version 2.3 for the servlet specification may be
-included in version 3.3.)
-
 =============================================================================
 5.  NEW FEATURES IN THIS RELEASE
 
-Tomcat 3.2 is mainly a performance tune-up release, although a few new
-features have been added.
-
-- Support for mod_jk, which is a replacement to the elderly mod_jserv, has
-  had several bugs fixed and has received much more testing.  It is now
-  recommended that all users use mod_jk instead of mod_jserv.
-
-- Support JAXP-based XML parser independence.
-
-- New and often requested "how-to" documents covering the following topics:
-     - Configuring workers.properties
-     - IIS and Netscape configuration
-     - Running tomcat inside an IIS or Netscape process
-     - Running Tomcat as a Windows NT service
-     - Configuring a JDBC realm
-     - Configuring mod_jk
-
-- First round of policy-based security support intended for running untrusted
-  code inside of Tomcat.  Interested users should test this support and post
-  feedback to the Tomcat users mailing list.
-
-- SSL support for standalone Tomcat. (Preliminary support first appeared in
-  3.1, but the support in 3.2 has received more testing and documentation
-  support).
-
-- Thread reuse is now enabled by default. The thread pool support code was part
-  of 3.1, but not enabled since it was new.
-
-- Support for plug-able session managers.  Unfortunately, no how-to documents
-  that support this functionality exist (yet). For the adventurous, be aware
-  that the interface that allows administrators to plug session managers is
-  the normal Interceptor interface.
-
-- An almost total rewrite of the HTTP request handling now results in improved
-  performance when running Tomcat stand-alone.
-
-- Significantly reduced garbage collection.
-
-- The code underwent a refactoring effort resulting in improved readability.
-
-- And of course, hundreds of miscellaneous improvements and fixes.
-
+Tomcat 3.2.2 is strictly a bug fix release.  No new features have been
+added.
 
 =============================================================================
 6.  KNOWN BUGS AND ISSUES
@@ -152,22 +110,54 @@ Under Unix, absolute pathnames must begin with a slash ('/') character.
 =============================================================================
 7.  FIXES AND ENHANCEMENTS IN UPDATES
 
-7.1 Fixes and Enhancements In Release 3.2.1
 
-JDBCRealm - The exception message that is logged when an exception occurs now
-includes a description of the actual SQLException, to aid in debugging the
-cause of the problem.  Also, this class is no longer marked "final", so that
-it can be conveniently subclassed by customized versions.
+7.1 Fixes and Enhancements in Release 3.2.2
 
-ShowSource - The mechanism used to display the JSP source examples could be
-used to display sensitive files from the WEB-INF and META-INF directories.
-This has been corrected.
+This section highlights the bugs fixed in this release.  In addition to
+these, there have been many other minor bug fixes through the product.
 
-SSL Documentation - The "doc/tomcat-ssl-howto.html" document has been updated
-to reflect more current information about using Tomcat+Apache in an SSL
-environment.
+Documentation
+  -  Several updates to how-to documents and users guide.
 
-Security Vulnerability - Tomcat 3.2 (final) exposes sensitive information when
-a URL like "http://localhost:8080/examples//WEB-INF/web.xml" (note the double
-slash) is presented.  This has been corrected so that a 404 is returned.
+Connectors
+  -  Fix infinite loop on invalid content-length for ajp12.  (#264)
+  -  Fix infinite llop if Tomcat connector closed connection.  (#510)
+  -  For ajp13 protocol, add support for multipart form encoding
+     and file uploads now work.
+  -  Reading session ids from cookies in the load balancer. (#603) 
+
+  IIS
+     -  Better error logging for startup failures.
+  NetWare
+     -  Fix for netbuf_getbytes() not supported on NetWare 5.1.
+
+Jasper
+  -  Fix for UnsupportedEncodingException due UTF8 instead of UTF-8.  (#269)
+  -  Support compiling with debug information.
+  -  If JSP source file is removed then generated files are removed
+     and subsequent requests return a 404 error. (#698)
+  -  Fix compile error with more than one set of tags with the same 
+     name. (#540)
+  -  Support for non 8858-1 character encodings for included pages.
+  -  Better error reporting if compile fails due to missing tag library.
+  -  Fix thread synchronization problem that can cause page compilation to 
+     fail (#44).
+  
+
+Servlet
+  -  Fix infinite loop if no prefix matches the request URI.  Now returns
+     a 404 error.
+  -  Handle UnAvailable exceptions in included servlets.
+  -  User Principle was incorrectly maintained.  (#757)
+  -  Use Access control for forward() and include() when security manager
+     is being used.
+  -  Properly interpret url-patterns inside security-contraints.  (#567)
+  -  Fix authentication with Sybase ASE 11.9.2 and Interbase.
+  -  reqeust.getPort() now returns the correct port when using SSL. (#743)
+  -  Fix problem accessing via HTTP without protocol. (#513)
+  -  Fix JSP source disclosure problem.  (#619)
+  -  ServletRequest.getProtocol() could contain a CRLF.  (#620)
+  -  Better initialization of psuedo-random number generator improves
+     response time for first request that generates a session.
+  -  Fix session tracking through forward().  (#504)
 
