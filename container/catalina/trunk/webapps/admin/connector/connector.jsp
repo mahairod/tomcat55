@@ -118,6 +118,35 @@
             </controls:data>
         </controls:row>
 
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="uriencoding">
+            <controls:label><bean:message key="connector.uriencoding"/>:</controls:label>
+            <controls:data>
+               <html:text property="URIEncodingText" size="30" styleId="uriencoding"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="usebodyencoding">
+            <controls:label><bean:message key="connector.useBodyEncodingForURI"/>:</controls:label>
+            <controls:data>
+                <html:select property="useBodyEncodingForURIText" styleId="usebodyencoding">
+                     <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="allowTrace">
+            <controls:label><bean:message key="connector.allowTrace"/>:</controls:label>
+            <controls:data>
+                <html:select property="allowTraceText" styleId="allowTrace">
+                     <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
         <%-- Input only allowed on create transaction --%>
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="address">
             <controls:label><bean:message key="connector.address.ip"/>:</controls:label>

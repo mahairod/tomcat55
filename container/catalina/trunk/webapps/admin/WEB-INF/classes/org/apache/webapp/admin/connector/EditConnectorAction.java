@@ -247,6 +247,15 @@ public class EditConnectorAction extends Action {
             attribute = "xpoweredBy";
             connectorFm.setXpoweredBy
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());;
+            attribute = "URIEncoding";
+            connectorFm.setURIEncodingText
+                ((String) mBServer.getAttribute(cname, attribute));
+            attribute = "useBodyEncodingForURI";
+            connectorFm.setUseBodyEncodingForURIText
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());       
+            attribute = "allowTrace";
+            connectorFm.setAllowTraceText
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());       
           
             // Ports
             attribute = "port";
