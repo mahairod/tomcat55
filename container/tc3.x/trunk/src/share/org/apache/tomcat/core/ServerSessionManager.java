@@ -108,6 +108,9 @@ public class ServerSessionManager {
 	String sessionId = null;
 	ServerSession session = null;
 
+	// XXX need to check if request.getRequestdSessionId() returns something,
+	// since the connector might have set it.
+	
 	//	Enumeration enum = request.getCookies().elements();
 	Cookie cookies[]=request.getCookies(); // assert !=null
 	
