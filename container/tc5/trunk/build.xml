@@ -198,9 +198,9 @@
 
       <property name="jk.build" value="${tomcat.build}"/>
 
+        <!--
       <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
       <property name="tomcat-jk2.jar" value="${tomcat.build}/server/lib/tomcat-ajp.jar" />
-      <!--
       <property name="tomcat-jk.jar" value="${tomcat.build}/server/lib/tomcat-jk.jar" />
       <property name="tomcat-jkconfig.jar" value="${tomcat.build}/server/lib/jkconfig.jar" />
       <property name="tomcat-jkshm.jar" value="${tomcat.build}/server/lib/jkshm.jar" />
@@ -211,6 +211,17 @@
 
     <copy file="${jtc.home}/jk/conf/jk2.properties" 
         todir="${tomcat.build}/conf" />
+
+  	<!-- Protocol handlers - AJP -->
+	<jar jarfile="${tomcat.build}/server/lib/tomcat-ajp.jar" index="true">
+      <fileset dir="${tomcat.build}/classes">
+        <include name="org/apache/jk/**" />
+        <exclude name="org/apache/jk/ant/**" />
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
+      </fileset>
+    </jar>
 
   </target>
 
@@ -223,11 +234,26 @@
       <property name="catalina.home" value="${tomcat.build}"/>
       <property name="build.home" value="${tomcat.build}"/>
       <property name="tomcat5.detect" value="true"/>
+      <!--
       <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
+      -->
       <property name="tomcat-util.jar"
                 value="${tomcat.build}/server/lib/tomcat-util.jar"/>
       <property name="servlet.jar"   value="${servlet-api.jar}"/>
     </ant>
+
+  	<!-- Coyote API -->
+  	<delete file="${tomcat.build}/server/lib/tomcat-coyote.jar" />
+	<jar jarfile="${tomcat.build}/server/lib/tomcat-coyote.jar" index="true">
+      <fileset dir="${tomcat.build}/classes">
+        <include name="org/apache/coyote/*" />
+        <include name="org/apache/coyote/memory/*" />
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
+      </fileset>
+    </jar>
+
   </target>
 
   <target name="build-tomcathttp11" 
@@ -237,10 +263,23 @@
 
     <ant dir="${jtc.home}/http11" target="compile-only">
       <property name="build.home" value="${tomcat.build}"/>
+      <!--
       <property name="tomcat-http11.jar" value="${tomcat.build}/server/lib/tomcat-http11.jar"/>
       <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
+      -->
       <property name="commons-logging.jar" value="${commons-logging.jar}"/>
     </ant>
+  	
+  	<!-- Protocol handlers - HTTP -->
+	<jar jarfile="${tomcat.build}/server/lib/tomcat-http.jar" index="true">
+      <fileset dir="${tomcat.build}/classes">
+        <include name="org/apache/coyote/http11/**" />
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
+      </fileset>
+    </jar>
+
   </target>
 
   <target name="build-jasper" 
@@ -466,6 +505,8 @@
       
     <antcall target="build-jasper"/>
 
+    <antcall target="build-i18n"/>
+
     <!-- Correct permissions and line endings on "bin" scripts -->
     <fixcrlf srcdir="${tomcat.build}/bin"   includes="*.sh"  eol="lf"/>
     <fixcrlf srcdir="${tomcat.build}/bin"   includes="*.bat" eol="crlf"/>
@@ -473,6 +514,30 @@
 
   </target>
 
+  <target name="build-i18n">
+
+  	<!-- i18n JARs -->
+    <jar jarfile="${tomcat.build}/common/i18n/tomcat-i18n-es.jar">
+      <fileset dir="${tomcat.build}/classes">
+        <include name="**/LocalStrings_es.properties" />
+        <exclude name="**/tomcat4/**" />
+      </fileset>
+    </jar>
+    <jar jarfile="${tomcat.build}/common/i18n/tomcat-i18n-fr.jar">
+      <fileset dir="${tomcat.build}/classes">
+        <include name="**/LocalStrings_fr.properties" />
+        <exclude name="**/tomcat4/**" />
+      </fileset>
+    </jar>
+    <jar jarfile="${tomcat.build}/common/i18n/tomcat-i18n-ja.jar">
+      <fileset dir="${tomcat.build}/classes">
+        <include name="**/LocalStrings_ja.properties" />
+        <exclude name="**/tomcat4/**" />
+      </fileset>
+    </jar>
+
+  </target>
+	
   <!-- ====================== Build dependent code =================== -->
 
 <!--
@@ -747,7 +812,6 @@
     <copy todir="embed/lib" file="${commons-modeler.jar}"/>
     <copy todir="embed/lib" file="${commons-beanutils.jar}"/>
     <copy todir="embed/lib" file="${commons-collections.jar}"/>
-    <copy todir="embed/lib" file="${regexp.jar}"/>
 
     <copy todir="embed/lib" file="${jasper-compiler-jdt.jar}"/>
 
@@ -1764,11 +1828,6 @@
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-fileupload.loc}"/>
       <param name="destfile" value="${commons-fileupload.jar}"/>
-    </antcall>
-
-    <antcall target="downloadgz">
-      <param name="sourcefile" value="${regexp.loc}"/>
-      <param name="destfile" value="${regexp.jar}"/>
     </antcall>
 
     <antcall target="downloadgz">
