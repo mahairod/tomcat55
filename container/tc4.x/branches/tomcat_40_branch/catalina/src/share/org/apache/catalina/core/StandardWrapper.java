@@ -916,7 +916,6 @@ public final class StandardWrapper
             instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
                                               servlet);
             servlet.init(facade);
-            servlet.init(facade);
             // Invoke jspInit on JSP pages
             if ((loadOnStartup > 0) && (jspFile != null)) {
                 // Invoking jspInit
