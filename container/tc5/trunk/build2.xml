@@ -19,6 +19,8 @@
            value="${basedir}/../jakarta-taglibs"/>
   <property name="commons.home"
            value="${basedir}/../jakarta-commons"/>
+  <property name="tomcat.home"
+           value="${basedir}/../jakarta-tomcat"/>
   <property name="catalina.home"
            value="${basedir}/../jakarta-tomcat-catalina"/>
   <property name="jasper.home"
@@ -41,13 +43,17 @@
     <pathelement location="${activation.jar}"/>
     <pathelement location="${jta.jar}"/>
     <pathelement location="${log4j.jar}"/>
+  </path>
+
+  <path id="jasperjars" >
     <pathelement location="${jaxen.jar}"/>
     <pathelement location="${saxpath.jar}"/>
   </path>
 
   <!-- =================== DETECT: Display configuration ================== -->
-  <target name="detect"
+  <target name="init"
           description="Display configuration and conditional compilation flags">
+    <mkdir dir="${build.dir}/classes" />
     <echo message="Path: ${toString:alljars}"/>
   </target>
 
@@ -61,38 +67,107 @@
   <!-- ======================= COMBO: Build All Components ================ -->
   <target name="all"
           description="Clean, build, and deploy all components"
-          depends="detect">
-    <mkdir dir="${build.dir}/classes" />
+          depends="init,utils,tomcat,jasper" />
+
+  <target name="utils"
+          description="Utils build" >
+
     <javac destdir="${build.dir}/classes"
            optimize="off"
            debug="on"
            classpathref="alljars" >
       <src>
-        <path location="${api.home}/src/share" />
-        <path location="${jasper.home}/src/share" />
-        <path location="${taglibs.home}/standard/src" />
-        <path location="${catalina.home}/catalina/src/share" />
         <path location="${jtc.home}/util/java" />
-        <path location="${jtc.home}/coyote/src/java" />
-        <path location="${jtc.home}/jk/java" />
-        <path location="${jtc.home}/http11/src/java" />
         <path location="${commons.home}/modeler/src/java" />
         <path location="${commons.home}/digester/src/java" />
         <path location="${commons.home}/collections/src/java" />
         <path location="${commons.home}/beanutils/src/java" />
         <path location="${commons.home}/logging/src/java" />
       </src>
-      <exclude name="org/apache/coyote/tomcat3/**" />
-      <exclude name="org/apache/ajp/**" />
       <exclude name="org/apache/tomcat/util/net/PureTLS*" />
-      <exclude name="org/apache/naming/factory/Tyrex*" />
       <exclude name="org/apache/commons/logging/impl/LogKitLogger.java" />
-      <exclude name="org/apache/taglibs/standard/tag/common/xml/**" />
       <exclude name="org/apache/commons/modeler/Modeler.java" />
+    </javac>
+  </target>
+
+  <target name="tomcat"
+          description="Tomcat build" >
+
+    <javac destdir="${build.dir}/classes"
+           optimize="off"
+           debug="on"
+           classpathref="alljars" >
+      <src>
+        <path location="${api.home}/src/share" />
+        <path location="${catalina.home}/catalina/src/share" />
+        <path location="${jtc.home}/coyote/src/java" />
+        <path location="${jtc.home}/jk/java" />
+        <path location="${jtc.home}/http11/src/java" />
+        <path location="${tomcat.home}/src/share" />
+      </src>
+      <exclude name="org/apache/ajp/**" />
+      <exclude name="org/apache/jasper/**" />
+      <exclude name="org/apache/naming/factory/Tyrex*" />
+      <exclude name="org/apache/tomcat/ant/Tomcat3Precompiler.java" />
       <exclude name="org/apache/catalina/startup/BootstrapService.java" />
+    </javac>
+  </target>
+
+
+  <target name="jasper"
+          description="Jasper build">
+    <javac destdir="${build.dir}/classes"
+           optimize="off"
+           debug="on"
+           classpathref="alljars" >
+      <classpath refid="jasperjars"/>
+      <src>
+        <path location="${jasper.home}/src/share" />
+        <path location="${taglibs.home}/standard/src" />
+      </src>
+      <exclude name="org/apache/taglibs/standard/tag/common/xml/**" />
       <exclude name="org/apache/taglibs/standard/lang/jstl/test/**" />
       <exclude name="org/apache/taglibs/standard/lang/jstl/parser/jsp20/ELParser.java" />
     </javac>
   </target>
+
+  <target name="run" >
+    <java classname="org.apache.catalina.startup.Bootstrap" >
+      <classpath location="${build.dir}/classes"/>
+    </java>
+  </target>
+
+  <target name="jdepend" description="Document the dependency graph ">
+    <mkdir dir="${build.dir}/doc/jdepend" />
+    <property name="jdepend.home" location="${base.path}/jdepend" />
+    <property name="jdepend.jar" location="${jdepend.home}/lib/jdepend.jar" />
+
+    <java classname="jdepend.xmlui.JDepend" >
+      <classpath location="${jdepend.jar}"/>
+      <arg line="-file ${build.dir}/doc/jdepend/jdepend.xml" />
+      <arg value="${jtc.home}/util/java" />
+      <arg value="${commons.home}/modeler/src/java" />
+      <arg value="${commons.home}/digester/src/java" />
+      <arg value="${commons.home}/collections/src/java" />
+      <arg value="${commons.home}/beanutils/src/java" />
+      <arg value="${commons.home}/logging/src/java" />
+      <arg value="${api.home}/src/share" />
+      <arg value="${catalina.home}/catalina/src/share" />
+      <arg value="${jtc.home}/coyote/src/java" />
+      <arg value="${jtc.home}/jk/java" />
+      <arg value="${jtc.home}/http11/src/java" />
+      <arg value="${tomcat.home}/src/share" />
+      <arg value="${jasper.home}/src/share" />
+      <arg value="${taglibs.home}/standard/src" />
+    </java>
+
+    <!-- Stylesheet stolen from krystalis -->
+    <style basedir="${build.dir}/doc/jdepend" 
+           destdir="${build.dir}/doc/jdepend"
+           includes="jdepend.xml"
+           style="${jdepend.home}/jdepend.xsl" />
+
+  </target>
+
 
 </project>
