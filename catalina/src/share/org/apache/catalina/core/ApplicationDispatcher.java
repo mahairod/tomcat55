@@ -196,15 +196,6 @@ final class ApplicationDispatcher
                 this.pathInfo + ", queryString=" + queryString +
                 ", name=" + this.name);
 
-        // If this is a wrapper for a JSP page (<jsp-file>), tweak
-        // the request parameters appropriately
-        String jspFile = wrapper.getJspFile();
-        if (jspFile != null) {
-            if ( log.isDebugEnabled() )
-                log.debug("-->servletPath=" + jspFile);
-            this.servletPath = jspFile;
-        }
-
     }
 
 
