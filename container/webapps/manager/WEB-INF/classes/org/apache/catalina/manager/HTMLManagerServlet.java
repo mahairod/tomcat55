@@ -205,9 +205,13 @@ public final class HTMLManagerServlet extends ManagerServlet {
 
                 if (!isServiced(path)) {
                     addServiced(path);
-                    warUpload.write(file);
-                    check(path);
-                    removeServiced(path);
+                    try {
+                        warUpload.write(file);
+                        // Perform new deployment
+                        check(path);
+                    } finally {
+                        removeServiced(path);
+                    }
                 }
                 break;
             }

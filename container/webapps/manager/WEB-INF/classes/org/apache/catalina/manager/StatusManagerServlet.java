@@ -108,7 +108,7 @@ public class StatusManagerServlet
     public void init() throws ServletException {
 
         // Retrieve the MBean server
-        mBeanServer = Registry.getServer();
+        mBeanServer = Registry.getRegistry(null, null).getMBeanServer();
 
         // Set our properties from the initialization parameters
         String value = null;

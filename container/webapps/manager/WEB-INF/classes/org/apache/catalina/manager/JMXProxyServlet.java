@@ -20,12 +20,9 @@ package org.apache.catalina.manager;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Vector;
 import javax.management.MBeanServer;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.MBeanInfo;
 import javax.management.MBeanAttributeInfo;
@@ -35,7 +32,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.modeler.Registry;
-import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
  * This servlet will dump JMX attributes in a simple format
@@ -59,8 +55,8 @@ public class JMXProxyServlet extends HttpServlet  {
      */
     public void init() throws ServletException {
         // Retrieve the MBean server
-        registry=Registry.getRegistry();
-        mBeanServer = Registry.getRegistry().getServer();
+        registry = Registry.getRegistry(null, null);
+        mBeanServer = Registry.getRegistry(null, null).getMBeanServer();
     }
 
 
