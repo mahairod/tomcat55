@@ -288,13 +288,13 @@ public class ResponseImpl implements Response {
 
 
     public void setHeader(String name, String value) {
-	if( ! notIncluded ) return; // we are in included sub-request
+        if( isIncluded() ) return;      // We are in an included sub-request
 	if( ! checkSpecialHeader(name, value) ) 
 	    headers.putHeader(name, value);
     }
 
     public void addHeader(String name, String value) {
-	if( ! notIncluded ) return; // we are in included sub-request
+        if( isIncluded() ) return;      // We are in an included sub-request
 	if( ! checkSpecialHeader(name, value) ) 
 	    headers.addHeader(name, value);
     }
@@ -367,12 +367,14 @@ public class ResponseImpl implements Response {
 	// Force the PrintWriter to flush its data to the output
         // stream before resetting the output stream
         //
-	userCookies.removeAllElements();  // keep system (session) cookies
-	contentType = Constants.DEFAULT_CONTENT_TYPE;
-        locale = DEFAULT_LOCALE;
-	characterEncoding = Constants.DEFAULT_CHAR_ENCODING;
-	contentLength = -1;
-	status = 200;
+        if( ! isIncluded() ) {
+            userCookies.removeAllElements();  // keep system (session) cookies
+            contentType = Constants.DEFAULT_CONTENT_TYPE;
+            locale = DEFAULT_LOCALE;
+            characterEncoding = Constants.DEFAULT_CHAR_ENCODING;
+            contentLength = -1;
+            status = 200;
+        }
 
 	if (usingWriter == true && writer != null)
 	    writer.flush();
@@ -384,7 +386,7 @@ public class ResponseImpl implements Response {
         // Clear the cookies and such
 
         // Clear the headers
-        if( notIncluded) headers.clear();
+        if( ! isIncluded() ) headers.clear();
     }
 
     // Reset the response buffer but not headers and cookies
@@ -432,6 +434,7 @@ public class ResponseImpl implements Response {
     }
 
     public void addCookie(Cookie cookie) {
+        if( isIncluded() ) return;      // We are in an included sub-request
 	addHeader( CookieTools.getCookieHeaderName(cookie),
 			    CookieTools.getCookieHeaderValue(cookie));
 	if( cookie.getVersion() == 1 ) {
@@ -442,7 +445,7 @@ public class ResponseImpl implements Response {
 	    addHeader( CookieTools.getCookieHeaderName(c0),
 				CookieTools.getCookieHeaderValue(c0));
 	}
-	if( notIncluded ) userCookies.addElement(cookie);
+	userCookies.addElement(cookie);
     }
 
     public Enumeration getCookies() {
@@ -462,7 +465,7 @@ public class ResponseImpl implements Response {
     }
 
     public void setLocale(Locale locale) {
-        if (locale == null || ! notIncluded) {
+        if (locale == null || isIncluded() ) {
             return;  // throw an exception?
         }
 
@@ -505,7 +508,7 @@ public class ResponseImpl implements Response {
     }
 
     public void setContentType(String contentType) {
-        if( ! notIncluded ) return;
+        if( isIncluded() ) return;      // We are in an included sub-request
 	this.contentType = contentType;
 	String encoding = RequestUtil.getCharsetFromContentType(contentType);
         if (encoding != null) {
@@ -519,7 +522,7 @@ public class ResponseImpl implements Response {
     }
     
     public void setContentLength(int contentLength) {
-        if( ! notIncluded ) return;
+        if( isIncluded() ) return;      // We are in an included sub-request
 	this.contentLength = contentLength;
 	headers.putHeader("Content-Length", (new Integer(contentLength)).toString());
     }
@@ -536,7 +539,7 @@ public class ResponseImpl implements Response {
     /** Set the response status 
      */ 
     public void setStatus( int status ) {
-	if( ! notIncluded ) return;
+        if( isIncluded() ) return;      // We are in an included sub-request
 	this.status=status;
     }
 
