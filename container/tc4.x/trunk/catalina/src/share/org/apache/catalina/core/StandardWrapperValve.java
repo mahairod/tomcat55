@@ -499,6 +499,12 @@ final class StandardWrapperValve
 	if (message == null)
 	    message = "";
 
+	// Do nothing on an OK status
+	if (statusCode == HttpServletResponse.SC_OK)
+	    return;
+        if (statusCode < 400)
+            return;
+
 	// Handle a custom error page for this status code
 	Context context = (Context) container.getParent();
 	ErrorPage errorPage = context.findErrorPage(statusCode);
@@ -510,12 +516,6 @@ final class StandardWrapperValve
 	    if (custom(request, response, errorPage))
 		return;
 	}
-
-	// Do nothing on an OK status
-	if (statusCode == HttpServletResponse.SC_OK)
-	    return;
-        if (statusCode < 300)
-            return;
 
 	// Do nothing if there is no report for the specified status code
 	String report = null;

@@ -98,7 +98,8 @@ public final class HttpResponseStream extends ResponseStream {
     public HttpResponseStream(HttpResponseImpl response) {
 
 	super(response);
-        this.useChunking = (response.isChunkingAllowed()
+        this.useChunking = (!response.isCommitted()
+                            && response.isChunkingAllowed()
                             && response.getContentLength() == -1
                             && response.getStatus() != 206
                             && response.getStatus() != 304);

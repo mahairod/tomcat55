@@ -920,6 +920,7 @@ public class HttpResponseBase
 	String absolute = toAbsolute(location);
 	setStatus(SC_MOVED_TEMPORARILY, absolute);
 	setHeader("Location", absolute);
+        setContentLength(0);
 	flushBuffer();
 
     }
