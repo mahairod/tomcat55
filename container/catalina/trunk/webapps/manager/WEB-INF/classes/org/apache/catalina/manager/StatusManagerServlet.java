@@ -352,16 +352,15 @@ public class StatusManagerServlet
         throws Exception {
 
         writer.print("<h1>JVM</h1>");
-        writer.print("<br/>");
 
+        writer.print("<p>");
         writer.print(" Free memory: ");
         writer.print(Runtime.getRuntime().freeMemory());
         writer.print(" Total memory: ");
         writer.print(Runtime.getRuntime().totalMemory());
         writer.print(" Max memory: ");
         writer.print(JdkCompat.getJdkCompat().getMaxMemory());
-
-        writer.print("<br/>");
+        writer.print("</p>");
 
     }
 
@@ -377,8 +376,7 @@ public class StatusManagerServlet
         writer.print(name);
         writer.print("</h1>");
 
-        writer.print("<br/>");
-
+        writer.print("<p>");
         writer.print(" Max threads: ");
         writer.print(mBeanServer.getAttribute(tpName, "maxThreads"));
         writer.print(" Min spare threads: ");
@@ -418,8 +416,7 @@ public class StatusManagerServlet
         writer.print(mBeanServer.getAttribute(grpName, "bytesReceived"));
         writer.print(" Bytes sent: ");
         writer.print(mBeanServer.getAttribute(grpName, "bytesSent"));
-
-        writer.print("<br/>");
+        writer.print("</p>");
 
         writer.print("<table border=\"0\"><tr><th>Stage</th><th>Time</th><th>B Sent</th><th>B Recv</th><th>Client</th><th>VHost</th><th>Request</th></tr>");
 
@@ -579,14 +576,12 @@ public class StatusManagerServlet
         writer.print(name);
         writer.print("</h1>");
 
-        writer.print("<br/>");
-
+        writer.print("<p>");
         writer.print(" Startup time: ");
         writer.print(mBeanServer.getAttribute(objectName, "startupTime"));
         writer.print(" TLD scan time: ");
         writer.print(mBeanServer.getAttribute(objectName, "tldScanTime"));
-
-        writer.print("<br/>");
+        writer.print("</p>");
 
         String onStr = "*:j2eeType=Servlet,WebModule=" + webModuleName + ",*";
         ObjectName servletObjectName = new ObjectName(onStr);
@@ -612,8 +607,7 @@ public class StatusManagerServlet
         writer.print(servletName);
         writer.print("</h2>");
 
-        writer.print("<br/>");
-
+        writer.print("<p>");
         writer.print(" Processing time: ");
         writer.print(mBeanServer.getAttribute(objectName, "processingTime"));
         writer.print(" Max time: ");
@@ -626,8 +620,7 @@ public class StatusManagerServlet
         writer.print(mBeanServer.getAttribute(objectName, "loadTime"));
         writer.print(" Classload time: ");
         writer.print(mBeanServer.getAttribute(objectName, "classLoadTime"));
-
-        writer.print("<br/>");
+        writer.print("</p>");
 
     }
 

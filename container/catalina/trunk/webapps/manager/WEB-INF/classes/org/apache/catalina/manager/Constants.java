@@ -73,7 +73,33 @@ public class Constants {
         "<html>\n" +
         "<head>\n" +
         "<style>\n" +
-        "  table { width: 100%; }\n" +
+        "  P {\n" +
+        "    font-family:verdana,sans-serif;\n" +
+        "    background: white;\n" +
+        "    color: black;\n" +
+        "    font-size: 12px;\n" +
+        "  }\n" +
+        "  H1 {\n" +
+        "    font-family:verdana,sans-serif;\n" +
+        "    font-weight: bold;\n" +
+        "    font-size: 20px;\n" +
+        "    color: black;\n" +
+        "  }\n" +
+        "  H2 {\n" +
+        "    font-family:verdana,sans-serif;\n" +
+        "    font-weight: bold;\n" +
+        "    font-size: 14px;\n" +
+        "    color: black;\n" +
+        "  }\n" +
+        "  H3 {\n" +
+        "    font-family:verdana,sans-serif;\n" +
+        "    font-weight: bold;\n" +
+        "    font-size: 12px;\n" +
+        "    color: black;\n" +
+        "  }\n" +
+        "  table {\n" +
+        "    width: 100%;\n" +
+        "  }\n" +
         "  td.page-title {\n" +
         "    text-align: center;\n" +
         "    vertical-align: top;\n" +
@@ -120,6 +146,20 @@ public class Constants {
         "  }\n" +
         "  td.row-right {\n" +
         "    text-align: right;\n" +
+        "    vertical-align: middle;\n" +
+        "    font-family:verdana,sans-serif;\n" +
+        "    color: black;\n" +
+        "    background: white;\n" +
+        "  }\n" +
+        "  TH {\n" +
+        "    text-align: center;\n" +
+        "    vertical-align: top;\n" +
+        "    font-family:verdana,sans-serif;\n" +
+        "    font-weight: bold;\n" +
+        "    background: #FFDC75;\n" +
+        "  }\n" +
+        "  TD {\n" +
+        "    text-align: center;\n" +
         "    vertical-align: middle;\n" +
         "    font-family:verdana,sans-serif;\n" +
         "    color: black;\n" +
