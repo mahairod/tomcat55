@@ -25,8 +25,7 @@ set CLASSPATH=%JAVA_HOME%\lib\tools.jar;%CLASSPATH%
 
 :runAnt
 set CLASSPATH=%ANT_HOME%\lib\ant.jar;%ANT_HOME%\lib\xml.jar;%CLASSPATH%
-java -Dant.home="%ANT_HOME%" org.apache.tools.ant.Main %1 %2 %3 %4 %5 %6 %7
-%8 %9
+java -Dant.home="%ANT_HOME%" org.apache.tools.ant.Main %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 :end
 @endlocal
