@@ -102,6 +102,8 @@ import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -128,6 +130,7 @@ import org.apache.catalina.valves.ValveBase;
 public abstract class AuthenticatorBase
     extends ValveBase
     implements Authenticator, Lifecycle {
+    private static Log log = LogFactory.getLog(AuthenticatorBase.class);
 
 
     // ----------------------------------------------------- Instance Variables
@@ -443,8 +446,8 @@ public abstract class AuthenticatorBase
         }
         HttpRequest hrequest = (HttpRequest) request;
         HttpResponse hresponse = (HttpResponse) response;
-        if (debug >= 1)
-            log("Security checking request " +
+        if (log.isDebugEnabled())
+            log.debug("Security checking request " +
                 ((HttpServletRequest) request.getRequest()).getMethod() + " " +
                 ((HttpServletRequest) request.getRequest()).getRequestURI());
         LoginConfig config = this.context.getLoginConfig();
@@ -458,8 +461,8 @@ public abstract class AuthenticatorBase
                 if (session != null) {
                     principal = session.getPrincipal();
                     if (principal != null) {
-                        if (debug >= 1)
-                            log("We have cached auth type " +
+                        if (log.isDebugEnabled())
+                            log.debug("We have cached auth type " +
                                 session.getAuthType() +
                                 " for principal " +
                                 session.getPrincipal());
@@ -478,8 +481,8 @@ public abstract class AuthenticatorBase
         if (requestURI.startsWith(contextPath) &&
             requestURI.endsWith(Constants.FORM_ACTION)) {
             if (!authenticate(hrequest, hresponse, config)) {
-                if (debug >= 1)
-                    log(" Failed authenticate() test");
+                if (log.isDebugEnabled())
+                    log.debug(" Failed authenticate() test ??" + requestURI );
                 return;
             }
         }
@@ -491,13 +494,13 @@ public abstract class AuthenticatorBase
        
         if ((constraint == null) /* &&
             (!Constants.FORM_METHOD.equals(config.getAuthMethod())) */ ) {
-            if (debug >= 1)
-                log(" Not subject to any constraint");
+            if (log.isDebugEnabled())
+                log.debug(" Not subject to any constraint");
             context.invokeNext(request, response);
             return;
         }
-        if ((debug >= 1) && (constraint != null))
-            log(" Subject to constraint " + constraint);
+        if ((log.isDebugEnabled()) && (constraint != null))
+            log.debug(" Subject to constraint " + constraint);
 
         // Make sure that constrained resources are not cached by web proxies
         // or browsers as caching can provide a security hole
@@ -511,12 +514,12 @@ public abstract class AuthenticatorBase
         }
 
         // Enforce any user data constraint for this security constraint
-        if (debug >= 1)
-            log(" Calling hasUserDataPermission()");
+        if (log.isDebugEnabled())
+            log.debug(" Calling hasUserDataPermission()");
         
         if (!realm.hasUserDataPermission(hrequest, hresponse, constraint)) {
-            if (debug >= 1)
-                log(" Failed hasUserDataPermission() test");
+            if (log.isDebugEnabled())
+                log.debug(" Failed hasUserDataPermission() test");
             // ASSERT: Authenticator already set the appropriate
             // HTTP status code, so we do not have to do anything special
             return;
@@ -524,11 +527,11 @@ public abstract class AuthenticatorBase
 
         // Authenticate based upon the specified login configuration
         if (constraint.getAuthConstraint()) {
-            if (debug >= 1)
-                log(" Calling authenticate()");
+            if (log.isDebugEnabled())
+                log.debug(" Calling authenticate()");
             if (!authenticate(hrequest, hresponse, config)) {
-                if (debug >= 1)
-                    log(" Failed authenticate() test");
+                if (log.isDebugEnabled())
+                    log.debug(" Failed authenticate() test");
                 // ASSERT: Authenticator already set the appropriate
                 // HTTP status code, so we do not have to do anything special
                 return;
@@ -537,12 +540,12 @@ public abstract class AuthenticatorBase
 
         // Perform access control based on the specified role(s)
         if (constraint.getAuthConstraint()) {
-            if (debug >= 1)
-                log(" Calling accessControl()");
+            if (log.isDebugEnabled())
+                log.debug(" Calling accessControl()");
             
             if (!realm.hasResourcePermission(hrequest, hresponse, constraint, this.context)) {
-                if (debug >= 1)
-                    log(" Failed accessControl() test");
+                if (log.isDebugEnabled())
+                    log.debug(" Failed accessControl() test");
                 // ASSERT: AccessControl method has already set the appropriate
                 // HTTP status code, so we do not have to do anything special
                 return;
@@ -550,8 +553,8 @@ public abstract class AuthenticatorBase
         }
 
         // Any and all specified constraints have been satisfied
-        if (debug >= 1)
-            log(" Successfully passed all security constraints");
+        if (log.isDebugEnabled())
+            log.debug(" Successfully passed all security constraints");
         context.invokeNext(request, response);
 
     }
@@ -778,8 +781,8 @@ public abstract class AuthenticatorBase
                             Principal principal, String authType,
                             String username, String password) {
 
-        if (debug >= 1)
-            log("Authenticated '" + principal.getName() + "' with type '"
+        if (log.isDebugEnabled())
+            log.debug("Authenticated '" + principal.getName() + "' with type '"
                 + authType + "'");
 
         // Cache the authentication information in our request
@@ -879,6 +882,7 @@ public abstract class AuthenticatorBase
         if ("org.apache.catalina.core.StandardContext".equals
             (context.getClass().getName())) {
             try {
+                // XXX What is this ???
                 Class paramTypes[] = new Class[0];
                 Object paramValues[] = new Object[0];
                 Method method =
@@ -886,7 +890,7 @@ public abstract class AuthenticatorBase
                 Integer result = (Integer) method.invoke(context, paramValues);
                 setDebug(result.intValue());
             } catch (Exception e) {
-                log("Exception getting debug value", e);
+                log.error("Exception getting debug value", e);
             }
         }
         started = true;
@@ -909,11 +913,11 @@ public abstract class AuthenticatorBase
             if (sso == null)
                 parent = parent.getParent();
         }
-        if (debug >= 1) {
+        if (log.isDebugEnabled()) {
             if (sso != null)
-                log("Found SingleSignOn Valve at " + sso);
+                log.debug("Found SingleSignOn Valve at " + sso);
             else
-                log("No SingleSignOn Valve is present");
+                log.debug("No SingleSignOn Valve is present");
         }
 
     }
