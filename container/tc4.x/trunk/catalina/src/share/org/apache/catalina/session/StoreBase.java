@@ -67,9 +67,9 @@ package org.apache.catalina.session;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
@@ -328,12 +328,14 @@ public abstract class StoreBase
                     }
                     remove(session.getId());
                 }
-            } catch (IOException e) {
-                log (e.toString());
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                log (e.toString());
-                e.printStackTrace();
+            } catch (Exception e) {
+                log ("Session: "+keys[i]+"; "+e.toString());
+                try {
+                    remove(keys[i]);
+                } catch (IOException e2) {
+                    log (e2.toString());
+                    e2.printStackTrace();
+                }
             }
         }
     }
