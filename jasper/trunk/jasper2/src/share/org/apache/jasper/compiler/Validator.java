@@ -542,6 +542,7 @@ class Validator {
 
 	    String name = n.getTextAttribute ("id");
 	    String scope = n.getTextAttribute ("scope");
+	    JspUtil.checkScope(scope, n, err);
 	    String className = n.getTextAttribute ("class");
 	    String type = n.getTextAttribute ("type");
 	    BeanRepository beanInfo = pageInfo.getBeanRepository();
@@ -941,6 +942,10 @@ class Validator {
 	public void visit(Node.InvokeAction n) throws JasperException {
 
             JspUtil.checkAttributes("Invoke", n, invokeAttrs, err);
+
+	    String scope = n.getTextAttribute ("scope");
+	    JspUtil.checkScope(scope, n, err);
+
 	    if (n.getAttributeValue("var") != null
 		    && n.getAttributeValue("varReader") != null) {
 		err.jspError(n, "jsp.error.invoke.varAndVarReader");
@@ -950,6 +955,10 @@ class Validator {
 	public void visit(Node.DoBodyAction n) throws JasperException {
 
             JspUtil.checkAttributes("DoBody", n, doBodyAttrs, err);
+
+	    String scope = n.getTextAttribute ("scope");
+	    JspUtil.checkScope(scope, n, err);
+
 	    if (n.getAttributeValue("var") != null
 		    && n.getAttributeValue("varReader") != null) {
 		err.jspError(n, "jsp.error.doBody.varAndVarReader");

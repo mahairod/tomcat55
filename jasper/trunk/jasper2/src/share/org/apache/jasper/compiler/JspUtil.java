@@ -225,6 +225,26 @@ public class JspUtil {
     }
 
     /**
+     * Checks to see if the given scope is valid.
+     *
+     * @param scope The scope to be checked
+     * @param n The Node containing the 'scope' attribute whose value is to be
+     * checked
+     * @param err error dispatcher
+     *
+     * @throws JasperException if scope is not null and different from
+     * &quot;page&quot;, &quot;request&quot;, &quot;session&quot;, and
+     * &quot;application&quot;
+     */
+    public static void checkScope(String scope, Node n, ErrorDispatcher err)
+            throws JasperException {
+	if (scope != null && !scope.equals("page") && !scope.equals("request")
+	        && !scope.equals("session") && !scope.equals("application")) {
+	    err.jspError(n, "jsp.error.invalid.scope", scope);
+	}
+    }
+
+    /**
      * Checks if all mandatory attributes are present and if all attributes
      * present have valid names.  Checks attributes specified as XML-style
      * attributes as well as attributes specified using the jsp:attribute
