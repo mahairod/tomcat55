@@ -81,6 +81,9 @@
       <fix>
         <bug>25889</bug>: Don't execute queries twice, submitted by Tom Anderson (remm)
       </fix>
+      <fix>
+        <bug>32832</bug>: request.getSession(false) fails to return null (luehe)
+      </fix>
     </changelog>
   </subsection>
 
