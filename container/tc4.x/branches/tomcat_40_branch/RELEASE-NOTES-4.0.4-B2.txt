@@ -1,4 +1,4 @@
-                    Apache Tomcat Version 4.0.3
+                    Apache Tomcat Version 4.0.4
                     ===========================
                             Release Notes
                             =============
@@ -42,9 +42,6 @@ General New Features:
 Catalina New Features:
 ---------------------
 
-Authenticator:  Make authenticator non-final so that they can be subclassed.
-
-BaseDirContext:  Add lifecycle management, to allow releasing used resources.
 
 
 -------------------
@@ -74,79 +71,24 @@ Generic Bug Fixes:
 Catalina Bug Fixes:
 ------------------
 
-WebappClassLoader:  Clean up of the triggers.
-
-WebappClassLoader:  Do not allow a a webapp to override classes from J2SE.
-
-HttpResponseStream:  Fix rare NPE which could occur when processing an invalid
-  HTTP request.
-
-HttpProcessor:  Improve robustness of the main processing loop.
-
-TyrexDataSourceFactory:  Add error logging.
-
-TyrexDataSourceFactory:  Always return a ServerDataSource, which is transaction
-  aware.
-
-TyrexTransactionFactory:  Add error logging.
-
-ApplicationContext:  Fix security problem which could allow a servlet to serve
-  resources from outside the Catalina home directory, using the request
-  dispatcher. This also implements the specification requirement that the 
-  request dispatcher cannot extend outside the current servlet context.
 
 
 ----------------
 Jasper Bug Fixes:
 ----------------
 
-Script:  Fix problem with the Windows script for JSPC, which could cause JARs
-  to not be included in the classpath.
 
 
 -----------------
 Webapps Bug Fixes:
 -----------------
 
-Docs:  Fix typos in the web application development guide.
 
 
 ----------------------
 Bugzilla Bugs Resolved:
 ----------------------
 
-1450  Incorrect encode URL with session ID
-3770  HttpSessionListener.sessionCreated() called twice for each session
-4295  Cookies not following RFC2109
-4518  Jsp-file and load-on-startup and init-param does not work
-5422  HTTP Headers not being cleared after form authentication
-5647  AJP13 connector will not pass authentication requests
-6090  Listener not instantiated in tld file
-6201  ISO-8859-8-i  problem. (hebrew)
-6221  Bug with jsp:plugin
-6374  Class not found for: org/w3c/dom/range/Range
-6396  LoggerBase class is package not public
-6406  All classes in $CATALINA_HOME/classes become invisible 
-      when the Oracle 8.1.7 JDBC driver classes are added to this shared 
-      class loader directory
-6400  Tag Libraries not deploying in 4.0.2 final
-6464  Jspc generates bad package names on Windows NT
-6468  Content-type not set for errors
-6480  HttpServletRequest.getPathTranslated() returns different results 
-      on repeated actions
-6550  Old WebappClassLoaders can't be GC'd
-6558  NPE in RequestDumperValve.toString if debug in catalina/XmlMapper
-6569  setLocale() doesn't set the Content-Type charset attribute
-6594  Caching behavior after re-deploying a WAR with the manager
-6600  EncodeURL adds 'jsession' when 'isRequestedSessionIdFromURL' 
-      returns false
-6609  SendMailServlet.java is not compiled  even if javamail is installed 
-      correctly
-6641  Download of MS Office docs from protected areas fail with IE
-6644  Whitespace after Content-type header value leads to POST method failure
-6668  HttpProcessor takes incorrect defaults for proxy port according 
-      to HTTP/1.1 Spec
-6772  [Security] RequestDipatcher allows to bypass security manager sandboxing
 
 
 ============================
