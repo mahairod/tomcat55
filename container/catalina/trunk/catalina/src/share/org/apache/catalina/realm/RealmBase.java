@@ -73,6 +73,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -93,6 +95,7 @@ import org.apache.catalina.util.HexUtils;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.MD5Encoder;
+import org.apache.catalina.util.RequestUtil;
 
 
 /**
@@ -429,6 +432,47 @@ public abstract class RealmBase
 
     }
 
+    /**
+     * Return the SecurityConstraint configured to guard the request URI for
+     * this request, or <code>null</code> if there is no such constraint.
+     *
+     * @param request Request we are processing
+     */
+    public SecurityConstraint findSecurityConstraint(HttpRequest request,
+                                                     Context context) {
+
+        // Are there any defined security constraints?
+        SecurityConstraint constraints[] = context.findConstraints();
+        if ((constraints == null) || (constraints.length == 0)) {
+            if (debug >= 2)
+                log("  No applicable constraints defined");
+            return (null);
+        }
+
+        // Check each defined security constraint
+        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
+        String uri = request.getDecodedRequestURI();
+        String contextPath = hreq.getContextPath();
+        if (contextPath.length() > 0)
+            uri = uri.substring(contextPath.length());
+        uri = RequestUtil.URLDecode(uri); // Before checking constraints
+        String method = hreq.getMethod();
+        for (int i = 0; i < constraints.length; i++) {
+            if (debug >= 2)
+                log("  Checking constraint '" + constraints[i] +
+                    "' against " + method + " " + uri + " --> " +
+                    constraints[i].included(uri, method));
+            if (constraints[i].included(uri, method))
+                return (constraints[i]);
+        }
+
+        // No applicable security constraint was found
+        if (debug >= 2)
+            log("  No applicable constraint located");
+        return (null);
+
+    }
+ 
     
     /**
      * Perform access control based on the specified authorization constraint.
@@ -442,10 +486,10 @@ public abstract class RealmBase
      *
      * @exception IOException if an input/output error occurs
      */
-    public boolean hasResourceAccess(HttpRequest request,
-                                     HttpResponse response,
-                                     SecurityConstraint constraint,
-                                     Context context)
+    public boolean hasResourcePermission(HttpRequest request,
+                                         HttpResponse response,
+                                         SecurityConstraint constraint,
+                                         Context context)
         throws IOException {
 
         if (constraint == null)
@@ -545,7 +589,100 @@ public abstract class RealmBase
 
     }
 
+    
+    /**
+     * Enforce any user data constraint required by the security constraint
+     * guarding this request URI.  Return <code>true</code> if this constraint
+     * was not violated and processing should continue, or <code>false</code>
+     * if we have created a response already.
+     *
+     * @param request Request we are processing
+     * @param response Response we are creating
+     * @param constraint Security constraint being checked
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    public boolean hasUserDataPermission(HttpRequest request,
+                                    HttpResponse response,
+                                    SecurityConstraint constraint)
+        throws IOException {
 
+        // Is there a relevant user data constraint?
+        if (constraint == null) {
+            if (debug >= 2)
+                log("  No applicable security constraint defined");
+            return (true);
+        }
+        String userConstraint = constraint.getUserConstraint();
+        if (userConstraint == null) {
+            if (debug >= 2)
+                log("  No applicable user data constraint defined");
+            return (true);
+        }
+        if (userConstraint.equals(Constants.NONE_TRANSPORT)) {
+            if (debug >= 2)
+                log("  User data constraint has no restrictions");
+            return (true);
+        }
+
+        // Validate the request against the user data constraint
+        if (request.getRequest().isSecure()) {
+            if (debug >= 2)
+                log("  User data constraint already satisfied");
+            return (true);
+        }
+
+        // Initialize variables we need to determine the appropriate action
+        HttpServletRequest hrequest =
+            (HttpServletRequest) request.getRequest();
+        HttpServletResponse hresponse =
+            (HttpServletResponse) response.getResponse();
+        int redirectPort = request.getConnector().getRedirectPort();
+
+        // Is redirecting disabled?
+        if (redirectPort <= 0) {
+            if (debug >= 2)
+                log("  SSL redirect is disabled");
+            hresponse.sendError
+                (HttpServletResponse.SC_FORBIDDEN,
+                 hrequest.getRequestURI());
+            return (false);
+        }
+
+        // Redirect to the corresponding SSL port
+        String protocol = "https";
+        String host = hrequest.getServerName();
+        StringBuffer file = new StringBuffer(hrequest.getRequestURI());
+        String requestedSessionId = hrequest.getRequestedSessionId();
+        if ((requestedSessionId != null) &&
+            hrequest.isRequestedSessionIdFromURL()) {
+            file.append(";jsessionid=");
+            file.append(requestedSessionId);
+        }
+        String queryString = hrequest.getQueryString();
+        if (queryString != null) {
+            file.append('?');
+            file.append(queryString);
+        }
+        URL url = null;
+        try {
+            url = new URL(protocol, host, redirectPort, file.toString());
+            if (debug >= 2)
+                log("  Redirecting to " + url.toString());
+            hresponse.sendRedirect(url.toString());
+            return (false);
+        } catch (MalformedURLException e) {
+            if (debug >= 2)
+                log("  Cannot create new URL", e);
+            hresponse.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 hrequest.getRequestURI());
+            return (false);
+        }
+
+    }
+    
+    
     /**
      * Remove a property change listener from this component.
      *
@@ -825,5 +962,6 @@ public abstract class RealmBase
         }
 
     }
+    
 
 }

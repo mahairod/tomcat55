@@ -83,5 +83,9 @@ public final class Constants {
     // Form based authentication constants
     public static final String FORM_ACTION = "/j_security_check";
 
+    // User data constraints for transport guarantee
+    public static final String NONE_TRANSPORT = "NONE";
+    public static final String INTEGRAL_TRANSPORT = "INTEGRAL";
+    public static final String CONFIDENTIAL_TRANSPORT = "CONFIDENTIAL";
 
 }
