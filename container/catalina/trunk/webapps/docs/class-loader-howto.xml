@@ -8,6 +8,7 @@
 
     <properties>
         <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+        <author email="yoavs@apache.org">Yoav Shapira</author>
         <title>Class Loader HOW-TO</title>
     </properties>
 
@@ -103,6 +104,7 @@ loaders as it is initialized:</p>
         logging API.</li>
     <li><em>$CATALINA_HOME/bin/commons-daemon.jar</em> - Jakarta commons 
         daemon API.</li>
+    <li><em>jmx.jar</em> - The JMX 1.2 implementation.</li>
     </ul></li>
 <li><strong>Common</strong> - This class loader contains additional classes
     that are made visible to both Tomcat internal classes and to all web
@@ -124,7 +126,6 @@ loaders as it is initialized:</p>
     <li><em>commons-pool.jar</em> - Jakarta commons pool.</li>
     <li><em>jasper-compiler.jar</em> - The JSP 2.0 compiler.</li>
     <li><em>jasper-runtime.jar</em> - The JSP 2.0 runtime.</li>
-    <li><em>jmx.jar</em> - The JMX 1.2 implementation.</li>
     <li><em>jsp-api.jar</em> - The JSP 2.0 API.</li>
     <li><em>naming-common.jar</em> - The JNDI implementation used by Tomcat 5
         to represent in-memory naming contexts.</li>
@@ -189,7 +190,8 @@ loaders as it is initialized:</p>
 
 <p>As mentioned above, the web application class loader diverges from the
 default Java 2 delegation model (in accordance with the recommendations in the
-Servlet Specification, version 2.3, section 9.6).  When a request to load a
+Servlet Specification, version 2.3, section 9.7.2 Web Application Classloader).  
+When a request to load a
 class from the web application's <em>WebappX</em> class loader is processed,
 this class loader will look in the local repositories <strong>first</strong>,
 instead of delegating before looking.  There are exceptions. Classes which are
@@ -205,6 +207,7 @@ class patterns, the classloader will always delegate first
 <li><em>org.w3c.dom.*</em></li>
 <li><em>org.apache.xerces.*</em></li>
 <li><em>org.apache.xalan.*</em></li>
+<li><em>
 </ul>
 Last, any JAR containing servlet API classes will be ignored by the 
 classloader.
