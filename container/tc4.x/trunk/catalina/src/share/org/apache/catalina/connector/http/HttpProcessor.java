@@ -636,6 +636,11 @@ final class HttpProcessor
             } else if (header.equals(DefaultHeaders.HOST_NAME)) {
                 int n = value.indexOf(':');
                 if (n < 0) {
+                    if (connector.getScheme().equals("http")) {
+                        request.setServerPort(80);
+                    } else if (connector.getScheme().equals("https")) {
+                        request.setServerPort(443);
+                    }
                     if (proxyName != null)
                         request.setServerName(proxyName);
                     else
