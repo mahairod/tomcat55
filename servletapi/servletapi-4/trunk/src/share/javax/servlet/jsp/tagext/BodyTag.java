@@ -91,13 +91,16 @@ import javax.servlet.jsp.*;
  * The interface provides one new property with a setter method and one
  * new action method.
  *
- * <p> The new property is bodyContent, to contain the BodyContent
+ * <p><B>Properties</B>
+ * <p> There is a new property: bodyContent, to contain the BodyContent
  * object, where the JSP Page implementation object will place the
  * evaluation (and reevaluation, if appropriate) of the body.  The setter
  * method (setBodyContent) will only be invoked if doStartTag() returns
  * EVAL_BODY_BUFFERED.
  *
- * <p> The new action methods is doInitBody(), which is invoked right after
+ * <p><B>Methods</B>
+ * <p> In addition to the setter method for the bodyContent property, there
+ * is a new action methods: doInitBody(), which is invoked right after
  * setBodyContent() and before the body evaluation.  This method is only
  * invoked if doStartTag() returns EVAL_BODY_BUFFERED.
  *
@@ -110,6 +113,25 @@ import javax.servlet.jsp.*;
  * interface for details.
  * <p>
  * <IMG src="doc-files/BodyTagProtocol.gif"/>
+
+ * <p><B>Empty and Non-Empty Action</B>
+ * <p> If the action is an <b>empty action</b>, the doStartTag() method must
+ * return SKIP_BODY.
+ *
+ * <p> If the action is a <b>non-empty action</b>, the doStartTag() method
+ * may return SKIP_BODY, EVAL_BODY_INCLUDE, or EVAL_BODY_BUFFERED.
+ *
+ * If SKIP_BODY is returned the body is not evaluated, and doEndTag() is
+ * invoked.
+ *
+ * If EVAL_BODY_INCLUDE is returned, setBodyContent() is not invoked,
+ * doInitBody() is not invoked, the body is evaluated and
+ * "passed through" to the current out, doAfterBody() is invoked
+ * and then, after zero or more iterations, doEndTag() is invoked.
+ *
+ * If EVAL_BODY_BUFFERED is returned, setBodyContent() is invoked,
+ * doInitBody() is invoked, the body is evaluated, doAfterBody() is
+ * invoked, and then, after zero or more iterations, doEndTag() is invoked.
  */
 
 public interface BodyTag extends IterationTag {
@@ -141,10 +163,10 @@ public interface BodyTag extends IterationTag {
     /**
      * Set the bodyContent property.
      * This method is invoked by the JSP page implementation object at
-     * most once per action invocation.  The method will be invoked before
-     * doInitBody and it will not be invoked if there is no body evaluation
-     * (for example if doStartTag() returns EVAL_BODY_INCLUDE
-     * or SKIP_BODY).
+     * most once per action invocation.
+     * This method will be invoked before doInitBody.
+     * This method will not be invoked for empty tags or for non-empty
+     * tags whose doStartTag() method returns SKIP_BODY or EVAL_BODY_INCLUDE.
      *
      * <p>
      * When setBodyContent is invoked, the value of the implicit object out
@@ -169,8 +191,9 @@ public interface BodyTag extends IterationTag {
      * Prepare for evaluation of the body.
      * This method is invoked by the JSP page implementation object
      * after setBodyContent and before the first time
-     * the body is to be evaluated. The method will not be invoked if there
-     * is no body evaluation.
+     * the body is to be evaluated.
+     * This method will not be invoked for empty tags or for non-empty
+     * tags whose doStartTag() method returns SKIP_BODY or EVAL_BODY_INCLUDE.
      *
      * <p>
      * The JSP container will resynchronize
