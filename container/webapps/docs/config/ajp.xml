@@ -2,13 +2,13 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document url="jk.html">
+<document url="ajp.html">
 
   &project;
 
   <properties>
     <author email="remm@apache.org">Remy Maucherat</author>
-    <title>The JK Connector</title>
+    <title>The AJP Connector</title>
   </properties>
 
 <body>
@@ -16,7 +16,7 @@
 
 <section name="Introduction">
 
-  <p>The <strong>JK Connector</strong> element represents a
+  <p>The <strong>AJP Connector</strong> element represents a
   <strong>Connector</strong> component that communicates with a web
   connector via the <code>AJP</code> protocol.  This is used for cases
   where you wish to invisibly integrate Tomcat 5 into an existing (or new)
@@ -90,7 +90,7 @@
 
   <subsection name="Standard Implementation">
 
-  <p>The standard implementation of <strong>JK Connector</strong> is
+  <p>The standard implementation of <strong>AJP Connector</strong> is
   <strong>org.apache.coyote.tomcat5.CoyoteConnector</strong>, but you
   must specify the protocol attribute (see below).</p>
 
@@ -108,7 +108,7 @@
     </attribute>
 
     <attribute name="protocol" required="true">
-      <p>This attribute value must be <code>AJP/1.3</code> to use the JK
+      <p>This attribute value must be <code>AJP/1.3</code> to use the AJP
       handler.</p>
     </attribute>
 
