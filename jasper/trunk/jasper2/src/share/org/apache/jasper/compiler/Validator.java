@@ -796,7 +796,9 @@ class Validator {
 	    // has one or more variable subelements to have a TagExtraInfo
 	    // class that returns a non-null object.
 	    TagExtraInfo tei = tagInfo.getTagExtraInfo();
-	    if (tei != null && tei.getVariableInfo(tagData) != null
+	    if (tei != null
+		    && tei.getVariableInfo(tagData) != null
+		    && tei.getVariableInfo(tagData).length > 0
 		    && tagInfo.getTagVariableInfos() != null
 		    && tagInfo.getTagVariableInfos().length > 0) {
 		err.jspError("jsp.error.non_null_tei_and_var_subelems",
