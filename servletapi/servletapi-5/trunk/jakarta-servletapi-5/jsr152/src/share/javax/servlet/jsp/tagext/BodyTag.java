@@ -214,7 +214,7 @@ public interface BodyTag extends IterationTag {
      * NESTED variables (defined by the associated TagExtraInfo or TLD) after
      * the invocation of doInitBody().
      *
-     * @throws JspException
+     * @throws JspException if an error occurred while processing this tag
      * @see #doAfterBody
      */
 

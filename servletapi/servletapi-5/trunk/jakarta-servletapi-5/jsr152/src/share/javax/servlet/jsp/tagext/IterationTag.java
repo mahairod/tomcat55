@@ -147,7 +147,7 @@ public interface IterationTag extends Tag {
      * the invocation of doAfterBody().
      *
      * @return whether additional evaluations of the body are desired
-     * @throws JspException
+     * @throws JspException if an error occurred while processing this tag
      */
 
     int doAfterBody() throws JspException;

@@ -132,7 +132,14 @@ import javax.servlet.jsp.tagext.BodyContent;
 abstract public class PageContext 
     extends JspContext
 {
-
+    
+    /**
+     * Sole constructor. (For invocation by subclass constructors, 
+     * typically implicit.)
+     */
+    public PageContext() {
+    }
+    
     /**
      * Page scope: (this is the default) the named reference remains available
      * in this PageContext until the return from the current Servlet.service()

@@ -81,6 +81,13 @@ public class SimpleTagSupport
     /** The body of the tag. */
     protected JspFragment jspBody;
     
+    /**
+     * Sole constructor. (For invocation by subclass constructors, 
+     * typically implicit.)
+     */
+    public SimpleTagSupport() {
+    }
+    
     /** 
      * Default processing of the tag does nothing.
      *

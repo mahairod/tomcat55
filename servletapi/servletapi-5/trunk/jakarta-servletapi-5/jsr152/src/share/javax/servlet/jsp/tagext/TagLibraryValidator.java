@@ -106,6 +106,13 @@ import java.util.Map;
 abstract public class TagLibraryValidator {
 
     /**
+     * Sole constructor. (For invocation by subclass constructors, 
+     * typically implicit.)
+     */
+    public TagLibraryValidator() {
+    }
+    
+    /**
      * Set the init data in the TLD for this validator.
      * Parameter names are keys, and parameter values are the values.
      *
@@ -150,7 +157,7 @@ abstract public class TagLibraryValidator {
      */
     public void release() {
 	initParameters = null;
-    };
+    }
 
     // Private data
     private Map initParameters;
