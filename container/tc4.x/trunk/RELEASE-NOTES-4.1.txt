@@ -157,6 +157,10 @@ Jasper New Features:
 [4.1.8] JspCompilationContext:
         Use _ instead of $ to generate file and class names for jsp servlets.
 
+[4.1.19] Compiler:
+         Added new "fork" option. This tells Ant to fork the JSP page javac
+         compile so that it is run in a different JVM from the one Tomcat
+         is running in. Please refer to the Jasper-HOWTO for more information.
 
 ==========================
 BUG FIXES AND IMPROVEMENTS:
