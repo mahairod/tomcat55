@@ -194,22 +194,6 @@ public class MessageBytes extends Ascii {
     }
 
     /**
-     * Returns the message bytes parsed as a date.
-     * @param d the HttpDate object to use for parsing
-     * @exception IllegalArgumentException if the date format was invalid
-     */
-    public long toDate(HttpDate d) throws IllegalArgumentException {
-	if (bytes != null) {
-	    d.parse(bytes, offset, length);
-	    return d.getTime();
-	} else {
-            String msg = sm.getString("messageBytes.iae", bytes);
-
-	    throw new IllegalArgumentException(msg);
-	}
-    }
-
-    /**
      * Compares the message bytes to the specified String object.
      * @param s the String to compare
      * @return true if the comparison succeeded, false otherwise
