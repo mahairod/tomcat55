@@ -75,6 +75,11 @@ or by placing them in JAR files in the "lib" directory.
 Tomcat 5.0 also makes Xerces 2 and the Commons Logging API (release 1.0.3)
 available to web applications.
 
+Please note that the JMX API is available to applications as well.  The jmx.jar
+file used to be located in the common/lib directory, but was moved to the bin
+directory as part of the Tomcat 5.0.20 release.  The jmx.jar is in Tomcat's
+bootstrap classpath (included via the Class Path line in bootstrap.jar's manifest).
+
 
 --------------------------
 Tomcat 5.0 and XML Parsers:
