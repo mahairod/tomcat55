@@ -496,8 +496,8 @@ public class DefaultServlet
     /**
      * Process a POST request for the specified resource.
      *
-     * @param request The servlet request we are processing
-     * @param response The servlet response we are creating
+     * @param req The servlet request we are processing
+     * @param resp The servlet response we are creating
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet-specified error occurs
@@ -725,8 +725,6 @@ public class DefaultServlet
      * Get the ETag associated with a file.
      *
      * @param resourceInfo File object
-     * @param strong True if we want a strong ETag, in which case a checksum
-     * of the file has to be calculated
      */
     protected String getETag(ResourceInfo resourceInfo) {
         if (resourceInfo.strongETag != null) {
@@ -1845,7 +1843,7 @@ public class DefaultServlet
      * output stream, and ensure that both streams are closed before returning
      * (even in the face of an exception).
      *
-     * @param istream The input stream to read from
+     * @param resourceInfo The resource information 
      * @param ostream The output stream to write to
      *
      * @exception IOException if an input/output error occurs
@@ -1891,7 +1889,7 @@ public class DefaultServlet
      * output stream, and ensure that both streams are closed before returning
      * (even in the face of an exception).
      *
-     * @param istream The input stream to read from
+     * @param resourceInfo The resource info
      * @param writer The writer to write to
      *
      * @exception IOException if an input/output error occurs
@@ -2307,7 +2305,7 @@ public class DefaultServlet
         /**
          * Constructor.
          *
-         * @param pathname Path name of the file
+         * @param path Path name of the file
          */
         public ResourceInfo(String path, DirContext resources) {
             set(path, resources);
