@@ -839,9 +839,7 @@ public final class HttpConnector
 
         //        if (debug >= 2)
         //            log("recycle: Recycling processor " + processor);
-        synchronized (processors) {
-            processors.push(processor);
-        }
+        processors.push(processor);
 
     }
 
