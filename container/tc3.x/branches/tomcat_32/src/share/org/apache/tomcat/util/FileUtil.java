@@ -265,6 +265,12 @@ public class FileUtil {
             patchPath = sb.toString();
         }
 
+        // fix path on NetWare
+        if (System.getProperty("os.name").startsWith("NetWare") &&
+            path.length() >=3 &&
+            path.indexOf(':') > 0)
+            patchPath = patchPath.replace('/', '\\');
+
         return patchPath;
     }
 
@@ -279,6 +285,13 @@ public class FileUtil {
             Character.isLetter(path.charAt(0)) &&
             path.charAt(1) == ':')
 	    return true;
+
+        // NetWare volume:
+        if (System.getProperty("os.name").startsWith("NetWare") &&
+            path.length() >=3 &&
+            path.indexOf(':') > 0)
+            return true;
+
 	return false;
     }
     
