@@ -210,12 +210,6 @@ public class ServletWrapper {
 	initArgs.put( name, value );
     }
     
-    /** @deprecated
-     */
-    void setInitArgs(Hashtable initArgs) {
-        config.setInitArgs(initArgs);
-    }
-
     void destroy() {
 	if (servlet != null) {
 	    synchronized (this) {
