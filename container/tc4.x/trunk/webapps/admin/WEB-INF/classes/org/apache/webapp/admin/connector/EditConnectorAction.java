@@ -173,22 +173,29 @@ public class EditConnectorAction extends Action {
         connectorFm.setDebugLvlVals(Lists.getDebugLevels());               
         connectorFm.setBooleanVals(Lists.getBooleanValues());        
         
-        String scheme = null;
         String attribute = null;
         try {
 
             // Copy scalar properties
             // General properties
-            attribute = "className";
-            String className = 
+            attribute = "scheme";
+            String scheme = (String) mBServer.getAttribute(cname, attribute);
+            connectorFm.setScheme(scheme);
+
+            attribute = "protocolHandlerClassName";
+            String handlerClassName = 
                 (String) mBServer.getAttribute(cname, attribute);
-            int period = className.lastIndexOf('.');
-            String connectorType = className.substring(period + 1);
+            int period = handlerClassName.lastIndexOf('.');
+            String connType = handlerClassName.substring(period + 1);
+            String connectorType = "HTTPS";
+            if ("JkCoyoteHandler".equalsIgnoreCase(connType)) {
+                connectorType = "AJP";
+            } else if ("Http11Protocol".equalsIgnoreCase(connType) && 
+                      ("http".equalsIgnoreCase(scheme))) {
+                connectorType = "HTTP";
+            }             
             connectorFm.setConnectorType(connectorType);            
             
-            attribute = "scheme";
-            scheme = (String) mBServer.getAttribute(cname, attribute);
-            connectorFm.setScheme(scheme);
             attribute = "acceptCount";
             connectorFm.setAcceptCountText
                 (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
@@ -224,9 +231,8 @@ public class EditConnectorAction extends Action {
             connectorFm.setMaxProcessorsText
                 (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
             
-            // Supported by Coyote HTTP and HTTPS only
-            // FIX ME-- change this to use JK2 connector instead of Ajp13
-            if (!("Ajp13Connector".equalsIgnoreCase(connectorType))) {
+            // Supported by HTTP and HTTPS only
+            if (!("AJP".equalsIgnoreCase(connectorType))) {
                 attribute = "proxyName";
                 connectorFm.setProxyName
                     ((String) mBServer.getAttribute(cname, attribute));
@@ -235,7 +241,7 @@ public class EditConnectorAction extends Action {
                     (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
             }
             
-            if ("https".equalsIgnoreCase(scheme)) {
+            if ("HTTPS".equalsIgnoreCase(connectorType)) {
                 // Initialize rest of variables. 
                 // These are set only for SSL connectors.
                 attribute = "clientAuth";

@@ -459,7 +459,7 @@ public final class ConnectorForm extends ActionForm {
 
     }
 
-          /**
+    /**
      * Return the object name of the service this connector belongs to.
      */
     public String getKeyStoreFileName() {
@@ -777,7 +777,7 @@ public final class ConnectorForm extends ActionForm {
             }   
             
             /* supported only by Coyote HTTP/1.1 connectors */
-            if (!("HTTP(AJP)".equalsIgnoreCase(connectorType)))
+            if (!("AJP".equalsIgnoreCase(connectorType)))
                 numberCheck("proxyPortText",  proxyPortText, true, 0, 65535);            
         }
         

@@ -338,7 +338,6 @@ public final class SaveConnectorAction extends Action {
                                   new Attribute("maxProcessors", new Integer(maxProcessors))); 
       
             // proxy name and port do not exist for AJP connector
-            /*
             if (!("AJP".equalsIgnoreCase(connectorType))) {
                 attribute = "proxyName";              
                 mBServer.setAttribute(coname,
@@ -353,7 +352,6 @@ public final class SaveConnectorAction extends Action {
                 mBServer.setAttribute(coname,
                               new Attribute("proxyPort", new Integer(proxyPort))); 
             }
-            */
             
             // HTTPS specific properties
             if("HTTPS".equalsIgnoreCase(connectorType)) {
