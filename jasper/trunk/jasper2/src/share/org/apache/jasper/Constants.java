@@ -99,10 +99,9 @@ public class Constants {
     /**
      * FIXME
      * ServletContext attribute for classpath. This is tomcat specific. 
-     * Other servlet engines can choose to have this attribute if they 
+     * Other servlet engines may choose to support this attribute if they 
      * want to have this JSP engine running on them. 
      */
-    //public static final String SERVLET_CLASSPATH = "org.apache.tomcat.jsp_classpath";
     public static final String SERVLET_CLASSPATH = "org.apache.catalina.jsp_classpath";
 
     /**
