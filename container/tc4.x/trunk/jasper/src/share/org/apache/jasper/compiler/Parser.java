@@ -864,7 +864,7 @@ public class Parser {
 			    } catch (ParseException ex) {
 				throw new ParseException(
                                     start,
-			            Constants.getString("jsp.error.incorrect.nesting", 
+			            Constants.getString("jsp.error.unterminated.user.tag", 
 					 new Object[]{JspUtil.escapeXml(tagEnd)}));
 			    }
 			    listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);
