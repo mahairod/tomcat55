@@ -100,10 +100,15 @@ public class CharsetMapper {
      * @param locale The locale for which to calculate a character set
      */
     public String getCharset(Locale locale) {
-        // Match full language_country_variant first, then language only
+        // Match full language_country_variant first, then language_country, 
+        // then language only
         String charset = map.getProperty(locale.toString());
         if (charset == null) {
-            charset = map.getProperty(locale.getLanguage());
+            charset = map.getProperty(locale.getLanguage() + "_" 
+                    + locale.getCountry());
+            if (charset == null) {
+                charset = map.getProperty(locale.getLanguage());
+            }
         }
         return (charset);
     }
