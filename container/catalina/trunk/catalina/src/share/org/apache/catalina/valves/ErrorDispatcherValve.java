@@ -327,6 +327,9 @@ public class ErrorDispatcherValve
                                        errorPage.getLocation());
             sreq.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
                                                  new Integer(ApplicationFilterFactory.ERROR));
+            
+           ((HttpRequest) request).setPathInfo(errorPage.getLocation());
+            
             Wrapper wrapper = request.getWrapper();
             if (wrapper != null)
                 sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
