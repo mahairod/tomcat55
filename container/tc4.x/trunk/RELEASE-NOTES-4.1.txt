@@ -259,6 +259,13 @@ Generic Bug Fixes:
 [4.1.20] Administration Webapp:
          Fix the beahavior of valve creation, where atributes weren't saved.
 
+[4.1.21] Administration Webapp:
+         Add filtering to prevent the administrator from removing himself 
+         access.
+
+[4.1.21] Administration Webapp:
+         Remove groups and roles tables on user and group page.
+
 
 ------------------
 Catalina Bug Fixes:
@@ -690,6 +697,9 @@ Catalina Bug Fixes:
          line entry is logged instead of a complete stack trace and the
          request is terminated instead of trying to invoke an error page.
 
+[4.1.21] MbeanUtils:
+         Add JSR 77 servlet registration.
+
 
 ----------------
 Coyote Bug Fixes:
@@ -855,6 +865,9 @@ Coyote Bug Fixes:
 
 [4.1.20] CoyoteConnector:
          Allow setting socket linger.
+
+[4.1.21] Cookies:
+         Fix to return values instead of the names.
 
 
 ----------------
@@ -1125,6 +1138,24 @@ Jasper Bug Fixes:
          JspServletWrapper:
          Fix race condition in the reloading check by using an object local
          boolean.
+
+[4.1.21] #16449
+         JspServletWrapper:
+         Fix recompilation logic.
+
+[4.1.21] Compiler:
+         An ant Project uses the current directory as its base directory 
+         by default. The base directory doesn't matter but ant always checks 
+         it. This can cause problems when using the SecurityManager 
+         with a strict policy. The Compiler now explicitely sets the ant 
+         Project base dir to catalina.home.
+
+[4.1.21] Generator:
+         Added support for <jsp:fallback> to XML syntax.
+
+[4.1.21] #17049
+         Generator:
+         Invalid code generated when nesting tags.
 
 
 ============================
