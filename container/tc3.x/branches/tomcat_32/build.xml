@@ -5,7 +5,8 @@
   <property name="ant.home" value="../jakarta-ant"/>
   <property name="debug" value="on"/>
   <property name="j2ee.home" value="../../j2ee/build/unix"/>
-  <property name="jaxp" value="../jaxp-1.0.1" />
+  <property name="jaxp" value="../jaxp-1.1/jaxp.jar" />
+  <property name="parser" value="../jaxp-1.1/crimson.jar" />
   <property name="optimize" value="true" />
   <property name="servlet.jar" value="../jakarta-servletapi/lib/servlet.jar"/>
   <property name="tomcat.build" value="../build/tomcat"/>
@@ -54,10 +55,10 @@
             file="${ant.home}/lib/ant.jar"/>
     <copy tofile="${tomcat.build}/lib/servlet.jar"
             file="${servlet.jar}"/>
-    <copy tofile="${tomcat.build}/lib/jaxp.jar"
-            file="${jaxp}/jaxp.jar"/>
-    <copy tofile="${tomcat.build}/lib/parser.jar"
-            file="${jaxp}/parser.jar"/>
+    <copy todir="${tomcat.build}/lib"
+            file="${jaxp}"/>
+    <copy todir="${tomcat.build}/lib"
+            file="${parser}"/>
 
     <!-- Copy golden files for the tests webapp -->
     <copy todir="${tomcat.build}/lib/test/Golden">
@@ -89,7 +90,7 @@
 
     <!-- Compile the standard Tomcat components -->
     <javac srcdir="src/share" destdir="${tomcat.build}/classes"
-           classpath="${servlet.jar};${jaxp}/jaxp.jar" 
+           classpath="${servlet.jar};${jaxp};${parser}" 
            debug="${debug}" 
            optimize="${optimize}"
            deprecation="off" >
