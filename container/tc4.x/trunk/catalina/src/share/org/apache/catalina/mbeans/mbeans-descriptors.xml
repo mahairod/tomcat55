@@ -151,6 +151,25 @@
   </mbean>
 
 
+  <mbean         name="CertificatesValve"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
+          description="Valve that exposes SSL certificate information"
+               domain="Catalina"
+                group="Valve"
+                 type="org.apache.catalina.valves.CertificatesValve">
+
+    <attribute   name="className"
+          description="Fully qualified class name of the managed object"
+                 type="java.lang.String"
+            writeable="false"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+  </mbean>
+
+
   <mbean         name="ContextConfig"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Startup event listener for a Context that configures the
