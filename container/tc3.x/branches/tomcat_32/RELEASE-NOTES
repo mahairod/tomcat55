@@ -1,0 +1,144 @@
+                           Release Notes for:
+                           ==================
+                           TOMCAT Version 3.2
+                           ==================
+
+
+0.  TABLE OF CONTENTS:
+
+    1.  Introduction
+    2.  Installing and Running Tomcat
+    3.  Application Development Using Tomcat
+    4.  Tomcat: Past, Present, and Future
+    5.  New Features In This Release
+    6.  Known Bugs and Issues
+
+
+=============================================================================
+1.  INTRODUCTION
+
+Tomcat is a servlet container and JavaServer Pages(tm) implementation.  It may
+be used stand alone, or in conjunction with several popular web servers:
+- Apache, version 1.3 or later
+- Microsoft Internet Information Server, version 4.0 or later
+- Microsoft Personal Web Server, version 4.0 or later
+- Netscape Enterprise Server, version 3.0 or later
+
+You should read the License Agreement (in the LICENSE file of the top level
+directory), which applies to all software included in this release.
+
+
+=============================================================================
+2.  INSTALLING AND RUNNING TOMCAT
+
+Tomcat requires a Java Runtime Environment conformant to JRE 1.1 or later,
+including any Java2 platform system.  If you wish to develop applications,
+you will need a Java compiler, such as the one included in a Java Development
+Kit 1.1 or later environment, including JDKs conformant with Java2.
+
+For detailed information about installing and running Tomcat, point your
+browser at file "doc/uguide/tomcat_ug.html" under the directory into which
+you unpacked the Tomcat distribution or see the documentation at
+http://jakarta.apache.org/tomcat/index.html.
+
+
+=============================================================================
+3.  APPLICATION DEVELOPMENT USING TOMCAT
+
+Preliminary information on using Tomcat for developing Servlet/JSP based
+applications is provided in the included Application Developer's Guide.
+Point your browser at file "doc/appdev/index.html" under the directory into
+which you unpacked the Tomcat distribution.
+
+
+=============================================================================
+4.  TOMCAT: PAST, PRESENT, AND FUTURE
+
+- Version 3.0 (released 12/1999) was the initial release of Tomcat.  In
+addition to implementing the Java Servlet and Server Pages specification,
+this release featured a minimal Apache connector.
+
+- Tomcat 3.1 (released 4/2000) improved the Apache connection and added
+connector support for Netscape and IIS web servers. It also added WAR file
+support, automatic servlet reloading, and a command line tool (jspc) to
+compile the JSP pages that comprise your application in advance of
+deployment.  Finally, version 3.1 also focused on reorganizing the code
+(modularization, cleanup, refactoring, removal of dead code, and separation
+of J2EE-specific code).
+
+- Tomcat 3.2 is the first performance tune-up, and also adds a few new
+features (see next section).
+
+- It is expected that Tomcat 3.3 will feature additional major performance
+improvements resulting from changes in data representation and algorithms.
+Version 3.3 will also undergo a major review of security  (to be able to
+trust that "untrusted" code runs safely), and support for I18N character
+sets.
+
+- Tomcat 3.4 will likely focus on scalability and advanced load balancing.
+It will also support version 2.3 of the Java Servlet specification.
+(First-round support for version 2.3 for the servlet specification may be
+included in version 3.3.)
+
+=============================================================================
+5.  NEW FEATURES IN THIS RELEASE
+
+Tomcat 3.2 is mainly a performance tune-up release, although a few new
+features have been added.
+
+- Support for mod_jk, which is a replacement to the elderly mod_jserv, has
+  had several bugs fixed and has received much more testing.  It is now
+  recommended that all users use mod_jk instead of mod_jserv.
+
+- Support JAXP-based XML parser independence.
+
+- New and often requested "how-to" documents covering the following topics:
+     - Configuring workers.properties
+     - IIS and Netscape configuration
+     - Running tomcat inside an IIS or Netscape process
+     - Running Tomcat as a Windows NT service
+     - Configuring a JDBC realm
+     - Configuring mod_jk
+
+- First round of policy-based security support intended for running untrusted
+  code inside of Tomcat.  Interested users should test this support and post
+  feedback to the Tomcat users mailing list.
+
+- SSL support for standalone Tomcat. (Preliminary support first appeared in
+  3.1, but the support in 3.2 has received more testing and documentation
+  support).
+
+- Thread reuse is now enabled by default. The thread pool support code was part
+  of 3.1, but not enabled since it was new.
+
+- Support for plug-able session managers.  Unfortunately, no how-to documents
+  that support this functionality exist (yet). For the adventurous, be aware
+  that the interface that allows administrators to plug session managers is
+  the normal Interceptor interface.
+
+- An almost total rewrite of the HTTP request handling now results in improved
+  performance when running Tomcat stand-alone.
+
+- Significantly reduced garbage collection.
+
+- The code underwent a refactoring effort resulting in improved readability.
+
+- And of course, hundreds of miscellaneous improvements and fixes.
+
+
+=============================================================================
+6.  KNOWN BUGS AND ISSUES
+
+6.1 Using An Absolute Path as Document Root Under Windows
+
+In the TOMCAT_HOME/conf/server.xml file, you can declare a relative or absolute
+directory pathname for the docRoot attribute.  If you wish to use an absolute
+pathname on a Windows system, you MUST include the drive letter in order to
+conform to Java's definition of an absolute path on this platform:
+
+    GOOD:  c:\mydirectory\mydocroot
+    GOOD:  c:/mydirectory/mydocroot
+    BAD:   \mydirectory\mydocroot
+    BAD:   /mydirectory/mydocroot
+
+Under Unix, absolute pathnames must begin with a slash ('/') character.
