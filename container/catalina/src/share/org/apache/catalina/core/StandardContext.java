@@ -1233,7 +1233,12 @@ public class StandardContext
     public void setSessionTimeout(int timeout) {
 
         int oldSessionTimeout = this.sessionTimeout;
-        this.sessionTimeout = timeout;
+	/*
+	 * SRV.13.4 ("Deployment Descriptor"):
+	 * If the timeout is 0 or less, the container ensures the default
+	 * behaviour of sessions is never to time out.
+	 */
+        this.sessionTimeout = (timeout == 0) ? -1 : timeout;
         support.firePropertyChange("sessionTimeout",
                                    new Integer(oldSessionTimeout),
                                    new Integer(this.sessionTimeout));
