@@ -370,7 +370,7 @@ public class DataSender implements IDataSender {
         if(isSocketConnected) {
             socketCloseCounter++;
             if (log.isDebugEnabled())
-                log.debug(sm.getString("IDataSender.socketclose",
+                log.debug(sm.getString("IDataSender.closeSocket",
                         address, new Integer(port)));
             try {
                 sc.close();
