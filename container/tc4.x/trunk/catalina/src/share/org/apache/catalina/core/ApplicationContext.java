@@ -589,7 +589,8 @@ public class ApplicationContext
         if (!path.startsWith("/"))
             throw new IllegalArgumentException
               (sm.getString("applicationContext.requestDispatcher.iae", path));
-        if (normalize(path) == null)
+        path = normalize(path);
+        if (path == null)
             return (null);
 
         // Construct a "fake" request to be mapped by our Context
@@ -649,6 +650,11 @@ public class ApplicationContext
      */
     public URL getResource(String path)
         throws MalformedURLException {
+
+        path = normalize(path);
+        if (path == null)
+            return (null);
+
         DirContext resources = context.getResources();
         if (resources != null) {
             String fullPath = context.getName() + path;
@@ -687,6 +693,10 @@ public class ApplicationContext
      * @param path The path to the desired resource.
      */
     public InputStream getResourceAsStream(String path) {
+
+        path = normalize(path);
+        if (path == null)
+            return (null);
 
         DirContext resources = context.getResources();
         if (resources != null) {
