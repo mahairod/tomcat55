@@ -552,6 +552,7 @@ public class BodyContentImpl extends BodyContent {
      */
     void setWriter(Writer writer) {
 	this.writer = writer;
+        closed = false;
 	if (writer != null) {
 	    // According to the spec, the JspWriter returned by 
 	    // JspContext.pushBody(java.io.Writer writer) must behave as
