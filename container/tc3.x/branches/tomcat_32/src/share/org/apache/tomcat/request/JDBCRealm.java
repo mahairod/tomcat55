@@ -504,11 +504,11 @@ public class JDBCRealm extends BaseInterceptor {
     }
 
     private boolean checkConnection(){
+        if (started) log(sm.getString("jdbcRealm.checkConnectionDBClosed"));
+        else log(sm.getString("jdbcRealm.starting"));
         try {
             if( (dbConnection == null) || dbConnection.isClosed() ) {
                 Class.forName(driverName);
-                if (started) log(sm.getString("jdbcRealm.checkConnectionDBClosed"));
-                else log(sm.getString("jdbcRealm.starting"));
                 if ((connectionName == null || connectionName.equals("")) ||
                         (connectionPassword == null || connectionPassword.equals(""))) {
                         dbConnection = DriverManager.getConnection(connectionURL);
