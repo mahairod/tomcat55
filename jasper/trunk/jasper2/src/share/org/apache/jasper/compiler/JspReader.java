@@ -393,14 +393,45 @@ public class JspReader {
      *         otherwise.
      */
     public Mark skipUntil(String limit) throws JasperException {
+        Mark ret = null;
+        int limlen = limit.length();
+        int ch;
+
+    skip:
+        for (ret = mark(), ch = nextChar() ; ch != -1 ;
+                 ret = mark(), ch = nextChar()) {
+            if (ch == limit.charAt(0)) {
+                for (int i = 1 ; i < limlen ; i++) {
+                    if (peekChar() == limit.charAt(i))
+                        nextChar();
+                    else
+                        continue skip;
+                }
+                return ret;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Skip until the given string is matched in the stream, but ignoring
+     * chars initially escaped by a '\'.
+     * When returned, the context is positioned past the end of the match.
+     * @param s The String to match.
+     * @return A non-null <code>Mark</code> instance (positioned immediately
+     *         before the search string) if found, <strong>null</strong>
+     *         otherwise.
+     */
+    public Mark skipUntilIgnoreEsc(String limit) throws JasperException {
 	Mark ret = null;
 	int limlen = limit.length();
 	int ch;
+	int prev = 'x';	// Doesn't matter
 	
     skip:
 	for (ret = mark(), ch = nextChar() ; ch != -1 ;
-	         ret = mark(), ch = nextChar()) {	    
-	    if (ch == limit.charAt(0)) {
+	         ret = mark(), prev = ch, ch = nextChar()) {	    
+	    if (ch == limit.charAt(0) && prev != '\\') {
 		for (int i = 1 ; i < limlen ; i++) {
 		    if (peekChar() == limit.charAt(i))
 			nextChar();
