@@ -231,12 +231,6 @@ class JspDocumentParser extends DefaultHandler
 	Mark start = new Mark(path, locator.getLineNumber(),
 			      locator.getColumnNumber());
 
-	// XXX - As of JSP 2.0, xmlns: can appear in any node (not just
-	// <jsp:root>).  The spec still needs clarification here.
-	// What we implement is that it can appear in any node and
-	// is valid from that point forward.  Redefinitions cause an
-	// error.  This isn't quite consistent with how xmlns: normally
-	// works.
 	Attributes taglibAttrs = null;
 	Attributes nonTaglibAttrs = null;
 	if (attrs != null) {
