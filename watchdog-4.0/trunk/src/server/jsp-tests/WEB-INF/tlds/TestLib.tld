@@ -17,7 +17,6 @@
 	A simple tab library for JSP tests
   </description>
 
-  <!-- general validator tag -->
   <tag>
     <name>count</name>
     <tag-class>tags.Count</tag-class>
