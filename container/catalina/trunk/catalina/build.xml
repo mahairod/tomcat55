@@ -348,13 +348,13 @@
     </condition>
     <property name="compile.ssi" value="true"/>
     <condition property="compile.tyrex">
-      <and>
-        <equals arg1="${jta.present}" arg2="true" />
-        <or>
-           <equals arg1="${full.dist}" arg2="on" />
-           <equals arg1="${tyrex.present}" arg2="true" />
-        </or>
-      </and>
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <and>
+          <equals arg1="${jta.present}" arg2="true" />
+          <equals arg1="${tyrex.present}" arg2="true" />
+        </and>
+      </or>
     </condition>
 
 
