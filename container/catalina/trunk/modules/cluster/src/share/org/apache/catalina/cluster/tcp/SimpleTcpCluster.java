@@ -391,6 +391,7 @@ public class SimpleTcpCluster
         manager.setExpireSessionsOnShutdown(expireSessionsOnShutdown);
         manager.setPrintToScreen(printToScreen);
         manager.setUseDirtyFlag(useDirtyFlag);
+        manager.setDebug(debug);
         managers.put(name, manager);
         return manager;
     }
