@@ -487,6 +487,8 @@ static int ajpv12_handler(jserv_config *cfg, jserv_request *req,
 	 * Need to re-escape it for this, since the entire URI was
 	 * un-escaped before we determined where the PATH_INFO began.
 	 */
+	/* XXX In 2.2 we need to add "contextPath" or zone to the path_info !!!!!
+	 */
 	request_rec *pa_req;
 
 	pa_req = ap_sub_req_lookup_uri(ap_escape_uri(r->pool, r->path_info), r);
