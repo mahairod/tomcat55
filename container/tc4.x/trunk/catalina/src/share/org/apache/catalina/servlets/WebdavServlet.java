@@ -1498,21 +1498,41 @@ public class WebdavServlet
 
         String destinationPath = req.getHeader("Destination");
 
-        if (destinationPath.startsWith("http://")) {
-            destinationPath = destinationPath.substring("http://".length());
+        if (destinationPath == null) {
+            resp.sendError(WebdavStatus.SC_BAD_REQUEST);
+            return false;
         }
 
-        String hostName = req.getServerName();
-        if ((hostName != null) && (destinationPath.startsWith(hostName))) {
-            destinationPath = destinationPath.substring(hostName.length());
-        }
-
-        if (destinationPath.startsWith(":")) {
-            int firstSeparator = destinationPath.indexOf('/');
+        int protocolIndex = destinationPath.indexOf("://");
+        if (protocolIndex >= 0) {
+            // if the Destination URL contains the protocol, we can safely
+            // trim everything upto the first "/" character after "://"
+            int firstSeparator =
+                destinationPath.indexOf("/", protocolIndex + 4);
             if (firstSeparator < 0) {
                 destinationPath = "/";
             } else {
                 destinationPath = destinationPath.substring(firstSeparator);
+            }
+        } else {
+            String hostName = req.getServerName();
+            if ((hostName != null) && (destinationPath.startsWith(hostName))) {
+                destinationPath = destinationPath.substring(hostName.length());
+            }
+
+            int portIndex = destinationPath.indexOf(":");
+            if (portIndex >= 0) {
+                destinationPath = destinationPath.substring(portIndex);
+            }
+
+            if (destinationPath.startsWith(":")) {
+                int firstSeparator = destinationPath.indexOf("/");
+                if (firstSeparator < 0) {
+                    destinationPath = "/";
+                } else {
+                    destinationPath = 
+                        destinationPath.substring(firstSeparator);
+                }
             }
         }
 
