@@ -663,6 +663,11 @@ public abstract class Node {
 	    this.name = name;
 	    this.prefix = prefix;
 	    this.shortName = shortName;
+            jspAttrs = new JspAttribute[attrs.getLength()];
+            for (int i = 0; i < attrs.getLength(); i++) {
+                jspAttrs[i] = new JspAttribute
+                    (attrs.getLocalName(i), attrs.getValue(i), false);
+            }
 	}
 
 	public void accept(Visitor v) throws JasperException {
