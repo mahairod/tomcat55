@@ -398,9 +398,9 @@ public class HttpRequestBase
      * set the type to <code>null</code>.  Typical values are "BASIC",
      * "DIGEST", or "SSL".
      *
-     * @param type The authentication type used
+     * @param authType The authentication type used
      */
-    public void setAuthType(String type) {
+    public void setAuthType(String authType) {
 
 	this.authType = authType;
 

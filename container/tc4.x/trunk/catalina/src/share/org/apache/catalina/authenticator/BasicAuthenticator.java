@@ -144,8 +144,11 @@ public final class BasicAuthenticator
 	// Have we already authenticated someone?
 	Principal principal =
 	    ((HttpServletRequest) request.getRequest()).getUserPrincipal();
-	if (principal != null)
+	if (principal != null) {
+            //            if (debug >= 1)
+            //                log("Already authenticated '" + principal.getName() + "'");
 	    return (true);
+        }
 
 	// Have we got a cached authenticated Principal?
 	Session session = null;
@@ -154,6 +157,9 @@ public final class BasicAuthenticator
 	if (session != null) {
 	    principal = session.getPrincipal();
 	    if (principal != null) {
+                //                if (debug >= 1)
+                //                    log("Cached authentication for '" + principal.getName()
+                //                        + "'");
 	        request.setAuthType(Constants.BASIC_METHOD);
 		request.setUserPrincipal(principal);
 		return (true);
@@ -169,6 +175,8 @@ public final class BasicAuthenticator
 	if (authorization != null) {
 	    principal = findPrincipal(authorization, context.getRealm());
 	    if (principal != null) {
+                //                if (debug >= 1)
+                //                    log("Authenticated '" + principal.getName() + "'");
 	        request.setAuthType(Constants.BASIC_METHOD);
 		request.setUserPrincipal(principal);
 		if (cache && (session != null))
@@ -182,6 +190,8 @@ public final class BasicAuthenticator
 	String realmName = config.getRealmName();
 	if (realmName == null)
 	    realmName = hreq.getServerName() + ":" + hreq.getServerPort();
+    //        if (debug >= 1)
+    //            log("Challenging for realm '" + realmName + "'");
 	hres.setHeader("WWW-Authenticate", 
                        "Basic realm=\"" + realmName + "\"");
         hres.setContentLength(0);

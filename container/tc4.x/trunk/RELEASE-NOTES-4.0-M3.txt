@@ -81,6 +81,12 @@ public void resetBuffer().  As a side effect of this change, the implementation
 of RequestDispatcher.forward() now correct resets the buffer (but not the
 headers or cookies) before performing the forwarding.
 
+Jasper:  Per JSP 1.2 requirements, Jasper now supports the new capability to
+define a custom tag that iterates without having to create a nested
+BodyContent object.  This spec change supports improved performance for the
+(common) case where the nested content of a custom tag is simply rendered to
+the response anyway, with no need for double buffering.
+
 
 =========
 BUG FIXES:
@@ -144,6 +150,13 @@ Catalina:  Fix a nasty security bug that would display the source of a JSP
 page (or the raw HTML of a static resource) if you appended a "/" or "\"
 character after the name of a valid resource.  Now, these requests return
 NOT FOUND (404).
+
+Catalina:  Make the footer of directory listings produced by the default
+file-serving servlet reflect the same version information that is returned
+by ServletContext.getServerInfo().
+
+Catalina:  Correctly record the authentication method to be returned by
+HttpServletRequest.getAuthType().
 
 
 ==============================
