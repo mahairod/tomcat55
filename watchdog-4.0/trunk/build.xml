@@ -103,10 +103,10 @@
 
     <!-- Library files -->
     <copy    todir="${watchdog.build}/lib">
-      <fileset dir="${ant.home}/lib" includes="ant.jar"/>
-      <fileset dir="${ant.home}/lib" includes="crimson.jar"/>
-      <fileset dir="${ant.home}/lib" includes="jaxp.jar"/>
-      <fileset dir="${ant.home}/lib" includes="parser.jar"/>
+      <fileset dir="${ant.home}/lib">
+        <include name="ant.jar"/>
+        <include name="ant-launcher.jar" />
+      </fileset>
     </copy>
     <copy   tofile="${watchdog.build}/lib/servlet.jar"
               file="${servlet23.jar}" />

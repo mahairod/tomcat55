@@ -23,30 +23,17 @@ distribution, you must do the following:
 
 (1) Download and Install the Ant Binary Distribution
 
-NOTE:  These instructions assume that you are using the Ant 1.4 or above. 
+NOTE:  These instructions assume that you are using the Ant 1.6 or above. 
 
-* Download a binary distribution of Ant 1.4 from:
+* Download a binary distribution of Ant 1.6 from:
 
-    http://jakarta.apache.org/builds/jakarta-ant/release/v1.4/bin/
-
-  On a Windows platform, you will need:
-    jakarta-ant-1.4-bin.zip
-    jakarta-ant-1.4-optional.jar
-
-  On a Unix platform, you will need:
-    jakarta-ant-1.4-bin.tar.gz
-    jakarta-ant-1.4-optional.jar
+    http://ant.apache.org
 
 * Unpack the binary distribution into a convenient location so that the
   Ant release resides in its own directory (conventionally named
-  "jakarta-ant-1.4").  For the purposes of the remainder of this document,
+  "apache-ant-1.6").  For the purposes of the remainder of this document,
   the symbolic name "${ant.home}" is used to refer to the full pathname of
   the release directory.
-
-* Copy the file "jakarta-ant-1.4-optional.jar", downloaded above, into
-  the directory "${ant.home}/lib".  This makes available several Ant
-  extension commands that are commonly required when building Jakarta
-  based projects.
 
 * Modify the PATH environment variable to include directory
   "${ant.home}/bin" in its list.  This makes the "ant" command line script
