@@ -187,10 +187,6 @@ context and the <code>&lt;/Host&gt;</code> tag closing the localhost definition.
 &lt;Context path="/DBTest" docBase="DBTest"
         debug="5" reloadable="true" crossContext="true"&gt;
 
-  &lt;Logger className="org.apache.catalina.logger.FileLogger"
-             prefix="localhost_DBTest_log." suffix=".txt"
-             timestamp="true"/&gt;
-
     &lt;!-- maxActive: Maximum number of dB connections in pool. Make sure you
          configure your mysqld max_connections large enough to handle
          all of your db connections. Set to 0 for no limit.
