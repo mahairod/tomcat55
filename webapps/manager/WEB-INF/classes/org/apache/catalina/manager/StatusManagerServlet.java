@@ -259,7 +259,7 @@ public class StatusManagerServlet
             && (request.getPathInfo().equals("/all"))) {
             completeStatus = true;
         }
-		// use StatusTransformer to output status
+        // use StatusTransformer to output status
         StatusTransformer.writeHeader(writer,mode);
 
         // Body Header Section
@@ -270,7 +270,7 @@ public class StatusManagerServlet
         } else {
             args[1] = sm.getString("statusServlet.title");
         }
-		// use StatusTransformer to output status
+        // use StatusTransformer to output status
         StatusTransformer.writeBody(writer,args,mode);
 
         // Manager Section
@@ -295,11 +295,11 @@ public class StatusManagerServlet
                 (request.getContextPath() + "/status/all");
             args[8] = sm.getString("statusServlet.complete");
         }
-		// use StatusTransformer to output status
+        // use StatusTransformer to output status
         StatusTransformer.writeManager(writer,args,mode);
 
         // Server Header Section
-		args = new Object[7];
+        args = new Object[7];
         args[0] = sm.getString("htmlManagerServlet.serverTitle");
         args[1] = sm.getString("htmlManagerServlet.serverVersion");
         args[2] = sm.getString("htmlManagerServlet.serverJVMVersion");
@@ -307,7 +307,7 @@ public class StatusManagerServlet
         args[4] = sm.getString("htmlManagerServlet.serverOSName");
         args[5] = sm.getString("htmlManagerServlet.serverOSVersion");
         args[6] = sm.getString("htmlManagerServlet.serverOSArch");
-		// use StatusTransformer to output status
+        // use StatusTransformer to output status
         StatusTransformer.writePageHeading(writer,args,mode);
 
         // Server Row Section
@@ -318,38 +318,40 @@ public class StatusManagerServlet
         args[3] = System.getProperty("os.name");
         args[4] = System.getProperty("os.version");
         args[5] = System.getProperty("os.arch");
-		// use StatusTransformer to output status
-        StatusTransformer.writeServerInfo(writer,args,mode);
+        // use StatusTransformer to output status
+        StatusTransformer.writeServerInfo(writer, args, mode);
 
         try {
 
             // Display virtual machine statistics
-            // writeVMState(writer);
             StatusTransformer.writeVMState(writer,mode);
 
             Enumeration enum = threadPools.elements();
             while (enum.hasMoreElements()) {
                 ObjectName objectName = (ObjectName) enum.nextElement();
                 String name = objectName.getKeyProperty("name");
-				// use StatusTransformer to output status
-                StatusTransformer.writeConnectorState(writer,objectName,
-                		name,mBeanServer,globalRequestProcessors,
-                		requestProcessors,mode);
+                // use StatusTransformer to output status
+                StatusTransformer.writeConnectorState
+                    (writer, objectName,
+                     name, mBeanServer, globalRequestProcessors,
+                     requestProcessors, mode);
             }
 
             if ((request.getPathInfo() != null) 
                 && (request.getPathInfo().equals("/all"))) {
-                // Warning: slow
-				// use StatusTransformer to output status
-                StatusTransformer.writeDetailedState(writer,mBeanServer,mode);
+                // Note: Retrieving the full status is much slower
+                // use StatusTransformer to output status
+                StatusTransformer.writeDetailedState
+                    (writer, mBeanServer, mode);
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new ServletException(e);
         }
 
-		// use StatusTransformer to output status
-		StatusTransformer.writeFooter(writer,mode);
+        // use StatusTransformer to output status
+        StatusTransformer.writeFooter(writer, mode);
+
     }
 
     // ------------------------------------------- NotificationListener Methods
