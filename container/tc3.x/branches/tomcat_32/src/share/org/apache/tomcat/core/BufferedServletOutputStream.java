@@ -309,6 +309,7 @@ public class BufferedServletOutputStream extends ServletOutputStream {
 	bufferCount = 0;
 	totalCount = 0;
 	closed = false;
+    usingWriter = false;
     }
 
 }
