@@ -68,6 +68,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Hashtable;
 
 import javax.management.Attribute;
 import javax.management.InstanceAlreadyExistsException;
@@ -102,6 +103,7 @@ import org.apache.catalina.Service;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Valve;
+import org.apache.catalina.valves.ValveBase;
 import org.apache.catalina.core.StandardService;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
@@ -870,7 +872,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    static ObjectName createObjectName(String domain,
+    public static ObjectName createObjectName(String domain,
                                               ContextEnvironment environment)
         throws MalformedObjectNameException {
 
@@ -924,7 +926,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    static ObjectName createObjectName(String domain,
+    public static ObjectName createObjectName(String domain,
                                               ContextResource resource)
         throws MalformedObjectNameException {
 
@@ -983,7 +985,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    static ObjectName createObjectName(String domain,
+    public static ObjectName createObjectName(String domain,
                                               ContextResourceLink resourceLink)
         throws MalformedObjectNameException {
 
@@ -1522,8 +1524,13 @@ public class MBeanUtils {
      * @exception MalformedObjectNameException if a name cannot be created
      */
     static ObjectName createObjectName(String domain,
-                                              Valve valve)
+                                       Valve valve)
         throws MalformedObjectNameException {
+        if( valve instanceof ValveBase ) {
+            ObjectName name=((ValveBase)valve).getObjectName();
+            if( name != null )
+                return name;
+        }
 
         ObjectName name = null;
         Container container = null;
@@ -1538,15 +1545,15 @@ public class MBeanUtils {
         
         if (container instanceof Engine) {
             Service service = ((Engine)container).getService();
+            String local=",service=" + service.getName();
             name = new ObjectName(domain + ":type=Valve,sequence=" +
-                                  valve.hashCode() + ",service=" +
-                                  service.getName());
+                                  getSeq(local) + local );
         } else if (container instanceof Host) {
             Service service = ((Engine)container.getParent()).getService();
+            String local=",host=" +container.getName() + ",service=" +
+                    service.getName();
             name = new ObjectName(domain + ":type=Valve,sequence=" +
-                                  valve.hashCode() + ",host=" +
-                                  container.getName() + ",service=" +
-                                  service.getName() );
+                                  getSeq(local) + local);
         } else if (container instanceof Context) {
             String path = ((Context)container).getPath();
             if (path.length() < 1) {
@@ -1554,15 +1561,27 @@ public class MBeanUtils {
             }
             Host host = (Host) container.getParent();
             Service service = ((Engine) host.getParent()).getService();
+            String local=",path=" + path + ",host=" +
+                    host.getName() + ",service=" + service.getName();
             name = new ObjectName(domain + ":type=Valve,sequence=" +
-                                  valve.hashCode() + ",path=" +
-                                  path + ",host=" +
-                                  host.getName() + ",service=" +
-                                  service.getName());
+                                  getSeq(local) + local );
         }
 
         return (name);
 
+    }
+
+    static Hashtable seq=new Hashtable();
+    static int getSeq( String key ) {
+        int i[]=(int [])seq.get( key );
+        if (i == null ) {
+            i=new int[1];
+            i[0]=0;
+            seq.put( key, i);
+        } else {
+            i[0]++;
+        }
+        return i[0];
     }
 
     /**
@@ -1572,14 +1591,18 @@ public class MBeanUtils {
     public synchronized static Registry createRegistry() {
 
         if (registry == null) {
+            registry = Registry.getRegistry();
+            // If that failed - try the xml source
             try {
-                URL url = ServerLifecycleListener.class.getResource
+		 URL url = ServerLifecycleListener.class.getResource
                     ("/org/apache/catalina/mbeans/mbeans-descriptors.xml");
+
                 InputStream stream = url.openStream();
                 //                Registry.setDebug(1);
                 Registry.loadRegistry(stream);
                 stream.close();
                 registry = Registry.getRegistry();
+
             } catch (Throwable t) {
                 t.printStackTrace(System.out);
                 System.exit(1);
