@@ -67,7 +67,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
-import java.net.JarURLConnection;
+import java.net.URLConnection;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -492,7 +492,7 @@ public final class ContextConfig
         url = ContextConfig.class.getResource(Constants.WebSchemaResourcePath_24);
         SchemaResolver webEntityResolver = new SchemaResolver(url.toString(),
                                                               webDigester);
-        if( xmlValidation ) {
+        if (validation) {
             webDigester.setSchema(url.toString());
         }
 
