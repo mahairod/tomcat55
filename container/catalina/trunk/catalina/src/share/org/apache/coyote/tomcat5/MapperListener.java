@@ -272,7 +272,7 @@ public class MapperListener
         throws Exception
     {
         ObjectName engineName = new ObjectName
-            (domain + ":type=Engine,name=" + engine);
+            (domain + ":type=Engine");
         if ( ! mBeanServer.isRegistered(engineName)) return;
         String defaultHost = 
             (String) mBeanServer.getAttribute(engineName, "defaultHost");
