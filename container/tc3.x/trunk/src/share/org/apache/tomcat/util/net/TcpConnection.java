@@ -134,8 +134,9 @@ public class TcpConnection  { // implements Endpoint {
 	    // was added just to deal with such issues.
 	    
 	    // skip any unread (bogus) bytes
-	    if (available > 1) {
+	    while (available > 0) {
 		is.skip (available);
+		available = is.available();
 	    }
 	}catch(NullPointerException npe) {
 	    // do nothing - we are just cleaning up, this is
