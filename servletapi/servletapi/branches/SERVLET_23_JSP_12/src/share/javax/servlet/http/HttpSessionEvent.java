@@ -71,6 +71,8 @@ public class HttpSessionEvent extends java.util.EventObject {
 		super(source);
 }
 	/** Return the session that changed.*/
-    public HttpSession getSession () { return null;}
+    public HttpSession getSession () { 
+	return (HttpSession) super.getSource();
+    }
 }
 
