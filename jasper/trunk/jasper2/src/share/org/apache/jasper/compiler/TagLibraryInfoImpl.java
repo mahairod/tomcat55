@@ -367,10 +367,10 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
     }
 
     private TagInfo createTagInfo(TreeNode elem) throws JasperException {
-        String name = null;
-	String tagclass = null;
-	String teiclass = null;
-        String bodycontent = "JSP"; // Default body content is JSP
+        String tagName = null;
+	String tagClassName = null;
+	String teiClassName = null;
+        String bodycontent = null;
 	String info = null;
 	String displayName = null;
 	String smallIcon = null;
@@ -385,13 +385,13 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
             String tname = element.getName();
 
             if ("name".equals(tname)) {
-                name = element.getBody();
+                tagName = element.getBody();
             } else if ("tagclass".equals(tname) ||
                      "tag-class".equals(tname)) {
-                tagclass = element.getBody();
+                tagClassName = element.getBody();
             } else if ("teiclass".equals(tname) ||
                      "tei-class".equals(tname)) {
-                teiclass = element.getBody();
+                teiClassName = element.getBody();
             } else if ("bodycontent".equals(tname) ||
                      "body-content".equals(tname)) {
                 bodycontent = element.getBody();
@@ -422,6 +422,32 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	    }
 	}
 
+	// Determine appropriate default value for body-content
+	if (bodycontent == null) {
+            try {
+                Class tagClass = ctxt.getClassLoader().loadClass(tagClassName);
+		if (SimpleTag.class.isAssignableFrom(tagClass)) {
+		    bodycontent = TagInfo.BODY_CONTENT_SCRIPTLESS;
+		} else {
+		    bodycontent = TagInfo.BODY_CONTENT_JSP;
+		}
+	    } catch (Exception e) {
+                err.jspError("jsp.error.loadclass.taghandler", tagClassName,
+			     tagName);
+            }
+	}
+
+        TagExtraInfo tei = null;
+        if (teiClassName != null && !teiClassName.equals("")) {
+            try {
+                Class teiClass = ctxt.getClassLoader().loadClass(teiClassName);
+                tei = (TagExtraInfo) teiClass.newInstance();
+	    } catch (Exception e) {
+                err.jspError("jsp.error.teiclass.instantiation", teiClassName,
+			     e);
+            }
+	}
+
 	TagAttributeInfo[] tagAttributeInfo
 	    = new TagAttributeInfo[attributeVector.size()];
 	attributeVector.copyInto(tagAttributeInfo);
@@ -430,24 +456,17 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	    = new TagVariableInfo[variableVector.size()];
 	variableVector.copyInto(tagVariableInfos);
 
-        TagExtraInfo tei = null;
-        if (teiclass != null && !teiclass.equals("")) {
-            try {
-                Class teiClass = ctxt.getClassLoader().loadClass(teiclass);
-                tei = (TagExtraInfo) teiClass.newInstance();
-	    } catch (Exception e) {
-                err.jspError("jsp.error.teiclass.instantiation", teiclass, e);
-            }
-	}
-
-        TagInfo taginfo = new TagInfo(name, tagclass, bodycontent,
-                                      info, this, 
+        TagInfo taginfo = new TagInfo(tagName,
+                                      tagClassName,
+                                      bodycontent,
+                                      info,
+                                      this, 
                                       tei,
                                       tagAttributeInfo,
-				      displayName,
-				      smallIcon,
-				      largeIcon,
-				      tagVariableInfos,
+                                      displayName,
+                                      smallIcon,
+                                      largeIcon,
+                                      tagVariableInfos,
                                       dynamicAttributes);
         return taginfo;
     }
