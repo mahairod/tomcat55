@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="performance.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <title>Performance and Monitoring</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+<p>
+  This is about Tomcat performance.
+  <ul>
+    <li>[thread]
+        <a href="http://marc.theaimsgroup.com/?t=104455383100002&amp;r=1&amp;w=2">
+            Tomcat Performance Concerns
+        </a>
+    </li>
+    <li>[thread]
+        <a href="http://marc.theaimsgroup.com/?t=103598885300001&amp;r=1&amp;w=2">
+            How do I increase performance on Tomcat?
+        </a>
+    </li>
+  </ul>
+
+  Other (non-exhaustive) notes:
+  <ul>
+   <li>
+    Stress test your app. You can do this via
+        <a href="http://jakarta.apache.org/jmeter/">JMeter</a>,
+        <a href="http://www.joedog.org/siege/">siege</a>,
+        <a href="http://httpd.apache.org/test/flood/">flood</a>,
+        and other tools. Google is your friend.
+    </li><li>
+      Tweak you unix box! Look at ulimit and kernel parameters.
+    </li><li>
+      Bad design will hurt performance.
+    </li><li>
+      Look at <a href="http://java.quest.com/jprobe/jprobe.shtml">JProbe</a>,
+      or <a href="http://www.borland.com/optimizeit/">OptimizeIt</a>, or other
+      profiling tools. Lots of people recommend these tools.
+      This is not an endorsement for them, I just
+      notice other people like them.
+    </li>
+  </ul>
+
+</p>
+</section>
+<section name="Questions">
+Coming
+</section>
+<section name="Answers">
+Coming
+</section>
+
+
+</body>
+</document>

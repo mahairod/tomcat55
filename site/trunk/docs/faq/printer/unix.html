@@ -1,0 +1,91 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Tomcat FAQ - Unix / Linux Questions</title><meta value="Tim Funk" name="author"><meta value="funkman@apache.org" name="email"><style>
+      dt { font-size : larger;  font-weight : bold }
+      dd {padding-bottom : 10px;}
+    </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
+      Tomcat FAQ
+    " align="right" src="../../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Unix / Linux Questions</h2></td><td nowrap="true" valign="top" align="right"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
+  <p>
+    I wish there was more to say right here or to link to something.
+    On to the questions...
+  </p>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
+  <ul>
+
+     <li>
+       <a href="#ps">
+         When I run ps (on linux), why do I see my java process a
+         bazillion times!
+        </a>
+      </li>
+
+     <li>
+       <a href="#x">
+         How do I run without an X server and still get graphics?
+       </a>
+     </li>
+
+     <li><a href="#logout">
+         Tomcat dies after I log out!
+      </a>
+      </li>
+
+  </ul>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
+
+
+  <b style="font-size: larger">
+    <a name="ps">
+      When I run ps (on linux), why do I see my java process a
+      bazillion times!
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    Linux implemented threads as processes. Due to other gory details that
+    is beyond the scope of this FAQ - the ps command doesn't work correctly
+    with respect to threads. You can get more gory details
+    <a href="http://www.onlamp.com/pub/a/onlamp/2002/11/07/linux_threads.html">
+        here
+    </a> and
+    <a href="http://pauillac.inria.fr/~xleroy/linuxthreads/faq.html#D">
+        here
+    </a>.
+  </div><br>
+
+
+  <b style="font-size: larger">
+    <a name="x">
+          How do I run without an X server and still get graphics?
+  </a>
+  </b>
+  <div style="padding-left : 20px;">
+    You either need to run headless or run an alternate X-server. Some more
+    information can be found
+    <a href="http://marc.theaimsgroup.com/?t=104803047600003&r=1&w=2">
+        here
+    </a>,
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=102335321103262&w=2">
+        here
+    </a>,
+    or
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=101614645312259&w=2">
+        here
+    </a>.
+  </div><br>
+
+  <b style="font-size: larger">
+    <a name="logout">
+     Tomcat dies after I log out!</a>
+  </b>
+  <div style="padding-left : 20px;">
+    This is common complaint in Solaris. Make sure you use nohup and see
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=104809785114238&w=2">
+      this thread
+    </a>
+  </div><br>
+
+
+
+
+</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
+        Copyright &copy; 1999-2003, Apache Software Foundation
+        </em></font></div></td></tr></table></body></html>

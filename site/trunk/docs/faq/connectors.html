@@ -1,0 +1,226 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Tomcat FAQ - Connectors</title><meta value="Tim Funk" name="author"><meta value="funkman@apache.org" name="email"><style>
+      dt { font-size : larger;  font-weight : bold }
+      dd {padding-bottom : 10px;}
+    </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
+      Tomcat FAQ
+    " align="right" src="../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--LEFT SIDE NAVIGATION--><td nowrap="true" valign="top" width="20%"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="howto.html">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="links.html">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Connectors</h2></td><td nowrap="true" valign="top" align="right"><small><a href="printer/connectors.html"><img alt="Printer Friendly Version" border="0" src="../images/printer.gif"><br>print-friendly<br>version
+                    </a></small></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
+  <p>
+    Many people have also documented getting the connectors to work in their
+    own enivornment.
+    Each person had their own situation to deal with. Hopefully your situation
+    matches one of theirs. Otherwise, we also do provide the
+    reference documentation.
+
+<ul>
+  <li>[link]
+    <a href="http://www.johnturner.com/howto/apache-tomcat-howto.html">
+        John Turner's HOWTO
+    </a>
+  </li>
+  <li>[link]
+    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/jk2/index.html">
+        JK docs
+    </a>
+  </li>
+
+  <li>[link]
+    <a href="http://raibledesigns.com/tomcat/index.html">
+      Apache 2.x + Tomcat 4.x + Load Balancing (or Private JVMs)
+    </a>
+  </li>
+
+  <li>[link]
+    <a href="http://www.onjava.com/pub/a/onjava/2002/11/20/tomcat.html">
+        Configuring Tomcat and Apache With JK 1.2
+    </a>
+  </li>
+
+  <li>[link]
+    <a href="http://daydream.stanford.edu/tomcat/install_web_services.html">
+      Installing Web Services with Tomcat/Apache/Struts/Postgresql/Openssl
+    </a>
+  </li>
+
+  <li>[link]
+    <a href="http://www.thinlizard.com/lizard/modjk2.html">
+       Building mod_jk2 on FreeBSD 4.7
+    </a>
+  </li>
+
+  <li>[thread]
+    <a href="http://marc.theaimsgroup.com/?t=104040058200004&r=1&w=2">
+      Configuring mod_jk - Again!
+    </a>
+  </li>
+
+  <li>[thread]
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=103763413712975&w=2">
+       [CONFIG] Apache2.0.40 + Tomcat4.1.12 + mod_jk - STILL HAVING PROBLEMS
+    </a>
+  </li>
+
+   <li>[thread]Quickie how-to for building
+      <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=105112006011912&w=2">
+         JK
+      </a>
+      and
+      <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=105103815630094&w=2">
+        JK2
+      </a>
+    </li>
+  </ul>
+
+</p>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+  <ul>
+    <li>
+      <a href="#jk">
+        What is JK?
+      </a>
+    </li>
+    <li>
+      <a href="#vs">
+        Which connector: mod_jserv, JK, JK2, mod_webapp or mod_proxy?
+      </a>
+    </li>
+    <li>
+      <a href="#integrate">
+        Why should  I integrate Apache  with Tomcat? (or not)
+      </a>
+    </li>
+  </ul>
+</p>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
+
+  <b style="font-size: larger">
+    <a name="jk">What is JK?</a>
+  </b>
+  <div style="padding-left : 20px;">
+    JK is a wire protocol. It an optimized version of the HTTP protocol to
+    allow a standalone web server such as Apache talk to Tomcat. Historically,
+    Apache has always been much faster than Tomcat at serving static content.
+    The idea is to let Apache serve the static content when possible, then
+    proxy the request back to Tomcat for Tomcat related content.
+  </div><br>
+
+  <b style="font-size: larger">
+    <a name="vs">
+      Which connector: mod_jserv, JK, JK2, mod_webapp or mod_proxy?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    <ul>
+      <li>
+        Stay away from mod_webapp, aka warp. It is deprecated and unsupported
+        due to lack of developer interest and there are better options such
+        as jk and jk2. It is WILL NOT run on windows.
+      </li>
+      <li>
+        mod_jserv is good but AFAIK is unsupported and will not be supported
+        in Tomcat 5.
+      </li>
+      <li>
+        <b>mod_jk is great and should be used for production. It is getting
+        fixes as needed (which is now rare). </b>
+      </li>
+      <li>
+        jk2 is a refactoring of mod_jk and uses the Apache Portable
+        Runtime(apr). If you are using Apache 2.0,
+        you'll probably want to use jk2. But this may not be production
+        worthy for everyone. (YMMV)
+      </li>
+      <li>mod_proxy. Interesting idea and it
+        doesn't seem to have much problems with heavy loads. If you don't
+        need some of the features of jk, jk2 - this is a very simple
+        alternative.
+      </li>
+    </ul>
+  </div><br>
+
+   <b style="font-size: larger">
+     <a name="integrate">
+        Why should  I integrate Apache  with Tomcat? (or not)
+     </a>
+   </b>
+   <div style="padding-left : 20px;">
+    There are many reasons to integrate Tomcat with Apache. And there are
+    reasons why it
+    should not be done too. Needless to say, everyone will disagree with
+    the opinions here.
+    With the upcoming performance of Tomcat 5, performance reasons
+    become harder to justify. So here are the issues to discuss in
+    intergrating vs not.
+   <br><br>
+
+  <ul>
+    <li>
+      Clustering. By using Apache as a front end you can let Apache act as a
+      front door to your content to multiple Tomcat instances. If one of your
+      Tomcats fails, Apache
+      ignores it and your Sysadmin can sleep through the night. This point
+      could be ignored if you use a hardware loadbalancer and Tomcat's
+      clustering capabilities.
+    </li>
+    <li>
+      Clustering/Security. You can also use Apache as a front door to different
+      Tomcats for
+      different URL namespaces (/app1/, /app2/, /app3/, or virtual hosts).
+      The Tomcats can then be each in a protected area
+      and from a security point of view, you only need to worry about the
+      Apache server. Essentially, Apache becomes a smart proxy server.
+    </li>
+    <li>
+       Security. This topic can sway one either way. Java has the security
+       manager while Apache has a larger mindshare and more tricks with
+       respect to security. I won't go into this
+       in more detail, but let Google be your friend. Depending on your scenario,
+       one might be better than the other. But also keep in mind, if you run
+       Apache with
+       Tomcat - you have two systems to defend, not one.
+    </li>
+    <li>
+       Add-ons. Adding on CGI, perl, PHP is very natural to Apache. Its
+       slower and more
+       of a kludge for Tomcat. Apache also has hundreds of modules that can
+       be plugged in
+       at will. Tomcat can have this ability, but the code hasn't been
+       written yet.
+    </li>
+    <li>
+       Decorators! With Apache in front of Tomcat, you can perform any number
+       of decorators that
+       Tomcat doesn't support or doesn't have the immediate code support.
+       For example,
+       mod_headers, mod_rewrite, and mod_alias could be written for Tomcat,
+       but why reinvent the wheel when Apache has done it so well?
+    </li>
+    <li>
+      Speed. Apache is faster at serving static content than Tomcat. But unless
+      you have a high traffic site, this point is useless.
+    </li>
+    <li>
+       Socket handling/system stability. Apache has better socket handling
+       with respect
+       to error conditions than Tomcat. The main reason is Tomcat must perform
+       all its socket handling via the JVM which needs to be cross patform.
+       The problem
+       is socket optimization is a platform specific ordeal. Most of the
+       time the java
+       code is fine, but when you are also bombarded with dropped connections,
+       invalid
+       packets, invalid requests from invalid IP's, Apache does a better job
+       at dropping these error conditions than JVM based program.
+    </li>
+    <li>
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=104874913017036&w=2">Here </a>
+    is a great response from Craig R. McClanahan. If you have free time,
+    read emails by him in any of the list archives. You'll learn a lot.
+    </li>
+    </ul>
+  </div><br>
+
+</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
+        Copyright &copy; 1999-2003, Apache Software Foundation
+        </em></font></div></td></tr></table></body></html>

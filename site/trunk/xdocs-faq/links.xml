@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="links.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <title>Links to other tomcat resources</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+<p>
+Other people have documented their experience with tomcat. With luck, you
+predicament will mirror one of these links ...
+</p>
+</section>
+
+
+<section name="Connectors">
+<ul>
+
+  <li>
+    <a href="http://tud.at/programm/apache-ssl-win32-howto.php3/">
+      The Apache + SSL on Win32 HOWTO
+    </a>
+  </li>
+
+  <li>
+    <a href="http://www.onjava.com/pub/a/onjava/2002/12/18/tomcat.html">
+      Configuring Tomcat with IIS Web Server
+    </a>
+  </li>
+
+  <li>
+    <a href="http://www.mattkelli.com/tech/tomcat/ntservice.htm">
+      Setting up TomCat 4.1.12 to run as an NT Service
+    </a>
+  </li>
+
+  <li>
+    <a href="http://www.gregoire.org/howto/Apache2_Jk2_TC4.1.x_JSDK1.4.x.html">
+      How To for Apache2, Tomcat4.1.x, mod_jk2, JSDK1.4 on Win2k
+    </a>
+  </li>
+
+  <li>
+    <a href="http://www.johnturner.com/howto/apache-tomcat-howto.html">
+      John Turner's HOWTO
+    </a>
+  </li>
+
+  <li>
+    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/jk2/index.html">
+        JK docs
+    </a>
+  </li>
+
+  <li>
+    <a href="http://raibledesigns.com/tomcat/index.html">
+      Apache 2.x + Tomcat 4.x + Load Balancing (or Private JVMs)
+    </a>
+  </li>
+
+  <li>
+    <a href="http://www.onjava.com/pub/a/onjava/2002/11/20/tomcat.html">
+        Configuring Tomcat and Apache With JK 1.2
+    </a>
+  </li>
+
+  <li>
+    <a href="http://www.thinlizard.com/lizard/modjk2.html">
+       Building mod_jk2 on FreeBSD 4.7
+    </a>
+  </li>
+
+
+
+</ul>
+
+</section>
+
+<section name="Building/Configuring">
+<ul>
+
+  <li>
+    <a href="http://web.bvu.edu/staff/david/tcservcfg/">
+      NT Service Config Utility
+    </a> (See this if you want to set JVM options!)
+  </li>
+
+  <li>
+    <a href="http://www.cymulacrum.net/tomcat/tomcat_toc.html">
+       Apache Tomcat on Linux - Step-by-Step
+    </a>
+  </li>
+
+  <li>
+    <a href="http://daydream.stanford.edu/tomcat/install_web_services.html">
+      Installing Web Services with Tomcat/Apache/Struts/Postgresql/Openssl
+    </a>
+  </li>
+</ul>
+
+
+</section>
+
+
+</body>
+</document>

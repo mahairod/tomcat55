@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="tomcatuser.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <title>About Tomcat User</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+<p>
+    This is about the tomcat user list.
+    <a href="mailto:tomcat-user-subscribe@jakarta.apache.org">Subscribe</a>
+    and
+    <a href="http://jakarta.apache.org/site/mail.html">general information</a>
+    can be found
+    <a href="http://jakarta.apache.org/site/mail2.html">here</a>.
+    It is a high volume list! For those who can't handle that kind of traffic,
+    you can also get it in
+    <a href="tomcat-user-digest-subscribe@jakarta.apache.org">
+        digest form.
+    </a>
+
+    If you post
+    to tomcat-user, use
+    <a href="http://www.rfc-editor.org/rfc/rfc1855.txt">good etiqutte</a>,
+    <a href="http://www.catb.org/~esr/faqs/smart-questions.html">
+        ask good questions,
+    </a>
+    and use
+    <a href="http://nagoya.apache.org/wiki/apachewiki.cgi?MailListUserBestPractices">
+    Best Practices</a>, and also please read the docs, faqs, readme,
+    and search the archives before asking a question.
+</p>
+</section>
+
+
+<section name="Questions">
+  <ul>
+
+     <li>
+       <a href="#why">
+         Why won't people answer my question?
+       </a>
+     </li>
+
+     <li>
+       <a href="#unsubscribe">
+         How do I unsubscribe?
+        </a>
+      </li>
+
+<!--
+     <li>
+       <a href="#connectors">
+         Why isn't there a connector's list?
+        </a>
+      </li>
+
+     <li>
+       <a href="#newsgroup">
+         Why isn't there a newgroup/bridge?
+        </a>
+      </li>
+-->
+
+  </ul>
+</section>
+
+
+<section name="Answers">
+
+    <question>
+      <a name="why">
+               Why won't people answer my question?
+      </a>
+    </question>
+    <answer>
+        It could be one of any of the following answers:
+         <ul>
+            <li>No one knows the answer.</li>
+            <li>Everyone is ignoring you.</li>
+            <li>The person  who knows the answer hasn't gotten around to
+                it yet.</li>
+             <li>The person  who knows the answer hasn't gotten around to
+                it yet. (So please don't post the same question
+                    multiple times)</li>
+          </ul>
+
+         In other words - you get what you pay for. If you phrase
+         you question intelligently and not make your question annoying,
+         your quality of support will
+         probably better than any commercial help support.
+         <br/><br/>
+
+         In particular, some readers on the tomcat-user list have been
+         known to automatically ignore
+         a message which meets any of the following criteria:
+            (You have been warned)
+         <ul>
+            <li> "help" in the subject line
+                (we know you need help by writing in the first place)</li>
+            <li> plz or please in the subject line.
+                We already know you need help.</li>
+            <li> ALL CAPS IN THE SUBJECT LINE. (Sorry for anyone
+                emailing from a mainframe)</li>
+            <li> Do not place !! (more than 2!) in the subject line.
+                 The number of exclamation points has no relation to anyone's
+                 interest in answering the question. In fact - it has a higher
+                 chance at being ignored.
+            </li>
+            <li> Your email has a return receipt. You don't need to know
+                I got the message.</li>
+            <li> Select posters who have consistently displayed no
+                desire to research before posting a question.
+            </li>
+         </ul>
+  </answer>
+
+
+  <question>
+      <a name="unsubscribe">
+         How do I unsubscribe?
+      </a>
+  </question>
+  <answer>
+      <ul>
+        <li>To unsubscribe, e-mail:
+            tomcat-user-unsubscribe@jakarta.apache.org</li>
+        <li>For additional commands, e-mail:
+            tomcat-user-help@jakarta.apache.org</li>
+      </ul>
+      If you are unable to unsubscribe, it could be due to your email system
+      mangling your email address or you have subscribed under an alias.
+      In that case, maybe
+      <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=104190907020995&amp;w=2">
+         this thread
+      </a> will help.
+
+      <br/><br/>
+      If you send an email to the moderator to remove you from the list,
+      be prepared to continue receiving more emails from the lists until
+      the moderator has an opportunity to remove you from the list.
+  </answer>
+
+
+</section>
+
+
+</body>
+</document>

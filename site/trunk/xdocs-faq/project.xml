@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Tomcat FAQ"
+        href="http://jakarta.apache.org/tomcat/">
+
+    <title>Tomcat FAQ</title>
+
+    <logo href="/images/tomcat.gif">
+      Tomcat FAQ
+    </logo>
+
+
+    <body>
+
+    <menu name="Links">
+        <item name="Tomcat Home"              href=".."/>
+        <item name="FAQ Home"                 href="index.html"/>
+    </menu>
+
+    <menu name="Contents">
+        <item name="Bugs"                       href="bugs.html"/>
+        <item name="Class Not Found"            href="classnotfound.html"/>
+        <item name="Connectors"                 href="connectors.html"/>
+        <item name="Database"                   href="database.html"/>
+        <item name="How do I"                   href="howto.html"/>
+        <item name="Linux / Unix"               href="unix.html"/>
+        <item name="Memory"                     href="memory.html"/>
+        <item name="Meta"                       href="meta.html"/>
+        <item name="Miscellaneous"              href="misc.html"/>
+        <item name="Monitoring / Performance"   href="performance.html"/>
+        <item name="Other Resources"            href="links.html"/>
+        <item name="Security"                   href="security.html"/>
+        <item name="Which Version"              href="version.html"/>
+        <item name="Tomcat User List"           href="tomcatuser.html"/>
+        <item name="Windows"                    href="windows.html"/>
+    </menu>
+
+    </body>
+</project>

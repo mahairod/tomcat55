@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="bugs.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <title>Bugs</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+If you think you found a bug,
+<a href="http://jakarta.apache.org/tomcat/bugreport.html">read this page</a>.
+
+</section>
+
+<section name="Questions">
+<p>
+  <ul>
+    <li><a href="#gotone">I have a bug, what do I do?</a></li>
+    <li><a href="#feature">Why does feature ABC work
+        in Servlet Container XYZ but not in Tomcat?</a></li>
+    <li><a href="#ignored">I submitted a bug, why is it ignored?</a></li>
+  </ul>
+</p>
+</section>
+
+
+<section name="Answers">
+
+    <question>
+        <a name="gotone">I have a bug, what do I do?</a>
+    </question>
+    <answer>
+    Unless you have the source code reference in Tomcat which is wrong,
+    it may not be a bug. Email the
+    <a href="tomcatuser.html">user list</a> and confirm its a bug. Also
+    <a href="http://jakarta.apache.org/tomcat/bugreport.html">
+    read this first</a> from the tomcat site about reporting a bug.
+    </answer>
+
+    <question>
+       <a name="feature">Why does feature ABC work in Servlet
+         Container XYZ but not in Tomcat?
+       </a>
+    </question>
+
+    <answer>
+    There could be a good chance that the other servlet container could
+    be implementing the spec wrong.
+    </answer>
+
+    <question>
+      <a name="ignored">
+        I submitted a bug, why is it ignored?
+      </a>
+    </question>
+
+    <answer>
+    Any of the following may affect someone acting on a bug:
+    <ul>
+      <li>
+        Is it a bug?
+      </li>
+      <li>
+        Is your description good?
+      </li>
+      <li>
+        Is your description complete?
+      </li>
+      <li>
+        Can a developer <b>easily</b> reproduce the bug in their own environment?
+      </li>
+      <li>
+        Have you provided a patch? Is against cvs? using the correct file? Using
+        <code>cvs diff -u</code>
+      </li>
+      <li>
+        Is your patch coded well?
+      </li>
+      <li>
+        Is your solution "good"?
+      </li>
+    </ul>
+
+    Some developers are uncomfortable submitting patches to code they are
+    unfamiliar with. The committers are not experts in all areas of tomcat.
+    It may be that the developer who has the ability to adequately review
+    the patch may be too busy or unable to review the bug. Thats the bad news,
+    the good news is Tomcat is Open Source and you can build and use your own
+    release until the fix gets back into the offical release.
+    </answer>
+
+</section>
+
+</body>
+</document>

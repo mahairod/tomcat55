@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="memory.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <title>Memory</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+  <p>
+    This page discusses various memory issues. In a nutshell - if your
+    computer has less than 128MB of ram - you will probably have trouble.
+    Anyhow, also read the following threads for other memory related issues:
+    <ul>
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=104388973000006&amp;r=1&amp;w=2">
+          java.lang.OutOfMemoryError during deploy
+        </a>
+      </li>
+
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=104378347700007&amp;r=1&amp;w=2">
+          Memory requirements
+        </a>
+      </li>
+
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=104333066400004&amp;r=1&amp;w=2">
+          Memory Mgmt Tomcat
+        </a>
+      </li>
+
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=103011379700006&amp;r=1&amp;w=2">
+          Tomcat Out of memory
+        </a>
+      </li>
+
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=104519961700002&amp;r=1&amp;w=2">
+          Tracking memory usage over time
+        </a>
+      </li>
+
+    </ul>
+    Also look at
+    <a href="http://java.quest.com/jprobe/jprobe.shtml">JProbe</a>,
+    or <a href="http://www.borland.com/optimizeit/">OptimizeIt</a>, or other
+    profiling tools. Lots of people recommend these tools.
+    This is not an endorsement for them, I just
+    notice other people like them.
+</p>
+</section>
+<section name="Questions">
+<p>
+  <ul>
+    <li><a href="#adjust"> How do I adjust memory settings?</a></li>
+  </ul>
+</p>
+</section>
+
+
+<section name="Answers">
+
+  <question>
+    <a name="adjust">
+      How do I adjust memory settings?
+    </a>
+  </question>
+  <answer>
+    First look at <code>java -X</code> to determine what parameters to set.
+    Then you can set them via the environment variable <code>JAVA_OPTS</code>.
+    Read the files catalina.bat or catalina.sh for
+    more information on JAVA_OPTS.
+  </answer>
+
+
+</section>
+
+
+</body>
+</document>

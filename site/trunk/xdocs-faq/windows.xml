@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="windows.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <title>Windows Questions</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+<p>The will address various windows issues. Here are some great
+links of interest.</p>
+    <ul>
+     <li>
+        <a href="http://web.bvu.edu/staff/david/tcservcfg/">
+                    NT Service Config Utility
+        </a> (See this if you want to set JVM options!)
+     </li>
+
+     <li>
+        <a href="http://tud.at/programm/apache-ssl-win32-howto.php3/">
+                    The Apache + SSL on Win32 HOWTO
+        </a>
+     </li>
+
+     <li>
+        <a href="http://www.onjava.com/pub/a/onjava/2002/12/18/tomcat.html">
+                    Configuring Tomcat with IIS Web Server
+        </a>
+     </li>
+
+     <li>
+        <a href="http://www.mattkelli.com/tech/tomcat/ntservice.htm">
+                    Setting up TomCat 4.1.12 to run as an NT Service
+        </a>
+     </li>
+
+     <li>
+        <a href="http://www.gregoire.org/howto/Apache2_Jk2_TC4.1.x_JSDK1.4.x.html">
+                    How To for Apache2, Tomcat4.1.x, mod_jk2, JSDK1.4 on Win2k
+        </a>
+     </li>
+   </ul>
+</section>
+
+<section name="Questions">
+  <ul>
+     <li><a href="#out">
+         Why do I get Out of Environment Space?
+      </a> </li>
+
+      <li><a href="#illegal">
+         When I start up tomcat (or when it is running), I get the error
+         <code>java.lang.IllegalMonitorStateException:
+                current thread not owner</code>
+      </a> </li>
+
+      <li><a href="#case">
+         Can I turn off case sensitivity?
+      </a> </li>
+
+      <li><a href="#ntlm">
+         Can I use NTLM authentication?
+      </a> </li>
+  </ul>
+</section>
+
+
+<section name="Answers">
+
+  <question>
+    <a name="out">
+               Why do I get Out of Environment Space?
+      </a>
+  </question>
+  <answer>
+       Check the Tomcat README, and
+       <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=103918210305702&amp;w=2">
+       this link</a>
+  </answer>
+
+
+  <question>
+    <a name="illegal">
+      When I start up tomcat (or when it is running), I get the error
+      <code>java.lang.IllegalMonitorStateException:
+      current thread not owner</code>
+    </a>
+  </question>
+  <answer>
+      That is weird - but solved.(?) See the
+      <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=13723">
+        Tomcat Bug Report
+      </a>
+      and
+      <a href="http://developer.java.sun.com/developer/bugParade/bugs/4776385.html">
+        Sun Bug Parade report
+      </a>
+      for the answer.
+  </answer>
+
+
+  <question>
+    <a name="case">
+         Can I turn off case sensitivity?
+      </a>
+  </question>
+  <answer>
+    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/config/resources.html">
+      Yes
+    </a>
+  </answer>
+
+
+  <question>
+    <a name="ntlm">
+         Can I use NTLM authentication?
+      </a>
+  </question>
+  <answer>
+      With help from the Samba folks,
+      <a href="http://jcifs.samba.org/src/docs/ntlmhttpauth.html">
+        it is possible.</a>
+  </answer>
+
+
+
+</section>
+
+
+</body>
+</document>

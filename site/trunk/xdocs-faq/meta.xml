@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="meta.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <title>About Tomcat and this FAQ</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+<p>
+This FAQ is maintained by the Tomcat Committers.
+The content for this FAQ is usually discovered
+by lurking in the tomcat-user list.
+<br />
+If you wish to make a comment about the FAQ, make the comment on the
+tomcat-user list. Do not email any of the committers directly and do not
+email the tomcat-dev list. (Unless other people liked your suggestion
+and it was accidently missed by the committers who read the tomcat-user list)
+Emailing the tomcat-user list will allow a larger audience to immediately
+learn and critique your findings.
+</p>
+</section>
+<section name="Questions">
+<p>
+  <ul>
+    <li><a href="#name">How did Tomcat get its name?</a></li>
+    <li><a href="#contribute">How do I contribute a question?</a></li>
+  </ul>
+</p>
+</section>
+<section name="Answers">
+
+ <question>
+    <a name="contribute">
+      How did Tomcat get its name?
+    </a>
+  </question>
+  <answer>
+    He (James Duncan Davidson) came up with "Tomcat" since the animal
+    represented something that could take care of itself and fend for
+    itself. That's how he came up with the name.
+    [<a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=104432576828011&amp;w=2">
+      Source
+    </a>]
+  </answer>
+
+
+
+  <question>
+    <a name="contribute">
+        How do I contribute a question?
+    </a>
+  </question>
+  <answer>
+   <ul>
+      <li>Make sure the question has been asked more than once</li>
+      <li>Send an email to the tomcat-user list</li>
+      <li>Make sure the subject has [FAQ] in it</li>
+      <li>Place the email in a question and answer format like this.</li>
+      <li>Minimize the use of html. Content is more important, the person
+          updating the FAQ will make the wonderful stylistic choices.
+      </li>
+    </ul>
+  </answer>
+
+
+</section>
+
+
+</body>
+</document>

@@ -1,0 +1,73 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Tomcat FAQ - Memory</title><meta value="Tim Funk" name="author"><meta value="funkman@apache.org" name="email"><style>
+      dt { font-size : larger;  font-weight : bold }
+      dd {padding-bottom : 10px;}
+    </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
+      Tomcat FAQ
+    " align="right" src="../../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Memory</h2></td><td nowrap="true" valign="top" align="right"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
+  <p>
+    This page discusses various memory issues. In a nutshell - if your
+    computer has less than 128MB of ram - you will probably have trouble.
+    Anyhow, also read the following threads for other memory related issues:
+    <ul>
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=104388973000006&r=1&w=2">
+          java.lang.OutOfMemoryError during deploy
+        </a>
+      </li>
+
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=104378347700007&r=1&w=2">
+          Memory requirements
+        </a>
+      </li>
+
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=104333066400004&r=1&w=2">
+          Memory Mgmt Tomcat
+        </a>
+      </li>
+
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=103011379700006&r=1&w=2">
+          Tomcat Out of memory
+        </a>
+      </li>
+
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=104519961700002&r=1&w=2">
+          Tracking memory usage over time
+        </a>
+      </li>
+
+    </ul>
+    Also look at
+    <a href="http://java.quest.com/jprobe/jprobe.shtml">JProbe</a>,
+    or <a href="http://www.borland.com/optimizeit/">OptimizeIt</a>, or other
+    profiling tools. Lots of people recommend these tools.
+    This is not an endorsement for them, I just
+    notice other people like them.
+</p>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+  <ul>
+    <li><a href="#adjust"> How do I adjust memory settings?</a></li>
+  </ul>
+</p>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
+
+  <b style="font-size: larger">
+    <a name="adjust">
+      How do I adjust memory settings?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    First look at <code>java -X</code> to determine what parameters to set.
+    Then you can set them via the environment variable <code>JAVA_OPTS</code>.
+    Read the files catalina.bat or catalina.sh for
+    more information on JAVA_OPTS.
+  </div><br>
+
+
+</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
+        Copyright &copy; 1999-2003, Apache Software Foundation
+        </em></font></div></td></tr></table></body></html>

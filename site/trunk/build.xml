@@ -5,14 +5,14 @@
     <property name="docs.src" value="./xdocs"/>
     <property name="docs.dest" value="./docs"/>
 
-    <target name="prepare">    
-        <available classname="org.apache.velocity.anakia.AnakiaTask" 
+    <target name="prepare">
+        <available classname="org.apache.velocity.anakia.AnakiaTask"
             property="AnakiaTask.present"/>
     </target>
 
     <target depends="prepare" name="prepare-error" unless="AnakiaTask.present">
         <echo>
-            AnakiaTask is not present! Please check to make sure that 
+            AnakiaTask is not present! Please check to make sure that
             velocity.jar is in your classpath.
         </echo>
     </target>
@@ -43,5 +43,26 @@
             </fileset>
         </copy>
         -->
+
+         <!-- FAQ -->
+        <style basedir="xdocs-faq"
+               destdir="${docs.dest}/faq"
+             extension=".html"
+                 style="xdocs-faq/tomcat-faq.xsl"
+              excludes="project.xml build.xml"
+              includes="*.xml">
+          <param name="relative-path" expression=".."/>
+        </style>
+        <mkdir     dir="${docs.dest}/faq/printer"/>
+        <style basedir="xdocs-faq"
+               destdir="${docs.dest}/faq/printer"
+             extension=".html"
+                 style="xdocs-faq/tomcat-faq.xsl"
+              excludes="project.xml build.xml"
+              includes="*.xml">
+          <param name="relative-path" expression="../.."/>
+          <param name="project-menu" expression="nomenu"/>
+        </style>
+
     </target>
 </project>

@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="unix.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <title>Unix / Linux Questions</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+  <p>
+    I wish there was more to say right here or to link to something.
+    On to the questions...
+  </p>
+</section>
+
+<section name="Questions">
+  <ul>
+
+     <li>
+       <a href="#ps">
+         When I run ps (on linux), why do I see my java process a
+         bazillion times!
+        </a>
+      </li>
+
+     <li>
+       <a href="#x">
+         How do I run without an X server and still get graphics?
+       </a>
+     </li>
+
+     <li><a href="#logout">
+         Tomcat dies after I log out!
+      </a>
+      </li>
+
+  </ul>
+</section>
+
+
+<section name="Answers">
+
+
+  <question>
+    <a name="ps">
+      When I run ps (on linux), why do I see my java process a
+      bazillion times!
+    </a>
+  </question>
+  <answer>
+    Linux implemented threads as processes. Due to other gory details that
+    is beyond the scope of this FAQ - the ps command doesn't work correctly
+    with respect to threads. You can get more gory details
+    <a href="http://www.onlamp.com/pub/a/onlamp/2002/11/07/linux_threads.html">
+        here
+    </a> and
+    <a href="http://pauillac.inria.fr/~xleroy/linuxthreads/faq.html#D">
+        here
+    </a>.
+  </answer>
+
+
+  <question>
+    <a name="x">
+          How do I run without an X server and still get graphics?
+  </a>
+  </question>
+  <answer>
+    You either need to run headless or run an alternate X-server. Some more
+    information can be found
+    <a href="http://marc.theaimsgroup.com/?t=104803047600003&amp;r=1&amp;w=2">
+        here
+    </a>,
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=102335321103262&amp;w=2">
+        here
+    </a>,
+    or
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=101614645312259&amp;w=2">
+        here
+    </a>.
+  </answer>
+
+  <question>
+    <a name="logout">
+     Tomcat dies after I log out!</a>
+  </question>
+  <answer>
+    This is common complaint in Solaris. Make sure you use nohup and see
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=104809785114238&amp;w=2">
+      this thread
+    </a>
+  </answer>
+
+
+
+
+</section>
+
+
+</body>
+</document>

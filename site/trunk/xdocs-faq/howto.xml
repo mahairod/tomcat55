@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="howto.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <title>How to's</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+  <p>
+    This will be a link to various howtos and various code recipes. If you
+    are looking at how to configure different items, your answer may be in
+    the <a href="misc.html">miscellaneous</a> section.
+  </p>
+</section>
+<section name="How-tos">
+    More coming ...
+  <ul>
+    <li>
+      <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/BUILDING.txt">
+        Build tomcat 4.1
+      </a>
+    </li>
+    <li>
+      <a href="http://jakarta.apache.org/tomcat/tomcat-5.0-doc/BUILDING.txt">
+        Build tomcat 5
+      </a>
+    </li>
+<!--
+    <li>
+      Building jk (windows, linux, solaris, aix, bsd, novell)</li>
+    <li>
+      Building jk2 (windows, linux, solaris, aix, bsd, novell)</li>
+    <li> Configure ..
+    <table>
+      <tr>
+        <th> </th>
+        <th> Windows</th>
+        <th> Linux </th>
+        <th> Solaris </th>
+        <th> AIX </th>
+        <th> HPUX </th>
+        <th> BSD </th>
+        <th> Novell </th>
+      </tr>
+      <tr>
+        <th> Tomcat 4</th>
+        <td> Apache 1.3 <br />
+             Apache 2 <br />
+             IIS
+        </td>
+        <td> Apache 1.3 <br />
+             Apache 2
+        </td>
+        <td> Apache 1.3 <br />
+             Apache 2
+        </td>
+        <td> Apache 1.3 <br />
+             Apache 2
+        </td>
+        <td> Apache 1.3 <br />
+             Apache 2
+        </td>
+        <td> Apache 1.3 <br />
+             Apache 2
+        </td>
+        <td> Apache 1.3 <br />
+             Apache 2
+        </td>
+      </tr>
+      <tr>
+        <th> Tomcat 5</th>
+        <td> Apache 1.3 <br />
+             Apache 2 <br />
+             IIS
+        </td>
+        <td> Apache 1.3 <br />
+             Apache 2
+        </td>
+        <td> Apache 1.3 <br />
+             Apache 2
+        </td>
+        <td> Apache 1.3 <br />
+             Apache 2
+        </td>
+        <td> Apache 1.3 <br />
+             Apache 2
+        </td>
+        <td> Apache 1.3 <br />
+             Apache 2
+        </td>
+        <td> Apache 1.3 <br />
+             Apache 2
+        </td>
+      </tr>
+    </table>
+    </li>
+-->
+
+  </ul>
+</section>
+<section name="Recipies">
+  <p>
+    Links to various code recipes. Mostly likely, simple filter tricks,
+    JSTL examples, ...
+  </p>
+</section>
+
+
+</body>
+</document>
