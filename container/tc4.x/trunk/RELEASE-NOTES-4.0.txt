@@ -32,11 +32,13 @@ NEW FEATURES:
 General New Features:
 --------------------
 
+The 1.4 release of Ant is now required in order to build Tomcat 4.0
+from source. Previous versions relied on Ant 1.3.
+
 
 ---------------------
 Catalina New Features:
 ---------------------
-
 
 
 -------------------
