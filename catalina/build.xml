@@ -56,6 +56,7 @@
     <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${tomcat-util.jar}"/>
     <pathelement location="${jaas.jar}"/>
+    <pathelement location="${javagroups.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmx.jar}"/>
