@@ -68,7 +68,7 @@ package org.apache.tomcat.deployment;
     ** @author Danny Coward
     */
 public interface UserDataConstraint {
-    public static String INEGRAL_TRANSPORT = "INTEGRAL";
+    public static String INTEGRAL_TRANSPORT = "INTEGRAL";
     public static String SECURE_TRANSPORT = "SECURE";
 
     public String getDescription();
