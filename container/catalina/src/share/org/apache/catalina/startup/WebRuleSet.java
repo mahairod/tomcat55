@@ -154,12 +154,12 @@ public class WebRuleSet extends RuleSetBase {
      *  should be added.
      */
     public void addRuleInstances(Digester digester) {
-        sessionConfig = new SetSessionConfig(digester);
-        jspConfig = new SetJspConfig(digester);
-        loginConfig = new SetLoginConfig(digester);
+        sessionConfig = new SetSessionConfig();
+        jspConfig = new SetJspConfig();
+        loginConfig = new SetLoginConfig();
         
         digester.addRule(prefix + "web-app",
-                         new SetPublicIdRule(digester, "setPublicId"));
+                         new SetPublicIdRule("setPublicId"));
 
         digester.addCallMethod(prefix + "web-app/context-param",
                                "addParameter", 2);
@@ -170,7 +170,7 @@ public class WebRuleSet extends RuleSetBase {
                                "setDisplayName", 0);
 
         digester.addRule(prefix + "web-app/distributable",
-                         new SetDistributableRule(digester));
+                         new SetDistributableRule());
 
         digester.addObjectCreate(prefix + "web-app/ejb-local-ref",
                                  "org.apache.catalina.deploy.ContextLocalEjb");
@@ -378,7 +378,7 @@ public class WebRuleSet extends RuleSetBase {
                             "org.apache.catalina.deploy.SecurityConstraint");
 
         digester.addRule(prefix + "web-app/security-constraint/auth-constraint",
-                         new SetAuthConstraintRule(digester));
+                         new SetAuthConstraintRule());
         digester.addCallMethod(prefix + "web-app/security-constraint/auth-constraint/role-name",
                                "addAuthRole", 0);
         digester.addCallMethod(prefix + "web-app/security-constraint/display-name",
@@ -402,7 +402,7 @@ public class WebRuleSet extends RuleSetBase {
                                "addSecurityRole", 0);
 
         digester.addRule(prefix + "web-app/servlet",
-                         new WrapperCreateRule(digester));
+                         new WrapperCreateRule());
         digester.addSetNext(prefix + "web-app/servlet",
                             "addChild",
                             "org.apache.catalina.Container");
@@ -479,11 +479,11 @@ public class WebRuleSet extends RuleSetBase {
  */
 final class SetLoginConfig extends Rule {
     protected boolean isLoginConfigSet = false;
-    public SetLoginConfig(Digester digester) {
-        super(digester);
+    public SetLoginConfig() {
     }
 
-    public void begin(Attributes attributes) throws Exception {
+    public void begin(String namespace, String name, Attributes attributes)
+        throws Exception {
         if (isLoginConfigSet){
             throw new IllegalArgumentException(
             "<login-config> element is limited to 1 occurance");
@@ -500,11 +500,11 @@ final class SetLoginConfig extends Rule {
  */
 final class SetJspConfig extends Rule {
     protected boolean isJspConfigSet = false;
-    public SetJspConfig(Digester digester) {
-        super(digester);
+    public SetJspConfig() {
     }
 
-    public void begin(Attributes attributes) throws Exception {
+    public void begin(String namespace, String name, Attributes attributes)
+        throws Exception {
         if (isJspConfigSet){
             throw new IllegalArgumentException(
             "<jsp-config> element is limited to 1 occurance");
@@ -521,11 +521,11 @@ final class SetJspConfig extends Rule {
  */
 final class SetSessionConfig extends Rule {
     protected boolean isSessionConfigSet = false;
-    public SetSessionConfig(Digester digester) {
-        super(digester);
+    public SetSessionConfig() {
     }
 
-    public void begin(Attributes attributes) throws Exception {
+    public void begin(String namespace, String name, Attributes attributes)
+        throws Exception {
         if (isSessionConfigSet){
             throw new IllegalArgumentException(
             "<session-config> element is limited to 1 occurance");
@@ -543,16 +543,18 @@ final class SetSessionConfig extends Rule {
 
 final class SetAuthConstraintRule extends Rule {
 
-    public SetAuthConstraintRule(Digester digester) {
-        super(digester);
+    public SetAuthConstraintRule() {
     }
 
-    public void begin(Attributes attributes) throws Exception {
+    public void begin(String namespace, String name, Attributes attributes)
+        throws Exception {
         SecurityConstraint securityConstraint =
             (SecurityConstraint) digester.peek();
         securityConstraint.setAuthConstraint(true);
-        if (digester.getDebug() > 0)
-            digester.log("Calling SecurityConstraint.setAuthConstraint(true)");
+        if (digester.getLogger().isDebugEnabled()) {
+            digester.getLogger()
+               .debug("Calling SecurityConstraint.setAuthConstraint(true)");
+        }
     }
 
 }
@@ -565,16 +567,17 @@ final class SetAuthConstraintRule extends Rule {
 
 final class SetDistributableRule extends Rule {
 
-    public SetDistributableRule(Digester digester) {
-        super(digester);
+    public SetDistributableRule() {
     }
 
-    public void begin(Attributes attributes) throws Exception {
+    public void begin(String namespace, String name, Attributes attributes)
+        throws Exception {
         Context context = (Context) digester.peek();
         context.setDistributable(true);
-        if (digester.getDebug() > 0)
-            digester.log(context.getClass().getName() +
-                         ".setDistributable( true)");
+        if (digester.getLogger().isDebugEnabled()) {
+            digester.getLogger().debug
+               (context.getClass().getName() + ".setDistributable( true)");
+        }
     }
 
 }
@@ -587,14 +590,14 @@ final class SetDistributableRule extends Rule {
 
 final class SetPublicIdRule extends Rule {
 
-    public SetPublicIdRule(Digester digester, String method) {
-        super(digester);
+    public SetPublicIdRule(String method) {
         this.method = method;
     }
 
     private String method = null;
 
-    public void begin(Attributes attributes) throws Exception {
+    public void begin(String namespace, String name, Attributes attributes)
+        throws Exception {
 
         Context context = (Context) digester.peek(digester.getCount() - 1);
         Object top = digester.peek();
@@ -607,15 +610,15 @@ final class SetPublicIdRule extends Rule {
         try {
             m = top.getClass().getMethod(method, paramClasses);
         } catch (NoSuchMethodException e) {
-            digester.log("Can't find method " + method + " in " + top +
-                         " CLASS " + top.getClass());
+            digester.getLogger().error("Can't find method " + method + " in "
+                                       + top + " CLASS " + top.getClass());
             return;
         }
 
         m.invoke(top, paramValues);
-        if (digester.getDebug() >= 1)
-            digester.log("" + top.getClass().getName() + "." + method +
-                        "(" + paramValues[0] + ")");
+        if (digester.getLogger().isDebugEnabled())
+            digester.getLogger().debug("" + top.getClass().getName() + "." 
+                                       + method + "(" + paramValues[0] + ")");
 
     }
 
@@ -629,23 +632,24 @@ final class SetPublicIdRule extends Rule {
 
 final class WrapperCreateRule extends Rule {
 
-    public WrapperCreateRule(Digester digester) {
-        super(digester);
+    public WrapperCreateRule() {
     }
 
-    public void begin(Attributes attributes) throws Exception {
+    public void begin(String namespace, String name, Attributes attributes)
+        throws Exception {
         Context context =
             (Context) digester.peek(digester.getCount() - 1);
         Wrapper wrapper = context.createWrapper();
         digester.push(wrapper);
-        if (digester.getDebug() > 0)
-            digester.log("new " + wrapper.getClass().getName());
+        if (digester.getLogger().isDebugEnabled())
+            digester.getLogger().debug("new " + wrapper.getClass().getName());
     }
 
-    public void end() throws Exception {
+    public void end(String namespace, String name)
+        throws Exception {
         Wrapper wrapper = (Wrapper) digester.pop();
-        if (digester.getDebug() > 0)
-            digester.log("pop " + wrapper.getClass().getName());
+        if (digester.getLogger().isDebugEnabled())
+            digester.getLogger().debug("pop " + wrapper.getClass().getName());
     }
 
 }

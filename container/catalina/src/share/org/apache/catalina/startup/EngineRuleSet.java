@@ -140,8 +140,7 @@ public class EngineRuleSet extends RuleSetBase {
         digester.addSetProperties(prefix + "Engine");
         digester.addRule(prefix + "Engine",
                          new LifecycleListenerRule
-                         (digester,
-                          "org.apache.catalina.startup.EngineConfig",
+                         ("org.apache.catalina.startup.EngineConfig",
                           "engineConfigClass"));
         digester.addSetNext(prefix + "Engine",
                             "setContainer",

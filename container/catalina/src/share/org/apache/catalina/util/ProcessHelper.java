@@ -383,7 +383,7 @@ public class ProcessHelper {
                             + "]");
                 }
                 try {
-                    Thread.currentThread().sleep(iClientInputTimeout);
+                    Thread.sleep(iClientInputTimeout);
                 } catch (InterruptedException ignored) {
                 }
             }
@@ -478,7 +478,7 @@ public class ProcessHelper {
                 while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
                     if (servletContainerStdout != null) {
                         if (debug >= 4) {
-                            log("runCGI: write(\"" + cBuf + "\")");
+                            log("runCGI: write(\"" + new String(cBuf) + "\")");
                         }
                         servletContainerStdout.write(cBuf, 0, bufRead);
                     }
@@ -494,7 +494,7 @@ public class ProcessHelper {
 
             } catch (IllegalThreadStateException e) {
                 try {
-                    Thread.currentThread().sleep(500);
+                    Thread.sleep(500);
                 } catch (InterruptedException ignored) {
                 }
             }
