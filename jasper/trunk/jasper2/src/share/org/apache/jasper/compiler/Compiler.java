@@ -326,7 +326,6 @@ public abstract class Compiler {
      */
     public boolean isOutDated(boolean checkClass) {
 
-        boolean outDated = false;
         String jsp = ctxt.getJspFile();
 
         if ((jsw != null)
@@ -362,31 +361,31 @@ public abstract class Compiler {
         }
         
         if (!targetFile.exists()) {
-            outDated = true;
-        } else {
-            targetLastModified = targetFile.lastModified();
-            if (checkClass && jsw != null) {
-                jsw.setServletClassLastModifiedTime(targetLastModified);
-            }   
-            if (targetLastModified < jspRealLastModified) {
-                if( log.isDebugEnabled() ) {
-                    log.debug("Compiler: outdated: " + targetFile + " " +
-                        targetLastModified );
-                }
-                outDated = true;
+            return true;
+        }
+
+        targetLastModified = targetFile.lastModified();
+        if (checkClass && jsw != null) {
+            jsw.setServletClassLastModifiedTime(targetLastModified);
+        }   
+        if (targetLastModified < jspRealLastModified) {
+            if( log.isDebugEnabled() ) {
+                log.debug("Compiler: outdated: " + targetFile + " " +
+                    targetLastModified );
             }
+            return true;
         }
 
         // determine if source dependent files (e.g. includes using include
         // directives) have been changed.
         if( jsw==null ) {
-            return outDated;
+            return false;
         }
         jsw.setLastModificationTest(System.currentTimeMillis());
         
         List depends = jsw.getDependants();
         if (depends == null) {
-            return outDated;
+            return false;
         }
 
         Iterator it = depends.iterator();
@@ -395,29 +394,23 @@ public abstract class Compiler {
             try {
                 URL includeUrl = ctxt.getResource(include);
                 if (includeUrl == null) {
-                    outDated = true;
+                    return true;
                 }
-                if (!outDated) {
 
-                    URLConnection includeUconn = includeUrl.openConnection();
-                    long includeLastModified = includeUconn.getLastModified();
-                    includeUconn.getInputStream().close();
+                URLConnection includeUconn = includeUrl.openConnection();
+                long includeLastModified = includeUconn.getLastModified();
+                includeUconn.getInputStream().close();
 
-                    if (includeLastModified > targetLastModified) {
-                        outDated = true;
-                    }
-                }
-                if (outDated) {
-                    // Remove any potential Wrappers for tag files
-                    ctxt.getRuntimeContext().removeWrapper(include);
+                if (includeLastModified > targetLastModified) {
+                    return true;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                outDated = true;
+                return true;
             }
         }
 
-        return outDated;
+        return false;
 
     }
 
