@@ -55,8 +55,7 @@
 <!--
     <filter-mapping>
       <filter-name>Compression Filter</filter-name>
-      <url-pattern>/*</url-pattern>
-	    <!--url-pattern>/CompressionTest</url-pattern-->
+      <url-pattern>/CompressionTest</url-pattern>
     </filter-mapping>
 -->
 
