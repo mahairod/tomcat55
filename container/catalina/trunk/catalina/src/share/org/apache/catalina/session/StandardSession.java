@@ -146,6 +146,12 @@ public class StandardSession
 
 
     /**
+     * Type array.
+     */
+    protected static final String EMPTY_ARRAY[] = new String[0];
+
+
+    /**
      * The dummy attribute value serialized when a NotSerializableException is
      * encountered in <code>writeObject()</code>.
      */
@@ -241,7 +247,7 @@ public class StandardSession
     /**
      * The Manager with which this Session is associated.
      */
-    protected Manager manager = null;
+    protected transient Manager manager = null;
 
 
     /**
@@ -305,6 +311,12 @@ public class StandardSession
      * The current accessed time for this session.
      */
     protected long thisAccessedTime = creationTime;
+
+
+    /**
+     * The access count for thsi session.
+     */
+    protected transient int accessCount = 0;
 
 
     // ----------------------------------------------------- Session Properties
@@ -415,7 +427,6 @@ public class StandardSession
                     } catch (Exception e) {
                         ;
                     }
-                    // FIXME - should we do anything besides log these?
                     log(sm.getString("standardSession.sessionEvent"), t);
                 }
             }
@@ -574,14 +585,18 @@ public class StandardSession
      */
     public boolean isValid() {
 
-        if (this.expiring){
+        if (this.expiring) {
             return true;
         }
 
         if (!this.isValid ) {
             return false;
         }
-        
+
+        if (accessCount > 0) {
+            return true;
+        }
+
         if (maxInactiveInterval >= 0) { 
             long timeNow = System.currentTimeMillis();
             int timeIdle = (int) ((timeNow - thisAccessedTime) / 1000L);
@@ -620,6 +635,19 @@ public class StandardSession
         this.thisAccessedTime = System.currentTimeMillis();
 
 	evaluateIfValid();
+
+        accessCount++;
+
+    }
+
+
+    /**
+     * End the access.
+     */
+    public void endAccess() {
+
+        accessCount--;
+
     }
 
 
@@ -628,9 +656,7 @@ public class StandardSession
      */
     public void addSessionListener(SessionListener listener) {
 
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
+        listeners.add(listener);
 
     }
 
@@ -695,7 +721,6 @@ public class StandardSession
                         } catch (Exception e) {
                             ;
                         }
-                        // FIXME - should we do anything besides log these?
                         log(sm.getString("standardSession.sessionEvent"), t);
                     }
                 }
@@ -738,8 +763,12 @@ public class StandardSession
             if (attribute instanceof HttpSessionActivationListener) {
                 if (event == null)
                     event = new HttpSessionEvent(this);
-                // FIXME: Should we catch throwables?
-                ((HttpSessionActivationListener)attribute).sessionWillPassivate(event);
+                try {
+                    ((HttpSessionActivationListener)attribute)
+                        .sessionWillPassivate(event);
+                } catch (Throwable t) {
+                    log(sm.getString("standardSession.attributeEvent"), t);
+                }
             }
         }
 
@@ -760,8 +789,12 @@ public class StandardSession
             if (attribute instanceof HttpSessionActivationListener) {
                 if (event == null)
                     event = new HttpSessionEvent(this);
-                // FIXME: Should we catch throwables?
-                ((HttpSessionActivationListener)attribute).sessionDidActivate(event);
+                try {
+                    ((HttpSessionActivationListener)attribute)
+                        .sessionDidActivate(event);
+                } catch (Throwable t) {
+                    log(sm.getString("standardSession.attributeEvent"), t);
+                }
             }
         }
 
@@ -776,9 +809,7 @@ public class StandardSession
      */
     public Object getNote(String name) {
 
-        synchronized (notes) {
-            return (notes.get(name));
-        }
+        return (notes.get(name));
 
     }
 
@@ -789,9 +820,7 @@ public class StandardSession
      */
     public Iterator getNoteNames() {
 
-        synchronized (notes) {
-            return (notes.keySet().iterator());
-        }
+        return (notes.keySet().iterator());
 
     }
 
@@ -810,6 +839,7 @@ public class StandardSession
         id = null;
         lastAccessedTime = 0L;
         maxInactiveInterval = -1;
+        accessCount = 0;
         notes.clear();
         setPrincipal(null);
         isNew = false;
@@ -827,9 +857,7 @@ public class StandardSession
      */
     public void removeNote(String name) {
 
-        synchronized (notes) {
-            notes.remove(name);
-        }
+        notes.remove(name);
 
     }
 
@@ -839,9 +867,7 @@ public class StandardSession
      */
     public void removeSessionListener(SessionListener listener) {
 
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
+        listeners.remove(listener);
 
     }
 
@@ -855,9 +881,7 @@ public class StandardSession
      */
     public void setNote(String name, Object value) {
 
-        synchronized (notes) {
-            notes.put(name, value);
-        }
+        notes.put(name, value);
 
     }
 
@@ -985,9 +1009,7 @@ public class StandardSession
             throw new IllegalStateException
                 (sm.getString("standardSession.getAttribute.ise"));
 
-        synchronized (attributes) {
-            return (attributes.get(name));
-        }
+        return (attributes.get(name));
 
     }
 
@@ -1005,9 +1027,7 @@ public class StandardSession
             throw new IllegalStateException
                 (sm.getString("standardSession.getAttributeNames.ise"));
 
-        synchronized (attributes) {
-            return (new Enumerator(attributes.keySet(), true));
-        }
+        return (new Enumerator(attributes.keySet(), true));
 
     }
 
@@ -1162,29 +1182,19 @@ public class StandardSession
                 (sm.getString("standardSession.removeAttribute.ise"));
 
         // Remove this attribute from our collection
-        Object value = null;
-        boolean found = false;
-        synchronized (attributes) {
-            found = attributes.containsKey(name);
-            if (found) {
-                value = attributes.get(name);
-                attributes.remove(name);
-            } else {
-                return;
-            }
-        }
+        Object value = attributes.remove(name);
 
         // Do we need to do valueUnbound() and attributeRemoved() notification?
-        if (!notify) {
+        if (!notify || (value == null)) {
             return;
         }
 
         // Call the valueUnbound() method if necessary
-        HttpSessionBindingEvent event =
-          new HttpSessionBindingEvent((HttpSession) this, name, value);
-        if ((value != null) &&
-            (value instanceof HttpSessionBindingListener))
+        HttpSessionBindingEvent event = null;
+        if (value instanceof HttpSessionBindingListener) {
+            event = new HttpSessionBindingEvent(this, name, value);
             ((HttpSessionBindingListener) value).valueUnbound(event);
+        }
 
         // Notify interested application event listeners
         Context context = (Context) manager.getContainer();
@@ -1200,6 +1210,9 @@ public class StandardSession
                 fireContainerEvent(context,
                                    "beforeSessionAttributeRemoved",
                                    listener);
+                if (event == null) {
+                    event = new HttpSessionBindingEvent(this, name, value);
+                }
                 listener.attributeRemoved(event);
                 fireContainerEvent(context,
                                    "afterSessionAttributeRemoved",
@@ -1212,7 +1225,6 @@ public class StandardSession
                 } catch (Exception e) {
                     ;
                 }
-                // FIXME - should we do anything besides log these?
                 log(sm.getString("standardSession.attributeEvent"), t);
             }
         }
@@ -1284,32 +1296,23 @@ public class StandardSession
                 (sm.getString("standardSession.setAttribute.iae"));
 
         // Construct an event with the new value
-        HttpSessionBindingEvent event = new HttpSessionBindingEvent
-                ((HttpSession) this, name, value);
+        HttpSessionBindingEvent event = null;
 
         // Call the valueBound() method if necessary
-        if (value instanceof HttpSessionBindingListener)
-                ((HttpSessionBindingListener) value).valueBound(event);
+        if (value instanceof HttpSessionBindingListener) {
+            event = new HttpSessionBindingEvent(this, name, value);
+            ((HttpSessionBindingListener) value).valueBound(event);
+        }
 
         // Replace or add this attribute
-        Object unbound = null;
-        synchronized (attributes) {
-            unbound = attributes.get(name);
-            attributes.put(name, value);
-        }
+        Object unbound = attributes.put(name, value);
 
         // Call the valueUnbound() method if necessary
         if ((unbound != null) &&
-                (unbound instanceof HttpSessionBindingListener)) {
+            (unbound instanceof HttpSessionBindingListener)) {
             ((HttpSessionBindingListener) unbound).valueUnbound
-                    (new HttpSessionBindingEvent((HttpSession) this, name));
+                (new HttpSessionBindingEvent(this, name));
         }
-
-        // Replace the current event with one containing 
-        // the old value if necesary
-        if (unbound != null)
-            event = new HttpSessionBindingEvent((HttpSession) this,
-                                                name, unbound);
 
         // Notify interested application event listeners
         Context context = (Context) manager.getContainer();
@@ -1326,6 +1329,10 @@ public class StandardSession
                     fireContainerEvent(context,
                                        "beforeSessionAttributeReplaced",
                                        listener);
+                    if (event == null) {
+                        event = new HttpSessionBindingEvent
+                            (this, name, unbound);
+                    }
                     listener.attributeReplaced(event);
                     fireContainerEvent(context,
                                        "afterSessionAttributeReplaced",
@@ -1334,6 +1341,9 @@ public class StandardSession
                     fireContainerEvent(context,
                                        "beforeSessionAttributeAdded",
                                        listener);
+                    if (event == null) {
+                        event = new HttpSessionBindingEvent(this, name, value);
+                    }
                     listener.attributeAdded(event);
                     fireContainerEvent(context,
                                        "afterSessionAttributeAdded",
@@ -1353,7 +1363,6 @@ public class StandardSession
                 } catch (Exception e) {
                     ;
                 }
-                // FIXME - should we do anything besides log these?
                 log(sm.getString("standardSession.attributeEvent"), t);
             }
         }
@@ -1568,10 +1577,7 @@ public class StandardSession
      */
     protected String[] keys() {
 
-        String results[] = new String[0];
-        synchronized (attributes) {
-            return ((String[]) attributes.keySet().toArray(results));
-        }
+        return ((String[]) attributes.keySet().toArray(EMPTY_ARRAY));
 
     }
 
@@ -1581,9 +1587,7 @@ public class StandardSession
      */
     protected Object getAttributeInternal(String name) {
 
-        synchronized (attributes) {
-            return (attributes.get(name));
-        }
+        return (attributes.get(name));
 
     }
 
