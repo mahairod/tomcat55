@@ -11,8 +11,10 @@
   <property name="tomcat.src" location=".." />
   <property name="catalina.src" location="../../jakarta-tomcat-catalina" />
   <property name="jakarta-commons" location="${base.src}/jakarta-commons" />
+<!--
+  <property name="jmx.home" location="${base.dir}/mx4j-1.1.1" />
+-->
   <property name="jmx.home" location="${base.dir}/jmx-ri_1.2" />
-
   <property name="tomcat.home" location="${tomcat.src}/build" />
 
   <property name="commons-modeler.home" location="${jakarta-commons}/modeler/dist" />
@@ -22,6 +24,11 @@
   <property name="log4j.jar" location="${base.dir}/log4j/log4j.jar" />
 
   <path id="tomcatCP-extra" /> 
+
+  <!--
+  <taskdef name="commons-logger" classname="org.apache.tools.ant.listener.CommonsLoggingListener"/>
+  <commons-logger/>
+  -->
 
   <target name="init" unless="init.done">
     <property name="tomcat.home" location=".." />
@@ -156,21 +163,39 @@
 
   <target name="run" depends="init"
         description="Start tomcat as an mbean using server.xml config and returns">
+    <property name="domain" value="Catalina" />
 
     <modeler code="org.apache.catalina.startup.Catalina"
-          name="Catalina:type=server" />
+          name="${domain}:type=server" />
 
-    <jmxSet objectName="Catalina:type=server"
+    <jmxSet objectName="${domain}:type=server"
             attribute="catalinaHome"
             value="${tomcat.home}"/>
   
     <!-- We could also call init and set other properties - 
          init should load the modules -->
 
-    <jmx objectName="Catalina:type=server"
+    <jmx objectName="${domain}:type=server"
          operation="start" />
-    
+
+
     <echo message="Tomcat5 running"/>
+
+    <!-- let's add a context - using JMX -->
+    <property name="admin1Name" 
+              value="${domain}:j2eeType=WebModule,name=//localhost/admin1,J2EEApplication=none,J2EEServer=none" />
+
+    <modeler code="org.apache.catalina.core.StandardContext"
+           name="${admin1Name}" />
+
+    <jmxSet objectName="${admin1Name}"
+            attribute="docBase"
+            value="${tomcat.home}/server/webapps/admin" />
+
+    <jmx objectName="${admin1Name}"
+         operation="init" />
+
+    
   </target>
 
   <!-- ==================== Await ==================== 
