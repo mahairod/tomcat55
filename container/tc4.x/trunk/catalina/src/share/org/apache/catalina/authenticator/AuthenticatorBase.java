@@ -951,9 +951,12 @@ public abstract class AuthenticatorBase
      * @param response The servlet response we are generating
      * @param principal The authenticated Principal to be registered
      * @param authType The authentication type to be registered
+     * @param username Username used to authenticate (if any)
+     * @param password Password used to authenticate (if any)
      */
     protected void register(HttpRequest request, HttpResponse response,
-                            Principal principal, String authType) {
+                            Principal principal, String authType,
+                            String username, String password) {
 
         if (debug >= 1)
             log("Authenticated '" + principal.getName() + "' with type '"
@@ -962,13 +965,29 @@ public abstract class AuthenticatorBase
         // Cache the authentication information in our request
         request.setAuthType(authType);
         request.setUserPrincipal(principal);
+        if (username != null)
+            request.setNote(Constants.REQ_USERNAME_NOTE, username);
+        else
+            request.removeNote(Constants.REQ_USERNAME_NOTE);
+        if (password != null)
+            request.setNote(Constants.REQ_PASSWORD_NOTE, password);
+        else
+            request.removeNote(Constants.REQ_PASSWORD_NOTE);
 
         // Cache the authentication information in our session, if any
         if (cache) {
-            Session session = getSession((HttpRequest) request);
+            Session session = getSession(request, false);
             if (session != null) {
                 session.setAuthType(authType);
                 session.setPrincipal(principal);
+                if (username != null)
+                    session.setNote(Constants.SESS_USERNAME_NOTE, username);
+                else
+                    session.removeNote(Constants.SESS_USERNAME_NOTE);
+                if (password != null)
+                    session.setNote(Constants.SESS_PASSWORD_NOTE, password);
+                else
+                    session.removeNote(Constants.SESS_PASSWORD_NOTE);
             }
         }
 
@@ -986,8 +1005,8 @@ public abstract class AuthenticatorBase
         hres.addCookie(cookie);
 
         // Register this principal with our SSO valve
-        sso.register(value, principal, authType);
-        request.setSsoId(value);
+        sso.register(value, principal, authType, username, password);
+        request.setNote(Constants.REQ_SSOID_NOTE, value);
 
     }
 

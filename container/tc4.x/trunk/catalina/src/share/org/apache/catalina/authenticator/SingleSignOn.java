@@ -336,7 +336,7 @@ public class SingleSignOn
             (HttpServletRequest) request.getRequest();
         HttpServletResponse hres =
             (HttpServletResponse) response.getResponse();
-        ((HttpRequest) request).setSsoId(null);
+        request.removeNote(Constants.REQ_SSOID_NOTE);
 
         // Has a valid user already been authenticated?
         if (debug >= 1)
@@ -378,9 +378,17 @@ public class SingleSignOn
                 log(" Found cached principal '" +
                     entry.principal.getName() + "' with auth type '" +
                     entry.authType + "'");
-            ((HttpRequest) request).setSsoId(cookie.getValue());
+            request.setNote(Constants.REQ_SSOID_NOTE, cookie.getValue());
             ((HttpRequest) request).setAuthType(entry.authType);
             ((HttpRequest) request).setUserPrincipal(entry.principal);
+            if (entry.username != null)
+                request.setNote(Constants.REQ_USERNAME_NOTE, entry.username);
+            else
+                request.removeNote(Constants.REQ_USERNAME_NOTE);
+            if (entry.password != null)
+                request.setNote(Constants.REQ_PASSWORD_NOTE, entry.password);
+            else
+                request.removeNote(Constants.REQ_PASSWORD_NOTE);
         } else {
             if (debug >= 1)
                 log(" No cached principal found, erasing SSO cookie");
@@ -482,15 +490,19 @@ public class SingleSignOn
      * @param principal Associated user principal that is identified
      * @param authType Authentication type used to authenticate this
      *  user principal
+     * @param username Username used to authenticate this user
+     * @param password Password used to authenticate this user
      */
-    void register(String ssoId, Principal principal, String authType) {
+    void register(String ssoId, Principal principal, String authType,
+                  String username, String password) {
 
         if (debug >= 1)
             log("Registering sso id '" + ssoId + "' for user '" +
                 principal.getName() + "' with auth type '" + authType + "'");
 
         synchronized (cache) {
-            cache.put(ssoId, new SingleSignOnEntry(principal, authType));
+            cache.put(ssoId, new SingleSignOnEntry(principal, authType,
+                                                   username, password));
         }
 
     }
@@ -562,14 +574,21 @@ class SingleSignOnEntry {
 
     public String authType = null;
 
+    public String password = null;
+
     public Principal principal = null;
 
     public Session sessions[] = new Session[0];
 
-    public SingleSignOnEntry(Principal principal, String authType) {
+    public String username = null;
+
+    public SingleSignOnEntry(Principal principal, String authType,
+                             String username, String password) {
         super();
         this.principal = principal;
         this.authType = authType;
+        this.username = username;
+        this.password = password;
     }
 
     public synchronized void addSession(SingleSignOn sso, Session session) {

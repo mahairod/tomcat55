@@ -103,14 +103,20 @@ public final class InstanceEvent
 
     /**
      * The event indicating that the <code>service()</code> method is about
-     * to be called for this instance.
+     * to be called on a servlet.  The <code>servlet</code> property contains
+     * the servlet being called, and the <code>request</code> and
+     * <code>response</code> properties contain the current request and
+     * response being processed.
      */
     public static final String BEFORE_SERVICE_EVENT = "beforeService";
 
 
     /**
      * The event indicating that the <code>service()</code> method has
-     * returned.
+     * returned.  The <code>servlet</code> property contains the servlet
+     * that was called, and the <code>request</code> and
+     * <code>response</code> properties contain the current request and
+     * response being processed.
      */
     public static final String AFTER_SERVICE_EVENT = "afterService";
 
@@ -130,9 +136,35 @@ public final class InstanceEvent
 
 
     /**
+     * The event indicating that the <code>service()</code> method of a
+     * servlet accessed via a request dispatcher is about to be called.
+     * The <code>servlet</code> property contains a reference to the
+     * dispatched-to servlet instance, and the <code>request</code> and
+     * <code>response</code> properties contain the current request and
+     * response being processed.  The <code>wrapper</code> property will
+     * contain a reference to the dispatched-to Wrapper.
+     */
+    public static final String BEFORE_DISPATCH_EVENT = "beforeDispatch";
+
+
+    /**
+     * The event indicating that the <code>service()</code> method of a
+     * servlet accessed via a request dispatcher has returned.  The
+     * <code>servlet</code> property contains a reference to the
+     * dispatched-to servlet instance, and the <code>request</code> and
+     * <code>response</code> properties contain the current request and
+     * response being processed.  The <code>wrapper</code> property will
+     * contain a reference to the dispatched-to Wrapper.
+     */
+    public static final String AFTER_DISPATCH_EVENT = "afterDispatch";
+
+
+    /**
      * The event indicating that the <code>doFilter()</code> method of a
      * Filter is about to be called.  The <code>filter</code> property
-     * contains a reference to the relevant filter instance.
+     * contains a reference to the relevant filter instance, and the
+     * <code>request</code> and <code>response</code> properties contain
+     * the current request and response being processed.
      */
     public static final String BEFORE_FILTER_EVENT = "beforeFilter";
 
@@ -140,7 +172,9 @@ public final class InstanceEvent
     /**
      * The event indicating that the <code>doFilter()</code> method of a
      * Filter has returned.  The <code>filter</code> property contains
-     * a reference to the relevant filter instance.
+     * a reference to the relevant filter instance, and the
+     * <code>request</code> and <code>response</code> properties contain
+     * the current request and response being processed.
      */
     public static final String AFTER_FILTER_EVENT = "afterFilter";
 

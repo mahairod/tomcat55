@@ -147,12 +147,6 @@ public interface HttpRequest extends Request {
 
 
     /**
-     * Return the single sign on identifier this request is associated with.
-     */
-    public String getSsoId();
-
-
-    /**
      * Set the authentication type used for this request, if any; otherwise
      * set the type to <code>null</code>.  Typical values are "BASIC",
      * "DIGEST", or "SSL".
@@ -245,14 +239,6 @@ public interface HttpRequest extends Request {
      * @param path The servlet path
      */
     public void setServletPath(String path);
-
-
-    /**
-     * Set the single sign on identifier this request is associated with.
-     *
-     * @param ssoId The new SSO identifier (if any)
-     */
-    public void setSsoId(String ssoId);
 
 
     /**

@@ -83,18 +83,102 @@ public class Constants {
     // Form based authentication constants
     public static final String FORM_ACTION = "/j_security_check";
     public static final String FORM_PASSWORD = "j_password";
-    public static final String FORM_PASSWORD_NOTE =
-        "org.apache.catalina.authenticator.PASSWORD";
-    public static final String FORM_PRINCIPAL_NOTE =
-        "org.apache.catalina.authenticator.PRINCIPAL";
-    public static final String FORM_REQUEST_NOTE =
-        "org.apache.catalina.authenticator.REQUEST";
     public static final String FORM_USERNAME = "j_username";
-    public static final String FORM_USERNAME_NOTE =
-        "org.apache.catailna.authenticator.USERNAME";
 
     // Cookie name for single sign on support
     public static final String SINGLE_SIGN_ON_COOKIE = "JSESSIONIDSSO";
 
-}
 
+    // --------------------------------------------------------- Request Notes
+
+
+    /**
+     * <p>If a user has been authenticated by the web layer, by means of a
+     * login method other than CLIENT_CERT, the username and password
+     * used to authenticate the user will be attached to the request as
+     * Notes for use by other server components.  A server component can
+     * also call several existing methods on Request to determine whether
+     * or not any user has been authenticated:</p>
+     * <ul>
+     * <li><strong>((HttpServletRequest) getRequest()).getAuthType()</strong>
+     *     will return BASIC, CLIENT-CERT, DIGEST, FORM, or <code>null</code>
+     *     if there is no authenticated user.</li>
+     * <li><strong>((HttpServletRequest) getRequest()).getUserPrincipal()</strong>
+     *     will return the authenticated <code>Principal</code> returned by the
+     *     <code>Realm</code> that authenticated this user.</li>
+     * </ul>
+     * <p>If CLIENT_CERT authentication was performed, the certificate chain
+     * will be available as a request attribute, as defined in the
+     * servlet specification.</p>
+     */
+
+
+    /**
+     * The notes key for the password used to authenticate this user.
+     */
+    public static final String REQ_PASSWORD_NOTE =
+      "org.apache.catalina.request.PASSWORD";
+
+
+    /**
+     * The notes key for the username used to authenticate this user.
+     */
+    public static final String REQ_USERNAME_NOTE =
+      "org.apache.catalina.request.USERNAME";
+
+
+    /**
+     * The notes key to track the single-sign-on identity with which this
+     * request is associated.
+     */
+    public static final String REQ_SSOID_NOTE =
+      "org.apache.catalina.request.SSOID";
+
+
+    // ---------------------------------------------------------- Session Notes
+
+
+    /**
+     * If the <code>cache</code> property of our authenticator is set, and
+     * the current request is part of a session, authentication information
+     * will be cached to avoid the need for repeated calls to
+     * <code>Realm.authenticate()</code>, under the following keys:
+     */
+
+
+    /**
+     * The notes key for the password used to authenticate this user.
+     */
+    public static final String SESS_PASSWORD_NOTE =
+      "org.apache.catalina.session.PASSWORD";
+
+
+    /**
+     * The notes key for the username used to authenticate this user.
+     */
+    public static final String SESS_USERNAME_NOTE =
+      "org.apache.catalina.session.USERNAME";
+
+
+    /**
+     * The following note keys are used during form login processing to
+     * cache required information prior to the completion of authentication.
+     */
+
+
+    /**
+     * The previously authenticated principal (if caching is disabled).
+     */
+    public static final String FORM_PRINCIPAL_NOTE =
+        "org.apache.catalina.authenticator.PRINCIPAL";
+
+
+    /**
+     * The original request information, to which the user will be
+     * redirected if authentication succeeds.
+     */
+    public static final String FORM_REQUEST_NOTE =
+        "org.apache.catalina.authenticator.REQUEST";
+
+
+}

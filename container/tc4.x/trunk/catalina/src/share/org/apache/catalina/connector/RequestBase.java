@@ -75,6 +75,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import javax.servlet.RequestDispatcher;
@@ -179,6 +180,13 @@ public abstract class RequestBase
      * The preferred Locales assocaited with this Request.
      */
     protected ArrayList locales = new ArrayList();
+
+
+    /**
+     * Internal notes associated with this request by Catalina components
+     * and event listeners.
+     */
+    private transient HashMap notes = new HashMap();
 
 
     /**
@@ -515,6 +523,34 @@ public abstract class RequestBase
 
 
     /**
+     * Return the object bound with the specified name to the internal notes
+     * for this request, or <code>null</code> if no such binding exists.
+     *
+     * @param name Name of the note to be returned
+     */
+    public Object getNote(String name) {
+
+        synchronized (notes) {
+            return (notes.get(name));
+        }
+
+    }
+
+
+    /**
+     * Return an Iterator containing the String names of all notes bindings
+     * that exist for this request.
+     */
+    public Iterator getNoteNames() {
+
+        synchronized (notes) {
+            return (notes.keySet().iterator());
+        }
+
+    }
+
+
+    /**
      * Release all object references, and initialize instance variables, in
      * preparation for reuse of this object.
      */
@@ -529,6 +565,7 @@ public abstract class RequestBase
         context = null;
         input = null;
         locales.clear();
+        notes.clear();
         protocol = null;
         reader = null;
         remoteAddr = null;
@@ -541,6 +578,21 @@ public abstract class RequestBase
         socket = null;
         stream = null;
         wrapper = null;
+
+    }
+
+
+    /**
+     * Remove any object bound to the specified name in the internal notes
+     * for this request.
+     *
+     * @param name Name of the note to be removed
+     */
+    public void removeNote(String name) {
+
+        synchronized (notes) {
+            notes.remove(name);
+        }
 
     }
 
@@ -569,6 +621,22 @@ public abstract class RequestBase
         this.contentType = type;
         if (type.indexOf(';') >= 0)
             characterEncoding = RequestUtil.parseCharacterEncoding(type);
+
+    }
+
+
+    /**
+     * Bind an object to a specified name in the internal notes associated
+     * with this request, replacing any existing binding for this name.
+     *
+     * @param name Name to which the object should be bound
+     * @param value Object to be bound to the specified name
+     */
+    public void setNote(String name, Object value) {
+
+        synchronized (notes) {
+            notes.put(name, value);
+        }
 
     }
 

@@ -230,8 +230,10 @@ public final class DigestAuthenticator
         if (authorization != null) {
             principal = findPrincipal(hreq, authorization, context.getRealm());
             if (principal != null) {
+                String username = parseUsername(authorization);
                 register(request, response, principal,
-                         Constants.DIGEST_METHOD);
+                         Constants.DIGEST_METHOD,
+                         username, null);
                 return (true);
             }
         }
@@ -331,6 +333,43 @@ public final class DigestAuthenticator
 
         return (realm.authenticate(userName, response, nOnce, nc, cnonce, qop,
                                    realmName, md5a2));
+
+    }
+
+
+    /**
+     * Parse the username from the specified authorization string.  If none
+     * can be identified, return <code>null</code>
+     *
+     * @param authorization Authorization string to be parsed
+     */
+    private String parseUsername(String authorization) {
+
+        //System.out.println("Authorization token : " + authorization);
+        // Validate the authorization credentials format
+        if (authorization == null)
+            return (null);
+        if (!authorization.startsWith("Digest "))
+            return (null);
+        authorization = authorization.substring(7).trim();
+
+        StringTokenizer commaTokenizer =
+            new StringTokenizer(authorization, ",");
+
+        while (commaTokenizer.hasMoreTokens()) {
+            String currentToken = commaTokenizer.nextToken();
+            int equalSign = currentToken.indexOf('=');
+            if (equalSign < 0)
+                return null;
+            String currentTokenName =
+                currentToken.substring(0, equalSign).trim();
+            String currentTokenValue =
+                currentToken.substring(equalSign + 1).trim();
+            if ("username".equals(currentTokenName))
+                return (removeQuotes(currentTokenValue));
+        }
+
+        return (null);
 
     }
 

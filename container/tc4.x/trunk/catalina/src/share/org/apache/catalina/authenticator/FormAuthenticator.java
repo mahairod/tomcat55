@@ -152,7 +152,7 @@ public final class FormAuthenticator
             if (debug >= 1)
                 log("Already authenticated '" +
                     principal.getName() + "'");
-            String ssoId = request.getSsoId();
+            String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
             if (ssoId != null)
                 associate(ssoId, getSession(request, true));
             return (true);
@@ -164,9 +164,9 @@ public final class FormAuthenticator
             if (debug >= 1)
                 log("Checking for reauthenticate in session " + session);
             String username =
-                (String) session.getNote(Constants.FORM_USERNAME_NOTE);
+                (String) session.getNote(Constants.SESS_USERNAME_NOTE);
             String password =
-                (String) session.getNote(Constants.FORM_PASSWORD_NOTE);
+                (String) session.getNote(Constants.SESS_PASSWORD_NOTE);
             if ((username != null) && (password != null)) {
                 if (debug >= 1)
                     log("Reauthenticating username '" + username + "'");
@@ -175,7 +175,8 @@ public final class FormAuthenticator
                 if (principal != null) {
                     session.setNote(Constants.FORM_PRINCIPAL_NOTE, principal);
                     register(request, response, principal,
-                             Constants.FORM_METHOD);
+                             Constants.FORM_METHOD,
+                             username, password);
                     return (true);
                 }
                 if (debug >= 1)
@@ -191,8 +192,10 @@ public final class FormAuthenticator
                 log("Restore request from session '" + session.getId() + "'");
             principal = (Principal)
                 session.getNote(Constants.FORM_PRINCIPAL_NOTE);
-            register(request, response, principal, Constants.FORM_METHOD);
-            String ssoId = request.getSsoId();
+            register(request, response, principal, Constants.FORM_METHOD,
+                     (String) session.getNote(Constants.SESS_USERNAME_NOTE),
+                     (String) session.getNote(Constants.SESS_PASSWORD_NOTE));
+            String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
             if (ssoId != null)
                 associate(ssoId, session);
             if (restoreRequest(request, session)) {
@@ -274,8 +277,8 @@ public final class FormAuthenticator
 
         // If we are not caching, save the username and password as well
         if (!cache) {
-            session.setNote(Constants.FORM_USERNAME_NOTE, username);
-            session.setNote(Constants.FORM_PASSWORD_NOTE, password);
+            session.setNote(Constants.SESS_USERNAME_NOTE, username);
+            session.setNote(Constants.SESS_PASSWORD_NOTE, password);
         }
 
         // Redirect the user to the original request URI (which will cause

@@ -87,10 +87,13 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
+import org.apache.catalina.InstanceEvent;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.core.StandardWrapper;
+import org.apache.catalina.util.InstanceSupport;
 import org.apache.catalina.util.StringManager;
 
 
@@ -176,6 +179,10 @@ final class ApplicationDispatcher
         this.pathInfo = pathInfo;
         this.queryString = queryString;
         this.name = name;
+        if (wrapper instanceof StandardWrapper)
+            this.support = ((StandardWrapper) wrapper).getInstanceSupport();
+        else
+            this.support = new InstanceSupport(wrapper);
 
         if (debug >= 1)
             log("servletPath=" + this.servletPath + ", pathInfo=" +
@@ -275,6 +282,13 @@ final class ApplicationDispatcher
      */
     private static final StringManager sm =
       StringManager.getManager(Constants.Package);
+
+
+    /**
+     * The InstanceSupport instance associated with our Wrapper (used to
+     * send "before dispatch" and "after dispatch" events.
+     */
+    private InstanceSupport support = null;
 
 
     /**
@@ -638,6 +652,8 @@ final class ApplicationDispatcher
                 request.setAttribute(Globals.JSP_FILE_ATTR, jspFile);
             else
                 request.removeAttribute(Globals.JSP_FILE_ATTR);
+            support.fireInstanceEvent(InstanceEvent.BEFORE_DISPATCH_EVENT,
+                                      servlet, request, response);
             if (servlet != null) {
                 //                if (debug >= 2)
                 //                    log("  Calling service(), jspFile=" + jspFile);
@@ -649,24 +665,34 @@ final class ApplicationDispatcher
                 }
             }
             request.removeAttribute(Globals.JSP_FILE_ATTR);
+            support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
+                                      servlet, request, response);
         } catch (IOException e) {
             request.removeAttribute(Globals.JSP_FILE_ATTR);
+            support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
+                                      servlet, request, response);
             log(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             ioException = e;
         } catch (UnavailableException e) {
             request.removeAttribute(Globals.JSP_FILE_ATTR);
+            support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
+                                      servlet, request, response);
             log(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             servletException = e;
             wrapper.unavailable(e);
         } catch (ServletException e) {
             request.removeAttribute(Globals.JSP_FILE_ATTR);
+            support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
+                                      servlet, request, response);
             log(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             servletException = e;
         } catch (RuntimeException e) {
             request.removeAttribute(Globals.JSP_FILE_ATTR);
+            support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
+                                      servlet, request, response);
             log(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), e);
             runtimeException = e;

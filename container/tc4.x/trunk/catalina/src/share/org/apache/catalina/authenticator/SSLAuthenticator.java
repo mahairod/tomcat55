@@ -169,7 +169,8 @@ public final class SSLAuthenticator
         }
 
         // Cache the principal (if requested) and record this authentication
-        register(request, response, principal, Constants.CERT_METHOD);
+        register(request, response, principal, Constants.CERT_METHOD,
+                 null, null);
         return (true);
 
     }

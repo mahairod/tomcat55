@@ -156,12 +156,13 @@ public final class BasicAuthenticator
         HttpServletResponse hres =
             (HttpServletResponse) response.getResponse();
         String authorization = request.getAuthorization();
-        if (authorization != null) {
-            principal = findPrincipal(authorization, context.getRealm());
-            if (principal != null) {
-                register(request, response, principal, Constants.BASIC_METHOD);
-                return (true);
-            }
+        String username = parseUsername(authorization);
+        String password = parsePassword(authorization);
+        principal = context.getRealm().authenticate(username, password);
+        if (principal != null) {
+            register(request, response, principal, Constants.BASIC_METHOD,
+                     username, password);
+            return (true);
         }
 
         // Send an "unauthorized" response and an appropriate challenge
@@ -183,17 +184,13 @@ public final class BasicAuthenticator
 
 
     /**
-     * Parse the specified authorization credentials, and return the
-     * associated Principal that these credentials authenticate (if any)
-     * from the specified Realm.  If there is no such Principal, return
-     * <code>null</code>.
+     * Parse the username from the specified authorization credentials.
+     * If none can be found, return <code>null</code>.
      *
      * @param authorization Authorization credentials from this request
-     * @param realm Realm used to authenticate Principals
      */
-    private static Principal findPrincipal(String authorization, Realm realm) {
+    private String parseUsername(String authorization) {
 
-        // Validate the authorization credentials format
         if (authorization == null)
             return (null);
         if (!authorization.startsWith("Basic "))
@@ -207,12 +204,38 @@ public final class BasicAuthenticator
         if (colon < 0)
             return (null);
         String username = unencoded.substring(0, colon).trim();
-        String password = unencoded.substring(colon + 1).trim();
-
-        // Validate these credentials in our associated realm
-        return (realm.authenticate(username, password));
+        //        String password = unencoded.substring(colon + 1).trim();
+        return (username);
 
     }
+
+
+    /**
+     * Parse the password from the specified authorization credentials.
+     * If none can be found, return <code>null</code>.
+     *
+     * @param authorization Authorization credentials from this request
+     */
+    private String parsePassword(String authorization) {
+
+        if (authorization == null)
+            return (null);
+        if (!authorization.startsWith("Basic "))
+            return (null);
+        authorization = authorization.substring(6).trim();
+
+        // Decode and parse the authorization credentials
+        String unencoded =
+          new String(base64Helper.decode(authorization.getBytes()));
+        int colon = unencoded.indexOf(':');
+        if (colon < 0)
+            return (null);
+        //        String username = unencoded.substring(0, colon).trim();
+        String password = unencoded.substring(colon + 1).trim();
+        return (password);
+
+    }
+
 
 
 }

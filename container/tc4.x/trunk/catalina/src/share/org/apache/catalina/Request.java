@@ -68,6 +68,7 @@ package org.apache.catalina;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
@@ -231,10 +232,35 @@ public interface Request {
 
 
     /**
+     * Return the object bound with the specified name to the internal notes
+     * for this request, or <code>null</code> if no such binding exists.
+     *
+     * @param name Name of the note to be returned
+     */
+    public Object getNote(String name);
+
+
+    /**
+     * Return an Iterator containing the String names of all notes bindings
+     * that exist for this request.
+     */
+    public Iterator getNoteNames();
+
+
+    /**
      * Release all object references, and initialize instance variables, in
      * preparation for reuse of this object.
      */
     public void recycle();
+
+
+    /**
+     * Remove any object bound to the specified name in the internal notes
+     * for this request.
+     *
+     * @param name Name of the note to be removed
+     */
+    public void removeNote(String name);
 
 
     /**
@@ -253,6 +279,16 @@ public interface Request {
      * @param type The new content type
      */
     public void setContentType(String type);
+
+
+    /**
+     * Bind an object to a specified name in the internal notes associated
+     * with this request, replacing any existing binding for this name.
+     *
+     * @param name Name to which the object should be bound
+     * @param value Object to be bound to the specified name
+     */
+    public void setNote(String name, Object value);
 
 
     /**
