@@ -194,8 +194,9 @@ public class AddRealmAction extends Action {
         realmFm.setRealmType(realmType);
         realmFm.setDebugLvl("0");
         realmFm.setDigest("");
-        realmFm.setRoleBase("");        
-        realmFm.setSearch("false");
+        realmFm.setRoleBase("");                
+        realmFm.setUserSubtree("false");
+        realmFm.setRoleSubtree("false");
         realmFm.setRolePattern("");
         realmFm.setRoleAttribute("");
         realmFm.setRoleBase("");        

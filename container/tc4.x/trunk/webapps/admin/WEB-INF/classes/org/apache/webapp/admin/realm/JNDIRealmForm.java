@@ -84,9 +84,14 @@ public final class JNDIRealmForm extends RealmForm {
     // ----------------------------------------------------- Instance Variables
     
     /**
-     * The text for the search subtree.
+     * Should we search the entire subtree for matching roles?
      */
-    private String search = "false";
+    private String roleSubtree = "false";
+    
+    /**
+     * Should we search the entire subtree for matching users?
+     */
+    private String userSubtree = "false";
     
     /**
      * The text for the digest algorithm.
@@ -165,23 +170,41 @@ public final class JNDIRealmForm extends RealmForm {
     }
         
     /**
-     * Return the search boolean Text.
+     * Return the roleSubtree boolean Text.
      */
-    public String getSearch() {
+    public String getRoleSubtree() {
         
-        return this.search;
+        return this.roleSubtree;
         
     }
     
     /**
-     * Set the search Text.
+     * Set the roleSubtree Text.
      */
-    public void setSearch(String search) {
+    public void setRoleSubtree(String roleSubtree) {
         
-        this.search = search;
+        this.roleSubtree = roleSubtree;
+        
+    }
+            
+    /**
+     * Return the userSubtree boolean Text.
+     */
+    public String getUserSubtree() {
+        
+        return this.userSubtree;
         
     }
     
+    /**
+     * Set the userSubtree Text.
+     */
+    public void setUserSubtree(String userSubtree) {
+        
+        this.userSubtree = userSubtree;
+        
+    }
+
     /**
      * Return the digest.
      */
@@ -376,7 +399,8 @@ public final class JNDIRealmForm extends RealmForm {
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         
         super.reset(mapping, request);
-        this.search="false";
+        this.roleSubtree="false";
+        this.userSubtree="false";
         
         this.digest = null;
         this.roleAttribute = null;
@@ -392,7 +416,7 @@ public final class JNDIRealmForm extends RealmForm {
         this.contextFactory = null;
     }
     
-       /**
+    /**
      * Render this object as a String.
      */
     public String toString() {
@@ -401,8 +425,10 @@ public final class JNDIRealmForm extends RealmForm {
         sb.append(getAdminAction());
         sb.append(",debugLvl=");
         sb.append(getDebugLvl());
-        sb.append(",search=");
-        sb.append(search);
+        sb.append(",userSubtree=");
+        sb.append(userSubtree);
+        sb.append(",roleSubtree=");
+        sb.append(roleSubtree);
         sb.append(",digest=");
         sb.append(digest);
         sb.append("',roleAttribute='");

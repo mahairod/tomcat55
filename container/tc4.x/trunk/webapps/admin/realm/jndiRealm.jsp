@@ -150,9 +150,20 @@
         </controls:row>
 
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
-            <controls:label><bean:message key="realm.search"/>:</controls:label>
+            <controls:label><bean:message key="realm.role.subtree"/>:</controls:label>
             <controls:data>
-             <html:select property="search">
+             <html:select property="roleSubtree">
+                     <bean:define id="searchVals" name="jndiRealmForm" property="searchVals"/>
+                     <html:options collection="searchVals" property="value"
+                        labelProperty="label"/>
+                </html:select>
+              </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.user.subtree"/>:</controls:label>
+            <controls:data>
+             <html:select property="userSubtree">
                      <bean:define id="searchVals" name="jndiRealmForm" property="searchVals"/>
                      <html:options collection="searchVals" property="value"
                         labelProperty="label"/>

@@ -298,9 +298,13 @@ public final class SaveJNDIRealmAction extends Action {
             mBServer.setAttribute(roname,
                                   new Attribute("contextFactory",  rform.getContextFactory()));
 
+            attribute = "userSubtree";
+            mBServer.setAttribute(roname,
+                                  new Attribute("userSubtree",  new Boolean(rform.getUserSubtree())));
+
             attribute = "roleSubtree";
             mBServer.setAttribute(roname,
-                                  new Attribute("roleSubtree",  new Boolean(rform.getSearch())));
+                                  new Attribute("roleSubtree",  new Boolean(rform.getRoleSubtree())));
 
             attribute = "roleBase";
             mBServer.setAttribute(roname,
