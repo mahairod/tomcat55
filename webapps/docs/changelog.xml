@@ -40,6 +40,9 @@
       <fix>
         <bug>32130</bug>: Add safety check to FileStore#keys method. (yoavs)
       </fix>
+      <update>
+        <bug>32276</bug>: Add developer info to Realm How-To. (yoavs)
+      </update>
     </changelog>
   </subsection>
 </section>
