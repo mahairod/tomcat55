@@ -265,6 +265,7 @@ class Ajp13Response extends Response
     {
 	if(!finished) {
 	    super.finish();
+		finished = true; // Avoid END_OF_RESPONSE sent 2 times
 	    ajp13.finish();
 	}
     }
