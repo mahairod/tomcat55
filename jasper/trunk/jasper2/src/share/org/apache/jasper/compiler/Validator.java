@@ -476,6 +476,13 @@ class Validator {
 	public void visit(Node.ParamAction n) throws JasperException {
             JspUtil.checkAttributes("Param action", n,
                                     paramActionAttrs, err);
+	    // make sure the value of the 'name' attribute is not a
+	    // request-time expression
+	    if (isExpression(n, n.getAttributes().getValue("name"))) {
+		err.jspError(n,
+			     "jsp.error.attribute.standard.non_rt_with_expr",
+			     "name", "jsp:param");
+	    }
 	    n.setValue(getJspAttribute("value", null, null,
 				       n.getAttributeValue("value"),
                                        java.lang.String.class, null,
@@ -739,7 +746,7 @@ class Validator {
 			    // Make sure its value does not contain any.
 			    if (isExpression(n, attrs.getValue(i))) {
                                 err.jspError(n,
-				        "jsp.error.attribute.non_rt_with_expr",
+				        "jsp.error.attribute.custom.non_rt_with_expr",
 					     tldAttrs[j].getName());
 			    }
 			    jspAttrs[i]
@@ -976,7 +983,7 @@ class Validator {
 	 * Checks to see if the given attribute value represents a runtime or
 	 * EL expression.
 	 */
-	private boolean isExpression(Node.CustomTag n, String value) {
+	private boolean isExpression(Node n, String value) {
 	    if ((n.isXmlSyntax() && value.startsWith("%="))
 		    || (!n.isXmlSyntax() && value.startsWith("<%="))
    		    || (value.indexOf("${") != -1 && !pageInfo.isELIgnored()))
