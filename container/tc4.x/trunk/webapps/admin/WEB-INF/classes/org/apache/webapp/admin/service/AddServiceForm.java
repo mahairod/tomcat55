@@ -79,8 +79,21 @@ import javax.management.modelmbean.ModelMBean;
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanOperationInfo;
+import javax.management.MBeanInfo;
+
+import javax.management.modelmbean.ModelMBean;
+import javax.management.modelmbean.ModelMBeanInfo;
+
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
+
+import javax.management.RuntimeOperationsException;
+import javax.management.MBeanException;
+import java.lang.RuntimeException;
+
+//import org.apache.catalina.mbeans.MBeanUtils;
 
 /**
  * Form bean for the add service page.
@@ -220,6 +233,7 @@ public final class AddServiceForm extends ActionForm {
         this.defaultHost = defaultHost;
         
     }
+    
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -251,6 +265,7 @@ public final class AddServiceForm extends ActionForm {
         
         ActionErrors errors = new ActionErrors();
         String submit = request.getParameter("submit");
+        ObjectInstance mBeanFactory = null;
         
         if (submit != null) {
             
@@ -259,49 +274,55 @@ public final class AddServiceForm extends ActionForm {
                 new ActionError("error.serviceName.required"));
             } else {
                 
-                // just try to register mBean
-                // if exception is bean already registered, then add error message.
+                // try to create a new service.
                 try {
-                    
-                    Registry registry = Registry.getRegistry();
-                    String[] all = registry.findManagedBeans();
-                    
-                    for (int i=0; i<all.length; i++) {
-                        System.out.println(all[i]);
-                    }
                     
                     ApplicationServlet servlet = (ApplicationServlet)getServlet();
                     mBServer = servlet.getServer();
                     
-                    System.out.println("Creating MBeans ...");
+                    // Get hold of the parent server.
+                    Iterator serverItr =
+                    mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
+                    TomcatTreeBuilder.WILDCARD), null).iterator();
                     
-                    ManagedBean managed = registry.findManagedBean("StandardService");
-                      /*
-                      String domain = mserver.getDefaultDomain();
-                       
-                      mbean.setClassName("org.apache.catalina.mbeans.StandardContextMBean");
-                      mbean.setDomain(mBServer.getDefaultDomain());
-                       
-                      ModelMBean mbean = managed.createMBean(userDatabase);
-                      ObjectName oname = createObjectName(domain, userDatabase);
-                      */
-                    ObjectName oName = new ObjectName(
-                    TomcatTreeBuilder.ENGINE_TYPE + ",service=" + serviceName);
+                    ObjectInstance objInstance = (ObjectInstance)serverItr.next();
+                    ObjectName server = (objInstance).getObjectName();
                     
-                    ObjectInstance oInst = mBServer.createMBean(
-                    "org.apache.catalina.mbeans.StandardContextMBean", oName);
+                    mBeanFactory = TomcatTreeBuilder.getMBeanFactory();
+                    ObjectName factory = mBeanFactory.getObjectName();
                     
-                    ModelMBean mbean = managed.createMBean();
+                    Object[] params = new Object[2];
+                    // mBean name of the parent server
+                    params[0] = new String(server.toString());
+                    // name of the new service to be added
+                    params[1] = new String(serviceName);
                     
-                    mBServer.registerMBean(mbean, oName);
+                    String[] types = new String[2];
+                    types[0]= "java.lang.String";
+                    types[1]= "java.lang.String";
                     
-                    // check that this service name does not already exist.
-                    //} catch(InstanceAlreadyExistsException iaee) {
-                    // a service with this name does not exist before
-                    // therefore add it.
+                    // get a unique service name for the new service.
+                    String newService = (String)
+                    mBServer.invoke(factory, "createStandardService", params, types);
                     
-                    //System.out.println("created mBean!");
+                    // add this newly created service to the server mBean.
+                    Object[] serviceParam = new Object[1];
+                    serviceParam[0] = new String(newService);
                     
+                    String[] type = new String[1];
+                    type[0]= "java.lang.String";
+                    
+                    // System.out.println("Created Service " + newService);
+                    mBServer.invoke(server, "addService", serviceParam, type);
+                    
+                } catch (RuntimeOperationsException ex) {
+                    RuntimeException e = ex.getTargetException();
+                    // print the root exception
+                    if (e instanceof RuntimeOperationsException){
+                        ((RuntimeOperationsException)e).getTargetException().printStackTrace();
+                    } else {
+                        e.printStackTrace();
+                    }
                 } catch (Throwable t) {
                     t.printStackTrace();
                 }
