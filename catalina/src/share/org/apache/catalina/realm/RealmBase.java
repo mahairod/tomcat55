@@ -81,10 +81,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.management.ObjectName;
 import javax.management.MBeanServer;
 import javax.management.MBeanRegistration;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.ReflectionException;
-import javax.management.MalformedObjectNameException;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -98,6 +94,7 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.ContainerBase;
 
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
@@ -995,7 +992,16 @@ public abstract class RealmBase
     protected String host;
     protected String path;
     protected ObjectName oname;
+    protected ObjectName controller;
     protected MBeanServer mserver;
+
+    public ObjectName getController() {
+        return controller;
+    }
+
+    public void setController(ObjectName controller) {
+        this.controller = controller;
+    }
 
     public ObjectName getObjectName() {
         return oname;
@@ -1040,22 +1046,17 @@ public abstract class RealmBase
         if( container== null ) {
             // Register with the parent
             try {
-                Set names=null;
+                ObjectName parent=null;
                 if( host == null ) {
                     // global
-                    names=mserver.queryNames(new ObjectName(domain +":type=Engine,*"), null);
+                    parent=new ObjectName(domain +":type=Engine");
                 } else if( path==null ) {
-                    names=mserver.queryNames(new ObjectName(domain +
-                            ":type=Host,host=" + host +",*"), null);
+                    parent=new ObjectName(domain +
+                            ":type=Host,host=" + host);
                 } else {
-                    names=mserver.queryNames(new ObjectName(domain +":j2eeType=WebModule,name=//" +
-                            host + "/" + path + ",*"), null);
+                    parent=new ObjectName(domain +":j2eeType=WebModule,name=//" +
+                            host + "/" + path);
                 }
-                if( names.size() == 0 ) {
-                    log.error("Can't register, no object found " + oname );
-                    return;
-                }
-                ObjectName parent=(ObjectName)names.iterator().next();
                 log.info("Register with " + parent);
                 mserver.invoke(parent, "setRealm", new Object[] {this},
                         new String[] {"org.apache.catalina.Realm"});
@@ -1067,21 +1068,9 @@ public abstract class RealmBase
         if( oname==null ) {
             // register
             try {
-                StandardEngine engine=null;            
-                String suffix="";
-                if( container instanceof StandardEngine ) {
-                    engine=(StandardEngine)container;                
-                } else if( container instanceof StandardHost ) {
-                    engine=(StandardEngine)container.getParent();
-                    suffix=",host=" + container.getName();
-                } else if( container instanceof StandardContext ) {
-                    engine=(StandardEngine)container.getParent().getParent();
-                    suffix=",host=" + container.getParent().getName() + 
-                            ",path=" + ((StandardContext)container).getPath();
-                }
-                oname=new ObjectName(engine.getDomain()+ ":type=Realm" + suffix);
+                ContainerBase cb=(ContainerBase)container;
+                oname=new ObjectName(cb.getDomain()+":type=Realm" + cb.getContainerSuffix());
                 Registry.getRegistry().registerComponent(this, oname, null );
-                
             } catch (Throwable e) {
                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             }
