@@ -61,6 +61,8 @@
 package org.apache.coyote.tomcat5;
 
 import java.util.Vector;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.lang.reflect.Method;
 
 import javax.management.ObjectName;
@@ -113,6 +115,11 @@ public final class CoyoteConnector
 
     // ----------------------------------------------------- Instance Variables
 
+
+    /**
+     * Holder for our configured properties.
+     */
+    private HashMap properties = new HashMap();
 
     /**
      * The <code>Service</code> we are associated with (if any).
@@ -373,6 +380,26 @@ public final class CoyoteConnector
 
     // ------------------------------------------------------------- Properties
 
+    /**
+     * Return a configured property.
+     */
+    public Object getProperty(String name) {
+        return properties.get(name);
+    }
+
+    /**
+     * Set a configured property.
+     */
+    public void setProperty(String name, Object value) {
+        properties.put(name, value);
+    }
+
+    /** 
+     * remove a configured property.
+     */
+    public void removeProperty(String name) {
+        properties.remove(name);
+    }
 
     /**
      * Return the <code>Service</code> with which we are associated (if any).
@@ -392,6 +419,7 @@ public final class CoyoteConnector
     public void setService(Service service) {
 
         this.service = service;
+        setProperty("service", service);
 
     }
 
@@ -415,6 +443,7 @@ public final class CoyoteConnector
     public void setCompression(String compression) {
 
         this.compression = compression;
+        setProperty("compression", compression);
 
     }
 
@@ -437,6 +466,7 @@ public final class CoyoteConnector
     public void setConnectionLinger(int connectionLinger) {
 
         this.connectionLinger = connectionLinger;
+        setProperty("soLinger", String.valueOf(connectionLinger));
 
     }
 
@@ -459,6 +489,7 @@ public final class CoyoteConnector
     public void setConnectionTimeout(int connectionTimeout) {
 
         this.connectionTimeout = connectionTimeout;
+        setProperty("soTimeout", String.valueOf(connectionTimeout));
 
     }
 
@@ -481,6 +512,7 @@ public final class CoyoteConnector
     public void setConnectionUploadTimeout(int connectionUploadTimeout) {
 
         this.connectionUploadTimeout = connectionUploadTimeout;
+        setProperty("timeout", String.valueOf(connectionUploadTimeout));
 
     }
 
@@ -503,6 +535,7 @@ public final class CoyoteConnector
     public void setServerSocketTimeout(int serverSocketTimeout) {
 
         this.serverSocketTimeout = serverSocketTimeout;
+        setProperty("serverSoTimeout", String.valueOf(serverSocketTimeout));
 
     }
 
@@ -525,6 +558,7 @@ public final class CoyoteConnector
     public void setAcceptCount(int count) {
 
         this.acceptCount = count;
+        setProperty("backlog", String.valueOf(count));
 
     }
 
@@ -547,6 +581,7 @@ public final class CoyoteConnector
     public void setAddress(String address) {
 
         this.address = address;
+        setProperty("address", address);
 
     }
 
@@ -579,6 +614,7 @@ public final class CoyoteConnector
     public void setBufferSize(int bufferSize) {
 
         this.bufferSize = bufferSize;
+        setProperty("bufferSize", String.valueOf(bufferSize));
 
     }
 
@@ -660,6 +696,7 @@ public final class CoyoteConnector
     public void setEnableLookups(boolean enableLookups) {
 
         this.enableLookups = enableLookups;
+        setProperty("enableLookups", String.valueOf(enableLookups));
 
     }
 
@@ -729,6 +766,7 @@ public final class CoyoteConnector
     public void setMinProcessors(int minProcessors) {
 
         this.minProcessors = minProcessors;
+        setProperty("minProcessors", String.valueOf(minProcessors));
 
     }
 
@@ -751,6 +789,7 @@ public final class CoyoteConnector
     public void setMaxProcessors(int maxProcessors) {
 
         this.maxProcessors = maxProcessors;
+        setProperty("maxProcessors", String.valueOf(maxProcessors));
 
     }
 
@@ -773,6 +812,7 @@ public final class CoyoteConnector
     public void setPort(int port) {
 
         this.port = port;
+        setProperty("port", String.valueOf(port));
 
     }
 
@@ -829,8 +869,10 @@ public final class CoyoteConnector
 
         if(proxyName != null && proxyName.length() > 0) {
             this.proxyName = proxyName;
+            setProperty("proxyName", proxyName);
         } else {
             this.proxyName = null;
+            removeProperty("proxyName");
         }
 
     }
@@ -854,6 +896,7 @@ public final class CoyoteConnector
     public void setProxyPort(int proxyPort) {
 
         this.proxyPort = proxyPort;
+        setProperty("proxyPort", String.valueOf(proxyPort));
 
     }
 
@@ -878,6 +921,7 @@ public final class CoyoteConnector
     public void setRedirectPort(int redirectPort) {
 
         this.redirectPort = redirectPort;
+        setProperty("redirectPort", String.valueOf(redirectPort));
 
     }
 
@@ -897,6 +941,7 @@ public final class CoyoteConnector
      */
     public void setDisableUploadTimeout( boolean isDisabled ) {
         disableUploadTimeout = isDisabled;
+        setProperty("disableUploadTimeout", String.valueOf(isDisabled));
     }
 
 
@@ -912,7 +957,7 @@ public final class CoyoteConnector
      */
     public void setKeepAlive(boolean keepAlive) {
         if (!keepAlive) {
-            maxKeepAliveRequests = 1;
+            setMaxKeepAliveRequests(1);
         }
     }
 
@@ -929,6 +974,7 @@ public final class CoyoteConnector
      */
     public void setMaxKeepAliveRequests(int mkar) {
         maxKeepAliveRequests = mkar;
+        setProperty("maxKeepAliveRequests", String.valueOf(mkar));
     }
 
      /**
@@ -981,6 +1027,7 @@ public final class CoyoteConnector
     public void setScheme(String scheme) {
 
         this.scheme = scheme;
+        setProperty("scheme", scheme);
 
     }
 
@@ -1005,6 +1052,7 @@ public final class CoyoteConnector
     public void setSecure(boolean secure) {
 
         this.secure = secure;
+        setProperty("secure", String.valueOf(secure));
 
     }
 
@@ -1014,6 +1062,7 @@ public final class CoyoteConnector
 
     public void setTomcatAuthentication(boolean tomcatAuthentication) {
         this.tomcatAuthentication = tomcatAuthentication;
+        setProperty("tomcatAuthentication", String.valueOf(tomcatAuthentication));
     }
     
 
@@ -1036,6 +1085,7 @@ public final class CoyoteConnector
     public void setTcpNoDelay(boolean tcpNoDelay) {
 
         this.tcpNoDelay = tcpNoDelay;
+        setProperty("tcpNoDelay", String.valueOf(tcpNoDelay));
 
     }
 
@@ -1058,6 +1108,7 @@ public final class CoyoteConnector
      public void setURIEncoding(String URIEncoding) {
 
          this.URIEncoding = URIEncoding;
+         setProperty("uRIEncoding", URIEncoding);
 
      }
 
@@ -1214,36 +1265,8 @@ public final class CoyoteConnector
         IntrospectionUtils.setProperty(protocolHandler, "jkHome",
                                        System.getProperty("catalina.base"));
 
-        // Set attributes
-        IntrospectionUtils.setProperty(protocolHandler, "port", "" + port);
-        IntrospectionUtils.setProperty(protocolHandler, "maxThreads",
-                                       "" + maxProcessors);
-        IntrospectionUtils.setProperty(protocolHandler, "backlog",
-                                       "" + acceptCount);
-        IntrospectionUtils.setProperty(protocolHandler, "tcpNoDelay",
-                                       "" + tcpNoDelay);
-        IntrospectionUtils.setProperty(protocolHandler, "soLinger",
-                                       "" + connectionLinger);
-        IntrospectionUtils.setProperty(protocolHandler, "soTimeout",
-                                       "" + connectionTimeout);
-        IntrospectionUtils.setProperty(protocolHandler, "timeout",
-                                       "" + connectionUploadTimeout);
-        IntrospectionUtils.setProperty(protocolHandler, "serverSoTimeout",
-                                       "" + serverSocketTimeout);
-        IntrospectionUtils.setProperty(protocolHandler, "disableUploadTimeout",
-                                       "" + disableUploadTimeout);
-        IntrospectionUtils.setProperty(protocolHandler, "maxKeepAliveRequests",
-                                       "" + maxKeepAliveRequests);
-        IntrospectionUtils.setProperty(protocolHandler, "tomcatAuthentication",
-                                       "" + tomcatAuthentication);
-        IntrospectionUtils.setProperty(protocolHandler, "compression",
-                                       compression);
-        if (address != null) {
-            IntrospectionUtils.setProperty(protocolHandler, "address",
-                                           address);
-        }
-
         // Configure secure socket factory
+        // XXX For backwards compatibility only.
         if (factory instanceof CoyoteServerSocketFactory) {
             IntrospectionUtils.setProperty(protocolHandler, "secure",
                                            "" + true);
@@ -1275,6 +1298,16 @@ public final class CoyoteConnector
             IntrospectionUtils.setProperty(protocolHandler, "secure",
                                            "" + false);
         }
+        /* Set the configured properties.  This only sets the ones that were
+           explicitly configured.  Default values are the responsibility of
+           the protocolHandler. */
+        Iterator keys = properties.keySet().iterator();
+        while( keys.hasNext() ) {
+            String name = (String)keys.next();
+            String value = properties.get(name).toString(); 
+            IntrospectionUtils.setProperty(protocolHandler, name, value);
+        }
+        
 
         try {
             protocolHandler.init();
@@ -1390,6 +1423,7 @@ public final class CoyoteConnector
     }
 
     public void setClientAuth(boolean clientAuth) {
+        setProperty("clientauth", String.valueOf(clientAuth));
         ServerSocketFactory factory= this.getFactory();
         if( ! (factory instanceof CoyoteServerSocketFactory) )
             return;
@@ -1407,11 +1441,13 @@ public final class CoyoteConnector
     }
 
     public void setKeystoreFile(String keystoreFile) {
+        setProperty("keystore", keystoreFile);
         ServerSocketFactory factory= this.getFactory();
         if( ! (factory instanceof CoyoteServerSocketFactory) )
             return;
         CoyoteServerSocketFactory coyoteFactory=(CoyoteServerSocketFactory)factory;
         coyoteFactory.setKeystoreFile(keystoreFile);
+        
     }
 
     /**
@@ -1430,6 +1466,7 @@ public final class CoyoteConnector
      * Set keystorePass
      */
     public void setKeystorePass(String keystorePass) {
+        setProperty("keypass", keystorePass);
         ServerSocketFactory factory = getFactory();
         if( factory instanceof CoyoteServerSocketFactory ) {
             ((CoyoteServerSocketFactory)factory).setKeystorePass(keystorePass);
