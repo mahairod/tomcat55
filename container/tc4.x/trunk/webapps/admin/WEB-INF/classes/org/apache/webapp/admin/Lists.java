@@ -599,6 +599,7 @@ public class Lists {
 
     }
 
+
     /**
      * Return the  <code>Service</code> object name string
      * that the admin app belongs to.
@@ -608,25 +609,25 @@ public class Lists {
      *
      * @exception Exception if thrown while retrieving the list
      */
-    public static String getAdminAppService(MBeanServer mbserver, 
-                       String domain, HttpServletRequest request)
+    public static String getAdminAppService
+        (MBeanServer mbserver, String domain, HttpServletRequest request)
         throws Exception {
 
-            // Get the admin app's service name
-            StringBuffer sb = new StringBuffer(domain);
-            sb.append(":type=Context");
-            sb.append(",path=");
-            sb.append(request.getContextPath());
-            sb.append(",host=");
-            sb.append(request.getServerName());
-            sb.append(",*");
-            ObjectName search = new ObjectName(sb.toString());
-            Iterator names = mbserver.queryNames(search, null).iterator();
-            String service = null;
-            while (names.hasNext()) {
-                service = ((ObjectName)names.next()).getKeyProperty("service");
-            }
-            return service;
+        // Get the admin app's service name
+        StringBuffer sb = new StringBuffer(domain);
+        sb.append(":type=Context");
+        sb.append(",path=");
+        sb.append(request.getContextPath());
+        sb.append(",*");
+        ObjectName search = new ObjectName(sb.toString());
+        Iterator names = mbserver.queryNames(search, null).iterator();
+        String service = null;
+        while (names.hasNext()) {
+            service = ((ObjectName)names.next()).getKeyProperty("service");
+        }
+        return service;
+
     }
-    
+
+
 }
