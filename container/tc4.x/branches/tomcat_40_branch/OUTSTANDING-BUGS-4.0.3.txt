@@ -7,15 +7,19 @@ released. None of these bugs are regression problems, so it should be
 acceptable to delay their resolution.
 
 
+4964    jasper     popBody() is called before doEndTag() is called in a BodyTag
 5507    catalina   Swapping sessions causes exceptions and it doesn't work 
                    with FileStore
+5741    jasper     Jspc -webapp option is broken due to namespace collisions
 5827    catalina   DataInputStream.readInt returns wrong values
-5976    catalina   Tomcat 4.0.2B2 + Security Manager + JSSE don't work together
+5853    catalina   Unable to get request parameters in the Error page 
+                   for form based login
+5998    jasper     Exception hiding when a JspExceptioin is thrown by a tag
 6068    jk         AJP13 "bad read", IOException
+6281    catalina   JDBCRealm+Form Login+URL re-writing session=broken
 6331    jk         Cannot add more than one cookie
 6420    jk         Loadbalancer mod_jk from 4.02 not working with TC 3.3
 6457    jk         mod_jk causes segmentation fault with JkLogLevel != debug
-6464    jasper     Jspc generates bad package names on Windows NT
 6617    catalina   Iterating over session attribute name enumeration fails
 
 
