@@ -13,6 +13,195 @@
 
 <body>
 
+<section name="Tomcat 5.0.5 Alpha (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <add>
+      Update the tester web application for Tomcat 5, and make a tester run
+      part of the release process (remm)
+      </add>
+      <fix>
+      In the checkout target, only checkout modeler from commons instead 
+      of all of commons (funkman)
+      </fix>
+      <fix>
+      Add the catalina-optional JAR in the embed package (remm)
+      </fix>
+      <fix>
+      Fix obscure JAXP related CL problem in embedded mode, by preloading some
+      descriptors (remm)
+      </fix>
+      <fix>
+      Release notes updates (funkman)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <update>
+      Added Embedded.createConnector() methods that take address of type
+      String (luehe)
+      </update>
+      <fix>
+      Don't set the no-caching headers for protected POSTed pages.  This makes
+      the "back" button in the browser works as expected. (billbarker)
+      </fix>
+      <fix>
+      <bug>21341</bug>: Fix error page forwarding (remm)
+      </fix>
+      <fix>
+      In the extended log valve, if bytes are requested, then print bytes, 
+      not the date (funkman)
+      </fix>
+      <update>
+      Add a Container.getPipeline() to allow bypassing the (useless) 
+      invoke method (remm)
+      </update>
+      <add>
+      Add code to allow printing partial stack traces for exceptions in HTML
+      report pages, as well as add a note about the full stack trace of
+      the root cause being available in the logs (remm)
+      </add>
+      <update>
+      Logs will now contain the root cause of ServletExceptions (remm)
+      </update>
+      <fix>
+      Fix a problem where the Strings weren't escaped in the same way for chars
+      such as '. This caused problems for localization in French. (remm)
+      </fix>
+      <fix>
+      Add leading + to timezone offset in the access logs (funkman)
+      </fix>
+      <update>
+      Merge ErrorDispacherValve functionality back into StadardHostValve, and
+      remove associated hacks from StandardServer and StandardHost (remm)
+      </update>
+      <fix>
+      Like some of the other resources, application parameters must not be 
+      reset on a context stop, as they come from a Context element. 
+      Regular parameters read from web.xml should be fine. (remm)
+      </fix>
+      <fix>
+      Correctly update the mapper. The previous code was not compatible with
+      the invoker servlet and its dynamically added wrappers. (remm)
+      </fix>
+      <fix>
+      Use the context logger for all webapp related error messages (remm)
+      </fix>
+      <update>
+      Remove RequestListenerValve and merge into StandardContextValve (remm)
+      </update>
+      <fix>
+      Fix NPE exception when instances attribute is null (jfarcand)
+      </fix>
+      <fix>
+      <bug>21822</bug>: Valves should only be registered and unregistered when:
+      addValve or removeValve is called and the associated pipeline is started
+      or on start and stop of the pipeline (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <fix>
+      Slight re-factoring of the JSSE SSL implementation to allow it to work 
+      with non-Sun vendor's 1.4.x JVMs. (billbarker)
+      </fix>
+      <add>
+      Added support for X-Powered-By response header, as defined by the
+      Servlet 2.4 and JSP 2.0 specs (luehe)
+      </add>
+      <fix>
+      Fix context removal from the mapper when Tomcat is used as embedded
+      (jfarcand)
+      </fix>
+      <fix>
+      As mandated by the specs, the mapper will always redirect for physical 
+      directories, and will always process physical welcome files mapping
+      (billbarker)
+      </fix>
+      
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      <bug>21753</bug>: Fix comment generation, submitted by Eric Carmichael
+      (billbarker)
+      </fix>
+      <update>
+      Hide all taglib and XML namespace management in PageInfo (luehe)
+      </update>
+      <fix>
+      Forgive duplicate attribute values on static include (luehe)
+      </fix>
+      <fix>
+      Fixed typos and formatting of JspC help message (luehe)
+      </fix>
+      <fix>
+      Changed "jsp:usebean" to "jsp:useBean", submitted by Petr Jiricka (luehe)
+      </fix>
+      <update>
+      Preparation work for new 'static include' rules (luehe)
+      </update>
+      <update>
+      Ignore default settings for "extends" and "language" when checking for
+      multiple page directive attributes with conflicting values (luehe)
+      </update>
+      <fix>
+      Do not unconditionally use "JSP" as the default body-content type,
+      because it is illegal for SimpleTag handlers (luehe)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <fix>
+      Fix many tests (see bug <bug>21731</bug>), partially submitted by
+      Peter Rossbach (remm)
+      </fix>
+      <docs>
+      Added link to FAQ and Wiki on the introduction page of the docs (funkman)
+      </docs>
+      <docs>
+      Update docs for AccessLogValve (funkman)
+      </docs>
+      <docs>
+      Update docs index according to the menu changes (remm)
+      </docs>
+      <docs>
+      Add some Windows setup documentation (remm)
+      </docs>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.4 Alpha (remm)">
 
   <subsection name="General">
@@ -98,10 +287,7 @@
       to properly remove the config file even if it does not match the 
       context path (remm)
       </fix>
-      <fix>
-      Don't set the no-caching headers for protected POSTed pages.  This makes
-      the "back" button in the browser works as expected. (billbarker)
-      </fix>
+
     </changelog>
 
   </subsection>
@@ -134,10 +320,7 @@
       Add support for enabling subset of supported SSL cipher suites 
       in PureTLS implementation (billbarker)
       </add>
-      <fix>
-      Slight re-factoring of the JSSE SSL implementation to allow it to work 
-      with non-Sun vendor's 1.4.x JVMs. (billbarker)
-      </fix>
+
     </changelog>
 
   </subsection>
