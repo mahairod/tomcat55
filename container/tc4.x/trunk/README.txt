@@ -43,6 +43,11 @@ which you are installing all of the required Jakarta distributions.
   installed the distribution.  None of the standard JNDI providers are required
   unless you need them in your own applications.
 
+* If you want to have support for the JavaMail object factories, you must
+  download the JavaMail (Version 1.2 or later) and Java Activation Framework
+  (Version 1.0.1 or later), and make sure that the "mail.jar" and
+  "activation.jar" files, respectively, are on your CLASSPATH.
+
 * If you want to build in support for JNDI JDBC DataSources you need to
   download the following packages and put their jar files in your classpath.
 
