@@ -18,6 +18,7 @@ package org.apache.jasper.compiler;
 import java.util.Stack;
 import java.net.URL;
 import java.net.MalformedURLException;
+import org.apache.jasper.JspCompilationContext;
 
 /**
  * Mark represents a point in the JSP input. 
@@ -53,6 +54,7 @@ final class Mark {
     // reader that owns this mark (so we can look up fileid's)
     private JspReader reader;
 
+    private JspCompilationContext ctxt;
 
     /**
      * Constructor
@@ -68,6 +70,7 @@ final class Mark {
          String inBaseDir, String inEncoding) {
 
         this.reader = reader;
+        this.ctxt = reader.getJspCompilationContext();
         this.stream = inStream;
         this.cursor = 0;
         this.line = 1;
@@ -86,6 +89,7 @@ final class Mark {
     Mark(Mark other) {
 
         this.reader = other.reader;
+        this.ctxt = other.reader.getJspCompilationContext();
         this.stream = other.stream;
         this.fileId = other.fileId;
         this.fileName = other.fileName;
@@ -106,9 +110,10 @@ final class Mark {
     /**
      * Constructor
      */    
-    Mark(String filename, int line, int col) {
+    Mark(JspCompilationContext ctxt, String filename, int line, int col) {
 
         this.reader = null;
+        this.ctxt = ctxt;
         this.stream = null;
         this.cursor = 0;
         this.line = line;
@@ -210,7 +215,7 @@ final class Mark {
      * @exception MalformedURLException if the resource pathname is incorrect
      */
     public URL getURL() throws MalformedURLException {
-        return reader.getResource(getFile());
+        return ctxt.getResource(getFile());
     }
 
     public String toShortString() {

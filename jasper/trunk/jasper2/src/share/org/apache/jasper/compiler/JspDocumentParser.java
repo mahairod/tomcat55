@@ -199,7 +199,8 @@ class JspDocumentParser
             jspDocParser.err.jspError("jsp.error.data.file.read", path, ioe);
         } catch (SAXParseException e) {
             jspDocParser.err.jspError
-                (new Mark(path, e.getLineNumber(), e.getColumnNumber()),
+                (new Mark(jspDocParser.ctxt, path, e.getLineNumber(),
+                          e.getColumnNumber()),
                  e.getMessage());
         } catch (Exception e) {
             jspDocParser.err.jspError(e);
@@ -271,8 +272,8 @@ class JspDocumentParser
                 locator);
         }
 
-        startMark =
-            new Mark(path, locator.getLineNumber(), locator.getColumnNumber());
+        startMark = new Mark(ctxt, path, locator.getLineNumber(),
+                             locator.getColumnNumber());
 
         if (attrs != null) {
             /*
@@ -483,7 +484,7 @@ class JspDocumentParser
             if (charBuffer.length() > 0) {
                 new Node.TemplateText(charBuffer.toString(), startMark, current);
             }
-            startMark = new Mark(path, locator.getLineNumber(),
+            startMark = new Mark(ctxt, path, locator.getLineNumber(),
                                  locator.getColumnNumber());
             charBuffer = null;
             return;
@@ -516,7 +517,7 @@ class JspDocumentParser
                         ttext = new CharArrayWriter();
                         //We subtract two from the column number to
                         //account for the '${' that we've already parsed
-                        startMark = new Mark(path, line, column - 2);
+                        startMark = new Mark(ctxt, path, line, column - 2);
                     }
                     // following "${" to first unquoted "}"
                     i++;
@@ -550,7 +551,7 @@ class JspDocumentParser
                                 startMark,
                                 current);
                             ttext = new CharArrayWriter();
-                            startMark = new Mark(path, line, column);
+                            startMark = new Mark(ctxt, path, line, column);
                             break;
                         }
                         if (ch == '"')
@@ -581,8 +582,8 @@ class JspDocumentParser
                 new Node.TemplateText(ttext.toString(), startMark, current);
             }
         }
-        startMark =
-            new Mark(path, locator.getLineNumber(), locator.getColumnNumber());
+        startMark = new Mark(ctxt, path, locator.getLineNumber(),
+                             locator.getColumnNumber());
 
         charBuffer = null;
     }
@@ -668,6 +669,7 @@ class JspDocumentParser
         if (!inDTD) {
             startMark =
                 new Mark(
+                    ctxt,
                     path,
                     locator.getLineNumber(),
                     locator.getColumnNumber());
@@ -681,8 +683,8 @@ class JspDocumentParser
     public void startCDATA() throws SAXException {
 
         processChars();  // Flush char buffer and remove white spaces
-        startMark =
-            new Mark(path, locator.getLineNumber(), locator.getColumnNumber());
+        startMark = new Mark(ctxt, path, locator.getLineNumber(),
+                             locator.getColumnNumber());
     }
 
     /*

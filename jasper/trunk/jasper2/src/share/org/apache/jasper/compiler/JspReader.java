@@ -99,6 +99,14 @@ class JspReader {
 	singleFile = false;
 	pushFile(fname, encoding, reader);
     }
+
+    /*
+     * @return JSP compilation context with which this JspReader is 
+     * associated
+     */
+    JspCompilationContext getJspCompilationContext() {
+        return context;
+    }
     
     String getFile(int fileid) {
 	return (String) sourceFiles.elementAt(fileid);
