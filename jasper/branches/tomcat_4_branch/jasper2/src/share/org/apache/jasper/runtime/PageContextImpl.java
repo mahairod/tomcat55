@@ -534,7 +534,8 @@ public class PageContextImpl extends PageContext {
             if (t instanceof JspException) {
                 Throwable rootCause = ((JspException)t).getRootCause();
                 if (rootCause != null) {
-                    throw new ServletException(t.getMessage(), rootCause);
+                    throw new ServletException(t.getClass().getName() + ": " +
+                                               t.getMessage(), rootCause);
                 } else {
                     throw new ServletException(t);
                 }
