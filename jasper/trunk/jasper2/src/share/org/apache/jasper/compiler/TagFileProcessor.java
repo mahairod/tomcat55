@@ -216,17 +216,17 @@ class TagFileProcessor {
             String nameGiven = n.getAttributeValue("name-given");
             String nameFromAttribute = n.getAttributeValue("name-from-attribute");
             if (nameGiven == null && nameFromAttribute == null) {
-                err.jspError("jsp.variable.either.name");
+                err.jspError("jsp.error.variable.either.name");
             }
 
             if (nameGiven != null && nameFromAttribute != null) {
-                err.jspError("jsp.variable.both.name");
+                err.jspError("jsp.error.variable.both.name");
             }
 
             String alias = n.getAttributeValue("alias");
             if (nameFromAttribute != null && alias == null ||
                 nameFromAttribute == null && alias != null) {
-                err.jspError("jsp.variable.alias");
+                err.jspError("jsp.error.variable.alias");
             }
 
             String className = n.getAttributeValue("variable-class");
