@@ -216,33 +216,32 @@ public class CommandLineContext implements JspCompilationContext {
     
     /**
      * The package name for the generated class.
+     * The final package is assembled from the one specified in -p, and
+     * the one derived from the path to jsp file.
      */
     public String getServletPackageName() {
-        //get the path to the jsp file
-        int indexOfSlash = getJspFile().lastIndexOf('/');
+        //Get the path to the jsp file.  Note that the jspFile, by the
+	//time it gets here, would have been normalized to use '/'
+	//as file separator.
+
+	int indexOfSlash = getJspFile().lastIndexOf('/');
         String pathName;
         if (indexOfSlash != -1) {
             pathName = getJspFile().substring(0, indexOfSlash);
         } else {
             pathName = "/";
         }
-        //Assemble the package name from the base package name speced on
+
+        //Assemble the package name from the base package name specified on
         //the command line and the package name derived from the path to
         //the jsp file
         String packageName = "";
-        if (servletPackageName != null && !servletPackageName.equals("")) {
+        if (servletPackageName != null) {
             packageName = servletPackageName;
         }
-        if (packageName.equals("")) {
-            packageName = pathName.replace('/', '.');
-        } else {
-            packageName += pathName.replace('/', '.');
-        }
-        //strip off any leading '.' in the package name
-        if (!packageName.equals("") && packageName.charAt(0) == '.') {
-            packageName = packageName.substring(1);
-        }
-        return packageName;
+        packageName += pathName.replace('/', '.');
+
+        return CommandLineCompiler.manglePackage(packageName);
     }
 
     /**
@@ -344,7 +343,7 @@ public class CommandLineContext implements JspCompilationContext {
     /**
      * Gets a resource as a stream, relative to the meanings of this
      * context's implementation.
-     *@returns a null if the resource cannot be found or represented 
+     * @return a null if the resource cannot be found or represented 
      *         as an InputStream.
      */
     public java.io.InputStream getResourceAsStream(String res) {
