@@ -31,8 +31,6 @@ import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.util.StringManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -50,7 +48,6 @@ import org.apache.commons.logging.LogFactory;
 public class UserDatabaseRealm
     extends RealmBase {
 
-    private static Log log = LogFactory.getLog(UserDatabaseRealm.class);
 
     // ----------------------------------------------------- Instance Variables
 
@@ -224,8 +221,7 @@ public class UserDatabaseRealm
             Context context = server.getGlobalNamingContext();
             database = (UserDatabase) context.lookup(resourceName);
         } catch (Throwable e) {
-            log.error(sm.getString("userDatabaseRealm.lookup", resourceName),
-                      e);
+            container.getLogger().error(sm.getString("userDatabaseRealm.lookup", resourceName), e);
             database = null;
         }
         if (database == null) {
