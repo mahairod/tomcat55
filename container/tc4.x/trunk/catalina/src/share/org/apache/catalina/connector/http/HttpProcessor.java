@@ -880,6 +880,11 @@ final class HttpProcessor
                 normalized.substring(index + 3);
         }
 
+        // Declare occurrences of "/..." (three or more dots) to be invalid
+        // (on some Windows platforms this walks the directory tree!!!)
+        if (normalized.indexOf("/...") >= 0)
+            return (null);
+
         // Return the normalized path that we have completed
         return (normalized);
 
