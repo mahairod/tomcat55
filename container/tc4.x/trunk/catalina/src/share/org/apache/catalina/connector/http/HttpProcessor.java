@@ -923,7 +923,7 @@ final class HttpProcessor
 
         keepAlive = true;
 
-        while (ok && keepAlive) {
+        while (!stopped && ok && keepAlive) {
 
             try {
                 request.setStream(input);
@@ -1039,8 +1039,6 @@ final class HttpProcessor
             // Recycling the request and the response objects
             request.recycle();
             response.recycle();
-
-            ok = !stopped;
 
         }
 
