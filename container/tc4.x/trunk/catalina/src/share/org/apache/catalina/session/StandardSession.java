@@ -65,6 +65,8 @@
 package org.apache.catalina.session;
 
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
@@ -243,6 +245,14 @@ class StandardSession
 
 
     /**
+     * Internal notes associated with this session by Catalina components
+     * and event listeners.  <b>IMPLEMENTATION NOTE:</b> This object is
+     * <em>not</em> saved and restored across session serializations!
+     */
+    private transient HashMap notes = new HashMap();
+
+
+    /**
      * The authenticated Principal associated with this session, if any.
      * <b>IMPLEMENTATION NOTE:</b>  This object is <i>not</i> saved and
      * restored across session serializations!
@@ -261,6 +271,14 @@ class StandardSession
      * The HTTP session context associated with this session.
      */
     private static HttpSessionContext sessionContext = null;
+
+
+    /**
+     * The property change support for this component.  NOTE:  This value
+     * is not included in the serialized version of this object.
+     */
+    private transient PropertyChangeSupport support =
+        new PropertyChangeSupport(this);
 
 
     /**
@@ -291,7 +309,9 @@ class StandardSession
      */
     public void setAuthType(String authType) {
 
+        String oldAuthType = this.authType;
         this.authType = authType;
+        support.firePropertyChange("authType", oldAuthType, this.authType);
 
     }
 
@@ -484,7 +504,9 @@ class StandardSession
      */
     public void setPrincipal(Principal principal) {
 
+        Principal oldPrincipal = this.principal;
         this.principal = principal;
+        support.firePropertyChange("principal", oldPrincipal, this.principal);
 
     }
 
@@ -658,6 +680,34 @@ class StandardSession
 
 
     /**
+     * Return the object bound with the specified name to the internal notes
+     * for this session, or <code>null</code> if no such binding exists.
+     *
+     * @param name Name of the note to be returned
+     */
+    public Object getNote(String name) {
+
+        synchronized (notes) {
+            return (notes.get(name));
+        }
+
+    }
+
+
+    /**
+     * Return an Iterator containing the String names of all notes bindings
+     * that exist for this session.
+     */
+    public Iterator getNoteNames() {
+
+        synchronized (notes) {
+            return (notes.keySet().iterator());
+        }
+
+    }
+
+
+    /**
      * Release all object references, and initialize instance variables, in
      * preparation for reuse of this object.
      */
@@ -665,14 +715,15 @@ class StandardSession
 
         // Reset the instance variables associated with this Session
         attributes.clear();
-        authType = null;
+        setAuthType(null);
         creationTime = 0L;
         expiring = false;
         id = null;
         lastAccessedTime = 0L;
         manager = null;
         maxInactiveInterval = -1;
-        principal = null;
+        notes.clear();
+        setPrincipal(null);
         isNew = false;
         isValid = false;
 
@@ -684,12 +735,43 @@ class StandardSession
 
 
     /**
+     * Remove any object bound to the specified name in the internal notes
+     * for this session.
+     *
+     * @param name Name of the note to be removed
+     */
+    public void removeNote(String name) {
+
+        synchronized (notes) {
+            notes.remove(name);
+        }
+
+    }
+
+
+    /**
      * Remove a session event listener from this component.
      */
     public void removeSessionListener(SessionListener listener) {
 
         synchronized (listeners) {
             listeners.remove(listener);
+        }
+
+    }
+
+
+    /**
+     * Bind an object to a specified name in the internal notes associated
+     * with this session, replacing any existing binding for this name.
+     *
+     * @param name Name to which the object should be bound
+     * @param value Object to be bound to the specified name
+     */
+    public void setNote(String name, Object value) {
+
+        synchronized (notes) {
+            notes.put(name, value);
         }
 
     }

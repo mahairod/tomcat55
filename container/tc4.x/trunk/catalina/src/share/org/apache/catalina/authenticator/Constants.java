@@ -82,12 +82,16 @@ public class Constants {
 
     // Form based authentication constants
     public static final String FORM_ACTION = "/j_security_check";
-    public static final String FORM_KEY =
-        "org.apache.catalina.security.REQUEST";
     public static final String FORM_PASSWORD = "j_password";
-    public static final String FORM_PRINCIPAL =
-        "org.apache.catalina.security.PRINCIPAL";
+    public static final String FORM_PASSWORD_NOTE =
+        "org.apache.catalina.authenticator.PASSWORD";
+    public static final String FORM_PRINCIPAL_NOTE =
+        "org.apache.catalina.authenticator.PRINCIPAL";
+    public static final String FORM_REQUEST_NOTE =
+        "org.apache.catalina.authenticator.REQUEST";
     public static final String FORM_USERNAME = "j_username";
+    public static final String FORM_USERNAME_NOTE =
+        "org.apache.catailna.authenticator.USERNAME";
 
     // Cookie name for single sign on support
     public static final String SINGLE_SIGN_ON_COOKIE = "JSESSIONIDSSO";

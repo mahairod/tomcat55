@@ -158,14 +158,39 @@ public final class FormAuthenticator
             return (true);
         }
 
+        // Have we authenticated this user before but have caching disabled?
+        if (!cache) {
+            session = getSession(request, true);
+            if (debug >= 1)
+                log("Checking for reauthenticate in session " + session);
+            String username =
+                (String) session.getNote(Constants.FORM_USERNAME_NOTE);
+            String password =
+                (String) session.getNote(Constants.FORM_PASSWORD_NOTE);
+            if ((username != null) && (password != null)) {
+                if (debug >= 1)
+                    log("Reauthenticating username '" + username + "'");
+                principal =
+                    context.getRealm().authenticate(username, password);
+                if (principal != null) {
+                    session.setNote(Constants.FORM_PRINCIPAL_NOTE, principal);
+                    register(request, response, principal,
+                             Constants.FORM_METHOD);
+                    return (true);
+                }
+                if (debug >= 1)
+                    log("Reauthentication failed, proceed normally");
+            }
+        }
+
         // Is this the re-submit of the original request URI after successful
         // authentication?  If so, forward the *original* request instead.
         if (matchRequest(request)) {
-            session = getSession(request);
+            session = getSession(request, true);
             if (debug >= 1)
                 log("Restore request from session '" + session.getId() + "'");
             principal = (Principal)
-              session.getSession().getAttribute(Constants.FORM_PRINCIPAL);
+                session.getNote(Constants.FORM_PRINCIPAL_NOTE);
             register(request, response, principal, Constants.FORM_METHOD);
             String ssoId = request.getSsoId();
             if (ssoId != null)
@@ -230,6 +255,8 @@ public final class FormAuthenticator
         Realm realm = context.getRealm();
         String username = hreq.getParameter(Constants.FORM_USERNAME);
         String password = hreq.getParameter(Constants.FORM_PASSWORD);
+        if (debug >= 1)
+            log("Authenticating username '" + username + "'");
         principal = realm.authenticate(username, password);
         if (principal == null) {
             if (debug >= 1)
@@ -239,15 +266,23 @@ public final class FormAuthenticator
         }
 
         // Save the authenticated Principal in our session
+        if (debug >= 1)
+            log("Authentication of '" + username + "' was successful");
         if (session == null)
-            session = getSession(request);
-        session.getSession().setAttribute(Constants.FORM_PRINCIPAL, principal);
+            session = getSession(request, true);
+        session.setNote(Constants.FORM_PRINCIPAL_NOTE, principal);
+
+        // If we are not caching, save the username and password as well
+        if (!cache) {
+            session.setNote(Constants.FORM_USERNAME_NOTE, username);
+            session.setNote(Constants.FORM_PASSWORD_NOTE, password);
+        }
 
         // Redirect the user to the original request URI (which will cause
         // the original request to be restored)
         requestURI = savedRequestURL(session);
         if (debug >= 1)
-            log("Redirecting to '" + requestURI + "'");
+            log("Redirecting to original '" + requestURI + "'");
         hres.sendRedirect(hres.encodeRedirectURL(requestURI));
         return (false);
 
@@ -272,12 +307,12 @@ public final class FormAuthenticator
 
       // Is there a saved request?
       SavedRequest sreq = (SavedRequest)
-        session.getSession().getAttribute(Constants.FORM_KEY);
+          session.getNote(Constants.FORM_REQUEST_NOTE);
       if (sreq == null)
           return (false);
 
       // Is there a saved principal?
-      if (session.getSession().getAttribute(Constants.FORM_PRINCIPAL) == null)
+      if (session.getNote(Constants.FORM_PRINCIPAL_NOTE) == null)
           return (false);
 
       // Does the request URI match?
@@ -303,9 +338,9 @@ public final class FormAuthenticator
 
         // Retrieve and remove the SavedRequest object from our session
         SavedRequest saved = (SavedRequest)
-            session.getSession().getAttribute(Constants.FORM_KEY);
-        session.getSession().removeAttribute(Constants.FORM_KEY);
-        session.getSession().removeAttribute(Constants.FORM_PRINCIPAL);
+            session.getNote(Constants.FORM_REQUEST_NOTE);
+        session.removeNote(Constants.FORM_REQUEST_NOTE);
+        session.removeNote(Constants.FORM_PRINCIPAL_NOTE);
         if (saved == null)
             return (false);
 
@@ -387,7 +422,7 @@ public final class FormAuthenticator
         saved.setRequestURI(hreq.getRequestURI());
 
         // Stash the SavedRequest in our session for later use
-        session.getSession().setAttribute(Constants.FORM_KEY, saved);
+        session.setNote(Constants.FORM_REQUEST_NOTE, saved);
 
     }
 
@@ -401,7 +436,7 @@ public final class FormAuthenticator
     private String savedRequestURL(Session session) {
 
         SavedRequest saved =
-          (SavedRequest) session.getSession().getAttribute(Constants.FORM_KEY);
+            (SavedRequest) session.getNote(Constants.FORM_REQUEST_NOTE);
         if (saved == null)
             return (null);
         StringBuffer sb = new StringBuffer(saved.getRequestURI());

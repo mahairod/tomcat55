@@ -543,6 +543,7 @@ public abstract class AuthenticatorBase
             return (true);
 
         // Specifically allow access to the form login and form error pages
+        // and the "j_security_check" action
         LoginConfig config = context.getLoginConfig();
         if ((config != null) &&
             (Constants.FORM_METHOD.equals(config.getAuthMethod()))) {

@@ -67,6 +67,7 @@ package org.apache.catalina;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
@@ -270,6 +271,22 @@ public interface Session {
 
 
     /**
+     * Return the object bound with the specified name to the internal notes
+     * for this session, or <code>null</code> if no such binding exists.
+     *
+     * @param name Name of the note to be returned
+     */
+    public Object getNote(String name);
+
+
+    /**
+     * Return an Iterator containing the String names of all notes bindings
+     * that exist for this session.
+     */
+    public Iterator getNoteNames();
+
+
+    /**
      * Release all object references, and initialize instance variables, in
      * preparation for reuse of this object.
      */
@@ -277,9 +294,28 @@ public interface Session {
 
 
     /**
+     * Remove any object bound to the specified name in the internal notes
+     * for this session.
+     *
+     * @param name Name of the note to be removed
+     */
+    public void removeNote(String name);
+
+
+    /**
      * Remove a session event listener from this component.
      */
     public void removeSessionListener(SessionListener listener);
+
+
+    /**
+     * Bind an object to a specified name in the internal notes associated
+     * with this session, replacing any existing binding for this name.
+     *
+     * @param name Name to which the object should be bound
+     * @param value Object to be bound to the specified name
+     */
+    public void setNote(String name, Object value);
 
 
 }
