@@ -44,15 +44,15 @@ fi
 mkdir ws
 
 echo $TSEP | cat >> $TLOGFILE
-do-checkout 
+./do-checkout 
 
 echo $TSEP | cat >> $TLOGFILE
-do-build >> $TLOGFILE
+./do-build >> $TLOGFILE
 
 echo $TSEP | cat >> $TLOGFILE
-do-test >> $TLOGFILE
+./do-test >> $TLOGFILE
 
-do-package 
+./do-package 
 
 
 
