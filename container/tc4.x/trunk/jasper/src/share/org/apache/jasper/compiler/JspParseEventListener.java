@@ -742,6 +742,12 @@ public class JspParseEventListener implements ParseEventListener {
             throw new CompileException(start, Constants.getString(
 	    				"jsp.error.page.bad_b_and_a_combo"));
 
+	if (directive.equals("taglib")) {
+	    String uri = attrs.getValue("uri");
+	    String prefix = attrs.getValue("prefix");
+            processTaglibDirective(uri, prefix);
+        }
+
 	if (directive.equals("include")) {
 	    String file = attrs.getValue("file");
 	    String encoding = attrs.getValue("encoding");
@@ -1041,20 +1047,12 @@ public class JspParseEventListener implements ParseEventListener {
 		String prefix = qName.substring(6);
 		if (!prefix.equals("jsp")) {
 		    String uri = attrs.getValue(i);
-		    System.out.println("prefix: " + prefix);
-		    System.out.println("uri: " + uri);
+		    //System.out.println("prefix: " + prefix);
+		    //System.out.println("uri: " + uri);
 		    if (uri.startsWith("urn:jsptld:")) {
 			uri = uri.substring(11);
 		    }
-		    TagLibraryInfo tl = null;
-		    String[] location = 
-			ctxt.getTldLocation(uri);
-		    if (location == null) {
-			tl = new TagLibraryInfoImpl(ctxt, prefix, uri);
-		    } else {
-			tl = new TagLibraryInfoImpl(ctxt, prefix, uri, location);
-		    }
-		    libraries.addTagLibrary(prefix, tl);
+		    processTaglibDirective(uri, prefix);
 		}
 	    }
         }
@@ -1109,5 +1107,25 @@ public class JspParseEventListener implements ParseEventListener {
 			new Object[]{tli.getShortName(), msg}));
             }
         }
+    }
+
+    /**
+     * Process a taglib directive. This can happen either via the
+     * JSP taglib directive (in JSP syntax) or via xmlns in <jsp:root>
+     * (in XML syntax).
+     */
+    private void processTaglibDirective(String uri, String prefix)
+	throws JasperException
+    {
+	TagLibraryInfo tl = null;
+	
+	String[] location = 
+	    ctxt.getTldLocation(uri);
+	if (location == null) {
+	    tl = new TagLibraryInfoImpl(ctxt, prefix, uri);
+	} else {
+	    tl = new TagLibraryInfoImpl(ctxt, prefix, uri, location);
+	}
+	libraries.addTagLibrary(prefix, tl);
     }
 }
