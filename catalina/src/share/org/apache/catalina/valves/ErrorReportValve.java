@@ -343,7 +343,8 @@ public class ErrorReportValve
             sb.append("<p><b>");
             sb.append(sm.getString("errorReportValve.note"));
             sb.append("</b> <u>");
-            sb.append(sm.getString("errorReportValve.rootCauseInLogs"));
+            sb.append(sm.getString("errorReportValve.rootCauseInLogs",
+                                   ServerInfo.getServerInfo()));
             sb.append("</u></p>");
 
         }
