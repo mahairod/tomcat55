@@ -196,7 +196,7 @@ public class SmapStratum {
      * @param filePath the path for the filename, potentially relative
      *                 to a source compilation path
      */
-    public synchronized void addFile(String filename, String filePath) {
+    public void addFile(String filename, String filePath) {
       int pathIndex = filePathList.indexOf(filePath);
       if (pathIndex == -1) {
         fileNameList.add(filename);
@@ -227,7 +227,7 @@ public class SmapStratum {
      *        the subconscious urge to call this field
      *        <tt>OutputLineExcrement</tt>.</i>
      */
-    public synchronized void addLineData(int inputStartLine,
+    public void addLineData(int inputStartLine,
 				    String inputFileName,
 				    int inputLineCount,
 				    int outputStartLine,
@@ -266,7 +266,7 @@ public class SmapStratum {
      * Returns the given stratum as a String:  a StratumSection,
      * followed by at least one FileSection and at least one LineSection.
      */
-    public synchronized String getString() {
+    public String getString() {
 	// check state and initialize buffer
 	if (fileNameList.size() == 0 || lineData.size() == 0)
 	    return null;
