@@ -944,6 +944,17 @@
          request="${context.path}/WrappedInclude09?path=Include00c.jsp"
       outContent="Include00c PASSED" debug="${debug}"/>
 
+    <!-- ========== Container-Created Include Attributes ================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include10/extra/path?name1=value1"
+      outContent="Include10a PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude10/extra/path?name1=value1"
+      outContent="Include10a PASSED" debug="${debug}"/>
+
+
     <!-- ========== Response Wrapping ===================================== -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"

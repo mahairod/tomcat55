@@ -295,6 +295,11 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedInclude10</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedJndi01</url-pattern>
     </filter-mapping>
 
@@ -809,6 +814,16 @@
     <servlet>
         <servlet-name>Include09</servlet-name>
         <servlet-class>org.apache.tester.Include09</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include10</servlet-name>
+        <servlet-class>org.apache.tester.Include10</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include10a</servlet-name>
+        <servlet-class>org.apache.tester.Include10a</servlet-class>
     </servlet>
 
     <servlet>
@@ -1498,6 +1513,21 @@
     <servlet-mapping>
         <servlet-name>Include09</servlet-name>
         <url-pattern>/WrappedInclude09</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include10</servlet-name>
+        <url-pattern>/Include10/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include10</servlet-name>
+        <url-pattern>/WrappedInclude10/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include10a</servlet-name>
+        <url-pattern>/Include10a/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
