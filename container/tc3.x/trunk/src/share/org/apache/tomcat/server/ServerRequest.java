@@ -150,6 +150,8 @@ public class ServerRequest extends RequestImpl {
         String buffer = line.trim();
 	int firstDelim = buffer.indexOf(' ');
 	int lastDelim = buffer.lastIndexOf(' ');
+	// default - set it to HTTP/0.9 or null if we can parse the request
+	protocol = "HTTP/1.0";
 
 	if (firstDelim == -1 && lastDelim == -1) {
 	    if (buffer.trim().length() > 0) {
