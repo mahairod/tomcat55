@@ -72,7 +72,7 @@ import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 
 /**
- * This is the subclass of all JSP-generated servlets.
+ * This is the super class of all JSP-generated servlets.
  *
  * @author Anil K. Vijendran
  */
@@ -80,7 +80,6 @@ public abstract class HttpJspBase
     extends HttpServlet 
     implements HttpJspPage 
 {
-    protected PageContext pageContext;
     static {
         if( JspFactory.getDefaultFactory() == null ) {
             JspFactoryImpl factory = new JspFactoryImpl();
