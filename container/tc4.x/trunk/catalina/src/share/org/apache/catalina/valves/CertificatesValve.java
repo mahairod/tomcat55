@@ -86,6 +86,11 @@ import org.apache.catalina.util.StringManager;
  * request is an SSLSocket or not.  If it is, and if the client has presented
  * a certificate chain to authenticate itself, the array of certificates is
  * exposed as a request attribute.
+ * <p>
+ * In addition, this Valve exposes the cipher suite and key size being used
+ * on this SSL connection as request attributes.  Although this function is
+ * unrelated to certificates, the two tasks have been combined here to minimize
+ * the amount of code that has to check for the existence of JSSE classes.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
@@ -176,6 +181,16 @@ public final class CertificatesValve
         SSLSession session = socket.getSession();
         if (session == null)
             return;
+
+        // Expose the cipher suite and key size
+        String cipherSuite = session.getCipherSuite();
+        int keySize = 0;      // FIXME - no way to look it up?????
+        if (cipherSuite != null) {
+            request.getRequest().setAttribute(Globals.CIPHER_SUITE_ATTR,
+                                              cipherSuite);
+            request.getRequest().setAttribute(Globals.KEY_SIZE_ATTR,
+                                              new Integer(keySize));
+        }
 
 	// If we have cached certificates, return them
 	Object cached = session.getValue(Globals.CERTIFICATES_ATTR);

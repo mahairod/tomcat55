@@ -85,6 +85,15 @@ public final class Globals {
 
 
     /**
+     * The request attribute under which we store the name of the cipher suite
+     * being used on an SSL connection (as an object of type
+     * java.lang.String).
+     */
+    public static final String CIPHER_SUITE_ATTR =
+        "javax.servlet.request.cipher_suite";
+
+
+    /**
      * The servlet context attribute under which we store the class loader
      * used for loading servlets (as an object of type java.lang.ClassLoader).
      */
@@ -131,6 +140,14 @@ public final class Globals {
      */
     public static final String ERROR_MESSAGE_ATTR =
 	"javax.servlet.error.message";
+
+
+    /**
+     * The request attribute under which we store the key size being used for
+     * this SSL connection (as an object of type java.lang.Integer).
+     */
+    public static final String KEY_SIZE_ATTR =
+        "javax.servlet.request.key_size";
 
 
     /**
