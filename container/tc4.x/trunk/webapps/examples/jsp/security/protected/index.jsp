@@ -46,14 +46,16 @@ in session <b><%= session.getId() %></b><br><br>
 
 To check whether your username has been granted a particular role,
 enter it here:
-<form method="GET" action="index.jsp">
+<form method="GET" action='<%= response.encodeURL("index.jsp") %>'>
 <input type="text" name="role" value="<%= role %>">
 </form>
 <br><br>
 
 If you have configured this app for form-based authentication, you can log
-off by clicking <a href="index.jsp?logoff=true">here</a>.  This should cause
-you to be returned to the logon page after the redirect that is performed.
+off by clicking
+<a href='<%= response.encodeURL("index.jsp?logoff=true") %>'>here</a>.
+This should cause you to be returned to the logon page after the redirect
+that is performed.
 
 </body>
 </html>

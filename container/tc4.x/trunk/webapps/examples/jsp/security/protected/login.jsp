@@ -2,7 +2,7 @@
 <head>
 <title>Login Page for Examples</title>
 <body bgcolor="white">
-<form method="POST" action="j_security_check" >
+<form method="POST" action='<%= response.encodeURL("j_security_check") %>' >
   <table border="0" cellspacing="5">
     <tr>
       <th align="right">Username:</th>
