@@ -53,6 +53,8 @@ public class McastService implements MembershipService,MembershipListener {
      * The local member
      */
     protected McastMember localMember ;
+    private int mcastSoTimeout;
+    private int mcastTTL;
 
     /**
      * Create a membership service.
@@ -169,11 +171,30 @@ public class McastService implements MembershipService,MembershipListener {
         if ( properties.getProperty("mcastBindAddress")!= null ) {
             bind = java.net.InetAddress.getByName(properties.getProperty("mcastBindAddress"));
         }
+        int ttl = -1;
+        int soTimeout = -1;
+        if ( properties.getProperty("mcastTTL") != null ) {
+            try {
+                ttl = Integer.parseInt(properties.getProperty("mcastTTL"));
+            } catch ( Exception x ) {
+                log.error("Unable to parse mcastTTL="+properties.getProperty("mcastTTL"),x);
+            }
+        }
+        if ( properties.getProperty("mcastSoTimeout") != null ) {
+            try {
+                soTimeout = Integer.parseInt(properties.getProperty("mcastSoTimeout"));
+            } catch ( Exception x ) {
+                log.error("Unable to parse mcastSoTimeout="+properties.getProperty("mcastSoTimeout"),x);
+            }
+        }
+
         impl = new McastServiceImpl((McastMember)localMember,Long.parseLong(properties.getProperty("msgFrequency")),
                                     Long.parseLong(properties.getProperty("memberDropTime")),
                                     Integer.parseInt(properties.getProperty("mcastPort")),
                                     bind,
                                     java.net.InetAddress.getByName(properties.getProperty("mcastAddress")),
+                                    ttl,
+                                    soTimeout,
                                     this);
 
         impl.start(level);
@@ -249,5 +270,19 @@ public class McastService implements MembershipService,MembershipListener {
         service.setProperties(p);
         service.start();
         Thread.currentThread().sleep(60*1000*60);
+    }
+    public int getMcastSoTimeout() {
+        return mcastSoTimeout;
+    }
+    public void setMcastSoTimeout(int mcastSoTimeout) {
+        this.mcastSoTimeout = mcastSoTimeout;
+        properties.setProperty("mcastSoTimeout", String.valueOf(mcastSoTimeout));
+    }
+    public int getMcastTTL() {
+        return mcastTTL;
+    }
+    public void setMcastTTL(int mcastTTL) {
+        this.mcastTTL = mcastTTL;
+        properties.setProperty("mcastTTL", String.valueOf(mcastTTL));
     }
 }
