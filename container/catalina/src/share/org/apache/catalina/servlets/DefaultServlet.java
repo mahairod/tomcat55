@@ -1,12 +1,12 @@
 /*
  * Copyright 1999,2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,8 +32,6 @@ import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -56,7 +54,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.catalina.Globals;
-import org.apache.catalina.util.MD5Encoder;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.URLEncoder;
@@ -110,18 +107,6 @@ public class DefaultServlet
      * The output buffer size to use when serving resources.
      */
     protected int output = 2048;
-
-
-    /**
-     * MD5 message digest provider.
-     */
-    protected static MessageDigest md5Helper;
-
-
-    /**
-     * The MD5 helper object for this class.
-     */
-    protected static final MD5Encoder md5Encoder = new MD5Encoder();
 
 
     /**
@@ -259,13 +244,6 @@ public class DefaultServlet
                 ", output buffer size=" + output);
         }
 
-        // Load the MD5 helper used to calculate signatures.
-        try {
-            md5Helper = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new UnavailableException("No MD5");
-        }
-
         // Load the proxy dir context.
         try {
             resources = (ProxyDirContext) getServletContext()
@@ -288,7 +266,7 @@ public class DefaultServlet
         if (resources == null) {
             throw new UnavailableException("No resources");
         }
-        
+
     }
 
 
@@ -345,7 +323,7 @@ public class DefaultServlet
             serveResource(request, response, true);
         } catch( IOException ex ) {
             // we probably have this check somewhere else too.
-            if( ex.getMessage() != null 
+            if( ex.getMessage() != null
                 && ex.getMessage().indexOf("Broken pipe") >= 0 ) {
                 // ignore it.
             }
@@ -619,71 +597,6 @@ public class DefaultServlet
 
 
     /**
-     * Return a context-relative path, beginning with a "/", that represents
-     * the canonical version of the specified path after ".." and "." elements
-     * are resolved out.  If the specified path attempts to go outside the
-     * boundaries of the current context (i.e. too many ".." path elements
-     * are present), return <code>null</code> instead.
-     *
-     * @param path Path to be normalized
-     */
-    protected String normalize(String path) {
-
-        if (path == null)
-            return null;
-
-        // Create a place for the normalized path
-        String normalized = path;
-
-        if (normalized == null)
-            return (null);
-
-        if (normalized.equals("/."))
-            return "/";
-
-        // Normalize the slashes and add leading slash if necessary
-        if (normalized.indexOf('\\') >= 0)
-            normalized = normalized.replace('\\', '/');
-        if (!normalized.startsWith("/"))
-            normalized = "/" + normalized;
-
-        // Resolve occurrences of "//" in the normalized path
-        while (true) {
-            int index = normalized.indexOf("//");
-            if (index < 0)
-                break;
-            normalized = normalized.substring(0, index) +
-                normalized.substring(index + 1);
-        }
-
-        // Resolve occurrences of "/./" in the normalized path
-        while (true) {
-            int index = normalized.indexOf("/./");
-            if (index < 0)
-                break;
-            normalized = normalized.substring(0, index) +
-                normalized.substring(index + 2);
-        }
-
-        // Resolve occurrences of "/../" in the normalized path
-        while (true) {
-            int index = normalized.indexOf("/../");
-            if (index < 0)
-                break;
-            if (index == 0)
-                return (null);  // Trying to go outside our context
-            int index2 = normalized.lastIndexOf('/', index - 1);
-            normalized = normalized.substring(0, index2) +
-                normalized.substring(index + 3);
-        }
-
-        // Return the normalized path that we have completed
-        return (normalized);
-
-    }
-
-
-    /**
      * URL rewriter.
      *
      * @param path Path which has to be rewiten
@@ -798,17 +711,17 @@ public class DefaultServlet
             response.setHeader("ETag", getETag(cacheEntry.attributes));
 
             // Last-Modified header
-            response.setHeader("Last-Modified", 
+            response.setHeader("Last-Modified",
                     cacheEntry.attributes.getLastModifiedHttp());
 
             // Get content length
             contentLength = cacheEntry.attributes.getContentLength();
-            // Special case for zero length files, which would cause a 
+            // Special case for zero length files, which would cause a
             // (silent) ISE when setting the output buffer size
             if (contentLength == 0L) {
                 content = false;
             }
-            
+
         }
 
         ServletOutputStream ostream = null;
@@ -856,7 +769,7 @@ public class DefaultServlet
 
                 if (content) {
                     // Serve the directory browser
-                    renderResult = 
+                    renderResult =
                         render(request.getContextPath(), cacheEntry);
                 }
 
@@ -1140,23 +1053,6 @@ public class DefaultServlet
         return result;
     }
 
-
-    /**
-     * Append the request parameters to the redirection string before calling
-     * sendRedirect.
-     */
-    protected String appendParameters(HttpServletRequest request,
-                                      String redirectPath) {
-
-        StringBuffer result = new StringBuffer(rewriteUrl(redirectPath));
-
-        String query = request.getQueryString ();
-        if (query != null)
-            result.append ("?").append (query);
-
-        return result.toString();
-
-    }
 
 
     /**
@@ -1497,7 +1393,7 @@ public class DefaultServlet
      * Return the xsl template inputstream (if possible)
      */
     protected InputStream findXsltInputStream(DirContext directory) {
-        
+
         if (localXsltFile!=null) {
             try {
                 Object obj = directory.lookup(localXsltFile);
@@ -1544,7 +1440,7 @@ public class DefaultServlet
 
     }
 
-    
+
     // -------------------------------------------------------- Private Methods
 
 
@@ -1726,17 +1622,17 @@ public class DefaultServlet
      * output stream, and ensure that both streams are closed before returning
      * (even in the face of an exception).
      *
-     * @param resourceInfo The resource information 
+     * @param resourceInfo The resource information
      * @param ostream The output stream to write to
      *
      * @exception IOException if an input/output error occurs
      */
-    private void copy(CacheEntry cacheEntry, InputStream is, 
+    private void copy(CacheEntry cacheEntry, InputStream is,
                       ServletOutputStream ostream)
         throws IOException {
 
         IOException exception = null;
-        InputStream resourceInputStream = null; 
+        InputStream resourceInputStream = null;
 
         // Optimization: If the binary content has already been loaded, send
         // it directly
@@ -1901,7 +1797,7 @@ public class DefaultServlet
         while ( (exception == null) && (ranges.hasMoreElements()) ) {
 
             InputStream resourceInputStream = cacheEntry.resource.streamContent();
-            InputStream istream = 
+            InputStream istream =
                 new BufferedInputStream(resourceInputStream, input);
 
             Range currentRange = (Range) ranges.nextElement();
