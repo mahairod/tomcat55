@@ -239,7 +239,6 @@ public class PluginGenerator
 	    while (e.hasMoreElements ()) {
 	        key = (String) e.nextElement ();
 	        value = (String[]) param.get (key);
-		System.out.println ("Value is " + value[0]);
 	        writer.print ("_jspxNSString [i][0] = \"");
 		if (key.equalsIgnoreCase ("object"))
 		    key = "java_object";
