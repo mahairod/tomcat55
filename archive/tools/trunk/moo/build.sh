@@ -1,11 +1,11 @@
-#!/bin/ksh
+#!/bin/sh
 #
 # $Id$
 # Ksh wrapper around ant build system.
 
-ADDL_CLASSPATH=./../ant.jar:./../projectx-tr2.jar
+ADDL_CLASSPATH=./../../jakarta-ant/lib/ant.jar:./../../jakarta-ant/lib/xml.jar
 
-if [[ -n $CLASSPATH ]]; then
+if test -n $CLASSPATH; then
   export CLASSPATH=$ADDL_CLASSPATH:$CLASSPATH
 else
   export CLASSPATH=$ADDL_CLASSPATH
