@@ -11,6 +11,24 @@
 
 <mbeans-descriptors>
 
+  <mbean         name="RequestListenerValve"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
+          description="Valve that handles request initialization and destroy events"
+               domain="Catalina"
+                group="Valve"
+                 type="org.apache.catalina.valves.RequestListenerValve">
+
+    <attribute   name="className"
+          description="Fully qualified class name of the managed object"
+                 type="java.lang.String"
+            writeable="false"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+  </mbean>
+
 
   <mbean         name="AccessLogValve"
             className="org.apache.catalina.mbeans.ClassNameMBean"
