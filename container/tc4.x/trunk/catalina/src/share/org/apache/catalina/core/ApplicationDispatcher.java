@@ -441,8 +441,8 @@ final class ApplicationDispatcher
             ((ResponseFacade) response).finish();
         } else {
             // Close anyway
-            response.flushBuffer();
             try {
+                response.flushBuffer();
                 PrintWriter writer = response.getWriter();
                 writer.flush();
                 writer.close();
