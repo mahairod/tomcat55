@@ -1169,14 +1169,16 @@ public class StandardClassLoader
                 if (!((manifest == null) && (jarFile == null))) {
                     if ((manifest == null) && (jarFile != null))
                         manifest = jarFile.getManifest();
-                    Iterator extensions =
-                        Extension.getAvailable(manifest).iterator();
-                    while (extensions.hasNext())
-                        available.add(extensions.next());
-                    extensions =
-                        Extension.getRequired(manifest).iterator();
-                    while (extensions.hasNext())
-                        required.add(extensions.next());
+                    if (manifest != null) {
+                        Iterator extensions =
+                            Extension.getAvailable(manifest).iterator();
+                        while (extensions.hasNext())
+                            available.add(extensions.next());
+                        extensions =
+                            Extension.getRequired(manifest).iterator();
+                        while (extensions.hasNext())
+                            required.add(extensions.next());
+                    }
                 }
                 if (jarFile != null)
                     jarFile.close();
