@@ -469,7 +469,7 @@
     </mime-mapping>
     <mime-mapping>
         <extension>dtd</extension>
-        <mime-type>text/plain</mime-type>
+        <mime-type>application/xml-dtd</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>dv</extension>
@@ -592,6 +592,10 @@
         <mime-type>application/x-troff-man</mime-type>
     </mime-mapping>
     <mime-mapping>
+        <extension>mathml</extension>
+        <mime-type>application/mathml+xml</mime-type> 
+    </mime-mapping>
+    <mime-mapping>
         <extension>me</extension>
         <mime-type>application/x-troff-me</mime-type>
     </mime-mapping>
@@ -662,6 +666,10 @@
     <mime-mapping>
         <extension>oda</extension>
         <mime-type>application/oda</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>ogg</extension>
+        <mime-type>application/ogg</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>pbm</extension>
@@ -736,6 +744,10 @@
         <mime-type>image/x-cmu-raster</mime-type>
     </mime-mapping>
     <mime-mapping>
+        <extension>rdf</extension>
+        <mime-type>application/rdf+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
         <extension>rgb</extension>
         <mime-type>image/x-rgb</mime-type>
     </mime-mapping>
@@ -786,6 +798,10 @@
     <mime-mapping>
         <extension>sv4crc</extension>
         <mime-type>application/x-sv4crc</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>svg</extension>
+        <mime-type>image/svg+xml</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>swf</extension>
@@ -844,20 +860,24 @@
         <mime-type>application/x-ustar</mime-type>
     </mime-mapping>
     <mime-mapping>
+        <extension>vxml</extension>
+        <mime-type>application/voicexml+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
         <extension>xbm</extension>
         <mime-type>image/x-xbitmap</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>xht</extension>
-        <mime-type>application/xhtml</mime-type>
+        <mime-type>application/xhtml+xml</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>xhtml</extension>
-        <mime-type>application/xhtml</mime-type>
+        <mime-type>application/xhtml+xml</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>xml</extension>
-        <mime-type>text/xml</mime-type>
+        <mime-type>application/xml</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>xpm</extension>
@@ -865,7 +885,15 @@
     </mime-mapping>
     <mime-mapping>
         <extension>xsl</extension>
-        <mime-type>text/xml</mime-type>
+        <mime-type>application/xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xslt</extension>
+        <mime-type>application/xslt+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xul</extension>
+        <mime-type>application/vnd.mozilla.xul+xml</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>xwd</extension>
