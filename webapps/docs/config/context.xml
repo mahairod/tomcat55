@@ -16,6 +16,8 @@
 
 <section name="Introduction">
 
+  <p><b>FIXME: This needs updates</b></p>
+
   <p>The <strong>Context</strong> element represents a <em>web
   application</em>, which is run within a particular virtual host.
   Each web application is based on a <em>Web Application Archive</em>
@@ -203,6 +205,22 @@
         disclosure, among other security problems.</b></p>
       </attribute>
 
+      <attribute name="antiJARLocking" required="false">
+        <p>If true, the Tomcat classloader will take extra measures to avoid
+        JAR file locking when resources are accessed inside JARs through URLs.
+        This will impact startup time of applications, but could prove to be useful
+        on platforms or configurations where file locking can occur.
+        If not specified, the default value is <code>false</code>.</p>
+      </attribute>
+
+      <attribute name="antiResourceLocking" required="false">
+        <p>If true, Tomcat will prevent any file locking.
+        This will significantly impact startup time of applications, 
+        but allows full webapp hot deploy and undeploy on platforms 
+        or configurations where file locking can occur.
+        If not specified, the default value is <code>false</code>.</p>
+      </attribute>
+
       <attribute name="cacheMaxSize" required="false">
         <p>Maximum size of the static resource cache in kilobytes. 
         If not specified, the default value is <code>10240</code>
@@ -253,6 +271,12 @@
         of the flag is <code>false</code>.</p>
       </attribute>
 
+      <attribute name="unpackWAR" required="false">
+        <p>If true, Tomcat will unpack all compressed web applications before
+        running them.
+        If not specified, the default value is <code>true</code>.</p>
+      </attribute>
+
       <attribute name="useNaming" required="false">
         <p>Set to <code>true</code> (the default) to have Catalina enable a
         JNDI <code>InitialContext</code> for this web application that is
@@ -289,11 +313,6 @@
       Configure the web application class loader that will be used to load
       servlet and bean classes for this web application.  Normally, the
       default configuration of the class loader will be sufficient.</li>
-  <li><a href="logger.html"><strong>Logger</strong></a> -
-      Configure a logger that will receive
-      and process all log messages for this <strong>Context</strong>.  This
-      includes application messages logged via calls to
-      <code>ServletContext.log()</code>.</li>
   <li><a href="manager.html"><strong>Manager</strong></a> -
       Configure the session manager that will be used to create, destroy,
       and persist HTTP sessions for this web application.  Normally, the
@@ -314,6 +333,13 @@
 
 
 <section name="Special Features">
+
+
+  <subsection name="Logging">
+
+  <p><b>FIXME: This needs updates</b></p>
+
+  </subsection>
 
 
   <subsection name="Access Logs">
@@ -353,6 +379,7 @@
     the following configuration steps occur automtically when Catalina
     is started, or whenever this web application is reloaded.  No special
     configuration is required to enable this feature.</p>
+    
     <ul>
     <li>If you have not declared your own <a href="loader.html">Loader</a>
        element, a standard web application class loader will be configured.
@@ -570,10 +597,9 @@
     to be returned for JNDI lookups of <code>&lt;resource-ref&gt;</code> and
     <code>&lt;resource-env-ref&gt;</code> elements in the web application
     deployment descriptor.  You <strong>MUST</strong> also define
-    <a href="#Resource Parameters">Resource Parameters</a>
-    for the same resource name, to configure
-    the object factory to be used (if not known to Tomcat already), and
-    the properties used to configure that object factory.</p>
+    the needed resource parameters as attributes of the <code>Resource</code> 
+    element, to configure the object factory to be used (if not known to Tomcat 
+    already), and the properties used to configure that object factory.</p>
 
     <p>For example, you can create a resource definition like this:</p>
 <source>
@@ -643,80 +669,6 @@
 
   </subsection>
 
-
-  <subsection name="Resource Parameters">
-
-    <p>This element is used to configure the resource manager (or object
-    factory) used to return objects when the web application performs a
-    JNDI lookup operation on the corresponding resource name.  You
-    <strong>MUST</strong> define resource parameters for every resource name
-    that is specified by a <code>&lt;Resource&gt;</code> element inside a
-    <code>&lt;Context&gt;</code> or <code>&lt;DefaultContext&gt;</code>
-    element in <code>$CATALINA_HOME/conf/server.xml</code>, and/or for every
-    name declared in a <code>&lt;resource-ref&gt;</code> or
-    <code>&lt;resource-env-ref&gt;</code> element in the web application
-    deployment descriptor, before that resource can be successfully
-    accessed.</p>
-
-    <p>Resource parameters are defined by name, and the precise set of
-    parameter names supported depend on the resource manager (or object
-    factory) you are using - they must match the names of settable JavaBeans
-    properties on the corresponding factory class.  The JNDI implementation
-    will configure an instance of the specified factory class specified by
-    calling all the corresponding JavaBeans property setters, and then
-    making the factory instance available via the JNDI <code>lookup()</code>
-    call.</p>
-
-    <p>The resource parameters for a JDBC data source might look something
-    like this:</p>
-<source>
-&lt;Context ...&gt;
-  ...
-  &lt;ResourceParams name="jdbc/EmployeeDB"&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;driverClassName&lt;/name&gt;
-      &lt;value&gt;org.hsql.jdbcDriver&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;url&lt;/name&gt;
-      &lt;/value&gt;jdbc:HypersonicSQL:database&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;user&lt;/name&gt;
-      &lt;value&gt;dbusername&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;password&lt;/name&gt;
-      &lt;value&gt;dbpassword&lt;/value&gt;
-    &lt;/parameter&gt;
-  &lt;/ResourceParams&gt;
-  ...
-&lt;/Context&gt;
-</source>
-
-    <p>If you need to specify the Java class name of a factory class for a
-    particular resource type, use a <code>&lt;parameter&gt;</code> entry
-    named <code>factory</code> nested inside the
-    <code>&lt;ResourceParams&gt;</code> element.</p>
-
-    <p>The valid attributes of a <code>&lt;ResourceParams&gt;</code> element
-    are as follows:</p>
-
-    <attributes>
-
-      <attribute name="name" required="true">
-        <p>The name of the resource being configured, relative to the
-        <code>java:comp/env</code> contxt.  This name <strong>MUST</strong>
-        match the name of a resource defined by a <code>&lt;Resource&gt;</code>
-        element in <code>$CATALINA_HOME/conf/server.xml</code>, and/or
-        referenced in a <code>&lt;resource-ref&gt;</code> or
-        <code>&lt;resource-env-ref&gt;</code> element in the web application
-        deployment descriptor.</p>
-      </attribute>
-
-    </attributes>
-
-  </subsection>
 
   <subsection name="Resource Links">
 
