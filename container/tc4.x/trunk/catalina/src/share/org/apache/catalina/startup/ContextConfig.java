@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -278,21 +278,18 @@ public final class ContextConfig
 	// Has an authenticator been configured already?
 	if (context instanceof Authenticator)
 	    return;
-	if (context instanceof ContainerBase) {
-	    Valve basic = ((ContainerBase) context).getBasic();
-	    if ((basic != null) && (basic instanceof Authenticator))
-		return;
-	}
-	if (context instanceof Pipeline) {
-	    Valve valve = ((Pipeline) context).findValves();
-	    while (valve != null) {
-		if (valve instanceof Authenticator)
-		    return;
-		if (valve instanceof ValveBase)
-		    valve = ((ValveBase) valve).getNext();
-		else
-		    valve = null;
-	    }
+        if (context instanceof ContainerBase) {
+            Pipeline pipeline = ((ContainerBase) context).getPipeline();
+            if (pipeline != null) {
+                Valve basic = pipeline.getBasic();
+                if ((basic != null) && (basic instanceof Authenticator))
+                    return;
+                Valve valves[] = pipeline.getValves();
+                for (int i = 0; i < valves.length; i++) {
+                    if (valves[i] instanceof Authenticator)
+                        return;
+                }
+            }
 	} else {
 	    return;	// Cannot install a Valve even if it would be needed
 	}
@@ -336,9 +333,14 @@ public final class ContextConfig
 	try {
 	    Class authenticatorClass = Class.forName(authenticatorName);
 	    authenticator = (Valve) authenticatorClass.newInstance();
-	    ((Pipeline) context).addValve(authenticator);
-	    log(sm.getString("contextConfig.authenticatorConfigured",
-			     loginConfig.getAuthMethod()));
+            if (context instanceof ContainerBase) {
+                Pipeline pipeline = ((ContainerBase) context).getPipeline();
+                if (pipeline != null) {
+                    pipeline.addValve(authenticator);
+                    log(sm.getString("contextConfig.authenticatorConfigured",
+                                     loginConfig.getAuthMethod()));
+                }
+            }
 	} catch (Throwable t) {
 	    log(sm.getString("contextConfig.authenticatorInstantiate",
 			     authenticatorName), t);
@@ -377,8 +379,14 @@ public final class ContextConfig
 
         // Add this Valve to our Pipeline
         try {
-            ((Pipeline) context).addValve(certificates);
-            log(sm.getString("contextConfig.certificatesConfig.added"));
+            if (context instanceof ContainerBase) {
+                Pipeline pipeline = ((ContainerBase) context).getPipeline();
+                if (pipeline != null) {
+                    pipeline.addValve(certificates);
+                    log(sm.getString
+                        ("contextConfig.certificatesConfig.added"));
+                }
+            }
         } catch (Throwable t) {
             log(sm.getString("contextConfig.certificatesConfig.error"), t);
             ok = false;
@@ -899,10 +907,9 @@ public final class ContextConfig
         // Dump the contents of this pipeline if requested
         if (debug >= 1) {
             log("Pipline Configuration:");
-            Valve valve = ((Pipeline) context).findValves();
-            while (valve != null) {
-                log("  " + valve.getInfo());
-                valve = valve.getNext();
+            Valve valves[] = ((Pipeline) context).getValves();
+            for (int i = 0; i < valves.length; i++) {
+                log("  " + valves[i].getInfo());
             }
             log("======================");
         }
