@@ -736,8 +736,10 @@ public class MBeanFactory extends BaseModelMBean {
      * @exception Exception if an MBean cannot be created or registered
      */
     public String createStandardHost(String parent, String name,
-                                     String appBase, boolean autoDeploy,
-                                     boolean deployXML, boolean liveDeploy,                                      
+                                     String appBase,
+                                     boolean autoDeploy,
+                                     boolean deployOnStartup,
+                                     boolean deployXML,                                       
                                      boolean unpackWARs,
                                      boolean xmlNamespaceAware,
                                      boolean xmlValidation)
@@ -748,8 +750,8 @@ public class MBeanFactory extends BaseModelMBean {
         host.setName(name);
         host.setAppBase(appBase);
         host.setAutoDeploy(autoDeploy);
+        host.setDeployOnStartup(deployOnStartup);
         host.setDeployXML(deployXML);
-        host.setLiveDeploy(liveDeploy);
         host.setUnpackWARs(unpackWARs);
         host.setXmlNamespaceAware(xmlNamespaceAware);
         host.setXmlValidation(xmlValidation);
@@ -996,7 +998,12 @@ public class MBeanFactory extends BaseModelMBean {
         Host host = (Host) engine.findChild(hostName);
 
         // Remove this component from its parent component
-        engine.removeChild(host);
+        if(host!=null) {
+            if(host instanceof StandardHost)
+                ((StandardHost)host).destroy();
+            else
+                engine.removeChild(host);
+        }
 
     }
 
