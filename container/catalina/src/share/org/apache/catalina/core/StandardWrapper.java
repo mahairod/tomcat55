@@ -96,7 +96,7 @@ import javax.servlet.ServletResponse;
 import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.InstanceSupport;
-import org.apache.catalina.util.SecurityUtil;
+import org.apache.catalina.security.SecurityUtil;
 import org.apache.tomcat.util.log.SystemLogHandler;
 
 import java.security.PrivilegedActionException;
