@@ -159,9 +159,8 @@ with AJP enabled</li>
 
   <subsection name="Standard Implementation">
 
-  <p>The standard implementation of <strong>AJP Connector</strong> is
-  <strong>org.apache.coyote.tomcat5.CoyoteConnector</strong>, but you
-  must specify the protocol attribute (see below).</p>
+  <p>To use AJP, you
+  must specify the protocol attribute (see above).</p>
 
   <p><strong>This implementation supports the AJP 1.3 protocol.</strong></p>
 
@@ -184,6 +183,12 @@ with AJP enabled</li>
       all possible request processing threads are in use.  Any requests
       received when the queue is full will be refused.  The default
       value is 10.</p>
+    </attribute>
+
+    <attribute name="connectionTimeout" required="false">
+      <p>The number of milliseconds this <strong>Connector</strong> will wait,
+      after accepting a connection, for the request URI line to be
+      presented.  The default value is infinite (i.e. no timeout).</p>
     </attribute>
 
     <attribute name="minProcessors" required="false">
@@ -237,12 +242,6 @@ with AJP enabled</li>
       <p>If set to <code>true</code>, the TCP_NO_DELAY option will be
       set on the server socket, which improves performance under most
       circumstances.  This is set to <code>true</code> by default.</p>
-    </attribute>
-
-    <attribute name="soTimeout" required="false">
-      <p>The number of milliseconds this <strong>Connector</strong> will wait,
-      after accepting a connection, for the request URI line to be
-      presented.  The default value is 60000 (i.e. 60 seconds).</p>
     </attribute>
 
     <attribute name="tomcatAuthentication" required="false">
