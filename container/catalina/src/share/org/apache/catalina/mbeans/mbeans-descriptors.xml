@@ -1059,6 +1059,10 @@
           description="The message format used to select a user"
                  type="java.lang.String"/>
 
+   <attribute   name="userSearch"
+         description="The message format used to search for a user"
+                type="java.lang.String"/>
+
     <attribute   name="contextFactory"
           description="The JNDI context factory for this Realm"
                  type="java.lang.String"/>
