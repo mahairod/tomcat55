@@ -4218,10 +4218,10 @@ public class StandardContext
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, null);
         
-        // Send j2ee.state.stoping notification 
+        // Send j2ee.state.stopping notification 
         if (this.getObjectName() != null) {
             Notification notification = 
-                new Notification("j2ee.state.stoping", this.getObjectName(), 
+                new Notification("j2ee.state.stopping", this.getObjectName(), 
                                 sequenceNumber++);
             broadcaster.sendNotification(notification);
         }
