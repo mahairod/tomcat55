@@ -2791,13 +2791,10 @@ public class Generator {
      */
     private void generatePostamble(Node.Nodes page) {
         out.popIndent();
-	if (pageInfo.hasTagFile()) {
-	    // Silently catch SkipPageException
-	    out.printil("} catch (javax.servlet.jsp.SkipPageException t) {");
-	}
         out.printil("} catch (Throwable t) {");
         out.pushIndent();
-
+	out.printil("if (!(t instanceof javax.servlet.jsp.SkipPageException)){");
+        out.pushIndent();
         out.printil("out = _jspx_out;");
         out.printil("if (out != null && out.getBufferSize() != 0)");
         out.pushIndent();
@@ -2805,7 +2802,8 @@ public class Generator {
         out.popIndent();
 
         out.printil("if (pageContext != null) pageContext.handlePageException(t);");
-
+        out.popIndent();
+	out.printil("}");
         out.popIndent();
         out.printil("} finally {");
         out.pushIndent();
@@ -3002,10 +3000,12 @@ public class Generator {
         // helper method is declared to throw Throwable.
         out.printil( "} catch( Throwable t ) {" );
         out.pushIndent();
+        out.printil( "if( t instanceof javax.servlet.jsp.SkipPageException )" );
+        out.printil( "    throw (javax.servlet.jsp.SkipPageException) t;" );
         out.printil( "if( t instanceof java.io.IOException )" );
-        out.printil( "    throw (java.io.IOException)t;" );
+        out.printil( "    throw (java.io.IOException) t;" );
         out.printil( "if( t instanceof javax.servlet.jsp.JspException )" );
-        out.printil( "    throw (javax.servlet.jsp.JspException)t;" );
+        out.printil( "    throw (javax.servlet.jsp.JspException) t;" );
         out.printil("throw new javax.servlet.jsp.JspException(t);" );
         out.popIndent();
         out.printil( "}" );
@@ -3424,6 +3424,8 @@ public class Generator {
             out.printil( "}" ); // try
 	    out.printil( "catch( Throwable e ) {" );
             out.pushIndent();
+            out.printil("if (e instanceof javax.servlet.jsp.SkipPageException)");
+            out.printil("    throw (javax.servlet.jsp.SkipPageException) e;");
             out.printil( "throw new javax.servlet.jsp.JspException( e );" );
             out.popIndent();
             out.printil( "}" ); // catch
