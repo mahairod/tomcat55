@@ -35,6 +35,9 @@
       <update>
         <bug>32382</bug>: Index page and packaed WAR for sample webapp. (yoavs)
       </update>
+      <fix> 
+        <bug>32603</bug>: Updated host.xml to reflect appBase resolution. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
