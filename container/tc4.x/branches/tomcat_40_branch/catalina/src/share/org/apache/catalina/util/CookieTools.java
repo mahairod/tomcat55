@@ -108,9 +108,16 @@ public class CookieTools {
 
         // this part is the same for all cookies
 
-        buf.append(URLEncoder.encode(cookie.getName()));
+        String name = cookie.getName();     // Avoid NPE on malformed cookies
+        if (name == null)
+            name = "";
+        String value = cookie.getValue();
+        if (value == null)
+            value = "";
+        
+        buf.append(URLEncoder.encode(name));
         buf.append("=");
-        maybeQuote(version, buf, URLEncoder.encode(cookie.getValue()));
+        maybeQuote(version, buf, URLEncoder.encode(value));
 
         // add version 1 specific information
         if (version == 1) {
