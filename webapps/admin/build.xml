@@ -28,6 +28,7 @@
     <pathelement location="${jsp-api.jar}"/>
     <pathelement location="${struts.jar}"/>
     <pathelement location="${commons-beanutils.jar}"/>
+    <pathelement location="${commons-digester.jar}"/>
   </path>
 
 
