@@ -1,4 +1,4 @@
-/*
+ /*
  * $Header$
  * $Revision$
  * $Date$
@@ -142,7 +142,7 @@ public class Ajp13ConnectorRequest extends Request
         uriMB.setString( msg.getString());
         remoteAddr = msg.getString();
         remoteHost = msg.getString();
-        serverName = msg.getString();
+        serverNameMB.setString( msg.getString());
         serverPort = msg.getInt();
         bsc        = msg.getByte();
         if(bsc != 0) {

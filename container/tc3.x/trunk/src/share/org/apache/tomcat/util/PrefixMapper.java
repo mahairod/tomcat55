@@ -80,16 +80,16 @@ import java.util.*;
  */
 public class PrefixMapper {
     // host -> PrefixMapper for virtual hosts
-    Hashtable vhostMaps=new Hashtable();
+    SimpleHashtable vhostMaps=new SimpleHashtable();
 
 
-    Hashtable prefixMappedServlets;
-    Hashtable exactMappedServlets;
+    SimpleHashtable prefixMappedServlets;
+    SimpleHashtable exactMappedServlets;
 
         // Cache the most recent mappings
     // Disabled by default ( since we haven't implemented
     // capacity and remove ). 
-    Hashtable mapCache;
+    SimpleHashtable mapCache;
     // By using TreeMap instead of SimpleMap you go from 143 to 161 RPS
     // ( at least on my machine )
     // Interesting - even if SimpleHashtable is faster than Hashtable
@@ -105,9 +105,9 @@ public class PrefixMapper {
 
     
     public PrefixMapper() {
-	prefixMappedServlets=new Hashtable();
-	exactMappedServlets=new Hashtable();
-	mapCache=new Hashtable();
+	prefixMappedServlets=new SimpleHashtable();
+	exactMappedServlets=new SimpleHashtable();
+	mapCache=new SimpleHashtable();
     }
 
     public void setMapCache( boolean v ) {
@@ -141,7 +141,7 @@ public class PrefixMapper {
 		vmap.exactMappedServlets.remove( s );
 	}
 	// reset the cache
-	mapCache=new Hashtable();
+	mapCache=new SimpleHashtable();
 	
     }
 
@@ -193,7 +193,12 @@ public class PrefixMapper {
 
     /** Match a prefix rule - /foo/bar/index.html/abc
      */
-    public Object getLongestPrefixMatch( String host, String path ) {
+    public Object getLongestPrefixMatch( MessageBytes hostMB,
+					 MessageBytes pathMB )
+    {
+	// XXX fixme
+	String host=hostMB.toString();
+	String path=pathMB.toString();
 	Object container = null;
         String s = path;
 

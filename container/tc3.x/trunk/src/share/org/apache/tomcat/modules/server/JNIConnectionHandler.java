@@ -305,7 +305,7 @@ class JNIRequestAdapter extends Request {
     		queryMB.setString( env[2] );
     		remoteAddr  = env[3];
     		remoteHost  = env[4];
-    		serverName  = env[5];
+    		serverNameMB.setString( env[5] );
             serverPort  = Integer.parseInt(env[6]);
             authType    = env[7];
             remoteUser  = env[8];
