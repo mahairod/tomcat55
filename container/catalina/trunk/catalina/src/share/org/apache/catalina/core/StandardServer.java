@@ -842,6 +842,7 @@ public final class StandardServer
 
             writer.print("<Context");
             storeAttributes(writer, context);
+            writer.println(">");
             writer.println("</Context>");
 
             // Flush and close the output file
