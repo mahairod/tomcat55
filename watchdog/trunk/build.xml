@@ -1,8 +1,33 @@
-<project name="Jcheck" default="core" basedir=".">
+<project name="jakarta-check" default="core" basedir=".">
 
   <!-- system properties can be defined here, compiler can have the values:
        classic, modern, jikes -->
   <property name="build.compiler" value="classic"/>
+
+  <target name="server">
+     <mkdir dir="../build/tomcat/servlet-tests" />
+     <mkdir dir="../build/tomcat/jsp-tests" />
+
+    <copydir src="src/server/servlet-tests" dest="../build/tomcat/servlet-tests"/>
+    <copydir src="src/server/jsp-tests" dest="../build/tomcat/jsp-tests"/>
+     
+    <javac srcdir="src/server/servlet-tests/WEB-INF/classes" destdir="../build/tomcat/servlet-tests/WEB-INF/classes" />
+    <javac srcdir="src/server/jsp-tests/WEB-INF/classes" destdir="../build/tomcat/jsp-tests/WEB-INF/classes" />
+
+  </target>
+
+  <target name="client">
+     <mkdir dir="../build/jakarta-check" />
+     <mkdir dir="../build/jakarta-check/bin" />
+     <mkdir dir="../build/jakarta-check/classes" />
+     <mkdir dir="../build/jakarta-check/src" />
+
+    <copydir src="src/shell" dest="../build/jakarta-check/bin"/>
+    <copydir src="src/clients" dest="../build/jakarta-check/src"/>
+     
+    <javac srcdir="src/clients" destdir="../build/jakarta-check/classes" />    
+  </target>
+
 
   <target name="core">
 
