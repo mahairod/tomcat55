@@ -72,8 +72,8 @@ commons-daemon.home=${base.path}/commons-daemon
 commons-daemon.lib=${commons-daemon.home}/dist
 commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
 commons-daemon.procrun.home=${commons-daemon.home}/src/native/nt/procrun/bin
-commons-daemon.procrun.exe=${commons-daemon.procrun.home}/procrun.exe
-commons-daemon.procrunw.exe=${commons-daemon.procrun.home}/procrunw.exe
+commons-daemon.procrun.exe=${commons-daemon.procrun.home}/tomcat.exe
+commons-daemon.procrunw.exe=${commons-daemon.procrun.home}/tomcatw.exe
 commons-daemon.loc=jakarta-commons-sandbox/daemon
 commons-daemon.cvs.loc=jakarta-commons-sandbox/daemon
 
