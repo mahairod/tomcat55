@@ -66,6 +66,10 @@
       Fix subject lost problem with JAAS realm, submitted by Janne Vaananen 
       (jfarcand)
       </fix>
+      <fix>
+      Fixed parsing of some multi range requests, and generate MIME boundaries
+      starting with a CRLF (remm)
+      </fix>
 
     </changelog>
 
