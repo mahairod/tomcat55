@@ -150,6 +150,7 @@ public class NetworkClassLoader extends ClassLoader {
     private byte[] loadResource(URL url, String resourceName)
         throws IOException {
         URLResourceReader urr = (URLResourceReader) urlset.get(url);
+	//	System.out.println("Loading from " + urr + " " + resourceName);
         if(urr != null) {
             return urr.getResource(resourceName);
         }

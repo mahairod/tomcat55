@@ -233,15 +233,7 @@ public class ServletWrapper {
 	    if (servletClassName == null) 
 		throw new IllegalStateException(sm.getString("wrapper.load.noclassname"));
 
-	    ServletLoader loader=context.getServletLoader();
-	    if( loader==null) {
-		// XXX old code
-		servletClass = context.getLoader().loadServlet(this,
-							       servletClassName);
-	    } else {
-		servletClass=loader.loadClass( servletClassName);
-	    }
-		
+	    servletClass=context.getServletLoader().loadClass( servletClassName);
 	}
 	
 	servlet = (Servlet)servletClass.newInstance();

@@ -200,6 +200,10 @@ public class URLResourceReader  {
         resourceCache.clear();
         resourceCache = null;
     }
+
+    public String toString() {
+	return url.toString();
+    }
 }
 
 
