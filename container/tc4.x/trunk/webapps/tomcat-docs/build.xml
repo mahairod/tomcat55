@@ -52,6 +52,9 @@
     <copy   tofile="${webapps.build}/${webapp.name}/appdev/sample/build.xml"
               file="appdev/build.xml.txt"/>
 
+    <!-- Catalina Functional Specifications -->
+    <!-- Placeholder - no current static files to copy -->
+
     <!-- Catalina Javadocs -->
     <mkdir     dir="${webapps.build}/${webapp.name}/catalina/docs/api"/>
     <copy    todir="${webapps.build}/${webapp.name}/catalina/docs/api">
@@ -107,6 +110,17 @@
           excludes="project.xml"
           includes="*.xml">
       <param name="relative-path" expression=".."/>
+    </style>
+
+    <!-- Catalina Functional Specifications -->
+    <mkdir     dir="${webapps.build}/${webapp.name}/catalina"/>
+    <style basedir="funcspecs"
+           destdir="${webapps.build}/${webapp.name}/catalina/funcspecs"
+         extension=".html"
+             style="../tomcat-docs.xsl"
+          excludes="project.xml"
+          includes="*.xml">
+      <param name="relative-path" expression="../.."/>
     </style>
 
     <!-- Server Configuration Reference -->

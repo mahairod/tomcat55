@@ -22,14 +22,18 @@
         <item name="Config. Reference"     href="config/index.html"/>
     </menu>
 
-    <menu name="App Developers">
+    <menu name="Application Developers">
         <item name="App Developer Guide"   href="appdev/index.html"/>
         <item name="Servlet/JSP Javadocs"  href="servletapi/index.html"/>
     </menu>
 
-    <menu name="Tomcat Developers">
-        <item name="Catalina Javadocs"     href="catalina/docs/api/index.html"/>
-        <item name="Jasper Javadocs"       href="jasper/docs/api/index.html"/>
+    <menu name="Catalina Developers">
+        <item name="Functional Specs."     href="catalina/funcspecs/index.html"/>
+        <item name="Javadocs"              href="catalina/docs/api/index.html"/>
+    </menu>
+
+    <menu name="Jasper Developers">
+        <item name="Javadocs"              href="jasper/docs/api/index.html"/>
     </menu>
 
     </body>

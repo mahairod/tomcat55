@@ -65,7 +65,7 @@ are responsible for installing, configuring, and operating a Tomcat 4 server.
 </section>
 
 
-<section name="App Developers">
+<section name="Application Developers">
 
 <p>The following documents are aimed at <em>Application Developers</em> who
 are constructing web applications or web services that will run on Tomcat.</p>
@@ -84,16 +84,30 @@ are constructing web applications or web services that will run on Tomcat.</p>
 </section>
 
 
-<section name="Tomcat Developers">
+<section name="Catalina Developers">
 
 <p>The following documents are for Java developers who wish to contribute to
-the development of Tomcat itself, or to better understand its internal
-architecture and operation.</p>
+the development of the <em>Catalina</em> servlet container portion of Tomcat
+itself, or to better understand its internal architecture and operation.</p>
 <ul>
-<li><a href="catalina/docs/api/index.html"><strong>Catalina Javadocs</strong></a>
+<li><a href="catalina/funcspecs/index.html"><strong>Functional Specifications</strong></a>
+    - Requirements specifications for features of the <em>Catalina</em> servlet
+    container portion of Tomcat 4.</li>
+<li><a href="catalina/docs/api/index.html"><strong>Javadocs</strong></a>
     - Javadoc API documentation for the <em>Catalina</em> servlet container
     portion of Tomcat 4.</li>
-<li><a href="jasper/docs/api/index.html"><strong>Jasper Javadocs</strong></a>
+</ul>
+
+</section>
+
+
+<section name="Jasper Developers">
+
+<p>The following documents are for Java developers who wish to contribute to
+the development of the <em>Jasper</em> JSP container portion of Tomcat
+itself, or to better understand its internal architecture and operation.</p>
+<ul>
+<li><a href="jasper/docs/api/index.html"><strong>Javadocs</strong></a>
     - Javadoc API documentation for the <em>Jasper</em> JSP container
     portion of Tomcat 4.</li>
 </ul>
