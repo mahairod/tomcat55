@@ -1568,6 +1568,10 @@ class Parser {
             err.jspError( reader.mark(), "jsp.error.not.in.template",
 		"Expression language" );
         } else if (reader.matches("<jsp:")) {
+            if ((parent instanceof Node.NamedAttribute) &&
+                    reader.matches("attribute")) {
+                err.jspError(reader.mark(), "jsp.error.nested.jspattribute");
+            }
             err.jspError( reader.mark(), "jsp.error.not.in.template",
 		"Standard actions" );
 	} else if (parseCustomTag(parent)) {

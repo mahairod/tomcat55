@@ -1333,11 +1333,14 @@ abstract class Node {
             }
             childInfo = new ChildInfo();
 	    name = this.getAttributeValue("name");
-	    localName = name;
-	    int index = name.indexOf(':');
-	    if (index != -1) {
-		prefix = name.substring(0, index);
-		localName = name.substring(index+1);
+            if (name != null) {
+                // Mandatary attribute "name" will be checked in Validator
+	        localName = name;
+	        int index = name.indexOf(':');
+	        if (index != -1) {
+		    prefix = name.substring(0, index);
+		    localName = name.substring(index+1);
+                }
 	    }
         }
 
