@@ -142,6 +142,7 @@ import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.CharsetMapper;
+import org.apache.catalina.util.ExtensionValidator;
 import org.apache.catalina.util.RequestUtil;
 
 
@@ -3561,6 +3562,15 @@ public class StandardContext
 
         // Post work directory
         postWorkDirectory();
+
+        // Validate required extensions
+        ExtensionValidator validator = ExtensionValidator.getInstance();
+        boolean dependencyCheck = validator.validateApplication(
+                                  getResources(), this);
+        if (!dependencyCheck) {
+            // do not make application available if depency check fails
+            ok = false;
+        }
 
         // Reading the "catalina.useNaming" environment variable
         String useNamingProperty = System.getProperty("catalina.useNaming");

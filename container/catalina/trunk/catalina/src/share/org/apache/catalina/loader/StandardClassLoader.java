@@ -249,15 +249,6 @@ public class StandardClassLoader
 
 
     /**
-     * The set of optional packages (formerly standard extensions) that
-     * are available in the repositories associated with this class loader.
-     * Each object in this list is of type
-     * <code>org.apache.catalina.loader.Extension</code>.
-     */
-    protected ArrayList available = new ArrayList();
-
-
-    /**
      * The debugging detail level of this component.
      */
     protected int debug = 0;
@@ -279,15 +270,6 @@ public class StandardClassLoader
      * for locally loaded classes or resources.
      */
     protected String repositories[] = new String[0];
-
-
-    /**
-     * The set of optional packages (formerly standard extensions) that
-     * are required in the repositories associated with this class loader.
-     * Each object in this list is of type
-     * <code>org.apache.catalina.loader.Extension</code>.
-     */
-    protected ArrayList required = new ArrayList();
 
 
     /**
@@ -445,41 +427,6 @@ public class StandardClassLoader
 
 
     /**
-     * Return a list of "optional packages" (formerly "standard extensions")
-     * that have been declared to be available in the repositories associated
-     * with this class loader, plus any parent class loader implemented with
-     * the same class.
-     */
-    public Extension[] findAvailable() {
-
-        // Initialize the results with our local available extensions
-        ArrayList results = new ArrayList();
-        Iterator available = this.available.iterator();
-        while (available.hasNext())
-            results.add(available.next());
-
-        // Trace our parentage tree and add declared extensions when possible
-        ClassLoader loader = this;
-        while (true) {
-            loader = loader.getParent();
-            if (loader == null)
-                break;
-            if (!(loader instanceof StandardClassLoader))
-                continue;
-            Extension extensions[] =
-                ((StandardClassLoader) loader).findAvailable();
-            for (int i = 0; i < extensions.length; i++)
-                results.add(extensions[i]);
-        }
-
-        // Return the results as an array
-        Extension extensions[] = new Extension[results.size()];
-        return ((Extension[]) results.toArray(extensions));
-
-    }
-
-
-    /**
      * Return a String array of the current repositories for this class
      * loader.  If there are no repositories, a zero-length array is
      * returned.
@@ -487,41 +434,6 @@ public class StandardClassLoader
     public String[] findRepositories() {
 
         return (repositories);
-
-    }
-
-
-    /**
-     * Return a list of "optional packages" (formerly "standard extensions")
-     * that have been declared to be required in the repositories associated
-     * with this class loader, plus any parent class loader implemented with
-     * the same class.
-     */
-    public Extension[] findRequired() {
-
-        // Initialize the results with our local required extensions
-        ArrayList results = new ArrayList();
-        Iterator required = this.required.iterator();
-        while (required.hasNext())
-            results.add(required.next());
-
-        // Trace our parentage tree and add declared extensions when possible
-        ClassLoader loader = this;
-        while (true) {
-            loader = loader.getParent();
-            if (loader == null)
-                break;
-            if (!(loader instanceof StandardClassLoader))
-                continue;
-            Extension extensions[] =
-                ((StandardClassLoader) loader).findRequired();
-            for (int i = 0; i < extensions.length; i++)
-                results.add(extensions[i]);
-        }
-
-        // Return the results as an array
-        Extension extensions[] = new Extension[results.size()];
-        return ((Extension[]) results.toArray(extensions));
 
     }
 
@@ -542,13 +454,6 @@ public class StandardClassLoader
     public String toString() {
 
         StringBuffer sb = new StringBuffer("StandardClassLoader\r\n");
-        sb.append("  available:\r\n");
-        Iterator available = this.available.iterator();
-        while (available.hasNext()) {
-            sb.append("    ");
-            sb.append(available.next().toString());
-            sb.append("\r\n");
-        }
         sb.append("  delegate: ");
         sb.append(delegate);
         sb.append("\r\n");
@@ -556,13 +461,6 @@ public class StandardClassLoader
         for (int i = 0; i < repositories.length; i++) {
             sb.append("    ");
             sb.append(repositories[i]);
-            sb.append("\r\n");
-        }
-        sb.append("  required:\r\n");
-        Iterator required = this.required.iterator();
-        while (required.hasNext()) {
-            sb.append("    ");
-            sb.append(required.next().toString());
             sb.append("\r\n");
         }
         if (this.parent != null) {
@@ -1090,20 +988,6 @@ public class StandardClassLoader
                     throw new IllegalArgumentException
                         ("addRepositoryInternal:  Invalid URL '" +
                          repository + "'");
-                }
-                if (!((manifest == null) && (jarFile == null))) {
-                    if ((manifest == null) && (jarFile != null))
-                        manifest = jarFile.getManifest();
-                    if (manifest != null) {
-                        Iterator extensions =
-                            Extension.getAvailable(manifest).iterator();
-                        while (extensions.hasNext())
-                            available.add(extensions.next());
-                        extensions =
-                            Extension.getRequired(manifest).iterator();
-                        while (extensions.hasNext())
-                            required.add(extensions.next());
-                    }
                 }
             } catch (Throwable t) {
                 t.printStackTrace();

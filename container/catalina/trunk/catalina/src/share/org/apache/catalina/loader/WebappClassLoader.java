@@ -248,15 +248,6 @@ public class WebappClassLoader
 
 
     /**
-     * The set of optional packages (formerly standard extensions) that
-     * are available in the repositories associated with this class loader.
-     * Each object in this list is of type
-     * <code>org.apache.catalina.loader.Extension</code>.
-     */
-    protected ArrayList available = new ArrayList();
-
-
-    /**
      * The cache of ResourceEntry for classes and resources we have loaded,
      * keyed by resource name.
      */
@@ -340,15 +331,6 @@ public class WebappClassLoader
      * modifications.
      */
     protected String[] paths = new String[0];
-
-
-    /**
-     * The set of optional packages (formerly standard extensions) that
-     * are required in the repositories associated with this class loader.
-     * Each object in this list is of type
-     * <code>org.apache.catalina.loader.Extension</code>.
-     */
-    protected ArrayList required = new ArrayList();
 
 
     /**
@@ -680,55 +662,6 @@ public class WebappClassLoader
         }
         result4[jarRealFiles.length] = file;
         jarRealFiles = result4;
-
-        // Load manifest
-        Manifest manifest = jarFile.getManifest();
-        if (manifest != null) {
-            Iterator extensions = Extension.getAvailable(manifest).iterator();
-            while (extensions.hasNext()) {
-                available.add(extensions.next());
-            }
-            extensions = Extension.getRequired(manifest).iterator();
-            while (extensions.hasNext()) {
-                required.add(extensions.next());
-            }
-        }
-
-    }
-
-
-    /**
-     * Return a list of "optional packages" (formerly "standard extensions")
-     * that have been declared to be available in the repositories associated
-     * with this class loader, plus any parent class loader implemented with
-     * the same class.
-     */
-    public Extension[] findAvailable() {
-
-        // Initialize the results with our local available extensions
-        ArrayList results = new ArrayList();
-        Iterator available = this.available.iterator();
-        while (available.hasNext())
-            results.add(available.next());
-
-        // Trace our parentage tree and add declared extensions when possible
-        ClassLoader loader = this;
-        while (true) {
-            loader = loader.getParent();
-            if (loader == null)
-                break;
-            if (!(loader instanceof WebappClassLoader))
-                continue;
-            Extension extensions[] =
-                ((WebappClassLoader) loader).findAvailable();
-            for (int i = 0; i < extensions.length; i++)
-                results.add(extensions[i]);
-        }
-
-        // Return the results as an array
-        Extension extensions[] = new Extension[results.size()];
-        return ((Extension[]) results.toArray(extensions));
-
     }
 
 
@@ -740,41 +673,6 @@ public class WebappClassLoader
     public String[] findRepositories() {
 
         return (repositories);
-
-    }
-
-
-    /**
-     * Return a list of "optional packages" (formerly "standard extensions")
-     * that have been declared to be required in the repositories associated
-     * with this class loader, plus any parent class loader implemented with
-     * the same class.
-     */
-    public Extension[] findRequired() {
-
-        // Initialize the results with our local required extensions
-        ArrayList results = new ArrayList();
-        Iterator required = this.required.iterator();
-        while (required.hasNext())
-            results.add(required.next());
-
-        // Trace our parentage tree and add declared extensions when possible
-        ClassLoader loader = this;
-        while (true) {
-            loader = loader.getParent();
-            if (loader == null)
-                break;
-            if (!(loader instanceof WebappClassLoader))
-                continue;
-            Extension extensions[] =
-                ((WebappClassLoader) loader).findRequired();
-            for (int i = 0; i < extensions.length; i++)
-                results.add(extensions[i]);
-        }
-
-        // Return the results as an array
-        Extension extensions[] = new Extension[results.size()];
-        return ((Extension[]) results.toArray(extensions));
 
     }
 
@@ -878,13 +776,6 @@ public class WebappClassLoader
     public String toString() {
 
         StringBuffer sb = new StringBuffer("WebappClassLoader\r\n");
-        sb.append("  available:\r\n");
-        Iterator available = this.available.iterator();
-        while (available.hasNext()) {
-            sb.append("    ");
-            sb.append(available.next().toString());
-            sb.append("\r\n");
-        }
         sb.append("  delegate: ");
         sb.append(delegate);
         sb.append("\r\n");
@@ -892,13 +783,6 @@ public class WebappClassLoader
         for (int i = 0; i < repositories.length; i++) {
             sb.append("    ");
             sb.append(repositories[i]);
-            sb.append("\r\n");
-        }
-        sb.append("  required:\r\n");
-        Iterator required = this.required.iterator();
-        while (required.hasNext()) {
-            sb.append("    ");
-            sb.append(required.next().toString());
             sb.append("\r\n");
         }
         if (this.parent != null) {
@@ -1566,7 +1450,6 @@ public class WebappClassLoader
         paths = new String[0];
         hasExternalRepositories = false;
 
-        required.clear();
         permissionList.clear();
         loaderPC.clear();
 

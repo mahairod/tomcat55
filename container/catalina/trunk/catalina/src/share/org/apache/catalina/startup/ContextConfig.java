@@ -122,7 +122,6 @@ import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
-import org.apache.catalina.loader.Extension;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.SchemaResolver;
 import org.apache.catalina.valves.ValveBase;

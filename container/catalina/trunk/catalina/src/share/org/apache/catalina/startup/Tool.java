@@ -71,7 +71,6 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import org.apache.catalina.loader.Extension;
 import org.apache.catalina.loader.StandardClassLoader;
 
 
