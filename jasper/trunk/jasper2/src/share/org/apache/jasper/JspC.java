@@ -114,7 +114,6 @@ public class JspC implements Options {
     private static final String SWITCH_DIE = "-die";
     private static final String SWITCH_POOLING = "-poolingEnabled";
     private static final String SWITCH_ENCODING = "-javaEncoding";
-    private static final String SWITCH_ADD_EXTENSION = "-addExtension";
 
     private static final String SHOW_SUCCESS ="-s";
     private static final String LIST_ERRORS = "-l";
@@ -294,8 +293,6 @@ public class JspC implements Options {
                 setCompilerSourceVM(nextArg());
             } else if (tok.equals(SWITCH_TARGET)) {
                 setCompilerTargetVM(nextArg());
-            } else if (tok.equals(SWITCH_ADD_EXTENSION)) {
-                addExtension(nextArg());
             } else {
                 if (tok.startsWith("-")) {
                     throw new JasperException("Unrecognized option: " + tok +
@@ -564,7 +561,7 @@ public class JspC implements Options {
      *
      * @param extension The extension to add, e.g. "myjsp"
      */
-    public void addExtension(final String extension) {
+    protected void addExtension(final String extension) {
         if(extension != null) {
             if(extensions == null) {
                 extensions = new Vector();
