@@ -341,6 +341,12 @@ public class WebappClassLoader
     protected boolean started = false;
 
 
+    /**
+     * Has external repositories.
+     */
+    protected boolean hasExternalRepositories = false;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -461,6 +467,7 @@ public class WebappClassLoader
         try {
             URL url = new URL(repository);
             super.addURL(url);
+            hasExternalRepositories = true;
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e.toString());
         }
@@ -858,7 +865,7 @@ public class WebappClassLoader
                     log("      -->RuntimeException Rethrown", e);
                 throw e;
             }
-            if (clazz == null) {
+            if ((clazz == null) && hasExternalRepositories) {
                 try {
                     clazz = super.findClass(name);
                 } catch(AccessControlException ace) {
@@ -917,6 +924,9 @@ public class WebappClassLoader
         if (entry != null) {
             url = entry.source;
         }
+
+        if ((url == null) && hasExternalRepositories)
+            url = super.findResource(name);
 
         if (debug >= 3) {
             if (url != null)
@@ -981,10 +991,14 @@ public class WebappClassLoader
         }
 
         // Adding the results of a call to the superclass
-        Enumeration otherResourcePaths = super.findResources(name);
+        if (hasExternalRepositories) {
 
-        while (otherResourcePaths.hasMoreElements()) {
-            result.addElement(otherResourcePaths.nextElement());
+            Enumeration otherResourcePaths = super.findResources(name);
+
+            while (otherResourcePaths.hasMoreElements()) {
+                result.addElement(otherResourcePaths.nextElement());
+            }
+
         }
 
         return result.elements();
@@ -1114,6 +1128,12 @@ public class WebappClassLoader
             if (debug >= 2)
                 log("  --> Returning stream from local");
             stream = findLoadedResource(name);
+            try {
+                if (hasExternalRepositories && (stream == null))
+                    stream = url.openStream();
+            } catch (IOException e) {
+                ; // Ignore
+            }
             if (stream != null)
                 return (stream);
         }
@@ -1438,6 +1458,7 @@ public class WebappClassLoader
         jarNames = new String[0];
         lastModifiedDates = new long[0];
         paths = new String[0];
+        hasExternalRepositories = false;
 
         required.clear();
         permissionList.clear();
@@ -1560,9 +1581,6 @@ public class WebappClassLoader
         if ((name == null) || (path == null))
             return null;
 
-        if (notFoundResources.containsKey(name))
-            return null;
-
         ResourceEntry entry = (ResourceEntry) resourceEntries.get(name);
         if (entry != null)
             return entry;
@@ -1627,6 +1645,9 @@ public class WebappClassLoader
             } catch (NamingException e) {
             }
         }
+
+        if ((entry == null) && (notFoundResources.containsKey(name)))
+            return null;
 
         JarEntry jarEntry = null;
 
