@@ -23,9 +23,13 @@
     <form-bean      name="serviceForm"
                     type="org.apache.webapp.admin.service.ServiceForm"/>
                     
-    <!-- Service form bean -->
+    <!-- Delete Service form bean -->
     <form-bean      name="deleteServiceForm"
                     type="org.apache.webapp.admin.service.DeleteServiceForm"/>
+
+    <!-- Add Service form bean -->
+    <form-bean      name="addServiceForm"
+                    type="org.apache.webapp.admin.service.AddServiceForm"/>
 
     <!-- Connector form bean -->
     <form-bean      name="connectorForm"
@@ -92,6 +96,10 @@
 
     <forward        name="Delete Service"
                     path="/deleteService.jsp"
+                redirect="false"/>
+
+    <forward        name="Add Service"
+                    path="/addService.jsp"
                 redirect="false"/>
 
     <forward        name="Connector"
@@ -182,9 +190,14 @@
                type="org.apache.webapp.admin.service.SetUpDeleteServiceAction"
                name="deleteServiceForm"
                scope="session">
-      <forward        name="SetUpDeleteService"
-                      path="/deleteService.jsp"
-                  redirect="true"/>
+    </action>
+    
+    
+    <!-- Set up Add Service datastructure -->
+    <action    path="/setUpAddService"
+               type="org.apache.webapp.admin.service.SetUpAddServiceAction"
+               name="addServiceForm"
+               scope="session">
     </action>
     
    <!-- Set up Connector datastructure -->
@@ -315,12 +328,19 @@
               scope="request"
                type="org.apache.webapp.admin.SaveUserAction"/>
 
-                 <!-- Save user action -->
+    <!-- Delete service action -->
     <action    path="/deleteService"
               input="/deleteService.jsp"
                name="deleteServiceForm"
               scope="request"
                type="org.apache.webapp.admin.service.DeleteServiceAction"/>
+               
+    <!-- Add service action -->
+    <action    path="/addService"
+              input="/addService.jsp"
+               name="addServiceForm"
+              scope="request"
+               type="org.apache.webapp.admin.service.AddServiceAction"/>
                
   </action-mappings>  
     
