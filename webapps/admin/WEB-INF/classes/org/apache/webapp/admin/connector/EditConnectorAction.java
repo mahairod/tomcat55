@@ -198,10 +198,22 @@ public class EditConnectorAction extends Action {
             
             attribute = "acceptCount";
             connectorFm.setAcceptCountText
+                (((Integer) mBServer.getAttribute(cname, attribute)).toString());          
+            attribute = "compression";
+            connectorFm.setCompression
+                ((String) mBServer.getAttribute(cname, attribute));          
+            attribute = "connectionLinger";
+            connectorFm.setConnLingerText
                 (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
             attribute = "connectionTimeout";
             connectorFm.setConnTimeOutText
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
+                (((Integer) mBServer.getAttribute(cname, attribute)).toString());             
+            attribute = "connectionUploadTimeout";
+            connectorFm.setConnUploadTimeOutText
+                (((Integer) mBServer.getAttribute(cname, attribute)).toString());              
+            attribute = "disableUploadTimeout";
+            connectorFm.setDisableUploadTimeout
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());       
             attribute = "debug";
             connectorFm.setDebugLvl
                 (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
@@ -213,7 +225,19 @@ public class EditConnectorAction extends Action {
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());            
             attribute = "address";
             connectorFm.setAddress
-                ((String) mBServer.getAttribute(cname, attribute));
+                ((String) mBServer.getAttribute(cname, attribute));          
+            attribute = "maxKeepAliveRequests";
+            connectorFm.setMaxKeepAliveText
+                (((Integer) mBServer.getAttribute(cname, attribute)).toString());         
+            attribute = "secure";
+            connectorFm.setSecure
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());;       
+            attribute = "tcpNoDelay";
+            connectorFm.setTcpNoDelay
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());;        
+            attribute = "xpoweredBy";
+            connectorFm.setXpoweredBy
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());;
           
             // Ports
             attribute = "port";
@@ -244,15 +268,27 @@ public class EditConnectorAction extends Action {
             if ("HTTPS".equalsIgnoreCase(connectorType)) {
                 // Initialize rest of variables. 
                 // These are set only for SSL connectors.
+                attribute = "algorithm";
+                connectorFm.setAlgorithm
+                    ((String) mBServer.getAttribute(cname, attribute));
                 attribute = "clientAuth";
                 connectorFm.setClientAuthentication
                     (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
+                attribute = "ciphers";
+                connectorFm.setCiphers
+                    ((String) mBServer.getAttribute(cname, attribute));   
                 attribute = "keystoreFile";
                 connectorFm.setKeyStoreFileName
                     ((String) mBServer.getAttribute(cname, attribute));
                 attribute = "keystorePass";
                 connectorFm.setKeyStorePassword
-                    ((String) mBServer.getAttribute(cname, attribute));            
+                    ((String) mBServer.getAttribute(cname, attribute));     
+                attribute = "keystoreType";
+                connectorFm.setKeyStoreType
+                    ((String) mBServer.getAttribute(cname, attribute));   
+                attribute = "sslProtocol";
+                connectorFm.setSslProtocol
+                    ((String) mBServer.getAttribute(cname, attribute));          
             }     
                 
                         
