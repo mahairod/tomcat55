@@ -132,6 +132,9 @@
       <fix>
         <bug>31257</bug>: Added specification of endorsed dirs if forking. (yoavs)
       </fix>
+      <fix>
+        <bug>31510</bug>: Set response=null in JspWriterImpl#recycle to aid in JBoss memory leak. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
