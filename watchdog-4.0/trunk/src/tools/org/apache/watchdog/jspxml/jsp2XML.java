@@ -154,8 +154,17 @@ public class jsp2XML {
 
         if (!tag_prefix.containsKey(prefix)) {
             tag_prefix.put(prefix , prefix);
-            if (uri.charAt(0) == '/') {
-                // URI is relaitve
+            // URI is relaitve and directly references a TLD
+            // or a JAR file, then the URI must be prefixed by
+            // 'urn:jsptld:
+            // This is an ugly hack for the conversion, but
+            // given that an uri mapping in either a DD or
+            // TLD could end with the prefix of .tld, there
+            // is no easy way from the conversion point of
+            // view to determine the intention of the JSP.
+            // Will assume if the URI contains WEB-INF,
+            // that it is a direct reference.
+            if (uri.endsWith(".jar") || uri.indexOf("WEB-INF") > -1) {
                 uri = "urn:jsptld:" + uri;
             }
             //add to the xml NameSpace
