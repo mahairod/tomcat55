@@ -967,15 +967,22 @@ public class DefaultServlet
         // If the resource is a collection (aka a directory), we check 
         // the welcome files list.
         if (resourceInfo.collection) {
+
+	    if (!path.endsWith("/")) {
+	        response.sendRedirect(request.getRequestURI() + "/");
+		return;
+	    }
+
             ResourceInfo welcomeFileInfo = checkWelcomeFiles(path, resources);
             if (welcomeFileInfo != null) {
                 resourceInfo = welcomeFileInfo;
-            }
-            
-            if ((welcomeFileInfo != null) && 
-                (!path.endsWith("/"))) {
-                response.sendRedirect(request.getRequestURI() + "/");
-                return;
+		RequestDispatcher rd =
+		  getServletContext().getRequestDispatcher
+		    (resourceInfo.path);
+		if (rd != null) {
+		    rd.forward(request, response);
+		    return;
+		}
             }
             
         }
