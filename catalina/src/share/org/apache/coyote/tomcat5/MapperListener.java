@@ -203,10 +203,23 @@ public class MapperListener
         if (notification instanceof MBeanServerNotification) {
             ObjectName objectName = 
                 ((MBeanServerNotification) notification).getMBeanName();
-            if( ! "*".equals( domain ) &&
-                    ! domain.equals( objectName.getDomain() )) {
+            String j2eeType = objectName.getKeyProperty("j2eeType");
+            String engineName = null;
+            if (j2eeType != null) {
+                if ((j2eeType.equals("WebModule")) || 
+                    (j2eeType.equals("Servlet"))) {
+                        try {
+                            engineName = (String)
+                                mBeanServer.getAttribute(objectName, "engineName");
+                        } catch (Exception e) {
+                            e.printStackTrace();  
+                        }
+                }
+            }
+            if ( ! "*".equals( domain ) &&
+                    ! domain.equals( objectName.getDomain() ) &&
+                    ! domain.equals( engineName ) ) {
                 // A different domain - not ours
-                String j2eeType = objectName.getKeyProperty("j2eeType");
                 if( j2eeType!=null )
                     log.debug("MBean in different domain " + objectName);
                 return;
@@ -222,8 +235,7 @@ public class MapperListener
                         e.printStackTrace();  
                     }
                 }
-                
-                String j2eeType = objectName.getKeyProperty("j2eeType");
+    
                 if (j2eeType != null) {
                     if (j2eeType.equals("WebModule")) {
                         try {
@@ -249,8 +261,7 @@ public class MapperListener
                         e.printStackTrace();  
                     }
                 }
-                               
-                String j2eeType = objectName.getKeyProperty("j2eeType");
+ 
                 if (j2eeType != null) {
                     if (j2eeType.equals("WebModule")) {
                         try {
