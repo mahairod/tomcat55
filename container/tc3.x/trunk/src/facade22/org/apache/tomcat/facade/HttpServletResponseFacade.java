@@ -440,9 +440,17 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 	    path = url.substring(0, question);
 	    query = url.substring(question);
 	}
+	String anchor = null;
+	int hashP = path.indexOf("#");
+	if(hashP >= 0) {
+	    anchor = path.substring(hashP);
+	    path = path.substring(0,hashP);
+	}
 	StringBuffer sb = new StringBuffer(path);
 	sb.append(";jsessionid=");
 	sb.append(sessionId);
+	if(anchor != null) 
+	    sb.append(anchor);
 	if (query != null)
 	    sb.append(query);
 	return (sb.toString());
