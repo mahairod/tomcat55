@@ -530,14 +530,17 @@ public class WebappLoader
         return sb.toString();
     }
 
-    /** Classpath, as set in org.apache.catalina.jsp_classpath context
+
+    /** 
+     * Classpath, as set in org.apache.catalina.jsp_classpath context
      * property
      *
-     * @return
+     * @return The classpath
      */
     public String getClasspath() {
         return classpath;
     }
+
 
     /**
      * Has the internal repository associated with this Loader been modified,
@@ -547,6 +550,14 @@ public class WebappLoader
 
         return (classLoader.modified());
 
+    }
+
+
+    /**
+     * Used to periodically signal to the classloader to release JAR resources.
+     */
+    public void closeJARs(boolean force) {
+        classLoader.closeJARs(force);
     }
 
 
@@ -969,6 +980,8 @@ public class WebappLoader
 
         if( log.isDebugEnabled()) 
             log.debug(sm.getString("webappLoader.deploy", workDir.getAbsolutePath()));
+
+        classLoader.setWorkDir(workDir);
 
         DirContext resources = container.getResources();
 
