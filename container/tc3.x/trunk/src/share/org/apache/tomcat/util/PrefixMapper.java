@@ -123,8 +123,8 @@ public class PrefixMapper {
      */
     public void removeAllMappings( String host, String path ) {
 	PrefixMapper vmap=this;
-	host=host.toLowerCase();
 	if( host!=null ) {
+	    host=host.toLowerCase();
 	    vmap=(PrefixMapper)vhostMaps.get(host);
 	}
 	
@@ -207,10 +207,11 @@ public class PrefixMapper {
         String s = path;
 
 	PrefixMapper myMap=null;
-	if( host!=null )
+	if( host!=null ) {
 	    myMap=(PrefixMapper)vhostMaps.get( host );
-	if( myMap==null ) {
-	    myMap=(PrefixMapper)vhostMaps.get( host.toLowerCase() );
+	    if( myMap==null ) {
+		myMap=(PrefixMapper)vhostMaps.get( host.toLowerCase() );
+	    }
 	}
 	
 	if( myMap==null ) myMap = this; // default server
