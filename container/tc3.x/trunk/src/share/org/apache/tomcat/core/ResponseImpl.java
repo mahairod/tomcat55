@@ -594,6 +594,11 @@ public class ResponseImpl implements Response {
 	try {
 	    PrintWriter out = getWriter();
 	    out.close();
+	} catch (IOException err) {
+	    if("Broken pipe".equals( err.getMessage()))
+		System.out.println("Broken pipe");
+	    else
+		throw err;
 	} catch (IllegalStateException ise) {
 	    ServletOutputStream out = getOutputStream();
 	    out.close();
