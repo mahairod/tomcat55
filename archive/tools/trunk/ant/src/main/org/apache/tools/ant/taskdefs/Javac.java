@@ -125,11 +125,7 @@ public class Javac extends Task {
      */
     
     public void setClasspath(String classpath) {
-
-        // XXX
-        // need to translate ':' and '/' chars to native
-        
-        compileClasspath = classpath;
+        compileClasspath = Project.translatePath(classpath);
     }
 
     /**
@@ -137,12 +133,8 @@ public class Javac extends Task {
      * against.
      */
     
-    public void setBootclasspath(String bootclasspath) {
-
-        // XXX
-        // need to translate ':' and '/' chars to native
-        
-        this.bootclasspath = bootclasspath;
+    public void setBootclasspath(String bootclasspath) {        
+        this.bootclasspath = Project.translatePath(bootclasspath);
     }
 
     /**
@@ -151,11 +143,7 @@ public class Javac extends Task {
      */
     
     public void setExtdirs(String extdirs) {
-
-        // XXX
-        // need to translate ':' and '/' chars to native
-        
-        this.extdirs = extdirs;
+        this.extdirs = Project.translatePath(extdirs);
     }
 
     
