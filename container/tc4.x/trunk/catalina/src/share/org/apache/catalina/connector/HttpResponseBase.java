@@ -267,6 +267,21 @@ public class HttpResponseBase
     }
 
 
+    /**
+     * Reset this response, and specify the values for the HTTP status code
+     * and corresponding message.
+     *
+     * @exception IllegalStateException if this response has already been
+     *  committed
+     */
+    public void reset(int status, String message) {
+
+        reset();
+        setStatus(status, message);
+
+    }
+
+
     // ------------------------------------------------------ Protected Methods
 
 
@@ -920,11 +935,17 @@ public class HttpResponseBase
 	if ((contentType == null) || "text/plain".equals(contentType))
 	    setContentType("text/html");
         */
+
+        // Temporarily comment out the following flush so that
+        // default error reports can still set the content type
+        // FIXME - this stuff needs to be refactored
+        /*
 	try {
 	    flushBuffer();
 	} catch (IOException e) {
 	    ;
 	}
+        */
 
     }
 

@@ -863,9 +863,11 @@ final class StandardWrapperValve
 
 	// Reset the response data buffer (if possible)
 	try {
-	    response.resetBuffer();
+            //	    response.resetBuffer();
+	    hresponse.reset(statusCode, message);
 	} catch (Throwable e) {
-	    ;
+            if (debug >= 1)
+                log("status.reset", e);
 	}
 
 	// Render a default HTML status report page
@@ -873,7 +875,8 @@ final class StandardWrapperValve
 	    try {
 		hres.setContentType("text/html");
 	    } catch (Throwable t) {
-		;
+                if (debug >= 1)
+                    log("status.setContentType", t);
 	    }
 	    PrintWriter writer = response.getReporter();
 	    writer.println("<html>");
@@ -893,7 +896,8 @@ final class StandardWrapperValve
 	    writer.println("</html>");
 	    writer.flush();
 	} catch (IllegalStateException e) {
-	    ;
+            if (debug >= 1)
+                log("status.write", e);
 	}
         
 
