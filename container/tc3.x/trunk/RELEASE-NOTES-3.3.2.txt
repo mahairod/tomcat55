@@ -58,6 +58,11 @@ Bug No.  Description
 	 Fix problems with URL normalization when the URL attempts to access
 	 a file above the ROOT.
 
+	 Prevent session sharing when switching from HTTPS to HTTP.  This
+	 removes a way to hijack sensitive sessions.  The old behavior can
+	 be restored by setting the secureCookie="false" attribute on the
+	 SessionId element in server.xml.
+
 Jasper:
 
 Bug No.  Description
