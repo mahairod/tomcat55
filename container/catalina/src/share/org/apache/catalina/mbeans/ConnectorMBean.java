@@ -97,7 +97,7 @@ public class ConnectorMBean extends ClassNameMBean {
 	
 	if (("algorithm").equals(name) || ("keystoreType").equals(name) ||
             ("maxThreads").equals(name) || ("maxSpareThreads").equals(name) ||
-            ("minSpareThreads").equals(name)) {
+            ("minSpareThreads").equals(name) || ("threadPriority").equals(name)) {
                 
             if (("keystoreType").equals(name)) {
                 name = "keyType";
@@ -114,9 +114,6 @@ public class ConnectorMBean extends ClassNameMBean {
             } catch (Exception e) {
                 throw new MBeanException(e);
             }
-            //if( attribute == null ) {
-            //    attribute = connector.getProperty(name);
-            //}
 	} else {
 	    attribute = super.getAttribute(name);
 	}
@@ -166,8 +163,8 @@ public class ConnectorMBean extends ClassNameMBean {
 	
         if (("algorithm").equals(name) || ("keystoreType").equals(name) ||
             ("maxThreads").equals(name) || ("maxSpareThreads").equals(name) ||
-            ("minSpareThreads").equals(name)) {
-                
+            ("minSpareThreads").equals(name) || ("threadPriority").equals(name)) {
+
             if (("keystoreType").equals(name)) {
                 name = "keyType";
             }

@@ -265,7 +265,7 @@
             </controls:data>
         </controls:row>
 	
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="maxkthreads">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="maxthreads">
             <controls:label><bean:message key="connector.maxthreads"/>:</controls:label>
             <controls:data>
               <html:text property="maxThreads" size="5" maxlength="5" styleId="maxthreads"/>
@@ -276,6 +276,13 @@
             <controls:label><bean:message key="connector.minspare"/>:</controls:label>
             <controls:data>
               <html:text property="minSpare" size="5" maxlength="5" styleId="minspare"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="threadpriority">
+            <controls:label><bean:message key="connector.threadpriority"/>:</controls:label>
+            <controls:data>
+              <html:text property="threadPriority" size="5" maxlength="5" styleId="threadpriority"/>
             </controls:data>
         </controls:row>
 

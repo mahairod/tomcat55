@@ -116,6 +116,7 @@ public class AddConnectorAction extends Action {
         connectorFm.setMaxSpare("50");
         connectorFm.setMaxThreads("200");
         connectorFm.setMinSpare("4");
+        connectorFm.setThreadPriority(String.valueOf(Thread.NORM_PRIORITY));
         connectorFm.setSecure("false");
         connectorFm.setTcpNoDelay("true");
         connectorFm.setXpoweredBy("false");
