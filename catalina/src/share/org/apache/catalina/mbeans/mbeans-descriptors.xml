@@ -35,6 +35,36 @@
                  type="int"/>
     </operation>
 
+    <operation   name="createDataSourceRealm"
+          description="Create a new DataSource Realm"
+               impact="ACTION"
+           returnType="java.lang.String">
+      <parameter name="parent"
+          description="MBean Name of the associated parent component"
+                 type="java.lang.String"/>
+      <parameter name="dataSourceName"
+          description="The JNDI named JDBC DataSource"
+                 type="java.lang.String"/>
+      <parameter name="roleNameCol"
+          description="The column in the user role table that names a role"
+                 type="java.lang.String"/>
+      <parameter name="userCredCol"
+          description="The column in the user table that holds the user's
+                        credentials"
+                 type="java.lang.String"/>
+      <parameter name="userNameCol"
+          description="The column in the user table that holds the user's
+                        username"
+                 type="java.lang.String"/>
+      <parameter name="userRoleTable"
+          description="The table that holds the relation between user's and
+                        roles"
+                 type="java.lang.String"/>
+      <parameter name="userTable"
+          description="The table that holds user data"
+                 type="java.lang.String"/>
+    </operation>
+
     <operation   name="createDefaultContext"
           description="Create a new DefaultContext"
                impact="ACTION"
