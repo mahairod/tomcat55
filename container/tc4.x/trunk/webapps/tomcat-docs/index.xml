@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+    <title>Documentation Index</title>
+  </properties>
+
+<body>
+
+<section name="Introduction">
+
+<p>This is the top-level entry point of the documentation bundle for the
+<strong>Tomcat 4</strong> Servlet/JSP container.  Tomcat 4 implements the
+<a href="http://java.sun.com/products/servlet/">Servlet 2.3</a> and
+<a href="http://java.sun.com/products/jsp/">JavaServer Pages 1.2</a>
+specifications from Java Software, and includes many additional features that
+make it a useful platform for developing and deploying web applications and
+web services.</p>
+
+<p>Select one of the links from the navigation menu (to the left) to drill
+down to the more detailed documenation that is available.  Each available
+manual is described in more detail below.</p>
+
+</section>
+
+
+<section name="Getting Started">
+
+<p>The following documents will assist you in downloading and installing
+Tomcat 4, and (if you wish to) building a distribution from the source code.
+</p>
+<ul>
+<li><a href="README.txt"><strong>README.txt</strong></a> - Describes the
+    contents and directory structure of a Tomcat 4 binary distribution.</li>
+<li><a href="RUNNING.txt"><strong>RUNNING.txt</strong></a> - Documents the
+    steps necessary to download, install, start, and stop a Tomcat 4 server.
+    </li>
+<li><a href="BUILDING.txt"><strong>BUILDING.txt</strong></a> - Details the
+    steps necessary to download Tomcat 4 source code (and the other packages
+    that it depends on), and build a binary distribution from those sources.
+    </li>
+</ul>
+
+</section>
+
+
+<section name="Administrators">
+
+<p>The following documents are aimed at <em>System Administrators</em> who
+are responsible for installing, configuring, and operating a Tomcat 4 server.
+</p>
+
+</section>
+
+
+<section name="App Developers">
+
+<p>The following documents are aimed at <em>Application Developers</em> who
+are constructing web applications or web services that will run on Tomcat.</p>
+<ul>
+<li><a href="appdev/index.html"><strong>Application Developer's Guide</strong></a>
+    - An introduction to the concepts of a <em>web application</em> as defined
+    in the <a href="http://java.sun.com/products/servlet/download.html">Servlet
+    2.3 Specification</a>.  Covers basic organization of your web application
+    source tree, the structure of a web application archive, and an
+    introduction to the web application deployment descriptor
+    (<code>/WEB-INF/web.xml</code>).</li>
+<li><a href="servletapi/index.html"><strong>Servlet/JSP Javadocs</strong></a> -
+    The Servlet 2.3 and JSP 1.2 API Javadocs.</li>
+</ul>
+
+</section>
+
+
+<section name="Tomcat Developers">
+
+<p>The following documents are for Java developers who wish to contribute to
+the development of Tomcat itself, or to better understand its internal
+architecture and operation.</p>
+<ul>
+<li><a href="catalina/docs/api/index.html"><strong>Catalina Javadocs</strong></a>
+    - Javadoc API documentation for the <em>Catalina</em> servlet container
+    portion of Tomcat 4.</li>
+<li><a href="jasper/docs/api/index.html"><strong>Jasper Javadocs</strong></a>
+    - Javadoc API documentation for the <em>Jasper</em> JSP container
+    portion of Tomcat 4.</li>
+</ul>
+
+</section>
+
+
+</body>
+</document>
+

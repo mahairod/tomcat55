@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Tomcat Documentation - Top Level Directory"
+        href="http://jakarta.apache.org/tomcat/">
+
+    <title>The Tomcat 4 Servlet/JSP Container</title>
+
+    <logo href="http://jakarta.apache.org/tomcat/images/tomcat.gif">
+      The Tomcat Servlet/JSP Container
+    </logo>
+
+    
+    <body>
+
+    <menu name="Getting Started">
+        <item name="Docs Home"             href="/index.html"/>
+        <item name="READ ME"               href="/README.txt"/>
+        <item name="Install and Run"       href="/RUNNING.txt"/>
+        <item name="Building from Source"  href="/BUILDING.txt"/>
+    </menu>
+
+    <menu name="Administrators">
+<!--
+        <item name="Configuration"         href="/config/index.html"/>
+-->
+    </menu>
+
+    <menu name="App Developers">
+        <item name="App Developer Guide"   href="/appdev/index.html"/>
+        <item name="Servlet/JSP Javadocs"  href="/servletapi/index.html"/>
+    </menu>
+
+    <menu name="Tomcat Developers">
+        <item name="Catalina Javadocs"     href="/catalina/docs/api/index.html"/>
+        <item name="Jasper Javadocs"       href="/jasper/docs/api/index.html"/>
+    </menu>
+
+    </body>
+</project>
