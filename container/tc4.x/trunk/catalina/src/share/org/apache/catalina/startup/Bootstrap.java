@@ -66,6 +66,7 @@ package org.apache.catalina.startup;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -108,6 +109,12 @@ public final class Bootstrap {
      * @param args Command line arguments to be processed
      */
     public static void main(String args[]) {
+
+        // Set the debug flag appropriately
+        for (int i = 0; i < args.length; i++)  {
+            if ("-debug".equals(args[i]))
+                debug = 1;
+        }
 
         // Construct the class loaders we will need
         ClassLoader systemLoader = createSystemLoader();
@@ -183,18 +190,19 @@ public final class Bootstrap {
 	String filenames[] = directory.list();
 	for (int i = 0; i < filenames.length; i++) {
             String filename = filenames[i].toLowerCase();
-	    if ((!filename.endsWith(".jar")) || 
+	    if ((!filename.endsWith(".jar")) ||
                 (filename.indexOf("bootstrap.jar") != -1))
 		continue;
             File file = new File(directory, filenames[i]);
             try {
-                URL url = new URL("file", null, file.getAbsolutePath());
+                URL url = new URL("file", null, file.getCanonicalPath());
                 if (debug >= 1)
                     log("  Adding " + url.toString());
                 list.add(url.toString());
-            } catch (MalformedURLException e) {
+            } catch (IOException e) {
                 System.out.println("Cannot create URL for " +
                                    filenames[i]);
+                e.printStackTrace(System.out);
                 System.exit(1);
             }
 	}
@@ -226,13 +234,14 @@ public final class Bootstrap {
             classes.isDirectory()) {
             try {
                 URL url = new URL("file", null,
-                                  classes.getAbsolutePath() + "/");
+                                  classes.getCanonicalPath() + "/");
                 if (debug >= 1)
                     log("  Adding " + url.toString());
                 list.add(url.toString());
-            } catch (MalformedURLException e) {
+            } catch (IOException e) {
                 System.out.println("Cannot create URL for " +
                                    classes.getAbsolutePath());
+                e.printStackTrace(System.out);
                 System.exit(1);
             }
         }
@@ -251,13 +260,14 @@ public final class Bootstrap {
 		continue;
             File file = new File(directory, filenames[i]);
             try {
-                URL url = new URL("file", null, file.getAbsolutePath());
+                URL url = new URL("file", null, file.getCanonicalPath());
                 if (debug >= 1)
                     log("  Adding " + url.toString());
                 list.add(url.toString());
-            } catch (MalformedURLException e) {
+            } catch (IOException e) {
                 System.out.println("Cannot create URL for " +
                                    filenames[i]);
+                e.printStackTrace(System.out);
                 System.exit(1);
             }
 	}
@@ -297,13 +307,14 @@ public final class Bootstrap {
 		continue;
             File file = new File(directory, filenames[i]);
             try {
-                URL url = new URL("file", null, file.getAbsolutePath());
+                URL url = new URL("file", null, file.getCanonicalPath());
                 if (debug >= 1)
                     log("  Adding " + url.toString());
                 list.add(url.toString());
-            } catch (MalformedURLException e) {
+            } catch (IOException e) {
                 System.out.println("Cannot create URL for " +
                                    filenames[i]);
+                e.printStackTrace(System.out);
                 System.exit(1);
             }
 	}
