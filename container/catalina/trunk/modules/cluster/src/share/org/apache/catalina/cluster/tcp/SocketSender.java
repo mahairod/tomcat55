@@ -82,6 +82,7 @@ public class SocketSender implements IDataSender
     private Socket sc = null;
     private boolean isSocketConnected = false;
     private boolean suspect;
+    private long ackTimeout = 10000;
 
     public SocketSender(InetAddress host, int port)
     {
@@ -102,6 +103,7 @@ public class SocketSender implements IDataSender
     public void connect() throws java.io.IOException
     {
         sc = new Socket(getAddress(),getPort());
+        sc.setSoTimeout((int)ackTimeout);
         isSocketConnected = true;
     }
 
@@ -131,15 +133,27 @@ public class SocketSender implements IDataSender
         try
         {
             sc.getOutputStream().write(data);
+            sc.getOutputStream().flush();
+            waitForAck(ackTimeout);
         }
         catch ( java.io.IOException x )
         {
             disconnect();
             connect();
             sc.getOutputStream().write(data);
+            sc.getOutputStream().flush();
+            waitForAck(ackTimeout);
         }
     }
-    
+
+    private void waitForAck(long timeout)  throws java.io.IOException,
+        java.net.SocketTimeoutException {
+        int i = sc.getInputStream().read();
+        while ( (i!=-1) && (i!=3) ) {
+            i = sc.getInputStream().read();
+        }
+    }
+
     public String toString() {
         StringBuffer buf = new StringBuffer("SocketSender[");
         buf.append(getAddress()).append(":").append(getPort()).append("]");
@@ -148,11 +162,11 @@ public class SocketSender implements IDataSender
     public boolean isSuspect() {
         return suspect;
     }
-    
+
     public boolean getSuspect() {
         return suspect;
     }
-    
+
     public void setSuspect(boolean suspect) {
         this.suspect = suspect;
     }

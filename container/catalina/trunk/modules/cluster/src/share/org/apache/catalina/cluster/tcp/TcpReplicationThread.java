@@ -88,7 +88,7 @@ public class TcpReplicationThread extends WorkerThread
         org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
     private ByteBuffer buffer = ByteBuffer.allocate (1024);
     private SelectionKey key;
-
+    private boolean synchronous=false;
 
     TcpReplicationThread ()
     {
@@ -112,8 +112,9 @@ public class TcpReplicationThread extends WorkerThread
             try {
                 drainChannel (key);
             } catch (Exception e) {
-                log.info ("TCP Worker thread in cluster caught '"
-                    + e + "' closing channel");
+                log.error ("TCP Worker thread in cluster caught '"
+                    + e + "' closing channel", e);
+
                 // close channel and nudge selector
                 try {
                     key.channel().close();
@@ -139,9 +140,10 @@ public class TcpReplicationThread extends WorkerThread
      * to ignore read-readiness for this channel while the
      * worker thread is servicing it.
      */
-    synchronized void serviceChannel (SelectionKey key)
+    synchronized void serviceChannel (SelectionKey key, boolean synchronous)
     {
         this.key = key;
+        this.synchronous=synchronous;
         key.interestOps (key.interestOps() & (~SelectionKey.OP_READ));
         this.notify();		// awaken the thread
     }
@@ -157,6 +159,7 @@ public class TcpReplicationThread extends WorkerThread
     void drainChannel (SelectionKey key)
         throws Exception
     {
+        boolean packetReceived=false;
         SocketChannel channel = (SocketChannel) key.channel();
         int count;
         buffer.clear();			// make buffer empty
@@ -164,11 +167,19 @@ public class TcpReplicationThread extends WorkerThread
         // loop while data available, channel is non-blocking
         while ((count = channel.read (buffer)) > 0) {
             buffer.flip();		// make buffer readable
-            reader.append(buffer.array(),0,count);
+            if (reader.append(buffer.array(),0,count)) {
+                if (synchronous) {
+                    sendAck(key,channel);
+                } //end if
+            }
             buffer.clear();		// make buffer empty
         }
         //check to see if any data is available
-        reader.execute();
+        if ( reader.execute() ) {
+            if (synchronous) {
+                sendAck(key,channel);
+            }//end if
+        }//end if
         if (count < 0) {
             // close channel on EOF, invalidates the key
             channel.close();
@@ -178,5 +189,12 @@ public class TcpReplicationThread extends WorkerThread
         key.interestOps (key.interestOps() | SelectionKey.OP_READ);
         // cycle the selector so this key is active again
         key.selector().wakeup();
+    }
+
+    private void sendAck(SelectionKey key, SocketChannel channel) throws java.io.IOException {
+        //send a reply-acknowledgement
+        java.nio.ByteBuffer buf = java.nio.ByteBuffer.wrap(new byte[] {6,2,3});
+        channel.write(buf);
+        buf.clear();
     }
 }

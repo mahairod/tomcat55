@@ -480,7 +480,8 @@ public class SimpleTcpCluster
                                         this.tcpThreadCount,
                                         this.tcpAddress,
                                         this.tcpPort,
-                                        this.tcpSelectorTimeout);
+                                        this.tcpSelectorTimeout,
+                                        "synchronous".equals(this.replicationMode));
             mReplicationListener.setDaemon(true);
             mReplicationListener.start();
             mReplicationTransmitter = new ReplicationTransmitter(new IDataSender[0]);

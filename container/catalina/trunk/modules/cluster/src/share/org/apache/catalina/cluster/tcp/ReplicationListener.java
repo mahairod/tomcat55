@@ -91,13 +91,16 @@ public class ReplicationListener extends Thread
     private java.net.InetAddress bind;
     private int port;
     private long timeout = 0;
+    private boolean synchronous = false;
     public ReplicationListener(ListenCallback callback,
                                int poolSize,
                                java.net.InetAddress bind,
                                int port,
-                               long timeout)
+                               long timeout,
+                               boolean synchronous)
     {
         try {
+            this.synchronous=synchronous;
             pool = new ThreadPool(poolSize, TcpReplicationThread.class);
         }catch ( Exception x ) {
             log.fatal("Unable to start thread pool for TCP listeners, session replication will fail! msg="+x.getMessage());
@@ -155,7 +158,7 @@ public class ReplicationListener extends Thread
                     SocketChannel channel = server.accept();
                     registerChannel (selector,
                                      channel,
-                                     SelectionKey.OP_READ,
+                                     SelectionKey.OP_READ | SelectionKey.OP_WRITE,
                                      new ObjectReader(channel,selector,callback));
                 }
                 // is there data to read on this channel?
@@ -219,6 +222,6 @@ public class ReplicationListener extends Thread
             return;
         }
         // invoking this wakes up the worker thread then returns
-        worker.serviceChannel (key);
+        worker.serviceChannel (key,synchronous);
     }
 }
