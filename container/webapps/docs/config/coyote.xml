@@ -140,6 +140,12 @@
       attribute is set to "off".</p>
     </attribute>
 
+    <attribute name="connectionLinger" required="false">
+      <p>The number of milliseconds during which the sockets used by this
+      <strong>Connector</strong> will linger when they are closed. 
+      The default value is -1 (socket linger is disabled).</p>
+    </attribute>
+
     <attribute name="connectionTimeout" required="false">
       <p>The number of milliseconds this <strong>Connector</strong> will wait,
       after accepting a connection, for the request URI line to be
