@@ -101,6 +101,9 @@ class ImplicitTagLibraryInfo extends TagLibraryInfo {
 	this.tagFileMap = new Hashtable();
 	this.vec = new Vector();
 
+        // Implicit tag libraries have no functions:
+        this.functions = new FunctionInfo[0];
+
 	tlibversion = TLIB_VERSION;
 	jspversion = JSP_VERSION;
 
