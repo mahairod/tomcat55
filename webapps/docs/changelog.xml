@@ -140,9 +140,6 @@
       <fix>
         <bug>31549</bug>: Add name to WebappClassLoader's stopped message. (yoavs)
       </fix>
-      <fix>
-        Share the same JspServlet instance between all JSPs that are referenced as jsp-file elements inside servlet declarations in web.xml and all other JSPs. This also fixes loss of JSP monitoring info. (luehe)
-      </fix>
     </changelog>
   </subsection>
 
