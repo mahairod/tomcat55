@@ -650,23 +650,6 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
         session.setCreationTime(System.currentTimeMillis());
         session.setMaxInactiveInterval(this.maxInactiveInterval);
         String sessionId = generateSessionId();
-
-        String jvmRoute = getJvmRoute();
-        // @todo Move appending of jvmRoute generateSessionId()???
-        if (jvmRoute != null) {
-            sessionId += '.' + jvmRoute;
-        }
-        synchronized (sessions) {
-            while (sessions.get(sessionId) != null){ // Guarantee uniqueness
-                duplicates++;
-                sessionId = generateSessionId();
-                // @todo Move appending of jvmRoute generateSessionId()???
-                if (jvmRoute != null) {
-                    sessionId += '.' + jvmRoute;
-                }
-            }
-        }
-
         session.setId(sessionId);
         sessionCounter++;
 
@@ -789,30 +772,40 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     protected synchronized String generateSessionId() {
 
         byte random[] = new byte[16];
+        String jvmRoute = getJvmRoute();
+        String result = null;
 
         // Render the result as a String of hexadecimal digits
-        StringBuffer result = new StringBuffer();
-        int resultLenBytes = 0;
-        while (resultLenBytes < this.sessionIdLength) {
-            getRandomBytes(random);
-            random = getDigest().digest(random);
-            for (int j = 0;
-                    j < random.length && resultLenBytes < this.sessionIdLength;
-                    j++) {
-                byte b1 = (byte) ((random[j] & 0xf0) >> 4);
-                byte b2 = (byte) (random[j] & 0x0f);
-                if (b1 < 10)
-                    result.append((char) ('0' + b1));
-                else
-                    result.append((char) ('A' + (b1 - 10)));
-                if (b2 < 10)
-                    result.append((char) ('0' + b2));
-                else
-                    result.append((char) ('A' + (b2 - 10)));
-                resultLenBytes++;
+        StringBuffer buffer = new StringBuffer();
+        do {
+            int resultLenBytes = 0;
+            if (result != null)
+                buffer = new StringBuffer();
+            while (resultLenBytes < this.sessionIdLength) {
+                getRandomBytes(random);
+                random = getDigest().digest(random);
+                for (int j = 0;
+                j < random.length && resultLenBytes < this.sessionIdLength;
+                j++) {
+                    byte b1 = (byte) ((random[j] & 0xf0) >> 4);
+                    byte b2 = (byte) (random[j] & 0x0f);
+                    if (b1 < 10)
+                        buffer.append((char) ('0' + b1));
+                    else
+                        buffer.append((char) ('A' + (b1 - 10)));
+                    if (b2 < 10)
+                        buffer.append((char) ('0' + b2));
+                    else
+                        buffer.append((char) ('A' + (b2 - 10)));
+                    resultLenBytes++;
+                }
             }
-        }
-        return (result.toString());
+            if (jvmRoute != null) {
+                buffer.append('.').append(jvmRoute);
+            }
+            result = buffer.toString();
+        } while (sessions.get(result) != null);
+        return (result);
 
     }
 
