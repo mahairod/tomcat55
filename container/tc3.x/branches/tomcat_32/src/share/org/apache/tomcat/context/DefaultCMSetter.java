@@ -233,8 +233,13 @@ class ExceptionHandler extends ServletWrapper {
 
 	buf.append("<b>")
 	    .append(sm.getString("defaulterrorpage.internalservleterror"))
-	    .append("</b><br>");
-        buf.append("<pre>");
+	    .append("</b>")
+	    .append(e.getMessage())
+	    .append("<br>\r\n");
+	    //.append("</b><br>");
+
+/* Disable stack trace for security reasons
+	buf.append("<pre>");
 
 	StringWriter sw = new StringWriter();
 	PrintWriter pw = new PrintWriter(sw);
@@ -243,13 +248,18 @@ class ExceptionHandler extends ServletWrapper {
 	buf.append(sw.toString());
 
 	buf.append("</pre>\r\n");
+*/
 
         if (e instanceof ServletException) {
 	    Throwable cause = ((ServletException)e).getRootCause();
 	    if (cause != null) {
 		buf.append("<b>")
 		    .append(sm.getString("defaulterrorpage.rootcause"))
-		    .append("</b>\r\n");
+		    .append("</b>")
+		    .append(cause.getMessage())
+		    .append("\r\n");
+		    //.append("</b>\r\n");
+/*
 	    buf.append("<pre>");
 
 	    sw=new StringWriter();
@@ -258,6 +268,7 @@ class ExceptionHandler extends ServletWrapper {
 	    buf.append( sw.toString());
 
 	    buf.append("</pre>\r\n");
+*/
 	    }
 	}
 	
@@ -296,6 +307,18 @@ class StatusHandler extends ServletWrapper {
 	int sc=res.getStatus();
 	
 	StringBuffer buf = new StringBuffer();
+	buf.append("<head><title>");
+	if( res.isIncluded() ) {
+	    // use error code from include
+	    sc = ((Integer)req.getAttribute("javax.servlet.error.status_code")).intValue();
+	    buf.append(sm.getString("defaulterrorpage.includedservlet") );
+	}  else {
+	    buf.append("Error: ");
+	}
+
+	buf.append( sc );
+	buf.append("</title></head>\r\n");
+
 	buf.append("<h1>");
 	if( res.isIncluded() ) {
 	    buf.append(sm.getString("defaulterrorpage.includedservlet") );
@@ -315,6 +338,8 @@ class StatusHandler extends ServletWrapper {
 	buf.append("<b>")
 	    .append(msg)
 	    .append("</b><br>");
+
+	buf.append("</body>\r\n");
 
 	if( res.isUsingStream() ) {
 	    ServletOutputStream out = res.getOutputStream();
