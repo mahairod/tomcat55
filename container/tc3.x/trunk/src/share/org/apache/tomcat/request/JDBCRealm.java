@@ -470,28 +470,9 @@ public final class JDBCRealm extends BaseInterceptor {
 
     public void contextInit(Context ctx)
             throws org.apache.tomcat.core.TomcatException {
+        super.contextInit(ctx);
+        init(ctx.getContextManager());
 	// Validate and update our current component state
-      if (!started) {
-          started = true;
-      // set-up a per/container note for maps
-          try {
-            Class.forName(driverName);
-            if ((connectionName == null || connectionName.equals("")) &&
-                (connectionPassword == null || connectionPassword.equals(""))) {
-                dbConnection = DriverManager.getConnection(connectionURL);
-            } else {
-                dbConnection = DriverManager.getConnection(connectionURL,
-                                                           connectionName,
-                                                           connectionPassword);
-            }
-          }
-          catch( ClassNotFoundException ex ) {
-            throw new RuntimeException("JDBCRealm.contextInit: " + ex);
-          }
-          catch( SQLException ex ) {
-            throw new RuntimeException("JDBCRealm.contextInit: " + ex);
-          }
-      }
     }
 
     public void contextShutdown(Context ctx)
@@ -615,16 +596,40 @@ public final class JDBCRealm extends BaseInterceptor {
     public void engineInit(ContextManager cm) throws TomcatException {
         //TODO:  Override this org.apache.tomcat.core.BaseInterceptor method
         super.engineInit(cm);
-        try {
+        init(cm);
+    }
+
+    void init(ContextManager cm) {
+      if (!started) {
+          started = true;
+      // set-up a per/container note for maps
+          try {
+             Class.forName(driverName);
+             if ((connectionName == null || connectionName.equals("")) &&
+                 (connectionPassword == null || connectionPassword.equals(""))) {
+                 dbConnection = DriverManager.getConnection(connectionURL);
+             } else {
+                 dbConnection = DriverManager.getConnection(connectionURL,
+                                                            connectionName,
+                                                            connectionPassword);
+             }
           // XXX make the name a "global" static - after everything is stable!
-          reqRolesNote = cm.getNoteId( ContextManager.REQUEST_NOTE
+            reqRolesNote = cm.getNoteId( ContextManager.REQUEST_NOTE
                 , "required.roles");
-          reqRealmSignNote = cm.getNoteId( ContextManager.REQUEST_NOTE
+            reqRealmSignNote = cm.getNoteId( ContextManager.REQUEST_NOTE
                 , "realm.sign");
-        } catch( TomcatException ex ) {
-          log("setting up note for " + cm, ex);
-          throw new RuntimeException( "Invalid state ");
-        }
+          }
+          catch( TomcatException ex ) {
+            log("setting up note for " + cm, ex);
+            throw new RuntimeException( "Invalid state ");
+          }
+          catch( ClassNotFoundException ex ) {
+            throw new RuntimeException("JDBCRealm.contextInit: " + ex);
+          }
+          catch( SQLException ex ) {
+            throw new RuntimeException("JDBCRealm.contextInit: " + ex);
+          }
+      }
     }
 
 
