@@ -70,6 +70,9 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Stack;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -926,18 +929,46 @@ public class StandardWrapper
             // Load the specified servlet class from the appropriate class loader
             Class classClass = null;
             try {
-                if (classLoader != null) {
-                    classClass = classLoader.loadClass(actualClass);
-                } else {
-                    classClass = Class.forName(actualClass);
+                if (System.getSecurityManager() != null){
+                    final ClassLoader fclassLoader = classLoader;
+                    final String factualClass = actualClass;
+                    try{
+                        classClass = (Class)AccessController.doPrivileged(
+                                new PrivilegedExceptionAction(){                                
+                                    public Object run() throws Exception{
+                                        if (fclassLoader != null) {
+                                            return fclassLoader.loadClass(factualClass);
+                                        } else {
+                                            return Class.forName(factualClass);
+                                        }
+                                    }
+                        });    
+                    } catch(PrivilegedActionException pax){
+                        Exception ex = pax.getException();
+                        if (ex instanceof ClassNotFoundException){
+                            throw (ClassNotFoundException)ex;
+                        } else {
+                            log.error( "Error loading " 
+                                + fclassLoader + " " + factualClass, ex );
+                        }
+                    }
+                } else {                
+                    if (classLoader != null) {
+                        classClass = classLoader.loadClass(actualClass);
+                    } else {
+                        classClass = Class.forName(actualClass);
+                    }
                 }
             } catch (ClassNotFoundException e) {
                 unavailable(null);
+                
+                
                 log.error( "Error loading " + classLoader + " " + actualClass, e );
                 throw new ServletException
                     (sm.getString("standardWrapper.missingClass", actualClass),
                      e);
             }
+
             if (classClass == null) {
                 unavailable(null);
                 throw new ServletException
