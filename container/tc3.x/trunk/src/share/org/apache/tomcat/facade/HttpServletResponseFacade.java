@@ -165,6 +165,7 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 	if( osFacade!=null) return osFacade;
 	//if( response.getOutputBuffer() != null ) {
 	osFacade=new ServletOutputStreamFacade(response);
+	response.setServletOutputStream( osFacade );
 	//}
 	return osFacade;
 
@@ -191,6 +192,9 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 	}
 
 	writer=((ResponseImpl)response).getWriter( osFacade );
+	response.setServletOutputStream( osFacade );
+	response.setWriter(  writer );
+
 	return writer;
     }
 
