@@ -171,9 +171,10 @@ public class JasperLoader extends URLClassLoader {
             }                              
         }
 
-	// Class is in a package, delegate to parent
+	// Class is in a package, delegate to thread context class loader
 	if( !name.startsWith(Constants.JSP_PACKAGE_NAME) ) {
-	    clazz = parent.loadClass(name);
+	    clazz = Thread.currentThread().getContextClassLoader()
+                .loadClass(name);
 	    if( resolve )
 		resolveClass(clazz);
 	    return clazz;
