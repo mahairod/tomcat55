@@ -16,6 +16,9 @@
   <description>
 	A simple tab library for JSP tests
   </description>
+<validator>
+  <validator-class>validator.TestLibValidator</validator-class>
+</validator>
 
   <!-- general validator tag -->
   <tag>
@@ -200,6 +203,24 @@
       <required>true</required>
     </attribute>
   </tag>
+
+<tag>
+    <name>propertyEditor</name>
+    <tag-class>tags.PropertyEditorTag</tag-class>
+    <description>
+        A tag that Uses ProprtyEditorSupport class
+    </description>
+
+    <attribute>
+      <name>url</name>
+      <required>false</required>
+    </attribute>
+
+    <attribute>
+      <name>locale</name>
+      <required>false</required>
+    </attribute>
+</tag>
 
 
 
