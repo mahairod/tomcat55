@@ -139,8 +139,20 @@ final class HttpResponseImpl
     }
 
 
-    // --------------------------------------------------------- Public Methods
+    // ------------------------------------------------------ Protected Methods
 
+    /**
+     * Return the HTTP protocol version implemented by this response
+     * object.
+     *
+     * @return The &quot;HTTP/1.1&quot; string.
+     */
+    protected String getProtocol() {
+        return("HTTP/1.1");
+    }
+
+
+    // --------------------------------------------------------- Public Methods
 
     /**
      * Release all object references, and initialize instance variables, in

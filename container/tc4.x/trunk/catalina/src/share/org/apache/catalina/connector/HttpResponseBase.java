@@ -539,6 +539,17 @@ public class HttpResponseBase
         logger.log(message, throwable);
     }
 
+    /**
+     * Return the HTTP protocol version implemented by this response
+     * object. (This method must be overridden by subclasses of this
+     * as to correctly return the highest HTTP version number supported
+     * as specified in Section 3.1 of RFC-2616).
+     *
+     * @return A string in the form of &quot;HTTP/1.0&quot; ...
+     */
+    protected String getProtocol() {
+        return(request.getRequest().getProtocol());
+    }
 
     /**
      * Send the HTTP response headers, if this has not already occurred.
@@ -548,6 +559,7 @@ public class HttpResponseBase
         if (isCommitted())
             return;
 
+        // Check if the request was an HTTP/0.9 request
         if ("HTTP/0.9".equals(request.getRequest().getProtocol())) {
             committed = true;
             return;
@@ -559,7 +571,7 @@ public class HttpResponseBase
         final PrintWriter outputWriter = new PrintWriter(osr);
 
         // Send the "Status:" header
-        outputWriter.print(request.getRequest().getProtocol());
+        outputWriter.print(this.getProtocol());
         outputWriter.print(" ");
         outputWriter.print(status);
         if (message != null) {
