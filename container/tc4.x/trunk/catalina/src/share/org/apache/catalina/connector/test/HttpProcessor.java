@@ -448,6 +448,8 @@ final class HttpProcessor
 			if (debug >= 1)
 			  log(" Requested cookie session id is " +
 			      ((HttpServletRequest) request.getRequest()).getRequestedSessionId());
+                        break;  // Accept only the first session id value
+
 		    }
                     request.addCookie(cookies[i]);
 		}
