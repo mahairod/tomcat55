@@ -1375,6 +1375,9 @@ mod_webapp into mod_jk )
       <gtest  request="GET /test/nul.jsp HTTP/1.0"
              returnCode="${http.protocol} 404" />
 
+      <gtest  request="GET /test/NUL.jsp HTTP/1.0"
+             returnCode="${http.protocol} 404" />
+
       <gtest  request="GET /test/prn.jsp HTTP/1.0"
              returnCode="${http.protocol} 404" />
 
