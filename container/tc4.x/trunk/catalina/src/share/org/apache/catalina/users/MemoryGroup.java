@@ -212,6 +212,18 @@ public class MemoryGroup extends AbstractGroup {
 
 
     /**
+     * Remove all {@link Role}s from those assigned to this group.
+     */
+    public void removeRoles() {
+
+        synchronized (roles) {
+            roles.clear();
+        }
+
+    }
+
+
+    /**
      * <p>Return a String representation of this group in XML format.</p>
      */
     public String toString() {

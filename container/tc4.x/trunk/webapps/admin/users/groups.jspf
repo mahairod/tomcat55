@@ -11,7 +11,7 @@
           &nbsp;
         </td>
       </logic:present>
-      <td><div align="left" class="table-header-text">
+      <td width="20%"><div align="left" class="table-header-text">
         <bean:message key="users.list.groupname"/>
       </div></td>
       <td><div align="left" class="table-header-text">
@@ -23,13 +23,20 @@
       <tr class="line-row">
         <logic:present name="checkboxes">
           <td><div align="center" class="table-normal-text">
-            <input type="checkbox" name="groups"
-                  value="<%= group %>">
+            <logic:present name="userForm">
+              <html:multibox property="groups" value="<%= group %>"/>
+            </logic:present>
+            <logic:notPresent name="userForm">
+              <input type="checkbox" name="groups"
+                    value="<%= group %>">
+            </logic:notPresent>
           </td>
         </logic:present>
         <td><div align="left" class="table-normal-text">&nbsp;
           <html:link page='<%= "/users/setUpGroup.do?objectName=" + 
-                               URLEncoder.encode(group) %>'>
+                               URLEncoder.encode(group) +
+                               "&databaseName=" +
+                               URLEncoder.encode(request.getParameter("databaseName")) %>'>
             <controls:attribute name="group" attribute="groupname"/>
           </html:link>
         </div></td>

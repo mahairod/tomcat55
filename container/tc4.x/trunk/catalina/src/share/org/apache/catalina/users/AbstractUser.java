@@ -235,11 +235,23 @@ public abstract class AbstractUser implements User {
 
 
     /**
+     * Remove all {@link Group}s from those this user belongs to.
+     */
+    public abstract void removeGroups();
+
+
+    /**
      * Remove a {@link Role} from those assigned to this user.
      *
      * @param role The old role
      */
     public abstract void removeRole(Role role);
+
+
+    /**
+     * Remove all {@link Role}s from those assigned to this user.
+     */
+    public abstract void removeRoles();
 
 
     // ------------------------------------------------------ Principal Methods

@@ -11,7 +11,7 @@
           &nbsp;
         </td>
       </logic:present>
-      <td><div align="left" class="table-header-text">
+      <td width="20%"><div align="left" class="table-header-text">
         <bean:message key="users.list.username"/>
       </div></td>
       <td><div align="left" class="table-header-text">
@@ -29,7 +29,9 @@
         </logic:present>
         <td><div align="left" class="table-normal-text">&nbsp;
           <html:link page='<%= "/users/setUpUser.do?objectName=" + 
-                               URLEncoder.encode(user) %>'>
+                               URLEncoder.encode(user) +
+                               "&databaseName=" +
+                               URLEncoder.encode(request.getParameter("databaseName")) %>'>
             <controls:attribute name="user" attribute="username"/>
           </html:link>
         </div></td>

@@ -483,19 +483,19 @@
     <action    path="/users/saveGroup"
               input="/users/group.jsp"
                name="groupForm"
-              scope="session"
+              scope="request"
                type="org.apache.webapp.admin.users.SaveGroupAction"/>
 
     <action    path="/users/saveRole"
               input="/users/role.jsp"
                name="roleForm"
-              scope="session"
+              scope="request"
                type="org.apache.webapp.admin.users.SaveRoleAction"/>
 
     <action    path="/users/saveUser"
               input="/users/user.jsp"
                name="userForm"
-              scope="session"
+              scope="request"
                type="org.apache.webapp.admin.users.SaveUserAction"/>
 
     <action    path="/users/setUpGroup"

@@ -65,11 +65,9 @@ package org.apache.webapp.admin.users;
 
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.Arrays;
 import java.util.Locale;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.modelmbean.ModelMBean;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -152,32 +150,23 @@ public class ListUsersAction extends Action {
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
 
 
-        // Acquire the set of user object names to be listed
+        // Create a form bean containing the requested MBean Names
         String databaseName =
             URLDecoder.decode(request.getParameter("databaseName"));
-        String results[] = null;
+        UsersForm usersForm = null;
         try {
-            ObjectName dname = new ObjectName(databaseName);
-            results =
-                (String[]) mserver.getAttribute(dname, "users");
-            if (results == null) {
-                results = new String[0];
-            }
-            Arrays.sort(results);
-        } catch (Throwable t) {
+            usersForm = UserUtils.getUsersForm(mserver, databaseName);
+        } catch (Exception e) {
             getServlet().log(resources.getMessage
                              (locale,
-                              "users.error.attribute.get", "users"), t);
+                              "users.error.attribute.get", "users"), e);
             response.sendError
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  resources.getMessage
                  (locale, "users.error.attribute.get", "users"));
         }
 
-        // Stash the results in a form bean
-        UsersForm usersForm = new UsersForm();
-        usersForm.setDatabaseName(databaseName);
-        usersForm.setUsers(results);
+        // Stash the results in request scope
         request.setAttribute("usersForm", usersForm);
         saveToken(request);
         String forward =

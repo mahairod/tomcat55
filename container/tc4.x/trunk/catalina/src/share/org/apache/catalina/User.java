@@ -197,11 +197,23 @@ public interface User extends Principal {
 
 
     /**
+     * Remove all {@link Group}s from those this user belongs to.
+     */
+    public void removeGroups();
+
+
+    /**
      * Remove a {@link Role} from those assigned to this user.
      *
      * @param role The old role
      */
     public void removeRole(Role role);
+
+
+    /**
+     * Remove all {@link Role}s from those assigned to this user.
+     */
+    public void removeRoles();
 
 
 }

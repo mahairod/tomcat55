@@ -64,6 +64,7 @@ package org.apache.webapp.admin.users;
 
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.Locale;
 import javax.management.Attribute;
@@ -153,6 +154,25 @@ public final class SetUpGroupAction extends Action {
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
 
+        // Set up a bean containing all possible roles
+        String databaseName =
+            URLDecoder.decode(request.getParameter("databaseName"));
+        try {
+            request.setAttribute("rolesForm",
+                                 UserUtils.getRolesForm(mserver,
+                                                        databaseName));
+        } catch (Exception e) {
+            getServlet().log
+                (resources.getMessage(locale,
+                                      "users.error.attribute.get",
+                                      "roles"), e);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage
+                 (locale, "users.error.attribute.get", "roles"));
+            return (null);
+        }
+
         // Set up the form bean based on the creating or editing state
         String objectName = request.getParameter("objectName");
         GroupForm groupForm = new GroupForm();
@@ -173,11 +193,13 @@ public final class SetUpGroupAction extends Action {
                 attribute = "description";
                 groupForm.setDescription
                     ((String) mserver.getAttribute(oname, attribute));
-                // FIXME - roles list
-            } catch (Throwable t) {
+                attribute = "roles";
+                groupForm.setRoles
+                    ((String[]) mserver.getAttribute(oname, attribute));
+            } catch (Exception e) {
                 getServlet().log
                     (resources.getMessage(locale,
-                        "users.error.attribute.get", attribute), t);
+                        "users.error.attribute.get", attribute), e);
                 response.sendError
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                      resources.getMessage
@@ -185,11 +207,11 @@ public final class SetUpGroupAction extends Action {
                 return (null);
             }
         }
-        groupForm.setDatabaseName(request.getParameter("databaseName"));
+        groupForm.setDatabaseName(databaseName);
 
         // Stash the form bean and forward to the display page
         saveToken(request);
-        session.setAttribute("groupForm", groupForm);
+        request.setAttribute("groupForm", groupForm);
         return (mapping.findForward("Group"));
 
     }

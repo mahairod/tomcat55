@@ -114,6 +114,23 @@ public final class GroupForm extends BaseForm {
     }
 
 
+    /**
+     * The MBean Names of the roles associated with this group.
+     */
+    private String roles[] = new String[0];
+
+    public String[] getRoles() {
+        return (this.roles);
+    }
+
+    public void setRoles(String roles[]) {
+        if (roles == null) {
+            roles = new String[0];
+        }
+        this.roles = roles;
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -128,6 +145,7 @@ public final class GroupForm extends BaseForm {
         super.reset(mapping, request);
         description = null;
         groupname = null;
+        roles = new String[0];
 
     }
 

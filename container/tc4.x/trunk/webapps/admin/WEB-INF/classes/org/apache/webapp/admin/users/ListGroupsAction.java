@@ -65,11 +65,9 @@ package org.apache.webapp.admin.users;
 
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.Arrays;
 import java.util.Locale;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.modelmbean.ModelMBean;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -152,32 +150,23 @@ public class ListGroupsAction extends Action {
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
 
 
-        // Acquire the set of group object names to be listed
+        // Create a form bean containing the requested MBean Names
         String databaseName =
             URLDecoder.decode(request.getParameter("databaseName"));
-        String results[] = null;
+        GroupsForm groupsForm = null;
         try {
-            ObjectName dname = new ObjectName(databaseName);
-            results =
-                (String[]) mserver.getAttribute(dname, "groups");
-            if (results == null) {
-                results = new String[0];
-            }
-            Arrays.sort(results);
-        } catch (Throwable t) {
+            groupsForm = UserUtils.getGroupsForm(mserver, databaseName);
+        } catch (Exception e) {
             getServlet().log(resources.getMessage
                              (locale,
-                              "users.error.attribute.get", "groups"), t);
+                              "users.error.attribute.get", "groups"), e);
             response.sendError
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  resources.getMessage
                  (locale, "users.error.attribute.get", "groups"));
         }
 
-        // Stash the results in a form bean
-        GroupsForm groupsForm = new GroupsForm();
-        groupsForm.setDatabaseName(databaseName);
-        groupsForm.setGroups(results);
+        // Stash the results in request scope
         request.setAttribute("groupsForm", groupsForm);
         saveToken(request);
         String forward =

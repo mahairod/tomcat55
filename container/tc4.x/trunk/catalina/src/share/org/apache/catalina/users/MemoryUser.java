@@ -246,6 +246,18 @@ public class MemoryUser extends AbstractUser {
 
 
     /**
+     * Remove all {@link Group}s from those this user belongs to.
+     */
+    public void removeGroups() {
+
+        synchronized (groups) {
+            groups.clear();
+        }
+
+    }
+
+
+    /**
      * Remove a {@link Role} from those assigned to this user.
      *
      * @param role The old role
@@ -254,6 +266,18 @@ public class MemoryUser extends AbstractUser {
 
         synchronized (roles) {
             roles.remove(role);
+        }
+
+    }
+
+
+    /**
+     * Remove all {@link Role}s from those assigned to this user.
+     */
+    public void removeRoles() {
+
+        synchronized (roles) {
+            roles.clear();
         }
 
     }

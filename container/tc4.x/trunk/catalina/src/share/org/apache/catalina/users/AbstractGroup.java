@@ -191,6 +191,12 @@ public abstract class AbstractGroup implements Group {
     public abstract void removeRole(Role role);
 
 
+    /**
+     * Remove all {@link Role}s from those assigned to this group.
+     */
+    public abstract void removeRoles();
+
+
     // ------------------------------------------------------ Principal Methods
 
 

@@ -64,6 +64,7 @@ package org.apache.webapp.admin.users;
 
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.Locale;
 import javax.management.Attribute;
@@ -152,6 +153,8 @@ public final class SetUpRoleAction extends Action {
         }
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        String databaseName =
+            URLDecoder.decode(request.getParameter("databaseName"));
 
         // Set up the form bean based on the creating or editing state
         String objectName = request.getParameter("objectName");
@@ -173,10 +176,10 @@ public final class SetUpRoleAction extends Action {
                 attribute = "description";
                 roleForm.setDescription
                     ((String) mserver.getAttribute(oname, attribute));
-            } catch (Throwable t) {
+            } catch (Exception e) {
                 getServlet().log
                     (resources.getMessage(locale,
-                        "users.error.attribute.get", attribute), t);
+                        "users.error.attribute.get", attribute), e);
                 response.sendError
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                      resources.getMessage
@@ -184,11 +187,11 @@ public final class SetUpRoleAction extends Action {
                 return (null);
             }
         }
-        roleForm.setDatabaseName(request.getParameter("databaseName"));
+        roleForm.setDatabaseName(databaseName);
 
         // Stash the form bean and forward to the display page
         saveToken(request);
-        session.setAttribute("roleForm", roleForm);
+        request.setAttribute("roleForm", roleForm);
         return (mapping.findForward("Role"));
 
     }

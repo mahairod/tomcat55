@@ -64,6 +64,7 @@ package org.apache.webapp.admin.users;
 
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.Locale;
 import javax.management.Attribute;
@@ -153,6 +154,40 @@ public final class SetUpUserAction extends Action {
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
 
+        // Set up beans containing all possible groups and roles
+        String databaseName =
+            URLDecoder.decode(request.getParameter("databaseName"));
+        try {
+            request.setAttribute("groupsForm",
+                                 UserUtils.getGroupsForm(mserver,
+                                                         databaseName));
+        } catch (Exception e) {
+            getServlet().log
+                (resources.getMessage(locale,
+                                      "users.error.attribute.get",
+                                      "groups"), e);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage
+                 (locale, "users.error.attribute.get", "groups"));
+            return (null);
+        }
+        try {
+            request.setAttribute("rolesForm",
+                                 UserUtils.getRolesForm(mserver,
+                                                        databaseName));
+        } catch (Exception e) {
+            getServlet().log
+                (resources.getMessage(locale,
+                                      "users.error.attribute.get",
+                                      "roles"), e);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage
+                 (locale, "users.error.attribute.get", "roles"));
+            return (null);
+        }
+
         // Set up the form bean based on the creating or editing state
         String objectName = request.getParameter("objectName");
         UserForm userForm = new UserForm();
@@ -176,12 +211,16 @@ public final class SetUpUserAction extends Action {
                 attribute = "fullName";
                 userForm.setFullName
                     ((String) mserver.getAttribute(oname, attribute));
-                // FIXME - groups list
-                // FIXME - roles list
-            } catch (Throwable t) {
+                attribute = "groups";
+                userForm.setGroups
+                    ((String[]) mserver.getAttribute(oname, attribute));
+                attribute = "roles";
+                userForm.setRoles
+                    ((String[]) mserver.getAttribute(oname, attribute));
+            } catch (Exception e) {
                 getServlet().log
                     (resources.getMessage(locale,
-                        "users.error.attribute.get", attribute), t);
+                        "users.error.attribute.get", attribute), e);
                 response.sendError
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                      resources.getMessage
@@ -189,11 +228,11 @@ public final class SetUpUserAction extends Action {
                 return (null);
             }
         }
-        userForm.setDatabaseName(request.getParameter("databaseName"));
+        userForm.setDatabaseName(databaseName);
 
         // Stash the form bean and forward to the display page
         saveToken(request);
-        session.setAttribute("userForm", userForm);
+        request.setAttribute("userForm", userForm);
         return (mapping.findForward("User"));
 
     }

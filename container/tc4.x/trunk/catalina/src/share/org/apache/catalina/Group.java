@@ -159,4 +159,10 @@ public interface Group extends Principal {
     public void removeRole(Role role);
 
 
+    /**
+     * Remove all {@link Role}s from those assigned to this group.
+     */
+    public void removeRoles();
+
+
 }

@@ -161,6 +161,12 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation   name="removeRoles"
+          description="Remove all authorized roles for this group"
+               impact="ACTION"
+           returnType="void">
+    </operation>
+
   </mbean>
 
 
@@ -1436,6 +1442,12 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation   name="removeGroups"
+          description="Remove all group memberships for this user"
+               impact="ACTION"
+           returnType="void">
+    </operation>
+
     <operation   name="removeRole"
           description="Remove an old authorized role for this user"
                impact="ACTION"
@@ -1443,6 +1455,12 @@
       <parameter name="role"
           description="Role to be removed"
                  type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeRoles"
+          description="Remove all authorized roles for this user"
+               impact="ACTION"
+           returnType="void">
     </operation>
 
   </mbean>

@@ -191,14 +191,14 @@ public final class SaveGroupAction extends Action {
                 oname = new ObjectName(databaseName);
 
                 // Create the new object and associated MBean
-                mserver.invoke(oname, "createGroup",
-                               params, signature);
+                objectName = (String) mserver.invoke(oname, "createGroup",
+                                                     params, signature);
 
-            } catch (Throwable t) {
+            } catch (Exception e) {
 
                 getServlet().log
                     (resources.getMessage(locale, "users.error.invoke",
-                                          "createGroup"), t);
+                                          "createGroup"), e);
                 response.sendError
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                      resources.getMessage(locale, "users.error.invoke",
@@ -225,11 +225,11 @@ public final class SaveGroupAction extends Action {
                     (oname,
                      new Attribute(attribute, groupForm.getDescription()));
 
-            } catch (Throwable t) {
+            } catch (Exception e) {
 
                 getServlet().log
                     (resources.getMessage(locale, "users.error.set.attribute",
-                                          attribute), t);
+                                          attribute), e);
                 response.sendError
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                      resources.getMessage(locale, "users.error.set.attribute",
@@ -240,6 +240,40 @@ public final class SaveGroupAction extends Action {
 
         }
 
+
+        // Reset the roles associated with this group
+        try {
+
+            ObjectName oname = new ObjectName(objectName);
+            mserver.invoke(oname, "removeRoles",
+                           new Object[0], new String[0]);
+            String roles[] = groupForm.getRoles();
+            if (roles == null) {
+                roles = new String[0];
+            }
+            String addsig[] = new String[1];
+            addsig[0] = "java.lang.String";
+            Object addpar[] = new Object[1];
+            for (int i = 0; i < roles.length; i++) {
+                addpar[0] =
+                    (new ObjectName(roles[i])).getKeyProperty("rolename");
+                mserver.invoke(oname, "addRole",
+                               addpar, addsig);
+            }
+
+        } catch (Exception e) {
+
+            getServlet().log
+                (resources.getMessage(locale, "users.error.invoke",
+                                      "addRole"), e);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage(locale, "users.error.invoke",
+                                      "addRole"));
+            return (null);
+
+        }
+
         // Save the updated database information
         try {
 
@@ -247,11 +281,11 @@ public final class SaveGroupAction extends Action {
             mserver.invoke(dname, "save",
                            new Object[0], new String[0]);
 
-        } catch (Throwable t) {
+        } catch (Exception e) {
 
             getServlet().log
                 (resources.getMessage(locale, "users.error.invoke",
-                                      "save"), t);
+                                      "save"), e);
             response.sendError
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  resources.getMessage(locale, "users.error.invoke",

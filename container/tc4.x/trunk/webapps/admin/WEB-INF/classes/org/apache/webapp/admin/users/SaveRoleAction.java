@@ -194,11 +194,11 @@ public final class SaveRoleAction extends Action {
                 mserver.invoke(oname, "createRole",
                                params, signature);
 
-            } catch (Throwable t) {
+            } catch (Exception e) {
 
                 getServlet().log
                     (resources.getMessage(locale, "users.error.invoke",
-                                          "createRole"), t);
+                                          "createRole"), e);
                 response.sendError
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                      resources.getMessage(locale, "users.error.invoke",
@@ -225,11 +225,11 @@ public final class SaveRoleAction extends Action {
                     (oname,
                      new Attribute(attribute, roleForm.getDescription()));
 
-            } catch (Throwable t) {
+            } catch (Exception e) {
 
                 getServlet().log
                     (resources.getMessage(locale, "users.error.set.attribute",
-                                          attribute), t);
+                                          attribute), e);
                 response.sendError
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                      resources.getMessage(locale, "users.error.set.attribute",
@@ -247,7 +247,7 @@ public final class SaveRoleAction extends Action {
             mserver.invoke(dname, "save",
                            new Object[0], new String[0]);
 
-        } catch (Throwable t) {
+        } catch (Exception e) {
 
             getServlet().log
                 (resources.getMessage(locale, "users.error.invoke",

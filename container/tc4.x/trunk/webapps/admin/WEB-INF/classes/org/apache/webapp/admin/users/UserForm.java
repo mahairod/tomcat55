@@ -101,15 +101,18 @@ public final class UserForm extends BaseForm {
 
 
     /**
-     * A comma-delimited list of the groups this user is a member of.
+     * The MBean Names of the groups associated with this user.
      */
-    private String groups = null;
+    private String groups[] = new String[0];
 
-    public String getGroups() {
+    public String[] getGroups() {
         return (this.groups);
     }
 
-    public void setGroups(String groups) {
+    public void setGroups(String groups[]) {
+        if (groups == null) {
+            groups = new String[0];
+        }
         this.groups = groups;
     }
 
@@ -129,17 +132,18 @@ public final class UserForm extends BaseForm {
 
 
     /**
-     * A comma-delimited list of the security roles associated
-     * with this user.  <strong>FIXME</strong> - implement as a
-     * List instead, with predefined values?
+     * The MBean Names of the roles associated with this user.
      */
-    private String roles = null;
+    private String roles[] = new String[0];
 
-    public String getRoles() {
+    public String[] getRoles() {
         return (this.roles);
     }
 
-    public void setRoles(String roles) {
+    public void setRoles(String roles[]) {
+        if (roles == null) {
+            roles = new String[0];
+        }
         this.roles = roles;
     }
 
@@ -170,9 +174,9 @@ public final class UserForm extends BaseForm {
 
         super.reset(mapping, request);
         fullName = null;
-        groups = null;
+        groups = new String[0];
         password = null;
-        roles = null;
+        roles = new String[0];
         username = null;
 
     }
