@@ -175,27 +175,39 @@ public class JspDocumentParser extends DefaultHandler
 
 	Mark start = new Mark(path, locator.getLineNumber(),
 			      locator.getColumnNumber());
-	Attributes attrsCopy = new AttributesImpl(attrs);
+	Attributes attrsCopy;
 
 	Node node = null;
 
 	if (!qName.equals(JSP_ROOT) && !rootSeen) {
 	    // create dummy <jsp:root> element
-	    rootSeen = true;
 	    AttributesImpl rootAttrs = new AttributesImpl();
 	    rootAttrs.addAttribute("", "", "version", "CDATA", "2.0");
 	    node = new Node.JspRoot(rootAttrs, null, current, true);
 	    current = node;
 	}
 
-	if (qName.equals(JSP_ROOT)) {
+	if (!rootSeen) {
 	    rootSeen = true;
-	    node = new Node.JspRoot(attrsCopy, start, current, false);
-	    try {
-		addCustomTagLibraries(attrsCopy);
-	    } catch (JasperException je) {
-		throw new SAXException(je);
-	    }
+            // XXX - As of JSP 2.0, xmlns: can appear on the top node (either
+            // <jsp:root> or another top node.  The spec needs clarification 
+            // here.
+            try {
+                attrsCopy = addCustomTagLibraries(attrs);
+            } catch (JasperException je) {
+                throw new SAXException(je);
+            }
+        }
+        else {
+            attrsCopy = new AttributesImpl(attrs);
+        }
+
+	if (qName.equals(JSP_ROOT)) {
+            // give the <jsp:root> element the original attributes set
+            // (attrs) instead of the copy without the xmlns: elements 
+            // (attrsCopy)
+	    node = new Node.JspRoot(new AttributesImpl( attrs ), start, 
+                current, false);
 	} else if (qName.equals(JSP_PAGE_DIRECTIVE)) {
 	    if (isTagFile) {
 		throw new SAXParseException(
@@ -497,14 +509,18 @@ public class JspDocumentParser extends DefaultHandler
     /*
      * Parses the xmlns:prefix attributes from the jsp:root element and adds 
      * the corresponding TagLibraryInfo objects to the set of custom tag
-     * libraries.
+     * libraries.  In the process, returns a new Attributes object that does
+     * not contain any of the xmlns: attributes.
      */
-    private void addCustomTagLibraries(Attributes attrs)
-	        throws JasperException {
+    private Attributes addCustomTagLibraries(Attributes attrs)
+	        throws JasperException 
+    {
+        AttributesImpl result = new AttributesImpl( attrs );
         int len = attrs.getLength();
-        for (int i=0; i<len; i++) {
+        for (int i=len-1; i>=0; i--) {
 	    String qName = attrs.getQName(i);
-	    if (!qName.startsWith(XMLNS_JSP)
+	    if (qName.startsWith( XMLNS ) 
+                        && !qName.startsWith(XMLNS_JSP)
 		        && !qName.startsWith(JSP_VERSION)) {
 
 		// get the prefix
@@ -533,8 +549,10 @@ public class JspDocumentParser extends DefaultHandler
 						uri, location, err);
                 }
 		taglibs.put(prefix, tl);
+                result.removeAttribute( i );
 	    }
         }
+        return result;
     }
 
     /*
