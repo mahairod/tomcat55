@@ -1003,6 +1003,27 @@ public class JspUtil {
         return false;
     }
 
+    /**
+     * Converts the given Xml name to a legal Java identifier.  This is
+     * slightly more efficient than makeJavaIdentifier in that we only need
+     * to worry about '.', '-', and ':' in the string.  We also assume that
+     * the resultant string is further concatenated with some prefix string
+     * so that we don't have to worry about it being a Java key word.
+     *
+     * @param name Identifier to convert
+     *
+     * @return Legal Java identifier corresponding to the given identifier
+     */
+    public static final String makeXmlJavaIdentifier(String name) {
+        if (name.indexOf('-') >= 0)
+            name = replace(name, '-', "$1");
+        if (name.indexOf('.') >= 0)
+            name = replace(name, '.', "$2");
+        if (name.indexOf(':') >= 0)
+            name = replace(name, ':', "$3");
+        return name;
+    }
+
     static InputStreamReader getReader(String fname, String encoding,
 				       JarFile jarFile,
 				       JspCompilationContext ctxt,

@@ -254,18 +254,6 @@ class Generator {
                 boolean hasEmptyBody) {
                 String poolName = null;
 
-                if (prefix.indexOf('-') >= 0)
-                    prefix = JspUtil.replace(prefix, '-', "$1");
-                if (prefix.indexOf('.') >= 0)
-                    prefix = JspUtil.replace(prefix, '.', "$2");
-
-                if (shortName.indexOf('-') >= 0)
-                    shortName = JspUtil.replace(shortName, '-', "$1");
-                if (shortName.indexOf('.') >= 0)
-                    shortName = JspUtil.replace(shortName, '.', "$2");
-                if (shortName.indexOf(':') >= 0)
-                    shortName = JspUtil.replace(shortName, ':', "$3");
-
                 poolName = "_jspx_tagPool_" + prefix + "_" + shortName;
                 if (attrs != null) {
                     String[] attrNames = new String[attrs.getLength()];
@@ -280,7 +268,7 @@ class Generator {
                 if (hasEmptyBody) {
                     poolName = poolName + "_nobody";
                 }
-                return poolName;
+                return JspUtil.makeXmlJavaIdentifier(poolName);
             }
         }
 
@@ -2617,37 +2605,27 @@ class Generator {
 
         /*
          * Creates a tag variable name by concatenating the given prefix and
-         * shortName and replacing '-' with "$1", '.' with "$2", and ':' with
-         * "$3".
+         * shortName and endcoded to make the resultant string a valid Java
+         * Identifier.
          */
         private String createTagVarName(
             String fullName,
             String prefix,
             String shortName) {
-            if (prefix.indexOf('-') >= 0)
-                prefix = JspUtil.replace(prefix, '-', "$1");
-            if (prefix.indexOf('.') >= 0)
-                prefix = JspUtil.replace(prefix, '.', "$2");
 
-            if (shortName.indexOf('-') >= 0)
-                shortName = JspUtil.replace(shortName, '-', "$1");
-            if (shortName.indexOf('.') >= 0)
-                shortName = JspUtil.replace(shortName, '.', "$2");
-            if (shortName.indexOf(':') >= 0)
-                shortName = JspUtil.replace(shortName, ':', "$3");
-
+            String varName;
             synchronized (tagVarNumbers) {
-                String varName = prefix + "_" + shortName + "_";
+                varName = prefix + "_" + shortName + "_";
                 if (tagVarNumbers.get(fullName) != null) {
                     Integer i = (Integer)tagVarNumbers.get(fullName);
                     varName = varName + i.intValue();
                     tagVarNumbers.put(fullName, new Integer(i.intValue() + 1));
-                    return varName;
                 } else {
                     tagVarNumbers.put(fullName, new Integer(1));
-                    return varName + "0";
+                    varName = varName + "0";
                 }
             }
+            return JspUtil.makeXmlJavaIdentifier(varName);
         }
 
         private String evaluateAttribute(
