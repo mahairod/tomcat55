@@ -512,6 +512,7 @@ public class JspCompilationContext {
                 jsw.setReload(true);
                 jsw.setCompilationException(null);
             } catch (JasperException ex) {
+                // Cache compilation exception
                 jsw.setCompilationException(ex);
                 throw ex;
             } catch (Exception ex) {
@@ -519,6 +520,7 @@ public class JspCompilationContext {
                 JasperException je = new JasperException(
                             Localizer.getMessage("jsp.error.unable.compile"),
                             ex);
+                // Cache compilation exception
                 jsw.setCompilationException(je);
                 throw je;
             }
