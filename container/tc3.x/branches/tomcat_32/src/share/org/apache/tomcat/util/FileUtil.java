@@ -228,7 +228,7 @@ public class FileUtil {
     }
 
     public static String patch(String path) {
-	String patchPath = path;
+	String patchPath = path.trim();
 
 	// Move drive spec to the front of the path
 	if (patchPath.length() >= 3 &&
@@ -421,7 +421,8 @@ public class FileUtil {
     }
 
     /**  utility method to return the name of the localized file whose
-     *   name best-matches the Locale passed as an argument
+     *   name best-matches the Locale passed as an argument using the
+     *   'file-based' lookup mechanism.
      *
      *  @param base the directory that is the Document Base for the context
      *			in which the 'path' passed is expected to be located
@@ -441,6 +442,7 @@ public class FileUtil {
     /**  utility method to get the best-match for getting the Localized
      *   version of the file whose 'path' is passed as an argument, using
      *   the 'loc' Locale, and performing 'safePath'checks
+     *   The algorithm used matches 'file-based' lookup mechanism.
      *
      *  The method performs a resource lookup in a manner similar to the
      *  one specified by java.util.ResourceBundle.
@@ -592,4 +594,213 @@ public class FileUtil {
 	return null;
     }
 
+    /**  utility method to return the name of the localized file whose
+     *   name best-matches the Locale passed as an argument using the
+     *   'docbase-based' lookup mechanism.
+     *
+     *  @param base the directory that is the Document Base for the context
+     *			in which the 'path' passed is expected to be located
+     *  @param path the pathname for the file that is being searched for its
+     *			best-matched Localized version
+     *  @param loc the requested Locale to match
+     *  @param fbloc the requested fall-back Locale to match
+     *
+     *  @return the name of the file that best-matched the Locale requested
+     */
+    public static String getDocBaseLocalizedFile (String base,
+					   String path,
+					   Locale loc,
+					   Locale fbloc) {
+	return getDocBaseLocalizedResource (base, path, loc, fbloc);
+    }
+
+    /**  utility method to get the best-match for getting the Localized
+     *   version of the file whose 'path' is passed as an argument, using
+     *   the 'loc' Locale, and performing 'safePath'checks
+     *   The algorithm used matches 'docBase-based' lookup mechanism.
+     *
+     *  In the case of 'typed' files (files whose name is [file].[ftype])
+     *  search for localized versions of the file are looked for:
+     *
+     *   docbase + "/" + language1 + "_" + country1 + "_" + variant1 + filepath 
+     *   docbase + "/" + language1 + "_" + country1 + filepath 
+     *   docbase + "/" + language1 + filepath 
+     *
+     *  Where language1, country1, variant1 are associated with the Locale
+     *  passed as an argument. 
+     *
+     *  For example, if the preferred Locale is <CODE>es_AR_POSIX</CODE>
+     *  the docBase is '/' and  pathname is <CODE>/foo/bar/index.html</CODE>,
+     *  then a search for the following localized versions of that file will
+     *  be done, in order:
+     *<UL>
+     *<LI>/es_AR_POSIX/foo/bar/index.html</LI>
+     *<LI>/es_AR/foo/bar/index.html</LI>
+     *<LI>/es/foo/bar/index.html</LI>
+     *<LI>/foo/bar/index_es.html</LI>
+     *</UL>
+     *
+     *  @param base the directory that is the Document Base for the context
+     *			in which the 'path' passed is expected to be located
+     *  @param path the pathname for the file that is being searched for its
+     *			best-matched Localized version
+     *  @param loc the requested Locale to match
+     *  @param fbloc the fallback Locale if the requested one not found
+     *
+     *  @return the name of the file that best-matched the Locale requested
+     */
+    public static String getDocBaseLocalizedResource (String base,
+					              String path,
+					              Locale loc,
+					              Locale fbloc) {
+	
+	String locRes = null;
+
+	//  test first for safePath
+	//
+	locRes = safePath (base, path);
+
+	//  if it was not safe as requested, it will not be safe after
+	//  localization lookup. Localization name transformations do not
+	//  affect the safety of the file.
+	//
+	if (null == locRes)
+	    return null;
+
+	if (null != loc)
+	    locRes = getDocBaseLocalizedPath (base, path, loc);
+
+	if (null != locRes)
+	    return locRes;
+
+	if (null != fbloc)
+	    locRes= getDocBaseLocalizedPath (base, path, fbloc);
+
+	return locRes;
+    }
+
+    /**  internal method to check the existence of a file
+     *
+     *  @param base the docbase where the file is
+     *  @param info the pathinfo component under the docbase
+     *
+     *  @return a TestedFile object for that base+info
+     */
+    private static TestedFile checkFile (String base, String info)
+    {
+	return new TestedFile (base, info);
+    }
+
+    /**  method to perform docBase localization
+     *
+     *  The method performs a resource lookup in a manner similar to the
+     *  one performed by JavaHelp.
+     * 
+     *  See above explanation of lookup order.
+     *
+     *  @param dBase the document base for the context of the document
+     *  @param path the path to the document
+     *  @param loc the Locale from the request
+     *
+     *  @return the String for the localized path
+     */
+    private static String getDocBaseLocalizedPath (String dBase, String path,
+						   Locale loc)
+    {
+	String rLang = loc.getLanguage();
+	String rCoun = loc.getCountry();
+	String rVar  = loc.getVariant();
+	String ldBase = dBase.endsWith(File.separator)
+			    		? dBase
+			    		: (dBase + File.separatorChar);
+
+	TestedFile tf = null;
+
+	//  first, try with the provided language+country+variant
+	//
+	String base = null;
+
+	if (null != rVar && ! ("".equals (rVar)) )
+	{
+	    base = ldBase + rLang + '_' + rCoun + '_' + rVar;
+
+	    if ((tf = checkFile(base, path)).getFile().exists())
+		return tf.getPath();
+	}
+
+	//  then, try with the provided language+country
+	//
+	if (null != rCoun && ! ("".equals (rCoun)) )
+	{
+	    base = ldBase + rLang + '_' + rCoun;
+
+	    if ((tf = checkFile(base, path)).getFile().exists())
+		return tf.getPath();
+	}
+
+	//  now, try with the provided language only
+	//
+	base = ldBase + rLang;
+
+	if ((tf = checkFile(base, path)).getFile().exists())
+	    return tf.getPath();
+
+	return checkFile(dBase, path).getPath();
+    }
+
+    static String concatPath( String s1, String s2 )
+    {
+        if( s1.endsWith( File.separator ) ) {
+            if( s2.startsWith( File.separator ))
+                return s1 + s2.substring(1);
+            else
+                return s1 + s2;
+        } else {
+            if( s2.startsWith(File.separator))
+                return s1 + s2;
+            else
+                return s1 + File.separatorChar + s2;
+        }
+    }
+
+    /**  inner class to perform file tests
+     */
+    public static class TestedFile {
+
+	File	file = null;
+	String	path = null;
+
+	/**  class to return the combination of File and pathname
+	 *
+	 *  @param base the directory name for the document base 
+	 *  @param path the pathname for the file under the document base
+	 */
+	public TestedFile (String base, String path)
+	{
+	    if ((path == null) || (path.length() < 1))
+		this.path = base;
+	    else
+		this.path = concatPath (base, path);
+
+	    file = new File (this.path);
+	}
+
+	/**  method to obtain the path for the file being tested
+	 *
+	 *  @return a String with the path for the file associated
+	 */
+	public String getPath ()
+	{
+	    return path;
+	}
+
+	/**  method to obtain the File for the path being tested
+	 *
+	 *  @return a File corresponding to the path passed.
+	 */
+	public File getFile ()
+	{
+	    return file;
+	}
+    }
 }
