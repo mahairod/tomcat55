@@ -15,6 +15,11 @@
         Why does tomcat 5 create context configuration files?
       </a>
     </li>
+    <li>
+      <a href="deployMemIncrease">
+        Why does the memory usage increase when I redeploy a web application?
+      </a>
+    </li>
   </ul>
 </p>
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
@@ -36,6 +41,19 @@
     of your webapp, and use Tomcat's Manager webapp to deploy/undeploy your applications.
     More details can be found here:
     <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=107590945807699&w=2">MARC Archive</a>
+  </div><br>
+
+  <b style="font-size: larger">
+    <a name="deployMemIncrease">
+      Why does the memory usage increase when I redeploy a web application?
+    </a>
+  </b>
+
+  <div style="padding-left : 20px;">
+    Because the Classloader (and the Class objects it loaded) cannot be
+    recycled.  They are stored in the permanent heap generation by the JVM,
+    and when you redepoy a new class loader is created, which loads another
+    copy of all these classes.  This can cause OufOfMemoryErrors eventually.
   </div><br>
 </p>
 </blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
