@@ -38,9 +38,6 @@
   <patternset id="compat.servlet.tests"
     includes="**/compat/**"/>
 
-  <patternset id="jsp.classes"
-    excludes="**/tld_URI*"/>
-
   <!-- ===================== Verify Dependencies ========================= -->
   <target name="deps">
     <available file="${servlet23.jar}" property="servlet23.is.available"/>
@@ -170,50 +167,7 @@
      deprecation="${compile.deprecation}"
         optimize="${compile.optimize}">
       <classpath refid="compile.classpath"/>
-      <patternset refid="jsp.classes"/>
     </javac>
-    
-    <mkdir dir="${watchdog.build}/tmp"/>
-    <mkdir dir="${watchdog.build}/tmp/META-INF"/>
-    <mkdir dir="${watchdog.build}/tmp/tags"/>
-    <mkdir dir="${watchdog.build}/tmp/tags/tld_resource_path"/>
-    <copy file="src/server/jsp-tests/WEB-INF/tlds/tld_uri.tld"
-          tofile="${watchdog.build}/tmp/META-INF/taglib.tld"/>
-    <copy file="src/server/jsp-tests/WEB-INF/classes/tags/tld_resource_path/tld_URI.java"
-          todir="${watchdog.build}/tmp/tags/tld_resource_path"/>
-    <javac srcdir="${watchdog.build}/tmp"
-          destdir="${watchdog.build}/tmp"
-            debug="${compile.debug}"
-      deprecation="${complie.deprecation}"
-         optimize="${compile.optimize}">
-      <classpath refid="compile.classpath"/>
-    </javac>
-    <jar jarfile="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/tld_resource.jar"
-         basedir="${watchdog.build}/tmp"/>
-    <delete dir="${watchdog.build}/tmp"/>
-
-    <mkdir dir="${watchdog.build}/tmp"/>
-    <mkdir dir="${watchdog.build}/tmp/META-INF"/>
-    <mkdir dir="${watchdog.build}/tmp/tags"/>
-    <mkdir dir="${watchdog.build}/tmp/tags/tld_resource_path_one"/>
-    <mkdir dir="${watchdog.build}/tmp/tags/tld_resource_path_two"/>
-    <copy todir="${watchdog.build}/tmp/META-INF">
-      <fileset dir="src/server/jsp-tests/WEB-INF/tlds" includes="**/tld_uri_*"/>
-    </copy>
-    <copy file="src/server/jsp-tests/WEB-INF/classes/tags/tld_resource_path_one/tld_URI.java"
-          todir="${watchdog.build}/tmp/tags/tld_resource_path_one"/>
-    <copy file="src/server/jsp-tests/WEB-INF/classes/tags/tld_resource_path_two/tld_URI.java"
-          todir="${watchdog.build}/tmp/tags/tld_resource_path_two"/>
-    <javac srcdir="${watchdog.build}/tmp"
-          destdir="${watchdog.build}/tmp"
-            debug="${compile.debug}"
-      deprecation="${complie.deprecation}"
-         optimize="${compile.optimize}">
-      <classpath refid="compile.classpath"/>
-    </javac>
-    <jar jarfile="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/tld_uri.jar"
-         basedir="${watchdog.build}/tmp"/>
-    <delete dir="${watchdog.build}/tmp"/>
 
     <!-- Servlet tests -->
     <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
@@ -224,15 +178,6 @@
       <classpath refid="compile.classpath"/>
       <patternset refid="standard.servlet.tests"/>
     </javac>
-    <mkdir dir="${watchdog.build}/tmp"/>
-    <mkdir dir="${watchdog.build}/tmp/tests"/>
-    <mkdir dir="${watchdog.build}/tmp/tests/webapps"/>
-    <mkdir dir="${watchdog.build}/tmp/tests/webapps/dirstruct"/>
-    <move file="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes/tests/webapps/dirstruct/JarFileTestServlet.class"
-          todir="${watchdog.build}/tmp/tests/webapps/dirstruct"/>
-    <jar jarfile="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib/jarfiletest.jar"
-         basedir="${watchdog.build}/tmp"/>
-    <delete dir="${watchdog.build}/tmp"/>
 
     <!-- Compat Servlet tests -->
     <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
@@ -255,9 +200,80 @@
 
   </target>
 
+  
+  <!-- ===================== Build Jars  ==================== -->
+  <target name="buildjars" depends="tld_resource,tld_uri,propertybean,jartest"/>
+
+  <target name="tld_resource">
+    <mkdir dir="${watchdog.build}/tmp"/>
+    <mkdir dir="${watchdog.build}/tmp/META-INF"/>
+    <mkdir dir="${watchdog.build}/tmp/tags"/>
+    <mkdir dir="${watchdog.build}/tmp/tags/tld_resource_path"/>
+    <copy file="src/server/jsp-tests/WEB-INF/tlds/tld_uri.tld"
+          tofile="${watchdog.build}/tmp/META-INF/taglib.tld"/>
+    <move file="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes/tags/tld_resource_path/tld_URI.class"
+          todir="${watchdog.build}/tmp/tags/tld_resource_path"/>
+    <jar jarfile="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/tld_resource.jar"
+         basedir="${watchdog.build}/tmp"/>
+    <delete dir="${watchdog.build}/tmp"/>
+  </target>
+
+  <target name="tld_uri">
+    <mkdir dir="${watchdog.build}/tmp"/>
+    <mkdir dir="${watchdog.build}/tmp/META-INF"/>
+    <mkdir dir="${watchdog.build}/tmp/tags"/>
+    <mkdir dir="${watchdog.build}/tmp/tags/tld_resource_path_one"/>
+    <mkdir dir="${watchdog.build}/tmp/tags/tld_resource_path_two"/>
+    <copy todir="${watchdog.build}/tmp/META-INF">
+      <fileset dir="src/server/jsp-tests/WEB-INF/tlds" includes="**/tld_uri_*"/>
+    </copy>
+    <move file="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes/tags/tld_resource_path_one/tld_URI.class"
+          todir="${watchdog.build}/tmp/tags/tld_resource_path_one"/>
+    <move file="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes/tags/tld_resource_path_two/tld_URI.class"
+          todir="${watchdog.build}/tmp/tags/tld_resource_path_two"/>
+    <jar jarfile="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/tld_uri.jar"
+         basedir="${watchdog.build}/tmp"/>
+    <delete dir="${watchdog.build}/tmp"/>
+  </target>
+
+  <target name="propertybean">
+    <mkdir dir="${watchdog.build}/tmp"/>
+    <mkdir dir="${watchdog.build}/tmp/core_syntax"/>
+    <mkdir dir="${watchdog.build}/tmp/core_syntax/actions"/>
+    <mkdir dir="${watchdog.build}/tmp/core_syntax/actions/setProperty"/>
+    <move todir="${watchdog.build}/tmp">
+      <fileset dir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"
+          includes="**/*Property*.class"/>
+    </move>
+    <jar jarfile="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/propertybean.jar" 
+      basedir="${watchdog.build}/tmp">
+      <manifest>
+        <section name="core_syntax/actions/setProperty/PropertyBean.class">
+          <attribute name="Java-Bean" value="True"/>
+        </section>
+        <section name="core_syntax/actions/setProperty/PropertyBeanBeanInfo.class"/>
+        <section name="core_syntax/actions/setProperty/PStringPropertyEditor.class"/>
+        <section name="core_syntax/actions/setProperty/PBooleanPropertyEditor.class"/>
+        <section name="core_syntax/actions/setProperty/PIntegerPropertyEditor.class"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="jartest">
+    <mkdir dir="${watchdog.build}/tmp"/>
+    <mkdir dir="${watchdog.build}/tmp/tests"/>
+    <mkdir dir="${watchdog.build}/tmp/tests/webapps"/>
+    <mkdir dir="${watchdog.build}/tmp/tests/webapps/dirstruct"/>
+    <move file="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes/tests/webapps/dirstruct/JarFileTestServlet.class"
+          todir="${watchdog.build}/tmp/tests/webapps/dirstruct"/>
+    <jar jarfile="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib/jarfiletest.jar"
+         basedir="${watchdog.build}/tmp"/>
+    <delete dir="${watchdog.build}/tmp"/>
+  </target>
+
 
   <!-- ===================== Compile JSP to XML Syntax ==================== -->
-  <target name="convert" depends="compile"
+  <target name="convert" depends="compile,buildjars"
    description="Convert JSP syntax to XML syntax">
 
      <java classname="org.apache.jspxml.GetWorkspaceInXML" fork="true">
