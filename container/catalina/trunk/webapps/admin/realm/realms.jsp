@@ -25,9 +25,9 @@
           <bean:message key="actions.realms.delete"/>
         </div>
       </td>
-      <td width="19%">
-        <div align="right">
-            <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+            <controls:actions label="Realm Actions">
               <controls:action selected="true">
                 ----<bean:message key="actions.available.actions"/>----
               </controls:action>
@@ -64,8 +64,9 @@
         <logic:iterate name="realmsList" id="realm">
           <tr class="line-row">
             <td><div align="left" class="table-normal-text">&nbsp;
+            <label for="realms"></label>
               <html:multibox property="realms"
-                                value="<%= realm.toString() %>"/>
+                                value="<%= realm.toString() %>" styleId="realms"/>
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditRealm.do?select=" +

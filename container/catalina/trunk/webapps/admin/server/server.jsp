@@ -27,7 +27,7 @@
       </td>
       <td align="right" nowrap>
         <div class="page-title-text">
-        <controls:actions>
+        <controls:actions label="Server Actions">
           <controls:action selected="true">
             ----<bean:message key="actions.available.actions"/>----
           </controls:action>
@@ -69,17 +69,17 @@
             </controls:data>
           </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="portNumber">
             <controls:label><bean:message key="server.portnumber"/>:</controls:label>
             <controls:data>
-              <html:text property="portNumberText" size="24" maxlength="24"/>
+              <html:text property="portNumberText" size="24" maxlength="24" styleId="portNumber"/>
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debugLvl">
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
-                <html:select property="debugLvl">
+                <html:select property="debugLvl" styleId="debugLvl">
                      <bean:define id="debugLvlVals" name="serverForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                       labelProperty="label"/>
@@ -87,10 +87,10 @@
             </controls:data>
         </controls:row>
 
-       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="shutdown">
             <controls:label><bean:message key="server.shutdown"/>:</controls:label>
             <controls:data>
-               <html:text property="shutdownText" size="24" maxlength="24"/>
+               <html:text property="shutdownText" size="24" maxlength="24" styleId="shutdown"/>
             </controls:data>
         </controls:row>
       </controls:table>

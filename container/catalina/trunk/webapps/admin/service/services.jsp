@@ -25,9 +25,9 @@
           <bean:message key="actions.services.delete"/>
         </div>
       </td>
-      <td width="19%">
-        <div align="right">
-            <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">        
+            <controls:actions label="Service Actions">
               <controls:action selected="true">
                 ----<bean:message key="actions.available.actions"/>----
               </controls:action>
@@ -70,8 +70,9 @@
              </logic:match>
              <logic:notMatch name="service"
                         value='<%= (String)request.getAttribute("adminAppService") %>'>
+              <label for="services"></label>          
               <html:multibox property="services"
-                                value="<%= service.toString() %>"/>
+                                value="<%= service.toString() %>" styleId="services" styleId="services"/>
               </logic:notMatch>
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;

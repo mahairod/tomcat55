@@ -38,9 +38,9 @@
           </logic:equal>
        </div>
       </td>
-      <td width="19%">
-        <div align="right">
-      <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+      <controls:actions label="Loger Actions">
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action disabled="true"> --------------------------------- </controls:action>
             <logic:notEqual name="loggerForm" property="adminAction" value="Create">
@@ -67,11 +67,11 @@
             <controls:data><bean:message key="service.value"/></controls:data>
         </controls:row>
 
-      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="type">
             <controls:label><bean:message key="connector.type"/>:</controls:label>
             <controls:data>
                  <logic:equal name="loggerForm" property="adminAction" value="Create">
-                    <html:select property="loggerType" onchange="IA_jumpMenu('self',this)">
+                    <html:select property="loggerType" onchange="IA_jumpMenu('self',this)" styleId="type">
                      <bean:define id="loggerTypeVals" name="loggerForm" property="loggerTypeVals"/>
                      <html:options collection="loggerTypeVals" property="value" labelProperty="label"/>
                     </html:select>
@@ -82,10 +82,10 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
-               <html:select property="debugLvl">
+               <html:select property="debugLvl" styleId="debuglevel">
                      <bean:define id="debugLvlVals" name="loggerForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                         labelProperty="label"/>
@@ -93,10 +93,10 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="verbositylevel">
             <controls:label><bean:message key="logger.verbositylevel"/>:</controls:label>
             <controls:data>
-               <html:select property="verbosityLvl">
+               <html:select property="verbosityLvl" styleId="verbositylevel">
                      <bean:define id="verbosityLvlVals" name="loggerForm" property="verbosityLvlVals"/>
                      <html:options collection="verbosityLvlVals" property="value"
                         labelProperty="label"/>
@@ -130,31 +130,33 @@
             <controls:data><bean:message key="service.value"/></controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="directory">
             <controls:label><bean:message key="logger.directory"/>:</controls:label>
             <controls:data>
-               <html:text property="directory" size="25"/>
+               <html:text property="directory" size="25" styleId="directory"/>
+               
+               
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="prefix">
             <controls:label><bean:message key="logger.prefix"/>:</controls:label>
             <controls:data>
-               <html:text property="prefix" size="25"/>
+               <html:text property="prefix" size="25" styleId="prefix"/>
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="suffix">
             <controls:label><bean:message key="logger.suffix"/>:</controls:label>
             <controls:data>
-               <html:text property="suffix" size="15"/>
+               <html:text property="suffix" size="15" styleId="suffix"/>
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="timestamp">
             <controls:label><bean:message key="logger.timestamp"/>:</controls:label>
             <controls:data>
-                <html:select property="timestamp">
+                <html:select property="timestamp" styleId="timestamp">
                      <bean:define id="booleanVals" name="loggerForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>

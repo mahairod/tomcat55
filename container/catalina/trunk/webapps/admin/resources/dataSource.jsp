@@ -46,7 +46,7 @@
       </td>
       <td align="right" nowrap>
         <div class="page-title-text">
-          <controls:actions>
+          <controls:actions label="Data Source Actions">
             <controls:action selected="true">
               ----<bean:message key="actions.available.actions"/>----
             </controls:action>
@@ -54,7 +54,7 @@
               ---------------------------------
             </controls:action>
 
-  	    <controls:action url='<%= "/resources/setUpDataSource.do?resourcetype=" +
+        <controls:action url='<%= "/resources/setUpDataSource.do?resourcetype=" +
                             URLEncoder.encode(resourcetypeInfo) + "&path="+
                             URLEncoder.encode(pathInfo) + "&host="+
                             URLEncoder.encode(hostInfo) + "&service="+
@@ -96,7 +96,7 @@
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="jndi">
             <controls:label>
               <bean:message key="resources.datasrc.jndi"/>:
             </controls:label>
@@ -106,88 +106,88 @@
                 <html:hidden property="jndiName"/>
               </logic:present>
               <logic:notPresent name="dataSourceForm" property="objectName">
-                <html:text property="jndiName" size="35" maxlength="56"/>
+                <html:text property="jndiName" size="35" maxlength="56" styleId="jndi"/>
               </logic:notPresent>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="url">
             <controls:label>
               <bean:message key="resources.datasrc.url"/>:
             </controls:label>
             <controls:data>
-                <html:textarea property="url" cols="35" rows="2"/>
+                <html:textarea property="url" cols="35" rows="2" styleId="url"/>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="jdbcclass">
             <controls:label>
               <bean:message key="resources.datasrc.jdbcclass"/>:
             </controls:label>
             <controls:data>
-              <html:text property="driverClass" size="45" maxlength="256"/>
+              <html:text property="driverClass" size="45" maxlength="256" styleId="jdbcclass"/>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="username">
             <controls:label>
               <bean:message key="users.prompt.username"/>
             </controls:label>
             <controls:data>
-              <html:text property="username" size="15" maxlength="25"/>
+              <html:text property="username" size="15" maxlength="25" styleId="username"/>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="password">
             <controls:label>
               <bean:message key="users.prompt.password"/>
             </controls:label>
             <controls:data>
-              <html:password property="password" size="15" maxlength="25"/>
+              <html:password property="password" size="15" maxlength="25" styleId="password"/>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="active">
             <controls:label>
               <bean:message key="resources.datasrc.active"/>:
             </controls:label>
             <controls:data>
-              <html:text property="active" size="5" maxlength="5"/>
+              <html:text property="active" size="5" maxlength="5" styleId="active"/>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="idle">
             <controls:label>
               <bean:message key="resources.datasrc.idle"/>:
             </controls:label>
             <controls:data>
-              <html:text property="idle" size="5" maxlength="5"/>
+              <html:text property="idle" size="5" maxlength="5" styleId="idle"/>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="wait">
             <controls:label>
               <bean:message key="resources.datasrc.wait"/>:
             </controls:label>
             <controls:data>
-              <html:text property="wait" size="5" maxlength="5"/>
+              <html:text property="wait" size="5" maxlength="5" styleId="wait"/>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="validation">
             <controls:label>
               <bean:message key="resources.datasrc.validation"/>:
             </controls:label>
             <controls:data>
-              <html:textarea property="query" cols="35" rows="3"/>
+              <html:textarea property="query" cols="35" rows="3" styleId="validation"/>
             </controls:data>
           </controls:row>
 

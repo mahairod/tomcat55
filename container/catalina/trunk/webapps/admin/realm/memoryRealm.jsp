@@ -37,9 +37,9 @@
           </logic:equal>
         </div>
       </td>
-      <td width="19%">
-        <div align="right">
-      <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+      <controls:actions label="Label Actions">
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
             <logic:notEqual name="memoryRealmForm" property="adminAction" value="Create">
@@ -68,11 +68,11 @@
             <controls:data><bean:message key="service.value"/></controls:data>
         </controls:row>
 
-      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="type">
         <controls:label><bean:message key="connector.type"/>:</controls:label>
             <controls:data>
                  <logic:equal name="memoryRealmForm" property="adminAction" value="Create">
-                    <html:select property="realmType" onchange="IA_jumpMenu('self',this)">
+                    <html:select property="realmType" onchange="IA_jumpMenu('self',this)" styleId="type">
                      <bean:define id="realmTypeVals" name="memoryRealmForm" property="realmTypeVals"/>
                      <html:options collection="realmTypeVals" property="value" labelProperty="label"/>
                     </html:select>
@@ -83,10 +83,10 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
-               <html:select property="debugLvl">
+               <html:select property="debugLvl" styleId="debuglevel">
                      <bean:define id="debugLvlVals" name="memoryRealmForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                         labelProperty="label"/>
@@ -94,10 +94,10 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="pathName">
             <controls:label><bean:message key="realm.pathName"/>:</controls:label>
             <controls:data>
-                <html:text property="pathName" size="25"/>
+                <html:text property="pathName" size="25" styleId="pathName"/>
             </controls:data>
         </controls:row>
 

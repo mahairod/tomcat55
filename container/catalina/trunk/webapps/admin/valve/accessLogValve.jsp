@@ -39,9 +39,9 @@
           </logic:equal>
        </div>
       </td>
-      <td width="19%">
-        <div align="right">
-      <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+      <controls:actions label="Valve Actions">
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
             <logic:notEqual name="accessLogValveForm" property="adminAction" value="Create">
@@ -76,11 +76,11 @@
             <controls:data><bean:message key="service.value"/></controls:data>
         </controls:row>
 
-      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="type">
             <controls:label><bean:message key="connector.type"/>:</controls:label>
             <controls:data>
                  <logic:equal name="accessLogValveForm" property="adminAction" value="Create">
-                    <html:select property="valveType" onchange="IA_jumpMenu('self',this)">
+                    <html:select property="valveType" onchange="IA_jumpMenu('self',this)" styleId="type">
                      <bean:define id="valveTypeVals" name="accessLogValveForm" property="valveTypeVals"/>
                      <html:options collection="valveTypeVals" property="value" labelProperty="label"/>
                     </html:select>
@@ -91,10 +91,10 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
-               <html:select property="debugLvl">
+               <html:select property="debugLvl" styleId="debuglevel">
                      <bean:define id="debugLvlVals" name="accessLogValveForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                         labelProperty="label"/>
@@ -102,31 +102,31 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="directory">
             <controls:label><bean:message key="logger.directory"/>:</controls:label>
             <controls:data>
-              <html:text property="directory" size="30"/>
+              <html:text property="directory" size="30" styleId="directory"/>
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="pattern">
             <controls:label><bean:message key="valve.pattern"/>:</controls:label>
             <controls:data>
-                <html:textarea property="pattern" cols="30" rows="2"/>
+                <html:textarea property="pattern" cols="30" rows="2" styleId="pattern"/>
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="prefix">
             <controls:label><bean:message key="logger.prefix"/>:</controls:label>
             <controls:data>
-                <html:text property="prefix" size="30"/>
+                <html:text property="prefix" size="30" styleId="prefix"/>
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="resolveHosts">
             <controls:label><bean:message key="valve.resolveHosts"/>:</controls:label>
             <controls:data>
-                <html:select property="resolveHosts">
+                <html:select property="resolveHosts" styleId="resolveHosts">
                      <bean:define id="booleanVals" name="accessLogValveForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -134,10 +134,10 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="rotatable">
             <controls:label><bean:message key="valve.rotatable"/>:</controls:label>
             <controls:data>
-                <html:select property="rotatable">
+                <html:select property="rotatable" styleId="rotatable">
                      <bean:define id="booleanVals" name="accessLogValveForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -145,10 +145,10 @@
             </controls:data>
         </controls:row>
         
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="suffix">
             <controls:label><bean:message key="logger.suffix"/>:</controls:label>
             <controls:data>
-                <html:text property="suffix" size="30"/>
+                <html:text property="suffix" size="30" styleId="suffix"/>
             </controls:data>
         </controls:row>
 

@@ -26,9 +26,9 @@
           <bean:message key="actions.alias.delete"/>
         </div>
       </td>
-      <td width="19%">
-        <div align="right">
-            <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+            <controls:actions label="Alias Actions">
               <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
               <controls:action> --------------------------------- </controls:action>
             </controls:actions>
@@ -59,8 +59,9 @@
         <logic:iterate name="aliasesList" id="alias">
           <tr class="line-row">
             <td><div align="left" class="table-normal-text">&nbsp;
+            <label for="aliases"></label>
               <html:multibox property="aliases"
-                                value="<%= alias.toString() %>"/>
+                                value="<%= alias.toString() %>" styleId="aliases"/>
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
                 <%= alias.toString() %>

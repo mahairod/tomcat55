@@ -37,9 +37,9 @@
           </logic:equal>
         </div>
       </td>
-      <td width="19%">
-        <div align="right">
-      <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+      <controls:actions label="Realm Actions">
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
             <logic:notEqual name="userDatabaseRealmForm" property="adminAction" value="Create">
@@ -68,11 +68,11 @@
             <controls:data><bean:message key="service.value"/></controls:data>
         </controls:row>
 
-      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="type">
         <controls:label><bean:message key="connector.type"/>:</controls:label>
             <controls:data>
                  <logic:equal name="userDatabaseRealmForm" property="adminAction" value="Create">
-                    <html:select property="realmType" onchange="IA_jumpMenu('self',this)">
+                    <html:select property="realmType" onchange="IA_jumpMenu('self',this)" styleId="type">
                      <bean:define id="realmTypeVals" name="userDatabaseRealmForm" property="realmTypeVals"/>
                      <html:options collection="realmTypeVals" property="value" labelProperty="label"/>
                     </html:select>
@@ -83,10 +83,10 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
-               <html:select property="debugLvl">
+               <html:select property="debugLvl" styleId="debuglevel">
                      <bean:define id="debugLvlVals" name="userDatabaseRealmForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                         labelProperty="label"/>
@@ -94,11 +94,11 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="resource">
             <controls:label><bean:message key="realm.resource"/>:</controls:label>
             <controls:data>
                 <logic:equal name="userDatabaseRealmForm" property="adminAction" value="Create">
-                    <html:text property="resource" size="25" maxlength="25"/>
+                    <html:text property="resource" size="25" maxlength="25" styleId="resource"/>
                 </logic:equal>
                 <logic:equal name="userDatabaseRealmForm" property="adminAction" value="Edit">
                     <bean:write name="userDatabaseRealmForm" property="resource" scope="session"/>

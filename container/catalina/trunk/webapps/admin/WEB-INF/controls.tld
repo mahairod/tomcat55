@@ -105,6 +105,15 @@
       </description>
     </attribute>    
     
+     <attribute>
+      <name>styleId</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The styleId for the label table data element.
+      </description>
+    </attribute>
+        
   </tag>
 
  <tag>
@@ -176,6 +185,15 @@
       </description>
     </attribute>
 
+    <attribute>
+      <name>label</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        HTML Label tag generation.
+      </description>
+    </attribute>
+    
   </tag>
 
   <tag>

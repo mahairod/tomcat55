@@ -52,12 +52,12 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="aliasName">
             <controls:label>
                 <bean:message key="host.alias.name"/>:
             </controls:label>
             <controls:data>
-              <html:text property="aliasName" size="24" maxlength="24"/>
+              <html:text property="aliasName" size="24" maxlength="24" styleId="aliasName"/>
             </controls:data>
         </controls:row>
       </controls:table>

@@ -43,9 +43,9 @@
           </logic:equal>
         </div>
       </td>
-      <td width="19%">
-        <div align="right">
-          <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+          <controls:actions label="Service Actions">
             <controls:action selected="true">
               -----<bean:message key="actions.available.actions"/>-----
             </controls:action>
@@ -74,7 +74,7 @@
               </controls:action-->
               <controls:action disabled="true">
                 -------------------------------------
-              </controls:action>              
+              </controls:action>
               <controls:action url='<%= "/AddHost.do?serviceName=" +
                                         URLEncoder.encode(thisServiceName) %>'>
                 <bean:message key="actions.hosts.create"/>
@@ -161,13 +161,13 @@
             </controls:data>
           </controls:row>
           <controls:row header="false"
-              labelStyle="table-label-text" dataStyle="table-normal-text">
+              labelStyle="table-label-text" dataStyle="table-normal-text" styleId="serviceName">
             <controls:label>
               <bean:message key="service.name"/>:
             </controls:label>
             <controls:data>
               <logic:equal name="serviceForm" property="adminAction" value="Create">
-                <html:text property="serviceName" size="24" maxlength="24"/>
+                <html:text property="serviceName" size="24" maxlength="24" styleId="serviceName"/>
               </logic:equal>
               <logic:equal name="serviceForm" property="adminAction" value="Edit">
                 <html:hidden property="serviceName"/>
@@ -205,13 +205,13 @@
             </controls:data>
           </controls:row>
           <controls:row header="false"
-              labelStyle="table-label-text" dataStyle="table-normal-text">
+              labelStyle="table-label-text" dataStyle="table-normal-text" styleId="engineName">
             <controls:label>
               <bean:message key="service.name"/>:
             </controls:label>
             <controls:data>
               <logic:equal name="serviceForm" property="adminAction" value="Create">
-                <html:text property="engineName" size="24" maxlength="24"/>
+                <html:text property="engineName" size="24" maxlength="24" styleId="engineName"/>
               </logic:equal>
               <logic:equal name="serviceForm" property="adminAction" value="Edit">
                 <html:hidden property="engineName"/>
@@ -220,28 +220,28 @@
             </controls:data>
           </controls:row>
           <controls:row header="false"
-              labelStyle="table-label-text" dataStyle="table-normal-text">
+              labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debugLvlVals">
             <controls:label>
               <bean:message key="server.debuglevel"/>:
             </controls:label>
             <controls:data>
               <bean:define id="debugLvlVals" name="serviceForm"
                            property="debugLvlVals"/>
-              <html:select property="debugLvl">
+              <html:select property="debugLvl" styleId="debugLvlVals">
                 <html:options collection="debugLvlVals" property="value"
                               labelProperty="label"/>
               </html:select>
             </controls:data>
           </controls:row>
           <controls:row header="false"
-              labelStyle="table-label-text" dataStyle="table-normal-text">
+              labelStyle="table-label-text" dataStyle="table-normal-text" styleId="hostNameVals">
             <controls:label>
               <bean:message key="service.defaulthostname"/>:
             </controls:label>
             <controls:data>
               <bean:define id="hostNameVals" name="serviceForm"
                            property="hostNameVals"/>
-              <html:select property="defaultHost">
+              <html:select property="defaultHost" styleId="hostNameVals">
                 <html:options collection="hostNameVals" property="value"
                               labelProperty="label"/>
               </html:select>
