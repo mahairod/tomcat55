@@ -192,6 +192,16 @@ public final class FormAuthenticator
             return (true);      // Display the login page in the usual manner
         }
 
+        // Is this a request for the error page itself?  Test here to avoid
+        // an endless loop (back to the login page) if the error page is
+        // within the protected area of our security constraint
+        String errorURI = contextPath + config.getErrorPage();
+        if (requestURI.equals(errorURI)) {
+            if (debug >= 1)
+                log("Requesting error page normally");
+            return (true);      // Display the error page in the usual manner
+        }
+
         // Is this the action request from the login page?
         boolean loginAction =
             requestURI.startsWith(contextPath) &&
@@ -216,7 +226,6 @@ public final class FormAuthenticator
         String password = hreq.getParameter(Constants.FORM_PASSWORD);
         principal = realm.authenticate(username, password);
         if (principal == null) {
-            String errorURI = contextPath + config.getErrorPage();
             if (debug >= 1)
                 log("Redirect to error page '" + errorURI + "'");
             hres.sendRedirect(hres.encodeRedirectURL(errorURI));
