@@ -85,7 +85,7 @@
                     type="org.apache.webapp.admin.defaultcontext.DefaultContextForm"/>
                     
     <form-bean      name="defaultContextsForm"
-                    type="org.apache.webapp.admin.defaultContext.DefaultContextsForm"/>
+                    type="org.apache.webapp.admin.defaultcontext.DefaultContextsForm"/>
                                         
     <!-- ============= Connector Module ============= -->
 
