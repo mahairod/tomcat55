@@ -70,7 +70,7 @@ rem ----- Set Up The Runtime Classpath ----------------------------------------
 
 set CP=%CATALINA_HOME%\bin\bootstrap.jar;%JAVA_HOME%\lib\tools.jar
 if "%JSSE_HOME%" == "" goto noJsse
-set CP=%CP%;%JSSE_HOME%\lib\jcert.jar;%JSSE_HOME%\lib\jnet.jar;%JSSE_HOME%\jsse.jar
+set CP=%CP%;%JSSE_HOME%\lib\jcert.jar;%JSSE_HOME%\lib\jnet.jar;%JSSE_HOME%\lib\jsse.jar
 :noJsse
 set CLASSPATH=%CP%
 echo Using CATALINA_BASE: %CATALINA_BASE%
