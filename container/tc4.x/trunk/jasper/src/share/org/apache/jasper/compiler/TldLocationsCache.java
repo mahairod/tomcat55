@@ -124,7 +124,7 @@ public class TldLocationsCache {
      * (resource path) of the TLD associated with that tag library.
      * The location is returned as a String array:
      *    [0] The location
-     *    [1] If the location is a jar file, this is the locatiop 
+     *    [1] If the location is a jar file, this is the location
      *        of the tld.
      */
     private Hashtable mappings = new Hashtable();
@@ -133,54 +133,60 @@ public class TldLocationsCache {
     // Constructor and Initilizations
 
     public TldLocationsCache(ServletContext ctxt) {
-	try {
-	    processWebDotXml(ctxt);
-	    processJars(ctxt);
-	} catch (JasperException ex) {
-	    Constants.message(ex.getMessage(), Logger.ERROR);
-	}
+        try {
+            processWebDotXml(ctxt);
+            processJars(ctxt);
+        } catch (JasperException ex) {
+            Constants.message(ex.getMessage(), Logger.ERROR);
+        }
     }
 
     private void processWebDotXml(ServletContext ctxt)
-	throws JasperException
+        throws JasperException
     {
         // Parse web.xml
-	InputStream is = ctxt.getResourceAsStream(WEB_XML);
+        InputStream is = ctxt.getResourceAsStream(WEB_XML);
 
-	if (is == null) {
-	    Constants.message("jsp.error.internal.filenotfound", 
-			      new Object[]{WEB_XML},
-			      Logger.WARNING);
-	    return;
-	}
-	Document webtld =
-	    JspUtil.parseXMLDoc(WEB_XML, is);
-	NodeList nList =  webtld.getElementsByTagName("taglib");
-	if (nList.getLength() != 0) {
-	    for(int i=0; i<nList.getLength(); i++) {
-		String tagUri = null;
-		String tagLoc = null;
-		Element e =  (Element)nList.item(i);
+        if (is == null) {
+            Constants.message("jsp.error.internal.filenotfound", 
+                              new Object[]{WEB_XML},
+                              Logger.WARNING);
+            return;
+        }
+        Document webtld =
+            JspUtil.parseXMLDoc(WEB_XML, is);
+        NodeList nList =  webtld.getElementsByTagName("taglib");
+        if (nList.getLength() != 0) {
+            for(int i=0; i<nList.getLength(); i++) {
+                String tagUri = null;
+                String tagLoc = null;
+                Element e =  (Element)nList.item(i);
 
-		NodeList uriList = e.getElementsByTagName("taglib-uri");
-		Element uriElem = (Element)uriList.item(0);
-		tagUri = JspUtil.getElementChildTextData(uriElem);
-		if (tagUri == null) continue;
+                NodeList uriList = e.getElementsByTagName("taglib-uri");
+                Element uriElem = (Element)uriList.item(0);
+                tagUri = JspUtil.getElementChildTextData(uriElem);
+                if (tagUri == null) continue;
 
-		NodeList locList = 
-		    e.getElementsByTagName("taglib-location");
-		Element locElem = (Element)locList.item(0);
-		tagLoc = JspUtil.getElementChildTextData(locElem);
-		if (tagLoc == null) continue;
+                NodeList locList = 
+                    e.getElementsByTagName("taglib-location");
+                Element locElem = (Element)locList.item(0);
+                tagLoc = JspUtil.getElementChildTextData(locElem);
+                if (tagLoc == null) continue;
 
-		if (uriType(tagLoc) == NOROOT_REL_URI) {
-		    // relative to web.xml location
-		    tagLoc = "/WEB-INF/" + tagLoc;
-		}
+                if (uriType(tagLoc) == NOROOT_REL_URI) {
+                    // relative to web.xml location
+                    tagLoc = "/WEB-INF/" + tagLoc;
+                }
 
-		mappings.put(tagUri, new String[] {tagLoc, null});
-	    }
-	}
+                String loc2 = null;
+                if (tagLoc.endsWith(".jar")) {
+                    loc2 = "META-INF/taglib.tld";
+                }
+                mappings.put(tagUri, new String[] {tagLoc, loc2});
+                //p("added web.xml mapping: " + tagUri + " -> " + 
+                //  tagLoc + "  " + loc2);
+            }
+        }
     }
 
     /**
@@ -188,25 +194,24 @@ public class TldLocationsCache {
      * WEB-INF/lib directory.
      */
     private void processJars(ServletContext ctxt)
-	throws JasperException
+        throws JasperException
     {
         URL libURL = null;
         try {
             libURL = ctxt.getResource("/WEB-INF/lib");
         } catch (MalformedURLException e) {}
 
-	if ((libURL != null) && "file".equals(libURL.getProtocol())) {
-	    File libFile = new File(libURL.getFile());
-	    if (libFile.exists() && libFile.canRead() &&
-	        libFile.isDirectory()) {
-		String filenames[] = libFile.list();
-		for (int i=0; i<filenames.length; i++) {
-		    if (!filenames[i].endsWith(".jar")) continue;
-                    String resourcePath = "/WEB-INF/lib/" + filenames[i];
+        if ((libURL != null) && "file".equals(libURL.getProtocol())) {
+            File libFile = new File(libURL.getFile());
+            if (libFile.exists() && libFile.canRead() &&
+                libFile.isDirectory()) {
+                String filenames[] = libFile.list();
+                for (int i=0; i<filenames.length; i++) {
+                    if (!filenames[i].endsWith(".jar")) continue;
                     tldConfigJar(ctxt, "/WEB-INF/lib/" + filenames[i]);
-		}
-	    }
-	}
+                }
+            }
+        }
     }
 
     /**
@@ -218,7 +223,7 @@ public class TldLocationsCache {
      * @param resourcePath Context-relative resource path
      */
     private void tldConfigJar(ServletContext ctxt, String resourcePath) 
-	throws JasperException
+        throws JasperException
     {
         JarFile jarFile = null;
         InputStream stream = null;
@@ -235,21 +240,22 @@ public class TldLocationsCache {
                 String name = entry.getName();
                 if (!name.startsWith("META-INF/")) continue;
                 if (!name.endsWith(".tld")) continue;
-		//p("tldConfigJar(" + resourcePath +
-		//  "): Processing entry '" + name + "'");
+                //p("tldConfigJar(" + resourcePath +
+                //  "): Processing entry '" + name + "'");
                 stream = jarFile.getInputStream(entry);
-		String uri = parseTldForUri(resourcePath, stream);
-		if (uri != null) {
-		    mappings.put(uri, 
-				 new String[]{resourcePath, name});
-		    //p("adding: " + uri +
-		    //  " " + resourcePath + " " + name);
-		}
-	    }
-	    // FIXME @@@
-	    // -- it seems that the JarURLConnection class caches JarFile 
-	    // objects for particular URLs, and there is no way to get 
-	    // it to release the cached entry, so
+                String uri = parseTldForUri(resourcePath, stream);
+                //p("uri in TLD is: " + uri);
+                if (uri != null) {
+                    mappings.put(uri, 
+                                 new String[]{resourcePath, name});
+                    //p("added mapping: " + uri +
+                    //  " -> " + resourcePath + " " + name);
+                }
+            }
+            // FIXME @@@
+            // -- it seems that the JarURLConnection class caches JarFile 
+            // objects for particular URLs, and there is no way to get 
+            // it to release the cached entry, so
             // there's no way to redeploy from the same JAR file.  Wierd.
         } catch (Exception ex) {
             if (stream != null) {
@@ -261,36 +267,36 @@ public class TldLocationsCache {
                 try {
                     jarFile.close();
                 } catch (Throwable t) {}
-	    }
+            }
         }
     }
 
     private String parseTldForUri(String resourcePath, InputStream in) 
         throws JasperException
     {
-	Document tld = JspUtil.parseXMLDoc(resourcePath, in);
+        Document tld = JspUtil.parseXMLDoc(resourcePath, in);
         NodeList list = tld.getElementsByTagName("taglib");
         if (list.getLength() != 1) {
-	    Constants.message("jsp.error.more.than.one.taglib",
-			      new Object[]{resourcePath},
-			      Logger.ERROR);
-	    return null;
-	}
+            Constants.message("jsp.error.more.than.one.taglib",
+                              new Object[]{resourcePath},
+                              Logger.ERROR);
+            return null;
+        }
 
         Element elem = (Element)list.item(0);
         list = elem.getChildNodes();
 
         for(int i = 0; i < list.getLength(); i++) {
-	    Node tmp = list.item(i);
-	    if (! (tmp instanceof Element)) continue;
+            Node tmp = list.item(i);
+            if (! (tmp instanceof Element)) continue;
             Element e = (Element) tmp;
             String tname = e.getTagName();
             if (tname.equals("uri")) {
-		return JspUtil.getElementChildTextData(e);
-	    }
-	}
-	//p("No URI defined for this tag library: " + resourcePath);
-	return null;
+                return JspUtil.getElementChildTextData(e);
+            }
+        }
+        //p("No URI defined for this tag library: " + resourcePath);
+        return null;
     }
 
     //*********************************************************************
@@ -311,9 +317,9 @@ public class TldLocationsCache {
      * of a taglib deployed in a jar file (WEB-INF/lib).
      */
     public String[] getLocation(String uri) 
-	throws JasperException
+        throws JasperException
     {
-	return (String[])mappings.get(uri);
+        return (String[])mappings.get(uri);
     }
 
     //*********************************************************************
@@ -327,15 +333,15 @@ public class TldLocationsCache {
      */
     static public int uriType(String uri) {
         if (uri.indexOf(':') != -1) {
-	    return ABS_URI;
-	} else if (uri.startsWith("/")) {
-	    return ROOT_REL_URI;
-	} else {
-	    return NOROOT_REL_URI;
-	}
+            return ABS_URI;
+        } else if (uri.startsWith("/")) {
+            return ROOT_REL_URI;
+        } else {
+            return NOROOT_REL_URI;
+        }
     }
 
     private void p(String s) {
-	System.out.println("[TldLocationsCache] " + s);
+        System.out.println("[TldLocationsCache] " + s);
     }
 }
