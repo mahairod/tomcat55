@@ -72,7 +72,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -680,16 +679,6 @@ final class HttpProcessor
 	} else {
 	    request.setRequestedSessionId(null);
 	    request.setRequestedSessionURL(false);
-	}
-
-	// Perform decoding on the request URI if necessary
-	if ((uri.indexOf('%') >= 0) || (uri.indexOf('+') >= 0)) {
-	    try {
-		uri = URLDecoder.decode(uri);
-	    } catch (Exception e) {
-		throw new ServletException
-		    (sm.getString("httpProcessor.parseRequest.decode"));
-	    }
 	}
 
 	// Set the corresponding request properties
