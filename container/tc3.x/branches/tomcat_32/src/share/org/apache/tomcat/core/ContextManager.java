@@ -1015,7 +1015,7 @@ public class ContextManager {
 	} else if( t instanceof org.apache.jasper.JasperException ) {
 	    ctx.log("JasperException: " + req + " "  + t.getMessage());
 	} else if( t instanceof IOException ) {
-	    if( ((IOException)t).getMessage().equals("Broken pipe"))
+	    if ( "Broken pipe".equals(t.getMessage()))
 		return;
 	    ctx.log("IOException in: " + req + " "  + t.getMessage());
 	} else {
