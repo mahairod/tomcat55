@@ -1398,10 +1398,8 @@ public class CoyoteConnector
                 (CoyoteServerSocketFactory) factory;
             IntrospectionUtils.setProperty(protocolHandler, "algorithm",
                                            ssf.getAlgorithm());
-            if (ssf.getClientAuth()) {
-                IntrospectionUtils.setProperty(protocolHandler, "clientauth",
-                                               "" + ssf.getClientAuth());
-            }
+            IntrospectionUtils.setProperty(protocolHandler, "clientauth",
+                                           ssf.getClientAuth());
             IntrospectionUtils.setProperty(protocolHandler, "keystore",
                                            ssf.getKeystoreFile());
             IntrospectionUtils.setProperty(protocolHandler, "randomfile",
@@ -1573,12 +1571,12 @@ public class CoyoteConnector
     // -------------------- Management methods --------------------
 
     
-    public boolean getClientAuth() {
-        boolean ret = false;
+    public String getClientAuth() {
+        String ret = "false";
 
         String prop = (String) getProperty("clientauth");
         if (prop != null) {
-            ret = Boolean.valueOf(prop).booleanValue();
+            ret = prop;
         } else {	
             ServerSocketFactory factory = this.getFactory();
             if (factory instanceof CoyoteServerSocketFactory) {
@@ -1589,8 +1587,8 @@ public class CoyoteConnector
         return ret;
     }
 
-    public void setClientAuth(boolean clientAuth) {
-        setProperty("clientauth", String.valueOf(clientAuth));
+    public void setClientAuth(String clientAuth) {
+        setProperty("clientauth", clientAuth);
         ServerSocketFactory factory = this.getFactory();
         if (factory instanceof CoyoteServerSocketFactory) {
             ((CoyoteServerSocketFactory)factory).setClientAuth(clientAuth);
