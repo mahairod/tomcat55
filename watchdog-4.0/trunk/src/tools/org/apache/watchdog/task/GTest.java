@@ -703,6 +703,19 @@ public class GTest extends Task implements TaskContainer {
                                         numberFound++;
                                         headerValues.remove( 0 );
                                     }
+                                } else if ( currentHeaderField.equalsIgnoreCase( "location" ) ) {
+                                    String resVal = (String) headerValues.get( 0 );
+                                    int idx = currentHeaderValue.indexOf( ":80/" );
+                                    if ( idx > -1 ) {
+                                        String tempValue = currentHeaderValue.substring( 0, idx ) +
+                                                           currentHeaderValue.substring( idx + 3 );
+                                        System.out.println( tempValue );
+                                        if ( currentHeaderValue.equals( resVal ) || 
+                                             tempValue.equals( resVal ) ) {
+                                           numberFound++;
+                                           headerValues.remove( 0 );
+                                        }
+                                    }
                                 } else if ( headerValues.contains( currentHeaderValue ) ) {
                                     numberFound++;
                                     headerValues.remove( headerValues.indexOf( currentHeaderValue ) );
