@@ -537,8 +537,8 @@ final class HttpProcessor
 			  log(" Requested cookie session id is " +
 			      ((HttpServletRequest) request.getRequest())
                               .getRequestedSessionId());
-		    } else
-			request.addCookie(cookies[i]);
+		    }
+                    request.addCookie(cookies[i]);
 		}
 	    } else if (match.equals("content-length")) {
 		int n = -1;
