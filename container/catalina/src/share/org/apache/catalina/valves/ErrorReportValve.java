@@ -292,13 +292,9 @@ public class ErrorReportValve
         sb.append(ServerInfo.getServerInfo()).append(" - ");
         sb.append(sm.getString("errorReportValve.errorReport"));
         sb.append("</title>");
-        sb.append("<STYLE><!--");
-        sb.append("H1{font-family : sans-serif,Arial,Tahoma;color : white;background-color : #0086b2;} ");
-        sb.append("H3{font-family : sans-serif,Arial,Tahoma;color : white;background-color : #0086b2;} ");
-        sb.append("BODY{font-family : sans-serif,Arial,Tahoma;color : black;background-color : white;} ");
-        sb.append("B{color : white;background-color : #0086b2;} ");
-        sb.append("HR{color : #0086b2;} ");
-        sb.append("--></STYLE> ");
+        sb.append("<style><!--");
+        sb.append(org.apache.catalina.util.TomcatCSS.TOMCAT_CSS);
+        sb.append("--></style> ");
         sb.append("</head><body>");
         sb.append("<h1>");
         sb.append(sm.getString("errorReportValve.statusHeader",
