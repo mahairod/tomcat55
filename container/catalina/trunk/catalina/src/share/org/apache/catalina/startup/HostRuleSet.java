@@ -150,6 +150,7 @@ public class HostRuleSet extends RuleSetBase {
         digester.addCallMethod(prefix + "Host/Alias",
                                "addAlias", 0);
 
+        //Cluster configuration start
         digester.addObjectCreate(prefix + "Host/Cluster",
                                  null, // MUST be specified in the element
                                  "className");
@@ -157,6 +158,7 @@ public class HostRuleSet extends RuleSetBase {
         digester.addSetNext(prefix + "Host/Cluster",
                             "setCluster",
                             "org.apache.catalina.Cluster");
+        //Cluster configuration end
 
         digester.addObjectCreate(prefix + "Host/Listener",
                                  null, // MUST be specified in the element

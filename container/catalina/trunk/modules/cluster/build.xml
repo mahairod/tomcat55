@@ -20,6 +20,7 @@
     <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${jmx.jar}"/>
     <pathelement location="${catalina.build}/common/lib/servlet-api.jar"/>
+    <pathelement location="${catalina.build}/server/lib/commons-beanutils.jar"/>
   </path>
 
     <!-- Source path -->

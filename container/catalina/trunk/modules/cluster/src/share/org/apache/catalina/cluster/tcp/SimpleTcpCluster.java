@@ -83,13 +83,15 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.Valve;
+import org.apache.catalina.Host;
 
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.MembershipFactory;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MembershipService;
-
+import org.apache.commons.beanutils.MethodUtils;
 import org.apache.catalina.cluster.tcp.ReplicationListener;
 import org.apache.catalina.cluster.tcp.ReplicationTransmitter;
 import org.apache.catalina.cluster.tcp.SocketSender;
@@ -99,6 +101,9 @@ import org.apache.catalina.cluster.SessionMessage;
 import org.apache.catalina.cluster.session.ReplicationStream;
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.Constants;
+import org.apache.catalina.cluster.ClusterReceiver;
+import org.apache.catalina.cluster.ClusterSender;
+
 
 import org.apache.commons.logging.Log;
 
@@ -130,46 +135,14 @@ public class SimpleTcpCluster
     /**
      * Descriptive information about this component implementation.
      */
-    protected static final String info = "SimpleTcpCluster/1.0";
+    protected static final String info = "SimpleTcpCluster2/1.0";
 
 
     /**
      * the service that provides the membership
      */
-    protected MembershipService service = null;
-    /**
-     * the class name of the membership service
-     */
-    protected String serviceclass = null;
-    /**
-     * The properties for the
-     */
-    protected java.util.Properties svcproperties = new java.util.Properties();
+    protected MembershipService membershipService = null;
 
-    /**
-     * Tcp address to listen for incoming changes
-     */
-    protected java.net.InetAddress tcpAddress = null;
-
-    /**
-     * The tcp port this instance listens to for incoming changes
-     */
-    protected int tcpPort = 1234;
-
-    /**
-     * number of thread we listen to tcp requests coming in on
-     */
-    protected int tcpThreadCount = 2;
-
-    /**
-     * ReplicationTransmitter to send data with
-     */
-    protected ReplicationTransmitter mReplicationTransmitter;
-
-    /**
-     * Name to register for the background thread.
-     */
-    protected String threadName = "SimpleTcpCluster";
 
     /**
      * Whether to expire sessions when shutting down
@@ -188,20 +161,13 @@ public class SimpleTcpCluster
     /**
      * Name for logging purpose
      */
-    protected String clusterImpName = "SimpleTcpCluster";
+    protected String clusterImpName = "SimpleTcpCluster2";
 
 
     /**
      * The string manager for this package.
      */
     protected StringManager sm = StringManager.getManager(Constants.Package);
-
-
-    /**
-     * The background thread completion semaphore.
-     */
-    protected boolean threadDone = false;
-
 
     /**
      * The cluster name to join
@@ -243,52 +209,30 @@ public class SimpleTcpCluster
      * The context name <-> manager association for distributed contexts.
      */
     protected HashMap managers = new HashMap();
-    /**
-     * The context name <-> manager association for all contexts.
-     */
-    protected HashMap allmanagers = new HashMap();
 
     /**
-     * Nr of milliseconds between every heart beat
+     * Sending Stats
      */
-    protected long msgFrequency = 500;
-    /**
-     * java.nio.Channels.Selector.select timeout in case the JDK has a
-     * poor nio implementation
-     */
-    protected long tcpSelectorTimeout = 100;
-
-    /**
-     * The channel configuration.
-     */
-    protected String protocol = null;
-
-    /**
-     * The replication mode, can be either synchronous or asynchronous
-     * defaults to synchronous
-     */
-    protected String replicationMode="synchronous";
-
     private long nrOfMsgsReceived = 0;
     private long msgSendTime = 0;
     private long lastChecked = System.currentTimeMillis();
-    private boolean isJdk13 = false;
+
     private String managerClassName = "org.apache.catalina.cluster.session.DeltaManager";
+
+    /**
+     * Sender to send data with
+     */
+    private org.apache.catalina.cluster.ClusterSender clusterSender;
+
+    /**
+     * Receiver to register call back with
+     */
+    private org.apache.catalina.cluster.ClusterReceiver clusterReceiver;
+    private org.apache.catalina.Valve valve;
 
     // ------------------------------------------------------------- Properties
 
     public SimpleTcpCluster() {
-        try {
-            tcpAddress = java.net.InetAddress.getLocalHost();
-        }catch ( Exception x ) {
-            log.error("In SimpleTcpCluster.constructor()",x);
-        }
-
-//        if ( ServerFactory.getServer() instanceof StandardServer ) {
-//            StandardServer server = (StandardServer) ServerFactory.getServer();
-//            server.addLifecycleListener(this);
-//        }
-
     }
     /**
      * Return descriptive information about this Cluster implementation and
@@ -319,15 +263,6 @@ public class SimpleTcpCluster
         return(this.debug);
     }
 
-    public void setReplicationMode(String mode) {
-        String msg = IDataSenderFactory.validateMode(mode);
-        if ( msg == null ) {
-            log.debug("Setting replcation mode to "+mode);
-            this.replicationMode = mode;
-        } else
-            throw new IllegalArgumentException(msg);
-
-    }
     /**
      * Set the name of the cluster to join, if no cluster with
      * this name is present create one.
@@ -335,11 +270,7 @@ public class SimpleTcpCluster
      * @param clusterName The clustername to join
      */
     public void setClusterName(String clusterName) {
-        String oldClusterName = this.clusterName;
         this.clusterName = clusterName;
-        support.firePropertyChange("clusterName",
-                                   oldClusterName,
-                                   this.clusterName);
     }
 
 
@@ -350,7 +281,7 @@ public class SimpleTcpCluster
      * @return The name of the cluster associated with this server
      */
     public String getClusterName() {
-        return(this.clusterName);
+        return clusterName;
     }
 
 
@@ -388,9 +319,6 @@ public class SimpleTcpCluster
      * @see <a href="www.javagroups.com">JavaGroups</a> for details
      */
     public void setProtocol(String protocol) {
-        String oldProtocol = this.protocol;
-        this.protocol = protocol;
-        support.firePropertyChange("protocol", oldProtocol, this.protocol);
     }
 
 
@@ -398,12 +326,13 @@ public class SimpleTcpCluster
      * Returns the protocol.
      */
     public String getProtocol() {
-        return (this.protocol);
+        return null;
     }
 
     public Member[] getMembers() {
-        return service.getMembers();
+        return membershipService.getMembers();
     }
+    
 
 
 
@@ -423,7 +352,6 @@ public class SimpleTcpCluster
         manager.setDistributable(true);
         manager.setExpireSessionsOnShutdown(expireSessionsOnShutdown);
         manager.setUseDirtyFlag(useDirtyFlag);
-        allmanagers.put(name, manager);
         managers.put(name,manager);
         return manager;
     }
@@ -483,59 +411,30 @@ public class SimpleTcpCluster
                 (sm.getString("cluster.alreadyStarted"));
         log.info("Cluster is about to start");
         try {
-            if ( isJdk13 ) {
-                Jdk13ReplicationListener mReplicationListener =
-                    new Jdk13ReplicationListener(this,
-                                            this.tcpThreadCount,
-                                            this.tcpAddress,
-                                            this.tcpPort,
-                                            this.tcpSelectorTimeout,
-                                            "synchronous".equals(this.
-                    replicationMode));
-                Thread t = new Thread(mReplicationListener);
-                t.setName("Cluster-TcpListener");
-                t.setDaemon(true);
-                t.start();
-            } else {
-                ReplicationListener mReplicationListener =
-                    new ReplicationListener(this,
-                                            this.tcpThreadCount,
-                                            this.tcpAddress,
-                                            this.tcpPort,
-                                            this.tcpSelectorTimeout,
-                                            IDataSenderFactory.SYNC_MODE.equals(replicationMode) ||
-                                            IDataSenderFactory.POOLED_SYNC_MODE.equals(replicationMode));
-                mReplicationListener.setName("Cluster-ReplicationListener");
-                mReplicationListener.setDaemon(true);
-                mReplicationListener.start();
-            }
-
-            mReplicationTransmitter = new ReplicationTransmitter(new IDataSender[0]);
-            mReplicationTransmitter.start();
-
-            //wait 5 seconds to establish the view membership
-            log.info("Sleeping for "+(msgFrequency*4)+" secs to establish cluster membership");
-            service = MembershipFactory.getMembershipService(serviceclass,svcproperties);
-            service.addMembershipListener(this);
-            service.start();
-            Thread.currentThread().sleep((msgFrequency*4));
+            MethodUtils.invokeMethod(getContainer(), "addValve", valve);
+            clusterReceiver.setIsSenderSynchronized(clusterSender.getIsSenderSynchronized());
+            clusterReceiver.setCatalinaCluster(this);
+            clusterReceiver.start();
+            clusterSender.start();
+            membershipService.setLocalMemberProperties(clusterReceiver.getHost(),clusterReceiver.getPort());
+            membershipService.addMembershipListener(this);
+            membershipService.start();
             this.started = true;
         } catch ( Exception x ) {
             log.error("Unable to start cluster.",x);
+            throw new LifecycleException(x);
         }
-
-
     }
 
 
     public void send(SessionMessage msg, Member dest) {
         try
         {
-            msg.setAddress(service.getLocalMember());
+            msg.setAddress(membershipService.getLocalMember());
             Member destination = dest;
             if ( (destination == null) && (msg.getEventType() == SessionMessage.EVT_GET_ALL_SESSIONS) ) {
-                if (service.getMembers().length > 0)
-                    destination = service.getMembers()[0];
+                if (membershipService.getMembers().length > 0)
+                    destination = membershipService.getMembers()[0];
             }
             msg.setTimestamp(System.currentTimeMillis());
             java.io.ByteArrayOutputStream outs = new java.io.ByteArrayOutputStream();
@@ -544,18 +443,15 @@ public class SimpleTcpCluster
             byte[] data = outs.toByteArray();
             if(destination != null) {
                   Member tcpdest = dest;
-                  if ( (tcpdest != null) && (!service.getLocalMember().equals(tcpdest)))  {
-                       mReplicationTransmitter.sendMessage(msg.getSessionID(),
-                                                           data,
-                                                           InetAddress.getByName(tcpdest.getHost()),
-                                                           tcpdest.getPort());
+                  if ( (tcpdest != null) && (!membershipService.getLocalMember().equals(tcpdest)))  {
+                       clusterSender.sendMessage(msg.getSessionID(), data, tcpdest);
                   }//end if
             }
             else {
-                mReplicationTransmitter.sendMessage(msg.getSessionID(),data);
+                clusterSender.sendMessage(msg.getSessionID(),data);
             }
         } catch ( Exception x ) {
-            log.error("Unable to send message through tcp channel",x);
+            log.error("Unable to send message through cluster sender.",x);
         }
     }
 
@@ -580,15 +476,28 @@ public class SimpleTcpCluster
         if (!started)
             throw new IllegalStateException
                 (sm.getString("cluster.notStarted"));
-
+        
+        membershipService.stop();
+        membershipService.removeMembershipListener();
+        try {
+            clusterSender.stop();
+        } catch (Exception x ) {
+            log.error("Unable to stop cluster sender.",x);
+        }
+        try {
+            clusterReceiver.stop();
+            clusterReceiver.setCatalinaCluster(null);
+        } catch (Exception x ) {
+            log.error("Unable to stop cluster receiver.",x);
+        }
+        started = false;
     }
 
 
     public void memberAdded(Member member) {
         try  {
             log.info("Replication member added:" + member);
-            Member mbr = member;
-            mReplicationTransmitter.add(IDataSenderFactory.getIDataSender(replicationMode,mbr));
+            clusterSender.add(member);
         } catch ( Exception x ) {
             log.error("Unable to connect to replication system.",x);
         }
@@ -600,9 +509,7 @@ public class SimpleTcpCluster
         log.info("Received member disappeared:"+member);
         try
         {
-            Member mbr = member;
-            mReplicationTransmitter.remove(InetAddress.getByName(mbr.getHost()),
-                                 mbr.getPort());
+            clusterSender.remove(member);
         }
         catch ( Exception x )
         {
@@ -611,51 +518,7 @@ public class SimpleTcpCluster
 
     }
 
-    public void setServiceclass(String clazz){
-        this.serviceclass = clazz;
-    }
-    public void setMcastAddr(String addr) {
-        svcproperties.setProperty("mcastAddress",addr);
-    }
-
-
-    public void setMcastBindAddress(String bindaddr) {
-        svcproperties.setProperty("mcastBindAddress",bindaddr);
-    }
-
-    public void setMcastPort(int port) {
-        svcproperties.setProperty("mcastPort",String.valueOf(port));
-    }
-
-    public void setMcastFrequency(long time) {
-        svcproperties.setProperty("msgFrequency",String.valueOf(time));
-        msgFrequency = time;
-    }
-
-    public void setMcastDropTime(long time) {
-        svcproperties.setProperty("memberDropTime",String.valueOf(time));
-    }
-
-    public void setTcpThreadCount(int count) {
-        this.tcpThreadCount = count;
-    }
-
-    public void setTcpListenAddress(String address)  {
-        try {
-            if ("auto".equals(address) )
-            {
-                address = java.net.InetAddress.getLocalHost().getHostAddress();
-                tcpAddress = java.net.InetAddress.getByName(address);
-            }
-            else
-            {
-                tcpAddress = java.net.InetAddress.getByName(address);
-            }//end if
-            svcproperties.setProperty("tcpListenHost",address);
-        }catch ( Exception x ){
-            log.error("Unable to set listen address",x);
-        }
-    }
+    
 
     public void setExpireSessionsOnShutdown(boolean expireSessionsOnShutdown){
         this.expireSessionsOnShutdown = expireSessionsOnShutdown;
@@ -667,17 +530,6 @@ public class SimpleTcpCluster
     public void setUseDirtyFlag(boolean useDirtyFlag) {
         this.useDirtyFlag = useDirtyFlag;
     }
-
-
-    public void setTcpListenPort(int port) {
-        this.tcpPort = port;
-        svcproperties.setProperty("tcpListenPort",String.valueOf(port));
-    }
-
-    public void setTcpSelectorTimeout(long timeout) {
-        this.tcpSelectorTimeout = timeout;
-    }
-
 
 
     public void messageDataReceived(byte[] data) {
@@ -790,7 +642,7 @@ public class SimpleTcpCluster
     public void stop(String contextPath) throws IOException {
         return;
     }
-    
+
     public Log getLogger() {
         return log;
     }
@@ -808,17 +660,36 @@ public class SimpleTcpCluster
             log.debug("Calc msg send time total="+msgSendTime+"ms num request="+nrOfMsgsReceived+" average per msg="+(msgSendTime/nrOfMsgsReceived)+"ms.");
         }
     }
-    public boolean getIsJdk13() {
-        return isJdk13;
-    }
-    public void setIsJdk13(boolean isJdk13) {
-        this.isJdk13 = isJdk13;
-    }
+
     public String getManagerClassName() {
         return managerClassName;
     }
     public void setManagerClassName(String managerClassName) {
         this.managerClassName = managerClassName;
     }
+    public org.apache.catalina.cluster.ClusterSender getClusterSender() {
+        return clusterSender;
+    }
+    public void setClusterSender(org.apache.catalina.cluster.ClusterSender clusterSender) {
+        this.clusterSender = clusterSender;
+    }
+    public org.apache.catalina.cluster.ClusterReceiver getClusterReceiver() {
+        return clusterReceiver;
+    }
+    public void setClusterReceiver(org.apache.catalina.cluster.ClusterReceiver clusterReceiver) {
+        this.clusterReceiver = clusterReceiver;
+    }
+    public MembershipService getMembershipService() {
+        return membershipService;
+    }
+    public void setMembershipService(MembershipService membershipService) {
+        this.membershipService = membershipService;
+    }
+    
+    public void addValve(Valve valve) {
+        this.valve = valve;
+    }
+    
+    
 
 }

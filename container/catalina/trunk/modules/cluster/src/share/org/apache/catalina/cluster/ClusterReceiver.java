@@ -63,74 +63,21 @@
 
 package org.apache.catalina.cluster;
 
-import org.apache.catalina.Cluster;
-import org.apache.catalina.cluster.io.ListenCallback;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
-import org.apache.catalina.Valve;
-import org.apache.commons.logging.Log;
 
-/**
- * A <b>CatalinaCluster</b> interface allows to plug in and out the 
- * different cluster implementations
- *
- * @author Filip Hanik
- * @version $Revision$, $Date$
- */
 
-public interface CatalinaCluster
-    extends Cluster,ListenCallback {
-    // ----------------------------------------------------- Instance Variables
+public interface ClusterReceiver
+{
 
-    /**
-     * Descriptive information about this component implementation.
-     */
-    public String info = "CatalinaCluster/1.0";
+    public void start() throws java.io.IOException;
+
+    public void stop();
+
+    public void setCatalinaCluster(CatalinaCluster cluster);
     
-    /**
-     * Start the cluster, the owning container will invoke this
-     * @throws Exception - if failure to start cluster
-     */
-    public void start() throws Exception;
+    public void setIsSenderSynchronized(boolean isSenderSynchronized);
     
-    /**
-     * Stops the cluster, the owning container will invoke this
-     * @throws LifecycleException
-     */
-    public void stop() throws LifecycleException;
+    public String getHost();
     
-    /**
-     * Returns the associates logger with this cluster
-     * @return Log
-     */
-    public Log getLogger();
-    
-    /**
-     * Sends a message to all the members in the cluster
-     * @param msg SessionMessage
-     */
-    public void send(SessionMessage msg);
-    
-    /**
-     * Sends a message to a specific member in the cluster
-     * @param msg SessionMessage
-     * @param dest Member
-     */
-    public void send(SessionMessage msg, Member dest);
-    
-    /**
-     * returns all the members currently participating in the cluster
-     * @return Member[]
-     */
-    public Member[] getMembers();
-    
-    public void setClusterSender(ClusterSender sender);
-    
-    public void setClusterReceiver(ClusterReceiver receiver);
-    
-    public void setMembershipService(MembershipService service);
-    
-    public void addValve(Valve valve);
-    
+    public int getPort();
+
 }

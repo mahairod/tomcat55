@@ -79,9 +79,10 @@ import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.io.ObjectReader;
 import org.apache.catalina.cluster.io.XByteBuffer;
 import org.apache.catalina.cluster.CatalinaCluster;
+import org.apache.catalina.cluster.ClusterReceiver;
 /**
  */
-public class ReplicationListener extends Thread
+public class ReplicationListener implements Runnable,ClusterReceiver
 {
 
     private static org.apache.commons.logging.Log log =
@@ -90,27 +91,36 @@ public class ReplicationListener extends Thread
     private boolean doListen = false;
     private ListenCallback callback;
     private java.net.InetAddress bind;
-    private int port;
-    private long timeout = 0;
-    private boolean synchronous = false;
-    public ReplicationListener(ListenCallback callback,
-                               int poolSize,
-                               java.net.InetAddress bind,
-                               int port,
-                               long timeout,
-                               boolean synchronous)
-    {
-        try {
-            this.synchronous=synchronous;
-            pool = new ThreadPool(poolSize, TcpReplicationThread.class);
-        }catch ( Exception x ) {
-            log.fatal("Unable to start thread pool for TCP listeners, session replication will fail! msg="+x.getMessage());
-        }
-        this.callback = callback;
-        this.bind = bind;
-        this.port = port;
-        this.timeout = timeout;
+    private String tcpListenAddress;
+    private int tcpThreadCount;
+    private long tcpSelectorTimeout;
+    private int tcpListenPort;
+    private boolean isSenderSynchronized;
+    
+    public ReplicationListener() {
     }
+
+    public void start() {
+        try {
+            pool = new ThreadPool(tcpThreadCount, TcpReplicationThread.class);
+            if ( "auto".equals(tcpListenAddress) ) {
+                tcpListenAddress = java.net.InetAddress.getLocalHost().
+                    getHostAddress();
+            }
+            bind = java.net.InetAddress.getByName(tcpListenAddress);
+            Thread t = new Thread(this,"ClusterReceiver");
+            t.setDaemon(true);
+            t.start();
+        } catch ( Exception x ) {
+            log.fatal("Unable to start cluster receiver",x);
+        }
+
+    }
+    
+    public void stop() {
+        stopListening();
+    }
+    
 
     public void run()
     {
@@ -135,7 +145,7 @@ public class ReplicationListener extends Thread
         // create a new Selector for use below
         Selector selector = Selector.open();
         // set the port the server channel will listen to
-        serverSocket.bind (new InetSocketAddress (bind,port));
+        serverSocket.bind (new InetSocketAddress (bind,tcpListenPort));
         // set non-blocking mode for the listening socket
         serverChannel.configureBlocking (false);
         // register the ServerSocketChannel with the Selector
@@ -146,7 +156,7 @@ public class ReplicationListener extends Thread
             try {
 
                 //System.out.println("Selecting with timeout="+timeout);
-                int n = selector.select(timeout);
+                int n = selector.select(tcpSelectorTimeout);
                 //System.out.println("select returned="+n);
                 if (n == 0) {
                     continue; // nothing to do
@@ -197,6 +207,10 @@ public class ReplicationListener extends Thread
     public void stopListening(){
         doListen = false;
     }
+    
+    public void setCatalinaCluster(CatalinaCluster cluster) {
+        callback = cluster;
+    }
 
 
     // ----------------------------------------------------------
@@ -239,9 +253,47 @@ public class ReplicationListener extends Thread
             return;
         } else {
             // invoking this wakes up the worker thread then returns
-            worker.serviceChannel(key, synchronous);
+            worker.serviceChannel(key, isSenderSynchronized);
             return;
         }
+    }
+    public String getTcpListenAddress() {
+        return tcpListenAddress;
+    }
+    public void setTcpListenAddress(String tcpListenAddress) {
+        this.tcpListenAddress = tcpListenAddress;
+    }
+    public int getTcpListenPort() {
+        return tcpListenPort;
+    }
+    public void setTcpListenPort(int tcpListenPort) {
+        this.tcpListenPort = tcpListenPort;
+    }
+    public long getTcpSelectorTimeout() {
+        return tcpSelectorTimeout;
+    }
+    public void setTcpSelectorTimeout(long tcpSelectorTimeout) {
+        this.tcpSelectorTimeout = tcpSelectorTimeout;
+    }
+    public int getTcpThreadCount() {
+        return tcpThreadCount;
+    }
+    public void setTcpThreadCount(int tcpThreadCount) {
+        this.tcpThreadCount = tcpThreadCount;
+    }
+    public boolean getIsSenderSynchronized() {
+        return isSenderSynchronized;
+    }
+    public void setIsSenderSynchronized(boolean isSenderSynchronized) {
+        this.isSenderSynchronized = isSenderSynchronized;
+    }
+    
+    public String getHost() {
+        return getTcpListenAddress();
+    }
+
+    public int getPort() {
+        return getTcpListenPort();
     }
 
 }

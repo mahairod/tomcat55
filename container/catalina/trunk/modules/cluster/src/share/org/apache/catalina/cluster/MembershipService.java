@@ -105,6 +105,12 @@ public interface MembershipService {
      * @return
      */
     public Member getLocalMember();
+
+    /**
+     * Sets the local member properties for broadcasting
+     * @return
+     */
+    public void setLocalMemberProperties(String listenHost, int listenPort);
     /**
      * Sets the membership listener, only one listener can be added.
      * If you call this method twice, the last listener will be used.
