@@ -4254,16 +4254,16 @@ public class StandardContext
         // Stop our filters
         filterStop();
 
-        // Clear all application-originated servlet context attributes
-        if (context != null)
-            context.clearAttributes();
-
         // Stop ContainerBackgroundProcessor thread
         super.threadStop();
 
         if ((manager != null) && (manager instanceof Lifecycle)) {
             ((Lifecycle) manager).stop();
         }
+
+        // Clear all application-originated servlet context attributes
+        if (context != null)
+            context.clearAttributes();
 
         // Finalize our character set mapper
         setCharsetMapper(null);
