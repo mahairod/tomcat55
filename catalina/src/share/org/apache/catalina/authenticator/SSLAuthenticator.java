@@ -118,9 +118,8 @@ public class SSLAuthenticator
 
     /**
      * Authenticate the user by checking for the existence of a certificate
-     * chain (which should have been made visible by an instance of
-     * <code>CertificatesValve</code), and optionally asking a trust
-     * manager to validate that we trust this user.
+     * chain, and optionally asking a trust manager to validate that we trust
+     * this user.
      *
      * @param request Request we are processing
      * @param response Response we are creating
