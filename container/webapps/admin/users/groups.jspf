@@ -7,23 +7,23 @@
    cellspacing="0" cellpadding="0" width="100%">
     <tr class="header-row">
       <logic:present name="checkboxes">
-        <td width="5%"><div align="left" class="table-header-text">
+        <th scope="col" width="5%"><div align="left" class="table-header-text">
           &nbsp;
-        </td>
+        </th>
       </logic:present>
-      <td width="20%"><div align="left" class="table-header-text">
+      <th scope="col" width="20%"><div align="left" class="table-header-text">
         <bean:message key="users.list.groupname"/>
-      </div></td>
-      <td><div align="left" class="table-header-text">
+      </div></th>
+      <th scope="col"><div align="left" class="table-header-text">
         <bean:message key="users.list.description"/>
-      </div></td>
+      </div></th>
     </tr>
     <logic:present name="groupsForm">
     <logic:iterate name="groupsForm" property="groups"
                      id="group" type="java.lang.String">
       <tr class="line-row">
         <logic:present name="checkboxes">
-          <td><div align="center" class="table-normal-text">
+          <td scope="row"><div align="center" class="table-normal-text">
             <logic:present name="userForm">
              <label for="groups"></label>
               <html:multibox property="groups" value="<%= group %>" styleId="groups"/>
@@ -35,7 +35,7 @@
             </logic:notPresent>
           </td>
         </logic:present>
-        <td><div align="left" class="table-normal-text">&nbsp;
+        <td scope="row"><div align="left" class="table-normal-text">&nbsp;
           <html:link page='<%= "/users/setUpGroup.do?objectName=" + 
                                URLEncoder.encode(group) +
                                "&databaseName=" +
@@ -43,7 +43,7 @@
             <controls:attribute name="group" attribute="groupname"/>
           </html:link>
         </div></td>
-        <td><div align="left" class="table-normal-text">&nbsp;
+        <td scope="row"><div align="left" class="table-normal-text">&nbsp;
           <controls:attribute name="group" attribute="description"/>
         </div></td>
       </tr>
