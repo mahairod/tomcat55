@@ -71,6 +71,7 @@ import javax.servlet.jsp.el.FunctionMapper;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
+import org.apache.jasper.Constants;
 
 import org.xml.sax.Attributes;
 
@@ -1039,6 +1040,7 @@ class Validator {
 						       value, false, true,
 						       dynamic);
                     } else {
+			value = value.replace(Constants.ESC, '$');
                         result = new Node.JspAttribute(qName, uri, localName,
 						       value, false, false,
 						       dynamic);

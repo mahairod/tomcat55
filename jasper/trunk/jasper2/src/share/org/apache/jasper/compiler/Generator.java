@@ -786,9 +786,14 @@ class Generator {
 
             if (attr.isExpression() || attr.isELInterpreterInput()) {
 		if (attr.isELInterpreterInput()) {
+		    boolean replaceESC = v.indexOf(Constants.ESC) > 0;
 		    v = JspUtil.interpreterCall(this.isTagFile,
-		        attr.getValue(), expectedType, defaultPrefix,
+		        v, expectedType, defaultPrefix,
 			"_jspx_fnmap", false );
+		    // XXX ESC replacement hack
+		    if (replaceESC) {
+		        v = "(" + v + ").replace(" + Constants.ESCStr + ", '$')";
+		    }
 		}
 		if (encode) {
 		    return "java.net.URLEncoder.encode(\"\" + " + v + ")";
@@ -2507,8 +2512,14 @@ class Generator {
 		}
 	    } else if (attr.isELInterpreterInput()) {
                 // run attrValue through the expression interpreter
+		boolean replaceESC = attrValue.indexOf(Constants.ESC) > 0;
                 attrValue = JspUtil.interpreterCall(this.isTagFile,
                          attrValue, c[0], n.getPrefix(), "_jspx_fnmap", false );
+		// XXX hack: Replace ESC with '$'
+		if (replaceESC) {
+		    attrValue = "(" + attrValue + ").replace(" +
+				Constants.ESCStr + ", '$')";
+		}
             } else {
 		attrValue = convertString(
                                 c[0], attrValue, localName,

@@ -172,41 +172,12 @@ class JspReader {
     }
 
     /**
-     * Gets Content until the next potential JSP element.  Because all elements
-     * begin with a '&lt;' we can just move until we see the next one.
+     * Back up the current cursor by one char, assumes current.cursor > 0,
+     * and that the char to be pushed back is not '\n'.
      */
-    String nextContent() {
-        int cur_cursor = current.cursor;
-	int len = current.stream.length;
- 	char ch;
-
-	if (peekChar() == '\n') {
-	    current.line++;
-	    current.col = 0;
-	}
-	else current.col++;
-	
-	// pure obsfuscated genius!
-        while ((++current.cursor < len) && 
-	    ((ch = current.stream[current.cursor]) != '<')) {
-
-	    if (ch == '$') {
-		// XXX Make this backward compatible with JSP1.2.
-		if ((current.cursor+1 < len) &&
-			current.stream[current.cursor+1] == '{') {
-		    break;
-		}
-	    } else if (ch == '\n') {
-		current.line++;
-		current.col = 0;
-	    } else {
-  		current.col++;
-	    }
-	}
-
-	len = current.cursor - cur_cursor;
-
-	return new String(current.stream, cur_cursor, len);
+    void pushChar() {
+	current.cursor--;
+	current.col--;
     }
 
     String getText(Mark start, Mark stop) throws JasperException {
@@ -378,7 +349,10 @@ class JspReader {
     skip:
 	for (ret = mark(), ch = nextChar() ; ch != -1 ;
 	         ret = mark(), prev = ch, ch = nextChar()) {	    
-	    if (ch == limit.charAt(0) && prev != '\\') {
+	    if (ch == '\\' && prev == '\\') {
+		ch = 0;		// Double \ is not an escape char anymore
+	    }
+	    else if (ch == limit.charAt(0) && prev != '\\') {
 		for (int i = 1 ; i < limlen ; i++) {
 		    if (peekChar() == limit.charAt(i))
 			nextChar();

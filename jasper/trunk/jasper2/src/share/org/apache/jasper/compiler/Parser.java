@@ -296,6 +296,7 @@ class Parser {
      *                | '\"'
      *                | "\'"
      *                | '\>'
+     *                | '\$'
      *                | Char
      */
     private String parseQuoted(String tx) {
@@ -323,6 +324,10 @@ class Parser {
 		ch = tx.charAt(i+1);
 		if (ch == '\\' || ch == '\"' || ch == '\'' || ch == '>') {
 		    buf.append(ch);
+		    i += 2;
+		} else if (ch == '$') {
+		    // Replace "\$" with some special char.  XXX hack!
+		    buf.append(Constants.ESC);
 		    i += 2;
 		} else {
 		    buf.append('\\');
@@ -1378,16 +1383,48 @@ class Parser {
      *
      */
     private void parseTemplateText(Node parent) throws JasperException {
-	// Note except for the beginning of a page, the current char is '<'.
-	// Quoting in template text is handled here.
-	// JSP2.6 "A literal <% is quoted by <\%"
-	String templateText = null;
-	if (reader.matches("<\\%")) {
-	    templateText = "<%";
+
+	if (!reader.hasMoreInput())
+	    return;
+
+	CharArrayWriter ttext = new CharArrayWriter();
+	// Output the first character
+	int ch = reader.nextChar();
+	ttext.write(ch);
+
+	while (reader.hasMoreInput()) {
+	    ch = reader.nextChar();
+	    if (ch == '<') {
+		reader.pushChar();
+		break;
+	    }
+	    else if( ch == '$' ) {
+		if (!reader.hasMoreInput()) {
+		    ttext.write('$');
+		    break;
+                }
+		ch = reader.nextChar();
+		if (ch == '{') {
+		    reader.pushChar();
+		    reader.pushChar();
+		    break;
+		}
+		ttext.write('$');
+	    }
+	    else if (ch == '\\') {
+		if (!reader.hasMoreInput()) {
+		    ttext.write('\\');
+		    break;
+		}
+		ch = reader.nextChar();
+		// Looking for \% or \$
+		if (ch != '%' && ch != '$') {
+		    ttext.write('\\');
+                }
+	    }
+	    ttext.write(ch);
 	}
-	String content = reader.nextContent();
-	templateText = (templateText == null) ? content : templateText+content;
-	new Node.TemplateText(templateText, start, parent);
+	new Node.TemplateText(ttext.toString(), start, parent);
     }
     
     /*
@@ -1408,18 +1445,13 @@ class Parser {
                     "&lt;jsp:text&gt;" );
             }
             CharArrayWriter ttext = new CharArrayWriter();
-            int lastCh = 0;
-            do {
-                int ch = reader.nextChar();
-                if( ch == -1 ) {
-                    err.jspError(start, "jsp.error.unterminated",
-                        "&lt;jsp:text&gt;" );
-                    break;
-                }
+            while (reader.hasMoreInput()) {
+        	int ch = reader.nextChar();
                 if( ch == '<' ) {
                     // Check for <![CDATA[
-                    if (!reader.matches("![CDATA["))
+                    if (!reader.matches("![CDATA[")) {
                         break;
+                    }
                     start = reader.mark();
                     Mark stop = reader.skipUntil("]]>");
                     if (stop == null) {
@@ -1428,7 +1460,28 @@ class Parser {
                     String text = reader.getText(start, stop);
                     ttext.write(text, 0, text.length());
                 }
-                else if( (lastCh == '$') && (ch == '{') ) {
+                else if( ch == '\\') {
+                    if (!reader.hasMoreInput()) {
+                        ttext.write('\\');
+                        break;
+		    }
+                    ch = reader.nextChar();
+                    if (ch != '$' ) {
+                        ttext.write('\\');
+                    }
+                    ttext.write(ch);
+                }
+                else if( ch == '$' ) {
+                    if (!reader.hasMoreInput()) {
+                        ttext.write('$');
+                        break;
+                    }
+                    ch = reader.nextChar();
+                    if (ch != '{') {
+                        ttext.write('$');
+                        ttext.write(ch);
+                        continue;
+                    }
                     // Create a template text node
                     new Node.TemplateText( ttext.toString(), start, parent);
 
@@ -1436,35 +1489,15 @@ class Parser {
                     start = reader.mark();
                     parseELExpression(parent);
 
-                    // Go back to parsing template text, unless next
-                    // char is '<':
-                    if( reader.peekChar() == '<' ) {
-                        reader.nextChar();
-                        ttext = null;
-                        break;
-                    }
                     start = reader.mark();
                     ttext = new CharArrayWriter();
                 }
                 else {
-                    if( (lastCh == '$') && (ch != '{') ) {
-                        ttext.write( '$' );
-                    }
-                    if( ch != '$' ) {
-                        ttext.write( ch );
-                    }
+                    ttext.write( ch );
                 }
-                lastCh = ch;
-            } while( true );
-
-            if( ttext != null ) {
-                if( lastCh == '$' ) {
-                    ttext.write( '$' );
-                }
-                // This could happen if we parsed an EL expression and then
-                // there was no more template text (see above).
-                new Node.TemplateText( ttext.toString(), start, parent );
             }
+
+            new Node.TemplateText( ttext.toString(), start, parent );
 
             if( !reader.matchesETagWithoutLessThan( "jsp:text" ) ) {
                 err.jspError( start, "jsp.error.unterminated",

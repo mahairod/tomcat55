@@ -224,5 +224,12 @@ public class Constants {
      */
     public static final String TEMP_VARIABLE_NAME_PREFIX =
         "_jspx_temp";
+
+    /**
+     * A replacement char for "\$".
+     * XXX This is a hack to avoid changing EL interpreter to recognize "\$"
+     */
+    public static final char ESC='\u001b';
+    public static final String ESCStr="'\\u001b'";
 }
 
