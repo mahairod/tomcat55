@@ -22,8 +22,8 @@
     </menu>
 
     <menu name="Download">
-        <item name="Binaries"              href="/site/binindex.cgi"/>
-        <item name="Source Code"           href="/site/sourceindex.cgi"/>
+        <item name="Current Releases"     href="/site/downloads/downloads_tomcat-5.cgi" />
+        <item name="Archived Releases"    href="http://archive.apache.org/dist/jakarta/tomcat-5/" />
     </menu>
 
     <menu name="Archives">
