@@ -703,13 +703,13 @@ public abstract class RealmBase
         if ((config != null) &&
             (Constants.FORM_METHOD.equals(config.getAuthMethod()))) {
             String requestURI = request.getRequestPathMB().toString();
-            String loginPage = context.getPath() + config.getLoginPage();
+            String loginPage = config.getLoginPage();
             if (loginPage.equals(requestURI)) {
                 if (log.isDebugEnabled())
                     log.debug(" Allow access to login page " + loginPage);
                 return (true);
             }
-            String errorPage = context.getPath() + config.getErrorPage();
+            String errorPage = config.getErrorPage();
             if (errorPage.equals(requestURI)) {
                 if (log.isDebugEnabled())
                     log.debug(" Allow access to error page " + errorPage);
