@@ -439,12 +439,17 @@ environment is a prereq if you want to perform a custom build.&nbsp; The steps t
 
 <ol>
  <li>Change to the desired Apache (as explained above) source directory. </li>
+ <li>Set an APACHE1_HOME environment variable which points to where your Apache is
+   installed.</li>
  <li>Execute the following
      command:<br>
   <span><tt><br>
   &nbsp;&nbsp;&nbsp;</tt></span> <span><tt>MSDEV mod_jk.dsp /MAKE ALL</tt></span><br>
   <br>
-  NOTE: If msdev is not in your path, enter the full path to msdev.exe </li>
+  NOTE: If msdev is not in your path, enter the full path to msdev.exe.  Also, ApacheCore.lib
+  is expected to exist in the APACHE1_HOME\src\CoreD and APACHE1_HOME\src\CoreR
+  directories before linking will succeed. You will need to build enough of the
+  Apache source to create these libraries.</li>
  <li>Copy mod_jk.dll to Apache's modules directory.</li>
 </ol>
 
