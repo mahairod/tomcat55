@@ -76,7 +76,8 @@ import javax.servlet.http.*;
 
 
 public class HttpConnectionHandler  implements  TcpConnectionHandler {
-    
+
+    boolean secure=false;
     ContextManager contextM;
     
     public HttpConnectionHandler() {
@@ -87,6 +88,10 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	if("context.manager".equals(name) ) {
 	    contextM=(ContextManager)value;
 	}
+    }
+
+    public void setSecure( boolean b ) {
+	secure=b;
     }
     
     public void setServer( Object  contextM ) {
@@ -191,6 +196,12 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 		sis.setLimit(contentLength);
 	    }
 
+	    // If this connection handler was declared as "secure",
+	    // mark this in the request
+	    if( secure ) {
+		reqA.setScheme( "https" );
+	    }
+	    
 	    contextM.service( reqA, resA );
 
 	    try {
