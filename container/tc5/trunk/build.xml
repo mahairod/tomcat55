@@ -115,7 +115,7 @@
     </uptodate>
 
     <uptodate property="commons-modeler.build.notrequired"
-              targetfile="${tomcat.build}/server/lib/commons-modeler.jar">
+              targetfile="${commons-modeler.jar}">
       <srcfiles dir="${cvs.base}/jakarta-commons/modeler/src/java" includes="**" />
     </uptodate>
 
@@ -142,21 +142,21 @@
   </target>
 
   <!-- ====================== Build all components =================== -->
-  <target name="build-servletapi" unless="servletapi.build.notrequired" >
+  <target name="build-servletapi" unless="servletapi.build.notrequired" description="Build servlet API">
     <echo>========== Building: ${servlet-api.jar}</echo>
     <ant dir="${api.home}/jsr154" target="dist" >
       <property name="servlet-api.dist" value="${servlet-api.home}" />
     </ant>
   </target>
 
-  <target name="build-jspapi" unless="jspapi.build.notrequired" >
+  <target name="build-jspapi" unless="jspapi.build.notrequired" description="Build JSP API">
     <echo>========== Building: ${jsp-api.jar}</echo>
     <ant dir="${api.home}/jsr152" target="dist">
         <property name="jsp-api.dist" value="${jsp-api.home}" />
     </ant>
   </target>
 
-  <target name="build-tomcatutil" unless="tomcatutil.build.notrequired" >
+  <target name="build-tomcatutil" unless="tomcatutil.build.notrequired" description="Build j-t-c/util">
     <echo>========== Building: tomcat-util </echo>
 
     <ant dir="${jtc.home}/util" target="build-main">
@@ -169,8 +169,9 @@
     </ant>
   </target>
 
-  <target name="build-tomcatjk" unless="tomcatjk.build.notrequired" >
-    <echo>========== Building: tomcat-jk </echo>
+  <target name="build-tomcatjk" unless="tomcatjk.build.notrequired" 
+          description="build j-t-c/jk" >
+    <echo>========== Building: tomcat-jk ${catalina.build} </echo>
 
     <ant dir="${jtc.home}/jk" target="jkjava">
       <property name="tomcat5.home" value="${catalina.build}"/>
@@ -193,7 +194,7 @@
 
   <target name="build-tomcatcoyote" 
           unless="tomcatcoyote.build.notrequired" 
-          depends="init">
+          depends="init" description="Build j-t-c/coyote">
     <echo>========== Building: tomcat-coyote </echo>
 
     <ant dir="${jtc.home}/coyote" target="jar.tomcat5">
@@ -209,7 +210,7 @@
 
   <target name="build-tomcathttp11" 
           unless="tomcathttp11.build.notrequired" 
-          depends="init">
+          depends="init" description="builds j-t-c/http11">
     <echo>========== Building: tomcat-http11 </echo>
 
     <ant dir="${jtc.home}/http11" target="compile-only">
@@ -222,7 +223,7 @@
 
   <target name="build-jasper" 
           unless="jasper.build.notrequired" 
-          depends="init">
+          depends="init" description="build jasper">
     <echo>========== Building: jasper </echo>
 
     <ant dir="${jasper.home}"   target="build-only">
@@ -236,7 +237,7 @@
   </target>
 
   <target name="build-admin" unless="admin.build.notrequired" 
-          depends="init" >
+          depends="init" description="build admin" >
 
     <echo>========== Building: admin </echo>
     <ant dir="${catalina.home}/webapps/admin" target="build-main">
@@ -251,7 +252,7 @@
   </target>
 
   <target name="build-webapps-precompile" 
-          depends="init" description="Builds the admin webapp" >
+          depends="init" description="Precompile webapps" >
 
     <!-- JSPC -->
     <property name="admin.base" location="${tomcat.build}/server/webapps/admin" />
@@ -452,7 +453,7 @@
 
   <!-- ====================== Build dependent code =================== -->
 
-  <target name="build-commons-modeler" unless="commons-modeler.build.notrequired" >
+  <target name="build-commons-modeler" unless="commons-modeler.build.notrequired" description="build commons-modeler">
     <echo>========== Building: commons-modeler </echo>
 
     <ant dir="${cvs.base}/jakarta-commons/modeler" target="dist" >
@@ -465,7 +466,7 @@
   </target>
 
 
-  <target name="build-commons-el" unless="commons-el.build.notrequired" >
+  <target name="build-commons-el" unless="commons-el.build.notrequired" description="build commons-el" >
     <echo>========== Building: commons-el </echo>
 
     <ant dir="${cvs.base}/jakarta-commons/el" target="dist" >
@@ -476,11 +477,12 @@
     </ant>
   </target>
 
-  <target name="build-all" depends="init,deploy-static,build,build-webapps,embed"/>
+  <target name="build-all" depends="init,deploy-static,build,build-webapps,embed" 
+          description="build tomcat, webapps, embed" />
 
 
   <target name="build-depends" depends="init"
-          description="Builds various dependent components">
+          description="Builds various dependent components - APIs, commons-el, commons-modeler, daemon">
     <antcall target="build-servletapi"/>
     <antcall target="build-jspapi"/>
 
@@ -551,8 +553,8 @@
 
   </target>
 
-  <target name="fix-webapps" depends="init"
-          description="Extra build steps for webapps">
+  <target name="fix-webapps" depends="init" >
+    <!-- Extra build steps for webapps -->
 
     <!-- Add release notes to the root webapp -->
     <copy file="./RELEASE-NOTES"
@@ -705,8 +707,7 @@
   <target name="deploy" depends="deploy-static,build-all,build-webapps"
           description="Build and deploy all components" />
 
-  <target name="deploy.old" depends="deploy-static"
-          description="Old deploy target">
+  <target name="deploy.old" depends="deploy-static">
 
 
     <echo>Target: Modeler - Dist ...</echo>
@@ -781,7 +782,7 @@
 
   <!-- ======================= COMBO: Build All Components ================ -->
   <target name="all"
-   description="Clean, build, and deploy all components">
+          description="Clean, build, and deploy all components">
 
     <echo>Target: Servlet API - Dist ...</echo>
     <ant dir="${api.home}/jsr154" target="dist"/>
@@ -801,7 +802,7 @@
 
   <!-- ======================= COMBO: Test All Components ================= -->
   <target name="test"
-   description="Unit tests on all components">
+          description="Unit tests on all components">
     <echo>Target: Catalina - Test ...</echo>
     <ant dir="${catalina.home}" target="test"/>
     <echo>Target: Jasper - Test ...</echo>
@@ -812,8 +813,8 @@
 
   <!-- ======================= WATCHDOG: Run Watchdog Tests================ -->
   
-   <target name="dist-watchdog"  depends="proxyflags"
-    description="Download Watchdog binary">
+   <target name="dist-watchdog"  depends="proxyflags" 
+           description="Build watchdog">
 
    <cvs cvsRoot="${cvsroot}"
       package="${watchdog.loc}"
@@ -1534,6 +1535,12 @@
 
     <mbeans-descriptors file="${catalina.home}/catalina/src/share/org/apache/catalina/mbeans/mbeans-descriptors.xml"
               out="build/classes/org/apache/catalina/mbeans/mbeans-descriptors.xml.ser" />
+    <mbeans-descriptors file="${catalina.home}/catalina/src/share/org/apache/catalina/core/mbeans-descriptors.xml"
+              out="build/classes/org/apache/catalina/core/mbeans-descriptors.xml.ser" />
+    <mbeans-descriptors file="${catalina.home}/catalina/src/share/org/apache/catalina/valves/mbeans-descriptors.xml"
+              out="build/classes/org/apache/catalina/valves/mbeans-descriptors.xml.ser" />
+    <mbeans-descriptors file="${jtc.home}/coyote/src/java/org/apache/coyote/tomcat5/mbeans-descriptors.xml"
+              out="build/classes/org/apache/coyote/tomcat5/mbeans-descriptors.xml.ser" />
   </target>
 
 </project>
