@@ -60,6 +60,9 @@
       <fix>
         <bug>30415</bug>: Directories ending in .war not handled well. (yoavs)
       </fix>
+      <fix>
+        <bug>31052</bug>: BeanFactory swallows root cause of exception. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Webapps">
