@@ -91,6 +91,9 @@
       <fix>
         <bug>31362</bug>: Missing -Xdebug in catalina.bat when using JPDA and Security. (yoavs)
       </fix>
+      <fix>
+        <bug>30949</bug>: Make sure ApplicationDispatcher unwraps requests even if include fails. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Webapps">

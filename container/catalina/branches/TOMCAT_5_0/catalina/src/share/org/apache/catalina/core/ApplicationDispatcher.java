@@ -531,8 +531,6 @@ final class ApplicationDispatcher
                                              new Integer(ApplicationFilterFactory.INCLUDE));
             request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
             invoke(request, outerResponse);
-            unwrapResponse();
-
         }
 
         // Handle an HTTP named dispatcher include
@@ -552,9 +550,6 @@ final class ApplicationDispatcher
             invoke(outerRequest, outerResponse);
 
             wrequest.recycle();
-            unwrapRequest();
-            unwrapResponse();
-
         }
 
         // Handle an HTTP path based include
@@ -590,9 +585,6 @@ final class ApplicationDispatcher
             invoke(outerRequest, outerResponse);
 
             wrequest.recycle();
-            unwrapRequest();
-            unwrapResponse();
-
         }
 
     }
@@ -795,6 +787,11 @@ final class ApplicationDispatcher
         // Reset the old context class loader
         if (oldCCL != null)
             Thread.currentThread().setContextClassLoader(oldCCL);
+
+        // Unwrap the request and response if needed
+        // See Bugzilla 30949
+        unwrapRequest();
+        unwrapResponse();
 
         // Rethrow an exception if one was thrown by the invoked servlet
         if (ioException != null)
