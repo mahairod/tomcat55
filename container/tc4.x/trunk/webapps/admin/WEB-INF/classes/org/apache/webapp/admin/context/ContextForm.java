@@ -68,7 +68,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import java.net.InetAddress;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Form bean for the context page.
@@ -81,11 +81,31 @@ public final class ContextForm extends ActionForm {
     
     // ----------------------------------------------------- Instance Variables
     
-    /**
-     * The text for the scheme.
+   /**
+     * The administrative action represented by this form.
      */
-    //private String scheme = null;
-    
+    private String adminAction = "Edit";
+
+    /**
+     * The object name of the Context this bean refers to.
+     */
+    private String objectName = null;
+   
+    /**
+     * The object name of the parent of this Context.
+     */
+    private String parentObjectName = null;
+   
+   /**
+     * The object name of the loader of this Context.
+     */
+    private String loaderObjectName = null;
+   
+    /**
+     * The object name of the manager of this Context.
+     */
+    private String managerObjectName = null;
+   
     /**
      * The text for the node label.
      */
@@ -172,31 +192,107 @@ public final class ContextForm extends ActionForm {
     private String mgrMaxSessions = "0";
     
     /**
-     * The text for the contextName.
-     */
-    private String contextName = null;
-    
-    /**
-     * The text for the loaderName.
-     */
-    private String loaderName = null;
-    
-    /**
-     * The text for the managerName.
-     */
-    private String managerName = null;
-    
-    /**
      * Set of valid values for debug level.
      */
-    private ArrayList debugLvlVals = null;
+    private List debugLvlVals = null;
     
     /*
      * Represent boolean (true, false) values for cookies etc.
      */
-    private ArrayList booleanVals = null;
+    private List booleanVals = null;
     
     // ------------------------------------------------------------- Properties
+     
+   /**
+     * Return the administrative action represented by this form.
+     */
+    public String getAdminAction() {
+
+        return this.adminAction;
+
+    }
+
+
+    /**
+     * Set the administrative action represented by this form.
+     */
+    public void setAdminAction(String adminAction) {
+
+        this.adminAction = adminAction;
+
+    }
+
+    /**
+     * Return the object name of the Context this bean refers to.
+     */
+    public String getObjectName() {
+
+        return this.objectName;
+
+    }
+
+    /**
+     * Set the object name of the Context this bean refers to.
+     */
+    public void setObjectName(String objectName) {
+
+        this.objectName = objectName;
+
+    }    
+    
+    /**
+     * Return the parent object name of the Context this bean refers to.
+     */
+    public String getParentObjectName() {
+
+        return this.parentObjectName;
+
+    }
+
+    /**
+     * Set the parent object name of the Context this bean refers to.
+     */
+    public void setParentObjectName(String parentObjectName) {
+
+        this.parentObjectName = parentObjectName;
+
+    }
+    
+      /**
+     * Return the loader object name of the Context this bean refers to.
+     */
+    public String getLoaderObjectName() {
+
+        return this.loaderObjectName;
+
+    }
+
+    /**
+     * Set the loader object name of the Context this bean refers to.
+     */
+    public void setLoaderObjectName(String loaderObjectName) {
+
+        this.loaderObjectName = loaderObjectName;
+
+    }
+    
+      /**
+     * Return the manager object name of the Context this bean refers to.
+     */
+    public String getManagerObjectName() {
+
+        return this.managerObjectName;
+
+    }
+
+    /**
+     * Set the manager object name of the Context this bean refers to.
+     */
+    public void setManagerObjectName(String managerObjectName) {
+
+        this.managerObjectName = managerObjectName;
+
+    }
     
     /**
      * Return the label of the node that was clicked.
@@ -220,7 +316,7 @@ public final class ContextForm extends ActionForm {
     /**
      * Return the debugVals.
      */
-    public ArrayList getDebugLvlVals() {
+    public List getDebugLvlVals() {
         
         return this.debugLvlVals;
         
@@ -229,7 +325,7 @@ public final class ContextForm extends ActionForm {
     /**
      * Set the debugVals.
      */
-    public void setDebugLvlVals(ArrayList debugLvlVals) {
+    public void setDebugLvlVals(List debugLvlVals) {
         
         this.debugLvlVals = debugLvlVals;
         
@@ -238,7 +334,7 @@ public final class ContextForm extends ActionForm {
     /**
      * Return the booleanVals.
      */
-    public ArrayList getBooleanVals() {
+    public List getBooleanVals() {
         
         return this.booleanVals;
         
@@ -247,7 +343,7 @@ public final class ContextForm extends ActionForm {
     /**
      * Set the debugVals.
      */
-    public void setBooleanVals(ArrayList booleanVals) {
+    public void setBooleanVals(List booleanVals) {
         
         this.booleanVals = booleanVals;
         
@@ -558,59 +654,7 @@ public final class ContextForm extends ActionForm {
         this.mgrMaxSessions = mgrMaxSessions;
         
     }
-    
-    /**
-     * Return the Context Name.
-     */
-    public String getContextName() {
         
-        return this.contextName;
-        
-    }
-    
-    /**
-     * Set the Context Name.
-     */
-    public void setContextName(String contextName) {
-        
-        this.contextName = contextName;
-        
-    }
-    
-    /**
-     * Return the loader Name.
-     */
-    public String getLoaderName() {
-        
-        return this.loaderName;
-        
-    }
-    
-    /**
-     * Set the loader Name.
-     */
-    public void setLoaderName(String loaderName) {
-        
-        this.loaderName = loaderName;
-        
-    }
-    /**
-     * Return the manager Name.
-     */
-    public String getManagerName() {
-        
-        return this.managerName;
-        
-    }
-    
-    /**
-     * Set the manager Name.
-     */
-    public void setManagerName(String managerName) {
-        
-        this.managerName = managerName;
-        
-    }
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -620,6 +664,10 @@ public final class ContextForm extends ActionForm {
      * @param request The servlet request we are processing
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
+        
+        this.objectName = null;
+        this.loaderObjectName = null;
+        this.managerObjectName = null;
         
         // context properties
         this.cookies = "false";

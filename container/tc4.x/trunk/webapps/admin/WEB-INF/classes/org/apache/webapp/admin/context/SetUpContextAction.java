@@ -343,9 +343,9 @@ public class SetUpContextAction extends Action {
         //setting values obtained from the mBean to be displayed in the form.
         
         contextFm.setNodeLabel(nodeLabel);
-        contextFm.setContextName(selectedName);
-        contextFm.setLoaderName(loaderName);
-        contextFm.setManagerName(managerName);        
+        //contextFm.setContextName(selectedName);
+        //contextFm.setLoaderName(loaderName);
+        //contextFm.setManagerName(managerName);        
         contextFm.setDebugLvlVals(debugLvlList);  
         contextFm.setBooleanVals(booleanList);
         
