@@ -1,5 +1,0 @@
-The package org.apache.jspxml contains the utility classes to generate the XML view of JSP pages. The file jsp2XML.java contains the code to convert a jsp page to its XML view. The file FileLister.java is ussed to get all the jsp files in subdirectories of a given directory. The file jsp2XMLTarget has the code to generate the jsp-gtest-xml.xml file which has the XML targets.The file GetWorkspaceInXML.java  uses these classes to convert all the jsp file in webappas/jsp-tests/jsp directory to XML files. These files are built and packaged into testdriver.jaar file.
-  Right now, These tools work fine.jsp2XML is basically a pattern matching tool that parses the jsp file and generates the XML file. It's not very robust thoughat this point. A badly written jsp file can easily break the code. (for ex. using unnecessary whitespaces in jsp elements) . But it works fine with most of the jsp's (All of the JSP's in watchdog).The following things are not yet implemented in this tool.
-1)JSP quoting conventions
-2)New Namespaces based ob the type of URI in taglibs.
-   
