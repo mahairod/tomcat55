@@ -210,7 +210,11 @@
           depends="init">
     <echo>========== Building: jasper </echo>
 
-    <ant dir="${jasper.home}"   target="deploy">
+    <ant dir="${jasper.home}"   target="build-only">
+      <property name="jasper.classes" value="${tomcat.build}/classes"/>
+      <property name="jasper.build" value="${tomcat.build}"/>
+      <property name="jasper-compiler.jar" value="${tomcat.build}/common/lib/jasper-compiler.jar"/>
+      <property name="jasper-runtime.jar" value="${tomcat.build}/common/lib/jasper-runtime.jar"/>
       <property name="catalina.home" value="${tomcat.build}"/>
       <property name="commons-el.jar" location="${commons-el.jar}" />
     </ant>
