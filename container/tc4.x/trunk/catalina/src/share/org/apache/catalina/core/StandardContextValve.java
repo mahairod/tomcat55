@@ -166,11 +166,6 @@ final class StandardContextValve
             relativeURI.startsWith("/META-INF/") ||
             relativeURI.startsWith("/WEB-INF/")) {
             notFound(requestURI, (HttpServletResponse) response.getResponse());
-            try {
-                response.finishResponse();
-            } catch (IOException e) {
-                ;
-            }
             return;
         }
 
@@ -223,8 +218,10 @@ final class StandardContextValve
     private void badRequest(String requestURI, HttpServletResponse response) {
 
         try {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST, requestURI);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, requestURI);
         } catch (IllegalStateException e) {
+            ;
+        } catch (IOException e) {
             ;
         }
 
@@ -242,8 +239,10 @@ final class StandardContextValve
     private void notFound(String requestURI, HttpServletResponse response) {
 
         try {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND, requestURI);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, requestURI);
         } catch (IllegalStateException e) {
+            ;
+        } catch (IOException e) {
             ;
         }
 
