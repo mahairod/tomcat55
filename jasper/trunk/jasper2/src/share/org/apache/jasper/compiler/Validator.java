@@ -1238,8 +1238,7 @@ class Validator {
 				"jsp.error.attribute.invalidPrefix", prefix);
 			}
 		    }
-		    TagLibraryInfo taglib = 
-					(TagLibraryInfo) taglibs.get(uri);
+		    TagLibraryInfo taglib = (TagLibraryInfo) taglibs.get(uri);
 		    FunctionInfo funcInfo = null;
 		    if (taglib != null) {
 			funcInfo = taglib.getFunction(function);
@@ -1274,12 +1273,12 @@ class Validator {
 	    int start = signature.indexOf(' ');
 	    if (start < 0) {
 		err.jspError("jsp.error.tld.fn.invalid.signature",
-			func.getPrefix(), func.getName());
+			     func.getPrefix(), func.getName());
 	    }
 	    int end = signature.indexOf('(');
 	    if (end < 0) {
 		err.jspError("jsp.error.tld.fn.invalid.signature.parenexpected",
-			func.getPrefix(), func.getName());
+			     func.getPrefix(), func.getName());
 	    }
 	    return signature.substring(start+1, end).trim();
 	}
@@ -1304,7 +1303,7 @@ class Validator {
 		    p = signature.indexOf(')', start);
 		    if (p < 0) {
 			err.jspError("jsp.error.tld.fn.invalid.signature",
-				func.getPrefix(), func.getName());
+				     func.getPrefix(), func.getName());
 		    }
 		    lastArg = true;
 		}
@@ -1327,7 +1326,8 @@ class Validator {
 		    fnmap.put(fnQName, method);
 		}
 
-		public Method resolveFunction(String prefix, String localName) {
+		public Method resolveFunction(String prefix,
+					      String localName) {
 		    return (Method) this.fnmap.get(prefix + ":" + localName);
 		}
 	    }
@@ -1348,9 +1348,9 @@ class Validator {
 				n.getFunctionInfo().getFunctionClass());
 		    } catch (ClassNotFoundException e) {
 			err.jspError("jsp.error.function.classnotfound",
-				n.getFunctionInfo().getFunctionClass(),
-				n.getPrefix() + ':' + n.getName(),
-				e.getMessage());
+				     n.getFunctionInfo().getFunctionClass(),
+				     n.getPrefix() + ':' + n.getName(),
+				     e.getMessage());
 		    }
 		    String paramTypes[] = n.getParameters();
 		    int size = paramTypes.length;
@@ -1360,15 +1360,17 @@ class Validator {
 			for (i = 0; i < size; i++) {
 			    params[i] = JspUtil.toClass(paramTypes[i], loader);
 			}
-			method = c.getDeclaredMethod(n.getMethodName(), params);
+			method = c.getDeclaredMethod(n.getMethodName(),
+						     params);
 		    } catch (ClassNotFoundException e) {
 			err.jspError("jsp.error.signature.classnotfound",
-				paramTypes[i],
-				n.getPrefix() + ':' + n.getName(),
-				e.getMessage());
+				     paramTypes[i],
+				     n.getPrefix() + ':' + n.getName(),
+				     e.getMessage());
 		    } catch (NoSuchMethodException e ) {
-			err.jspError("jsp.error.noMethod", n.getName(),
-				n.getMethodName(), c.getName());
+			err.jspError("jsp.error.noFunctionMethod",
+				     n.getMethodName(), n.getName(),
+				     c.getName());
 		    }
 		    fmapper.mapFunction(n.getPrefix() + ':' + n.getName(),
 					method);
