@@ -144,6 +144,7 @@ public class SimpleTcpConnector  extends TcpEndpointConnector implements ServerC
     }
 
     public void stop() throws Exception {
+	cm.log("<l:stopEndpoint port=\"" + port + "\" handler=\"" + con.getClass().getName() + "\" />");
     	ep.stopEndpoint();
     }
 

@@ -105,8 +105,15 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 
 	//	System.out.println("New Connection");
 	try {
+	    // XXX - Add workarounds for the fact that the underlying
+	    // serverSocket.accept() call can now time out.  This whole
+	    // architecture needs some serious review.
+	    if (connection == null)
+		return;
 	    //	    System.out.print("1");
 	    socket=connection.getSocket();
+	    if (socket == null)
+		return;
 	    //	    System.out.print("2");
 	    InputStream in=socket.getInputStream();
 	    OutputStream out=socket.getOutputStream();
@@ -175,7 +182,7 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	    contextM.log( "Error reading request " + e.getMessage());
 	} finally {
 	    // recycle kernel sockets ASAP
-	    try { socket.close (); }
+	    try { if (socket != null) socket.close (); }
 	    catch (IOException e) { /* ignore */ }
         }
 	//	System.out.print("6");
