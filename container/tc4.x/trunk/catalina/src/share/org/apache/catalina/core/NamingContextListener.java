@@ -330,7 +330,17 @@ public class NamingContextListener
             // Setting the context in read/write mode
             ContextAccessController.setWritable(getName(), container);
 
-            ContextBindings.unbindClassLoader(container, container);
+            if (container instanceof Context) {
+                ContextBindings.unbindClassLoader
+                    (container, container, 
+                     ((Container) container).getLoader().getClassLoader());
+            }
+
+            if (container instanceof Server) {
+                ContextBindings.unbindClassLoader
+                    (container, container, 
+                     this.getClass().getClassLoader());
+            }
 
             ContextAccessController.unsetSecurityToken(getName(), container);
 
