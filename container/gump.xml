@@ -80,6 +80,7 @@
     <depend project="jakarta-servletapi-5-jsp"/>
     <depend project="jakarta-regexp"/>
     <option project="junit" />
+    <depend project="javagroups" />
 
     <work nested="build/server/classes"/>
     <home nested="build"/>
