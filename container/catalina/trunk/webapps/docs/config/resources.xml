@@ -76,6 +76,13 @@
 
     <attributes>
 
+      <attribute name="allowLinking" required="false">
+        <p>If the value of this flag is <code>true</code>, symlinks will be
+        allowed inside the web application, pointing to resources outside the
+        web application base path. If not specified, the default value
+        of the flag is <code>false</code>.</p>
+      </attribute>
+
       <attribute name="cached" required="false">
         <p>This boolean flag indicates if the resources should be cached. It
         defaults to <code>true</code>.</p>
@@ -85,6 +92,12 @@
         <p>Maximum size in kilobytes (KB) of the cache associated with 
         the resources, if cached is set to true. It defaults 
         to <code>10240</code> (10 megabytes).</p>
+      </attribute>
+
+      <attribute name="cacheTTL" required="false">
+        <p>Amount of time in milliseconds between cache entries revalidation.
+        If not specified, the default value is <code>5000</code> 
+        (5 seconds).</p>
       </attribute>
 
       <attribute name="caseSensitive" required="false">
