@@ -198,6 +198,8 @@ Bugzilla Bugs Resolved:
 [B1] 6641  Download of MS Office docs from protected areas fail with IE
 [B1] 6644  Whitespace after Content-type header value leads to 
            POST method failure
+[B3] 6662  Servlet context fails if webapp name smaller version of another 
+           webapp
 [B1] 6668  HttpProcessor takes incorrect defaults for proxy port according 
            to HTTP/1.1 Spec
 [B1] 6772  [Security] RequestDipatcher allows to bypass security manager 
@@ -212,6 +214,8 @@ Bugzilla Bugs Resolved:
            in Authorization request parameter
 [B3] 7488  JspC generates wrong package with -webapp on PC/DOS/NT/Win2k
 [B3] 7534  StackOverflowError in ChunkedOutputFilter.doWrite()
+[B3] 7170  JDBCStore doesn't work with Orcale 8.x
+[B3] 8092  Problems forwarding from an included servlet
 
 
 ============================
