@@ -16,6 +16,9 @@
   <property name="webapps.dist"    value="${basedir}/../dist"/>
   <property name="webapp.name"     value="admin"/>
 
+  <!-- Dependent JARs and files -->
+  <property name="servlet.jar" value="${api.home}/dist/lib/servlet.jar"/>
+
   <!-- Construct Admin classpath -->
   <path id="admin.classpath">
     <pathelement location="${commons-modeler.jar}"/>
