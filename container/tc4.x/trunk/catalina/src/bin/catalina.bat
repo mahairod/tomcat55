@@ -44,11 +44,11 @@ rem ----- Prepare Appropriate Java Execution Commands -------------------------
 if not "%OS%" == "Windows_NT" goto noTitle
 set _STARTJAVA=start "Catalina" "%JAVA_HOME%\bin\java"
 set _RUNJAVA="%JAVA_HOME%\bin\java"
-goto setBootpath
+goto gotTitle
 :noTitle
 set _STARTJAVA=start "%JAVA_HOME%\bin\java"
 set _RUNJAVA="%JAVA_HOME%\bin\java"
-
+:gotTitle
 
 rem ----- Set Up The Runtime Classpath ----------------------------------------
 
