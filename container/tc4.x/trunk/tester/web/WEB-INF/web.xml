@@ -109,6 +109,11 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedErrorPage09</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedForward00</url-pattern>
     </filter-mapping>
 
@@ -389,6 +394,11 @@
     <servlet>
         <servlet-name>ErrorPage08</servlet-name>
         <jsp-file>/ErrorPage08.jsp</jsp-file>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ErrorPage09</servlet-name>
+        <jsp-file>/ErrorPage09.jsp</jsp-file>
     </servlet>
 
     <servlet>
@@ -768,6 +778,16 @@
     <servlet-mapping>
         <servlet-name>ErrorPage08</servlet-name>
         <url-pattern>/WrappedErrorPage08</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage09</servlet-name>
+        <url-pattern>/ErrorPage09</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ErrorPage09</servlet-name>
+        <url-pattern>/WrappedErrorPage09</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

@@ -329,6 +329,21 @@
           status="200"
       outContent="ErrorPage06 PASSED - HTML"/>
 
+    <!-- ========== Exception Mapping (JSP Error Page) ==================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ErrorPage09"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage10 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedErrorPage09"
+           debug="${debug}"
+          status="200"
+      outContent="ErrorPage10 PASSED"/>
+
+
   </target>
 
 
