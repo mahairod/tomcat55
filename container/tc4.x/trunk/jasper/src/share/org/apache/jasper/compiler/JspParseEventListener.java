@@ -352,7 +352,7 @@ public class JspParseEventListener implements ParseEventListener {
 	else
 	    writer.println("response.setContentType(\"" +
 			   servletContentType +
-			   ";charset=8859_1\");");
+			   ";charset=ISO-8859-1\");");
 	writer.println("pageContext = _jspxFactory.getPageContext(this, request, response,\n"
 					+ "\t\t\t"
 					+ writer.quoteString(error) + ", "

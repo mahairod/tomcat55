@@ -122,9 +122,9 @@ public class ParserController {
     /*
      * The encoding of the "top" file. This encoding is used
      * for included files by default.
-     * Defaults to "8859_1" per JSP spec.
+     * Defaults to "ISO-8859-1" per JSP spec.
      */
-    private String topFileEncoding = "8859_1"; 
+    private String topFileEncoding = "ISO-8859-1"; 
     
     /*
      * The 'new' encoding required to read a page.
