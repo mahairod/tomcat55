@@ -141,17 +141,10 @@ public class Constants {
     public static final int DEFAULT_BUFFER_SIZE = 8*K;
 
     /**
-     * The query parameter that causes the JSP engine to just
-     * pregenerated the servlet but not invoke it. 
-     */
-    public static final String PRECOMPILE = "jsp_precompile";
-
-    /**
      * Servlet context and request attributes that the JSP engine
      * uses. 
      */
     public static final String INC_REQUEST_URI = "javax.servlet.include.request_uri";
-    public static final String INC_SERVLET_PATH = "javax.servlet.include.servlet_path";
     public static final String TMP_DIR = "javax.servlet.context.tempdir";
 
     /**

@@ -207,7 +207,7 @@ public class Compiler {
     {
 	Options options=pageInfo.getOptions();
 	if( debug > 0 ) logCompileInfo( pageInfo );
-	
+
         javac.setEncoding(pageInfo.getJavaEncoding());
         javac.setClasspath( computeCompilerClassPath( pageInfo ) );
         javac.setOutputDir(containerL.getOutputDir());
@@ -216,6 +216,8 @@ public class Compiler {
     }
 
     public void logCompileInfo( JspPageInfo pageInfo ) {
+	containerL.log( "Compiling java file " +
+			pageInfo.getMangler().getJavaFileName());
 	Options options=pageInfo.getOptions();
 	containerL.log( "CLASSPATH= " + computeCompilerClassPath( pageInfo) );
 	if( debug > 2) {
@@ -253,10 +255,7 @@ public class Compiler {
     /** Create a compier based on our options
      */
     public JavaCompiler createJavaCompiler(JspPageInfo pageInfo) {
-	String javacName=pageInfo.getOptions().getJspCompilerPlugin();
-	JavaCompiler javaC=JavaCompiler.createJavaCompiler( containerL,
-							    javacName );
-	return javaC;
+	return createJavaCompiler( pageInfo, null );
     }
     
     /** Create a compier using a certain plugin
@@ -264,6 +263,9 @@ public class Compiler {
     public JavaCompiler createJavaCompiler(JspPageInfo pageInfo,
 					   String javacName)
     {
+	if( javacName==null ) 
+	    javacName=pageInfo.getOptions().getJspCompilerPlugin();
+	    
 	JavaCompiler javaC=JavaCompiler.createJavaCompiler( containerL,
 							    javacName );
 	return javaC;
@@ -271,6 +273,9 @@ public class Compiler {
     
 
     public void postCompile( JspPageInfo pageInfo ) {
+	if(debug>0) containerL.log( "Generated " +
+				    pageInfo.getMangler().getClassFileName() );
+
         if (!pageInfo.getOptions().getKeepGenerated()) {
             File javaFile = new File(pageInfo.getMangler().getJavaFileName());
             javaFile.delete();
