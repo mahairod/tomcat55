@@ -182,7 +182,7 @@ public class DigestAuthenticator
             // to get coordinated session invalidation at logout
             String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
             if (ssoId != null)
-                associate(ssoId, getSession(request, true));
+                associate(ssoId, request.getSessionInternal(true));
             return (true);
         }
 

@@ -112,7 +112,7 @@ public class FormAuthenticator
                     principal.getName() + "'");
             // Associate the session with any existing SSO session
             if (ssoId != null)
-                associate(ssoId, getSession(request, true));
+                associate(ssoId, request.getSessionInternal(true));
             return (true);
         }
 
@@ -133,7 +133,7 @@ public class FormAuthenticator
 
         // Have we authenticated this user before but have caching disabled?
         if (!cache) {
-            session = getSession(request, true);
+            session = request.getSessionInternal(true);
             if (log.isDebugEnabled())
                 log.debug("Checking for reauthenticate in session " + session);
             String username =
@@ -162,7 +162,7 @@ public class FormAuthenticator
         // Is this the re-submit of the original request URI after successful
         // authentication?  If so, forward the *original* request instead.
         if (matchRequest(request)) {
-            session = getSession(request, true);
+            session = request.getSessionInternal(true);
             if (log.isDebugEnabled())
                 log.debug("Restore request from session '" + session.getId() 
                           + "'");
@@ -198,7 +198,7 @@ public class FormAuthenticator
 
         // No -- Save this request and redirect to the form login page
         if (!loginAction) {
-            session = getSession(request, true);
+            session = request.getSessionInternal(true);
             if (log.isDebugEnabled())
                 log.debug("Save request in session '" + session.getId() + "'");
             saveRequest(request, session);
@@ -206,7 +206,7 @@ public class FormAuthenticator
                 context.getServletContext().getRequestDispatcher
                 (config.getLoginPage());
             try {
-                disp.forward(request, response);
+                disp.forward(request.getRequest(), response.getResponse());
                 response.finishResponse();
             } catch (Throwable t) {
                 log.warn("Unexpected error forwarding to login page", t);
@@ -227,7 +227,7 @@ public class FormAuthenticator
                 context.getServletContext().getRequestDispatcher
                 (config.getErrorPage());
             try {
-                disp.forward(request, response);
+                disp.forward(request.getRequest(), response.getResponse());
             } catch (Throwable t) {
                 log.warn("Unexpected error forwarding to error page", t);
             }
@@ -238,7 +238,7 @@ public class FormAuthenticator
             log.debug("Authentication of '" + username + "' was successful");
 
         if (session == null)
-            session = getSession(request, false);
+            session = request.getSessionInternal(false);
         if (session == null) {
             if (container.getLogger().isDebugEnabled())
                 container.getLogger().debug("User took so long to log on the session expired");
@@ -283,7 +283,7 @@ public class FormAuthenticator
     protected boolean matchRequest(Request request) {
 
       // Has a session been created?
-      Session session = getSession(request, false);
+      Session session = request.getSessionInternal(false);
       if (session == null)
           return (false);
 
