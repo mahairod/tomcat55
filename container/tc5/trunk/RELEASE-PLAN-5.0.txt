@@ -37,10 +37,10 @@ either: Alpha, Beta, or Stable.
 This Release Plan proposes the following prospective target dates 
 for stability:
 
-  End of July, 2003
-  -----------------
+  Middle of August, 2003
+  ----------------------
 
-Tomcat 5.0 should reach Beta status.
+Tomcat 5.0 should reach Beta status by this date.
 
   Servlet 2.4 and JSP 2.0 Final Specification Releases (expected by 09/2003)
   ----------------------------------------------------
