@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE server [
+  <!ENTITY catalina.home "/ws/50/embed">
+]>
+
+<server>
+  <classpath codebase="file:&catalina.home;/lib/" archives="*"/>
+  <classpath codebase="." archives="tomcat5-service.jar"/>
+ 
+  <mbean code="org.apache.commons.modeler.BaseModelMBean"
+          name="Catalina:type=server" >
+    <constructor>
+        <arg type="java.lang.String" value="org.apache.catalina.startup.Catalina" />
+    </constructor>
+    <attribute name="catalinaHome">&catalina.home;</attribute>
+    <attribute name="useNaming">false</attribute>
+  </mbean>
+
+  <mbean code="org.jboss.web.catalina.Tomcat5"
+         name="jboss.web:service=EmbeddedCatalina41" >
+  </mbean>
+
+</server>
+
