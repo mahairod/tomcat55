@@ -594,7 +594,9 @@ public class ProxyDirContext implements DirContext {
      */
     public Context createSubcontext(Name name)
         throws NamingException {
-        return dirContext.createSubcontext(parseName(name));
+        Context context = dirContext.createSubcontext(parseName(name));
+        cacheUnload(name.toString());
+        return context;
     }
 
 
@@ -610,7 +612,9 @@ public class ProxyDirContext implements DirContext {
      */
     public Context createSubcontext(String name)
         throws NamingException {
-        return dirContext.createSubcontext(parseName(name));
+        Context context = dirContext.createSubcontext(parseName(name));
+        cacheUnload(name.toString());
+        return context;
     }
 
 
@@ -905,6 +909,7 @@ public class ProxyDirContext implements DirContext {
     public void modifyAttributes(Name name, int mod_op, Attributes attrs)
         throws NamingException {
         dirContext.modifyAttributes(parseName(name), mod_op, attrs);
+        cacheUnload(name.toString());
     }
 
 
@@ -923,6 +928,7 @@ public class ProxyDirContext implements DirContext {
     public void modifyAttributes(String name, int mod_op, Attributes attrs)
         throws NamingException {
         dirContext.modifyAttributes(parseName(name), mod_op, attrs);
+        cacheUnload(name);
     }
 
 
@@ -943,6 +949,7 @@ public class ProxyDirContext implements DirContext {
     public void modifyAttributes(Name name, ModificationItem[] mods)
         throws NamingException {
         dirContext.modifyAttributes(parseName(name), mods);
+        cacheUnload(name.toString());
     }
 
 
@@ -960,6 +967,7 @@ public class ProxyDirContext implements DirContext {
     public void modifyAttributes(String name, ModificationItem[] mods)
         throws NamingException {
         dirContext.modifyAttributes(parseName(name), mods);
+        cacheUnload(name);
     }
 
 
@@ -981,6 +989,7 @@ public class ProxyDirContext implements DirContext {
     public void bind(Name name, Object obj, Attributes attrs)
         throws NamingException {
         dirContext.bind(parseName(name), obj, attrs);
+        cacheUnload(name.toString());
     }
 
 
@@ -998,6 +1007,7 @@ public class ProxyDirContext implements DirContext {
     public void bind(String name, Object obj, Attributes attrs)
         throws NamingException {
         dirContext.bind(parseName(name), obj, attrs);
+        cacheUnload(name);
     }
 
 
@@ -1022,6 +1032,7 @@ public class ProxyDirContext implements DirContext {
     public void rebind(Name name, Object obj, Attributes attrs)
         throws NamingException {
         dirContext.rebind(parseName(name), obj, attrs);
+        cacheUnload(name.toString());
     }
 
 
@@ -1039,6 +1050,7 @@ public class ProxyDirContext implements DirContext {
     public void rebind(String name, Object obj, Attributes attrs)
         throws NamingException {
         dirContext.rebind(parseName(name), obj, attrs);
+        cacheUnload(name);
     }
 
 
@@ -1061,7 +1073,10 @@ public class ProxyDirContext implements DirContext {
      */
     public DirContext createSubcontext(Name name, Attributes attrs)
         throws NamingException {
-        return dirContext.createSubcontext(parseName(name), attrs);
+        DirContext context = 
+            dirContext.createSubcontext(parseName(name), attrs);
+        cacheUnload(name.toString());
+        return context;
     }
 
 
@@ -1078,7 +1093,10 @@ public class ProxyDirContext implements DirContext {
      */
     public DirContext createSubcontext(String name, Attributes attrs)
         throws NamingException {
-        return dirContext.createSubcontext(parseName(name), attrs);
+        DirContext context = 
+            dirContext.createSubcontext(parseName(name), attrs);
+        cacheUnload(name);
+        return context;
     }
 
 
