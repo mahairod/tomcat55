@@ -32,9 +32,9 @@
   <property name="tomcat-coyote.jar"
            value="${tomcat-coyote.home}/build/lib/tomcat-coyote.jar"/>
   <property name="tomcat-jk.jar"
-           value="${tomcat-jk.home}/build/WEB-INF/lib/tomcat-jk.jar"/>
+           value="${tomcat-jk.home}/build/lib/tomcat-jk.jar"/>
   <property name="tomcat-jk2.jar"
-           value="${tomcat-jk.home}/build/WEB-INF/lib/tomcat-jk2.jar"/>
+           value="${tomcat-jk.home}/build/lib/tomcat-jk2.jar"/>
   <property name="tomcat-webapp.jar"
            value="${tomcat-webapp.home}/build/lib/tomcat-webapp.jar"/>
   <property name="tomcat-http11.jar"
