@@ -78,10 +78,10 @@ commons-digester.loc=http://www.apache.org/dist/jakarta/commons/digester/binarie
 
 
 # ----- Commons FileUpload, nightly build -----
-commons-fileupload.home=${base.path}/commons-fileupload-1.0-beta-1
+commons-fileupload.home=${base.path}/commons-fileupload-1.0-rc1
 commons-fileupload.lib=${commons-fileupload.home}
-commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0-beta-1.jar
-commons-fileupload.loc=http://www.apache.org/dist/jakarta/commons/fileupload/commons-fileupload-1.0-beta-1.tar.gz 
+commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0-rc1.jar
+commons-fileupload.loc=http://www.apache.org/dist/jakarta/commons/fileupload/commons-fileupload-1.0-rc1.tar.gz
 
 
 # ----- Commons Logging, version 1.0.1 or later -----
