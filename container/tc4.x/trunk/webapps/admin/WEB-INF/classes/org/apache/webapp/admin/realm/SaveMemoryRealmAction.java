@@ -229,9 +229,7 @@ public final class SaveMemoryRealmAction extends Action {
                 if (control != null) {
                     TreeControlNode parentNode = control.findNode(rform.getParentObjectName());
                     if (parentNode != null) {
-                        String nodeLabel =
-                            //"Realm (" + rform.getRealmType() + ")";
-                            "Realm (" + "MemoryRealm" + ")";
+                        String nodeLabel = rform.getNodeLabel();                        
                         String encodedName =
                             URLEncoder.encode(rObjectName);
                         TreeControlNode childNode =

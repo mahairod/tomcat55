@@ -228,9 +228,8 @@ public final class SaveJNDIRealmAction extends Action {
                     session.getAttribute("treeControlTest");
                 if (control != null) {
                     TreeControlNode parentNode = control.findNode(rform.getParentObjectName());
-                    if (parentNode != null) {
-                        String nodeLabel =
-                            "Realm (" + rform.getRealmType() + ")";
+                    if (parentNode != null) {                        
+                        String nodeLabel = rform.getNodeLabel(); 
                         String encodedName =
                             URLEncoder.encode(rObjectName);
                         TreeControlNode childNode =
