@@ -26,6 +26,17 @@
   </p>
 </section>
 
+<section name="Tomcat 5.5.7 (yoavs)">
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>32694</bug>: Fix bad code to make docBase path aboslute in antiLocking
+        method. (remm)
+      </fix>
+    </changelog>
+  </subsection>
+</section>
+
 <section name="Tomcat 5.5.6 (yoavs)">
   <subsection name="General">
     <changelog>
