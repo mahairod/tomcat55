@@ -516,9 +516,12 @@ public class Context {
     }
 
     public Object getAttribute(String name) {
-	Object o = attributes.get(name);
-
-        return attributes.get(name);
+        if (name.equals("servlet.classpath"))
+            return getClassPath();
+        else {
+            Object o = attributes.get(name);
+            return attributes.get(name);
+        }
     }
 
     public Enumeration getAttributeNames() {
