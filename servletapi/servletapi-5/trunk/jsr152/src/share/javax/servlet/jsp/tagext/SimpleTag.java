@@ -89,13 +89,15 @@ import javax.servlet.jsp.JspContext;
  *       tag handlers, simple tag handlers are never cached and reused by
  *       the JSP container.</li>
  *   <li>The <code>setJspContext()</code> and <code>setParent()</code> 
- *       methods are called by the container.</li>
+ *       methods are called by the container.  The <code>setParent()</code>
+ *       method is only called if the element is nested within another tag 
+ *       invocation.</li>
  *   <li>The setters for each attribute defined for this tag are called
- *       by the container, in the order in which they appear in the JSP
- *       page or Tag File.</li>
+ *       by the container.</li>
  *   <li>If a body exists, the <code>setJspBody()</code> method is called 
  *       by the container to set the body of this tag, as a 
- *       <code>JspFragment</code>.</li>
+ *       <code>JspFragment</code>.  If the action element is empty in
+ *       the page, this method is not called at all.</li>
  *   <li>The <code>doTag()</code> method is called by the container.  All
  *       tag logic, iteration, body evaluations, etc. occur in this 
  *       method.</li>
@@ -135,6 +137,9 @@ public interface SimpleTag extends JspTag {
     
     /**
      * Sets the parent of this tag, for collaboration purposes.
+     * <p>
+     * The container invokes this method only if this tag invocation is 
+     * nested within another tag invocation.
      *
      * @param parent the tag that encloses this tag
      */
@@ -161,7 +166,8 @@ public interface SimpleTag extends JspTag {
      * invoked zero or more times by the tag handler. 
      * <p>
      * This method is invoked by the JSP page implementation 
-     * object prior to <code>doTag()</code>. 
+     * object prior to <code>doTag()</code>.  If the action element is
+     * empty in the page, this method is not called at all.
      * 
      * @param jspBody The fragment encapsulating the body of this tag.
      */ 

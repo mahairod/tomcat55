@@ -111,6 +111,9 @@ public class SimpleTagSupport
     
     /**
      * Sets the parent of this tag, for collaboration purposes.
+     * <p>
+     * The container invokes this method only if this tag invocation is
+     * nested within another tag invocation.
      *
      * @param parent the tag that encloses this tag
      */
@@ -151,8 +154,9 @@ public class SimpleTagSupport
     /** 
      * Stores the provided JspFragment.
      *
-     * @param jspBody The fragment encapsulating the body of this tag, or
-     *     null if this tag as a body content type of empty.
+     * @param jspBody The fragment encapsulating the body of this tag.
+     *     If the action element is empty in the page, this method is 
+     *     not called at all.
      * @see SimpleTag#setJspBody
      */ 
     public void setJspBody( JspFragment jspBody ) {
@@ -163,7 +167,7 @@ public class SimpleTagSupport
      * Returns the body passed in by the container via setJspBody.
      *
      * @return the fragment encapsulating the body of this tag, or
-     *    null if this tag has a body content type of empty.
+     *    null if the action element is empty in the page.
      */
     protected JspFragment getJspBody() {
         return this.jspBody;
