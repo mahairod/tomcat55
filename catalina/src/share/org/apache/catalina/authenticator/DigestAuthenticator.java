@@ -313,7 +313,11 @@ public class DigestAuthenticator
         String a2 = method + ":" + uri;
         //System.out.println("A2:" + a2);
 
-        String md5a2 = md5Encoder.encode(md5Helper.digest(a2.getBytes()));
+        byte[] buffer = null;
+        synchronized (md5Helper) {
+            buffer = md5Helper.digest(a2.getBytes());
+        }
+        String md5a2 = md5Encoder.encode(buffer);
 
         return (realm.authenticate(userName, response, nOnce, nc, cnonce, qop,
                                    realmName, md5a2));
@@ -396,7 +400,10 @@ public class DigestAuthenticator
         String nOnceValue = request.getRemoteAddr() + ":" +
             currentTime + ":" + key;
 
-        byte[] buffer = md5Helper.digest(nOnceValue.getBytes());
+        byte[] buffer = null;
+        synchronized (md5Helper) {
+            buffer = md5Helper.digest(nOnceValue.getBytes());
+        }
         nOnceValue = md5Encoder.encode(buffer);
 
         // Updating the value in the no once hashtable
@@ -444,13 +451,14 @@ public class DigestAuthenticator
             realmName = request.getServerName() + ":"
                 + request.getServerPort();
 
-        byte[] buffer = md5Helper.digest(nOnce.getBytes());
+        byte[] buffer = null;
+        synchronized (md5Helper) {
+            buffer = md5Helper.digest(nOnce.getBytes());
+        }
 
         String authenticateHeader = "Digest realm=\"" + realmName + "\", "
             +  "qop=\"auth\", nonce=\"" + nOnce + "\", " + "opaque=\""
             + md5Encoder.encode(buffer) + "\"";
-        // System.out.println("Authenticate header value : "
-        //                   + authenticateHeader);
         response.setHeader("WWW-Authenticate", authenticateHeader);
 
     }
