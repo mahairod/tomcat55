@@ -82,6 +82,10 @@ grant codeBase "jar:file:${catalina.home}/server/webapps/admin/WEB-INF/lib/jaspe
         permission java.security.AllPermission;                                
 };
 
+grant codeBase "jar:file:${catalina.home}/server/webapps/admin/WEB-INF/lib/struts.jar!/-" {
+        permission java.security.AllPermission;                                
+};
+
 grant codeBase "jar:file:${catalina.home}/server/webapps/manager/WEB-INF/lib/jasper-compiler.jar!/-" {
         permission java.security.AllPermission;                                
 };                                                           
