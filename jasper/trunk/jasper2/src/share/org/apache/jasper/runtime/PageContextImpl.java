@@ -529,15 +529,23 @@ public class PageContextImpl
     public void handlePageException(Throwable t)
         throws IOException, ServletException 
     {
-        // set the request attribute with the Throwable.
-	request.setAttribute("javax.servlet.jsp.jspException", t);
-
 	if (errorPageURL != null && !errorPageURL.equals("")) {
+
+	    // Set request attributes
+	    request.setAttribute("javax.servlet.jsp.jspException", t);
+	    request.setAttribute("javax.servlet.error.exception", t);
+	    request.setAttribute("javax.servlet.error.status_code",
+	        new Integer(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
+	    request.setAttribute("javax.servlet.error.request_uri",
+		((HttpServletRequest) request).getRequestURI());
+	    request.setAttribute("javax.servlet.error.servlet_name",
+				 config.getServletName());
             try {
                 forward(errorPageURL);
             } catch (IllegalStateException ise) {
                 include(errorPageURL);
             }
+
 	} else {
             // Otherwise throw the exception wrapped inside a ServletException.
 	    // Set the exception as the root cause in the ServletException
