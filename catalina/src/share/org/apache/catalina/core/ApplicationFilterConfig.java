@@ -295,7 +295,8 @@ final class ApplicationFilterConfig implements FilterConfig, Serializable {
              if( System.getSecurityManager() != null) {
                 try{
                     SecurityUtil.doAsPrivilege("destroy",
-                                               filter);  
+                                               filter); 
+                    SecurityUtil.remove(filter);
                 } catch(java.lang.Exception ex){                    
                     log.error("ApplicationFilterConfig.doAsPrivilege", ex);
                 }
@@ -337,6 +338,7 @@ final class ApplicationFilterConfig implements FilterConfig, Serializable {
                     try{
                         SecurityUtil.doAsPrivilege("destroy",
                                                    filter);  
+                        SecurityUtil.remove(filter);
                     } catch(java.lang.Exception ex){    
                         log.error("ApplicationFilterConfig.doAsPrivilege", ex);
                     }
