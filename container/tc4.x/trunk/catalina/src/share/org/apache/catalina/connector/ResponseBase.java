@@ -673,6 +673,11 @@ public abstract class ResponseBase
         if (bufferCount > 0) {
             try {
                 output.write(buffer, 0, bufferCount);
+            } catch(IOException ioe) {
+                // An IOException on a write is almost always due to
+                // the remote client aborting the request.  Wrap this
+                // so that it can be handled better by the error dispatcher.
+                throw new ClientAbortException(ioe);
             } finally {
                 bufferCount = 0;
             }
