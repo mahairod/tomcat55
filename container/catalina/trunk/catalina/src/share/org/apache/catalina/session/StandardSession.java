@@ -802,7 +802,7 @@ public class StandardSession
         id = null;
         lastAccessedTime = 0L;
         maxInactiveInterval = -1;
-        accessCount = 1;
+        accessCount = 0;
         notes.clear();
         setPrincipal(null);
         isNew = false;
