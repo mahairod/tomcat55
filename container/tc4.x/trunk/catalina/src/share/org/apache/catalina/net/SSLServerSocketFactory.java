@@ -382,10 +382,13 @@ public class SSLServerSocketFactory
 
         try {
 
-            /*
-            Security.addProvider(new sun.security.provider.Sun());
-            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-            */
+            // Register the JSSE security Provider (if it is not already there)
+            try {
+                Security.addProvider((java.security.Provider)
+                    Class.forName("com.sun.net.ssl.internal.ssl.Provider").newInstance());
+            } catch (Throwable t) {
+                ;
+            }
 
             // Create an SSL context used to create an SSL socket factory
             SSLContext context = SSLContext.getInstance(protocol);
