@@ -26,8 +26,8 @@ The Java portion of Invocation:
     alternate ways to trigger events inside the process.
 
     For example, it usually happens that UNIX daemons upon reception of
-    the HUP signal, the service is stopper, configuration are re-read
-    from disk, and the service is started againg with the new
+    the HUP signal, the service is stopped, configuration is re-read
+    from disk, and the service is started again with the new
     configurations, or, upon reception of a TERM signal, the service is
     stopped (freeing all resources allocated) and the process is
     terminated.
@@ -61,12 +61,12 @@ The native portion of Invocation:
 
     The native portion of Invocation is made of two major components:
 
-    A system-indipendant library based on JNI handling the creation and
-    destruction of the Java Virtual Machine, and providing an easy way to
+    A system-independent library based on JNI handling the creation and
+    destruction of the Java Virtual Machine and providing an easy way to
     access to the service start(String argv[]), restart() and stop()
     methods as described above.
 
-    An Operating-System dependant set of sources dealing with calls from
+    An Operating-System dependent set of sources dealing with calls from
     the underlying operating system:
 
     - in UNIX operating systems we listen for TERM and HUP sinals, and
@@ -77,7 +77,7 @@ The native portion of Invocation:
     - in Microsoft Windows operating systems we provide two different
       modes of operation: a GUI based one that will allow the user to
       access to the above-mentioned methods thru a standard tray-icon
-      menu (there's no console allocated for the Java Process, wich is
+      menu (there's no console allocated for the Java Process, which is
       for most of us Windows users a major pain). Another mode to operate
       under Windows is thru the Win32 Service API (WinNT and Win2K only)
       thru the standard Control-Panel Service tab.
