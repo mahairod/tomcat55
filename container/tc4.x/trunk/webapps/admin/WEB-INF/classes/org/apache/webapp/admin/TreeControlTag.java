@@ -429,6 +429,7 @@ public class TreeControlTag extends TagSupport {
         }
 
         // Render the label for this node (if any)
+
         if (node.getLabel() != null) {
             String labelStyle = null;
             if (node.isSelected() && (styleSelected != null))
@@ -439,6 +440,11 @@ public class TreeControlTag extends TagSupport {
                 out.print("<a href=\"");
                 out.print(hyperlink);
                 out.print("\"");
+
+                String target = node.getTarget();
+                if(target != null)
+                    out.print(" Target=\"" + target + "\"");
+
                 if (labelStyle != null) {
                     out.print(" class=\"");
                     out.print(labelStyle);

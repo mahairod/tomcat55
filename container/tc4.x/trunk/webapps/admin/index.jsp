@@ -13,9 +13,9 @@
 
 <!-- Body -->
 
-<frameset rows="100,*" border="0">
+<frameset rows="100,*" border="1">
   <frame name="banner" src='<%= response.encodeURL("banner.jsp") %>' scrolling="no">
-  <frameset cols="300,*" border="0">
+  <frameset cols="300,*" border="1">
     <frame name="tree" src='<%= response.encodeURL("tree-control-test.jsp") %>' scrolling="auto">
     <frame name="content" src='<%= response.encodeURL("sample.jsp") %>' scrolling="auto">
   </frameset>
