@@ -71,6 +71,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.webapp.admin.LabelValueBean;
 
+import java.lang.reflect.Constructor;
 
 /**
  * Form bean for the individual environment entry page.
@@ -156,7 +157,10 @@ public final class EnvEntryForm extends BaseForm {
         typeVals.add(new LabelValueBean("java.lang.Integer", "java.lang.Integer"));    
         typeVals.add(new LabelValueBean("java.lang.Long", "java.lang.Long"));
         typeVals.add(new LabelValueBean("java.lang.Short", "java.lang.Short"));        
-        typeVals.add(new LabelValueBean("java.lang.String", "java.lang.String"));
+        typeVals.add(new LabelValueBean("java.lang.String", "java.lang.String"));           
+        typeVals.add(new LabelValueBean("java.lang.hehe", "java.lang.hehe"));
+        typeVals.add(new LabelValueBean("java.util.Vector", "java.util.Vector"));
+        
     }
 
     /**
@@ -195,7 +199,6 @@ public final class EnvEntryForm extends BaseForm {
 
     }
 
-
     /**
      * Validate the properties that have been set from this HTTP request,
      * and return an <code>ActionErrors</code> object that encapsulates any
@@ -206,10 +209,13 @@ public final class EnvEntryForm extends BaseForm {
      * @param mapping The mapping used to select this instance
      * @param request The servlet request we are processing
      */
+    
+    private ActionErrors errors = null;
+    
     public ActionErrors validate(ActionMapping mapping,
     HttpServletRequest request) {
 
-        ActionErrors errors = new ActionErrors();
+        errors = new ActionErrors();
 
         String submit = request.getParameter("submit");
         if (submit != null) {
@@ -243,12 +249,63 @@ public final class EnvEntryForm extends BaseForm {
                 errors.add("description",
                            new ActionError("users.error.quotes"));
             }
-
+            
+            if (validateType(entryType, value)) {
+                   errors.add("value",
+                           new ActionError("resources.error.value.mismatch"));
+            }
         }
-
         return (errors);
-
     }
 
-
+    /**
+     * Entry type must match type of value.
+     */
+    private boolean validateType(String entryType, String value) {
+        Class cls = null;
+        boolean mismatch = false;
+        try {
+            cls = Class.forName(entryType);
+            
+            if (Character.class.isAssignableFrom(cls)) {
+                // Special handling is needed because the UI returns
+                // a string even if it is a character (single length string).
+                if (value.length() != 1) {
+                    mismatch = true;
+                }
+            } else if (Boolean.class.isAssignableFrom(cls)) {
+                // Special handling is needed because Boolean
+                // string constructor accepts anything other than
+                // true to be false
+                if (!("true".equalsIgnoreCase(value) ||
+                "false".equalsIgnoreCase(value))) {
+                    mismatch = true;
+                }
+            } else if (Number.class.isAssignableFrom(cls)) {
+                // all numbers throw NumberFormatException if they are
+                // constructed with an incorrect number string
+                // We use the general string constructor to do this job
+                try {
+                    Class[] parameterTypes = {String.class};
+                    Constructor ct = cls.getConstructor(parameterTypes);
+                    Object arglist1[] = {value};
+                    Object retobj = ct.newInstance(arglist1);
+                } catch (Exception e) {
+                    mismatch = true;
+                }
+            } else if (String.class.isAssignableFrom(cls)) {
+                // all strings are allowed
+            } else {
+                // validation for other types not implemented yet
+               errors.add("entryType",
+                       new ActionError("resources.error.entryType.notimpl"));
+            }
+        } catch (ClassNotFoundException cnfe) {
+            // entry type has an invalid entry
+           errors.add("entryType",
+                       new ActionError("resources.error.entryType.invalid"));
+         }        
+        return mismatch;
+    }
+    
 }
