@@ -376,7 +376,8 @@ values, depending on how you configured your keystore earlier:</p>
   </tr>
   <tr>
    <td><code>truststorePass</code></td>
-   <td>The password to access the TrustStore.</td>
+   <td>The password to access the TrustStore.  This defaults to the value
+       of <code>keystorePass</code>.</td>
   </tr>
   <tr>
    <td><code>truststoreType</code></td>
