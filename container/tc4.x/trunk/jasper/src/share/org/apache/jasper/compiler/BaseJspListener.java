@@ -83,6 +83,10 @@ public class BaseJspListener implements ParseEventListener {
 	this.writer = writer;
     }
 
+    public void setReader(JspReader reader) {
+	this.reader = reader;
+    }
+
     public void setTemplateInfo(Mark start, Mark stop) {
     }
 
@@ -92,7 +96,7 @@ public class BaseJspListener implements ParseEventListener {
     public void endPageProcessing() throws JasperException {
     }
     
-    public void handleComment(Mark start, Mark stop) throws JasperException {
+    public void handleComment(Mark start, Mark stop, char[] text) throws JasperException {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.comments"));
     }
 
@@ -102,15 +106,15 @@ public class BaseJspListener implements ParseEventListener {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.directives"));
     }
     
-    public void handleDeclaration(Mark start, Mark stop, Hashtable attrs) throws JasperException {
+    public void handleDeclaration(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.declarations"));
     }
     
-    public void handleScriptlet(Mark start, Mark stop, Hashtable attrs) throws JasperException {
+    public void handleScriptlet(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.scriptlets"));
     }
     
-    public void handleExpression(Mark start, Mark stop, Hashtable attrs) throws JasperException {
+    public void handleExpression(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.expressions"));
     }
 
@@ -180,4 +184,7 @@ public class BaseJspListener implements ParseEventListener {
     public TagLibraries getTagLibraries() {
 	return null;
     }
+
+    public void handleRootBegin(Hashtable attrs) {};
+    public void handleRootEnd() {};
 }

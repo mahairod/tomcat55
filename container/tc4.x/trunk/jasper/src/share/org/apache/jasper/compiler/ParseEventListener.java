@@ -73,18 +73,27 @@ import org.apache.jasper.JasperException;
  * probably try and make this a SAX (XML) listener. 
  *
  * @author Anil K. Vijendran
+ * @author Pierre Delisle
  */
 public interface ParseEventListener {
+    /**
+     * The reader associated with the listener.
+     * As of JSP1.2, each part of the JSP tranlation
+     * unit is parsed with a new instance of a parser
+     * and the reader is different for each one.
+     */
+    public void setReader(JspReader reader);
+
     void setTemplateInfo(Mark start, Mark stop);
     void beginPageProcessing() throws JasperException;
 
-    void handleComment(Mark start, Mark stop) throws JasperException;
+    void handleComment(Mark start, Mark stop, char[] text) throws JasperException;
     void handleDirective(String directive, 
 			 Mark start, Mark stop, 
 			 Hashtable attrs) throws JasperException;
-    void handleDeclaration(Mark start, Mark stop, Hashtable attrs) throws JasperException;
-    void handleScriptlet(Mark start, Mark stop, Hashtable attrs) throws JasperException;
-    void handleExpression(Mark start, Mark stop, Hashtable attrs) throws JasperException;
+    void handleDeclaration(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException;
+    void handleScriptlet(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException;
+    void handleExpression(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException;
     void handleBean(Mark start, Mark stop, Hashtable attrs) 
 	throws JasperException;
     void handleBeanEnd (Mark start, Mark stop, Hashtable attrs)
@@ -120,5 +129,9 @@ public interface ParseEventListener {
 	throws JasperException;
 
     void endPageProcessing() throws JasperException;
+
+    public void handleRootBegin(Hashtable attrs);
+    public void handleRootEnd();
+
 }
 

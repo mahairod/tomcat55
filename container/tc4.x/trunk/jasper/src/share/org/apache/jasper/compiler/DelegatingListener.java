@@ -87,6 +87,10 @@ final class DelegatingListener implements ParseEventListener {
         this.action = action;
     }
 
+    public void setReader(JspReader reader) {
+	delegate.setReader(reader);
+    }
+
     void doAction(Mark start, Mark stop) throws JasperException {
         action.execute(start, stop);
     }
@@ -104,9 +108,9 @@ final class DelegatingListener implements ParseEventListener {
         delegate.endPageProcessing();
     }
     
-    public void handleComment(Mark start, Mark stop) throws JasperException {
+    public void handleComment(Mark start, Mark stop, char[] text) throws JasperException {
         doAction(this.tmplStart, this.tmplStop);
-        delegate.handleComment(start, stop);
+        delegate.handleComment(start, stop, text);
     }
 
     public void handleDirective(String directive, Mark start, Mark stop, Hashtable attrs) 
@@ -116,19 +120,19 @@ final class DelegatingListener implements ParseEventListener {
         delegate.handleDirective(directive, start, stop, attrs);
     }
     
-    public void handleDeclaration(Mark start, Mark stop, Hashtable attrs) throws JasperException {
+    public void handleDeclaration(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException {
         doAction(this.tmplStart, this.tmplStop);
-        delegate.handleDeclaration(start, stop, attrs);
+        delegate.handleDeclaration(start, stop, attrs, text);
     }
     
-    public void handleScriptlet(Mark start, Mark stop, Hashtable attrs) throws JasperException {
+    public void handleScriptlet(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException {
         doAction(this.tmplStart, this.tmplStop);
-        delegate.handleScriptlet(start, stop, attrs);
+        delegate.handleScriptlet(start, stop, attrs, text);
     }
     
-    public void handleExpression(Mark start, Mark stop, Hashtable attrs) throws JasperException {
+    public void handleExpression(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException {
         doAction(this.tmplStart, this.tmplStop);
-        delegate.handleExpression(start, stop, attrs);
+        delegate.handleExpression(start, stop, attrs, text);
     }
 
     public void handleBean(Mark start, Mark stop, Hashtable attrs) 
@@ -206,5 +210,8 @@ final class DelegatingListener implements ParseEventListener {
     public TagLibraries getTagLibraries() {
         return delegate.getTagLibraries();
     }
+
+    public void handleRootBegin(Hashtable attrs) {};
+    public void handleRootEnd() {};
 }
 
