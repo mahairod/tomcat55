@@ -220,6 +220,8 @@ public class DummyRequest
     public void setConnector(Connector connector) {}
     public Context getContext() { return null; }
     public void setContext(Context context) {}
+    public Host getHost() { return null; }
+    public void setHost(Host host) {}
     public String getInfo() { return null; }
     public Response getResponse() { return null; }
     public void setResponse(Response response) {}
