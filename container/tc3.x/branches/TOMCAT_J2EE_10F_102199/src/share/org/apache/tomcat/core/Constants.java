@@ -200,7 +200,7 @@ public class Constants {
         public static final String ERROR_MESSAGE =
             "javax.servlet.error.message";
         public static final String RESOLVED_SERVLET =
-            "javax.servlet.resolved";
+            "org.apache.tomcat.servlet.resolved";
     }
 
     public static class Locale {
