@@ -78,7 +78,7 @@
       <chmod src="${watchdog.dist}/runClient.sh" perm="+x"/>
       <chmod src="${watchdog.dist}/runTest.sh" perm="+x"/> 
 
-      <jar jarfile="${watchdog.dist}/check-client.jar"
+      <jar jarfile="${watchdog.dist}/client.jar"
         basedir="${watchdog.build}/clients" 
         items="org" />
 
