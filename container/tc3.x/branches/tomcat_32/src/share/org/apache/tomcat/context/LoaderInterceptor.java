@@ -128,6 +128,7 @@ public class LoaderInterceptor extends BaseInterceptor {
 		    return false;
 		}
 	    };
+/* Don't include subdirectories. Spec says just WEB-INF/lib/*.jar
         FilenameFilter dirfilter = new FilenameFilter() {
 		public boolean accept(File dir, String fname) {
 		    File f1 = new File(dir, fname);
@@ -137,6 +138,7 @@ public class LoaderInterceptor extends BaseInterceptor {
 		    return false;
 		}
 	    };
+*/
 
         if(f.exists() && f.isDirectory() && f.isAbsolute()) {
             String[] jarlist = f.list(jarfilter);
@@ -145,12 +147,14 @@ public class LoaderInterceptor extends BaseInterceptor {
                 v.addElement(jarlist[i]);
             }
 
+/* Don't include subdirectories. Spec says just WEB-INF/lib/*.jar
             String[] dirlist = f.list(dirfilter);
 
             for(int i=0; (dirlist != null) && (i < dirlist.length); ++i) {
                 File dir = new File(f, dirlist[i]);
                 getJars(v, dir);
             }
+*/
         }
     }
 
