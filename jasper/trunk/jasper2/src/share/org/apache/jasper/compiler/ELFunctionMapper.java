@@ -205,7 +205,7 @@ public class ELFunctionMapper {
 		    if (k != 0) {
 			ds.append(", ");
 		    }
-		    ds.append("Class.forName(\"" + params[k] + "\")");
+		    ds.append(params[k] + ".class");
 		}
 		ds.append("});\n");
 		// Put the current name in the global function map
