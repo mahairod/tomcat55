@@ -816,6 +816,7 @@ public class MBeanFactory extends BaseModelMBean {
 
         // Create a new StandardContext instance
         StandardContext context = new StandardContext();
+        path = getPathStr(path);
         context.setPath(path);
         context.setDocBase(docBase);
 
