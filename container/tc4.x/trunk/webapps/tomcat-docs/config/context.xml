@@ -183,6 +183,13 @@
         debugging detail level is zero (0).</p>
       </attribute>
 
+      <attribute name="swallowOutput" required="false">
+        <p>If the value of this flag is <code>true</code>, the bytes output to
+        System.out and System.err by the web application will be redirected to
+        the web application logger. If not specified, the default value 
+        of the flag is <code>false</code>.</p>
+      </attribute>
+
       <attribute name="workDir" required="false">
         <p>Pathname to a scratch directory to be provided by this Context
         for temporary read-write use by servlets within the associated web
