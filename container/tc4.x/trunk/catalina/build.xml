@@ -15,7 +15,6 @@
   <property name="catalina.jaxp.parser.jar" value="crimson.jar"/>
 
   <property name="servletapi.home"   value="../../jakarta-servletapi-4/dist"/>
-  <property name="avalon.dist"       value="../../dist/avalon"/>
 
   <property name="test.failonerror"  value="true"/>
   <property name="test.runner"       value="junit.textui.TestRunner"/>
@@ -138,10 +137,6 @@
              excludes="**/CVS/**">
       <exclude name="**/factory/Tyrex*.java" 
        unless="tyrex.present" />
-      <exclude name="**/factory/ResourceFactory.java" 
-       unless="jdbcse.present" />
-      <exclude name="**/factory/TransactionFactory.java" 
-       unless="jta.present" />
       <exclude name="**/factory/MailSessionFactory.java"
        unless="javamail.present" />
       <exclude name="**/factory/SendMailFactory.java"
