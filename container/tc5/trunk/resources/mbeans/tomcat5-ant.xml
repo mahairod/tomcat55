@@ -145,7 +145,7 @@
          <attribute name="privileged" value="true" />
        </mbean>
 
-       <mbean name="${domain}:j2eeType=WebModule,name=//localhost/servlet-examples,J2EEApplication=none,J2EEServer=none" 
+       <mbean name="${domain}:j2eeType=WebModule,name=//localhost/servlets-examples,J2EEApplication=none,J2EEServer=none" 
               code="org.apache.catalina.core.StandardContext"  modeler="true">
          <attribute name="docBase" value="/opt/50/webapps/servlets-examples" />
          <!-- Required for now -->
