@@ -80,6 +80,8 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Service;
+import org.apache.catalina.Realm;
+import org.apache.catalina.realm.JAASRealm;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -167,6 +169,19 @@ public class StandardEngine
 
 
     // ------------------------------------------------------------- Properties
+
+    /** Provide a default in case no explicit configuration is set
+     *
+     * @return configured realm, or a JAAS realm by default
+     */
+    public Realm getRealm() {
+        Realm configured=super.getRealm();
+        if( configured==null ) {
+            configured=new JAASRealm();
+            this.setRealm( configured );
+        }
+        return configured;
+    }
 
 
     /**
@@ -363,6 +378,19 @@ public class StandardEngine
      * @exception LifecycleException if a startup error occurs
      */
     public void start() throws LifecycleException {
+        if( started ) {
+            return;
+        }
+        if( oname==null ) {
+            // not registered in JMX yet - standalone mode
+            try {
+                domain=getName();
+                log.info( "Register " + domain );
+                oname=new ObjectName(domain + ":type=Engine");
+            } catch( Throwable t ) {
+                log.info("Error registering ", t );
+            }
+        }
 
         // Log our server identification information
         //System.out.println(ServerInfo.getServerInfo());
@@ -426,4 +454,13 @@ public class StandardEngine
 
         return name;
     }
+
+    public ObjectName createObjectName(String domain, ObjectName parent)
+        throws Exception
+    {
+        if( log.isDebugEnabled())
+            log.debug("Create ObjectName " + domain + " " + parent );
+        return new ObjectName( domain + ":type=Engine");
+    }
+
 }
