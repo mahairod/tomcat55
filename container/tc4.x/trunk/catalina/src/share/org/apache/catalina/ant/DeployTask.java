@@ -63,19 +63,23 @@
 package org.apache.catalina.ant;
 
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 
 /**
- * Ant task that implements the <code>/reload</code> command, supported by the
- * Tomcat manager application.
+ * Ant task that implements the <code>/deploy</code> command, supported by
+ * the Tomcat manager application.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  * @since 4.1
  */
-public class ReloadTask extends AbstractCatalinaTask {
+public class DeployTask extends AbstractCatalinaTask {
 
 
     // ------------------------------------------------------------- Properties
@@ -95,6 +99,20 @@ public class ReloadTask extends AbstractCatalinaTask {
     }
 
 
+    /**
+     * URL of the web application archive (WAR) file to be deployed.
+     */
+    protected String war = null;
+
+    public String getWar() {
+        return (this.war);
+    }
+
+    public void setWar(String war) {
+        this.war = war;
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -110,7 +128,22 @@ public class ReloadTask extends AbstractCatalinaTask {
             throw new BuildException
                 ("Must specify 'path' attribute");
         }
-        execute("/reload?path=" + this.path);
+        if (war == null) {
+            throw new BuildException
+                ("Must specify 'war' attribute");
+        }
+        BufferedInputStream stream = null;
+        int contentLength = -1;
+        try {
+            URL url = new URL(war);
+            URLConnection conn = url.openConnection();
+            contentLength = conn.getContentLength();
+            stream = new BufferedInputStream(conn.getInputStream(), 1024);
+        } catch (IOException e) {
+            throw new BuildException(e);
+        }
+        execute("/deploy?path=" + this.path, stream,
+                "application/octet-stream", contentLength);
 
     }
 

@@ -27,15 +27,21 @@ configuration file.</p>
 (installed by default on context path <code>/manager</code>) that supports
 the following functions:</p>
 <ul>
-<li>Deploy a new web application, on a specified context path, from a
-    specified directory or WAR file pathname.</li>
+<li>Deploy a new web application, on a specified context path, from
+    the uploaded contents of a WAR file.</li>
+<li>Install a new web application, which can be anywhere on the
+    server's disks.</li>
 <li>List the currently deployed web applications, as well as the
     sessions that are currently active for those web apps.</li>
-<li>Cause an existing application to be reloaded.</li>
-<li>Undeploy an existing web application.</li>
+<li>Reload an existing web application, to reflect changes in the
+    contents of <code>/WEB-INF/classes</code> or <code>/WEB-INF/lib</code>.
+    </li>
+<li>Remove an installed web application.</li>
+<li>Start a stopped application (thus making it available again).</li>
 <li>Stop an existing application (so that it becomes unavailable), but
     do not undeploy it.</li>
-<li>Start a stopped application (thus making it available again).</li>
+<li>Undeploy a deployed web application and delete its document base
+    directory.</li>
 </ul>
 
 <p>Since <code>Manager</code> is itself a web application, it interacts with
@@ -156,6 +162,10 @@ the host and port appropriately for your installation.</p>
         path of a directory that contains the unpacked version of a web
         application.  This directory will be attached to the context path
         you specify without any changes.</li>
+    <li><strong>file:/absolute/path/to/a/webapp.war</strong> - The absolute
+        path of a web application archive (WAR) file.  This is valid
+        <strong>only</strong> for the <code>/deploy</code> command, and is
+        the only acceptable format to that command.</li>
     <li><strong>jar:file:/absolute/path/to/a/warfile.war!/</strong> - The
         URL to a local web application archive (WAR) file.  You can use any
         syntax that is valid for the <code>JarURLConnection</code> class
@@ -183,6 +193,63 @@ version of the messages.</p>
 <subsection name="Deploy A New Application">
 
 <source>
+http://localhost:8080/manager/deploy?path=/foo
+</source>
+
+<p>Upload the web application archive (WAR) file that is specified as the
+request data in this HTTP PUT request, install it into the <code>appBase</code>
+directory of our corresponding virtual host, and start it on the context path
+specified by the <code>path</code> request parameter.  The application can
+later be undeployed (and the corresponding application directory removed)
+by use of the <code>/undeploy</code>.</p>
+
+<p><strong>NOTE</strong> - Since this command requires an HTTP PUT request,
+it is usable only from tools (such as the custom Ant tasks described below).
+To install a new web application without copying, consider the
+<code>/install</code> command described below.  This command is the logical
+opposite of the <code>/undeploy</code> command.</p>
+
+<p>If installation and startup is successful, you will receive a response
+like this:</p>
+<source>
+OK - Deployed application at context path /foo
+</source>
+
+<p>Otherwise, the response will start with <code>FAIL</code> and include an
+error message.  Possible causes for problems include:</p>
+<ul>
+<li><em>Application already exists at path /foo</em>
+    <blockquote>
+    <p>The context paths for all currently running web applications must be
+    unique.  Therefore, you must either remove or undeploy the existing web
+    application using this context path, or choose a different context path
+    for the new one.</p>
+    </blockquote></li>
+<li><em>Encountered exception</em>
+    <blockquote>
+    <p>An exception was encountered trying to start the new web application.
+    Check the Tomcat 4 logs for the details, but likely explanations include
+    problems parsing your <code>/WEB-INF/web.xml</code> file, or missing
+    classes encountered when initializing application event listeners and
+    filters.</p>
+    </blockquote></li>
+<li><em>Invalid context path was specified</em>
+    <blockquote>
+    <p>The context path must start with a slash character, unless you are
+    referencing the ROOT web application -- in which case the context path
+    must be a zero-length string.</p>
+    </blockquote></li>
+<li><em>No context path was specified</em>
+    <blockquote>
+    The <code>path</code> parameter is required.
+    </blockquote></li>
+</ul>
+
+</subsection>
+
+<subsection name="Install A New Application">
+
+<source>
 http://localhost:8080/manager/install?path=/foo&amp;war=file:/path/to/foo
 
 http://localhost:8080/manager/install?path=/bar&amp;war=jar:file:/path/to/bar.war!/
@@ -194,7 +261,8 @@ path (which must not be in use by any other web application).  The
 scheme) for either a directory or a web application archive (WAR) file.
 The supported syntax for a URL referring to a WAR file is described on the
 Javadocs page for the <code>java.net.JarURLConnection</code> class.  Use
-only URLs that refer to the entire WAR file.</p>
+only URLs that refer to the entire WAR file.  This command is the logical
+opposite of the <code>/remove</code> command.</p>
 
 <p>If installation and startup is successful, you will receive a response
 like this:</p>
@@ -208,9 +276,9 @@ error message.  Possible causes for problems include:</p>
 <li><em>Application already exists at path /foo</em>
     <blockquote>
     <p>The context paths for all currently running web applications must be
-    unique.  Therefore, you must either undeploy the existing web application
-    using this context path, or choose a different context path for the
-    new one.</p>
+    unique.  Therefore, you must either remove or undeploy the existing web
+    application using this context path, or choose a different context path
+    for the new one.</p>
     </blockquote></li>
 <li><em>Document base does not exist or is not a readable directory</em>
     <blockquote>
@@ -248,7 +316,7 @@ error message.  Possible causes for problems include:</p>
 
 </subsection>
 
-<subsection name="List Currently Deployed Applications">
+<subsection name="List Currently Deployed and Installed Applications">
 
 <source>
 http://localhost:8080/manager/list
@@ -256,8 +324,8 @@ http://localhost:8080/manager/list
 
 <p>List the context paths, current status (<code>running</code> or
 <code>stopped</code>), and number of active sessions for all currently
-deployed web applications.  A typical response immediately after starting
-Tomcat might look like this:</p>
+deployed and installed web applications.  A typical response immediately
+after starting Tomcat might look like this:</p>
 <source>
 OK - Listed applications for virtual host localhost
 /webdav:running:0
@@ -303,8 +371,51 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>No context exists for path /foo</em>
     <blockquote>
-    <p>There is no deployed application on the context path that you
-    specified.</p>
+    <p>There is no deployed or installed application on the context path
+    that you specified.</p>
+    </blockquote></li>
+<li><em>No context path was specified</em>
+    <blockquote>
+    The <code>path</code> parameter is required.
+    </blockquote></li>
+</ul>
+
+</subsection>
+
+<subsection name="Remove an Existing Application">
+
+<source>
+http://localhost:8080/manager/remove?path=/examples
+</source>
+
+<p>Signal an existing application to gracefully shut itself down, and then
+remove it from Tomcat (which also makes this context path available for
+reuse later).  This command is the logical opposite of the
+<code>/install</code> command.</p>
+
+<p>If this command succeeds, you will see a response like this:</p>
+<source>
+OK - Removed application at context path /examples
+</source>
+
+<p>Otherwise, the response will start with <code>FAIL</code> and include an
+error message.  Possible causes for problems include:</p>
+<ul>
+<li><em>Encountered exception</em>
+    <blockquote>
+    <p>An exception was encountered trying to remove the web application.
+    Check the Tomcat 4 logs for the details.</p>
+    </blockquote></li>
+<li><em>Invalid context path was specified</em>
+    <blockquote>
+    <p>The context path must start with a slash character, unless you are
+    referencing the ROOT web application -- in which case the context path
+    must be a zero-length string.</p>
+    </blockquote></li>
+<li><em>No context exists for path /foo</em>
+    <blockquote>
+    <p>There is no deployed or installed application on the context path
+    that you specified.</p>
     </blockquote></li>
 <li><em>No context path was specified</em>
     <blockquote>
@@ -356,7 +467,7 @@ error message.  Possible causes for problems include:</p>
 <ul>
 <li><em>Encountered exception</em>
     <blockquote>
-    <p>An exception was encountered trying to undeploy the web application.
+    <p>An exception was encountered trying to start the web application.
     Check the Tomcat 4 logs for the details.</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
@@ -367,8 +478,8 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>No context exists for path /foo</em>
     <blockquote>
-    <p>There is no deployed application on the context path that you
-    specified.</p>
+    <p>There is no deployed or installed application on the context path
+    that you specified.</p>
     </blockquote></li>
 <li><em>No context path was specified</em>
     <blockquote>
@@ -385,9 +496,9 @@ http://localhost:8080/manager/stop?path=/examples
 </source>
 
 <p>Signal an existing application to make itself unavailable, but leave it
-deployed.  Any request that comes in while an application is stopped will
-see an HTTP error 404, and this application will show as "stopped" on a
-list applications command.</p>
+deployed or installed.  Any request that comes in while an application is
+stopped will see an HTTP error 404, and this application will show as
+"stopped" on a list applications command.</p>
 
 <p>If this command succeeds, you will see a response like this:</p>
 <source>
@@ -399,7 +510,7 @@ error message.  Possible causes for problems include:</p>
 <ul>
 <li><em>Encountered exception</em>
     <blockquote>
-    <p>An exception was encountered trying to undeploy the web application.
+    <p>An exception was encountered trying to stop the web application.
     Check the Tomcat 4 logs for the details.</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
@@ -410,8 +521,8 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>No context exists for path /foo</em>
     <blockquote>
-    <p>There is no deployed application on the context path that you
-    specified.</p>
+    <p>There is no deployed or installed application on the context path
+    that you specified.</p>
     </blockquote></li>
 <li><em>No context path was specified</em>
     <blockquote>
@@ -425,16 +536,25 @@ error message.  Possible causes for problems include:</p>
 <subsection name="Undeploy an Existing Application">
 
 <source>
-http://localhost:8080/manager/remove?path=/examples
+http://localhost:8080/manager/undeploy?path=/examples
 </source>
 
-<p>Signal an existing application to gracefully shut itself down, and then
+<p><strong><font color="red">WARNING</font> - This command will
+delete the contents of the web application directory if it exists within the
+<code>appBase</code> directory (typically "webapps") for this virtual host
+</strong>.  If you simply want to take an application out of service,
+you should use the <code>/remove</code> command instead.</p>
+
+<p>Signal an existing application to gracefully shut itself down, and
 remove it from Tomcat (which also makes this context path available for
-reuse later).</p>
+reuse later).  In addition, the document root directory is removed, if it
+exists in the <code>appBase</code> directory (typically "webapps") for
+this virtual host.  This command is the logical opposite of the
+<code>/deploy</code> command.</p>
 
 <p>If this command succeeds, you will see a response like this:</p>
 <source>
-OK - Removed application at context path /examples
+OK - Undeployed application at context path /examples
 </source>
 
 <p>Otherwise, the response will start with <code>FAIL</code> and include an
@@ -453,8 +573,8 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>No context exists for path /foo</em>
     <blockquote>
-    <p>There is no deployed application on the context path that you
-    specified.</p>
+    <p>There is no deployed or installed application on the context path
+    that you specified.</p>
     </blockquote></li>
 <li><em>No context path was specified</em>
     <blockquote>
@@ -508,12 +628,14 @@ file might look something like this:</p>
   &lt;property name="password" value="mypassword"/&gt;
 
   &lt;-- Configure the custom Ant tasks for the Manager application --&gt;
-  &lt;taskdef name="install" classname="org.apache.catalina.ant.InstallTask"/&gt;
-  &lt;taskdef name="list"    classname="org.apache.catalina.ant.ListTask"/&gt;
-  &lt;taskdef name="reload"  classname="org.apache.catalina.ant.ReloadTask"/&gt;
-  &lt;taskdef name="remove"  classname="org.apache.catalina.ant.RemoveTask"/&gt;
-  &lt;taskdef name="start"   classname="org.apache.catalina.ant.StartTask"/&gt;
-  &lt;taskdef name="stop"    classname="org.apache.catalina.ant.StopTask"/&gt;
+  &lt;taskdef name="deploy"   classname="org.apache.catalina.ant.DeployTask"/&gt;
+  &lt;taskdef name="install"  classname="org.apache.catalina.ant.InstallTask"/&gt;
+  &lt;taskdef name="list"     classname="org.apache.catalina.ant.ListTask"/&gt;
+  &lt;taskdef name="reload"   classname="org.apache.catalina.ant.ReloadTask"/&gt;
+  &lt;taskdef name="remove"   classname="org.apache.catalina.ant.RemoveTask"/&gt;
+  &lt;taskdef name="start"    classname="org.apache.catalina.ant.StartTask"/&gt;
+  &lt;taskdef name="stop"     classname="org.apache.catalina.ant.StopTask"/&gt;
+  &lt;taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"/&gt;
 
   &lt;-- Executable Targets --&gt;
   &lt;target name="compile" description="Compile web application"&gt;
@@ -522,7 +644,7 @@ file might look something like this:</p>
 
   &lt;target name="deploy" description="Deploy web application"
           depends="compile"&gt;
-    &lt;install url="${url}" username="${username}" password="${password}"
+    &lt;deploy url="${url}" username="${username}" password="${password}"
             path="${path}" war="file://${build}"/&gt;
   &lt;/target&gt;
 
@@ -530,6 +652,11 @@ file might look something like this:</p>
           depends="compile"&gt;
     &lt;reload  url="${url}" username="${username}" password="${password}"
             path="${path}" war="file://${build}"/&gt;
+  &lt;/target&gt;
+
+  &lt;target name="undeploy" description="Undeploy and delete web application"&gt;
+    &lt;deploy url="${url}" username="${username}" password="${password}"
+            path="${path}"/&gt;
   &lt;/target&gt;
 
 &lt;/project&gt;

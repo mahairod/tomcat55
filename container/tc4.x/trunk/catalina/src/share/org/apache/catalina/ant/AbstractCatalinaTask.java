@@ -63,8 +63,10 @@
 package org.apache.catalina.ant;
 
 
+import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import org.apache.catalina.util.Base64;
@@ -80,6 +82,7 @@ import org.apache.tools.ant.Task;
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
+ * @since 4.1
  */
 
 public abstract class AbstractCatalinaTask extends Task {
@@ -165,30 +168,84 @@ public abstract class AbstractCatalinaTask extends Task {
      */
     public void execute(String command) throws BuildException {
 
+        execute(command, null, null, -1);
+
+    }
+
+
+    /**
+     * Execute the specified command, based on the configured properties.
+     * The input stream will be closed upon completion of this task, whether
+     * it was executed successfully or not.
+     *
+     * @param command Command to be executed
+     * @param istream InputStream to include in an HTTP PUT, if any
+     * @param contentType Content type to specify for the input, if any
+     * @param contentLength Content length to specify for the input, if any
+     *
+     * @exception BuildException if an error occurs
+     */
+    public void execute(String command, InputStream istream,
+                        String contentType, int contentLength)
+        throws BuildException {
+
         URLConnection conn = null;
         InputStreamReader reader = null;
         try {
 
             // Create a connection for this command
             conn = (new URL(url + command)).openConnection();
+            HttpURLConnection hconn = (HttpURLConnection) conn;
 
             // Set up standard connection characteristics
-            conn.setAllowUserInteraction(false);
-            conn.setDoInput(true);
-            conn.setDoOutput(false);
-            conn.setUseCaches(false);
-            conn.setRequestProperty("User-Agent",
-                                    "Catalina-Ant-Task/1.0");
+            hconn.setAllowUserInteraction(false);
+            hconn.setDoInput(true);
+            hconn.setUseCaches(false);
+            if (istream != null) {
+                hconn.setDoOutput(true);
+                hconn.setRequestMethod("PUT");
+                if (contentType != null) {
+                    hconn.setRequestProperty("Content-Type", contentType);
+                }
+                if (contentLength >= 0) {
+                    hconn.setRequestProperty("Content-Length",
+                                             "" + contentLength);
+                }
+            } else {
+                hconn.setDoOutput(false);
+                hconn.setRequestMethod("GET");
+            }
+            hconn.setRequestProperty("User-Agent",
+                                     "Catalina-Ant-Task/1.0");
 
             // Set up an authorization header with our credentials
             String input = username + ":" + password;
             String output = new String(Base64.encode(input.getBytes()));
-            conn.setRequestProperty("Authorization",
-                                    "Basic " + output);
+            hconn.setRequestProperty("Authorization",
+                                     "Basic " + output);
 
-            // Perform the requested command and process the output
-            conn.connect();
-            reader = new InputStreamReader(conn.getInputStream());
+            // Establish the connection with the server
+            hconn.connect();
+
+            // Send the request data (if any)
+            if (istream != null) {
+                BufferedOutputStream ostream =
+                    new BufferedOutputStream(hconn.getOutputStream(), 1024);
+                byte buffer[] = new byte[1024];
+                while (true) {
+                    int n = istream.read(buffer);
+                    if (n < 0) {
+                        break;
+                    }
+                    ostream.write(buffer, 0, n);
+                }
+                ostream.flush();
+                ostream.close();
+                istream.close();
+            }
+
+            // Process the response message
+            reader = new InputStreamReader(hconn.getInputStream());
             StringBuffer buff = new StringBuffer();
             String error = null;
             boolean first = true;
@@ -216,6 +273,7 @@ public abstract class AbstractCatalinaTask extends Task {
             if (error != null) {
                 throw new BuildException(error);
             }
+
         } catch (Throwable t) {
             throw new BuildException(t);
         } finally {
@@ -226,6 +284,14 @@ public abstract class AbstractCatalinaTask extends Task {
                     ;
                 }
                 reader = null;
+            }
+            if (istream != null) {
+                try {
+                    istream.close();
+                } catch (Throwable u) {
+                    ;
+                }
+                istream = null;
             }
         }
 

@@ -68,14 +68,14 @@ import org.apache.tools.ant.Task;
 
 
 /**
- * Ant task that implements the <code>/reload</code> command, supported by the
- * Tomcat manager application.
+ * Ant task that implements the <code>/undeploy</code> command, supported by
+ * the Tomcat manager application.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  * @since 4.1
  */
-public class ReloadTask extends AbstractCatalinaTask {
+public class UndeployTask extends AbstractCatalinaTask {
 
 
     // ------------------------------------------------------------- Properties
@@ -110,7 +110,7 @@ public class ReloadTask extends AbstractCatalinaTask {
             throw new BuildException
                 ("Must specify 'path' attribute");
         }
-        execute("/reload?path=" + this.path);
+        execute("/undeploy?path=" + this.path);
 
     }
 

@@ -65,10 +65,18 @@
 package org.apache.catalina.servlets;
 
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -78,6 +86,7 @@ import org.apache.catalina.ContainerServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
 import org.apache.catalina.Globals;
+import org.apache.catalina.Host;
 import org.apache.catalina.Session;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.StringManager;
@@ -126,6 +135,13 @@ import org.apache.catalina.util.StringManager;
  *     context path <code>/xxx</code> for this virtual host.</li>
  * <li><b>/stop?path=/xxx</b> - Stop the web application attached to
  *     context path <code>/xxx</code> for this virtual host.</li>
+ * <li><b>/undeploy?path=/xxx</b> - Shutdown and remove the web application
+ *     attached to context path <code>/xxx</code> for this virtual host,
+ *     and remove the underlying WAR file or document base directory.
+ *     (<em>NOTE</em> - This is only allowed if the WAR file or document
+ *     base is stored in the <code>appBase</code> directory of this host,
+ *     typically as a result of being placed there via the <code>/deploy</code>
+ *     command.</li>
  * </ul>
  * <p>Use <code>path=/</code> for the ROOT context.</p>
  * <p>The syntax of the URL for a web application archive must conform to one
@@ -281,7 +297,7 @@ public class ManagerServlet
         response.setContentType("text/plain");
         PrintWriter writer = response.getWriter();
 
-        // Process the requested command
+        // Process the requested command (note - "/deploy" is not listed here)
         if (command == null) {
             writer.println(sm.getString("managerServlet.noCommand"));
         } else if (command.equals("/install")) {
@@ -298,6 +314,53 @@ public class ManagerServlet
             start(writer, path);
         } else if (command.equals("/stop")) {
             stop(writer, path);
+        } else if (command.equals("/undeploy")) {
+            undeploy(writer, path);
+        } else {
+            writer.println(sm.getString("managerServlet.unknownCommand",
+                                        command));
+        }
+
+        // Finish up the response
+        writer.flush();
+        writer.close();
+
+    }
+
+
+    /**
+     * Process a PUT request for the specified resource.
+     *
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are creating
+     *
+     * @exception IOException if an input/output error occurs
+     * @exception ServletException if a servlet-specified error occurs
+     */
+    public void doPut(HttpServletRequest request,
+                      HttpServletResponse response)
+        throws IOException, ServletException {
+
+        // Verify that we were not accessed using the invoker servlet
+        if (request.getAttribute(Globals.INVOKED_ATTR) != null)
+            throw new UnavailableException
+                (sm.getString("managerServlet.cannotInvoke"));
+
+        // Identify the request parameters that we need
+        String command = request.getPathInfo();
+        if (command == null)
+            command = request.getServletPath();
+        String path = request.getParameter("path");
+
+        // Prepare our output writer to generate the response message
+        response.setContentType("text/plain");
+        PrintWriter writer = response.getWriter();
+
+        // Process the requested command
+        if (command == null) {
+            writer.println(sm.getString("managerServlet.noCommand"));
+        } else if (command.equals("/deploy")) {
+            deploy(writer, path, request);
         } else {
             writer.println(sm.getString("managerServlet.unknownCommand",
                                         command));
@@ -352,6 +415,185 @@ public class ManagerServlet
 
 
     /**
+     * Deploy a web application archive (included in the current request)
+     * at the specified context path.
+     *
+     * @param writer Writer to render results to
+     * @param path Context path of the application to be installed
+     * @param request Servlet request we are processing
+     */
+    protected synchronized void deploy(PrintWriter writer, String path,
+                                       HttpServletRequest request) {
+
+        if (debug >= 1) {
+            log("deploy: Deploying web application at '" + path + "'");
+        }
+
+        if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
+            writer.println(sm.getString("managerServlet.invalidPath", path));
+            return;
+        }
+        String displayPath = path;
+        if (displayPath.equals("")) {
+            displayPath = "/";
+        }
+
+        // Upload the web application archive to a temporary JAR file
+        File tempDir = (File) getServletContext().getAttribute
+            ("javax.servlet.context.tempdir");
+        File tempJar = new File(tempDir, "webapp.war");
+        tempJar.delete();
+        try {
+            if (debug >= 2) {
+                log("Uploading WAR file to " + tempJar);
+            }
+            ServletInputStream istream = request.getInputStream();
+            BufferedOutputStream ostream =
+                new BufferedOutputStream(new FileOutputStream(tempJar), 1024);
+            byte buffer[] = new byte[1024];
+            while (true) {
+                int n = istream.read(buffer);
+                if (n < 0) {
+                    break;
+                }
+                ostream.write(buffer, 0, n);
+            }
+            ostream.flush();
+            ostream.close();
+            istream.close();
+        } catch (IOException e) {
+            log("managerServlet.upload[" + displayPath + "]", e);
+            writer.println(sm.getString("managerServlet.exception",
+                                        e.toString()));
+            tempJar.delete();
+            return;
+        }
+
+        // Validate that the context path and directory name are available
+        if (deployer.findDeployedApp(path) != null) {
+            writer.println
+                (sm.getString("managerServlet.alreadyContext", displayPath));
+            tempJar.delete();
+            return;
+        }
+        if (!(context.getParent() instanceof Host)) {
+            writer.println(sm.getString("managerServlet.noAppBase",
+                                        displayPath));
+            tempJar.delete();
+            return;
+        }
+        String appBase = ((Host) context.getParent()).getAppBase();
+        File appBaseDir = new File(appBase);
+        if (!appBaseDir.isAbsolute()) {
+            appBaseDir = new File(System.getProperty("catalina.base"),
+                                  appBase);
+        }
+        String docBase = displayPath.substring(1);
+        if (docBase.length() < 1) {
+            docBase = "_";
+        }
+        File docBaseDir = new File(appBaseDir, docBase);
+        if (docBaseDir.exists()) {
+            writer.println(sm.getString("managerServlet.alreadyDocBase",
+                                        docBaseDir));
+            tempJar.delete();
+            return;
+        }
+        File tempBaseDir = new File(tempDir, docBase);
+
+        // Unpack the web application into a temporary directory
+        try {
+
+            // Open the uploaded WAR file
+            if (debug >= 2) {
+                log("Opening WAR file " + tempJar.getPath());
+            }
+            JarFile jarFile = new JarFile(tempJar);
+
+            // Create a temporary directory
+            if (debug >= 2) {
+                log("deploy: Creating WAR directory " + tempBaseDir);
+            }
+            tempBaseDir.mkdir();
+
+            // Unpack the contents of the uploaded WAR file
+            Enumeration jarEntries = jarFile.entries();
+            while (jarEntries.hasMoreElements()) {
+                JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
+                String name = jarEntry.getName();
+                int last = name.lastIndexOf('/');
+                if (last >= 0) {
+                    File parent = new File(tempBaseDir,
+                                           name.substring(0, last));
+                    parent.mkdirs();
+                }
+                if (name.endsWith("/")) {
+                    continue;
+                }
+                InputStream istream = jarFile.getInputStream(jarEntry);
+                deployExpand(istream, tempBaseDir, name);
+                istream.close();
+            }
+            jarFile.close();
+
+            // Rename the temporary directory to a corresponding name
+            // in appBase (which will cause the app to be auto-deployed)
+            if (!tempBaseDir.renameTo(docBaseDir)) {
+                log("Cannot rename " + tempBaseDir + " to " + docBaseDir);
+                writer.println(sm.getString("managerServlet.noRename",
+                                            displayPath));
+                undeployDir(tempBaseDir);
+                tempJar.delete();
+                return;
+            }
+
+        } catch (IOException e) {
+            log("managerServlet.unpack[" + displayPath + "]", e);
+            writer.println(sm.getString("managerServlet.exception",
+                                        e.toString()));
+            undeployDir(docBaseDir);
+            tempJar.delete();
+            return;
+        }
+
+        // Acknowledge successful completion of this deploy command
+        tempJar.delete();
+        writer.println(sm.getString("managerServlet.installed",
+                                    displayPath));
+
+    }
+
+
+    /**
+     * Expand the specified input stream into the specified dirctory, creating
+     * a file named from the specified relative path.
+     *
+     * @param istream InputStream to be copied
+     * @param docBaseDir Document base directory into which we are expanding
+     * @param name Relative pathname of the file to be created
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    protected void deployExpand(InputStream istream, File docBaseDir,
+                                String name) throws IOException {
+
+        File file = new File(docBaseDir, name);
+        BufferedOutputStream ostream =
+            new BufferedOutputStream(new FileOutputStream(file));
+        byte buffer[] = new byte[2048];
+        while (true) {
+            int n = istream.read(buffer);
+            if (n <= 0) {
+                break;
+            }
+            ostream.write(buffer, 0, n);
+        }
+        ostream.close();
+
+    }
+
+
+    /**
      * Install an application for the specified path from the specified
      * web application archive.
      *
@@ -395,8 +637,7 @@ public class ManagerServlet
                 writer.println(sm.getString("managerServlet.configured",
                                             config));
             } catch (Throwable t) {
-                getServletContext().log("ManagerServlet.configure[" +
-                                        config + "]", t);
+                log("ManagerServlet.configure[" + config + "]", t);
                 writer.println(sm.getString("managerServlet.exception",
                                             t.toString()));
             }
@@ -430,8 +671,7 @@ public class ManagerServlet
                 writer.println(sm.getString("managerServlet.installed",
                                             displayPath));
             } catch (Throwable t) {
-                getServletContext().log("ManagerServlet.install[" +
-                                        displayPath + "]", t);
+                log("ManagerServlet.install[" + displayPath + "]", t);
                 writer.println(sm.getString("managerServlet.exception",
                                             t.toString()));
             }
@@ -505,7 +745,7 @@ public class ManagerServlet
             context.reload();
             writer.println(sm.getString("managerServlet.reloaded", displayPath));
         } catch (Throwable t) {
-            getServletContext().log("ManagerServlet.reload[" + displayPath + "]", t);
+            log("ManagerServlet.reload[" + displayPath + "]", t);
             writer.println(sm.getString("managerServlet.exception",
                                         t.toString()));
         }
@@ -541,8 +781,7 @@ public class ManagerServlet
             deployer.remove(path);
             writer.println(sm.getString("managerServlet.removed", displayPath));
         } catch (Throwable t) {
-            getServletContext().log("ManagerServlet.remove[" + displayPath + "]",
-                                    t);
+            log("ManagerServlet.remove[" + displayPath + "]", t);
             writer.println(sm.getString("managerServlet.exception",
                                         t.toString()));
         }
@@ -608,8 +847,7 @@ public class ManagerServlet
                 writer.println(sm.getString("managerServlet.sessiontimeout",
                                             "unlimited","" + notimeout));
         } catch (Throwable t) {
-            getServletContext().log("ManagerServlet.sessions[" + displayPath + "]",
-                                    t);
+            log("ManagerServlet.sessions[" + displayPath + "]", t);
             writer.println(sm.getString("managerServlet.exception",
                                         t.toString()));
         }
@@ -688,11 +926,113 @@ public class ManagerServlet
             deployer.stop(path);
             writer.println(sm.getString("managerServlet.stopped", displayPath));
         } catch (Throwable t) {
-            getServletContext().log("ManagerServlet.stop[" + displayPath + "]",
-                                    t);
+            log("ManagerServlet.stop[" + displayPath + "]", t);
             writer.println(sm.getString("managerServlet.exception",
                                         t.toString()));
         }
+
+    }
+
+
+    /**
+     * Undeploy the web application at the specified context path.
+     *
+     * @param writer Writer to render to
+     * @param path Context path of the application to be removed
+     */
+    protected void undeploy(PrintWriter writer, String path) {
+
+        if (debug >= 1)
+            log("undeploy: Undeploying web application at '" + path + "'");
+
+        if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
+            writer.println(sm.getString("managerServlet.invalidPath", path));
+            return;
+        }
+        String displayPath = path;
+        if( path.equals("/") )
+            path = "";
+
+        try {
+
+            // Validate the Context of the specified application
+            Context context = deployer.findDeployedApp(path);
+            if (context == null) {
+                writer.println(sm.getString("managerServlet.noContext",
+                                            displayPath));
+                return;
+            }
+
+            // Validate the owning Host of this Context
+            if (!(context.getParent() instanceof Host)) {
+                writer.println(sm.getString("managerServlet.noAppBase",
+                                            displayPath));
+                return;
+            }
+            String appBase = ((Host) context.getParent()).getAppBase();
+            File appBaseDir = new File(appBase);
+            if (!appBaseDir.isAbsolute()) {
+                appBaseDir = new File(System.getProperty("catalina.base"),
+                                      appBase);
+            }
+
+            // Validate the docBase directory of this application
+            String docBase = context.getDocBase();
+            File docBaseDir = new File(docBase);
+            if (!docBaseDir.isAbsolute()) {
+                docBaseDir = new File(appBaseDir, docBase);
+            }
+            if (!docBaseDir.getCanonicalPath().
+                startsWith(appBaseDir.getCanonicalPath())) {
+                writer.println(sm.getString("managerServlet.noDocBase",
+                                            displayPath));
+                return;
+            }
+            if (!docBaseDir.isDirectory()) {
+                writer.println(sm.getString("managerServlet.noDirectory",
+                                            displayPath));
+                return;
+            }
+
+            // Remove this web application and its associated docBase directory
+            if (debug >= 2) {
+                log("Undeploying document base " + docBaseDir);
+            }
+            deployer.remove(path);
+            undeployDir(docBaseDir);
+            writer.println(sm.getString("managerServlet.undeployed",
+                                        displayPath));
+
+        } catch (Throwable t) {
+            log("ManagerServlet.undeploy[" + displayPath + "]", t);
+            writer.println(sm.getString("managerServlet.exception",
+                                        t.toString()));
+        }
+
+    }
+
+
+    /**
+     * Delete the specified directory, including all of its contents and
+     * subdirectories recursively.
+     *
+     * @param dir File object representing the directory to be deleted
+     */
+    protected void undeployDir(File dir) {
+
+        String files[] = dir.list();
+        if (files == null) {
+            files = new String[0];
+        }
+        for (int i = 0; i < files.length; i++) {
+            File file = new File(dir, files[i]);
+            if (file.isDirectory()) {
+                undeployDir(file);
+            } else {
+                file.delete();
+            }
+        }
+        dir.delete();
 
     }
 

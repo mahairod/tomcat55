@@ -73,6 +73,7 @@ import org.apache.tools.ant.Task;
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
+ * @since 4.1
  */
 public class ListTask extends AbstractCatalinaTask {
 
