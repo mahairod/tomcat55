@@ -1806,13 +1806,22 @@ public final class CGIServlet extends HttpServlet {
                             (new InputStreamReader(proc.getInputStream()));
 
                         char[] cBuf = new char[1024];
-                        while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
-                            if (servletContainerStdout != null) {
-                                if (debug >= 4) {
-                                    log("runCGI: write(\"" +
-                                        new String(cBuf, 0, bufRead) + "\")");
+                        try {
+                            while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
+                                if (servletContainerStdout != null) {
+                                    if (debug >= 4) {
+                                        log("runCGI: write(\"" +
+                                                new String(cBuf, 0, bufRead) + "\")");
+                                    }
+                                    servletContainerStdout.write(cBuf, 0, bufRead);
                                 }
-                                servletContainerStdout.write(cBuf, 0, bufRead);
+                            }
+                        } finally {
+                            // Attempt to consume any leftover byte if something bad happens,
+                            // such as a socket disconnect on the servlet side; otherwise, the
+                            // external process could hang
+                            if (bufRead != -1) {
+                                while ((bufRead = commandsStdOut.read(cBuf)) != -1) {}
                             }
                         }
     
