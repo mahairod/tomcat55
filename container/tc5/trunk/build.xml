@@ -29,6 +29,8 @@
            value="${basedir}/../jakarta-tomcat-jasper/jasper2"/>
   <property name="jtc.home"
            value="${basedir}/../jakarta-tomcat-connectors"/>
+  <property name="watchdog.home"
+           value="${basedir}/../jakarta-watchdog-4.0"/>
 
   <!-- Build Defaults -->
   <property name="catalina.build"   value="${catalina.home}/build"/>
@@ -51,6 +53,7 @@
     <echo message="catalina.home=${catalina.home}"/>
     <echo message="jasper.home=${jasper.home}"/>
     <echo message="jtc.home=${jtc.home}"/>
+    <echo message="watchdog.home=${watchdog.home}"/>
 
     <ant dir="${catalina.home}" target="flags.display"/>
 
@@ -149,6 +152,64 @@
     <ant dir="${jasper.home}"   target="test">
       <property name="catalina.home" value="${tomcat.build}"/>
     </ant>
+  </target>
+
+  <!-- ======================= WATCHDOG: Run Watchdog Tests================ -->
+  <target name="watchdog"
+   description="Watchdog Servlet Container Tests">
+    <ant dir="${watchdog.home}" target="dist">
+      <property name="servlet23api.home" value="${api.home}"/>
+      <property name="servlet22api.home" value="${api.home}"/>
+    </ant>
+    <property name="catalina.base" location="${basedir}/tmp/tomcat"/>
+    <delete dir="${catalina.base}"/>
+    <mkdir dir="${catalina.base}"/>
+    <copy todir="${catalina.base}/conf">
+      <fileset dir="${tomcat.build}/conf"/>
+    </copy>
+    <copy todir="${catalina.base}/webapps">
+      <fileset dir="${tomcat.build}/webapps"/> 
+    </copy>
+    <copy todir="${catalina.base}/work">
+      <fileset dir="${tomcat.build}/work"/> 
+    </copy>
+    <copy todir="${catalina.base}/logs">
+      <fileset dir="${tomcat.build}/logs"/> 
+    </copy>
+    <copy todir="${catalina.base}/webapps">
+      <fileset dir="${watchdog.home}/dist/webapps"/>
+    </copy>
+
+    <java classname="LauncherBootstrap" fork="yes">
+      <arg value="-launchfile"/>
+      <arg value="catalina.xml"/>
+      <arg value="-verbose"/>
+      <arg value="catalina"/>
+      <arg value="-Dcatalina.base=${catalina.base}"/>
+      <arg value="start"/>
+      <classpath>
+        <pathelement path="${java.class.path}"/>
+        <pathelement path="${tomcat.build}/bin"/>
+      </classpath>
+    </java>
+
+    <sleep seconds="60"/>
+
+    <ant dir="${watchdog.home}/dist" target="all"/>
+   
+    <java classname="LauncherBootstrap" fork="yes">
+      <arg value="-launchfile"/>
+      <arg value="catalina.xml"/>
+      <arg value="-verbose"/>
+      <arg value="catalina"/>
+      <arg value="-Dcatalina.base=${catalina.base}"/>
+      <arg value="stop"/>
+      <classpath>
+        <pathelement path="${java.class.path}"/>
+        <pathelement path="${tomcat.build}/bin"/>
+      </classpath>
+    </java>
+    
   </target>
 
 
