@@ -196,14 +196,6 @@ public final class SaveContextAction extends Action {
             Object values[] = null;
             
             try {                
-                String docBase = cform.getDocBase();
-                if ((docBase == null) || (docBase.length() < 1)) {
-                    ActionErrors errors = new ActionErrors();
-                    errors.add("docBase", 
-                        new ActionError("error.docBase.required"));
-                    saveErrors(request, errors);
-                    return (new ActionForward(mapping.getInput()));
-                }
                 // get the parent host name
                 String parentName = cform.getParentObjectName();
                 ObjectName honame = new ObjectName(parentName);

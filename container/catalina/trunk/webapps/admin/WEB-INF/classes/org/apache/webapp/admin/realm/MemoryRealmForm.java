@@ -162,12 +162,12 @@ public final class MemoryRealmForm extends RealmForm {
         String submit = request.getParameter("submit");
         
         // front end validation when save is clicked.
-        if (submit != null) {
+        //if (submit != null) {
             if ((pathName == null) || (pathName.length()<1)) {
                 errors.add("pathName",
                 new ActionError("error.pathName.required"));
             }
-        }        
+        //}        
         return errors;
     }
 }

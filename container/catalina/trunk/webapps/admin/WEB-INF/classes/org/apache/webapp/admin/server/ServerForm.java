@@ -253,7 +253,7 @@ public final class ServerForm extends ActionForm {
         ActionErrors errors = new ActionErrors();
         
         String submit = request.getParameter("submit");
-        if (submit != null) {
+        //if (submit != null) {
             
             // check for portNumber -- must not be blank, must be in
             // the range 1 to 65535.
@@ -279,7 +279,7 @@ public final class ServerForm extends ActionForm {
                 errors.add("shutdownText",
                 new ActionError("error.shutdownText.length"));
             
-        }
+        //}
         
         return errors;
         

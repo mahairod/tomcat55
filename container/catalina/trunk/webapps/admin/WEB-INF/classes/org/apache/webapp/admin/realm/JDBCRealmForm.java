@@ -408,7 +408,7 @@ public final class JDBCRealmForm extends RealmForm {
         //String type = request.getParameter("realmType");
         
         // front end validation when save is clicked.        
-         if (submit != null) {
+         //if (submit != null) {
              // the following fields are required.
             
             if ((driver == null) || (driver.length() < 1)) {
@@ -455,7 +455,7 @@ public final class JDBCRealmForm extends RealmForm {
                 errors.add("connectionURL",
                 new ActionError("error.connectionURL.required"));
             }
-        }
+        //}
                  
         return errors;
     }

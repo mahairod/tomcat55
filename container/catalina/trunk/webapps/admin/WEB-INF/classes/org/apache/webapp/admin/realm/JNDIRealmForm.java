@@ -555,7 +555,7 @@ public final class JNDIRealmForm extends RealmForm {
         String submit = request.getParameter("submit");
 
         // front end validation when save is clicked.
-        if (submit != null) {
+        //if (submit != null) {
             // the following fields are required.
 
             if ((connectionURL == null) || (connectionURL.length() < 1)) {
@@ -638,7 +638,7 @@ public final class JNDIRealmForm extends RealmForm {
                 errors.add("contextFactory",
                 new ActionError("error.contextFactory.required"));
             } */
-        }
+        //}
 
         return errors;
     }

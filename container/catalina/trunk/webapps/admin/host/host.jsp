@@ -70,10 +70,11 @@
                 <bean:message key="actions.contexts.deletes"/>
             </controls:action>
             <controls:action disabled="true"> ------------------------------------- </controls:action>
-            <controls:action url='<%= "/AddDefaultContext.do?parent=" +
+            <!--FIXME add/remove defaultcontext-->
+            <!--controls:action url='<%= "/AddDefaultContext.do?parent=" +
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.defaultcontexts.create"/>
-            </controls:action>
+            </controls:action-->
             <!--controls:action url='<%= "/DeleteDefaultContext.do?parent=" +
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.defaultcontexts.deletes"/>

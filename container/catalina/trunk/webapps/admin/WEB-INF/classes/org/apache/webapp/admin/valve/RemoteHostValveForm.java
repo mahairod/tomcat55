@@ -205,7 +205,7 @@ public final class RemoteHostValveForm extends ValveForm {
         String submit = request.getParameter("submit");
         
         // front end validation when save is clicked.        
-        if (submit != null) {
+        //if (submit != null) {
              // TBD
             // validate allow/deny IPs
             if ((allow == null) || (allow.length() < 1)) {
@@ -214,7 +214,7 @@ public final class RemoteHostValveForm extends ValveForm {
                     new ActionError("error.allow.deny.required"));
                 }
             }              
-        }
+        //}
         
         try {
             allows = ValveUtil.precalculate(allow);            

@@ -166,7 +166,7 @@ public final class GroupForm extends BaseForm {
         ActionErrors errors = new ActionErrors();
 
         String submit = request.getParameter("submit");
-        if (submit != null) {
+        //if (submit != null) {
 
             // groupname is a required field
             if ((groupname == null) || (groupname.length() < 1)) {
@@ -186,7 +186,7 @@ public final class GroupForm extends BaseForm {
                            new ActionError("users.error.quotes"));
             }
 
-        }
+        //}
 
         return (errors);
 

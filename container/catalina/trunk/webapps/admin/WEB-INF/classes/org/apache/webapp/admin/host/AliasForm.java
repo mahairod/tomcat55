@@ -197,14 +197,14 @@ public final class AliasForm extends ActionForm {
         String submit = request.getParameter("submit");
         
         // front end validation when save is clicked.
-        if (submit != null) {
+        //if (submit != null) {
             
-            // hostName cannot be null
+            // aliasName cannot be null
             if ((aliasName== null) || (aliasName.length() < 1)) {
                 errors.add("aliasName", new ActionError("error.aliasName.required"));
             }
                         
-        }        
+        //}        
         return errors;       
     }
     
