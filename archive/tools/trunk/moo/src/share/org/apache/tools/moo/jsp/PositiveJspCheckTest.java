@@ -109,8 +109,8 @@ extends JspCheckTest {
 
         //handle HTTP codes here
         int code = connection.getResponseCode();
-        if (this.useCookie == true)
-            saveCookies(connection);
+       if (this.useCookie == true)
+         saveCookies(connection);
         String message = connection.getResponseMessage();
 
         //http response in 400s signifies Client Request Incomplete/Doc Not found
@@ -134,7 +134,11 @@ extends JspCheckTest {
                     String token = tok.nextToken();
                     result.append("  " + token);
                 }
+                
+                          
             }
+            
+            
 
             // Get the expected result from the "golden" file.
             StringBuffer expResult = getExpectedResult (getGoldenFileName());
@@ -170,7 +174,7 @@ extends JspCheckTest {
             String gfURL = mapManager.getGoldenfilePrefix(mapResource, goldenFile);
             url = URLHelper.getURL(gfURL);
             out.println("url = " + url.toString());
-
+            
             con = (HttpURLConnection) url.openConnection();
             con.setUseCaches(false);
 
@@ -185,6 +189,8 @@ extends JspCheckTest {
                     String token = tok.nextToken();
                     expResult.append("  " + token);
                 }
+                
+            
             }
 
         } catch (Exception ex) {
@@ -203,7 +209,9 @@ extends JspCheckTest {
 
         while (st1.hasMoreTokens() && st2.hasMoreTokens()) {
             String tok1 = st1.nextToken();
+            
             String tok2 = st2.nextToken();
+            
             if (!tok1.equals(tok2)) {
                 try {
                     out.println("FAIL*** : tok1 = " + tok1 + ", tok2 = " + tok2);

@@ -339,7 +339,9 @@ implements Testable {
 
         while (enum.hasMoreElements()) {
             String key = (String)enum.nextElement();
-            Vector values = (Vector)queryString.get(key);
+            Vector values = new Vector();
+            //(Vector)queryString.get(key);
+            values.add(0,queryString.get(key));
 
             Enumeration valuesEnum = values.elements();
 

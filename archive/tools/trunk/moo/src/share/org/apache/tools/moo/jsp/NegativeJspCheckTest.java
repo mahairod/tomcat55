@@ -99,14 +99,19 @@ extends JspCheckTest {
 
     public TestResult getTestResult(HttpURLConnection connection)
     throws Exception {
+    	
+    	
 
         TestResult testResult = new TestResult();
 
         //handle HTTP codes here
         int code = connection.getResponseCode();
-        if (this.useCookie == true)
-            saveCookies(connection);
-        Thread.currentThread().dumpStack();
+        
+        
+       if (this.useCookie == true)
+         saveCookies(connection);
+             
+         Thread.currentThread().dumpStack();
 
         //http response in 400s signifies Client Request Incomplete/Doc Not found
         //http response in 500s signifies servlet error
