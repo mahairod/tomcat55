@@ -44,6 +44,9 @@
       <fix>
         <bug>28943</bug>: Fixed CURRENT_DIR missing % signs in bin/startup.bat. (yoavs)
       </fix>
+      <fix>
+        <bug>29255</bug>: common/lib/naming-factory.jar missing MailSession and SendMail factories. (yoavs)
+      </fix>
     </changelog>
   </subsection>
  
