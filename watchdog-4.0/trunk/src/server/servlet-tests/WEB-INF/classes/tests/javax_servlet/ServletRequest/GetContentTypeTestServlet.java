@@ -81,9 +81,10 @@ public class GetContentTypeTestServlet extends GenericServlet {
 
 		// in client side it was set to "text/plain"
 		String contentType=request.getContentType();
-		if(contentType == null) { // spec says that it can be null
-			out.println("GetContentTypeTest test PASSED");
-		} else if (contentType.equals("text/plain")) {
+                if (contentType == null) {
+                        out.println("GetContentTypeTest test FAILED");
+                        out.println("contentType is NULL!");
+                } else if (contentType.equals("text/plain")) {
 			out.println("GetContentTypeTest test PASSED");
                 } else {
                         out.println("GetContentTypeTest test FAILED");
