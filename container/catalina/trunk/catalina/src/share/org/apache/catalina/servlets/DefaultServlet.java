@@ -139,6 +139,12 @@ public class DefaultServlet
     protected ProxyDirContext resources = null;
 
 
+    /**
+     * File encoding to be used when reading static files. If none is specified
+     * the platform default is used.
+     */
+    protected String fileEncoding = null;
+    
     // ----------------------------------------------------- Static Initializer
 
 
@@ -225,6 +231,12 @@ public class DefaultServlet
         try {
             value = getServletConfig().getInitParameter("output");
             output = Integer.parseInt(value);
+        } catch (Throwable t) {
+            ;
+        }
+        try {
+            value = getServletConfig().getInitParameter("fileEncoding");
+            fileEncoding = value;
         } catch (Throwable t) {
             ;
         }
@@ -1711,8 +1723,14 @@ public class DefaultServlet
         } else {
             resourceInputStream = is;
         }
-        // FIXME : i18n ?
-        Reader reader = new InputStreamReader(resourceInputStream);
+
+        Reader reader;
+        if (fileEncoding == null) {
+            reader = new InputStreamReader(resourceInputStream);
+        } else {
+            reader = new InputStreamReader(resourceInputStream,
+                                           fileEncoding);
+        }
 
         // Copy the input stream to the output stream
         exception = copyRange(reader, writer);
@@ -1783,7 +1801,15 @@ public class DefaultServlet
         IOException exception = null;
 
         InputStream resourceInputStream = cacheEntry.resource.streamContent();
-        Reader reader = new InputStreamReader(resourceInputStream);
+
+        Reader reader;
+        if (fileEncoding == null) {
+            reader = new InputStreamReader(resourceInputStream);
+        } else {
+            reader = new InputStreamReader(resourceInputStream,
+                                           fileEncoding);
+        }
+
         exception = copyRange(reader, writer, range.start, range.end);
 
         // Clean up the input stream
@@ -1877,7 +1903,14 @@ public class DefaultServlet
         while ( (exception == null) && (ranges.hasMoreElements()) ) {
 
             InputStream resourceInputStream = cacheEntry.resource.streamContent();
-            Reader reader = new InputStreamReader(resourceInputStream);
+            
+            Reader reader;
+            if (fileEncoding == null) {
+                reader = new InputStreamReader(resourceInputStream);
+            } else {
+                reader = new InputStreamReader(resourceInputStream,
+                                               fileEncoding);
+            }
 
             Range currentRange = (Range) ranges.nextElement();
 
