@@ -67,6 +67,7 @@ Bugzilla Bugs Resolved
 ----------------------
 
 2693    Syntax errors in JSP source generate NumberFormatException.
+3640    Fix for JSPC handling of tag libraries in a JAR.
 3669    Improve Jasper error reporting (stack traces).
 3695    Do not add ldap.jar to class path on JDK 1.3 or later.
 3699    A recursive function call in org.apache.naming.NamingContext.
@@ -104,9 +105,6 @@ Connectors  3509    Apache 1.3.20 and mod_webapp and Tomcat 4b7 HANGS
 
 Connectors  3534    File Upload doesn't work with Apache, mod_webapp, Tomcat 4,
                     and WebDAV.
-
-Jasper      3640    Fix for JSPC handling of tag libraries in a JAR
-                    (probably related to 3529).
 
 Jasper      3779    The value of <jsp:param> should be URL encoded.
 
