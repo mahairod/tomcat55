@@ -116,9 +116,9 @@
       <!-- Add the following attributes if you want to turn XML validation
            on. Remember to comment the Host element above. 
            
-           Note: XML Schema validationn will works with Xerces 2.0.1 or 
+           Note: XML Schema validation will work with Xerces 2.0.1 or 
            Xerces 2.1. Xerces 2.0.2 and Xerces 2.2 have bugs that prevent 
-           their use with Tomcat-->
+           their use with Tomcat -->
       <!--
       <Host name="localhost" debug="0" appBase="webapps"
        unpackWARs="true" autoDeploy="true"
@@ -144,8 +144,8 @@
         -->
 
         <!-- Access log processes all requests for this virtual host.  By
-             default, log files are created in the "logs" directory relative to
-             $CATALINA_HOME.  If you wish, you can specify a different
+             default, log files are created in $CATALINA_HOME/logs.
+             If you wish, you can specify a different
              directory with the "directory" attribute.  Specify either a relative
              (to $CATALINA_HOME) or absolute path to the desired directory.
         -->
