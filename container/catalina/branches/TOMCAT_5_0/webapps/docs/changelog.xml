@@ -14,6 +14,16 @@
 
 <body>
 
+<section name="Tomcat 5.0.32 (yoavs)">
+  <subsection name="General">
+    <changelog>
+      <fix>
+        <bug>32210</bug>: Fixed Realm HowTo. (yoavs)
+      </fix>
+    </changelog>
+  </subsection>
+</section>
+
 <section name="Tomcat 5.0.31 (yoavs)">
   <subsection name="General">
     <changelog>
