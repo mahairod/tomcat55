@@ -164,7 +164,7 @@ public class PrefixMapper {
 	if( host == null )
 	    prefixMappedServlets.put( path, target);
 	else {
-	    host=host.toLowerCasse();
+	    host=host.toLowerCase();
 	    PrefixMapper vmap=(PrefixMapper)vhostMaps.get( host );
 	    if( vmap == null ) {
 		vmap=new PrefixMapper();
