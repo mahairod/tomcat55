@@ -27,7 +27,6 @@ This will build tests into a build directory located in this directory.
 Windows Note: If you get an "Out of Environment Space" message, you
 need to clean-up the initial environment of your command prompt window.
 
-
 To build a 'distribution' build (without the tests, and with all the
 classes jarrd up nice) execute:
 
