@@ -123,8 +123,6 @@ public class Constants {
     public static final int K = 1024;
     public static final int DEFAULT_BUFFER_SIZE = 8*K;
 
-    //    public static final String SERVLET_VERSION = "JSP";
-
     /**
      * The query parameter that causes the JSP engine to just
      * pregenerated the servlet but not invoke it. 
