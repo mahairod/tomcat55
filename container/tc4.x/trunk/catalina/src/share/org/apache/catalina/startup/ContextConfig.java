@@ -708,13 +708,14 @@ public final class ContextConfig
         }
 
         // Removing application parameters
+        /*
         ApplicationParameter[] applicationParameters =
             context.findApplicationParameters();
         for (i = 0; i < applicationParameters.length; i++) {
             context.removeApplicationParameter
                 (applicationParameters[i].getName());
         }
-
+        */
         // Removing security constraints
         SecurityConstraint[] securityConstraints = context.findConstraints();
         for (i = 0; i < securityConstraints.length; i++) {
@@ -780,7 +781,7 @@ public final class ContextConfig
         for (i = 0; i < parameters.length; i++) {
             context.removeParameter(parameters[i]);
         }
-
+        
         // Removing resource env refs
         /*
         String[] resourceEnvRefs = context.findResourceEnvRefs();
