@@ -19,7 +19,7 @@
   <p>The <strong>Webapp Connector</strong> element represents a
   <strong>Connector</strong> component that communicates with a web
   connector via the <code>WARP</code> protocol.  This is used for cases
-  where you wish to invisibly integrate Tomcat 4 into an existing (or new)
+  where you wish to invisibly integrate Tomcat 5 into an existing (or new)
   Apache installation, and you want Apache to handle the static content
   contained in the web application, and/or utilize Apache's SSL
   processing.  In many application environments, this will result in

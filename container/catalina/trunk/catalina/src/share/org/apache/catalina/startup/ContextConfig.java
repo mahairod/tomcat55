@@ -1049,7 +1049,7 @@ public final class ContextConfig
         String taglibs[] = context.findTaglibs();
         for (int i = 0; i < taglibs.length; i++) {
             String resourcePath = context.findTaglib(taglibs[i]);
-            // FIXME - Servlet 2.3 DTD implies that the location MUST be
+            // FIXME - Servlet 2.4 DTD implies that the location MUST be
             // a context-relative path starting with '/'?
             if (!resourcePath.startsWith("/")) {
                 resourcePath = "/WEB-INF/web.xml/../" + resourcePath;
@@ -1071,7 +1071,7 @@ public final class ContextConfig
             while (items.hasMoreElements()) {
                 NameClassPair item = (NameClassPair) items.nextElement();
                 String resourcePath = "/WEB-INF/" + item.getName();
-                // FIXME - JSP 1.2 is not explicit about whether we should
+                // FIXME - JSP 2.0 is not explicit about whether we should
                 // scan subdirectories of /WEB-INF for TLDs also
                 if (!resourcePath.endsWith(".tld")) {
                     continue;

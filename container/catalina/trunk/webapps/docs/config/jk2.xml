@@ -19,7 +19,7 @@
   <p>The <strong>JK 2 Connector</strong> element represents a
   <strong>Connector</strong> component that communicates with a web
   connector via the <code>AJP</code> protocol.  This is used for cases
-  where you wish to invisibly integrate Tomcat 4 into an existing (or new)
+  where you wish to invisibly integrate Tomcat 5 into an existing (or new)
   Apache installation, and you want Apache to handle the static content
   contained in the web application, and/or utilize Apache's SSL
   processing.  In many application environments, this will result in
@@ -161,7 +161,7 @@
 
      <subsection name="Introduction">
 
-        <p>This section explains how to connect Tomcat 4 to the popular
+        <p>This section explains how to connect Tomcat 5 to the popular
         open source web server, Apache.  It was originally part of
         <i>Tomcat: A Minimalistic User's Guide</i> by Gal Shachor, but
         has been split off for organizational reasons.  It should be
@@ -221,7 +221,7 @@
               another process, the web server opens a JVM and executes 
               Tomcat inside the web server process address space. 
               Our discussion in this document is not going to get into this 
-              special worker. Note: Tomcat 4 can't be run as this type of 
+              special worker. Note: Tomcat 5 can't be run as this type of 
               worker at the moment.</li>
               <li><strong>Web Server Plug-in/Tomcat Redirector</strong> - 
               For Tomcat to cooperate with any web server it needs an "agent" 
@@ -260,7 +260,7 @@
 
            <p><strong>Note: Note: The version of mod_jk is not dependent on 
            the version of Tomcat. The Tomcat 3.3 distribution of mod_jk will 
-           function correctly with Tomcat 4.x and other 3.x versions of 
+           function correctly with Tomcat 5, 4.x, and other 3.x versions of 
            Tomcat, such as Tomcat 3.2.1.</strong></p>
 
         </subsection>
@@ -274,7 +274,7 @@
            The mod_jserv configuration directives are not compatible 
            with mod_jk!</p>
 
-           <p>Unlike Tomcat 3, Tomcat 4 doesn't automatically generate the 
+           <p>Unlike Tomcat 4.x, Tomcat 5 doesn't automatically generate the 
            necessary <code>$CATALINA_HOME/conf/mod_jk.conf</code>,
            and it will have to be created manually. Note that Tomcat 
            and Apache must be restarted after adding a new context.</p>
@@ -307,7 +307,7 @@
 
         <subsection name="Configuring Tomcat">
 
-           <p>Tomcat 4 won't automatically generate the Apache configuration 
+           <p>Tomcat 5 won't automatically generate the Apache configuration 
            file at the moment.</p>
 
            <p>After enabling the AJP 1.3 connector, you need to define workers,
@@ -389,7 +389,7 @@ JkMount /servlet/* ajp13
      <subsection name="Introduction">
 
         <p>This section explains how to set up IIS 4.0 or newer to cooperate 
-        with Tomcat 4. Normally IIS cannot execute Servlets and Java Server
+        with Tomcat 5. Normally IIS cannot execute Servlets and Java Server
         Pages (JSPs), configuring IIS to use Tomcat redirector plugin 
         will allow IIS to redirect Servlet and JSP requests to Tomcat.</p>
 
