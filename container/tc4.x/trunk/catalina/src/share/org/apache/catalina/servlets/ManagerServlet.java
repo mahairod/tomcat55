@@ -273,7 +273,8 @@ public final class ManagerServlet
 	    log("deploy: Deploying web application at '" + path +
 		"' from '" + war + "'");
 
-        if ((path == null) || !path.startsWith("/")) {
+        if ((path == null) ||
+            (!path.startsWith("/") && !path.equals(""))) {
             writer.println(sm.getString("managerServlet.invalidPath", path));
             return;
         }
@@ -332,7 +333,8 @@ public final class ManagerServlet
         if (debug >= 1)
 	    log("restart: Reloading web application at '" + path + "'");
 
-        if ((path == null) || !path.startsWith("/")) {
+        if ((path == null) ||
+            (!path.startsWith("/") && !path.equals(""))) {
             writer.println(sm.getString("managerServlet.invalidPath", path));
             return;
         }
@@ -365,7 +367,8 @@ public final class ManagerServlet
         if (debug >= 1)
 	    log("undeploy: Undeploying web application at '" + path + "'");
 
-        if ((path == null) || !path.startsWith("/")) {
+        if ((path == null) ||
+            (!path.startsWith("/") && !path.equals(""))) {
             writer.println(sm.getString("managerServlet.invalidPath", path));
             return;
         }
