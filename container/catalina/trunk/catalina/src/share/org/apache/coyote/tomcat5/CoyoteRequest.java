@@ -968,7 +968,7 @@ public class CoyoteRequest
      * empty <code>Enumeration</code> if there are none.
      */
     public Enumeration getAttributeNames() {
-        return (new Enumerator(attributes.keySet()));
+        return new Enumerator(attributes.keySet(), true);
     }
 
 

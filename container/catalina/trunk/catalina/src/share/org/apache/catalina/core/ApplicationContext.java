@@ -260,7 +260,7 @@ public class ApplicationContext
     public Enumeration getAttributeNames() {
 
         synchronized (attributes) {
-            return (new Enumerator(attributes.keySet()));
+            return new Enumerator(attributes.keySet(), true);
         }
 
     }
