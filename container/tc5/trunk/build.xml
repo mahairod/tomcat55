@@ -83,6 +83,12 @@
       <fileset dir="${catalina.home}/build"/>
     </copy>
 
+    <!-- Copy the examples webapps -->
+    <copy file="${api.home}/jsr152/dist/examples/examples.war"
+          tofile="${tomcat.build}/webapps/jsp-examples.war" />
+    <copy file="${api.home}/jsr154/dist/examples/examples.war"
+          tofile="${tomcat.build}/webapps/servlets-examples.war" />
+
     <echo>Target: Jasper - Deploy ...</echo>
     <ant dir="${jasper.home}"   target="deploy">
       <property name="catalina.home" value="${tomcat.build}"/>
