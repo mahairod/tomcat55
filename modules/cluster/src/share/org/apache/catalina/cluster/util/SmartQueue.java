@@ -88,12 +88,19 @@ public class SmartQueue {
      * @return
      */
     public SmartEntry remove() {
-        SmartEntry result = null;        
+        return remove(0);
+    }
+    public SmartEntry remove(long timeout) {
+        SmartEntry result = null; 
+        long startEntry = System.currentTimeMillis();
         synchronized (mutex) {
             while ( size() == 0 ) {
                 try {
                     if ( debug != 0 ) log.debug("["+Thread.currentThread().getName()+"][SmartQueue] Queue sleeping until object added size="+size()+".");
-                    mutex.wait();
+                    if ( (timeout != 0) && ((System.currentTimeMillis()-startEntry)>timeout) ) {
+                        return null;
+                    }
+                    mutex.wait(timeout);
                     if ( debug != 0 ) log.debug("["+Thread.currentThread().getName()+"][SmartQueue] Queue woke up or interrupted size="+size()+".");
                 }
                 catch(IllegalMonitorStateException ex) {
