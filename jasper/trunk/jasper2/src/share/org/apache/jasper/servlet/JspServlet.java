@@ -167,38 +167,8 @@ public class JspServlet extends HttpServlet {
 		throw new JasperException(ex);
 	    }
 	    theServlet.init(JspServlet.this.config);
-/*	Shouldn't be needed after switching to URLClassLoader
-	    if (theServlet instanceof HttpJspBase)  {
-                HttpJspBase h = (HttpJspBase) theServlet;
-                h.setClassLoader(JspServlet.this.parentClassLoader);
-	    }
-*/
 	}
-	
-	private void loadIfNecessary(HttpServletRequest req, HttpServletResponse res) 
-            throws JasperException, ServletException, FileNotFoundException 
-        {
-            // First try context attribute; if that fails then use the 
-            // classpath init parameter. 
 
-            // Should I try to concatenate them if both are non-null?
-
-            String cp = (String) context.getAttribute(Constants.SERVLET_CLASSPATH);
-
-            String accordingto;
-
-            if (cp == null || cp.equals("")) {
-                accordingto = "according to the init parameter";
-                cp = options.getClassPath();
-            } else 
-                accordingto = "according to the Servlet Engine";
-            
-            if (loadJSP(this, jspUri, cp, isErrorPage, req, res) 
-                    || theServlet == null) {
-                load();
-            }
-	}
-	
 	public void service(HttpServletRequest request, 
 			    HttpServletResponse response,
 			    boolean precompile)
@@ -213,7 +183,11 @@ public class JspServlet extends HttpServlet {
                          Constants.getString("jsp.error.unavailable"));
                 }
 
-                loadIfNecessary(request, response);
+                if (loadJSP(this, jspUri, classpath,
+                            isErrorPage, request, response)
+                        || theServlet == null) {
+                    load();
+                }
 
 		// If a page is to only to be precompiled return.
 		if (precompile)
@@ -286,9 +260,9 @@ public class JspServlet extends HttpServlet {
     protected URLClassLoader parentClassLoader;
     protected ServletEngine engine;
     protected String serverInfo;
-    private PermissionCollection permissionCollection = null;
-    private CodeSource codeSource = null;
-
+    private PermissionCollection permissionCollection;
+    private CodeSource codeSource;
+    private String classpath;
     static boolean firstTime = true;
 
     public void init(ServletConfig config)
@@ -309,6 +283,13 @@ public class JspServlet extends HttpServlet {
 	loghelper = new Logger.Helper("JASPER_LOG", "JspServlet");
 
 	options = new EmbededServletOptions(config, context);
+
+        // Get the classpath to use for compiling
+        classpath = (String) context.getAttribute(Constants.SERVLET_CLASSPATH);
+
+        if (classpath == null || classpath.equals("")) {
+            classpath = options.getClassPath();
+        }
 
 	// Get the parent class loader
 	parentClassLoader =
@@ -642,29 +623,6 @@ public class JspServlet extends HttpServlet {
         }
 
 	return outDated;
-    }
-
-
-    /**
-     * Determines whether the current JSP class is older than the JSP file
-     * from whence it came
-     * KMC: This is currently no used
-     */
-    public boolean isOutDated(File jsp, JspCompilationContext ctxt,
-			      Mangler mangler ) {
-        File jspReal = null;
-	boolean outDated;
-	
-        jspReal = new File(ctxt.getRealPath(jsp.getPath()));
-
-        File classFile = new File(mangler.getClassFileName());
-        if (classFile.exists()) {
-            outDated = classFile.lastModified() < jspReal.lastModified();
-        } else {
-            outDated = true;
-        }
-
-        return outDated;
     }
 
 
