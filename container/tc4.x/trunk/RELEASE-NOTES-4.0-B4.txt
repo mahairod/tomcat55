@@ -38,6 +38,10 @@ application deployment descriptor approved by the JSR-053 expert group:
 * The new <local-ejb-ref> element (and associated subelements) supports
   the optional EJB feature of local EJBs.
 
+PersistentManager:  You can now configure the persistent session manager
+(along with an appropriate Store implementation) in the server.xml file.
+Added an example of this, commented out by default.
+
 
 -------------------
 Jasper New Features:
@@ -47,6 +51,10 @@ Jasper New Features:
 --------------------
 Webapps New Features:
 --------------------
+
+SsiInvokerServlet:  Can now be configured for virtual paths to be relative
+to the server's document root (the default, for NCSA compatibility) or the
+current web application's context root (for convenience when using web apps).
 
 
 ==========================
@@ -58,6 +66,32 @@ BUG FIXES AND IMPROVEMENTS:
 Catalina Bug Fixes:
 ------------------
 
+Base64:  Update to the new version of the Xerces Base64 encoder/decoder.
+The old one had problems encoding binary content.
+
+Catalina:  Do not set an initial context factory.
+
+Naming:  Make the initial context factory available during the init() method
+of a <load-on-startup> servlet.
+
+ApplicationContext:  Fix for Bugzilla #1219.  Previously, different web apps
+that used JAR files with the same name in their WEB-INF/lib directories could
+get access to classes from the wrong JAR file.
+
+StandardClassLoader:  Change the way that security manager permissions are
+defined (for each web app) to account for the changes in the previous fix for
+cross-webapp JAR files.
+
+ApplicationFilterChain:  If a filter or servlet throws a security exception
+(when run under a security manager), make the rethrown ServletException more
+useful by including the actual exception as a root cause.
+
+Bootstrap:  Set the Catalina class loader as the thread context class loader.
+
+catalina.policy:  Update the default security manager policies to reflet the
+fact that "${java.home}" on some JVMs actually points at "$JAVA_HOME/jre"
+instead of "$JAVA_HOME".
+
 
 ----------------
 Jasper Bug Fixes:
@@ -67,6 +101,16 @@ Jasper Bug Fixes:
 -----------------
 Webapps Bug Fixes:
 -----------------
+
+WebdavServlet:  Fix thread safety problems with the WebDAV servlet.  The JAXP
+document builder is not thread-safe, but it was being reused.  Now, a new
+instance is created on each request.
+
+DefaultServlet:  Path "/." was not normalized properly (even though "/./" was).
+
+WebdavServlet:  Prevent /WEB-INF and /META-INF from being deleted, or the
+contents of these directories from being modified, if read/write
+access is enabled.  This is *not* enabled by default.
 
 
 ============================
