@@ -54,6 +54,16 @@
           <li><a href="http://jzos.com/">JZOS</a>.</li>
         </ul>
       </li>
+      <li>GNU/Linux:
+        <ul>
+          <li><a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=31447">From pander@users.sourceforge.net</a></li>
+        </ul>
+      </li>
+      <li>OpenVMS-Alpha:
+        <ul>
+          <li><a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=31499">Hewlett Packard (meg.garrison@hp.com)</a></li>
+        </ul>
+      </li>
     </ul>
   </answer>
 </section>
