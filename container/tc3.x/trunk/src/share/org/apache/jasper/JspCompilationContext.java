@@ -71,9 +71,6 @@ import org.apache.jasper.runtime.JspLoader;
 import org.apache.jasper.compiler.TagLibraries;
 
 import org.apache.jasper.compiler.Compiler;
-import org.apache.jasper.compiler.JspCompiler;
-import org.apache.jasper.compiler.SunJavaCompiler;
-import org.apache.jasper.compiler.PluginJavaCompiler;
 
 /**
  * A place holder for various things that are used through out the JSP
