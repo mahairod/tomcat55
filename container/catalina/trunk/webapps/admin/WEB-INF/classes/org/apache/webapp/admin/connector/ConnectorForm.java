@@ -284,6 +284,11 @@ public final class ConnectorForm extends ActionForm {
     private List connectorTypeVals = null;
 
     /**
+     * Represent supported clientAuth values.
+     */
+    private List clientAuthVals = null;
+
+    /**
      * The value of secure.
      */
     private String secure = "false";
@@ -807,6 +812,19 @@ public final class ConnectorForm extends ActionForm {
         
         this.booleanVals = booleanVals;
         
+    }
+
+    /**
+     * Return the clientAuth values.
+     */
+    public List getClientAuthVals() {
+        return clientAuthVals;
+    }
+    /**
+     * Set the clientAuth vaues.
+     */
+    public void setClientAuthVals(List clientAuthVals) {
+        this.clientAuthVals = clientAuthVals;
     }
     
     /**

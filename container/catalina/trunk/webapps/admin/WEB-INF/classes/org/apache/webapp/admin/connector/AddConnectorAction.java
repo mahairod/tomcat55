@@ -180,6 +180,7 @@ public class AddConnectorAction extends Action {
         
         connectorFm.setDebugLvlVals(Lists.getDebugLevels());
         connectorFm.setBooleanVals(Lists.getBooleanValues());                
+        connectorFm.setClientAuthVals(Lists.getClientAuthValues());
         
         String schemeTypes[]= new String[3];
         schemeTypes[0] = "HTTP";

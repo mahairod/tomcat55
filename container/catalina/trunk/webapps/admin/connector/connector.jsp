@@ -374,8 +374,8 @@
             <controls:label><bean:message key="connector.client.auth"/>:</controls:label>
             <controls:data>
                 <html:select property="clientAuthentication" styleId="clientauth">
-                     <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
-                     <html:options collection="booleanVals" property="value"
+                     <bean:define id="clientAuthVals" name="connectorForm" property="clientAuthVals"/>
+                     <html:options collection="clientAuthVals" property="value"
                    labelProperty="label"/>
                 </html:select>
             </controls:data>
