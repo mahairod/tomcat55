@@ -173,6 +173,10 @@
           description="Character encoding used to decode the URI"
                  type="java.lang.String"/>
 
+    <attribute   name="useBodyEncodingForURI"
+          description="Should the body encoding be used for URI parameters"
+                 type="boolean"/>
+
     <attribute    name="xpoweredBy"
            description="Is generation of X-Powered-By response header enabled/disabled?"
                     is="true"

@@ -375,6 +375,12 @@ public class CoyoteConnector
      private String URIEncoding = null;
 
 
+     /**
+      * URI encoding as body.
+      */
+     private boolean useBodyEncodingForURI = false;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -1124,6 +1130,30 @@ public class CoyoteConnector
 
          this.URIEncoding = URIEncoding;
          setProperty("uRIEncoding", URIEncoding);
+
+     }
+
+
+     /**
+      * Return the true if the entity body encoding should be used for the URI.
+      */
+     public boolean getUseBodyEncodingForURI() {
+
+         return (this.useBodyEncodingForURI);
+
+     }
+
+
+     /**
+      * Set if the entity body encoding should be used for the URI.
+      *
+      * @param useBodyEncodingForURI The new value for the flag.
+      */
+     public void setUseBodyEncodingForURI(boolean useBodyEncodingForURI) {
+
+         this.useBodyEncodingForURI = useBodyEncodingForURI;
+         setProperty
+             ("useBodyEncodingForURI", String.valueOf(useBodyEncodingForURI));
 
      }
 
