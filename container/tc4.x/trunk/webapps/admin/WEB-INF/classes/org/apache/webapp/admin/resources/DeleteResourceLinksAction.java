@@ -217,7 +217,7 @@ public final class DeleteResourceLinksAction extends Action {
         }
 
         // Proceed to the list envEntrys screen
-        return (mapping.findForward("Resource Links List Setup"));
+        return (mapping.findForward("ResourceLinks List Setup"));
 
     }
 
