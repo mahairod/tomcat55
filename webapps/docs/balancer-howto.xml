@@ -19,8 +19,8 @@
 <p>
 <a href="#Using the JK 1.2.x native connector">
 Using the JK native connector</a><br />
-<a href="#Using Apache httpd 2.2 with mod_proxy">
-Using Apache httpd 2.2 and mod_proxy</a><br />
+<a href="#Using Apache HTTP Server 2.x with mod_proxy">
+Using Apache HTTP Server 2.x and mod_proxy</a><br />
 <a href="#Using the balancer webapp">Using the balancer webapp</a><br />
 </p>
 </section>
@@ -31,11 +31,12 @@ Please refer to the JK 1.2.x documentation.
 
 </section>
 
-<section name="Using Apache httpd 2.2 with mod_proxy">
+<section name="Using Apache HTTP Server 2.x with mod_proxy">
 
-Please refer to the mod_proxy documentation for Apache 2.2. This supports either
+Please refer to the mod_proxy documentation for Apache HTTP Server 2.2. This supports either
 HTTP or AJP load balancing. This new version of mod_proxy is also useable with
-Apache httpd 2.0.
+Apache HTTP Server 2.0, but mod_proxy will have to be compiled separately using the code
+from Apache HTTP Server 2.2.
 
 </section>
 

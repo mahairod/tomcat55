@@ -29,13 +29,15 @@
   the <code>jvmRoute</code> attribute of the 
   <a href="engine.html">Engine</a>.</p>
 
-  <p>On the native side, Tomcat 5.5 supports the following connectors:</p>
-  <ul>
-  <li>mod_jk 1.2.x with any of its supported native servers</li>
-  <li>Apache httpd 2.2 with mod_proxy configured for AJP</li>
-  </ul>
-  <p>Other native connectors supporting AJP/1.3 may work, but are no longer
-  supported.</p>
+<p>The native connectors supported with this Tomcat release are:
+<ul>
+<li>JK 1.2.x with any of the supported servers</li>
+<li>mod_proxy on Apache httpd 2.x (included by default in Apache HTTP Server 2.2), 
+with AJP enabled</li>
+</ul>
+</p>
+
+<p><b>Other native connectors supporting AJP may work, but are no longer supported.</b></p>
 
 </section>
 
