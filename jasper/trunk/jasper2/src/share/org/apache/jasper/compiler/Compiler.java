@@ -76,6 +76,7 @@ import org.apache.tools.ant.types.Path;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
+import org.apache.jasper.Options;
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.util.SystemLogHandler;
 
@@ -112,6 +113,8 @@ public class Compiler {
 
     protected Project project;
 
+    protected Options options;
+
 
     // ------------------------------------------------------------ Constructor
 
@@ -119,6 +122,7 @@ public class Compiler {
     public Compiler(JspCompilationContext ctxt) {
         this.ctxt = ctxt;
 	this.errDispatcher = new ErrorDispatcher();
+        this.options = ctxt.getOptions();
         // Initializing project
         project = new Project();
         project.init();
@@ -139,10 +143,6 @@ public class Compiler {
 
         String javaFileName = ctxt.getServletJavaFileName();
 
-        Constants.message("jsp.message.java_file_name_is",
-                          new Object[] { javaFileName },
-                          Logger.DEBUG);
-
         // Setup the ServletWriter
 	// We try UTF8 by default. If it fails, we use the java encoding 
 	// specified for JspServlet init parameter "javaEncoding".
@@ -158,8 +158,8 @@ public class Compiler {
 	    javaEncoding = ctxt.getOptions().getJavaEncoding();
 	    if (javaEncoding != null) {
 		try {
-		    osw = new OutputStreamWriter(
-			      new FileOutputStream(javaFileName),javaEncoding);
+		    osw = new OutputStreamWriter
+                        (new FileOutputStream(javaFileName),javaEncoding);
 		} catch (UnsupportedEncodingException ex2) {
 		    // no luck :-(
 		    errDispatcher.jspError("jsp.error.invalid.javaEncoding",
@@ -198,25 +198,36 @@ public class Compiler {
         // Initializing javac task
         Javac javac = (Javac) project.createTask("javac");
 
-        // Initializing paths
+        // Initializing classpath
         Path path = new Path(project);
-        Path srcPath = new Path(project);
-
         path.setPath(System.getProperty("java.class.path") + sep
                      + classpath);
-        srcPath.setPath(ctxt.getOutputDir());
 
-        /*
-         * Configure the compiler object
-         */
+        // Initializing sourcepath
+        Path srcPath = new Path(project);
+        srcPath.setPath(options.getScratchDir().getAbsolutePath());
+
+        // Configure the compiler object
         javac.setEncoding(javaEncoding);
         javac.setClasspath(path);
-        if (ctxt.getJavacOutputDir() != null) {
-            javac.setDestdir(new File(ctxt.getJavacOutputDir()));
-        }
         javac.setDebug(ctxt.getOptions().getClassDebugInfo());
         javac.setSrcdir(srcPath);
 
+        // Build includes path
+        String dirName = ctxt.getJspFile();
+        int pos = dirName.lastIndexOf('/');
+        if (pos > 0) {
+            dirName = dirName.substring(0, pos + 1);
+        } else {
+            dirName = "";
+        }
+        String includePath = dirName + ctxt.getServletClassName() + ".java";
+        if (includePath.startsWith("/")) {
+            includePath = includePath.substring(1);
+        }
+        javac.setIncludes(includePath);
+
+        // Start capturing the System.err output for this thread
         SystemLogHandler.setThread();
 
         try {
@@ -225,6 +236,7 @@ public class Compiler {
             success = false;
         }
 
+        // Stop capturing the System.err output for this thread
         errorReport = SystemLogHandler.unsetThread();
 
         if (!ctxt.keepGenerated()) {
