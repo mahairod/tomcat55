@@ -321,9 +321,6 @@ final class StandardHostValve
         if (!(response.getResponse() instanceof HttpServletResponse))
             return;
         int statusCode = hresponse.getStatus();
-        String message = RequestUtil.filter(hresponse.getMessage());
-        if (message == null)
-            message = "";
 
         // Handle a custom error page for this status code
         Context context = request.getContext();
@@ -337,6 +334,9 @@ final class StandardHostValve
             ServletResponse sresp = response.getResponse();
             sreq.setAttribute(Globals.STATUS_CODE_ATTR,
                               new Integer(statusCode));
+	    String message = RequestUtil.filter(hresponse.getMessage());
+            if (message == null)
+                message = "";
             sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR, message);
             sreq.setAttribute
                 (ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR,
