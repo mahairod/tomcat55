@@ -260,6 +260,9 @@
       <fix>
         <bug>33373</bug>: Fix handling of context classloader in jspc (remm)
       </fix>
+      <fix>
+        <bug>33538</bug>: Ignore example and tag-extension elements in TagLibraryInfoImpl. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   
