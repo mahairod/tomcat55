@@ -7,7 +7,7 @@
                     </a></small></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
 <p>The will address various windows issues.
     Please see the
-    <a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Links">
+    <a href="http://wiki.apache.org/jakarta-tomcat/UsefulLinks">
         Other Resources
     </a> Link for more links related to Windows.
 </p>
@@ -33,7 +33,7 @@
       </a> </li>
 
       <li><a href="#lock">
-         I want to redeploy web applications, how do I prevent resources 
+         I want to redeploy web applications, how do I prevent resources
          from getting locked?
       </a> </li>
   </ul>
@@ -60,7 +60,7 @@
   </b>
   <div style="padding-left : 20px;">
       That is weird - but solved.(?) See the
-      <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=13723">
+      <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13723">
         Tomcat Bug Report
       </a>
       and
@@ -97,24 +97,24 @@
 
   <b style="font-size: larger">
     <a name="lock">
-         I want to redeploy web applications, how do I prevent resources 
+         I want to redeploy web applications, how do I prevent resources
          from getting locked?
       </a>
   </b>
   <div style="padding-left : 20px;">
-      Most locking issues will occur with JARs from /WEB-INF/lib, and are 
+      Most locking issues will occur with JARs from /WEB-INF/lib, and are
       useally caused by access through URLs. Tomcat has mechanisms to allow
       avoiding locking. In Tomcat 5.0, a mechanism exists to prevent locking
-      when accessing resources using the getResource method of the URL 
+      when accessing resources using the getResource method of the URL
       classloader (many applications, such as Xerces, do not set the use of
-      caching to false before opening the URL connection, causing locking). 
+      caching to false before opening the URL connection, causing locking).
       If such a call occurs, resources inside the JARs will be extracted to
-      the work directory of the web application. In Tomcat 5.5, this mechanism 
+      the work directory of the web application. In Tomcat 5.5, this mechanism
       is disabled by default (as it has a non negligible influence on startup
       times, and is often useless), and can be enabled using the antiJARLocking
-      attribute of the Context element. There is another lock prevention 
+      attribute of the Context element. There is another lock prevention
       mechanism in Tomcat 5.5 (antiResourceLocking attribute), which will cause
-      the web application files to be copied to the temp folder and run from 
+      the web application files to be copied to the temp folder and run from
       this location. This has a larger impact on web application startup times,
       but obviously prevents locking on all resources of the web application.
       This also allows more flexible management operations as none of the web
