@@ -109,6 +109,19 @@ public class ContextAccessController {
 
 
     /**
+     * Remove a security token for a context.
+     * 
+     * @param name Name of the context
+     * @param context Security token
+     */
+    public static void unsetSecurityToken(Object name, Object token) {
+        if (checkSecurityToken(name, token)) {
+            securityTokens.remove(name);
+        }
+    }
+
+
+    /**
      * Check a submitted security token. The submitted token must be equal to
      * the token present in the repository. If no token is present for the 
      * context, then returns true.

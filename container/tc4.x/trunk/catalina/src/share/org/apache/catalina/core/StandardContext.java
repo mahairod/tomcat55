@@ -3297,6 +3297,13 @@ public class StandardContext
         // Finalize our character set mapper
         setCharsetMapper(null);
 
+        // Create and register the associated naming context, if internal 
+        // naming is used
+        if (isUseNaming()) {
+            ContextAccessController.unsetSecurityToken
+                (getNamingContextName(), this);
+        }
+
         // Normal container shutdown processing
         if (debug >= 1)
             log("Processing standard container shutdown");
