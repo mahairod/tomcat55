@@ -93,7 +93,7 @@ public class RequestImpl  implements Request {
     protected String queryString;
 
    //  RequestAdapterImpl Hints
-    protected String serverName;
+    protected String serverName=null;
     protected Vector cookies = new Vector();
 
     protected String contextPath;
@@ -610,7 +610,7 @@ public class RequestImpl  implements Request {
 	queryString=null;
 	protocol="HTTP/1.0";
 	headers.clear(); // XXX use recycle pattern
-	serverName="localhost";
+	serverName=null;
 	serverPort=8080;
 	pathTranslated=null;
 	pathInfo=null;

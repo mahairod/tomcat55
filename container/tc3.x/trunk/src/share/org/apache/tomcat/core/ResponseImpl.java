@@ -149,13 +149,13 @@ public class ResponseImpl implements Response {
     }
 
     public void recycle() {
-	userCookies.removeAllElements();
+	userCookies.removeAllElements(); // XXX reuse !!!
 	contentType = Constants.DEFAULT_CONTENT_TYPE;
+	contentLanguage = null;
         locale = new Locale(Constants.LOCALE_DEFAULT, "");
 	characterEncoding = Constants.DEFAULT_CHAR_ENCODING;
 	contentLength = -1;
 	status = 200;
-	headers.clear();
 	usingWriter = false;
 	usingStream = false;
 	sessionId=null;
@@ -166,6 +166,13 @@ public class ResponseImpl implements Response {
 	// adapter
 	body.setLength(0);
 	if( out != null ) out.recycle();
+
+
+	out.recycle(); //=new BufferedServletOutputStream();
+	//	out.setResponse(this);
+
+	headers.clear();
+	//headers = new MimeHeaders();
     }
 
     public void finish() throws IOException {
@@ -487,5 +494,5 @@ public class ResponseImpl implements Response {
     public static String getMessage( int status ) {
 	return sm.getString("sc."+ status);
     }
-    
+
 }

@@ -82,8 +82,7 @@ import javax.servlet.http.*;
 public class HttpServletResponseFacade
     implements HttpServletResponse
 {
-
-    private StringManager sm =
+    private static StringManager sm =
         StringManager.getManager(Constants.Package);
     private Response response;
 

@@ -121,7 +121,7 @@ public class MimeMap implements FileNameMap {
     public String getContentTypeFor(String fileName) {
 	String extn=getExtension( fileName );
         if (extn!=null) {
-            return getContentType(extn.toLowerCase());
+            return getContentType(extn);
         } else {
             // no extension, no content type
             return null;

@@ -94,7 +94,7 @@ public class HttpResponseAdapter extends  ResponseImpl {
     }
 
     public void recycle() {
-	sout=null;
+	super.recycle();
 	statusSB.setLength(0);
 	headersSB.setLength(0);
     }

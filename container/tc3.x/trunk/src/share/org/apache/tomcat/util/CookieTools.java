@@ -86,9 +86,13 @@ public class CookieTools {
             return "Set-Cookie";
         }
     }
-
     public static String getCookieHeaderValue(Cookie cookie) {
         StringBuffer buf = new StringBuffer();
+	getCookieHeaderValue( cookie, buf );
+	return buf.toString();
+    }
+    
+    public static void getCookieHeaderValue(Cookie cookie, StringBuffer buf) {
         int version = cookie.getVersion();
 
         // this part is the same for all cookies
@@ -138,8 +142,6 @@ public class CookieTools {
 	if (cookie.getSecure()) {
 	  buf.append (";Secure");
 	}
-
-	return buf.toString();
     }
 
     static void maybeQuote (int version, StringBuffer buf,
