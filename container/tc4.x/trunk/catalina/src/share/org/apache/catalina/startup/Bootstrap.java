@@ -90,6 +90,15 @@ import org.apache.catalina.loader.StandardClassLoader;
 public final class Bootstrap {
 
 
+    // ------------------------------------------------------- Static Variables
+
+
+    /**
+     * Debugging detail level for processing the startup.
+     */
+    private static int debug = 0;
+
+
     // ----------------------------------------------------------- Main Program
 
 
@@ -108,12 +117,17 @@ public final class Bootstrap {
 	// Load our startup class and call its process() method
 	try {
 
+            // Instantiate a startup class instance
+            if (debug >= 1)
+                log("Loading startup class");
 	    Class startupClass =
 		catalinaLoader.loadClass
                 ("org.apache.catalina.startup.Catalina");
 	    Object startupInstance = startupClass.newInstance();
 
             // Set the shared extensions class loader
+            if (debug >= 1)
+                log("Setting startup class properties");
             String methodName = "setParentClassLoader";
             Class paramTypes[] = new Class[1];
             paramTypes[0] = Class.forName("java.lang.ClassLoader");
@@ -124,6 +138,8 @@ public final class Bootstrap {
             method.invoke(startupInstance, paramValues);
 
             // Call the process() method
+            if (debug >= 1)
+                log("Calling startup class process() method");
 	    methodName = "process";
 	    paramTypes = new Class[1];
 	    paramTypes[0] = args.getClass();
@@ -150,6 +166,9 @@ public final class Bootstrap {
      */
     private static ClassLoader createSystemLoader() {
 
+        if (debug >= 1)
+            log("Creating SYSTEM class loader");
+
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
 
@@ -170,6 +189,8 @@ public final class Bootstrap {
             File file = new File(directory, filenames[i]);
             try {
                 URL url = new URL("file", null, file.getAbsolutePath());
+                if (debug >= 1)
+                    log("  Adding " + url.toString());
                 list.add(url.toString());
             } catch (MalformedURLException e) {
                 System.out.println("Cannot create URL for " +
@@ -193,6 +214,9 @@ public final class Bootstrap {
      */
     private static ClassLoader createCatalinaLoader(ClassLoader parent) {
 
+        if (debug >= 1)
+            log("Creating CATALINA class loader");
+
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
 
@@ -203,6 +227,8 @@ public final class Bootstrap {
             try {
                 URL url = new URL("file", null,
                                   classes.getAbsolutePath() + "/");
+                if (debug >= 1)
+                    log("  Adding " + url.toString());
                 list.add(url.toString());
             } catch (MalformedURLException e) {
                 System.out.println("Cannot create URL for " +
@@ -226,6 +252,8 @@ public final class Bootstrap {
             File file = new File(directory, filenames[i]);
             try {
                 URL url = new URL("file", null, file.getAbsolutePath());
+                if (debug >= 1)
+                    log("  Adding " + url.toString());
                 list.add(url.toString());
             } catch (MalformedURLException e) {
                 System.out.println("Cannot create URL for " +
@@ -249,6 +277,9 @@ public final class Bootstrap {
      */
     private static ClassLoader createSharedLoader(ClassLoader parent) {
 
+        if (debug >= 1)
+            log("Creating SHARED class loader");
+
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
 
@@ -267,6 +298,8 @@ public final class Bootstrap {
             File file = new File(directory, filenames[i]);
             try {
                 URL url = new URL("file", null, file.getAbsolutePath());
+                if (debug >= 1)
+                    log("  Adding " + url.toString());
                 list.add(url.toString());
             } catch (MalformedURLException e) {
                 System.out.println("Cannot create URL for " +
@@ -292,6 +325,19 @@ public final class Bootstrap {
         */
 
         return (loader);
+
+    }
+
+
+    /**
+     * Log a debugging detail message.
+     *
+     * @param message The message to be logged
+     */
+    private static void log(String message) {
+
+        System.out.print("Bootstrap: ");
+        System.out.println(message);
 
     }
 
