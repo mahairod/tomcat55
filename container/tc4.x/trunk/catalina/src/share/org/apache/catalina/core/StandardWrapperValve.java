@@ -554,6 +554,12 @@ final class StandardWrapperValve
 	if (errorPage != null) {
             //            if (debug >= 1)
             //                log(" Sending to custom error page " + errorPage);
+            ServletRequest sreq = request.getRequest();
+            sreq.setAttribute(Globals.EXCEPTION_ATTR,
+                              realError.getClass());
+            if (sreq instanceof HttpServletRequest)
+                sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
+                                  ((HttpServletRequest) sreq).getRequestURI());
 	    request.getRequest().setAttribute(Globals.EXCEPTION_TYPE_ATTR,
 					      realError.getClass());
 	    if (custom(request, response, errorPage))

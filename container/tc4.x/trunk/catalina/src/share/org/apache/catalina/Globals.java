@@ -102,6 +102,22 @@ public final class Globals {
 
 
     /**
+     * The request attribute under which we forward a Java exception
+     * (as an object of type Throwable) to an error page.
+     */
+    public static final String EXCEPTION_ATTR =
+        "javax.servlet.error.exception";
+
+
+    /**
+     * The request attribute under which we forward the request URI
+     * (as an object of type String) of the page on which an error occurred.
+     */
+    public static final String EXCEPTION_PAGE_ATTR =
+        "javax.servlet.error.request_uri";
+
+
+    /**
      * The request attribute under which we forward a Java exception type
      * (as an object of type Class) to an error page.
      */
