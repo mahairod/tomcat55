@@ -26,6 +26,17 @@
   </p>
 </section>
 
+<section name="Tomcat 5.5.8">
+  <subsection name="Jasper">
+    <changelog>
+      <fix>
+        <bug>33223</bug>: pageContext.forward and <jsp:include> result
+in StringIndexOutOfBoundsException (luehe)
+      </fix>
+    </changelog>
+  </subsection>
+</section>
+
 <section name="Tomcat 5.5.7 (remm)">
   <subsection name="General">
     <changelog>
