@@ -275,6 +275,7 @@ implements org.apache.catalina.cluster.ClusterManager
                     SessionMessage msg = new SessionMessageImpl(name,
                     SessionMessage.EVT_SESSION_EXPIRED,
                     null,
+                    sessionId,
                     sessionId);
                 return msg;
                 }
@@ -295,6 +296,7 @@ implements org.apache.catalina.cluster.ClusterManager
                             SessionMessage accmsg = new SessionMessageImpl(name,
                                 SessionMessage.EVT_SESSION_ACCESSED,
                                 null,
+                                sessionId,
                                 sessionId);
                             session.setLastAccessWasDistributed(System.currentTimeMillis());
                             return accmsg;
@@ -312,6 +314,7 @@ implements org.apache.catalina.cluster.ClusterManager
                     SessionMessage msg = new SessionMessageImpl(name,
                         SessionMessage.EVT_SESSION_CREATED,
                         writeSession(session),
+                        session.getId(),
                         session.getId());
                     return msg;
                 } //end if
@@ -449,7 +452,8 @@ implements org.apache.catalina.cluster.ClusterManager
                     new SessionMessageImpl(this.getName(),
                                        SessionMessage.EVT_GET_ALL_SESSIONS,
                                        null,
-                                       "GET-ALL");
+                                       "GET-ALL",
+                                       "GET-ALL-"+this.getName());
                 cluster.send(msg, mbr);
                 log.warn("Manager["+getName()+"], requesting session state from "+mbr+
                          ". This operation will timeout if no session state has been received within "+
@@ -545,7 +549,7 @@ implements org.apache.catalina.cluster.ClusterManager
                     byte[] data = bout.toByteArray();
                     SessionMessage newmsg = new SessionMessageImpl(name,
                         SessionMessage.EVT_ALL_SESSION_DATA,
-                        data, "");
+                        data, "SESSION-STATE","SESSION-STATE-"+getName());
                     cluster.send(newmsg, sender);
                     break;
                 }
