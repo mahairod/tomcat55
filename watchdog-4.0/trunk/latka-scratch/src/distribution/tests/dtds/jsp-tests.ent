@@ -1,0 +1,67 @@
+<!ENTITY jsp-tests.jsp.core_syntax.directives.page.content SYSTEM "jsp-tests/jsp/core_syntax/directives/page/content/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.directives.page.extend SYSTEM "jsp-tests/jsp/core_syntax/directives/page/extend/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.directives.page.errorpage SYSTEM "jsp-tests/jsp/core_syntax/directives/page/errorpage/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.directives.page.imports SYSTEM "jsp-tests/jsp/core_syntax/directives/page/imports/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.directives.page.info SYSTEM "jsp-tests/jsp/core_syntax/directives/page/info/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.directives.page.language SYSTEM "jsp-tests/jsp/core_syntax/directives/page/language/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.directives.page.session SYSTEM "jsp-tests/jsp/core_syntax/directives/page/session/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.directives.page.buffer SYSTEM "jsp-tests/jsp/core_syntax/directives/page/buffer/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.directives.include SYSTEM "jsp-tests/jsp/core_syntax/directives/include/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.directives.taglib SYSTEM "jsp-tests/jsp/core_syntax/directives/taglib/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.scripting.declaration SYSTEM "jsp-tests/jsp/core_syntax/scripting/declaration/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.scripting.expressions SYSTEM "jsp-tests/jsp/core_syntax/scripting/expressions/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.scripting.scriptlet SYSTEM "jsp-tests/jsp/core_syntax/scripting/scriptlet/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.implicitobjects SYSTEM "jsp-tests/jsp/core_syntax/implicitobjects/tests.mod">
+<!ENTITY jsp-tests SYSTEM "jsp-tests/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.actions.setProperty SYSTEM "jsp-tests/jsp/core_syntax/actions/setProperty/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.actions.getProperty SYSTEM "jsp-tests/jsp/core_syntax/actions/getProperty/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.actions.useBean SYSTEM "jsp-tests/jsp/core_syntax/actions/useBean/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.actions.forward SYSTEM "jsp-tests/jsp/core_syntax/actions/forward/tests.mod">
+<!ENTITY jsp-tests.jsp.core_syntax.actions.include SYSTEM "jsp-tests/jsp/core_syntax/actions/include/tests.mod">
+<!ENTITY jsp-tests.jsp.engine.PageContext SYSTEM "jsp-tests/jsp/engine/PageContext/tests.mod">
+<!ENTITY jsp-tests.jsp.engine.HttpJspPage SYSTEM "jsp-tests/jsp/engine/HttpJspPage/tests.mod">
+<!ENTITY jsp-tests.jsp.engine.JspWriter.print SYSTEM "jsp-tests/jsp/engine/JspWriter/print/tests.mod">
+<!ENTITY jsp-tests.jsp.engine.JspWriter.misc SYSTEM "jsp-tests/jsp/engine/JspWriter/misc/tests.mod">
+<!ENTITY jsp-tests.jsp.tagext.TagData SYSTEM "jsp-tests/jsp/tagext/TagData/tests.mod">
+<!ENTITY jsp-tests.jsp.tagext.TagSupport SYSTEM "jsp-tests/jsp/tagext/TagSupport/tests.mod">
+<!ENTITY jsp-tests.jsp.tagext.BodyTagSupport SYSTEM "jsp-tests/jsp/tagext/BodyTagSupport/tests.mod">
+<!ENTITY jsp-tests.jsp.tagext.LifeCycle SYSTEM "jsp-tests/jsp/tagext/LifeCycle/tests.mod">
+<!ENTITY jsp-tests.jsp.tagext.misc SYSTEM "jsp-tests/jsp/tagext/misc/tests.mod">
+<!ENTITY jsp-tests.jsp.tagext.TldPathResolution.implicit SYSTEM "jsp-tests/jsp/tagext/TldPathResolution/implicit/tests.mod">
+<!ENTITY jsp-tests.jsp.tagext.TldPathResolution.explicit SYSTEM "jsp-tests/jsp/tagext/TldPathResolution/explicit/tests.mod">
+<!ENTITY jsp-tests.jsp.misc.precompilation SYSTEM "jsp-tests/jsp/misc/precompilation/tests.mod">
+
+<!ENTITY jsp-tests.testAll "
+&jsp-tests.jsp.core_syntax.directives.page.content;
+&jsp-tests.jsp.core_syntax.directives.page.extend;
+&jsp-tests.jsp.core_syntax.directives.page.errorpage;
+&jsp-tests.jsp.core_syntax.directives.page.imports;
+&jsp-tests.jsp.core_syntax.directives.page.info;
+&jsp-tests.jsp.core_syntax.directives.page.language;
+&jsp-tests.jsp.core_syntax.directives.page.session;
+&jsp-tests.jsp.core_syntax.directives.page.buffer;
+&jsp-tests.jsp.core_syntax.directives.include;
+&jsp-tests.jsp.core_syntax.directives.taglib;
+&jsp-tests.jsp.core_syntax.scripting.declaration;
+&jsp-tests.jsp.core_syntax.scripting.expressions;
+&jsp-tests.jsp.core_syntax.scripting.scriptlet;
+&jsp-tests.jsp.core_syntax.implicitobjects;
+&jsp-tests;
+&jsp-tests.jsp.core_syntax.actions.setProperty;
+&jsp-tests.jsp.core_syntax.actions.getProperty;
+&jsp-tests.jsp.core_syntax.actions.useBean;
+&jsp-tests.jsp.core_syntax.actions.forward;
+&jsp-tests.jsp.core_syntax.actions.include;
+&jsp-tests.jsp.engine.PageContext;
+&jsp-tests.jsp.engine.HttpJspPage;
+&jsp-tests.jsp.engine.JspWriter.print;
+&jsp-tests.jsp.engine.JspWriter.misc;
+&jsp-tests.jsp.tagext.TagData;
+&jsp-tests.jsp.tagext.TagSupport;
+&jsp-tests.jsp.tagext.BodyTagSupport;
+&jsp-tests.jsp.tagext.LifeCycle;
+&jsp-tests.jsp.tagext.misc;
+&jsp-tests.jsp.tagext.TldPathResolution.implicit;
+&jsp-tests.jsp.tagext.TldPathResolution.explicit;
+&jsp-tests.jsp.misc.precompilation;
+">

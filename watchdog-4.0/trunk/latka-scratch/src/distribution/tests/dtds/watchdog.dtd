@@ -1,0 +1,2 @@
+<!ENTITY % jsp-tests.ent SYSTEM "jsp-tests.ent">
+%jsp-tests.ent;
