@@ -113,7 +113,7 @@ public class NetworkClassLoader extends ClassLoader {
      * @param URL where to look for the classes.
      */
     public void addURL(URL url) {
-        System.out.println("Adding url: " + url);
+        // System.out.println("Adding url: " + url);
         if(!urlset.contains(url)) {
             urlset.addElement(url);
         }
