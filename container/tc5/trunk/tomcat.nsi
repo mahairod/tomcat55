@@ -2,6 +2,12 @@
 ; Tomcat script for Nullsoft Installer
 ; $Id$
 
+  ;Compression options
+  CRCCheck on
+  SetCompress force
+  SetCompressor bzip2
+  SetDatablockOptimize on
+
 !include "MUI.nsh"
 
 !define MUI_PRODUCT "Apache Tomcat"
@@ -39,12 +45,6 @@
 
   ;General
   OutFile tomcat-installer.exe
-
-  ;Compression options
-  CRCCheck on
-  SetCompress force
-  SetCompressor bzip2
-  SetDatablockOptimize on
 
   ;Install Options pages
   LangString TEXT_JVM_TITLE ${LANG_ENGLISH} "Java Virtual Machine"
