@@ -421,7 +421,8 @@ public class Request  {
     }
 
     public void setParameters( Hashtable h ) {
-	this.parameters=h;
+	if(h!=null)
+	    this.parameters=h;
 	// XXX Should we override query parameters ??
     }
         
@@ -453,6 +454,13 @@ public class Request  {
      */
     public void setQueryString(String queryString) {
 	this.queryString = queryString;
+        // catch any parse exceptions
+
+        try {
+            this.parameters = HttpUtils.parseQueryString(queryString);
+        } catch (Exception e) {
+            this.parameters.clear();
+        }
     }
     
 //     public void setScheme(String scheme) {
