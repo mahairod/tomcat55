@@ -86,6 +86,7 @@ public class ServletRequestGetCharacterEncoding_1TestServlet extends GenericServ
 		}// else wrong type of encoding
 		else {
 				out.println("ServletRequestGetCharacterEncoding_1Test test FAILED");
+				out.println("Encoding got= " + encoding);
 		}
 	}
 }

@@ -79,7 +79,7 @@ public class SetDomainTestServlet extends HttpServlet {
 		Cookie testcookie = new Cookie("BestLanguage","Java");
 
 		testcookie.setDomain(".SFBAY.COM");
-		if(testcookie.getDomain().equals(".SFBAY.COM")) {
+		if(testcookie.getDomain().equalsIgnoreCase(".SFBAY.COM")) {
 			out.println("SetDomainTest test PASSED");
 		}
 		else {

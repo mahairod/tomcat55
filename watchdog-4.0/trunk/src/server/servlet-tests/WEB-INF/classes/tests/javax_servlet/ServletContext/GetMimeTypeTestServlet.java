@@ -77,8 +77,9 @@ public class GetMimeTypeTestServlet extends HttpServlet {
 
 		ServletContext context = config.getServletContext();
 		String mimeType = context.getMimeType("testlist.txt");
+                mimeType = mimeType.trim();
 
-		if ((mimeType == null) || (mimeType == "" )){
+		if ((mimeType == null) || (mimeType.equals("text/plain")) ){
 			out.println("GetMimeTypeTest test PASSED");
 		}
 		else {

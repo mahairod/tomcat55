@@ -96,7 +96,7 @@
            debug="0" host="${host}" port="${port}"  
            returnCode="500"
 	   testName="DoInit1Test"
-           assertion="Called by the servlet container to indicate to a servlet that the servlet is being placed into service., specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.Servlet.init() method "
+           assertion="CalLed by the servlet container to indicate to a servlet that the servlet is being placed into service., specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.Servlet.init() method "
            testStrategy="A negative test for the init method. We will throw UnavailableException from inside init.The Servlet should not be initialized "
 />
 
@@ -252,9 +252,9 @@
            goldenFile="${wgdir}/javax_servlet/ServletContext/GetRealPathTest.html" />
 
 
-      <gtest request="GET /servlet-tests/ServletContextGetRequestDispatcherTestServlet HTTP/1.0"
+      <gtest request="GET /servlet-tests/ServletContextGetRequestDispatcherTest HTTP/1.0"
            debug="0" host="${host}" port="${port}"  
-           goldenFile="${wgdir}/javax_servlet/ServletContext/ServletContextGetRequestDispatcherTestServlet.html" />
+           goldenFile="${wgdir}/javax_servlet/ServletContext/GetMinorVersionTest.html" />
 
       <gtest request="GET /servlet-tests/GetResourceAsStreamTest HTTP/1.0"
            debug="0" host="${host}" port="${port}"  
@@ -323,6 +323,7 @@
 
       <gtest request="GET /servlet-tests/ReadLineTest HTTP/1.0"
            debug="0" host="${host}" port="${port}"  
+           content="java"
            goldenFile="${wgdir}/javax_servlet/ServletInputStream/ReadLineTest.html" />
 
 
@@ -390,13 +391,13 @@
 
   <!-- javax_servlet_ServletRequest tests -->
 
-      <gtest request="GET /servlet-tests/ServletRequestGetAttributeNamesTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}" requestHeaders="BestLanguageHeader:Java##BestJSPHeader:Tomcat" 
+      <gtest request="GET /servlet-tests/ServletRequestGetAttributeNamesTest  HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
            goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetAttributeNamesTest.html" />
 
 
       <gtest request="GET /servlet-tests/ServletRequestGetAttributeTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}" requestHeaders="BestLanguageHeader:Java" 
+           debug="0" host="${host}" port="${port}" 
            goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetAttributeTest.html" />
 
 
@@ -455,7 +456,7 @@
 
       <gtest request="GET /servlet-tests/GetParameterValuesTest?Containers=JSP&amp;Containers=Servlet HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetParameterTest.html" />
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetParameterValuesTest.html" />
 
       <gtest request="GET /servlet-tests/GetParameterValues_1Test HTTP/1.0"
            debug="0" host="${host}" port="${port}"
@@ -677,7 +678,7 @@
            goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetCookies_01Test.html" />
 
       <gtest request="GET /servlet-tests/GetDateHeaderTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}" requestHeaders="If-Modified-Since:966465196330" 
+           debug="0" host="${host}" port="${port}" requestHeaders="If-Modified-Since:Sat , 01 Jan 2000 00:00:01 GMT" 
            goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetDateHeaderTest.html" />
 
       <gtest request="GET /servlet-tests/GetDateHeader_01Test HTTP/1.0"

@@ -85,33 +85,31 @@ public class ServletContextGetAttributeNamesTestServlet extends HttpServlet {
 		//first we have to Set Attributes
 
 		context.setAttribute("Chef","expert");
-		context.setAttribute("chief","commanding");
+		context.setAttribute("Chief","commanding");
 
 		//then get Attributes
 		Enumeration enum = context.getAttributeNames();
+                String attr1="null"  ; //for attribute Chef
+                String attr2="null"  ; //for attribute Chief
 
-		int count=0;
+//The Jsp 1.2 spec doesn't define the order in which the attribute names are returned ..we take care of that by setting variables attr1 & attr2  so that the final String derived will be same no matter what is the sequence of the attribute names returned
+
 		while(enum.hasMoreElements()) {
-			count++;
-			String gotAttributeValue = (String)enum.nextElement();
-			if ( (!gotAttributeValue.trim().equals("expert")) || ( !gotAttributeValue.trim().equals("commanding") )) {
-				out.println("ServletContextGetAttributeNamesTest test PASSED");
-			}
-			else {
-				out.println("ServletContextGetAttributeNamesTest test FAILED");
-				out.println("ServletContext.getAttributeNames() returned incorrect results");
-			}
-		}
+			String gotAttributeName = (String)enum.nextElement();
+			if ( gotAttributeName.equals("Chef") )
+                        attr1=gotAttributeName;
 
-		//some more context attrs may be in the context
-		// so safely checking for >=2
+			if ( gotAttributeName.equals("Chief") )
+                        attr2=gotAttributeName;
 
-		if(count>=2) {
-				out.println("ServletContextGetAttributeNamesTest test PASSED");
-		}
-		else {
-				out.println("ServletContextGetAttributeNamesTest test FAILED");
-				out.println("ServletContext.getAttributeNames() returned incorrect number of attributes ");
+			}
+String final_string = attr1 + attr2 ;
+
+                if(final_string.equals("ChefChief") )
+                out.println("ServletContextGetAttributeNamesTest PASSED");
+                else
+                out.println("ServletContextGetAttributeNamesTes FAILED");
+
+
 		}
 	}
-}

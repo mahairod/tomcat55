@@ -82,23 +82,27 @@ public class ServletRequestGetAttributeNamesTestServlet extends GenericServlet {
 	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
 
 		PrintWriter out = response.getWriter();
-		//request.setAttribute("BestLanguageHeader","Java");
-		//request.setAttribute("BestJSPHeader","Tomcat");
+		request.setAttribute("BestLanguageHeader","Java");
+		request.setAttribute("BestJSPHeader","Tomcat");
 
 		int count =0;//AttributeNames count
 		Enumeration e = request.getAttributeNames();
                 while(e.hasMoreElements()) {
                         count++;
                         String gotAttrNames = (String)e.nextElement();
-                        if ( (!gotAttrNames.trim().equalsIgnoreCase("BestLanguageHeader") ) || ( !gotAttrNames.trim().equalsIgnoreCase("BestJSPHeader") ))
+                        if ( (gotAttrNames.trim().equalsIgnoreCase("BestLanguageHeader") ) || ( gotAttrNames.trim().equalsIgnoreCase("BestJSPHeader") ))
                         {
-                                out.println("ServletRequestGetAttributeNamesTest test FAILED <BR>");
-                                out.println("Got a AttributeNames list which is not sent : " + gotAttrNames );
+                                out.println("ServletRequestGetAttributeNamesTest test PASSED");
+                        }
+                        else
+                        {
+                                out.println("ServletRequestGetAttributeNamesTest test FAILED");
+
                         }
 
                 }
                 if(count !=2) {
-                        out.println("ServletRequestGetAttributeNamesTest test FAILED");
+                  out.println("ServletRequestGetAttributeNamesTest test FAILED");
                 }
                 else
                 {

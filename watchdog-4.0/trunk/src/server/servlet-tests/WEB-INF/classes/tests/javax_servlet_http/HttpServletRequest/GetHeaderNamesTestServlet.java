@@ -95,24 +95,29 @@ public class GetHeaderNamesTestServlet extends HttpServlet {
 		}
 		
 		int count =0;//header name count
+                String header1="null" ;
+                String header2="null" ;
 		while(e.hasMoreElements()) {
 			count++;
 			String gotHeader = (String)e.nextElement();
-			if ( (!gotHeader.trim().equalsIgnoreCase("Authorization") ) || ( !gotHeader.trim().equalsIgnoreCase("Cookie") ))
+
+                         if(gotHeader.equalsIgnoreCase("Authorization"))
+                         header1="authorization" ;
+                         if(gotHeader.equalsIgnoreCase("Cookie") )
+                         header1="cookie" ;
+                                           }
+		if(count !=2) {
+			out.println("GetHeaderNamesTest test FAILED");
+                        return;
+                              }
+       String final_header=header1+header2;
+
+         if(final_header.equals("authorizationcookie") )
 			{
-				out.println("GetHeaderNamesTest test FAILED");
-				out.println("Got a header which is not sent : " + gotHeader );
+				out.println("GetHeaderNamesTest test PASSED");
 			}
 
 		}
-		if(count !=2) {
-		
-			out.println("GetHeaderNamesTest test FAILED");
 
-		}
-		else
-		{
-			out.println("GetHeaderNamesTest test PASSED");
-		}
+		
 	}
-}

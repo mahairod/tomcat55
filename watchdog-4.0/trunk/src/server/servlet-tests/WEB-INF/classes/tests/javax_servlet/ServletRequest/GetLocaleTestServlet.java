@@ -88,6 +88,7 @@ public class GetLocaleTestServlet extends GenericServlet {
                 }
 		else {
 			out.println("GetLocaleTest test FAILED");
+                        out.println("Locale = " + request.getLocale().toString().trim()  );
 		}
 	}
 }

@@ -861,7 +861,7 @@
 			ServletExceptionConstructor3Test
 		</servlet-name>
 		<servlet-class>
-			tests.javax_servlet.ServletException.ServletExceptionConstructor3Test
+			tests.javax_servlet.ServletException.ServletExceptionConstructor3TestServlet
 		</servlet-class>
 	</servlet>
 	<servlet>
@@ -1674,14 +1674,6 @@
 		<servlet-class>
 			tests.deployment_descriptor.SessionTimeOutTestServlet
 		</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>
-			JspFile_1Test
-		</servlet-name>
-		<jsp-file>
-			DoesNotExist
-		</jsp-file>
 	</servlet>
 	<servlet>
 		<servlet-name>
@@ -3801,35 +3793,6 @@
 		</url-pattern>
 	</servlet-mapping>
 
-	<!--
-	<servlet>
-		<servlet-name>
-			JspFileTest
-		</servlet-name>
-		<jsp-file>
-			/JspTestFile.jsp
-		</jsp-file>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>
-			JspFileTest
-		</servlet-name>
-		<url-pattern>
-			/JspFileTest
-		</url-pattern>
-	</servlet-mapping>
-	-->
-
-
-	<servlet-mapping>
-		<servlet-name>
-			JspFile_1Test
-		</servlet-name>
-		<url-pattern>
-			/JspFile_1Test
-		</url-pattern>
-	</servlet-mapping>
 
 
 	<servlet-mapping>

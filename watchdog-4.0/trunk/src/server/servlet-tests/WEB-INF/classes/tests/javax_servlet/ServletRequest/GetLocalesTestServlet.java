@@ -95,7 +95,7 @@ public class GetLocalesTestServlet extends GenericServlet {
                         }
 
                 }
-                if(count !=4) {
+                if(count !=2) {
                         out.println("GetLocalesTest test FAILED <BR>");
                         out.println("Number of Locales returned -> " + count);
                 }

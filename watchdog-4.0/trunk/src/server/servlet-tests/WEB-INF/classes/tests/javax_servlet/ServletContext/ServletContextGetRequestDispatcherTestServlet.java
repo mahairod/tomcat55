@@ -1,6 +1,5 @@
-/*
- * $Header$
- * $Date$
+/* 
+* $Date$
  *
  * The Apache Software License, Version 1.1
  *
@@ -85,20 +84,20 @@ public class ServletContextGetRequestDispatcherTestServlet extends HttpServlet {
 
 		PrintWriter out = response.getWriter();
 		//String path="/ServletContextGetRequestDispatcherTest";
-		String path="/WEB-INF/web.xml";
+		String path="/GetMinorVersionTest" ;
+             
 
 		ServletConfig config = this.getServletConfig();
 		ServletContext context = config.getServletContext();
 
 		RequestDispatcher rd = context.getRequestDispatcher(path);
 
-		RequestDispatcher rd2 = context.getRequestDispatcher(path);
-                if((rd2 == rd) || (rd2 == null))  {
-                        out.println("ServletContextGetRequestDispatcherTest test PASSED");
+                if(rd != null)  {
+                        rd.forward(request,response) ;
                 }
                 else {
                         out.println("ServletContextGetRequestDispatcherTest test FAILED <BR>");
-                        out.println("ServletContext.getRequestDispatcher(String) returned incorrect result <BR>");
+                        out.println("Request Dispatcher Couldn't forward to /GetMinorVersionTest ");
                 }
 	}
 }

@@ -88,8 +88,10 @@ public class SetBufferSize_1TestServlet extends GenericServlet {
 				out.println("SetBufferSize_1Test test FAILED");
 			}catch(IllegalStateException ise) {
 				out.println("SetBufferSize_1Test test PASSED");
-			}
+			                                  }
 		}catch(Exception e) {
-		}
+				out.println("SetBufferSize_1Test test FAILED");
+				 }
+		
 	}	
 }

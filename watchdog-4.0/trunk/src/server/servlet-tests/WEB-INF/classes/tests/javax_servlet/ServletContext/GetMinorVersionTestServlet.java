@@ -80,7 +80,7 @@ public class GetMinorVersionTestServlet extends HttpServlet {
 		ServletContext context = config.getServletContext();
 
 		//Version should be 2 right
-		if(context.getMinorVersion()==2) {
+		if(context.getMinorVersion()==3) {
 			out.println("GetMinorVersionTest test PASSED");
 		}
 		else {

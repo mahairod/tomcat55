@@ -91,7 +91,7 @@ public class ReadLineTestServlet extends HttpServlet {
 
 		String buff = new String(buffer,0,len);
 
-		if(buff.trim().equals("ULTRA SPARC")) {
+		if(buff.trim().equals("java")) {
 			out.println("ReadLineTest test PASSED");
 		}
 		else {

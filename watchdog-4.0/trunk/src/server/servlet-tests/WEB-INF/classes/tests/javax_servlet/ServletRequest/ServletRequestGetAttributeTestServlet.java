@@ -71,7 +71,7 @@ public class ServletRequestGetAttributeTestServlet extends GenericServlet {
 
 	public void service (ServletRequest request, ServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-		//request.setAttribute("BestLanguageHeader","Java");
+		request.setAttribute("BestLanguageHeader","Java");
 
 		String attr = (String)request.getAttribute("BestLanguageHeader");
 
@@ -84,7 +84,7 @@ public class ServletRequestGetAttributeTestServlet extends GenericServlet {
 				out.println("ServletRequestGetAttributeTest test FAILED <BR>");
 				out.println("ServletRequest.getAttribute() returned incorrect value <BR>");
 				out.println("Expected Attribute Value -> Java <BR>");
-				out.println("Actual Attribute value returned -> + attr ");
+				out.println("Actual Attribute value returned -> " + attr );
 		}
 	}
 }
