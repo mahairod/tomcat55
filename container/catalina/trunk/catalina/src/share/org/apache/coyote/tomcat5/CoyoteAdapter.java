@@ -246,6 +246,14 @@ final class CoyoteAdapter
             request.setSecure(connector.getSecure());
         }
 
+        // Filter trace method
+        if (!connector.getAllowTrace() 
+            && req.method().equalsIgnoreCase("TRACE")) {
+            res.setStatus(403);
+            res.setMessage("TRACE method is not allowed");
+            return false;
+        }
+
         // FIXME: the code below doesnt belongs to here, 
         // this is only have sense 
         // in Http11, not in ajp13..
