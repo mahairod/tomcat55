@@ -93,6 +93,11 @@ public class Constants {
         public static final String WAR = "war";
     }
 
+    public static class SESSION {
+	public static final String COOKIE_NAME = "JSESSIONID";
+	public static final String PARAMETER_NAME = "jsessionid";
+    }
+
     public static class CharacterEncoding {
         public static final String Default = "8859_1";
      }
