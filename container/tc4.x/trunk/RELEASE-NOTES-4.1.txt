@@ -43,6 +43,14 @@ General New Features:
 Catalina New Features:
 ---------------------
 
+[4.1.3] Catalina:
+        Implement custom logger which can be used to capture System.out and
+        System.err to a buffer for later use.
+
+[4.1.3] SSIServlet:
+        Complete rewrite of the SSI functionality (WARNING: servlet class name
+        has changed).
+
 
 -------------------
 Jasper New Features:
@@ -54,6 +62,9 @@ Jasper New Features:
 
 [4.1.1] JspServlet:
         Refactor the JSP modification checking as a background thread.
+
+[4.1.3] Compiler:
+        Ant 1.5 based compiler.
 
 
 ==========================
@@ -75,6 +86,9 @@ Generic Bug Fixes:
 
 [4.1.2] Administration Webapp:
         Many cosmetic fixes.
+
+[4.1.3] Administration Webapp:
+        Fix creation of new connectors through the admin webapp.
 
 
 ------------------
@@ -100,6 +114,57 @@ Catalina Bug Fixes:
         Fixed a problem where the facades would still keep a pointer to the 
         facaded objects after the end of the processing of the request.
 
+[4.1.3] #7578
+        Summary: Signed jars loses their certificates when in /WEB-INF/lib
+        WebappClassLoader:
+        Fix the timing of the call to JarEntry.getCertificates(), so that the
+        certificates are set correctly.
+
+[4.1.3] WebappClassLoader:
+        Modify the filters to have a matched class be delegated first, instead
+        of refusing to load it altogether. Also add filters for javax.*, Xerces
+        and Xalan.
+
+[4.1.3] Endpoint:
+        Add support for a two phase connector initialization in Coyote, so that
+        Tomcat can be used as nobody on Unix.
+
+[4.1.3] Http11Protocol:
+        i18n.
+
+[4.1.3] StandardServerMBean:
+        Encode special characters when writing configuration file.
+
+[4.1.3] ContextConfig:
+        Fix NPE when the Embedded class is used.
+
+[4.1.3] DBCP:
+        Use the JNDI factory provided by the commons-dbcp project.
+
+[4.1.3] StandardHost:
+        Modify mapping error uri to provide the source uri.
+
+[4.1.3] NamingContextListener:
+        Fix a bug where the listener was registered on all lifecycle events.
+
+[4.1.3] #7656
+        Summary: Webapplications deployed using PUT don't survive 
+        a tomcat restart
+        StandardServer:
+        Move the save to XML functionality out of the JMX code, and make the
+        ManagerServlet use it after a deploy, so that the deployed application
+        is persistent.
+
+[4.1.3] #9353
+        Transfer-Encoding: chunked (on Request fails)
+        ChunkedInputFilter:
+        In rare cases, the data read could be corrupted.
+
+[4.1.3] ManagerServlet:
+        Handle resources nested in subcontexts.
+
+
+
 
 ----------------
 Jasper Bug Fixes:
@@ -121,6 +186,30 @@ Jasper Bug Fixes:
         JspServletWrapper:
         Fix JSP recompilation when the new "development" flag is set to "true".
 
+[4.1.3] #5793
+        Summary: Variable element in tld with TagExtraInfo class
+        TagLibraryInfoImpl:
+        Fix spec compliance problem.
+
+[4.1.3] PagaDataImpl:
+        Fix bug where only one validator could be used on a page.
+
+[4.1.3] #8565
+        Summary: MyEntityResolver doesn't allow including user-defined entities
+
+[4.1.3] Generator:
+        Use an array instead of a collection to simulate the try/catch nesting.
+
+[4.1.3] Generator:
+        Fix spec compliance bug where a tag could define scripting variables in
+        both the TLD and the TagExtraInfo class.
+
+[4.1.3] CoyoteConnector:
+        Add PureTLS support.
+
+[4.1.3] NamingResources:
+        Prevent naming resources overriding.
+
 
 ============================
 KNOWN ISSUES IN THIS RELEASE:
@@ -132,9 +221,7 @@ KNOWN ISSUES IN THIS RELEASE:
 * Web application reloading and static fields in shared libraries
 * JAVAC leaking memory
 * Linux and Sun JDK 1.2.x - 1.3.x
-* Jasper and Jikes
 * Enabling SSI and CGI Support
-* Tomcat examples web application
 
 
 -------------------------------------
@@ -196,7 +283,7 @@ As described above, Tomcat 4.0 makes an XML parser (and many other standard
 APIs) available to web applications.  This parser is also used internally
 to parse web.xml files and the server.xml configuration file.  If you wish,
 you may replace the "xercesImpl.jar" file in "common/endorsed" with another 
-XML parser, as long as it is compatible with the JAXP/1.1 APIs.
+XML parser, as long as it is compatible with the JAXP 1.1 APIs.
 
 
 ---------------------------------------------------------------
@@ -241,39 +328,6 @@ do "ulimit -s 2048"; use "limit stacksize 2048" for tcsh.
 GLIBC 2.2 / Linux 2.4 users should also define an environment variable:
 export LD_ASSUME_KERNEL=2.2.5
 
----------------------------------
-Tomcat 4.0 and Sun JDK 1.4 beta 3:
----------------------------------
-
-Some unpredictable classloading behavior has been reported when Tomcat is 
-used with Sun JDK 1.4 beta 3. The problem has been fixed with Sun JDK 1.4 
-Realease Candidate or later.
-
-
-
-----------------
-Jasper and Jikes:
-----------------
-
-Jikes can be used with the Jasper JSP page compiler, but the runtime classes 
-JAR of the JDK or JRE (depending on what is installed on the computer) must
-be added to the system classpath.
-
-This can be achieved by editing the main catalina script, and adding the rt.jar
-file:
-
-On Windows:
-  line 71 of %CATALINA_HOME%\bin\catalina.bat, change
-set CP=%CATALINA_HOME%\bin\bootstrap.jar;%JAVA_HOME%\lib\tools.jar
-  to
-set CP=%JAVA_HOME%\jre\lib\rt.jar;%CATALINA_HOME%\bin\bootstrap.jar;%JAVA_HOME%\lib\tools.jar
-
-On Unix or Unix-like OSes:
-  line 89 of $CATALINA_HOME/bin/catalina.sh, change
-CP="$CATALINA_HOME/bin/bootstrap.jar"
-  to
-CP="$JAVA_HOME/jre/lib/rt.jar:$CATALINA_HOME/bin/bootstrap.jar"
-
 
 ----------------------------
 Enabling SSI and CGI Support:
@@ -304,14 +358,5 @@ On Unix:
   line 165 and 213, as well as the associated servlet mappings 
   line 265 and 274. Alternately, these servlet declarations and mappings can
   be added to your web application deployment descriptor.
-
-
--------------------------------
-Tomcat examples web application:
--------------------------------
-
-It is recommended to remove the "examples" web application when deploying
-Tomcat on a production server.
-
 
 
