@@ -17,6 +17,8 @@
 package org.apache.jasper.compiler;
 
 import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -34,6 +36,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.xmlparser.ParserUtils;
 import org.apache.jasper.xmlparser.TreeNode;
@@ -260,18 +263,39 @@ public class TldLocationsCache {
 
         try {
             // Acquire input stream to web application deployment descriptor
-            is = ctxt.getResourceAsStream(WEB_XML);
-            if (is == null) {
-                if (log.isWarnEnabled()) {
+            String altDDName = (String)ctxt.getAttribute(
+                                                    Constants.ALT_DD_ATTR);
+            if (altDDName != null) {
+                try {
+                    is = new FileInputStream(altDDName);
+                } catch (FileNotFoundException e) {
+                    if (log.isWarnEnabled()) {
+                        log.warn(Localizer.getMessage(
+                                            "jsp.error.internal.filenotfound",
+                                            altDDName));
+                    }
+                }
+            } else {
+                is = ctxt.getResourceAsStream(WEB_XML);
+                if (is == null && log.isWarnEnabled()) {
                     log.warn(Localizer.getMessage(
                                             "jsp.error.internal.filenotfound",
                                             WEB_XML));
                 }
+            }
+
+            if (is == null) {
                 return;
             }
 
             // Parse the web application deployment descriptor
-            TreeNode webtld = new ParserUtils().parseXMLDocument(WEB_XML, is);
+            TreeNode webtld = null;
+            // altDDName is the absolute path of the DD
+            if (altDDName != null) {
+                webtld = new ParserUtils().parseXMLDocument(altDDName, is);
+            } else {
+                webtld = new ParserUtils().parseXMLDocument(WEB_XML, is);
+            }
 
             // Allow taglib to be an element of the root or jsp-config (JSP2.0)
             TreeNode jspConfig = webtld.findChild("jsp-config");

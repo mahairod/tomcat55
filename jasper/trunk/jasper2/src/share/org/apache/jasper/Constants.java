@@ -121,6 +121,9 @@ public class Constants {
     public static final String TMP_DIR = "javax.servlet.context.tempdir";
     public static final String FORWARD_SEEN = "javax.servlet.forward.seen";
 
+    // Must be kept in sync with org/apache/catalina/Globals.java
+    public static final String ALT_DD_ATTR = "org.apache.catalina.deploy.alt_dd";
+
     /**
      * Public Id and the Resource path (of the cached copy) 
      * of the DTDs for tag library descriptors. 
