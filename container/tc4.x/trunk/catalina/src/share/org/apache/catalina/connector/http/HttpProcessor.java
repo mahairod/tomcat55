@@ -610,7 +610,10 @@ final class HttpProcessor
 	    } else if (header.equals(DefaultHeaders.TRANSFER_ENCODING_NAME)) {
                 //request.setTransferEncoding(header);
 	    }
-	}
+            
+            request.nextHeader();
+            
+        }
 
     }
 

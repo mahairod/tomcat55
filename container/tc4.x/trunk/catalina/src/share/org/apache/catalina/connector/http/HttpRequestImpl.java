@@ -229,7 +229,15 @@ final class HttpRequestImpl
         }
         if (headerPool[nextHeader] == null)
             headerPool[nextHeader] = new HttpHeader();
-        return headerPool[nextHeader++];
+        return headerPool[nextHeader];
+    }
+
+
+    /**
+     * Go to the next header.
+     */
+    void nextHeader() {
+        nextHeader++;
     }
 
 
