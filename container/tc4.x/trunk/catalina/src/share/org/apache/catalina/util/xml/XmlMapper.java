@@ -328,8 +328,8 @@ public class XmlMapper
             this.action=action;
         }
     }
-    Rule rules[]=new Rule[256];
-    Rule matching[]=new Rule[256];
+    Rule rules[]=new Rule[512];
+    Rule matching[]=new Rule[512];
     int ruleCount=0;
 
     /**
