@@ -63,7 +63,6 @@
 
 package org.apache.naming.resources;
 
-import java.util.Hashtable;
 import java.net.URLStreamHandler;
 import java.net.URLStreamHandlerFactory;
 import java.io.IOException;
