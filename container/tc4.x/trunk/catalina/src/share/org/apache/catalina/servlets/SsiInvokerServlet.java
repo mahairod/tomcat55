@@ -235,6 +235,8 @@ public final class SsiInvokerServlet extends HttpServlet {
             return;
         }
 
+        res.setContentType("text/html;charset=UTF-8");
+
         if (expires != null) {
             res.setDateHeader("Expires", (
                 new java.util.Date()).getTime() + expires.longValue() * 1000);
