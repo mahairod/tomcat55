@@ -8,7 +8,7 @@
 
 <html:html locale="true">
 
-<%@ include file="header.jsp" %>
+<%@ include file="../users/header.jsp" %>
 
 <!-- Body -->
 <body bgcolor="white">
@@ -23,8 +23,8 @@
     <tr class="page-title-row">
       <td align="left" nowrap>
         <div class="page-title-text">
-            <html:hidden property="hostName"/>
             <bean:write name="hostForm" property="nodeLabel" scope="session"/>
+            <bean:define id="hostName" name="hostForm" property="hostName"/>
         </div>
       </td>
       <td align="right" nowrap> 
@@ -51,21 +51,25 @@
             <controls:action url="">  <bean:message key="actions.valve.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.valve.delete"/> </controls:action>
             <controls:action> ------------------------------------- </controls:action>
-            <controls:action url="">  <bean:message key="actions.thishost.delete"/> </controls:action>
             --%>
+            <controls:action url='<%= "/setUpDeleteHost.do?this=" + 
+                             java.net.URLEncoder.encode(hostName.toString()) %>'>  
+                <bean:message key="actions.thishost.delete"/> 
+            </controls:action>
         </controls:actions>
           </div>
       </td>
     </tr>
   </table>
 
-  <%@ include file="buttons.jsp" %>
+  <%@ include file="../buttons.jsp" %>
 <br>
 
  <table border="0" cellspacing="0" cellpadding="0" width="100%">
     <tr> <td> 
         <div class="table-title-text"> 
-            <bean:message key="host.properties"/> 
+            <bean:message key="host.properties"/>
+             <html:hidden property="hostName"/>
         </div>
     </td> </tr>
   </table>
@@ -153,14 +157,9 @@
  </table>
   <!-- Alias table end -->
 
-  <%@ include file="buttons.jsp" %>
+  <%@ include file="../buttons.jsp" %>
 
 </html:form>
-
-<!-- Standard Footer -->
-
-<%@ include file="footer.jsp" %>
-
 </body>
 
 </html:html>

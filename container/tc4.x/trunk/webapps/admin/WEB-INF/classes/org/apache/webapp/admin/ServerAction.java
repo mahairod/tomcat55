@@ -156,7 +156,7 @@ public final class ServerAction extends Action {
         }
         
         String attribute = null;
-        // read properties from the mBean
+        // write out attributes read from the form to the mBean
         try{
             String shutdownText = request.getParameter("shutdownText");
             String portNumberText = request.getParameter("portNumberText");

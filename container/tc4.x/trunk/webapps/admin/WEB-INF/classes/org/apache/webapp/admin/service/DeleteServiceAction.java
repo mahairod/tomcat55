@@ -65,6 +65,7 @@ package org.apache.webapp.admin.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.management.MBeanServer;
@@ -72,6 +73,7 @@ import javax.management.ObjectName;
 import javax.management.ObjectInstance;
 import javax.management.modelmbean.ModelMBean;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.Action;
@@ -79,6 +81,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import javax.management.QueryExp;
+import org.apache.struts.util.MessageResources;
 
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TomcatTreeBuilder;
@@ -92,7 +95,15 @@ import org.apache.webapp.admin.TomcatTreeBuilder;
  */
 
 public class DeleteServiceAction extends Action {
-    
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
+
+    /**
+     * The MBeanServer we will be interacting with.
+     */
+    private MBeanServer mBServer = null;
     
     // --------------------------------------------------------- Public Methods
     
@@ -119,8 +130,16 @@ public class DeleteServiceAction extends Action {
     throws IOException, ServletException {
         
         
-        // Acquire a reference to the MBeanServer containing our MBeans
-        MBeanServer mBServer = null;
+        // Look up the components we will be using as needed
+        if (mBServer == null) {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        }
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
+        HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        
         try {
             mBServer = ((ApplicationServlet) getServlet()).getServer();
         } catch (Throwable t) {
@@ -165,8 +184,15 @@ public class DeleteServiceAction extends Action {
                         
                         mBServer.invoke(server, "removeService", serviceParam, type);
                         
-                    } catch (Throwable t) {
-                        throw new ServletException("Exception while removing service", t);
+                    } catch (Exception e) {                        
+                        getServlet().log
+                        (resources.getMessage(locale, "users.error.invoke",
+                        "removeService"), e);
+                        response.sendError
+                        (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        resources.getMessage(locale, "users.error.invoke",
+                        "removeService"));
+                        return (null);
                     }
                 }
             }

@@ -67,7 +67,6 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import java.net.InetAddress;
 import java.util.ArrayList;
 
 /**
@@ -82,7 +81,8 @@ public final class HostForm extends ActionForm {
     // ----------------------------------------------------- Instance Variables
     
     /**
-     * The text for the node label.
+     * The text for the node label. This is of the form 'Host(name)'
+     * and is picked up from the node of the tree that is clicked on.
      */
     private String nodeLabel = null;
     

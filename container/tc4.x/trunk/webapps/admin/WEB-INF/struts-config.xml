@@ -39,6 +39,10 @@
     <form-bean      name="hostForm"
                     type="org.apache.webapp.admin.host.HostForm"/>
 
+    <!-- Delete Host form bean -->
+    <form-bean      name="deleteHostForm"
+                    type="org.apache.webapp.admin.host.DeleteHostForm"/>
+                    
     <!-- Context form bean -->
     <form-bean      name="contextForm"
                     type="org.apache.webapp.admin.context.ContextForm"/>
@@ -138,7 +142,11 @@
                 redirect="false"/>
         
     <forward        name="Host"
-                    path="/host.jsp"
+                    path="/host/host.jsp"
+                redirect="false"/>
+ 
+    <forward        name="Delete Host"
+                    path="/host/deleteHost.jsp"
                 redirect="false"/>
        
     <forward        name="Context"
@@ -296,6 +304,13 @@
                scope="session">
     </action>
     
+    <!-- Set up delete Host datastructure -->
+    <action    path="/setUpDeleteHost"
+               type="org.apache.webapp.admin.host.SetUpDeleteHostAction"
+               name="deleteHostForm"
+               scope="session">
+    </action>
+    
       <!-- Set up Context datastructure -->
     <action    path="/setUpContext"
                type="org.apache.webapp.admin.context.SetUpContextAction"
@@ -375,7 +390,15 @@
                type="org.apache.webapp.admin.host.HostAction"
                name="hostForm"
               scope="session"
-              input="/host.jsp">
+              input="/host/host.jsp">
+    </action>
+
+    <!-- Process a delete host change -->
+    <action    path="/deleteHost"
+               type="org.apache.webapp.admin.host.DeleteHostAction"
+               name="deleteHostForm"
+              scope="session"
+              input="/host/deleteHost.jsp">
     </action>
     
      <!-- Process a context change -->

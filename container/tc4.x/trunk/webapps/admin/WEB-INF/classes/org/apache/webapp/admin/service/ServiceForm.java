@@ -254,8 +254,6 @@ public final class ServiceForm extends ActionForm {
         this.engineName = null;
         this.debugLvl = "0";
         this.defaultHost = " ";
-        //this.debugLvlVals = null;
-        //this.hostNameVals = null;
     }
     
     /**

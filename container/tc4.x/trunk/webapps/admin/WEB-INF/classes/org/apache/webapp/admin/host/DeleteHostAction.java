@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,60 +59,54 @@
  *
  */
 
-
-package org.apache.webapp.admin;
-
+package org.apache.webapp.admin.host;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
-import java.util.ArrayList;
+import java.util.TreeSet;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.management.ObjectInstance;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
 import javax.management.QueryExp;
-import javax.management.Query;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
-
-import javax.management.modelmbean.ModelMBean;
-import javax.management.modelmbean.ModelMBeanInfo;
-
 import org.apache.struts.util.MessageResources;
+
+import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.TomcatTreeBuilder;
+
 /**
- * Test <code>Action</code> that handles events from the tree control test
- * page.
+ * Delete hosts that are selected to be deleted.
  *
- * @author Jazmin Jonson
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public class SetUpServerAction extends Action {
+public class DeleteHostAction extends Action {
     
-    private static MBeanServer mBServer = null;
+    /**
+     * The MBeanServer we will be interacting with.
+     */
+    private MBeanServer mBServer = null;
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
     private MessageResources resources = null;
-
-    public final static String PORT_PROP_NAME = "port";
-    public final static String SHUTDOWN_PROP_NAME = "shutdown";
-    public final static String DEBUG_PROP_NAME = "debug";
     
-    private ArrayList debugLvlList = null;
+    /* 
+     * Remove operation.
+     */
+    private String REMOVE_OP = "removeHost";
     
     // --------------------------------------------------------- Public Methods
+    
     
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -135,49 +129,16 @@ public class SetUpServerAction extends Action {
     HttpServletResponse response)
     throws IOException, ServletException {
         
+        // Look up the components we will be using as needed
+        if (mBServer == null) {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        }
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }        
-        if (form == null) {
-            getServlet().log(" Creating new ServerForm bean under key "
-            + mapping.getAttribute());
-            form = new ServerForm();
-            
-            if ("request".equals(mapping.getScope()))
-                request.setAttribute(mapping.getAttribute(), form);
-            else
-                request.getSession().setAttribute(mapping.getAttribute(), form);
-            
-        }
-        
-        // label of the node that was clicked on.
-        String nodeLabel = request.getParameter("nodeLabel");
-        
-        ServerForm serverFm = (ServerForm) form;
-        
-        if(debugLvlList == null) {
-            debugLvlList = new ArrayList();
-            debugLvlList.add(new LabelValueBean("0", "0"));
-            debugLvlList.add(new LabelValueBean("1", "1"));
-            debugLvlList.add(new LabelValueBean("2", "2"));
-            debugLvlList.add(new LabelValueBean("3", "3"));
-            debugLvlList.add(new LabelValueBean("4", "4"));
-            debugLvlList.add(new LabelValueBean("5", "5"));
-            debugLvlList.add(new LabelValueBean("6", "6"));
-            debugLvlList.add(new LabelValueBean("7", "7"));
-            debugLvlList.add(new LabelValueBean("8", "8"));
-            debugLvlList.add(new LabelValueBean("9", "9"));
-            
-        }
-        
-        Integer portNumb = null;
-        Integer debug = null;
-        String shutdown = null;
-        
-        // Acquire a reference to the MBeanServer containing our MBeans
         try {
             mBServer = ((ApplicationServlet) getServlet()).getServer();
         } catch (Throwable t) {
@@ -185,52 +146,69 @@ public class SetUpServerAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
-        ObjectName serverObjName = null;
-        try{
-            Iterator serverItr =
-            mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
-            TomcatTreeBuilder.WILDCARD),
-            null).iterator();
-            
-            serverObjName =
-            ((ObjectInstance)serverItr.next()).getObjectName();            
-        } catch (Throwable t) {
-            throw new ServletException
-            ("Cannot acquire Server MBean reference ", t);
-        }
+        // Get the parent engine name
+        String serviceName = request.getParameter("serviceName");        
         
-        String attribute = null;
-        // read attributes from the server mBean to display them on the form.
+        ObjectName engine = null;
+        // retrieve the parent engine bean
+        String enginePattern = TomcatTreeBuilder.ENGINE_TYPE +
+        ",service=" + serviceName;
+        
         try {
-            portNumb = (Integer)mBServer.getAttribute(serverObjName,
-            attribute=PORT_PROP_NAME);
+            Iterator engineItr =
+            mBServer.queryMBeans(new ObjectName(
+            enginePattern), null).iterator();
             
-            debug = (Integer)mBServer.getAttribute(serverObjName,
-            attribute=DEBUG_PROP_NAME);
-            
-            shutdown = (String)mBServer.getAttribute(serverObjName,
-            attribute=SHUTDOWN_PROP_NAME);
-            
-        } catch(Exception e){
-            getServlet().log
-            (resources.getMessage(locale, "users.error.attribute.get",
-            attribute), e);
-            response.sendError
-            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-            resources.getMessage(locale, "users.error.attribute.get",
-            attribute));
-            return (null);
+            ObjectInstance objInstance = (ObjectInstance)engineItr.next();
+            engine = (objInstance).getObjectName();
+        } catch (Exception e) {
+            throw new ServletException("Error getting parent engine Bean(" +
+            enginePattern + ")", e);
         }
         
-        //setting values obtained from the mBean to be displayed in the form.
-        serverFm.setNodeLabel(nodeLabel);        
-        serverFm.setPortNumberText(portNumb.toString());
-        serverFm.setDebugLvl(debug.toString());
-        serverFm.setShutdownText(shutdown);
-        serverFm.setDebugLvlVals(debugLvlList);
+        // selected services to be deleted
+        String[] selected  = request.getParameterValues("checkbox");
         
-        //forward to the server jsp.
-        return (mapping.findForward("Server"));        
+        // process delete action
+        if (selected != null) {
+            for (int index=0; index <selected.length; index++) {
+                String pattern = selected[index];
+                Iterator names = null;
+                
+                try {
+                    names = mBServer.queryNames(new ObjectName(pattern), null).iterator();
+                } catch (Exception e) {
+                    throw new ServletException("queryNames(" + pattern + ")", e);
+                }
+                                
+                while (names.hasNext()) {
+                    try {
+                        ObjectName oName = (ObjectName) names.next();
+                        
+                        // remove this host
+                        Object[] param = new Object[1];
+                        param[0] = new String(oName.toString());
+                        
+                        String[] type = new String[1];
+                        type[0]= "java.lang.String";
+                        
+                        mBServer.invoke(engine, REMOVE_OP , param, type);
+                        
+                    } catch (Exception e) {
+                        getServlet().log
+                        (resources.getMessage(locale, "users.error.invoke",
+                        REMOVE_OP), e);
+                        response.sendError
+                        (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        resources.getMessage(locale, "users.error.invoke",
+                        REMOVE_OP));
+                        return (null);
+                    }
+                }
+            }
+        }
+        //Fix me -- need to refresh the tree?
+        return (mapping.findForward("Save Successful"));
     }
-        
+    
 }

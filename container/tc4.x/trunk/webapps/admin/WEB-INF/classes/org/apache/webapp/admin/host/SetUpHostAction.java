@@ -213,6 +213,11 @@ public class SetUpHostAction extends Action {
             name = (String)mBServer.getAttribute(hostObjName,
             attribute=NAME_PROP_NAME);
             
+            // FIX-ME
+            // nodelabel might be null in case of returning from delete screen
+            if (nodeLabel == null)
+                nodeLabel = "Host (" + name + ")";
+            
             appBase = (String)mBServer.getAttribute(hostObjName,
             attribute=APPBASE_PROP_NAME);
             

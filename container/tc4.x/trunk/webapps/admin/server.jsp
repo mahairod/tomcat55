@@ -39,7 +39,7 @@
   </table>
 
   <%@ include file="buttons.jsp" %>
-<br>
+ <br>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
     <tr> 
@@ -64,7 +64,7 @@
                 <html:select property="debugLvl">
                      <bean:define id="debugLvlVals" name="serverForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
-                   labelProperty="label"/>
+                      labelProperty="label"/>
                 </html:select>
             </controls:data>
         </controls:row>

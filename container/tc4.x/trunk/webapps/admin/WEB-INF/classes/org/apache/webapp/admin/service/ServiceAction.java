@@ -62,6 +62,7 @@
 package org.apache.webapp.admin.service;
 
 import java.util.Iterator;
+import java.util.Locale;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -93,9 +94,15 @@ import org.apache.webapp.admin.TomcatTreeBuilder;
  */
 
 public final class ServiceAction extends Action {
-    
+    /**
+     * The MBeanServer we will be interacting with.
+     */
     private static MBeanServer mBServer = null;
     
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
     // --------------------------------------------------------- Public Methods
     
     
@@ -120,37 +127,45 @@ public final class ServiceAction extends Action {
     HttpServletResponse response)
     throws IOException, ServletException {
         
-        try{
-            
-            // front end validation and checking.
-            // ===================================================
-            MessageResources messages = getResources();
-            
-            // Validate the request parameters specified by the user
-            ActionErrors errors = new ActionErrors();
-            
-            // Report any errors we have discovered back to the original form
-            if (!errors.empty()) {
-                saveErrors(request, errors);
-                return (new ActionForward(mapping.getInput()));
-            }
-            
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
-            }
-            
-            String serviceName = request.getParameter("serviceName");
-            
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
+        Locale locale = (Locale)request.getSession().getAttribute(Action.LOCALE_KEY);
+        
+        ActionErrors errors = new ActionErrors();
+        
+        // Report any errors we have discovered back to the original form
+        if (!errors.empty()) {
+            saveErrors(request, errors);
+            return (new ActionForward(mapping.getInput()));
+        }
+        
+        // Acquire a reference to the MBeanServer containing our MBeans
+        try {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBeanServer reference", t);
+        }
+        
+        String serviceName = request.getParameter("serviceName");
+        ObjectName serviceObjName = null;
+        try {
             Iterator serviceItr =
             mBServer.queryMBeans(new ObjectName(
             TomcatTreeBuilder.ENGINE_TYPE +
             ",service=" + serviceName),
             null).iterator();
             
-            ObjectName serviceObjName =
+            serviceObjName =
             ((ObjectInstance)serviceItr.next()).getObjectName();
-            
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBean reference " + serviceName, t);
+        }
+        
+        String attribute = null;
+        try {
             String engineName = request.getParameter("engineName");
             String debugLvlText = request.getParameter("debugLvl");
             String defaultHost = request.getParameter("defaultHost");
@@ -158,14 +173,14 @@ public final class ServiceAction extends Action {
             if (engineName != null) {
                 
                 mBServer.setAttribute(serviceObjName,
-                new Attribute(SetUpServiceAction.NAME_PROP_NAME,
+                new Attribute(attribute=SetUpServiceAction.NAME_PROP_NAME,
                 engineName));
             }
             
             if(debugLvlText != null) {
                 Integer debugLvl = new Integer(debugLvlText);
                 mBServer.setAttribute(serviceObjName,
-                new Attribute(SetUpServiceAction.DEBUG_PROP_NAME,
+                new Attribute(attribute=SetUpServiceAction.DEBUG_PROP_NAME,
                 debugLvl));
             }
             
@@ -179,14 +194,19 @@ public final class ServiceAction extends Action {
                 }
              */
                 mBServer.setAttribute(serviceObjName,
-                new Attribute(SetUpServiceAction.HOST_PROP_NAME,
-                defaultHost));
-                
+                new Attribute(attribute=SetUpServiceAction.HOST_PROP_NAME,
+                defaultHost));                
+
             }
-            
-        }catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+        }catch(Exception e){
+            getServlet().log
+            (resources.getMessage(locale, "users.error.attribute.set",
+            attribute), e);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.attribute.set",
+            attribute));
+            return (null);
         }
         
         if (servlet.getDebug() >= 1)

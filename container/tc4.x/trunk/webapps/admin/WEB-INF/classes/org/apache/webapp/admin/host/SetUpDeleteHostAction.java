@@ -60,13 +60,15 @@
  */
 
 
-package org.apache.webapp.admin;
-
+package org.apache.webapp.admin.host;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.TreeSet;
+import java.util.StringTokenizer;
+import java.util.Set;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -77,40 +79,26 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
 import javax.management.QueryExp;
-import javax.management.Query;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
-
-import javax.management.modelmbean.ModelMBean;
-import javax.management.modelmbean.ModelMBeanInfo;
-
 import org.apache.struts.util.MessageResources;
+
+import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.TomcatTreeBuilder;
+
 /**
- * Test <code>Action</code> that handles events from the tree control test
- * page.
+ * Test <code>Action</code> that handles events to delete hosts.
  *
- * @author Jazmin Jonson
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public class SetUpServerAction extends Action {
+public class SetUpDeleteHostAction extends Action {
     
     private static MBeanServer mBServer = null;
-    private MessageResources resources = null;
-
-    public final static String PORT_PROP_NAME = "port";
-    public final static String SHUTDOWN_PROP_NAME = "shutdown";
-    public final static String DEBUG_PROP_NAME = "debug";
-    
-    private ArrayList debugLvlList = null;
     
     // --------------------------------------------------------- Public Methods
     
@@ -136,46 +124,18 @@ public class SetUpServerAction extends Action {
     throws IOException, ServletException {
         
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }        
         if (form == null) {
-            getServlet().log(" Creating new ServerForm bean under key "
+            getServlet().log(" Creating new DeleteHostForm bean under key "
             + mapping.getAttribute());
-            form = new ServerForm();
             
-            if ("request".equals(mapping.getScope()))
-                request.setAttribute(mapping.getAttribute(), form);
-            else
-                request.getSession().setAttribute(mapping.getAttribute(), form);
-            
+            form = new DeleteHostForm();
         }
         
-        // label of the node that was clicked on.
-        String nodeLabel = request.getParameter("nodeLabel");
-        
-        ServerForm serverFm = (ServerForm) form;
-        
-        if(debugLvlList == null) {
-            debugLvlList = new ArrayList();
-            debugLvlList.add(new LabelValueBean("0", "0"));
-            debugLvlList.add(new LabelValueBean("1", "1"));
-            debugLvlList.add(new LabelValueBean("2", "2"));
-            debugLvlList.add(new LabelValueBean("3", "3"));
-            debugLvlList.add(new LabelValueBean("4", "4"));
-            debugLvlList.add(new LabelValueBean("5", "5"));
-            debugLvlList.add(new LabelValueBean("6", "6"));
-            debugLvlList.add(new LabelValueBean("7", "7"));
-            debugLvlList.add(new LabelValueBean("8", "8"));
-            debugLvlList.add(new LabelValueBean("9", "9"));
-            
-        }
-        
-        Integer portNumb = null;
-        Integer debug = null;
-        String shutdown = null;
+        if ("request".equals(mapping.getScope()))
+            request.setAttribute(mapping.getAttribute(), form);
+        else
+            session.setAttribute(mapping.getAttribute(), form);
         
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
@@ -185,52 +145,50 @@ public class SetUpServerAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
-        ObjectName serverObjName = null;
-        try{
-            Iterator serverItr =
-            mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
-            TomcatTreeBuilder.WILDCARD),
-            null).iterator();
-            
-            serverObjName =
-            ((ObjectInstance)serverItr.next()).getObjectName();            
-        } catch (Throwable t) {
-            throw new ServletException
-            ("Cannot acquire Server MBean reference ", t);
+        // get the parent engine name to get the parent Engine mBean
+        // on which the removeHost operation will be invoked.
+        String serviceName = request.getParameter("serviceName");;
+        String deleteThis = request.getParameter("this");
+
+        // get the service name from the host mBean
+        if (serviceName == null) {
+            StringTokenizer st = new StringTokenizer(deleteThis, "=");
+            while (st.hasMoreTokens()) {
+                serviceName = st.nextToken().trim();
+            }
         }
         
-        String attribute = null;
-        // read attributes from the server mBean to display them on the form.
+        DeleteHostForm deleteForm = (DeleteHostForm) form;
+        
+        String pattern = null;
+        
+        if (deleteThis != null) {
+            // this particular host is to be deleted.
+            pattern = deleteThis ;
+        } else {
+            // Acquire the entire set of host MBean names to be listed
+            pattern = TomcatTreeBuilder.HOST_TYPE + TomcatTreeBuilder.WILDCARD +
+            ",service=" + serviceName;
+        }
+        
+        Set results = null;
         try {
-            portNumb = (Integer)mBServer.getAttribute(serverObjName,
-            attribute=PORT_PROP_NAME);
-            
-            debug = (Integer)mBServer.getAttribute(serverObjName,
-            attribute=DEBUG_PROP_NAME);
-            
-            shutdown = (String)mBServer.getAttribute(serverObjName,
-            attribute=SHUTDOWN_PROP_NAME);
-            
-        } catch(Exception e){
-            getServlet().log
-            (resources.getMessage(locale, "users.error.attribute.get",
-            attribute), e);
-            response.sendError
-            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-            resources.getMessage(locale, "users.error.attribute.get",
-            attribute));
-            return (null);
+            results = mBServer.queryNames(new ObjectName(pattern), null);
+        } catch (Throwable t) {
+            throw new ServletException("queryNames(" + pattern + ")", t);
         }
         
-        //setting values obtained from the mBean to be displayed in the form.
-        serverFm.setNodeLabel(nodeLabel);        
-        serverFm.setPortNumberText(portNumb.toString());
-        serverFm.setDebugLvl(debug.toString());
-        serverFm.setShutdownText(shutdown);
-        serverFm.setDebugLvlVals(debugLvlList);
+        TreeSet hosts = new TreeSet();
+        Iterator names = results.iterator();
+        while (names.hasNext()) {
+            ObjectName name = (ObjectName) names.next();
+            hosts.add(name);
+        }
         
-        //forward to the server jsp.
-        return (mapping.findForward("Server"));        
+        // Forward the Set as a request attribute
+        request.setAttribute("hosts", hosts);
+        deleteForm.setServiceName(serviceName);
+        
+        return (mapping.findForward("Delete Host"));
     }
-        
 }
