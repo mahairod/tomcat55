@@ -949,7 +949,39 @@ public class JspC implements Options {
     public static void setLog( PrintStream log ) {
 	    JspC.log = log;
     }
-    
+
+
+    static final String javaKeywords[] = {
+        "abstract", "boolean", "break", "byte", "case",
+        "catch", "char", "class", "const", "continue",
+        "default", "do", "double", "else", "extends",
+        "final", "finally", "float", "for", "goto",
+        "if", "implements", "import", "instanceof", "int",
+        "interface", "long", "native", "new", "package",
+        "private", "protected", "public", "return", "short",
+        "static", "strictfp", "super", "switch", "synchronized",
+        "this", "throws", "transient", "try", "void",
+        "volatile", "while" };
+
+
+    static private boolean isJavaKeyword(String key) {
+        int i = 0;
+        int j = javaKeywords.length;
+        while (i < j) {
+            int k = (i+j)/2;
+            int result = javaKeywords[k].compareTo(key);
+            if (result == 0) {
+                return true;
+            }
+            if (result < 0) {
+                i = k+1;
+            } else {
+                j = k;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Converts the JSP file path into a valid package name with a
@@ -964,17 +996,25 @@ public class JspC implements Options {
         StringBuffer modifiedPackageName = new StringBuffer();
         int iSep = jspUri.lastIndexOf('/');
 	// Start after the first slash
+        int nameStart = 1;
 	for (int i = 1; i < iSep; i++) {
 	    char ch = jspUri.charAt(i);
 	    if (Character.isJavaIdentifierPart(ch)) {
 		modifiedPackageName.append(ch);
 	    }
 	    else if (ch == '/') {
+                if (isJavaKeyword(jspUri.substring(nameStart, i))) {
+                    modifiedPackageName.append('_');
+                }
+                nameStart = i+1;
 		modifiedPackageName.append('.');
 	    } else {
 		modifiedPackageName.append(mangleChar(ch));
 	    }
 	}
+        if (nameStart < iSep && isJavaKeyword(jspUri.substring(nameStart, iSep))) {
+            modifiedPackageName.append('_');
+        }
         return modifiedPackageName.toString();
     }
 
