@@ -160,10 +160,9 @@ implements org.apache.catalina.cluster.ClusterManager
      * Constructor, just calls super()
      *
      */
-    public SimpleTcpReplicationManager(String name)
+    public SimpleTcpReplicationManager()
     {
         super();
-        this.name = name;
     }
 
 
@@ -674,5 +673,8 @@ implements org.apache.catalina.cluster.ClusterManager
             }
             SimpleTcpCluster.log.error(lmsg,x);
         }//end if
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -98,8 +98,8 @@ public class DeltaRequest implements Serializable {
     private boolean recordAllActions = false;
 
     public DeltaRequest(String sessionId, boolean recordAllActions) {
-        this.sessionId = sessionId;
-        this.recordAllActions = recordAllActions;
+        this.recordAllActions=recordAllActions;
+        setSessionId(sessionId);
     }
 
 
@@ -179,6 +179,21 @@ public class DeltaRequest implements Serializable {
         }//for
     }
 
+    public void reset() {
+        actions.clear();
+    }
+    public String getSessionId() {
+        return sessionId;
+    }
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+        if ( sessionId == null ) {
+            new Exception("Session Id is null for setSessionId").fillInStackTrace().printStackTrace();
+        }
+    }
+    public int getSize() {
+        return actions.size();
+    }
 
     public static class AttributeInfo implements java.io.Serializable {
         private String name = null;
