@@ -11,7 +11,7 @@
   <!-- The default servlet that serves static resources -->
   <servlet>
     <servlet-name>default</servlet-name>
-    <servlet-class>org.apache.tomcat.servlets.DefaultServlet</servlet-class>
+    <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
     <init-param>
       <param-name>debug</param-name>
       <param-value>0</param-value>
@@ -26,7 +26,7 @@
   <!-- The invoker servlet that executes non-registered servlets -->
   <servlet>
     <servlet-name>invoker</servlet-name>
-    <servlet-class>org.apache.tomcat.servlets.InvokerServlet</servlet-class>
+    <servlet-class>org.apache.catalina.servlets.InvokerServlet</servlet-class>
     <init-param>
       <param-name>debug</param-name>
       <param-value>0</param-value>
