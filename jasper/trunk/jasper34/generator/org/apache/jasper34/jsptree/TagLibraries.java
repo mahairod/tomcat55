@@ -82,7 +82,7 @@ public class TagLibraries {
     
     public TagLibraries(ClassLoader cl) {
         this.tagLibInfos = new Hashtable();
-	this.tagCaches = new Hashtable();
+	//	this.tagCaches = new Hashtable();
         this.cl = cl;
     }
     
