@@ -56,6 +56,7 @@
     <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${tomcat-util.jar}"/>
+    <pathelement location="${tomcat-coyote.jar}"/>
     <pathelement location="${jaas.jar}"/>
     <pathelement location="${javagroups.jar}"/>
     <pathelement location="${jcert.jar}"/>
@@ -936,6 +937,7 @@
          index="true">
       <fileset dir="${classes.dir}">
         <include name="org/apache/catalina/**" />
+        <include name="org/apache/coyote/tomcat5/**" />
         <exclude name="org/apache/catalina/ant/**" />
         <exclude name="org/apache/catalina/launcher/**" />
         <exclude name="org/apache/naming/**" />
