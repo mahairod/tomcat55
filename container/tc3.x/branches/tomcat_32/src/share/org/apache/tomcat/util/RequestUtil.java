@@ -572,17 +572,20 @@ public class RequestUtil {
 	try {
             date = rfc1123Format.parse(dateString);
 	} catch (ParseException e) { }
+          catch (StringIndexOutOfBoundsException e) { }
 	
         if( date==null)
 	    try {
 		date = rfc1036Format.parse(dateString);
 	    } catch (ParseException e) { }
+              catch (StringIndexOutOfBoundsException e) { }
 	
         if( date==null)
 	    try {
 		date = asctimeFormat.parse(dateString);
 	    } catch (ParseException pe) {
 	    }
+              catch (StringIndexOutOfBoundsException e) { }
 
 	if(date==null) {
 	    return -1;
