@@ -1,0 +1,3 @@
+FTP_DIR=/home/ftp/pub/tomcat
+
+export FTP_DIR OSTYPE HOSTTYPE

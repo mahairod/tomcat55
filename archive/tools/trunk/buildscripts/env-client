@@ -25,6 +25,9 @@ TMONTH=`date +%m`
 TDAY=`date +%d`
 TDSTRING=$TYEAR$TMONTH$TDAY
 
+OSTYPE=`uname -s`
+HOSTTYPE=`uname -m`
+
 # default, may be overriden in host-specific
 BUILD_DIR=$HOME
 SRC_DIR=$HOME/ws

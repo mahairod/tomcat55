@@ -12,8 +12,9 @@ cd /x3/www/jakarta.apache.org/builds/tomcat/standalone/nightly
 
 # Get Canonical Unix build
 
-ftp ftp://tokyo.javasoft.com/pub/tomcat/tomcat-sparc-solaris2.4-$TDSTRING.log
 ftp ftp://tokyo.javasoft.com/pub/tomcat/tomcat-$TDSTRING.tar.Z
+ftp ftp://tokyo.javasoft.com/pub/tomcat/tomcat-sun4u-SunOS-$TDSTRING.log
+ftp ftp://kyoto.javasoft.com/pub/tomcat/apache-1.3.9-sun4u-SunOS.tar.Z
 
 # Get Canoncial Windows build
 
@@ -24,14 +25,14 @@ ftp ftp://tokyo.javasoft.com/pub/tomcat/tomcat-$TDSTRING.tar.Z
 # Solaris Intel
 
 # Linux Sparc
-ftp ftp://kyoto.javasoft.com/pub/tomcat/tomcat-sparc-Linux-$TDSTRING.log
-ftp ftp://kyoto.javasoft.com/pub/tomcat/apache-1.3.9-sparc-Linux.tar.Z
-ftp ftp://kyoto.javasoft.com/pub/tomcat/mod_ajp23-sparc-Linux-${TDSTRING}.Z  
+ftp ftp://kyoto.javasoft.com/pub/tomcat/tomcat-sparc64-Linux-$TDSTRING.log
+ftp ftp://kyoto.javasoft.com/pub/tomcat/apache-1.3.9-sparc64-Linux.tar.Z
+ftp ftp://kyoto.javasoft.com/pub/tomcat/mod_ajp23-sparc64-Linux-${TDSTRING}.Z  
 
 # Linux Intel
-ftp ftp://osaka.javasoft.com/pub/tomcat/tomcat-i386-Linux-$TDSTRING.log
-ftp ftp://osaka.javasoft.com/pub/tomcat/apache-1.3.9-i386-Linux.tar.Z
-ftp ftp://osaka.javasoft.com/pub/tomcat/mod_ajp23-i386-Linux-${TDSTRING}.Z  
+ftp ftp://osaka.javasoft.com/pub/tomcat/tomcat-i686-Linux-$TDSTRING.log
+ftp ftp://osaka.javasoft.com/pub/tomcat/apache-1.3.9-i686-Linux.tar.Z
+ftp ftp://osaka.javasoft.com/pub/tomcat/mod_ajp23-i686-Linux-${TDSTRING}.Z  
 
 # FBSD Intel
 
