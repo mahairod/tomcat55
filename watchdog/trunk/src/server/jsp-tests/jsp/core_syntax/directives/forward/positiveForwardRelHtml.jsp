@@ -8,7 +8,7 @@
 	Result : we expect the forwarded page to come
 **/ %>	 
 
-<!-- testing whether forwarding works using url relative to current context->
+<!-- testing whether forwarding works using url relative to current context-->
 <jsp:forward page= "includecommon.html" />
 </body>
 </html>

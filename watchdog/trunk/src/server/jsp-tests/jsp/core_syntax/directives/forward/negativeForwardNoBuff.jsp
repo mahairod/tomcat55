@@ -7,7 +7,7 @@
         IllegalStateException
 	Result :
 **/ %>	 
-<!-- testing whether forwarding works if we stream is unbuffered->
+<!-- testing whether forwarding works if we stream is unbuffered-->
 <%@ page buffer="none"  %>
 <% try { %>
 <jsp:forward page= "/tests/core_syntax/directives/include/includecommon.html" />

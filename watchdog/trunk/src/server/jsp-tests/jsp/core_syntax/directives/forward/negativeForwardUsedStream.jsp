@@ -7,7 +7,7 @@
 	IllegalStateException
 	Result :
 **/ %>	 
-<!-- testing whether forwarding works if we stream is already used->
+<!-- testing whether forwarding works if we stream is already used -->
 <% out.flush(); %>
 <% try { %>
 <jsp:forward page= "/tests/core_syntax/directives/include/includecommon.html" />

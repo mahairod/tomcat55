@@ -7,7 +7,7 @@
 			  the flush() method on out to flush the output to the client.
 		Result:Should return the output that you sent to the client.
 **/ %>		
-<!--- with buff size 0f 12kb and autoflush false and do flush ----!>
+<!-- with buff size 0f 12kb and autoflush false and do flush -->
 <%@ page buffer="12kb" autoFlush="false" %>
 <% for(int d=0;d<1000;d++) out.print(d+"    "); out.flush(); %>
 </body>

@@ -8,6 +8,6 @@
 **/ %>	 <!-- Declaring the bean with body -->
 <!-- Here the tag is not closed. Hence bound for error -->
 <jsp:useBean id="myBean" scope="request" class="core_syntax.beantests.useBean.String_IntBean" >
-<jsp:getProperty name=myBean property="Name" />
+<jsp:getProperty name="myBean" property="Name" />
 </body>
 </html> 

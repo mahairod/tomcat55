@@ -8,13 +8,13 @@
                later call the flush method.
 **/ %>
 
-<!- this is to test if flush method throws IOException if stream is closed ->
+<!-- This is to test if flush method throws IOException if stream is closed -->
 <%@ page import="java.io.*;" %>
 <% out.println("hello"); %>
 <% out.close(); %>
 
 <!-- To report this situation, we dont have a stream to client available -->
-<!- we create a file in the directory where jsp is kept which is seen by javatest->
+<!-- we create a file in the directory where jsp is kept which is seen by javatest -->
 <%! String dir; %>
 <% String path=request.getPathTranslated(); %>
 <% if(path!=null) {
@@ -27,7 +27,7 @@
 		 java.io.FileWriter fw=new java.io.FileWriter(file);
 %>
 
-<!-- now lets try to flush the stream -->
+<!-- Now lets try to flush the stream -->
 <% try { out.flush(); fw.write("no IOException"); fw.flush();fw.close();
 }catch(java.io.IOException ioe) { %>
 <% fw.write("we got IOException"); fw.flush();fw.close(); }%>

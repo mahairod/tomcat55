@@ -7,7 +7,7 @@
 		Result: Should return all data written to out without throwing an
 			  exception.
 **/ %>		
-<!--- with default buff size 0f 8kb and autoflush true write more data 22kb --!>
+<!-- with default buff size 0f 8kb and autoflush true write more data 22kb -->
 <%@ page autoFlush="true" %>
 <% for(int d=0;d<6000;d++) out.print(d+"    ");  %>
 </body>

@@ -8,7 +8,7 @@
         url.
 	Result :
 **/ %>	 
-<!- testing Request-time static inclusion with absolute url from docroot -->
+<!-- testing Request-time static inclusion with absolute url from docroot -->
 <jsp:include page= "/tests/core_syntax/directives/include/includecommon.html" />
 </body>
 </html>

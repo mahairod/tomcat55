@@ -7,7 +7,7 @@
 			  page's Servlet object
 		Result: Should return the correct value of the set string. 
 **/ %>		
-<!--- testing whether the info directive is working ---!>
+<!-- Testing for the 'info' directive -->
 <%@ page info="positiveInfo of JCK" %>
 <% out.println(getServletInfo()); %>
 </body>

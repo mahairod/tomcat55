@@ -8,7 +8,7 @@
         context  as   url.
 	Result :
 **/ %>	 
-<!- testing Request-time static inclusion relative to from current context->
+<!-- testing Request-time static inclusion relative to from current context-->
 <jsp:include page= "includecommon.html" />
 </body>
 </html>

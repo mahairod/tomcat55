@@ -8,7 +8,7 @@
 	Result :
 **/ %>	 
 
-<!-- testing whether forwarding works using absolute url relative to doc root->
+<!-- testing whether forwarding works using absolute url relative to doc root-->
 <jsp:forward page= "/tests/core_syntax/directives/forward/includecommon.html" />
 </body>
 </html>

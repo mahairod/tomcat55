@@ -6,7 +6,7 @@
 	              is not assignable to 'type'.
 	Result :
 **/ %>	 
-<!- using 'class' and 'type' together and 'class' is not assignable to type->
+<!-- using 'class' and 'type' together and 'class' is not assignable to type -->
 <% try { %>
 <jsp:useBean id="ncounter"  class="core_syntax.beantests.useBean.NewCounter"
 type="java.util.Properties" />

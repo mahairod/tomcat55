@@ -7,7 +7,8 @@
 	              second page, set the buffer to false and iserrorpage to 
 	              true. Access the first page.
 	Result :Fatal translation error
-**/ %>	 <!-- we are setting the error page to errorpage.jsp where buffer is none-!>
+**/ %>	 
+<!-- We are setting the error page to "errorpage.jsp" where buffer is none -->
 <%@ page errorPage="errorpageNoBuff.jsp"  autoFlush="false" %>
 <%! int i=0; %>
 <%= 9/i %>

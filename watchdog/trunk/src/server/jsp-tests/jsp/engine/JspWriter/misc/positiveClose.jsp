@@ -8,13 +8,13 @@
  the stream, try to write something into the stream. 
  */
  %>
-<!-- this is to test if close method works -->
-<!-- we should get 'out' object to be null after closing output -->
+<!-- This is to test if close method works -->
+<!-- We should get 'out' object to be null after closing output -->
 <%@ page import="java.io.*;" %>
 <% out.println("hello"); %>
 <% out.close(); %>
 <!-- To report that 'out' is null, we dont have a stream to client available -->
-<!- we create a file in the directory where jsp is kept which is seen by javatest->
+<!-- We create a file in the directory where jsp is kept which is seen by javatest -->
 <%! String dir; %>
 <% String path=request.getPathTranslated(); %>
 <% if(path!=null) {

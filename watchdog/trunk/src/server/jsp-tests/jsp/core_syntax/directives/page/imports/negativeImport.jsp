@@ -6,8 +6,7 @@
 			   to java.Create an import statement with any package.
 		Result:Undefined? Error?
 **/ %>		
-<!-language defined to something other than java and we import a java -->
-<!--package to check if import works-->
+<!-- Language defined to something other than java and invalid import. Test should fail -->
 <%@ page  language="c" import="java.util.Properties" %>
 
 <%  Properties props=new Properties(); 

@@ -8,7 +8,7 @@
 **/ %>	 <!-- Declaring the bean with body -->
 <!-- Here the bean tag is not closed -->
 <jsp:useBean id="myBean" scope="request" class="core_syntax.beantests.useBean.String_IntBean" >
-<jsp:setProperty property="Name" value="APPLE" />
-<jsp:getProperty name=myBean property="Name" />
+<jsp:setProperty name="myBean" property="Name" value="APPLE" />
+<jsp:getProperty name="myBean" property="Name" />
 </body>
 </html> 

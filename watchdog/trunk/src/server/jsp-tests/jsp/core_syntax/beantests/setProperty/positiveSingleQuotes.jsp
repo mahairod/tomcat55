@@ -6,7 +6,7 @@
                       as 'value' attribute in setProperty
 	Result :we should get the expected page without error
 **/ %>	 
-<!- testing if are able to set a  property using single quoted expression -->
+<!-- testing if are able to set a  property using single quoted expression -->
 <jsp:useBean id="myBean" class="core_syntax.beantests.setProperty.MiscBean" />
 <% int k=10;  %>
 <% byte p=10; %>

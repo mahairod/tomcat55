@@ -8,7 +8,7 @@
  Now try to use the clear() method.
 */
 %>
-<!- this is to test if clear() method throws IllegalStateException if buffer is none ->
+<!-- This is to test if clear() method throws IllegalStateException if buffer is none -->
 <%@ page buffer="none" %>
 <% out.println("hello"); %>
 <% try { out.clear(); }catch(IllegalStateException ise) { %>

@@ -7,8 +7,7 @@
 	              in a scriptlet.
 	Result :Fatal Translation Error
 **/ %>	 
-<!--we are setting the error page to errorpageWrong.jsp -->
-<!--where iserrorpage is false --!>
+<!-- We are setting the error page to "errorpageWrong.jsp" where iserrorpage is false -->
 <%@ page errorPage="errorpageWrong.jsp" autoFlush="false" %>
 <%! int i=0; %>
 <%= 9/i %>

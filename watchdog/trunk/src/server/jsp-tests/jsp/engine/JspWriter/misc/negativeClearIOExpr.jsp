@@ -8,12 +8,12 @@
  should happen for the current situation.
 */
 %>
-<!- this is to test if clear method throws IOException if stream is closed ->
+<!-- This is to test if clear method throws IOException if stream is closed -->
 <%@ page import="java.io.*;" %>
 <% out.println("hello"); %>
 <% out.close(); %>
 <!-- To report that 'out' is null, we dont have a stream to client available -->
-<!- we create a file  which is seen by javatest->  
+<!-- We create a file  which is seen by javatest -->  
 <%! String dir; %>
 <% String path=request.getPathTranslated(); %>
 <% if(path!=null) {
@@ -28,7 +28,7 @@
                   
 %>
 
-<!-- now lets try to clear the stream -->
+<!-- Now lets try to clear the stream -->
 <% try { out.clear(); fw.write("no IOException"); fw.flush();fw.close();
 }catch(java.io.IOException ioe) { %>
 <% fw.write("we got IOException"); fw.flush();fw.close(); }%>
