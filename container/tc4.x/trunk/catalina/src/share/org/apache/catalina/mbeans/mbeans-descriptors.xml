@@ -193,6 +193,11 @@
           description="The port number on which we listen for ajp13 requests"
   		type="int"/>
 
+    <attribute   name="protocolHandlerClassName"
+          description="Coyote Protocol handler class name"
+                 type="java.lang.String"
+            writeable="false"/>
+
     <attribute   name="proxyName"
           description="Ther Server name to which we should pretend requests to this Connector"
                  type="java.lang.String"/>             

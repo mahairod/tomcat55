@@ -61,7 +61,7 @@
  *
  */
 
-package catalina.src.share.org.apache.catalina.mbeans;
+package org.apache.catalina.mbeans;
 
 import java.lang.reflect.Method;
 import javax.management.MBeanException;
