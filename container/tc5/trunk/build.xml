@@ -117,13 +117,6 @@
       <srcfiles dir="${catalina.home}/webapps/admin" includes="**" />
     </uptodate>
 
-<!--
-    <uptodate property="commons-modeler.build.notrequired"
-              targetfile="${commons-modeler.jar}">
-      <srcfiles dir="${cvs.base}/jakarta-commons/modeler/src/java" includes="**" />
-    </uptodate>
--->
-
     <uptodate property="commons-daemon.build.notrequired"
               targetfile="${commons-daemon.jar}">
       <srcfiles dir="${cvs.base}/jakarta-commons-sandbox/daemon/src" includes="**" />
