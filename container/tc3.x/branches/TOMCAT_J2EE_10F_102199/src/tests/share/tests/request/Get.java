@@ -174,6 +174,8 @@ public class Get extends TestableBase {
 	if( testCondition!=responseStatus) {
 	    System.out.println("Get.test: unexpected result ");
 	    System.out.println("Request: " + request );
+        if (testCondition != true) 
+            System.out.print("Not ");
 	    System.out.println("Expecting: " + responseKey );
 	    System.out.println("Got: " + response);
 	    

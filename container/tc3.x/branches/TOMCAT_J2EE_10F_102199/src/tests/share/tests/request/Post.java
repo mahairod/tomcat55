@@ -100,6 +100,8 @@ public class Post extends TestableBase {
 	
 	if( testCondition!=responseStatus) {
 	    System.out.println("POST error in " + testId );
+        if (testCondition != true) 
+            System.out.print("Not ");
 	    System.out.println("Expecting: " + responseKey);
 	    System.out.println("Response: " + response);
 	}
