@@ -32,6 +32,9 @@
       <update>
         Tomcat 5.5 can be built on JDK 5.0. (yoavs)
       </update>
+      <fix>
+        Windows installer polish. (mladen, remm)
+      </fix>
     </changelog>
   </subsection>
 
@@ -44,6 +47,18 @@
       <update>
         Backport if-else logic for SSI servlet from 4.1 (funkman)
       </update>
+      <fix>
+        Remove DefaultContext elements from the digester rules. (remm)
+      </fix>
+      <fix>
+        Fix ResourceLink handling. (remm)
+      </fix>
+      <fix>
+        Modify the auto deployer to get along with contexts which are statically defined in server.xml. (remm)
+      </fix>
+      <fix>
+        Externalize constant strings defining the location of deployment related resources. (remm)
+      </fix>
     </changelog>
   </subsection>
 
