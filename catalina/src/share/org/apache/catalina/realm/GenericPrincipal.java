@@ -65,11 +65,29 @@ public class GenericPrincipal implements Principal {
      */
     public GenericPrincipal(Realm realm, String name, String password,
                             List roles) {
+        this(realm, name, password, roles, null);
+    }
+
+    /**
+     * Construct a new Principal, associated with the specified Realm, for the
+     * specified username and password, with the specified role names
+     * (as Strings).
+     *
+     * @param realm The Realm that owns this principal
+     * @param name The username of the user represented by this Principal
+     * @param password Credentials used to authenticate this user
+     * @param roles List of roles (must be Strings) possessed by this user
+     * @param userPrincipal - the principal to be returned from the request 
+     *        getUserPrincipal call if not null; if null, this will be returned
+     */
+    public GenericPrincipal(Realm realm, String name, String password,
+                            List roles, Principal userPrincipal) {
 
         super();
         this.realm = realm;
         this.name = name;
         this.password = password;
+        this.userPrincipal = userPrincipal;
         if (roles != null) {
             this.roles = new String[roles.size()];
             this.roles = (String[]) roles.toArray(this.roles);
@@ -78,19 +96,6 @@ public class GenericPrincipal implements Principal {
         }
     }
 
-    public GenericPrincipal(String name, String password,
-                            List roles) {
-
-        super();
-        this.name = name;
-        this.password = password;
-        if (roles != null) {
-            this.roles = new String[roles.size()];
-            this.roles = (String[]) roles.toArray(this.roles);
-            if (this.roles.length > 0)
-                Arrays.sort(this.roles);
-        }
-    }
 
     // ------------------------------------------------------------- Properties
 
@@ -137,6 +142,20 @@ public class GenericPrincipal implements Principal {
 
     public String[] getRoles() {
         return (this.roles);
+    }
+
+
+    /**
+     * The authenticated Principal to be exposed to applications.
+     */
+    protected Principal userPrincipal = null;
+
+    public Principal getUserPrincipal() {
+        if (userPrincipal != null) {
+            return userPrincipal;
+        } else {
+            return this;
+        }
     }
 
 

@@ -20,9 +20,7 @@ package org.apache.catalina.realm;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.List;
 
 import javax.security.auth.Subject;
@@ -170,12 +168,6 @@ public class JAASRealm
      */
     protected List userClasses = new ArrayList();
 
-     /**
-      * Map associating each user <code>Principal</code> object
-      * with an array of role <code>Principal</code>s. 
-      * This Map is read when <code>hasRole</code> is called.
-      */
-     protected Map roleMap = new HashMap();
 
     /**
      * Whether to use context ClassLoader or default ClassLoader.
@@ -417,52 +409,6 @@ public class JAASRealm
         }
     }
      
-     /**
-      * Returns <code>true</code> if the specified user <code>Principal</code> has the specified
-      * security role, within the context of this <code>Realm</code>; otherwise return
-      * <code>false</code>. This will be true when 
-      * an associated role <code>Principal</code> can be found whose <code>getName</code>
-      * method returns a <code>String</code> equalling the specified role.
-      * @param principal <code>Principal</code> for whom the role is to be checked
-      * @param role Security role to be checked
-      */
-     public boolean hasRole(Principal principal, String role) {
-         if (log.isDebugEnabled()) {
-             log.debug(sm.getString("jaasRealm.isInRole.start", principal.getName(), role));
-         }
-         
-         if ((principal == null) || (role == null) ||
-             (roleMap.get(principal) == null)) {
-             if (log.isDebugEnabled()) {
-                 log.debug(sm.getString("jaasRealm.isInRole.noPrincipalOrRole"));
-             }
-             return false;
-         }
-         
-         List roles = (List)roleMap.get(principal);
-         if (log.isDebugEnabled()) {
-             log.debug(sm.getString("jaasRealm.isInRole.principalCached", String.valueOf(roles.size())));
-         }
-         
-         for (Iterator it = roles.iterator(); it.hasNext();) {
-             Principal possessedRole = (Principal)it.next();
-             String possessedRoleName = possessedRole.getName();
-             if (log.isDebugEnabled()) {
-                 log.debug(sm.getString("jaasRealm.isInRole.possessesRole", possessedRole.getName()));
-             }
-             
-             if (possessedRoleName.equals(role)) {
-                 if (log.isDebugEnabled()) {
-                     log.debug(sm.getString("jaasRealm.isInRole.match"));
-                 }
-                 return true;
-             }
-         }
-         if (log.isDebugEnabled()) {
-             log.debug(sm.getString("jaasRealm.isInRole.noMatch"));
-         }
-         return false;
-     }
 
     // -------------------------------------------------------- Package Methods
 
@@ -538,7 +484,7 @@ public class JAASRealm
             }
             
             if (roleClasses.contains(principalClass)) {
-                roles.add(principal);
+                roles.add(principal.getName());
                 if( log.isDebugEnabled() ) {
                     log.debug(sm.getString("jaasRealm.rolePrincipalAdd", principal.getName()));
                 }
@@ -556,17 +502,11 @@ public class JAASRealm
                 if (log.isDebugEnabled()) {
                     log.debug(sm.getString("jaasRealm.rolePrincipalFailure"));
                 }
-            } else {
-                roleMap.put(userPrincipal, roles);
-                if (log.isDebugEnabled()) {
-                    log.debug(sm.getString("jaasRealm.rolePrincipalSuccess", String.valueOf(roles.size())));
-                    log.debug(sm.getString("jaasRealm.cachePrincipal", userPrincipal.getName(), String.valueOf(roles.size())));
-                }
             }
         }
 
         // Return the resulting Principal for our authenticated user
-        return userPrincipal;
+        return new GenericPrincipal(this, username, null, roles, userPrincipal);
     }
 
      /**
