@@ -926,6 +926,11 @@ Coyote Bug Fixes:
 [4.1.25] PureTLS SSL:
          Fix problems with getting the CLIENT-CERT.
 
+[4.1.25] #21219
+         Http11Processor:
+         Drop the client connection (nicely, if possible, rudely if not) in the
+         event of a serious protocol error.
+ 
 ----------------
 Jasper Bug Fixes:
 ----------------
