@@ -35,7 +35,7 @@
   <!-- The mapping for the webdav servlet -->
   <servlet-mapping>
     <servlet-name>webdav</servlet-name>
-    <url-pattern>/</url-pattern>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
 
   <!-- Establish the default MIME type mappings -->
