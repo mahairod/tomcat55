@@ -119,7 +119,7 @@ print statement per input line, to ease debugging?
 
 <li><strong>modificationTestInterval</strong> - Checks for modification for a given
 JSP file (and all its dependent files) will be performed only once every specified amount
-of milliseconds. Setting this to 0 will cause the JSP to be checked on every access.
+of seconds. Setting this to 0 will cause the JSP to be checked on every access.
 Default is <code>4</code> seconds.</li>
 
 <li><strong>reloading</strong> - Should Jasper check for modified JSPs?
