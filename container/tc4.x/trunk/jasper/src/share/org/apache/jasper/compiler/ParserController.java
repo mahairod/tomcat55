@@ -111,7 +111,6 @@ public class ParserController {
      * Static information used in the process of figuring out
      * the kind of document we're dealing with.
      */
-    private static final String XML_PROLOG_TAG = "<?xml";
     private static final String JSP_ROOT_TAG   = "<jsp:root";
 
     /*
@@ -241,20 +240,16 @@ public class ParserController {
         jspReader.setSingleFile(true);
         Mark startMark = jspReader.mark();
 
-        // check the prolog (ideally it's been included if it is an xml doc)
-        Mark mark = jspReader.skipUntil(XML_PROLOG_TAG);
-        if (mark != null) {
-            isXml = true;
-        } else {
-            // must have the jsp:root tag
-            jspReader.reset(startMark);
-            mark = jspReader.skipUntil(JSP_ROOT_TAG);
-            if (mark != null) {
-                isXml = true;
-            } else {
-                isXml = false;
-            }
-        }
+	// Check for the jsp:root tag
+	// No check for xml prolog, since nothing prevents a page
+	// to output XML and still use JSP syntax.
+	jspReader.reset(startMark);
+	Mark mark = jspReader.skipUntil(JSP_ROOT_TAG);
+	if (mark != null) {
+	    isXml = true;
+	} else {
+	    isXml = false;
+	}
 
 	// Figure out the encoding of the page
 	// FIXME: We assume xml parser will take care of
