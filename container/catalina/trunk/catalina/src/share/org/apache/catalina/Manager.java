@@ -259,6 +259,14 @@ public interface Manager {
      * @exception IOException if an input/output error occurs
      */
     public void unload() throws IOException;
+    
+     /**
+      * This method will be invoked by the context/container on a periodic
+      * basis and allows the manager to implement
+      * a method that executes periodic tasks, such as expiring sessions etc.
+      */
+     public void backgroundProcess();
+
 
 
 }
