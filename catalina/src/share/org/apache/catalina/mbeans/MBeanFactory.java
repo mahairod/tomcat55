@@ -254,7 +254,7 @@ public class MBeanFactory extends BaseModelMBean {
 
             // Create a new CoyoteConnector instance for AJP
             // use reflection to avoid j-t-c compile-time circular dependencies
-            Class cls = Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
+            Class cls = Class.forName("org.apache.coyote.tomcat5.CoyoteConnector");
             Constructor ct = cls.getConstructor(null);
             retobj = ct.newInstance(null);
             Class partypes1 [] = new Class[1];
@@ -393,7 +393,7 @@ public class MBeanFactory extends BaseModelMBean {
 
             // Create a new CoyoteConnector instance
             // use reflection to avoid j-t-c compile-time circular dependencies
-            Class cls = Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
+            Class cls = Class.forName("org.apache.coyote.tomcat5.CoyoteConnector");
             Constructor ct = cls.getConstructor(null);
             retobj = ct.newInstance(null);
             Class partypes1 [] = new Class[1];
@@ -448,7 +448,7 @@ public class MBeanFactory extends BaseModelMBean {
 
             // Create a new CoyoteConnector instance
             // use reflection to avoid j-t-c compile-time circular dependencies
-            Class cls = Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
+            Class cls = Class.forName("org.apache.coyote.tomcat5.CoyoteConnector");
             Constructor ct = cls.getConstructor(null);
             retobj = ct.newInstance(null);
             Class partypes1 [] = new Class[1];
@@ -484,7 +484,7 @@ public class MBeanFactory extends BaseModelMBean {
             Class serverSocketFactoryCls =
                 Class.forName("org.apache.catalina.net.ServerSocketFactory");
             Class coyoteServerSocketFactoryCls =
-                Class.forName("org.apache.coyote.tomcat4.CoyoteServerSocketFactory");
+                Class.forName("org.apache.coyote.tomcat5.CoyoteServerSocketFactory");
             Constructor factoryConst =
                             coyoteServerSocketFactoryCls.getConstructor(null);
             Object factoryObj = factoryConst.newInstance(null);
