@@ -196,11 +196,33 @@ public interface Manager {
 
 
     /**
+     * Load any currently active sessions that were previously unloaded
+     * to the appropriate persistence mechanism, if any.  If persistence is not
+     * supported, this method returns without doing anything.
+     *
+     * @exception ClassNotFoundException if a serialized class cannot be
+     *  found during the reload
+     * @exception IOException if an input/output error occurs
+     */
+    public void load() throws ClassNotFoundException, IOException;
+
+
+    /**
      * Remove a property change listener from this component.
      *
      * @param listener The listener to remove
      */
     public void removePropertyChangeListener(PropertyChangeListener listener);
+
+
+    /**
+     * Save any currently active sessions in the appropriate persistence
+     * mechanism, if any.  If persistence is not supported, this method
+     * returns without doing anything.
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    public void unload() throws IOException;
 
 
 }

@@ -1813,9 +1813,8 @@ public final class StandardContext
 	// Stop accepting requests temporarily
 	setPaused(true);
 
-	// Shut down the current version of the relevant components
+	// Shut down the current version of all active servlets
 	Container children[] = findChildren();
-
 	for (int i = 0; i < children.length; i++) {
 	    Wrapper wrapper = (Wrapper) children[i];
 	    if (wrapper instanceof Lifecycle) {
@@ -1829,9 +1828,18 @@ public final class StandardContext
 	    }
 	}
 
-        listenerStop();
-        setApplicationListeners(null);
+        // Unload sessions to persistent storage, if supported
+        try {
+            getManager().unload();
+        } catch (Throwable t) {
+            log(sm.getString("standardContext.managerUnload"), t);
+        }
 
+        // Shut down filters and application event listeners
+        filterStop();
+        listenerStop();
+
+        // Shut down our session manager
 	if ((manager != null) && (manager instanceof Lifecycle)) {
 	    try {
 		((Lifecycle) manager).stop();
@@ -1840,6 +1848,7 @@ public final class StandardContext
 	    }
 	}
 
+        // Shut down our application class loader
 	if ((loader != null) && (loader instanceof Lifecycle)) {
 	    try {
 		((Lifecycle) loader).stop();
@@ -1848,16 +1857,16 @@ public final class StandardContext
 	    }
 	}
 
-	// Start up the new version of the relevant components
+        // Restart our application class loader
 	if ((loader != null) && (loader instanceof Lifecycle)) {
 	    try {
-		;	// FIXME - check for new WEB-INF/lib/*.jar files?
 		((Lifecycle) loader).start();
 	    } catch (LifecycleException e) {
 		log(sm.getString("standardContext.startingLoader"), e);
 	    }
 	}
 
+        // Restart our session manager
 	if ((manager != null) && (manager instanceof Lifecycle)) {
 	    try {
 		((Lifecycle) manager).start();
@@ -1866,9 +1875,18 @@ public final class StandardContext
 	    }
 	}
 
-        listenerConfig();
+        // Restart our application event listeners and filters
         listenerStart();
+        filterStart();
 
+        // Load sessions from persistent storage, if supported
+        try {
+            getManager().load();
+        } catch (Throwable t) {
+            log(sm.getString("standardContext.managerLoad"), t);
+        }
+
+        // Restart our currently defined servlets
 	for (int i = 0; i < children.length; i++) {
 	    Wrapper wrapper = (Wrapper) children[i];
 	    if (wrapper instanceof Lifecycle) {
@@ -2398,15 +2416,46 @@ public final class StandardContext
 
 
     /**
+     * Configure and initialize the set of filters for this Context.
+     * Return <code>true</code> if all filter initialization completed
+     * successfully, or <code>false</code> otherwise.
+     */
+    public boolean filterStart() {
+
+        if (debug >= 1)
+            log("Starting filters");
+
+        return (true);  // No actions currently required
+
+    }
+
+
+    /**
+     * Finalize and release the set of filters for this Context.
+     * Return <code>true</code> if all filter finalization completed
+     * successfully, or <code>false</code> otherwise.
+     */
+    public boolean filterStop() {
+
+        if (debug >= 1)
+            log("Stopping filters");
+
+        return (true);  // No actions currently required
+
+    }
+
+
+    /**
      * Configure the set of instantiated application event listeners
      * for this Context.  Return <code>true</code> if all listeners wre
      * initialized successfully, or <code>false</code> otherwise.
      */
-    public boolean listenerConfig() {
+    public boolean listenerStart() {
 
         if (debug >= 1)
 	    log("Configuring application event listeners");
 
+        // Instantiate the required listeners
         ClassLoader loader = getLoader().getClassLoader();
 	String listeners[] = findApplicationListeners();
         Object results[] = new Object[listeners.length];
@@ -2419,45 +2468,39 @@ public final class StandardContext
 		Class clazz = loader.loadClass(listeners[i]);
 		results[i] = clazz.newInstance();
 	    } catch (Throwable t) {
-		log(sm.getString("contextConfig.applicationListener",
+		log(sm.getString("standardContext.applicationListener",
 				 listeners[i]), t);
                 ok = false;
 	    }
 	}
-	if (ok)
-	    setApplicationListeners(results);
-        return (ok);
-    }
+	if (!ok) {
+            log(sm.getString("standardContext.applicationSkipped"));
+            return (false);
+        }
 
-
-    /**
-     * Send an application start event to all interested listeners.
-     * Return <code>true</code> if all events were sent successfully,
-     * or <code>false</code> otherwise.
-     */
-    public boolean listenerStart() {
+        // Send application start events
 
         if (debug >= 1)
 	    log("Sending application start events");
 
-        boolean ok = true;
-        Object listeners[] = getApplicationListeners();
-        if (listeners == null)
+        setApplicationListeners(results);
+        Object instances[] = getApplicationListeners();
+        if (instances == null)
 	    return (ok);
 	ServletContextEvent event =
 	  new ServletContextEvent(getServletContext());
-	for (int i = 0; i < listeners.length; i++) {
-            if (listeners[i] == null)
+	for (int i = 0; i < instances.length; i++) {
+            if (instances[i] == null)
                 continue;
-	    if (!(listeners[i] instanceof ServletContextListener))
+	    if (!(instances[i] instanceof ServletContextListener))
 	        continue;
 	    try {
 	        ServletContextListener listener =
-		  (ServletContextListener) listeners[i];
+		  (ServletContextListener) instances[i];
 		listener.contextInitialized(event);
 	    } catch (Throwable t) {
 	        log(sm.getString("standardContext.listenerStart",
-                                 listeners[i].getClass().getName()), t);
+                                 instances[i].getClass().getName()), t);
                 ok = false;
 	    }
 	}
@@ -2498,6 +2541,7 @@ public final class StandardContext
                 ok = false;
 	    }
 	}
+        setApplicationListeners(null);
         return (ok);
 
     }
@@ -2510,43 +2554,55 @@ public final class StandardContext
      */
     public void start() throws LifecycleException {
 
+        if (debug >= 1)
+            log("Starting");
+
         // Add missing components as necessary
         if (getResources() == null) {   // (1) Required by Loader
             if (debug >= 1)
-                log(sm.getString("standardContext.defaultResources"));
+                log("Configuring default Resources");
             setResources(new FileResources());
         }
         if (getLoader() == null) {      // (2) Required by Manager
             if (debug >= 1)
-                log(sm.getString("standardContext.defaultLoader"));
+                log("Configuring default Loader");
             setLoader(new StandardLoader(getParentClassLoader()));
         }
         if (getManager() == null) {     // (3) After prerequisites
             if (debug >= 1)
-                log(sm.getString("standardContext.defaultManager"));
+                log("Configuring default Manager");
             setManager(new StandardManager());
         }
 
 	// Standard container startup
+        if (debug >= 1)
+            log("Processing standard container startup");
 	super.start();
         if (!available)
             return;
 
-        // Configure and call application event listeners
-        if (!listenerConfig()) {
-            setAvailable(false);
-            return;
-        }
-        if (!listenerStart()) {
-            setAvailable(false);
-            return;
-        }
+        // Configure and call application event listeners and filters
+        listenerStart();
+        filterStart();
 
 	// Create context attributes that will be required
+        if (debug >= 1)
+            log("Posting standard context attributes");
 	postWelcomeFiles();
 	postWorkDirectory();
 
+        // Reload sessions from persistent storage if supported
+        try {
+            if (debug >= 1)
+                log("Loading persisted sessions");
+            getManager().load();
+        } catch (Throwable t) {
+            log(sm.getString("standardContext.managerLoad"), t);
+        }
+
         // Collect "load on startup" servlets that need to be initialized
+        if (debug >= 1)
+            log("Identifying load-on-startup servlets");
         TreeMap map = new TreeMap();
         Container children[] = findChildren();
         for (int i = 0; i < children.length; i++) {
@@ -2566,6 +2622,8 @@ public final class StandardContext
         }
 
         // Load the collected "load on startup" servlets
+        if (debug >= 1)
+            log("Loading " + map.size() + " load-on-startup servlets");
         Iterator keys = map.keySet().iterator();
         while (keys.hasNext()) {
             Integer key = (Integer) keys.next();
@@ -2582,6 +2640,9 @@ public final class StandardContext
             }
         }
 
+        if (debug >= 1)
+            log("Starting completed");
+
     }
 
 
@@ -2592,10 +2653,32 @@ public final class StandardContext
      */
     public void stop() throws LifecycleException {
 
+        if (debug >= 1)
+            log("Stopping");
+
+        // Mark this application as unavailable while we shut down
         setAvailable(false);
+
+        // Unload sessions to persistent storage, if supported
+        try {
+            if (debug >= 1)
+                log("Saving persisted sessions");
+            getManager().unload();
+        } catch (Throwable t) {
+            log(sm.getString("standardContext.managerUnload"), t);
+        }
+
+        // Stop our filters and application listeners
+        filterStop();
         listenerStop();
-        setApplicationListeners(null);
+
+        // Normal container shutdown processing
+        if (debug >= 1)
+            log("Processing standard container shutdown");
         super.stop();
+
+        if (debug >= 1)
+            log("Stopping complete");
 
     }
 

@@ -78,6 +78,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
+import java.util.ArrayList;
 import java.util.Iterator;
 import javax.servlet.ServletContext;
 import org.apache.catalina.Container;
@@ -319,6 +320,211 @@ public final class StandardManager
     }
 
 
+    /**
+     * Load any currently active sessions that were previously unloaded
+     * to the appropriate persistence mechanism, if any.  If persistence is not
+     * supported, this method returns without doing anything.
+     *
+     * @exception ClassNotFoundException if a serialized class cannot be
+     *  found during the reload
+     * @exception IOException if an input/output error occurs
+     */
+    public void load() throws ClassNotFoundException, IOException {
+
+        if (debug >= 1)
+            log("Loading persisted sessions");
+
+	// Initialize our internal data structures
+	recycled.clear();
+	sessions.clear();
+
+	// Open an input stream to the specified pathname, if any
+	File file = file();
+	if (file == null)
+	    return;
+	if (debug >= 1)
+	    log(sm.getString("standardManager.loading", pathname));
+	FileInputStream fis = null;
+	ObjectInputStream ois = null;
+	Loader loader = null;
+	ClassLoader classLoader = null;
+	try {
+	    fis = new FileInputStream(file.getAbsolutePath());
+	    BufferedInputStream bis = new BufferedInputStream(fis);
+	    if (container != null)
+		loader = container.getLoader();
+	    if (loader != null)
+		classLoader = loader.getClassLoader();
+	    if (classLoader != null)
+		ois = new CustomObjectInputStream(bis, classLoader);
+	    else
+		ois = new ObjectInputStream(bis);
+	} catch (FileNotFoundException e) {
+            if (debug >= 1)
+                log("No persisted data file found");
+	    return;
+	} catch (IOException e) {
+	    if (ois != null) {
+		try {
+		    ois.close();
+		} catch (IOException f) {
+		    ;
+		}
+		ois = null;
+	    }
+	    throw e;
+	}
+
+	// Load the previously unloaded active sessions
+	synchronized (sessions) {
+	    try {
+		Integer count = (Integer) ois.readObject();
+		int n = count.intValue();
+                if (debug >= 1)
+                    log("Loading " + n + " persisted sessions");
+		for (int i = 0; i < n; i++) {
+		    StandardSession session = new StandardSession(this);
+                    session.readObjectData(ois);
+		    session.setManager(this);
+		    sessions.put(session.getId(), session);
+		}
+	    } catch (ClassNotFoundException e) {
+		if (ois != null) {
+		    try {
+			ois.close();
+		    } catch (IOException f) {
+			;
+		    }
+		    ois = null;
+		}
+		throw e;
+	    } catch (IOException e) {
+		if (ois != null) {
+		    try {
+			ois.close();
+		    } catch (IOException f) {
+			;
+		    }
+		    ois = null;
+		}
+		throw e;
+	    }
+	}
+
+	// Close the input stream
+	try {
+	    ois.close();
+	} catch (IOException f) {
+	    ;
+	}
+
+        // Delete the persistent storage file
+        file.delete();
+
+        if (debug >= 1)
+            log("Loading complete");
+
+    }
+
+
+    /**
+     * Save any currently active sessions in the appropriate persistence
+     * mechanism, if any.  If persistence is not supported, this method
+     * returns without doing anything.
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    public void unload() throws IOException {
+
+        if (debug >= 1)
+            log("Unloading persisted sessions");
+
+	// Open an output stream to the specified pathname, if any
+	File file = file();
+	if (file == null)
+	    return;
+	if (debug >= 1)
+	    log(sm.getString("standardManager.unloading", pathname));
+	FileOutputStream fos = null;
+	ObjectOutputStream oos = null;
+	try {
+	    fos = new FileOutputStream(file.getAbsolutePath());
+	    oos = new ObjectOutputStream(new BufferedOutputStream(fos));
+	} catch (IOException e) {
+	    if (oos != null) {
+		try {
+		    oos.close();
+		} catch (IOException f) {
+		    ;
+		}
+		oos = null;
+	    }
+	    throw e;
+	}
+
+	// Write the number of active sessions, followed by the details
+        ArrayList list = new ArrayList();
+	synchronized (sessions) {
+            if (debug >= 1)
+                log("Unloading " + sessions.size() + " sessions");
+	    try {
+		oos.writeObject(new Integer(sessions.size()));
+		Iterator elements = sessions.values().iterator();
+		while (elements.hasNext()) {
+		    StandardSession session =
+                        (StandardSession) elements.next();
+                    list.add(session);
+                    session.writeObjectData(oos);
+		}
+	    } catch (IOException e) {
+		if (oos != null) {
+		    try {
+			oos.close();
+		    } catch (IOException f) {
+			;
+		    }
+		    oos = null;
+		}
+		throw e;
+	    }
+	}
+
+	// Flush and close the output stream
+	try {
+	    oos.flush();
+	    oos.close();
+	    oos = null;
+	} catch (IOException e) {
+	    if (oos != null) {
+		try {
+		    oos.close();
+		} catch (IOException f) {
+		    ;
+		}
+		oos = null;
+	    }
+	    throw e;
+	}
+
+        // Expire all the sessions we just wrote
+        if (debug >= 1)
+            log("Expiring " + list.size() + " persisted sessions");
+        Iterator expires = list.iterator();
+        while (expires.hasNext()) {
+            StandardSession session = (StandardSession) expires.next();
+            try {
+                session.expire();
+            } catch (Throwable t) {
+                ;
+            }
+        }
+
+        if (debug >= 1)
+            log("Unloading complete");
+
+    }
+
+
     // ------------------------------------------------------ Lifecycle Methods
 
 
@@ -358,15 +564,15 @@ public final class StandardManager
      */
     public void start() throws LifecycleException {
 
+        if (debug >= 1)
+            log("Starting");
+
 	// Validate and update our current component state
 	if (started)
 	    throw new LifecycleException
 		(sm.getString("standardManager.alreadyStarted"));
 	lifecycle.fireLifecycleEvent(START_EVENT, null);
 	started = true;
-
-	// Load any previously persisted sessions
-	load();
 
 	// Start the background reaper thread
 	threadStart();
@@ -385,6 +591,9 @@ public final class StandardManager
      */
     public void stop() throws LifecycleException {
 
+        if (debug >= 1)
+            log("Stopping");
+
 	// Validate and update our current component state
 	if (!started)
 	    throw new LifecycleException
@@ -394,9 +603,6 @@ public final class StandardManager
 
 	// Stop the background reaper thread
 	threadStop();
-
-	// Save any currently active sessions
-	unload();
 
 	// Expire all active sessions
 	Session sessions[] = findSessions();
@@ -472,98 +678,6 @@ public final class StandardManager
 
 
     /**
-     * Load any currently active sessions that were previously unloaded
-     * to the specified persistence file, if any.
-     *
-     * @exception LifecycleException if a fatal error is encountered
-     */
-    private void load() throws LifecycleException {
-
-	// Initialize our internal data structures
-	recycled.clear();
-	sessions.clear();
-
-	// Open an input stream to the specified pathname, if any
-	File file = file();
-	if (file == null)
-	    return;
-	if (debug >= 1)
-	    log(sm.getString("standardManager.loading", pathname));
-	FileInputStream fis = null;
-	ObjectInputStream ois = null;
-	Loader loader = null;
-	ClassLoader classLoader = null;
-	try {
-	    fis = new FileInputStream(file.getAbsolutePath());
-	    BufferedInputStream bis = new BufferedInputStream(fis);
-	    if (container != null)
-		loader = container.getLoader();
-	    if (loader != null)
-		classLoader = loader.getClassLoader();
-	    if (classLoader != null)
-		ois = new CustomObjectInputStream(bis, classLoader);
-	    else
-		ois = new ObjectInputStream(bis);
-	} catch (FileNotFoundException e) {
-	    return;
-	} catch (IOException e) {
-	    if (ois != null) {
-		try {
-		    ois.close();
-		} catch (IOException f) {
-		    ;
-		}
-		ois = null;
-	    }
-	    throw new LifecycleException("load/open: IOException", e);
-	}
-
-	// Load the previously unloaded active sessions
-	synchronized (sessions) {
-	    try {
-		Integer count = (Integer) ois.readObject();
-		int n = count.intValue();
-		for (int i = 0; i < n; i++) {
-		    StandardSession session = new StandardSession(this);
-                    session.readObjectData(ois);
-		    session.setManager(this);
-		    sessions.put(session.getId(), session);
-		}
-	    } catch (ClassNotFoundException e) {
-		if (ois != null) {
-		    try {
-			ois.close();
-		    } catch (IOException f) {
-			;
-		    }
-		    ois = null;
-		}
-		throw new LifecycleException
-		    ("load/read: ClassNotFoundException", e);
-	    } catch (IOException e) {
-		if (ois != null) {
-		    try {
-			ois.close();
-		    } catch (IOException f) {
-			;
-		    }
-		    ois = null;
-		}
-		throw new LifecycleException("load/read: IOException", e);
-	    }
-	}
-
-	// Close the input stream
-	try {
-	    ois.close();
-	} catch (IOException f) {
-	    ;
-	}
-
-    }
-
-
-    /**
      * Invalidate all sessions that have expired.
      */
     private void processExpires() {
@@ -583,80 +697,6 @@ public final class StandardManager
 	    if (timeIdle >= maxInactiveInterval)
 		session.expire();
 	}
-    }
-
-
-    /**
-     * Save any currently active sessions in the specified persistence file,
-     * if any.
-     *
-     * @exception LifecycleException if a fatal error is encountered
-     */
-    private void unload() throws LifecycleException {
-
-	// Open an output stream to the specified pathname, if any
-	File file = file();
-	if (file == null)
-	    return;
-	if (debug >= 1)
-	    log(sm.getString("standardManager.unloading", pathname));
-	FileOutputStream fos = null;
-	ObjectOutputStream oos = null;
-	try {
-	    fos = new FileOutputStream(file.getAbsolutePath());
-	    oos = new ObjectOutputStream(new BufferedOutputStream(fos));
-	} catch (IOException e) {
-	    if (oos != null) {
-		try {
-		    oos.close();
-		} catch (IOException f) {
-		    ;
-		}
-		oos = null;
-	    }
-	    throw new LifecycleException("unload/open: IOException", e);
-	}
-
-	// Write the number of active sessions, followed by the details
-	synchronized (sessions) {
-	    try {
-		oos.writeObject(new Integer(sessions.size()));
-		Iterator elements = sessions.values().iterator();
-		while (elements.hasNext()) {
-		    StandardSession session =
-                        (StandardSession) elements.next();
-                    session.writeObjectData(oos);
-		}
-	    } catch (IOException e) {
-		if (oos != null) {
-		    try {
-			oos.close();
-		    } catch (IOException f) {
-			;
-		    }
-		    oos = null;
-		}
-		throw new LifecycleException("unload/write: IOException", e);
-	    }
-	}
-
-	// Flush and close the output stream
-	try {
-	    oos.flush();
-	    oos.close();
-	    oos = null;
-	} catch (IOException e) {
-	    if (oos != null) {
-		try {
-		    oos.close();
-		} catch (IOException f) {
-		    ;
-		}
-		oos = null;
-	    }
-	    throw new LifecycleException("unload/close: IOException", e);
-	}
-
     }
 
 
