@@ -31,6 +31,9 @@
   </subsection>
 
   <subsection name="Catalina">
+      <update>
+        Give proper permission to the balancer app when running under the security manager. (jfarcand)
+      </update>
   </subsection>
 
   <subsection name="Coyote">
