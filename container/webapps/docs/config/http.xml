@@ -150,7 +150,7 @@
       2048 bytes will be provided.</p>
     </attribute>
 
-    <attribute name="restrictedUserAgents" required="false">
+    <attribute name="compressableMimeTypes" required="false">
       <p>The value is a comma separated list of MIME types for which HTTP
       compression may be used.
       The default value is <code>text/html,text/xml,text/plain</code>.</p>
