@@ -162,6 +162,10 @@ public class WebappClassLoader
         system = getSystemClassLoader();
         securityManager = System.getSecurityManager();
 
+        if (securityManager != null) {
+            refreshPolicy();
+        }
+
     }
 
 
@@ -176,6 +180,10 @@ public class WebappClassLoader
         this.parent = getParent();
         system = getSystemClassLoader();
         securityManager = System.getSecurityManager();
+
+        if (securityManager != null) {
+            refreshPolicy();
+        }
 
     }
 
@@ -312,12 +320,6 @@ public class WebappClassLoader
      * Instance of the SecurityManager installed.
      */
     private SecurityManager securityManager = null;
-
-
-    /**
-     * Flag that the security policy has been refreshed from file.
-     */
-    private boolean policy_refresh = false;
 
 
     /**
@@ -1276,12 +1278,6 @@ public class WebappClassLoader
      */
     protected PermissionCollection getPermissions(CodeSource codeSource) {
 
-        if (!policy_refresh) {
-            // Refresh the security policies
-            Policy policy = Policy.getPolicy();
-            policy.refresh();
-            policy_refresh = true;
-        }
         String codeUrl = codeSource.getLocation().toString();
         PermissionCollection pc;
         if ((pc = (PermissionCollection)loaderPC.get(codeUrl)) == null) {
@@ -1702,6 +1698,25 @@ public class WebappClassLoader
             return entry.loadedClass;
         }
         return (null);  // FIXME - findLoadedResource()
+
+    }
+
+
+    /**
+     * Refresh the system policy file, to pick up eventual changes.
+     */
+    protected void refreshPolicy() {
+
+        try {
+            // The policy file may have been modified to adjust 
+            // permissions, so we're reloading it when loading or 
+            // reloading a Context
+            Policy policy = Policy.getPolicy();
+            policy.refresh();
+        } catch (AccessControlException e) {
+            // Some policy files may restrict this, even for the core,
+            // so this exception is ignored
+        }
 
     }
 
