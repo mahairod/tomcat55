@@ -695,21 +695,6 @@ public class NamingContextListener
             addEjb(ejbs[i]);
         }
 
-        // Binding a User Transaction reference
-        if (container instanceof Context) {
-            try {
-                Reference ref = new TransactionRef();
-                compCtx.bind("UserTransaction", ref);
-                addAdditionalParameters
-                    (namingResources, ref, "UserTransaction");
-            } catch (NameAlreadyBoundException e) {
-                // Ignore because UserTransaction was obviously 
-                // added via ResourceLink
-            } catch (NamingException e) {
-                log(sm.getString("naming.bindFailed", e));
-            }
-        }
-
         // Binding the resources directory context
         if (container instanceof Context) {
             try {
@@ -860,6 +845,20 @@ public class NamingContextListener
             log(sm.getString("naming.bindFailed", e));
         }
 
+        if (container instanceof Context && 
+            "UserTransaction".equals(resource.getName())) {
+          try {
+            Reference ref2 = new TransactionRef();
+            compCtx.bind("UserTransaction", ref2);
+            addAdditionalParameters
+                (resource.getNamingResources(), ref2, "UserTransaction");
+          } catch (NameAlreadyBoundException e) {
+            // Ignore because UserTransaction was obviously 
+            // added via ResourceLink
+          } catch (NamingException e) {
+            log(sm.getString("naming.bindFailed", e));
+          }
+        }
     }
 
 
@@ -963,6 +962,13 @@ public class NamingContextListener
             log(sm.getString("naming.unbindFailed", e));
         }
 
+        if ("UserTransaction".equals(name)) {
+          try {
+            compCtx.unbind(name);
+          } catch (NamingException e) {
+            log(sm.getString("naming.unbindFailed", e));
+          }
+        } 
     }
 
 

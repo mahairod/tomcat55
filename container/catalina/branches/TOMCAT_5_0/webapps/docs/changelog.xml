@@ -49,6 +49,9 @@
       <update>
         <bug>31683</bug>: Minor clarifications to realm documentation. (yoavs)
       </update>
+      <fix>
+        <bug>31851</bug>: UserTransaction in DefaultContext broken. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
