@@ -103,4 +103,8 @@ public interface ServerConnector {
     /** Set a config property
      */
     public void setAttribute( String s, Object value );
+
+    /** Set a org.apache.tomcat.logging.Logger explicitly
+     */
+    public void setLogger( org.apache.tomcat.logging.Logger logger );
 }
