@@ -114,6 +114,8 @@
 
 		<jar destfile="${config.dist}/catalina-storeconfig.jar" basedir="${catalina.build}/classes">
 			<include name="org/apache/catalina/storeconfig/**" />
+			<exclude name="**/package.html" />
+            <exclude name="**/LocalStrings_*" />
 		</jar>
 	</target>
 
