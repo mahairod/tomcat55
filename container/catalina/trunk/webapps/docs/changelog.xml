@@ -56,6 +56,9 @@
 
   <subsection name="Jasper">
     <changelog>
+      <update>
+        Exposed compilerSourceVM and compilerTargetVM options to JspC. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
