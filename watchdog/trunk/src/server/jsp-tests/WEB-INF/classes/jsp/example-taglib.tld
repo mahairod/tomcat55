@@ -18,47 +18,6 @@
 	A simple tab library for the examples
   </info>
 
-  <!-- A simple Tag -->
-  <!-- foo tag -->
-  <tag>
-    <name>foo</name>
-    <tagclass>examples.FooTag</tagclass>
-    <teiclass>examples.FooTagExtraInfo</teiclass>
-    <bodycontent>JSP</bodycontent>
-    <info>
-	Perform a server side action; uses 3 mandatory attributes
-    </info>
-
-    <attribute>
-      <name>att1</name>
-      <required>true</required>
-    </attribute>
-    <attribute>
-      <name>att2</name>
-      <required>true</required>
-    </attribute>
-    <attribute>
-      <name>att3</name>
-      <required>true</required>
-    </attribute>
-  </tag>
-
-  <!-- Another simple tag -->
-  <!-- log tag -->
-  <tag>
-    <name>log</name>
-    <tagclass>examples.LogTag</tagclass>
-    <bodycontent>TAGDEPENDENT</bodycontent>
-    <info>
-	Perform a server side action; Log the message.
-    </info>
-    <attribute>
-	<name>toBrowser</name>
-	<required>false</required>
-    </attribute>
-  </tag>
-  
-
   <!-- Test tag -->
   <!-- test tag -->
   <tag>
@@ -72,19 +31,15 @@
 	<name>toBrowser</name>
 	<required>false</required>
     </attribute>
-
     <attribute>
       <name>att1</name>
       <required>true</required>
     </attribute>
-
     <attribute>
       <name>att2</name>
       <required>false</required>
     </attribute>
-
-
-</tag>
+  </tag>
 
   <tag>
     <name>page</name>
@@ -97,11 +52,10 @@
 	<name>toBrowser</name>
 	<required>false</required>
     </attribute>
-
     <attribute>
       <name>att1</name>
       <required>true</required>
     </attribute>
-</tag>
+  </tag>
 
 </taglib>
