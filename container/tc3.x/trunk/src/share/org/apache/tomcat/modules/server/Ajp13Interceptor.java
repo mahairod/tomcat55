@@ -233,10 +233,16 @@ class Ajp13Request extends Request
 class Ajp13Response extends Response 
 {
     Ajp13 ajp13;
+    boolean finished=false;
     
     public Ajp13Response() 
     {
 	super();
+    }
+
+    public void recycle() {
+	super.recycle();
+	finished=false;
     }
 
     public void setSocket( Socket s ) {
@@ -257,8 +263,10 @@ class Ajp13Response extends Response
          
     public void finish() throws IOException 
     {
-        super.finish();
-	ajp13.finish();
+	if(!finished) {
+	    super.finish();
+	    ajp13.finish();
+	}
     }
     
     public void doWrite(  byte b[], int off, int len) throws IOException 
