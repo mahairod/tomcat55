@@ -305,11 +305,15 @@ public class Generator {
 	 */
 	private String attributeValue(Node.JspAttribute attr, boolean encode) {
 	    String v = attr.getValue();
-	    if (attr.isExpression())
+	    if (attr.isExpression()) {
+		if (encode) {
+		    return "java.net.URLEncoder.encode(" + v + ")";
+		}
 		return v;
-	    else {
-		if (encode) 
+	    } else {
+		if (encode) {
 		    v = URLEncoder.encode(v);
+		}
 		return quote(v);
 	    }
 	}
