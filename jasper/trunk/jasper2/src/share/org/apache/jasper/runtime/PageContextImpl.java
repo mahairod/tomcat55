@@ -62,7 +62,9 @@
 package org.apache.jasper.runtime;
 
 import java.io.*;
-
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 import java.util.EmptyStackException;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -645,21 +647,36 @@ public class PageContextImpl
      * @param defaultPrefix Default prefix for this evaluation
      * @return The result of the evaluation
      */
-    public static Object proprietaryEvaluate( String expression,
-        Class expectedType, PageContext pageContext,
-	ProtectedFunctionMapper functionMap, String defaultPrefix )
-        throws ELException
+    public static Object proprietaryEvaluate( final String expression, 
+         final Class expectedType,  final PageContext pageContext,
+	 final ProtectedFunctionMapper functionMap,  final String defaultPrefix )
+       throws ELException
     {
-	java.util.HashMap funcMap =
+	final java.util.HashMap funcMap =
 		(functionMap == null)? null: functionMap.getFnMap();
+                
+        if (System.getSecurityManager() != null){
+            try {
+                return AccessController.doPrivileged(new PrivilegedExceptionAction(){
 
-        try {
-            return PageContextImpl.proprietaryEvaluator.evaluate( "<unknown>",
-                expression, expectedType, null, pageContext,
-		funcMap, defaultPrefix );
-        }
-        catch( JspException e ) {
-            throw new ELException( e );
+                    public Object run() throws Exception{
+                       return PageContextImpl.proprietaryEvaluator.evaluate( "<unknown>", 
+                            expression, expectedType, null, pageContext,
+                            funcMap, defaultPrefix );
+                    }
+                });
+            } catch( PrivilegedActionException ex ) {
+                Exception e = ex.getException();
+                throw new ELException( e );
+            }
+        } else {
+            try{
+               return PageContextImpl.proprietaryEvaluator.evaluate( "<unknown>", 
+                    expression, expectedType, null, pageContext,
+                    funcMap, defaultPrefix );
+            } catch(JspException e){
+                throw new ELException( e );                
+            }  
         }
     }
 

@@ -65,7 +65,8 @@ import org.apache.jasper.logging.Logger;
 import java.util.HashMap;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 /**
  * Maps EL functions to their Java method counterparts.  Keeps the
  * actual Method objects protected so that JSP pages can't indirectly
@@ -125,14 +126,28 @@ public final class ProtectedFunctionMapper {
      *     could be found.
      */
     public void mapFunction( String prefix, String fnName,
-        Class c, String methodName, Class[] args ) 
+        final Class c, final String methodName, final Class[] args ) 
     {
 	java.lang.reflect.Method method;
-	try {
-	    method = c.getDeclaredMethod(methodName, args);
-	} catch( NoSuchMethodException e ) {
-            throw new RuntimeException(
-                "Invalid function mapping - no such method: " + e.getMessage());
+        if (System.getSecurityManager() != null){
+            try{
+                method = (java.lang.reflect.Method)AccessController.doPrivileged(new PrivilegedExceptionAction(){
+
+                    public Object run() throws Exception{
+                        return c.getDeclaredMethod(methodName, args);
+                    }                
+                });      
+            } catch (PrivilegedActionException ex){
+                throw new RuntimeException(
+                    "Invalid function mapping - no such method: " + ex.getException().getMessage());               
+            }
+        } else {
+             try {
+                method = c.getDeclaredMethod(methodName, args);
+            } catch( NoSuchMethodException e ) {
+                throw new RuntimeException(
+                    "Invalid function mapping - no such method: " + e.getMessage());
+            }
         }
 
 	this.fnmap.put( prefix + ":" + fnName, method );

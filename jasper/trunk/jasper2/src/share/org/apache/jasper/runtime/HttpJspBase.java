@@ -61,7 +61,6 @@ import java.io.InputStreamReader;
 
 import java.net.URL;
 import java.net.MalformedURLException;
-
 import java.util.List;
 
 import javax.servlet.*;
@@ -98,8 +97,6 @@ public abstract class HttpJspBase
                                                                    "runtime.ServletResponseWrapperInclude");
                     factory.getClass().getClassLoader().loadClass( basePackage +
                                                                    "servlet.JspServletWrapper");
-                    factory.getClass().getClassLoader().loadClass( basePackage +
-				"runtime.ProtectedFunctionMapper");
                 } catch (ClassNotFoundException ex) {
                     System.out.println(
                                        "Jasper JspRuntimeContext preload of class failed: " +
@@ -135,7 +132,7 @@ public abstract class HttpJspBase
     public final void service(HttpServletRequest request, HttpServletResponse response) 
 	throws ServletException, IOException 
     {
-	_jspService(request, response);
+        _jspService(request, response);
     }
     
     public void jspInit() {
