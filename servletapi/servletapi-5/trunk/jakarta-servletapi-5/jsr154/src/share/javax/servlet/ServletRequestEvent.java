@@ -86,7 +86,7 @@ public class ServletRequestEvent extends java.util.EventObject {
       *
       * @return the ServletRequest that sent the event.
       */
-    public ServletRequest getRequest () { 
+    public ServletRequest getServletRequest () { 
         return this.request;
     }
 
