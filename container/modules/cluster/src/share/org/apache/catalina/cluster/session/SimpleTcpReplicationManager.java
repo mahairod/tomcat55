@@ -491,7 +491,7 @@ implements org.apache.catalina.cluster.ClusterManager
                     new SessionMessage(this.getName(),
                                        SessionMessage.EVT_GET_ALL_SESSIONS,
                                        null,
-                                       null);
+                                       "GET-ALL");
                 cluster.send(msg, mbr);
                 log.warn("Manager["+getName()+"], requesting session state from "+mbr+
                          ". This operation will timeout if no session state has been received within "+
