@@ -36,7 +36,8 @@
         <item name="16) MBean Descriptor"
               href="mbeans-descriptor-howto.html"/>
         <item name="17) Default Servlet"    href="default-servlet.html"/>
-        <item name="18) Clustering"    href="cluster-howto.html"/>
+        <item name="18) Clustering"         href="cluster-howto.html"/>
+        <item name="19) Balancer"           href="balancer-howto.html"/>
     </menu>
 
     <menu name="Reference">
