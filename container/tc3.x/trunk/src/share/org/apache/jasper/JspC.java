@@ -340,8 +340,13 @@ public class JspC implements Options { //, JspCompilationContext {
 
             targetClassName = null;
             if (mapout != null) {
-                String thisServletName = clc.getPackageName()
+                String thisServletName;
+		if  (clc.getPackageName == null) {
+		    thisServletName = clc.getClassName();
+		 } else {
+		    thisServletName = clc.getPackageName()
                         + '.' + clc.getClassName();
+		};
                 mapout.write("\n\t<servlet>\n\t\t<servlet-name>");
                 mapout.write(thisServletName);
                 mapout.write("</servlet-name>\n\t\t<servlet-class>");
