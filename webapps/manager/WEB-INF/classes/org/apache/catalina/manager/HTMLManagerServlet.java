@@ -205,6 +205,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
         upload.setRepositoryPath(tempdir.getCanonicalPath());
     
         // Parse the request
+        String basename = null;
+        File appBaseDir = null;
         String war = null;
         FileItem warUpload = null;
         try {
@@ -224,7 +226,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
                     }
                 }
             }
-            while(true) {
+            while (true) {
                 if (warUpload == null) {
                     message = sm.getString
                         ("htmlManagerServlet.deployUploadNoFile");
@@ -246,13 +248,13 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 // Identify the appBase of the owning Host of this Context
                 // (if any)
                 String appBase = null;
-                File appBaseDir = null;
                 appBase = ((Host) context.getParent()).getAppBase();
                 appBaseDir = new File(appBase);
                 if (!appBaseDir.isAbsolute()) {
                     appBaseDir = new File(System.getProperty("catalina.base"),
                                           appBase);
                 }
+                basename = war.substring(0, war.indexOf(".war"));
                 File file = new File(appBaseDir, war);
                 if (file.exists()) {
                     message = sm.getString
@@ -281,9 +283,26 @@ public final class HTMLManagerServlet extends ManagerServlet {
             warUpload = null;
         }
 
+        // Extract the nested context deployment file (if any)
+        File localWar = new File(appBaseDir, basename + ".war");
+        File localXml = new File(configBase, basename + ".xml");
+        try {
+            extractXml(localWar, localXml);
+        } catch (IOException e) {
+            log("managerServlet.extract[" + localWar + "]", e);
+            return;
+        }
+        String config = null;
+        try {
+            URL url = localXml.toURL();
+            config = url.toString();
+        } catch (MalformedURLException e) {
+            throw e;
+        }
+
         // If there were no errors, deploy the WAR
         if (message.length() == 0) {
-            message = deployInternal(null, null, war);
+            message = deployInternal(config, null, war);
         }
 
         list(request, response, message);
