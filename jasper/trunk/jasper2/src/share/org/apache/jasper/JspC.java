@@ -123,6 +123,7 @@ public class JspC implements Options {
     public static final String SWITCH_PACKAGE_NAME = "-p";
     public static final String SWITCH_CLASS_NAME = "-c";
     public static final String SWITCH_FULL_STOP = "--";
+    public static final String SWITCH_COMPILE = "--compile";
     public static final String SWITCH_URI_BASE = "-uribase";
     public static final String SWITCH_URI_ROOT = "-uriroot";
     public static final String SWITCH_FILE_WEBAPP = "-webapp";
@@ -168,6 +169,8 @@ public class JspC implements Options {
     static int die; // I realize it is duplication, but this is for
                     // the static main catch
 
+    boolean compile=false;
+    
     boolean dirset;
 
     Vector extensions;
@@ -304,6 +307,10 @@ public class JspC implements Options {
 
     public void setVerbose( int level ) {
         Constants.jasperLog.setVerbosityLevel(level);
+    }
+    
+    public void setCompile( boolean b ) {
+        compile=b;
     }
     
     public void setOutputDir( String s ) {
@@ -489,12 +496,17 @@ public class JspC implements Options {
 
             Compiler clc = clctxt.createCompiler();
 
-            // Don't compile if the .class file is newer than the .jsp file
-            if( clc.isOutDated(false) ) {
-                clc.generateJava();
+            if( compile ) {
+                // Generate both .class and .java
+                if( clc.isOutDated() ) {
+                    clc.compile();
+                }
             } else {
-                // already compiled
-                //  System.out.println("Already compiled " + file );
+                // Only generate .java, compilation is separated 
+                // Don't compile if the .class file is newer than the .jsp file
+                if( clc.isOutDated(false) ) {
+                    clc.generateJava();
+                } 
             }
 
             // Generate mapping
@@ -815,6 +827,8 @@ public class JspC implements Options {
                 }
             } else if (tok.equals(SWITCH_PACKAGE_NAME)) {
                 targetPackage = nextArg();
+            } else if (tok.equals(SWITCH_COMPILE)) {
+                compile=true;
             } else if (tok.equals(SWITCH_CLASS_NAME)) {
                 targetClassName = nextArg();
             } else if (tok.equals(SWITCH_URI_BASE)) {
