@@ -1,0 +1,98 @@
+<project name="Tomcat 5.0-nobin" default="all" basedir=".">
+
+  <!-- 
+       Build 5.0 from sources. No apache binary is used.
+    -->
+
+  <!-- See "build.properties.sample" in the top level directory for all     -->
+  <!-- property values you must customize for successful building!!!        -->
+  <property file="${user.home}/build.properties"/>
+  <property file="build.properties"/>
+  <property file="build.properties.default"/>
+  
+  <property name="basedir" location="." />
+        
+  <!-- Source dependencies -->
+  <property name="api.home"
+           value="${basedir}/../jakarta-servletapi-5"/>
+  <property name="taglibs.home"
+           value="${basedir}/../jakarta-taglibs"/>
+  <property name="commons.home"
+           value="${basedir}/../jakarta-commons"/>
+  <property name="catalina.home"
+           value="${basedir}/../jakarta-tomcat-catalina"/>
+  <property name="jasper.home"
+           value="${basedir}/../jakarta-tomcat-jasper-5/jasper2"/>
+  <property name="jtc.home"
+           value="${basedir}/../jakarta-tomcat-connectors"/>
+
+  <property name="build.dir"   value="${basedir}/build/tomcat5"/>
+
+  <property name="log4j.jar"   value="${base.path}/log4j/log4j.jar"/>
+
+
+  <path id="alljars" >
+    <pathelement location="${jmx.jar}"/>
+    <pathelement location="${mail.jar}"/>
+    <pathelement location="${regexp.jar}"/>
+    <pathelement location="${jsse.jar}"/>
+    <pathelement location="${jnet.jar}"/>
+    <pathelement location="${jcert.jar}"/>
+    <pathelement location="${activation.jar}"/>
+    <pathelement location="${jta.jar}"/>
+    <pathelement location="${log4j.jar}"/>
+    <pathelement location="${jaxen.jar}"/>
+    <pathelement location="${saxpath.jar}"/>
+  </path>
+
+  <!-- =================== DETECT: Display configuration ================== -->
+  <target name="detect"
+          description="Display configuration and conditional compilation flags">
+    <echo message="Path: ${toString:alljars}"/>
+  </target>
+
+
+  <!-- ====================== COMBO: Clean All Directories ================ -->
+  <target name="clean"
+          description="Clean all components">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <!-- ======================= COMBO: Build All Components ================ -->
+  <target name="all"
+          description="Clean, build, and deploy all components"
+          depends="detect">
+    <mkdir dir="${build.dir}/classes" />
+    <javac destdir="${build.dir}/classes"
+           optimize="off"
+           debug="on"
+           classpathref="alljars" >
+      <src>
+        <path location="${api.home}/src/share" />
+        <path location="${jasper.home}/src/share" />
+        <path location="${taglibs.home}/standard/src" />
+        <path location="${catalina.home}/catalina/src/share" />
+        <path location="${jtc.home}/util/java" />
+        <path location="${jtc.home}/coyote/src/java" />
+        <path location="${jtc.home}/jk/java" />
+        <path location="${jtc.home}/http11/src/java" />
+        <path location="${commons.home}/modeler/src/java" />
+        <path location="${commons.home}/digester/src/java" />
+        <path location="${commons.home}/collections/src/java" />
+        <path location="${commons.home}/beanutils/src/java" />
+        <path location="${commons.home}/logging/src/java" />
+      </src>
+      <exclude name="org/apache/coyote/tomcat3/**" />
+      <exclude name="org/apache/ajp/**" />
+      <exclude name="org/apache/tomcat/util/net/PureTLS*" />
+      <exclude name="org/apache/naming/factory/Tyrex*" />
+      <exclude name="org/apache/commons/logging/impl/LogKitLogger.java" />
+      <exclude name="org/apache/taglibs/standard/tag/common/xml/**" />
+      <exclude name="org/apache/commons/modeler/Modeler.java" />
+      <exclude name="org/apache/catalina/startup/BootstrapService.java" />
+      <exclude name="org/apache/taglibs/standard/lang/jstl/test/**" />
+      <exclude name="org/apache/taglibs/standard/lang/jstl/parser/jsp20/ELParser.java" />
+    </javac>
+  </target>
+
+</project>
