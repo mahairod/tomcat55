@@ -1266,6 +1266,8 @@ class Parser implements TagConstants {
 	    err.jspError(start, "jsp.error.params.invalidUse");
 	} else if (reader.matches(PARAM_ACTION)) {
 	    err.jspError(start, "jsp.error.param.invalidUse");
+	} else if (reader.matches(OUTPUT_ACTION)) {
+	    err.jspError(start, "jsp.error.jspoutput.invalidUse");
 	} else {
 	    err.jspError(start, "jsp.error.badStandardAction");
 	}
