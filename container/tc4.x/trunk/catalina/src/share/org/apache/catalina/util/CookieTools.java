@@ -63,7 +63,7 @@
 
 
 package org.apache.catalina.util;
-import java.net.URLEncoder;
+
 import java.text.*;
 import java.util.*;
 
@@ -115,9 +115,9 @@ public class CookieTools {
         if (value == null)
             value = "";
         
-        buf.append(URLEncoder.encode(name));
+        buf.append(name);
         buf.append("=");
-        maybeQuote(version, buf, URLEncoder.encode(value));
+        maybeQuote(version, buf, value);
 
         // add version 1 specific information
         if (version == 1) {
@@ -127,8 +127,7 @@ public class CookieTools {
             // Comment=comment
             if (cookie.getComment() != null) {
                 buf.append (";Comment=");
-                maybeQuote (version, buf,
-                            URLEncoder.encode(cookie.getComment()));
+                maybeQuote (version, buf, cookie.getComment());
             }
         }
 
