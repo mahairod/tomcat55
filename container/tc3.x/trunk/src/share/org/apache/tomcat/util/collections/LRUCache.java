@@ -60,99 +60,125 @@
  * [Additional notices, if required by prior licensing conditions]
  *
  */ 
+package org.apache.tomcat.util.collections;
 
-
-package org.apache.tomcat.util;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.*;
-import java.text.*;
+import java.util.Hashtable;
 
 /**
- *  Common place for date utils.
+ * This class implements a Generic LRU Cache
  *
- * @author dac@eng.sun.com
- * @author Jason Hunter [jch@eng.sun.com]
- * @author James Todd [gonzo@eng.sun.com]
- * @author Costin Manolache
+ *
+ * @author Ignacio J. Ortega
+ *
  */
-public class DateTool {
 
-    /** US locale - all HTTP dates are in english
-     */
-    public final static Locale LOCALE_US = Locale.US;
+public class LRUCache
+{
+    class CacheNode
+    {
 
-    /** GMT timezone - all HTTP dates are on GMT
-     */
-    public final static TimeZone GMT_ZONE = TimeZone.getTimeZone("GMT");
+        CacheNode prev;
+        CacheNode next;
+        Object value;
+        Object key;
 
-    /** format for RFC 1123 date string -- "Sun, 06 Nov 1994 08:49:37 GMT"
-     */
-    public final static String RFC1123_PATTERN =
-        "EEE, dd MMM yyyyy HH:mm:ss z";
-
-    // format for RFC 1036 date string -- "Sunday, 06-Nov-94 08:49:37 GMT"
-    private final static String rfc1036Pattern =
-        "EEEEEEEEE, dd-MMM-yy HH:mm:ss z";
-
-    // format for C asctime() date string -- "Sun Nov  6 08:49:37 1994"
-    private final static String asctimePattern =
-        "EEE MMM d HH:mm:ss yyyyy";
-
-    /** Pattern used for old cookies
-     */
-    public final static String OLD_COOKIE_PATTERN = "EEE, dd-MMM-yyyy HH:mm:ss z";
-
-    /** DateFormat to be used to format dates
-     */
-    public final static DateFormat rfc1123Format =
-	new SimpleDateFormat(RFC1123_PATTERN, LOCALE_US);
-    
-    /** DateFormat to be used to format old netscape cookies
-     */
-    public final static DateFormat oldCookieFormat =
-	new SimpleDateFormat(OLD_COOKIE_PATTERN, LOCALE_US);
-    
-    public final static DateFormat rfc1036Format =
-	new SimpleDateFormat(rfc1036Pattern, LOCALE_US);
-    
-    public final static DateFormat asctimeFormat =
-	new SimpleDateFormat(asctimePattern, LOCALE_US);
-    
-    static {
-	rfc1123Format.setTimeZone(GMT_ZONE);
-	oldCookieFormat.setTimeZone(GMT_ZONE);
-	rfc1036Format.setTimeZone(GMT_ZONE);
-	asctimeFormat.setTimeZone(GMT_ZONE);
-    }
- 
-    private static StringManager sm =
-        StringManager.getManager("org.apache.tomcat.resources");
-    
-    public static long parseDate( MessageBytes value ) {
-	return parseDate( value.toString());
-    }
-
-    public static long parseDate( String dateString ) {
-	Date date=null;
-        try {
-            date = DateTool.rfc1123Format.parse(dateString);
-	    return date.getTime();
-	} catch (ParseException e) { }
-	
-        try {
-	    date = DateTool.rfc1036Format.parse(dateString);
-	    return date.getTime();
-	} catch (ParseException e) { }
-	
-        try {
-            date = DateTool.asctimeFormat.parse(dateString);
-	    return date.getTime();
-        } catch (ParseException pe) {
+        CacheNode()
+        {
         }
-	String msg = sm.getString("httpDate.pe", dateString);
-	throw new IllegalArgumentException(msg);
     }
 
+
+    public LRUCache(int i)
+    {
+        currentSize = 0;
+        cacheSize = i;
+    }
+
+    public Object get(Object key)
+    {
+        if(nodes == null)
+            return null;
+        CacheNode node = (CacheNode)nodes.get(key);
+        if(node != null)
+        {
+            moveToHead(node);
+            return node.value;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public void put(Object key, Object value)
+    {
+        if(nodes == null)
+            nodes = new Hashtable(cacheSize);
+        CacheNode node = (CacheNode)nodes.get(key);
+        if(node == null)
+        {
+            if(currentSize >= cacheSize)
+            {
+                if(last != null)
+                    nodes.remove(last.key);
+                removeLast();
+            }
+            else
+            {
+                currentSize++;
+            }
+            node = new CacheNode();
+        }
+        node.value = value;
+        node.key = key;
+        moveToHead(node);
+        nodes.put(key, node);
+    }
+
+    public void clear()
+    {
+        if(nodes != null)
+            nodes.clear();
+        first = null;
+        last = null;
+    }
+
+    private void removeLast()
+    {
+        if(last != null)
+        {
+            if(last.prev != null)
+                last.prev.next = null;
+            else
+                first = null;
+            last = last.prev;
+        }
+    }
+
+    private void moveToHead(CacheNode node)
+    {
+        if(node == first)
+            return;
+        if(node.prev != null)
+            node.prev.next = node.next;
+        if(node.next != null)
+            node.next.prev = node.prev;
+        if(last == node)
+            last = node.prev;
+        if(first != null)
+        {
+            node.next = first;
+            first.prev = node;
+        }
+        first = node;
+        node.prev = null;
+        if(last == null)
+            last = first;
+    }
+
+    private int cacheSize;
+    private Hashtable nodes;
+    private int currentSize;
+    private CacheNode first;
+    private CacheNode last;
 }

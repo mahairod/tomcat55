@@ -65,6 +65,8 @@
 package org.apache.tomcat.util;
 
 import org.apache.tomcat.util.collections.*;
+import org.apache.tomcat.util.buf.*;
+import org.apache.tomcat.util.io.FileUtil;
 
 import java.net.URL;
 import java.io.File;

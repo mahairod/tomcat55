@@ -64,7 +64,7 @@
 
 package org.apache.tomcat.util.net;
 
-import org.apache.tomcat.util.*;
+import org.apache.tomcat.util.res.*;
 import org.apache.tomcat.util.collections.SimplePool;
 import org.apache.tomcat.util.threads.*;
 import org.apache.tomcat.util.log.*;
