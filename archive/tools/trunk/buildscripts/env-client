@@ -37,7 +37,11 @@ SCRIPT_DIR=${TOOLS_DIR}/buildscripts
 
 TLOGFILE=${BUILD_DIR}/result/tomcat-$TDSTRING.log
 
-export TDSTRING TLOGFILE TSEP BUILD_DIR TOOLS_DIR SCRIPT_DIR
+if [ "$CVSROOT" = "" ] ; then 
+  CVSROOT=:pserver:anoncvs@dev.apache.org:/home/cvspublic
+fi
+
+export TDSTRING TLOGFILE TSEP BUILD_DIR TOOLS_DIR SCRIPT_DIR CVSROOT
 
 
 # per arch - "official"

@@ -7,7 +7,7 @@ echo "<checkout>"
 cd ${BUILD_DIR}/ws
 
     # filter out boring messages
-cvs -d :pserver:anoncvs@dev.apache.org:/home/cvspublic checkout \
+cvs -d $CVSROOT checkout \
 		jakarta-tools \
 		jakarta-tomcat \
 		jakarta-watchdog \
