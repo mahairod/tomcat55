@@ -23,6 +23,12 @@
 	    <param-value>filters.ExampleFilter.PATH_MAPPED</param-value>
 	</init-param>
     </filter>
+    <filter>
+        <filter-name>Request Dumper Filter</filter-name>
+        <filter-class>filters.RequestDumperFilter</filter-class>
+    </filter>
+
+    <!-- Define filter mappings for the defined filters -->
     <filter-mapping>
         <filter-name>Servlet Mapped Filter</filter-name>
 	<servlet-name>invoker</servlet-name>
@@ -31,6 +37,12 @@
         <filter-name>Path Mapped Filter</filter-name>
 	<url-pattern>/servlet/*</url-pattern>
     </filter-mapping>
+<!--
+    <filter-mapping>
+        <filter-name>Request Dumper Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+-->
 
     <!-- Define example application events listeners -->
     <listener>
