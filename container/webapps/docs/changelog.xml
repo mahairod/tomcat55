@@ -98,7 +98,7 @@
       NPE in toString after stop (remm)
       </fix>
       <fix>
-      Avoid references leak: ckean up and recycle all thread local resources, 
+      Avoid references leak: clean up and recycle all thread local resources, 
       and reset the context CL after invoking the pipeline (remm)
       </fix>
       <fix>
@@ -116,14 +116,14 @@
       </fix>
       <fix>
       Don't save the config file attribute, as it is always useless, and don't
-      indent context confug files (remm)
+      indent context config files (remm)
       </fix>
       <update>
       Allow overriding the Host's unpackWARs using a new unpackWAR attribute on
       the Context element (remm)
       </update>
       <fix>
-      Include the patInfo when a relative path is used to get a request 
+      Include the pathInfo when a relative path is used to get a request 
       dispatcher, submitted by Mark Thomas (remm)
       </fix>
       <fix>
@@ -220,7 +220,7 @@
       to TagLibraryValidator.validate() match the above (luehe)
       </fix>
       <fix>
-      When precompiling with JSPC, files that mathch the url-pattern specified
+      When precompiling with JSPC, files that match the url-pattern specified
       in jsp-config should be included for compilation (kinman)
       </fix>
       <update>
