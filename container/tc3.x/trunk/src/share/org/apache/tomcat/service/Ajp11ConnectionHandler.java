@@ -98,8 +98,8 @@ public class Ajp11ConnectionHandler implements  TcpConnectionHandler {
 	}
     }
     
-    public void setContextManager( ContextManager contextM ) {
-	this.contextM=contextM;
+    public void setServer( Object contextM ) {
+	this.contextM=(ContextManager)contextM;
     }
 
     public void processConnection(TcpConnection connection, Object thData[]) {

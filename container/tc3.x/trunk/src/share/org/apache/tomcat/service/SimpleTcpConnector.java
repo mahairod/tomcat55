@@ -133,6 +133,7 @@ public class SimpleTcpConnector  extends TcpEndpointConnector implements ServerC
     	    throw new Exception( "Invalid ConnectionHandler");
 
 	con.setAttribute("context.manager",cm );
+	con.setServer( cm );
     	ep.setPort(port);
 	ep.setAddress( address );
 	if(socketFactory != null) {

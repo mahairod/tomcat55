@@ -173,8 +173,8 @@ public class Ajp13ConnectionHandler implements  TcpConnectionHandler
         }
     }
 
-    public void setContextManager(ContextManager contextM)
+    public void setServer(Object contextM)
     {
-        this.contextM=contextM;
+        this.contextM=(ContextManager)contextM;
     }
 }

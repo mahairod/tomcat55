@@ -88,8 +88,8 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	}
     }
     
-    public void setContextManager( ContextManager contextM ) {
-	this.contextM=contextM;
+    public void setServer( Object  contextM ) {
+	this.contextM=(ContextManager)contextM;
     }
 
     public Object[] init() {

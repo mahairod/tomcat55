@@ -166,6 +166,7 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 	usingWriter= true ;
 	response.setUsingWriter( true );
 	return response.getWriter();
+	//	return new ServletWriterFacade( coreW, this);
     }
 
     public void sendError(int sc) throws IOException {

@@ -140,6 +140,12 @@ public class HttpRequestAdapter extends RequestImpl {
     }
 
     public void readNextRequest(Response response) throws IOException {
+
+	// Odd, but works: we use the ServletInputStream, which uses doRead.
+	// We do implement doRead in Http protocol to return from the input
+	// stream - it works for the normal body but also for the HTTP
+	// head. The limit is set after ( and if ) we have a content-length.
+	
 	count = in.readLine(buf, 0, buf.length);
 
 	if (count < 0 ) {
@@ -336,7 +342,7 @@ public class HttpRequestAdapter extends RequestImpl {
 	return -1;
     }
 
-    public void processRequestLine(Response response)
+    private void processRequestLine(Response response)
 	throws IOException
     {
 	off=0;
