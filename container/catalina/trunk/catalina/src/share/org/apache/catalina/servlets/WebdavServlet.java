@@ -72,7 +72,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Locale;
 import java.util.Stack;
 import java.util.TimeZone;
 import java.util.Vector;
@@ -98,6 +97,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -113,7 +113,7 @@ public class WebdavServlet
 
 
     // -------------------------------------------------------------- Constants
-
+    
 
     private static final String METHOD_HEAD = "HEAD";
     private static final String METHOD_PROPFIND = "PROPFIND";
@@ -699,6 +699,22 @@ public class WebdavServlet
             return;
         }
 
+        if (req.getInputStream().available() > 0) {
+            DocumentBuilder documentBuilder = getDocumentBuilder();
+            try {
+                Document document = documentBuilder.parse
+                    (new InputSource(req.getInputStream()));
+                // TODO : Process this request body    
+                resp.sendError(WebdavStatus.SC_NOT_IMPLEMENTED);
+                return;
+
+            } catch(SAXException saxe) {
+                // Parse error - assume invalid content
+                resp.sendError(WebdavStatus.SC_BAD_REQUEST);
+                return;
+            }
+        }
+
         boolean result = true;
         try {
             resources.createSubcontext(path);
@@ -848,6 +864,11 @@ public class WebdavServlet
         if (lockDurationStr == null) {
             lockDuration = DEFAULT_TIMEOUT;
         } else {
+            int commaPos = lockDurationStr.indexOf(",");
+            // If multiple timeouts, just use the first
+            if (commaPos != -1) {
+                lockDurationStr = lockDurationStr.substring(0,commaPos);
+            }    
             if (lockDurationStr.startsWith("Second-")) {
                 lockDuration =
                     (new Integer(lockDurationStr.substring(7))).intValue();
@@ -1364,12 +1385,6 @@ public class WebdavServlet
 
 
     // -------------------------------------------------------- Private Methods
-
-
-    protected String getETagValue(ResourceInfo resourceInfo) {
-        return resourceInfo.length + "-" + resourceInfo.date;
-    }
-
 
     /**
      * Generate the namespace declarations.
@@ -2014,19 +2029,20 @@ public class WebdavServlet
             generatedXML.writeElement(null, "displayname", XMLWriter.OPENING);
             generatedXML.writeData(resourceName);
             generatedXML.writeElement(null, "displayname", XMLWriter.CLOSING);
-            generatedXML.writeProperty(null, "getcontentlanguage",
-                                       Locale.getDefault().toString());
             if (!resourceInfo.collection) {
                 generatedXML.writeProperty
                     (null, "getlastmodified", resourceInfo.httpDate);
                 generatedXML.writeProperty
                     (null, "getcontentlength",
                      String.valueOf(resourceInfo.length));
-                generatedXML.writeProperty
-                    (null, "getcontenttype",
-                     getServletContext().getMimeType(resourceInfo.path));
+                String contentType = getServletContext().getMimeType
+                    (resourceInfo.path); 
+                if (contentType != null) {
+                    generatedXML.writeProperty(null, "getcontenttype",
+                                               contentType);
+                }
                 generatedXML.writeProperty(null, "getetag",
-                                           getETagValue(resourceInfo));
+                                           getETag(resourceInfo));
                 generatedXML.writeElement(null, "resourcetype",
                                           XMLWriter.NO_CONTENT);
             } else {
@@ -2127,9 +2143,8 @@ public class WebdavServlet
                     if (resourceInfo.collection) {
                         propertiesNotFound.addElement(property);
                     } else {
-                        generatedXML.writeProperty
-                            (null, "getcontentlanguage",
-                             Locale.getDefault().toString());
+                        generatedXML.writeElement(null, "getcontentlanguage",
+                                                  XMLWriter.NO_CONTENT);
                     }
                 } else if (property.equals("getcontentlength")) {
                     if (resourceInfo.collection) {
@@ -2153,7 +2168,7 @@ public class WebdavServlet
                         propertiesNotFound.addElement(property);
                     } else {
                         generatedXML.writeProperty
-                            (null, "getetag", getETagValue(resourceInfo));
+                            (null, "getetag", getETag(resourceInfo));
                     }
                 } else if (property.equals("getlastmodified")) {
                     if (resourceInfo.collection) {
@@ -2303,8 +2318,6 @@ public class WebdavServlet
             generatedXML.writeData(resourceName);
             generatedXML.writeElement
                 (null, "displayname", XMLWriter.CLOSING);
-            generatedXML.writeProperty(null, "getcontentlanguage",
-                                       Locale.getDefault().toString());
             generatedXML.writeProperty(null, "getlastmodified",
                                        FastHttpDateFormat.formatDate
                                        (lock.creationDate.getTime(), null));
@@ -2403,9 +2416,8 @@ public class WebdavServlet
                     generatedXML.writeElement
                         (null, "displayname", XMLWriter.CLOSING);
                 } else if (property.equals("getcontentlanguage")) {
-                    generatedXML.writeProperty
-                        (null, "getcontentlanguage",
-                         Locale.getDefault().toString());
+                    generatedXML.writeElement(null, "getcontentlanguage",
+                                              XMLWriter.NO_CONTENT);
                 } else if (property.equals("getcontentlength")) {
                     generatedXML.writeProperty
                         (null, "getcontentlength", (String.valueOf(0)));
@@ -2587,11 +2599,11 @@ public class WebdavServlet
             return methodsAllowed;
         }
 
-        methodsAllowed.append("OPTIONS, GET, HEAD, POST, DELETE, TRACE, ");
-        methodsAllowed.append("PROPPATCH, COPY, MOVE, LOCK, UNLOCK");
+        methodsAllowed.append("OPTIONS, GET, HEAD, POST, DELETE, TRACE");
+        methodsAllowed.append(", PROPPATCH, COPY, MOVE, LOCK, UNLOCK");
         
         if (listings) {
-            methodsAllowed.append("PROPFIND, ");
+            methodsAllowed.append(", PROPFIND");
         }
         
         if (!(object instanceof DirContext)) {
