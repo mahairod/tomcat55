@@ -15,28 +15,9 @@
   <property name="year"                  value="2004" />
   <property name="version.major"         value="5" />
   <property name="version.minor"         value="5" />
-  <!-- When releasing set the 'version.build' to even number
-        and 'version.isdev' to zero.
-  -->
-  <property name="version.build"         value="3" />
-  <property name="version.patch"         value="0" />
-  <property name="version.isdev"         value="1" />
-
-  <condition property="isDevVersion"     value="-dev">
-    <not>
-      <equals arg1="${version.isdev}" arg2="0"/>
-    </not>
-  </condition>
-  <condition property="isPatchedVersion" value=".${version.patch}">
-    <not>
-      <equals arg1="${version.patch}" arg2="0"/>
-    </not>
-  </condition>
-  <!-- Second definition if not already conditionaly set -->
-  <property name="isDevVersion"          value="" />
-  <property name="isPatchedVersion"      value="" />
-  
-  <property name="version"               value="${version.major}.${version.minor}.${version.build}${isPatchedVersion}${isDevVersion}" />
+  <property name="version.build"         value="0" />
+  <property name="version.patch"         value="0" />  
+  <property name="version"               value="5.5.0-dev" />
   <property name="version.number"        value="${version.major}.${version.minor}.${version.build}.${version.patch}" />
 
   <property name="project"               value="jakarta-tomcat" />
