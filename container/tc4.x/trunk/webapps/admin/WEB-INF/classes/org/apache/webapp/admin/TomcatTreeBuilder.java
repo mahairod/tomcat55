@@ -65,6 +65,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.StringTokenizer;
 import java.net.URLEncoder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -108,6 +109,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public final static String CONTEXT_TYPE = "Catalina:type=Context";
     public final static String LOADER_TYPE = "Catalina:type=WebappLoader";
     public final static String MANAGER_TYPE = "Catalina:type=StandardManager";
+    public final static String LOGGER_TYPE = "Catalina:type=Logger";
 
     public final static String WILDCARD = ",*";
     
@@ -195,7 +197,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             
             getConnectors(serviceNode, serviceName);
             getHosts(serviceNode, serviceName);
-            
+            getLoggers(serviceNode, serviceName, null, null, 0);
         }
     }
     
@@ -269,23 +271,13 @@ public class TomcatTreeBuilder implements TreeBuilder{
             serviceNode.addChild(hostNode);
             
             getContexts(hostNode, hostName, serviceName);
+            getLoggers(hostNode, serviceName, hostName, null, 1);
         }
         
     }
     
     public void getContexts(TreeControlNode hostNode, String hostName, String serviceName)
     throws JMException{
-
-        /*
-        System.out.println("** There are " + mBServer.getMBeanCount().intValue() +
-        " registered MBeans **");
-        Iterator instances = mBServer.queryMBeans(null, null).iterator();
-        while (instances.hasNext()) {
-            ObjectInstance instance = (ObjectInstance) instances.next();
-            System.out.println("  objectName=" + instance.getObjectName() +
-            ", className=" + instance.getClassName());
-        }
-        */
     
         Iterator contextItr =
         (mBServer.queryMBeans(new ObjectName(CONTEXT_TYPE + WILDCARD +
@@ -315,8 +307,79 @@ public class TomcatTreeBuilder implements TreeBuilder{
             "content", true);
             
             hostNode.addChild(contextNode);
-            
+            //get all loggers for this context
+            if (contextName.length() > 0)
+                getLoggers(contextNode, serviceName, hostName, contextName, 2);            
+        }        
+    }
+    
+        
+    /**
+     * Add the required logger nodes to the specified node instance.
+     *
+     * @param node The <code>TreeControlNode</code> to which we should
+     * add our logger nodes.
+     * @param serviceName The service to which this logger belongs.
+     * @param hostName The host to which this logger belongs.
+     * @param contextName The context to which this logger belongs.
+     * @param type (0,1,2)  Get all loggers for a particular service(0),
+     * host(1), context (2).
+     */
+    public void getLoggers(TreeControlNode node, String serviceName,
+    String hostName, String contextName, int type)
+    throws JMException{
+        
+        Iterator loggerItr = null;
+        
+        if (type == 0) {
+            loggerItr =
+            (mBServer.queryMBeans(new ObjectName(LOGGER_TYPE +
+            ",service=" + serviceName), null)).iterator();
+        }  else if (type == 1) {
+            loggerItr =
+            (mBServer.queryMBeans(new ObjectName(LOGGER_TYPE +
+            ",host=" + hostName + ",service=" + serviceName), null)).iterator();
+        } else if (type == 2) {
+            loggerItr =
+            (mBServer.queryMBeans(new ObjectName(LOGGER_TYPE +
+            ",path=" + contextName + ",host=" + hostName +
+            ",service=" + serviceName), null)).iterator();
         }
         
-    }
+        TreeControlNode loggerNode = null;
+        String encodedLoggerName;
+        
+        while(loggerItr.hasNext()){
+            
+            ObjectInstance loggerObj = (ObjectInstance)loggerItr.next();
+            ObjectName loggerObjName = loggerObj.getObjectName();            
+            encodedLoggerName =  URLEncoder.encode(loggerObj.getObjectName().toString());
+            
+            String className =
+            (String)mBServer.getAttribute(loggerObj.getObjectName(), 
+            SetUpLoggerAction.CLASSNAME_PROP_NAME);
+            
+            String loggerType = null;
+            StringTokenizer st = new StringTokenizer(className, ".");
+            while (st.hasMoreTokens()) {
+                loggerType = st.nextToken().trim();
+            }
+           
+            String encodedLoggerType =  URLEncoder.encode(loggerType);
+            
+            String nodeLabel="Logger";
+            String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
+            
+            loggerNode =
+            new TreeControlNode(loggerObj.getObjectName().toString(),
+            "folder_16_pad.gif",
+            nodeLabel,
+            "setUpLogger.do?select=" + encodedLoggerName
+            +"&nodeLabel="+ encodedNodeLabel
+            +"&type="+ encodedLoggerType,
+            "content", true);
+            
+            node.addChild(loggerNode);
+        }
+    }    
 }

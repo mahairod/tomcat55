@@ -34,6 +34,10 @@
     <!-- Context form bean -->
     <form-bean      name="contextForm"
                     type="org.apache.webapp.admin.ContextForm"/>
+                    
+    <!-- Logger form bean -->
+    <form-bean      name="loggerForm"
+                    type="org.apache.webapp.admin.LoggerForm"/>
 
     <!-- Set Locale form bean -->
     <form-bean      name="setLocaleForm"
@@ -106,6 +110,10 @@
                     path="/listUsers.jsp"
                 redirect="false"/>
 
+    <forward        name="Logger"
+                    path="/logger.jsp"
+                redirect="false"/>
+  
   </global-forwards>
 
 
@@ -180,6 +188,16 @@
                   redirect="true"/>
     </action>
     
+    <!-- Set up Logger datastructure -->
+    <action    path="/setUpLogger"
+               type="org.apache.webapp.admin.SetUpLoggerAction"
+               name="loggerForm"
+               scope="session">
+      <forward        name="SetUpLogger"
+                      path="/logger.jsp"
+                  redirect="true"/>
+    </action>
+    
     <!-- Log out of the application -->
     <action    path="/logOut"
                type="org.apache.webapp.admin.LogOutAction">
@@ -226,6 +244,14 @@
                name="contextForm"
               scope="session"
               input="/context.jsp">
+    </action>
+    
+     <!-- Process a logger change -->
+    <action    path="/logger"
+               type="org.apache.webapp.admin.LoggerAction"
+               name="loggerForm"
+              scope="session"
+              input="/logger.jsp">
     </action>
     
     <!-- Process a set-locale action -->
