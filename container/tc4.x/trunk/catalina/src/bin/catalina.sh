@@ -18,7 +18,7 @@
 
 # ----- Verify and Set Required Environment Variables -------------------------
 
-if [ "$CATALINA_HOME" = "" ] ; then
+if [ -z "$CATALINA_HOME" ] ; then
   ## resolve links - $0 may be a link to  home
   PRG=$0
   progname=`basename $0`
@@ -41,24 +41,31 @@ if [ "$CATALINA_HOME" = "" ] ; then
     fi
 fi
 
-if [ "$CATALINA_OPTS" = "" ] ; then
+if [ -z "$CATALINA_OPTS" ] ; then
   CATALINA_OPTS=""
 fi
 
-if [ "$JAVA_HOME" = "" ] ; then
+if [ -z "$JAVA_HOME" ] ; then
   echo You must set JAVA_HOME to point at your Java Development Kit installation
   exit 1
 fi
 
 # ----- Set Up The System Classpath -------------------------------------------
 
-CP=$CATALINA_HOME/bin/bootstrap.jar:$CATALINA_HOME/bin/servlet.jar:$CATALINA_HOME/bin/naming.jar
+CP="$CATALINA_HOME/bin/bootstrap.jar:$CATALINA_HOME/bin/servlet.jar:$CATALINA_HOME/bin/naming.jar"
 
-if [ -f $JAVA_HOME/lib/tools.jar ] ; then
-  CP=$CP:$JAVA_HOME/lib/tools.jar
+if [ -f "$JAVA_HOME/lib/tools.jar" ] ; then
+  CP=$CP:"$JAVA_HOME/lib/tools.jar"
 fi
 
-echo Using CLASSPATH: $CP
+# convert the existing path to windows
+if [ "$OSTYPE" = "cygwin32" ] || [ "$OSTYPE" = "cygwin" ] ; then
+   CP=`cygpath --path --windows "$CP"`
+   CATALINA_HOME=`cygpath --path --windows "$CATALINA_HOME"`
+fi
+
+echo "Using CLASSPATH: $CP"
+echo "Using CATALINA_HOME: $CATALINA_HOME"
 
 
 # ----- Execute The Requested Command -----------------------------------------
