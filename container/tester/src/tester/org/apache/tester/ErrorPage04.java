@@ -82,7 +82,6 @@ public class ErrorPage04 extends HttpServlet {
 
         // Accumulate all the reasons this request might fail
         ServletException exception = null;
-        Throwable rootCause = null;
         StringBuffer sb = new StringBuffer();
         Object value = null;
 
@@ -94,7 +93,7 @@ public class ErrorPage04 extends HttpServlet {
             sb.append(value.getClass().getName());
             sb.append("/");
         } else {
-            TesterException te = (TesterException) rootCause;
+            TesterException te = (TesterException) value;
             if (!"ErrorPage03 Threw Exception".equals(te.getMessage())) {
                 sb.append(" exception message is ");
                 sb.append(te.getMessage());
