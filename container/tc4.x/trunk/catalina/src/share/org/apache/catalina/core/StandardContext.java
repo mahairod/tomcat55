@@ -2350,15 +2350,6 @@ public class StandardContext
             }
         }
 
-        // Load sessions from persistent storage, if supported
-        try {
-            if (ok)
-                getManager().load();
-        } catch (Throwable t) {
-            log(sm.getString("standardContext.managerLoad"), t);
-            ok = false;
-        }
-
         if (isUseNaming()) {
             try {
                 ContextBindings.bindThread(this, this);
@@ -3209,18 +3200,6 @@ public class StandardContext
             if (debug >= 1)
                 log("Posting standard context attributes");
             postWelcomeFiles();
-        }
-
-        // Reload sessions from persistent storage if supported
-        try {
-            if (ok) {
-                if (debug >= 1)
-                    log("Loading persisted sessions");
-                getManager().load();
-            }
-        } catch (Throwable t) {
-            log(sm.getString("standardContext.managerLoad"), t);
-            ok = false;
         }
 
         // Collect "load on startup" servlets that need to be initialized
