@@ -122,6 +122,16 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 
 	    reqA.readNextRequest(response );
 
+	    // XXX temporary fix for getServerName
+	    String hostHeader = request.getHeader("host");
+	    //  if it's not null, Request.getServerName() will take care
+	    if (hostHeader == null) {
+		// XXX
+		// we need a better solution here
+		InetAddress localAddress = socket.getLocalAddress();
+		reqA.setServerName(localAddress.getHostName());
+	    }
+ 
 	    contextM.service( request, response );
 
 	    try {
