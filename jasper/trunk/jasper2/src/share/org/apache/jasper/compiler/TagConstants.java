@@ -61,32 +61,49 @@
 package org.apache.jasper.compiler;
 
 public interface TagConstants {
-    public static final String JSP_ROOT_TAG = "jsp:root";
-    public static final String JSP_ROOT_TAG_END = "</jsp:root>";
-    public static final String JSP_PAGE_DIRECTIVE_TAG = "jsp:directive.page";
-    public static final String JSP_INCLUDE_DIRECTIVE_TAG
+    public static final String JSP_ROOT = "jsp:root";
+    public static final String JSP_ROOT_END = "</jsp:root>";
+    public static final String JSP_PAGE_DIRECTIVE = "jsp:directive.page";
+    public static final String JSP_INCLUDE_DIRECTIVE
 	= "jsp:directive.include";
-    public static final String JSP_DECLARATION_TAG = "jsp:declaration";
-    public static final String JSP_DECLARATION_TAG_START = "<jsp:declaration>";
-    public static final String JSP_DECLARATION_TAG_END = "</jsp:declaration>";
-    public static final String JSP_SCRIPTLET_TAG = "jsp:scriptlet";
-    public static final String JSP_SCRIPTLET_TAG_START = "<jsp:scriptlet>";
-    public static final String JSP_SCRIPTLET_TAG_END = "</jsp:scriptlet>";
-    public static final String JSP_EXPRESSION_TAG = "jsp:expression";
-    public static final String JSP_EXPRESSION_TAG_START = "<jsp:expression>";
-    public static final String JSP_EXPRESSION_TAG_END = "</jsp:expression>";
-    public static final String JSP_USE_BEAN_TAG = "jsp:useBean";
-    public static final String JSP_SET_PROPERTY_TAG = "jsp:setProperty";
-    public static final String JSP_GET_PROPERTY_TAG = "jsp:getProperty";
-    public static final String JSP_INCLUDE_TAG = "jsp:include";
-    public static final String JSP_FORWARD_TAG = "jsp:forward";
-    public static final String JSP_PARAM_TAG = "jsp:param";
-    public static final String JSP_PARAMS_TAG = "jsp:params";
-    public static final String JSP_PLUGIN_TAG = "jsp:plugin";
-    public static final String JSP_FALLBACK_TAG = "jsp:fallback";
-    public static final String JSP_TEXT_TAG = "jsp:text";
-    public static final String JSP_TEXT_TAG_START = "<jsp:text>";
-    public static final String JSP_TEXT_TAG_END = "</jsp:text>";
-    public static final String JSP_ATTRIBUTE_TAG = "jsp:attribute";
-    public static final String JSP_BODY_TAG = "jsp:body";
+    public static final String JSP_DECLARATION = "jsp:declaration";
+    public static final String JSP_DECLARATION_START = "<jsp:declaration>";
+    public static final String JSP_DECLARATION_END = "</jsp:declaration>";
+    public static final String JSP_SCRIPTLET = "jsp:scriptlet";
+    public static final String JSP_SCRIPTLET_START = "<jsp:scriptlet>";
+    public static final String JSP_SCRIPTLET_END = "</jsp:scriptlet>";
+    public static final String JSP_EXPRESSION = "jsp:expression";
+    public static final String JSP_EXPRESSION_START = "<jsp:expression>";
+    public static final String JSP_EXPRESSION_END = "</jsp:expression>";
+    public static final String JSP_USE_BEAN = "jsp:useBean";
+    public static final String JSP_SET_PROPERTY = "jsp:setProperty";
+    public static final String JSP_GET_PROPERTY = "jsp:getProperty";
+    public static final String JSP_INCLUDE = "jsp:include";
+    public static final String JSP_FORWARD = "jsp:forward";
+    public static final String JSP_PARAM = "jsp:param";
+    public static final String JSP_PARAMS = "jsp:params";
+    public static final String JSP_PLUGIN = "jsp:plugin";
+    public static final String JSP_FALLBACK = "jsp:fallback";
+    public static final String JSP_TEXT = "jsp:text";
+    public static final String JSP_TEXT_START = "<jsp:text>";
+    public static final String JSP_TEXT_END = "</jsp:text>";
+    public static final String JSP_ATTRIBUTE = "jsp:attribute";
+    public static final String JSP_BODY = "jsp:body";
+
+    /*
+     * Tag Files
+     */
+    public static final String JSP_INVOKE = "jsp:invoke";
+    public static final String JSP_DO_BODY = "jsp:doBody";
+
+    /*
+     * Tag File Directives
+     */
+    public static final String JSP_TAG_DIRECTIVE = "jsp:directive.tag";
+    public static final String JSP_ATTRIBUTE_DIRECTIVE
+	= "jsp:directive.attribute";
+    public static final String JSP_VARIABLE_DIRECTIVE
+	= "jsp:directive.variable";
+    public static final String JSP_FRAGMENT_INPUT_DIRECTIVE
+	= "jsp:directive.fragment-input";
 }

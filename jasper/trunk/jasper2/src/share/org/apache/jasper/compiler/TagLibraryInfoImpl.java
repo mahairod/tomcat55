@@ -162,8 +162,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    if (uriType == TldLocationsCache.ABS_URI) {
 		err.jspError("jsp.error.taglibDirective.absUriCannotBeResolved",
 			     uri);
-	    } else if (uriType == 
-		       TldLocationsCache.NOROOT_REL_URI) {
+	    } else if (uriType == TldLocationsCache.NOROOT_REL_URI) {
 		uri = ctxt.resolveRelativeUri(uri);
 	    }
 	    location = new String[2];
@@ -690,7 +689,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     }
 
     /**
-     * Translation-time validation of the XML docu-ment
+     * Translation-time validation of the XML document
      * associated with the JSP page.
      * This is a convenience method on the associated 
      * TagLibraryValidator class.

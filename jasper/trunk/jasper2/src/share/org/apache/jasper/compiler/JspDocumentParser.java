@@ -183,21 +183,21 @@ public class JspDocumentParser extends DefaultHandler
 	Attributes attrsCopy = new AttributesImpl(attrs);
 
 	Node node = null;	
-	if (qName.equals(JSP_ROOT_TAG)) {
+	if (qName.equals(JSP_ROOT)) {
 	    node = new Node.JspRoot(attrsCopy, start, current);
 	    try {
 		addCustomTagLibraries(attrsCopy);
 	    } catch (JasperException je) {
 		throw new SAXException(je);
 	    }
-	} else if (qName.equals(JSP_PAGE_DIRECTIVE_TAG)) {
+	} else if (qName.equals(JSP_PAGE_DIRECTIVE)) {
 	    node = new Node.PageDirective(attrsCopy, start, current);
 	    String imports = attrs.getValue("import");
 	    // There can only be one 'import' attribute per page directive
 	    if (imports != null) {
 		((Node.PageDirective) node).addImport(imports);
 	    }
-	} else if (qName.equals(JSP_INCLUDE_DIRECTIVE_TAG)) {
+	} else if (qName.equals(JSP_INCLUDE_DIRECTIVE)) {
 	    node = new Node.IncludeDirective(attrsCopy, start, current);
 	    String file = attrsCopy.getValue("file");
 	    try {
@@ -209,34 +209,42 @@ public class JspDocumentParser extends DefaultHandler
 	    } catch (Exception e) {
 		throw new SAXException(e);
 	    }
-	} else if (qName.equals(JSP_DECLARATION_TAG)) {
+	} else if (qName.equals(JSP_DECLARATION)) {
 	    node = new Node.Declaration(start, current);
-	} else if (qName.equals(JSP_SCRIPTLET_TAG)) {
+	} else if (qName.equals(JSP_SCRIPTLET)) {
 	    node = new Node.Scriptlet(start, current);
-	} else if (qName.equals(JSP_EXPRESSION_TAG)) {
+	} else if (qName.equals(JSP_EXPRESSION)) {
 	    node = new Node.Expression(start, current);
-	} else if (qName.equals(JSP_USE_BEAN_TAG)) {
+	} else if (qName.equals(JSP_USE_BEAN)) {
 	    node = new Node.UseBean(attrsCopy, start, current);
-	} else if (qName.equals(JSP_SET_PROPERTY_TAG)) {
+	} else if (qName.equals(JSP_SET_PROPERTY)) {
 	    node = new Node.SetProperty(attrsCopy, start, current);
-	} else if (qName.equals(JSP_GET_PROPERTY_TAG)) {
+	} else if (qName.equals(JSP_GET_PROPERTY)) {
 	    node = new Node.GetProperty(attrsCopy, start, current);
-	} else if (qName.equals(JSP_INCLUDE_TAG)) {
+	} else if (qName.equals(JSP_INCLUDE)) {
 	    node = new Node.IncludeAction(attrsCopy, start, current);
-	} else if (qName.equals(JSP_FORWARD_TAG)) {
+	} else if (qName.equals(JSP_FORWARD)) {
 	    node = new Node.ForwardAction(attrsCopy, start, current);
-	} else if (qName.equals(JSP_PARAM_TAG)) {
+	} else if (qName.equals(JSP_PARAM)) {
 	    node = new Node.ParamAction(attrsCopy, start, current);
-	} else if (qName.equals(JSP_PARAMS_TAG)) {
+	} else if (qName.equals(JSP_PARAMS)) {
 	    node = new Node.ParamsAction(start, current);
-	} else if (qName.equals(JSP_PLUGIN_TAG)) {
+	} else if (qName.equals(JSP_PLUGIN)) {
 	    node = new Node.PlugIn(attrsCopy, start, current);
-	} else if (qName.equals(JSP_TEXT_TAG)) {
+	} else if (qName.equals(JSP_TEXT)) {
 	    node = new Node.JspText(start, current);
-	} else if (qName.equals(JSP_BODY_TAG)) {
+	} else if (qName.equals(JSP_BODY)) {
 	    node = new Node.JspBody(attrsCopy, start, current);
-	} else if (qName.equals(JSP_ATTRIBUTE_TAG)) {
+	} else if (qName.equals(JSP_ATTRIBUTE)) {
 	    node = new Node.NamedAttribute(attrsCopy, start, current);
+	} else if (qName.equals(JSP_TAG_DIRECTIVE)) {
+	    node = new Node.TagDirective(attrsCopy, start, current);
+	} else if (qName.equals(JSP_ATTRIBUTE_DIRECTIVE)) {
+	    node = new Node.AttributeDirective(attrsCopy, start, current);
+	} else if (qName.equals(JSP_VARIABLE_DIRECTIVE)) {
+	    node = new Node.VariableDirective(attrsCopy, start, current);
+	} else if (qName.equals(JSP_FRAGMENT_INPUT_DIRECTIVE)) {
+	    node = new Node.FragmentInputDirective(attrsCopy, start, current);
 	} else {
 	    node = getCustomTag(qName, attrsCopy, start, current);
 	    if (node == null) {
@@ -468,14 +476,15 @@ public class JspDocumentParser extends DefaultHandler
 		    uri = uri.substring(URN_JSPTLD.length());
 		}
 
-                TldLocationsCache cache=ctxt.getOptions().getTldLocationsCache();
-                TagLibraryInfo tl=cache.getTagLibraryInfo( uri );
-                if( tl==null ) {
+                TldLocationsCache cache
+		    = ctxt.getOptions().getTldLocationsCache();
+                TagLibraryInfo tl = cache.getTagLibraryInfo(uri);
+                if (tl == null) {
                     // get the location
                     String[] location = ctxt.getTldLocation(uri);
                 
-                    tl = new TagLibraryInfoImpl(ctxt, prefix, uri,
-                                                location, err);
+                    tl = new TagLibraryInfoImpl(ctxt, prefix, uri, location,
+						err);
                 }
 		taglibs.put(prefix, tl);
 	    }

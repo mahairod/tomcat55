@@ -434,10 +434,36 @@ public class JspUtil {
     }
 
     /**
-     * Replaces any occurrence of <tt>replace</tt> with <tt>with</tt> in the
-     * given string.
+     * Replaces any occurrences of the character <tt>replace</tt> with the
+     * string <tt>with</tt>.
      */
     public static String replace(String name, char replace, String with) {
+	StringBuffer buf = new StringBuffer();
+	int begin = 0;
+	int end;
+	int last = name.length();
+
+	while (true) {
+	    end = name.indexOf(replace, begin);
+	    if (end < 0) {
+		end = last;
+	    }
+	    buf.append(name.substring(begin, end));
+	    if (end == last) {
+		break;
+	    }
+	    buf.append(with);
+	    begin = end + 1;
+	}
+	
+	return buf.toString();
+    }
+
+    /**
+     * Replaces any occurrences of the character <tt>replace</tt> with the
+     * character <tt>with</tt>.
+     */
+    public static String replace(String name, char replace, char with) {
 	StringBuffer buf = new StringBuffer();
 	int begin = 0;
 	int end;
