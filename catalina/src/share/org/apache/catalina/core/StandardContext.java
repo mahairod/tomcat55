@@ -2766,6 +2766,23 @@ public class StandardContext
         // Stop accepting requests temporarily
         setPaused(true);
 
+        try {
+            stop();
+        } catch (LifecycleException e) {
+            log.error(sm.getString("standardContext.stoppingContext"), e);
+        }
+
+        try {
+            start();
+        } catch (LifecycleException e) {
+            log.error(sm.getString("standardContext.startingContext"), e);
+        }
+
+        setPaused(false);
+
+        if (true)
+            return;
+
         // Binding thread
         ClassLoader oldCCL = bindThread();
 
@@ -4323,10 +4340,10 @@ public class StandardContext
         
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
-        
-        
+
         if (log.isDebugEnabled())
             log.debug("Stopping complete");
+
     }
 
     /** Destroy needs to clean up the context completely.
@@ -4351,7 +4368,8 @@ public class StandardContext
         children=new HashMap();
         log.debug("resetContext " + oname + " " + mserver);
         if( oname != null ) { 
-            Registry.getRegistry().unregisterComponent(oname); 
+            Registry.getRegistry().unregisterComponent(oname);
+            oname = null;
         }
         
     }
