@@ -138,6 +138,7 @@ import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.RequestUtil;
+import org.apache.tomcat.util.log.SystemLogHandler;
 
 
 /**
@@ -2347,7 +2348,16 @@ public class StandardContext
         }
 
         // Normal request processing
-        super.invoke(request, response);
+        try {
+            SystemLogHandler.startCapture();
+            super.invoke(request, response);
+        } finally {
+            String log = SystemLogHandler.stopCapture();
+            if (log != null && log.length() > 0) {
+                log(log);
+        }
+
+        }
 
     }
 
