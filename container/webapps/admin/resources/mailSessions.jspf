@@ -11,25 +11,25 @@
           &nbsp;
         </td>
       </logic:present>
-      <td width="20%"><div align="left" class="table-header-text">
+      <th scope="col" width="20%"><div align="left" class="table-header-text">
         <bean:message key="resources.mailsession.name"/>
-      </div></td>
-      <td><div align="left" class="table-header-text">
+      </div></th>
+      <th scope="col"><div align="left" class="table-header-text">
         <bean:message key="resources.mailsession.mailhost"/>
-      </div></td>
+      </div></th>
     </tr>
 
     <logic:iterate name="mailSessionsForm" property="mailSessions"
                      id="mailSession" type="java.lang.String">
       <tr class="line-row">
         <logic:present name="checkboxes">
-          <td><div align="center" class="table-normal-text">
+          <td scope="row"><div align="center" class="table-normal-text">
             <label for="mailSessions"></label>
             <input type="checkbox" name="mailSessions"
                   value="<%= mailSession %>" styleId="mailSessions">
           </td>
         </logic:present>
-        <td><div align="left" class="table-normal-text">
+        <td scope="row"><div align="left" class="table-normal-text">
           <html:link page='<%= "/resources/setUpMailSession.do?objectName=" + 
                                URLEncoder.encode(mailSession) + "&resourcetype=" +
                                URLEncoder.encode(resourcetypeInfo) + "&path="+
@@ -39,7 +39,7 @@
             <controls:attribute name="mailSession" attribute="name"/>
           </html:link>
         </div></td>
-        <td><div align="left" class="table-normal-text">&nbsp;
+        <td scope="row"><div align="left" class="table-normal-text">&nbsp;
           <controls:attribute name="mailSession" attribute="mail.smtp.host"/>
         </div></td>
       </tr>
