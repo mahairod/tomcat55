@@ -601,7 +601,7 @@
       &lt;value&gt;org.hsql.jdbcDriver&lt;/value&gt;
     &lt;/parameter&gt;
     &lt;parameter&gt;
-      &lt;name&gt;driverName&lt;/name&gt;
+      &lt;name&gt;url&lt;/name&gt;
       &lt;/value&gt;jdbc:HypersonicSQL:database&lt;/value&gt;
     &lt;/parameter&gt;
     &lt;parameter&gt;

@@ -515,8 +515,16 @@ conn.close();
       &lt;value&gt;org.hsql.jdbcDriver&lt;/value&gt;
     &lt;/parameter&gt;
     &lt;parameter&gt;
-      &lt;name&gt;driverName&lt;/name&gt;
+      &lt;name&gt;url&lt;/name&gt;
       &lt;value&gt;jdbc:HypersonicSQL:database&lt;/value&gt;
+    &lt;/parameter&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;maxActive&lt;/name&gt;
+      &lt;value&gt;8&lt;/value&gt;
+    &lt;/parameter&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;maxIdle&lt;/name&gt;
+      &lt;value&gt;4&lt;/value&gt;
     &lt;/parameter&gt;
   &lt;/ResourceParams&gt;
   ...
@@ -530,6 +538,33 @@ conn.close();
     JDBC driver.  Customize the <code>driverClassName</code> and
     <code>driverName</code> parameters to match your actual database's
     JDBC driver and connection URL.</p>
+
+    <p>The configuration properties for Tomcat's standard data source
+    resource factory
+    (<code>org.apache.naming.factory.DbcpDataSourceFactory</code>) are
+    as follows:</p>
+    <ul>
+    <li><strong>driverClassName</strong> - Fully qualified Java class name
+        of the JDBC driver to be used.</li>
+    <li><strong>maxActive</strong> - The maximum number of active instances
+        that can be allocated from this pool at the same time.</li>
+    <li><strong>maxIdle</strong> - The maximum number of connections that
+        can sit idle in this pool at the same time.</li>
+    <li><strong>maxWait</strong> - The maximum number of milliseconds that the
+        pool will wait (when there are no available connections) for a
+        connection to be returned before throwing an exception.</li>
+    <li><strong>password</strong> - Database password to be passed to our
+        JDBC driver.</li>
+    <li><strong>url</strong> - Connection URL to be passed to our JDBC driver.
+        (For backwards compatibility, the property <code>driverName</code>
+        is also recognized.)</li>
+    <li><strong>user</strong> - Database username to be passed to our
+        JDBC driver.</li>
+    <li><strong>validationQuery</strong> - SQL query that can be used by the
+        pool to validate connections before they are returned to the
+        application.  If specified, this query MUST be an SQL SELECT
+        statement that returns at least one row.</li>
+    </ul>
 
   </subsection>
 
