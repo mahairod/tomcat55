@@ -645,7 +645,8 @@ public abstract class PersistentManagerBase
                     ids = (String[])AccessController.doPrivileged(new PrivilegedStoreKeys());
                 }catch(PrivilegedActionException ex){
                     Exception exception = ex.getException();
-                    log.error("Exception clearing the Store: " + exception);
+                    log.error("Exception in the Store during load: "
+                              + exception);
                     exception.printStackTrace();                        
                 }
             } else {
@@ -702,7 +703,8 @@ public abstract class PersistentManagerBase
                     AccessController.doPrivileged(new PrivilegedStoreRemove(id));
                 }catch(PrivilegedActionException ex){
                     Exception exception = ex.getException();
-                    log.error("Exception clearing the Store: " + exception);
+                    log.error("Exception in the Store during removeSession: "
+                              + exception);
                     exception.printStackTrace();                        
                 }
             } else {
@@ -769,7 +771,8 @@ public abstract class PersistentManagerBase
                     session = (Session) AccessController.doPrivileged(new PrivilegedStoreLoad(id));
                 }catch(PrivilegedActionException ex){
                     Exception exception = ex.getException();
-                    log.error("Exception clearing the Store: " + exception);
+                    log.error("Exception in the Store during swapIn: "
+                              + exception);
                     if (exception instanceof IOException){
                         throw (IOException)exception;
                     } else if (exception instanceof ClassNotFoundException) {
@@ -849,7 +852,8 @@ public abstract class PersistentManagerBase
                     AccessController.doPrivileged(new PrivilegedStoreSave(session));
                 }catch(PrivilegedActionException ex){
                     Exception exception = ex.getException();
-                    log.error("Exception clearing the Store: " + exception);
+                    log.error("Exception in the Store during writeSession: "
+                              + exception);
                     exception.printStackTrace();                        
                 }
             } else {
