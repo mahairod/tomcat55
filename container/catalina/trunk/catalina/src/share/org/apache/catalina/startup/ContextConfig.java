@@ -124,9 +124,11 @@ import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.loader.Extension;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.util.SchemaResolver;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.digester.Digester;
 import org.xml.sax.InputSource;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
@@ -275,12 +277,15 @@ public final class ContextConfig
             try {
                 URL url =
                     servletContext.getResource(Constants.ApplicationWebXml);
+                
                 InputSource is = new InputSource(url.toExternalForm());
                 is.setByteStream(stream);
                 webDigester.setDebug(getDebug());
                 if (context instanceof StandardContext) {
                     ((StandardContext) context).setReplaceWelcomeFiles(true);
                 }
+                
+                
                 webDigester.clear();
                 webDigester.push(context);
                 webDigester.parse(is);
@@ -482,25 +487,52 @@ public final class ContextConfig
         Digester tldDigester = new Digester();
         tldDigester.setNamespaceAware(true);
         tldDigester.setValidating(true);
-        url = ContextConfig.class.getResource(Constants.TldDtdResourcePath_11);
-        tldDigester.register(Constants.TldDtdPublicId_11,
-                             url.toString());
-        url = ContextConfig.class.getResource(Constants.TldDtdResourcePath_12);
-        tldDigester.register(Constants.TldDtdPublicId_12,
-                             url.toString());
-
-        url = ContextConfig.class.getResource(Constants.TldSchemaResourcePath_20);
-        // to support servlet.jar that does not contains the schema
-        if (url != null){
-            tldDigester.setSchema(url.toString());
-            tldDigester = registerLocalSchema(tldDigester);
+        
+        if (tldDigester.getFactory().getClass().getName().indexOf("xerces")!=-1) {
+            tldDigester = patchXerces(tldDigester);
         }
-
+        
+        // Set the schemaLocation
+        url = ContextConfig.class.getResource(Constants.TldSchemaResourcePath_20);
+        SchemaResolver tldEntityResolver = new SchemaResolver(url.toString(), 
+                                                              tldDigester);
+        tldDigester.setSchema(url.toString());       
+        
+        url = ContextConfig.class.getResource(Constants.TldDtdResourcePath_11);
+        tldEntityResolver.register(Constants.TldDtdPublicId_11,
+                                   url.toString());
+        
+        url = ContextConfig.class.getResource(Constants.TldDtdResourcePath_12);
+        tldEntityResolver.register(Constants.TldDtdPublicId_12,
+                                   url.toString());
+        
+        tldEntityResolver = registerLocalSchema(tldEntityResolver);
+        
+        tldDigester.setEntityResolver(tldEntityResolver);
         tldDigester.addRuleSet(new TldRuleSet());
         return (tldDigester);
 
     }
 
+    
+    private static Digester patchXerces(Digester digester){
+        // This feature is needed for backward compatibility with old DDs
+        // which used Java encoding names such as ISO8859_1 etc.
+        // with Crimson (bug 4701993). By default, Xerces does not
+        // support ISO8859_1.
+        try{
+            digester.setFeature(
+                "http://apache.org/xml/features/allow-java-encodings", true);
+        } catch(ParserConfigurationException e){
+                // log("contextConfig.registerLocalSchema", e);
+        } catch(SAXNotRecognizedException e){
+                // log("contextConfig.registerLocalSchema", e);
+        } catch(SAXNotSupportedException e){
+                // log("contextConfig.registerLocalSchema", e);
+        }
+        return digester;
+    }
+    
 
     /**
      * Create (if necessary) and return a Digester configured to process the
@@ -512,26 +544,29 @@ public final class ContextConfig
         Digester webDigester = new Digester();
         webDigester.setNamespaceAware(true);
         webDigester.setValidating(true);
-        url = ContextConfig.class.getResource(Constants.WebDtdResourcePath_22);
-        webDigester.register(Constants.WebDtdPublicId_22,
-                             url.toString());
-        url = ContextConfig.class.getResource(Constants.WebDtdResourcePath_23);
-        webDigester.register(Constants.WebDtdPublicId_23,
-                             url.toString());
-
-        url = ContextConfig.class.getResource(Constants.WebSchemaResourcePath_24);
-        webDigester.register(Constants.WebSchemaPublicId_24,
-                             url.toString());
-
-        // to support servlet.jar that does not contains the schema
-        if (url != null){
-            webDigester.setSchema(url.toString());
-            webDigester = registerLocalSchema(webDigester);
+       
+        if (webDigester.getFactory().getClass().getName().indexOf("xerces")!=-1) {
+            webDigester = patchXerces(webDigester);
         }
+        
+        url = ContextConfig.class.getResource(Constants.WebSchemaResourcePath_24);
+        SchemaResolver webEntityResolver = new SchemaResolver(url.toString(),
+                                                              webDigester);
+        webDigester.setSchema(url.toString());
+        
+        url = ContextConfig.class.getResource(Constants.WebDtdResourcePath_22);
+        webEntityResolver.register(Constants.WebDtdPublicId_22,
+                                   url.toString());
+        
+        url = ContextConfig.class.getResource(Constants.WebDtdResourcePath_23);
+        webEntityResolver.register(Constants.WebDtdPublicId_23,
+                                   url.toString());
 
+        webEntityResolver = registerLocalSchema(webEntityResolver);
+
+        webDigester.setEntityResolver(webEntityResolver);
         webDigester.addRuleSet(new WebRuleSet());
         return (webDigester);
-
     }
 
 
@@ -566,6 +601,7 @@ public final class ContextConfig
                 stream = new FileInputStream(file);
                 is.setByteStream(stream);
                 webDigester.setDebug(getDebug());
+                
                 if (context instanceof StandardContext)
                     ((StandardContext) context).setReplaceWelcomeFiles(true);
                 webDigester.clear();
@@ -642,45 +678,29 @@ public final class ContextConfig
      * @param digester The instance on which properties are set.
      * @return an instance ready to parse XML schema.
      */
-    protected static Digester registerLocalSchema(Digester digester){
-
-        // This feature is needed for backward compatibility with old DDs
-        // which used Java encoding names such as ISO8859_1 etc.
-        // with Crimson (bug 4701993). By default, Xerces does not
-        // support ISO8859_1.
-        if (digester.getFactory().getClass().getName().indexOf("xerces")!=-1) {
-            try{
-                digester.setFeature(
-                    "http://apache.org/xml/features/allow-java-encodings", true);
-            } catch(ParserConfigurationException e){
-                    // log("contextConfig.registerLocalSchema", e);
-            } catch(SAXNotRecognizedException e){
-                    // log("contextConfig.registerLocalSchema", e);
-            } catch(SAXNotSupportedException e){
-                    // log("contextConfig.registerLocalSchema", e);
-            }
-        }
+    protected static SchemaResolver registerLocalSchema(SchemaResolver entityResolver){
 
         URL url = ContextConfig.class.getResource(Constants.J2eeSchemaResourcePath_14);
-        digester.register(Constants.J2eeSchemaPublicId_14,
-                             url.toString());
+        entityResolver.register(Constants.J2eeSchemaPublicId_14,
+                                url.toString());
 
         url = ContextConfig.class.getResource(Constants.W3cSchemaResourcePath_10);
-        digester.register(Constants.W3cSchemaPublicId_10,
-                             url.toString());
+        entityResolver.register(Constants.W3cSchemaPublicId_10,
+                                url.toString());
 
         url = ContextConfig.class.getResource(Constants.JspSchemaResourcePath_20);
-        digester.register(Constants.JspSchemaPublicId_20,
-                             url.toString());
+        entityResolver.register(Constants.JspSchemaPublicId_20,
+                                url.toString());
 
         url = ContextConfig.class.getResource(Constants.TldSchemaResourcePath_20);
-        digester.register(Constants.TldSchemaPublicId_20,
-                             url.toString());
+        entityResolver.register(Constants.TldSchemaPublicId_20,
+                                url.toString());
+        
         url = ContextConfig.class.getResource(Constants.WebSchemaResourcePath_24);
-        digester.register(Constants.WebSchemaPublicId_24,
-                             url.toString());
+        entityResolver.register(Constants.WebSchemaPublicId_24,
+                                url.toString());
 
-        return digester;
+        return entityResolver;
     }
 
 
