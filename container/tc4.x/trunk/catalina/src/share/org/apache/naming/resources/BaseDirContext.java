@@ -158,6 +158,12 @@ public abstract class BaseDirContext implements DirContext {
     protected int cacheTTL = 5000; // 5s
 
 
+    /**
+     * Max size of resources which will have their content cached.
+     */
+    protected int cacheObjectMaxSize = 32768; // 32 KB
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -239,6 +245,22 @@ public abstract class BaseDirContext implements DirContext {
      */
     public int getCacheTTL() {
         return cacheTTL;
+    }
+
+
+    /**
+     * Set cacheObjectMaxSize.
+     */
+    public void setCacheObjectMaxSize(int cacheObjectMaxSize) {
+        this.cacheObjectMaxSize = cacheObjectMaxSize;
+    }
+
+
+    /**
+     * Get cacheObjectMaxSize.
+     */
+    public int getCacheObjectMaxSize() {
+        return cacheObjectMaxSize;
     }
 
 
