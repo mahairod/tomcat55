@@ -40,7 +40,7 @@ Servlet/JSP specifications:</p>
 
 <tr>
   <td>2.3/1.2</td>
-  <td>4.0.2</td>
+  <td>4.0.3</td>
 </tr>
 
 <tr>
@@ -79,7 +79,7 @@ Software Foundation.  The 3.x versions all implement the <strong>Servlet
 which one is right for you.  More details about each release can be found in 
 the associated release notes.</p> 
 
-<p><strong>Tomcat 4.0.x</strong>.  Tomcat 4.0.2 is the current production
+<p><strong>Tomcat 4.0.x</strong>.  Tomcat 4.0.3 is the current production
 quality release.  Tomcat 4.0 is the next generation of Tomcat.  The 4.0 servlet
 container (Catalina) has been developed from the ground up for flexibility and
 performance.  Version 4.0 implements the final released versions of the Servlet
