@@ -1097,7 +1097,9 @@
     </copy>
 -->
     <copy todir="${tomcat.dist}/webapps">
-      <fileset dir="${tomcat.build}/webapps" />
+      <fileset dir="${tomcat.build}/webapps">
+        <exclude name="**/WEB-INF/src/**" />
+      </fileset>
     </copy>
 
     <!-- Correct permissions and line endings on "bin" scripts -->
