@@ -82,7 +82,7 @@ public class TagPluginManager {
     private static final String TAG_PLUGINS_ROOT_ELEM = "tag-plugins";
 
     private boolean initialized = false;
-    private Hashtable tagPlugins = null;
+    private HashMap tagPlugins = null;
     private ServletContext ctxt;
     private PageInfo pageInfo;
 
@@ -129,7 +129,7 @@ public class TagPluginManager {
 			 TAG_PLUGINS_ROOT_ELEM);
 	}
 
-	tagPlugins = new Hashtable();
+	tagPlugins = new HashMap();
 	Iterator pluginList = root.findChildren("tag-plugin");
 	while (pluginList.hasNext()) {
 	    TreeNode pluginNode = (TreeNode) pluginList.next();
@@ -204,11 +204,11 @@ public class TagPluginManager {
 	    return ((Node.CustomTag) parent).getTagPluginContext();
 	}
 
-	public void setAttribute(String key, Object value) {
+	public void setPluginAttribute(String key, Object value) {
 	    pluginAttributes.put(key, value);
 	}
 
-	public Object getAttribute(String key) {
+	public Object getPluginAttribute(String key) {
 	    return pluginAttributes.get(key);
 	}
 
