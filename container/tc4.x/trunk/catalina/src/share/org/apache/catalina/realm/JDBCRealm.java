@@ -734,6 +734,7 @@ final class JDBCRealmPrincipal implements Principal {
 	for (int i = 0; i < roles.length; i++)
 	    results[i] = roles[i];
 	results[roles.length] = role;
+        roles = results;
     }
 
 
