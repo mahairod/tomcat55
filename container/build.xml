@@ -42,7 +42,7 @@
   <target name="deploy" depends="deploy-static"
    description="Build and deploy all components">
     <echo>Target: Catalina - Deploy ...</echo>
-    <ant dir="${basedir}/catalina" target="${catalina.target}"/>
+    <ant dir="${basedir}/catalina" target="deploy"/>
     <echo>Target: Webapps - Deploy ...</echo>
     <ant dir="${basedir}/webapps"  target="deploy"/>
   </target>
