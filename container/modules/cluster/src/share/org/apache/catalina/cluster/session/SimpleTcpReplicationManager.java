@@ -484,6 +484,7 @@ implements org.apache.catalina.cluster.ClusterManager
         //stop the javagroup channel
         try
         {
+            cluster.removeManager(getName());
 //            mReplicationListener.stopListening();
 //            mReplicationTransmitter.stop();
 //            service.stop();

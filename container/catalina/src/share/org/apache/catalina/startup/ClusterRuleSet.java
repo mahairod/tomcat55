@@ -115,6 +115,15 @@ public class ClusterRuleSet extends RuleSetBase {
         digester.addSetNext(prefix + "Valve",
                             "addValve",
                             "org.apache.catalina.Valve");
+        
+        digester.addObjectCreate(prefix + "Deployer",
+                                 null, // MUST be specified in the element
+                                 "className");
+        digester.addSetProperties(prefix + "Deployer");
+        digester.addSetNext(prefix + "Deployer",
+                            "setClusterDeployer",
+                            "org.apache.catalina.cluster.ClusterDeployer");
+
 
 
         //Cluster configuration end

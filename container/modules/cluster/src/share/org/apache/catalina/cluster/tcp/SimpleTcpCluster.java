@@ -22,6 +22,7 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Vector;
 
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.core.StandardServer;
@@ -56,6 +57,8 @@ import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.Constants;
 import org.apache.catalina.cluster.ClusterReceiver;
 import org.apache.catalina.cluster.ClusterSender;
+import org.apache.catalina.cluster.ClusterDeployer;
+
 
 
 import org.apache.commons.logging.Log;
@@ -184,6 +187,12 @@ public class SimpleTcpCluster
      */
     private org.apache.catalina.cluster.ClusterReceiver clusterReceiver;
     private org.apache.catalina.Valve valve;
+    private org.apache.catalina.cluster.ClusterDeployer clusterDeployer;
+    
+    /**
+     * Listeners of messages
+     */
+    protected Vector clusterListeners = new Vector();
 
     // ------------------------------------------------------------- Properties
 
@@ -291,6 +300,15 @@ public class SimpleTcpCluster
         return members;
     }
     
+    /**
+     * Return the member that represents this node.
+     * @return Member
+     */
+    public Member getLocalMember() {
+        return membershipService.getLocalMember();
+    }
+
+    
 
 
 
@@ -299,6 +317,7 @@ public class SimpleTcpCluster
 
     public synchronized Manager createManager(String name) {
         log.debug("Creating ClusterManager for context "+name + " using class "+getManagerClassName());
+        System.out.println("\n\n\n\nCreating ClusterManager for context "+name + " using class "+getManagerClassName()+"\n\n\n\n");
         ClusterManager manager = null;
         try {
             manager = (ClusterManager)getClass().getClassLoader().loadClass(getManagerClassName()).newInstance();
@@ -312,8 +331,18 @@ public class SimpleTcpCluster
         manager.setExpireSessionsOnShutdown(expireSessionsOnShutdown);
         manager.setUseDirtyFlag(useDirtyFlag);
         managers.put(name,manager);
+        
         return manager;
     }
+    
+    public void removeManager(String name) {
+        managers.remove(name);
+    }
+    
+    public Manager getManager(String name) {
+        return (Manager)managers.get(name);
+    }
+    
 
 
     // ------------------------------------------------------ Lifecycle Methods
@@ -378,6 +407,22 @@ public class SimpleTcpCluster
             membershipService.setLocalMemberProperties(clusterReceiver.getHost(),clusterReceiver.getPort());
             membershipService.addMembershipListener(this);
             membershipService.start();
+            //set the deployer.
+            try {
+                if ( clusterDeployer != null ) {
+                    clusterDeployer.setCluster(this);
+                    Object deployer = MethodUtils.invokeMethod(
+                        getContainer(),
+                        "getDeployer",
+                        new Object[0],
+                        new Class[0]);
+                    clusterDeployer.setDeployer( (org.apache.catalina.Deployer)
+                                                deployer);
+                   clusterDeployer.start();
+                }
+            } catch (Throwable x) {
+                log.fatal("Unable to retrieve the container deployer. Cluster deployment disabled.",x);
+            } //catch
             this.started = true;
         } catch ( Exception x ) {
             log.error("Unable to start cluster.",x);
@@ -455,6 +500,9 @@ public class SimpleTcpCluster
         } catch (Exception x ) {
             log.error("Unable to stop cluster receiver.",x);
         }
+        if ( clusterDeployer != null ) {
+            clusterDeployer.stop();
+        }
         started = false;
     }
 
@@ -529,8 +577,19 @@ public class SimpleTcpCluster
                     else
                         log.warn("Context manager doesn't exist:" + ctxname);
                 }//end if
-            }  else
-                log.warn("Received invalid message myobj="+myobj);
+            }  else {
+                //invoke all the listeners
+                for ( int i=0; i<clusterListeners.size(); i++ ) {
+                    MessageListener listener = (MessageListener)clusterListeners.elementAt(i);
+                    if ( myobj!=null &&
+                         myobj instanceof ClusterMessage && 
+                         listener.accept((ClusterMessage)myobj) ) {
+                        listener.messageReceived((ClusterMessage)myobj);
+                    }//end if
+                    
+                }//for
+            }//end if
+                
         } catch ( Exception x ) {
             log.error("Unable to deserialize session message.",x);
         }
@@ -657,12 +716,23 @@ public class SimpleTcpCluster
     }
     
     public void addClusterListener(MessageListener listener) {
-        //TO DO
+        if ( !clusterListeners.contains(listener) ) {
+            clusterListeners.addElement(listener);
+        }
     }
 
     public void removeClusterListener(MessageListener listener) {
-        //TO DO
+        clusterListeners.removeElement(listener);
     }
+    public org.apache.catalina.cluster.ClusterDeployer getClusterDeployer() {
+        return clusterDeployer;
+    }
+    public void setClusterDeployer(org.apache.catalina.cluster.ClusterDeployer clusterDeployer) {
+        this.clusterDeployer = clusterDeployer;
+    }
+    
+ 
+
     
     
     private class MemberComparator implements java.util.Comparator {
