@@ -554,9 +554,14 @@ public class PageContextImpl
 
 	if (errorPageURL != null && !errorPageURL.equals("")) {
 
-	    // Set request attributes
+	    // Set request attributes.
+	    // Do not set the javax.servlet.error.exception attribute here
+	    // (instead, set in the generated servlet code for the error page)
+	    // in order to prevent the ErrorReportValve, which is invoked as
+	    // part of forwarding the request to the error page, from 
+	    // throwing it if the response has not been committed (the response
+	    // will have been committed if the error page is a JSP page).
 	    request.setAttribute("javax.servlet.jsp.jspException", t);
-	    request.setAttribute("javax.servlet.error.exception", t);
 	    request.setAttribute("javax.servlet.error.status_code",
 	        new Integer(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
 	    request.setAttribute("javax.servlet.error.request_uri",

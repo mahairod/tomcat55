@@ -492,8 +492,10 @@ public class Generator {
 	if (pageInfo.isSession())
 	    out.printil("HttpSession session = null;");
 
-	if (pageInfo.isIsErrorPage())
+	if (pageInfo.isIsErrorPage()) {
             out.printil("Throwable exception = (Throwable) request.getAttribute(\"javax.servlet.jsp.jspException\");");
+	    out.printil("request.setAttribute(\"javax.servlet.error.exception\", exception);");
+	}
 
 	out.printil("ServletContext application = null;");
 	out.printil("ServletConfig config = null;");
