@@ -67,6 +67,7 @@ package org.apache.naming.factory;
 import java.util.Hashtable;
 import javax.naming.Name;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.RefAddr;
@@ -110,6 +111,27 @@ public class EjbFactory
         
         if (obj instanceof EjbRef) {
             Reference ref = (Reference) obj;
+
+            // If ejb-link has been specified, resolving the link using JNDI
+            RefAddr linkRefAddr = ref.get(EjbRef.LINK);
+            if (linkRefAddr != null) {
+                // Retrieving the EJB link
+                String ejbLink = linkRefAddr.getContent().toString();
+                Object beanObj = (new InitialContext()).lookup(ejbLink);
+                // Load home interface and checking if bean correctly
+                // implements specified home interface
+                String homeClassName = ref.getClassName();
+                Class home = Class.forName(homeClassName);
+                if (home.isInstance(beanObj)) {
+                    return beanObj;
+                } else {
+                    throw new NamingException
+                        ("Bean of type " + beanObj.getClass().getName() 
+                         + " doesn't implement home interface " 
+                         + home.getName());
+                }
+            }
+            
             ObjectFactory factory = null;
             RefAddr factoryRefAddr = ref.get(Constants.FACTORY);
             if (factoryRefAddr != null) {
@@ -138,6 +160,7 @@ public class EjbFactory
                     }
                 }
             }
+
             // Note: No defaults here
             if (factory != null) {
                 return factory.getObjectInstance
@@ -146,6 +169,7 @@ public class EjbFactory
                 throw new NamingException
                     ("Cannot create resource instance");
             }
+
         }
 
         return null;
