@@ -580,6 +580,8 @@ public class HttpRequestBase
         results.setLocked(false);
 
         String encoding = getCharacterEncoding();
+        if (encoding == null)
+            encoding = "ISO-8859-1";
 
 	// Parse any parameters specified in the query string
 	String queryString = getQueryString();

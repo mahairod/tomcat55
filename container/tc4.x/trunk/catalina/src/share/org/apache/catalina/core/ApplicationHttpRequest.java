@@ -451,6 +451,8 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
 	HashMap queryParameters = new HashMap();
         String encoding = getCharacterEncoding();
+        if (encoding == null)
+            encoding = "ISO-8859-1";
         try {
 	    RequestUtil.parseParameters
                 (queryParameters, queryString, encoding);
