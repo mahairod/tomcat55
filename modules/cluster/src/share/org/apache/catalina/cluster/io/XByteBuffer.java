@@ -76,6 +76,10 @@ package org.apache.catalina.cluster.io;
 
 public class XByteBuffer
 {
+    
+    public static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( XByteBuffer.class );
+    
     /**
      * This is a package header, 7 bytes
      */
@@ -168,7 +172,7 @@ public class XByteBuffer
 
         if (bufSize > START_DATA.length && (firstIndexOf(buf,0,START_DATA)==-1)){
             bufSize = 0;
-            System.out.println("Discarded the package, invalid header");
+            log.error("Discarded the package, invalid header");
             return false;
         }
         return true;
@@ -395,18 +399,18 @@ public class XByteBuffer
     }//createDataPackage
 
     public static void main(String[] args) throws Exception {
-       System.out.println("Before="+Integer.MAX_VALUE);
+       log.info("Before="+Integer.MAX_VALUE);
        byte[] d = toBytes(Integer.MAX_VALUE);
-       System.out.println("After="+toInt(d,0));
+       log.info("After="+toInt(d,0));
 
 
-       System.out.println("Before="+Long.MAX_VALUE);
+       log.info("Before="+Long.MAX_VALUE);
        d = toBytes(Long.MAX_VALUE);
-       System.out.println("After="+toLong(d,0));
+       log.info("After="+toLong(d,0));
 
-       System.out.println("Before=" + 4564564);
+       log.info("Before=" + 4564564);
        d = toBytes((long)4564564);
-       System.out.println("After=" + toLong(d, 0));
+       log.info("After=" + toLong(d, 0));
 
        byte[] d1 = createDataPackage(new byte[] {1});
        byte[] d2 = createDataPackage(new byte[] {2});
@@ -422,7 +426,7 @@ public class XByteBuffer
        XByteBuffer b = new XByteBuffer();
        b.append(test,0,test.length);
        int s = b.countPackages();
-       System.out.println("Nr of packages="+s);
+       log.info("Nr of packages="+s);
        while ( s > 0 ) {
            d = b.extractPackage(true);
            System.out.print("Package d1=");
@@ -433,10 +437,11 @@ public class XByteBuffer
     }
 
     public static void printBuf(byte[] b) {
+        StringBuffer buf = new StringBuffer();
         for ( int i=0; i<b.length; i++ ) {
-            System.out.print(b[i] + " ");
+            buf.append(b[i] + " ");
         }
-        System.out.println();
+        log.info(buf);
     }
 
 }//class

@@ -79,6 +79,10 @@ import java.util.LinkedList;
 import java.util.HashMap;
 
 public class SmartQueue {
+    
+    public static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( SmartQueue.class );
+    
     /**
      * This is the actual queue
      */
@@ -106,14 +110,14 @@ public class SmartQueue {
             SmartEntry current = (SmartEntry)queueMap.get(entry.getKey());
             if ( current == null ) {
                 /*the object has not been queued, at it to the end of the queue*/
-                if ( debug != 0 ) System.out.println("["+Thread.currentThread().getName()+"][SmartQueue] Adding new object="+entry);
+                if ( debug != 0 ) log.debug("["+Thread.currentThread().getName()+"][SmartQueue] Adding new object="+entry);
                 queue.addLast(entry);
                 queueMap.put(entry.getKey(),entry);
             }else {
                 /*the object has been queued, replace the value*/
                 if ( debug != 0 ) System.out.print("["+Thread.currentThread().getName()+"][SmartQueue] Replacing old object="+current);
                 current.setValue(entry.getValue());
-                if ( debug != 0 ) System.out.println("with new object="+current);
+                if ( debug != 0 ) log.debug("with new object="+current);
             }
             /*wake up all the threads that are waiting for the lock to be released*/
             mutex.notifyAll();
@@ -135,9 +139,9 @@ public class SmartQueue {
         synchronized (mutex) {
             while ( size() == 0 ) {
                 try {
-                    if ( debug != 0 ) System.out.println("["+Thread.currentThread().getName()+"][SmartQueue] Queue sleeping until object added size="+size()+".");
+                    if ( debug != 0 ) log.debug("["+Thread.currentThread().getName()+"][SmartQueue] Queue sleeping until object added size="+size()+".");
                     mutex.wait();
-                    if ( debug != 0 ) System.out.println("["+Thread.currentThread().getName()+"][SmartQueue] Queue woke up or interrupted size="+size()+".");
+                    if ( debug != 0 ) log.debug("["+Thread.currentThread().getName()+"][SmartQueue] Queue woke up or interrupted size="+size()+".");
                 }
                 catch(IllegalMonitorStateException ex) {
                     throw ex;
@@ -148,7 +152,7 @@ public class SmartQueue {
             /*guaranteed that we are not empty by now*/
             result = (SmartEntry)queue.removeFirst();
             queueMap.remove(result.getKey());
-            if ( debug != 0 ) System.out.println("["+Thread.currentThread().getName()+"][SmartQueue] Returning="+result);
+            if ( debug != 0 ) log.debug("["+Thread.currentThread().getName()+"][SmartQueue] Returning="+result);
         }
         return result;
     }
