@@ -173,7 +173,7 @@ public class DeleteValvesAction extends Action {
             for (int i = 0; i < valves.length; i++) {
                 values[0] = valves[i];
                 String domain = (new ObjectName(valves[i])).getDomain();
-                ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                ObjectName fname = TomcatTreeBuilder.getMBeanFactory();
                 mBServer.invoke(fname, operation,
                                 values, removeValveTypes);
                 if (control != null) {
