@@ -6,6 +6,6 @@ PUBLIC "-//Sun Microsystems Inc.//DTD JavaServer Pages Version 1.2//EN"
 <jsp:root
 xmlns:jsp="http://java.sun.com/products/jsp/dtd/jsp_1_2.dtd"
 ><jsp:directive.page contentType="text/plain"
-/><jsp:text><![CDATA[Xerces00 PASSED]]></jsp:text>
+/><jsp:cdata><![CDATA[Xerces00 PASSED]]></jsp:cdata>
 </jsp:root>
 
