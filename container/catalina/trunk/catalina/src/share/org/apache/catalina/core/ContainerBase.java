@@ -208,9 +208,9 @@ public abstract class ContainerBase
 
 
     /**
-     * The execute delay for this component.
+     * The processor delay for this component.
      */
-    protected int executeDelay = -1;
+    protected int backgroundProcessorDelay = -1;
 
 
     /**
@@ -346,16 +346,16 @@ public abstract class ContainerBase
 
 
     /**
-     * Get the delay between the invocation of the execute method on
+     * Get the delay between the invocation of the backgroundProcess method on
      * this container and its children. Child containers will not be invoked
-     * if their delay value is not -1 (which would mean they are using their
-     * own thread). Setting this to a positive value will cause a thread to
-     * be spawn. After waiting the specified amount of time, the thread will
-     * invoke the executePeriodic method on this container and all 
-     * its children.
+     * if their delay value is not negative (which would mean they are using 
+     * their own thread). Setting this to a positive value will cause 
+     * a thread to be spawn. After waiting the specified amount of time, 
+     * the thread will invoke the executePeriodic method on this container 
+     * and all its children.
      */
-    public int getExecuteDelay() {
-        return executeDelay;
+    public int getBackgroundProcessorDelay() {
+        return backgroundProcessorDelay;
     }
 
 
@@ -363,11 +363,11 @@ public abstract class ContainerBase
      * Set the delay between the invocation of the execute method on this
      * container and its children.
      * 
-     * @param delay The delay in seconds between the invocation of execute 
-     *              methods
+     * @param delay The delay in seconds between the invocation of 
+     *              backgroundProcess methods
      */
-    public void setExecuteDelay(int executeDelay) {
-        this.executeDelay = executeDelay;
+    public void setBackgroundProcessorDelay(int delay) {
+        backgroundProcessorDelay = delay;
     }
 
 
@@ -1371,7 +1371,7 @@ public abstract class ContainerBase
      * invoked inside the classloading context of this container. Unexpected
      * throwables will be caught and logged.
      */
-    public void execute() {
+    public void backgroundProcess() {
     }
 
 
@@ -1583,12 +1583,12 @@ public abstract class ContainerBase
 
         if (thread != null)
             return;
-        if (executeDelay <= 0)
+        if (backgroundProcessorDelay <= 0)
             return;
 
         threadDone = false;
-        String threadName = "ExecuteDelay[" + getName() + "]";
-        thread = new Thread(new ContainerExecuteDelay(), threadName);
+        String threadName = "ContainerBackgroundProcessor[" + toString() + "]";
+        thread = new Thread(new ContainerBackgroundProcessor(), threadName);
         thread.setDaemon(true);
         thread.start();
 
@@ -1621,19 +1621,15 @@ public abstract class ContainerBase
 
 
     /**
-     * Private thread class to invoke the execute method of this container 
-     * and its children after a fixed delay.
+     * Private thread class to invoke the backgroundProcess method 
+     * of this container and its children after a fixed delay.
      */
-    protected class ContainerExecuteDelay implements Runnable {
+    protected class ContainerBackgroundProcessor implements Runnable {
 
-
-        /**
-         * Perform the requested notification.
-         */
         public void run() {
             while (!threadDone) {
                 try {
-                    Thread.sleep(executeDelay * 1000L);
+                    Thread.sleep(backgroundProcessorDelay * 1000L);
                 } catch (InterruptedException e) {
                     ;
                 }
@@ -1655,7 +1651,7 @@ public abstract class ContainerBase
                     Thread.currentThread().setContextClassLoader
                         (container.getLoader().getClassLoader());
                 }
-                container.execute();
+                container.backgroundProcess();
             } catch (Throwable t) {
                 log.error("Exception invoking periodic operation: ", t);
             } finally {
@@ -1663,7 +1659,7 @@ public abstract class ContainerBase
             }
             Container[] children = container.findChildren();
             for (int i = 0; i < children.length; i++) {
-                if (children[i].getExecuteDelay() <= 0) {
+                if (children[i].getBackgroundProcessorDelay() <= 0) {
                     processChildren(children[i], cl);
                 }
             }
