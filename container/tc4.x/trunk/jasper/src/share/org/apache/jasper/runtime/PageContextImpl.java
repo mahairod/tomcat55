@@ -169,14 +169,18 @@ public class PageContextImpl extends PageContext {
     }
 
     public void release() {
-	try {
-	    if (isIncluded) {
-		((JspWriterImpl)out).flushBuffer(); // push it into the including jspWriter
-	    } else {
-		out.flush();
+	// Flush the out stream only if the response is not committed.
+	if (! response.isCommitted()) {
+	    try {
+	        if (isIncluded) {
+		    ((JspWriterImpl)out).flushBuffer();
+				// push it into the including jspWriter
+	        } else {
+		    out.flush();
+	        }
+	    } catch (IOException ex) {
+	        loghelper.log("Internal error flushing the buffer in release()");
 	    }
-	} catch (IOException ex) {
-	    loghelper.log("Internal error flushing the buffer in release()");
 	}
 	servlet      = null;
 	config	     = null;
