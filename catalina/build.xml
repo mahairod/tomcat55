@@ -41,20 +41,20 @@
            value="${tomcat-jk.home}/build/conf/jk2.properties"/>
   <property name="tomcat-http11.jar"
            value="${tomcat-http11.home}/build/lib/tomcat-http11.jar"/>
-
+  <property name="tomcat-dbcp.jar" 
+           value="${base.path}/tomcat-deps/naming-factory-dbcp-${commons-dbcp.version}.jar"/>
   <!-- Construct Catalina classpath -->
   <path id="catalina.classpath">
     <pathelement location="${activation.jar}"/>
     <pathelement location="${ant.jar}"/>
     <pathelement location="${commons-beanutils.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
-    <pathelement location="${commons-dbcp.jar}"/>
+    <pathelement location="${tomcat-dbcp.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
     <pathelement location="${commons-fileupload.jar}"/>
     <pathelement location="${commons-launcher.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${commons-modeler.jar}"/>
-    <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${tomcat-util.jar}"/>
     <pathelement location="${tomcat-coyote.jar}"/>
     <pathelement location="${jaas.jar}"/>
@@ -83,13 +83,12 @@
     <pathelement location="${ant.jar}"/>
     <pathelement location="${commons-beanutils.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
-    <pathelement location="${commons-dbcp.jar}"/>
+    <pathelement location="${tomcat-dbcp.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
     <pathelement location="${commons-fileupload.jar}"/>
     <pathelement location="${commons-launcher.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${commons-modeler.jar}"/>
-    <pathelement location="${commons-pool.jar}"/>
     <pathelement location="${jaas.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
@@ -142,8 +141,8 @@
      classname="org.apache.commons.collections.FastHashMap"
      classpath="${commons-collections.jar}"/>
     <available property="dbcp.present"
-     classname="org.apache.commons.dbcp.ConnectionFactory"
-     classpath="${commons-dbcp.jar}"/>
+     classname="org.apache.tomcat.dbcp.dbcp.ConnectionFactory"
+     classpath="${tomcat-dbcp.jar}"/>
     <available property="digester.present"
      classname="org.apache.commons.digester.Digester"
      classpath="${commons-digester.jar}"/>
@@ -211,8 +210,8 @@
      classname="com.sun.jndi.ldap.LdapClient"
      classpath="${ldap.jar}" />
     <available property="pool.present"
-     classname="org.apache.commons.pool.ObjectPool"
-     classpath="${commons-pool.jar}"/>
+     classname="org.apache.tomcat.dbcp.pool.ObjectPool"
+     classpath="${tomcat-dbcp.jar}"/>
     <available property="regexp.present"
      classname="org.apache.regexp.RE"
      classpath="${regexp.jar}" />
@@ -221,7 +220,7 @@
      classpath="${xercesImpl.jar}" />
 
     <!-- JAR files availability flags -->
-    <available property="dbcp.jar.present" file="${commons-dbcp.jar}" />
+    <available property="dbcp.jar.present" file="${tomcat-dbcp.jar}" />
     <available property="fileupload.jar.present" file="${commons-fileupload.jar}" />
     <available property="jaas.jar.present" file="${jaas.jar}" />
     <condition property="javamail.jar.present">
@@ -247,7 +246,7 @@
     <available property="ldap.jar.present" file="${ldap.jar}" />
     <available property="logging.jar.present" file="${commons-logging.jar}" />
     <available property="modeler.jar.present" file="${commons-modeler.jar}" />
-    <available property="pool.jar.present" file="${commons-pool.jar}" />
+    <available property="pool.jar.present" file="${tomcat-dbcp.jar}" />
     <available property="regexp.jar.present" file="${regexp.jar}" />
     <available property="servlet-api.jar.present" file="${servlet-api.jar}" />
     <available property="tomcat-util.jar.present" file="${tomcat-util.jar}" />
@@ -545,7 +544,7 @@
     <copy todir="${catalina.build}/common/lib" file="${servlet-api.jar}"/>
 -->
     <copy todir="${catalina.build}/common/lib"
-           file="${base.path}/tomcat-deps/naming-factory-dbcp-${commons-dbcp.version}.jar"/>
+           file="${tomcat-dbcp.jar}" />
 
     <!-- Configuration Files -->
     <copy todir="${catalina.build}/conf">
