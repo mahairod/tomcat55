@@ -252,8 +252,9 @@ final class CoyoteAdapter
         }
 
         // URI decoding
-        req.decodedURI().duplicate(req.requestURI());
-        req.getURLDecoder().convert(req.decodedURI(), false);
+        MessageBytes decodedURI = req.decodedURI();
+        decodedURI.duplicate(req.requestURI());
+        req.getURLDecoder().convert(decodedURI, false);
 
         // Normalize decoded URI
         if (!normalize(req.decodedURI())) {
@@ -261,9 +262,6 @@ final class CoyoteAdapter
             res.setMessage("Invalid URI");
             throw new IOException("Invalid URI");
         }
-
-        // Parse session Id
-        parseSessionId(req, request);
 
         // Parse cookies
         parseCookies(req, request);
@@ -285,19 +283,22 @@ final class CoyoteAdapter
         }
 
         // URI character decoding
-        convertURI(req.decodedURI(), request);
+        convertURI(decodedURI, request);
 
-        // Request mapping.
+        // Parse session Id
+        parseSessionId(req, request);
+
         // Remove any remaining parameters (other than session id, which has
         // already been removed in parseSessionId()) from the URI, so they
         // won't be considered by the mapping algorithm.
-        MessageBytes decodedURI = req.decodedURI();
         CharChunk uriCC = decodedURI.getCharChunk();
         int semicolon = uriCC.indexOf(';');
         if (semicolon > 0) {
-            decodedURI.setChars(uriCC.getBuffer(), uriCC.getStart(), 
-                                semicolon);
+            decodedURI.setChars
+                (uriCC.getBuffer(), uriCC.getStart(), semicolon);
         }
+
+        // Request mapping.
         connector.getMapper().map(req.serverName(), decodedURI, 
                                   request.getMappingData());
         request.setContext((Context) request.getMappingData().context);
@@ -308,42 +309,51 @@ final class CoyoteAdapter
 
     /**
      * Parse session id in URL.
-     * FIXME: Optimize this.
      */
     protected void parseSessionId(Request req, CoyoteRequest request) {
 
-        ByteChunk uriBC = req.decodedURI().getByteChunk();
-        int semicolon = uriBC.indexOf(match, 0, match.length(), 0);
+        CharChunk uriCC = req.decodedURI().getCharChunk();
+        int semicolon = uriCC.indexOf(match, 0, match.length(), 0);
 
         if (semicolon > 0) {
 
             // Parse session ID, and extract it from the decoded request URI
-            String uri = uriBC.toString();
-            String rest = uri.substring(semicolon + match.length());
-            int semicolon2 = rest.indexOf(';');
+            int start = uriCC.getStart();
+            int end = uriCC.getEnd();
+
+            int sessionIdStart = start + semicolon + match.length();
+            int semicolon2 = uriCC.indexOf(';', sessionIdStart);
             if (semicolon2 >= 0) {
-                request.setRequestedSessionId(rest.substring(0, semicolon2));
-                rest = rest.substring(semicolon2);
+                request.setRequestedSessionId
+                    (new String(uriCC.getBuffer(), sessionIdStart, 
+                                semicolon2 - semicolon - match.length()));
             } else {
-                request.setRequestedSessionId(rest);
-                rest = "";
+                request.setRequestedSessionId
+                    (new String(uriCC.getBuffer(), sessionIdStart, 
+                                end - sessionIdStart));
             }
             request.setRequestedSessionURL(true);
-            req.decodedURI().setString(uri.substring(0, semicolon) + rest);
 
             // Extract session ID from request URI
-            uri = req.requestURI().toString();
-            semicolon = uri.indexOf(match);
+            ByteChunk uriBC = req.requestURI().getByteChunk();
+            start = uriBC.getStart();
+            end = uriBC.getEnd();
+            semicolon = uriBC.indexOf(match, 0, match.length(), 0);
 
             if (semicolon > 0) {
-                rest = uri.substring(semicolon + match.length());
-                semicolon2 = rest.indexOf(';');
+                sessionIdStart = start + semicolon;
+                semicolon2 = uriCC.indexOf
+                    (';', start + semicolon + match.length());
+                uriBC.setEnd(start + semicolon);
+                byte[] buf = uriBC.getBuffer();
                 if (semicolon2 >= 0) {
-                    rest = rest.substring(semicolon2);
-                } else {
-                    rest = "";
+                    for (int i = 0; i < end - start - semicolon2; i++) {
+                        buf[start + semicolon + i] 
+                            = buf[start + i + semicolon2];
+                    }
+                    uriBC.setBytes(buf, start, semicolon 
+                                   + (end - start - semicolon2));
                 }
-                req.requestURI().setString(uri.substring(0, semicolon) + rest);
             }
 
         } else {
