@@ -98,7 +98,6 @@ import org.apache.catalina.Service;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Valve;
-import org.apache.catalina.connector.http.HttpConnector;
 import org.apache.catalina.core.StandardService;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
@@ -137,10 +136,6 @@ public class MBeanUtils {
           "CoyoteConnector" },
         { "org.apache.catalina.core.StandardDefaultContext",
           "DefaultContext" },
-        { "org.apache.catalina.connector.http10.HttpConnector",
-          "Http10Connector" },
-        { "org.apache.catalina.connector.http.HttpConnector",
-          "Http11Connector" },
         { "org.apache.catalina.users.JDBCGroup",
           "Group" },
         { "org.apache.catalina.users.JDBCRole",
@@ -808,50 +803,7 @@ public class MBeanUtils {
         throws MalformedObjectNameException {
 
         ObjectName name = null;
-        if (connector instanceof HttpConnector) {
-            HttpConnector httpConnector = (HttpConnector) connector;
-            Service service = httpConnector.getService();
-            String serviceName = null;
-            if (service != null)
-                serviceName = service.getName();
-            name = new ObjectName(domain + ":type=Connector" +
-                                  ",service=" + serviceName +
-                                  ",port=" + httpConnector.getPort() +
-                                  ",address=" + httpConnector.getAddress());
-            return (name);
-        } else if (connector instanceof org.apache.catalina.connector.http10.HttpConnector) {
-            org.apache.catalina.connector.http10.HttpConnector httpConnector =
-                (org.apache.catalina.connector.http10.HttpConnector) connector;
-            Service service = httpConnector.getService();
-            String serviceName = null;
-            if (service != null)
-                serviceName = service.getName();
-            name = new ObjectName(domain + ":type=Connector" +
-                                  ",service=" + serviceName+
-                                  ",port=" + httpConnector.getPort() +
-                                  ",address=" + httpConnector.getAddress());
-            return (name);
-        } else if ("org.apache.ajp.tomcat4.Ajp13Connector".equals
-                   (connector.getClass().getName())) {
-            try {
-                String address = (String)
-                    PropertyUtils.getSimpleProperty(connector, "address");
-                Integer port = (Integer)
-                    PropertyUtils.getSimpleProperty(connector, "port");
-                Service service = connector.getService();
-                String serviceName = null;
-                if (service != null)
-                    serviceName = service.getName();
-                name = new ObjectName(domain + ":type=Connector" +
-                                      ",service=" + serviceName +
-                                      ",port=" + port +
-                                      ",address=" + address);
-                return (name);
-            } catch (Exception e) {
-                throw new MalformedObjectNameException
-                    ("Cannot create object name for " + connector+e);
-            }
-        } else if ("org.apache.coyote.tomcat4.CoyoteConnector".equals
+        if ("org.apache.coyote.tomcat4.CoyoteConnector".equals
                    (connector.getClass().getName())) {
             try {
                 String address = (String)

@@ -5,15 +5,14 @@
 
   <!-- See "build.properties.sample" in the top level directory for all     -->
   <!-- property values you must customize for successful building!!!        -->
-  <property file="build.properties"/>
+  <!--property file="build.properties"/>
   <property file="../build.properties"/>
-  <property file="${user.home}/build.properties"/>
+  <property file="${user.home}/build.properties"/-->
 
   <!-- Build Defaults -->
-  <property name="build.compiler"    value="classic"/>
-  <property name="catalina.build"    value="${basedir}/build"/>
-  <property name="catalina.deploy"   value="${basedir}/../build"/>
-  <property name="catalina.dist"     value="${basedir}/dist"/>
+  <property name="catalina.build"    value="${catalina.home}/catalina/build"/>
+  <property name="catalina.deploy"   value="${catalina.home}/build"/>
+  <property name="catalina.dist"     value="${catalina.home}/dist"/>
   <property name="test.failonerror"  value="true"/>
   <property name="test.runner"       value="junit.textui.TestRunner"/>
   <property name="test.webapp"       value="../webapps/build/examples"/>
@@ -28,6 +27,7 @@
 
   <!-- Dependent JARs and files -->
   <property name="ant.jar" value="${ant.home}/lib/ant.jar"/>
+  <property name="servlet.jar" value="${api.home}/dist/lib/servlet.jar"/>
   <property name="tomcat-util.jar"
            value="${tomcat-util.home}/build/lib/tomcat-util.jar"/>
   <property name="tomcat-coyote.jar"
@@ -688,7 +688,7 @@
   </target>
   <target name="copy-jmx.jar" if="copy.jmx.jar">
     <copy todir="${catalina.build}/server/lib" file="${jmx.jar}"/>
-    <copy todir="${catalina.build}/server/lib" file="../lib/mx4j.license"/>
+    <copy todir="${catalina.build}/server/lib" file="../etc/mx4j.license"/>
   </target>
   <target name="copy-jndi.jar" if="copy.jndi.jar">
     <copy todir="${catalina.build}/common/lib" file="${jndi.jar}"/>
