@@ -59,7 +59,7 @@ commons-digester.jar=${commons-digester.lib}/commons-digester.jar
 # ----- Commons Modeler, version 20011026 or later -----
 commons-modeler.home=${base.path}/commons-modeler
 commons-modeler.lib=${commons-modeler.home}
-commons-modeler.jar=${commons-modeler.lib}/commons-digester.jar
+commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
 
 
 # ----- Jakarta Regular Expressions Library, version 1.2 -----
