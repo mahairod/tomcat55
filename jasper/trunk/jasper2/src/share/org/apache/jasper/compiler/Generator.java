@@ -1832,8 +1832,8 @@ class Generator {
 
 	    // Copy virtual page scope of tag file to page scope of invoking
 	    // page
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
 
 	    // Invoke fragment
 	    String varReaderAttr = n.getTextAttribute("varReader");
@@ -1852,8 +1852,8 @@ class Generator {
 	    out.pushIndent();
 	    // Copy page scope of invoking page back to virtual page scope of
 	    // tag file
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
 	    out.popIndent();
 	    out.printil("}");
 
@@ -1880,8 +1880,8 @@ class Generator {
 
 	    // Copy virtual page scope of tag file to page scope of invoking
 	    // page
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
 
 	    // Invoke body
 	    String varReaderAttr = n.getTextAttribute("varReader");
@@ -1899,8 +1899,8 @@ class Generator {
 	    out.pushIndent();
 	    // Copy page scope of invoking page back to virtual page scope of
 	    // tag file
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
 	    out.popIndent();
 	    out.printil("}");
 
