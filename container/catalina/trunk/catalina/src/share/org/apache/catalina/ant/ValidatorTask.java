@@ -132,6 +132,11 @@ public class ValidatorTask extends Task {
             throw new BuildException("Cannot find web.xml");
         }
 
+        // Commons-logging likes having the context classloader set
+        ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader
+            (ValidatorTask.class.getClassLoader());
+
         Digester digester = ContextConfig.createWebXmlDigester(true, true);
         try {
             file = file.getCanonicalFile();
@@ -142,6 +147,8 @@ public class ValidatorTask extends Task {
             digester.parse(is);
         } catch (Throwable t) {
             throw new BuildException("Validation failure", t);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldCL);
         }
 
     }
