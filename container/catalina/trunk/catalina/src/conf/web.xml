@@ -148,6 +148,9 @@
   <!--                       print statement per input line, to ease        -->
   <!--                       debugging?  [false]                            -->
   <!--                                                                      -->
+  <!--   trimSpaces          Should white spaces in template text between   -->
+  <!--                       actions or directives be trimmed?  [false]     -->
+  <!--                                                                      -->
   <!--   reloading           Should Jasper check for modified JSPs?  [true] -->
   <!--                                                                      -->
   <!--   suppressSmap        Should the generation of SMAP info for JSR45   -->
