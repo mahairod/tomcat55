@@ -350,7 +350,7 @@ as your database structure conforms to the following requirements:</p>
 
 <h3>Quick Start</h3>
                   
-<p>To set up Tomcat to use JDBCRealm, you will need to follow these steps:</p>
+<p>To set up Tomcat to use DataSourceRealm, you will need to follow these steps:</p>
 <ol>              
 <li>If you have not yet done so, create tables and columns in your database
     that conform to the requirements described above.</li>
@@ -367,7 +367,7 @@ as your database structure conforms to the following requirements:</p>
 
 <h3>Realm Element Attributes</h3>
 
-<p>To configure JDBCRealm, you will create a <code>&lt;Realm&gt;</code>
+<p>To configure DataSourceRealm, you will create a <code>&lt;Realm&gt;</code>
 element and nest it in your <code>$CATALINA_HOME/conf/server.xml</code> file,
 as described <a href="#Configuring a Realm">above</a>.  The following
 attributes are supported by this implementation:</p>
@@ -377,21 +377,13 @@ attributes are supported by this implementation:</p>
   <attribute name="className" required="true">
     <p>The fully qualified Java class name of this Realm implementation.
     You <strong>MUST</strong> specify the value
-    "<code>org.apache.catalina.realm.JDBCRealm</code>" here.</p>
+    "<code>org.apache.catalina.realm.DataSourceRealm</code>" here.</p>
   </attribute>
 
-  <attribute name="connectionName" required="true">
-    <p>The database username used to establish a JDBC connection.</p>
+  <attribute name="dataSourceName" required="true">
+    <p>The JNDI named JDBC DataSource for your database.</p>
   </attribute>
 
-  <attribute name="connectionPassword" required="true">
-    <p>The database password used to establish a JDBC connection.</p>
-  </attribute>
-
-  <attribute name="connectionURL" required="true">
-    <p>The database URL used to establish a JDBC connection.</p>
-  </attribute>
-    
   <attribute name="debug" required="false">
     <p>The level of debugging detail logged by this Realm
     to the associated <a href="config/logger.html">Logger</a>.  Higher numbers
@@ -405,12 +397,6 @@ attributes are supported by this implementation:</p>
     <code>java.security.MessageDigest</code> class.  See
     <a href="#Digested Passwords">Digested Passwords</a> for more
     information.  If not specified, passwords are stored in clear text.</p>
-  </attribute>
-    
-  <attribute name="driverName" required="true">
-    <p>The fully qualified Java class name of the JDBC driver to be used.
-    Consult the documentation for your JDBC driver for the appropriate
-    value.</p>
   </attribute>
     
   <attribute name="roleNameCol" required="true">
