@@ -2845,13 +2845,6 @@ public class StandardContext
             }
         }
 
-        // Create request listener valve
-        if (ok) {
-            if (!requestListenerConfig()) {
-                log.error(sm.getString("standardContext.requestListenerStartFailed"));
-            }
-        }
-
         // Restore the "Welcome Files" and "Resources" context attributes
         postResources();
         postWelcomeFiles();
@@ -3551,7 +3544,8 @@ public class StandardContext
                       (this, (FilterDef) filterDefs.get(name));
                     filterConfigs.put(name, filterConfig);
                 } catch (Throwable t) {
-                    log.error(sm.getString("standardContext.filterStart", name), t);
+                    getServletContext().log
+                        (sm.getString("standardContext.filterStart", name), t);
                     ok = false;
                 }
             }
@@ -3626,8 +3620,9 @@ public class StandardContext
                 Class clazz = loader.loadClass(listeners[i]);
                 results[i] = clazz.newInstance();
             } catch (Throwable t) {
-                log.error(sm.getString("standardContext.applicationListener",
-                                 listeners[i]), t);
+                getServletContext().log
+                    (sm.getString("standardContext.applicationListener",
+                                  listeners[i]), t);
                 ok = false;
             }
         }
@@ -3660,8 +3655,9 @@ public class StandardContext
                 fireContainerEvent("afterContextInitialized", listener);
             } catch (Throwable t) {
                 fireContainerEvent("afterContextInitialized", listener);
-                log.error(sm.getString("standardContext.listenerStart",
-                                 instances[i].getClass().getName()), t);
+                getServletContext().log
+                    (sm.getString("standardContext.listenerStart",
+                                  instances[i].getClass().getName()), t);
                 ok = false;
             }
         }
@@ -3700,8 +3696,9 @@ public class StandardContext
                 fireContainerEvent("beforeContextDestroyed", listener);
             } catch (Throwable t) {
                 fireContainerEvent("beforeContextDestroyed", listener);
-                log.error(sm.getString("standardContext.listenerStop",
-                                 listeners[j].getClass().getName()), t);
+                getServletContext().log
+                    (sm.getString("standardContext.listenerStop",
+                                  listeners[j].getClass().getName()), t);
                 ok = false;
             }
         }
@@ -3828,8 +3825,9 @@ public class StandardContext
                 try {
                     wrapper.load();
                 } catch (ServletException e) {
-                    log.error(sm.getString("standardWrapper.loadException",
-                                     getName()), e);
+                    getServletContext().log
+                        (sm.getString("standardWrapper.loadException",
+                                      getName()), e);
                     // NOTE: load errors (including a servlet that throws
                     // UnavailableException from tht init() method) are NOT
                     // fatal to application startup
@@ -4096,14 +4094,6 @@ public class StandardContext
             if (!filterStart()) {
                 log.error( "Error filterStart");
                 ok = false;
-            }
-        }
-
-        // Create request listener lifecycle valve
-        if (ok) {
-            if (!requestListenerConfig()) {
-                log.error(sm.getString
-                          ("standardContext.requestListenerStartFailed"));
             }
         }
 
@@ -4779,58 +4769,6 @@ public class StandardContext
 
     }
 
-
-    /**
-     * Create and deploy a Valve to handle request linitialization and
-     * destroy listener lifecycle events. If there are no request listeners
-     * registered to receive notifications do not instantiate valve.
-     */
-    private boolean requestListenerConfig() {
-        // Only install this valive if there is a registered RequestListener.
-        Object instances[] = getApplicationListeners();
-        boolean registered = false;
-        boolean ok = true;
-
-        if (instances != null) {
-            for (int i = 0; i < instances.length; i++) {
-                if (instances[i] instanceof ServletRequestListener) {
-                    registered = true;
-                    break;
-                }
-            }
-        }
-
-        if (!registered) {
-            return ok;
-        }
-
-        // Instantiate a new CertificatesValve if possible
-        Valve requestListener = null;
-        try {
-            Class clazz =
-                Class.forName("org.apache.catalina.valves.RequestListenerValve");
-            requestListener = (Valve) clazz.newInstance();
-        } catch (Throwable t) {
-            return false;
-        }
-
-        // Add this Valve to our Pipeline
-        try {
-            if (this instanceof ContainerBase) {
-                Pipeline pipeline = this.getPipeline();
-                if (pipeline != null) {
-                    this.addValve(requestListener);
-                    log.info(sm.getString
-                        ("standardContext.requestListenerConfig.added"));
-                }
-            }
-        } catch (Throwable t) {
-            log.error(sm.getString("standardContext.requestListenerConfig.error"), t);
-            ok = false;
-        }
-        return ok;
-
-    }
 
     // -------------------- JMX methods  --------------------
 
