@@ -512,7 +512,7 @@ public class Catalina {
         XmlMapper mapper) {
 
         mapper.addRule(prefix + "", mapper.objectCreate
-                       ("org.apache.catalina.core.DefaultContext",
+                       ("org.apache.catalina.core.StandardDefaultContext",
                         "className"));
         mapper.addRule(prefix + "", mapper.setProperties());
         mapper.addRule(prefix + "", mapper.addChild

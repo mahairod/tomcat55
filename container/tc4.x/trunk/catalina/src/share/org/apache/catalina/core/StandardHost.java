@@ -82,6 +82,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Deployer;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
@@ -92,7 +93,6 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
-import org.apache.catalina.core.DefaultContext;
 import org.apache.catalina.valves.ErrorDispatcherValve;
 
 
