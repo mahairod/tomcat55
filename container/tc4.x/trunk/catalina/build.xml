@@ -775,6 +775,8 @@
 
     <ant dir="${tomcat-util.home}" target="build-main">
        <property name="jmx.jar" value="${jmx.jar}" />
+       <property name="puretls.jar" value="${puretls.jar}" />
+       <property name="jsse.lib" value="${jsse.lib}" />
     </ant>
 
     <copy todir="${catalina.build}/server/lib"

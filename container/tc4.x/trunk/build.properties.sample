@@ -214,6 +214,12 @@ nsis.home=${base.path}/nsis
 nsis.loc=http://www.nullsoft.com/free/nsis/nsis198.exe
 
 
+# ----- PureTLS Extension, version 0.9 or later -----
+puretls.home=${base.path}/puretls-0.9b2
+puretls.lib=${puretls.home}/build
+puretls.jar=${puretls.lib}/puretls.jar
+
+
 # ----- Struts, version 1.0.1 or later -----
 struts.home=${base.path}/jakarta-struts-1.0.2
 struts.lib=${struts.home}/lib
