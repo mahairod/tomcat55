@@ -251,10 +251,14 @@ jta.jar=${jta.lib}/jta.jar
 
 
 # ----- Java Mail, version 1.2 or later -----
-mail.home=${base.path}/javamail-1.2
+mail.home=${base.path}/javamail-1.3.1
 mail.lib=${mail.home}
 mail.jar=${mail.lib}/mail.jar
 
+# ----- Java Activation Framework, version 1.0.1 or later -----
+activation.home=${base.path}/jaf-1.0.2
+activation.lib=${activation.home}
+activation.jar=${activation.lib}/activation.jar
 
 # ----- PureTLS Extension, version 0.9 or later -----
 puretls.home=${base.path}/puretls-0.9b4
