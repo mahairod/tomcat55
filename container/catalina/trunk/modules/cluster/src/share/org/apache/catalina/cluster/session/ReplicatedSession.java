@@ -101,6 +101,8 @@ public class ReplicatedSession extends org.apache.catalina.session.StandardSessi
 
     private transient Manager mManager = null;
     protected boolean isDirty = false;
+    private transient long lastAccessWasDistributed = System.currentTimeMillis();
+
     public ReplicatedSession(Manager manager) {
         super(manager);
         mManager = manager;
@@ -118,7 +120,13 @@ public class ReplicatedSession extends org.apache.catalina.session.StandardSessi
     }
 
 
-
+    public void setLastAccessWasDistributed(long time) {
+        lastAccessWasDistributed = time;
+    }
+    
+    public long getLastAccessWasDistributed() {
+        return lastAccessWasDistributed;
+    }
 
 
     public void removeAttribute(String name) {
@@ -178,7 +186,19 @@ public class ReplicatedSession extends org.apache.catalina.session.StandardSessi
         setIsDirty(true);
     }
 
+    public void expire() {
+        SimpleTcpReplicationManager mgr =(SimpleTcpReplicationManager)getManager();
+        mgr.sessionInvalidated(getId());
+        setIsDirty(true);
+        super.expire();
+    }
 
+    public void invalidate() {
+        SimpleTcpReplicationManager mgr =(SimpleTcpReplicationManager)getManager();
+        mgr.sessionInvalidated(getId());
+        setIsDirty(true);
+        super.invalidate();
+    }
 
 
     /**

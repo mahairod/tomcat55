@@ -116,18 +116,18 @@ public class SessionMessage
      * Event type used when a session has expired, but we don't
      * want to notify the session listeners
      */
-//    public static final int EVT_SESSION_EXPIRED_WONOTIFY = 2;
+    public static final int EVT_SESSION_EXPIRED_WONOTIFY = 2;
     /**
      * Event type used when a session has expired, and we do
      * want to notify the session listeners
      */
-//    public static final int EVT_SESSION_EXPIRED_WNOTIFY = 7;
+    public static final int EVT_SESSION_EXPIRED_WNOTIFY = 7;
     /**
      * Event type used when a session has been accessed (ie, last access time
      * has been updated. This is used so that the replicated sessions will not expire
      * on the network
      */
-//    public static final int EVT_SESSION_ACCESSED = 3;
+    public static final int EVT_SESSION_ACCESSED = 3;
     /**
      * Event type used when a server comes online for the first time.
      * The first thing the newly started server wants to do is to grab the
@@ -261,12 +261,12 @@ public class SessionMessage
         switch (mEvtType)
         {
             case EVT_SESSION_CREATED : return "SESSION-MODIFIED";
-//            case EVT_SESSION_EXPIRED_WNOTIFY : return "SESSION-EXPIRED-WITH-NOTIFY";
-//            case EVT_SESSION_EXPIRED_WONOTIFY : return "SESSION-EXPIRED-WITHOUT-NOTIFY";
+            case EVT_SESSION_EXPIRED_WNOTIFY : return "SESSION-EXPIRED-WITH-NOTIFY";
+            case EVT_SESSION_EXPIRED_WONOTIFY : return "SESSION-EXPIRED-WITHOUT-NOTIFY";
 //            case EVT_ATTRIBUTE_ADDED : return "SESSION-ATTRIBUTE-ADDED";
 //            case EVT_ATTRIBUTE_REMOVED_WNOTIFY : return "SESSION-ATTRIBUTE-REMOVED-WITH-NOTIFY";
 //            case EVT_ATTRIBUTE_REMOVED_WONOTIFY: return "SESSION-ATTRIBUTE-REMOVED-WITHOUT-NOTIFY";
-//            case EVT_SESSION_ACCESSED : return "SESSION-ACCESSED";
+            case EVT_SESSION_ACCESSED : return "SESSION-ACCESSED";
             case EVT_GET_ALL_SESSIONS : return "SESSION-GET-ALL";
 //            case EVT_SET_SESSION_NOTE: return "SET-SESSION-NOTE";
 //            case EVT_SET_USER_PRINCIPAL : return "SET-USER-PRINCIPAL";

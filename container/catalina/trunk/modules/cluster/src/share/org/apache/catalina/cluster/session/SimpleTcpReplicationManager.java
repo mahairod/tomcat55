@@ -145,6 +145,8 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
     protected boolean distributable = true;
 
     protected org.apache.catalina.cluster.tcp.SimpleTcpCluster cluster;
+    
+    protected java.util.HashMap invalidatedSessions = new java.util.HashMap();
     /**
      * Constructor, just calls super()
      *
@@ -283,28 +285,75 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
         add(session);
         return session;
     }
-
+    
+    public void sessionInvalidated(String sessionId) {
+        synchronized ( invalidatedSessions ) {
+            invalidatedSessions.put(sessionId, sessionId);
+        }
+    }
+    
+    public String[] getInvalidatedSessions() {
+        synchronized ( invalidatedSessions ) {
+            String[] result = new String[invalidatedSessions.size()];
+            invalidatedSessions.values().toArray(result);
+            return result;
+        }
+        
+    }
+    
     public SessionMessage requestCompleted(String sessionId)
     {
         //notify javagroups
         try
         {
-            ReplicatedSession session = (ReplicatedSession)findSession(sessionId);
-            if (session != null)
-            {
-                //return immediately if the session is not dirty
-                if ( useDirtyFlag && (!session.isDirty())) return null;
-                session.setIsDirty(false);
-                if (getDebug()>5) {
-                    try {
-                        log.debug("Sending session to cluster="+session);
-                    }catch ( Exception ignore) {}
-                }
-                SessionMessage msg = new SessionMessage(name,SessionMessage.EVT_SESSION_CREATED,
-                    writeSession(session),
-                    session.getId());
+            if ( invalidatedSessions.get(sessionId) != null ) {
+                synchronized ( invalidatedSessions ) {
+                    invalidatedSessions.remove(sessionId);
+                    SessionMessage msg = new SessionMessage(name,
+                    SessionMessage.EVT_SESSION_EXPIRED_WNOTIFY,
+                    null,
+                    sessionId);
                 return msg;
-            } //end if
+                }
+            } else {
+                ReplicatedSession session = (ReplicatedSession) findSession(
+                    sessionId);
+                if (session != null) {
+                    //return immediately if the session is not dirty
+                    if (useDirtyFlag && (!session.isDirty())) {
+                        //but before we return doing nothing, 
+                        //see if we should send
+                        //an updated last access message so that
+                        //sessions across cluster dont expire
+                        long interval = session.getMaxInactiveInterval();
+                        long lastaccdist = System.currentTimeMillis() - 
+                            session.getLastAccessWasDistributed();
+                        System.out.println("\nFH\ninterval="+interval+" lastaccdist="+lastaccdist);    
+                        if ( ((interval*1000) / lastaccdist)< 3 ) {
+                            SessionMessage accmsg = new SessionMessage(name,
+                                SessionMessage.EVT_SESSION_ACCESSED,
+                                null,
+                                sessionId);
+                            session.setLastAccessWasDistributed(System.currentTimeMillis());
+                            return accmsg;
+                        }
+                        return null;
+                    }
+                        
+                    session.setIsDirty(false);
+                    if (getDebug() > 5) {
+                        try {
+                            log.debug("Sending session to cluster=" + session);
+                        }
+                        catch (Exception ignore) {}
+                    }
+                    SessionMessage msg = new SessionMessage(name,
+                        SessionMessage.EVT_SESSION_CREATED,
+                        writeSession(session),
+                        session.getId());
+                    return msg;
+                } //end if
+            }//end if
         }
         catch (Exception x )
         {
@@ -518,6 +567,22 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
                     session.setValid(true);
                     session.access();
                     if ( getDebug()  > 5 ) log("Received replicated session="+session);
+                    break;
+                }
+                case SessionMessage.EVT_SESSION_EXPIRED_WNOTIFY:
+                case SessionMessage.EVT_SESSION_EXPIRED_WONOTIFY: {
+                    Session session = findSession(msg.getSessionID());
+                    if ( session != null ) {
+                        session.expire();
+                        this.remove(session);
+                    }//end if
+                    break;
+                }
+                case SessionMessage.EVT_SESSION_ACCESSED :{
+                    Session session = findSession(msg.getSessionID());
+                    if ( session != null ) {
+                        session.access();
+                    }
                     break;
                 }
                 default:  {
