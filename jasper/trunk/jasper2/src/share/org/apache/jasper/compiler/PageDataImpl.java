@@ -92,7 +92,6 @@ import org.apache.jasper.JasperException;
  */
 class PageDataImpl extends PageData implements TagConstants {
 
-    private static final String JSP_URI = "http://java.sun.com/JSP/Page";
     private static final String JSP_VERSION = "2.0";
     private static final String CDATA_START_SECTION = "<![CDATA[\n";
     private static final String CDATA_END_SECTION = "]]>\n";
@@ -109,13 +108,15 @@ class PageDataImpl extends PageData implements TagConstants {
 	        throws JasperException {
 
 	// First pass
-	FirstPassVisitor firstPass = new FirstPassVisitor(page.getRoot());
+	FirstPassVisitor firstPass = new FirstPassVisitor(page.getRoot(),
+							  compiler.getPageInfo());
 	page.visit(firstPass);
 
 	// Second pass
 	buf = new StringBuffer();
-	SecondPassVisitor secondPass = new SecondPassVisitor(page.getRoot(),
-							     buf, compiler);
+	SecondPassVisitor secondPass
+	    = new SecondPassVisitor(page.getRoot(), buf, compiler,
+				    firstPass.getJspIdPrefix());
 	page.visit(secondPass);
     }
 
@@ -149,15 +150,21 @@ class PageDataImpl extends PageData implements TagConstants {
 
 	private Node.Root root;
 	private AttributesImpl rootAttrs;
+	private PageInfo pageInfo;
+
+	// Prefix for the 'id' attribute
+	private String jspIdPrefix;
 
 	/*
 	 * Constructor
 	 */
-	public FirstPassVisitor(Node.Root root) {
+	public FirstPassVisitor(Node.Root root, PageInfo pageInfo) {
 	    this.root = root;
+	    this.pageInfo = pageInfo;
 	    this.rootAttrs = new AttributesImpl();
 	    this.rootAttrs.addAttribute("", "", "version", "CDATA",
 					JSP_VERSION);
+	    this.jspIdPrefix = "jsp";
 	}
 
 	public void visit(Node.Root n) throws JasperException {
@@ -174,6 +181,24 @@ class PageDataImpl extends PageData implements TagConstants {
 		    rootAttrs.addAttribute("", "", "xmlns:jsp", "CDATA",
 					   JSP_URI);
 		}
+
+		if (pageInfo.isJspPrefixHijacked()) {
+		    /*
+		     * 'jsp' prefix has been hijacked, that is, bound to a
+		     * namespace other than the JSP namespace. This means that
+		     * when adding an 'id' attribute to each element, we can't
+		     * use the 'jsp' prefix. Therefore, create a new prefix 
+		     * (one that is unique across the translation unit) for use
+		     * by the 'id' attribute, and bind it to the JSP namespace
+		     */
+		    jspIdPrefix += "jsp";
+		    while (pageInfo.containsPrefix(jspIdPrefix)) {
+			jspIdPrefix += "jsp";
+		    }
+		    rootAttrs.addAttribute("", "", "xmlns:" + jspIdPrefix,
+					   "CDATA", JSP_URI);
+		}
+
 		root.setAttributes(rootAttrs);
 	    }
 	}
@@ -213,6 +238,10 @@ class PageDataImpl extends PageData implements TagConstants {
 	    }
 	}
 
+	public String getJspIdPrefix() {
+	    return jspIdPrefix;
+	}
+
 	private void addAttributes(Attributes attrs) {
 	    if (attrs != null) {
 		int len = attrs.getLength();
@@ -233,7 +262,7 @@ class PageDataImpl extends PageData implements TagConstants {
 
     /*
      * Second-pass Visitor responsible for producing XML view and assigning
-     * each JSP element a jsp:id attribute.
+     * each element a unique jsp:id attribute.
      */
     static class SecondPassVisitor extends Node.Visitor
         	implements TagConstants {
@@ -241,18 +270,20 @@ class PageDataImpl extends PageData implements TagConstants {
 	private Node.Root root;
 	private StringBuffer buf;
 	private Compiler compiler;
+	private String jspIdPrefix;
 
-	// current jsp:id attribute value
+	// Current value of jsp:id attribute
 	private int jspId;
 
 	/*
 	 * Constructor
 	 */
 	public SecondPassVisitor(Node.Root root, StringBuffer buf,
-				 Compiler compiler) {
+				 Compiler compiler, String jspIdPrefix) {
 	    this.root = root;
 	    this.buf = buf;
 	    this.compiler = compiler;
+	    this.jspIdPrefix = jspIdPrefix;
 	}
 
 	/*
@@ -310,7 +341,9 @@ class PageDataImpl extends PageData implements TagConstants {
 	public void visit(Node.ELExpression n) throws JasperException {
 	    if (!n.getRoot().isXmlSyntax()) {
 		buf.append("<").append(JSP_TEXT_ACTION);
-		buf.append(" jsp:id=\"");
+		buf.append(" ");
+	        buf.append(jspIdPrefix);
+		buf.append(":id=\"");
 		buf.append(jspId++).append("\">");
 	    }
 	    buf.append("${");
@@ -418,7 +451,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	    buf.append("\n");
 
 	    printAttributes(n);
-	    buf.append("  ").append("jsp:id").append("=\"");
+	    buf.append("  ").append(jspIdPrefix).append(":id").append("=\"");
 	    buf.append(jspId++).append("\"\n");
 
 	    if (ROOT_ACTION.equals(n.getLocalName()) || body != null
@@ -476,7 +509,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	    buf.append("\n");
 
 	    // append jsp:id
-	    buf.append("  ").append("jsp:id").append("=\"");
+	    buf.append("  ").append(jspIdPrefix).append(":id").append("=\"");
 	    buf.append(jspId++).append("\"\n");
 
 	    // append remaining attributes
@@ -529,7 +562,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	    buf.append("\n");
 
 	    // append jsp:id
-	    buf.append("  ").append("jsp:id").append("=\"");
+	    buf.append("  ").append(jspIdPrefix).append(":id").append("=\"");
 	    buf.append(jspId++).append("\"\n");
 	    buf.append("  ").append("pageEncoding").append("=\"UTF-8\"\n");
 	    buf.append("  ").append("contentType").append("=\"");
@@ -574,7 +607,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	    buf.append("\n");
 
 	    // append jsp:id
-	    buf.append("  ").append("jsp:id").append("=\"");
+	    buf.append("  ").append(jspIdPrefix).append(":id").append("=\"");
 	    buf.append(jspId++).append("\"\n");
 	    buf.append("  ").append("pageEncoding").append("=\"UTF-8\"\n");
 	    buf.append("/>\n");	    
@@ -586,7 +619,7 @@ class PageDataImpl extends PageData implements TagConstants {
 		buf.append("\n");
 
 		// append jsp:id
-		buf.append("  ").append("jsp:id").append("=\"");
+		buf.append("  ").append(jspIdPrefix).append(":id").append("=\"");
 		buf.append(jspId++).append("\"\n");
 		buf.append(">\n");
 

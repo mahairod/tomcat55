@@ -105,6 +105,11 @@ class PageInfo {
     // A custom tag is a tag file
     private boolean hasTagFile = false;
 
+    private boolean isJspPrefixHijacked;
+
+    // Set of all element and attribute prefixes used in this translation unit
+    private HashSet prefixes;
+
     private boolean hasJspRoot = false;
     private Vector includePrelude;
     private Vector includeCoda;
@@ -120,6 +125,7 @@ class PageInfo {
 	this.includePrelude = new Vector();
 	this.includeCoda = new Vector();
 	this.pluginDcls = new Vector();
+	this.prefixes = new HashSet();
 
 	// Enter standard imports
 	for(int i = 0; i < Constants.STANDARD_IMPORTS.length; i++)
@@ -340,5 +346,33 @@ class PageInfo {
 
     public void setOmitXmlDecl(String omit) {
 	omitXmlDecl = omit;
+    }
+
+    public void setIsJspPrefixHijacked(boolean isHijacked) {
+	isJspPrefixHijacked = isHijacked;
+    }
+
+    public boolean isJspPrefixHijacked() {
+	return isJspPrefixHijacked;
+    }
+
+    /*
+     * Adds the given prefix to the set of prefixes of this translation unit.
+     * 
+     * @param prefix The prefix to add
+     */
+    public void addPrefix(String prefix) {
+	prefixes.add(prefix);
+    }
+
+    /*
+     * Checks to see if this translation unit contains the given prefix.
+     *
+     * @param prefix The prefix to check
+     * @return true if this translation unit contains the given prefix, false
+     * otherwise
+     */
+    public boolean containsPrefix(String prefix) {
+	return prefixes.contains(prefix);
     }
 }

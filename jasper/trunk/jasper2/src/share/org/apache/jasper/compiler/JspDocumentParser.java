@@ -217,6 +217,8 @@ class JspDocumentParser extends DefaultHandler
 			     String qName,
 			     Attributes attrs) throws SAXException {
 
+	checkPrefixes(uri, qName, attrs);
+
 	if (directivesOnly && !localName.startsWith(DIRECTIVE_ACTION)) {
 	    return;
 	}
@@ -856,6 +858,45 @@ class JspDocumentParser extends DefaultHandler
 		    locator, fnfe);
 	} catch (Exception e) {
 	    throw new SAXException(e);
+	}
+    }
+
+    /*
+     * Checks an element's given URI, qname, and attributes to see if any
+     * of them hijack the 'jsp' prefix, that is, bind it to a namespace other
+     * than http://java.sun.com/JSP/Page.
+     *
+     * @param uri The element's URI
+     * @param qName The element's qname
+     * @param attrs The element's attributes
+     */
+    private void checkPrefixes(String uri, String qName, Attributes attrs) {
+	
+	checkPrefix(uri, qName);
+
+	int len = attrs.getLength();
+	for (int i=0; i<len; i++) {
+	    checkPrefix(attrs.getURI(i), attrs.getQName(i));
+	}
+    }
+
+    /*
+     * Checks the given URI and qname to see if they hijack the 'jsp' prefix,
+     * which would be the case if qName contained the 'jsp' prefix and
+     * uri was different from http://java.sun.com/JSP/Page.
+     *
+     * @param uri The URI to check
+     * @param qName The qname to check
+     */
+    private void checkPrefix(String uri, String qName) {
+
+	int index = qName.indexOf(':');
+	if (index != -1) {
+	    String prefix = qName.substring(0, index);
+	    pageInfo.addPrefix(prefix);
+	    if ("jsp".equals(prefix) && !JSP_URI.equals(uri)) {
+		pageInfo.setIsJspPrefixHijacked(true);
+	    }
 	}
     }
 }

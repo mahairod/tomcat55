@@ -62,6 +62,8 @@ package org.apache.jasper.compiler;
 
 public interface TagConstants {
 
+    public static final String JSP_URI = "http://java.sun.com/JSP/Page";
+
     public static final String DIRECTIVE_ACTION = "directive.";
 
     public static final String ROOT_ACTION = "root";
