@@ -135,6 +135,17 @@
         </controls:row>
 
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="valve.rotatable"/>:</controls:label>
+            <controls:data>
+                <html:select property="rotatable">
+                     <bean:define id="booleanVals" name="accessLogValveForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+        
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="logger.suffix"/>:</controls:label>
             <controls:data>
                 <html:text property="suffix" size="30"/>

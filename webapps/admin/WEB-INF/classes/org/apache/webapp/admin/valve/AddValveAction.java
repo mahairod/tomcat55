@@ -185,6 +185,7 @@ public class AddValveAction extends Action {
         valveFm.setPrefix("access_log.");
         valveFm.setSuffix("");
         valveFm.setResolveHosts("false");
+        valveFm.setRotatable("true");
         valveFm.setDebugLvlVals(Lists.getDebugLevels());
         valveFm.setBooleanVals(Lists.getBooleanValues());
         valveFm.setValveTypeVals(types);        
