@@ -341,11 +341,11 @@ FunctionEnd
 ;
 Function findJavaPath
 
-  ClearErrors
+  ;ClearErrors
 
-  ReadEnvStr $1 JAVA_HOME
+  ;ReadEnvStr $1 JAVA_HOME
 
-  IfErrors 0 FoundJDK
+  ;IfErrors 0 FoundJDK
 
   ClearErrors
 
