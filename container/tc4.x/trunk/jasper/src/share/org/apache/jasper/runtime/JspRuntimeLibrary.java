@@ -167,6 +167,8 @@ public class JspRuntimeLibrary {
                 return new Long(s);
             } else if ( t.equals(Double.class) || t.equals(Double.TYPE) ) {
                 return new Double(s);
+            } else if ( t.equals(Object.class) ) {
+                return new Object[] {s};
             } else if ( t.equals(String.class) ) {
                 return s;
             } else if ( t.equals(java.io.File.class) ) {
