@@ -1400,7 +1400,7 @@ mod_webapp into mod_jk )
 
 
    <!-- ==================== All targets ====================  -->
-   <target name="client" depends="file,params,writer,dispatch,get,requestMap,post,wrong_request,restricted,jsp,unavailable,headers,security_chk,aaa">
+   <target name="client" depends="file,params,writer,dispatch,get,requestMap,post,wrong_request,restricted,jsp,unavailable,headers,security_chk,aaa,mangler">
    </target>
 
    <!-- ==================== Aux targets ==================== -->
