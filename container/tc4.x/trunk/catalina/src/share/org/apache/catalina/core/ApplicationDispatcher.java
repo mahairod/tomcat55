@@ -78,6 +78,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.StringManager;
@@ -373,7 +374,7 @@ final class ApplicationDispatcher
 
 	    ApplicationHttpRequest wrequest =
 		new ApplicationHttpRequest((HttpServletRequest) request);
-            wrequest.setAttribute("org.apache.catalina.NAMED", name);
+            wrequest.setAttribute(Globals.NAMED_DISPATCHER_ATTR, name);
 
 	    try {
 		invoke(wrequest, wresponse);
@@ -405,19 +406,19 @@ final class ApplicationDispatcher
 	    if (pathInfo != null)
 		sb.append(pathInfo);
 	    if (sb.length() > 0)
-		wrequest.setAttribute("javax.servlet.include.request_uri",
+		wrequest.setAttribute(Globals.REQUEST_URI_ATTR,
 				      sb.toString());
 	    if (contextPath != null)
-		wrequest.setAttribute("javax.servlet.include.context_path",
+		wrequest.setAttribute(Globals.CONTEXT_PATH_ATTR,
 				      contextPath);
 	    if (servletPath != null)
-		wrequest.setAttribute("javax.servlet.include.servlet_path",
+		wrequest.setAttribute(Globals.SERVLET_PATH_ATTR,
 				      servletPath);
 	    if (pathInfo != null)
-		wrequest.setAttribute("javax.servlet.include.path_info",
+		wrequest.setAttribute(Globals.PATH_INFO_ATTR,
 				      pathInfo);
 	    if (queryString != null) {
-		wrequest.setAttribute("javax.servlet.include.query_string",
+		wrequest.setAttribute(Globals.QUERY_STRING_ATTR,
 				      queryString);
 		wrequest.mergeParameters(queryString);
 	    }
