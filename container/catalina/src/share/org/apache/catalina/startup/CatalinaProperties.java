@@ -117,19 +117,6 @@ public class CatalinaProperties {
     }
 
 
-    /**
-     * Sets the property with the specified key to the specified value.
-     *
-     * @param key the property key
-     * @param value the property value
-     * @return the previous value of the specified key in the property
-     *         list, or <code>null</code> if it did not have one.
-     */
-    public static Object setProperty(String key, String value) {
-        return properties.setProperty(key, value);
-    }
-
-
     // --------------------------------------------------------- Public Methods
 
 

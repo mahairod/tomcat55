@@ -108,30 +108,11 @@ import org.xml.sax.SAXNotSupportedException;
  */
 public final class TldConfig  {
 
-    // Names of JARs that are known not to contain any TLDs
-    private static HashSet noTldJars;
-
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( TldConfig.class );
 
     private static final String FILE_URL_PREFIX = "file:";
     private static final int FILE_URL_PREFIX_LEN = FILE_URL_PREFIX.length();
-
-
-    /*
-     * Initializes the set of JARs that are known not to contain any TLDs
-     */
-    static {
-        String value = CatalinaProperties.getProperty("noTldJars");
-        if (value != null) {
-            noTldJars = new HashSet();
-            StringTokenizer tokenizer = new StringTokenizer(value, ",");
-            while (tokenizer.hasMoreElements()) {
-                noTldJars.add(tokenizer.nextToken());
-            }
-        }
-    }
-
 
     // ----------------------------------------------------- Instance Variables
 
@@ -752,19 +733,13 @@ public final class TldConfig  {
      * location that all web applications have access to (e.g.,
      * <CATALINA_HOME>/common/lib).
      *
-     * The set of shared JARs to be scanned for TLDs is narrowed down by
-     * the list of JARs specified as the value of the <tt>noTldJars</tt>
-     * property in catalina.properties, which are known not to contain any 
-     * TLDs.
-     *
      * @return Map of JAR file paths
      */
     private Map getJarPaths() {
 
         HashMap jarPathMap = null;
 
-        ClassLoader webappLoader = Thread.currentThread().getContextClassLoader();
-        ClassLoader loader = webappLoader;
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
         while (loader != null) {
             if (loader instanceof URLClassLoader) {
                 URL[] urls = ((URLClassLoader) loader).getURLs();
@@ -786,19 +761,11 @@ public final class TldConfig  {
                     if (!path.endsWith(".jar")) {
                         continue;
                     }
-                    /*
-                     * Scan all JARs from WEB-INF/lib, plus any shared JARs
-                     * that are not known not to contain any TLDs
-                     */
-                    if (loader == webappLoader
-                            || noTldJars == null
-                            || !noTldJars.contains(file.getName())) {
-                        if (jarPathMap == null) {
-                            jarPathMap = new HashMap();
-                            jarPathMap.put(path, file);
-                        } else if (!jarPathMap.containsKey(path)) {
-                            jarPathMap.put(path, file);
-                        }
+                    if (jarPathMap == null) {
+                        jarPathMap = new HashMap();
+                        jarPathMap.put(path, file);
+                    } else if (!jarPathMap.containsKey(path)) {
+                        jarPathMap.put(path, file);
                     }
                 }
             }
