@@ -43,7 +43,7 @@ goto cleanup
 :startServer
 echo Starting tomcat in new window
 echo Using classpath: %CLASSPATH%
-start -Dtomcat.home=%TOMCAT_HOME% java org.apache.tomcat.startup.Tomcat %2 %3 %4 %5 %6 %7 %8 %9
+start java -Dtomcat.home=%TOMCAT_HOME% org.apache.tomcat.startup.Tomcat %2 %3 %4 %5 %6 %7 %8 %9
 goto cleanup
 
 :runServer
