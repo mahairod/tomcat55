@@ -214,14 +214,6 @@ public final class Tool {
                 log("Constructing class loader");
                 ClassLoaderFactory.setDebug(1);
             }
-            // Put the JDK's installed extensions in the parent class loader.
-            // Presumably, the "java.ext.dirs" property has already been set
-            // to a zero length string.
-            File[] extFile = new File[1];
-            extFile[0] = new File(System.getProperty("java.home"),
-                                    "lib" + File.separator + "ext");
-            ClassLoader extLoader =
-                ClassLoaderFactory.createClassLoader(null, extFile, null);
             ArrayList packed = new ArrayList();
             ArrayList unpacked = new ArrayList();
             unpacked.add(new File(catalinaHome, "classes"));
@@ -248,12 +240,7 @@ public final class Tool {
                 ClassLoaderFactory.createClassLoader
                 ((File[]) unpacked.toArray(new File[0]),
                  (File[]) packed.toArray(new File[0]),
-                 extLoader);
-            // Need to have the classLoader only delegate to the parent
-            // class loader only after searching its own repositories. This
-            // allows the classLoader's repositories to take priority over
-            // the JDK's installed extensions.
-            ((StandardClassLoader)classLoader).setDelegate(false);
+                 null);
         } catch (Throwable t) {
             log("Class loader creation threw exception", t);
             System.exit(1);

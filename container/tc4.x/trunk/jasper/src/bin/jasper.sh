@@ -68,9 +68,6 @@ for i in "$JASPER_HOME"/shared/lib/*.jar; do
   CLASSPATH="$CLASSPATH":"$i"
 done
 CLASSPATH="$CLASSPATH":"$JASPER_HOME"/shared/classes
-for i in "$JAVA_HOME"/jre/lib/ext/*.jar; do
-  CLASSPATH="$CLASSPATH":"$i"
-done
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
@@ -85,8 +82,7 @@ if [ "$1" = "jspc" ] ; then
 
   shift
   exec "$_RUNJAVA" $JAVA_OPTS $JASPER_OPTS \
-    -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" \
-    -Djava.ext.dirs="$JAVA_EXT_DIRS" -classpath "$CLASSPATH" \
+    -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
     -Djasper.home="$JASPER_HOME" \
     org.apache.jasper.JspC "$@"
 

@@ -130,8 +130,7 @@ if [ "$1" = "debug" ] ; then
     echo "Using Security Manager"
     shift
     exec "$_RUNJDB" $JAVA_OPTS $CATALINA_OPTS \
-      -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" \
-      -Djava.ext.dirs="$JAVA_EXT_DIRS" -classpath "$CLASSPATH" \
+      -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
       -sourcepath "$CATALINA_HOME"/../../jakarta-tomcat-4.0/catalina/src/share \
       -Djava.security.manager \
       -Djava.security.policy=="$CATALINA_BASE"/conf/catalina.policy \
@@ -141,8 +140,7 @@ if [ "$1" = "debug" ] ; then
       org.apache.catalina.startup.Bootstrap "$@" start
   else
     exec "$_RUNJDB" $JAVA_OPTS $CATALINA_OPTS \
-      -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" \
-      -Djava.ext.dirs="$JAVA_EXT_DIRS" -classpath "$CLASSPATH" \
+      -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
       -sourcepath "$CATALINA_HOME"/../../jakarta-tomcat-4.0/catalina/src/share \
       -Dcatalina.base="$CATALINA_BASE" \
       -Dcatalina.home="$CATALINA_HOME" \
@@ -155,8 +153,7 @@ elif [ "$1" = "embedded" ] ; then
   shift
   echo "Embedded Classpath: $CLASSPATH"
   exec "$_RUNJAVA" $JAVA_OPTS $CATALINA_OPTS \
-    -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" \
-    -Djava.ext.dirs="$JAVA_EXT_DIRS" -classpath "$CLASSPATH" \
+    -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
     -Dcatalina.base="$CATALINA_BASE" \
     -Dcatalina.home="$CATALINA_HOME" \
     -Djava.io.tmpdir="$CATALINA_TMPDIR" \
@@ -169,8 +166,7 @@ elif [ "$1" = "run" ]; then
     echo "Using Security Manager"
     shift
     exec "$_RUNJAVA" $JAVA_OPTS $CATALINA_OPTS \
-      -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" \
-      -Djava.ext.dirs="$JAVA_EXT_DIRS" -classpath "$CLASSPATH" \
+      -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
       -Djava.security.manager \
       -Djava.security.policy=="$CATALINA_BASE"/conf/catalina.policy \
       -Dcatalina.base="$CATALINA_BASE" \
@@ -179,8 +175,7 @@ elif [ "$1" = "run" ]; then
       org.apache.catalina.startup.Bootstrap "$@" start
   else
     exec "$_RUNJAVA" $JAVA_OPTS $CATALINA_OPTS \
-      -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" \
-      -Djava.ext.dirs="$JAVA_EXT_DIRS" -classpath "$CLASSPATH" \
+      -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
       -Dcatalina.base="$CATALINA_BASE" \
       -Dcatalina.home="$CATALINA_HOME" \
       -Djava.io.tmpdir="$CATALINA_TMPDIR" \
@@ -195,8 +190,7 @@ elif [ "$1" = "start" ] ; then
     echo "Using Security Manager"
     shift
     "$_RUNJAVA" $JAVA_OPTS $CATALINA_OPTS \
-      -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" \
-      -Djava.ext.dirs="$JAVA_EXT_DIRS" -classpath "$CLASSPATH" \
+      -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
       -Djava.security.manager \
       -Djava.security.policy=="$CATALINA_BASE"/conf/catalina.policy \
       -Dcatalina.base="$CATALINA_BASE" \
@@ -206,8 +200,7 @@ elif [ "$1" = "start" ] ; then
       >> "$CATALINA_BASE"/logs/catalina.out 2>&1 &
   else
     "$_RUNJAVA" $JAVA_OPTS $CATALINA_OPTS \
-      -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" \
-      -Djava.ext.dirs="$JAVA_EXT_DIRS" -classpath "$CLASSPATH" \
+      -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
       -Dcatalina.base="$CATALINA_BASE" \
       -Dcatalina.home="$CATALINA_HOME" \
       -Djava.io.tmpdir="$CATALINA_TMPDIR" \
@@ -219,8 +212,7 @@ elif [ "$1" = "stop" ] ; then
 
   shift
   exec "$_RUNJAVA" $JAVA_OPTS $CATALINA_OPTS \
-    -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" \
-    -Djava.ext.dirs="$JAVA_EXT_DIRS" -classpath "$CLASSPATH" \
+    -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
     -Dcatalina.base="$CATALINA_BASE" \
     -Dcatalina.home="$CATALINA_HOME" \
     -Djava.io.tmpdir="$CATALINA_TMPDIR" \

@@ -121,7 +121,6 @@ public final class Bootstrap {
             System.setProperty("catalina.base", getCatalinaHome());
 
         // Construct the class loaders we will need
-        ClassLoader extLoader = null;
         ClassLoader commonLoader = null;
         ClassLoader catalinaLoader = null;
         ClassLoader sharedLoader = null;
@@ -132,14 +131,6 @@ public final class Bootstrap {
             File packed2[] = new File[2];
             ClassLoaderFactory.setDebug(debug);
 
-            // Put the JDK's installed extensions in the parent class loader.
-            // Presumably, the "java.ext.dirs" property has already been set
-            // to a zero length string.
-            packed[0] = new File(System.getProperty("java.home"),
-                                 "lib" + File.separator + "ext");
-            extLoader =
-                ClassLoaderFactory.createClassLoader(null, packed, null);
-
             unpacked[0] = new File(getCatalinaHome(),
                                    "common" + File.separator + "classes");
             packed2[0] = new File(getCatalinaHome(),
@@ -147,14 +138,7 @@ public final class Bootstrap {
             packed2[1] = new File(getCatalinaHome(),
                                   "common" + File.separator + "lib");
             commonLoader =
-                ClassLoaderFactory.createClassLoader(unpacked, packed2,
-                                                     extLoader);
-
-            // Need to have the commonLoader only delegate to the parent
-            // class loader only after searching its own repositories. This
-            // allows the commonLoader's repositories to take priority over
-            // the JDK's installed extensions.
-            ((StandardClassLoader)commonLoader).setDelegate(false);
+                ClassLoaderFactory.createClassLoader(unpacked, packed2, null);
 
             unpacked[0] = new File(getCatalinaHome(),
                                    "server" + File.separator + "classes");
@@ -171,7 +155,6 @@ public final class Bootstrap {
             sharedLoader =
                 ClassLoaderFactory.createClassLoader(unpacked, packed,
                                                      commonLoader);
-
         } catch (Throwable t) {
 
             log("Class loader creation threw exception", t);
