@@ -112,28 +112,6 @@ public class DigestAuthenticator
 
 
     /**
-     * No once hashtable.
-     */
-    protected Hashtable nOnceTokens = new Hashtable();
-
-
-    /**
-     * No once expiration (in millisecond). A shorter amount would mean a
-     * better security level (since the token is generated more often), but at
-     * the expense of a bigger server overhead.
-     */
-    protected long nOnceTimeout = TIMEOUT_INFINITE;
-
-
-    /**
-     * No once expiration after a specified number of uses. A lower number
-     * would produce more overhead, since a token would have to be generated
-     * more often, but would be more secure.
-     */
-    protected int nOnceUses = USE_ONCE;
-
-
-    /**
      * Private key.
      */
     protected String key = "Catalina";
@@ -404,9 +382,6 @@ public class DigestAuthenticator
 
         byte[] buffer = md5Helper.digest(nOnceValue.getBytes());
         nOnceValue = md5Encoder.encode(buffer);
-
-        // Updating the value in the no once hashtable
-        nOnceTokens.put(nOnceValue, new Long(currentTime + nOnceTimeout));
 
         return nOnceValue;
     }
