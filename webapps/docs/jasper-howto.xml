@@ -114,7 +114,7 @@ pages in external data files, to reduce the size of the generated servlets?
 
 <li><strong>mappedfile</strong> - Should we generate static content with one 
 print statement per input line, to ease debugging?
-<code>true</code> or <code>false</code>, default <code>false</code>.</li>
+<code>true</code> or <code>false</code>, default <code>true</code>.</li>
 
 <li><strong>reloading</strong> - Should Jasper check for modified JSPs?
 <code>true</code> or <code>false</code>, default <code>true</code>.</li>
