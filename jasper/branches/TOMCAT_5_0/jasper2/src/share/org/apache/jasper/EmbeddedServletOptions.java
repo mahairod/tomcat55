@@ -139,6 +139,11 @@ public final class EmbeddedServletOptions implements Options {
     private String compiler = null;
 
     /**
+     * The compiler target VM ("1.2" by default).
+     */
+    private String compilerTargetVM = "1.2";
+
+    /**
      * Cache for the TLD locations
      */
     private TldLocationsCache tldLocationsCache = null;
@@ -289,6 +294,13 @@ public final class EmbeddedServletOptions implements Options {
      */
     public String getCompiler() {
         return compiler;
+    }
+
+    /**
+     * @see Options#getCompilerTargetVM
+     */
+    public String getCompilerTargetVM() {
+        return compilerTargetVM;
     }
 
     public boolean getErrorOnUseBeanInvalidClassAttribute() {
@@ -553,6 +565,10 @@ public final class EmbeddedServletOptions implements Options {
 					   scratchDir.getAbsolutePath()));
                                   
         this.compiler = config.getInitParameter("compiler");
+        compilerTargetVM = config.getInitParameter("compilerTargetVM");
+        if(compilerTargetVM != null) {
+            this.compilerTargetVM = compilerTargetVM;
+        }
 
         String javaEncoding = config.getInitParameter("javaEncoding");
         if (javaEncoding != null) {

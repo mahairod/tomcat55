@@ -142,7 +142,10 @@ public class JspC implements Options {
     private int dieLevel;
     private boolean helpNeeded = false;
     private boolean compile = false;
+
     private String compiler = null;
+    private String compilerTargetVM = "1.2";
+
     private boolean classDebugInfo = true;
     private Vector extensions;
     private Vector pages = new Vector();
@@ -460,6 +463,20 @@ public class JspC implements Options {
 
     public void setCompiler(String c) {
         compiler=c;
+    }
+
+    /**
+     * @see Options#getCompilerTargetVM.
+     */
+    public String getCompilerTargetVM() {
+        return compilerTargetVM;
+    }
+
+    /**
+     * @see Options#getCompilerTargetVM.
+     */
+    public void setCompilerTargetVM(String vm) {
+        compilerTargetVM = vm;
     }
 
     public TldLocationsCache getTldLocationsCache() {
