@@ -1481,8 +1481,10 @@ public class WebappClassLoader
 
         }
 
-        clazz = defineClass(name, entry.binaryContent, 0,
-                            entry.binaryContent.length, codeSource);
+        synchronized(this) {
+            clazz = defineClass(name, entry.binaryContent, 0,
+                                entry.binaryContent.length, codeSource);
+        }
 
         entry.loadedClass = clazz;
 
