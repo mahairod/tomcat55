@@ -1360,19 +1360,6 @@ public class StandardWrapper
         swValve.setProcessingTime(processingTime);
     }
 
-    /**
-     * Returns the execution time of the servlet's service method.
-     *
-     * This method is identical in functionality to getProcessingTime(),
-     * except that it exposes the execution time of the servlet's service
-     * method under the JSR 77 compliant property name.
-     *
-     * @return Execution time of the servlet's service method
-     */
-    public long getServiceTime() {
-        return swValve.getProcessingTime();
-    }
-
     public long getMaxTime() {
         return swValve.getMaxTime();
     }
