@@ -473,6 +473,8 @@ public class JspCompilationContext {
             try {
                 jspCompiler.compile();
                 reload = true;
+            } catch (JasperException ex) {
+                throw ex;
             } catch (Exception ex) {
                 throw new JasperException(
                     Constants.getString("jsp.error.unable.compile"),ex);
