@@ -709,6 +709,15 @@ class Validator {
 	    }
 
 	    /*
+	     * The bodyconet of a SimpleTag cannot be JSP.
+	     */
+	    if (n.implementsSimpleTag() &&
+                tagInfo.getBodyContent().equalsIgnoreCase(TagInfo.BODY_CONTENT_JSP)) {
+                err.jspError(n, "jsp.error.simpletag.badbodycontent",
+                        tagInfo.getTagClassName());
+	    }
+
+	    /*
 	     * If the tag handler declares in the TLD that it supports dynamic
 	     * attributes, it also must implement the DynamicAttributes
 	     * interface.
