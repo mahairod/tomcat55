@@ -181,7 +181,6 @@ public class SSLSocketFactory
 
 	    return;
 	} catch(Exception e) {
-	    //	    e.printStackTrace();
 	    if( e instanceof IOException )
 		throw (IOException)e;
 	    throw new IOException(e.getMessage());
@@ -213,9 +212,17 @@ public class SSLSocketFactory
 	    istream = new FileInputStream(keystoreFile);
 	    kstore.load(istream, keyPass.toCharArray());
 	    return kstore;
-	} catch(Exception ex) {
-	    //	    ex.printStackTrace();
-	    throw new IOException( "Can't load server certificate" );
+	}
+	catch (FileNotFoundException fnfe) {
+	    throw fnfe;
+	}
+	catch (IOException ioe) {
+	    throw ioe;	    
+	}
+	catch(Exception ex) {
+	    throw new IOException( "Exception trying to load keystore " + keystoreFile + ": " + ex.getMessage() );
 	}
     }
+
+    
 }
