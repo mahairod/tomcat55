@@ -197,8 +197,10 @@ public class Constants {
     private static StringManager resources;
     
     private static void initResources() {
+	// XXX bug in StringManager and ResourceBundle, class loader
+	// can't be passed !
         resources = StringManager.getManager(
-                    "org.apache.jasper.resources");
+                    "org.apache.jasper34.runtime.res");
     }
 
     /**
