@@ -144,6 +144,20 @@ public final class EnvEntryForm extends BaseForm {
     }
 
     /**
+     * The value of override appl level entries.
+     */
+    private boolean override = true;
+
+    public boolean getOverride() {
+        return (this.override);
+    }
+
+    public void setOverride(boolean override) {
+        this.override = override;
+    }
+
+
+    /**
      * Precomputed list of entry type labels and values.
      */
     private static List typeVals = new ArrayList();
@@ -194,6 +208,7 @@ public final class EnvEntryForm extends BaseForm {
         entryType = null;
         value = null;
         description = null;
+        override = false;
 
     }
 
@@ -247,6 +262,9 @@ public final class EnvEntryForm extends BaseForm {
                 errors.add("description",
                            new ActionError("users.error.quotes"));
             }
+            
+            // if cehcked, override will be sent as a request parameter
+            override = (request.getParameter("override") != null);
             
             if (validateType(entryType, value)) {
                    errors.add("value",

@@ -176,6 +176,9 @@ public final class SetUpEnvEntryAction extends Action {
                 attribute = "value";
                 envEntryForm.setValue
                     ((String) mserver.getAttribute(oname, attribute));
+                attribute = "override";
+                envEntryForm.setOverride(
+                    ((Boolean) mserver.getAttribute(oname, attribute)).booleanValue());
                 attribute = "description";
                 envEntryForm.setDescription
                     ((String) mserver.getAttribute(oname, attribute));

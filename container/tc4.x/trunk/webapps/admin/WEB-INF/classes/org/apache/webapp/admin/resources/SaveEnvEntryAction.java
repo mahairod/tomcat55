@@ -218,6 +218,10 @@ public final class SaveEnvEntryAction extends Action {
             ObjectName oname = new ObjectName(objectName);
 
             // Update the specified env entry
+            attribute = "override";
+            mserver.setAttribute
+                (oname,
+                 new Attribute(attribute, new Boolean(envEntryForm.getOverride())));
             attribute = "description";
             mserver.setAttribute
                 (oname,
