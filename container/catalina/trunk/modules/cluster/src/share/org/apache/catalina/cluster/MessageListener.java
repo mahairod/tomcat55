@@ -24,5 +24,18 @@ public interface MessageListener {
     public boolean equals(Object listener);
     
     public int hashCode();
+    
+    /**
+     * Returns the cluster the cluster deployer is associated with
+     * @return CatalinaCluster
+     */
+    public CatalinaCluster getCluster();
+
+    /**
+     * Associates the cluster deployer with a cluster
+     * @param cluster CatalinaCluster
+     */
+    public void setCluster(CatalinaCluster cluster);
+
 
 }

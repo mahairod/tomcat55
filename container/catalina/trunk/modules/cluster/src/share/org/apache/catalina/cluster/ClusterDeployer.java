@@ -29,18 +29,6 @@ import java.net.URL;
 
 public interface ClusterDeployer extends MessageListener {
     /**
-     * Returns the cluster the cluster deployer is associated with
-     * @return CatalinaCluster
-     */
-    public CatalinaCluster getCluster();
-
-    /**
-     * Associates the cluster deployer with a cluster
-     * @param cluster CatalinaCluster
-     */
-    public void setCluster(CatalinaCluster cluster);
-
-    /**
      * Descriptive information about this component implementation.
      */
     public String info = "ClusterDeployer/1.0";
