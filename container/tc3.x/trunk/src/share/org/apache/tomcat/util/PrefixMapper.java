@@ -64,15 +64,11 @@
 
 package org.apache.tomcat.util;
 
-import org.apache.tomcat.util.collections.*;
-import org.apache.tomcat.util.buf.*;
-import org.apache.tomcat.util.io.FileUtil;
+import java.util.Enumeration;
 
-import java.net.URL;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.io.IOException;
-import java.util.*;
+import org.apache.tomcat.util.buf.MessageBytes;
+import org.apache.tomcat.util.collections.SimpleHashtable;
+import org.apache.tomcat.util.io.FileUtil;
 
 /** Prefix and exact mapping alghoritm.
  *XXX finish factoring out the creation of the map ( right now direct field access is
