@@ -31,6 +31,7 @@
   </subsection>
 
   <subsection name="Catalina">
+    <changelog>
       <update>
         Remove Digester code for Xerces workaround. (jfarcand)
       </update>
@@ -40,6 +41,11 @@
       <fix>
         <bug>30869</bug>: Make sure JAAS realm name is legal. (yoavs)
       </fix>
+      <update>
+          md5Helper, md5Encoder, and normalize are used by WebdavServlet,
+          not DefaultServelt so move them into WebdavServlet.
+      </update>
+    </changelog>
   </subsection>
 
   <subsection name="Coyote">
