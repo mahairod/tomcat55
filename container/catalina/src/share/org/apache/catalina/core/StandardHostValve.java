@@ -350,7 +350,7 @@ final class StandardHostValve
                 request.getContext().getServletContext();
             RequestDispatcher rd =
                 servletContext.getRequestDispatcher(errorPage.getLocation());
-            rd.forward(request, response);
+            rd.forward(request.getRequest(), response.getResponse());
 
             // If we forward, the response is suspended again
             response.setSuspended(false);
