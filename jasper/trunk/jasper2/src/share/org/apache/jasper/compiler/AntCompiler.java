@@ -105,7 +105,11 @@ public class AntCompiler extends Compiler {
     protected void generateClass(String[] smap)
         throws FileNotFoundException, JasperException, Exception {
         
-        long t1=System.currentTimeMillis();
+        long t1 = 0;
+        if (log.isDebugEnabled()) {
+            t1 = System.currentTimeMillis();
+        }
+
         String javaEncoding = ctxt.getOptions().getJavaEncoding();
         String javaFileName = ctxt.getServletJavaFileName();
         String classpath = ctxt.getClassPath(); 
@@ -242,7 +246,8 @@ public class AntCompiler extends Compiler {
         
         if( log.isDebugEnabled() ) {
             long t2=System.currentTimeMillis();
-            log.debug( "Compiled " + ctxt.getServletJavaFileName() + " " + (t2-t1) + "ms");
+            log.debug("Compiled " + ctxt.getServletJavaFileName() + " "
+                      + (t2-t1) + "ms");
         }
         
         logger = null;

@@ -80,7 +80,10 @@ public class JDTCompiler extends org.apache.jasper.compiler.Compiler {
     protected void generateClass(String[] smap)
         throws FileNotFoundException, JasperException, Exception {
 
-        long t1=System.currentTimeMillis();
+        long t1 = 0;
+        if (log.isDebugEnabled()) {
+            t1 = System.currentTimeMillis();
+        }
         
         final String sourceFile = ctxt.getServletJavaFileName();
         final String outputDir = ctxt.getOptions().getScratchDir().getAbsolutePath();
@@ -388,7 +391,8 @@ public class JDTCompiler extends org.apache.jasper.compiler.Compiler {
         
         if( log.isDebugEnabled() ) {
             long t2=System.currentTimeMillis();
-            log.debug( "Compiled " + ctxt.getServletJavaFileName() + " " + (t2-t1) + "ms");
+            log.debug("Compiled " + ctxt.getServletJavaFileName() + " "
+                      + (t2-t1) + "ms");
         }
 
         if (ctxt.isPrototypeMode()) {
