@@ -1,4 +1,3 @@
-$Id$
 
 PROJECT jakarta-watchdog SOURCE TREE 
 ====================================
@@ -14,31 +13,29 @@ There are 2 compilation scripts provided, a ksh based script for
 Unix and a .bat based DOS build script. Essentially these scripts are
 wrappers that put the ant.jar file on the classpath and calls:
 
-        java org.apache.tools.ant.Main
+      java org.apache.tools.ant.Main
 
 To build, execute the either of the following commands in this
 directory:
 
-        (unix)% ./build.sh
-        (dos)> .\build.bat 
+      (unix)% ./build.sh
+      (dos)> .\build.bat 
 
 This will build tests into a build directory located in this directory.
 
 Windows Note: If you get an "Out of Environment Space" message, you
 need to clean-up the initial environment of your command prompt window.
 
-To build a 'distribution' build (without the tests, and with all the
-classes jarrd up nice) execute:
+To build a 'distribution' build (with all the classes jarrd up), execute:
 
-        (unix)% ./build.sh dist
-        (dos)> .\build.bat dist
+      (unix)% ./build.sh dist
+      (dos)> \build.bat dist
 
-NOTE: dist does not work right now.
+To clean out the build and dist (removes the build/watchdog and dist/watchdog
+dirs):
 
-To clean out the build (removes the build dir):
-
-        (unix)% ./build.sh clean
-        (dos)> .\build.bat clean
+      (unix)% ./build.sh clean
+      (dos)> .\build.bat clean
 
 NOTE: To build Jcheck you will need "servlet-2.2.0.jar" in your CLASSPATH.
       It has all the Servlet 2.2 and JSP 1.1 public APIs. It can be found
@@ -49,86 +46,99 @@ NOTE: To build Jcheck you will need "servlet-2.2.0.jar" in your CLASSPATH.
 Running the Build
 -----------------
 
+                   Jakarta
+                      |
+                     / \
+                   /  |   \
+                 /    |     \
+               /      |       \
+             /        |         \
+           /         / \         \ 
+         /         /     \          \
+ jakarta-tomcat  build   dist    jakarta-watchdog
+                          |
+                         / \
+                       /     \
+                   tomcat   watchdog
+                     |          |
+                   webapps   webapps
+
+
 Tests can be run in two different ways:
 
 1) Running tests against the tomcat server:
 
-   The scripts will automatically start the tomcat webserver and run tests
-   against this server. Once the tests are executed, server will be shut
-   down automatically by the script. You will need the following classes in
-   your CLASSPATH:
+    - Deploy the servlet and jsp test on the tomcat server by copying  
+        jsp-tests.war and 
+        servlet-tests.war 
+      from 
+        dist/watchdog/webapps
+      to 
+        dist/tomcat/webapps
 
-	- JDK classes (classes.zip if you are using JDK 1.1.x,
-		       and tools.jar if you are using JDK 1.2)
-	- servlet.jar (Servlet 2.2 and JSP 1.1 public APIs)
-	- webserver.jar (tomcat servlet container)
-	- jasper.jar (JSP engine)
+    - Start tomcat server
+       (unix)% cd dist/tomcat/bin
+        (unix)% ./startup.sh
 
-	The last three jars can be obtained from the jakarta-tomcat
-	workspace by doing a distribution build. Alternatively you can
-        just do a regular build and have <builddir>/tomcat/classes in
-        your CLASSPATH.
-	
-   - Running Servlet tests
-
-        (unix)% ./build.sh
-        (unix)% cd ../build/watchdog
-        (unix)% ./runTest.sh servlet
-
-        (dos)> .\build.bat
-        (dos)> cd ..\build\watchdog
-        (dos)> .\runTest.bat servlet
-
-   - Running JSP tests
+        (dos)> cd dist\tomcat\bin
+        (dos)> .\startup.bat
+        
+    - Running Servlet tests
 
         (unix)% ./build.sh
-        (unix)% cd ../build/watchdog
-        (unix)% ./runTest.sh jsp
+        (unix)% cd ../dist/watchdog/bin
+        (unix)% ./watchdog.sh servlet
 
         (dos)> .\build.bat
-        (dos)> cd ..\build\watchdog
-        (dos)> .\runTest.bat jsp
+        (dos)> cd ..\dist\watchdog\bin
+        (dos)> .\watchdog.bat servlet
+
+    - Running JSP tests
+
+        (unix)% ./build.sh
+        (unix)% cd ../dist/watchdog
+        (unix)% ./watchdog.sh jsp
+
+        (dos)> .\build.bat
+        (dos)> cd ..\dist\watchdog
+        (dos)> .\watchdog.bat jsp
 
 2) Running test against other servers:
 
-   - Running Servlet tests.
+    - Running Servlet tests.
 
-	The server-side web-application is in build/servlet-tests.war 
-     file. Install this war file on the server you want to test. Then 
+      The server-side web-application is in 
+        dist/watchdog/webapps/servlet-tests.war 
 
-        (unix)% ./build.sh
-        (unix)% cd ../build/watchdog
-        (unix)% ./runClient.sh servlet {host} {port}
-
-        (dos)> .\build.bat
-        (dos)> cd ..\build\watchdog
-        (dos)> .\runClient.bat servlet {host} {port}
-
-   - Running JSP tests.
-
-	The server-side web-application is in build/jsp-tests.war 
-     file. Install this war file on the server you want to test. Then 
+      Deploy this war file on the server you want to test. Then 
 
         (unix)% ./build.sh
-        (unix)% cd ../build/watchdog
-        (unix)% ./runClient.sh jsp {host} {port}
+        (unix)% cd ../dist/watchdog/bin
+        (unix)% ./watchdog.sh servlet {host} {port}
 
         (dos)> .\build.bat
-        (dos)> cd ..\build\watchdog
-        (dos)> .\runClient.bat jsp {host} {port}
+        (dos)> cd ..\dist\watchdog\bin
+        (dos)> .\watchdog.bat servlet {host} {port}
+
+    - Running JSP tests.
+
+      The server-side web-application is in 
+        dist/watchdog/webapps/jsp-tests.war 
+
+      Install this war file on the server you want to test. Then 
+
+        (unix)% ./build.sh
+        (unix)% cd ../dist/watchdog/bin
+        (unix)% ./watchdog.sh jsp {host} {port}
+
+        (dos)> .\build.bat
+        (dos)> cd ..\dist\watchdog\bin
+        (dos)> .\watchdog.bat jsp {host} {port}
 
 
 BEFORE COMMITTING CHANGES
 -------------------------
 
-You must, MUST do a `compile clean;compile` to make sure a clean
+You must, MUST do a `build clean;build` to make sure a clean
 workspace builds. Also, you must, MUST run the tests. All tests must
 pass before checking in the code. 
-
-Mandar Raje 
-mandar@eng.sun.com
-
-
-
-
-
