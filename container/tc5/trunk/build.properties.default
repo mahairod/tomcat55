@@ -13,7 +13,7 @@
 # ----- Compile Control Flags -----
 compile.debug=on
 compile.deprecation=off
-compile.optimize=on
+compile.optimize=off
 
 
 # ----- Build Control Flags
@@ -33,7 +33,6 @@ compile.optimize=on
 
 # ----- CVS root for the jakarta repositories ------
 cvsroot=":pserver:anoncvs@cvs.apache.org:/home/cvspublic"
-cvstag=HEAD
 
 # ----- Default Base Path for Dependent Packages -----
 #base.path=/usr/share/java
@@ -135,7 +134,6 @@ commons-dbcp.loc=http://jakarta.apache.org/builds/jakarta-commons/release/common
 
 # ----- Commons Modeler, version 1.0 or later -----
 commons-modeler.home=${base.path}/commons-modeler-1.1dev
-#commons-modeler.home=${base.path}/commons-modeler-1.0
 #commons-modeler.lib=${commons-modeler.home}
 commons-modeler.lib=${commons-modeler.home}/dist
 commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
