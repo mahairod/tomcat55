@@ -144,7 +144,6 @@ public class Catalina {
      */
     protected boolean stopping = false;
 
-
     /**
      * Are we using naming ?
      */
@@ -200,12 +199,14 @@ public class Catalina {
      * @param args Command line arguments
      */
     public void process(String args[]) {
+
         setAwait(true);
         setCatalinaHome();
         setCatalinaBase();
         try {
             if (arguments(args)) {
                 if (starting) {
+                    load(args);
                     start();
                 } else if (stopping) {
                     stopServer();
@@ -470,7 +471,7 @@ public class Catalina {
      * Set the <code>catalina.base</code> System property to the current
      * working directory if it has not been set.
      */
-    protected void setCatalinaBase() {
+    public void setCatalinaBase() {
 
         if (System.getProperty("catalina.base") != null)
             return;
@@ -479,12 +480,20 @@ public class Catalina {
 
     }
 
+    public void setCatalinaHome( String s ) {
+        System.out.println("Setting home "+ s);
+        System.setProperty( "catalina.home", s);
+    }
+
+    public void setCatalinaBase( String s ) {
+        System.setProperty( "catalina.base", s);
+    }
 
     /**
      * Set the <code>catalina.home</code> System property to the current
      * working directory if it has not been set.
      */
-    protected void setCatalinaHome() {
+    public void setCatalinaHome() {
 
         if (System.getProperty("catalina.home") != null)
             return;
@@ -493,12 +502,28 @@ public class Catalina {
 
     }
 
+    public String getConfigFile() {
+        return configFile;
+    }
+
+    public boolean isAwait() {
+        return await;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public boolean isUseNaming() {
+        return useNaming;
+    }
 
     /**
      * Start a new server instance.
      */
     public void load() {
-
+        setCatalinaHome();
+        setCatalinaBase();
         // Create and execute our Digester
         Digester digester = createStartDigester();
         long t1 = System.currentTimeMillis();
@@ -575,12 +600,21 @@ public class Catalina {
         }
     }
 
+    public void create() {
+
+    }
+
+    public void destroy() {
+
+    }
 
     /**
      * Start a new server instance.
      */
     public void start() {
-
+        if( server==null ) {
+            load();
+        }
         // Start the new server
         if (server instanceof Lifecycle) {
             try {
