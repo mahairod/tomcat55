@@ -18,10 +18,6 @@
     <!-- Server form bean -->
     <form-bean      name="serverForm"
                     type="org.apache.webapp.admin.ServerForm"/>
-
-    <!-- Connector form bean -->
-    <form-bean      name="connectorForm"
-                    type="org.apache.webapp.admin.connector.ConnectorForm"/>
                     
     <!-- Set Locale form bean -->
     <form-bean      name="setLocaleForm"
@@ -76,6 +72,14 @@
     <form-bean      name="contextsForm"
                     type="org.apache.webapp.admin.context.ContextsForm"/>
 
+    <!-- ============= Connector Module ============= -->
+
+    <form-bean      name="connectorForm"
+                    type="org.apache.webapp.admin.connector.ConnectorForm"/>
+                    
+    <form-bean      name="connectorsForm"
+                    type="org.apache.webapp.admin.host.ConnectorsForm"/>
+
     <!-- ========== User Database Module ========== -->
 
     <form-bean      name="databaseForm"
@@ -128,10 +132,6 @@
     <forward        name="Server"
                     path="/server.jsp"
                 redirect="false"/>
-
-    <forward        name="Connector"
-                    path="/connector.jsp"
-                redirect="false"/>
                    
     <forward        name="Save Successful"
                     path="/saved.jsp"
@@ -183,6 +183,16 @@
 
     <forward        name="Contexts"
                     path="/context/contexts.jsp"
+                redirect="false"/>
+
+    <!-- ============ Connector Module ============== -->
+
+    <forward        name="Connector"
+                    path="/connector/connector.jsp"
+                redirect="false"/>
+
+    <forward        name="Connectors"
+                    path="/connector/connectors.jsp"
                 redirect="false"/>
 
     <!-- ============ Realm Module ============== -->
@@ -300,13 +310,6 @@
                scope="session">
     </action>
 
-   <!-- Set up Connector datastructure -->
-    <action    path="/setUpConnector"
-               type="org.apache.webapp.admin.connector.SetUpConnectorAction"
-               name="connectorForm"
-               scope="session">
-    </action>
-    
     <!-- Log out of the application -->
     <action    path="/logOut"
                type="org.apache.webapp.admin.LogOutAction">
@@ -321,14 +324,6 @@
                name="serverForm"
               scope="session"
               input="/server.jsp">
-    </action>
-
-    <!-- Process a connector change -->
-    <action    path="/connector"
-               type="org.apache.webapp.admin.connector.ConnectorAction"
-               name="connectorForm"
-              scope="session"
-              input="/connector.jsp">
     </action>
     
     <!-- Process a set-locale action -->
@@ -511,11 +506,42 @@
                type="org.apache.webapp.admin.context.EditContextAction">
     </action>
 
-    <!-- Perform Save Host transaction -->
+    <!-- Perform Save Context transaction -->
     <action    path="/SaveContext"
                type="org.apache.webapp.admin.context.SaveContextAction"
                name="contextForm"
               input="/context/context.jsp"
+               scope="session"/>
+
+   <!-- ============= Connector Module ============== -->
+
+    <!-- Set up Add Connector transaction -->
+    <action    path="/AddConnector"
+               type="org.apache.webapp.admin.connector.AddConnectorAction">
+    </action>
+
+    <!-- Set up Delete Connectors transaction -->
+    <action    path="/DeleteConnector"
+               type="org.apache.webapp.admin.connector.DeleteConnectorAction"
+               name="connectorsForm"
+               scope="request"/>
+
+    <!-- Perform Delete Connectors transaction -->
+    <action    path="/DeleteConnectors"
+               type="org.apache.webapp.admin.connector.DeleteConnectorsAction"
+               name="connectorsForm"
+               scope="request"/>
+
+    <!-- Set up Edit Connector transaction -->
+    <action    path="/EditConnector"
+               type="org.apache.webapp.admin.connector.EditConnectorAction">
+    </action>
+
+    <!-- Perform Save Connector transaction -->
+    <action    path="/SaveConnector"
+               type="org.apache.webapp.admin.connector.SaveConnectorAction"
+               name="connectorForm"
+              input="/connector/connector.jsp"
                scope="session"/>
                
     <!-- ========== User Database Module ========== -->

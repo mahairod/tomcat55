@@ -113,7 +113,8 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public final static String MANAGER_TYPE = "Catalina:type=Manager";
     public final static String LOGGER_TYPE = "Catalina:type=Logger";
     public final static String REALM_TYPE = "Catalina:type=Realm";
-    
+    public final static String VALVE_TYPE = "Catalina:type=Valve";
+
     public final static String WILDCARD = ",*";
     
     private static MBeanServer mBServer = null;
@@ -236,7 +237,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                 new TreeControlNode(connectorName,
                                     "folder_16_pad.gif",
                                     nodeLabel,
-                                    "setUpConnector.do?select=" +
+                                    "EditConnector.do?select=" +
                                     URLEncoder.encode(connectorName) +
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
@@ -281,8 +282,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             getRealms(hostNode, hostName);
         }
 
-    }
-    
+    }    
 
     /**
      * Append nodes for all defined contexts for the specified host.
@@ -383,6 +383,5 @@ public class TomcatTreeBuilder implements TreeBuilder{
             containerNode.addChild(realmNode);
         }
 
-    }
-    
+    }    
 }
