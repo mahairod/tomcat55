@@ -27,6 +27,14 @@
 </section>
 
 <section name="Tomcat 5.5.8 (yoavs)">
+  <subsection name="General">
+    <changelog>
+      <fix>
+        <bug>33204</bug>: Fixed SSL HowTo page. (yoavs)
+      </fix>
+    </changelog>
+  </subsection>
+
   <subsection name="Catalina">
     <changelog>
       <fix>
