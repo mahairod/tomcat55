@@ -319,6 +319,12 @@ Generic Bug Fixes:
 [4.1.30] Docs:
          Docs updates.
 
+[4.1.31] Administration Wepapp:
+         Add support for new clientAtuth values
+
+[4.1.31] Docs:
+         Correctly document default value for useBodyEncodingForURI
+
 
 ------------------
 Catalina Bug Fixes:
@@ -884,6 +890,155 @@ Catalina Bug Fixes:
          Optimize use of database session persistence to improve scaling
          and performance.
 
+[4.1.31] #14246
+         Startup scripts
+         Make clear in error message that JDK is required
+
+[4.1.31] #26988
+         CGI Servlet
+         Remove unnecessary line feeds from stdin stream.
+
+[4.1.31] #27090
+         CGI Servlet
+         Make parameter encoding configurable. Default remains as is.
+
+[4.1.31] #14193
+         Startup and Admin webapp
+         Exceptions on startup and errors in admin webapp when default
+         context is
+ defined with loader and/or manager.
+
+[4.1.31] #10469
+         WebappClassloader
+         Fix inconsistent encoding of URLs
+
+[4.1.31] #26487
+         JNDIRealm
+         RFC 2254 done on whole string instead of just DN
+
+[4.1.31] UserDatabaseRealm
+         Provide an implementation for getName() and getPassword() which
+         are required if using CLIENT-CERT authentication
+
+[4.1.31] #27190
+         Webdav Servlet
+         Returns correct status in response to MOVE request
+
+[4.1.31] #27100
+         Webdav Servlet
+         Remove lock obsfucation functionality as it breaks a number of
+         webdav clients and does not appear to be covered by the webdav
+         spec.
+
+[4.1.31] #16323
+         Webdav Servlet
+         Lock token must be returned after lock creation.
+
+[4.1.31] #26906
+         Webdav Servlet
+         The destination path needs to be normalised after the protocol
+         and host has been removed (if present).
+
+[4.1.31] #14283
+         Sessions
+         Catch and log exceptions in listeners
+
+[4.1.31] #15572
+         Startup
+         Ensure the catalina.useNaming property is set before executing
+         the digester so the -nonaming command line option has an effect.
+
+[4.1.31] #17712
+         Startup
+         Use correct escaping (replace single ' with double '') in
+         French translations
+
+[4.1.31] #13805
+         Classloader docs
+         Update docs to show that the shared directory is relative to
+         CATALINA_BASE not CATALINA_HOME.
+
+[4.1.31] #bug 13772
+         Classloader docs
+         Add a link to the security manager how-to.
+
+[4.1.31] #17859
+         Startup
+         Provide cygwin friendly JAVA_ENDORSED_DIRS property
+
+[4.1.31] #17848
+         Default web.xml
+         Add mappings for the XHTML media type
+
+[4.1.31] #18005
+         Sssions
+         Provide a better error message if session expires during login
+         process
+
+[4.1.31] #13833
+         StandardContext
+         Start() should throw an exception if it fails.
+
+[4.1.31] #14228
+         StandardContext
+         Load on startup servlets should be loaded after AFTER_START_EVENT
+         (where environment entries are created).
+
+[4.1.31] #18079
+         StandardContext
+         Cached attribute of resources now has an effect
+
+[4.1.31] #20770
+         Admin webapp
+         workDir attribute now retain in context
+
+[4.1.31] #18369
+         JDBCStore
+         Prevent npe in StoreBase if a sql exception occurs
+
+[4.1.31] #18479
+         Session
+         Non-serializable sessions attributes are be removed so
+         valueUnbound is called
+
+[4.1.31] #18626
+         Startup
+         Make clear which file digester failed to parse
+
+[4.1.31] #19852
+         Context config
+         Don't remove application parameters on stop (only the parameters
+         specified in web.xml would get added back)
+
+[4.1.31] #17690
+         Context config
+         Display more helpful error message if docBase is invalid
+
+[4.1.31] #18294
+         Tests
+         Add spaces to expected cookie values to enable tests to pass.
+         Whitespace is allowed between tokens
+
+[4.1.31] Tests
+         Change 'asset()' to 'assertTrue()' to fix build problem on 1.4 JDK
+
+[4.1.31] #22268
+         Admin webapp
+         User password was truncated to 32 characters
+
+[4.1.31] Admin webapp
+         Fixed validation for various forms
+
+[4.1.31] #24085
+         Admin webapp
+         The group and role list disappear when using "Create New User" if
+         "save" clicked without filling in form.
+
+[4.1.31] #16507
+         Documentation
+         Update valve docs to provide pointer to the Jakarta Regexp docs
+
+
 ----------------
 Coyote Bug Fixes:
 ----------------
@@ -1432,6 +1587,41 @@ Jasper Bug Fixes:
          Parser:
          Special characters not escaped in "Unterminated ... tag" 
          error message.
+
+[4.1.31] #13960, #13961
+         Correct javadoc comments to prevent warnings during compile
+
+[4.1.31] #14359
+         Remove the last traces of the largefile option which is no longer
+         supported.
+
+[4.1.31] #19361
+         Generator
+         Nested tags with scripting variables generates invalid code
+
+[4.1.31] #16830
+         Generator
+         bodyContent content not reset when a tag is reused.
+
+[4.1.31] #18180
+         Runtime
+         jsp:getProperty should return "null" rather than "" for null objects
+
+[4.1.31] #13499
+         Runtime
+         If page output is unbuffered, illegal state exception is no longer
+         thrown on forward if and only if nothing has been written to the
+         page. The ise will still be thrown on forward if there has been any
+         unbuffered output (JSP.5.5)
+
+[4.1.31] #15754
+         Runtime
+         PageContext.setAttribute() should throw a NPE if name or object are
+         null
+
+[4.1.31] #16113
+         Servlet wrapper
+         removing then replacing a jsp page continues to give a 404
 
 
 ============================
