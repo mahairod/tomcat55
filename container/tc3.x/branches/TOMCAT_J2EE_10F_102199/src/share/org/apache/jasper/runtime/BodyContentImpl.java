@@ -503,6 +503,11 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void clear() throws IOException {
+        synchronized (lock) {
+            cb = new char [Constants.DEFAULT_BUFFER_SIZE];
+	    bufferSize = Constants.DEFAULT_BUFFER_SIZE;
+	    nextChar = 0;
+	}
     }
 
     /**
@@ -515,19 +520,7 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void clearBuffer() throws IOException {
-    }
-
-    /**
-     * Flush the stream.  If the stream has saved any characters from the
-     * various write() methods in a buffer, write them immediately to their
-     * intended destination.  Then, if that destination is another character or
-     * byte stream, flush it.  Thus one flush() invocation will flush all the
-     * buffers in a chain of Writers and OutputStreams.
-     *
-     * @exception  IOException  If an I/O error occurs
-     */
-
-    public void flush()  throws IOException {
+        this.clear();
     }
 
     /**
@@ -539,6 +532,9 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void close() throws IOException {
+        synchronized (lock) {
+	    cb = null;	
+	}
     }
 
     /**
@@ -587,19 +583,12 @@ public class BodyContentImpl extends BodyContent {
      * @param out The writer into which to place the contents of
      * this body evaluation
      */
-    public void writeOut(Writer out) {
-	try {
-            out.write (cb);
-	} catch (IOException ioe) {
-	    //What do we do here???	
-	}
+    public void writeOut(Writer out) throws IOException {
+        out.write (cb);
+	//Flush not called as the writer passed could be a BodyContent and
+	//it doesn't allow to flush.
     }
 
-    public void clearBody() {
-        nextChar = 0;
-	cb = null;
-	bufferSize = Constants.DEFAULT_BUFFER_SIZE;
-    }
 
     public static void main (String[] args) throws Exception {
 	char[] buff = {'f','o','o','b','a','r','b','a','z','y'};
