@@ -4,15 +4,12 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.naming.NamingException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
-import javax.naming.directory.InitialDirContext;
 
 /**
  * Demonstration of the web application environment support.

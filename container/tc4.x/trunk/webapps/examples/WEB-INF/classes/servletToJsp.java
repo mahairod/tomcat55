@@ -1,4 +1,3 @@
-import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class servletToJsp extends HttpServlet {
