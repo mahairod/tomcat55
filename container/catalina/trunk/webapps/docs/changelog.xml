@@ -13,6 +13,61 @@
 
 <body>
 
+<section name="Tomcat 5.0.9 (remm)">
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <fix>
+      Fix bug where no sttic resource over 512 bytes would get cached 
+      by default (remm)
+      </fix>
+      <fix>
+      Ensure uniqueness of patterns across all servlets, so that it is possible
+      to reliably override the servlets defined in the default configuration
+      (remm)
+      </fix>
+      <fix>
+      Fix and improve static resource cache space allocation algorithm (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <fix>
+      Revert a patch on CoyoteConnector causing a performance regression (remm)
+      </fix>
+      <fix>
+      When mapping to the default servlet, or mapping to a physical welcome 
+      file, String representation of the path is available, which saves some
+      object creation (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      Disable tag pooling when a JSP uses "extends", to avoid NPE when the pool
+      was accessed (luehe)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.8 (remm)">
 
   <subsection name="General">
