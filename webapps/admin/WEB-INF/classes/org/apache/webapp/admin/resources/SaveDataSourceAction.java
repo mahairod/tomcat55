@@ -72,6 +72,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -186,8 +187,31 @@ public final class SaveDataSourceAction extends Action {
             ObjectName oname = null;
 
             try {
+            
+                if (resourcetype.equals("Global")) {
+                    oname = new ObjectName( domain + ResourceUtils.RESOURCE_TYPE + 
+                                            ResourceUtils.GLOBAL_TYPE + 
+                                            ",class=" + params[1] + 
+                                            ",name=" + params[0]);
+                } else if (resourcetype.equals("Context")) {
+                    oname = new ObjectName( domain + ResourceUtils.RESOURCE_TYPE + 
+                                            ResourceUtils.CONTEXT_TYPE + 
+                                            ",path=" + path + ",host=" + host + 
+                                            ",class=" + params[1] + 
+                                            ",name=" + params[0]);
+                }
+                    
+                if (mserver.isRegistered(oname)) {
+                    ActionErrors errors = new ActionErrors();
+                    errors.add("jndiName",
+                               new ActionError("resources.invalid.name"));
+                    saveErrors(request, errors);
+                    return (new ActionForward(mapping.getInput()));
+                }        
+                
                 oname = ResourceUtils.getNamingResourceObjectName(domain,
-                            resourcetype, path, host);
+                            resourcetype, path, host);                                
+                            
                 // Create the new object and associated MBean
                 objectName = (String) mserver.invoke(oname, "addResource",
                                                      params, signature);
