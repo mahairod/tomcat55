@@ -2,7 +2,7 @@
 rem build.bat -- Build Script for the "Hello, World" Application
 rem $Id$
 
-if %CLASSPATH% == "" goto noclasspath
+if "%CLASSPATH%" == "" goto noclasspath
 
 :haveclasspath
 set _CLASSPATH=%CLASSPATH%
