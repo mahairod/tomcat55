@@ -269,7 +269,21 @@ public class PageContextImpl extends PageContext {
     }
 
     public Object findAttribute(String name) {
-        return getAttribute(name, getAttributesScope(name));
+        Object o = attributes.get(name);
+        if (o != null)
+            return o;
+
+        o = request.getAttribute(name);
+        if (o != null)
+            return o;
+
+        if (session != null) {
+            o = session.getAttribute(name);
+            if (o != null)
+                return o;
+        }
+        
+        return context.getAttribute(name);
     }
 
 
