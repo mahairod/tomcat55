@@ -632,6 +632,10 @@
                type="java.lang.String"
                writeable="false"/>
 
+    <attribute name="objectName"
+               description="Name of the object"
+               type="java.lang.String"/>
+
     <operation name="findMappings"
                description="Return the mappings associated with this wrapper"
                impact="INFO"
