@@ -112,6 +112,7 @@ class JspDocumentParser extends DefaultHandler
     private ErrorDispatcher err;
     private boolean isTagFile;
     private boolean directivesOnly;
+    private boolean isTop;
 
     /*
      * Constructor
@@ -130,6 +131,7 @@ class JspDocumentParser extends DefaultHandler
 	this.inputSource = new InputSource(reader);
 	this.isTagFile = isTagFile;
 	this.directivesOnly = directivesOnly;
+	this.isTop = true;
     }
 
     /*
@@ -161,6 +163,7 @@ class JspDocumentParser extends DefaultHandler
 		handler.addInclude(jspRoot,
 				   handler.pageInfo.getIncludePrelude());
 	    } else {
+		handler.isTop = false;
 		handler.current = parent;
 	    }
 
@@ -228,6 +231,9 @@ class JspDocumentParser extends DefaultHandler
             // (attrs) instead of the copy without the xmlns: elements 
             // (attrsCopy)
 	    node = new Node.JspRoot(new AttributesImpl(attrs), start, current);
+	    if (isTop) {
+		pageInfo.setHasJspRoot(true);
+	    }
 	} else if (qName.equals(JSP_PAGE_DIRECTIVE)) {
 	    if (isTagFile) {
 		throw new SAXParseException(

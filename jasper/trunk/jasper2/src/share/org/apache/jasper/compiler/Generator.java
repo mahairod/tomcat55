@@ -544,6 +544,18 @@ class Generator {
     }
 
     /**
+     * Generates a XML declaration
+     */
+    private void generateXmlDeclaration(Node.Nodes page) {
+	if (page.getRoot().isXmlSyntax() && ! pageInfo.hasJspRoot()) {
+	    String cType = pageInfo.getContentType();
+	    String charSet = cType.substring(cType.indexOf("charset=")+8);
+	    out.printil("out.write(\"<?xml version=\\\"1.0\\\" encoding=\\\"" +
+		charSet + "\\\"?>\\n\");");
+	}
+    }
+
+    /**
      * Generates EL Function map section
      */
     private void generateELFunctionMap() 
@@ -2840,6 +2852,7 @@ class Generator {
 	    gen.generateTagHandlerPostamble(  tagInfo );
 	} else {
 	    gen.generatePreamble(page);
+	    gen.generateXmlDeclaration(page);
 	    gen.fragmentHelperClass.generatePreamble();
 	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(),
 					       out,

@@ -97,6 +97,7 @@ class PageInfo {
     private boolean isXmlSpecified = false;	// true is there is a is-xml
 						// element in jsp-config
     private boolean hasTagFile = false;		// A custom tag is a tag file
+    private boolean hasJspRoot = false;
     private Vector includePrelude;
     private Vector includeCoda;
 
@@ -297,5 +298,13 @@ class PageInfo {
 
     public boolean hasTagFile() {
 	return hasTagFile;
+    }
+
+    public void setHasJspRoot(boolean s) {
+	hasJspRoot = s;
+    }
+
+    public boolean hasJspRoot() {
+	return hasJspRoot;
     }
 }
