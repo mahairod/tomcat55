@@ -417,7 +417,14 @@ public class TreeControlTag extends TagSupport {
             if (hyperlink != null) {
                 out.print("<a href=\"");
                 out.print(hyperlink);
-                out.print("\">");
+                out.print("\"");
+                String target = node.getTarget();
+                if(target != null) {
+                    out.print(" target=\"");
+                    out.print(target);
+                    out.print("\"");
+                }
+                out.print(">");
             }
             out.print("<img src=\"");
             out.print(images);
@@ -440,11 +447,12 @@ public class TreeControlTag extends TagSupport {
                 out.print("<a href=\"");
                 out.print(hyperlink);
                 out.print("\"");
-
                 String target = node.getTarget();
-                if(target != null)
-                    out.print(" Target=\"" + target + "\"");
-
+                if(target != null) {
+                    out.print(" target=\"");
+                    out.print(target);
+                    out.print("\"");
+                }
                 if (labelStyle != null) {
                     out.print(" class=\"");
                     out.print(labelStyle);
