@@ -555,16 +555,16 @@ public class StandardSession
             return false;
         }
 
+        if (accessCount > 0) {
+            return true;
+        }
+
         if (maxInactiveInterval >= 0) { 
             long timeNow = System.currentTimeMillis();
             int timeIdle = (int) ((timeNow - thisAccessedTime) / 1000L);
             if (timeIdle >= maxInactiveInterval) {
                 expire(true);
             }
-        }
-
-        if (accessCount > 0) {
-            return true;
         }
 
         return (this.isValid);
