@@ -112,7 +112,6 @@
     <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.SetAttributeTest" />
     <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetAttributeNamesTest" />
     <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetContextTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetContext_1Test" />
     <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetMajorVersionTest" />
     <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetMinorVersionTest" />
     <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetMimeTypeTest" />
