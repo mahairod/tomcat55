@@ -146,18 +146,18 @@ class Validator {
 		String value = attrs.getValue(i);
 
 		if ("language".equals(attr)) {
-		    if (pageInfo.getLanguage() == null) {
+		    if (pageInfo.getLanguage(false) == null) {
 			pageInfo.setLanguage(value, n, err, true);
-		    } else if (!pageInfo.getLanguage().equals(value)) {
+		    } else if (!pageInfo.getLanguage(false).equals(value)) {
 			err.jspError(n, "jsp.error.page.conflict.language",
-				     pageInfo.getLanguage(), value);
+				     pageInfo.getLanguage(false), value);
 		    }
 		} else if ("extends".equals(attr)) {
-		    if (pageInfo.getExtends() == null) {
+		    if (pageInfo.getExtends(false) == null) {
 			pageInfo.setExtends(value, n);
-		    } else if (!pageInfo.getExtends().equals(value)) {
+		    } else if (!pageInfo.getExtends(false).equals(value)) {
 			err.jspError(n, "jsp.error.page.conflict.extends",
-				     pageInfo.getExtends(), value);
+				     pageInfo.getExtends(false), value);
 		    }
 		} else if ("contentType".equals(attr)) {
 		    if (pageInfo.getContentType() == null) {
@@ -260,11 +260,11 @@ class Validator {
 		String value = attrs.getValue(i);
 
 		if ("language".equals(attr)) {
-		    if (pageInfo.getLanguage() == null) {
+		    if (pageInfo.getLanguage(false) == null) {
 			pageInfo.setLanguage(value, n, err, false);
-		    } else if (!pageInfo.getLanguage().equals(value)) {
+		    } else if (!pageInfo.getLanguage(false).equals(value)) {
 			err.jspError(n, "jsp.error.tag.conflict.language",
-				     pageInfo.getLanguage(), value);
+				     pageInfo.getLanguage(false), value);
 		    }
 		} else if ("isELIgnored".equals(attr)) {
 		    if (pageInfo.getIsELIgnored() == null) {

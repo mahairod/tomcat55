@@ -81,8 +81,10 @@ class PageInfo {
     private HashMap taglibsMap;
     private HashMap jspPrefixMapper;
     private HashMap xmlPrefixMapper;
-    private String language = "java";
-    private String xtends = Constants.JSP_SERVLET_BASE;
+    private String defaultLanguage = "java";
+    private String language;
+    private String defaultExtends = Constants.JSP_SERVLET_BASE;
+    private String xtends;
     private String contentType = null;
     private String session;
     private boolean isSession = true;
@@ -419,8 +421,12 @@ class PageInfo {
 	language = value;
     }
 
+    public String getLanguage(boolean useDefault) {
+	return (language == null && useDefault ? defaultLanguage : language);
+    }
+
     public String getLanguage() {
-	return language;
+	return getLanguage(true);
     }
 
 
@@ -440,8 +446,12 @@ class PageInfo {
 	    n.addImport(value);
     }
 
+    public String getExtends(boolean useDefault) {
+	return (xtends == null && useDefault ? defaultExtends : xtends);
+    }
+
     public String getExtends() {
-	return xtends;
+	return getExtends(true);
     }
 
 
