@@ -283,15 +283,16 @@
                   mcastPort="45564"
                   mcastFrequency="500"
                   mcastDropTime="3000"
-                  tcpThreadCount="2"
+                  tcpThreadCount="6"
                   tcpListenAddress="auto"
                   tcpListenPort="4001"
                   tcpSelectorTimeout="100"
                   printToScreen="false"
                   expireSessionsOnShutdown="false"
                   useDirtyFlag="true"
-                  replicationMode="synchronous"
+                  replicationMode="pooled"
         />
+
         -->
         <!--
             When configuring for clustering, you also add in a valve to catch all the requests
