@@ -75,7 +75,7 @@
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditContext.do?select=" +
-                         java.net.URLEncoder.encode(context.toString()) %>'>
+                         java.net.URLEncoder.encode(context.toString(),"UTF-8") %>'>
                 <controls:attribute name="context" attribute="path"/>
               </html:link>
             </div></td>

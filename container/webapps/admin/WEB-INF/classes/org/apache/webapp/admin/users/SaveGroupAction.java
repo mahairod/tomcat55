@@ -45,7 +45,7 @@ import javax.management.MBeanOperationInfo;
 import javax.management.MBeanInfo;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
-
+import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
  * <p>Implementation of <strong>Action</strong> that saves a new or
@@ -86,7 +86,7 @@ public final class SaveGroupAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -116,7 +116,7 @@ public final class SaveGroupAction extends Action {
         // Perform any extra validation that is required
         GroupForm groupForm = (GroupForm) form;
         String databaseName =
-            URLDecoder.decode(groupForm.getDatabaseName());
+            URLDecoder.decode(groupForm.getDatabaseName(),TomcatTreeBuilder.URL_ENCODING);
         String objectName = groupForm.getObjectName();
 
         // Perform an "Add Group" transaction

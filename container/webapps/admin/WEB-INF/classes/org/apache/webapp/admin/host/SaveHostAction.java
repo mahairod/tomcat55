@@ -99,7 +99,7 @@ public final class SaveHostAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -179,7 +179,7 @@ public final class SaveHostAction extends Action {
                             resources.getMessage(locale, "server.service.treeBuilder.host") +
                             " (" + hform.getHostName() + ")";
                         String encodedName =
-                            URLEncoder.encode(hObjectName);
+                            URLEncoder.encode(hObjectName,TomcatTreeBuilder.URL_ENCODING);
                         TreeControlNode childNode =
                             new TreeControlNode(hObjectName,
                                                 "Host.gif",

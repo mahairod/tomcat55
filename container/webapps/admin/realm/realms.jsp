@@ -70,7 +70,7 @@
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditRealm.do?select=" +
-                         java.net.URLEncoder.encode(realm.toString()) %>'>
+                         java.net.URLEncoder.encode(realm.toString(),"UTF-8") %>'>
                 <controls:attribute name="realm" attribute="className"/>
               </html:link>
             </div></td>

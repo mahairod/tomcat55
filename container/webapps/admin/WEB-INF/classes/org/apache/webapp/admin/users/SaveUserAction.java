@@ -45,7 +45,7 @@ import javax.management.MBeanOperationInfo;
 import javax.management.MBeanInfo;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
-
+import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
  * <p>Implementation of <strong>Action</strong> that saves a new or
@@ -86,7 +86,7 @@ public final class SaveUserAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -116,7 +116,7 @@ public final class SaveUserAction extends Action {
         // Perform any extra validation that is required
         UserForm userForm = (UserForm) form;
         String databaseName =
-            URLDecoder.decode(userForm.getDatabaseName());
+            URLDecoder.decode(userForm.getDatabaseName(),TomcatTreeBuilder.URL_ENCODING);
         String objectName = userForm.getObjectName();
 
         // Perform an "Add User" transaction

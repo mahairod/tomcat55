@@ -39,13 +39,13 @@
               ---------------------------------
             </controls:action>
             <controls:action url='<%= "/users/setUpUser.do?databaseName=" +
-            URLEncoder.encode(request.getParameter("databaseName")) %>'>
+            URLEncoder.encode(request.getParameter("databaseName"),"UTF-8") %>'>
                 <bean:message key="users.actions.user.create"/>
             </controls:action>
 
             <controls:action url='<%= "/users/listUsers.do?databaseName=" +
-                URLEncoder.encode(request.getParameter("databaseName")) +
-                "&forward=" + URLEncoder.encode("Users Delete List") %>'>
+                URLEncoder.encode(request.getParameter("databaseName"),"UTF-8") +
+                "&forward=" + URLEncoder.encode("Users Delete List","UTF-8") %>'>
                 <bean:message key="users.actions.user.delete"/>
             </controls:action>
          </controls:actions>

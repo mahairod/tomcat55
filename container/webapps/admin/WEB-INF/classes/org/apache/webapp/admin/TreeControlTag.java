@@ -348,7 +348,7 @@ public class TreeControlTag extends TagSupport {
         // in the node name, could remove this code if encode URL
         // and later request.getParameter() could deal with = and &
         // character in parameter values. 
-        String encodedNodeName = URLEncoder.encode(node.getName());
+        String encodedNodeName = URLEncoder.encode(node.getName(),TomcatTreeBuilder.URL_ENCODING);
 
         String action = replace(getAction(), "${name}", encodedNodeName);
 

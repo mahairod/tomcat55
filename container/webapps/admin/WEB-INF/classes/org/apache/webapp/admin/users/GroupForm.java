@@ -24,7 +24,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.webapp.admin.ApplicationServlet;
-
+import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
  * Form bean for the individual group page.
@@ -133,7 +133,7 @@ public final class GroupForm extends BaseForm {
          
             // Set up beans containing all possible groups and roles
             String databaseName =
-                URLDecoder.decode(request.getParameter("databaseName"));
+                URLDecoder.decode(request.getParameter("databaseName"),TomcatTreeBuilder.URL_ENCODING);
             request.setAttribute("rolesForm",
                                  UserUtils.getRolesForm(mserver,
                                                         databaseName));

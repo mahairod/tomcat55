@@ -46,8 +46,8 @@
             <controls:action> --------------------------------- </controls:action>
             <logic:notEqual name="remoteHostValveForm" property="adminAction" value="Create">
              <controls:action url='<%= "/DeleteValve.do?"  +
-                                 "select=" + URLEncoder.encode(thisObjectName) +
-                                 "&parent="+ URLEncoder.encode(thisParentName) %>'>
+                                 "select=" + URLEncoder.encode(thisObjectName,"UTF-8") +
+                                 "&parent="+ URLEncoder.encode(thisParentName,"UTF-8") %>'>
                 <bean:message key="actions.valves.delete"/>
               </controls:action>
               </logic:notEqual>
