@@ -1181,7 +1181,7 @@
 
         <sequential>
             <!-- Let tomcat starts before starting Tester -->
-            <sleep seconds="15"/>
+            <sleep seconds="8"/>
 
             <ant dir="${catalina.home}/tester/dist/bin" antfile="tester.xml" 
                  target="all">
