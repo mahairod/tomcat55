@@ -631,7 +631,7 @@ Section Uninstall
   ; if $INSTDIR was removed, skip these next ones
   IfFileExists "$INSTDIR" 0 Removed 
     MessageBox MB_YESNO|MB_ICONQUESTION \
-      "Remove all files in your Tomcat 5.5 directory? (If you have anything \
+      "Remove all files in your Tomcat 5.5 directory? (If you have anything  \
  you created that you want to keep, click No)" IDNO Removed
     RMDir /r "$INSTDIR\webapps\ROOT" ; this would be skipped if the user hits no
     RMDir "$INSTDIR\webapps"
