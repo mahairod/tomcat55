@@ -87,6 +87,7 @@ public class JspReader {
     protected char stream[] = null;
     protected Mark current  = null;
     String master = null;
+    String parent = null;
 
     Vector sourceFiles = new Vector();
     Stack includeStack;
@@ -103,17 +104,23 @@ public class JspReader {
     class IncludeState {
 	Mark current;
 	char stream[] = null;
+	String parent;
 
 	void restore() {
 	    JspReader.this.current = current;
 	    JspReader.this.stream = stream;
+	    JspReader.this.parent = parent;
 	}
 	
 	IncludeState() {
 	    this.current = JspReader.this.current;
 	    this.stream = JspReader.this.stream;
+	    this.parent = JspReader.this.parent;
 	}
 
+	public String getParent() {
+	    return this.parent;
+	}
     }
 
     public String getFile(int fileid) {
@@ -141,17 +148,32 @@ public class JspReader {
     public void pushFile(String name, String encoding) 
 	throws ParseException, FileNotFoundException
     {
-        String parent = master == null ?
-            null : master.substring(0, master.lastIndexOf("/") + 1);
-        boolean isAbsolute = name.startsWith("/");
+	boolean isAbsolute = name.startsWith("/");
+	String filePath = null;
+	String filePrefix = null;
 
-        if (parent == null || isAbsolute)
+	// Use "parent" first.
+	if (includeStack != null && includeStack.size() != 0) 
+	    filePath =  ((IncludeState)includeStack.peek()).getParent();
+
+	// If "parent" is null then use "master"
+	if (filePath == null) {
+	    if (master == null) master = name;
+	    filePath = master;
+	}
+	
+	filePrefix = filePath.substring(0, filePath.lastIndexOf("/") + 1);
+	
+	// Set the parent so that the state can be captured correctly.
+	if (isAbsolute)
+	    this.parent = name;
+	else
+	    this.parent = filePrefix + name;
+
+        if (filePath == null || isAbsolute)
             pushFile(new File(name), encoding);
         else
-            pushFile(new File(parent + name), encoding);
-
-        if (master == null)
-            master = name;
+            pushFile(new File(filePrefix + name), encoding);
     }
 
     /**
@@ -200,12 +222,11 @@ public class JspReader {
 	    this.stream = caw.toCharArray();
 	    this.current = new Mark(this, fileid);
 	    // Prepare a new include state:
-	    if (includeStack == null) {
-		// Initial file, prepare for include files:
+	    if (includeStack == null)
 		includeStack = new Stack();
-	    } else {
-		includeStack.push(state);
-	    }
+
+	    includeStack.push(state);
+
         } catch (FileNotFoundException fnfe) {
             throw fnfe;
 	} catch (Throwable ex) {
@@ -227,15 +248,16 @@ public class JspReader {
 	// missing.
 	if(includeStack == null) 
 		return false;
-
-	// Any thing left ?
-	if ( includeStack.size() == 0 )
-	    return false;
+	
 	// Restore parser state:
 	size--;
 	IncludeState state = (IncludeState) includeStack.pop();
-	//	System.out.println("Popping back... "+state.current);
 	state.restore();
+	
+	// Any thing left ?
+	if ( includeStack.size() == 0 ) 
+	    return false;
+	
 	return true;
     }
 	

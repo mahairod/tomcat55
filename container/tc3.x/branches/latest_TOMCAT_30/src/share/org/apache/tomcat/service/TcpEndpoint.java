@@ -235,7 +235,7 @@ public class TcpEndpoint  { // implements Endpoint {
 	// XXX reuse, pools, etc
 
 	// XXX set socket options
-	// 	s.setSoLinger( true, 100);
+	s.setSoLinger( true, 100);
 	
 	TcpConnection con=new TcpConnection();
 	con.setEndpoint(this);
@@ -252,6 +252,7 @@ public class TcpEndpoint  { // implements Endpoint {
 	    if (running == false) {
 		socket.close();  // rude, but unlikely!
 	    }
+	    socket.setTcpNoDelay(true);
 	    processSocket(socket);
 	} catch (InterruptedIOException iioe) {
 	    // normal part -- should happen regularly so
