@@ -697,8 +697,10 @@
     <copy tofile="${catalina.deploy}/server/lib/tomcat-ajp.jar"
             file="${tomcat-jk2.jar}"/>
     -->
+  	<!--
     <copy todir="${catalina.deploy}/conf"
            file="${jk2.properties}"/>
+    -->
 
   </target>
 
@@ -1017,43 +1019,11 @@
       </fileset>
     </jar>
 
-    <!-- Naming - Common JAR File -->
-    <jar jarfile="${catalina.deploy}/common/lib/naming-common.jar"
-         index="true">
-      <fileset dir="${classes.dir}">
-        <include name="org/apache/naming/*" />
-        <include name="org/apache/naming/factory/Constants.class" />
-        <include name="org/apache/naming/factory/ResourceLinkFactory.class" />
-        <exclude name="org/apache/naming/java/*" />
-<!--
-        <exclude name="org/apache/naming/JndiPermission.class" />
--->
-
-        <!-- Javadoc and i18n exclusions -->
-        <exclude name="**/package.html" />
-        <exclude name="**/LocalStrings_*" />
-
-      </fileset>
-    </jar>
-
-    <!-- Naming - Java: namespace. It shouldn't be included if tomcat is used inside a different
-         container that provides this ns -->
-    <jar jarfile="${catalina.deploy}/common/lib/naming-java.jar" index="true">
-      <fileset dir="${classes.dir}">
-        <include name="org/apache/naming/java/*" />
-        <!-- Javadoc and i18n exclusions -->
-        <exclude name="**/package.html" />
-        <exclude name="**/LocalStrings_*" />
-      </fileset>
-    </jar>
-
-
     <!-- Naming - Factory JAR File -->
     <jar jarfile="${catalina.deploy}/common/lib/naming-factory.jar" index="true">
       <fileset dir="${classes.dir}">
+        <include name="org/apache/naming/*" />
         <include name="org/apache/naming/factory/**" />
-        <exclude name="org/apache/naming/factory/Constants.class" />
-        <exclude name="org/apache/naming/factory/ResourceLinkFactory.class" />
         <!-- Javadoc and i18n exclusions -->
         <exclude name="**/package.html" />
         <exclude name="**/LocalStrings_*" />
@@ -1061,7 +1031,7 @@
     </jar>
 
     <!-- Naming - Resources JAR File -->
-    <jar jarfile="${catalina.deploy}/common/lib/naming-resources.jar" index="true">
+    <jar jarfile="${catalina.deploy}/server/lib/naming-resources.jar" index="true">
       <fileset dir="${classes.dir}">
         <include name="org/apache/naming/JndiPermission.class" />
       	<include name="org/apache/naming/NameParserImpl.class" />
