@@ -97,7 +97,7 @@ import java.sql.*;
  * @author Carson McDonald
  */
 
-public final class JDBCRealm 
+public class JDBCRealm 
     extends RealmBase {
 
 
