@@ -76,13 +76,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import org.apache.naming.resources.ResourceAttributes;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.core.StandardHost;
@@ -94,11 +99,12 @@ import org.apache.catalina.util.StringManager;
  * of that Host, and the associated defined contexts.
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
-public final class HostConfig
-    implements LifecycleListener {
+public class HostConfig
+    implements LifecycleListener, Runnable {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -107,32 +113,63 @@ public final class HostConfig
     /**
      * The Java class name of the Context configuration class we should use.
      */
-    private String configClass = "org.apache.catalina.startup.ContextConfig";
+    protected String configClass = "org.apache.catalina.startup.ContextConfig";
 
 
     /**
      * The Java class name of the Context implementation we should use.
      */
-    private String contextClass = "org.apache.catalina.core.StandardContext";
+    protected String contextClass = "org.apache.catalina.core.StandardContext";
 
 
     /**
      * The debugging detail level for this component.
      */
-    private int debug = 0;
+    protected int debug = 0;
 
 
     /**
      * The Host we are associated with.
      */
-    private Host host = null;
+    protected Host host = null;
 
 
     /**
      * The string resources for this package.
      */
-    private static final StringManager sm =
+    protected static final StringManager sm =
         StringManager.getManager(Constants.Package);
+
+
+    /**
+     * The number of seconds between checks for web app deployment.
+     */
+    private int checkInterval = 15;
+
+
+    /**
+     * The background thread.
+     */
+    private Thread thread = null;
+
+
+    /**
+     * The background thread completion semaphore.
+     */
+    private boolean threadDone = false;
+
+
+    /**
+     * Name to register for the background thread.
+     */
+    private String threadName = "HostConfig";
+
+
+    /**
+     * Last modified dates of the web.xml files of the contexts, keyed by
+     * context name.
+     */
+    private HashMap webXmlLastModified = new HashMap();
 
 
     // ------------------------------------------------------------- Properties
@@ -236,14 +273,14 @@ public final class HostConfig
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // ------------------------------------------------------ Protected Methods
 
 
     /**
      * Return a File object representing the "application root" directory
      * for our associated Host.
      */
-    private File appBase() {
+    protected File appBase() {
 
         File file = new File(host.getAppBase());
         if (!file.isAbsolute())
@@ -258,7 +295,7 @@ public final class HostConfig
      * Deploy applications for any directories or WAR files that are found
      * in our "application root" directory.
      */
-    private void deployApps() {
+    protected void deployApps() {
 
         if (!(host instanceof Deployer))
             return;
@@ -334,13 +371,67 @@ public final class HostConfig
     }
 
 
+    /**
+     * Check deployment descriptors last modified date.
+     */
+    protected void checkWebXmlLastModified() {
+
+        if (!(host instanceof Deployer))
+            return;
+
+        Deployer deployer = (Deployer) host;
+
+        String[] contextNames = deployer.findDeployedApps();
+
+        for (int i = 0; i < contextNames.length; i++) {
+
+            String contextName = contextNames[i];
+            Context context = deployer.findDeployedApp(contextName);
+
+            if (!context.getReloadable())
+                continue;
+
+            if (!(context instanceof Lifecycle))
+                continue;
+
+            try {
+                DirContext resources = context.getResources();
+                ResourceAttributes webXmlAttributes = 
+                    (ResourceAttributes) 
+                    resources.getAttributes("/WEB-INF/web.xml");
+                long newLastModified = webXmlAttributes.getLastModified();
+                Long lastModified = (Long) webXmlLastModified.get(contextName);
+                if (lastModified == null) {
+                    webXmlLastModified.put
+                        (contextName, new Long(newLastModified));
+                } else {
+                    if (lastModified.longValue() != newLastModified) {
+                        webXmlLastModified.remove(contextName);
+                        ((Lifecycle) context).stop();
+                        // Note: If the context was already stopped, a 
+                        // Lifecycle exception will be thrown, and the context
+                        // won't be restarted
+                        ((Lifecycle) context).start();
+                    }
+                }
+            } catch (LifecycleException e) {
+                ; // Ignore
+            } catch (NamingException e) {
+                ; // Ignore
+            }
+
+        }
+
+    }
+
+
 
     /**
      * Log a message on the Logger associated with our Host (if any)
      *
      * @param message Message to be logged
      */
-    private void log(String message) {
+    protected void log(String message) {
 
         Logger logger = null;
         if (host != null)
@@ -360,7 +451,7 @@ public final class HostConfig
      * @param message Message to be logged
      * @param throwable Associated exception
      */
-    private void log(String message, Throwable throwable) {
+    protected void log(String message, Throwable throwable) {
 
         Logger logger = null;
         if (host != null)
@@ -381,12 +472,12 @@ public final class HostConfig
     /**
      * Process a "start" event for this Host.
      */
-    private void start() {
+    protected void start() {
 
         if (debug >= 1)
             log(sm.getString("hostConfig.start"));
 
-        deployApps();
+        threadStart();
 
     }
 
@@ -394,10 +485,12 @@ public final class HostConfig
     /**
      * Process a "stop" event for this Host.
      */
-    private void stop() {
+    protected void stop() {
 
         if (debug >= 1)
             log(sm.getString("hostConfig.stop"));
+
+        threadStop();
 
         undeployApps();
 
@@ -407,7 +500,7 @@ public final class HostConfig
     /**
      * Undeploy all deployed applications.
      */
-    private void undeployApps() {
+    protected void undeployApps() {
 
         if (!(host instanceof Deployer))
             return;
@@ -425,6 +518,101 @@ public final class HostConfig
                                  contextPaths[i]), t);
             }
         }
+
+    }
+
+
+    /**
+     * Start the background thread that will periodically check for
+     * session timeouts.
+     *
+     * @exception IllegalStateException if we should not be starting
+     *  a background thread now
+     */
+    protected void threadStart() {
+
+        // Has the background thread already been started?
+        if (thread != null)
+            return;
+
+        // Start the background thread
+        if (debug >= 1)
+            log(" Starting background thread");
+        threadDone = false;
+        threadName = "HostConfig[" + host.getName() + "]";
+        thread = new Thread(this, threadName);
+        thread.setDaemon(true);
+        thread.start();
+
+    }
+
+
+    /**
+     * Stop the background thread that is periodically checking for
+     * modified classes.
+     */
+    protected void threadStop() {
+
+        if (thread == null)
+            return;
+
+        if (debug >= 1)
+            log(" Stopping background thread");
+        threadDone = true;
+        thread.interrupt();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            ;
+        }
+
+        thread = null;
+
+    }
+
+
+    /**
+     * Sleep for the duration specified by the <code>checkInterval</code>
+     * property.
+     */
+    protected void threadSleep() {
+
+        try {
+            Thread.sleep(checkInterval * 1000L);
+        } catch (InterruptedException e) {
+            ;
+        }
+
+    }
+
+
+    // ------------------------------------------------------ Background Thread
+
+
+    /**
+     * The background thread that checks for session timeouts and shutdown.
+     */
+    public void run() {
+
+        if (debug >= 1)
+            log("BACKGROUND THREAD Starting");
+
+        // Loop until the termination semaphore is set
+        while (!threadDone) {
+
+            // Deploy apps
+            deployApps();
+
+            // Check for web.xml modification
+            checkWebXmlLastModified();
+
+            // Wait for our check interval
+            threadSleep();
+
+        }
+
+        if (debug >= 1)
+            log("BACKGROUND THREAD Stopping");
 
     }
 
