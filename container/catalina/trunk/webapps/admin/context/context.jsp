@@ -43,18 +43,9 @@
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action disabled="true"> --------------------------------- </controls:action>
             <logic:notEqual name="contextForm" property="adminAction" value="Create">
-            <controls:action url='<%= "/AddLogger.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
-                <bean:message key="actions.loggers.create"/>
-            </controls:action>
-            <controls:action url='<%= "/DeleteLogger.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
-                <bean:message key="actions.loggers.deletes"/>
-            </controls:action>
             <%-- cannot delete or add the realm of the context of the admin app --%>
             <logic:notEqual name="contextForm" property="path"
                             value='<%= request.getContextPath() %>'>
-            <controls:action disabled="true"> ------------------------------------- </controls:action>
             <controls:action url='<%= "/AddRealm.do?parent=" +
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.realms.create"/>
@@ -127,17 +118,6 @@
                      <bean:define id="booleanVals" name="contextForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
-                </html:select>
-            </controls:data>
-        </controls:row>
-
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
-            <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
-            <controls:data>
-               <html:select property="debugLvl" styleId="debuglevel">
-                     <bean:define id="debugLvlVals" name="contextForm" property="debugLvlVals"/>
-                     <html:options collection="debugLvlVals" property="value"
-                        labelProperty="label"/>
                 </html:select>
             </controls:data>
         </controls:row>
@@ -259,17 +239,6 @@
             </controls:data>
         </controls:row--%>
 
-      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debugLvlVals">
-            <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
-            <controls:data>
-               <html:select property="ldrDebugLvl" styleId="debugLvlVals">
-                     <bean:define id="debugLvlVals" name="contextForm" property="debugLvlVals"/>
-                     <html:options collection="debugLvlVals" property="value"
-                        labelProperty="label"/>
-                </html:select>
-            </controls:data>
-        </controls:row>
-
       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="reloadable">
             <controls:label><bean:message key="context.reloadable"/>:</controls:label>
             <controls:data>
@@ -309,17 +278,6 @@
                 <html:text property="mgrCheckInterval" size="5" styleId="checkInterval"/>
             </controls:data>
         </controls:row--%>
-
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
-            <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
-            <controls:data>
-               <html:select property="mgrDebugLvl" styleId="debuglevel">
-                     <bean:define id="debugLvlVals" name="contextForm" property="debugLvlVals"/>
-                     <html:options collection="debugLvlVals" property="value"
-                        labelProperty="label"/>
-                </html:select>
-            </controls:data>
-        </controls:row>
 
        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="sessionId">
             <controls:label><bean:message key="context.sessionId"/>:</controls:label>

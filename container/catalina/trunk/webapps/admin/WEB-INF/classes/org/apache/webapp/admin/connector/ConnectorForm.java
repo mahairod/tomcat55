@@ -98,11 +98,6 @@ public final class ConnectorForm extends ActionForm {
     private String connUploadTimeOutText = null;
     
     /**
-     * The text for the debug level.
-     */
-    private String debugLvl = "0";
-    
-    /**
      * The text for the buffer size.
      */
     private String bufferSizeText = null;
@@ -227,11 +222,6 @@ public final class ConnectorForm extends ActionForm {
      * The text for the Ssl Protocol.
      */
     private String sslProtocol= null;
-    
-    /**
-     * Set of valid values for debug level.
-     */
-    private List debugLvlVals = null;
     
     /*
      * Represent boolean (true, false) values for enableLookups etc.
@@ -659,44 +649,6 @@ public final class ConnectorForm extends ActionForm {
 
         this.sslProtocol = sslProtocol;
 
-    }
-    
-    /**
-     * Return the debugVals.
-     */
-    public List getDebugLvlVals() {
-        
-        return this.debugLvlVals;
-        
-    }
-    
-    /**
-     * Set the debugVals.
-     */
-    public void setDebugLvlVals(List debugLvlVals) {
-        
-        this.debugLvlVals = debugLvlVals;
-        
-    }
-    
-    
-    /**
-     * Return the Debug Level Text.
-     */
-    
-    public String getDebugLvl() {
-        
-        return this.debugLvl;
-        
-    }
-    
-    /**
-     * Set the Debug Level Text.
-     */
-    public void setDebugLvl(String debugLvl) {
-        
-        this.debugLvl = debugLvl;
-        
     }
     
     /**

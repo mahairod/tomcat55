@@ -85,8 +85,6 @@ public final class MemoryRealmForm extends RealmForm {
 
         StringBuffer sb = new StringBuffer("UserDatabaseRealmForm[adminAction=");
         sb.append(getAdminAction());
-        sb.append(",debugLvl=");
-        sb.append(getDebugLvl());
         sb.append(",pathname=");
         sb.append(pathName);
         sb.append("',objectName='");

@@ -170,7 +170,6 @@ public class EditDefaultContextAction extends Action {
         defaultContextFm.setManagerObjectName(mname.toString());
         sb = new StringBuffer("DefaultContext");
         defaultContextFm.setNodeLabel(sb.toString());
-        defaultContextFm.setDebugLvlVals(Lists.getDebugLevels());
         defaultContextFm.setBooleanVals(Lists.getBooleanValues());
        
         String attribute = null;
@@ -194,9 +193,6 @@ public class EditDefaultContextAction extends Action {
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
 
             // loader properties
-            attribute = "debug";
-            defaultContextFm.setLdrDebugLvl
-                (((Integer) mBServer.getAttribute(lname, attribute)).toString());
             attribute = "checkInterval";
             defaultContextFm.setLdrCheckInterval
                 (((Integer) mBServer.getAttribute(lname, attribute)).toString());
@@ -205,9 +201,6 @@ public class EditDefaultContextAction extends Action {
                 (((Boolean) mBServer.getAttribute(lname, attribute)).toString());
 
             // manager properties
-            attribute = "debug";
-            defaultContextFm.setMgrDebugLvl
-                (((Integer) mBServer.getAttribute(mname, attribute)).toString());
             attribute = "entropy";
             defaultContextFm.setMgrSessionIDInit
                 ((String) mBServer.getAttribute(mname, attribute));

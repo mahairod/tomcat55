@@ -46,7 +46,7 @@ import org.apache.struts.util.MessageResources;
 
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TomcatTreeBuilder;
-import org.apache.webapp.admin.logger.DeleteLoggerAction;
+import org.apache.webapp.admin.valve.ValveUtil;
 
 /**
  * The <code>Action</code> that sets up <em>Delete Realms</em> transactions.
@@ -128,7 +128,7 @@ public class DeleteRealmAction extends Action {
         
         if (parent != null) {
             try {
-                pattern = DeleteLoggerAction.getObjectName(
+                pattern = ValveUtil.getObjectName(
                              parent,TomcatTreeBuilder.REALM_TYPE);
             } catch (Exception e) {
                 getServlet().log

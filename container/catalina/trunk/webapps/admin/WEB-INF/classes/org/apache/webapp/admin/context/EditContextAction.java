@@ -172,16 +172,12 @@ public class EditContextAction extends Action {
         sb.append(path);
         sb.append(")");
         contextFm.setNodeLabel(sb.toString());
-        contextFm.setDebugLvlVals(Lists.getDebugLevels());
         contextFm.setBooleanVals(Lists.getBooleanValues());
        
         String attribute = null;
         try {
 
             // Copy scalar properties
-            attribute = "debug";
-            contextFm.setDebugLvl
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());
             attribute = "path";
             contextFm.setPath
                 ((String) mBServer.getAttribute(cname, attribute));
@@ -211,9 +207,6 @@ public class EditContextAction extends Action {
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
 
             // loader properties
-            attribute = "debug";
-            contextFm.setLdrDebugLvl
-                (((Integer) mBServer.getAttribute(lname, attribute)).toString());
             //attribute = "checkInterval";
             //contextFm.setLdrCheckInterval
             //    (((Integer) mBServer.getAttribute(lname, attribute)).toString());
@@ -222,9 +215,6 @@ public class EditContextAction extends Action {
                 (((Boolean) mBServer.getAttribute(lname, attribute)).toString());
 
             // manager properties
-            attribute = "debug";
-            contextFm.setMgrDebugLvl
-                (((Integer) mBServer.getAttribute(mname, attribute)).toString());
             attribute = "entropy";
             contextFm.setMgrSessionIDInit
                 ((String) mBServer.getAttribute(mname, attribute));

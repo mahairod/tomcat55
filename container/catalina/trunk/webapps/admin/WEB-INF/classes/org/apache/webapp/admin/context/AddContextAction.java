@@ -104,18 +104,14 @@ public class AddContextAction extends Action {
         contextFm.setUseNaming("false");
         contextFm.setWorkDir("");        
         contextFm.setPath("");
-        contextFm.setDebugLvl("0");
         //loader initialization
         //contextFm.setLdrCheckInterval("15");
-        contextFm.setLdrDebugLvl("0");
         contextFm.setLdrReloadable("false");
         //manager initialization
         //contextFm.setMgrCheckInterval("60");
-        contextFm.setMgrDebugLvl("0");
         contextFm.setMgrMaxSessions("-1");
         contextFm.setMgrSessionIDInit("");
         
-        contextFm.setDebugLvlVals(Lists.getDebugLevels());
         contextFm.setBooleanVals(Lists.getBooleanValues());        
         
         // Forward to the context display page

@@ -450,8 +450,6 @@ public final class JNDIRealmForm extends RealmForm {
 
         StringBuffer sb = new StringBuffer("UserDatabaseRealmForm[adminAction=");
         sb.append(getAdminAction());
-        sb.append(",debugLvl=");
-        sb.append(getDebugLvl());
         sb.append(",userSubtree=");
         sb.append(userSubtree);
         sb.append(",roleSubtree=");

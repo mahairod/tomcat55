@@ -127,7 +127,6 @@ public class EditConnectorAction extends Action {
         sb.append(cname.getKeyProperty("port"));
         sb.append(")");
         connectorFm.setNodeLabel(sb.toString());
-        connectorFm.setDebugLvlVals(Lists.getDebugLevels());               
         connectorFm.setBooleanVals(Lists.getBooleanValues());        
         connectorFm.setClientAuthVals(Lists.getClientAuthValues());
         
@@ -172,9 +171,6 @@ public class EditConnectorAction extends Action {
             attribute = "disableUploadTimeout";
             connectorFm.setDisableUploadTimeout
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());       
-            attribute = "debug";
-            connectorFm.setDebugLvl
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
             attribute = "bufferSize";
             connectorFm.setBufferSizeText
                 (((Integer) mBServer.getAttribute(cname, attribute)).toString());            

@@ -17,8 +17,4 @@
     allow="127.0.0.1"/>
   -->
 
-  <Logger className="org.apache.catalina.logger.FileLogger"
-             prefix="localhost_admin_log." suffix=".txt"
-          timestamp="true"/>
-
 </Context>

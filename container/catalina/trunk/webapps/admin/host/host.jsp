@@ -52,15 +52,6 @@
                 <bean:message key="actions.alias.delete"/>
             </controls:action>
             <controls:action disabled="true"> ------------------------------------- </controls:action>
-            <controls:action url='<%= "/AddLogger.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
-                <bean:message key="actions.loggers.create"/>
-            </controls:action>
-            <controls:action url='<%= "/DeleteLogger.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
-                <bean:message key="actions.loggers.deletes"/>
-            </controls:action>
-            <controls:action disabled="true"> ------------------------------------- </controls:action>
             <controls:action url='<%= "/AddContext.do?parent=" +
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.contexts.create"/>
@@ -181,17 +172,6 @@
                <html:select property="autoDeploy" styleId="autodeploy">
                      <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
-                   labelProperty="label"/>
-                </html:select>
-            </controls:data>
-        </controls:row>
-        
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
-            <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
-            <controls:data>
-                <html:select property="debugLvl" styleId="debuglevel">
-                     <bean:define id="debugLvlVals" name="hostForm" property="debugLvlVals"/>
-                     <html:options collection="debugLvlVals" property="value"
                    labelProperty="label"/>
                 </html:select>
             </controls:data>

@@ -53,24 +53,6 @@ public class Lists {
 
 
     /**
-     * Precomputed list of debug level labels and values.
-     */
-    private static List debugLevels = new ArrayList();
-
-    static {
-        debugLevels.add(new LabelValueBean("0", "0"));
-        debugLevels.add(new LabelValueBean("1", "1"));
-        debugLevels.add(new LabelValueBean("2", "2"));
-        debugLevels.add(new LabelValueBean("3", "3"));
-        debugLevels.add(new LabelValueBean("4", "4"));
-        debugLevels.add(new LabelValueBean("5", "5"));
-        debugLevels.add(new LabelValueBean("6", "6"));
-        debugLevels.add(new LabelValueBean("7", "7"));
-        debugLevels.add(new LabelValueBean("8", "8"));
-        debugLevels.add(new LabelValueBean("9", "9"));
-    }
-
-    /**
      * Precomputed list of verbosity level labels and values.
      */
     private static List verbosityLevels = new ArrayList();
@@ -107,16 +89,6 @@ public class Lists {
     // --------------------------------------------------------- Public Methods
 
 
-    /**
-     * Return a <code>List</code> of {@link LabelValueBean}s for the legal
-     * settings for <code>debug</code> properties.
-     */
-    public static List getDebugLevels() {
-
-        return (debugLevels);
-
-    }
-    
     /**
      * Return a <code>List</code> of {@link LabelValueBean}s for the legal
      * settings for <code>verbosity</code> properties.
@@ -339,49 +311,6 @@ public class Lists {
         throws Exception {
 
         return (getHosts(mbserver, new ObjectName(service)));
-
-    }
-
-
-    /**
-     * Return a list of <code>Logger</code> object name strings
-     * for the specified container (service, host, or context) object name.
-     *
-     * @param mbserver MBeanServer from which to retrieve the list
-     * @param container Object name of the container for which to select
-     *                  loggers
-     *
-     * @exception Exception if thrown while retrieving the list
-     */
-    public static List getLoggers(MBeanServer mbserver, ObjectName container)
-        throws Exception {
-
-        ObjectName search = getSearchObject(container, "Logger");
-        ArrayList loggers = new ArrayList();
-        Iterator names = mbserver.queryNames(search, null).iterator();
-        while (names.hasNext()) {
-            loggers.add(names.next().toString());
-        }
-        Collections.sort(loggers);
-        return (loggers);
-
-    }
-
-
-    /**
-     * Return a list of <code>Logger</code> object name strings
-     * for the specified container (service, host, or context) object name.
-     *
-     * @param mbserver MBeanServer from which to retrieve the list
-     * @param container Object name of the container for which to select
-     *                  loggers
-     *
-     * @exception Exception if thrown while retrieving the list
-     */
-    public static List getLoggers(MBeanServer mbserver, String container)
-        throws Exception {
-
-        return (getLoggers(mbserver, new ObjectName(container)));
 
     }
 

@@ -154,17 +154,6 @@
             </controls:data>
         </controls:row>
 
-      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
-            <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
-            <controls:data>
-               <html:select property="ldrDebugLvl" styleId="debuglevel">
-                     <bean:define id="debugLvlVals" name="defaultContextForm" property="debugLvlVals"/>
-                     <html:options collection="debugLvlVals" property="value"
-                        labelProperty="label"/>
-                </html:select>
-            </controls:data>
-        </controls:row>
-
       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="reloadable">
             <controls:label><bean:message key="context.reloadable"/>:</controls:label>
             <controls:data>
@@ -202,17 +191,6 @@
             <controls:label><bean:message key="context.checkInterval"/>:</controls:label>
             <controls:data>
                 <html:text property="mgrCheckInterval" size="5" styleId="checkinterval"/>
-            </controls:data>
-        </controls:row>
-
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
-            <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
-            <controls:data>
-               <html:select property="mgrDebugLvl" styleId="debuglevel">
-                     <bean:define id="debugLvlVals" name="defaultContextForm" property="debugLvlVals"/>
-                     <html:options collection="debugLvlVals" property="value"
-                        labelProperty="label"/>
-                </html:select>
             </controls:data>
         </controls:row>
 

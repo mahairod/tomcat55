@@ -237,15 +237,6 @@ public final class SaveConnectorAction extends Action {
 
             coname = new ObjectName(cObjectName);
 
-            attribute = "debug";
-            int debug = 0;
-            try {
-                debug = Integer.parseInt(cform.getDebugLvl());
-            } catch (Throwable t) {
-                debug = 0;
-            }
-            mBServer.setAttribute(coname,
-                                  new Attribute("debug", new Integer(debug)));
             attribute = "acceptCount";
             int acceptCount = 60000;
             try {

@@ -158,7 +158,6 @@ public class EditServiceAction extends Action {
         sb.append(")");
         serviceFm.setNodeLabel(sb.toString());
         serviceFm.setAdminServiceName(adminService);
-        serviceFm.setDebugLvlVals(Lists.getDebugLevels());
         String attribute = null;
         try {
 
@@ -169,9 +168,6 @@ public class EditServiceAction extends Action {
             attribute = "name";
             serviceFm.setEngineName
                 ((String) mBServer.getAttribute(ename, attribute));
-            attribute = "debug";
-            serviceFm.setDebugLvl
-                (((Integer) mBServer.getAttribute(ename, attribute)).toString());
             attribute = "defaultHost";
             serviceFm.setDefaultHost
                 ((String) mBServer.getAttribute(ename, attribute));

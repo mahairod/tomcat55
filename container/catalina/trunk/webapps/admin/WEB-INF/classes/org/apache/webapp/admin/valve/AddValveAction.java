@@ -134,14 +134,12 @@ public class AddValveAction extends Action {
         String valveType = "AccessLogValve";
         valveFm.setNodeLabel("Valve (" + valveType + ")");
         valveFm.setValveType(valveType);
-        valveFm.setDebugLvl("0");
         valveFm.setPattern("");
         valveFm.setDirectory("logs");
         valveFm.setPrefix("access_log.");
         valveFm.setSuffix("");
         valveFm.setResolveHosts("false");
         valveFm.setRotatable("true");
-        valveFm.setDebugLvlVals(Lists.getDebugLevels());
         valveFm.setBooleanVals(Lists.getBooleanValues());
         valveFm.setValveTypeVals(types);        
     }
@@ -186,8 +184,6 @@ public class AddValveAction extends Action {
         String valveType = "RequestDumperValve";
         valveFm.setNodeLabel("Valve (" + valveType + ")");
         valveFm.setValveType(valveType);
-        valveFm.setDebugLvl("0");
-        valveFm.setDebugLvlVals(Lists.getDebugLevels()); 
         valveFm.setValveTypeVals(types);        
     }
 
@@ -201,8 +197,6 @@ public class AddValveAction extends Action {
         String valveType = "SingleSignOn";
         valveFm.setNodeLabel("Valve (" + valveType + ")");
         valveFm.setValveType(valveType);
-        valveFm.setDebugLvl("0");
-        valveFm.setDebugLvlVals(Lists.getDebugLevels());    
         valveFm.setValveTypeVals(types);        
     }
 
