@@ -157,7 +157,16 @@ Section "Core" SecTomcatCore
 
   DetailPrint "Using Jvm: $2"
 
+  InstallRetry:
+  ClearErrors
   nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //IS//Tomcat5 --DisplayName "Apache Tomcat" --Description "Apache Tomcat @VERSION@ Server - http://jakarta.apache.org/tomcat/" --LogPath "$INSTDIR\logs" --Install "$INSTDIR\bin\tomcat5.exe" --Jvm "$2"'
+  Pop $0
+  StrCmp $0 "0" InstallOk
+    MessageBox MB_ABORTRETRYIGNORE|MB_ICONSTOP \
+      "Failed to install Tomcat5 service.$\r$\nCheck your settings and permissions$\r$\nIgnore and continue anyway (not recommended)?" \
+       /SD IDIGNORE IDIGNORE InstallOk IDRETRY InstallRetry
+  Quit
+  InstallOk:
   ClearErrors
 
 SectionEnd
@@ -353,7 +362,7 @@ Function findJavaPath
   ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$2" "JavaHome"
   ReadRegStr $3 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$2" "RuntimeLib"
 
-  FoundJDK:
+  ;FoundJDK:
 
   IfErrors 0 NoErrors
   StrCpy $1 ""
