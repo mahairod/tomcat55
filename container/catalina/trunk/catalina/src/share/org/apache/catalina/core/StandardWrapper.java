@@ -1607,17 +1607,13 @@ public class StandardWrapper
 
     protected void registerJMX(StandardContext ctx) {
         try {
-            String name=this.getJspFile();
-            if( name==null ) {
-                name=this.getServletName();
-            }
             // it should be full name
             String parentName=ctx.getName();
             String hostName=ctx.getParent().getName();
             String webMod= "//" + ((hostName==null)? "DEFAULT" :hostName ) +
                     (("".equals(parentName) ) ? "/" : parentName );
             String onameStr=ctx.getDomain() + 
-                    ":j2eeType=Servlet,name=" + name + ",WebModule=" +
+                    ":j2eeType=Servlet,name=" + getName() + ",WebModule=" +
                     webMod + ",J2EEApplication=" +
                     ctx.getJ2EEApplication() + ",J2EEServer=" +
                     ctx.getJ2EEServer();
