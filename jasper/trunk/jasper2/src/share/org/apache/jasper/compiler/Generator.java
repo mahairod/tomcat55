@@ -2753,6 +2753,14 @@ public class Generator {
     private void generateTagHandlerPreamble(TagInfo tagInfo)
 	    throws JasperException {
 
+	// Generate package declaration
+	String className = tagInfo.getTagClassName();
+	String pkgName = className.substring(0, className.lastIndexOf("."));
+	out.printin("package ");
+	out.print(pkgName);
+	out.println(";");
+	out.println();
+
 	// Generate class declaration
 	out.printin("public class ");
 	out.print(tagInfo.getTagName());
