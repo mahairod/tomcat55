@@ -54,25 +54,6 @@ public class DigestAuthenticator
 
     // -------------------------------------------------------------- Constants
 
-
-    /**
-     * Indicates that no once tokens are used only once.
-     */
-    protected static final int USE_ONCE = 1;
-
-
-    /**
-     * Indicates that no once tokens are used only once.
-     */
-    protected static final int USE_NEVER_EXPIRES = Integer.MAX_VALUE;
-
-
-    /**
-     * Indicates that no once tokens are used only once.
-     */
-    protected static final int TIMEOUT_INFINITE = Integer.MAX_VALUE;
-
-
     /**
      * The MD5 helper object for this class.
      */
@@ -108,28 +89,6 @@ public class DigestAuthenticator
      * MD5 message digest provider.
      */
     protected static MessageDigest md5Helper;
-
-
-    /**
-     * No once hashtable.
-     */
-    protected Hashtable nOnceTokens = new Hashtable();
-
-
-    /**
-     * No once expiration (in millisecond). A shorter amount would mean a
-     * better security level (since the token is generated more often), but at
-     * the expense of a bigger server overhead.
-     */
-    protected long nOnceTimeout = TIMEOUT_INFINITE;
-
-
-    /**
-     * No once expiration after a specified number of uses. A lower number
-     * would produce more overhead, since a token would have to be generated
-     * more often, but would be more secure.
-     */
-    protected int nOnceUses = USE_ONCE;
 
 
     /**
@@ -405,9 +364,6 @@ public class DigestAuthenticator
             buffer = md5Helper.digest(nOnceValue.getBytes());
         }
         nOnceValue = md5Encoder.encode(buffer);
-
-        // Updating the value in the no once hashtable
-        nOnceTokens.put(nOnceValue, new Long(currentTime + nOnceTimeout));
 
         return nOnceValue;
     }
