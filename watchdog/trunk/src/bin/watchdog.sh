@@ -74,12 +74,12 @@ echo
 
 if [ "${default}" = jsp -o "${default}" = all ] ; then
     java org.apache.tools.ant.Main -Dport=${PORT} -Dhost=${HOST} \
-        -Dwatchdog.home=${WATCHDOG_HOME} -f ${WATCHDOG_HOME}/conf/jsp.xml jsp-test
+        -Dwatchdog.home=${WATCHDOG_HOME} -f ${WATCHDOG_HOME}/conf/jsp-gtest.xml jsp-test
 fi
 
 if [ "${default}" = servlet -o "${default}" = all ] ; then
     java org.apache.tools.ant.Main -Dport=${PORT} -Dhost=${HOST} \
-        -Dwatchdog.home=${WATCHDOG_HOME} -f ${WATCHDOG_HOME}/conf/servlet.xml servlet-test
+        -Dwatchdog.home=${WATCHDOG_HOME} -f ${WATCHDOG_HOME}/conf/servlet-moo.xml servlet-test
 fi
 
 if [ "$cp" != "" ] ; then

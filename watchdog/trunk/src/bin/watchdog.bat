@@ -25,12 +25,12 @@ SET CLASSPATH=%WATCHDOG_HOME%\lib\ant.jar;%CLASSPATH%
 echo "using classpath=" %CLASSPATH%
 if "%1"=="servlet" goto servlet
 
-java org.apache.tools.ant.Main -Dport %PORT% -Dhost %HOST% -Dwatchdog.home %WATCHDOG_HOME% -f %WATCHDOG_HOME%/conf/jsp.xml jsp-test
+java org.apache.tools.ant.Main -Dport %PORT% -Dhost %HOST% -Dwatchdog.home %WATCHDOG_HOME% -f %WATCHDOG_HOME%/conf/jsp-gtest.xml jsp-test
 
 if "%1"=="jsp" goto restore
 
 :servlet
-java org.apache.tools.ant.Main -Dport %PORT% -Dhost %HOST% -Dwatchdog.home %WATCHDOG_HOME% -f %WATCHDOG_HOME%/conf/servlet.xml servlet-test
+java org.apache.tools.ant.Main -Dport %PORT% -Dhost %HOST% -Dwatchdog.home %WATCHDOG_HOME% -f %WATCHDOG_HOME%/conf/servlet-moo.xml servlet-test
 
 
 :restore
