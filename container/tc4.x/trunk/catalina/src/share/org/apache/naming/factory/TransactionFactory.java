@@ -111,14 +111,44 @@ public class TransactionFactory
         if (obj instanceof TransactionRef) {
             Reference ref = (Reference) obj;
             ObjectFactory factory = null;
-            String javaxTransactionUserTransactionFactoryClassName =
-                System.getProperty("javax.transaction.UserTransaction.Factory",
-                                   Constants.TYREX_TRANSACTION_FACTORY);
-            try {
-                factory = (ObjectFactory) Class.forName
-                    (javaxTransactionUserTransactionFactoryClassName)
-                    .newInstance();
-            } catch(Throwable t) {
+            RefAddr factoryRefAddr = ref.get(Constants.FACTORY);
+            if (factoryRefAddr != null) {
+                // Using the specified factory
+                String factoryClassName = 
+                    factoryRefAddr.getContent().toString();
+                // Loading factory
+                ClassLoader tcl = 
+                    Thread.currentThread().getContextClassLoader();
+                Class factoryClass = null;
+                if (tcl != null) {
+                    try {
+                        factoryClass = tcl.loadClass(factoryClassName);
+                    } catch(ClassNotFoundException e) {
+                    }
+                } else {
+                    try {
+                        factoryClass = Class.forName(factoryClassName);
+                    } catch(ClassNotFoundException e) {
+                    }
+                }
+                if (factoryClass != null) {
+                    try {
+                        factory = (ObjectFactory) factoryClass.newInstance();
+                    } catch(Throwable t) {
+                    }
+                }
+            } else {
+                // Defaults to Tyrex
+                String javaxTransactionUserTransactionFactoryClassName =
+                    System.getProperty
+                    ("javax.transaction.UserTransaction.Factory",
+                     Constants.TYREX_TRANSACTION_FACTORY);
+                try {
+                    factory = (ObjectFactory) Class.forName
+                        (javaxTransactionUserTransactionFactoryClassName)
+                        .newInstance();
+                } catch(Throwable t) {
+                }
             }
             if (factory != null) {
                 return factory.getObjectInstance
@@ -127,6 +157,7 @@ public class TransactionFactory
                 throw new NamingException
                     ("Cannot create resource instance");
             }
+            
         }
         
         return null;

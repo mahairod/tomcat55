@@ -93,4 +93,6 @@ public final class Constants {
 
     public static final String OBJECT_FACTORIES = "";
 
+    public static final String FACTORY = "factory";
+
 }

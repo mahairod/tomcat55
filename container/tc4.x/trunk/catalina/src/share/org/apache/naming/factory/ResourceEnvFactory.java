@@ -106,11 +106,46 @@ public class ResourceEnvFactory
      */
     public Object getObjectInstance(Object obj, Name name, Context nameCtx,
                                     Hashtable environment)
-        throws NamingException {
+        throws Exception {
         
         if (obj instanceof ResourceEnvRef) {
             Reference ref = (Reference) obj;
-            // Does nothing yet
+            ObjectFactory factory = null;
+            RefAddr factoryRefAddr = ref.get(Constants.FACTORY);
+            if (factoryRefAddr != null) {
+                // Using the specified factory
+                String factoryClassName = 
+                    factoryRefAddr.getContent().toString();
+                // Loading factory
+                ClassLoader tcl = 
+                    Thread.currentThread().getContextClassLoader();
+                Class factoryClass = null;
+                if (tcl != null) {
+                    try {
+                        factoryClass = tcl.loadClass(factoryClassName);
+                    } catch(ClassNotFoundException e) {
+                    }
+                } else {
+                    try {
+                        factoryClass = Class.forName(factoryClassName);
+                    } catch(ClassNotFoundException e) {
+                    }
+                }
+                if (factoryClass != null) {
+                    try {
+                        factory = (ObjectFactory) factoryClass.newInstance();
+                    } catch(Throwable t) {
+                    }
+                }
+            }
+            // Note: No defaults here
+            if (factory != null) {
+                return factory.getObjectInstance
+                    (obj, name, nameCtx, environment);
+            } else {
+                throw new NamingException
+                    ("Cannot create resource instance");
+            }
         }
 
         return null;
