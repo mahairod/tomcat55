@@ -173,10 +173,7 @@
   <target name="deploy-prepare">
     <mkdir dir="${jasper.deploy}"/>
     <mkdir dir="${jasper.deploy}/bin"/>
-    <mkdir dir="${jasper.deploy}/common/classes"/>
     <mkdir dir="${jasper.deploy}/common/lib"/>
-    <mkdir dir="${jasper.deploy}/shared/classes"/>
-    <mkdir dir="${jasper.deploy}/shared/lib"/>
   </target>
 
 
@@ -191,11 +188,6 @@
     <fixcrlf srcdir="${jasper.deploy}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${jasper.deploy}/bin/jasper.sh"/>
     <chmod perm="+x" file="${jasper.deploy}/bin/jspc.sh"/>
-
-    <!-- Runtime Library -->
-    <copy todir="${jasper.deploy}/shared/lib">
-      <fileset dir="${jasper.build}/shared/lib" />
-    </copy>
 
   </target>
 
