@@ -208,9 +208,37 @@ final class ApplicationDispatcher
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public void forward(ServletRequest request, ServletResponse response)
-        throws IOException, ServletException {
 
+    public void forward(ServletRequest request, ServletResponse response)
+        throws ServletException, IOException
+    {
+        if( System.getSecurityManager() != null ) {
+            final ServletRequest req = request;
+            final ServletResponse res = response;
+            try {
+                java.security.AccessController.doPrivileged(
+                    new java.security.PrivilegedExceptionAction()
+                    {
+                        public Object run() throws ServletException, IOException {
+                            doForward(req,res);
+                            return null;
+                        }
+                    }
+                );
+            } catch( PrivilegedActionException pe) {
+                Exception e = pe.getException();
+                if( e.getClass().getName().equals("javax.servlet.ServletException") )
+                    throw (ServletException)e;
+                throw (IOException)e;
+            }
+        } else {
+            doForward(request,response);
+        }
+    }    
+     
+    private void doForward(ServletRequest request, ServletResponse response)
+        throws ServletException, IOException
+    {
 	// Reset any output that has been buffered, but keep headers/cookies
 	if (response.isCommitted())
 	    throw new IllegalStateException
@@ -334,8 +362,35 @@ final class ApplicationDispatcher
      * @exception ServletException if a servlet exception occurs
      */
     public void include(ServletRequest request, ServletResponse response)
-        throws IOException, ServletException {
-
+        throws ServletException, IOException
+    {
+        if( System.getSecurityManager() != null ) {
+            final ServletRequest req = request;
+            final ServletResponse res = response;
+            try {
+                java.security.AccessController.doPrivileged(
+                    new java.security.PrivilegedExceptionAction()
+                    {
+                        public Object run() throws ServletException, IOException {
+                            doInclude(req,res);
+                            return null;       
+                        }               
+                    }       
+                );      
+            } catch( PrivilegedActionException pe) {
+                Exception e = pe.getException();
+                if( e.getClass().getName().equals("javax.servlet.ServletException") )
+                    throw (ServletException)e;
+                throw (IOException)e;
+            }
+        } else {
+            doInclude(request,response);
+        }
+    }    
+     
+    private void doInclude(ServletRequest request, ServletResponse response)
+        throws ServletException, IOException
+    {
 	// Create a wrapped response to use for this request
 	ServletResponse wresponse = null;
 	if (response instanceof HttpServletResponse) {
