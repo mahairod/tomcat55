@@ -373,9 +373,12 @@ public class Generator {
      	// Number of tag object that need to be popped
 	// XXX TODO: use a better criteria
 	maxTagNesting = pageInfo.getMaxTagNesting();
+/*
         if (maxTagNesting > 0) {
 	    out.printil("JspxState _jspxState = new JspxState();");
         }
+*/
+        out.printil("JspWriter _jspx_out = null;");
 
 	out.printil("try {");
 	out.pushIndent();
@@ -400,9 +403,7 @@ public class Generator {
 	if (pageInfo.isSession())
 	    out.printil("session = pageContext.getSession();");
 	out.printil("out = pageContext.getOut();");
-        if (maxTagNesting > 0) {
-            out.printil("_jspxState.out = out;");
-        }
+        out.printil("_jspx_out = out;");
 	out.println();
     }
 
@@ -426,20 +427,19 @@ public class Generator {
      * 1. Servlet state object, used to pass servlet info round methods.
      */
     private void generateJspState() {
+/*
 	out.println();
 	out.printil("static final class JspxState {");
 	out.pushIndent();
-	out.printil("public int tagCount;");
-	out.println();
 	out.printil("public JspWriter out;");
 	out.println();
 	out.printil("public JspxState() {");
 	out.pushIndent();
-	out.printil("tagCount = 0;");
 	out.popIndent();
 	out.printil("}");
 	out.popIndent();
 	out.printil("}");
+*/
     }
 
     /**
@@ -1019,7 +1019,8 @@ public class Generator {
 		    out.print(parent);
 		    out.print(", ");
 		}
-		out.println("pageContext, _jspxState);");
+//		out.println("pageContext, _jspxState);");
+		out.println("pageContext);");
 
 		// Set up new buffer for the method
 		outSave = out;
@@ -1038,7 +1039,8 @@ public class Generator {
 		    out.print(parent);
 		    out.print(", ");
 		}
-		out.println("javax.servlet.jsp.PageContext pageContext, JspxState _jspxState)");
+//		out.println("javax.servlet.jsp.PageContext pageContext, JspxState _jspxState)");
+		out.println("javax.servlet.jsp.PageContext pageContext)");
 		out.printil("        throws Throwable {");
 		out.pushIndent();
 
@@ -1245,10 +1247,6 @@ public class Generator {
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE) {");
 		    // Assume EVAL_BODY_BUFFERED
 		    out.pushIndent();
-		    
-                    if (!implementsTryCatchFinally) {
-                        out.printil("_jspxState.tagCount++;");
- 		    }
                     out.printil("javax.servlet.jsp.tagext.BodyContent _bc = pageContext.pushBody();");
                     out.printil("_bc.clear();");
                     out.printil("out = _bc;");
@@ -1309,9 +1307,6 @@ public class Generator {
 		    out.print(tagEvalVar);
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
 		    out.pushIndent();
-                    if (!implementsTryCatchFinally) {
-                        out.printil("_jspxState.tagCount--;");
- 		    }
                     out.printil("out = pageContext.popBody();");
 		    out.popIndent();
 		}
@@ -1347,8 +1342,8 @@ public class Generator {
                 out.printil("}");
             } else {
                 out.printin(n.getTagHandlerPoolName());
-                out.println(".reuse(");
-		out.printin(tagHandlerVar);
+                out.print(".reuse(");
+		out.print(tagHandlerVar);
 		out.println(");");
 	    }
 
@@ -1556,6 +1551,7 @@ public class Generator {
         out.printil("} catch (Throwable t) {");
         out.pushIndent();
 
+        out.printil("out = _jspx_out;");
         out.printil("if (out != null && out.getBufferSize() != 0)");
         out.pushIndent();
         out.printil("out.clearBuffer();");
@@ -1567,7 +1563,6 @@ public class Generator {
         out.printil("} finally {");
         out.pushIndent();
 
-        out.printil("out = _jspxState.out;");
         out.printil("if (_jspxFactory != null) _jspxFactory.releasePageContext(pageContext);");
 
         out.popIndent();

@@ -67,7 +67,6 @@ import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.NoSuchElementException;
-import java.util.Stack;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -173,6 +172,7 @@ public class PageContextImpl extends PageContext {
     }
 
     public void release() {
+        out = baseOut;
 	try {
 	    if (isIncluded) {
 		((JspWriterImpl)out).flushBuffer();
@@ -193,7 +193,6 @@ public class PageContextImpl extends PageContext {
 	request      = null;
 	response     = null;
         depth = -1;
-        out = baseOut;
 	baseOut.recycle();
 	session      = null;
 
