@@ -224,14 +224,7 @@ public class HostManagerServlet
         if (command == null)
             command = request.getServletPath();
         String name = request.getParameter("name");
-        String aliases = request.getParameter("aliases");
-        String appBase = request.getParameter("appBase");
-        boolean manager = true;
-        if ((request.getParameter("manager") != null) 
-            && (request.getParameter("manager").equals("false"))) {
-            manager = false;
-        }
-
+  
         // Prepare our output writer to generate the response message
         response.setContentType("text/plain; charset=" + Constants.CHARSET);
         PrintWriter writer = response.getWriter();
@@ -240,7 +233,7 @@ public class HostManagerServlet
         if (command == null) {
             writer.println(sm.getString("hostManagerServlet.noCommand"));
         } else if (command.equals("/add")) {
-            add(writer, name, aliases, appBase, manager);
+            add(request, writer, name, false);
         } else if (command.equals("/remove")) {
             remove(writer, name);
         } else if (command.equals("/list")) {
@@ -258,6 +251,62 @@ public class HostManagerServlet
         writer.flush();
         writer.close();
 
+    }
+
+
+    /**
+     * Add host with all parameter
+     * @param request
+     * @param writer
+     * @param name
+     */
+    protected void add(HttpServletRequest request, PrintWriter writer, String name, boolean htmlMode ) {
+        String aliases = request.getParameter("aliases");
+        String appBase = request.getParameter("appBase");
+        boolean manager = booleanParameter(request, "manager", true, htmlMode);
+        boolean autoDeploy = booleanParameter(request, "autoDeploy", true, htmlMode);
+        boolean deployOnStartup = booleanParameter(request, "deployOnStartup", true, htmlMode);
+        boolean deployXML = booleanParameter(request, "deployXML", true, htmlMode);
+        boolean unpackWARs = booleanParameter(request, "unpackWARs", true, htmlMode);
+        boolean xmlNamespaceAware = booleanParameter(request, "xmlNamespaceAware", false, htmlMode);
+        boolean xmlValidation = booleanParameter(request, "xmlValidation", false, htmlMode);
+        add(writer, name, aliases, appBase, manager,
+            autoDeploy,
+            deployOnStartup,
+            deployXML,                                       
+            unpackWARs,
+            xmlNamespaceAware,
+            xmlValidation);
+    }
+
+
+    /**
+     * extract boolean value from checkbox with default
+     * @param request
+     * @param parameter
+     * @param theDefault
+     * @param htmlMode
+     * @return
+     */
+    protected boolean booleanParameter(HttpServletRequest request,
+            String parameter, boolean theDefault, boolean htmlMode) {
+        String value = request.getParameter(parameter);
+        boolean booleanValue = theDefault;
+        if (value != null) {
+            if (htmlMode) {
+                if (value.equals("on")) {
+                    booleanValue = true;
+                }
+            } else if (theDefault) {
+                if (value.equals("false")) {
+                    booleanValue = false;
+                }
+            } else if (value.equals("true")) {
+                booleanValue = true;
+            }
+        } else if (htmlMode)
+            booleanValue = false;
+        return booleanValue;
     }
 
 
@@ -306,8 +355,13 @@ public class HostManagerServlet
      */
     protected synchronized void add
         (PrintWriter writer, String name, String aliases, String appBase, 
-         boolean manager) {
-
+         boolean manager,
+         boolean autoDeploy,
+         boolean deployOnStartup,
+         boolean deployXML,                                       
+         boolean unpackWARs,
+         boolean xmlNamespaceAware,
+         boolean xmlValidation) {
         if (debug >= 1) {
             log("add: Adding host '" + name + "'");
         }
@@ -393,6 +447,12 @@ public class HostManagerServlet
                 host.addAlias(tok.nextToken());
             }
         }
+        host.setAutoDeploy(autoDeploy);
+        host.setDeployOnStartup(deployOnStartup);
+        host.setDeployXML(deployXML);
+        host.setUnpackWARs(unpackWARs);
+        host.setXmlNamespaceAware(xmlNamespaceAware);
+        host.setXmlValidation(xmlValidation);
         
         // Add new host
         try {
