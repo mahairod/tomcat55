@@ -14,6 +14,7 @@ $Id$
     4.  Tomcat: Past, Present, and Future
     5.  New Features In This Release
     6.  Known Bugs and Issues
+    7.  Security Vulnerabilities Fixed in 3.2.1
 
 
 =============================================================================
@@ -28,6 +29,16 @@ be used stand alone, or in conjunction with several popular web servers:
 
 You should read the License Agreement (in the LICENSE file of the top level
 directory), which applies to all software included in this release.
+
+Tomcat Version 3.2.1 is a security related update!  See Section 7, below,
+for details on the changes that have been made.  All other existing issues with
+Tomcat 3.2 will remain in 3.2.1 -- they will be addressed in subsequent
+maintenance updates (3.2.2, and so on).
+
+No changes to the native code components of Tomcat 3.2 have been made.
+Therefore, you should *not* need to recompile components such as mod_jserv
+in order to take advantage of this release.  You only need to replace the
+Java based modules in the "jakarta-tomcat-3.2.*" distribution.
 
 
 =============================================================================
@@ -287,4 +298,35 @@ loop instead of responding with a 404 error.
 
 Workaround:  kill the offending Tomcat process and correct your server.xml
 file such that there is a properly configured root context.
+
+
+===============================================================================
+7.  SECURITY VULNERABILITIES FIXED IN TOMCAT 3.2.1
+
+
+7.1 Protection of Resources in /WEB-INF and /META-INF Directories
+
+The servlet specification prohibits servlet containers from serving resources
+in the /WEB-INF and /META-INF directories of a web application archive directly
+to clients.  In Tomcat 3.2, this means that URLs like:
+
+   http://localhost:8080/examples/WEB-INF/web.xml
+
+will return an error message, rather than the contents of your deployment
+descriptor.  However, there is a vulnerability in Tomcat 3.2 that exposes
+this information if the client requests a URL like this instead:
+
+    http://localhost:8080/examples//WEB-INF/web.xml
+
+(note the double slash before "WEB-INF").  This vulnerability has been
+corrected in Tomcat 3.2.1.
+
+
+7.2 Show Source Vulnerability
+
+The example application delivered with Tomcat 3.2 included a mechanism to
+display the source code for the JSP page examples.  This mechanism could
+be used to bypass the restrictions on displaying sensitive information in
+the WEB-INF and META-INF directories.  This vulnerability has been removed.
+
 
