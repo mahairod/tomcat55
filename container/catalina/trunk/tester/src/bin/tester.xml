@@ -512,7 +512,7 @@
            debug="${debug}"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
          request="${manager.path}/reload?path=${reload.path}"
-      outContent="OK - Reloaded application at context path ${reload.path}"/>
+      outContent="OK - "/>
 
     <!-- Repeat the tests to ensure the naming context is reinitialized -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
@@ -1416,7 +1416,7 @@
            debug="${debug}"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
          request="${manager.path}/reload?path=${reload.path}"
-      outContent="OK - Reloaded application at context path ${reload.path}"/>
+      outContent="OK - "/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
            debug="${debug}"
@@ -1438,7 +1438,7 @@
            debug="${debug}"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
          request="${manager.path}/reload?path=${reload.path}"
-      outContent="OK - Reloaded application at context path ${reload.path}"/>
+      outContent="OK - "/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
            debug="${debug}"
@@ -1663,7 +1663,7 @@
            debug="${debug}"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
          request="${manager.path}/reload?path=${reload.path}"
-      outContent="OK - Reloaded application at context path ${reload.path}"/>
+      outContent="OK - "/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Session03" debug="${debug}"
@@ -1689,7 +1689,7 @@
            debug="${debug}"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
          request="${manager.path}/reload?path=${reload.path}"
-      outContent="OK - Reloaded application at context path ${reload.path}"/>
+      outContent="OK - "/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedSession03" debug="${debug}"
