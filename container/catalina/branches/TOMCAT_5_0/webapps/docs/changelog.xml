@@ -45,6 +45,12 @@
       <update>
         Added processTlds context attribute to allow disabling TLD processing. (yoavs)
       </update>
+      <update>
+        Backport if-else logic for SSI servlet from 4.1 (funkman)
+      </update>
+      <update>
+        StandardClassLoader: Output the name of the repository if it failed to load. (funkman)
+      </update>
     </changelog>
   </subsection>
   <subsection name="Webapps">
