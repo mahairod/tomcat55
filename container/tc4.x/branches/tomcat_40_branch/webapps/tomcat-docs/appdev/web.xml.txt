@@ -76,7 +76,7 @@
       <description>
         This servlet plays the "controller" role in the MVC architecture
         used in this application.  It is generally mapped to the ".do"
-        filename extension with a <servlet-mapping> element, and all form
+        filename extension with a servlet-mapping element, and all form
         submits in the app will be submitted to a request URI like
         "saveCustomer.do", which will therefore be mapped to this servlet.
 
