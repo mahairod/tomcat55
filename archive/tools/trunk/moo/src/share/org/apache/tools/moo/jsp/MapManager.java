@@ -86,6 +86,8 @@ public class MapManager {
     //maps is a hashtable from client test (key) to server test (value)
     private Hashtable maps = new Hashtable();
 
+    private Hashtable resMap = new Hashtable();
+
     //offers some configurability options such as the base directory of
     // server resources (ie server-side tests)
     private static final String ConfigFile =  Constants.Config.propDir +
@@ -93,8 +95,7 @@ public class MapManager {
 
     public String resourceBase;
 
-    public
-    MapManager() {
+    public MapManager() {
 
         String defaultResourceBase = "/jsp-tests";
         Properties props = new Properties();
@@ -155,10 +156,13 @@ public class MapManager {
             if (uri.trim().charAt(0) != '/') {
                 String value = prefix + uri;
                 maps.put(key, value);
+                resMap.put(key, this.resourceBase);
             } else {
                 StringTokenizer stok = new StringTokenizer(uri, "/");
-                if (stok.hasMoreElements())
-                    this.resourceBase = "/" + (String) stok.nextToken();
+                if (stok.hasMoreElements()) {
+                    String resBase = "/" + (String) stok.nextToken();
+                    resMap.put(key, resBase);
+                }
             }
         }
     }
@@ -172,6 +176,10 @@ public class MapManager {
         return (String)maps.get(testName);
     }
 
+    public String getResourceBase (String testName) {
+        return (String)resMap.get(testName);
+    }
+
     /**
      * return the URL prefix for the golden file.
      */
@@ -179,13 +187,14 @@ public class MapManager {
     throws FileNotFoundException {
 
         String toConnect = get(mapResource);
-        int index = toConnect.lastIndexOf(this.resourceBase);
+        String resBase = getResourceBase(mapResource);
+        int index = toConnect.lastIndexOf(resBase);
 
         if (index == -1)
             throw new FileNotFoundException("GoldenFile URL incorrect");
 
-        return  toConnect.substring(0,index) + this.resourceBase + "/golden-files/" +
-                goldenFile;
+        return  toConnect.substring(0,index) + resBase
+                    + "/golden-files/" + goldenFile;
     }
 
 
