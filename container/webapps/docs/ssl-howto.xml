@@ -214,8 +214,8 @@ documentation (in your JDK documentation package) about <code>keytool</code>.
 </p>
 <p>To import an existing certificate signed by your own CA into a PKCS12 
 keystore using OpenSSL you would execute a command like:
-<source>openssl pkcs12 -export -infile mycert.crt -inkey mykey.key \
-                        -outfile mycert.p12 -name tomcat -CAfile myCA.crt \
+<source>openssl pkcs12 -export -in mycert.crt -inkey mykey.key \
+                        -out mycert.p12 -name tomcat -CAfile myCA.crt \
                         -caname root -chain
 </source>
 For more advanced cases, consult the <a href="http://www.openssl.org/">OpenSSL
