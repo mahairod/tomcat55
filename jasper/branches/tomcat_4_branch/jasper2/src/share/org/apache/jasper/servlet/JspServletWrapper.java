@@ -157,6 +157,7 @@ public class JspServletWrapper {
                     
                     theServlet.init(config);
                     firstTime = false;
+                    reload = false;
                 }
             }    
         }

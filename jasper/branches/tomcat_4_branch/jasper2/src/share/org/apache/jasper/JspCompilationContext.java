@@ -504,7 +504,6 @@ public class JspCompilationContext {
                 (Constants.getString("jsp.error.unable.compile"), ex);
         }
         removed = 0;
-        jsw.setReload(false);
         return servletClass;
     }
 
