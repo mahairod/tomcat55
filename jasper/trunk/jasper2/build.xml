@@ -123,7 +123,9 @@
 
     <!-- Compile internal server components -->
     <javac srcdir="src/share" destdir="${jasper.classes}"
-           debug="${compile.debug}" deprecation="${compile.deprecation}"
+           debug="${compile.debug}"
+           deprecation="${compile.deprecation}"
+           source="${compile.source}"
            optimize="${compile.optimize}"
            excludes="**/CVS/**">
       <classpath refid="jasper.classpath" />
@@ -208,7 +210,9 @@
 <!--
     <javac   srcdir="src/test" destdir="${jasper.build}/tests"
              deprecation="${compile.deprecation}"
-             debug="${compile.debug}" optimize="off"
+             debug="${compile.debug}"
+             source="${compile.source}"
+             optimize="off"
              excludes="**/CVS/**">
       <classpath refid="test.classpath"/>
     </javac>
