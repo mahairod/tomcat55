@@ -731,7 +731,15 @@ public final class ContextConfig
         url = ContextConfig.class.getResource(Constants.WebSchemaResourcePath_24);
         entityResolver.register(Constants.WebSchemaPublicId_24,
                                 url.toString());
+        
+        url = ContextConfig.class.getResource(Constants.J2eeWebServiceSchemaResourcePath_11);
+        entityResolver.register(Constants.J2eeWebServiceSchemaPublicId_11,
+                                url.toString());
 
+        url = ContextConfig.class.getResource(Constants.J2eeWebServiceClientSchemaResourcePath_11);
+        entityResolver.register(Constants.J2eeWebServiceClientSchemaPublicId_11,
+                                url.toString());
+        
         return entityResolver;
     }
 
