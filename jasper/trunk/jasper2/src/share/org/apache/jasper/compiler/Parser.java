@@ -1190,7 +1190,7 @@ class Parser {
 	} else if (reader.matches("element")) {
 	    parseElement(parent);
 	} else if (reader.matches("attribute")) {
-	    err.jspError(start, "jsp.error.attribute.invalidUse");
+	    err.jspError(start, "jsp.error.namedAttribute.invalidUse");
 	} else if (reader.matches("fallback")) {
 	    err.jspError(start, "jsp.error.fallback.invalidUse");
 	} else if (reader.matches("params")) {
@@ -1317,12 +1317,13 @@ class Parser {
 	// Note except for the beginning of a page, the current char is '<'.
 	// Quoting in template text is handled here.
 	// JSP2.6 "A literal <% is quoted by <\%"
+	String templateText = null;
 	if (reader.matches("<\\%")) {
-	    String content = reader.nextContent();
-	    new Node.TemplateText("<%" + content, start, parent);
-	} else {
-	    new Node.TemplateText(reader.nextContent(), start, parent);
+	    templateText = "<%";
 	}
+	String content = reader.nextContent();
+	templateText = (templateText == null) ? content : templateText+content;
+	new Node.TemplateText(templateText, start, parent);
     }
     
     /*

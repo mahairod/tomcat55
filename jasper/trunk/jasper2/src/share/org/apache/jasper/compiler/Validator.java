@@ -656,6 +656,12 @@ class Validator {
             }
         }
 
+	public void visit(Node.UninterpretedTag n) throws JasperException {
+            if (n.getNamedAttributeNodes() != null) {
+		err.jspError(n, "jsp.error.namedAttribute.invalidUse");
+            }
+        }
+
 	public void visit(Node.CustomTag n) throws JasperException {
 	    TagInfo tagInfo = n.getTagInfo();
 	    if (tagInfo == null) {
