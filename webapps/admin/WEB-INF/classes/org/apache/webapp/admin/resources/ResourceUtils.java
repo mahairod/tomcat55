@@ -110,6 +110,7 @@ public class ResourceUtils {
         throws Exception {
                            
         ObjectName ename = null;
+        StringBuffer sb = null;        
         if (resourcetype!=null) {
             if (resourcetype.equals("Global")) {
                 ename = new ObjectName( ENVIRONMENT_TYPE + GLOBAL_TYPE + ",*");
@@ -118,7 +119,23 @@ public class ResourceUtils {
                     ",path=" + path + ",host=" + host + ",service=" + 
                     service + ",*");
             } else if (resourcetype.equals("DefaultContext")) {
-                // add defaultcontext support later
+                if (host.length() > 0) {
+                    sb = new StringBuffer(ENVIRONMENT_TYPE);
+                    sb.append(DEFAULTCONTEXT_TYPE);
+                    sb.append(",host=");
+                    sb.append(host);
+                    sb.append(",service=");
+                    sb.append(service);
+                    sb.append(",*");
+                    ename = new ObjectName(sb.toString());
+                } else {
+                    sb = new StringBuffer(ENVIRONMENT_TYPE);
+                    sb.append(DEFAULTCONTEXT_TYPE);
+                    sb.append(",service=");
+                    sb.append(service);
+                    sb.append(",*");
+                    ename = new ObjectName(sb.toString());
+                }
             }
         }
         
@@ -183,7 +200,16 @@ public class ResourceUtils {
                     ",path=" + path + ",host=" + host + ",service=" + 
                     service + ",class=" + DATASOURCE_CLASS + ",*");
             } else if (resourcetype.equals("DefaultContext")) {
-                // add defaultcontext support later
+                if (host.length() > 0) {
+                    rname = new ObjectName(RESOURCE_TYPE + 
+                        DEFAULTCONTEXT_TYPE + ",host=" + host + 
+                        ",service=" + service + ",class=" + 
+                        DATASOURCE_CLASS + ",*");
+                } else {
+                    rname = new ObjectName(RESOURCE_TYPE + 
+                        DEFAULTCONTEXT_TYPE + ",service=" + service + 
+                        ",class=" + DATASOURCE_CLASS + ",*");
+                }
             }
         }
        
@@ -248,7 +274,16 @@ public class ResourceUtils {
                     ",path=" + path + ",host=" + host + ",service=" + 
                     service + ",class=" + MAILSESSION_CLASS + ",*");
             } else if (resourcetype.equals("DefaultContext")) {
-                // add defaultcontext support later
+                if (host.length() > 0) {
+                    rname = new ObjectName(RESOURCE_TYPE + 
+                        DEFAULTCONTEXT_TYPE + ",host=" + host + 
+                        ",service=" + service + ",class=" + 
+                        MAILSESSION_CLASS + ",*");
+                } else {
+                    rname = new ObjectName(RESOURCE_TYPE + 
+                        DEFAULTCONTEXT_TYPE + ",service=" + service + 
+                        ",class=" + MAILSESSION_CLASS + ",*");
+                }
             }
         }
        
@@ -312,7 +347,14 @@ public class ResourceUtils {
                     ",path=" + path + ",host=" + host + ",service=" + 
                     service + ",*");
             } else if (resourcetype.equals("DefaultContext")) {
-                // add defaultcontext support later
+                if (host.length() > 0) {
+                    rname = new ObjectName(RESOURCELINK_TYPE + 
+                        DEFAULTCONTEXT_TYPE + ",host=" + host + 
+                        ",service=" + service + ",*");
+                } else {
+                    rname = new ObjectName(RESOURCELINK_TYPE + 
+                        DEFAULTCONTEXT_TYPE + ",service=" + service + ",*");
+                }
             }
         }
        

@@ -59,13 +59,12 @@
  *
  */
 
-package org.apache.webapp.admin.host;
+package org.apache.webapp.admin.defaultcontext;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Arrays;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -89,28 +88,29 @@ import org.apache.webapp.admin.Lists;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
- * The <code>Action</code> that sets up <em>Edit Host</em> transactions.
+ * The <code>Action</code> that sets up <em>Edit DefaultContext</em> transactions.
  *
- * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
-public class EditHostAction extends Action {
+public class EditDefaultContextAction extends Action {
+    
 
     /**
      * The MBeanServer we will be interacting with.
      */
     private MBeanServer mBServer = null;
-
+    
 
     /**
      * The MessageResources we will be retrieving messages from.
      */
     private MessageResources resources = null;
-
+    
 
     // --------------------------------------------------------- Public Methods
-
+    
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -131,14 +131,14 @@ public class EditHostAction extends Action {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws IOException, ServletException {
-
+        
         // Acquire the resources that we need
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         if (resources == null) {
             resources = getServlet().getResources();
         }
-
+        
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
             mBServer = ((ApplicationServlet) getServlet()).getServer();
@@ -146,64 +146,121 @@ public class EditHostAction extends Action {
             throw new ServletException
             ("Cannot acquire MBeanServer reference", t);
         }
-
+        
         // Set up the object names of the MBeans we are manipulating
-        ObjectName hname = null;
+        // DefaultContext mBean
+        ObjectName cname = null;
+        // Loader mBean
+        //ObjectName lname = null;
+        // Manager mBean 
+        //ObjectName mname = null;
+        
         StringBuffer sb = null;
         try {
-            hname = new ObjectName(request.getParameter("select"));
+            cname = new ObjectName(request.getParameter("select"));
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.hostName.bad",
+                resources.getMessage("error.contextName.bad",
                                      request.getParameter("select"));
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
             return (null);
         }
+        
+        // Get the corresponding loader
+        //try {
+        //    sb = new StringBuffer(cname.getDomain());
+        //    sb.append(":type=Loader");
+        //    sb.append(",path=");
+        //    sb.append(cname.getKeyProperty("path"));
+        //    sb.append(",host=");
+        //    sb.append(cname.getKeyProperty("host"));
+        //    sb.append(",service=");
+        //    sb.append(cname.getKeyProperty("service"));
+        //    lname = new ObjectName(sb.toString());
+        // } catch (Exception e) {
+        //    String message =
+        //        resources.getMessage("error.managerName.bad",
+        //                         sb.toString());
+        //    getServlet().log(message);
+        //    response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+        //    return (null);
+        //}
+
+        // Session manager properties
+        // Get the corresponding Session Manager mBean
+        //try {
+        //    sb = new StringBuffer(cname.getDomain());
+        //    sb.append(":type=Manager");
+        //    sb.append(",path=");
+        //    sb.append(cname.getKeyProperty("path"));
+        //    sb.append(",host=");
+        //    sb.append(cname.getKeyProperty("host"));
+        //    sb.append(",service=");
+        //    sb.append(cname.getKeyProperty("service"));
+        //    mname = new ObjectName(sb.toString());
+        //} catch (Exception e) {
+        //    String message =
+        //        resources.getMessage("error.managerName.bad",
+        //                         sb.toString());
+        //    getServlet().log(message);
+        //    response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+        //    return (null);
+        //}
 
         // Fill in the form values for display and editing
-        HostForm hostFm = new HostForm();
-        session.setAttribute("hostForm", hostFm);
-        hostFm.setAdminAction("Edit");
-        hostFm.setObjectName(hname.toString());
-        sb = new StringBuffer("Host (");
-        sb.append(hname.getKeyProperty("host"));
-        sb.append(")");
-        hostFm.setNodeLabel(sb.toString());
-        hostFm.setDebugLvlVals(Lists.getDebugLevels());
-        hostFm.setBooleanVals(Lists.getBooleanValues());
-
+        DefaultContextForm defaultContextFm = new DefaultContextForm();
+        session.setAttribute("defaultContextForm", defaultContextFm);
+        defaultContextFm.setAdminAction("Edit");
+        defaultContextFm.setObjectName(cname.toString());
+        //defaultContextFm.setLoaderObjectName(lname.toString());
+        //defaultContextFm.setManagerObjectName(mname.toString());
+        sb = new StringBuffer("DefaultContext");
+        defaultContextFm.setNodeLabel(sb.toString());
+        defaultContextFm.setDebugLvlVals(Lists.getDebugLevels());
+        defaultContextFm.setBooleanVals(Lists.getBooleanValues());
+       
         String attribute = null;
         try {
 
             // Copy scalar properties
-            attribute = "name";
-            hostFm.setHostName
-                ((String) mBServer.getAttribute(hname, attribute));
-            attribute = "debug";
-            hostFm.setDebugLvl
-                (((Integer) mBServer.getAttribute(hname, attribute)).toString());
-            attribute = "appBase";
-            hostFm.setAppBase
-                ((String) mBServer.getAttribute(hname, attribute));
-            attribute = "autoDeploy";
-            hostFm.setAutoDeploy
-                (((Boolean) mBServer.getAttribute(hname, attribute)).toString());
-            attribute = "deployXML";
-            hostFm.setDeployXML
-                (((Boolean) mBServer.getAttribute(hname, attribute)).toString());
-            attribute = "liveDeploy";
-            hostFm.setLiveDeploy
-                (((Boolean) mBServer.getAttribute(hname, attribute)).toString());                
-            attribute = "unpackWARs";
-            hostFm.setUnpackWARs
-                (((Boolean) mBServer.getAttribute(hname, attribute)).toString());
-            attribute = "xmlNamespaceAware";
-            hostFm.setXmlNamespaceAware
-                (((Boolean) mBServer.getAttribute(hname, attribute)).toString());
-            attribute = "xmlValidation";
-            hostFm.setXmlValidation
-                (((Boolean) mBServer.getAttribute(hname, attribute)).toString());
+            attribute = "cookies";
+            defaultContextFm.setCookies
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
+            attribute = "crossContext";
+            defaultContextFm.setCrossContext
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
+            attribute = "useNaming";
+            defaultContextFm.setUseNaming
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
+            attribute = "reloadable";
+            defaultContextFm.setReloadable
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
+
+            // loader properties
+            //attribute = "debug";
+            //defaultContextFm.setLdrDebugLvl
+            //    (((Integer) mBServer.getAttribute(lname, attribute)).toString());
+            //attribute = "checkInterval";
+            //defaultContextFm.setLdrCheckInterval
+            //    (((Integer) mBServer.getAttribute(lname, attribute)).toString());
+            //attribute = "reloadable";
+            //defaultContextFm.setLdrReloadable
+            //    (((Boolean) mBServer.getAttribute(lname, attribute)).toString());
+
+            // manager properties
+            //attribute = "debug";
+            //defaultContextFm.setMgrDebugLvl
+            //    (((Integer) mBServer.getAttribute(mname, attribute)).toString());
+            //attribute = "entropy";
+            //defaultContextFm.setMgrSessionIDInit
+            //    ((String) mBServer.getAttribute(mname, attribute));
+            //attribute = "maxActiveSessions";
+            //defaultContextFm.setMgrMaxSessions
+            //    (((Integer) mBServer.getAttribute(mname, attribute)).toString());
+            //attribute = "checkInterval";
+            //defaultContextFm.setMgrCheckInterval
+            //    (((Integer) mBServer.getAttribute(mname, attribute)).toString());
 
         } catch (Throwable t) {
             getServlet().log
@@ -215,29 +272,11 @@ public class EditHostAction extends Action {
                                       attribute));
             return (null);
         }
-
-        // retrieve all aliases
-        String operation = null;
-        try {
-            operation = "findAliases";
-            String aliases[] =
-                (String[]) mBServer.invoke(hname, operation, null, null);
-
-            hostFm.setAliasVals(new ArrayList(Arrays.asList(aliases)));
-
-        } catch (Throwable t) {
-            getServlet().log
-            (resources.getMessage(locale, "users.error.invoke",
-                                  operation), t);
-            response.sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                resources.getMessage(locale, "users.error.invoke",
-                                     operation));
-            return (null);
-        }
-
-        // Forward to the host display page
-        return (mapping.findForward("Host"));
-
+        
+        // Forward to the default context display page
+        return (mapping.findForward("DefaultContext"));
+        
     }
+
+
 }

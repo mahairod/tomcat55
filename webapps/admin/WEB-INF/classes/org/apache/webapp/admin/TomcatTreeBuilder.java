@@ -110,6 +110,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public final static String CONNECTOR_TYPE = "Catalina:type=Connector";
     public final static String HOST_TYPE = "Catalina:type=Host";
     public final static String CONTEXT_TYPE = "Catalina:type=Context";
+    public final static String DEFAULTCONTEXT_TYPE = "Catalina:type=DefaultContext";
     public final static String LOADER_TYPE = "Catalina:type=Loader";
     public final static String MANAGER_TYPE = "Catalina:type=Manager";
     public final static String LOGGER_TYPE = "Catalina:type=Logger";
@@ -214,7 +215,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     false);
             serverNode.addChild(serviceNode);
             getConnectors(serviceNode, serviceName);
-            getDefaultContexts(serviceNode, serviceName, "service", resources);
+            getDefaultContexts(serviceNode, serviceName, resources);
             getHosts(serviceNode, serviceName, resources);
             getLoggers(serviceNode, serviceName);
             getRealms(serviceNode, serviceName);
@@ -289,7 +290,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     false);
             serviceNode.addChild(hostNode);
             getContexts(hostNode, hostName, resources);            
-            getDefaultContexts(hostNode, hostName, "host", resources);
+            getDefaultContexts(hostNode, hostName, resources);
             getLoggers(hostNode, hostName);
             getRealms(hostNode, hostName);
             getValves(hostNode, hostName);
@@ -349,16 +350,14 @@ public class TomcatTreeBuilder implements TreeBuilder{
      * @exception Exception if an exception occurs building the tree
      */
     public void getDefaultContexts(TreeControlNode hostNode, String containerName, 
-                        String containerType, MessageResources resources) 
-                        throws Exception {
+                                    MessageResources resources) throws Exception {
         
         Iterator defaultContextNames =
-            Lists.getDefaultContexts(mBServer, containerName, 
-                containerType).iterator();
+            Lists.getDefaultContexts(mBServer, containerName).iterator();
         while (defaultContextNames.hasNext()) {
             String defaultContextName = (String) defaultContextNames.next();
             ObjectName objectName = new ObjectName(defaultContextName);
-            String nodeLabel = "Default Context";
+            String nodeLabel = "DefaultContext";
             TreeControlNode defaultContextNode =
                 new TreeControlNode(defaultContextName,
                                     "DefaultContext.gif",
@@ -371,9 +370,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     false);
             hostNode.addChild(defaultContextNode);
             getResources(defaultContextNode, defaultContextName, resources);
-            getLoggers(defaultContextNode, defaultContextName);
-            getRealms(defaultContextNode, defaultContextName);
-            getValves(defaultContextNode, defaultContextName);
         }
     }  
     
@@ -457,8 +453,17 @@ public class TomcatTreeBuilder implements TreeBuilder{
 
         ObjectName oname = new ObjectName(containerName);
         String type = oname.getKeyProperty("type");
+        if (type == null) {
+            type = "";
+        }
         String path = oname.getKeyProperty("path");
+        if (path == null) {
+            path = "";
+        }        
         String host = oname.getKeyProperty("host");
+        if (host == null) {
+            host = "";
+        }                
         String service = oname.getKeyProperty("service");
         TreeControlNode subtree = new TreeControlNode
             ("Context Resource Administration " + containerName,

@@ -70,6 +70,7 @@ import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
+import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
 
 
@@ -216,6 +217,12 @@ public interface DefaultContext {
     public void setManager(Manager manager);
 
 
+    /**
+     * Return the naming resources associated with this web application.
+     */
+    public NamingResources getNamingResources();
+    
+    
     // ------------------------------------------------------ Public Properties
 
 
