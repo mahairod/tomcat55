@@ -108,11 +108,71 @@ import org.xml.sax.SAXNotSupportedException;
  */
 public final class TldConfig  {
 
+    // Names of JARs that are known not to contain any TLDs
+    private static HashSet noTldJars;
+
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( TldConfig.class );
 
     private static final String FILE_URL_PREFIX = "file:";
     private static final int FILE_URL_PREFIX_LEN = FILE_URL_PREFIX.length();
+
+
+    /*
+     * Initializes the set of JARs that are known not to contain any TLDs
+     */
+    static {
+        noTldJars = new HashSet();
+        noTldJars.add("ant.jar");
+        noTldJars.add("catalina.jar");
+        noTldJars.add("catalina-ant.jar");
+        noTldJars.add("catalina-cluster.jar");
+        noTldJars.add("catalina-optional.jar");
+        noTldJars.add("catalina-i18n-fr.jar");
+        noTldJars.add("catalina-i18n-ja.jar");
+        noTldJars.add("catalina-i18n-es.jar");
+        noTldJars.add("commons-dbcp.jar");
+        noTldJars.add("commons-modeler.jar");
+        noTldJars.add("commons-logging-api.jar");
+        noTldJars.add("commons-beanutils.jar");
+        noTldJars.add("commons-fileupload-1.0.jar");
+        noTldJars.add("commons-pool.jar");
+        noTldJars.add("commons-digester.jar");
+        noTldJars.add("commons-logging.jar");
+        noTldJars.add("commons-collections.jar");
+        noTldJars.add("commons-el.jar");
+        noTldJars.add("jakarta-regexp-1.2.jar");
+        noTldJars.add("jasper-compiler.jar");
+        noTldJars.add("jasper-runtime.jar");
+        noTldJars.add("jmx.jar");
+        noTldJars.add("jmx-tools.jar");
+        noTldJars.add("jsp-api.jar");
+        noTldJars.add("jkshm.jar");
+        noTldJars.add("jkconfig.jar");
+        noTldJars.add("naming-common.jar");
+        noTldJars.add("naming-resources.jar");
+        noTldJars.add("naming-factory.jar");
+        noTldJars.add("naming-java.jar");
+        noTldJars.add("servlet-api.jar");
+        noTldJars.add("servlets-default.jar");
+        noTldJars.add("servlets-invoker.jar");
+        noTldJars.add("servlets-common.jar");
+        noTldJars.add("servlets-webdav.jar");
+        noTldJars.add("tomcat-util.jar");
+        noTldJars.add("tomcat-http11.jar");
+        noTldJars.add("tomcat-jni.jar");
+        noTldJars.add("tomcat-jk.jar");
+        noTldJars.add("tomcat-jk2.jar");
+        noTldJars.add("tomcat-coyote.jar");
+        noTldJars.add("xercesImpl.jar");
+        noTldJars.add("xmlParserAPIs.jar");
+        // JARs from J2SE runtime
+        noTldJars.add("sunjce_provider.jar");
+        noTldJars.add("ldapsec.jar");
+        noTldJars.add("localedata.jar");
+        noTldJars.add("dnsns.jar");
+    }
+
 
     // ----------------------------------------------------- Instance Variables
 
@@ -152,7 +212,23 @@ public final class TldConfig  {
 
     // --------------------------------------------------------- Public Methods
 
-     /**
+    /**
+     * Sets the list of JARs that are known not to contain any TLDs.
+     *
+     * @param jarNames List of comma-separated names of JAR files that are 
+     * known not to contain any TLDs 
+     */
+    public static void setNoTldJars(String jarNames) {
+        if (jarNames != null) {
+            noTldJars.clear();
+            StringTokenizer tokenizer = new StringTokenizer(jarNames, ",");
+            while (tokenizer.hasMoreElements()) {
+                noTldJars.add(tokenizer.nextToken());
+            }
+        }
+    }
+
+    /**
      * Set the validation feature of the XML parser used when
      * parsing xml instances.
      * @param xmlValidation true to enable xml instance validation
@@ -733,13 +809,18 @@ public final class TldConfig  {
      * location that all web applications have access to (e.g.,
      * <CATALINA_HOME>/common/lib).
      *
+     * The set of shared JARs to be scanned for TLDs is narrowed down by
+     * the <tt>noTldJars</tt> class variable, which contains the names of JARs
+     * that are known not to contain any TLDs.
+     *
      * @return Map of JAR file paths
      */
     private Map getJarPaths() {
 
         HashMap jarPathMap = null;
 
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        ClassLoader webappLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader loader = webappLoader;
         while (loader != null) {
             if (loader instanceof URLClassLoader) {
                 URL[] urls = ((URLClassLoader) loader).getURLs();
@@ -761,11 +842,19 @@ public final class TldConfig  {
                     if (!path.endsWith(".jar")) {
                         continue;
                     }
-                    if (jarPathMap == null) {
-                        jarPathMap = new HashMap();
-                        jarPathMap.put(path, file);
-                    } else if (!jarPathMap.containsKey(path)) {
-                        jarPathMap.put(path, file);
+                    /*
+                     * Scan all JARs from WEB-INF/lib, plus any shared JARs
+                     * that are not known not to contain any TLDs
+                     */
+                    if (loader == webappLoader
+                            || noTldJars == null
+                            || !noTldJars.contains(file.getName())) {
+                        if (jarPathMap == null) {
+                            jarPathMap = new HashMap();
+                            jarPathMap.put(path, file);
+                        } else if (!jarPathMap.containsKey(path)) {
+                            jarPathMap.put(path, file);
+                        }
                     }
                 }
             }
