@@ -8,7 +8,8 @@
 <!--  <property name="protocol"       value="HTTP/1.0"/> -->
   <property name="protocol"       value=""/> <!-- Use HttpURLConnection -->
   <property name="context.path"   value="/tester"/>
-  <property name="examples.path"  value="/jsp-examples"/>
+  <property name="jsp-examples.path"  value="/jsp-examples"/>
+  <property name="servlets-examples.path"  value="/servlets-examples"/>
   <property name="golden.path"    value="${context.path}/golden"/>
   <property name="manager.path"   value="/manager"/>
   <property name="reload.path"    value="/tester"/>
@@ -33,8 +34,8 @@
 
     <!-- Should be able to use relative path to document root -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/.." debug="${debug}"
-          status="302"/>
+         request="${jsp-examples.path}/.." debug="${debug}"
+          status="200"/>
 
     <!-- Should be able to successfully retrieve a golden file -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
@@ -115,37 +116,37 @@
 
     <!-- Should be able to execute the Date example -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/dates/date.jsp" debug="${debug}"
+         request="${jsp-examples.path}/dates/date.jsp" debug="${debug}"
           status="200"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/dates/date.Jsp" debug="${debug}"
+         request="${jsp-examples.path}/dates/date.Jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/dates/Date.jsp" debug="${debug}"
+         request="${jsp-examples.path}/dates/Date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/Dates/date.jsp" debug="${debug}"
+         request="${jsp-examples.path}/Dates/date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should be able to execute the HelloWorld servlet example -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/servlet/HelloWorldExample" debug="${debug}"
+         request="${servlets-examples.path}/servlet/HelloWorldExample" debug="${debug}"
           status="200"/>
 
     <!-- Should not be able to execute HelloWorld with different cases -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/servlet/helloWorldExample" debug="${debug}"
+         request="${servlets-examples.path}/servlet/helloWorldExample" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to execute HelloWorld with different cases -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/Servlet/HelloWorldExample" debug="${debug}"
+         request="${servlets-examples.path}/Servlet/HelloWorldExample" debug="${debug}"
           status="404"/>
 
   </target>
@@ -197,7 +198,7 @@
 
     <!-- Verify we can access the JSP page normally -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/snp/snoop.jsp"
+         request="${jsp-examples.path}/snp/snoop.jsp"
           status="200"/>
 
   </target>
@@ -241,25 +242,25 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/ErrorPage05?type=Array"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - JSP"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedErrorPage05?type=Array"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - JSP"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/ErrorPage05?type=Number"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - HTML"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedErrorPage05?type=Number"
            debug="${debug}"
-          status="200"
+          status="500"
       outContent="ErrorPage06 PASSED - HTML"/>
 
     <!-- ========== Load On Startup Exception Handling ==================== -->
@@ -1374,18 +1375,18 @@
 
     <!-- Should not be able to use relative path above document root -->
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
-         request="${examples.path}/../.." debug="${debug}"
+         request="${jsp-examples.path}/../.." debug="${debug}"
           status="400"/>
 
     <!-- Should not be able to use specially crafted URLs to get around 
          security constraints -->
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
-         request="${examples.path}/security//protected/index.jsp" 
-         debug="${debug}" status="302"/>
+         request="/tester//./protected//Authentication01" 
+         debug="${debug}" status="401"/>
 
     <!-- DefaultServlet should not decode the path again -->
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
-         request="${examples.path}/snp/snoop%252ejsp"
+         request="${jsp-examples.path}/snp/snoop%252ejsp"
           status="404"/>
 
   </target>
