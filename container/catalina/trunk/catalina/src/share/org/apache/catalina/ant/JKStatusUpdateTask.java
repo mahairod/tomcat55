@@ -264,9 +264,9 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
      * Create JkStatus link
      * <ul>
      * <li><b>load balance example:
-     * </b>http://localhost/status?cmd=textupdate&w=lb&lf=false&ls=true</li>
+     * </b>http://localhost/status?cmd=update&mime=txt&w=lb&lf=false&ls=true</li>
      * <li><b>worker example:
-     * </b>http://localhost/status?cmd=textupdate&w=node1&l=lb&wf=1&wd=false
+     * </b>http://localhost/status?cmd=update&mime=txt&w=node1&l=lb&wf=1&wd=false
      * </li>
      * </ul>
      * 
@@ -276,12 +276,12 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
         // Building URL
         StringBuffer sb = new StringBuffer();
         try {
-            sb.append("?cmd=textupdate");
+            sb.append("?cmd=update&mime=txt");
             sb.append("&w=");
             sb.append(URLEncoder.encode(worker, getCharset()));
 
             if (isLBMode) {
-                //http://localhost/status?cmd=onlyupdate&w=lb&lf=false&ls=true
+                //http://localhost/status?cmd=update&mime=txt&w=lb&lf=false&ls=true
                 if ((lbRetries != null)) { // > 0
                     sb.append("&lr=");
                     sb.append(lbRetries);
@@ -299,7 +299,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
                     sb.append(lbForceSession);
                 }
             } else {
-                //http://localhost/status?cmd=onlyupdate&w=node1&l=lb&wf=1&wd=false
+                //http://localhost/status?cmd=update&mime=txt&w=node1&l=lb&wf=1&wd=false
                 if ((workerLb != null)) { // must be configured
                     sb.append("&l=");
                     sb.append(URLEncoder.encode(workerLb, getCharset()));
