@@ -303,7 +303,7 @@ abstract class Node implements TagConstants {
                 if( n instanceof NamedAttribute ) {
                     result.add( n );
                 }
-                else {
+                else if (! (n instanceof Comment)) {
                     // Nothing can come before jsp:attribute, and only
                     // jsp:body can come after it.
                     break;
