@@ -232,7 +232,7 @@
 
              useDirtyFlag = true means that we only replicate a session after setAttribute,removeAttribute has been called.
                             false means to replicate the session after each request.
-                            false means that replication would work for the following piece of code:
+                            false means that replication would work for the following piece of code: (only for SimpleTcpReplicationManager)
                             <%
                             HashMap map = (HashMap)session.getAttribute("map");
                             map.put("key","value");
