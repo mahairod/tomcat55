@@ -183,12 +183,12 @@
     <copy todir="${tomcat.dist}/shared/lib">
       <fileset dir="${tomcat.build}/shared/lib" />
     </copy>
+    <copy todir="${tomcat.dist}/temp">
+      <fileset dir="${tomcat.build}/temp" />
+    </copy>
     <copy todir="${tomcat.dist}/webapps">
       <fileset dir="${tomcat.build}/webapps" />
     </copy>
-
-    <!-- Copy temp file -->
-    <copy todir="${tomcat.dist}/temp" file="${basedir}/resources/DONOTREMOVE"/>
 
     <!-- Correct permissions and line endings on "bin" scripts -->
     <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.sh"  eol="lf"/>
