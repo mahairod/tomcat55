@@ -291,8 +291,9 @@ public abstract class StoreBase
         long timeNow = System.currentTimeMillis();
         String[] keys = null;
 
-        if(!started)
+        if(!started) {
             return;
+        }
 
         try {
             keys = keys();
@@ -305,17 +306,22 @@ public abstract class StoreBase
         for (int i = 0; i < keys.length; i++) {
             try {
                 StandardSession session = (StandardSession) load(keys[i]);
-                if (!session.isValid())
+                if (session == null) {
                     continue;
+                }
+                if (!session.isValid()) {
+                    continue;
+                }
                 int maxInactiveInterval = session.getMaxInactiveInterval();
-                if (maxInactiveInterval < 0)
+                if (maxInactiveInterval < 0) {
                     continue;
+                }
                 int timeIdle = // Truncate, do not round up
                     (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
                 if (timeIdle >= maxInactiveInterval) {
                     if ( ( (PersistentManagerBase) manager).isLoaded( keys[i] )) {
                         // recycle old backup session
-                       session.recycle();
+                        session.recycle();
                     } else {
                         // expire swapped out session
                         session.expire();
@@ -341,16 +347,18 @@ public abstract class StoreBase
         Logger logger = null;
         Container container = manager.getContainer();
 
-        if (container != null)
+        if (container != null) {
             logger = container.getLogger();
+        }
 
         if (logger != null) {
             logger.log(getStoreName()+"[" + container.getName() + "]: "
                        + message);
         } else {
             String containerName = null;
-            if (container != null)
+            if (container != null) {
                 containerName = container.getName();
+            }
             System.out.println(getStoreName()+"[" + containerName
                                + "]: " + message);
         }
