@@ -164,6 +164,11 @@
   <!--                       arrays, to improve performance in some cases?  -->
   <!--                       [false]                                        -->
   <!--                                                                      -->
+  <!--   errorOnUseBeanInvalidClassAttribute                                -->
+  <!--                       Should Jasper issue an error when the value of -->
+  <!--                       the class attribute in an useBean action is    -->
+  <!--                       not a valid bean class?  [true]                -->
+  <!--                                                                      -->
   <!--   scratchdir          What scratch directory should we use when      -->
   <!--                       compiling JSP pages?  [default work directory  -->
   <!--                       for the current web application]               -->
