@@ -598,6 +598,10 @@ public class ApplicationContext
     public URL getResource(String path)
         throws MalformedURLException {
 
+        if (!path.startsWith("/")) {
+            throw new MalformedURLException(sm.getString("applicationContext.requestDispatcher.iae"));
+        }
+        
         path = normalize(path);
         if (path == null)
             return (null);
