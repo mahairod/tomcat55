@@ -543,15 +543,6 @@ public class Generator {
 	private MethodsBuffer methodsBuffer;
 	private int methodNesting;
 
-	/*
-	 * Maps temporary scripting variable to parent of custom tag that
-	 * declared it
-	 */
-	private Hashtable tmpVars;
-
-	// Maps NESTED scripting var to parent of custom tag that declared it
-	private Hashtable nestedVars;
-
 	/**
 	 * Constructor.
 	 */
@@ -561,8 +552,6 @@ public class Generator {
 	    methodNesting = 0;
 	    handlerInfos = new Hashtable();
 	    tagVarNumbers = new Hashtable();
-	    tmpVars = new Hashtable();
-	    nestedVars = new Hashtable();
 	}
 
 	/**
@@ -1306,20 +1295,20 @@ public class Generator {
 	    out.printin("/* ----  ");
 	    out.print(n.getName());
 	    out.println(" ---- */");
+	    out.printil("{");
+	    out.pushIndent();
 
             boolean implementsTryCatchFinally =
                 TryCatchFinally.class.isAssignableFrom(tagHandlerClass);
 
-	    /*
-	     * Declare variables where current contents of scripting variables
-	     * will be temporarily saved
-	     */
-	    declareTemporaryScriptingVariables(n);
-
 	    // Declare scripting variables with NESTED scope
 	    declareNestedScriptingVariables(n);
 
-	    // Save current value of scripting variables if required
+	    /*
+	     * Save current values of scripting variables, so that the 
+	     * scripting variables may be synchronized without affecting their
+	     * original values
+	     */
 	    saveScriptingVariables(n);
 
 	    out.printin(tagHandlerClass.getName());
@@ -1464,6 +1453,8 @@ public class Generator {
 	    syncScriptingVariables(n, VariableInfo.AT_END);
 
 	    restoreScriptingVariables(n);
+	    out.popIndent();
+	    out.printil("}");
 
 	    n.setEndJavaLine(out.getJavaLine());
 	}
@@ -1502,14 +1493,10 @@ public class Generator {
 			if ((varInfos[i].getScope() == VariableInfo.NESTED)
 			            && varInfos[i].getDeclare()) {
 			    String name = varInfos[i].getVarName();
-			    Node parent = (Node) nestedVars.get(name);
-			    if (parent == null || parent != n.getParent()) {
-				out.printin(varInfos[i].getClassName());
-				out.print(" ");
-				out.print(name);
-				out.println(";");
-				nestedVars.put(name, n.getParent());
-			    }
+			    out.printin(varInfos[i].getClassName());
+			    out.print(" ");
+			    out.print(name);
+			    out.println(";");
 			}
 		    }
 		} else {
@@ -1522,14 +1509,11 @@ public class Generator {
 			if ((varInfos[i].getScope() == VariableInfo.NESTED)
 			            && varInfos[i].getDeclare()) {
 			    String name = varInfos[i].getVarName();
-			    Node parent = (Node) nestedVars.get(name);
-			    if ((parent == null || parent != n.getParent())
-				    && idAttr.equals(name)) {
+			    if (idAttr.equals(name)) {
 				out.printin(varInfos[i].getClassName());
 				out.print(" ");
 				out.print(name);
 				out.println(" = null;");
-				nestedVars.put(name, n.getParent());
 				break;
 			    }
 			}
@@ -1544,67 +1528,10 @@ public class Generator {
 			    name = n.getTagData().getAttributeString(
                                     tagVarInfos[i].getNameFromAttribute());
 			}
-			Node parent = (Node) nestedVars.get(name);
-			if ((parent == null) || (parent != n.getParent())) {
-			    out.printin(tagVarInfos[i].getClassName());
-			    out.print(" ");
-			    out.print(name);
-			    out.println(";");
-			    nestedVars.put(name, n.getParent());
-			}
-		    }
-		}
-	    }
-	}
-
-	/*
-	 * This method is called as part of the custom tag's start element.
-	 *
-	 * If the given custom tag has a custom nesting level greater than 0,
-	 * declare temporary variables where the current values of the tag's
-	 * scripting variables may be saved, so these values may be restored
-	 * in the tag's end element.
-	 */
-	private void declareTemporaryScriptingVariables(Node.CustomTag n) {
-	    if (n.getCustomNestingLevel() == 0) {
-		return;
-	    }
-
-	    TagVariableInfo[] tagVarInfos = n.getTagVariableInfos();
-	    VariableInfo[] varInfos = n.getVariableInfos();
-	    if ((varInfos == null) && (tagVarInfos == null)) {
-		return;
-	    }
-
-	    if (varInfos != null) {
-		for (int i=0; i<varInfos.length; i++) {
-		    String tmpVarName = "_jspx_" + varInfos[i].getVarName()
-			+ "_" + n.getCustomNestingLevel();
-		    Node parent = (Node) tmpVars.get(tmpVarName);
-		    if ((parent == null) || (parent != n.getParent())) {
-			out.printin(varInfos[i].getClassName());
-			out.print(" ");
-			out.print(tmpVarName);
-			out.println(";");
-			tmpVars.put(tmpVarName, n.getParent());
-		    }
-		}
-	    } else {
-		for (int i=0; i<tagVarInfos.length; i++) {
-		    String varName = tagVarInfos[i].getNameGiven();
-		    if (varName == null) {
-			varName = n.getTagData().getAttributeString(
-			                tagVarInfos[i].getNameFromAttribute());
-		    }
-		    String tmpVarName = "_jspx_" + varName + "_"
-			+ n.getCustomNestingLevel();
-		    Node parent = (Node) tmpVars.get(tmpVarName);
-		    if ((parent == null) || (parent != n.getParent())) {
 			out.printin(tagVarInfos[i].getClassName());
 			out.print(" ");
-			out.print(tmpVarName);
+			out.print(name);
 			out.println(";");
-			tmpVars.put(tmpVarName, n.getParent());
 		    }
 		}
 	    }
@@ -1614,10 +1541,10 @@ public class Generator {
 	 * This method is called as part of the custom tag's start element.
 	 *
 	 * If the given custom tag has a custom nesting level greater than 0,
-	 * save the values of all its scripting variables to temporary
-	 * variables, so the scripting variables may be synchronized
-	 * without affecting the values they had at the tag's start element.
-	 * Those values will be restored when the tag's end element is reached.
+	 * save the current values of its scripting variables to 
+	 * temporary variables, so those values may be restored in the tag's
+	 * end element. This way, the scripting variables may be synchronized
+	 * by the given tag without affecting their original values.
 	 */
 	private void saveScriptingVariables(Node.CustomTag n) {
 	    if (n.getCustomNestingLevel() == 0) {
@@ -1635,7 +1562,9 @@ public class Generator {
 		    String varName = varInfos[i].getVarName();
 		    String tmpVarName = "_jspx_" + varName + "_"
 			+ n.getCustomNestingLevel();
-		    out.printin(tmpVarName);
+		    out.printin(varInfos[i].getClassName());
+		    out.print(" ");
+		    out.print(tmpVarName);
 		    out.print(" = ");
 		    out.print(varName);
 		    out.println(";");
@@ -1645,11 +1574,13 @@ public class Generator {
 		    String varName = tagVarInfos[i].getNameGiven();
 		    if (varName == null) {
 			varName = n.getTagData().getAttributeString(
-                                tagVarInfos[i].getNameFromAttribute());
+			                tagVarInfos[i].getNameFromAttribute());
 		    }
 		    String tmpVarName = "_jspx_" + varName + "_"
 			+ n.getCustomNestingLevel();
-		    out.printin(tmpVarName);
+		    out.printin(tagVarInfos[i].getClassName());
+		    out.print(" ");
+		    out.print(tmpVarName);
 		    out.print(" = ");
 		    out.print(varName);
 		    out.println(";");
