@@ -810,7 +810,8 @@ public class Generator {
 
         public void visit(Node.Expression n) throws JasperException {
 	    n.setBeginJavaLine(out.getJavaLine());
-	    out.printil("out.write(" + new String(n.getText()) + ");");
+	    out.printil("out.write(String.valueOf("
+			+ new String(n.getText()) + "));");
 	    n.setEndJavaLine(out.getJavaLine());
         }
 
