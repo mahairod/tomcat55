@@ -65,6 +65,15 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
 import org.apache.jasper.compiler.ServletWriter;
 import org.apache.jasper.compiler.Compiler;
 import org.apache.jasper.compiler.TldLocationsCache;
@@ -165,6 +174,7 @@ public class JspC implements Options {
     // Generation of web.xml fragments
     private String webxmlFile;
     private int webxmlLevel;
+    private boolean addWebXmlMappings = false;
 
     private Writer mapout;
     private CharArrayWriter servletout;
@@ -465,6 +475,18 @@ public class JspC implements Options {
     }
 
     /**
+     * File where we generate a complete web.xml with the class definitions.
+     */
+    public void setWebXml( String s ) {
+        webxmlFile=s;
+        webxmlLevel=ALL_WEBXML;
+    }
+
+    public void setAddWebXmlMappings(boolean b) {
+        addWebXmlMappings = b;
+    }
+
+    /**
      * Obtain JSP configuration informantion specified in web.xml.
      */
     public JspConfig getJspConfig() {
@@ -503,6 +525,72 @@ public class JspC implements Options {
             mappingout.write("</url-pattern>\n\t</servlet-mapping>\n");
 
         }
+    }
+
+    /**
+     * Include the generated web.xml inside the webapp's web.xml.
+     */
+    protected void mergeIntoWebXml()
+        throws Exception {
+
+        File webappBase = new File(uriRoot);
+        File webXml = new File(webappBase, "WEB-INF/web.xml");
+        File webXml2 = new File(webappBase, "WEB-INF/web2.xml");
+
+        BufferedReader reader = new BufferedReader(new FileReader(webXml));
+        BufferedReader fragmentReader = 
+            new BufferedReader(new FileReader(webxmlFile));
+        PrintWriter writer = new PrintWriter(new FileWriter(webXml2));
+
+        // TODO: This is a hack
+        while (true) {
+            String line = reader.readLine();
+            if (line == null) {
+                break;
+            }
+            int pos = line.indexOf("</web-app>");
+            if (pos >= 0) {
+                writer.println(line.substring(0, pos));
+                break;
+            } else {
+                writer.write(line);
+                writer.write("\n");
+            }
+        }
+
+        while (true) {
+            String line = fragmentReader.readLine();
+            if (line == null) {
+                break;
+            }
+            writer.write(line);
+            writer.write("\n");
+        }
+
+        writer.write("</web-app>");
+        writer.write("\n");
+        writer.close();
+
+        reader.close();
+        fragmentReader.close();
+
+        FileInputStream fis = new FileInputStream(webXml2);
+        FileOutputStream fos = new FileOutputStream(webXml);
+
+        byte buf[] = new byte[512];
+        while (true) {
+            int n = fis.read(buf);
+            if (n < 0) {
+                break;
+            }
+            fos.write(buf, 0, n);
+        }
+
+        fis.close();
+        fos.close();
+
+        webXml2.delete();
+
     }
 
     public boolean processFile(String file)
@@ -670,6 +758,10 @@ public class JspC implements Options {
 
 	    completeWebXml();
 	    
+            if (addWebXmlMappings) {
+                mergeIntoWebXml();
+            }
+
         } catch (Throwable t) {
             t.printStackTrace();
         }
