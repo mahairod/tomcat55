@@ -89,6 +89,10 @@ HttpResponseBase: The toEncoded() method has been updated to place
 StandardManager: Set the context class loader of the thread in charge of 
   session management.
 
+StandardSession: Remove the redundant unbinding of session attriutes in 
+  writeObject().
+
+
 ----------------
 Jasper Bug Fixes:
 ----------------
@@ -353,7 +357,7 @@ On Unix:
 Tomcat 4.0 and Sun JDK 1.4 beta 3:
 ---------------------------------
 
-Some unpredictable clq*assloading behavior has been reported when Tomcat is 
+Some unpredictable classloading behavior has been reported when Tomcat is 
 used with Sun JDK 1.4. For this reason, it is recommended to use this release 
 of Tomcat with Sun JDK 1.3.1.
 
