@@ -308,11 +308,16 @@ final class StandardWrapperValve
             //            exception(request, response, e);
             wrapper.unavailable(e);
             long available = wrapper.getAvailable();
-            if ((available > 0L) && (available < Long.MAX_VALUE))
+            if ((available > 0L) && (available < Long.MAX_VALUE)) {
                 hres.setDateHeader("Retry-After", available);
-            hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
                            sm.getString("standardWrapper.isUnavailable",
                                         wrapper.getName()));
+            } else if (available == Long.MAX_VALUE) {
+                hres.sendError(HttpServletResponse.SC_NOT_FOUND,
+                            sm.getString("standardWrapper.notFound",
+                                        wrapper.getName()));
+            }            
             // Do not save exception in 'throwable', because we
             // do not want to do exception(request, response, e) processing
         } catch (ServletException e) {
