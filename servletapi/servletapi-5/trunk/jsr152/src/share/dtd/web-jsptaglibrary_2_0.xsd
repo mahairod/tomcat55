@@ -10,7 +10,7 @@
 
 <xsd:annotation>
 <xsd:documentation>
-@(#)web-jsptaglibrary_2_0.xsds	1.26 01/24/03
+%W% %G%
 </xsd:documentation>
 </xsd:annotation>
 <xsd:annotation>
@@ -334,23 +334,69 @@ as a .tag file.
 
 The tag-file element has two required subelements:
 
-name    The unique action name
+description       Optional tag-specific information
 
-path    Where to find the .tag file implementing this
-        action, relative to the root of the web application or
-	the root of the JAR file for a tag library packaged in
-	a JAR.  This must begin with /WEB-INF/tags if the .tag
-	file resides in the WAR, or /META-INF/tags if the .tag
-	file resides in a JAR.
+display-name      A short name that is intended to be
+                  displayed by tools
+
+icon              Optional icon element that can be used
+                  by tools
+
+name              The unique action name
+
+path              Where to find the .tag file implementing this
+                  action, relative to the root of the web application or
+	          the root of the JAR file for a tag library packaged in
+	          a JAR.  This must begin with /WEB-INF/tags if the .tag
+	          file resides in the WAR, or /META-INF/tags if the .tag
+	          file resides in a JAR.
+
+example           Optional informal description of an
+                  example of a use of this tag
+
+tag-extension     Zero or more extensions that provide extra
+		  information about this tag, for tool
+		  consumption
 
 </xsd:documentation>
 </xsd:annotation>
 
     <xsd:sequence>
+        <xsd:group ref="j2ee:descriptionGroup"/>
         <xsd:element name="name"
                      type="j2ee:tld-canonical-nameType"/>
         <xsd:element name="path"
                      type="j2ee:pathType"/>
+        <xsd:element name="example"
+                     type="j2ee:xsdStringType"
+                     minOccurs="0">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        The example element contains an informal description
+        of an example of the use of a tag.
+
+        </xsd:documentation>
+        </xsd:annotation>
+
+        </xsd:element>
+	<xsd:element name="tag-extension"
+		     type="j2ee:deployment-extensionType"
+		     minOccurs="0"
+		     maxOccurs="unbounded">
+	<xsd:annotation>
+	<xsd:documentation>
+
+        Tag extensions are for tool use only and must not affect
+	the behavior of a container.  The TLD extension mechanism
+	only allows ignorable extensions (i.e. those without a
+	mustUnderstand attribute).  A Tag Library is considered
+	invalid if it requires an extension that must be
+	understood by setting mustUnderstand="true".
+
+	</xsd:documentation>
+	</xsd:annotation>
+	</xsd:element>
     </xsd:sequence>
     <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
