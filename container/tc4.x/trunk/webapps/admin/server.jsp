@@ -21,7 +21,9 @@
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">
       <td align="left" nowrap>
-        <div class="page-title-text"><bean:message key="server.heading"/></div>
+        <div class="page-title-text">
+             <bean:write name="serverForm" property="nodeLabel" scope="session"/>
+        </div>
       </td>
       <td align="right" nowrap> 
         <div class="page-title-text">

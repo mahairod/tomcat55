@@ -29,7 +29,7 @@
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
- * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
+ * 4. The names "The Jakarta Project", "Struts", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
  *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -62,21 +62,18 @@
 
 package org.apache.webapp.admin;
 
-
-import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
-import java.util.ArrayList;
+import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.QueryExp;
@@ -87,31 +84,22 @@ import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.MBeanInfo;
-
-import javax.management.modelmbean.ModelMBean;
-import javax.management.modelmbean.ModelMBeanInfo;
-
 import org.apache.struts.util.MessageResources;
+
 /**
- * Test <code>Action</code> that handles events from the tree control test
- * page.
+ * Implementation of <strong>Action</strong> that validates
+ * actions on a Host.
  *
- * @author Jazmin Jonson
  * @author Manveen Kaur
- * @version $Revision$ $Date$
+ * @version $Revision$Date: $
  */
 
-public class SetUpServerAction extends Action {
+public final class HostAction extends Action {
     
     private static MBeanServer mBServer = null;
     
-    public final static String PORT_PROP_NAME = "port";
-    public final static String SHUTDOWN_PROP_NAME = "shutdown";
-    public final static String DEBUG_PROP_NAME = "debug";
-    
-    private ArrayList debugLvlList = null;
-    
     // --------------------------------------------------------- Public Methods
+    
     
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -128,105 +116,94 @@ public class SetUpServerAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
+    
     public ActionForward perform(ActionMapping mapping,
     ActionForm form,
     HttpServletRequest request,
     HttpServletResponse response)
     throws IOException, ServletException {
         
-        HttpSession session = request.getSession();
-        
-        // Do I have to do this part ??
-        if (form == null) {
-            getServlet().log(" Creating new ServerForm bean under key "
-            + mapping.getAttribute());
-            form = new ServerForm();
-            
-            if ("request".equals(mapping.getScope()))
-                request.setAttribute(mapping.getAttribute(), form);
-            else
-                request.getSession().setAttribute(mapping.getAttribute(), form);
-            
-        }
-        
-        // label of the node that was clicked on.
-        String nodeLabel = request.getParameter("nodeLabel");
-        
-        // Do transaction stuff before this
-        
-        ServerForm serverFm = (ServerForm) form;
-        
-        if(debugLvlList == null) {
-            debugLvlList = new ArrayList();
-            debugLvlList.add(new LabelValueBean("0", "0"));
-            debugLvlList.add(new LabelValueBean("1", "1"));
-            debugLvlList.add(new LabelValueBean("2", "2"));
-            debugLvlList.add(new LabelValueBean("3", "3"));
-            debugLvlList.add(new LabelValueBean("4", "4"));
-            debugLvlList.add(new LabelValueBean("5", "5"));
-            debugLvlList.add(new LabelValueBean("6", "6"));
-            debugLvlList.add(new LabelValueBean("7", "7"));
-            debugLvlList.add(new LabelValueBean("8", "8"));
-            debugLvlList.add(new LabelValueBean("9", "9"));
-            
-        }
-        
-        Integer portNumb = null;
-        Integer debug = null;
-        String shutdown = null;
         try{
+            
+            // front end validation and checking.
+            // ===================================================
+            MessageResources messages = getResources();
+            Locale locale = (Locale)request.getSession().getAttribute(Action.LOCALE_KEY);
+            
+            // Validate the request parameters specified by the user
+            ActionErrors errors = new ActionErrors();
+            
+            // Report any errors we have discovered back to the original form
+            if (!errors.empty()) {
+                saveErrors(request, errors);
+                return (new ActionForward(mapping.getInput()));
+            }
             
             if(mBServer == null) {
                 ApplicationServlet servlet = (ApplicationServlet)getServlet();
                 mBServer = servlet.getServer();
             }
             
-            Iterator serverItr =
-            mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
-            TomcatTreeBuilder. WILDCARD),
-            null).iterator();
+            /**
+             * Get the host Name from the form.
+             * This is used to lookup the MBeanServer and
+             * retrieve this connector's MBean.
+             */
+            String hostName = request.getParameter("hostName");
             
-            ObjectName serverObjName =
-            ((ObjectInstance)serverItr.next()).getObjectName();
+            Iterator hostItr =
+            mBServer.queryMBeans(new
+            ObjectName(hostName), null).iterator();
             
-            /*
-            ModelMBeanInfo info = (ModelMBeanInfo) mBServer.getMBeanInfo(serverObjName);
-            MBeanAttributeInfo attrs[] = info.getAttributes();
-            for (int i = 0; i < attrs.length; i++)
-                System.out.println("  AttributeInfo=" + attrs[i]);
-             
-            MBeanOperationInfo opers[] = info.getOperations();
-            for (int i = 0; i < opers.length; i++)
-                System.out.println("  Operation=" + opers[i]);
+            ObjectInstance objInstance = (ObjectInstance)hostItr.next();
+            ObjectName hostObjName = (objInstance).getObjectName();
+            
+            /**
+             * Extracting the values from the form and
+             * updating the MBean with the new values.
              */
             
-            portNumb = (Integer)mBServer.getAttribute(serverObjName,
-            PORT_PROP_NAME);
+            String nameText = request.getParameter("name");
+            if(nameText != null) {
+                mBServer.setAttribute(hostObjName,
+                new Attribute(SetUpHostAction.NAME_PROP_NAME,
+                nameText));
+            }
             
-            debug = (Integer)mBServer.getAttribute(serverObjName,
-            DEBUG_PROP_NAME);
+            String appBaseText = request.getParameter("appBase");
+            if(appBaseText != null) {
+                mBServer.setAttribute(hostObjName,
+                new Attribute(SetUpHostAction.APPBASE_PROP_NAME,
+                appBaseText));
+            }
+                        
+            String debugLvlText = request.getParameter("debugLvl");
+            if(debugLvlText != null) {
+                Integer debugLvl = new Integer(debugLvlText);
+                mBServer.setAttribute(hostObjName,
+                new Attribute(SetUpHostAction.DEBUG_PROP_NAME,
+                debugLvl));
+            }
             
-            shutdown = (String)mBServer.getAttribute(serverObjName,
-            SHUTDOWN_PROP_NAME);
             
-            request.setAttribute("debugLvlVals", debugLvlList);
-            
+            String unpackWARsText = request.getParameter("unpackWARs");
+            if(unpackWARsText != null) {
+                Boolean unpackWARs = Boolean.valueOf(unpackWARsText);
+                mBServer.setAttribute(hostObjName,
+                new Attribute(SetUpHostAction.UNPACKWARS_PROP_NAME,
+                unpackWARs));
+                
+            }
+         
         }catch(Throwable t){
             t.printStackTrace(System.out);
             //forward to error page
         }
-        
-        serverFm.setNodeLabel(nodeLabel);        
-        serverFm.setPortNumberText(portNumb.toString());
-        // Hardcode debuglvl for now
-        serverFm.setDebugLvl(debug.toString());
-        serverFm.setShutdownText(shutdown);
-        serverFm.setDebugLvlVals(debugLvlList);
-        
+        if (servlet.getDebug() >= 1)
+            servlet.log(" Forwarding to success page");
         // Forward back to the test page
-        return (mapping.findForward("Server"));
+        return (mapping.findForward("Save Successful"));
         
     }
-    
     
 }

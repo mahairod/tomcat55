@@ -62,7 +62,6 @@
 
 package org.apache.webapp.admin;
 
-
 /**
  * Simple JavaBean to represent label-value pairs for use in collections
  * that are utilized by the <code>&lt;form:options&gt;</code> tag.

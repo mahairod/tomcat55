@@ -80,12 +80,15 @@ public final class ServiceForm extends ActionForm {
     
     // ----------------------------------------------------- Instance Variables
     
-    
     /**
      * The text for the serviceName.
      */
-    private String serviceName = null;
+    private String serviceName = null;    
     
+   /**
+     * The text for the node label.
+    */
+    private String nodeLabel = null; 
     
     /**
      * The text for the engine Name.
@@ -107,7 +110,24 @@ public final class ServiceForm extends ActionForm {
     private ArrayList hostNameVals = null;
     // ------------------------------------------------------------- Properties
     
+       /**
+     * Return the label of the node that was clicked.
+     */
+    public String getNodeLabel() {
+        
+        return this.nodeLabel;
+        
+    }
     
+    /**
+     * Set the node label.
+     */
+    public void setNodeLabel(String nodeLabel) {
+        
+        this.nodeLabel = nodeLabel;
+        
+    }
+        
     /**
      * Return the debugVals.
      */

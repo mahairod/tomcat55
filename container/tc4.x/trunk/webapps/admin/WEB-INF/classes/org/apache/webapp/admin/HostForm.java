@@ -59,25 +59,25 @@
  *
  */
 
-package org.apache.webapp.admin;
 
+package org.apache.webapp.admin;
 
 import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 /**
- * Form bean for the server form page.  
- * @author Patrick Luby
+ * Form bean for the host page.
+ *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public final class ServerForm extends ActionForm {
+public final class HostForm extends ActionForm {
     
     // ----------------------------------------------------- Instance Variables
     
@@ -87,9 +87,20 @@ public final class ServerForm extends ActionForm {
     private String nodeLabel = null;
     
     /**
-     * The text for the port number.
-     */    
-    private String portNumberText = "8080";
+     * The text for the hostName.
+     */
+    private String name = null;
+    
+    /**
+     * The text for the selected host name that is used to lookup the MBean info.
+     * This contains all information including the service name to which this host belongs etc.
+     */
+    private String hostName = null;
+    
+    /**
+     * The directory for the appBase.
+     */
+    private String appBase = null;
     
     /**
      * The text for the debug level.
@@ -97,13 +108,30 @@ public final class ServerForm extends ActionForm {
     private String debugLvl = "0";
     
     /**
-     * The text for the debug level.
+     * Boolean for unpack WARs.
      */
+    private String unpackWARs = "false";
     
-    private String shutdownText = null;
+    /**
+     * The text for the port. -- TBD
+     */
+    private String findAliases = null;
     
+    /**
+     * Set of valid values for debug level.
+     */
     private ArrayList debugLvlVals = null;
     
+    /*
+     * Represent boolean (true, false) values for unpackWARs etc.
+     */
+    private ArrayList booleanVals = null;
+    
+    /*
+     * Represent aliases as a List.
+     */    
+    private ArrayList aliasVals = null;
+   
     // ------------------------------------------------------------- Properties
     /**
      * Return the label of the node that was clicked.
@@ -121,7 +149,82 @@ public final class ServerForm extends ActionForm {
         
         this.nodeLabel = nodeLabel;
         
-    }    
+    }
+    
+    /**
+     * Return the selected node host name to lookup mBean.
+     */
+    public String getHostName() {
+        
+        return this.hostName;
+        
+    }
+    
+    /**
+     * Set the selected node host name to lookup mBean.
+     */
+    public void setHostName(String hostName) {
+        
+        this.hostName = hostName;
+        
+    }
+    
+    /**
+     * Return the host name.
+     */
+    public String getName() {
+        
+        return this.name;
+        
+    }
+    
+    /**
+     * Set the host name.
+     */
+    public void setName(String name) {
+        
+        this.name = name;
+        
+    }
+    
+    /**
+     * Return the appBase.
+     */
+    public String getAppBase() {
+        
+        return this.appBase;
+        
+    }
+    
+    
+    /**
+     * Set the appBase.
+     */
+    
+    public void setAppBase(String appBase) {
+        
+        this.appBase = appBase;
+        
+    }
+    
+    /**
+     * Return the unpackWARs.
+     */
+    public String getUnpackWARs() {
+        
+        return this.unpackWARs;
+        
+    }
+    
+    /**
+     * Set the unpackWARs.
+     */
+    
+    public void setUnpackWARs(String unpackWARs) {
+        
+        this.unpackWARs = unpackWARs;
+        
+    }
     
     /**
      * Return the debugVals.
@@ -140,28 +243,12 @@ public final class ServerForm extends ActionForm {
         this.debugLvlVals = debugLvlVals;
         
     }
-        
-    /**
-     * Return the portNumberText.
-     */
-    public String getPortNumberText() {
-        
-        return this.portNumberText;
-        
-    }
     
-    /**
-     * Set the portNumberText.
-     */
-    public void setPortNumberText(String portNumberText) {
-        
-        this.portNumberText = portNumberText;
-        
-    }
     
     /**
      * Return the Debug Level Text.
      */
+    
     public String getDebugLvl() {
         
         return this.debugLvl;
@@ -178,20 +265,38 @@ public final class ServerForm extends ActionForm {
     }
     
     /**
-     * Return the Shutdown Text.
+     * Return the booleanVals.
      */
-    public String getShutdownText() {
+    public ArrayList getBooleanVals() {
         
-        return this.shutdownText;
+        return this.booleanVals;
         
     }
     
     /**
-     * Set the Shut down  Text.
+     * Set the booleanVals.
      */
-    public void setShutdownText(String shutdownText) {
+    public void setBooleanVals(ArrayList booleanVals) {
         
-        this.shutdownText = shutdownText;
+        this.booleanVals = booleanVals;
+        
+    }
+    
+    /**
+     * Return the List of alias Vals.
+     */
+    public ArrayList getAliasVals() {
+        
+        return this.aliasVals;
+        
+    }
+    
+    /**
+     * Set the alias Vals.
+     */
+    public void setAliasVals(ArrayList aliasVals) {
+        
+        this.aliasVals = aliasVals;
         
     }
     
@@ -205,12 +310,12 @@ public final class ServerForm extends ActionForm {
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         
-        this.portNumberText = null;
+        this.name = null;
+        this.appBase = null;
         this.debugLvl = "0";
-        this.shutdownText = null;
+        this.unpackWARs = "false";
         
     }
-    
     
     /**
      * Validate the properties that have been set from this HTTP request,
@@ -222,40 +327,28 @@ public final class ServerForm extends ActionForm {
      * @param mapping The mapping used to select this instance
      * @param request The servlet request we are processing
      */
+    
     public ActionErrors validate(ActionMapping mapping,
     HttpServletRequest request) {
         
         ActionErrors errors = new ActionErrors();
         
         String submit = request.getParameter("submit");
+        
+        // front end validation when save is clicked.
         if (submit != null) {
             
-            // check for portNumber -- must not be blank, must be in
-            // the range 1 to 65535.
-            
-            if ((portNumberText == null) || (portNumberText.length() < 1)) {
-                errors.add("portNumberText",
-                new ActionError("error.portNumber.required"));
-            } else {
-                try {
-                    int port = Integer.parseInt(portNumberText);
-                    if ((port <= 0) || (port >65535 ))
-                        errors.add("portNumberText", 
-                            new ActionError("error.portNumber.range"));
-                } catch (NumberFormatException e) {
-                    errors.add("portNumberText", 
-                        new ActionError("error.portNumber.format"));
-                }
+            // name cannot be null
+            if ((name== null) || (name.length() < 1)) {
+                errors.add("name", new ActionError("error.hostName.required"));
             }
-        
-            // shutdown text can be any non-empty string of atleast 6 characters.
             
-            if ((shutdownText == null) || (shutdownText.length() < 7))
-                errors.add("shutdownText",
-                new ActionError("error.shutdownText.length"));
+            // appBase cannot be null
+            if ((appBase == null) || (appBase.length() < 1)) {
+                errors.add("appBase", new ActionError("error.appBase.required"));
+            }
             
-        }
-        
+        }        
         return errors;
         
     }

@@ -165,6 +165,8 @@ public class SetUpConnectorAction extends Action {
         }
         
         String selectedName = request.getParameter("select");
+        // label of the node that was clicked on.
+        String nodeLabel = request.getParameter("nodeLabel");
         
         ConnectorForm connectorFm = (ConnectorForm) form;
         
@@ -190,7 +192,7 @@ public class SetUpConnectorAction extends Action {
             booleanList.add(new LabelValueBean("False", "false"));
         }
         
-        String connectorName = null;
+        String connectorName = null;        
         String scheme = null;
         Integer debug = null;
         String acceptCountText = null;
@@ -284,6 +286,7 @@ public class SetUpConnectorAction extends Action {
         
         //setting values obtained from the mBean to be displayed in the form.
         connectorFm.setScheme(scheme);
+        connectorFm.setNodeLabel(nodeLabel);
         connectorFm.setAcceptCountText(acceptCountText);
         connectorFm.setConnTimeOutText(connTimeOut.toString());
         

@@ -17,16 +17,18 @@
 
 <html:errors/>
 
-<html:form method="POST" action="/service">
+<html:form method="POST" action="/host" focus="name">
+
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">
-      <td width="81%"> 
-        <div class="page-title-text" align="left">
-        <bean:write name="serviceForm" property="nodeLabel" scope="session"/>
+      <td align="left" nowrap>
+        <div class="page-title-text">
+            <html:hidden property="hostName"/>
+            <bean:write name="hostForm" property="nodeLabel" scope="session"/>
         </div>
       </td>
-      <td width="19%"> 
-        <div align="right">
+      <td align="right" nowrap> 
+       <div align="right">
         <controls:actions>
             <controls:action selected="true"> -----<bean:message key="actions.available.actions"/>----- </controls:action>
             <controls:action> ------------------------------------- </controls:action>
@@ -34,12 +36,9 @@
             <controls:action url="">  <bean:message key="actions.accesslogger.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.accesslogger.delete"/> </controls:action>
             <controls:action> ------------------------------------- </controls:action>
-            <controls:action url="">  <bean:message key="actions.connector.create"/> </controls:action>
-            <controls:action url="">  <bean:message key="actions.connector.delete"/> </controls:action>
-            <controls:action> ------------------------------------- </controls:action>
-            <controls:action url="">  <bean:message key="actions.host.create"/> </controls:action>
-            <controls:action url="">  <bean:message key="actions.host.delete"/> </controls:action>
-            <controls:action> ------------------------------------- </controls:action>
+            <controls:action url="">  <bean:message key="actions.alias.create"/> </controls:action>
+            <controls:action url="">  <bean:message key="actions.alias.delete"/> </controls:action>
+           <controls:action> ------------------------------------- </controls:action>
             <controls:action url="">  <bean:message key="actions.logger.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.logger.delete"/> </controls:action>
             <controls:action> ------------------------------------- </controls:action>
@@ -52,7 +51,7 @@
             <controls:action url="">  <bean:message key="actions.valve.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.valve.delete"/> </controls:action>
             <controls:action> ------------------------------------- </controls:action>
-            <controls:action url="">  <bean:message key="actions.service.delete"/> </controls:action>
+            <controls:action url="">  <bean:message key="actions.host.delete"/> </controls:action>
         </controls:actions>
           </div>
       </td>
@@ -60,13 +59,14 @@
   </table>
 
   <%@ include file="buttons.jsp" %>
+<br>
 
- <%-- Heading --%>
- 
  <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr> <td>  <div class="table-title-text">  
-            <bean:message key="service.properties"/>
-    </div> </td> </tr>
+    <tr> <td> 
+        <div class="table-title-text"> 
+            <bean:message key="host.properties"/> 
+        </div>
+    </td> </tr>
   </table>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
@@ -76,46 +76,21 @@
             <controls:row header="true" 
                 labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label><bean:message key="service.property"/></controls:label>
-            <controls:data><bean:message key="service.value"/> </controls:data>
+            <controls:data><bean:message key="service.value"/></controls:data>
         </controls:row>
 
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
-            <controls:label><bean:message key="service.name"/>:</controls:label>
+            <controls:label><bean:message key="host.name"/>:</controls:label>
             <controls:data>
-              <html:hidden property="serviceName"/>
-              <bean:write name="serviceForm" property="serviceName" 
-                          scope="session"/> 
+              <html:text property="name" size="24" maxlength="24"/>
             </controls:data>
         </controls:row>
 
-    </controls:table>
-
-    </td>
-    </tr>
-  </table>
-
-<br>
-
-  <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr> <td> <div class="table-title-text">  
-        <bean:message key="service.engine.props"/> 
-    </div> </td> </tr>
-  </table>
- 
-  <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
-    <tr> 
-      <td> 
-        <controls:table tableStyle="front-table" lineStyle="line-row">
-            <controls:row header="true" 
-                labelStyle="table-header-text" dataStyle="table-header-text">
-            <controls:label><bean:message key="service.property"/></controls:label>
-            <controls:data><bean:message key="service.value"/> </controls:data>
-        </controls:row>
 
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
-            <controls:label><bean:message key="service.name"/>:</controls:label>
+            <controls:label><bean:message key="host.base"/>:</controls:label>
             <controls:data>
-              <html:text property="engineName" size="24" maxlength="24"/>
+              <html:text property="appBase" size="24" maxlength="24"/>
             </controls:data>
         </controls:row>
 
@@ -123,34 +98,64 @@
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
                 <html:select property="debugLvl">
-                     <bean:define id="debugLvlVals" name="serviceForm" property="debugLvlVals"/>
+                     <bean:define id="debugLvlVals" name="hostForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                    labelProperty="label"/>
                 </html:select>
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
-            <controls:label><bean:message key="service.defaulthostname"/>:</controls:label>
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="host.wars"/>:</controls:label>
             <controls:data>
-                <html:select property="defaultHost">
-                     <bean:define id="hostNameVals" 
-                            name="serviceForm" property="hostNameVals"/>
-                     <html:options collection="hostNameVals" property="value"
-                            labelProperty="label"/>
+               <html:select property="unpackWARs">
+                     <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
                 </html:select>
             </controls:data>
         </controls:row>
+      </controls:table>
 
-    </controls:table>
-    </td>
+      </td>
     </tr>
   </table>
-  <br>
+
+<br>
+<br>
+
+ <!-- Aliases -->
+ <table border="0" cellspacing="0" cellpadding="0" width="100%">
+    <tr> <td> 
+        <div class="table-title-text"> 
+            <bean:message key="host.aliases"/> 
+        </div>
+    </td> </tr>
+  </table>
+
+ <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
+    <tr> <td>
+        <table class="front-table" border="1" cellspacing="0" cellpadding="0" width="100%">
+          <tr class="header-row"> 
+            <td width="27%"> 
+              <div class="table-header-text" align="left"><bean:message key="host.alias.name"/> </div>
+            </td> </tr>
+
+            <logic:iterate id="aliasVal" name="hostForm" property="aliasVals">
+            <tr> <td width="27%" valign="top" colspan=2> 
+                <div class="table-normal-text"> <%= aliasVal %> </div>
+            </td> </tr>
+            </logic:iterate>
+         </table>
+
+    </td> </tr>
+ </table>
+  <!-- Alias table end -->
 
   <%@ include file="buttons.jsp" %>
 
-  </html:form>
+</html:form>
+
 <!-- Standard Footer -->
 
 <%@ include file="footer.jsp" %>

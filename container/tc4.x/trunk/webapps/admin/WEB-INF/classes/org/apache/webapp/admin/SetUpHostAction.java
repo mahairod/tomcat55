@@ -67,6 +67,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Arrays;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -77,7 +78,6 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.QueryExp;
@@ -93,26 +93,27 @@ import javax.management.modelmbean.ModelMBean;
 import javax.management.modelmbean.ModelMBeanInfo;
 
 import org.apache.struts.util.MessageResources;
-
 /**
  * Test <code>Action</code> that handles events from the tree control test
- * page.
- *
+ * page when a node linking to a host is selected.
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public class SetUpServiceAction extends Action {
+public class SetUpHostAction extends Action {
     
     private static MBeanServer mBServer = null;
     
     public final static String NAME_PROP_NAME = "name";
-    public final static String HOST_PROP_NAME = "defaultHost";
+    public final static String APPBASE_PROP_NAME = "appBase";
     public final static String DEBUG_PROP_NAME = "debug";
+    public final static String UNPACKWARS_PROP_NAME = "unpackWARs";
+    
+    public final static String FINDALIASES_OPERATION_NAME = "findAliases";
     
     private ArrayList debugLvlList = null;
-    private ArrayList hostNameList = null;
-    
+    private ArrayList booleanList = null;
+    private ArrayList aliasList = null;
     
     // --------------------------------------------------------- Public Methods
     
@@ -139,27 +140,26 @@ public class SetUpServiceAction extends Action {
         
         HttpSession session = request.getSession();
         
+        // Do I have to do this part ??
         if (form == null) {
-            getServlet().log(" Creating new ServiceForm bean under key "
+            getServlet().log(" Creating new hostForm bean under key "
             + mapping.getAttribute());
-            form = new ServiceForm();
+            form = new HostForm();
             
             if ("request".equals(mapping.getScope()))
                 request.setAttribute(mapping.getAttribute(), form);
             else
-                session.setAttribute(mapping.getAttribute(), form);
+                request.getSession().setAttribute(mapping.getAttribute(), form);
             
         }
-        
-        // The message resources for this package.
-        //    MessageResources messages = getResources();
-        //    Locale locale = (Locale)session.getAttribute(Action.LOCALE_KEY);
         
         String selectedName = request.getParameter("select");
         // label of the node that was clicked on.
         String nodeLabel = request.getParameter("nodeLabel");
         
-        ServiceForm serviceFm = (ServiceForm) form;
+        // Do transaction stuff before this
+        
+        HostForm hostFm = (HostForm) form;
         
         if(debugLvlList == null) {
             debugLvlList = new ArrayList();
@@ -176,10 +176,17 @@ public class SetUpServiceAction extends Action {
             
         }
         
-        String serviceName = null;
-        String engineName = null;
+        /* Boolean (true.false) list for unpackWARs */
+        if(booleanList == null) {
+            booleanList = new ArrayList();
+            booleanList.add(new LabelValueBean("True", "true"));
+            booleanList.add(new LabelValueBean("False", "false"));
+        }
+        
+        String name= null;
+        String appBase = null;
         Integer debug = null;
-        String defaultHost = null;
+        Boolean unpackWARs = null;
         
         try{
             
@@ -188,87 +195,61 @@ public class SetUpServiceAction extends Action {
                 mBServer = servlet.getServer();
             }
             
-            Iterator serviceItr =
-            mBServer.queryMBeans(new
-            ObjectName(selectedName), null).iterator();
+            Iterator hostItr =
+            mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.HOST_TYPE +
+            TomcatTreeBuilder. WILDCARD),
+            null).iterator();
             
-            ObjectInstance objInstance = (ObjectInstance)serviceItr.next();
-            ObjectName serviceObjName = (objInstance).getObjectName();
+            ObjectName hostObjName =
+            ((ObjectInstance)hostItr.next()).getObjectName();
             
-            /*
-            System.out.println("There are " + mBServer.getMBeanCount().intValue() +
-            " registered MBeans");
-            Iterator instances = mBServer.queryMBeans(null, null).iterator();
-            while (instances.hasNext()) {
-                ObjectInstance instance = (ObjectInstance) instances.next();
-                System.out.println("  objectName=" + instance.getObjectName() +
-                ", className=" + instance.getClassName());
-             }
-             */
-            
-            serviceName = (String) mBServer.getAttribute(serviceObjName,
+            name = (String)mBServer.getAttribute(hostObjName,
             NAME_PROP_NAME);
             
-            String search =  TomcatTreeBuilder.ENGINE_TYPE +
-            ",service=" + serviceName;
+            appBase = (String)mBServer.getAttribute(hostObjName,
+            APPBASE_PROP_NAME);
             
-            Iterator engineItr =
-            mBServer.queryMBeans(new ObjectName(search), null).iterator();
-            
-            ObjectName engineObjName = ((ObjectInstance)engineItr.next()).getObjectName();
-            
-            /*set values from engine mBean*/
-            engineName = (String) mBServer.getAttribute(engineObjName,
-            NAME_PROP_NAME);
-            
-            debug = (Integer) mBServer.getAttribute(engineObjName,
+            debug = (Integer)mBServer.getAttribute(hostObjName,
             DEBUG_PROP_NAME);
             
-            defaultHost = (String) mBServer.getAttribute(engineObjName,
-            HOST_PROP_NAME);
+            unpackWARs = (Boolean) mBServer.getAttribute(hostObjName,
+            UNPACKWARS_PROP_NAME);
             
-            // defaultHost is an optional attribute of Engine,
-            // display blank if this value was not set.
-            if (defaultHost == null) defaultHost =" ";
+            // retrieve all aliases
+            String aliases[] = (String[]) mBServer.invoke(hostObjName,
+            FINDALIASES_OPERATION_NAME, null, null);
             
-            /* Now Extracting all Hostnames configured for this engine */
-            search =  TomcatTreeBuilder.HOST_TYPE
-            + TomcatTreeBuilder.WILDCARD
-            + ",service=" + serviceName;
+            // convert the alias string array into an alias ArrayList
+            if (aliasList == null)
+                aliasList = new ArrayList(Arrays.asList(aliases));
             
-            Iterator hostItr =
-            mBServer.queryMBeans(new ObjectName(search), null).iterator();
-            
-            hostNameList = new ArrayList();
-            //add a blank entry here for this attribute not set
-            hostNameList.add(new LabelValueBean("(none)", " "));
-            
-            while(hostItr.hasNext()) {
-                
-                ObjectName hostObjName = ((ObjectInstance)hostItr.next()).getObjectName();
-                String hostName = (String) mBServer.getAttribute(hostObjName,
-                NAME_PROP_NAME);
-                // add this to the list that will be displayed in
-                // the pulldown menu..
-                hostNameList.add(new LabelValueBean(hostName, hostName));
-            }
-            
+            request.setAttribute("debugLvlVals", debugLvlList);
+            request.setAttribute("booleanVals", booleanList);
+            request.setAttribute("aliasVals", aliasList);
             
         }catch(Throwable t){
             t.printStackTrace(System.out);
-            //forward to error page
+            //forward to error page -- TBD
+            // return (mapping.findForward("error"));
         }
         
-        serviceFm.setNodeLabel(nodeLabel);
-        serviceFm.setServiceName(serviceName);
-        serviceFm.setDefaultHost(defaultHost);
-        serviceFm.setDebugLvl(debug.toString());
-        serviceFm.setEngineName(engineName);
-        serviceFm.setDebugLvlVals(debugLvlList);
-        serviceFm.setHostNameVals(hostNameList);
+        hostFm.setNodeLabel(nodeLabel);
+        hostFm.setHostName(selectedName);
+        
+        hostFm.setName(name);
+        hostFm.setAppBase(appBase);
+        hostFm.setDebugLvl(debug.toString());
+        hostFm.setUnpackWARs(unpackWARs.toString());
+        
+        hostFm.setDebugLvlVals(debugLvlList);
+        hostFm.setBooleanVals(booleanList);
+        hostFm.setAliasVals(aliasList);
         
         // Forward back to the test page
-        return (mapping.findForward("Service"));
+        return (mapping.findForward("Host"));
         
     }
+    
+    
 }
+

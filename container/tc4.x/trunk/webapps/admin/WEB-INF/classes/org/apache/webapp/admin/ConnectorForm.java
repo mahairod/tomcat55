@@ -86,6 +86,12 @@ public final class ConnectorForm extends ActionForm {
      */
     private String scheme = null;
     
+     /**
+     * The text for the node label.
+     */
+    private String nodeLabel = null;
+    
+    
     /**
      * The text for the accept Count.
      */
@@ -168,7 +174,7 @@ public final class ConnectorForm extends ActionForm {
     // ------------------------------------------------------------- Properties
     
     /**
-     * Return the Class Name.
+     * Return the Scheme.
      */
     public String getScheme() {
         
@@ -182,6 +188,24 @@ public final class ConnectorForm extends ActionForm {
     public void setScheme(String scheme) {
         
         this.scheme = scheme;
+        
+    }
+    
+    /**
+     * Return the label of the node that was clicked.
+     */
+    public String getNodeLabel() {
+        
+        return this.nodeLabel;
+        
+    }
+    
+    /**
+     * Set the node label.
+     */
+    public void setNodeLabel(String nodeLabel) {
+        
+        this.nodeLabel = nodeLabel;
         
     }
     

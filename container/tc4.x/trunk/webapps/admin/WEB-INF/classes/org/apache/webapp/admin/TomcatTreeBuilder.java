@@ -143,7 +143,8 @@ public class TomcatTreeBuilder implements TreeBuilder{
         TreeControlNode serverNode =
         new TreeControlNode(serverObjName,
         "folder_16_pad.gif", SERVER_LABEL,
-        "setUpServer.do?select=" + encodedServerName,
+        "setUpServer.do?select=" + encodedServerName
+        +"&nodeLabel=" + SERVER_LABEL,
         "content", true);
         
         return serverNode;
@@ -173,23 +174,26 @@ public class TomcatTreeBuilder implements TreeBuilder{
             
             encodedServiceName =  URLEncoder.encode(service.getObjectName().toString());
             
+            String nodeLabel = "Service (" + serviceName + ")";
+            
             TreeControlNode serviceNode =
             new TreeControlNode(service.getObjectName().toString(),
             "folder_16_pad.gif",
-            "Service(" + serviceName + ")",
-            "setUpService.do?select=" + encodedServiceName,
+            nodeLabel,
+            "setUpService.do?select=" + encodedServiceName
+            +"&nodeLabel=" + nodeLabel,
             "content", true);
             
             serverNode.addChild(serviceNode);
             
             getConnectors(serviceNode, serviceName);
-
+            getHosts(serviceNode, serviceName);
+            
         }
     }
     
-    public void getConnectors(TreeControlNode serviceNode,
-                              String serviceName)
-        throws JMException{
+    public void getConnectors(TreeControlNode serviceNode, String serviceName)
+    throws JMException{
         
         Iterator ConnectorItr =
         (mBServer.queryMBeans(new ObjectName(CONNECTOR_TYPE + WILDCARD +
@@ -213,12 +217,13 @@ public class TomcatTreeBuilder implements TreeBuilder{
             // This is because warp connector doesn't conform to the
             // standard Engine/Host/Context hierarchy and we don't support it.
             if (!"warp".equalsIgnoreCase(connectorName)) {
+                String nodeLabel = "Connector (" + connectorName + ")";
                 connectorNode =
                 new TreeControlNode(connectorObj.getObjectName().toString(),
-                "folder_16_pad.gif",
-                "Connector(" + connectorName + ")",
-                "setUpConnector.do?select=" +
-                encodedConnectorName,
+                "folder_16_pad.gif", 
+                nodeLabel,
+                "setUpConnector.do?select=" + encodedConnectorName
+                + "&nodeLabel="+nodeLabel,
                 "content", true);
                 
                 serviceNode.addChild(connectorNode);
@@ -227,4 +232,48 @@ public class TomcatTreeBuilder implements TreeBuilder{
         
     }
     
+    public void getHosts(TreeControlNode serviceNode, String serviceName)
+    throws JMException{
+        
+        /*
+        System.out.println("** There are " + mBServer.getMBeanCount().intValue() +
+        " registered MBeans **");
+        Iterator instances = mBServer.queryMBeans(null, null).iterator();
+        while (instances.hasNext()) {
+            ObjectInstance instance = (ObjectInstance) instances.next();
+            System.out.println("  objectName=" + instance.getObjectName() +
+            ", className=" + instance.getClassName());
+        }
+        */
+        
+        Iterator HostItr =
+        (mBServer.queryMBeans(new ObjectName(HOST_TYPE + WILDCARD +
+        ",service=" + serviceName), null)).iterator();
+        
+        TreeControlNode hostNode = null;
+        String encodedHostName;
+        
+        while(HostItr.hasNext()){
+            
+            ObjectInstance hostObj = (ObjectInstance)HostItr.next();
+            
+            String hostName =
+            (String)mBServer.getAttribute(hostObj.getObjectName(),
+            "name");
+            
+            encodedHostName =  URLEncoder.encode(hostObj.getObjectName().toString());
+            
+            String nodeLabel="Host (" + hostName + ")";
+            
+            hostNode =
+            new TreeControlNode(hostObj.getObjectName().toString(),
+            "folder_16_pad.gif",
+            nodeLabel,
+            "setUpHost.do?select=" + encodedHostName
+            +"&nodeLabel="+nodeLabel,
+            "content", true);
+            
+            serviceNode.addChild(hostNode);
+        }        
+    }
 }

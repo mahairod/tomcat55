@@ -21,9 +21,9 @@
     <tr bgcolor="7171A5">
       <td width="81%"> 
        <html:hidden property="connectorName"/>
-       <div class="page-title-text" align="left">Connector ( 
-         <bean:write name="connectorForm" property="scheme" scope="session"/>
-        ) </div>
+       <div class="page-title-text" align="left">
+         <bean:write name="connectorForm" property="nodeLabel" scope="session"/>
+       </div>
       </td>
       <td width="19%"> 
         <div align="right">
