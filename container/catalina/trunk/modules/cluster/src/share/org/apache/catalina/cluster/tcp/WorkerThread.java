@@ -84,6 +84,8 @@ import java.util.LinkedList;
      */
 public class WorkerThread extends Thread
 {
+    private static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
     private ByteBuffer buffer = ByteBuffer.allocate (1024);
     private ThreadPool pool;
     private SelectionKey key;
@@ -109,7 +111,7 @@ public class WorkerThread extends Thread
                 // sleep and release object lock
                 this.wait();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.info("TCP worker thread interrupted in cluster",e);
                 // clear interrupt status
                 this.interrupted();
             }
@@ -119,13 +121,13 @@ public class WorkerThread extends Thread
             try {
                 drainChannel (key);
             } catch (Exception e) {
-                System.err.println ("Caught '"
+                log.info ("TCP Worker thread in cluster caught '"
                     + e + "' closing channel");
                 // close channel and nudge selector
                 try {
                     key.channel().close();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    log.error("Unable to close channel.",ex);
                 }
                 key.selector().wakeup();
             }

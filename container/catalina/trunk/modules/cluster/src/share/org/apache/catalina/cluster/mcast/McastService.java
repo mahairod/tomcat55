@@ -82,6 +82,8 @@ import java.util.Properties;
 
 public class McastService implements MembershipService,MembershipListener {
 
+    private static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( McastService.class );
     /**
      * The implementation specific properties
      */
@@ -180,7 +182,7 @@ public class McastService implements MembershipService,MembershipListener {
         try  {
             if ( impl != null) impl.stop();
         } catch ( Exception x)  {
-            x.printStackTrace();
+            log.error("Unable to stop the mcast service.",x);
         }
         impl = null;
     }
