@@ -50,7 +50,12 @@ Catalina    2883    Error page for 401 error code is not populated
                     (Not a spec issue, so likely to be downgraded to
                     "enhancement request")
 
+Catalina    3009    Manager cannot install web app
+
 Catalina    3292    Class reloading fails (awaiting test case)
+
+Catalina    3336    ArrayIndexOutOfBounds exception when starting and stopping
+                    an app several times through Manager
 
 Connectors  1788    mod_webapp errors on Win2k
 
@@ -72,13 +77,6 @@ Jasper      3350    Using XML syntax causes content rearrangement
 
 Jasper      3398    Jasper does not support primitive types for tag variables
 
-Webapps     3009    Manager cannot install web app
-
-Webapps     3336    ArrayIndexOutOfBounds exception when starting and stopping
-                    an app several times through Manager
-
-Webapps     3383    CompressionFilter problem in Catalina
-
 
 Nice To Have Fixes Before Final Release:
 ---------------------------------------
@@ -86,8 +84,6 @@ Nice To Have Fixes Before Final Release:
 Catalina    3114    Spanish translations of LocalString.properties files
 
 Catalina    3194    Javadoc errors during build
-
-Catalina    3434    NT/2K Service installation on JDK 1.4 b2 fails 
 
 Jasper      3055    <jsp:plugin> tag ignores the name attribute
 
