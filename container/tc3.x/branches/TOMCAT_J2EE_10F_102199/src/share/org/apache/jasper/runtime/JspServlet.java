@@ -200,7 +200,7 @@ public class JspServlet extends HttpServlet {
         else {
             options = new Options(config, context);
 
-            parentClassLoader = engine.getClassLoader(context);
+            parentClassLoader = (ClassLoader) context.getAttribute(Constants.SERVLET_CLASS_LOADER);
             if (parentClassLoader == null)
                 parentClassLoader = this.getClass().getClassLoader();
             

@@ -241,19 +241,11 @@ public class Context {
     }
 
     public ClassLoader getClassLoader() {
-        ClassLoader cl = this.container.getClassLoader();
-
-        if (cl == null) {
-            cl = (ClassLoader)this.container.getLoader();
-        }
-
-	return (ClassLoader)cl;
+      return this.classLoader;
     }
 
     public void setClassLoader(ClassLoader classLoader) {
-        if (! this.initialized) {
-	    this.container.setClassLoader(classLoader);
-        }
+      this.classLoader = classLoader;
     }
 
     public String getClassPath() {
@@ -270,8 +262,12 @@ public class Context {
         return cp;
     }
     
-    public void setClassPath(String classpath) {
-        this.classPath = classpath;
+    public void setClassPath(String classPath) {
+        if (this.classPath.trim().length() > 0) {
+	    this.classPath += File.pathSeparator;
+	}
+
+        this.classPath += classPath;
     }
     
     /**
@@ -522,8 +518,10 @@ public class Context {
 
     public Object getAttribute(String name) {
         if (name.equals("org.apache.tomcat.jsp_classpath"))
-            return getClassPath();
-        else {
+	  return getClassPath();
+	else if(name.equals("org.apache.tomcat.classloader")) {
+	  return this.container.getLoader();
+        }else {
             Object o = attributes.get(name);
             return attributes.get(name);
         }

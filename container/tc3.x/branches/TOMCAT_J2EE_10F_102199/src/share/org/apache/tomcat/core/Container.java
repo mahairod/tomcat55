@@ -78,7 +78,6 @@ import java.util.*;
 public class Container {
 
     private Context context;
-    private ClassLoader classLoader;
     private ServletLoader servletLoader;
     private Hashtable servlets = new Hashtable();
     private Hashtable prefixMappedServlets = new Hashtable();
@@ -95,14 +94,6 @@ public class Container {
 
     Context getContext() {
 	return context;
-    }
-
-    ClassLoader getClassLoader() {
-        return this.classLoader;
-    }
-
-    void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
     }
 
     ServletLoader getLoader() {

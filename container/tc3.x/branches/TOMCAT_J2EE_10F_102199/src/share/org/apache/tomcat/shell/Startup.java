@@ -89,13 +89,19 @@ public class Startup {
     // add war protocol handler to system properties
 
     static {
+        String jarPackage = Constants.Protocol.JAR.PACKAGE;
+	String jarProtocol = Constants.Protocol.JAR.SYSTEM_PROPERTY;
+	String jarHandlers = System.getProperties().getProperty(jarProtocol);
         String warPackage = Constants.Protocol.WAR.PACKAGE;
-	String protocolKey = Constants.Protocol.WAR.SYSTEM_PROPERTY;
-	String protocolHandlers =
-	    System.getProperties().getProperty(protocolKey);
-	System.getProperties().put(protocolKey,
-	    (protocolHandlers == null) ?
-	    warPackage : protocolHandlers + "|" + warPackage);
+	String warProtocol = Constants.Protocol.WAR.SYSTEM_PROPERTY;
+	String warHandlers = System.getProperties().getProperty(warProtocol);
+
+	System.getProperties().put(jarProtocol,
+            (jarHandlers == null) ?
+                jarPackage : jarHandlers + "|" + jarPackage);
+	System.getProperties().put(warProtocol,
+            (warHandlers == null) ?
+                warPackage : warHandlers + "|" + warPackage);
     };
 
     /**

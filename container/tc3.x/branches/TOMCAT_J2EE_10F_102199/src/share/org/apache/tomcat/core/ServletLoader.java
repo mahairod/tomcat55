@@ -222,7 +222,7 @@ class ServletLoader extends ClassLoader {
         Class clazz = null;
 
 	try {
-	    ClassLoader parent = container.getClassLoader();
+	    ClassLoader parent = container.getContext().getClassLoader();
 
 	    if (parent != null) {
 	        clazz = parent.loadClass(name);
@@ -369,11 +369,12 @@ class ServletLoader extends ClassLoader {
 		    try {
 		        URL tURL = new URL(Constants.Request.FILE,
                             null, s);
-			URL jURL = new URL(Constants.Request.WAR +
-                            ":" + tURL);
+			URL jURL = new URL(Constants.Request.JAR +
+                            ":" + tURL + "!/" + entryName);
 
-			u = resolveURL(jURL, null, entryName);
+			u = jURL;
 		    } catch (MalformedURLException mue) {
+		        mue.printStackTrace();
 		        u = null;
 		    }
 
@@ -457,8 +458,8 @@ class ServletLoader extends ClassLoader {
 	    s += ((! s.endsWith("/")) ? "/" : "") + name.trim();
 	}
 
-	if (base.getProtocol().equalsIgnoreCase(Constants.Request.WAR)) {
-	    u = new URL(base.toString() +
+	if (base.getProtocol().equalsIgnoreCase(Constants.Request.JAR)) {
+	  u = new URL(base.toString() +
                 ((s.length() > 0) ? "!" : "") + s);
 	} else {
 	    u = new URL(base.toString() +

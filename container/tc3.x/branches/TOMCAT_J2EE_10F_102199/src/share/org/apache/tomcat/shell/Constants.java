@@ -175,5 +175,12 @@ public class Constants {
             public static final String SYSTEM_PROPERTY =
                 "java.protocol.handler.pkgs";
         }
+
+        public static class JAR {
+            public static final String PACKAGE =
+                "org.apache.tomcat.protocol";
+            public static final String SYSTEM_PROPERTY =
+                "java.protocol.handler.pkgs";
+        }
     }
  }

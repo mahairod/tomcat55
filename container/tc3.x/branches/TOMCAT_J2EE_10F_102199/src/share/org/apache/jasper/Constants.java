@@ -114,6 +114,14 @@ public class Constants {
     public static final String SERVLET_CLASSPATH = "org.apache.tomcat.jsp_classpath";
 
     /**
+     * ServletContext attribute for classpath. This is tomcat specific. 
+     * Other servlet engines can choose to have this attribute if they 
+     * want to have this JSP engine running on them. 
+     */
+    public static final String SERVLET_CLASS_LOADER = "org.apache.tomcat.classloader";
+
+
+    /**
      * Codes that indicate how verbose you want the JSP engine to be. 
      */
     public static final int FATAL_ERRORS = Integer.MIN_VALUE;

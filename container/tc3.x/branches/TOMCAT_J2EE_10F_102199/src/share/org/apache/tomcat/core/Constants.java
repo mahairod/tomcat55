@@ -221,5 +221,6 @@ public class Constants {
         public static final String HTTPS = "https";
         public static final String FILE = "file";
         public static final String WAR = "war";
+        public static final String JAR = "jar";
     }
 }
