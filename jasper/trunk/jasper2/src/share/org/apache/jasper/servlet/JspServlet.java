@@ -252,21 +252,23 @@ public class JspServlet extends HttpServlet {
         JspServletWrapper wrapper =
             (JspServletWrapper) rctxt.getWrapper(jspUri);
         if (wrapper == null) {
-            // First check if the requested JSP page exists, to avoid
-            // creating unnecessary directories and files.
-            InputStream resourceStream = context.getResourceAsStream(jspUri);
-            if (resourceStream == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, jspUri);
-                return;
-            } else {
-                try {
-                    resourceStream.close();
-                } catch(IOException e) { /* ignore */ }
-            }
-            boolean isErrorPage = exception != null;
             synchronized(this) {
                 wrapper = (JspServletWrapper) rctxt.getWrapper(jspUri);
                 if (wrapper == null) {
+                    // Check if the requested JSP page exists, to avoid
+                    // creating unnecessary directories and files.
+                    InputStream resourceStream =
+                        context.getResourceAsStream(jspUri);
+                    if (resourceStream == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND,
+                                           jspUri);
+                        return;
+                    } else {
+                        try {
+                            resourceStream.close();
+                        } catch(IOException e) { /* ignore */ }
+                    }
+                    boolean isErrorPage = exception != null;
                     wrapper = new JspServletWrapper(config, options, jspUri,
                                                     isErrorPage, rctxt);
                     rctxt.addWrapper(jspUri,wrapper);
