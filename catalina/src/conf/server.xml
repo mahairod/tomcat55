@@ -201,7 +201,6 @@
       <!-- Define the default virtual host -->
       <Host name="localhost" debug="0" appBase="webapps"
        unpackWARs="true" autoDeploy="true">
-	
 
       <!-- Add the following attributes if you want to turn XML validation
            on. Remember to comment the Host element above. 
@@ -214,6 +213,13 @@
        unpackWARs="true" autoDeploy="true"
        xmlValidation="true" xmlNamespaceAware="true">
       -->
+
+        <!-- Uncomment this to cluster this host using JavaGroups. The
+             protocol attribute can be used to configure the JavaGroups
+             network stack (the defaults are used if it's not specified). -->
+        <!--
+        <Cluster className="org.apache.catalina.cluster.JGCluster"/>
+        -->
 
         <!-- Normally, users must authenticate themselves to each web app
              individually.  Uncomment the following entry if you would like
