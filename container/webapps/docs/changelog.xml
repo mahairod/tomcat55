@@ -130,6 +130,9 @@
         <bug>33223</bug>: pageContext.forward and jsp:include result
         in StringIndexOutOfBoundsException (luehe)
       </fix>
+      <fix>
+        <bug>33373</bug>: Fix handling of context classloader in jspc (remm)
+      </fix>
     </changelog>
   </subsection>
   
