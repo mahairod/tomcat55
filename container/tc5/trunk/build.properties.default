@@ -67,11 +67,11 @@ commons-launcher.bootstrap.class=${commons-launcher.bin}/LauncherBootstrap.class
 commons-launcher.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-launcher/v0.9/commons-launcher-0.9.tar.gz
 
 
-# ----- Commons Digester, version 20020820 or later -----
-commons-digester.home=${base.path}/commons-digester
-commons-digester.lib=${commons-digester.home}/dist
+# ----- Commons Digester, version 1.4 or later -----
+commons-digester.home=${base.path}/commons-digester-1.4
+commons-digester.lib=${commons-digester.home}
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
-commons-digester.loc=jakarta-commons/digester
+commons-digester.loc=http://www.apache.org/dist/jakarta/commons/digester/binaries/commons-digester-1.4.tar.gz
 
 
 # ----- Commons Expression Language (EL) -----
@@ -192,10 +192,10 @@ junit.loc=http://telia.dl.sourceforge.net/sourceforge/junit/junit3.7.zip
 
 
 # ----- NSIS, version 2.0a7 or later -----
-nsis.home=${base.path}/nsis-2.0
+nsis.home=${base.path}/nsis-2.0-b1
 nsis.exe=${nsis.home}/makensis.exe
 nsis.installoptions.dll=${nsis.home}/Plugins/InstallOptions.dll
-nsis.loc=http://telia.dl.sourceforge.net/sourceforge/nsis/nsis20b0.exe
+nsis.loc=http://telia.dl.sourceforge.net/sourceforge/nsis/nsis20b1.exe
 
 
 # ----- Struts, version 1.1 Beta 2 or later -----

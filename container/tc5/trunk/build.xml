@@ -958,9 +958,8 @@
       <param name="destfile" value="${logkit.jar}"/>
     </antcall>
 
-    <antcall target="cvsbuild">
-      <param name="location" value="${commons-digester.loc}"/>
-      <param name="subdir" value="${commons-digester.home}"/>
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-digester.loc}"/>
       <param name="destfile" value="${commons-digester.jar}"/>
     </antcall>
 
