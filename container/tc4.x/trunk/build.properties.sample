@@ -52,3 +52,8 @@ regexp.home=${base.path}/jakarta-regexp-1.2
 # The directory containing your binary distribution of the Servlet 2.3
 # and JSP 1.2 API classes
 servletapi.home=${base.path}/jakarta-servletapi-4/dist
+
+# This property should be uncommented if you are using JDK 1.3
+# If it is not defined, classes that depend on 1.3 APIs will not
+# be compiled.
+#using.jdk.1.3=true
