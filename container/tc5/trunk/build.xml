@@ -1266,8 +1266,10 @@
       <fileset dir="resources" />
     </copy>
     <copy file="${nsis.installoptions.dll}" todir="${tomcat.dist}" />
-    <copy file="${commons-daemon.procrun.exe}" tofile="${tomcat.dist}/bin/tomcat.exe" />
-    <copy file="${commons-daemon.procrunw.exe}" tofile="${tomcat.dist}/bin/tomcatw.exe" />
+    <copy file="${jtc.home}/procrun/bin/tomcat.exe" 
+        tofile="${tomcat.dist}/bin/tomcat.exe" />
+    <copy file="${jtc.home}/procrun/bin/tomcatw.exe" 
+        tofile="${tomcat.dist}/bin/tomcatw.exe" />
     <filter token="VERSION" value="${version}"/>
     <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" 
      filtering="true"/>
