@@ -29,6 +29,7 @@ Standard Realm Implementations</a><br />
 <a href="#DataSourceRealm">DataSourceRealm</a><br />
 <a href="#JNDIRealm">JNDIRealm</a><br />
 <a href="#MemoryRealm">MemoryRealm</a><br />
+<a href="#JAASRealm">JAASRealm</a><br />
 </blockquote>
 <a href="#Common Features">Common Features</a><br />
 <blockquote>
@@ -1168,6 +1169,151 @@ to all virtual hosts and web applications.  The default contents of the
     log file in the <code>$CATALINA_HOME/logs</code> directory.</li>
 </ul>
 
+
+</subsection>
+
+
+<subsection name="JAASRealm">
+
+<h3>Introduction</h3>
+
+        <p><strong>JAASRealm</strong> is an implementation of the Tomcat
+4 <code>Realm</code> interface that authenticates users through the Java
+Authentication &amp; Authorization Service (JAAS) framework, a Java
+package that is available as an optional package in Java 2 SDK 1.3 and
+is fully integrated as of SDK 1.4 .</p>
+        <p>Using JAASRealm gives the developer the ability to combine
+practically any conceivable security realm with Tomcat's CMA. </p>
+        <p>JAASRealm is prototype for Tomcat of the proposed JAAS-based
+J2EE authentication framework for J2EE v1.4, based on the <a
+ href="http://www.jcp.org/en/jsr/detail?id=196">JCP Specification
+Request 196</a> to enhance container-managed security and promote
+'pluggable' authentication mechanisms whose implementations would be
+container-independent.
+        </p>
+        <p>Based on the JAAS login module and principal (see <code>javax.security.auth.spi.LoginModule</code>
+and <code>javax.security.Principal</code>), you can develop your own
+security mechanism or wrap another third-party mechanism for
+integration with the CMA as implemented by Tomcat.
+        </p>
+
+        <h3>Quick Start</h3>
+        <p>To set up Tomcat to use JAASRealm with your own JAAS login module,
+ you will need to follow these steps:</p>
+        <ol>
+          <li>Write your own LoginModule, User and Role classes based
+on JAAS (see 
+<a href="http://java.sun.com/j2se/1.4.1/docs/guide/security/jaas/tutorials/GeneralAcnOnly.html">the
+JAAS Authentication Tutorial</a> and 
+<a href="http://java.sun.com/j2se/1.4.1/docs/guide/security/jaas/JAASLMDevGuide.html">the JAAS Login Module 
+Developer's Guide</a>) to be managed by the JAAS Login
+Context (<code>javax.security.auth.login.LoginContext</code>)
+          </li>
+          <li>Although not specified in JAAS, you should create
+seperate classes to distinguish between users and roles, extending <code>javax.security.Principal</code>,
+so that Tomcat can tell which Principals returned from your login
+module are users and which are roles (see <code>org.apache.catalina.realm.JAASRealm</code>).
+          </li>
+          <li>Place the compiled classes on Tomcat's classpath
+          </li>
+          <li>Set up a login.config file for Java (see <a
+ href="http://java.sun.com/j2se/1.4.1/docs/guide/security/jaas/tutorials/LoginConfigFile.html">JAAS
+LoginConfig file</a>) and tell Tomcat where to find it by specifying
+its location to the JVM, for instance by setting the environment
+variable: JAVA_OPTS=-D<code>JAVA_OPTS=-Djava.security.auth.login.config==$CATALINA_HOME/conf/jaas.config</code></li>
+          <li>Configure your security-constraints in your web.xml for
+the resources you want to protect</li>
+          <li>Configure the JAASRealm module in your server.xml </li>
+          <li>Restart Tomcat 4 if it is already running.</li>
+        </ol>
+        <h3>Realm Element Attributes</h3>
+        <p>To configure JAASRealm as for step 6 above, you create
+a <code>&lt;Realm&gt;</code> element and nest it in your 
+<code>$CATALINA_HOME/conf/server.xml</code>
+file within your <code>&lt;Engine&gt;</code> node. The following attributes 
+are supported by this implementation:</p>
+
+<attributes>
+
+  <attribute name="className" required="true">
+    <p>The fully qualified Java class name of this Realm implementation.
+    You <strong>MUST</strong> specify the value
+    "<code>org.apache.catalina.realm.MemoryRealm</code>" here.</p>
+  </attribute>
+
+  <attribute name="debug" required="false">
+    <p>The level of debugging detail logged by this Realm
+    to the associated <a href="config/logger.html">Logger</a>.  Higher numbers
+    generate more detailed output.  If not specified, the default
+    debugging detail level is zero (0).</p>
+  </attribute>
+
+  <attribute name="appName" required="true">
+    <p>The name of the realm as configured in your login configuration file 
+    (<a href="http://java.sun.com/j2se/1.4.1/docs/guide/security/jaas/tutorials/LoginConfigFile.html">JAAS LoginConfig</a>).</p>
+  </attribute>
+
+  <attribute name="userClassNames" required="true">
+    <p>A comma-seperated list of the names of the classes that you have made 
+    for your user <code>Principals</code>.</p>
+  </attribute>
+
+  <attribute name="roleClassNames" required="false">
+    <p>A comma-seperated list of the names of the classes that you have made 
+    for your role <code>Principals</code>.</p>
+  </attribute>
+
+</attributes>
+
+<h3>Example</h3>
+
+<p>Here is an example of how your server.xml snippet should look.</p>
+
+<source>
+&lt;Realm className="org.apache.catalina.realm.JAASRealm"                 
+                appName="MyFooRealm"       
+    userClassNames="org.foobar.realm.FooUser"       
+     roleClassNames="org.foobar.realm.FooRole" 
+                      debug="99"/&gt;
+</source>
+
+<p>It is the responsibility of your login module to create and save User and 
+Role objects representing Principals for the user 
+(<code>javax.security.auth.Subject</code>). If your login module doesn't 
+create a user object but also doesn't throw a login exception, then the 
+Tomcat CMA will break and you will be left at the 
+http://localhost:8080/myapp/j_security_check URI or at some other 
+unspecified location.</p>
+
+        <p>The flexibility of the JAAS approach is two-fold: </p>
+        <ul>
+          <li>you can carry out whatever processing you require behind
+the scenes in your own login module.</li>
+          <li>you can plug in a completely different LoginModule by changing the configuration 
+and restarting the server, without any code changes to your application.</li>
+        </ul>
+
+        <h3>Additional Notes</h3>
+        <ul>
+          <li>
+When a user attempts to access a protected resource for
+the first time,     Tomcat 4 will call the <code>authenticate()</code>
+method of this <code>Realm</code>.  Thus, any changes you have made in
+the security mechanism     directly (new users, changed passwords or
+roles, etc.) will be immediately     reflected.</li>
+          <li>Once a user has been authenticated, the user (and his or
+her associated     roles) are cached within Tomcat for the duration of
+the user's login.     (For FORM-based authentication, that means until
+the session times out or     is invalidated; for BASIC authentication,
+that means until the user     closes their browser).  Any changes to the
+security information for an     already authenticated user will <strong>not</strong>
+be reflected until     the next time that user logs on again.</li>
+          <li>Debugging and exception messages logged by this <code>Realm</code>
+will be recorded by the <code>Logger</code> that is associated with our
+surrounding <code>Context</code>, <code>Host</code>, or <code>Engine</code>.
+By default, the corresponding Logger will create a     log file in the <code>$CATALINA_HOME/logs</code>
+directory.</li>
+        </ul>
 
 </subsection>
 
