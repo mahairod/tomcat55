@@ -62,18 +62,26 @@ import javax.servlet.jsp.tagext.FunctionInfo;
 import org.apache.jasper.JasperException;
 
 /**
- * This class generates a mapper for an EL expression
+ * This class generates functions mappers for the EL expressions in the page.
  * Instead of a global mapper, a mapper is used for ecah call to EL
  * evaluator, thus avoiding the prefix overlapping and redefinition
  * issues.
+ *
+ * @author Kin-man Chung
  */
 
 public class ELFunctionMapper {
     static private int currFunc = 0;
     private ErrorDispatcher err;
-    StringBuffer ds;
-    StringBuffer ss;
+    StringBuffer ds;  // Contains codes to initialize the functions mappers.
+    StringBuffer ss;  // Contains declarations of the functions mappers.
 
+    /**
+     * Creates the functions mappers for all EL expressions in the JSP page.
+     *
+     * @param compiler Current compiler, mainly for accessing error dispatcher.
+     * @param page The current compilation unit.
+     */
     public static void map(Compiler compiler, Node.Nodes page) 
 		throws JasperException {
 
@@ -94,6 +102,10 @@ public class ELFunctionMapper {
 	}
     }
 
+    /**
+     * A visitor for the page.  The places where EL is allowed are scanned
+     * for functions, and if found functions mappers are created.
+     */
     class ELFunctionVisitor extends Node.Visitor {
 	
 	/**
@@ -171,9 +183,13 @@ public class ELFunctionMapper {
 	    }
 	}
 
+        /**
+         * Creates function mappers, if needed, from ELNodes
+         */
 	private void doMap(ELNode.Nodes el) 
 		throws JasperException {
 
+            // Only care about functions in ELNode's
 	    class Fvisitor extends ELNode.Visitor {
 		ArrayList funcs = new ArrayList();
 		HashMap keyMap = new HashMap();
@@ -190,7 +206,7 @@ public class ELFunctionMapper {
 		return;
 	    }
 
-	    // First locate all functions in this expression
+	    // First locate all unique functions in this EL
 	    Fvisitor fv = new Fvisitor();
 	    el.visit(fv);
 	    ArrayList functions = fv.funcs;
@@ -212,6 +228,7 @@ public class ELFunctionMapper {
 
 	    ds.append("  " + decName + "= ");
 	    ds.append("org.apache.jasper.runtime.ProtectedFunctionMapper");
+
 	    // Special case if there is only one function in the map
 	    String funcMethod = null;
 	    if (functions.size() == 1) {
@@ -221,6 +238,7 @@ public class ELFunctionMapper {
 		funcMethod = "  " + decName + ".mapFunction";
 	    }
 
+            // Setup arguments for either getMapForFunction or mapFunction
 	    for (int i = 0; i < functions.size(); i++) {
 		ELNode.Function f = (ELNode.Function)functions.get(i);
 		FunctionInfo funcInfo = f.getFunctionInfo();
@@ -266,6 +284,14 @@ public class ELFunctionMapper {
 	    el.setMapName(decName);
 	}
 
+        /**
+         * Find the name of the function mapper for an EL.  Reuse a
+         * previously generated one if possible.
+         * @param functions An ArrayList of ELNode.Function instances that
+         *                  represents the functions in an EL
+         * @return A previous generated function mapper name that can be used
+         *         by this EL; null if none found.
+         */
 	private String matchMap(ArrayList functions) {
 
 	    String mapName = null;
@@ -286,6 +312,9 @@ public class ELFunctionMapper {
 	    return mapName;
 	}
 
+        /*
+         * @return An unique name for a function mapper.
+         */
 	private String getMapName() {
 	    return "_jspx_fnmap_" + currFunc++;
 	}

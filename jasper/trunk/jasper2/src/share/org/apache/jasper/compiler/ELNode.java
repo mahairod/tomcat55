@@ -66,6 +66,8 @@ import org.apache.jasper.JasperException;
  *
  * It currently only defines functions.  It can be expanded to define
  * all the components of an EL expression, if need to.
+ *
+ * @author Kin-man Chung
  */
 
 abstract class ELNode {
@@ -118,7 +120,8 @@ abstract class ELNode {
     }
 
     /**
-     * Represents anything else EL expression, including function arguments etc
+     * Represents anything in EL expression, other than functions, including
+     * function arguments etc
      */
     public static class ELText extends ELNode {
 
@@ -139,7 +142,8 @@ abstract class ELNode {
 
     /**
      * Represents a function
-     * Currently only the prefix and function name, but not its arguments.
+     * Currently only include the prefix and function name, but not its
+     * arguments.
      */
     public static class Function extends ELNode {
 
@@ -208,7 +212,7 @@ abstract class ELNode {
 	/* Name used for creating a map for the functions in this
 	   EL expression, for communication to Generator.
 	 */
-	String mapName = null;
+	String mapName = null;	// The function map associated this EL
 	private List list;
 
 	public Nodes() {
@@ -262,6 +266,9 @@ abstract class ELNode {
 	}
     }
 
+    /*
+     * A visitor class for traversing ELNodes
+     */
     public static class Visitor {
 
 	public void visit(Root n) throws JasperException {

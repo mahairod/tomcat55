@@ -64,6 +64,8 @@ package org.apache.jasper.compiler;
  * a ELNode.Nodes.
  *
  * Currently, it only handles text outside ${..} and functions in ${ ..}.
+ *
+ * @author Kin-man Chung
  */
 
 public class ELParser {
@@ -81,6 +83,12 @@ public class ELParser {
 	expr = new ELNode.Nodes();
     }
 
+    /**
+     * Parse an EL expression
+     * @param expression The input expression string of the form
+     *                   Char* ('${' Char* '}')* Char*
+     * @return Parsed EL expression in ELNode.Nodes
+     */
     public static ELNode.Nodes parse(String expression) {
 	ELParser parser = new ELParser(expression);
 	while (parser.hasNextChar()) {
@@ -97,9 +105,10 @@ public class ELParser {
     }
 
     /**
-     * Parse EL into functions and else.
-     *@return An ELLNode.Nodes representing the EL expression
-     * TODO: this should be rewritten for a full parser.
+     * Parse an EL expression string '${...}'
+     *@return An ELNode.Nodes representing the EL expression
+     * TODO: Currently only parsed into functions and text strings.  This
+     *       should be rewritten for a full parser.
      */
     private ELNode.Nodes parseEL() {
 
@@ -139,8 +148,8 @@ public class ELParser {
 	if (! (curToken instanceof Id)) {
 	    return false;
 	}
-	String s1 = null;
-	String s2 = curToken.toString();
+	String s1 = null;                 // Function prefix
+	String s2 = curToken.toString();  // Function name
 	int mark = getIndex();
 	if (hasNext()) {
 	    Token t = nextToken();
@@ -166,7 +175,8 @@ public class ELParser {
     }
 
     /**
-     * Skip until an EL expression is reached.
+     * Skip until an EL expression ('${') is reached, allowing escape sequences
+     * '\\' and '\$'.
      * @return The text string up to the EL expression
      */
     private String skipUntilEL() {
@@ -203,11 +213,18 @@ public class ELParser {
 	return buf.toString();
     }
 
+    /*
+     * @return true if there is something left in EL expression buffer other
+     *         than white spaces.
+     */
     private boolean hasNext() {
 	skipSpaces();
 	return hasNextChar();
     }
 
+    /*
+     * @return The next token in the EL expression buffer.
+     */
     private Token nextToken() {
 	skipSpaces();
 	if (hasNextChar()) {
@@ -233,6 +250,10 @@ public class ELParser {
 	return null;
     }
 
+    /*
+     * Parse a string in single or double quotes, allowing for escape sequences
+     * '\\', and ('\"', or "\'")
+     */
     private Token parseQuotedChars(char quote) {
 	StringBuffer buf = new StringBuffer();
 	buf.append(quote);
@@ -253,6 +274,11 @@ public class ELParser {
 	}
 	return new QuotedString(buf.toString());
     }
+
+    /*
+     * A collection of low level parse methods dealing with character in
+     * the EL expression buffer.
+     */
 
     private void skipSpaces() {
 	while (hasNextChar()) {
@@ -288,6 +314,9 @@ public class ELParser {
 	index = i;
     }
 
+    /*
+     * Represents a token in EL expression string
+     */
     private static class Token {
 
 	char toChar() {
@@ -299,6 +328,9 @@ public class ELParser {
 	}
     }
 
+    /*
+     * Represents an ID token in EL
+     */
     private static class Id extends Token {
 	String id;
 
@@ -311,6 +343,9 @@ public class ELParser {
 	}
     }
 
+    /*
+     * Represents a character token in EL
+     */
     private static class Char extends Token {
 
 	private char ch;
@@ -328,6 +363,9 @@ public class ELParser {
 	}
     }
 
+    /*
+     * Represents a quoted (single or double) string token in EL
+     */
     private static class QuotedString extends Token {
 
 	private String value;
