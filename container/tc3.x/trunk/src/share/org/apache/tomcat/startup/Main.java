@@ -220,7 +220,7 @@ public class Main{
             if( f.isDirectory() ){
                     path +="/";
             }
-            return new URL( "file", null, path );
+            return new URL( "file", "", path );
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
@@ -281,7 +281,7 @@ public class Main{
             for(int i=0; i < serverUrlV.size();i++){
                 serverJars.addElement(serverUrlV.elementAt(i));
             }
-            serverJars.addElement( new URL( "file", null ,
+            serverJars.addElement( new URL( "file", "" ,
                 System.getProperty( "java.home" ) + "/../lib/tools.jar"));
 
             Vector commonDirJars = getClassPathV(getCommonDir());
@@ -392,7 +392,7 @@ public class Main{
                 if(f.isDirectory()){
                         path += "/";
                 }
-                URL url = new URL("file",null,path);
+                URL url = new URL("file","",path);
                 if(!jars.contains(url)){
                         jars.addElement(url);
                 }
