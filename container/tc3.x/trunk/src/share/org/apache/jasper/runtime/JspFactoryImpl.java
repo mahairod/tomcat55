@@ -68,7 +68,7 @@ import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.JspEngineInfo;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.tomcat.util.SimplePool;
+import org.apache.tomcat.util.collections.SimplePool;
 import org.apache.tomcat.util.log.*;
 
 /**
