@@ -659,12 +659,6 @@ public final class ContextConfig
             context.removeChild(children[i]);
         }
 
-        // Removing application listeners
-        String[] applicationListeners = context.findApplicationListeners();
-        for (i = 0; i < applicationListeners.length; i++) {
-            context.removeApplicationListener(applicationListeners[i]);
-        }
-
         // Removing application parameters
         /*
         ApplicationParameter[] applicationParameters =
@@ -713,12 +707,6 @@ public final class ContextConfig
         FilterMap[] filterMaps = context.findFilterMaps();
         for (i = 0; i < filterMaps.length; i++) {
             context.removeFilterMap(filterMaps[i]);
-        }
-
-        // Removing instance listeners
-        String[] instanceListeners = context.findInstanceListeners();
-        for (i = 0; i < instanceListeners.length; i++) {
-            context.removeInstanceListener(instanceListeners[i]);
         }
 
         // Removing local ejbs
