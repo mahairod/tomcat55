@@ -123,6 +123,11 @@ public abstract class RealmBase
 
 
     /**
+     * Short name for this Realm Implementation
+     */
+    protected static final String name = "RealmBase";
+
+    /**
      * The lifecycle event support for this component.
      */
     protected LifecycleSupport lifecycle = new LifecycleSupport(this);
@@ -185,14 +190,11 @@ public abstract class RealmBase
 
     }
 
-
     /**
      * Return the debugging detail level for this component.
      */
     public int getDebug() {
-
 	return (this.debug);
-
     }
 
 
@@ -202,9 +204,7 @@ public abstract class RealmBase
      * @param debug The new debugging detail level
      */
     public void setDebug(int debug) {
-
 	this.debug = debug;
-
     }
 
 
@@ -215,10 +215,18 @@ public abstract class RealmBase
      */
     public String getInfo() {
 
-	return (info);
+	return info;
 
     }
 
+    /**
+     * Return short name of this Realm implementation
+     */
+    public String getName() {
+
+	return name;
+
+    }
 
     // --------------------------------------------------------- Public Methods
 
@@ -451,6 +459,57 @@ public abstract class RealmBase
      * Return the Principal associated with the given user name.
      */
     protected abstract Principal getPrincipal(String username);
+
+
+    /**
+     * Log a message on the Logger associated with our Container (if any)
+     *
+     * @param message Message to be logged
+     */
+    protected void log(String message) {
+	Logger logger = null;
+
+	if (container != null) {
+	    logger = container.getLogger();
+        }
+
+	if (logger != null) {
+	    logger.log(getName()+"[" + container.getName() + "]: " + message);
+        } else {
+	    String containerName = null;
+	    if (container != null) {
+		containerName = container.getName();
+            }
+	    System.out.println(getName()+"[" + containerName + "]: " + message);
+	}
+    }
+
+
+    /**
+     * Log a message on the Logger associated with our Container (if any)
+     *
+     * @param message Message to be logged
+     * @param throwable Associated exception
+     */
+    protected void log(String message, Throwable throwable) {
+	Logger logger = null;
+
+	if (container != null) {
+	    logger = container.getLogger();
+        }
+
+	if (logger != null) {
+	    logger.log(getName()+"[" + container.getName() + "]: " + message, throwable);
+        } else {
+	    String containerName = null;
+	    if (container != null) {
+		containerName = container.getName();
+            }
+	    System.out.println(getName()+"[" + containerName + "]: " + message);
+	    System.out.println("" + throwable);
+	    throwable.printStackTrace(System.out);
+	}
+    }
 
 
 }

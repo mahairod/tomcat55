@@ -113,22 +113,17 @@ public final class MemoryRealm
 
 
     /**
-     * The debugging detail level for this component.
+     * Descriptive information about this Realm implementation.
      */
-    private int debug = 0;
+    protected final String info =
+	"org.apache.catalina.realm.MemoryRealm/1.0";
 
 
     /**
      * Descriptive information about this Realm implementation.
      */
-    private static final String info =
-	"org.apache.catalina.realm.MemoryRealm/1.0";
 
-
-    /**
-     * The lifecycle event support for this component.
-     */
-    private LifecycleSupport lifecycle = new LifecycleSupport(this);
+    protected static final String name = "MemoryRealm";
 
 
     /**
@@ -156,60 +151,7 @@ public final class MemoryRealm
      */
     private boolean started = false;
 
-
-    /**
-     * The property change support for this component.
-     */
-    private PropertyChangeSupport support = new PropertyChangeSupport(this);
-
-
     // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the Container with which this Realm has been associated.
-     */
-    public Container getContainer() {
-
-	return (container);
-
-    }
-
-
-    /**
-     * Set the Container with which this Realm has been associated.
-     *
-     * @param container The associated Container
-     */
-    public void setContainer(Container container) {
-
-	Container oldContainer = this.container;
-	this.container = container;
-	support.firePropertyChange("container", oldContainer, this.container);
-
-    }
-
-
-    /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-
-	return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-	this.debug = debug;
-
-    }
 
 
     /**
@@ -219,24 +161,22 @@ public final class MemoryRealm
      */
     public String getInfo() {
 
-	return (info);
+	return info;
 
     }
+
+    /**
+     * Return short name of this Realm implementation
+     */
+    public String getName() {
+
+	return name;
+
+    }
+
 
 
     // --------------------------------------------------------- Public Methods
-
-
-    /**
-     * Add a property change listener to this component.
-     *
-     * @param listener The listener to add
-     */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-
-	support.addPropertyChangeListener(listener);
-
-    }
 
 
     /**
@@ -266,21 +206,6 @@ public final class MemoryRealm
 
 
     /**
-     * Return the Principal associated with the specified username and
-     * credentials, if there is one; otherwise return <code>null</code>.
-     *
-     * @param username Username of the Principal to look up
-     * @param credentials Password or other credentials to use in
-     *  authenticating this username
-     */
-    public Principal authenticate(String username, byte[] credentials) {
-
-	return (authenticate(username, credentials.toString()));
-
-    }
-
-
-    /**
      * Return <code>true</code> if the specified Principal has the specified
      * security role, within the context of this Realm; otherwise return
      * <code>false</code>.
@@ -303,18 +228,6 @@ public final class MemoryRealm
 		log(sm.getString("memoryRealm.hasRoleFailure", name, role));
 	}
 	return (result);
-
-    }
-
-
-    /**
-     * Remove a property change listener from this component.
-     *
-     * @param listener The listener to remove
-     */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-
-	support.removePropertyChangeListener(listener);
 
     }
 
@@ -372,86 +285,6 @@ public final class MemoryRealm
 	return (Principal) principals.get(username);
     }
 
-
-    // -------------------------------------------------------- Private Methods
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     */
-    private void log(String message) {
-
-	Logger logger = null;
-	if (container != null)
-	    logger = container.getLogger();
-	if (logger != null)
-	    logger.log("MemoryRealm[" + container.getName() + "]: "
-		       + message);
-	else {
-	    String containerName = null;
-	    if (container != null)
-		containerName = container.getName();
-	    System.out.println("MemoryRealm[" + containerName
-			       + "]: " + message);
-	}
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    private void log(String message, Throwable throwable) {
-
-	Logger logger = null;
-	if (container != null)
-	    logger = container.getLogger();
-	if (logger != null)
-	    logger.log("MemoryRealm[" + container.getName() + "] "
-		       + message, throwable);
-	else {
-	    String containerName = null;
-	    if (container != null)
-		containerName = container.getName();
-	    System.out.println("MemoryRealm[" + containerName
-			       + "]: " + message);
-	    System.out.println("" + throwable);
-	    throwable.printStackTrace(System.out);
-	}
-
-    }
-
-
-    // ------------------------------------------------------ Lifecycle Methods
-
-
-    /**
-     * Add a lifecycle event listener to this component.
-     *
-     * @param listener The listener to add
-     */
-    public void addLifecycleListener(LifecycleListener listener) {
-
-	lifecycle.addLifecycleListener(listener);
-
-    }
-
-
-    /**
-     * Remove a lifecycle event listener from this component.
-     *
-     * @param listener The listener to remove
-     */
-    public void removeLifecycleListener(LifecycleListener listener) {
-
-	lifecycle.removeLifecycleListener(listener);
-
-    }
 
 
     /**
@@ -646,5 +479,4 @@ final class MemoryRealmUserAction extends XmlAction {
 	realm.addUser(username, password, roles);
 
     }
-
 }

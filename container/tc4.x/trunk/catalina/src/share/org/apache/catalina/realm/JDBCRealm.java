@@ -97,7 +97,7 @@ import java.sql.*;
  * @author Carson McDonald
  */
 
-public class JDBCRealm 
+public class JDBCRealm
     extends RealmBase {
 
 
@@ -111,21 +111,9 @@ public class JDBCRealm
 
 
     /**
-     * The Container with which this Realm is associated.
-     */
-    private Container container = null;
-
-
-    /**
      * The connection to the database.
      */
     private Connection dbConnection = null;
-
-
-    /**
-     * The debugging detail level for this component.
-     */
-    private int debug = 0;
 
 
     /**
@@ -137,13 +125,14 @@ public class JDBCRealm
     /**
      * Descriptive information about this Realm implementation.
      */
-    private static final String info = "org.apache.catalina.realm.JDBCRealm/1.0";
 
+    protected static final String info = "org.apache.catalina.realm.JDBCRealm/1.0";
 
     /**
-     * The lifecycle event support for this component.
+     * Descriptive information about this Realm implementation.
      */
-    private LifecycleSupport lifecycle = new LifecycleSupport(this);
+
+    private static final String name = "JDBCRealm";
 
 
     /**
@@ -176,12 +165,6 @@ public class JDBCRealm
      * Has this component been started?
      */
     private boolean started = false;
-
-
-    /**
-     * The property change support for this component.
-     */
-    private PropertyChangeSupport support = new PropertyChangeSupport(this);
 
 
     /**
@@ -241,60 +224,12 @@ public class JDBCRealm
 
 
     /**
-     * Return the Container with which this Realm has been associated.
-     */
-    public Container getContainer() {
-	return (container);
-    }
-
-
-    /**
-     * Set the Container with which this Realm has been associated.
-     *
-     * @param container The associated Container
-     */
-    public void setContainer(Container container) {
-	Container oldContainer = this.container;
-	this.container = container;
-	support.firePropertyChange("container", oldContainer, this.container);
-    }
-
-
-    /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-	return (this.debug);
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-	this.debug = debug;
-    }
-
-
-    /**
      * Set the JDBC driver that will be used.
      *
      * @param driverName The driver name
      */
     public void setDriverName( String driverName ) {
       this.driverName = driverName;
-    }
-
-
-    /**
-     * Return descriptive information about this Realm implementation and
-     * the corresponding version number, in the format
-     * <code>&lt;description&gt;/&lt;version&gt;</code>.
-     */
-    public String getInfo() {
-	return (info);
     }
 
 
@@ -390,17 +325,27 @@ public class JDBCRealm
     }
 
 
-    // --------------------------------------------------------- Public Methods
+    /**
+     * Return descriptive information about this Realm implementation and
+     * the corresponding version number, in the format
+     * <code>&lt;description&gt;/&lt;version&gt;</code>.
+     */
+    public String getInfo() {
 
+	return this.info;
+
+    }
 
     /**
-     * Add a property change listener to this component.
-     *
-     * @param listener The listener to add
+     * Return short name of this Realm implementation
      */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-	support.addPropertyChangeListener(listener);
+    public String getName() {
+
+	return name;
+
     }
+
+    // --------------------------------------------------------- Public Methods
 
 
     /**
@@ -426,25 +371,7 @@ public class JDBCRealm
 
         try {
 
-	    // Establish the database connection if necessary
-	    if ((dbConnection == null) || dbConnection.isClosed()) {
-		log(sm.getString("jdbcRealm.authDBClosed"));
-                if ((connectionName == null || connectionName.equals("")) &&
-                    (connectionPassword == null || connectionPassword.equals(""))) {
-                    dbConnection = DriverManager.getConnection(connectionURL);
-                } else {
-                    dbConnection = DriverManager.getConnection(connectionURL,
-                                                               connectionName,
-                                                               connectionPassword);
-                }
-		if( (dbConnection == null) || dbConnection.isClosed() ) {
-		    log(sm.getString("jdbcRealm.authDBReOpenFail"));
-		    return null;
-		}
-// XXX Commented it gives problems on Oracle 8i Drivers
-//		dbConnection.setReadOnly(true);
-	    }
-
+            if (!checkConnection()) return null;
 	    // Create the authentication search prepared statement if necessary
 	    if (preparedAuthenticate == null) {
 		String sql = "SELECT " + userCredCol + " FROM " + userTable +
@@ -543,31 +470,15 @@ public class JDBCRealm
 
     /**
      *
-     * Return the Principal associated with the specified username and
-     * credentials, if there is one; otherwise return <code>null</code>.
-     *
-     * See other authenticate for more details.
-     * 
-     * @param username Username of the Principal to look up
-     * @param credentials Password or other credentials to use in
-     *  authenticating this username
-     */
-    public Principal authenticate(String username, byte[] credentials) {
-	return (authenticate(username, credentials.toString()));
-    }
-
-
-    /**
-     *
      * Return <code>true</code> if the specified Principal has the specified
      * security role, within the context of this Realm; otherwise return
      * <code>false</code>.
      *
-     * If there are any errors with the JDBC connection, executing 
+     * If there are any errors with the JDBC connection, executing
      * the query or anything we return false (not in role set). This
-     * event is also logged. 
+     * event is also logged.
      *
-     * If there is some SQL exception the connection is set to null. 
+     * If there is some SQL exception the connection is set to null.
      * This will allow a retry on the next auth attempt. This might not
      * be the best thing to do but it will keep Catalina from needing a
      * restart if the database goes down.
@@ -577,7 +488,7 @@ public class JDBCRealm
      */
     public boolean hasRole(Principal principal, String role) {
         String username = principal.getName();
-     
+
 	// Is the specified Principal one that we created?
 	if (!(principal instanceof JDBCRealmPrincipal))
 	    return (false);
@@ -588,21 +499,10 @@ public class JDBCRealm
     }
 
 
-    /**
-     * Remove a property change listener from this component.
-     *
-     * @param listener The listener to remove
-     */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-	support.removePropertyChangeListener(listener);
-    }
-
-
     // -------------------------------------------------------- Package Methods
 
 
     // ------------------------------------------------------ Protected Methods
-
 
     /**
      * Return the password associated with the given principal's user name.
@@ -611,89 +511,11 @@ public class JDBCRealm
         return (null);
     }
 
-
     /**
      * Return the Principal associated with the given user name.
      */
     protected Principal getPrincipal(String username) {
-	return (null);
-    }
-
-
-    // -------------------------------------------------------- Private Methods
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     */
-    private void log(String message) {
-	Logger logger = null;
-
-	if (container != null) {
-	    logger = container.getLogger();
-        }
-
-	if (logger != null) {
-	    logger.log("JDBCRealm[" + container.getName() + "]: " + message);
-        } else {
-	    String containerName = null;
-	    if (container != null) {
-		containerName = container.getName();
-            }
-	    System.out.println("JDBCRealm[" + containerName + "]: " + message);
-	}
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    private void log(String message, Throwable throwable) {
-	Logger logger = null;
-
-	if (container != null) {
-	    logger = container.getLogger();
-        }
-
-	if (logger != null) {
-	    logger.log("JDBCRealm[" + container.getName() + "] " + message, throwable);
-        } else {
-	    String containerName = null;
-	    if (container != null) {
-		containerName = container.getName();
-            }
-	    System.out.println("JDBCRealm[" + containerName + "]: " + message);
-	    System.out.println("" + throwable);
-	    throwable.printStackTrace(System.out);
-	}
-    }
-
-
-    // ------------------------------------------------------ Lifecycle Methods
-
-
-    /**
-     * Add a lifecycle event listener to this component.
-     *
-     * @param listener The listener to add
-     */
-    public void addLifecycleListener(LifecycleListener listener) {
-	lifecycle.addLifecycleListener(listener);
-    }
-
-
-    /**
-     * Remove a lifecycle event listener from this component.
-     *
-     * @param listener The listener to remove
-     */
-    public void removeLifecycleListener(LifecycleListener listener) {
-	lifecycle.removeLifecycleListener(listener);
+        return (null);
     }
 
 
@@ -714,27 +536,12 @@ public class JDBCRealm
 	if (started) {
 	    throw new LifecycleException (sm.getString("jdbcRealm.alreadyStarted"));
         }
-
 	lifecycle.fireLifecycleEvent(START_EVENT, null);
 	started = true;
-
-        try {
-            Class.forName(driverName);
-            if ((connectionName == null || connectionName.equals("")) &&
-                (connectionPassword == null || connectionPassword.equals(""))){
-                        dbConnection = DriverManager.getConnection(connectionURL);
-            } else {
-                        dbConnection =DriverManager.getConnection(connectionURL,
-                            connectionName,
-                            connectionPassword);
-            }
-
-        } catch( ClassNotFoundException ex ) {
-	  throw new LifecycleException("JDBCRealm.start.readXml: " + ex, ex);
+        if(!checkConnection()) {
+            throw new LifecycleException (sm.getString("jdbcRealm.alreadyStarted"));
         }
-        catch( SQLException ex ) {
-	  throw new LifecycleException("JDBCRealm.start.readXml: " + ex, ex);
-        }
+
     }
 
 
@@ -790,11 +597,39 @@ public class JDBCRealm
             // convert the byte array to hex string
             Base64 enc=new Base64();
             return new String(enc.encode(HexUtils.convert(dig).getBytes()));
-//            return HexUtils.convert(dig);
 
         } catch( Exception ex ) {
                 ex.printStackTrace();
                 return credentials;
+        }
+    }
+
+    private boolean checkConnection(){
+        try {
+            if( (dbConnection == null) || dbConnection.isClosed() ) {
+                Class.forName(driverName);
+                log(sm.getString("jdbcRealm.checkConnectionDBClosed"));
+                if ((connectionName == null || connectionName.equals("")) ||
+                        (connectionPassword == null || connectionPassword.equals(""))) {
+                        dbConnection = DriverManager.getConnection(connectionURL);
+                } else {
+                        dbConnection = DriverManager.getConnection(connectionURL,
+                                                                   connectionName,
+                                                                   connectionPassword);
+                }
+                if( dbConnection == null || dbConnection.isClosed() ) {
+                  log(sm.getString("jdbcRealm.checkConnectionDBReOpenFail"));
+                  return false;
+                }
+            }
+            return true;
+        }catch (SQLException ex){
+            log(sm.getString("jdbcRealm.checkConnectionSQLException"),ex);
+            return false;
+        }
+        catch( ClassNotFoundException ex ) {
+            log(sm.getString("jdbcRealm.checkConnectionClassNotFoundException"),ex);
+            return false;
         }
     }
 
@@ -809,6 +644,7 @@ public class JDBCRealm
         }
 
     }
+
 }
 
 
