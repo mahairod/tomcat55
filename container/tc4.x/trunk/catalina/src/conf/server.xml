@@ -103,7 +103,7 @@
     </Connector>
     -->
 
-    <!-- Define a Coyote/JK2 AJP 1.4 Connector on port 8009 -->
+    <!-- Define a Coyote/JK2 AJP 1.3 Connector on port 8009 -->
     <Connector className="org.apache.coyote.tomcat4.CoyoteConnector"
                port="8009" minProcessors="5" maxProcessors="75"
                enableLookups="true" redirectPort="8443"
