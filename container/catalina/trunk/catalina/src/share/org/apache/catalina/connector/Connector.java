@@ -273,7 +273,6 @@ public class Connector
         if (replacements.get(name) != null) {
             repl = (String) replacements.get(name);
         }
-        log.info("get " + name + " as " + repl);
         return IntrospectionUtils.getProperty(protocolHandler, repl);
     }
 
