@@ -63,8 +63,6 @@ package org.apache.jasper.compiler;
 import java.util.*;
 import java.beans.*;
 import java.net.URLEncoder;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.lang.reflect.Method;
 import javax.servlet.jsp.tagext.*;
 import org.xml.sax.Attributes;

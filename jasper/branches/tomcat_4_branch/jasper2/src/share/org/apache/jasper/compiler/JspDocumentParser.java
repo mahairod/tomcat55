@@ -64,7 +64,6 @@ import java.io.*;
 import java.util.Hashtable;
 import javax.servlet.jsp.tagext.*;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import org.xml.sax.*;
 import org.xml.sax.ext.LexicalHandler;

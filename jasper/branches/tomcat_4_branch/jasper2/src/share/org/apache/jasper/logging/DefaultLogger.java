@@ -56,7 +56,6 @@
  */ 
 package org.apache.jasper.logging;
 
-import java.io.Writer;
 import java.io.IOException;
 import javax.servlet.ServletContext;
 

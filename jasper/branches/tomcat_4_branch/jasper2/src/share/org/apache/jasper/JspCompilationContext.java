@@ -63,7 +63,6 @@ package org.apache.jasper;
 
 import org.apache.jasper.compiler.JspReader;
 import org.apache.jasper.compiler.ServletWriter;
-import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;

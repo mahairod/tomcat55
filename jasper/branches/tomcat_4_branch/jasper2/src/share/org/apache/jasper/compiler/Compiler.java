@@ -63,16 +63,10 @@ package org.apache.jasper.compiler;
 import java.util.*;
 import java.io.*;
 import java.net.URL;
-import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.ServletException;
 import javax.servlet.Servlet;
 
-import org.xml.sax.Attributes;
-
-import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildListener;
-import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Javac;

@@ -62,7 +62,6 @@
 package org.apache.jasper.runtime;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -78,7 +77,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.JspFactory;

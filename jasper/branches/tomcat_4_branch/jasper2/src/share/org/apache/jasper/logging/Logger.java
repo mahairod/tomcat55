@@ -502,8 +502,8 @@ public abstract class Logger {
     }
 
     /**
-     * If we are timestamping at all, what format do we use to print
-     * the timestamp? See java.text.SimpleDateFormat.
+     * Set the format to be used for the timestamp, assuming that timestamping
+     * is enabled. @see java.text.SimpleDateFormat.
      *
      * Default = "yyyy-MM-dd hh:mm:ss". Special case: "msec" => raw
      * number of msec since epoch, very efficient but not

@@ -59,7 +59,6 @@
 
 package org.apache.jasper.servlet;
 
-import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -69,13 +68,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.MalformedURLException;
 import java.util.Enumeration;
 
-import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.Options;
 import org.apache.jasper.EmbededServletOptions;
@@ -84,7 +78,6 @@ import org.apache.jasper.compiler.JspRuntimeContext;
 
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.logging.DefaultLogger;
-import org.apache.jasper.logging.JasperLogger;
 
 /**
  * The JSP engine (a.k.a Jasper).

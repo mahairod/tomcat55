@@ -57,12 +57,9 @@ package org.apache.jasper.compiler;
 
 import java.io.*;
 import java.util.*;
-import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.logging.*;
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * JspReader is an input buffer for the JSP parser. It should allow
@@ -358,7 +355,7 @@ public class JspReader {
     /**
      * Skip until the given string is matched in the stream.
      * When returned, the context is positioned past the end of the match.
-     * @param s The String to match.
+     * @param limit The String to match.
      * @return A non-null <code>Mark</code> instance (positioned immediately
      *         before the search string) if found, <strong>null</strong>
      *         otherwise.
@@ -391,7 +388,7 @@ public class JspReader {
      * Skip until the given string is matched in the stream, but ignoring
      * chars initially escaped by a '\'.
      * When returned, the context is positioned past the end of the match.
-     * @param s The String to match.
+     * @param limit The String to match.
      * @return A non-null <code>Mark</code> instance (positioned immediately
      *         before the search string) if found, <strong>null</strong>
      *         otherwise.

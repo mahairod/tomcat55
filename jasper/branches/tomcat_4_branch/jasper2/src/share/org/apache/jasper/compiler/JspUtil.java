@@ -60,15 +60,11 @@
  */ 
 package org.apache.jasper.compiler;
 
-import java.net.URL;
-
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileInputStream;
 import java.util.Hashtable;
 import java.util.Vector;
-import java.util.Enumeration;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
@@ -84,7 +80,6 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.InputSource;
-import org.xml.sax.helpers.AttributesImpl;
 
 /** 
  * This class has all the utility method(s).

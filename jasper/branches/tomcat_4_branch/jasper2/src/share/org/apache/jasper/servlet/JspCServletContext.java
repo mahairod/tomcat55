@@ -60,7 +60,6 @@ package org.apache.jasper.servlet;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -69,7 +68,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.Vector;
-import java.net.URL;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;

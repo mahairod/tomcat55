@@ -56,11 +56,8 @@ package org.apache.jasper.compiler;
 
 import java.io.*;
 import java.util.*;
-import javax.servlet.jsp.tagext.*;
-import org.xml.sax.InputSource;
 import org.xml.sax.Attributes;
 import org.apache.jasper.*;
-import org.apache.jasper.logging.Logger;
 
 /**
  * Controller for the parsing of a JSP page.

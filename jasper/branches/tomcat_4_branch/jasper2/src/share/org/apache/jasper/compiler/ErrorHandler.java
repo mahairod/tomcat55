@@ -81,7 +81,7 @@ public interface ErrorHandler {
      * @param fname Name of the JSP file in which the parse error occurred
      * @param line Parse error line number
      * @param column Parse error column number
-     * @param errMsg Parse error message
+     * @param msg Parse error message
      * @param exception Parse exception
      */
     public void jspError(String fname, int line, int column, String msg,
@@ -90,7 +90,7 @@ public interface ErrorHandler {
     /**
      * Processes the given JSP parse error.
      *
-     * @param errMsg Parse error message
+     * @param msg Parse error message
      * @param exception Parse exception
      */
     public void jspError(String msg, Exception exception)

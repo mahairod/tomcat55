@@ -64,15 +64,12 @@ package org.apache.jasper.compiler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilePermission;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
 import java.security.Policy;
 import java.security.PermissionCollection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,7 +77,6 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.JspFactory;
 
-import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Options;
@@ -90,7 +86,7 @@ import org.apache.jasper.servlet.JspServletWrapper;
 
 /**
  * Class for tracking JSP compile time file dependencies when the
- * &lt;%@include file="..."%&gt; directive is used.
+ * &060;%@include file="..."&062; directive is used.
  *
  * A background thread periodically checks the files a JSP page
  * is dependent upon.  If a dpendent file changes the JSP page
@@ -142,7 +138,7 @@ public final class JspRuntimeContext implements Runnable {
      *
      * Loads in any previously generated dependencies from file.
      *
-     * @param ServletContext for web application
+     * @param context for web application
      */
     public JspRuntimeContext(ServletContext context, Options options) {
 
@@ -227,8 +223,8 @@ public final class JspRuntimeContext implements Runnable {
     /**
      * Add a new JspServletWrapper.
      *
-     * @param String uri of JSP
-     * @param JspServletWrapper for JSP
+     * @param jspUri Uri of JSP
+     * @param jsw Servlet wrapper for JSP
      */
     public void addWrapper(String jspUri, JspServletWrapper jsw) {
         jsps.remove(jspUri);
@@ -238,7 +234,7 @@ public final class JspRuntimeContext implements Runnable {
     /**
      * Get an already existing JspServletWrapper.
      *
-     * @param String JSP URI
+     * @param jspUri JSP URI
      * @return JspServletWrapper for JSP
      */
     public JspServletWrapper getWrapper(String jspUri) {
@@ -248,7 +244,7 @@ public final class JspRuntimeContext implements Runnable {
     /**
      * Remove a  JspServletWrapper.
      *
-     * @param String JSP URI of JspServletWrapper to remove
+     * @param jspUri JSP URI of JspServletWrapper to remove
      */
     public void removeWrapper(String jspUri) {
         jsps.remove(jspUri);

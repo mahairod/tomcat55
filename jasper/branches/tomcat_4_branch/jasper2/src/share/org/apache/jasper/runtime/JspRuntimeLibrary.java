@@ -67,13 +67,6 @@ import java.util.Enumeration;
 
 import java.lang.reflect.Method;
 
-import java.io.Writer;
-import java.io.Reader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import java.beans.PropertyDescriptor;
-import java.beans.IndexedPropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 
@@ -84,10 +77,8 @@ import java.security.PrivilegedActionException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 
@@ -468,7 +459,7 @@ public class JspRuntimeLibrary {
 
     /**
      * Decode an URL formatted string.
-     * @param s The string to decode.
+     * @param encoded The string to decode.
      * @return The decoded string.
      */
 

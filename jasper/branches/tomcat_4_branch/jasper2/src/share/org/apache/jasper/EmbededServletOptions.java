@@ -99,7 +99,7 @@ public final class EmbededServletOptions implements Options {
     public boolean keepGenerated = true;
 
     /**
-     * Do you want support for "large" files? What this essentially
+     * Indicates if "large" files should be supported. What this essentially
      * means is that we generated code so that the HTML data in a JSP
      * file is stored separately as opposed to those constant string
      * data being used literally in the generated servlet. 
@@ -112,21 +112,21 @@ public final class EmbededServletOptions implements Options {
     public boolean poolingEnabled = true;
 
     /**
-     * Do you want support for "mapped" files? This will generate
+     * Indicates if "mapped" files should be supported. This will generate
      * servlet that has a print statement per line of the JSP file.
      * This seems like a really nice feature to have for debugging.
      */
     public boolean mappedFile = false;
     
     /**
-     * Do you want stack traces and such displayed in the client's
-     * browser? If this is false, such messages go to the standard
+     * Indicates if you want stack traces and such displayed in the client's
+     * browser. If this is false, such messages go to the standard
      * error or a log file if the standard error is redirected. 
      */
     public boolean sendErrorToClient = false;
 
     /**
-     * Do we want to include debugging information in the class file?
+     * Indicates if debugging information should be included in the class file.
      */
     public boolean classDebugInfo = true;
 
@@ -136,7 +136,7 @@ public final class EmbededServletOptions implements Options {
     public int checkInterval = 300;
 
     /**
-     * JSP reloading check ?
+     * Indicates status of  JSP reloading.
      */
     public boolean reloading = true;
 
@@ -154,7 +154,7 @@ public final class EmbededServletOptions implements Options {
     public String ieClassId = "clsid:8AD9C840-044E-11D1-B3E9-00805F499D93";
 
     /**
-     * What classpath should I use while compiling generated servlets?
+     * Classpath to use while compiling generated servlets.
      */
     public String classpath = null;
     
@@ -164,7 +164,7 @@ public final class EmbededServletOptions implements Options {
     public String compiler = null;
 
     /**
-     * Cache for the TLD locations
+     * Cache for the TLD locations.
      */
     private TldLocationsCache tldLocationsCache = null;
 
@@ -183,14 +183,14 @@ public final class EmbededServletOptions implements Options {
     }
     
     /**
-     * Are we keeping generated code around?
+     * Getter method to see if generated code is kept.
      */
     public boolean getKeepGenerated() {
         return keepGenerated;
     }
     
     /**
-     * Are we supporting large files?
+     * Getter method to determine large file support.
      */
     public boolean getLargeFile() {
         return largeFile;
@@ -201,42 +201,44 @@ public final class EmbededServletOptions implements Options {
     }
     
     /**
-     * Are we supporting HTML mapped servlets?
+     * Getter method to determine HTML mapped servlets support.
      */
     public boolean getMappedFile() {
         return mappedFile;
     }
     
     /**
-     * Should errors be sent to client or thrown into stderr?
+     * Getter method to determine if errors should be sent to client or thrown
+     * into stderr.
      */
     public boolean getSendErrorToClient() {
         return sendErrorToClient;
     }
  
     /**
-     * Should class files be compiled with debug information?
+     * Getter method to determine if class files should be compiled with debug
+     * information.
      */
     public boolean getClassDebugInfo() {
         return classDebugInfo;
     }
 
     /**
-     * Background JSP compile thread check intervall
+     * Background JSP compile thread check interval.
      */
     public int getCheckInterval() {
         return checkInterval;
     }
 
     /**
-     * Is Jasper being used in development mode?
+     * Getter method to determine if Jasper being used in development mode.
      */
     public boolean getDevelopment() {
         return development;
     }
 
     /**
-     * JSP reloading check ?
+     * Getter method for JSP reloading check.
      */
     public boolean getReloading() {
         return reloading;
@@ -250,15 +252,15 @@ public final class EmbededServletOptions implements Options {
     }
     
     /**
-     * What is my scratch dir?
+     * Getter method for scratch dir.
      */
     public File getScratchDir() {
         return scratchDir;
     }
 
     /**
-     * What classpath should I use while compiling the servlets
-     * generated from JSP files?
+     * Getter method for classpath used when compiling the servlets
+     * generated from JSP files.
      */
     public String getClassPath() {
         return classpath;

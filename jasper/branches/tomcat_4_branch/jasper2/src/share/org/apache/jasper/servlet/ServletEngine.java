@@ -60,8 +60,6 @@
  */ 
 package org.apache.jasper.servlet;
 
-import java.io.File;
-
 import javax.servlet.ServletContext;
 
 /**

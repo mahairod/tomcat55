@@ -63,9 +63,6 @@ package org.apache.jasper;
 
 import java.io.File;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-
 import org.apache.jasper.compiler.TldLocationsCache;
 
 /**

@@ -55,9 +55,6 @@
 package org.apache.jasper.compiler;
 
 import java.io.InputStream;
-import java.io.FileNotFoundException;
-import java.io.File;
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -68,8 +65,6 @@ import java.net.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
-import javax.servlet.jsp.tagext.TagInfo;
-import javax.servlet.jsp.tagext.Tag;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;

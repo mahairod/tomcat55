@@ -57,12 +57,6 @@
 package org.apache.jasper.logging;
 
 import java.io.Writer;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.Date;
-import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
 
 import org.apache.jasper.util.Queue;
