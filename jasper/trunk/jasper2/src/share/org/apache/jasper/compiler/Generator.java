@@ -3148,7 +3148,8 @@ public class Generator {
 		if (attrInfos[i].isFragment()) {
 		    out.print("javax.servlet.jsp.tagext.JspFragment ");
 		} else {
-		    out.print("String ");
+		    out.print(attrInfos[i].getTypeName());
+		    out.print(" ");
 		}
 		out.print(attrInfos[i].getName());
 		out.println(";");
@@ -3164,7 +3165,8 @@ public class Generator {
 		if (attrInfos[i].isFragment()) {
 		    out.print("javax.servlet.jsp.tagext.JspFragment ");
 		} else {
-		    out.print("String ");
+		    out.print(attrInfos[i].getTypeName());
+		    out.print(" ");
 		}
 		out.print(toGetterMethod(attrInfos[i].getName()));
 		out.println(" {");
@@ -3180,9 +3182,11 @@ public class Generator {
 		out.printin("public void ");
 		out.print(toSetterMethodName(attrInfos[i].getName()));
 		if (attrInfos[i].isFragment()) {
-		    out.printin("(javax.servlet.jsp.tagext.JspFragment ");
+		    out.print("(javax.servlet.jsp.tagext.JspFragment ");
 		} else {
-		    out.printin("(String ");
+		    out.print("(");
+		    out.print(attrInfos[i].getTypeName());
+		    out.print(" ");
 		}
 		out.print(attrInfos[i].getName());
 		out.println(") {");
