@@ -41,6 +41,7 @@ import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.directory.DirContext;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -87,6 +88,8 @@ import org.apache.tomcat.util.buf.StringCache;
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
+ * TODO remove useless code
+ * TODO test the new save context backuo saving mode!!
  */
 
 public final class StandardServer
@@ -675,6 +678,17 @@ public final class StandardServer
      */
     public synchronized void storeConfig() throws Exception {
 
+        ObjectName sname = null;    
+        try {
+           sname = new ObjectName("Catalina:type=StoreConfig");
+           if(mserver.isRegistered(sname)) {
+               mserver.invoke(sname, "storeConfig", null, null);            
+           } else
+               log.error("StoreConfig mbean not registered" + sname);
+        } catch (Throwable t) {
+            log.error(t);
+        }
+/*
         // Calculate file objects for the old and new configuration files.
         String configFile = "conf/server.xml"; // FIXME - configurable?
         File configOld = new File(configFile);
@@ -761,7 +775,7 @@ public final class StandardServer
                                   configOld.getAbsolutePath() + " to " +
                                   configSave.getAbsolutePath());
         }
-
+*/
     }
 
 
@@ -777,7 +791,21 @@ public final class StandardServer
      *  by the persistence mechanism
      */
     public synchronized void storeContext(Context context) throws Exception {
-
+        
+        ObjectName sname = null;    
+        try {
+           sname = new ObjectName("Catalina:type=StoreConfig");
+           if(mserver.isRegistered(sname)) {
+               mserver.invoke(sname, "store",
+                   new Object[] {context}, 
+                   new String [] { "java.lang.String"});
+           } else
+               log.error("StoreConfig mbean not registered" + sname);
+        } catch (Throwable t) {
+            log.error(t);
+        }
+ 
+     /*   
         String configFile = context.getConfigFile();
 
         if (configFile != null) {
@@ -820,7 +848,7 @@ public final class StandardServer
                 throw (e);
             }
         }
-
+*/
     }
 
 

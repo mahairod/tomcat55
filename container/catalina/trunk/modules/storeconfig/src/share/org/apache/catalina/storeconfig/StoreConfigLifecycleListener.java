@@ -84,7 +84,7 @@ public class StoreConfigLifecycleListener implements LifecycleListener {
         MBeanServer mserver = MBeanUtils.createServer();
         InputStream descriptor = null;
         try {
-            ObjectName objectName = new ObjectName("Catalina:type=StoreConfig,resource=\"" +loader.getRegistryResource()+ "\"");
+            ObjectName objectName = new ObjectName("Catalina:type=StoreConfig" );
             if (!mserver.isRegistered(objectName)) {
                 descriptor = this.getClass().getResourceAsStream(
                         "mbeans-descriptors.xml");

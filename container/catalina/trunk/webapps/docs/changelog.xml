@@ -44,6 +44,9 @@
 
   <subsection name="Catalina">
     <changelog>
+      <update>
+         First integration at StoreConfig to StandardServer (pero)
+      </update>
       <fix>
         <bug>32714 </bug>: Don't make the AccessLogValve final (funkman)
       </fix>

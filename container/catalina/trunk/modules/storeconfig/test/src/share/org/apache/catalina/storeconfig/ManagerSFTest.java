@@ -20,10 +20,8 @@ import java.io.StringWriter;
 
 import junit.framework.TestCase;
 
+import org.apache.catalina.Manager;
 import org.apache.catalina.session.StandardManager;
-import org.apache.catalina.storeconfig.ManagerSF;
-import org.apache.catalina.storeconfig.StoreDescription;
-import org.apache.catalina.storeconfig.StoreRegistry;
 
 /**
  * @author Peter Rossbach
@@ -52,8 +50,8 @@ public class ManagerSFTest extends TestCase {
         super.setUp();
         registry = new StoreRegistry();
         desc = DescriptorHelper.registerDescriptor(null, registry,
-                StandardManager.class.getName(), "Manager",
-                StandardManager.class.getName(),
+                Manager.class.getName(), "Manager",
+                Manager.class.getName(),
                 "org.apache.catalina.storeconfig.ManagerSF", false, false);
         desc.addTransientAttribute("entropy");
         desc.addTransientAttribute("distributable");
@@ -62,6 +60,11 @@ public class ManagerSFTest extends TestCase {
 
     }
 
+    public void testFindStandardManager() {
+        StoreDescription managerdesc = registry.findDescription(manager.getClass());
+        assertEquals(desc,managerdesc);
+    }
+    
     public void testManagerNonStandardStore() throws Exception {
         assertTrue(factory.isDefaultManager(manager));
         manager.setMaxActiveSessions(100);
