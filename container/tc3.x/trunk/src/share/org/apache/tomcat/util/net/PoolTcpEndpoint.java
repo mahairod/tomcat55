@@ -256,11 +256,15 @@ public class PoolTcpEndpoint { // implements Endpoint {
 	    if(factory==null)
 		factory=ServerSocketFactory.getDefault();
 	    if(serverSocket==null) {
-		if (inet == null) {
-		    serverSocket = factory.createSocket(port, backlog);
-		} else {
-		    serverSocket = factory.createSocket(port, backlog, inet);
-		}
+                try {
+                    if (inet == null) {
+                        serverSocket = factory.createSocket(port, backlog);
+                    } else {
+                        serverSocket = factory.createSocket(port, backlog, inet);
+                    }
+                } catch ( BindException be ) {
+                    throw new BindException(be.getMessage() + ":" + port);
+                }
 	    }
 	    if( serverTimeout >= 0 )
 		serverSocket.setSoTimeout( serverTimeout );
