@@ -129,9 +129,13 @@ public class Startup {
 	    while (contexts.hasMoreElements()) {
 	        ContextConfig contextConfig =
 		    (ContextConfig)contexts.nextElement();
-                Context context = contextManager.addContext(
-		    contextConfig.getPath(),
-		    contextConfig.getDocumentBase());
+
+		Context context = new Context(contextManager,
+					      contextConfig.getPath(),
+					      contextConfig.getDocumentBase());
+
+                contextManager.addContext(context);
+
 		String contextWorkDirPath =
 		    getContextWorkDirPath(serverConfig,
 			contextManagerConfig,
