@@ -448,7 +448,19 @@ public class WebappClassLoader
      */
     public void addRepository(String repository) {
 
-        addRepository(repository, new File(repository));
+        // Ignore any of the standard repositories, as they are set up using 
+        // either addJar or addRepository
+        if (repository.startsWith("/WEB-INF/lib")
+            || repository.startsWith("/WEB-INF/classes"))
+            return;
+
+        // Add this repository to our underlying class loader
+        try {
+            URL url = new URL(repository);
+            super.addURL(url);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e.toString());
+        }
 
     }
 
@@ -463,7 +475,7 @@ public class WebappClassLoader
      * @exception IllegalArgumentException if the specified repository is
      *  invalid or does not exist
      */
-    public synchronized void addRepository(String repository, File file) {
+    synchronized void addRepository(String repository, File file) {
 
         // Note : There should be only one (of course), but I think we should 
         // keep this a bit generic
@@ -495,7 +507,7 @@ public class WebappClassLoader
     }
 
 
-    public synchronized void addJar(String jar, JarFile jarFile, File file)
+    synchronized void addJar(String jar, JarFile jarFile, File file)
         throws IOException {
 
         if (jar == null)
@@ -809,7 +821,7 @@ public class WebappClassLoader
         Class clazz = null;
         try {
 	    if (debug >= 4)
-	        log("      super.findClass(" + name + ")");
+	        log("      findClassInternal(" + name + ")");
 	    try {
 	        clazz = findClassInternal(name);
             } catch(AccessControlException ace) {
@@ -820,6 +832,17 @@ public class WebappClassLoader
 		    log("      -->RuntimeException Rethrown", e);
 		throw e;
 	    }
+            if (clazz == null) {
+                try {
+                    clazz = super.findClass(name);
+                } catch(AccessControlException ace) {
+                    throw new ClassNotFoundException(name);
+                } catch (RuntimeException e) {
+                    if (debug >= 4)
+                        log("      -->RuntimeException Rethrown", e);
+                    throw e;
+                }
+            }
             if (clazz == null) {
                 if (debug >= 3)
                     log("    --> Returning ClassNotFoundException");
@@ -1262,9 +1285,11 @@ public class WebappClassLoader
      */
     public URL[] getURLs() {
 
+        URL[] external = super.getURLs();
+
         int filesLength = files.length;
         int jarFilesLength = jarRealFiles.length;
-        int length = filesLength + jarFilesLength;
+        int length = filesLength + jarFilesLength + external.length;
         int i;
 
         try {
@@ -1273,8 +1298,10 @@ public class WebappClassLoader
             for (i = 0; i < length; i++) {
                 if (i < filesLength) {
                     urls[i] = files[i].toURL();
-                } else {
+                } else if (i < filesLength + jarFilesLength) {
                     urls[i] = jarRealFiles[i - filesLength].toURL();
+                } else {
+                    urls[i] = external[i - filesLength - jarFilesLength];
                 }
             }
 
