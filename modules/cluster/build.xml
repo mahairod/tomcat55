@@ -18,7 +18,7 @@
   <path id="cluster.classpath">
     <pathelement location="${catalina.build}/server/lib/catalina.jar"/>
     <pathelement location="${catalina.build}/server/lib/commons-logging.jar"/>
-    <pathelement location="${catalina.build}/common/lib/mx4j-jmx.jar"/>
+    <pathelement location="${jmx.jar}"/>
     <pathelement location="${catalina.build}/common/lib/servlet-api.jar"/>
   </path>
 
