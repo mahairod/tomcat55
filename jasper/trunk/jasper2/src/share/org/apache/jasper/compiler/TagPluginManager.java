@@ -197,6 +197,13 @@ public class TagPluginManager {
 	    return node.getChildInfo().isScriptless();
 	}
 
+	public boolean isConstantAttribute(String attribute) {
+	    Node.JspAttribute attr = getAttribute(attribute);
+	    if (attr == null)
+		return false;
+	    return attr.isLiteral();
+	}
+
 	public boolean isAttributeSpecified(String attribute) {
 	    return getAttribute(attribute) != null;
 	}
