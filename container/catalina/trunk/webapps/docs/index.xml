@@ -89,6 +89,9 @@ Tomcat 5, and using many of the Tomcat features.</p>
     Configuring MBean descriptors files for custom components.</li>
 <li><a href="default-servlet.html"><strong>Default Servlet</strong></a> -
     Configuring the default servlet and customizing directory listings.</li>
+<li><a href="cluster-howto.html"><strong>Tomcat Clustering</strong></a> -
+    Enable session replication in a Tomcat environment.</li>
+
 </ol>
 
 </section>
