@@ -65,13 +65,10 @@
 package org.apache.catalina.core;
 
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
@@ -85,7 +82,6 @@ import org.apache.catalina.startup.ExpandWar;
 import org.apache.catalina.startup.NamingRuleSet;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
-import org.xml.sax.SAXParseException;
 
 
 /**
@@ -288,7 +284,11 @@ public class StandardHostDeployer implements Deployer {
 
         // Expand war file if host wants wars unpacked
         if (isWAR && host.isUnpackWARs()) {
-            docBase = ExpandWar.expand(host,war,contextPath);
+            if (contextPath.equals("")) {
+                docBase = ExpandWar.expand(host,war,"/ROOT");
+            } else {
+                docBase = ExpandWar.expand(host,war,contextPath);
+            }
         }
 
         // Install the new web application
