@@ -167,9 +167,16 @@ public final class HexUtils {
 
     }
 
-    /** Convert 4 hex digits to an int.
+    /**
+     * Convert 4 hex digits to an int, and return the number of converted
+     * bytes.
+     *
+     * @param hex Byte array containing exactly four hexadecimal digits
+     *
+     * @exception IllegalArgumentException if an invalid hexadecimal digit
+     *  is included
      */
-    public int convert2Int( byte[] hex ) {
+    public static int convert2Int( byte[] hex ) {
 	// Code from Ajp11, from Apache's JServ
     
 	// assert b.length==4
