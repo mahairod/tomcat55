@@ -164,11 +164,12 @@
     <!-- Construct bootstrap JAR file -->
     <jar   jarfile="${catalina.build}/bin/bootstrap.jar"
            basedir="${catalina.build}/classes"
-           includes="org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class" 
+           includes="org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class,org/apache/catalina/startup/SecurityManagerDebug.class,org/apache/naming/JndiPermission.class" 
            />
     <jar   jarfile="${catalina.build}/common/lib/naming.jar"
            basedir="${catalina.build}/classes"
            includes="**/org/apache/naming/*,**/org/apache/naming/factory/Constants.class,**/org/apache/naming/java/*"
+           excludes="**/org/apache/naming/JndiPermission.class"
            />
     <jar   jarfile="${catalina.build}/common/lib/resources.jar"
            basedir="${catalina.build}/classes"
@@ -337,7 +338,7 @@
   <target name="deploy-main" depends="deploy-static">
     <jar  jarfile="${catalina.deploy}/server/lib/catalina.jar"
           basedir="${catalina.build}/classes" 
-          excludes="**/org/apache/naming/**,**/connector/warp/**,org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class" />
+          excludes="**/org/apache/naming/**,**/connector/warp/**,org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class,org/apache/catalina/startup/SecurityManagerDebug.class" />
     <jar  jarfile="${catalina.deploy}/server/lib/warp.jar"
           basedir="${catalina.build}/classes" 
           includes="**/connector/warp/**" />
