@@ -349,6 +349,13 @@ public class Catalina {
 			"Server/Service/Engine/Host/DefaultContext",
 			mapper);
 
+	mapper.addRule("Server/Service/Engine/Host/Context/Manager/Store",
+			mapper.objectCreate(null, "className"));
+	mapper.addRule("Server/Service/Engine/Host/Context/Manager/Store",
+			mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Host/Context/Manager/Store",
+			mapper.addChild("setStore", "org.apache.catalina.Store"));
+
 	mapper.addRule("Server/Service/Engine/Host/Listener",
                        mapper.objectCreate
 		       (null, "className"));
