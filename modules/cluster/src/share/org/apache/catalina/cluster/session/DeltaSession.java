@@ -1317,7 +1317,11 @@ public class DeltaSession
         // Call the valueBound() method if necessary
         if ( value instanceof HttpSessionBindingListener ) {
             event = new HttpSessionBindingEvent(this, name, value);
-            ((HttpSessionBindingListener) value).valueBound(event);
+            try {
+                ( (HttpSessionBindingListener) value).valueBound(event);
+            } catch ( Exception x ) {
+                log.error("Session binding listener throw an exception",x);
+            }
         }
         
         // Replace or add this attribute
@@ -1326,8 +1330,13 @@ public class DeltaSession
         // Call the valueUnbound() method if necessary
         if ((unbound != null) &&
             (unbound instanceof HttpSessionBindingListener)) {
-            ((HttpSessionBindingListener) unbound).valueUnbound
-              (new HttpSessionBindingEvent((HttpSession) this, name));
+            try {
+                ( (HttpSessionBindingListener) unbound).valueUnbound
+                    (new HttpSessionBindingEvent( (HttpSession)this, name));
+            } catch ( Exception x ) {
+                log.error("Session binding listener throw an exception",x);
+            }
+
         }
 
 
@@ -1641,7 +1650,12 @@ public class DeltaSession
           new HttpSessionBindingEvent((HttpSession) this, name, value);
         if ((value != null) &&
             (value instanceof HttpSessionBindingListener))
-            ((HttpSessionBindingListener) value).valueUnbound(event);
+            try {
+                ( (HttpSessionBindingListener) value).valueUnbound(event);
+            } catch ( Exception x ) {
+                log.error("Session binding listener throw an exception",x);
+            }
+
 
         // Notify interested application event listeners
         Context context = (Context) manager.getContainer();
