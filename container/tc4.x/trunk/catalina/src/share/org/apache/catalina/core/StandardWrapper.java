@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -852,8 +852,8 @@ public final class StandardWrapper
 
         ClassLoader classLoader = loader.getClassLoader();
 
-        // Special case class loader for a Catalina internal servlet
-        if (isContainerServlet(actualClass)) {
+        // Special case class loader for a container provided servlet
+        if (isContainerProvidedServlet(actualClass)) {
             classLoader = this.getClass().getClassLoader();
             log(sm.getString
                   ("standardWrapper.containerServlet", getName()));
@@ -905,7 +905,7 @@ public final class StandardWrapper
 
         // Special handling for ContainerServlet instances
         if ((servlet instanceof ContainerServlet) &&
-            isContainerServlet(actualClass)) {
+            isContainerProvidedServlet(actualClass)) {
             ((ContainerServlet) servlet).setWrapper(this);
         }
 
@@ -1203,16 +1203,23 @@ public final class StandardWrapper
 
     /**
      * Return <code>true</code> if the specified class name represents a
-     * container class that should be loaded by the system class loader.
+     * container provided servlet class that should be loaded by the
+     * server class loader.
      *
      * @param name Name of the class to be checked
      */
-    private boolean isContainerServlet(String classname) {
+    private boolean isContainerProvidedServlet(String classname) {
 
-        if (classname.startsWith("org.apache.catalina."))
+        if (classname.startsWith("org.apache.catalina.")) {
             return (true);
-        else
+        }
+        try {
+            Class clazz =
+                this.getClass().getClassLoader().loadClass(classname);
+            return (ContainerServlet.class.isAssignableFrom(clazz));
+        } catch (Throwable t) {
             return (false);
+        }
 
     }
 
