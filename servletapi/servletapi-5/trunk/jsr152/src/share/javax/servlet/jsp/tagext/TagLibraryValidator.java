@@ -146,7 +146,7 @@ abstract public class TagLibraryValidator {
     }
 
     /**
-     * Release any data kept by this instance for validation purposes
+     * Release any data kept by this instance for validation purposes.
      */
     public void release() {
 	initParameters = null;

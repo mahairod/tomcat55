@@ -70,7 +70,9 @@ package javax.servlet.jsp.tagext;
  * capable of executing the defined fragment.
  * <p>
  * A tag handler can invoke the fragment zero or more times, or 
- * pass it along to other tags, before returning.
+ * pass it along to other tags, before returning.  To communicate values
+ * to/from a JSP fragment, tag handlers store/retrieve values in 
+ * the JspContext associated with the fragment.
  * <p>
  * Note that tag library developers and page authors should not generate
  * JspFragment implementations manually.
@@ -81,7 +83,7 @@ package javax.servlet.jsp.tagext;
  * JspFragment. Upon construction, a discriminator can be passed to 
  * select which fragment that instance will execute.
  *
- * @since JSP2.0
+ * @since 2.0
  */
 public interface JspFragment {
 

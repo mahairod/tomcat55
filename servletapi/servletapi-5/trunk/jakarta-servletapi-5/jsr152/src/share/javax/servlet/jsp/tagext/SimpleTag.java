@@ -85,9 +85,11 @@ import javax.servlet.jsp.JspContext;
  *
  * <ol>
  *   <li>A new tag handler instance is created each time by the container 
- *       by calling the provided zero-args constructor.</li>
- *   <li>The <code>setJspContext()</code> and <code>setParent()</code> are 
- *       called by the container.</li>
+ *       by calling the provided zero-args constructor.  Unlike classic
+ *       tag handlers, simple tag handlers are never cached and reused by
+ *       the JSP container.</li>
+ *   <li>The <code>setJspContext()</code> and <code>setParent()</code> 
+ *       methods are called by the container.</li>
  *   <li>The setters for each attribute defined for this tag are called
  *       by the container, in the order in which they appear in the JSP
  *       page or Tag File.</li>
@@ -101,7 +103,7 @@ import javax.servlet.jsp.JspContext;
  * </ol>
  * 
  * @see SimpleTagSupport
- * @since JSP2.0
+ * @since 2.0
  */
 public interface SimpleTag extends JspTag {
     

@@ -179,7 +179,7 @@ public class TagSupport implements IterationTag, Serializable {
 
 
     /**
-     * Default processing for a body
+     * Default processing for a body.
      *
      * @return SKIP_BODY
      * @throws JspException if an error occurs while processing this tag
@@ -323,7 +323,7 @@ public class TagSupport implements IterationTag, Serializable {
     // protected fields
 
     /**
-     * The PageContext
+     * The PageContext.
      */
     protected PageContext pageContext;
 }

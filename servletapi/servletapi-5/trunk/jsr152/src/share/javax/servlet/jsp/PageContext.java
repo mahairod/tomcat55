@@ -57,8 +57,6 @@ package javax.servlet.jsp;
 
 import java.io.IOException;
 
-import java.util.Enumeration;
-
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -66,7 +64,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import javax.servlet.jsp.tagext.BodyContent;
@@ -452,7 +449,7 @@ abstract public class PageContext
      * @throws ServletException if the page that was forwarded to throws
      *     a ServletException
      * @throws IOException if an I/O error occurred while forwarding
-     * @since JSP2.0
+     * @since 2.0
      */
     abstract public void include(String relativeUrlPath, boolean flush) 
 	throws ServletException, IOException;
@@ -480,7 +477,6 @@ abstract public class PageContext
      * @throws IOException if an I/O error occurred while invoking the error
      *     page
      * @throws NullPointerException if the exception is null
-     * @throws SecurityException if target resource cannot be accessed by caller
      *
      * @see #handlePageException(Throwable)
      */
@@ -513,7 +509,6 @@ abstract public class PageContext
      * @throws IOException if an I/O error occurred while invoking the error
      *     page
      * @throws NullPointerException if the exception is null
-     * @throws SecurityException if target resource cannot be accessed by caller
      *
      * @see #handlePageException(Exception)
      */
@@ -524,7 +519,7 @@ abstract public class PageContext
     /**
      * Return a new BodyContent object, save the current "out" JspWriter,
      * and update the value of the "out" attribute in the page scope
-     * attribute namespace of the PageContext
+     * attribute namespace of the PageContext.
      *
      * @return the new BodyContent
      */
@@ -543,7 +538,7 @@ abstract public class PageContext
      * if the isErrorPage attribute of the page directive is not set
      * to "true"), the information is meaningless.
      *
-     * @since JSP2.0
+     * @since 2.0
      */
     public ErrorData getErrorData() {
 	return new ErrorData( 

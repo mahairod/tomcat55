@@ -63,7 +63,7 @@ package javax.servlet.jsp;
  * to "true".
  *
  * @see PageContext#getErrorData
- * @since JSP2.0
+ * @since 2.0
  */
 
 public final class ErrorData {
@@ -74,7 +74,7 @@ public final class ErrorData {
     private String servletName;
 
     /**
-     * Creates a new ErrorData object
+     * Creates a new ErrorData object.
      *
      * @param throwable The Throwable that is the cause of the error
      * @param statusCode The status code of the error
@@ -91,7 +91,7 @@ public final class ErrorData {
     }
 
     /**
-     * Returns the Throwable that caused the error
+     * Returns the Throwable that caused the error.
      *
      * @return The Throwable that caused the error
      */
@@ -100,7 +100,7 @@ public final class ErrorData {
     }
 
     /**
-     * Returns the status code of the error
+     * Returns the status code of the error.
      *
      * @return The status code of the error
      */
@@ -109,7 +109,7 @@ public final class ErrorData {
     }
 
     /**
-     * Returns the request URI
+     * Returns the request URI.
      *
      * @return The request URI
      */
@@ -118,7 +118,7 @@ public final class ErrorData {
     }
 
     /**
-     * Returns the name of the servlet invoked
+     * Returns the name of the servlet invoked.
      *
      * @return The name of the servlet invoked
      */

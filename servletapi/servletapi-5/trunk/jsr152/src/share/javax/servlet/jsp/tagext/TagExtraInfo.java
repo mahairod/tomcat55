@@ -81,6 +81,12 @@ package javax.servlet.jsp.tagext;
  * corresponds to the tag being translated. The call should happen before
  * any invocation on validate() and before any invocation on
  * getVariableInfo().
+ *
+ * <p>
+ * <tt>NOTE:</tt> It is a (translation time) error for a tag definition
+ * in a TLD with one or more variable subelements to have an associated
+ * TagExtraInfo implementation that returns a VariableInfo array with
+ * one or more elements from a call to getVariableInfo().
  */
 
 public abstract class TagExtraInfo {
@@ -91,10 +97,11 @@ public abstract class TagExtraInfo {
      * Request-time attributes are indicated as such in the TagData parameter.
      *
      * @param data The TagData instance.
-     * @return An array of VariableInfo data.
+     * @return An array of VariableInfo data, or a zero length array
+     *         if no scripting variables are to be defined.
      */
     public VariableInfo[] getVariableInfo(TagData data) {
-	return new VariableInfo[0];
+	return ZERO_VARIABLE_INFO;
     }
 
     /**
@@ -127,7 +134,7 @@ public abstract class TagExtraInfo {
      * @param data The TagData instance.
      * @return A null object, or zero length array if no errors, an 
      *     array of ValidationMessages otherwise.
-     * @since JSP2.0
+     * @since 2.0
      */
     public ValidationMessage[] validate( TagData data ) {
 	ValidationMessage[] result = null;
@@ -160,5 +167,8 @@ public abstract class TagExtraInfo {
     
     // private data
     private TagInfo tagInfo;
+
+    // zero length VariableInfo array
+    private static final VariableInfo[] ZERO_VARIABLE_INFO = { };
 }
 

@@ -86,7 +86,7 @@ import java.util.Map;
  * </ul>
  * </p>
  *
- * @since JSP2.0
+ * @since 2.0
  */
 public interface ExpressionEvaluator {
 

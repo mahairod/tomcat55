@@ -122,27 +122,27 @@ import java.io.IOException;
 abstract public class JspWriter extends java.io.Writer {
 
     /**
-     * constant indicating that the Writer is not buffering output
+     * Constant indicating that the Writer is not buffering output.
      */
 
     public static final int	NO_BUFFER = 0;
 
     /**
-     * constant indicating that the Writer is buffered and is using the 
-     * implementation default buffer size
+     * Constant indicating that the Writer is buffered and is using the
+     * implementation default buffer size.
      */
 
     public static final int	DEFAULT_BUFFER = -1;
 
     /**
-     * constant indicating that the Writer is buffered and is unbounded; this 
-     * is used in BodyContent
+     * Constant indicating that the Writer is buffered and is unbounded; this
+     * is used in BodyContent.
      */
 
     public static final int	UNBOUNDED_BUFFER = -2;
 
     /**
-     * protected constructor.
+     * Protected constructor.
      *
      * @param bufferSize the size of the buffer to be used by the JspWriter
      * @param autoFlush whether the JspWriter should be autoflushing
@@ -479,7 +479,7 @@ abstract public class JspWriter extends java.io.Writer {
      */
 
     /**
-     * The size of the buffer used by the JspWriter
+     * The size of the buffer used by the JspWriter.
      */
     protected int     bufferSize;
     

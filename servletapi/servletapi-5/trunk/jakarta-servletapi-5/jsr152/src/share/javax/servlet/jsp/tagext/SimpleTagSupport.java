@@ -55,6 +55,8 @@
 package javax.servlet.jsp.tagext;
 
 import javax.servlet.jsp.JspContext;
+import javax.servlet.jsp.JspException;
+import java.io.IOException;
 
 /**
  * A base class for defining tag handlers implemeting SimpleTag.
@@ -65,18 +67,18 @@ import javax.servlet.jsp.JspContext;
  * convenience methods including getter methods for the properties in
  * SimpleTag.
  *
- * @since JSP2.0
+ * @since 2.0
  */
 public class SimpleTagSupport 
     implements SimpleTag
 {
-    /** Reference to the enclosing tag */
+    /** Reference to the enclosing tag. */
     private JspTag parentTag;
     
-    /** The JSP context for the upcoming tag invocation */
+    /** The JSP context for the upcoming tag invocation. */
     protected JspContext jspContext;
     
-    /** The body of the tag */
+    /** The body of the tag. */
     protected JspFragment jspBody;
     
     /** 
@@ -96,7 +98,7 @@ public class SimpleTagSupport
      * @see SimpleTag#doTag()
      */ 
     public void doTag() 
-        throws javax.servlet.jsp.JspException, java.io.IOException
+        throws JspException, IOException
     {
     }
     
@@ -151,7 +153,7 @@ public class SimpleTagSupport
     }
     
     /**
-     * Returns the body passed in by the container via setJspBody
+     * Returns the body passed in by the container via setJspBody.
      *
      * @return the fragment encapsulating the body of this tag, or
      *    null if this tag has a body content type of empty.

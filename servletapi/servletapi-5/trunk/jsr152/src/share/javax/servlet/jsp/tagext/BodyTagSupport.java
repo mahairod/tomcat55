@@ -92,7 +92,7 @@ public class BodyTagSupport extends TagSupport implements BodyTag {
     }
 
     /**
-     * Default processing of the start tag returning EVAL_BODY_BUFFERED
+     * Default processing of the start tag returning EVAL_BODY_BUFFERED.
      *
      * @return EVAL_BODY_BUFFERED
      * @throws JspException if an error occurred while processing this tag
@@ -198,7 +198,7 @@ public class BodyTagSupport extends TagSupport implements BodyTag {
     // protected fields
 
     /**
-     * The current BodyContent for this BodyTag
+     * The current BodyContent for this BodyTag.
      */
     protected BodyContent   bodyContent;
 }

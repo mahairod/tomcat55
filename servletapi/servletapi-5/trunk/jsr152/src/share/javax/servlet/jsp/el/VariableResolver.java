@@ -66,7 +66,7 @@ package javax.servlet.jsp.el;
  * <p>An instance of this class includes the context against which resolution
  * will happen</p>
  *
- * @since JSP2.0
+ * @since 2.0
  */
 public interface VariableResolver
 {

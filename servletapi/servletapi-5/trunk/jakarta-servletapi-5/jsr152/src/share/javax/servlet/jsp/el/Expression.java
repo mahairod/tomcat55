@@ -69,7 +69,7 @@ import java.util.Map;
  * invoking the evaluate() mehod should be ready for the case where ELParseException
  * exceptions are raised. </p>
  *
- * @since JSP2.0
+ * @since 2.0
  */
 public interface Expression {
 
