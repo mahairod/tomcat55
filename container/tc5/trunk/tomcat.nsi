@@ -25,6 +25,7 @@
   !define MUI_CUSTOMPAGECOMMANDS
 
   !define MUI_UNINSTALLER
+  !define MUI_UNCONFIRMPAGE
 
   !define TEMP1 $R0
   !define TEMP2 $R1
@@ -83,11 +84,6 @@
 
   ; Main registry key
   InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\5.0" ""
-
-  ;Uninstaller
-  !define MUI_UNCUSTOMPAGECOMMANDS
-  !insertmacro MUI_UNPAGECOMMAND_CONFIRM
-  !insertmacro MUI_UNPAGECOMMAND_INSTFILES
 
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
   !insertmacro MUI_RESERVEFILE_SPECIALINI
