@@ -127,9 +127,9 @@ public class CatalinaProperties {
         }
 
         // Register the properties as system properties
-        Enumeration enum = properties.propertyNames();
-        while (enum.hasMoreElements()) {
-            String name = (String) enum.nextElement();
+        Enumeration enumeration = properties.propertyNames();
+        while (enumeration.hasMoreElements()) {
+            String name = (String) enumeration.nextElement();
             String value = properties.getProperty(name);
             if (value != null) {
                 System.setProperty(name, value);

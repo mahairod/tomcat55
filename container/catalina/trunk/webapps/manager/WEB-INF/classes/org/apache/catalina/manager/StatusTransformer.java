@@ -207,9 +207,9 @@ public class StatusTransformer {
 
             ObjectName grpName = null;
 
-            Enumeration enum = globalRequestProcessors.elements();
-            while (enum.hasMoreElements()) {
-                ObjectName objectName = (ObjectName) enum.nextElement();
+            Enumeration enumeration = globalRequestProcessors.elements();
+            while (enumeration.hasMoreElements()) {
+                ObjectName objectName = (ObjectName) enumeration.nextElement();
                 if (name.equals(objectName.getKeyProperty("name"))) {
                     grpName = objectName;
                 }
@@ -239,9 +239,9 @@ public class StatusTransformer {
 
             writer.print("<table border=\"0\"><tr><th>Stage</th><th>Time</th><th>B Sent</th><th>B Recv</th><th>Client</th><th>VHost</th><th>Request</th></tr>");
 
-            enum = requestProcessors.elements();
-            while (enum.hasMoreElements()) {
-                ObjectName objectName = (ObjectName) enum.nextElement();
+            enumeration = requestProcessors.elements();
+            while (enumeration.hasMoreElements()) {
+                ObjectName objectName = (ObjectName) enumeration.nextElement();
                 if (name.equals(objectName.getKeyProperty("worker"))) {
                     writer.print("<tr>");
                     writeProcessorState(writer, objectName, mBeanServer, mode);
@@ -267,9 +267,9 @@ public class StatusTransformer {
 
             ObjectName grpName = null;
 
-            Enumeration enum = globalRequestProcessors.elements();
-            while (enum.hasMoreElements()) {
-                ObjectName objectName = (ObjectName) enum.nextElement();
+            Enumeration enumeration = globalRequestProcessors.elements();
+            while (enumeration.hasMoreElements()) {
+                ObjectName objectName = (ObjectName) enumeration.nextElement();
                 if (name.equals(objectName.getKeyProperty("name"))) {
                     grpName = objectName;
                 }
@@ -287,9 +287,9 @@ public class StatusTransformer {
                 writer.write(" />");
 
                 writer.write("<workers>");
-                enum = requestProcessors.elements();
-                while (enum.hasMoreElements()) {
-                    ObjectName objectName = (ObjectName) enum.nextElement();
+                enumeration = requestProcessors.elements();
+                while (enumeration.hasMoreElements()) {
+                    ObjectName objectName = (ObjectName) enumeration.nextElement();
                     if (name.equals(objectName.getKeyProperty("worker"))) {
                         writeProcessorState(writer, objectName, mBeanServer, mode);
                     }

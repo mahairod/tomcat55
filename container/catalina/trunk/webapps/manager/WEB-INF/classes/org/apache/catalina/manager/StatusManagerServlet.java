@@ -279,9 +279,9 @@ public class StatusManagerServlet
             // Display virtual machine statistics
             StatusTransformer.writeVMState(writer,mode);
 
-            Enumeration enum = threadPools.elements();
-            while (enum.hasMoreElements()) {
-                ObjectName objectName = (ObjectName) enum.nextElement();
+            Enumeration enumeration = threadPools.elements();
+            while (enumeration.hasMoreElements()) {
+                ObjectName objectName = (ObjectName) enumeration.nextElement();
                 String name = objectName.getKeyProperty("name");
                 // use StatusTransformer to output status
                 StatusTransformer.writeConnectorState
