@@ -61,7 +61,7 @@ the "examples" application that is set up as both path mapped and servlet
 mapped to the invoker servlet ("/servlet/*"), which stores a request attribute
 that is passed on to the servlet that is ultimately executed.
 
-Dependencies on Installed Extensions [Raw]
+Dependencies on Installed Extensions [Medium Rare]
 --------------------------------------------------
 Web applications, or the JAR files in the WEB-INF/lib directory, can now
 declare their dependence on particular versions of external libraries that
