@@ -70,7 +70,6 @@ public class Main {
                 String name = arg.substring(2, arg.length());
 		String value = args[++i];
                 definedProps.put(name, value);
-		System.out.println("n: "+ name + " v: " + value);
             } else if (arg.startsWith("-")) {
 		// we don't have any more args to recognize!
 		String msg = "Unknown arg: " + arg;
