@@ -158,8 +158,7 @@ final class CoyoteReader
                     aggregator = new StringBuffer();
                 }
                 aggregator.append(lineBuffer);
-                reset();
-                skip(MAX_LINE_LENGTH);
+                pos = 0;
             } else {
                 reset();
                 skip(skip);
