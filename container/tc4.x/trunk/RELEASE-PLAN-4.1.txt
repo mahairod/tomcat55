@@ -1,0 +1,69 @@
+$Id$
+
+                      Release Plan for Apache Tomcat 4.1
+                      ==================================
+
+
+Introduction:
+------------
+
+This document is a release plan for the *final* release of Apache Tomcat 4.1.
+
+The goal of the Apache Tomcat 4.1 final release is to provide a stable
+container that supports 100% of the mandatory requirements of the Servlet 2.3
+and JSP 1.2 specifications, as well as to improve and add many useful 
+additional features on top of the existing Apache Tomcat 4.0 releases.
+
+Apache Tomcat 4.1 includes the following major new features over 
+Apache Tomcat 4.0:
+
+* JMX based administration features
+* JSP and Struts based administration web application
+* New Coyote HTTP/1.1 connector
+* New Coyote JK2 AJP 1.4 connector
+* Rewritten Jasper JSP page compiler
+* Performance and memory efficiency improvements
+* Many other miscanellous improvements
+
+This Release Plan proposes the following schedule:
+
+  Friday, April 26, 2002          Apache Tomcat 4.1 Beta 1
+
+  Friday, May 10, 2002            Apache Tomcat 4.1 Beta 2
+
+  Friday, May 17, 2002            Apache Tomcat 4.1 Release Candidate
+
+In order to complete final release, all outstanding Bugzilla bug reports
+against Tomcat 4.1 above NORMAL severity need to be fixed or deferred for 
+later releases.  After the first 4.1 Release Candidate, other RC releases may
+be made as needed until one is promoted as Final by the Tomcat committers.
+
+This Release Plan proposes the following classification of current outstanding
+bug reports in the bug tracking system, sorted by component and their ID
+numbers in our bug tracking system at:
+
+  http://nagoya.apache.org/bugzilla/
+
+Please review the bug reports, and their classification as "must have",
+"nice to have", or "address later".  Lobbying for changes in classification
+can take place on the TOMCAT-DEV mailling list.  In addition, if you have a
+bug report or enhancement that you wish to have considered prior to final
+release, please submit a bug report as quickly as possible.
+
+
+
+Bugs That Must Be Addressed Before Final Release:
+------------------------------------------------
+
+
+
+Nice To Have Fixes Before Final Release:
+---------------------------------------
+
+
+
+Unconfirmed Bugs (Awaiting Reproducible Failure Case):
+-----------------------------------------------------
+
+
+
