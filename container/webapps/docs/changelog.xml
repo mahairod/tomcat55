@@ -178,6 +178,9 @@
       <fix>
         <bug>34033</bug>: Fix quoting related bugs (remm)
       </fix>
+      <fix>
+        <bug>33713</bug>: Add Struts init code in frameset.jsp as well (remm)
+      </fix>
      </changelog>
    </subsection>
 </section>

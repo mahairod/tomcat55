@@ -5,6 +5,10 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
 
+<% // Force the initialization of "action" servlet
+   getServletContext().getNamedDispatcher("action").include(request,response);
+%> 
+
 <html:html locale="true">
 
 <!-- Standard Content -->
