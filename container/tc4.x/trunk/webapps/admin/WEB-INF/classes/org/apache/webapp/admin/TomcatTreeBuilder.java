@@ -306,7 +306,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                 new TreeControlNode(contextName,
                                     "folder_16_pad.gif",
                                     nodeLabel,
-                                    "setUpContext.do?select=" +
+                                    "EditContext.do?select=" +
                                     URLEncoder.encode(contextName) +
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
