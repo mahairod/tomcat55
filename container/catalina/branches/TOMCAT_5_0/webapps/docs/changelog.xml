@@ -57,6 +57,9 @@
       <fix>
         <bug>31707</bug>: Broken JavaScript confirmation in HTML manager. (yoavs)
       </fix>
+      <update>
+        Removed hard-coded admin context path. (yoavs)
+      </update>
     </changelog>
   </subsection>
 </section>
