@@ -276,7 +276,8 @@ public class JspParseEventListener extends BaseJspListener {
         writer.println("private boolean _jspx_inited = false;");
         writer.println();
 
-        writer.println("public final synchronized void _jspx_init() throws JasperException {");
+        writer.println("public final synchronized void _jspx_init() throws " +
+		       Constants.JSP_RUNTIME_PACKAGE + ".JasperException {");
         writer.pushIndent();
         writer.println("if (! _jspx_inited) {");
         writer.pushIndent();

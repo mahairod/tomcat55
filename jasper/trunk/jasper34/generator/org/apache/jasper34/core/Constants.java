@@ -72,7 +72,7 @@ import org.apache.tomcat.util.res.StringManager;
  */
 public class Constants {
     public static String JSP_RUNTIME_PACKAGE =
-	"org.apache.jasper.runtime";
+	"org.apache.jasper34.runtime";
 
     /**
      * The base class of the generated servlets. 
