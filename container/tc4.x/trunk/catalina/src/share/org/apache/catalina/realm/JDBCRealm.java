@@ -1,65 +1,66 @@
 /*
- * The Apache Software License, Version 1.1
- *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
- * reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
- *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowlegement may appear in the software itself,
- *    if and wherever such third-party acknowlegements normally appear.
- *
- * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
- *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
- *    permission, please contact apache@apache.org.
- *
- * 5. Products derived from this software may not be called "Apache"
- *    nor may "Apache" appear in their names without prior written
- *    permission of the Apache Group.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
- *
- * [Additional notices, if required by prior licensing conditions]
- *
- */
+* The Apache Software License, Version 1.1
+*
+* Copyright (c) 1999 The Apache Software Foundation.  All rights
+* reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions
+* are met:
+*
+* 1. Redistributions of source code must retain the above copyright
+*    notice, this list of conditions and the following disclaimer.
+*
+* 2. Redistributions in binary form must reproduce the above copyright
+*    notice, this list of conditions and the following disclaimer in
+*    the documentation and/or other materials provided with the
+*    distribution.
+*
+* 3. The end-user documentation included with the redistribution, if
+*    any, must include the following acknowlegement:
+*       "This product includes software developed by the
+*        Apache Software Foundation (http://www.apache.org/)."
+*    Alternately, this acknowlegement may appear in the software itself,
+*    if and wherever such third-party acknowlegements normally appear.
+*
+* 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
+*    Foundation" must not be used to endorse or promote products derived
+*    from this software without prior written permission. For written
+*    permission, please contact apache@apache.org.
+*
+* 5. Products derived from this software may not be called "Apache"
+*    nor may "Apache" appear in their names without prior written
+*    permission of the Apache Group.
+*
+* THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+* ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+* USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+* ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+* OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+* SUCH DAMAGE.
+* ====================================================================
+*
+* This software consists of voluntary contributions made by many
+* individuals on behalf of the Apache Software Foundation.  For more
+* information on the Apache Software Foundation, please see
+* <http://www.apache.org/>.
+*
+* [Additional notices, if required by prior licensing conditions]
+*
+*/
 
 
 package org.apache.catalina.realm;
 
 
 import java.io.File;
+import java.security.MessageDigest;
 import java.security.Principal;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -75,26 +76,27 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
+import org.apache.catalina.util.HexUtils;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.Base64;
 
 
 /**
- *
- * Implmentation of <b>Realm</b> that works with any JDBC supported database.
- * See the JDBCRealm.howto for more details on how to set up the database and
- * for configuration options.
- *
- * <p><strong>TODO</strong> - Support connection pooling (including message
- * format objects) so that <code>authenticate()</code> does not have to be
- * synchronized.</p>
- *
- * @author Craig R. McClanahan
- * @author Carson McDonald
- * @author Ignacio Ortega
- * @version $Revision$ $Date$
- */
+*
+* Implmentation of <b>Realm</b> that works with any JDBC supported database.
+* See the JDBCRealm.howto for more details on how to set up the database and
+* for configuration options.
+*
+* <p><strong>TODO</strong> - Support connection pooling (including message
+* format objects) so that <code>authenticate()</code> does not have to be
+* synchronized.</p>
+*
+* @author Craig R. McClanahan
+* @author Carson McDonald
+* @author Ignacio Ortega
+* @version $Revision$ $Date$
+*/
 
 public class JDBCRealm
     extends RealmBase {
@@ -175,7 +177,7 @@ public class JDBCRealm
      * The string manager for this package.
      */
     protected static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -302,7 +304,7 @@ public class JDBCRealm
      * Return the Principal associated with the specified username and
      * credentials, if there is one; otherwise return <code>null</code>.
      *
-     * If there are any errors with the JDBC connection, executing 
+     * If there are any errors with the JDBC connection, executing
      * the query or anything we return null (don't authenticate). This
      * event is also logged, and the connection will be closed so that
      * a subsequent request will automatically re-open it.
@@ -330,20 +332,20 @@ public class JDBCRealm
             // Return the Principal (if any)
             return (principal);
 
-	} catch (SQLException e) {
-
-	    // Log the problem for posterity
-	    log(sm.getString("jdbcRealm.exception"), e);
-
+        } catch (SQLException e) {
+            
+            // Log the problem for posterity
+            log(sm.getString("jdbcRealm.exception"), e);
+            
             // Close the connection so that it gets reopened next time
             if (dbConnection != null)
                 close(dbConnection);
-
-	    // Return "not authenticated" for this request
-	    return (null);
-
-	}
-
+            
+            // Return "not authenticated" for this request
+            return (null);
+            
+        }
+        
     }
 
 
@@ -366,9 +368,9 @@ public class JDBCRealm
      */
     public synchronized Principal authenticate(Connection dbConnection,
                                                String username,
-					       String credentials)
+                                               String credentials)
         throws SQLException {
-
+        
         // Look up the user's credentials
         String dbCredentials = null;
         PreparedStatement stmt = credentials(dbConnection, username);
@@ -378,9 +380,9 @@ public class JDBCRealm
         }
         rs.close();
         if (dbCredentials == null) {
-                return (null);
+            return (null);
         }
-
+        
         // Validate the user's credentials
         if (digest(credentials).equals(dbCredentials)) {
             if (debug >= 2)
@@ -392,7 +394,7 @@ public class JDBCRealm
                                  username));
             return (null);
         }
-
+        
         // Accumulate the user's roles
         ArrayList list = new ArrayList();
         stmt = roles(dbConnection, username);
@@ -402,12 +404,12 @@ public class JDBCRealm
         }
         rs.close();
         dbConnection.commit();
-
+        
         // Create and return a suitable Principal for this user
         return (new GenericPrincipal(this, username, credentials, list));
-
+        
     }
-
+    
 
     /**
      * Close the specified database connection.
@@ -632,5 +634,47 @@ public class JDBCRealm
 
     }
 
-
+    /**
+     * Digest password using the algorithm especificied and
+     * convert the result to a corresponding hex string.
+     * If exception, the plain credentials string is returned
+     *
+     * @param credentials Password or other credentials to use in
+     *  authenticating this username
+     * @param algorithm Algorithm used to do th digest
+     */
+    public final static String Digest(String credentials, String algorithm) {
+        try {
+            // Obtain a new message digest with "digest" encryption
+            MessageDigest md =
+                (MessageDigest)MessageDigest.getInstance(algorithm).clone();
+            // encode the credentials
+            md.update(credentials.getBytes());
+            
+            // Digest the credentials and return as hexadecimal
+            return (HexUtils.convert(md.digest()));
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            return credentials;
+        }
+    }
+    
+    /**
+     * Digest password using the algorithm especificied and
+     * convert the result to a corresponding hex string.
+     * If exception, the plain credentials string is returned
+     *
+     * @see JDBCRealm#Digest
+     */
+    public static void main(String args[]) {
+        if(args.length > 2 && args[0].equalsIgnoreCase("-a")) {
+            for(int i=2; i < args.length ; i++){
+                System.out.print(args[i]+":");
+                System.out.println(Digest(args[i], args[1]));
+            }
+        } else {
+            System.out.println("Usage: JDBCRealm -a <algorithm> <credentials>");
+        }
+    }
 }
+
