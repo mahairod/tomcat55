@@ -144,8 +144,8 @@ public class ReplicationTransmitter
             if (!sender.isConnected())
                 sender.connect();
             sender.sendMessage(sessionId,data);
-            addStats(data.length);
             sender.setSuspect(false);
+            addStats(data.length);
         }catch ( Exception x)
         {
             if ( !sender.getSuspect() ) {
@@ -153,6 +153,7 @@ public class ReplicationTransmitter
                          x);
             }
             sender.setSuspect(true);
+
         }
 
     }
@@ -175,7 +176,6 @@ public class ReplicationTransmitter
             try
             {
                 sendMessageData(sessionId,data,sender);
-                sender.setSuspect(false);
             }catch ( Exception x)
             {
 
