@@ -20,7 +20,7 @@ package org.apache.catalina.authenticator;
 
 import java.io.IOException;
 import java.security.Principal;
-import javax.servlet.http.HttpServletRequest;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.connector.Request;
@@ -92,8 +92,7 @@ public class BasicAuthenticator
         throws IOException {
 
         // Have we already authenticated someone?
-        Principal principal =
-            ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+        Principal principal = request.getUserPrincipal();
         String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
         if (principal != null) {
             if (log.isDebugEnabled())

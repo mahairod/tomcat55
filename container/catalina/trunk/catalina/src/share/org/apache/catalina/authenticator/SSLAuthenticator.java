@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Globals;
@@ -86,8 +85,7 @@ public class SSLAuthenticator
         throws IOException {
 
         // Have we already authenticated someone?
-        Principal principal =
-            ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+        Principal principal = request.getUserPrincipal();
         //String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
         if (principal != null) {
             if (container.getLogger().isDebugEnabled())

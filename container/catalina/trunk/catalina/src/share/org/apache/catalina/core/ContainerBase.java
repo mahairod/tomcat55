@@ -187,6 +187,12 @@ public abstract class ContainerBase
 
 
     /**
+     * Associated logger name.
+     */
+    protected String logName = null;
+    
+
+    /**
      * The Manager implementation with which this Container is associated.
      */
     protected Manager manager = null;
@@ -197,7 +203,7 @@ public abstract class ContainerBase
      */
     protected Cluster cluster = null;
 
-
+    
     /**
      * The human-readable name of this Container.
      */
@@ -371,14 +377,7 @@ public abstract class ContainerBase
 
         if (logger != null)
             return (logger);
-        String loggerName = null;
-        Container current = this;
-        while (current != null) {
-            loggerName = "[" + current.getName() + "]" 
-                + ((loggerName != null) ? ("." + loggerName) : "");
-            current = current.getParent();
-        }
-        logger = LogFactory.getLog("Tomcat." + loggerName);
+        logger = LogFactory.getLog(logName());
         return (logger);
 
     }
@@ -1284,12 +1283,19 @@ public abstract class ContainerBase
      */
     protected String logName() {
 
-        String className = this.getClass().getName();
-        int period = className.lastIndexOf(".");
-        if (period >= 0)
-            className = className.substring(period + 1);
-        return (className + "[" + getName() + "]");
-
+        if (logName != null) {
+            return logName;
+        }
+        String loggerName = null;
+        Container current = this;
+        while (current != null) {
+            loggerName = "[" + current.getName() + "]" 
+                + ((loggerName != null) ? ("." + loggerName) : "");
+            current = current.getParent();
+        }
+        logName = ContainerBase.class.getName() + "." + loggerName;
+        return logName;
+        
     }
 
     

@@ -29,8 +29,6 @@ import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.Authenticator;
@@ -364,14 +362,12 @@ public abstract class AuthenticatorBase
 
         if (log.isDebugEnabled())
             log.debug("Security checking request " +
-                ((HttpServletRequest) request.getRequest()).getMethod() + " " +
-                ((HttpServletRequest) request.getRequest()).getRequestURI());
+                request.getMethod() + " " + request.getRequestURI());
         LoginConfig config = this.context.getLoginConfig();
 
         // Have we got a cached authenticated Principal to record?
         if (cache) {
-            Principal principal =
-                ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+            Principal principal = request.getUserPrincipal();
             if (principal == null) {
                 Session session = getSession(request);
                 if (session != null) {
@@ -637,9 +633,7 @@ public abstract class AuthenticatorBase
      */
     protected Session getSession(Request request, boolean create) {
 
-        HttpServletRequest hreq =
-            (HttpServletRequest) request.getRequest();
-        HttpSession hses = hreq.getSession(create);
+        HttpSession hses = request.getSession(create);
         if (hses == null)
             return (null);
         Manager manager = context.getManager();
@@ -683,11 +677,9 @@ public abstract class AuthenticatorBase
             associate(ssoId, getSession(request, true));
 
             if (log.isDebugEnabled()) {
-                HttpServletRequest hreq = 
-                    (HttpServletRequest) request.getRequest();
                 log.debug(" Reauthenticated cached principal '" +
-                          hreq.getUserPrincipal().getName() +
-                          "' with auth type '" +  hreq.getAuthType() + "'");
+                          request.getUserPrincipal().getName() +
+                          "' with auth type '" +  request.getAuthType() + "'");
             }
         }
 
@@ -747,13 +739,11 @@ public abstract class AuthenticatorBase
         String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
         if (ssoId == null) {
             // Construct a cookie to be returned to the client
-            HttpServletResponse hres =
-                (HttpServletResponse) response.getResponse();
             ssoId = generateSessionId();
             Cookie cookie = new Cookie(Constants.SINGLE_SIGN_ON_COOKIE, ssoId);
             cookie.setMaxAge(-1);
             cookie.setPath("/");
-            hres.addCookie(cookie);
+            response.addCookie(cookie);
 
             // Register this principal with our SSO valve
             sso.register(ssoId, principal, authType, username, password);

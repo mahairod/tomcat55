@@ -117,7 +117,7 @@ public class StandardContext
     extends ContainerBase
     implements Context, Serializable
 {
-    private transient Log log = LogFactory.getLog(StandardContext.class);
+    private static transient Log log = LogFactory.getLog(StandardContext.class);
 
 
     // ----------------------------------------------------------- Constructors
@@ -4043,12 +4043,8 @@ public class StandardContext
                 throw new LifecycleException("Error initializaing ", ex);
             }
         }
-        
-        String logName = "tomcat." + getParent().getName() + "." +
-            ("".equals(getName()) ? "ROOT" : getName()) + ".Context";
-        log = org.apache.commons.logging.LogFactory.getLog(logName);
 
-        log.debug("Starting " + logName);
+        log.debug("Starting " + ("".equals(getName()) ? "ROOT" : getName()));
 
         // Set JMX object name for proper pipeline registration
         preRegisterJMX();

@@ -27,7 +27,6 @@ import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Realm;
@@ -299,11 +298,10 @@ public class FormAuthenticator
           return (false);
 
       // Does the request URI match?
-      HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
-      String requestURI = hreq.getRequestURI();
+      String requestURI = request.getRequestURI();
       if (requestURI == null)
           return (false);
-      return (requestURI.equals(sreq.getRequestURI()));
+      return (requestURI.equals(request.getRequestURI()));
 
     }
 
@@ -374,37 +372,36 @@ public class FormAuthenticator
     private void saveRequest(Request request, Session session) {
 
         // Create and populate a SavedRequest object for this request
-        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
         SavedRequest saved = new SavedRequest();
-        Cookie cookies[] = hreq.getCookies();
+        Cookie cookies[] = request.getCookies();
         if (cookies != null) {
             for (int i = 0; i < cookies.length; i++)
                 saved.addCookie(cookies[i]);
         }
-        Enumeration names = hreq.getHeaderNames();
+        Enumeration names = request.getHeaderNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
-            Enumeration values = hreq.getHeaders(name);
+            Enumeration values = request.getHeaders(name);
             while (values.hasMoreElements()) {
                 String value = (String) values.nextElement();
                 saved.addHeader(name, value);
             }
         }
-        Enumeration locales = hreq.getLocales();
+        Enumeration locales = request.getLocales();
         while (locales.hasMoreElements()) {
             Locale locale = (Locale) locales.nextElement();
             saved.addLocale(locale);
         }
-        Map parameters = hreq.getParameterMap();
+        Map parameters = request.getParameterMap();
         Iterator paramNames = parameters.keySet().iterator();
         while (paramNames.hasNext()) {
             String paramName = (String) paramNames.next();
             String paramValues[] = (String[]) parameters.get(paramName);
             saved.addParameter(paramName, paramValues);
         }
-        saved.setMethod(hreq.getMethod());
-        saved.setQueryString(hreq.getQueryString());
-        saved.setRequestURI(hreq.getRequestURI());
+        saved.setMethod(request.getMethod());
+        saved.setQueryString(request.getQueryString());
+        saved.setRequestURI(request.getRequestURI());
 
         // Stash the SavedRequest in our session for later use
         session.setNote(Constants.FORM_REQUEST_NOTE, saved);

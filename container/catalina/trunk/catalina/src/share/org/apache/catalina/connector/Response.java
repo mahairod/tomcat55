@@ -1029,9 +1029,7 @@ public class Response
     public String encodeRedirectURL(String url) {
 
         if (isEncodeable(toAbsolute(url))) {
-            HttpServletRequest hreq =
-                (HttpServletRequest) request.getRequest();
-            return (toEncoded(url, hreq.getSession().getId()));
+            return (toEncoded(url, request.getSession().getId()));
         } else {
             return (url);
         }
@@ -1063,14 +1061,11 @@ public class Response
         
         String absolute = toAbsolute(url);
         if (isEncodeable(absolute)) {
-            HttpServletRequest hreq =
-                (HttpServletRequest) request.getRequest();
-            
             // W3c spec clearly said 
             if (url.equalsIgnoreCase("")){
                 url = absolute;
             }
-            return (toEncoded(url, hreq.getSession().getId()));
+            return (toEncoded(url, request.getSession().getId()));
         } else {
             return (url);
         }
@@ -1334,8 +1329,7 @@ public class Response
             return (false);
 
         // Are we in a valid session that is not using cookies?
-        final HttpServletRequest hreq = 
-            (HttpServletRequest) request.getRequest();
+        final HttpServletRequest hreq = request;
         final HttpSession session = hreq.getSession(false);
         if (session == null)
             return (false);
