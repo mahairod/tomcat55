@@ -2073,6 +2073,10 @@ public class Generator {
 	    out.printin("/* ----  ");
 	    out.print(n.getName());
 	    out.println(" ---- */");
+            
+            // Declare AT_BEGIN scripting variables
+	    declareScriptingVars(n, VariableInfo.AT_BEGIN);
+            
 	    out.printil("{");
 	    out.pushIndent();
 
@@ -2093,11 +2097,6 @@ public class Generator {
 
 	    generateSetters(n, tagHandlerVar, handlerInfo, true);
 
-            if (n.implementsTryCatchFinally()) {
-                out.printil("try {");
-                out.pushIndent();
-            }
-	    
 	    // Set the body
 	    if (findJspBody(n) == null) {
 		/*
@@ -2127,29 +2126,16 @@ public class Generator {
 	    out.printin(tagHandlerVar);
 	    out.println(".doTag();");
 
-	    // Synchronize AT_BEGIN and AT_END scripting variables
-	    syncScriptingVars(n, VariableInfo.AT_BEGIN);
-	    syncScriptingVars(n, VariableInfo.AT_END);
-
-	    // TryCatchFinally
-	    if (n.implementsTryCatchFinally()) {
-                out.popIndent(); // try
-		out.printil("} catch (Throwable _jspx_exception) {");
-		out.pushIndent();
-		out.printin(tagHandlerVar);
-		out.println(".doCatch(_jspx_exception);");
-		out.popIndent();
-                out.printil("} finally {");
-                out.pushIndent();
-		out.printin(tagHandlerVar);
-		out.println(".doFinally();");
-                out.popIndent();
-                out.println("}");
-	    }
-
 	    restoreScriptingVars(n);
 	    out.popIndent();
 	    out.printil("}");
+            
+	    // Synchronize AT_BEGIN scripting variables
+	    syncScriptingVars(n, VariableInfo.AT_BEGIN);
+            
+	    // Declare and synchronize AT_END scripting variables
+	    declareScriptingVars(n, VariableInfo.AT_END);
+	    syncScriptingVars(n, VariableInfo.AT_END);
 
 	    n.setEndJavaLine(out.getJavaLine());
 	}
@@ -2162,21 +2148,25 @@ public class Generator {
 		    Object elem = vec.elementAt(i);
 		    if (elem instanceof VariableInfo) {
 			VariableInfo varInfo = (VariableInfo) elem;
-			out.printin(varInfo.getClassName());
-			out.print(" ");
-			out.print(varInfo.getVarName());
-			out.println(" = null;");
+                        if( varInfo.getDeclare() ) {
+                            out.printin(varInfo.getClassName());
+                            out.print(" ");
+                            out.print(varInfo.getVarName());
+                            out.println(" = null;");
+                        }
 		    } else {
 			TagVariableInfo tagVarInfo = (TagVariableInfo) elem;
-			String varName = tagVarInfo.getNameGiven();
-			if (varName == null) {
-			    varName = n.getTagData().getAttributeString(
-                                        tagVarInfo.getNameFromAttribute());
-			}
-			out.printin(tagVarInfo.getClassName());
-			out.print(" ");
-			out.print(varName);
-			out.println(" = null;");
+                        if( tagVarInfo.getDeclare() ) {
+                            String varName = tagVarInfo.getNameGiven();
+                            if (varName == null) {
+    			    varName = n.getTagData().getAttributeString(
+                                            tagVarInfo.getNameFromAttribute());
+                            }
+                            out.printin(tagVarInfo.getClassName());
+                            out.print(" ");
+                            out.print(varName);
+                            out.println(" = null;");
+                        }
 		    }
 		}
 	    }
@@ -2580,7 +2570,7 @@ public class Generator {
             throws JasperException
         {
             // XXX - A possible optimization here would be to check to see
-            // if the old child of the parent node is TemplateText.  If so,
+            // if the only child of the parent node is TemplateText.  If so,
             // we know there won't be any parameters, etc, so we can 
             // generate a low-overhead JspFragment that just echoes its
             // body.  The implementation of this fragment can come from
@@ -2802,7 +2792,7 @@ public class Generator {
 	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(), out,
 					       gen.methodsBuffer, null,
 					       tagInfo));
-	    gen.generateTagHandlerPostamble();
+	    gen.generateTagHandlerPostamble(  tagInfo );
 	} else {
 	    gen.generatePreamble(page);
 	    gen.fragmentHelperClass.generatePreamble();
@@ -2863,7 +2853,7 @@ public class Generator {
         // Now the doTag() method
 	out.printil("public void doTag() throws javax.servlet.jsp.JspException, java.io.IOException {");
 	out.pushIndent();
-	out.printil("PageContext pageContext = (PageContext)getJspContext();");
+	out.printil("PageContext pageContext = (PageContext)jspContext;");
         
         // Declare implicit objects.  
         // XXX - Note that the current JSP 2.0 PFD 
@@ -2889,7 +2879,7 @@ public class Generator {
 	// if 'varReader' or 'var' attribute is specified
 	out.printil("java.io.Writer _jspx_sout = null;");
 
-	out.printil("javax.servlet.jsp.JspWriter out = pageContext.getOut();");
+	out.printil("javax.servlet.jsp.JspWriter out = jspContext.getOut();");
 	generatePageScopedVariables(tagInfo);
         
      	// Number of tag object that need to be popped
@@ -2903,7 +2893,40 @@ public class Generator {
 	out.pushIndent();
     }
 
-    private void generateTagHandlerPostamble() {
+    private void generateTagHandlerPostamble( TagInfo tagInfo ) {
+        // Note: Before this point, the page author must have updated the
+        // scoped variables with the synced versions.  We now transfer any
+        // of those scoped variables that are in the locally-scoped page
+        // context to the "real" page context of the calling code.
+        out.printil( "// Sync up variables with caller's page context:" );
+        
+        TagVariableInfo[] tagVariableInfo = tagInfo.getTagVariableInfos();
+        
+        for( int i = 0; i < tagVariableInfo.length; i++ ) {
+            // XXX - Spec bug: Note, we don't know the value of 
+            // this attribute at translation time, because we're defining
+            // the tag, and we don't know how page authors will call it.
+            // Instead, we make a best guess at runtime of what the
+            // name of the attribute is.  There are lots of potential 
+            // problems with this approach and this implementation, but
+            // we're expecting the spec to change.
+            if( ( tagVariableInfo[i].getScope() == VariableInfo.AT_BEGIN ) ||
+                ( tagVariableInfo[i].getScope() == VariableInfo.AT_END ) )
+            {
+                String var = tagVariableInfo[i].getNameFromAttribute();
+                if( var == null ) {
+                    var = "\"" + tagVariableInfo[i].getNameGiven() + "\"";
+                }
+                out.printil( "if( jspContext.getAttributesScope( " + var + 
+                    " ) == JspContext.PAGE_SCOPE ) {" );
+                out.pushIndent();
+                out.printil( "super.jspContext.setAttribute( " + var + 
+                    ", jspContext.getAttribute( " + var + " ) );" );
+                out.popIndent();
+                out.printil( "}" );
+            }
+        }
+        
         out.popIndent();
         
         // Have to catch Throwable because a classic tag handler
