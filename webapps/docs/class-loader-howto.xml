@@ -207,7 +207,6 @@ class patterns, the classloader will always delegate first
 <li><em>org.w3c.dom.*</em></li>
 <li><em>org.apache.xerces.*</em></li>
 <li><em>org.apache.xalan.*</em></li>
-<li><em>
 </ul>
 Last, any JAR containing servlet API classes will be ignored by the 
 classloader.
