@@ -554,7 +554,7 @@
            debug="0" host="${host}" port="${port}"  expectHeaders="Content-Type:text/html" />
 
       <gtest request="GET /servlet-tests/SetLocaleTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}"  expectHeaders="Content-Language:text/html" />
+           debug="0" host="${host}" port="${port}"  expectHeaders="Content-Language:en" />
 
 
   <!-- javax_servlet_UnavailableException tests -->
