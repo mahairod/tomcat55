@@ -135,11 +135,11 @@ import java.util.*;
  */
 public class IISConfig extends BaseJkConfig  { 
 
-    public static final String WORKERS_CONFIG = "/conf/jk/workers.properties";
-    public static final String URI_WORKERS_MAP_CONFIG = "/conf/auto/uriworkermap.properties";
-    public static final String ISAPI_LOG_LOCATION = "/logs/iis_redirect.log";
-    public static final String ISAPI_REG_FILE = "/conf/auto/iis_redirect.reg";    
-    public static final String ISAPI_PROP_FILE = "/conf/auto/isapi_redirect.properties";
+    public static final String WORKERS_CONFIG = "conf/jk/workers.properties";
+    public static final String URI_WORKERS_MAP_CONFIG = "conf/auto/uriworkermap.properties";
+    public static final String ISAPI_LOG_LOCATION = "logs/iis_redirect.log";
+    public static final String ISAPI_REG_FILE = "conf/auto/iis_redirect.reg";    
+    public static final String ISAPI_PROP_FILE = "conf/auto/isapi_redirect.properties";
     public static final String ISAPI_REDIRECTOR = "isapi_redirect.dll";
 
     private File regConfig = null;
