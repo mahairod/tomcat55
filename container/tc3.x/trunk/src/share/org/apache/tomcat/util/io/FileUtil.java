@@ -136,6 +136,14 @@ public class FileUtil {
 
     */
     public static String safePath( String base, String path ) {
+	return safePath(base, path, true);
+    }
+
+    /** All the safety checks from getRealPath() and
+	DefaultServlet.
+
+    */
+    public static String safePath( String base, String path, boolean caseSf ) {
 	// Hack for Jsp ( and other servlets ) that use rel. paths 
 	// if( ! path.startsWith("/") ) path="/"+ path;
 	if( path==null || path.equals("") ) return base;
@@ -202,9 +210,8 @@ public class FileUtil {
 	if (File.separatorChar  == '\\') {
 	    // On Windows check ignore case....
 	    if (!realPath.equals(canPath)){
-            int ls=realPath.lastIndexOf('\\');
-            if ( (ls > 0) && !realPath.substring(0,ls).equals(canPath) )
-        		return null;
+		if(caseSf || !realPath.equalsIgnoreCase(canPath))
+		    return null;
 	    }
 	}
 
