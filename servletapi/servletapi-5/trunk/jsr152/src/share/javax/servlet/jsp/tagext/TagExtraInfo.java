@@ -92,6 +92,13 @@ package javax.servlet.jsp.tagext;
 public abstract class TagExtraInfo {
 
     /**
+     * Sole constructor. (For invocation by subclass constructors, 
+     * typically implicit.)
+     */
+    public TagExtraInfo() {
+    }
+    
+    /**
      * information on scripting variables defined by the tag associated with
      * this TagExtraInfo instance.
      * Request-time attributes are indicated as such in the TagData parameter.

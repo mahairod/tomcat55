@@ -109,6 +109,13 @@ import javax.servlet.jsp.el.VariableResolver;
 
 public abstract class JspContext {
 
+    /**
+     * Sole constructor. (For invocation by subclass constructors, 
+     * typically implicit.)
+     */
+    public JspContext() {
+    }
+    
     /** 
      * Register the name and value specified with page scope semantics.
      * If the value passed in is <code>null</code>, this has the same 
