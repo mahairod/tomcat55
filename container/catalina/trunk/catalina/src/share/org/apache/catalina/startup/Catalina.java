@@ -410,22 +410,24 @@ public class Catalina extends Embedded {
 
     public void stopServer() {
 
-        // Create and execute our Digester
-        Digester digester = createStopDigester();
-        digester.setClassLoader(Thread.currentThread().getContextClassLoader());
-        File file = configFile();
-        try {
-            InputSource is =
-                new InputSource("file://" + file.getAbsolutePath());
-            FileInputStream fis = new FileInputStream(file);
-            is.setByteStream(fis);
-            digester.push(this);
-            digester.parse(is);
-            fis.close();
-        } catch (Exception e) {
-            System.out.println("Catalina.stop: " + e);
-            e.printStackTrace(System.out);
-            System.exit(1);
+        if( server == null ) {
+            // Create and execute our Digester
+            Digester digester = createStopDigester();
+            digester.setClassLoader(Thread.currentThread().getContextClassLoader());
+            File file = configFile();
+            try {
+                InputSource is =
+                    new InputSource("file://" + file.getAbsolutePath());
+                FileInputStream fis = new FileInputStream(file);
+                is.setByteStream(fis);
+                digester.push(this);
+                digester.parse(is);
+                fis.close();
+            } catch (Exception e) {
+                System.out.println("Catalina.stop: " + e);
+                e.printStackTrace(System.out);
+                System.exit(1);
+            }
         }
 
         // Stop the existing server
