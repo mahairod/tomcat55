@@ -321,7 +321,8 @@ public abstract class Compiler {
         boolean outDated = false;
         String jsp = ctxt.getJspFile();
 
-        if ((jsw != null) && ((jsw.getLastModificationTest() + 2000) 
+        if ((jsw != null) && ((jsw.getLastModificationTest() 
+                + ctxt.getOptions().getModificationTestInterval()) 
             > System.currentTimeMillis())) {
             return false;
         }

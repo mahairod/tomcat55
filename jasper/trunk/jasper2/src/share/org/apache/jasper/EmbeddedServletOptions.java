@@ -164,7 +164,12 @@ public final class EmbeddedServletOptions implements Options {
      */
     private String javaEncoding = "UTF8";
 
-    /*
+    /**
+     * Modification test interval.
+     */
+    public int modificationTestInterval = 4000;
+    
+    /**
      * Is generation of X-Powered-By response header enabled/disabled?
      */
     private boolean xpoweredBy;
@@ -225,6 +230,13 @@ public final class EmbeddedServletOptions implements Options {
         return checkInterval;
     }
 
+    /**
+     * Modification test interval.
+     */
+    public int getModificationTestInterval() {
+        return modificationTestInterval;
+    }
+    
     /**
      * Is Jasper being used in development mode?
      */
@@ -450,6 +462,17 @@ public final class EmbeddedServletOptions implements Options {
             }
         }
 
+        String modificationTestInterval = config.getInitParameter("modificationTestInterval");
+        if (modificationTestInterval != null) {
+            try {
+                this.modificationTestInterval = Integer.parseInt(modificationTestInterval);
+            } catch(NumberFormatException ex) {
+                if (log.isWarnEnabled()) {
+                    log.warn(Localizer.getMessage("jsp.warning.modificationTestInterval"));
+                }
+            }
+        }
+
         String development = config.getInitParameter("development");
         if (development != null) {
             if (development.equalsIgnoreCase("true")) {
@@ -589,9 +612,6 @@ public final class EmbeddedServletOptions implements Options {
 	    }
         }
 
-        /*
-         * X-Powered-By
-         */
         String xpoweredBy = config.getInitParameter("xpoweredBy"); 
         if (xpoweredBy != null) {
             if (xpoweredBy.equalsIgnoreCase("true")) {

@@ -373,6 +373,13 @@ public class JspC implements Options {
     }
 
     /**
+     * Modification test interval.
+     */
+    public int getModificationTestInterval() {
+        return 4000;
+    }
+
+    /**
      * Is Jasper being used in development mode?
      */
     public boolean getDevelopment() {
