@@ -363,7 +363,7 @@ public class Catalina {
                                                       parentClassLoader));
 
         long t2=System.currentTimeMillis();
-        log.log("Digester for server.xml created " + ( t2-t1 ));
+        log.info("Digester for server.xml created " + ( t2-t1 ));
         return (digester);
 
     }
@@ -456,7 +456,7 @@ public class Catalina {
             System.exit(1);
         }
         long t2=System.currentTimeMillis();
-        log.log( "Server.xml processed " + (t2-t1 ));
+        log.info( "Server.xml processed " + (t2-t1 ));
         
         // Setting additional variables
         if (!useNaming) {
@@ -515,7 +515,7 @@ public class Catalina {
                 server.initialize();
                 ((Lifecycle) server).start();
                 long t4=System.currentTimeMillis();
-                log.log( "server.start " + server + " " + (t4-t3 ));
+                log.info( "server.start " + server + " " + (t4-t3 ));
                 try {
                     // Register shutdown hook
                     Runtime.getRuntime().addShutdownHook(shutdownHook);
