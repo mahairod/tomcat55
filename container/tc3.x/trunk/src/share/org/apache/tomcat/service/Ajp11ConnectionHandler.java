@@ -130,7 +130,7 @@ public class Ajp11ConnectionHandler implements  TcpConnectionHandler {
 
 	    // resolve the server that we are for
 
-	    int contentLength = reqA.getIntHeader("content-length");
+	    int contentLength = reqA.getFacade().getIntHeader("content-length");
 	    if (contentLength != -1) {
 		BufferedServletInputStream sis =
 		    (BufferedServletInputStream)reqA.getInputStream();

@@ -154,7 +154,6 @@ public class JspWrapper extends ServletWrapper {
 			     Constants.JSP.Directive.Compile.Value );
 	
 	request.setContext(context);
-	request.updatePaths();
 	request.getSession(true);
 	
 	RequestDispatcher rd =
