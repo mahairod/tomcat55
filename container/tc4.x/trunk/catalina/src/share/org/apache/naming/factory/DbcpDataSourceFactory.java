@@ -248,7 +248,7 @@ public class DbcpDataSourceFactory
         }
         try {
             if (maxIdle != null)
-                connectionPool.setMaxActive(Integer.parseInt(maxIdle));
+                connectionPool.setMaxIdle(Integer.parseInt(maxIdle));
         } catch (Throwable t) {
             log("Error setting maxIdle", t);
         }
