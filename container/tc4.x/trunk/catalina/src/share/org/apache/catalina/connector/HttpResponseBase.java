@@ -476,11 +476,19 @@ public class HttpResponseBase
 	if (!hreq.getServerName().equalsIgnoreCase(url.getHost()))
 	    return (false);
 	int serverPort = hreq.getServerPort();
-	if (serverPort == -1)	// Work around bug in java.net.URL.getHost()
-	    serverPort = 80;
+	if (serverPort == -1) {
+            if ("https".equals(hreq.getScheme()))
+                serverPort = 443;
+            else
+                serverPort = 80;
+        }
 	int urlPort = url.getPort();
-	if (urlPort == -1)
-	    urlPort = 80;
+	if (urlPort == -1) {
+            if ("https".equals(url.getProtocol()))
+                urlPort = 443;
+            else
+                urlPort = 80;
+        }
 	if (serverPort != urlPort)
 	    return (false);
 
