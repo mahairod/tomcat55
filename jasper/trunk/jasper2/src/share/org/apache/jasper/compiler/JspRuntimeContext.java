@@ -243,6 +243,16 @@ public final class JspRuntimeContext implements Runnable {
     }
 
     /**
+     * Returns the number of JSPs for which JspServletWrappers exist, i.e.,
+     * the number of JSPs that have been loaded into the webapp.
+     *
+     * @return The number of JSPs that have been loaded into the webapp
+     */
+    public int getJspCount() {
+        return jsps.size();
+    }
+
+    /**
      * Get the SecurityManager Policy CodeSource for this web
      * applicaiton context.
      *

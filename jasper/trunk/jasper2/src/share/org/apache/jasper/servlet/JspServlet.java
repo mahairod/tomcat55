@@ -72,6 +72,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.jasper.Constants;
 import org.apache.jasper.EmbeddedServletOptions;
 import org.apache.jasper.Options;
@@ -104,16 +105,18 @@ public class JspServlet extends HttpServlet {
     private Options options;
     private JspRuntimeContext rctxt;
 
-    public void init(ServletConfig config)
-	throws ServletException {
+
+    /*
+     * Initializes this JspServlet.
+     */
+    public void init(ServletConfig config) throws ServletException {
 
 	super.init(config);
 	this.config = config;
 	this.context = config.getServletContext();
-        
-        options = new EmbeddedServletOptions(config, context);
 
         // Initialize the JSP Runtime Context
+        options = new EmbeddedServletOptions(config, context);
         rctxt = new JspRuntimeContext(context,options);
 
 	if (log.isDebugEnabled()) {
@@ -121,6 +124,21 @@ public class JspServlet extends HttpServlet {
 					   options.getScratchDir().toString()));
 	    log.debug(Localizer.getMessage("jsp.message.dont.modify.servlets"));
 	}
+    }
+
+
+    /**
+     * Returns the number of JSPs for which JspServletWrappers exist, i.e.,
+     * the number of JSPs that have been loaded into the webapp with which
+     * this JspServlet is associated.
+     *
+     * This info may be used for monitoring purposes.
+     *
+     * @return The number of JSPs that have been loaded into the webapp with
+     * which this JspServlet is associated
+     */
+    public int getJspCount() {
+        return this.rctxt.getJspCount();
     }
 
 
@@ -262,6 +280,7 @@ public class JspServlet extends HttpServlet {
         if (log.isDebugEnabled()) {
             log.debug("JspServlet.destroy()");
         }
+
         rctxt.destroy();
     }
 
