@@ -161,7 +161,7 @@
       <property name="servlet23api.home" value="${api.home}"/>
       <property name="servlet22api.home" value="${api.home}"/>
     </ant>
-    <property name="catalina.base" location="${basedir}/tmp/tomcat"/>
+    <property name="catalina.base" location="${tomcat.build}/tmp/tomcat"/>
     <delete dir="${catalina.base}"/>
     <mkdir dir="${catalina.base}"/>
     <copy todir="${catalina.base}/conf">
