@@ -16,17 +16,17 @@
 <section name="Table of Contents">
 <p>
 <a href="#Introduction">Introduction</a><br />
-<a href="#Upgrading">Upgrading</a><br />
 <a href="#Configuration">Configuration</a><br />
 <a href="#Production Configuration">Production Configuration</a><br />
+<a href="#Web Application Compilation">Web Application Compilation</a><br />
 <a href="#Using Jikes">Using Jikes</a><br />
 </p>
 </section>
 
 <section name="Introduction">
 
-<p>Starting with Tomcat 4.1, Tomcat uses the Jasper 2 JSP Engine to implement
-the <a href="http://java.sun.com/products/jsp/">JavaServer Pages 1.2</a>
+<p>Tomcat 5.0 uses the Jasper 2 JSP Engine to implement
+the <a href="http://java.sun.com/products/jsp/">JavaServer Pages 2.0</a>
 specification.</p>
 
 <p>Jasper 2 has been redesigned to significantly improve performance over
@@ -53,23 +53,6 @@ used to perform JSP java source code compilation.</li>
 
 <p>Jasper is implemented using the servlet class
 <code>org.apache.jasper.servlet.JspServlet</code>.</p>
-
-</section>
-
-<section name="Upgrading">
-
-<p>Upgrading to Tomcat 4.1 and Jasper 2 from an earlier version of
-Tomcat and/or Jasper.</p>
-
-<p>Jasper 2 generates different java source code from Jasper 1.  You
-must remove all previous class files generated for your JSP pages
-from your <code>work</code> directory.</p>
-
-<p>Jasper 2 implements JSP Custom Tag Pooling.  This can cause
-JSP custom tags which are not compliant with the JSP specification to fail
-or behave inconsistently.  When upgrading from a version of Tomcat earlier
-than 4.1 you should test to make sure your JSP pages which use custom tags
-are working correctly.</p>
 
 </section>
 
@@ -171,28 +154,9 @@ on Windows.</li>
 
 </section>
 
-<section name="Production Configuration">
+<section name="Web Application Compilation">
 
-<p>When using Jasper 2 in a production Tomcat server you should consider
-making the following changes from the default configuration.
-<ul>
-<li><strong>development</strong> - To enable background compilation of JSP
-pages set this to <code>false</code>.</li>
-<li><strong>fork</strong> - The internal JVM javac compiler used by Ant
-has a known memory leak. And Ant requires that java compiles be synchronized,
-i.e. only one JSP page can be compiled at a time.  Set fork to
-<code>true</code> so that Ant compiles JSP pages in a seperate JVM.
-This removes the synchronization of JSP page compiles and prevents
-all the javac classes from being instantiated and subsequently garbage
-collected by the JVM Tomcat is running in.</li>
-</ul>
-</p>
-
-</section>
-
-<section name="Web application precompilation">
-
-<p>Using Ant is the preferred way to precompile web applications. 
+<p>Using Ant is the preferred way to compile web applications using JSPC. 
 Use the script given below to precompile a webapp:
 </p>
 
@@ -215,7 +179,6 @@ Use the script given below to precompile a webapp:
     &lt;/taskdef&gt; 
 
     &lt;jasper2 
-             compile="false" 
              validateXml="false" 
              uriroot="${webapp.path}" 
              webXmlFragment="${webapp.path}/WEB-INF/generated_web.xml" 
@@ -275,7 +238,11 @@ during the precompilation must be added to the web application deployment
 descriptor. Insert the <code>${webapp.path}/WEB-INF/generated_web.xml</code>
 at the right place inside the <code>${webapp.path}/WEB-INF/web.xml</code> file.
 Restart the web application (using the manager) and test it to verify it is 
-running fine with precompiled servlets.
+running fine with precompiled servlets. An appropriate token placed in the
+web application deployment descriptor may also be used to automatically
+insert the generated servlet declarations and mappings using Ant filtering 
+capabilities. This is actually how all the webapps distributed with Tomcat 
+are automatically compiled as part of the build process.
 </p>
 
 </section>
