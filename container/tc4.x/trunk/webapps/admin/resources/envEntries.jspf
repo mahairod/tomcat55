@@ -34,7 +34,9 @@
           <html:link page='<%= "/resources/setUpEnvEntry.do?objectName=" + 
                                URLEncoder.encode(envEntry) +
                                 "&parent=" +
-                               URLEncoder.encode(parentInfo) %>'>
+                               URLEncoder.encode(parentNameInfo) +
+                                "&parentType="+
+                               URLEncoder.encode(parentTypeInfo) %>'>
             <controls:attribute name="envEntry" attribute="name"/>
           </html:link>
         </div></td>

@@ -18,10 +18,13 @@
 
 <html:form action="/resources/listEnvEntries">
 
-  <bean:define id="parentInfo" type="java.lang.String"
+  <bean:define id="parentNameInfo" type="java.lang.String"
                name="envEntriesForm" property="parentName"/>
   <html:hidden property="parentName"/>
 
+  <bean:define id="parentTypeInfo" type="java.lang.String"
+               name="envEntriesForm" property="parentType"/>
+  <html:hidden property="parentType"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">

@@ -174,7 +174,26 @@ public final class EnvEntryForm extends BaseForm {
     public void setParentName(String parentName) {
         this.parentName = parentName;
     }
+    
+    /**
+     * The parent type of this environment entry.
+     */
+    private String parentType = null;
+    
+    /**
+     * Return the parent type of the environment entry this bean refers to.
+     */
+    public String getParentType() {
+        return this.parentType;
+    }
 
+    /**
+     * Set the parent type of the environment entry this bean refers to.
+     */
+    public void setParentType(String parentType) {
+        this.parentType = parentType;
+    }
+    
     /**
      * Precomputed list of entry type labels and values.
      */

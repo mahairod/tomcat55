@@ -9,7 +9,8 @@
   </controls:action>
 
   <controls:action url='<%= "/resources/setUpEnvEntry.do?parent=" +
-                            URLEncoder.encode(parentInfo) %>'>
+                            URLEncoder.encode(parentNameInfo) + "&parentType="+
+                            URLEncoder.encode(parentTypeInfo) %>'>
     <bean:message key="resources.actions.env.create"/>
   </controls:action>
 

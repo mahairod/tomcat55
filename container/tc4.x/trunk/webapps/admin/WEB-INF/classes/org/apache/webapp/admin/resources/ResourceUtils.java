@@ -103,30 +103,31 @@ public class ResourceUtils {
      */
     public static EnvEntriesForm getEnvEntriesForm(MBeanServer mserver, 
                         String parent, String parentType) throws Exception {
-
+                           
         ObjectName ename = null;
         if ((parent == null) || (parentType == null)) {
-            ename = new ObjectName(NAMINGRESOURCES_TYPE);
+            ename = new ObjectName( ENVIRONMENT_TYPE + ",*");
         } else {
-            ename = new ObjectName( NAMINGRESOURCES_TYPE +
+            ename = new ObjectName( ENVIRONMENT_TYPE +
                                         ","+parentType+"=" + parent);
         }
+               
+        Iterator iterator = (mserver.queryMBeans(ename, null).iterator());
         
-        String results[] = null;
-        try {
-            results = (String[]) mserver.getAttribute(ename, "environments");
-        } catch (Exception e) {
-            // leave results null return empty forms
+        ArrayList results = new ArrayList();        
+        while (iterator.hasNext()) {
+            ObjectInstance instance = (ObjectInstance) iterator.next(); 
+            results.add(instance.getObjectName().toString());
         }
-        if (results == null) {
-            results = new String[0];
-        }
-        Arrays.sort(results);
+
+        Collections.sort(results);        
         
         EnvEntriesForm envEntriesForm = new EnvEntriesForm();
-        envEntriesForm.setEnvEntries(results);
+        envEntriesForm.setEnvEntries((String[]) 
+                        results.toArray(new String[results.size()])); 
         envEntriesForm.setParentName(parent);
         envEntriesForm.setParentType(parentType);
+        
         return (envEntriesForm);
 
     }
