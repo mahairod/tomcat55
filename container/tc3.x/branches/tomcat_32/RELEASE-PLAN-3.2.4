@@ -1,0 +1,50 @@
+$Id$
+
+			Tomcat 3.2.4 Release Plan
+			=========================
+
+Objective: 
+
+    The objective of the Tomcat 3.2.4 release is to provide an official 
+    release of all the bug fixes that have been made to the tomcat_32 branch 
+    since the release of Tomcat 3.2.3.  
+
+
+
+Plan:
+
+    Tomcat 3.2.4 Beta Release:
+
+        Code Freeze/Tag Date:   October 25, 2001
+        Release Manager:        Marc Saegesser
+
+        The beta release will allow users to install and verify
+        bugs fixed in Tomcat 3.2.4 and to verify that no new
+        bugs have been introduced. 
+    
+        The RELEASE-NOTES file will be updated to indicate bugs
+        that have been fixed in this release.
+
+    Tomcat 3.2.4 Final Release:
+
+        Code Freeze/Tag Date:   November 8, 2001
+        Release Manager:        Marc Saegesser
+
+
+Release Criteria:
+    
+There are currently two unresolved bugs open against Tomcat 3.  These bugs 
+will be resolved prior to the beta release.  
+
+Tomcat 3 - 3983  Uploading files.   I can't duplicate the problem.  Waiting
+                 for additional information from the reporter.
+Tomcat 3 - 4260  PageContextImpl cast.  The proposed change is minor, but I'm
+                 not sure why there is a problem.  This may turn out to be a
+		 platform issue.  In any event it will be resolved quickly.
+		 
+New bugs reported during the beta release will be evaluated and resolved 
+prior to the final release.  Depending on impact some of these bugs may be 
+resolved as LATER in which case they will be addressed in a subsequent 
+3.2.x release or Tomcat 3.3.  
+
+
