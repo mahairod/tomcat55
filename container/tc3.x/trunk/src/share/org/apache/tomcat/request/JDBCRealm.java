@@ -497,8 +497,8 @@ public final class JDBCRealm extends BaseInterceptor {
     public int authenticate( Request req, Response response ) {
         String user=(String)req.getNote( userNote );
         String password=(String)req.getNote( passwordNote );
-	if( user==null) return 0;
-
+	if( user==null) return DECLINED; 
+	
 	if( checkPassword( user, password ) ) {
      	    if( debug > 0 ) log( "Auth ok, user=" + user );
             Context ctx = req.getContext();
@@ -509,9 +509,10 @@ public final class JDBCRealm extends BaseInterceptor {
 //		req.setNote(reqRealmSignNote,this);
 		String userRoles[] = getUserRoles( user );
 		req.setUserRoles( userRoles );
+		return OK;
 	    }
 	}
-	return 0;
+	return DECLINED;
     }
 
   
