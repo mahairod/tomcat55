@@ -62,67 +62,104 @@
  */
 
 package org.apache.catalina.cluster.tcp;
-import java.util.List;
-import java.util.LinkedList;
+
+import java.net.InetAddress ;
+import java.net.Socket;
 import java.io.IOException;
-/**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author not attributable
- * @version 1.0
- */
+import org.apache.catalina.cluster.util.SmartQueue;
+public class AsyncSocketSender implements IDataSender {
+    private InetAddress address;
+    private int port;
+    private Socket sc = null;
+    private boolean isSocketConnected = false;
+    private SmartQueue queue = new SmartQueue();
+    
+    public AsyncSocketSender(InetAddress host, int port)  {
+        this.address = host;
+        this.port = port;
+        QueueThread t = new QueueThread(this);
+        t.setDaemon(true);
+        t.start();
+        SimpleTcpCluster.log.info("Started async sender thread for TCP replication.");
+    }
 
-public class ThreadPool
-{
-    /**
-     * A very simple thread pool class.  The pool size is set at
-     * construction time and remains fixed.  Threads are cycled
-     * through a FIFO idle queue.
-     */
+    public InetAddress getAddress() {
+        return address;
+    }
 
-    List idle = new LinkedList();
+    public int getPort() {
+        return port;
+    }
 
-    ThreadPool (int poolSize, Class threadClass) throws Exception {
-        // fill up the pool with worker threads
-        for (int i = 0; i < poolSize; i++) {
-            WorkerThread thread = (WorkerThread)threadClass.newInstance();
-            thread.setPool(this);
+    public void connect() throws java.io.IOException  {
+        sc = new Socket(getAddress(),getPort());
+        isSocketConnected = true;
+    }
 
-            // set thread name for debugging, start it
-            thread.setName (threadClass.getName()+"[" + (i + 1)+"]");
-            thread.setDaemon(true);
-            thread.start();
+    public void disconnect()  {
+        try
+        {
+            sc.close();
+        }catch ( Exception x)
+        {}
+        isSocketConnected = false;
+    }
 
-            idle.add (thread);
-        }
+    public boolean isConnected() {
+        return isSocketConnected;
     }
 
     /**
-     * Find an idle worker thread, if any.  Could return null.
+     * Blocking send
+     * @param data
+     * @throws java.io.IOException
      */
-    WorkerThread getWorker()
-    {
-        WorkerThread worker = null;
+    private synchronized void sendMessage(byte[] data) throws java.io.IOException  {
+        if ( !isConnected() ) connect();
+        try
+        {
+            sc.getOutputStream().write(data);
+        }
+        catch ( java.io.IOException x )
+        {
+            disconnect();
+            connect();
+            sc.getOutputStream().write(data);
+        }
+    }
 
-        synchronized (idle) {
-            if (idle.size() > 0) {
-                worker = (WorkerThread) idle.remove (0);
+    public synchronized void sendMessage(String sessionId, byte[] data) throws java.io.IOException {
+        SmartQueue.SmartEntry entry = new SmartQueue.SmartEntry(sessionId,data);
+        queue.add(entry);
+    }
+
+    public String toString() {
+        StringBuffer buf = new StringBuffer("SocketSender[");
+        buf.append(getAddress()).append(":").append(getPort()).append("]");
+        return buf.toString();
+    }
+    
+    private class QueueThread extends Thread {
+        AsyncSocketSender sender;
+        public QueueThread(AsyncSocketSender sender) {
+            this.sender = sender;
+        }
+        
+        public void run() {
+            while (true) {
+                SmartQueue.SmartEntry entry = sender.queue.remove();
+                if ( entry != null ) {
+                    try {
+                        byte[] data = (byte[]) entry.getValue();
+                        sender.sendMessage(data);
+                    }
+                    catch (Exception x) {
+                        SimpleTcpCluster.log.warn(
+                            "Unable to asynchronously send session w/ id=" +
+                            entry.getKey()+" message will be ignored.");
+                    }
+                }
             }
-        }
-
-        return (worker);
-    }
-
-    /**
-     * Called by the worker thread to return itself to the
-     * idle pool.
-     */
-    void returnWorker (WorkerThread worker)
-    {
-        synchronized (idle) {
-            idle.add (worker);
         }
     }
 }

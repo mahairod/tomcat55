@@ -1,13 +1,7 @@
 /*
-<<<<<<< SimpleTcpCluster.java
  * $Header$
  * $Revision$
  * $Date$
-=======
- * $Header$
- * $Revision$
- * $Date$
->>>>>>> 1.7
  *
  * ====================================================================
  *
@@ -275,7 +269,12 @@ public class SimpleTcpCluster
      * The channel configuration.
      */
     protected String protocol = null;
-
+    
+    /**
+     * The replication mode, can be either synchronous or asynchronous
+     * defaults to synchronous
+     */
+    protected String replicationMode="synchronous";
     // ------------------------------------------------------------- Properties
 
     public SimpleTcpCluster() {
@@ -320,7 +319,15 @@ public class SimpleTcpCluster
         return(this.debug);
     }
 
-
+    public void setReplicationMode(String mode) {
+        if ("synchronous".equals(mode) ||
+            "asynchronous".equals(mode)) {
+            log.debug("Setting replcation mode to "+mode);
+            this.replicationMode = mode;
+        } else 
+            throw new IllegalArgumentException("Replication mode must be either synchronous or asynchronous");
+        
+    }
     /**
      * Set the name of the cluster to join, if no cluster with
      * this name is present create one.
@@ -492,7 +499,7 @@ public class SimpleTcpCluster
                                         this.tcpSelectorTimeout);
             mReplicationListener.setDaemon(true);
             mReplicationListener.start();
-            mReplicationTransmitter = new ReplicationTransmitter(new SocketSender[0]);
+            mReplicationTransmitter = new ReplicationTransmitter(new IDataSender[0]);
             mReplicationTransmitter.start();
 
             //wait 5 seconds to establish the view membership
@@ -526,13 +533,14 @@ public class SimpleTcpCluster
             if(destination != null) {
                   Member tcpdest = dest;
                   if ( (tcpdest != null) && (!localMember.equals(tcpdest)))  {
-                       mReplicationTransmitter.sendMessage(data,
+                       mReplicationTransmitter.sendMessage(msg.getSessionID(),
+                                                           data,
                                                            InetAddress.getByName(tcpdest.getHost()),
                                                            tcpdest.getPort());
                   }//end if
             }
             else {
-                mReplicationTransmitter.sendMessage(data);
+                mReplicationTransmitter.sendMessage(msg.getSessionID(),data);
             }
         } catch ( Exception x ) {
             log.error("Unable to send message through tcp channel",x);
@@ -568,9 +576,7 @@ public class SimpleTcpCluster
         try  {
             log.info("Replication member added:" + member);
             Member mbr = member;
-            mReplicationTransmitter.add(
-                new SocketSender(InetAddress.getByName(mbr.getHost()),
-                                 mbr.getPort()));
+            mReplicationTransmitter.add(IDataSenderFactory.getIDataSender(replicationMode,mbr));
         } catch ( Exception x ) {
             log.error("Unable to connect to replication system.",x);
         }
@@ -589,7 +595,7 @@ public class SimpleTcpCluster
         }
         catch ( Exception x )
         {
-            log.error("Unable remove cluster node from replicaiton system.",x);
+            log.error("Unable remove cluster node from replication system.",x);
         }
 
     }

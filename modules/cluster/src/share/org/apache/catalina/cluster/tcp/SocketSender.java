@@ -63,9 +63,6 @@
 
 package org.apache.catalina.cluster.tcp;
 import java.net.InetAddress ;
-import java.nio.channels.SocketChannel;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 import java.net.Socket;
 
 /**
@@ -83,7 +80,6 @@ public class SocketSender implements IDataSender
     private InetAddress address;
     private int port;
     private Socket sc = null;
-    protected ByteBuffer dbuf = ByteBuffer.allocateDirect(1024);
     private boolean isSocketConnected = false;
 
     public SocketSender(InetAddress host, int port)
@@ -104,12 +100,8 @@ public class SocketSender implements IDataSender
 
     public void connect() throws java.io.IOException
     {
-        //InetSocketAddress isa = new InetSocketAddress(getAddress(), getPort());
         sc = new Socket(getAddress(),getPort());
         isSocketConnected = true;
-        // Connect
-        //sc = SocketChannel.open();
-        //sc.connect(isa);
     }
 
     public void disconnect()
@@ -132,7 +124,7 @@ public class SocketSender implements IDataSender
      * @param data
      * @throws java.io.IOException
      */
-    public synchronized void sendMessage(byte[] data) throws java.io.IOException
+    public synchronized void sendMessage(String sessionId, byte[] data) throws java.io.IOException
     {
         if ( !isConnected() ) connect();
         try
@@ -145,6 +137,12 @@ public class SocketSender implements IDataSender
             connect();
             sc.getOutputStream().write(data);
         }
+    }
+    
+    public String toString() {
+        StringBuffer buf = new StringBuffer("SocketSender[");
+        buf.append(getAddress()).append(":").append(getPort()).append("]");
+        return buf.toString();
     }
 
 
