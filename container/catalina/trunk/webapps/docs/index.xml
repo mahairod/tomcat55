@@ -81,6 +81,8 @@ are responsible for installing, configuring, and operating a Tomcat 5 server.
 <li><a href="manager-howto.html"><strong>Manager App HOW-TO</strong></a> -
     Operating the <code>Manager</code> web app to deploy, undeploy, and
     redeploy applications while Tomcat is running.</li>
+<li><a href="mbeans-descriptor-howto.html"><strong>MBean Descriptor HOW-TO</strong></a> -
+    Configuring MBean descriptors files for custom components.</li>   
 <li><a href="proxy-howto.html"><strong>Proxy Support HOW-TO</strong></a> -
     Configuring Tomcat 5 to run behind a proxy server (or a web server
     functioning as a proxy server).</li>
@@ -180,4 +182,3 @@ itself, or to better understand its internal architecture and operation.</p>
 
 </body>
 </document>
-
