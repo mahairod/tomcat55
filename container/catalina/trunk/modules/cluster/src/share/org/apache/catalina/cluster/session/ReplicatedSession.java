@@ -121,6 +121,10 @@ public class ReplicatedSession extends org.apache.catalina.session.StandardSessi
 
 
 
+    public void removeAttribute(String name) {
+        setIsDirty(true);
+        super.removeAttribute(name);
+    }
 
     /**
      * see parent description,
