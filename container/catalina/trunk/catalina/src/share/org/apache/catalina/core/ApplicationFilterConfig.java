@@ -76,7 +76,7 @@ import javax.servlet.ServletException;
 import org.apache.catalina.Context;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.util.Enumerator;
-import org.apache.catalina.util.SecurityUtil;
+import org.apache.catalina.security.SecurityUtil;
 
 /**
  * Implementation of a <code>javax.servlet.FilterConfig</code> useful in
