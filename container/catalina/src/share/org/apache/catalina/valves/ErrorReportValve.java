@@ -322,6 +322,7 @@ public class ErrorReportValve
         sb.append("</u></p>");
 
         if (throwable != null) {
+
             String stackTrace = JdkCompat.getJdkCompat()
                 .getPartialServletStackTrace(throwable);
             sb.append("<p><b>");
@@ -329,6 +330,7 @@ public class ErrorReportValve
             sb.append("</b> <pre>");
             sb.append(stackTrace);
             sb.append("</pre></p>");
+
             while (rootCause != null) {
                 stackTrace = JdkCompat.getJdkCompat()
                     .getPartialServletStackTrace(rootCause);
@@ -337,13 +339,19 @@ public class ErrorReportValve
                 sb.append("</b> <pre>");
                 sb.append(stackTrace);
                 sb.append("</pre></p>");
-
-                /* In case root cause is somehow heavily nested */
+                // In case root cause is somehow heavily nested
                 if (rootCause instanceof ServletException)
                     rootCause = ((ServletException) rootCause).getRootCause();
                 else
                     rootCause = null;
             }
+
+            sb.append("<p><b>");
+            sb.append(sm.getString("errorReportValve.note"));
+            sb.append("</b> <u>");
+            sb.append(sm.getString("errorReportValve.rootCauseInLogs"));
+            sb.append("</u></p>");
+
         }
 
         sb.append("<HR size=\"1\" noshade>");
