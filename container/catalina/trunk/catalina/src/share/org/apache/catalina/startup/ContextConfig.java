@@ -535,6 +535,9 @@ public final class ContextConfig
                              url.toString());
 
         url = ContextConfig.class.getResource(Constants.WebSchemaResourcePath_24);
+        webDigester.register(Constants.WebSchemaPublicId_24,
+                             url.toString());
+
 
         // to support servlet.jar that does not contains the schema
         if (url != null){
