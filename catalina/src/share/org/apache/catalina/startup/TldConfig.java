@@ -229,9 +229,9 @@ public final class TldConfig  {
 
         File tldCache=null;
 
-        if( context instanceof StandardContext ) {
-            File workDir=(File)
-                    ((StandardContext)context).getServletContext().getAttribute(Globals.WORK_DIR_ATTR);
+        if (context instanceof StandardContext) {
+            File workDir= (File)
+                ((StandardContext)context).getServletContext().getAttribute(Globals.WORK_DIR_ATTR);
             tldCache=new File( workDir, "tldCache.ser");
         }
 
@@ -753,7 +753,7 @@ public final class TldConfig  {
      * @return Map of paths to all JAR files accessible to all parent class
      *         loaders of the web application class loader
      */
-    private Map getGlobalJarPaths() throws IOException {
+    private Map getGlobalJarPaths() {
 
         HashMap globalJarPaths = null;
 
@@ -767,7 +767,11 @@ public final class TldConfig  {
                     // over file or the custom jndi handler, but a lot less
                     // buggy overall
                     File file = new File(urls[i].getFile());
-                    file = file.getCanonicalFile();
+                    try {
+                        file = file.getCanonicalFile();
+                    } catch (IOException e) {
+                        // Ignore
+                    }
                     if (file.exists()) {
                         String path = file.getAbsolutePath();
                         if (path.endsWith(".jar")) {
