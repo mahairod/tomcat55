@@ -190,8 +190,9 @@ public final class SaveConnectorAction extends Action {
                     String parentName = serviceName;
                     TreeControlNode parentNode = control.findNode(parentName);
                     if (parentNode != null) {
-                        String nodeLabel =
-                           "Connector (" + cform.getPortText() + ")";
+                        String nodeLabel = resources.getMessage(locale, 
+                            "server.service.treeBuilder.connector") + " (" + 
+                            cform.getPortText() + ")";
                         String encodedName =
                             URLEncoder.encode(cObjectName);
                         TreeControlNode childNode =

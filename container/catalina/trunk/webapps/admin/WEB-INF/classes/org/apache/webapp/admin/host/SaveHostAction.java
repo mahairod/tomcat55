@@ -184,7 +184,8 @@ public final class SaveHostAction extends Action {
                     TreeControlNode parentNode = control.findNode(parentName);
                     if (parentNode != null) {
                         String nodeLabel =
-                            "Host (" + hform.getHostName() + ")";
+                            resources.getMessage(locale, "server.service.treeBuilder.host") +
+                            " (" + hform.getHostName() + ")";
                         String encodedName =
                             URLEncoder.encode(hObjectName);
                         TreeControlNode childNode =

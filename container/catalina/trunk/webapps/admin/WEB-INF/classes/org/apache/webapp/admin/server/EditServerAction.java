@@ -123,7 +123,7 @@ public class EditServerAction extends Action {
             sname = new ObjectName(select);
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.serviceName.bad",
+                resources.getMessage(locale, "error.serviceName.bad",
                                      request.getParameter("select"));
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);

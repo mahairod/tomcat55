@@ -134,7 +134,7 @@ public class DeleteHostAction extends Action {
                                   mBServer, "domain" ,request);
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.hostName.bad",
+                resources.getMessage(locale, "error.hostName.bad",
                                         adminHost);
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);

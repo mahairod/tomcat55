@@ -115,7 +115,7 @@ public class EditDefaultContextAction extends Action {
             cname = new ObjectName(request.getParameter("select"));
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.contextName.bad",
+                resources.getMessage(locale, "error.contextName.bad",
                                      request.getParameter("select"));
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
@@ -154,7 +154,7 @@ public class EditDefaultContextAction extends Action {
             mname = new ObjectName(sb.toString());
         } catch (Exception e) {
             String message =
-                resources.getMessage("error.managerName.bad",
+                resources.getMessage(locale, "error.managerName.bad",
                                  sb.toString());
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);

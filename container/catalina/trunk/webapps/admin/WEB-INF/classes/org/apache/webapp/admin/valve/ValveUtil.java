@@ -109,8 +109,7 @@ public final class ValveUtil {
                     parent = sb.toString();
                 }
             } catch (Exception e) {
-                String message =
-                resources.getMessage("error.engineName.bad",
+                String message = resources.getMessage("error.engineName.bad",
                 sb.toString());
                 servlet.log(message);
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
@@ -127,7 +126,7 @@ public final class ValveUtil {
                 errors.add("valveName",
                     new ActionError("error.valveName.exists"));
                 String message =
-                    resources.getMessage("error.valveName.exists", sb.toString());
+                    resources.getMessage(locale, "error.valveName.exists", sb.toString());
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);                
                 return (new ActionForward(mapping.getInput()));
             }

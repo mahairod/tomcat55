@@ -17,7 +17,9 @@
 package org.apache.webapp.admin.resources;
 
 import java.net.URLEncoder;
+import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
@@ -60,7 +62,9 @@ public class ResourcesTreeBuilder implements TreeBuilder {
 
         MessageResources resources = (MessageResources)
             servlet.getServletContext().getAttribute(Action.MESSAGES_KEY);
-        addSubtree(treeControl.getRoot(), resources);
+        HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        addSubtree(treeControl.getRoot(), resources, locale);
 
     }
 
@@ -75,21 +79,21 @@ public class ResourcesTreeBuilder implements TreeBuilder {
      * @param resources The MessageResources for our localized messages
      *  messages
      */
-    protected void addSubtree(TreeControlNode root,
-                              MessageResources resources) {
+    protected void addSubtree(TreeControlNode root, MessageResources resources,
+                              Locale locale) {
 
         String domain = root.getDomain();
         TreeControlNode subtree = new TreeControlNode
             ("Global Resource Administration",
              "folder_16_pad.gif",
-             resources.getMessage("resources.treeBuilder.subtreeNode"),
+             resources.getMessage(locale, "resources.treeBuilder.subtreeNode"),
              null,
              "content",
              true, domain);        
         TreeControlNode datasources = new TreeControlNode
             ("Globally Administer Data Sources",
              "Datasource.gif",
-             resources.getMessage("resources.treeBuilder.datasources"),
+             resources.getMessage(locale, "resources.treeBuilder.datasources"),
              "resources/listDataSources.do?resourcetype=Global&domain=" +
              domain + "&forward=" + URLEncoder.encode("DataSources List Setup"),
              "content",
@@ -97,7 +101,7 @@ public class ResourcesTreeBuilder implements TreeBuilder {
         TreeControlNode mailsessions = new TreeControlNode
             ("Globally Administer Mail Sessions ",
              "Mailsession.gif",
-             resources.getMessage("resources.treeBuilder.mailsessions"),
+             resources.getMessage(locale, "resources.treeBuilder.mailsessions"),
              "resources/listMailSessions.do?resourcetype=Global&domain=" +
              domain + "&forward=" + URLEncoder.encode("MailSessions List Setup"),
              "content",
@@ -105,7 +109,7 @@ public class ResourcesTreeBuilder implements TreeBuilder {
         TreeControlNode userdbs = new TreeControlNode
             ("Globally Administer UserDatabase Entries",
              "Realm.gif",
-             resources.getMessage("resources.treeBuilder.databases"),
+             resources.getMessage(locale, "resources.treeBuilder.databases"),
              "resources/listUserDatabases.do?domain=" + domain + 
              "&forward=" + URLEncoder.encode("UserDatabases List Setup"),
              "content",
@@ -113,7 +117,7 @@ public class ResourcesTreeBuilder implements TreeBuilder {
         TreeControlNode envs = new TreeControlNode
             ("Globally Administer Environment Entries",
              "EnvironmentEntries.gif",
-             resources.getMessage("resources.env.entries"),
+             resources.getMessage(locale, "resources.env.entries"),
              "resources/listEnvEntries.do?resourcetype=Global&domain=" +
              domain+"&forward="+URLEncoder.encode("EnvEntries List Setup"),
              "content",

@@ -122,7 +122,7 @@ public class DeleteServiceAction extends Action {
                                   mBServer, domain ,request);
          } catch (Exception e) {
             String message =
-                resources.getMessage("error.serviceName.bad",
+                resources.getMessage(locale, "error.serviceName.bad",
                                  adminService);
             getServlet().log(message);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
