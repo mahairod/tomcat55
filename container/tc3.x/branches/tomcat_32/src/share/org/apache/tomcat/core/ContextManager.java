@@ -466,11 +466,9 @@ public class ContextManager {
     /** Will shutdown all contexts
      */
     public void shutdown() throws TomcatException {
-	Enumeration enum = getContexts();
-	while (enum.hasMoreElements()) {
-	    removeContext((Context)enum.nextElement());
-	}
-
+        while (!contextsV.isEmpty()) {
+            removeContext((Context) contextsV.firstElement());
+        }
 	ContextInterceptor cI[]=getContextInterceptors();
 	for( int i=0; i< cI.length; i++ ) {
 	    cI[i].engineShutdown( this );
