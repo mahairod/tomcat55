@@ -53,6 +53,7 @@ import org.apache.catalina.util.StringManager;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
 import org.apache.naming.ContextAccessController;
+import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
  * Used to store the default configuration a Host will use
@@ -79,6 +80,22 @@ public class StandardDefaultContext
         namingResources.setContainer(this);
 
     }
+
+
+    // ----------------------------------------------------- Class Variables
+
+
+    /**
+     * The string manager for this package.
+     */
+    protected static StringManager sm =
+        StringManager.getManager(Constants.Package);
+
+
+    /**
+     * JDK compatibility support
+     */
+    private static final JdkCompat jdkCompat = JdkCompat.getJdkCompat();
 
 
     // ----------------------------------------------------- Instance Variables
@@ -261,13 +278,6 @@ public class StandardDefaultContext
      * Frequency of manager checks.
      */
     protected int managerChecksFrequency = 6;
-
-
-    /**
-     * The string manager for this package.
-     */
-    protected static StringManager sm =
-        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -1534,7 +1544,7 @@ public class StandardDefaultContext
             } catch(Exception e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                    ("DefaultContext custom Loader install failed");
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
         }
@@ -1698,7 +1708,7 @@ public class StandardDefaultContext
             } catch (MalformedObjectNameException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for environment " + envs[i]);
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
         }
@@ -1724,7 +1734,7 @@ public class StandardDefaultContext
             } catch (MalformedObjectNameException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for resource " + resources[i]);
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
         }
@@ -1749,7 +1759,7 @@ public class StandardDefaultContext
             } catch (MalformedObjectNameException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for resource " + links[i]);
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
         }
