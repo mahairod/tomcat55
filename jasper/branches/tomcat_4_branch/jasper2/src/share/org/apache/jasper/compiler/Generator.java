@@ -1155,7 +1155,7 @@ public class Generator {
 		    out.println("HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();");
 		}
 		if (n.isHasIncludeAction()) {
-		    out.println("ServletResponse response = pageContext.getResponse();");
+                    out.println("HttpServletResponse response = (HttpServletResponse)pageContext.getResponse();");
 		}
 	    }
 
