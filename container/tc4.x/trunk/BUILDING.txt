@@ -138,14 +138,13 @@ of Tomcat 4.0.
   distribution resides in its own directory.
 
 
-(6) Download and Install JDBC Optional Package API
+(6) Download and Install JDBC Optional Package API Binary Distribution
 
 * Download the JDBC Optional Pacakge API package (version 2.0) from:
 
     http://java.sun.com/products/jdbc/download.html
 
-* Unpack the package into a convenient location so that it resides
-  in its own subdirectory.
+* Place the jar in a convenient location.
 
 
 (7) Download and Install the JMX 1.0 Reference Implementation
