@@ -78,7 +78,13 @@ class RecycleBufferedInputStream extends BufferedInputStream {
     }
 
     void setInputStream( InputStream is ) {
+	this.count=0;
 	this.in=is;
+    }
+
+    void recycle() {
+	this.in=null;
+	this.count=0;
     }
 
     
@@ -114,6 +120,7 @@ public class HttpRequestAdapter extends RequestImpl {
 	super.recycle();
 	off=0;
 	count=0;
+	if( sin!=null )  sin.recycle();
     }
     
     public Socket getSocket() {
@@ -243,6 +250,7 @@ public class HttpRequestAdapter extends RequestImpl {
 
 	if (c != ':') {
 	    System.out.println("Parse error, missing : in  " + new String( b, off, len ));
+	    System.out.println("Full  " + new String( b, 0, b.length ));
 	    return false;
 	}
 
