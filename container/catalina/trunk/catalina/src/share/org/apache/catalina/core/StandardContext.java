@@ -1,7 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
  *
  * ====================================================================
  *
@@ -92,23 +89,7 @@ import org.apache.naming.resources.FileDirContext;
 import org.apache.naming.resources.ProxyDirContext;
 import org.apache.naming.resources.WARDirContext;
 import org.apache.naming.resources.DirContextURLStreamHandler;
-import org.apache.catalina.Container;
-import org.apache.catalina.ContainerListener;
-import org.apache.catalina.Context;
-import org.apache.catalina.Host;
-import org.apache.catalina.Globals;
-import org.apache.catalina.InstanceListener;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Loader;
-import org.apache.catalina.Mapper;
-import org.apache.catalina.Pipeline;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.Valve;
-import org.apache.catalina.Wrapper;
+import org.apache.catalina.*;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.TldConfig;
 import org.apache.catalina.mbeans.MBeanUtils;
@@ -263,6 +244,10 @@ public class StandardContext
      */
     private String displayName = null;
 
+    /** Override the default web xml location. ContextConfig is not configurable
+     * so the setter is not used.
+     */
+    private String defaultWebXml;
 
     /**
      * The distributable flag for this web application.
@@ -763,6 +748,22 @@ public class StandardContext
                                    new Boolean(oldCrossContext),
                                    new Boolean(this.crossContext));
 
+    }
+
+    public String getDefaultWebXml() {
+        return defaultWebXml;
+    }
+
+    /** Set the location of the default web xml that will be used.
+     * If not absolute, it'll be made relative to the engine's base dir
+     * ( which defaults to catalina.base system property ).
+     *
+     * XXX If a file is not found - we can attempt a getResource()
+     *
+     * @param defaultWebXml
+     */
+    public void setDefaultWebXml(String defaultWebXml) {
+        this.defaultWebXml = defaultWebXml;
     }
 
     public long getStartupTime() {
@@ -3726,9 +3727,10 @@ public class StandardContext
      */
     public synchronized void start() throws LifecycleException {
 
-        if (started)
-            throw new LifecycleException
-                (sm.getString("containerBase.alreadyStarted", logName()));
+        if (started) {
+            log.info(sm.getString("containerBase.alreadyStarted", logName()));
+            return;
+        }
 
         String logName="tomcat." + getParent().getName() + "." +
                 ("".equals(getName()) ? "ROOT" : getName()) + ".Context";
@@ -4156,9 +4158,12 @@ public class StandardContext
      * entire servlet container (i.e. the Engine container if present).
      */
     protected File engineBase() {
-
-        return (new File(System.getProperty("catalina.base")));
-
+        String base=System.getProperty("catalina.base");
+        if( base == null ) {
+            StandardEngine eng=(StandardEngine)this.getParent().getParent();
+            base=eng.getBaseDir();
+        }
+        return (new File(base));
     }
 
 
@@ -4373,7 +4378,7 @@ public class StandardContext
         // Create this directory if necessary
         File dir = new File(workDir);
         if (!dir.isAbsolute()) {
-            File catalinaHome = new File(System.getProperty("catalina.base"));
+            File catalinaHome = engineBase();
             String catalinaHomePath = null;
             try {
                 catalinaHomePath = catalinaHome.getCanonicalPath();
@@ -4661,7 +4666,7 @@ public class StandardContext
     private void registerJMX() {
         String onameStr=null;
         try {
-            if( oname==null || oname.getKeyProperty("WebModule")==null ) {
+            if( oname==null || oname.getKeyProperty("j2eeType")==null ) {
                 ContainerBase ctx=(ContainerBase)parent;
                 String pathName=getName();
                 String hostName=getParent().getName();
@@ -4671,11 +4676,16 @@ public class StandardContext
                 onameStr="j2eeType=WebModule,name=" + name +
                         ctx.getJSR77Suffix();
                 if( log.isDebugEnabled())
-                    log.debug("Registering " + onameStr );
+                    log.debug("Registering " + onameStr + " for " + oname);
 
-                Registry.getRegistry().registerComponent(this,
-                        ctx.getDomain(),
-                        "StandardContext", onameStr);
+                ObjectName oname=new ObjectName(ctx.getDomain()+ ":" + onameStr);
+                log.debug("Checking for " + oname );
+                if(! Registry.getRegistry().getMBeanServer().isRegistered(oname))
+                {
+                    Registry.getRegistry().registerComponent(this,
+                            ctx.getDomain(),
+                            "StandardContext", onameStr);
+                }
             }
             for( Iterator it=wrappers.iterator(); it.hasNext() ; ) {
                 StandardWrapper wrapper=(StandardWrapper)it.next();
@@ -4683,8 +4693,8 @@ public class StandardContext
                 wrapper.registerJMX( this );
             }
         } catch( Exception ex ) {
-            log.info("Error registering context with jmx " + this + " " +
-                    onameStr + " " + ex.toString() );
+            log.info("Error registering ctx with jmx " + this + " " +
+                    onameStr + " " + ex.toString(), ex );
         }
     }
 
@@ -4711,7 +4721,7 @@ public class StandardContext
         return name;
     }
 
-    public void preDeregister() {
+    public void preDeregister() throws Exception {
         if( started ) {
             try {
                 stop();
@@ -4751,6 +4761,13 @@ public class StandardContext
                 "type=Host,host=" + hostName + ",service=Tomcat-Standalone");
         log.info("Adding to " + parentName );
 
+        if( ! mserver.isRegistered(parentName)) {
+            log.info("No host, creating one ");
+            StandardHost host=new StandardHost();
+            host.setName(hostName);
+            Registry.getRegistry().registerComponent(host, parentName, null);
+            mserver.invoke(parentName, "init", new Object[] {}, new String[] {} );
+        }
         ContextConfig config = new ContextConfig();
         this.addLifecycleListener(config);
 
@@ -4758,4 +4775,40 @@ public class StandardContext
                 new String[] {"org.apache.catalina.Container"});
 
     }
+
+    public void destroy() throws Exception {
+        if( started ) {
+            stop();
+        }
+        parent.removeChild(this);
+    }
+
+    public void create() throws Exception{
+        init();
+    }
+
+    // ------------------------------------------------------------- Attributes
+
+
+    /**
+     * Return the naming resources associated with this web application.
+     */
+    public javax.naming.directory.DirContext getStaticResources() {
+
+        return getResources();
+
+    }
+
+
+    /**
+     * Return the naming resources associated with this web application.
+     */
+    public String[] getWelcomeFiles() {
+
+        return findWelcomeFiles();
+
+    }
+
+
+
 }
