@@ -284,6 +284,15 @@ public class SimpleTcpCluster
             log.error("Unable to load class for replication manager",x);
             manager = new org.apache.catalina.cluster.session.SimpleTcpReplicationManager();
         }
+        addManager(name,manager);
+        return manager;
+    }
+    
+    public void removeManager(String name) {
+        managers.remove(name);
+    }
+    
+    public void addManager(String name, ClusterManager manager) {
         manager.setName(name);
         manager.setCluster(this);
         manager.setDistributable(true);
@@ -291,13 +300,6 @@ public class SimpleTcpCluster
         manager.setUseDirtyFlag(useDirtyFlag);
         manager.setNotifyListenersOnReplication(notifyListenersOnReplication);
         managers.put(name,manager);
-        
-        
-        return manager;
-    }
-    
-    public void removeManager(String name) {
-        managers.remove(name);
     }
     
     public Manager getManager(String name) {

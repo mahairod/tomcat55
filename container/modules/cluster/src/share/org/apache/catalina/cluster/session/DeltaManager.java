@@ -625,6 +625,9 @@ public class DeltaManager
                 log.error("Starting... no cluster associated with this context:"+getName());
                 return;
             }
+            //to survice context reloads, as only a stop/start is called, not createManager
+            System.out.println("\n\n\nADDING MANAGER WITH NAME "+getName()+"\n\n\n");
+            getCluster().addManager(getName(),this);
 
             if (cluster.getMembers().length > 0) {
                 Member mbr = cluster.getMembers()[0];
@@ -668,7 +671,6 @@ public class DeltaManager
         } catch (Throwable t) {
             log.error(sm.getString("standardManager.managerLoad"), t);
         }
-
     }
 
 
@@ -684,6 +686,8 @@ public class DeltaManager
 
         if (log.isDebugEnabled())
             log.debug("Stopping");
+
+        getCluster().removeManager(getName());
 
         // Validate and update our current component state
         if (!started)
@@ -715,7 +719,6 @@ public class DeltaManager
         if( initialized ) {
             destroy();
         }
-        getCluster().removeManager(getName());
     }
 
 
