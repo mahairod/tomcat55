@@ -318,6 +318,10 @@ public class Compiler {
         StringBuffer errorReport = new StringBuffer();
         boolean success = true;
 
+        StringBuffer info=new StringBuffer();
+        info.append("Compile: javaFileName=" + javaFileName + "\n" );
+        info.append("    classpath=" + classpath + "\n" );
+
         // Start capturing the System.err output for this thread
         SystemLogHandler.setThread();
 
@@ -328,11 +332,13 @@ public class Compiler {
         // Initializing classpath
         Path path = new Path(project);
         path.setPath(System.getProperty("java.class.path"));
+        info.append("     cp=" + System.getProperty("java.class.path") + "\n");
         StringTokenizer tokenizer = new StringTokenizer(classpath, sep);
         while (tokenizer.hasMoreElements()) {
             String pathElement = tokenizer.nextToken();
             File repository = new File(pathElement);
             path.setLocation(repository);
+            info.append("     cp=" + repository + "\n");
         }
 
         if( log.isDebugEnabled() )
@@ -343,28 +349,36 @@ public class Compiler {
         Path srcPath = new Path(project);
         srcPath.setLocation(options.getScratchDir());
 
+        info.append("     work dir=" + options.getScratchDir() + "\n");
+
         // Configure the compiler object
         javac.setEncoding(javaEncoding);
         javac.setClasspath(path);
         javac.setDebug(ctxt.getOptions().getClassDebugInfo());
         javac.setSrcdir(srcPath);
         javac.setOptimize(! ctxt.getOptions().getClassDebugInfo() );
+        info.append("    srcDir=" + srcPath + "\n" );
 
         // Set the Java compiler to use
         if (options.getCompiler() != null) {
             javac.setCompiler(options.getCompiler());
+            info.append("    compiler=" + options.getCompiler() + "\n");
         }
 
         // Build includes path
         PatternSet.NameEntry includes = javac.createInclude();
-        includes.setName(ctxt.getJspPath());
+        File f=new File( ctxt.getJspPath());
+
+        includes.setName(f.getCanonicalPath());
+        info.append("    include="+ ctxt.getJspPath() + "\n" );
 
         try {
             synchronized(javacLock) {
                 javac.execute();
             }
         } catch (BuildException e) {
-            log.error( "Javac exception ", e);
+            log.error( "Javac execption ", e);
+            log.error( "Env: " + info.toString());
             success = false;
         }
 
