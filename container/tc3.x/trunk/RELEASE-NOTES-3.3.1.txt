@@ -172,6 +172,7 @@ Bug No.  Description
 	 StaticInterceptor).  The check was redundant, and was causing
 	 Spec problems.
 
+5191	 Fix parsing of JSP comments with extra '-' characters.
 
 Configuration:
 
