@@ -81,8 +81,8 @@ public class StandardContextSF extends StoreFactoryBase {
                         else
                             storeContextSeparate(aWriter, indent,
                                     (StandardContext) aContext);
+                        return;
                     }
-                    return;
                 }
             }
         }

@@ -12,6 +12,7 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.ContextConfig;
+import java.io.File ;
 
 /**
  * @author Peter Rossbach
@@ -99,5 +100,35 @@ public class StoreContextAppenderTest extends TestCase {
                 .defaultInstance(context);
         assertEquals(0, defaultContext.findLifecycleListeners().length);
 
+    }
+    
+    public void testPath() throws Exception {
+        StandardContext defaultContext = (StandardContext) appender
+        .defaultInstance(context);
+        context.setPath("/myapps");
+        assertNull(context.getConfigFile());
+        StoreDescription desc = new StoreDescription();
+        desc.setExternalAllowed(true);
+        desc.setStoreSeparate(true);
+        assertTrue(appender.isPrintValue(context, defaultContext, "path", desc));
+        context.setConfigFile("conf/Catalina/locahost/myapps.xml");
+        assertFalse(appender.isPrintValue(context, defaultContext, "path", desc));
+        desc.setExternalAllowed(false);
+        assertFalse(appender.isPrintValue(context, defaultContext, "path", desc));
+        desc.setExternalAllowed(true);
+        desc.setStoreSeparate(false);
+        assertFalse(appender.isPrintValue(context, defaultContext, "path", desc));
+    }
+    
+    public void testDocBase() throws Exception {
+        StandardContext defaultContext = (StandardContext) appender
+        .defaultInstance(context);
+        context.setPath("/myapps");
+        context.setDocBase("myapps");
+        host.setAppBase("webapps");
+        assertFalse(appender.isPrintValue(context, defaultContext, "docBase", null));
+        context.setDocBase(System.getProperty("java.io.tmpdir") + "/myapps");
+        assertTrue(appender.isPrintValue(context, defaultContext, "docBase", null));
+        
     }
 }
