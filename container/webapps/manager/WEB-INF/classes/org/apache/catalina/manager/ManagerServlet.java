@@ -737,6 +737,9 @@ public class ManagerServlet
     protected void deploy(PrintWriter writer, String config,
             String path, String war, boolean update) {
         
+        if (config != null && config.length() == 0) {
+            config = null;
+        }
         if (war != null && war.length() == 0) {
             war = null;
         }
