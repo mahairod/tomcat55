@@ -48,6 +48,11 @@ Bug No.  Description
 	 class is loaded.  This allows JAXP and log4j classes to be created
 	 in the constructor of the servlet, instead of in init.
 
+	 Fix problem with multiple Context adds on Context reload under
+	 high traffic.
+
+	 Preserve sessions across session reloadings.
+
 Jasper:
 
 Bug No.  Description
