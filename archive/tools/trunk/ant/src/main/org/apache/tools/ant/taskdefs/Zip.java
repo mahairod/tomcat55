@@ -78,6 +78,7 @@ public class Zip extends Task {
     private File manifest;    
     private Vector ignoreList = new Vector();
     private boolean allItems = false;
+    protected String archiveType = "zip";
     
     /**
         This is the name/location of where to 
@@ -140,11 +141,11 @@ public class Zip extends Task {
     }
     
     public void execute() throws BuildException {
-        project.log("Building zip: " + zipFile.getAbsolutePath());
+        project.log("Building " + archiveType + ": " + zipFile.getAbsolutePath());
     
         try {
             ZipOutputStream zOut = new ZipOutputStream(new FileOutputStream(zipFile));
-            zOut.setMethod(ZipOutputStream.DEFLATED);
+	    initZipOutputStream(zOut);
             
             if ( allItems ) {
                 String[] lst = baseDir.list();
@@ -167,19 +168,25 @@ public class Zip extends Task {
                         zipFile(f, zOut, s);
                     }
                 } else {
-                    project.log("Zip Ignored: " + s, Project.MSG_WARN);
+                    project.log("Ignoring: " + s, Project.MSG_WARN);
                 }
             }
     
             // close up            
             zOut.close();
         } catch (IOException ioe) {
-            String msg = "Problem creating zip " + ioe.getMessage();
+            String msg = "Problem creating " + archiveType + " " + ioe.getMessage();
             throw new BuildException(msg);
         }
     }
 
-    private void zipDir(File dir, ZipOutputStream zOut, String vPath)
+    protected void initZipOutputStream(ZipOutputStream zOut)
+	throws IOException, BuildException
+    {
+	zOut.setMethod(ZipOutputStream.DEFLATED);
+    }
+
+    protected void zipDir(File dir, ZipOutputStream zOut, String vPath)
         throws IOException
     {
         String[] list = dir.list();
@@ -194,12 +201,12 @@ public class Zip extends Task {
                     zipFile(file, zOut, vPath + f);
                 }
             } else {
-                project.log("Zip Ignored: " + f, Project.MSG_WARN);
+                project.log("Ignoring: " + f, Project.MSG_WARN);
             }
         }
     }
 
-    private void zipFile(InputStream in, ZipOutputStream zOut, String vPath)
+    protected void zipFile(InputStream in, ZipOutputStream zOut, String vPath)
         throws IOException
     {
         ZipEntry ze = new ZipEntry(vPath);
@@ -213,7 +220,7 @@ public class Zip extends Task {
         } while (count != -1);
     }
     
-    private void zipFile(File file, ZipOutputStream zOut, String vPath)
+    protected void zipFile(File file, ZipOutputStream zOut, String vPath)
         throws IOException
     {
         FileInputStream fIn = new FileInputStream(file);
