@@ -57,6 +57,9 @@
       <update>
         <bug>34139</bug>: Updated Realm-HowTo to specify JMX, Commons-Logging jars for RealmBase. (yoavs)
       </update>
+      <add>
+        <bug>33325</bug>: Added top-level clean target to Netbuild build.xml file. (yoavs)
+      </add>
     </changelog>
    </subsection>
 
