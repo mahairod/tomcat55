@@ -334,14 +334,16 @@ public class ErrorDispatcher {
 
 
     /*
-     * Dispatches the given compilation exception to the configured error
-     * handler.
+     * Dispatches the given compilation error report and exception to the
+     * configured error handler.
      *
+     * @param errorReport Compilation error report
      * @param e Compilation exception
      */
-    public void javacError(Exception e) throws JasperException {
+    public void javacError(String errorReport, Exception e)
+                throws JasperException {
 
-        errHandler.javacError(e);
+        errHandler.javacError(errorReport, e);
     }
 
 

@@ -81,11 +81,12 @@ class DefaultErrorHandler implements ErrorHandler {
     }
 
     /**
-     * Processes the given javac compilation exception.
+     * Processes the given javac error report and exception.
      *
+     * @param errorReport Compilation error report
      * @param exception Compilation exception
      */
-    public void javacError(Exception exception)
+    public void javacError(String errorReport, Exception exception)
             throws JasperException {
 
  	throw new JasperException(

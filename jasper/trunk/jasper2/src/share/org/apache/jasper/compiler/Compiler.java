@@ -403,14 +403,15 @@ public class Compiler {
         }
 
         if (be != null) {
+            String errorReportString = errorReport.toString();
             log.error("Error compiling file: " + javaFileName + " "
-                      + errorReport);
+                      + errorReportString);
             JavacErrorDetail[] javacErrors = errDispatcher.parseJavacErrors(
-                        errorReport.toString(), javaFileName, pageNodes);
+                        errorReportString, javaFileName, pageNodes);
             if (javacErrors != null) {
                 errDispatcher.javacError(javacErrors);
             } else {
-                errDispatcher.javacError(be);
+                errDispatcher.javacError(errorReportString, be);
             }
         }
 
