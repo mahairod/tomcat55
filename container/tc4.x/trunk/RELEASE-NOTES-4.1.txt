@@ -65,6 +65,7 @@ General New Features:
 [4.1.19] Administration Webapp:
          Complete the accessibility requirements to pass section 508.
 
+
 ---------------------
 Catalina New Features:
 ---------------------
@@ -122,6 +123,12 @@ Catalina New Features:
 
 [4.1.19] CoyoteConnector:
          Add HTTP/1.1 GZIP compression support.
+
+[4.1.20] StandardWrapper, ManagerBase:
+         Added JavaBean fields to expose statistics through JMX.
+
+[4.1.20] GlobalResourcesLifecycleListener:
+         Allow the listener to be associated with a Service.
 
 
 -------------------
@@ -239,6 +246,18 @@ Generic Bug Fixes:
          Fix classloading failures on JDK 1.4 related to commons-logging, 
          which were caused by JARs being set as endorsed and added to the
          system classloader.
+
+[4.1.20] Xerces:
+         Upgrade to Xerces 2.3.0.
+
+[4.1.20] Administration Webapp:
+         Additional accessibility improvements.
+
+[4.1.20] Administration Webapp:
+         Fix to prevent localhost from being deleted.
+
+[4.1.20] Administration Webapp:
+         Fix the beahavior of valve creation, where atributes weren't saved.
 
 
 ------------------
@@ -640,10 +659,26 @@ Catalina Bug Fixes:
          attributes.
 
 [4.1.20] #16316
-         DataSourceRealm
+         DataSourceRealm:
          Removed code which validates the realm can connect to the db from
          the realm start in case the JNDI named DataSource has not been
          initialized yet.
+
+[4.1.20] #16106
+         StandardServer:
+         Fix a problem where some valves would be incorrectly written 
+         to server.xml.
+
+[4.1.20] StandardSession:
+         Don't recycle sessions, as the performance gain is minimal.
+
+[4.1.20] CookieTools:
+         Add spaces after ; in cookies. This avoids problems with IE on Mac.
+
+[4.1.20] Manager:
+         Add missing security mapping for deploy (this bug was introduced 
+         in 4.1.19).
+
 
 ----------------
 Coyote Bug Fixes:
@@ -806,6 +841,9 @@ Coyote Bug Fixes:
 
 [4.1.19] ThreadPool:
          Remove thread from active thread list when it ends.
+
+[4.1.20] CoyoteConnector:
+         Allow setting socket linger.
 
 
 ----------------
@@ -1051,6 +1089,32 @@ Jasper Bug Fixes:
          the JSP page compiles which are not reused are dereferenced so
          they are eligible for GC. This should reduce the memory footprint
          and improve GC performance.
+
+[4.1.20] JspC:
+         Port fixes to JspC from HEAD, including support for packaged JSPs, and
+         fixes to webapp precompilation.
+
+[4.1.20] Compiler:
+         Dereference objects used during compilation, in order to allow 
+         garbage collection.
+
+[4.1.20] Compiler:
+         Fixed a NPE caused by nulling errorDispatcher.
+
+[4.1.20] #16181
+         Generator:
+         JspWriter not restored properly when exception thrown 
+         in a tag's body content.
+
+[4.1.20] #16200
+         Generator:
+         Fix isThreadSafe functionality.
+
+[4.1.20] #16449
+         JspServletWrapper:
+         Fix race condition in the reloading check by using an object local
+         boolean.
+
 
 ============================
 KNOWN ISSUES IN THIS RELEASE:
