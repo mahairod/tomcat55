@@ -127,6 +127,12 @@ Catalina Bug Fixes:
 [B2] HttpResponseBase:
      Revert fix for 6600, which breaks sessionid URL encoding in 4.0.4 Beta 1.
 
+[B3] Request:
+     Add support for language variants.
+
+[B3] WebdavServlet:
+     Avoid unnecessary operations when doing a PROPFIND.
+
 
 ----------------
 Jasper Bug Fixes:
