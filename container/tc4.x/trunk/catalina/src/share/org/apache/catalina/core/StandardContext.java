@@ -443,6 +443,12 @@ public class StandardContext
     private boolean useNaming = true;
 
 
+    /**
+     * Filesystem based flag.
+     */
+    private boolean filesystemBased = false;
+
+
     // ----------------------------------------------------- Context Properties
 
 
@@ -461,6 +467,17 @@ public class StandardContext
      */
     public void setUseNaming(boolean useNaming) {
         this.useNaming = useNaming;
+    }
+
+
+    /**
+     * Returns true if the resources associated with this context are 
+     * filesystem based.
+     */
+    public boolean isFilesystemBased() {
+
+        return (filesystemBased);
+
     }
 
 
@@ -916,6 +933,9 @@ public class StandardContext
         if (resources instanceof BaseDirContext) {
             if (resources instanceof BaseDirContext)
                 ((BaseDirContext) resources).setDocBase(getBasePath());
+        }
+        if (resources instanceof FileDirContext) {
+            filesystemBased = true;
         }
         super.setResources(resources);
         if (started)

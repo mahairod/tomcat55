@@ -361,7 +361,9 @@ public final class ApplicationContext
      */
     public String getRealPath(String path) {
 
-        // Here, we return a fake path
+        if (!context.isFilesystemBased())
+            return null;
+
         File file = new File(basePath, path);
         return (file.getAbsolutePath());
 

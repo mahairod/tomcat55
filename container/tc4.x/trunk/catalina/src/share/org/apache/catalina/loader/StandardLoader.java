@@ -942,7 +942,7 @@ public final class StandardLoader
                         servletContext.getRealPath(repository.substring(5));
                 else
                     continue;
-                if (repository.endsWith("/"))
+                if ((repository == null) || (repository.endsWith("/")))
                     continue;
                 if (n > 0)
                     classpath.append(File.pathSeparator);
