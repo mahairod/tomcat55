@@ -581,7 +581,12 @@
                type="boolean"/>
 
     <attribute name="processingTime"
-               description="Cumulative processing time"
+               description="Execution time of the servlet's service method"
+               type="long"
+               writeable="false" />
+
+    <attribute name="serviceTime"
+               description="Execution time of the servlet's service method"
                type="long"
                writeable="false" />
 
