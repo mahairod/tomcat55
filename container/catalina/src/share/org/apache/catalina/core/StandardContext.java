@@ -5340,6 +5340,7 @@ public class StandardContext
                 log.debug("No host, creating one " + parentName);
                 StandardHost host=new StandardHost();
                 host.setName(hostName);
+                host.setAutoDeploy(false);
                 Registry.getRegistry().registerComponent(host, parentName, null);
                 mserver.invoke(parentName, "init", new Object[] {}, new String[] {} );
             }
