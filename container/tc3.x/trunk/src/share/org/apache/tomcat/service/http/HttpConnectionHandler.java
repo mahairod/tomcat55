@@ -141,6 +141,13 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 		
 		reqA.setServerName(hostHeader);
              }
+
+	    int contentLength = reqA.getFacade().getIntHeader("content-length");
+	    if (contentLength != -1) {
+		BufferedServletInputStream sis =
+		    (BufferedServletInputStream)reqA.getInputStream();
+		sis.setLimit(contentLength);
+	    }
     
 	    //	    System.out.print("3");
 	    contextM.service( reqA, resA );

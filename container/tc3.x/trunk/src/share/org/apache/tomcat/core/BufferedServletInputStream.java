@@ -79,7 +79,6 @@ import javax.servlet.*;
  * @author James Duncan Davidson <duncan@eng.sun.com>
  * @author Jason Hunter <jch@eng.sun.com>
  */
-
 public class BufferedServletInputStream extends ServletInputStream {
 
     // XXX
