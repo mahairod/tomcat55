@@ -261,7 +261,7 @@
              compile="false"
              validateXml="false"
              uriroot="${jsp-examples.base}"
-             webXmlFragment="${jsp-examples.base}/WEB-INF/generated_web.xml"
+	     webXmlFragment="${jsp-examples.base}/WEB-INF/generated_web.xml"
              outputDir="${jsp-examples.base}/WEB-INF/src" />
 
     <jasper2 
@@ -290,7 +290,9 @@
     <javac destdir="${ROOT.base}/WEB-INF/classes"
            optimize="off"
            debug="on" failonerror="false"
-           srcdir="${ROOT.base}/WEB-INF/src" >
+           srcdir="${ROOT.base}/WEB-INF/src" 
+	   excludes="**/*.smap"
+    >
       <classpath>
         <pathelement location="${java.home}/../lib/tools.jar"/>
         <fileset dir="${tomcat.build}/server/lib">
@@ -310,7 +312,9 @@
     <javac destdir="${jsp-examples.base}/WEB-INF/classes"
            optimize="off"
            debug="on" failonerror="false"
-           srcdir="${jsp-examples.base}/WEB-INF/src" >
+           srcdir="${jsp-examples.base}/WEB-INF/src" 
+	   excludes="**/*.smap"
+    >
       <classpath>
         <pathelement location="${java.home}/../lib/tools.jar"/>
         <fileset dir="${tomcat.build}/server/lib">
@@ -330,7 +334,9 @@
     <javac destdir="${admin.base}/WEB-INF/classes"
            optimize="off"
            debug="on" failonerror="false"
-           srcdir="${admin.base}/WEB-INF/src" >
+           srcdir="${admin.base}/WEB-INF/src" 
+	   excludes="**/*.smap"
+    >
       <classpath>
         <pathelement location="${java.home}/../lib/tools.jar"/>
         <fileset dir="${tomcat.build}/server/lib">
@@ -497,7 +503,7 @@
     <chmod      dir="${tomcat.build}/bin"   includes="*.sh"  perm="+x"/>
 
     <echo>Target: Webapps precompilation ...</echo>
-    <ant dir="."   target="build-webapps-precompile" />
+    <ant dir="."   target="build-webapps-precompile" /> 
 
   </target>
 
