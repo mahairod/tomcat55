@@ -199,7 +199,11 @@
             </controls:data>
         </controls:row>
 
-<%-- The following properties are supported for both Coyote and JK2 Connectors --%>
+<%-- The following properties are supported only for Coyote Connectors --%>
+     <logic:notEqual name="connectorForm" property="connectorType" scope="session" 
+                  value="Ajp13Connector">
+     <logic:notEqual name="connectorForm" property="connectorType" scope="session" 
+                  value="HTTP(AJP)">
         <controls:row header="true" labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label>Proxy</controls:label>
             <controls:data>&nbsp;</controls:data>
@@ -218,12 +222,13 @@
                 <html:text property="proxyPortText" size="5"/> 
             </controls:data>
         </controls:row>
+        </logic:notEqual>
+        </logic:notEqual>
 
-<%-- The following properties are supported only on HTTPS JK2 Connector --%>
+<%-- The following properties are supported only on HTTPS Connector --%>
      <logic:equal name="connectorForm" property="connectorType" scope="session" 
                   value="HTTPS">
         <br>
-
         <controls:row header="true" labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label>Factory Properties:</controls:label>
             <controls:data>&nbsp;</controls:data>
