@@ -138,6 +138,32 @@
 
     <!-- ========== JNDI Naming Context =================================== -->
 
+    <!-- Perform the tests before restarting the application -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Jndi01" debug="${debug}"
+      outContent="Jndi01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedJndi01" debug="${debug}"
+      outContent="Jndi01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Jndi02" debug="${debug}"
+      outContent="Jndi02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedJndi02" debug="${debug}"
+      outContent="Jndi02 PASSED"/>
+
+    <!-- Restart this web application -->
+    <!-- NOTE: Assign role "manager" to user "tomcat" for this to work -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+         request="${manager.path}/reload?path=${context.path}"
+      outContent="OK - Reloaded application at context path ${context.path}"/>
+
+    <!-- Repeat the tests to ensure the naming context is reinitialized -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Jndi01" debug="${debug}"
       outContent="Jndi01 PASSED"/>
