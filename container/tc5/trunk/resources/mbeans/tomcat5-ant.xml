@@ -5,7 +5,7 @@
 
   <property name="tomcat.home" location="." />
   <!-- This matches the build struct with build and embed at the same level -->
-  <property name="tomcat.webapps" location="${tomcat.home}/../build/webapps" />
+  <property name="tomcat.webapps" location="${tomcat.home}/webapps" />
 
   <path id="tomcatCP-extra" /> 
 
@@ -252,7 +252,7 @@
 
        <mbean name="${jsr77Domain}:j2eeType=WebModule,name=//localhost/manager,J2EEApplication=none,J2EEServer=none" 
               code="org.apache.catalina.core.StandardContext"  modeler="true">
-         <attribute name="docBase" value="${tomcat.webapps}/../server/webapps/manager" />
+         <attribute name="docBase" value="${tomcat.webapps}/manager" />
          <attribute name="engineName" value="${domain}" />
          <attribute name="privileged" value="true" />
        </mbean>
