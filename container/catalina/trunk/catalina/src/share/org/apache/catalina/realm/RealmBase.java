@@ -250,12 +250,29 @@ public abstract class RealmBase
 
         String serverCredentials = getPassword(username);
 
-        if ( (serverCredentials == null)
-             || (!serverCredentials.equals(credentials)) )
+        boolean validated ;
+        if ( serverCredentials == null ) {
+            validated = false;
+        } else if(hasMessageDigest()) {
+            validated = serverCredentials.equalsIgnoreCase(digest(credentials));
+        } else {
+            validated = serverCredentials.equals(credentials);
+        }
+        if(! validated ) {
+            if (container.getLogger().isTraceEnabled()) {
+                container.getLogger().
+                    trace(sm.getString("realmBase.authenticateFailure",
+                                 username));
+            }
             return null;
+        }
+        if (container.getLogger().isTraceEnabled()) {
+            container.getLogger().
+                trace(sm.getString("realmBase.authenticateSuccess",
+                             username));
+        }
 
         return getPrincipal(username);
-
     }
 
 
