@@ -328,11 +328,11 @@ final class ApplicationDispatcher
 	// Create a wrapped response to use for this request
 	ServletResponse wresponse = null;
 	if (response instanceof HttpServletResponse) {
-	    response =
+	    wresponse =
 		new ApplicationHttpResponse((HttpServletResponse) response,
 					    true);
 	} else {
-	    response = new ApplicationResponse(response, true);
+	    wresponse = new ApplicationResponse(response, true);
 	}
 
 	// Handle a non-HTTP include
