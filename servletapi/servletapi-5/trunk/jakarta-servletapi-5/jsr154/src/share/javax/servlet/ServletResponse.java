@@ -149,6 +149,8 @@ public interface ServletResponse {
      *			content type, for example,
      *			<code>text/html; charset=UTF-8</code>,
      *			or null
+     *
+     * @since 2.4
      */
   
     public String getContentType();
@@ -243,6 +245,8 @@ public interface ServletResponse {
      *
      * @see		#setContentType
      * 			#setLocale
+     *
+     * @since 2.4
      *
      */
 

@@ -501,7 +501,7 @@ public interface HttpServletRequest extends ServletRequest {
      *
      * 
 
-     * <table>
+     * <table summary="Examples of Returned Values">
      * <tr align=left><th>First line of HTTP request      </th>
      * <th>     Returned Value</th>
      * <tr><td>POST /some/path.html HTTP/1.1<td><td>/some/path.html

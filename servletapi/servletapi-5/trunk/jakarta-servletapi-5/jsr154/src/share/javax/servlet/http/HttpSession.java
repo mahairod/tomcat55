@@ -474,6 +474,8 @@ public interface HttpSession {
      *
      * @exception IllegalStateException if this method is called on an
      *                                  already invalidated session
+     *
+     * @since 2.4
      */
     public void logout();
 
