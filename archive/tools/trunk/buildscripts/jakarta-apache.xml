@@ -1,0 +1,97 @@
+<project name="source-snapshots" default="src.snap" basedir=".">
+   <!-- ******************** Initialization ******************** -->
+   <target name="init">
+    <tstamp />
+    <property name="ws.dir" value="${user.home}/ws" />
+    <property name="nightly.dir" value="/www/jakarta.apache.org/builds/tomcat/nightly" />
+    <property name="nightly.url" value="http://jakarta.apache.org/builds/tomcat/nightly" />
+    <property name="tomcat.home" value="/opt/tomcat" />
+    <property name="dist.dir" value="/opt" />
+    <property name="package.dir" value="/home/ftp/pub" />
+    <!-- Allow user to override any of the hardcoded directories -->
+    <property file="${user.home}/.ant.properties" />
+  </target>
+
+  <target name="clean.src">
+     <deltree dir="${ws.dir}/jakarta-tomcat" />
+     <deltree dir="${ws.dir}/jakarta-watchdog" />
+     <deltree dir="${ws.dir}/jakarta-tools" />
+     <deltree dir="${ws.dir}/jakarta-tomcat.src.zip" />
+     <deltree dir="${ws.dir}/jakarta-tools.src.zip" />
+     <deltree dir="${ws.dir}/jakarta-watchdog.src.zip" />
+  </target>
+
+  <target name="prepare">
+    <mkdir dir="${ws.dir}" />
+   </target>
+
+   <!-- ******************** Creating source snapshots  ******************** -->
+  <target name="ant.src.snap" depends="prepare">
+    <cvs cvsRoot=":pserver:anoncvs@jakarta.apache.org:/home/cvspublic" 
+         package="jakarta-tools"   dest="${ws.dir}"  />
+    <zip zipfile="${nightly.dir}/src/jakarta-tools.src.zip" 
+         basedir="${ws.dir}" items="jakarta-tools"/>
+    <copyfile src="${nightly.dir}/src/jakarta-tools.src.zip"
+              dest="${nightly.dir}/src/jakarta-tools-${DSTAMP}.src.zip" />
+    <copyfile src="${ws.dir}/jakarta-tools/buildscripts/main.xml"
+              dest="${user.home}/scripts/main.xml" />
+    <copyfile src="${ws.dir}/jakarta-tools/buildscripts/jakarta-apache.xml"
+              dest="${user.home}/scripts/jakarta-apache.xml" />
+  </target>
+
+  <target name="tomcat.src.snap" depends="prepare">
+    <cvs cvsRoot=":pserver:anoncvs@jakarta.apache.org:/home/cvspublic"
+         package="jakarta-tomcat"   dest="${ws.dir}"  />
+    <zip zipfile="${nightly.dir}/src/jakarta-tomcat.src.zip" 
+         basedir="${ws.dir}"  items="jakarta-tomcat"/>
+    <copyfile src="${nightly.dir}/src/jakarta-tomcat.src.zip" 
+         dest="${nightly.dir}/src/jakarta-tomcat-${DSTAMP}.src.zip" />
+  </target> 
+
+  <target name="watchdog.src.snap" depends="prepare">
+    <cvs cvsRoot=":pserver:anoncvs@jakarta.apache.org:/home/cvspublic"
+         package="jakarta-watchdog"  dest="${ws.dir}"  />
+    <zip zipfile="${nightly.dir}/src/jakarta-watchdog.src.zip" 
+         basedir="${ws.dir}" items="jakarta-watchdog"/>
+    <copyfile src="${nightly.dir}/src/jakarta-watchdog.src.zip" 
+              dest="${nightly.dir}/src/jakarta-watchdog-${DSTAMP}.src.zip" />
+  </target> 
+ 
+   <!-- ******************** Getting binaries from build machines  ******************** -->
+   <target name="binaries.get" >
+    <get src="ftp://tokyo.javasoft.com/pub/tomcat/tomcat.zip" 
+         dest="${nightly.dir}/tomcat-${DSTAMP}.zip" />
+    <get src="ftp://tokyo.javasoft.com/pub/tomcat/ASFtomcat-pkg.zip" 
+         dest="${nightly.dir}/tomcat-${DSTAMP}.zip" />
+    <get src="ftp://tokyo.javasoft.com/pub/tomcat/tomcat-test.log" 
+         dest="${nightly.dir}/log/tomcat-test-SunOS-${DSTAMP}.log" />
+    <get src="ftp ftp://tokyo.javasoft.com/pub/tomcat/watchdog-test.log" 
+         dest="${nightly.dir}/log/watchdog-test-SunOS-${DSTAMP}.log" />
+
+    <get src="ftp://osaka.javasoft.com/pub/tomcat/watchdog-test.log" 
+         dest="${nightly.dir}/log/watchdog-test-Linux-i386-${DSTAMP}.log" />
+    <get src="ftp://osaka.javasoft.com/pub/tomcat/tomcat-test.log" 
+         dest="${nightly.dir}/log/tomcat-test-Linux-i386-${DSTAMP}.log" />
+    <get src="ftp://osaka.javasoft.com/pub/ant/ant-1.0-0.noarch.rpm" 
+         dest="${nightly.dir}/ant-1.0-0.noarch.rpm  " />
+    <get src="ftp://osaka.javasoft.com/pub/ant/ant-1.0-0.src.rpm" 
+         dest="${nightly.dir}/ant-1.0-0.src.rpm  " />
+    <get src="ftp://osaka.javasoft.com/pub/tomcat/tomcat-3.0-0.noarch.rpm" 
+         dest="${nightly.dir}/tomcat-3.0-0.noarch.rpm  " />
+    <get src="ftp://osaka.javasoft.com/pub/tomcat/tomcat-3.0-0.src.rpm" 
+         dest="${nightly.dir}/tomcat-3.0-0.src.rpm  " />
+
+    <copyfile src="${nightly.dir}/tomcat-${DSTAMP}.zip" dest="${nightly.dir}/tomcat.zip" />
+   </target>
+
+   <target name="remove-old" >
+      <exec dir="${nightly.dir}" command="find . -atime +3 -name tomcat-\*.zip -print -exec rm {} \;" />
+      <exec dir="${nightly.dir}/logs" command="find . -atime +3  -print -exec rm {} \;" />
+   </target>
+   <!-- ******************** Agregate targets  ******************** -->
+
+  <target name="src.snap" depends="clean.src,ant.src.snap,tomcat.src.snap,watchdog.src.snap" >
+  </target>
+  
+</project>
+

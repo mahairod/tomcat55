@@ -1,5 +1,10 @@
+if [ -f $HOME/.antrc ] ; then 
+  . $HOME/.antrc
+fi
+
 SRCDIR=src/main/org/apache/tools/ant
 CLASSDIR=classes
+CLASSPATH=${CLASSPATH}:${JAVA_HOME}/lib/classes.zip:${JAVA_HOME}/lib/tools.jar
 CLASSPATH=${CLASSPATH}:../projectx-tr2.jar:../javac.jar:src:${CLASSDIR}
 
 mkdir -p ${CLASSDIR}

@@ -1,13 +1,13 @@
 Summary: Java build tool
 Name: ant
-Version: 1
+Version: 1.0
 Release: 0
 Group: Development/Tools
 Copyright: Apache - free
 Provides: ant
 Url: http://jakarta.apache.org
 
-Source: http://jakarta.apache.org/builds/tmp/ant/ant.src.zip
+Source: http://jakarta.apache.org/builds/nightly/ant/jakarta-tools.src.zip
 Prefix: /opt
 
 %description
@@ -16,7 +16,7 @@ Used by tomcat/jakarta projects.
 
 %prep
 rm -rf ${RPM_BUILD_DIR}/jakarta-tools
-unzip -x $RPM_SOURCE_DIR/ant.src.zip
+unzip -x $RPM_SOURCE_DIR/jakarta-tools.src.zip
 
 %build
 cd ${RPM_BUILD_DIR}/jakarta-tools
