@@ -82,7 +82,7 @@ public class SocketSender implements IDataSender
     private Socket sc = null;
     private boolean isSocketConnected = false;
     private boolean suspect;
-    private long ackTimeout = 10000;
+    private long ackTimeout = 60*1000;
 
     public SocketSender(InetAddress host, int port)
     {
