@@ -93,8 +93,9 @@ public final class TldConfig  {
         noTldJars.add("commons-logging.jar");
         noTldJars.add("commons-collections.jar");
         noTldJars.add("commons-el.jar");
-        noTldJars.add("jakarta-regexp-1.2.jar");
+        noTldJars.add("jakarta-regexp-1.3.jar");
         noTldJars.add("jasper-compiler.jar");
+        noTldJars.add("jasper-compiler-jdt.jar");
         noTldJars.add("jasper-runtime.jar");
         noTldJars.add("jmx.jar");
         noTldJars.add("jmx-tools.jar");
@@ -102,6 +103,7 @@ public final class TldConfig  {
         noTldJars.add("naming-common.jar");
         noTldJars.add("naming-resources.jar");
         noTldJars.add("naming-factory.jar");
+        noTldJars.add("naming-factory-dbcp.jar");
         noTldJars.add("naming-java.jar");
         noTldJars.add("servlet-api.jar");
         noTldJars.add("servlets-default.jar");
