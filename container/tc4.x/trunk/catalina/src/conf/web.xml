@@ -77,6 +77,11 @@
       <param-name>buffered</param-name>
       <param-value>1</param-value>
     </init-param>
+    <init-param>
+      <!-- 0 == false; 1 == true -->
+      <param-name>isVirtualWebappRelative</param-name>
+      <param-value>0</param-value>
+    </init-param>
     <load-on-startup>5</load-on-startup>
   </servlet>
 
