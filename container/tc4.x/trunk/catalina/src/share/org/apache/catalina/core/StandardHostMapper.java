@@ -184,8 +184,7 @@ public class StandardHostMapper
             return (request.getContext());
 
         // Perform mapping on our request URI
-        String uri =
-            ((HttpServletRequest) request.getRequest()).getRequestURI();
+        String uri = ((HttpRequest) request).getDecodedRequestURI();
         Context context = host.map(uri);
 
         // Update the request (if requested) and return the selected Context

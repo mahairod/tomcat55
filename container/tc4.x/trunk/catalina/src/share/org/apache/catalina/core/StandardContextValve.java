@@ -75,6 +75,7 @@ import org.apache.naming.ContextBindings;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.ValveContext;
@@ -157,7 +158,7 @@ final class StandardContextValve
         // Disallow any direct access to resources under WEB-INF or META-INF
         HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
         String contextPath = hreq.getContextPath();
-        String requestURI = hreq.getRequestURI();
+        String requestURI = ((HttpRequest) request).getDecodedRequestURI();
         String relativeURI =
             requestURI.substring(contextPath.length()).toUpperCase();
         if (relativeURI.equals("/META-INF") ||

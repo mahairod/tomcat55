@@ -212,7 +212,7 @@ public class FormAuthenticator
 
         // Acquire references to objects we will need to evaluate
         String contextPath = hreq.getContextPath();
-        String requestURI = hreq.getRequestURI();
+        String requestURI = request.getDecodedRequestURI();
         response.setContext(request.getContext());
 
         // Is this a request for the login page itself?  Test here to avoid

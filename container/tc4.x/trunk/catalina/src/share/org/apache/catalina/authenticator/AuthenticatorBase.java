@@ -452,8 +452,7 @@ public abstract class AuthenticatorBase
         // where the login form (and therefore the "j_security_check" URI
         // to which it submits) might be outside the secured area
         String contextPath = this.context.getPath();
-        String requestURI =
-            ((HttpServletRequest) request.getRequest()).getRequestURI();
+        String requestURI = hrequest.getDecodedRequestURI();
         if (requestURI.startsWith(contextPath) &&
             requestURI.endsWith(Constants.FORM_ACTION)) {
             if (!authenticate(hrequest, hresponse, config)) {
@@ -557,8 +556,7 @@ public abstract class AuthenticatorBase
         LoginConfig config = context.getLoginConfig();
         if ((config != null) &&
             (Constants.FORM_METHOD.equals(config.getAuthMethod()))) {
-            String requestURI =
-                ((HttpServletRequest) request.getRequest()).getRequestURI();
+            String requestURI = request.getDecodedRequestURI();
             String loginPage = context.getPath() + config.getLoginPage();
             if (loginPage.equals(requestURI)) {
                 if (debug >= 1)
@@ -764,7 +762,7 @@ public abstract class AuthenticatorBase
 
         // Check each defined security constraint
         HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
-        String uri = hreq.getRequestURI();
+        String uri = request.getDecodedRequestURI();
         String contextPath = hreq.getContextPath();
         if (contextPath.length() > 0)
             uri = uri.substring(contextPath.length());
