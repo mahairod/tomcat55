@@ -81,6 +81,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.management.ObjectName;
 import javax.management.MBeanServer;
 import javax.management.MBeanRegistration;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.ReflectionException;
+import javax.management.MalformedObjectNameException;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -91,6 +95,9 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
+import org.apache.catalina.core.StandardEngine;
+import org.apache.catalina.core.StandardHost;
+import org.apache.catalina.core.StandardContext;
 
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
@@ -101,6 +108,7 @@ import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.MD5Encoder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.modeler.Registry;
 
 /**
  * Simple implementation of <b>Realm</b> that reads an XML file to configure
@@ -762,6 +770,9 @@ public abstract class RealmBase
             log.info(sm.getString("realmBase.alreadyStarted"));
             return;
         }
+        if( !initialized ) {
+            init();
+        }
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
 
@@ -959,24 +970,24 @@ public abstract class RealmBase
     }
 
 
-    /**
-     * Digest password using the algorithm especificied and
-     * convert the result to a corresponding hex string.
-     * If exception, the plain credentials string is returned
-     */
-    public static void main(String args[]) {
-
-        if(args.length > 2 && args[0].equalsIgnoreCase("-a")) {
-            for(int i=2; i < args.length ; i++){
-                System.out.print(args[i]+":");
-                System.out.println(Digest(args[i], args[1]));
-            }
-        } else {
-            System.out.println
-                ("Usage: RealmBase -a <algorithm> <credentials>");
-        }
-
-    }
+//    /**
+//     * Digest password using the algorithm especificied and
+//     * convert the result to a corresponding hex string.
+//     * If exception, the plain credentials string is returned
+//     */
+//    public static void main(String args[]) {
+//
+//        if(args.length > 2 && args[0].equalsIgnoreCase("-a")) {
+//            for(int i=2; i < args.length ; i++){
+//                System.out.print(args[i]+":");
+//                System.out.println(Digest(args[i], args[1]));
+//            }
+//        } else {
+//            System.out.println
+//                ("Usage: RealmBase -a <algorithm> <credentials>");
+//        }
+//
+//    }
 
     // -------------------- JMX and Registration  --------------------
     protected String type;
@@ -1020,32 +1031,62 @@ public abstract class RealmBase
     public void postDeregister() {
     }
 
-    public void init() throws Exception {
-        if( container!= null ) {
-            return;
+    protected boolean initialized=false;
+    
+    public void init() {
+        if( initialized ) return;
+        
+        initialized=true;
+        if( container== null ) {
+            // Register with the parent
+            try {
+                Set names=null;
+                if( host == null ) {
+                    // global
+                    names=mserver.queryNames(new ObjectName(domain +":type=Engine,*"), null);
+                } else if( path==null ) {
+                    names=mserver.queryNames(new ObjectName(domain +
+                            ":type=Host,host=" + host +",*"), null);
+                } else {
+                    names=mserver.queryNames(new ObjectName(domain +":j2eeType=WebModule,name=//" +
+                            host + "/" + path + ",*"), null);
+                }
+                if( names.size() == 0 ) {
+                    log.error("Can't register, no object found " + oname );
+                    return;
+                }
+                ObjectName parent=(ObjectName)names.iterator().next();
+                log.info("Register with " + parent);
+                mserver.invoke(parent, "setRealm", new Object[] {this},
+                        new String[] {"org.apache.catalina.Realm"});
+            } catch (Exception e) {
+                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+            }
+        }
+        
+        if( oname==null ) {
+            // register
+            try {
+                StandardEngine engine=null;            
+                String suffix="";
+                if( container instanceof StandardEngine ) {
+                    engine=(StandardEngine)container;                
+                } else if( container instanceof StandardHost ) {
+                    engine=(StandardEngine)container.getParent();
+                    suffix=",host=" + container.getName();
+                } else if( container instanceof StandardContext ) {
+                    engine=(StandardEngine)container.getParent().getParent();
+                    suffix=",host=" + container.getParent().getName() + 
+                            ",path=" + ((StandardContext)container).getPath();
+                }
+                oname=new ObjectName(engine.getDomain()+ ":type=Realm" + suffix);
+                Registry.getRegistry().registerComponent(this, oname, null );
+                
+            } catch (Throwable e) {
+                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+            }
         }
 
-        // Register with the parent
-        Set names=null;
-        if( host == null ) {
-            // global
-            names=mserver.queryNames(new ObjectName(domain +":type=Engine,*"), null);
-        } else if( path==null ) {
-            names=mserver.queryNames(new ObjectName(domain +
-                    ":type=Host,host=" + host +",*"), null);
-        } else {
-            names=mserver.queryNames(new ObjectName(domain +":j2eeType=WebModule,name=//" +
-                    host + "/" + path + ",*"), null);
-        }
-        if( names.size() == 0 ) {
-            log.error("Can't register, no object found " + oname );
-            return;
-        }
-        ObjectName parent=(ObjectName)names.iterator().next();
-        log.info("Register with " + parent);
-        mserver.invoke(parent, "setRealm", new Object[] {this},
-                new String[] {"org.apache.catalina.Realm"});
     }
-
 
 }
