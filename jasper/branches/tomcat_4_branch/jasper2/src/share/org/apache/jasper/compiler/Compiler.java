@@ -109,6 +109,10 @@ public class Compiler {
 
     }
 
+    // Some javac are not thread safe; use a lock to serialize compilation, 
+    static Object javacLock = new Object();
+
+
     // ----------------------------------------------------- Instance Variables
 
 
@@ -288,7 +292,9 @@ public class Compiler {
         includes.setName(ctxt.getJspPath());
 
         try {
-            javac.execute();
+            synchronized(javacLock) {
+                javac.execute();
+            }
         } catch (BuildException e) {
             success = false;
         }
