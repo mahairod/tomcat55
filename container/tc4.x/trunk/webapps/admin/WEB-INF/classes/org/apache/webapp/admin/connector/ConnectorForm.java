@@ -742,7 +742,7 @@ public final class ConnectorForm extends ActionForm {
   
             /* The IP address can also be null -- which means open the
              server socket on *all* IP addresses for this host */
-            if (address.length() > 0) {
+            if ((address.length() > 0) && !address.equalsIgnoreCase(" ")) {
                 try {
                     InetAddress.getByName(address);
                 } catch (Exception e) {
@@ -767,7 +767,7 @@ public final class ConnectorForm extends ActionForm {
                 numberCheck("maxProcessorsText",  maxProcessorsText, true, 1, 512);
             }
             
-            /* proxy*/                  
+            // proxy                  
             if ((proxyName!= null) && (proxyName.length() > 0)) {
                 try {
                     InetAddress.getByName(proxyName);
@@ -776,7 +776,7 @@ public final class ConnectorForm extends ActionForm {
                 }
             }   
             
-            /* supported only by Coyote HTTP/1.1 connectors */
+            // supported only by Coyote HTTP and HTTPS connectors
             if (!("AJP".equalsIgnoreCase(connectorType)))
                 numberCheck("proxyPortText",  proxyPortText, true, 0, 65535);            
         }
@@ -785,7 +785,7 @@ public final class ConnectorForm extends ActionForm {
     }
     
     /*
-     * Helper method to check that it is a reuired number and
+     * Helper method to check that it is a required number and
      * is a valid integer within the given range. (min, max).
      *
      * @param  field  The field name in the form for which this error occured.

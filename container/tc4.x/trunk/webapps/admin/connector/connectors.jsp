@@ -77,7 +77,7 @@
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditConnector.do?select=" + 
                          java.net.URLEncoder.encode(connector.toString()) %>'>
-                <controls:attribute name="connector" attribute="className"/>
+                Connector (<controls:attribute name="connector" attribute="port"/>)
               </html:link>
             </div></td>
           </tr>
