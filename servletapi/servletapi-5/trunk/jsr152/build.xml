@@ -1,0 +1,147 @@
+<project name="JSP API Classes" default="compile" basedir=".">
+
+
+  <!-- =================== Environmental Properties ======================= -->
+
+  <!-- Load user property definition overrides -->
+  <property file="build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
+  <!-- Establish property definition defaults -->
+  <property name="compile.debug"       value="true"/>
+  <property name="compile.deprecation" value="false"/>
+  <property name="compile.optimize"    value="true"/>
+  <property name="implementation.revision" value="public_draft"/>
+  <property name="jsp-api.build"    value="build"/>
+  <property name="jsp-api.dist"     value="dist"/>
+  <property name="servlet-api.jar"  value="../jsr154/dist/lib/servlet-api.jar"/>
+
+
+
+  <!-- ===================== Prepare Directories ========================= -->
+  <target name="prepare">
+
+    <!-- "Build" Hierarchy -->
+    <mkdir dir="${jsp-api.build}"/>
+    <mkdir dir="${jsp-api.build}/classes"/>
+    <mkdir dir="${jsp-api.build}/docs"/>
+    <mkdir dir="${jsp-api.build}/docs/api"/>
+
+    <!-- "Dist" Hierarchy -->
+    <mkdir dir="${jsp-api.dist}"/>
+    <mkdir dir="${jsp-api.dist}/docs"/>
+    <mkdir dir="${jsp-api.dist}/docs/api"/>
+    <mkdir dir="${jsp-api.dist}/lib"/>
+    <mkdir dir="${jsp-api.dist}/src"/>
+
+    <uptodate property="docs.uptodate" targetfile="${jsp-api.build}/docs/api/index.html">
+      <srcfiles dir="src/share" includes="**/*.java" />
+    </uptodate>
+  </target>
+
+
+  <!-- ======================= Static Files ============================== -->
+  <target name="static" depends="prepare">
+
+    <!-- "Dist" Hierarchy -->
+    <copy todir="${jsp-api.dist}">
+      <fileset dir="." includes="BUILDING.txt"/>
+      <fileset dir="." includes="LICENSE"/>
+      <fileset dir="." includes="README.txt"/>
+    </copy>
+
+  </target>
+
+
+  <!-- ======================== Compile Classes ========================== -->
+  <target name="compile" depends="static"
+   description="Compile API classes (Default)">
+
+    <!-- Java classes -->
+    <javac srcdir="src/share" destdir="${jsp-api.build}/classes"
+           debug="${compile.debug}" deprecation="${compile.deprecation}"
+        optimize="${compile.optimize}"
+       classpath="${servlet-api.jar}" />
+
+    <!-- Associated property files -->
+    <copy todir="${jsp-api.build}/classes">
+        <fileset dir="src/share">
+          <include name="**/*.properties"/>
+        </fileset>
+    </copy>
+
+    <!-- JSP resources -->
+    <copy todir="${jsp-api.build}/classes/javax/servlet/jsp/resources">
+        <fileset dir="src/share/dtd">
+          <include name="jsp*.dtd"/>
+          <include name="jsp*.xsd"/>
+          <include name="web-jsp*.dtd"/>
+          <include name="web-jsp*.xsd"/>
+        </fileset>
+    </copy>
+
+  </target>
+
+
+  <!-- ======================== Build JavaDoc =========================== -->
+  <target name="javadoc" depends="prepare" unless="docs.uptodate">
+
+    <javadoc packagenames="javax.servlet.jsp.*"
+             sourcepath="${basedir}/src/share"
+             classpath="${servlet-api.jar}"
+             destdir="${jsp-api.build}/docs/api"
+             use="true"
+             windowtitle="JavaServer Pages API Documentation"
+             doctitle="JavaServer Pages API Documentation"
+             bottom="Copyright &amp;copy; 1999-2002 The Apache Software Foundation.  All Rights Reserved."/>
+
+  </target>
+
+
+  <!-- ===================== Distribution Files ========================= -->
+  <target name="dist" depends="compile,javadoc"
+   description="Create binary distribution">
+
+    <!-- Copy Javadocs -->
+    <copy todir="${jsp-api.dist}/docs/api">
+        <fileset dir="${jsp-api.build}/docs/api"/>
+    </copy>
+
+    <!-- Prepare Manifest -->
+    <copy tofile="${jsp-api.build}/manifest"
+            file="src/etc/manifest" overwrite="yes">
+      <filterset>
+        <filter token="implementation.revision"
+                value="${implementation.revision}"/>
+      </filterset>
+    </copy>
+
+    <!-- Create JAR file -->
+    <jar jarfile="${jsp-api.dist}/lib/jsp-api.jar"
+         basedir="${jsp-api.build}/classes"
+         manifest="${jsp-api.build}/manifest"/>
+
+    <!-- Copy API source files -->
+    <copy todir="${jsp-api.dist}/src">
+        <fileset dir="src/share"/>
+    </copy>
+
+  </target>
+
+
+  <!-- ====================== Clean Generated Files ===================== -->
+  <target name="clean"
+   description="Clean previous build results">
+
+    <delete dir="${jsp-api.build}"/>
+    <delete dir="${jsp-api.dist}"/>
+
+  </target>
+
+
+  <!-- ========================= All In One Build ======================= -->
+  <target name="all" depends="clean,dist"
+   description="Clean, compile, and dist"/>
+
+
+</project>
