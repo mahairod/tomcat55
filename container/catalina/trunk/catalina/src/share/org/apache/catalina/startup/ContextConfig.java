@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 
@@ -71,6 +72,13 @@ public final class ContextConfig
         org.apache.commons.logging.LogFactory.getLog( ContextConfig.class );
 
     // ----------------------------------------------------- Instance Variables
+
+
+    /*
+     * Custom mappings of login methods to authenticators
+     */
+    private Map customAuthenticators;
+
 
     /**
      * The set of Authenticators that we know how to configure.  The key is
@@ -204,6 +212,17 @@ public final class ContextConfig
 
         this.defaultContextXml = path;
 
+    }
+
+
+    /**
+     * Sets custom mappings of login methods to authenticators.
+     *
+     * @param customAuthenticators Custom mappings of login methods to
+     * authenticators
+     */
+    public void setCustomAuthenticators(Map customAuthenticators) {
+        this.customAuthenticators = customAuthenticators;
     }
 
 
@@ -383,54 +402,70 @@ public final class ContextConfig
             return;
         }
 
-        // Load our mapping properties if necessary
-        if (authenticators == null) {
-            try {
-                InputStream is=this.getClass().getClassLoader().getResourceAsStream("org/apache/catalina/startup/Authenticators.properties");
-                if( is!=null ) {
-                    authenticators = new Properties();
-                    authenticators.load(is);
-                } else {
-                    log.error(sm.getString("contextConfig.authenticatorResources"));
-                    ok=false;
+        /*
+         * First check to see if there is a custom mapping for the login
+         * method. If so, use it. Otherwise, check if there is a mapping in
+         * org/apache/catalina/startup/Authenticators.properties.
+         */
+        Valve authenticator = null;
+        if (customAuthenticators != null) {
+            authenticator = (Valve)
+                customAuthenticators.get(loginConfig.getAuthMethod());
+        }
+        if (authenticator == null) {
+            // Load our mapping properties if necessary
+            if (authenticators == null) {
+                try {
+                    InputStream is=this.getClass().getClassLoader().getResourceAsStream("org/apache/catalina/startup/Authenticators.properties");
+                    if( is!=null ) {
+                        authenticators = new Properties();
+                        authenticators.load(is);
+                    } else {
+                        log.error(sm.getString("contextConfig.authenticatorResources"));
+                        ok=false;
+                        return;
+                    }
+                } catch (IOException e) {
+                    log.error(sm.getString("contextConfig.authenticatorResources"), e);
+                    ok = false;
                     return;
                 }
-            } catch (IOException e) {
-                log.error(sm.getString("contextConfig.authenticatorResources"), e);
+            }
+
+            // Identify the class name of the Valve we should configure
+            String authenticatorName = null;
+            authenticatorName =
+                    authenticators.getProperty(loginConfig.getAuthMethod());
+            if (authenticatorName == null) {
+                log.error(sm.getString("contextConfig.authenticatorMissing",
+                                 loginConfig.getAuthMethod()));
                 ok = false;
                 return;
             }
+
+            // Instantiate and install an Authenticator of the requested class
+            try {
+                Class authenticatorClass = Class.forName(authenticatorName);
+                authenticator = (Valve) authenticatorClass.newInstance();
+            } catch (Throwable t) {
+                log.error(sm.getString(
+                                    "contextConfig.authenticatorInstantiate",
+                                    authenticatorName),
+                          t);
+                ok = false;
+            }
         }
 
-        // Identify the class name of the Valve we should configure
-        String authenticatorName = null;
-        authenticatorName =
-                authenticators.getProperty(loginConfig.getAuthMethod());
-        if (authenticatorName == null) {
-            log.error(sm.getString("contextConfig.authenticatorMissing",
-                             loginConfig.getAuthMethod()));
-            ok = false;
-            return;
-        }
-
-        // Instantiate and install an Authenticator of the requested class
-        Valve authenticator = null;
-        try {
-            Class authenticatorClass = Class.forName(authenticatorName);
-            authenticator = (Valve) authenticatorClass.newInstance();
-            if (context instanceof ContainerBase) {
-                Pipeline pipeline = ((ContainerBase) context).getPipeline();
-                if (pipeline != null) {
-                    ((ContainerBase) context).addValve(authenticator);
-                    if (log.isDebugEnabled())
-                        log.debug(sm.getString("contextConfig.authenticatorConfigured",
+        if (authenticator != null && context instanceof ContainerBase) {
+            Pipeline pipeline = ((ContainerBase) context).getPipeline();
+            if (pipeline != null) {
+                ((ContainerBase) context).addValve(authenticator);
+                if (log.isDebugEnabled()) {
+                    log.debug(sm.getString(
+                                    "contextConfig.authenticatorConfigured",
                                      loginConfig.getAuthMethod()));
                 }
             }
-        } catch (Throwable t) {
-            log.error(sm.getString("contextConfig.authenticatorInstantiate",
-                             authenticatorName), t);
-            ok = false;
         }
 
     }
