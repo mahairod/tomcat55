@@ -18,8 +18,6 @@ package org.apache.catalina.cluster.tcp;
 import java.net.InetAddress ;
 import java.net.Socket;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Collections;
 
 /**
  * <p>Title: </p>
@@ -176,7 +174,7 @@ public class PooledSocketSender implements IDataSender
                         try {
                             mutex.wait(timeout);
                         }catch ( Exception x ) {
-                            parent.log.warn("PoolSocketSender.senderQueue.getSender failed",x);
+                            PooledSocketSender.log.warn("PoolSocketSender.senderQueue.getSender failed",x);
                         }//catch
                     }//end if
                     if ( sender != null ) {

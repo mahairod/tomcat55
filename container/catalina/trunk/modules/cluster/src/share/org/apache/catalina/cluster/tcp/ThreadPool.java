@@ -17,7 +17,7 @@
 package org.apache.catalina.cluster.tcp;
 import java.util.List;
 import java.util.LinkedList;
-import java.io.IOException;
+
 /**
  * <p>Title: </p>
  * <p>Description: </p>

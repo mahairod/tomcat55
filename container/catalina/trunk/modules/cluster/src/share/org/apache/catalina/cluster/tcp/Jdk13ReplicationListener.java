@@ -22,11 +22,9 @@ package org.apache.catalina.cluster.tcp;
 import java.net.Socket;
 import java.net.ServerSocket;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.util.Iterator;
 import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.io.Jdk13ObjectReader;
-import org.apache.catalina.cluster.io.XByteBuffer;
+
 /**
  */
 public class Jdk13ReplicationListener implements Runnable

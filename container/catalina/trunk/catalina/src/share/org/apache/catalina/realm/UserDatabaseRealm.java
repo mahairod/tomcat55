@@ -19,7 +19,6 @@ package org.apache.catalina.realm;
 
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.naming.Context;

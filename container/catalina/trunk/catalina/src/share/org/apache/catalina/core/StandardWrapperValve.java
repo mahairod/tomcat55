@@ -24,7 +24,6 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletResponse;
 
