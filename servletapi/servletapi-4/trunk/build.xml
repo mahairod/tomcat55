@@ -8,9 +8,13 @@
   <property file="${user.home}/build.properties"/>
 
   <!-- Establish property definition defaults -->
-  <property name="servletapi.build" value="build"/>
-  <property name="servletapi.dist"  value="dist"/>
-  <property name="servletapi.lib"   value="lib"/>
+  <property name="compile.debug"       value="true"/>
+  <property name="compile.deprecation" value="false"/>
+  <property name="compile.optimize"    value="true"/>
+  <property name="servletapi.build"    value="build"/>
+  <property name="servletapi.dist"     value="dist"/>
+  <property name="servletapi.lib"      value="lib"/>
+
 
 
   <!-- ===================== Prepare Directories ========================= -->
@@ -54,7 +58,8 @@
 
     <!-- Java classes -->
     <javac srcdir="src/share" destdir="${servletapi.build}/classes"
-           debug="on" optimize="on" deprecation="on"/>
+           debug="${compile.debug}" deprecation="${compile.deprecation}"
+        optimize="${compile.optimize}"/>
 
     <!-- Associated property files -->
     <copy todir="${servletapi.build}/classes">
