@@ -65,6 +65,12 @@ General New Features:
 [4.1.19] Administration Webapp:
          Complete the accessibility requirements to pass section 508.
 
+[4.1.28] Connectors:
+         The Coyote connector (HTTP/1.1 and AJP/1.3) has been upgraded to
+         Coyote 1.1, which is the one used by Tomcat 5.0.x. Please refer to the
+         Tomcat 5.0 changelog for the list of changes.
+
+
 ---------------------
 Catalina New Features:
 ---------------------
@@ -283,6 +289,22 @@ Generic Bug Fixes:
 
 [4.1.27] Administration Webapp:
          Fix typo in the default context action declaraion.
+
+[4.1.28] Modeler:
+         Update to commons-modeler 1.1.
+
+[4.1.28] Xerces:
+         Update to Xerces 2.5.0.
+
+[4.1.28] Regexp:
+         Update to regexp 1.3.
+
+[4.1.28] Scripts:
+         Use -Dsun.io.useCanonCaches=false as an extra system property for
+         Windows scripts, so that the canonical paths returned are case exact.
+
+[4.1.28] Docs:
+         Minor docs updates.
 
 
 ------------------
@@ -779,6 +801,31 @@ Catalina Bug Fixes:
 
 [4.1.27] ExtendedAccessLogValve:
          If bytes are requested, then print bytes not the date.
+
+[4.1.28] StandardContext:
+         Fix reloading regression.
+
+[4.1.28] StandardHostValve:
+         Reset context classloader after invoking the servlet.
+
+[4.1.28] StandardWrapperValve:
+         Fix infinite recursion when logging in certain cases.
+
+[4.1.28] JNDIRealm:
+         Many bugfixes (18698, 11678, 19864, 20518, 14817, 22236), and allow 
+         multiple user patterns.
+
+[4.1.28] CGI Servlet:
+         Bugfixes (22857, 22858).
+
+[4.1.28] WebDAV Servlet:
+         Fix bad handling of the destinationPath URL.
+
+[4.1.28] SecurityClassLoad:
+         Preload a few additional classes from Coyote.
+
+[4.1.28] MemoryUser:
+         XML-escape the values when writing out the tomcat-users.xml file.
 
 
 ----------------
