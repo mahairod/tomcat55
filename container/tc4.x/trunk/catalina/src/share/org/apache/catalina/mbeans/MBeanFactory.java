@@ -220,7 +220,7 @@ public class MBeanFactory extends BaseModelMBean {
     }
 
     /**
-     * Create a new Ajp13Connector
+     * Create a new AjpConnector
      *
      * @param parent MBean Name of the associated parent component
      * @param address The IP address on which to bind
@@ -228,70 +228,14 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createAjp13Connector(String parent, String address, int port)
+    public String createAjpConnector(String parent, String address, int port)
         throws Exception {
 
         Object retobj = null;
 
         try {
 
-            // Create a new AjpConnector instance
-            // use reflection to avoid j-t-c compile-time circular dependencies
-            Class cls = Class.forName("org.apache.ajp.tomcat4.Ajp13Connector");
-            Constructor ct = cls.getConstructor(null);
-            retobj = ct.newInstance(null);
-            Class partypes1 [] = new Class[1];
-            // Set address
-            String str = new String();
-            partypes1[0] = str.getClass();
-            Method meth1 = cls.getMethod("setAddress", partypes1);
-            Object arglist1[] = new Object[1];
-            arglist1[0] = address;
-            meth1.invoke(retobj, arglist1);
-            // Set port number
-            Class partypes2 [] = new Class[1];
-            partypes2[0] = Integer.TYPE;
-            Method meth2 = cls.getMethod("setPort", partypes2);
-            Object arglist2[] = new Object[1];
-            arglist2[0] = new Integer(port);
-            meth2.invoke(retobj, arglist2);
-
-        } catch (Exception e) {
-            throw new MBeanException(e);
-        }
-
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("name"));
-        service.addConnector((Connector)retobj);
-
-        // Return the corresponding MBean name
-        ManagedBean managed = registry.findManagedBean("Ajp13Connector");
-        ObjectName oname =
-            MBeanUtils.createObjectName(managed.getDomain(), (Connector)retobj);
-        return (oname.toString());
-
-    }
-
-
-    /**
-     * Create a new CoyoteConnector
-     *
-     * @param parent MBean Name of the associated parent component
-     * @param address The IP address on which to bind
-     * @param port TCP port number to listen on
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    public String createCoyoteConnector(String parent, String address, int port)
-        throws Exception {
-
-        Object retobj = null;
-
-        try {
-
-            // Create a new CoyoteConnector instance
+            // Create a new CoyoteConnector instance for AJP
             // use reflection to avoid j-t-c compile-time circular dependencies
             Class cls = Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
             Constructor ct = cls.getConstructor(null);
@@ -311,6 +255,13 @@ public class MBeanFactory extends BaseModelMBean {
             Object arglist2[] = new Object[1];
             arglist2[0] = new Integer(port);
             meth2.invoke(retobj, arglist2);
+            // set protocolHandlerClassName for AJP
+            Class partypes3 [] = new Class[1];
+            partypes3[0] = str.getClass();
+            Method meth3 = cls.getMethod("setProtocolHandlerClassName", partypes3);
+            Object arglist3[] = new Object[1];
+            arglist3[0] = new String("org.apache.jk.server.JkCoyoteHandler");
+            meth3.invoke(retobj, arglist2);
 
         } catch (Exception e) {
             throw new MBeanException(e);
@@ -323,7 +274,7 @@ public class MBeanFactory extends BaseModelMBean {
         service.addConnector((Connector)retobj);
 
         // Return the corresponding MBean name
-        ManagedBean managed = registry.findManagedBean("CoyoteConnector");
+        ManagedBean managed = registry.findManagedBean("AjpConnector");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), (Connector)retobj);
         return (oname.toString());
@@ -405,10 +356,10 @@ public class MBeanFactory extends BaseModelMBean {
         return (oname.toString());
 
     }
-
-
+    
+    
     /**
-     * Create a new HTTP/1.0 Connector.
+     * Create a new HTTPConnector
      *
      * @param parent MBean Name of the associated parent component
      * @param address The IP address on which to bind
@@ -416,32 +367,54 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createHttp10Connector(String parent, String address, int port)
+    public String createHTTPConnector(String parent, String address, int port)
         throws Exception {
 
-        // Create a new HttpConnector instance
-        org.apache.catalina.connector.http10.HttpConnector connector =
-            new org.apache.catalina.connector.http10.HttpConnector();
-        connector.setAddress(address);
-        connector.setPort(port);
+        Object retobj = null;
+
+        try {
+
+            // Create a new CoyoteConnector instance
+            // use reflection to avoid j-t-c compile-time circular dependencies
+            Class cls = Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
+            Constructor ct = cls.getConstructor(null);
+            retobj = ct.newInstance(null);
+            Class partypes1 [] = new Class[1];
+            // Set address
+            String str = new String();
+            partypes1[0] = str.getClass();
+            Method meth1 = cls.getMethod("setAddress", partypes1);
+            Object arglist1[] = new Object[1];
+            arglist1[0] = address;
+            meth1.invoke(retobj, arglist1);
+            // Set port number
+            Class partypes2 [] = new Class[1];
+            partypes2[0] = Integer.TYPE;
+            Method meth2 = cls.getMethod("setPort", partypes2);
+            Object arglist2[] = new Object[1];
+            arglist2[0] = new Integer(port);
+            meth2.invoke(retobj, arglist2);
+        } catch (Exception e) {
+            throw new MBeanException(e);
+        }
 
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("name"));
-        service.addConnector(connector);
+        service.addConnector((Connector)retobj);
 
         // Return the corresponding MBean name
-        ManagedBean managed = registry.findManagedBean("Http10Connector");
+        ManagedBean managed = registry.findManagedBean("HttpConnector");
         ObjectName oname =
-            MBeanUtils.createObjectName(managed.getDomain(), connector);
+            MBeanUtils.createObjectName(managed.getDomain(), (Connector)retobj);
         return (oname.toString());
 
     }
 
-
+    
     /**
-     * Create a new HTTP/1.1 Connector.
+     * Create a new HTTPSConnector
      *
      * @param parent MBean Name of the associated parent component
      * @param address The IP address on which to bind
@@ -449,25 +422,61 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createHttp11Connector(String parent, String address, int port)
+    public String createHTTPSConnector(String parent, String address, int port)
         throws Exception {
 
-        // Create a new HttpConnector instance
-        org.apache.catalina.connector.http.HttpConnector connector =
-            new org.apache.catalina.connector.http.HttpConnector();
-        connector.setAddress(address);
-        connector.setPort(port);
+        Object retobj = null;
+
+        try {
+
+            // Create a new CoyoteConnector instance
+            // use reflection to avoid j-t-c compile-time circular dependencies
+            Class cls = Class.forName("org.apache.coyote.tomcat4.CoyoteConnector");
+            Constructor ct = cls.getConstructor(null);
+            retobj = ct.newInstance(null);
+            Class partypes1 [] = new Class[1];
+            // Set address
+            String str = new String();
+            partypes1[0] = str.getClass();
+            Method meth1 = cls.getMethod("setAddress", partypes1);
+            Object arglist1[] = new Object[1];
+            arglist1[0] = address;
+            meth1.invoke(retobj, arglist1);
+            // Set port number
+            Class partypes2 [] = new Class[1];
+            partypes2[0] = Integer.TYPE;
+            Method meth2 = cls.getMethod("setPort", partypes2);
+            Object arglist2[] = new Object[1];
+            arglist2[0] = new Integer(port);
+            meth2.invoke(retobj, arglist2);
+            // Set scheme
+            Class partypes3 [] = new Class[1];
+            partypes3[0] = str.getClass();
+            Method meth3 = cls.getMethod("setScheme", partypes3);
+            Object arglist3[] = new Object[1];
+            arglist3[0] = new String("https");
+            meth3.invoke(retobj, arglist3);
+            // Set secure
+            Class partypes4 [] = new Class[1];
+            partypes4[0] = Boolean.TYPE;
+            Method meth4 = cls.getMethod("setSecure", partypes4);
+            Object arglist4[] = new Object[1];
+            arglist4[0] = new Boolean(true);
+            meth4.invoke(retobj, arglist4);
+        } catch (Exception e) {
+            throw new MBeanException(e);
+        }
 
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("name"));
-        service.addConnector(connector);
+        service.addConnector((Connector)retobj);
 
         // Return the corresponding MBean name
-        ManagedBean managed = registry.findManagedBean("Http11Connector");
+        ManagedBean managed = registry.findManagedBean("HttpsConnector");
         ObjectName oname =
-            MBeanUtils.createObjectName(managed.getDomain(), connector);
+            MBeanUtils.createObjectName(managed.getDomain(), (Connector)retobj);
         return (oname.toString());
 
     }
