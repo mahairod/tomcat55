@@ -66,6 +66,7 @@ package org.apache.catalina.core;
 
 
 import java.io.IOException;
+import java.util.Locale;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -187,6 +188,19 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
 
         if (!included)
             getResponse().setContentType(type);
+
+    }
+
+
+    /**
+     * Disallow <code>setLocale()</code> calls on an included response.
+     *
+     * @param loc The new locale
+     */
+    public void setLocale(Locale loc) {
+
+        if (!included)
+            getResponse().setLocale(loc);
 
     }
 
