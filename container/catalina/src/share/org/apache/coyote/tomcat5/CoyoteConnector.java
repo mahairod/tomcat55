@@ -1240,7 +1240,7 @@ public final class CoyoteConnector
 
         if( this.domain != null ) {
             mapperListener.setDomain( domain );
-            mapperListener.setEngine( service.getContainer().getName() );
+            //mapperListener.setEngine( service.getContainer().getName() );
             mapperListener.init();
             try {
                 Registry.getRegistry().registerComponent
