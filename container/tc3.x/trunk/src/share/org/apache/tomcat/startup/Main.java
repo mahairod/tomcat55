@@ -227,9 +227,9 @@ public class Main {
             return libBase;
         }
         if( homeDir!=null ){
-            libBase=checkDir( homeDir + "/lib");
+            libBase=checkDir( homeDir + "/lib/container");
         }else{
-            libBase=checkDir("./lib");
+            libBase=checkDir("./lib/container");
         }
         return libBase;
     }
@@ -239,9 +239,9 @@ public class Main {
             return serverBase;
         }
         if( homeDir!=null ){
-            serverBase=checkDir( homeDir + "/lib/shared");
+            serverBase=checkDir( homeDir + "/lib/apps");
         }else{
-            serverBase=checkDir("./lib/shared");
+            serverBase=checkDir("./lib/apps");
         }
         return serverBase;
     }
@@ -271,7 +271,7 @@ public class Main {
             // the server classloader loads from classes dir too and from tools.jar
 
             Vector serverJars=new Vector();
-            serverJars.addElement( getURL(  getServerDir() ,"../classes/" ));
+            //serverJars.addElement( getURL(  getServerDir() ,"../classes/" ));
             Vector serverUrlV =getClassPathV(getServerDir());
             for(int i=0; i < serverUrlV.size();i++){
                 serverJars.addElement(serverUrlV.elementAt(i));
