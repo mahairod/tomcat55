@@ -331,6 +331,10 @@
           description="Character encoding used to decode the URI"
                  type="java.lang.String"/>
 
+    <attribute   name="useBodyEncodingForURI"
+          description="Should the body encoding be used for URI query parameters"
+                 type="boolean"/>
+
     <attribute    name="disableUploadTimeout"
            description="Should Tomcat ignore setting a timeout for uploads?"
                   type="boolean"/>
