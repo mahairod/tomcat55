@@ -493,7 +493,7 @@ public final class AccessLogValve
     /**
      * Close the currently open log file (if any)
      */
-    private void close() {
+    private synchronized void close() {
 
 	if (writer == null)
 	    return;
@@ -516,9 +516,10 @@ public final class AccessLogValve
     public void log(String message, Date date) {
 
         // Only do a logfile switch check once a second, max.
-        if ((System.currentTimeMillis() - currentDate.getTime()) > 1000) {
+        long systime = System.currentTimeMillis();
+        if ((systime - currentDate.getTime()) > 1000) {
             // We need a new currentDate
-            currentDate = new Date();
+            currentDate = new Date(systime);
 
             // Check for a change of date
             String tsDate = dateFormatter.format(currentDate);
@@ -563,7 +564,7 @@ public final class AccessLogValve
     /**
      * Open the new log file for the date specified by <code>dateStamp</code>.
      */
-    private void open() {
+    private synchronized void open() {
 
 	// Create the directory if necessary
 	File dir = new File(directory);
@@ -698,8 +699,9 @@ public final class AccessLogValve
     private Date getDate() {
         
         // Only create a new Date once per second, max.
-        if ((System.currentTimeMillis() - currentDate.getTime()) > 1000) {
-            currentDate = new Date();
+        long systime = System.currentTimeMillis();
+        if ((systime - currentDate.getTime()) > 1000) {
+            currentDate = new Date(systime);
         }
         
         return currentDate;
@@ -770,6 +772,7 @@ public final class AccessLogValve
         timeFormatter = new SimpleDateFormat("kk:mm:ss");
         timeFormatter.setTimeZone(tz);
         currentDate = new Date();
+        dateStamp = dateFormatter.format(currentDate);
 
         open();
 
