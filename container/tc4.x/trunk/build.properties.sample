@@ -36,6 +36,10 @@ base.path=/usr/local
 #jtc.home=../../jakarta-tomcat-connectors
 
 
+# ----- Jakarta Tomcat Jasper source path -----
+#jasper.home=../jakarta-tomcat-jasper/jasper2
+
+
 # --------------------------------------------------
 #                REQUIRED LIBRARIES
 # --------------------------------------------------
