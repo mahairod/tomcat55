@@ -149,11 +149,13 @@ public final class HttpResponseStream extends ResponseStream {
     public void write(byte[] b, int off, int len)
         throws IOException {
         if (useChunking && !writingChunk) {
-            writingChunk = true;
-            println(Integer.toHexString(len));
-            super.write(b, off, len);
-            println();
-            writingChunk = false;
+            if (len > 0) {
+                writingChunk = true;
+                println(Integer.toHexString(len));
+                super.write(b, off, len);
+                println();
+                writingChunk = false;
+            }
         } else {
             super.write(b, off, len);
         }
