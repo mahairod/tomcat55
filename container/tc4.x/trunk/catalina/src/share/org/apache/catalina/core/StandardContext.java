@@ -2276,6 +2276,8 @@ public class StandardContext
             }
         }
 
+        DirContextURLStreamHandler.bind(getResources());
+
         // Restart our application event listeners and filters
         listenerStart();
         filterStart();
@@ -2300,6 +2302,8 @@ public class StandardContext
 		}
 	    }
 	}
+
+        DirContextURLStreamHandler.unbind();
 
 	// Start accepting requests again
 	setPaused(false);
