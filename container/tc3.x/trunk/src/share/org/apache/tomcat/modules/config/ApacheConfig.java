@@ -115,16 +115,15 @@ import org.apache.tomcat.modules.server.Ajp13Interceptor;
 	@version $Revision$ $Date$
  */
 public class ApacheConfig  extends BaseInterceptor { 
-    // XXX maybe conf/
     
     /** default path to JServ .conf location */
-    public static final String APACHE_CONFIG="/conf/jserv/tomcat-apache.conf";
+    public static final String APACHE_CONFIG="conf/jserv/tomcat-apache.conf";
     /** default path to mod_jk .conf location */
-    public static final String MOD_JK_CONFIG = "/conf/jk/mod_jk.conf";
+    public static final String MOD_JK_CONFIG = "conf/jk/mod_jk.conf";
     /** default path to workers.properties file */
-    public static final String WORKERS_CONFIG = "/conf/jk/workers.properties";
+    public static final String WORKERS_CONFIG = "conf/jk/workers.properties";
     /** default mod_jk log file location */
-    public static final String JK_LOG_LOCATION = "/logs/mod_jk.log";
+    public static final String JK_LOG_LOCATION = "logs/mod_jk.log";
     /** default location of mod_jserv Apache plug-in. */
     public static final String MOD_JSERV;
     /** default location of mod_jk Apache plug-in. */
