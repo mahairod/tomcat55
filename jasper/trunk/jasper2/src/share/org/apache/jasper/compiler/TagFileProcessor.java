@@ -412,60 +412,73 @@ class TagFileProcessor {
 
 	JspCompilationContext ctxt = compiler.getCompilationContext();
 	JspRuntimeContext rctxt = ctxt.getRuntimeContext();
-        JspServletWrapper wrapper =
+	JspServletWrapper wrapper = null;
+	if( rctxt != null ) {
+	    wrapper =
 		(JspServletWrapper) rctxt.getWrapper(tagFilePath);
 
-	synchronized(rctxt) {
-	    if (wrapper == null) {
-	        wrapper = new JspServletWrapper(ctxt.getServletContext(),
-						ctxt.getOptions(),
-						tagFilePath,
-						tagInfo,
-						ctxt.getRuntimeContext(),
-						(JarFile) ctxt.getTagFileJars().get(tagFilePath));
-	        rctxt.addWrapper(tagFilePath,wrapper);
-	    }
-
-	    Class tagClazz;
-	    int tripCount = wrapper.incTripCount();
-	    try {
-	        if (tripCount > 0) {
-		    // When tripCount is greater than zero, a circular
-		    // dependency exists.  The circularily dependant tag
-		    // file is compiled in prototype mode, to avoid infinite
-		    // recursion.
-
-		    JspServletWrapper tempWrapper
-			= new JspServletWrapper(ctxt.getServletContext(),
-						ctxt.getOptions(),
-						tagFilePath,
-						tagInfo,
-						ctxt.getRuntimeContext(),
-						(JarFile) ctxt.getTagFileJars().get(tagFilePath));
-	            tagClazz = tempWrapper.loadTagFilePrototype();
-		    tempVector.add(
-			tempWrapper.getJspEngineContext().getCompiler());
-	        } else {
-	            tagClazz = wrapper.loadTagFile();
-	        }
-	    } finally {
-	        wrapper.decTripCount();
-	    }
-
-	    // Add the dependants for this tag file to its parent's
-	    // dependant list.
-	    PageInfo pageInfo = wrapper.getJspEngineContext().getCompiler().
-					getPageInfo();
-	    if (pageInfo != null) {
-	        Iterator iter = pageInfo.getDependants().iterator();
-	            if (iter.hasNext()) {
-		        parentPageInfo.addDependant((String)iter.next());
+	    synchronized(rctxt) {
+		if (wrapper == null) {
+		    wrapper = new JspServletWrapper(ctxt.getServletContext(),
+						    ctxt.getOptions(),
+						    tagFilePath,
+						    tagInfo,
+						    ctxt.getRuntimeContext(),
+						    (JarFile) ctxt.getTagFileJars().get(tagFilePath));
+		    rctxt.addWrapper(tagFilePath,wrapper);
 		}
 	    }
-
-	    return tagClazz;
+	} else {
+	    wrapper = new JspServletWrapper(ctxt.getServletContext(),
+					    ctxt.getOptions(),
+					    tagFilePath,
+					    tagInfo,
+					    ctxt.getRuntimeContext(),
+					    (JarFile)ctxt.getTagFileJars().get(tagFilePath)
+					    );
 	}
+									     
+
+	Class tagClazz;
+	int tripCount = wrapper.incTripCount();
+	try {
+	    if (tripCount > 0) {
+		// When tripCount is greater than zero, a circular
+		// dependency exists.  The circularily dependant tag
+		// file is compiled in prototype mode, to avoid infinite
+		// recursion.
+
+		JspServletWrapper tempWrapper
+		    = new JspServletWrapper(ctxt.getServletContext(),
+					    ctxt.getOptions(),
+					    tagFilePath,
+					    tagInfo,
+					    ctxt.getRuntimeContext(),
+					    (JarFile) ctxt.getTagFileJars().get(tagFilePath));
+		tagClazz = tempWrapper.loadTagFilePrototype();
+		tempVector.add(
+			       tempWrapper.getJspEngineContext().getCompiler());
+	    } else {
+		tagClazz = wrapper.loadTagFile();
+	    }
+	} finally {
+	    wrapper.decTripCount();
+	}
+	
+	// Add the dependants for this tag file to its parent's
+	// dependant list.
+	PageInfo pageInfo = wrapper.getJspEngineContext().getCompiler().
+	    getPageInfo();
+	if (pageInfo != null) {
+	    Iterator iter = pageInfo.getDependants().iterator();
+	    if (iter.hasNext()) {
+		parentPageInfo.addDependant((String)iter.next());
+	    }
+	}
+	
+	return tagClazz;
     }
+
 
     /*
      * A visitor that scan the page, looking for tag handlers that are tag
