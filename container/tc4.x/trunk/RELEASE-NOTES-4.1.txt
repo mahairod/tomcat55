@@ -700,6 +700,19 @@ Catalina Bug Fixes:
 [4.1.21] MbeanUtils:
          Add JSR 77 servlet registration.
 
+[4.1.22] JDBCStore:
+         Optimize keys() method SQL WHERE clause.
+         Implement a new db field so that the session can be localized to
+         the Engine, Host, and Context (Web Application).
+
+[4.1.22] #17591
+         JDBCStore
+         Synchronize methods which use db so that use of db connection is
+         thread safe.
+
+[4.1.22] #17587 
+         Session Manager StoreBase
+         Fix a NPE bug when the background thread expires sessions.
 
 ----------------
 Coyote Bug Fixes:
