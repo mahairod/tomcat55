@@ -244,8 +244,8 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
     {
         Vector tagVector = new Vector();
         Vector tagFileVector = new Vector();
-        Vector functionVector = new Vector();
-
+        Hashtable functionTable = new Hashtable();
+	
         // Create an iterator over the child elements of our <taglib> element
         ParserUtils pu = new ParserUtils();
         TreeNode tld = pu.parseXMLDocument(uri, in);
@@ -278,9 +278,16 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
             else if ("tag-file".equals(tname))
                 tagFileVector.addElement(createTagFileInfo(element, uri,
 							   jarFile));
-            else if ("function".equals(tname))          // JSP2.0
-                functionVector.addElement(createFunctionInfo(element));
-            else if ("display-name".equals(tname) ||    // Ignored elements
+            else if ("function".equals(tname)) {         // JSP2.0
+		FunctionInfo funcInfo = createFunctionInfo(element);
+		String funcName = funcInfo.getName();
+		if (functionTable.containsKey(funcName)) {
+		    err.jspError("jsp.error.tld.fn.duplicate.name",
+				 funcName, uri);
+
+		}
+                functionTable.put(funcName, funcInfo);
+            } else if ("display-name".equals(tname) ||    // Ignored elements
                      "small-icon".equals(tname) ||
                      "large-icon".equals(tname) ||
                      "listener".equals(tname)) {
@@ -302,8 +309,12 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
         this.tagFiles = new TagFileInfo[tagFileVector.size()];
         tagFileVector.copyInto (this.tagFiles);
 
-        this.functions = new FunctionInfo[functionVector.size()];
-        functionVector.copyInto (this.functions);
+        this.functions = new FunctionInfo[functionTable.size()];
+	int i=0;
+        Enumeration enum = functionTable.elements();
+	while (enum.hasMoreElements()) {
+	    this.functions[i++] = (FunctionInfo) enum.nextElement();
+	}
     }
 
     private TagInfo createTagInfo(TreeNode elem) throws JasperException {
