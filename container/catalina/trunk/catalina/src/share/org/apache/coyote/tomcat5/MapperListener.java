@@ -213,7 +213,7 @@ public class MapperListener
                             engineName = (String)
                                 mBeanServer.getAttribute(objectName, "engineName");
                         } catch (Exception e) {
-                            e.printStackTrace();  
+                            // Ignore  
                         }
                     }
                 }
@@ -334,12 +334,16 @@ public class MapperListener
         // name attribute is the same... - then it's ours
         String targetDomain=objectName.getDomain();
         if( ! domain.equals( targetDomain )) {
-            targetDomain=(String) mBeanServer.getAttribute(objectName, "engineName");
+            try {
+                targetDomain = (String) mBeanServer.getAttribute
+                    (objectName, "engineName");
+            } catch (Exception e) {
+                // Ignore
+            }
             if( ! domain.equals( targetDomain )) {
                 // not ours
                 return;
             }
-            
         }
 
         String hostName = null;
@@ -384,6 +388,22 @@ public class MapperListener
         throws Exception {
 
         String name = objectName.getKeyProperty("name");
+
+        // If the domain is the same with ours or the engine 
+        // name attribute is the same... - then it's ours
+        String targetDomain=objectName.getDomain();
+        if( ! domain.equals( targetDomain )) {
+            try {
+                targetDomain = (String) mBeanServer.getAttribute
+                    (objectName, "engineName");
+            } catch (Exception e) {
+                // Ignore
+            }
+            if( ! domain.equals( targetDomain )) {
+                // not ours
+                return;
+            }
+        }
 
         String hostName = null;
         String contextName = null;
