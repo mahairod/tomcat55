@@ -28,6 +28,10 @@
           description="Should we require client authentication?"
                  type="boolean"/>
 
+    <attribute   name="ciphers"
+          description="Comma-separated list of SSL cipher suites to be enabled"
+                 type="java.lang.String"/>
+
     <attribute   name="connectionTimeout"
           description="Timeout value on the incoming connection"
                  type="int"/>
