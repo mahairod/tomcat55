@@ -24,7 +24,6 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,6 @@ import org.apache.catalina.Host;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.DiskFileUpload;
-import org.apache.commons.fileupload.FileUploadException;
 
 /**
 * Servlet that enables remote management of the web applications deployed
@@ -375,7 +373,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
                      "/html/sessions?path=" + displayPath);
                 if (context.getManager() != null) {
                     args[4] = new Integer
-                        (context.getManager().findSessions().length);
+                        (context.getManager().getActiveSessions());
                 } else {
                     args[4] = new Integer(0);
                 }
