@@ -91,6 +91,7 @@ public class KjcJavaCompiler implements JavaCompiler {
     String compilerPath;
     String outdir; // ignored
     OutputStream out;
+    boolean classDebugInfo=false;
 
     /**
      * Specify where the compiler can be found
@@ -126,6 +127,13 @@ public class KjcJavaCompiler implements JavaCompiler {
      */
     public void setMsgOutput(OutputStream out) {
       this.out = out;
+    }
+
+    /**
+     * Set if you want debugging information in the class file
+     */
+    public void setClassDebugInfo(boolean classDebugInfo) {
+        this.classDebugInfo = classDebugInfo;
     }
 
     /**
