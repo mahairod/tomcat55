@@ -111,7 +111,7 @@ public class TagFileProcessor {
 
 	private static final JspUtil.ValidAttribute[] variableDirectiveAttrs = {
 	    new JspUtil.ValidAttribute("name-given"),
-	    new JspUtil.ValidAttribute("name-from"),
+	    new JspUtil.ValidAttribute("name-from-attribute"),
 	    new JspUtil.ValidAttribute("variable-class"),
 	    new JspUtil.ValidAttribute("scope"),
 	    new JspUtil.ValidAttribute("declare"),
