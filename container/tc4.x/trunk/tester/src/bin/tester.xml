@@ -8,8 +8,10 @@
 <!--  <property name="protocol"       value="HTTP/1.0"/> -->
   <property name="protocol"       value=""/> <!-- Use HttpURLConnection -->
   <property name="context.path"   value="/tester"/>
+  <property name="examples.path"  value="/examples"/>
   <property name="golden.path"    value="${context.path}/golden"/>
   <property name="manager.path"   value="/manager"/>
+  <property name="reload.path"    value="/tester"/>
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
@@ -27,12 +29,12 @@
 
     <!-- Should be able to use relative path to document root -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/.." debug="${debug}"
+         request="${examples.path}/.." debug="${debug}"
           status="302"/>
 
     <!-- Should not be able to use relative path above document root -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/../.." debug="${debug}"
+         request="${examples.path}/../.." debug="${debug}"
           status="404"/>
 
     <!-- Should be able to successfully retrieve a golden file -->
@@ -92,57 +94,46 @@
     <!-- Should be able to execute the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/dates/date.jsp" debug="${debug}"
+         request="${examples.path}/jsp/dates/date.jsp" debug="${debug}"
           status="200"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/dates/date.Jsp" debug="${debug}"
+         request="${examples.path}/jsp/dates/date.Jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/dates/Date.jsp" debug="${debug}"
+         request="${examples.path}/jsp/dates/Date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/Dates/date.jsp" debug="${debug}"
+         request="${examples.path}/jsp/Dates/date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
     <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/Jsp/dates/date.jsp" debug="${debug}"
-          status="404"/>
-
-    <!-- Should not be able to view the source of the Date example -->
-    <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
-    <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/Examples/jsp/dates/date.jsp" debug="${debug}"
+         request="${examples.path}/Jsp/dates/date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should be able to execute the HelloWorld servlet example -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/servlet/HelloWorldExample" debug="${debug}"
+         request="${examples.path}/servlet/HelloWorldExample" debug="${debug}"
           status="200"/>
 
     <!-- Should not be able to execute HelloWorld with different cases -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/servlet/helloWorldExample" debug="${debug}"
+         request="${examples.path}/servlet/helloWorldExample" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to execute HelloWorld with different cases -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/Servlet/HelloWorldExample" debug="${debug}"
-          status="404"/>
-
-    <!-- Should not be able to execute HelloWorld with different cases -->
-    <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/Examples/servlet/HelloWorldExample" debug="${debug}"
+         request="${examples.path}/Servlet/HelloWorldExample" debug="${debug}"
           status="404"/>
 
   </target>
@@ -194,12 +185,12 @@
 
     <!-- Verify we can access the JSP page normally -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/snp/snoop.jsp"
+         request="${examples.path}/jsp/snp/snoop.jsp"
           status="200"/>
 
     <!-- DefaultServlet should not decode the path again -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/examples/jsp/snp/snoop%252ejsp"
+         request="${examples.path}/jsp/snp/snoop%252ejsp"
           status="404"/>
 
   </target>
@@ -306,8 +297,8 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
            debug="${debug}"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
-         request="${manager.path}/reload?path=${context.path}"
-      outContent="OK - Reloaded application at context path ${context.path}"/>
+         request="${manager.path}/reload?path=${reload.path}"
+      outContent="OK - Reloaded application at context path ${reload.path}"/>
 
     <!-- Repeat the tests to ensure the naming context is reinitialized -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
@@ -826,8 +817,8 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
            debug="${debug}"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
-         request="${manager.path}/reload?path=${context.path}"
-      outContent="OK - Reloaded application at context path ${context.path}"/>
+         request="${manager.path}/reload?path=${reload.path}"
+      outContent="OK - Reloaded application at context path ${reload.path}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Session03" debug="${debug}"
@@ -852,8 +843,8 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
            debug="${debug}"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
-         request="${manager.path}/reload?path=${context.path}"
-      outContent="OK - Reloaded application at context path ${context.path}"/>
+         request="${manager.path}/reload?path=${reload.path}"
+      outContent="OK - Reloaded application at context path ${reload.path}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedSession03" debug="${debug}"
