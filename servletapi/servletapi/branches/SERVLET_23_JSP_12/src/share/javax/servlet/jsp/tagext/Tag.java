@@ -73,11 +73,6 @@ import javax.servlet.jsp.*;
  * <p> The JSP page implementation object invokes setPageContext and
  * setParent, in that order, before invoking doStartTag() or doEndTag().
  *
- * <p> The JSP 1.2 specification has the resetCustomProperties()
- * method to reset all custom properties  to default values.  Note that the
- * JSP translator can determine whether a specific tag handler class supports
- * or not this method.
- *
  * <p><B>Methods</B>
  *
  * <p>
@@ -95,11 +90,30 @@ import javax.servlet.jsp.*;
  * are completed, the release method is invoked on it.  Once a release
  * method is invoked <em>all</em> properties, including parent and
  * pageContext, are assumed to have been reset to an unspecified value.
- * The page compiler guarantees that release will be invoked on the Tag
- * handler before the end of the page.
+ * The page compiler guarantees that release() will be invoked on the Tag
+ * handler before the handler is released to the GC.
  *
- * <p> Lifecycle details are collected elsewhere in the JSP specification
- * document.
+ *
+ * <p><B>Lifecycle</B>
+ * <p> Lifecycle details are described by the transition diagram below,
+ * with the following comments:
+ * <ul>
+ * <li> [1] This transition is intended to be for releasing long-term data.
+ * no guarantees are assumed on whether any properties have been retained
+ * or not.
+ * <li> [2] This transition happens if and only if the tag ends normally
+ * without raising an exception
+ * <li> [3] Note that since there are no guarantees on the state of the
+ * properties, a tag handler that had some optional properties set can only be
+ * reused if those properties are set to a new (known) value.  This means
+ * that tag handlers can only be reused within the same "AttSet" (set of
+ * attributes that have been set).
+ * <li> Check the TryCatchFinally interface for additional details related
+ * to exception handling and resource management.
+ * </ul>
+ *
+ * <IMG src="doc-files/TagProtocol.gif"/>
+ * 
 */
 
 public interface Tag {
@@ -156,8 +170,7 @@ public interface Tag {
      * Invoked by the JSP page implementation object prior to doStartTag().
      * <p>
      * This value is *not* reset by doEndTag() and must be explicitly reset
-     * by a page implementation.  Code can assume that setPageContext
-     * has been called with the proper values before this point.
+     * by a page implementation.
      *
      * @param t The parent tag, or null.
      */
@@ -179,13 +192,6 @@ public interface Tag {
 
 
     // Actions for basic start/end processing.
-
-
-    /**
-     * Reset all custom (i.e. not parent, not pageContext) attributes to their
-     * default values
-     */
-    public void resetCustomAttributes();
 
 
     /**

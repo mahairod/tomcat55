@@ -70,7 +70,17 @@ import javax.servlet.jsp.*;
  * If doAfterBody() returns Tag.SKIP_BODY, then the body will be skipped
  * and doEndTag() will be evaluated instead.
  *
- */
+ * <p><B>Lifecycle</B>
+ *
+ * <p> Lifecycle details are described by the transition diagram
+ * below.  Exceptions that are thrown during the computation of
+ * doStartTag(), BODY and doAfterBody() interrupt the execution
+ * sequence and are propagated up the stack, unless the tag handler
+ * implements the TryCatchFinally interface; see that interface for
+ * details.
+ *
+ * <p>
+ * <IMG src="doc-files/IterationTagProtocol.gif"/> */
 
 public interface IterationTag extends Tag {
 

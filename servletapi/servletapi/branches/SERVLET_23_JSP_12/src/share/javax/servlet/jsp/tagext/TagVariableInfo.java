@@ -73,8 +73,11 @@ public class TagVariableInfo {
     /**
      * Constructor for TagVariableInfo
      *
-     * @param
-     * @param
+     * @param nameGiven value of &lt;name-given&gt;
+     * @param nameFromAttribute value of &lt;name-from-attribute&gt;
+     * @param className value of &lt;variable-class&gt;
+     * @param declare value of &lt;declare&gt;
+     * @param scope value of &lt;scope&gt;
      */
     public TagVariableInfo(
 	    String nameGiven,
@@ -90,7 +93,7 @@ public class TagVariableInfo {
     }
 			 
     /**
-     * The body of the <name-given> element
+     * The body of the &lt;name-given&gt; element
      *
      * @return The variable name as a constant
      */
@@ -100,10 +103,10 @@ public class TagVariableInfo {
     }
 
     /**
-     * The body of the <name-from-attribute> element.
+     * The body of the &lt;name-from-attribute&gt; element.
      * This is the name of an attribute whose (translation-time)
      * value will give the name of the variable.  One of
-     * <name-given> or <name-from-attribute> is required.
+     * &lt;name-given&gt; or &lt;name-from-attribute&gt; is required.
      *
      * @return The attribute whose value defines the variable name
      */
@@ -113,7 +116,7 @@ public class TagVariableInfo {
     }
 
     /**
-     * The body of the <variable-class> element.  
+     * The body of the &lt;variable-class&gt; element.  
      *
      * @return The name of the class of the variable
      */
@@ -123,7 +126,7 @@ public class TagVariableInfo {
     }
 
     /**
-     * The body of the <declare> element
+     * The body of the &lt;declare&gt; element
      *
      * @return Whether the variable is to be declared or not
      */
@@ -133,7 +136,7 @@ public class TagVariableInfo {
     }
 
     /**
-     * The body of the <scope> element
+     * The body of the &lt;scope&gt; element
      *
      * @return The scope to give the variable.
      */
