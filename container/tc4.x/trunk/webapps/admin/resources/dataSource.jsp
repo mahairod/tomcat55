@@ -78,7 +78,13 @@
               <bean:message key="resources.datasrc.url"/>:
             </controls:label>
             <controls:data>
-                <html:text property="url" size="56" maxlength="64"/>
+              <logic:present name="dataSourceForm" property="objectName">
+                <bean:write name="dataSourceForm" property="url"/>
+                <html:hidden property="url"/>
+              </logic:present>
+              <logic:notPresent name="dataSourceForm" property="objectName">
+                <html:textarea property="url" cols="35" rows="2"/>
+              </logic:notPresent>
             </controls:data>
           </controls:row>
 
@@ -88,7 +94,7 @@
               <bean:message key="resources.datasrc.jdbcclass"/>:
             </controls:label>
             <controls:data>
-              <html:text property="driverClass" size="56" maxlength="256"/>
+              <html:text property="driverClass" size="45" maxlength="256"/>
             </controls:data>
           </controls:row>
 
@@ -148,7 +154,7 @@
               <bean:message key="resources.datasrc.validation"/>:
             </controls:label>
             <controls:data>
-              <html:textarea property="query" cols="30" rows="3"/>
+              <html:textarea property="query" cols="35" rows="3"/>
             </controls:data>
           </controls:row>
 
