@@ -30,6 +30,12 @@
   </path>
 
 
+	  <!-- ======================== BUILD: Copy JARs ========================== -->
+	  <target name="copy-fileupload.jar">
+	    <copy todir="${webapps.build}/${webapp.name}/WEB-INF/lib" file="${commons-fileupload.jar}"/>
+	  </target>
+
+
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
     <mkdir dir="${webapps.build}"/>
@@ -41,7 +47,7 @@
 
 
   <!-- ================ BUILD: Copy Static Files ========================== -->
-  <target name="build-static" depends="build-prepare">
+  <target name="build-static" depends="build-prepare,copy-fileupload.jar">
     <copy todir="${webapps.build}/${webapp.name}">
       <fileset dir=".">
         <exclude name="build.*"/>
