@@ -25,6 +25,14 @@ you are installing all of the required distributions.
   "jaxp.jar" and "parser.jar" files are on your class path.  (NOTE:  In the
   future it will be possible to use any JAXP-compliant parser).
 
+* Download and install a version of the Java Secure Sockets Extension (JSSE)
+  classes appropriate for your jurisdiction, and add the included JAR files
+  on your classpath.  If you intend to use Tomcat's support for SSL connections
+  in stand-alone mode, these classes will also need to be on the classpath
+  when you start Tomcat.  Get version 1.0.2 or later of JSSE from:
+
+	http://java.sun.com/products/jsse
+
 * Download and install the Ant distribution (subproject "jakarta-ant") into
   a directory named "$JAKARTA_HOME/jakarta-ant".  If you have downloaded the
   source distribution, you will need to build the executable version by
