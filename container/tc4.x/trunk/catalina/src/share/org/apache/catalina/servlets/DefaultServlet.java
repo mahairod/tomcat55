@@ -878,6 +878,9 @@ public class DefaultServlet
         if (normalized == null)
             return (null);
 
+        if (normalized.equals("/."))
+            return "/";
+
 	// Normalize the slashes and add leading slash if necessary
 	if (normalized.indexOf('\\') >= 0)
 	    normalized = normalized.replace('\\', '/');
