@@ -758,40 +758,52 @@ public class JDBCStore
                 ;
             }
 
-            try {
-                preparedSizeSql.close();
-            } catch (SQLException e) {
-                ;
+            if( preparedSizeSql != null ) {
+                try {
+                    preparedSizeSql.close();
+                } catch (SQLException e) {
+                    ;
+                }
             }
 
-            try {
-                preparedKeysSql.close();
-            } catch (SQLException e) {
-                ;
+            if( preparedKeysSql != null ) { 
+                try {
+                    preparedKeysSql.close();
+                } catch (SQLException e) {
+                    ;
+                }
             }
 
-            try {
-                preparedSaveSql.close();
-            } catch (SQLException e) {
-                ;
+            if( preparedSaveSql != null ) { 
+                try {
+                    preparedSaveSql.close();
+                } catch (SQLException e) {
+                    ;
+                }
             }
 
-            try {
-                preparedClearSql.close();
-            } catch (SQLException e) {
-                ;
+            if( preparedClearSql != null ) { 
+                try {
+                    preparedClearSql.close();
+                } catch (SQLException e) {
+                    ;
+                }
             }
 
-            try {
-                preparedRemoveSql.close();
-            } catch (SQLException e) {
-                ;
+            if( preparedRemoveSql != null ) { 
+                try {
+                    preparedRemoveSql.close();
+                } catch (SQLException e) {
+                    ;
+                }
             }
 
-            try {
-                preparedLoadSql.close();
-            } catch (SQLException e) {
-                ;
+            if( preparedLoadSql != null ) { 
+                try {
+                    preparedLoadSql.close();
+                } catch (SQLException e) {
+                    ;
+                }
             }
 
             try {
