@@ -71,6 +71,7 @@ import java.util.Vector;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import org.apache.tomcat.util.*;
+import org.apache.tomcat.core.Request;
 
 /**
  * Standard implementation of the <b>Manager</b> interface that provides
@@ -321,6 +322,14 @@ public final class StandardManager implements Runnable  {
 	public Hashtable getSessions() {
 		return this.sessions;
 	}
+
+        /**
+                This method will replace the sessions Hashtable with
+                that given.
+        */
+        public void setSessions(Hashtable sessions) {
+                this.sessions = sessions;
+        }
 	
     /**
      * Construct and return a new session object, based on the default
@@ -361,8 +370,8 @@ public final class StandardManager implements Runnable  {
 	return (session);
     }
 
-    public void handleReload(ClassLoader newLoader) {
-	SessionSerializer.doSerialization(newLoader, this);
+    public void handleReload(Request req, ClassLoader newLoader) {
+	SessionSerializer.doSerialization(req, newLoader, this);
     }
 
     /**

@@ -111,7 +111,7 @@ public interface ContextInterceptor {
 	This can be used to serialize sessions, log the event,
 	remove any resource that was class-loader dependent.
      */
-    public void reload( Context ctx) throws TomcatException;
+    public void reload( Request req, Context ctx) throws TomcatException;
 
 
     /** Called when a context is stoped, before removeContext. You must free all resources.

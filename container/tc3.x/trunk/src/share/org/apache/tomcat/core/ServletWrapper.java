@@ -392,7 +392,7 @@ public class ServletWrapper {
     // XXX ugly - should find a better way to deal with invoker
     // The problem is that we are just clearing up invoker, not
     // the class loaded by invoker.
-    void handleReload() throws TomcatException {
+    void handleReload(Request req) throws TomcatException {
 		// That will be reolved after we reset the context - and many
 		// other conflicts.
 		if( isReloadable && ! "invoker".equals( getServletName())) {
@@ -406,7 +406,7 @@ public class ServletWrapper {
 					loader.reload();
 					
 					ContextManager cm=context.getContextManager();
-					cm.doReload( context );
+					cm.doReload( req, context );
 					
 					servlet=null;
 					servletClass=null;
@@ -488,7 +488,7 @@ public class ServletWrapper {
     public void handleRequest(Request req, Response res) 
     {
 	try {
-	    handleReload();
+	    handleReload(req);
 	} catch( TomcatException ex ) {
 	    ex.printStackTrace();// what to do ?
 	}
