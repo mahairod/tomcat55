@@ -63,6 +63,7 @@ import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.Tag;
+import javax.servlet.jsp.tagext.IterationTag;
 import javax.servlet.jsp.tagext.BodyTag;
 
 import org.xml.sax.Attributes;
@@ -108,12 +109,15 @@ public class TagEndGenerator
 
         Class tagHandlerClass =
 	    libraries.getTagCache(prefix, shortTagName).getTagHandlerClass();
-        boolean implementsBodyTag = BodyTag.class.isAssignableFrom(tagHandlerClass);
+        boolean implementsIterationTag = 
+	    IterationTag.class.isAssignableFrom(tagHandlerClass);
+        boolean implementsBodyTag = 
+	    BodyTag.class.isAssignableFrom(tagHandlerClass);
 
 	writer.popIndent();
 
-        if (implementsBodyTag)
-            writer.println("} while ("+thVarName+".doAfterBody() == BodyTag.EVAL_BODY_TAG);");
+        if (implementsIterationTag)
+            writer.println("} while ("+thVarName+".doAfterBody() == BodyTag.EVAL_BODY_AGAIN);");
         else
             writer.println("} while (false);");
 

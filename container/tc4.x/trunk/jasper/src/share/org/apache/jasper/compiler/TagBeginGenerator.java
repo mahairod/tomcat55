@@ -347,7 +347,7 @@ public class TagBeginGenerator
                            " implements BodyTag, it can't return Tag.EVAL_BODY_INCLUDE\");");
             writer.popIndent();
         } else {
-            writer.println("if ("+evalVar+" == BodyTag.EVAL_BODY_TAG)");
+            writer.println("if ("+evalVar+" == BodyTag.EVAL_BODY_BUFFERED)");
             writer.pushIndent();
             writer.println("throw new JspTagException(\"Since tag handler "+tc.getTagHandlerClass()+
                            " does not implement BodyTag, it can't return BodyTag.EVAL_BODY_TAG\");");
