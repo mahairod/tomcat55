@@ -17,8 +17,7 @@
 
 package org.apache.naming;
 
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.Iterator;
 
 import javax.naming.Binding;
 import javax.naming.NamingEnumeration;
@@ -38,13 +37,8 @@ public class NamingContextBindingsEnumeration
     // ----------------------------------------------------------- Constructors
 
 
-    public NamingContextBindingsEnumeration(Vector entries) {
-        enum = entries.elements();
-    }
-
-
-    public NamingContextBindingsEnumeration(Enumeration enum) {
-        this.enum = enum;
+    public NamingContextBindingsEnumeration(Iterator entries) {
+        enum = entries;
     }
 
 
@@ -54,7 +48,7 @@ public class NamingContextBindingsEnumeration
     /**
      * Underlying enumeration.
      */
-    protected Enumeration enum;
+    protected Iterator enum;
 
 
     // --------------------------------------------------------- Public Methods
@@ -74,7 +68,7 @@ public class NamingContextBindingsEnumeration
      */
     public boolean hasMore()
         throws NamingException {
-        return enum.hasMoreElements();
+        return enum.hasNext();
     }
 
 
@@ -87,12 +81,12 @@ public class NamingContextBindingsEnumeration
 
 
     public boolean hasMoreElements() {
-        return enum.hasMoreElements();
+        return enum.hasNext();
     }
 
 
     public Object nextElement() {
-        NamingEntry entry = (NamingEntry) enum.nextElement();
+        NamingEntry entry = (NamingEntry) enum.next();
         return new Binding(entry.name, entry.value.getClass().getName(), 
                            entry.value, true);
     }

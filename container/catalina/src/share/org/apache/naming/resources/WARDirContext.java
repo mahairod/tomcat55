@@ -20,11 +20,11 @@ package org.apache.naming.resources;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -277,12 +277,12 @@ public class WARDirContext extends BaseDirContext {
     public NamingEnumeration list(Name name)
         throws NamingException {
         if (name.isEmpty())
-            return new NamingContextEnumeration(list(entries));
+            return new NamingContextEnumeration(list(entries).iterator());
         Entry entry = treeLookup(name);
         if (entry == null)
             throw new NamingException
                 (sm.getString("resources.notFound", name));
-        return new NamingContextEnumeration(list(entry));
+        return new NamingContextEnumeration(list(entry).iterator());
     }
 
 
@@ -321,12 +321,12 @@ public class WARDirContext extends BaseDirContext {
     public NamingEnumeration listBindings(Name name)
         throws NamingException {
         if (name.isEmpty())
-            return new NamingContextBindingsEnumeration(list(entries));
+            return new NamingContextBindingsEnumeration(list(entries).iterator());
         Entry entry = treeLookup(name);
         if (entry == null)
             throw new NamingException
                 (sm.getString("resources.notFound", name));
-        return new NamingContextBindingsEnumeration(list(entry));
+        return new NamingContextBindingsEnumeration(list(entry).iterator());
     }
 
 
@@ -797,9 +797,9 @@ public class WARDirContext extends BaseDirContext {
     /**
      * List children as objects.
      */
-    protected Vector list(Entry entry) {
+    protected ArrayList list(Entry entry) {
         
-        Vector entries = new Vector();
+        ArrayList entries = new ArrayList();
         Entry[] children = entry.getChildren();
         Arrays.sort(children);
         NamingEntry namingEntry = null;
@@ -814,7 +814,7 @@ public class WARDirContext extends BaseDirContext {
             }
             namingEntry = new NamingEntry
                 (children[i].getName(), object, NamingEntry.ENTRY);
-            entries.addElement(namingEntry);
+            entries.add(namingEntry);
         }
         
         return entries;
