@@ -1600,6 +1600,12 @@ public class GTest extends Task implements TaskContainer {
             }
             int val = buf[pos++] & 0xff;
             if ( val == CARRIAGE_RETURN ) {
+                if (pos >= count) {
+                    fill();
+                    if (pos >= count) {
+                       return -1;
+                    }
+                }
                 return buf[pos++] & 0xff;
             }
             return val;
