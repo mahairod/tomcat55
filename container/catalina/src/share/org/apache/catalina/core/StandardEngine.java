@@ -223,6 +223,12 @@ public class StandardEngine
     }
     
     public void setName(String name ) {
+        if( domain != null ) {
+            // keep name==domain, ignore override
+            // we are already registered
+            super.setName( domain );
+            return;
+        }
         // The engine name is used as domain
         domain=name; // XXX should we set it in init() ? It shouldn't matter
         super.setName( name );
