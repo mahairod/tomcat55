@@ -23,10 +23,8 @@ acceptable to delay their resolution.
 5752    docs       Documentation: Resources link invalid on page 
                    http://jakarta.apache.org/tomcat/tomcat-4.0-doc
                    /config/context.html
-5760    docs       Doc-bug: Inexact documented jars in "Class Loader INFO"
 5795    catalina   Catalina Shutdown relies on localhost causing problems 
                    in a Clustered Solaris environment
-5820    docs       Undocumented restriction on inoking manager webapp
 5827    catalina   DataInputStream.readInt returns wrong values
 5899    servlets   HTTP POST parameters ignored in CGIServlet.java
 5905    jasper     JSP Document not correctly processed
@@ -36,6 +34,7 @@ acceptable to delay their resolution.
 4518    jasper     load-on-startup is not working with jsp page
 5759    servlets   CGI servlet mapping by extension *.cgi does not work
 5988    jasper     Jasper Null Pointer Exception Error
+5471    jasper     jspc -webapp option is broken due to namespace collisions
 
 
 
@@ -43,5 +42,6 @@ FIXED? - 5330    catalina   JNDI ENC context problem
 LATER - 5396    installer  Tomcat start shortcut fails when HTTPS is set
 FIXED - 5876    catalina   HttpResponseBase broken
 FIXED - 5908    catalina   java.lang.IllegalStateException: zip file closed
+FIXED - 5760    docs       Doc-bug: Inexact documented jars in "Class Loader INFO"
 
 

@@ -92,6 +92,7 @@ Bugzilla Bugs Resolved:
 
 5330  JNDI ENC context problem
 5740  Content-type reset to text/html on response with status >= 400
+5760  Doc-bug: Inexact documented jars in "Class Loader INFO"
 5876  HttpResponseBase broken
 5908  java.lang.IllegalStateException: zip file closed
 
