@@ -252,6 +252,12 @@ public class StatusManagerServlet
                 writeConnectorState(writer, objectName, name);
             }
 
+            if ((request.getPathInfo() != null) 
+                && (request.getPathInfo().equals("/all"))) {
+                // Warning: slow
+                writeApplicationsState(writer);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -444,6 +450,23 @@ public class StatusManagerServlet
 
 
     /**
+     * Write applications state.
+     */
+    protected void writeApplicationsState(PrintWriter writer)
+        throws Exception {
+
+        ObjectName queryHosts = new ObjectName("*:type=Host,*");
+        Set hostsON = mBeanServer.queryNames(queryHosts, null);
+        Iterator iterator = hostsON.iterator();
+        while (iterator.hasNext()) {
+            ObjectName hostON = (ObjectName) iterator.next();
+            System.out.println("Host: " + hostON);
+        }
+
+    }
+
+
+    /**
      * Filter the specified message string for characters that are sensitive
      * in HTML.  This avoids potential attacks caused by including JavaScript
      * codes in the request URL that is often reported in error messages.
@@ -517,6 +540,10 @@ public class StatusManagerServlet
                     } else if (type.equals("RequestProcessor")) {
                         requestProcessors.removeElement(objectName);
                     }
+                }
+                String j2eeType = objectName.getKeyProperty("j2eeType");
+                if (j2eeType != null) {
+                    
                 }
             }
         }

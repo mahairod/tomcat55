@@ -99,7 +99,7 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>Status</servlet-name>
-    <url-pattern>/status</url-pattern>
+    <url-pattern>/status/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>JMXProxy</servlet-name>
@@ -140,7 +140,7 @@
       <url-pattern>/undeploy</url-pattern>
       <url-pattern>/reload</url-pattern>
       <url-pattern>/serverinfo</url-pattern>
-      <url-pattern>/status</url-pattern>
+      <url-pattern>/status/*</url-pattern>
       <url-pattern>/roles</url-pattern>
       <url-pattern>/resources</url-pattern>
     </web-resource-collection>
