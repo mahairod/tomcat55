@@ -627,6 +627,17 @@ public interface ServletContext {
      */
 
     public void removeAttribute(String name);
+    
+    /**
+     * Returns the name of this web application correponding to this ServletContext as specified in the deployment
+     * descriptor for this web application by the <display-name> element.
+     *
+     *
+     * @return	    The name of the web application or null if no name has been declared in the deployment descriptor.
+     * @since Servlet 2.3
+     */
+    
+    public String getServletContextName();
 }
 
 
