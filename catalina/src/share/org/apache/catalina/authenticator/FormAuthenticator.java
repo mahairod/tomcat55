@@ -187,7 +187,7 @@ public class FormAuthenticator
         if (matchRequest(request)) {
             session = request.getSessionInternal(true);
             if (log.isDebugEnabled())
-                log.debug("Restore request from session '" + session.getId() 
+                log.debug("Restore request from session '" + session.getIdInternal() 
                           + "'");
             principal = (Principal)
                 session.getNote(Constants.FORM_PRINCIPAL_NOTE);
@@ -229,7 +229,7 @@ public class FormAuthenticator
         if (!loginAction) {
             session = request.getSessionInternal(true);
             if (log.isDebugEnabled())
-                log.debug("Save request in session '" + session.getId() + "'");
+                log.debug("Save request in session '" + session.getIdInternal() + "'");
             saveRequest(request, session);
             RequestDispatcher disp =
                 context.getServletContext().getRequestDispatcher

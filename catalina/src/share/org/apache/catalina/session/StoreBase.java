@@ -208,7 +208,7 @@ public abstract class StoreBase
                     // expire swapped out session
                     session.expire();
                 }
-                remove(session.getId());
+                remove(session.getIdInternal());
             } catch (Exception e) {
                 manager.getContainer().getLogger().error("Session: "+keys[i]+"; ", e);
                 try {

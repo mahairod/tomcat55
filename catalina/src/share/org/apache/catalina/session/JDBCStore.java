@@ -754,7 +754,7 @@ public class JDBCStore
                 // If sessions already exist in DB, remove and insert again.
                 // TODO:
                 // * Check if ID exists in database and if so use UPDATE.
-                remove(session.getId());
+                remove(session.getIdInternal());
 
                 try {
                     bos = new ByteArrayOutputStream();
@@ -778,7 +778,7 @@ public class JDBCStore
                        preparedSaveSql = _conn.prepareStatement(saveSql);
 					}
 
-                    preparedSaveSql.setString(1, session.getId());
+                    preparedSaveSql.setString(1, session.getIdInternal());
                     preparedSaveSql.setString(2, getName());
                     preparedSaveSql.setBinaryStream(3, in, size);
                     preparedSaveSql.setString(4, session.isValid() ? "1" : "0");
@@ -812,7 +812,7 @@ public class JDBCStore
 
         if (manager.getContainer().getLogger().isDebugEnabled()) {
             manager.getContainer().getLogger().debug(sm.getString(getStoreName() + ".saving",
-                    session.getId(), sessionTable));
+                    session.getIdInternal(), sessionTable));
         }
     }
 

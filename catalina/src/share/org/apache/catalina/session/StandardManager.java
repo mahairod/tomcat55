@@ -392,7 +392,7 @@ public class StandardManager
                     StandardSession session = getNewSession();
                     session.readObjectData(ois);
                     session.setManager(this);
-                    sessions.put(session.getId(), session);
+                    sessions.put(session.getIdInternal(), session);
                     session.activate();
                     session.endAccess();
                 }

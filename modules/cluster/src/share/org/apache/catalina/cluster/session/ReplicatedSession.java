@@ -143,14 +143,14 @@ implements org.apache.catalina.cluster.ClusterSession{
 
     public void expire() {
         SimpleTcpReplicationManager mgr =(SimpleTcpReplicationManager)getManager();
-        mgr.sessionInvalidated(getId());
+        mgr.sessionInvalidated(getIdInternal());
         setIsDirty(true);
         super.expire();
     }
 
     public void invalidate() {
         SimpleTcpReplicationManager mgr =(SimpleTcpReplicationManager)getManager();
-        mgr.sessionInvalidated(getId());
+        mgr.sessionInvalidated(getIdInternal());
         setIsDirty(true);
         super.invalidate();
     }
@@ -254,7 +254,7 @@ implements org.apache.catalina.cluster.ClusterSession{
 
     public String toString() {
         StringBuffer buf = new StringBuffer("ReplicatedSession id=");
-        buf.append(getId()).append(" ref=").append(super.toString()).append("\n");
+        buf.append(getIdInternal()).append(" ref=").append(super.toString()).append("\n");
         java.util.Enumeration e = getAttributeNames();
         while ( e.hasMoreElements() ) {
             String name = (String)e.nextElement();
