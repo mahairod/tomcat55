@@ -23,6 +23,8 @@ import java.util.LinkedList;
 /**
  * Send cluster messages with a pool of sockets (25).
  * 
+ * FIXME support processing stats
+ * 
  * @author Filip Hanik
  * @author Peter Rossbach
  * @version 1.2
