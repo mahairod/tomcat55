@@ -4107,6 +4107,9 @@ public class StandardContext
                     ((Lifecycle) getManager()).start();
                 }
 
+                // Start ContainerBackgroundProcessor thread
+                super.threadStart();
+
             } finally {
                 // Unbinding thread
                 unbindThread(oldCCL);
@@ -4294,6 +4297,9 @@ public class StandardContext
 
         // Finalize our character set mapper
         setCharsetMapper(null);
+
+        // Stop ContainerBackgroundProcessor thread
+        super.threadStop();
 
         if ((manager != null) && (manager instanceof Lifecycle)) {
             ((Lifecycle) manager).stop();

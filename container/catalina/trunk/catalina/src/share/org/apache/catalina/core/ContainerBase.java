@@ -1158,7 +1158,7 @@ public abstract class ContainerBase
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, null);
 
-        // Stop out thread
+        // Stop our thread
         threadStop();
 
         // Notify our interested LifecycleListeners
@@ -1583,7 +1583,7 @@ public abstract class ContainerBase
      * Start the background thread that will periodically check for
      * session timeouts.
      */
-    private void threadStart() {
+    protected void threadStart() {
 
         if (thread != null)
             return;
@@ -1603,7 +1603,7 @@ public abstract class ContainerBase
      * Stop the background thread that is periodically checking for
      * session timeouts.
      */
-    private void threadStop() {
+    protected void threadStop() {
 
         if (thread == null)
             return;
