@@ -110,7 +110,7 @@ public class ServletRequestWrapper implements ServletRequest {
 	* @throws java.lang.IllegalArgumentException if the request is null.
 	*/
 	
-	public void setResponse(ServletRequest request) {
+	public void setRequeste(ServletRequest request) {
 	    if (request == null) {
 		throw new IllegalArgumentException("Request cannot be null");
 	    }
