@@ -154,7 +154,7 @@ extends URLConnection {
         // XXX
         // hmmm .. what about the mimeTypes associated with
         // this context
-        return getFileNameMap().getContentTypeFor(path);
+        return URLConnection.getFileNameMap().getContentTypeFor(path);
     }
 
     public int getContentLength() {
