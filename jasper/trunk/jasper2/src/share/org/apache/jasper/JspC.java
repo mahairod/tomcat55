@@ -184,7 +184,7 @@ public class JspC implements Options {
 
     public static void main(String arg[]) {
         if (arg.length == 0) {
-           System.out.println(Localizer.getMessage("jspc.usage"));
+            System.out.println(Localizer.getMessage("jspc.usage"));
         } else {
             try {
                 JspC jspc = new JspC();
