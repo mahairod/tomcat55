@@ -180,7 +180,7 @@ public class Constants {
         "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n" +
         " <tr>\n" +
         "  <td class=\"row-left\" width=\"10%\">" +
-        "<small><b>{0}</b></small>&nbsp;</td>\n" +
+        "<small><strong>{0}</strong></small>&nbsp;</td>\n" +
         "  <td class=\"row-left\"><pre>{1}</pre></td>\n" +
         " </tr>\n" +
         "</table>\n" +

@@ -432,6 +432,10 @@ public class StatusManagerServlet
 
         writer.print("</table>");
 
+        writer.print("<p>");
+        writer.print("P: Parse and prepare request S: Service F: Finishing R: Ready K: Keepalive");
+        writer.print("</p>");
+
     }
 
 
@@ -446,7 +450,7 @@ public class StatusManagerServlet
         int stage = stageValue.intValue();
         boolean fullStatus = true;
 
-        writer.write("<td><b>");
+        writer.write("<td><strong>");
 
         switch (stage) {
 
@@ -485,7 +489,7 @@ public class StatusManagerServlet
 
         }
 
-        writer.write("</b></td>");
+        writer.write("</strong></td>");
 
         if (fullStatus) {
             writer.write("<td>");
