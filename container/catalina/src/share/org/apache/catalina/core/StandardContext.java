@@ -497,6 +497,7 @@ public class StandardContext
      */
     private boolean cachingAllowed = true;
 
+    private boolean lazy=true;
 
     /**
      * Non proxied resources.
@@ -876,6 +877,14 @@ public class StandardContext
 
     }
 
+    // experimental
+    public boolean isLazy() {
+        return lazy;
+    }
+
+    public void setLazy(boolean lazy) {
+        this.lazy = lazy;
+    }
 
     /**
      * Return descriptive information about this Container implementation and
@@ -1969,7 +1978,7 @@ public class StandardContext
      * will have been called, but no properties will have been set.
      */
     public Wrapper createWrapper() {
-
+        //log.info( "Create wrapper" );
         Wrapper wrapper = new StandardWrapper();
         wrappers.add(wrapper);
 
@@ -3749,7 +3758,7 @@ public class StandardContext
      * @exception LifecycleException if a startup error occurs
      */
     public synchronized void start() throws LifecycleException {
-
+        //if (lazy ) return;
         if (started) {
             log.info(sm.getString("containerBase.alreadyStarted", logName()));
             return;
@@ -4106,14 +4115,68 @@ public class StandardContext
         // Reset application context
         context = null;
 
+        wrappers = new ArrayList();
+        
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
+        
 
         if (log.isDebugEnabled())
             log.debug("Stopping complete");
-
     }
 
+    /** Destroy needs to clean up the context completely.
+     * 
+     * The problem is that undoing all the config in start() and restoring 
+     * a 'fresh' state is impossible. After stop()/destroy()/init()/start()
+     * we should have the same state as if a fresh start was done - i.e
+     * read modified web.xml, etc. This can only be done by completely 
+     * removing the context object and remapping a new one, or by cleaning
+     * up everything.
+     * 
+     * XXX Should this be done in stop() ?
+     * 
+     */ 
+    public void destroy() throws Exception {
+        super.destroy();
+        
+                
+        // Restore the original state ( pre reading web.xml in start )
+        // If you extend this - override this method and make sure to clean up
+        children=new HashMap();
+    
+        StandardContext repl=new StandardContext();
+        // All configurable options
+        repl.setAltDDName(altDDName);
+        repl.setCachingAllowed(cachingAllowed);
+        repl.setCharsetMapperClass(mapperClass);
+        repl.setConfigFile(configFile);
+        repl.setCookies(cookies);
+        repl.setCrossContext(crossContext);
+        repl.setDefaultWebXml(defaultWebXml);
+        //repl.setDistributable(distributable); // this is from web.xml
+        repl.setDocBase(docBase);
+        repl.setJ2EEApplication(j2EEApplication);
+        repl.setJ2EEServer(j2EEServer);
+        repl.setLazy(lazy);
+        repl.setMapperClass(mapperClass);
+        repl.setName(name);
+        repl.setOverride(override);
+        repl.setPath(getPath());
+        repl.setPrivileged(privileged);
+        repl.setReloadable(reloadable);
+        repl.setReplaceWelcomeFiles(replaceWelcomeFiles);
+        repl.setSessionTimeout(sessionTimeout);
+        repl.setUseNaming(useNaming);
+        repl.setWrapperClass(wrapperClass);
+        repl.setWorkDir(workDir);
+        repl.setSwallowOutput(swallowOutput);
+        
+        if( oname != null ) 
+            mserver.unregisterMBean(oname);
+        Registry.getRegistry().registerComponent(repl, oname, null);
+        
+    }
 
     /**
      * Return a String representation of this component.
