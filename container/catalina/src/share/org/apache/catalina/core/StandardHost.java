@@ -792,9 +792,9 @@ public class StandardHost
         }
 
         if (xmlValidation)
-            log.info( "XML validation enabled ");
+            log.info( sm.getString("standardHost.validationEnabled"));
         else
-            log.info( "XML validation disabled ");
+            log.info( sm.getString("standardHost.validationDisabled"));
 
         super.start();
 
