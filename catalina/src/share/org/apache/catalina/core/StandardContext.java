@@ -3762,18 +3762,22 @@ public class StandardContext
             }
         }
         
-        String logName="tomcat." + getParent().getName() + "." +
-                ("".equals(getName()) ? "ROOT" : getName()) + ".Context";
-        log=org.apache.commons.logging.LogFactory.getLog(logName);
+        String logName = "tomcat." + getParent().getName() + "." +
+            ("".equals(getName()) ? "ROOT" : getName()) + ".Context";
+        log = org.apache.commons.logging.LogFactory.getLog(logName);
 
-        //if (log.isDebugEnabled())
-            log.debug("Starting " + logName);
+        log.debug("Starting " + logName);
+
+        if ((oname != null) && 
+            (Registry.getRegistry().getMBeanServer().isRegistered(oname))) {
+            // As things depend on the JMX registration, the context
+            // must be reregistered again once properly initialized
+            Registry.getRegistry().unregisterComponent(oname);
+        }
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
 
-        if (log.isDebugEnabled())
-            log.debug("Processing start(), current available=" + getAvailable());
         setAvailable(false);
         setConfigured(false);
         boolean ok = true;
