@@ -158,8 +158,8 @@ public class PooledSocketSender implements IDataSender
     {
         //get a socket sender from the pool
         SocketSender sender = senderQueue.getSender(0);
-        if ( sender == null && isConnected() ) {
-            log.warn("No socket sender available for client="+this.getAddress()+":"+this.getPort());
+        if ( sender == null ) {
+            log.warn("No socket sender available for client="+this.getAddress()+":"+this.getPort()+" did it disappear?");
             return;
         }//end if
         //send the message
