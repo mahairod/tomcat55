@@ -8,6 +8,8 @@
 
   <properties>
     <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+    <author email="remm@apache.org">Remy Maucherat</author> 
+    <author email="yoavs@apache.org">Yoav Shapira</author> 
     <title>The Host Container</title>
   </properties>
 
@@ -275,7 +277,8 @@
         be the absolute pathname to a web application directory, or the
         absolute pathname of a web application archive (WAR) file (which
         will not be expanded).</li>
-    <li>Any web application archive file that does not have a corresponding
+    <li>Any web application archive file within the application base (appBase) 
+        directory that does not have a corresponding
         directory of the same name (without the ".war" extension) will be
         automatically expanded, unless the <code>unpackWARs</code> property
         is set to <code>false</code>.  If you redeploy an updated WAR file,
@@ -320,6 +323,11 @@
     <code>appBase</code> directory. If this is not the case difficulties
     may be experienced deploying the web application or the application may
     be deployed twice.</p>
+
+    <p>Finally, note that if you are defining contexts explicitly, you should 
+    probably turn off automatic application deployment.  Otherwise, your context 
+    will be deployed twice each, and that may cause problems for your app. 
+    </p> 
 
   </subsection>
 
