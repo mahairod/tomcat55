@@ -70,6 +70,7 @@ import java.util.Vector;
 /**
  *
  * @author James Todd [gonzo@eng.sun.com]
+ * @author Anil K. Vijendran [akv@eng.sun.com] -- added support for taglib in web.xml
  */
 
 public class WebApplicationDescriptorImpl
@@ -86,6 +87,8 @@ implements WebApplicationDescriptor {
     private Vector resourceReferences = new Vector();
     private Vector securityRoles = new Vector();
     private Vector securityConstraints = new Vector();
+    private Vector tldConfigs = new Vector();
+    
     // XXX
     // commented out in anticipation they'll eventually be supported 
 /*
@@ -219,6 +222,14 @@ implements WebApplicationDescriptor {
     public void addEnvironmentEntry(EnvironmentEntry environmentEntry) {
 	this.getEnvironmentEntryVector().addElement(environmentEntry);
     }
+
+    public Enumeration getTagLibConfigs() {
+        return tldConfigs.elements();
+    }
+    
+    public void addTagLibConfig(TagLibConfig tldConfig) {
+        tldConfigs.addElement(tldConfig);
+    }
     
     public String toString() {
 	String s = "Web App Descriptor ";
@@ -242,6 +253,7 @@ implements WebApplicationDescriptor {
 */
 	s = s + " \n loginConfiguration " + loginConfiguration;
 	s = s + " \n environmentEntries " + environmentEntries;
+        s = s + " \n tldConfigs " + tldConfigs;
 
 	return s;
     }

@@ -150,6 +150,10 @@ public class Constants {
     public static String FORM_LOGIN_PAGE = "form-login-page";
     public static String FORM_ERROR_PAGE = "form-error-page";
 
+    public static final String TAGLIB = "taglib";
+    public static final String TAGLIB_URI = "taglib-uri";
+    public static final String TAGLIB_LOCATION = "taglib-location";
+
 
     public static final String JakartaWebApplication =
         "org.apache.deployment.WebApplicationDescriptorImpl";

@@ -116,6 +116,9 @@ implements WebDescriptorFactory {
             WebResourceCollection.class, WebResourceCollectionImpl.class);
 	this.interfaceToImplementationMap.put(ResourceReference.class,
             ResourceReferenceImpl.class);
+
+        this.interfaceToImplementationMap.put(TagLibConfig.class, 
+                                              TagLibConfigImpl.class);
     }
 
     public Object createDescriptor(Class interfaceType) {

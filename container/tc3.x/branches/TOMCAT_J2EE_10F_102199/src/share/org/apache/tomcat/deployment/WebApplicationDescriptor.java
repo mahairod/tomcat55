@@ -114,6 +114,11 @@ public interface WebApplicationDescriptor extends WebDescriptor {
     
     public LoginConfiguration getLoginConfiguration();
     public void setLoginConfiguration(LoginConfiguration loginConfiguration);
+
+    /** Get all the TLD location/uri mappings. */
+    public Enumeration getTagLibConfigs();
+    public void addTagLibConfig(TagLibConfig tldConfig);
+    
     // XXX
     // commented out in anticipation they'll eventually be supported
 /*
