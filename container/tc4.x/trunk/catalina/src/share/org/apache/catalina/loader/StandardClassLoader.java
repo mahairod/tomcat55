@@ -570,6 +570,61 @@ public class StandardClassLoader
     }
 
 
+    /**
+     * Render a String representation of this object.
+     */
+    public String toString() {
+
+        StringBuffer sb = new StringBuffer("StandardClassLoader\r\n");
+        sb.append("  allowed: ");
+        for (int i = 0; i < allowed.length; i++) {
+            if (i > 0)
+                sb.append(", ");
+            sb.append(allowed[i]);
+        }
+        sb.append("\r\n");
+        sb.append("  available:\r\n");
+        Iterator available = this.available.iterator();
+        while (available.hasNext()) {
+            sb.append("    ");
+            sb.append(available.next().toString());
+            sb.append("\r\n");
+        }
+        sb.append("  delegate: ");
+        sb.append(delegate);
+        sb.append("\r\n");
+        sb.append("  repositories:\r\n");
+        for (int i = 0; i < repositories.length; i++) {
+            sb.append("    ");
+            sb.append(repositories[i]);
+            sb.append("\r\n");
+        }
+        sb.append("  required:\r\n");
+        Iterator required = this.required.iterator();
+        while (required.hasNext()) {
+            sb.append("    ");
+            sb.append(required.next().toString());
+            sb.append("\r\n");
+        }
+        sb.append("  restricted: ");
+        for (int i = 0; i < restricted.length; i++) {
+            if (i > 0)
+                sb.append(", ");
+            sb.append(restricted[i]);
+        }
+        sb.append("\r\n");
+        sb.append("  systems: ");
+        for (int i = 0; i < systems.length; i++) {
+            if (i > 0)
+                sb.append(", ");
+            sb.append(systems[i]);
+        }
+        sb.append("\r\n");
+        return (sb.toString());
+
+    }
+
+
     // ---------------------------------------------------- ClassLoader Methods
 
 

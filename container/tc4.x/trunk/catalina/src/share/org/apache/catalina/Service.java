@@ -66,102 +66,75 @@ package org.apache.catalina;
 
 
 /**
- * A <b>Server</b> represents one convenient way to package a set of
- * <code>Connectors</code> associated with a particular <code>Container</code>.
- * You can have several many-to-one relationships (set of Connectors associated
- * with one Container) by adding one or more Connectors first, followed by the
- * corresponding Container, and then repeating this pattern.
+ * A <strong>Service</strong> is a group of one or more
+ * <strong>Connectors</strong> that share a single <strong>Container</strong>
+ * to process their incoming requests.  This arrangement allows, for example,
+ * a non-SSL and SSL connector to share the same population of web apps.
  * <p>
- * This interface (and the corresonding implementation) exist to simplify
- * configuring Catalina from a <code>server.xml</code> file.  It has no
- * functional role once the server has been started.
- * <p>
- * Normally, an implementation of this interface will also implement
- * <code>Lifecycle</code>, such that when the <code>start()</code> and
- * <code>stop()</code> methods are called, all of the defined Containers
- * and Connectors are also started or stopped.
- * <p>
- * In between, the implementation must open a server socket on the port number
- * specified by the <code>port</code> property.  When a connection is accepted,
- * the first line is read and compared with the specified shutdown command.
- * If the command matches, shutdown of the server is initiated.
+ * A given JVM can contain any number of Service instances; however, they are
+ * completely independent of each other and share only the basic JVM facilities
+ * and classes on the system class path.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public interface Server {
+public interface Service {
 
 
     // ------------------------------------------------------------- Properties
 
 
     /**
-     * Return descriptive information about this Server implementation and
+     * Return the <code>Container</code> that handles requests for all
+     * <code>Connectors</code> associated with this Service.
+     */
+    public Container getContainer();
+
+
+    /**
+     * Set the <code>Container</code> that handles requests for all
+     * <code>Connectors</code> associated with this Service.
+     *
+     * @param container The new Container
+     */
+    public void setContainer(Container container);
+
+
+    /**
+     * Return descriptive information about this Service implementation and
      * the corresponding version number, in the format
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getInfo();
 
 
-    /**
-     * Return the port number we listen to for shutdown commands.
-     */
-    public int getPort();
-
-
-    /**
-     * Set the port number we listen to for shutdown commands.
-     *
-     * @param port The new port number
-     */
-    public void setPort(int port);
-
-
-    /**
-     * Return the shutdown command string we are waiting for.
-     */
-    public String getShutdown();
-
-
-    /**
-     * Set the shutdown command we are waiting for.
-     *
-     * @param shutdown The new shutdown command
-     */
-    public void setShutdown(String shutdown);
-
-
     // --------------------------------------------------------- Public Methods
 
 
     /**
-     * Add a new Service to the set of defined Services.
+     * Add a new Connector to the set of defined Connectors, and associate it
+     * with this Service's Container.
      *
-     * @param service The Service to be added
+     * @param connector The Connector to be added
      */
-    public void addService(Service service);
+    public void addConnector(Connector connector);
 
 
     /**
-     * Wait until a proper shutdown command is received, then return.
+     * Find and return the set of Connectors associated with this Service.
      */
-    public void await();
+    public Connector[] findConnectors();
 
 
     /**
-     * Return the set of Services defined within this Server.
-     */
-    public Service[] findServices();
-
-
-    /**
-     * Remove the specified Service from the set associated from this
-     * Server.
+     * Remove the specified Connector from the set associated from this
+     * Service.  The removed Connector will also be disassociated from our
+     * Container.
      *
-     * @param service The Service to be removed
+     * @param connector The Connector to be removed
      */
-    public void removeService(Service service);
+    public void removeConnector(Connector connector);
 
 
 }

@@ -39,7 +39,7 @@
 
     <!-- Shared Extensions -->
     <!--   Jasper needs the servlet API classes -->
-    <copyfile src="${servlet.jar}" dest="${jasper.build}/lib/servlet.jar"/>
+    <copyfile src="${servlet.jar}" dest="${jasper.build}/bin/servlet.jar"/>
     <!--   Jasper needs Xerces (JAXP1.0/SAX2.0 compliant parser -->
     <copyfile src="${xerces.jar}"    dest="${jasper.build}/lib/xerces.jar"/>
 

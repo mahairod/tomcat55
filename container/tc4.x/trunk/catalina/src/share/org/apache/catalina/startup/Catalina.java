@@ -71,6 +71,7 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.Stack;
+import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
@@ -116,15 +117,16 @@ public class Catalina {
 
 
     /**
-     * The server component we are starting or stopping
+     * The shared extensions class loader for this server.
      */
-    protected Server server = null;
+    protected ClassLoader parentClassLoader =
+        ClassLoader.getSystemClassLoader();
 
 
     /**
-     * The shared extensions class loader for this server.
+     * The server component we are starting or stopping
      */
-    protected ClassLoader sharedLoader = ClassLoader.getSystemClassLoader();
+    protected Server server = null;
 
 
     /**
@@ -175,6 +177,18 @@ public class Catalina {
 
 
     /**
+     * Set the shared extensions class loader.
+     *
+     * @param parentClassLoader The shared extensions class loader.
+     */
+    public void setParentClassLoader(ClassLoader parentClassLoader) {
+
+        this.parentClassLoader = parentClassLoader;
+
+    }
+
+
+    /**
      * Set the server instance we are configuring.
      *
      * @param server The new server
@@ -182,18 +196,6 @@ public class Catalina {
     public void setServer(Server server) {
 
         this.server = server;
-
-    }
-
-
-    /**
-     * Set the shared extensions class loader.
-     *
-     * @param sharedLoader The shared extensions class loader.
-     */
-    public void setSharedLoader(ClassLoader sharedLoader) {
-
-        this.sharedLoader = sharedLoader;
 
     }
 
@@ -270,255 +272,293 @@ public class Catalina {
         mapper.addRule("Server", mapper.addChild
 		       ("setServer", "org.apache.catalina.Server"));
 
-	mapper.addRule("Server/Connector", mapper.objectCreate
+        mapper.addRule("Server/Service", mapper.objectCreate
+                    ("org.apache.catalina.core.StandardService", "className"));
+        mapper.addRule("Server/Service", mapper.setProperties());
+        mapper.addRule("Server/Service", mapper.addChild
+                       ("addService", "org.apache.catalina.Service"));
+
+        mapper.addRule("Server/Service/Connector", mapper.objectCreate
 		       ("org.apache.catalina.connector.http.HttpConnector",
 			"className"));
-	mapper.addRule("Server/Connector", mapper.setProperties());
-	mapper.addRule("Server/Connector", mapper.addChild
+	mapper.addRule("Server/Service/Connector", mapper.setProperties());
+	mapper.addRule("Server/Service/Connector", mapper.addChild
 		       ("addConnector", "org.apache.catalina.Connector"));
 
-        mapper.addRule("Server/Connector/Factory", mapper.objectCreate
+        mapper.addRule("Server/Service/Connector/Factory", mapper.objectCreate
                        ("org.apache.catalina.net.DefaultServerSocketFactory",
                         "className"));
-        mapper.addRule("Server/Connector/Factory", mapper.setProperties());
-        mapper.addRule("Server/Connector/Factory", mapper.addChild
+        mapper.addRule("Server/Service/Connector/Factory",
+                       mapper.setProperties());
+        mapper.addRule("Server/Service/Connector/Factory", mapper.addChild
                        ("setFactory",
                         "org.apache.catalina.net.ServerSocketFactory"));
 
-	mapper.addRule("Server/Connector/Listener", mapper.objectCreate
+	mapper.addRule("Server/Service/Connector/Listener", mapper.objectCreate
 		       (null, "className"));
-	mapper.addRule("Server/Connector/Listener", mapper.setProperties());
-	mapper.addRule("Server/Connector/Listener", mapper.addChild
+	mapper.addRule("Server/Service/Connector/Listener",
+                       mapper.setProperties());
+	mapper.addRule("Server/Service/Connector/Listener", mapper.addChild
 		       ("addLifecycleListener",
 			"org.apache.catalina.LifecycleListener"));
 
-	mapper.addRule("Server/Engine", mapper.objectCreate
+	mapper.addRule("Server/Service/Engine", mapper.objectCreate
 		       ("org.apache.catalina.core.StandardEngine",
 			"className"));
-	mapper.addRule("Server/Engine", mapper.setProperties());
-	mapper.addRule("Server/Engine",
+	mapper.addRule("Server/Service/Engine", mapper.setProperties());
+	mapper.addRule("Server/Service/Engine",
 		       new LifecycleListenerAction
 			   ("org.apache.catalina.startup.EngineConfig",
 			    "configClass"));
-	mapper.addRule("Server/Engine", mapper.addChild
-		       ("addContainer", "org.apache.catalina.Container"));
+        mapper.addRule("Server/Service/Engine",
+                       new SetParentClassLoaderAction(parentClassLoader));
+	mapper.addRule("Server/Service/Engine", mapper.addChild
+		       ("setContainer", "org.apache.catalina.Container"));
 
-	mapper.addRule("Server/Engine/Host", mapper.objectCreate
+        createStartMapperContext("Server/Service/Engine/Context", mapper);
+
+	mapper.addRule("Server/Service/Engine/Host", mapper.objectCreate
 		       ("org.apache.catalina.core.StandardHost",
 			"className"));
-	mapper.addRule("Server/Engine/Host", mapper.setProperties());
-	mapper.addRule("Server/Engine/Host",
+	mapper.addRule("Server/Service/Engine/Host", mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Host",
 		       new LifecycleListenerAction
 			   ("org.apache.catalina.startup.HostConfig",
 			    "configClass"));
-	mapper.addRule("Server/Engine/Host", mapper.addChild
+	mapper.addRule("Server/Service/Engine/Host", mapper.addChild
 		       ("addChild", "org.apache.catalina.Container"));
 
-	mapper.addRule("Server/Engine/Host/Context", mapper.objectCreate
+        createStartMapperContext("Server/Service/Engine/Host/Context", mapper);
+
+	mapper.addRule("Server/Service/Engine/Host/Listener",
+                       mapper.objectCreate
+		       (null, "className"));
+	mapper.addRule("Server/Service/Engine/Host/Listener",
+                       mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Host/Listener", mapper.addChild
+		       ("addLifecycleListener",
+			"org.apache.catalina.LifecycleListener"));
+
+	mapper.addRule("Server/Service/Engine/Host/Loader", mapper.objectCreate
+		       ("org.apache.catalina.core.StandardLoader",
+			"className"));
+	mapper.addRule("Server/Service/Engine/Host/Loader",
+                       mapper.setProperties());
+	mapper.addRule("Engine/Service/Engine/Host/Loader", mapper.addChild
+		       ("setLoader", "org.apache.catalina.Loader"));
+
+	mapper.addRule("Server/Service/Engine/Host/Logger", mapper.objectCreate
+		       (null, "className"));
+	mapper.addRule("Server/Service/Engine/Host/Logger",
+                       mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Host/Logger", mapper.addChild
+		       ("setLogger", "org.apache.catalina.Logger"));
+
+	mapper.addRule("Server/Service/Engine/Host/Manager",
+                       mapper.objectCreate
+		       ("org.apache.catalina.session.StandardManager",
+			"className"));
+	mapper.addRule("Server/Service/Engine/Host/Manager",
+                       mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Host/Manager", mapper.addChild
+		       ("setManager", "org.apache.catalina.Manager"));
+
+	mapper.addRule("Server/Service/Engine/Host/Realm", mapper.objectCreate
+		       (null, "className"));
+	mapper.addRule("Server/Service/Engine/Host/Realm",
+                       mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Host/Realm", mapper.addChild
+		       ("setRealm", "org.apache.catalina.Realm"));
+
+	mapper.addRule("Server/Service/Engine/Host/Resources",
+                       mapper.objectCreate
+		       ("org.apache.catalina.core.StandardResources",
+			"className"));
+	mapper.addRule("Server/Service/Engine/Host/Resources",
+                       mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Host/Resources", mapper.addChild
+		       ("setResources", "org.apache.catalina.Resources"));
+
+	mapper.addRule("Server/Service/Engine/Host/Valve", mapper.objectCreate
+		       (null, "className"));
+	mapper.addRule("Server/Service/Engine/Host/Valve",
+                       mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Host/Valve", mapper.addChild
+		       ("addValve", "org.apache.catalina.Valve"));
+
+	mapper.addRule("Server/Service/Engine/Listener", mapper.objectCreate
+		       (null, "className"));
+	mapper.addRule("Server/Service/Engine/Listener",
+                       mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Listener", mapper.addChild
+		       ("addLifecycleListener",
+			"org.apache.catalina.LifecycleListener"));
+
+	mapper.addRule("Server/Service/Engine/Loader", mapper.objectCreate
+		       ("org.apache.catalina.core.StandardLoader",
+			"className"));
+	mapper.addRule("Server/Service/Engine/Loader", mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Loader", mapper.addChild
+		       ("setLoader", "org.apache.catalina.Loader"));
+
+	mapper.addRule("Server/Service/Engine/Logger", mapper.objectCreate
+		       (null, "className"));
+	mapper.addRule("Server/Service/Engine/Logger", mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Logger", mapper.addChild
+		       ("setLogger", "org.apache.catalina.Logger"));
+
+	mapper.addRule("Server/Service/Engine/Manager", mapper.objectCreate
+		       ("org.apache.catalina.session.StandardManager",
+			"className"));
+	mapper.addRule("Server/Service/Engine/Manager",
+                       mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Manager", mapper.addChild
+		       ("setManager", "org.apache.catalina.Manager"));
+
+	mapper.addRule("Server/Service/Engine/Realm", mapper.objectCreate
+		       (null, "className"));
+	mapper.addRule("Server/Service/Engine/Realm", mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Realm", mapper.addChild
+		       ("setRealm", "org.apache.catalina.Realm"));
+
+	mapper.addRule("Server/Service/Engine/Resources", mapper.objectCreate
+		       ("org.apache.catalina.core.StandardResources",
+			"className"));
+	mapper.addRule("Server/Service/Engine/Resources",
+                       mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Resources", mapper.addChild
+		       ("setResources", "org.apache.catalina.Resources"));
+
+	mapper.addRule("Server/Service/Engine/Valve", mapper.objectCreate
+		       (null, "className"));
+	mapper.addRule("Server/Service/Engine/Valve", mapper.setProperties());
+	mapper.addRule("Server/Service/Engine/Valve", mapper.addChild
+		       ("addValve", "org.apache.catalina.Valve"));
+
+	return (mapper);
+
+    }
+
+
+    /**
+     * Create the mapper rules for a Context, based on the specified prefix.
+     *
+     * @param prefix Prefix to rule selectors to be created
+     * @param mapper The mapper we are updating
+     */
+    protected void createStartMapperContext(String prefix, XmlMapper mapper) {
+
+	mapper.addRule(prefix + "", mapper.objectCreate
 		       ("org.apache.catalina.core.StandardContext",
 			"className"));
-	mapper.addRule("Server/Engine/Host/Context", mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Context",
+	mapper.addRule(prefix + "", mapper.setProperties());
+	mapper.addRule(prefix + "",
 		       new LifecycleListenerAction
 			   ("org.apache.catalina.startup.ContextConfig",
 			    "configClass"));
-	mapper.addRule("Server/Engine/Host/Context", mapper.addChild
+	mapper.addRule(prefix + "", mapper.addChild
 		       ("addChild", "org.apache.catalina.Container"));
 
-        mapper.addRule("Server/Engine/Host/Context/Ejb", mapper.objectCreate
+        mapper.addRule(prefix + "/Ejb", mapper.objectCreate
                        ("org.apache.catalina.deploy.ContextEjb"));
-        mapper.addRule("Server/Engine/Host/Context/Ejb",
+        mapper.addRule(prefix + "/Ejb",
                        mapper.setProperties());
-        mapper.addRule("Server/Engine/Host/Context/Ejb", mapper.addChild
+        mapper.addRule(prefix + "/Ejb", mapper.addChild
                        ("addEjb", "org.apache.catalina.deploy.ContextEjb"));
 
-        mapper.addRule("Server/Engine/Host/Context/Environment",
+        mapper.addRule(prefix + "/Environment",
                        mapper.objectCreate
                        ("org.apache.catalina.deploy.ContextEnvironment"));
-        mapper.addRule("Server/Engine/Host/Context/Environment",
+        mapper.addRule(prefix + "/Environment",
                        mapper.setProperties());
-        mapper.addRule("Server/Engine/Host/Context/Environment",
+        mapper.addRule(prefix + "/Environment",
                        mapper.addChild
                        ("addEnvironment",
                         "org.apache.catalina.deploy.ContextEnvironment"));
 
-	mapper.addRule("Server/Engine/Host/Context/InstanceListener",
+	mapper.addRule(prefix + "/InstanceListener",
 		       mapper.methodSetter("addInstanceListener", 0));
 
-	mapper.addRule("Server/Engine/Host/Context/Listener",
+	mapper.addRule(prefix + "/Listener",
 		       mapper.objectCreate
 		       (null, "className"));
-	mapper.addRule("Server/Engine/Host/Context/Listener",
+	mapper.addRule(prefix + "/Listener",
 		       mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Context/Listener", mapper.addChild
+	mapper.addRule(prefix + "/Listener", mapper.addChild
 		       ("addLifecycleListener",
 			"org.apache.catalina.LifecycleListener"));
 
-	mapper.addRule("Server/Engine/Host/Context/Loader",
+	mapper.addRule(prefix + "/Loader",
 		       mapper.objectCreate
 		       ("org.apache.catalina.core.StandardLoader",
 			"className"));
-	mapper.addRule("Server/Engine/Host/Context/Loader",
+	mapper.addRule(prefix + "/Loader",
 		       mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Context/Loader", mapper.addChild
+	mapper.addRule(prefix + "/Loader", mapper.addChild
 		       ("setLoader", "org.apache.catalina.Loader"));
 
-	mapper.addRule("Server/Engine/Host/Context/Logger", mapper.objectCreate
+	mapper.addRule(prefix + "/Logger", mapper.objectCreate
 		       (null, "className"));
-	mapper.addRule("Server/Engine/Host/Context/Logger",
+	mapper.addRule(prefix + "/Logger",
 		       mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Context/Logger", mapper.addChild
+	mapper.addRule(prefix + "/Logger", mapper.addChild
 		       ("setLogger", "org.apache.catalina.Logger"));
 
-	mapper.addRule("Server/Engine/Host/Context/Manager",
+	mapper.addRule(prefix + "/Manager",
 		       mapper.objectCreate
 		       ("org.apache.catalina.session.StandardManager",
 			"className"));
-	mapper.addRule("Server/Engine/Host/Context/Manager",
+	mapper.addRule(prefix + "/Manager",
 		       mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Context/Manager", mapper.addChild
+	mapper.addRule(prefix + "/Manager", mapper.addChild
 		       ("setManager", "org.apache.catalina.Manager"));
 
-        mapper.addRule("Server/Engine/Host/Context/Parameter", mapper.objectCreate
+        mapper.addRule(prefix + "/Parameter", mapper.objectCreate
                        ("org.apache.catalina.deploy.ApplicationParameter"));
-        mapper.addRule("Server/Engine/Host/Context/Parameter",
+        mapper.addRule(prefix + "/Parameter",
                        mapper.setProperties());
-        mapper.addRule("Server/Engine/Host/Context/Parameter", mapper.addChild
+        mapper.addRule(prefix + "/Parameter", mapper.addChild
                        ("addApplicationParameter",
                         "org.apache.catalina.deploy.ApplicationParameter"));
 
-	mapper.addRule("Server/Engine/Host/Context/Realm", mapper.objectCreate
+	mapper.addRule(prefix + "/Realm", mapper.objectCreate
 		       (null, "className"));
-	mapper.addRule("Server/Engine/Host/Context/Realm",
+	mapper.addRule(prefix + "/Realm",
 		       mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Context/Realm", mapper.addChild
+	mapper.addRule(prefix + "/Realm", mapper.addChild
 		       ("setRealm", "org.apache.catalina.Realm"));
 
-        mapper.addRule("Server/Engine/Host/Context/Resource",
+        mapper.addRule(prefix + "/Resource",
                        mapper.objectCreate
                        ("org.apache.catalina.deploy.ContextResource"));
-        mapper.addRule("Server/Engine/Host/Context/Resource",
+        mapper.addRule(prefix + "/Resource",
                        mapper.setProperties());
-        mapper.addRule("Server/Engine/Host/Context/Resource",
+        mapper.addRule(prefix + "/Resource",
                        mapper.addChild
                        ("addResource",
                         "org.apache.catalina.deploy.ContextResource"));
 
-	mapper.addRule("Server/Engine/Host/Context/Resources",
+	mapper.addRule(prefix + "/Resources",
 		       mapper.objectCreate
 		       ("org.apache.catalina.core.StandardResources",
 			"className"));
-	mapper.addRule("Server/Engine/Host/Context/Resources",
+	mapper.addRule(prefix + "/Resources",
 		       mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Context/Resources", mapper.addChild
+	mapper.addRule(prefix + "/Resources", mapper.addChild
 		       ("setResources", "org.apache.catalina.Resources"));
 
-	mapper.addRule("Server/Engine/Host/Context/Valve", mapper.objectCreate
+	mapper.addRule(prefix + "/Valve", mapper.objectCreate
 		       (null, "className"));
-	mapper.addRule("Server/Engine/Host/Context/Valve",
+	mapper.addRule(prefix + "/Valve",
 		       mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Context/Valve", mapper.addChild
+	mapper.addRule(prefix + "/Valve", mapper.addChild
 		       ("addValve", "org.apache.catalina.Valve"));
 
-	mapper.addRule("Server/Engine/Host/Context/WrapperLifecycle",
+	mapper.addRule(prefix + "/WrapperLifecycle",
 		       mapper.methodSetter("addWrapperLifecycle", 0));
 
-	mapper.addRule("Server/Engine/Host/Context/WrapperListener",
+	mapper.addRule(prefix + "/WrapperListener",
 		       mapper.methodSetter("addWrapperListener", 0));
-
-	mapper.addRule("Server/Engine/Host/Listener", mapper.objectCreate
-		       (null, "className"));
-	mapper.addRule("Server/Engine/Host/Listener", mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Listener", mapper.addChild
-		       ("addLifecycleListener",
-			"org.apache.catalina.LifecycleListener"));
-
-	mapper.addRule("Server/Engine/Host/Loader", mapper.objectCreate
-		       ("org.apache.catalina.core.StandardLoader",
-			"className"));
-	mapper.addRule("Server/Engine/Host/Loader", mapper.setProperties());
-	mapper.addRule("Engine/Host/Loader", mapper.addChild
-		       ("setLoader", "org.apache.catalina.Loader"));
-
-	mapper.addRule("Server/Engine/Host/Logger", mapper.objectCreate
-		       (null, "className"));
-	mapper.addRule("Server/Engine/Host/Logger", mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Logger", mapper.addChild
-		       ("setLogger", "org.apache.catalina.Logger"));
-
-	mapper.addRule("Server/Engine/Host/Manager", mapper.objectCreate
-		       ("org.apache.catalina.session.StandardManager",
-			"className"));
-	mapper.addRule("Server/Engine/Host/Manager", mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Manager", mapper.addChild
-		       ("setManager", "org.apache.catalina.Manager"));
-
-	mapper.addRule("Server/Engine/Host/Realm", mapper.objectCreate
-		       (null, "className"));
-	mapper.addRule("Server/Engine/Host/Realm", mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Realm", mapper.addChild
-		       ("setRealm", "org.apache.catalina.Realm"));
-
-	mapper.addRule("Server/Engine/Host/Resources", mapper.objectCreate
-		       ("org.apache.catalina.core.StandardResources",
-			"className"));
-	mapper.addRule("Server/Engine/Host/Resources", mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Resources", mapper.addChild
-		       ("setResources", "org.apache.catalina.Resources"));
-
-	mapper.addRule("Server/Engine/Host/Valve", mapper.objectCreate
-		       (null, "className"));
-	mapper.addRule("Server/Engine/Host/Valve", mapper.setProperties());
-	mapper.addRule("Server/Engine/Host/Valve", mapper.addChild
-		       ("addValve", "org.apache.catalina.Valve"));
-
-	mapper.addRule("Server/Engine/Listener", mapper.objectCreate
-		       (null, "className"));
-	mapper.addRule("Server/Engine/Listener", mapper.setProperties());
-	mapper.addRule("Server/Engine/Listener", mapper.addChild
-		       ("addLifecycleListener",
-			"org.apache.catalina.LifecycleListener"));
-
-	mapper.addRule("Server/Engine/Loader", mapper.objectCreate
-		       ("org.apache.catalina.core.StandardLoader",
-			"className"));
-	mapper.addRule("Server/Engine/Loader", mapper.setProperties());
-	mapper.addRule("Server/Engine/Loader", mapper.addChild
-		       ("setLoader", "org.apache.catalina.Loader"));
-
-	mapper.addRule("Server/Engine/Logger", mapper.objectCreate
-		       (null, "className"));
-	mapper.addRule("Server/Engine/Logger", mapper.setProperties());
-	mapper.addRule("Server/Engine/Logger", mapper.addChild
-		       ("setLogger", "org.apache.catalina.Logger"));
-
-	mapper.addRule("Server/Engine/Manager", mapper.objectCreate
-		       ("org.apache.catalina.session.StandardManager",
-			"className"));
-	mapper.addRule("Server/Engine/Manager", mapper.setProperties());
-	mapper.addRule("Server/Engine/Manager", mapper.addChild
-		       ("setManager", "org.apache.catalina.Manager"));
-
-	mapper.addRule("Server/Engine/Realm", mapper.objectCreate
-		       (null, "className"));
-	mapper.addRule("Server/Engine/Realm", mapper.setProperties());
-	mapper.addRule("Server/Engine/Realm", mapper.addChild
-		       ("setRealm", "org.apache.catalina.Realm"));
-
-	mapper.addRule("Server/Engine/Resources", mapper.objectCreate
-		       ("org.apache.catalina.core.StandardResources",
-			"className"));
-	mapper.addRule("Server/Engine/Resources", mapper.setProperties());
-	mapper.addRule("Server/Engine/Resources", mapper.addChild
-		       ("setResources", "org.apache.catalina.Resources"));
-
-	mapper.addRule("Server/Engine/Valve", mapper.objectCreate
-		       (null, "className"));
-	mapper.addRule("Server/Engine/Valve", mapper.setProperties());
-	mapper.addRule("Server/Engine/Valve", mapper.addChild
-		       ("addValve", "org.apache.catalina.Valve"));
-
-	return (mapper);
 
     }
 
@@ -585,8 +625,10 @@ public class Catalina {
 	    } catch (LifecycleException e) {
 	        System.out.println("Catalina.start: " + e);
 		e.printStackTrace(System.out);
-                System.out.println("----- Root Cause -----");
-                e.getThrowable().printStackTrace(System.out);
+                if (e.getThrowable() != null) {
+                    System.out.println("----- Root Cause -----");
+                    e.getThrowable().printStackTrace(System.out);
+                }
 	    }
 	}
 
@@ -601,8 +643,10 @@ public class Catalina {
 	    } catch (LifecycleException e) {
 	        System.out.println("Catalina.stop: " + e);
 	        e.printStackTrace(System.out);
-                System.out.println("----- Root Cause -----");
-                e.getThrowable().printStackTrace(System.out);
+                if (e.getThrowable() != null) {
+                    System.out.println("----- Root Cause -----");
+                    e.getThrowable().printStackTrace(System.out);
+                }
 	    }
 	}
 
@@ -738,3 +782,49 @@ final class LifecycleListenerAction extends XmlAction {
 
 
 }
+
+
+/**
+ * Class that sets the parent class loader for the top class on the stack.
+ */
+
+final class SetParentClassLoaderAction extends XmlAction {
+
+
+    /**
+     * Construct a new action.
+     *
+     * @param parentClassLoader The new parent class loader
+     */
+    public SetParentClassLoaderAction(ClassLoader parentClassLoader) {
+
+        this.parentClassLoader = parentClassLoader;
+
+    }
+
+
+    /**
+     * The parent class loader to be set.
+     */
+    private ClassLoader parentClassLoader = null;
+
+
+    /**
+     * Add the requested parent class loader
+     */
+    public void start(SaxContext context) throws Exception {
+
+	if (context.getDebug() >= 1)
+	    context.log("Setting parent class loader");
+
+	// Set the parent class loader for this Container
+	Stack stack = context.getObjectStack();
+        Container top = (Container) stack.peek();
+        top.setParentClassLoader(parentClassLoader);
+
+    }
+
+
+}
+
+

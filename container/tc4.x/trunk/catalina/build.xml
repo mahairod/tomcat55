@@ -48,7 +48,7 @@
 
     <!-- Shared Extensions -->
     <!--   All applications need the servlet API classes -->
-    <copyfile src="${servlet.jar}" dest="${catalina.build}/lib/servlet.jar"/>
+    <copyfile src="${servlet.jar}" dest="${catalina.build}/bin/servlet.jar"/>
 
     <!-- Server Components -->
     <!--   Catalina needs Xerces XML parser -->

@@ -70,6 +70,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import javax.servlet.ServletContext;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -731,6 +733,7 @@ public final class StandardLoader
      */
     private void setClassPath() {
 
+        // Validate our current state information
 	if (!(container instanceof Context))
 	    return;
 	ServletContext servletContext =
@@ -738,17 +741,37 @@ public final class StandardLoader
 	if (servletContext == null)
 	    return;
 
+        // Assemble the class path information from our class loader chain
 	StringBuffer classpath = new StringBuffer();
-	for (int i = 0; i < repositories.length; i++) {
-	    if (i > 0)
-		classpath.append(File.pathSeparator);
-            String repository = repositories[i];
-            if (repository.startsWith("file:"))
-                repository = repository.substring(5);
-            if (repository.endsWith("/"))
-                repository = repository.substring(0, repository.length() - 1);
-            classpath.append(repository);
-	}
+        ClassLoader loader = getClassLoader();
+        int layers = 0;
+        int n = 0;
+        while ((layers < 3) && (loader != null)) {
+            if (!(loader instanceof URLClassLoader))
+                break;
+            URL repositories[] =
+                ((URLClassLoader) loader).getURLs();
+            for (int i = 0; i < repositories.length; i++) {
+                String repository = repositories[i].toString();
+                if (repository.startsWith("file://"))
+                    repository = repository.substring(7);
+                else if (repository.startsWith("file:"))
+                    repository = repository.substring(5);
+                else
+                    continue;
+                if (repository.endsWith("/"))
+                    repository =
+                        repository.substring(0, repository.length() - 1);
+                if (n > 0)
+                    classpath.append(File.pathSeparator);
+                classpath.append(repository);
+                n++;
+            }
+            loader = loader.getParent();
+            layers++;
+        }
+
+        // Store the assembled class path as a servlet context attribute
 	servletContext.setAttribute(Globals.CLASS_PATH_ATTR,
 				    classpath.toString());
 

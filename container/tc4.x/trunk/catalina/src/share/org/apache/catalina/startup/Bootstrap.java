@@ -113,7 +113,7 @@ public final class Bootstrap {
 	    Object startupInstance = startupClass.newInstance();
 
             // Set the shared extensions class loader
-            String methodName = "setSharedLoader";
+            String methodName = "setParentClassLoader";
             Class paramTypes[] = new Class[1];
             paramTypes[0] = Class.forName("java.lang.ClassLoader");
             Object paramValues[] = new Object[1];

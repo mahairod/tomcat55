@@ -245,6 +245,12 @@ public abstract class ContainerBase
 
 
     /**
+     * The parent class loader to be configured when we install a Loader.
+     */
+    private ClassLoader parentClassLoader = null;
+
+
+    /**
      * The Realm with which this Container is associated.
      */
     protected Realm realm = null;
@@ -622,6 +628,41 @@ public abstract class ContainerBase
 	Container oldParent = this.parent;
 	this.parent = container;
 	support.firePropertyChange("parent", oldParent, this.parent);
+
+    }
+
+
+    /**
+     * Return the parent class loader (if any) for this web application.
+     * This call is meaningful only <strong>after</strong> a Loader has
+     * been configured.
+     */
+    public ClassLoader getParentClassLoader() {
+
+        if (parentClassLoader != null)
+            return (parentClassLoader);
+        if (parent != null)
+            return (parent.getParentClassLoader());
+        return (ClassLoader.getSystemClassLoader());
+
+    }
+
+
+    /**
+     * Set the parent class loader (if any) for this web application.
+     * This call is meaningful only <strong>before</strong> a Loader has
+     * been configured, and the specified value (if non-null) should be
+     * passed as an argument to the class loader constructor.
+     *
+     *
+     * @param parent The new parent class loader
+     */
+    public void setParentClassLoader(ClassLoader parent) {
+
+        ClassLoader oldParentClassLoader = this.parentClassLoader;
+        this.parentClassLoader = parent;
+        support.firePropertyChange("parentClassLoader", oldParentClassLoader,
+                                   this.parentClassLoader);
 
     }
 

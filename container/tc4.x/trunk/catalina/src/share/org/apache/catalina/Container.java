@@ -273,6 +273,23 @@ public interface Container {
 
 
     /**
+     * Return the parent class loader (if any) for web applications.
+     */
+    public ClassLoader getParentClassLoader();
+
+
+    /**
+     * Set the parent class loader (if any) for web applications.
+     * This call is meaningful only <strong>before</strong> a Loader has
+     * been configured, and the specified value (if non-null) should be
+     * passed as an argument to the class loader constructor.
+     *
+     * @param parent The new parent class loader
+     */
+    public void setParentClassLoader(ClassLoader parent);
+
+
+    /**
      * Return the Realm with which this Container is associated.  If there is
      * no associated Realm, return the Realm associated with our parent
      * Container (if any); otherwise return <code>null</code>.

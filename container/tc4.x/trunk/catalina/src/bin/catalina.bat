@@ -52,7 +52,8 @@ set _RUNJAVA="%JAVA_HOME%\bin\java"
 
 rem ----- Set Up The Runtime Classpath ----------------------------------------
 
-set CP=%CATALINA_HOME%\bin\bootstrap.jar
+set CP=%CATALINA_HOME%\bin\bootstrap.jar;%CATALINA_HOME%\bin\servlet.jar
+goto installClasspath
 rem Try to determine if CATALINA_HOME contains spaces
 if exist %CATALINA_HOME%\server\catalina.jar goto dynClasspath
 echo Your CATALINA_HOME appears to contain spaces.

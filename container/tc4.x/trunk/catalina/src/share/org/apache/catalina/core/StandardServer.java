@@ -70,13 +70,12 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import org.apache.catalina.Connector;
-import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
+import org.apache.catalina.Service;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
@@ -95,18 +94,6 @@ public final class StandardServer
 
 
     // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The set of Connectors associated with this Server.
-     */
-    private Connector connectors[] = new Connector[0];
-
-
-    /**
-     * The set of Containers associated with this Server.
-     */
-    private Container containers[] = new Container[0];
 
 
     /**
@@ -129,6 +116,12 @@ public final class StandardServer
 
 
     /**
+     * The set of Services associated with this Server.
+     */
+    private Service services[] = new Service[0];
+
+
+    /**
      * The shutdown command string we are looking for.
      */
     private String shutdown = "SHUTDOWN";
@@ -148,6 +141,18 @@ public final class StandardServer
 
 
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return descriptive information about this Server implementation and
+     * the corresponding version number, in the format
+     * <code>&lt;description&gt;/&lt;version&gt;</code>.
+     */
+    public String getInfo() {
+
+	return (info);
+
+    }
 
 
     /**
@@ -198,52 +203,25 @@ public final class StandardServer
 
 
     /**
-     * Add a new Connector to the set of defined Connectors.  The newly
-     * added Connector will have no associated Container until a later call
-     * to <code>addContainer()</code> is made.
+     * Add a new Service to the set of defined Services.
      *
-     * @param connector The connector to be added
+     * @param service The Service to be added
      */
-    public void addConnector(Connector connector) {
+    public void addService(Service service) {
 
-	connector.setContainer(null);
-	synchronized (connectors) {
-	    Connector results[] = new Connector[connectors.length + 1];
-	    for (int i = 0; i < connectors.length; i++)
-		results[i] = connectors[i];
-	    results[connectors.length] = connector;
-	    connectors = results;
-	}
-	    
-    }
-
-
-    /**
-     * Add a new Container to the set of defined Containers, and assign this
-     * Container to all defined Connectors that have not yet been associated
-     * with a Container will be associated with this one.
-     *
-     * @param container The container to be added
-     *
-     * @exception IllegalStateException if there are no unassociated
-     *  Connectors to associate with (implying calls out of order)
-     */
-    public void addContainer(Container container) {
-
-	synchronized (containers) {
-	    Container results[] = new Container[containers.length + 1];
-	    for (int i = 0; i < containers.length; i++)
-		results[i] = containers[i];
-	    results[containers.length] = container;
-	    containers = results;
-	}
-
-	synchronized (connectors) {
-	    for (int i = 0; i < connectors.length; i++) {
-		if (connectors[i].getContainer() == null)
-		    connectors[i].setContainer(container);
-	    }
-	}
+	synchronized (services) {
+	    Service results[] = new Service[services.length + 1];
+            System.arraycopy(services, 0, results, 0, services.length);
+            results[services.length] = service;
+            services = results;
+            if (started && (service instanceof Lifecycle)) {
+                try {
+                    ((Lifecycle) service).start();
+                } catch (LifecycleException e) {
+                    ;
+                }
+            }
+        }
 
     }
 
@@ -336,13 +314,48 @@ public final class StandardServer
 
 
     /**
-     * Return descriptive information about this Server implementation and
-     * the corresponding version number, in the format
-     * <code>&lt;description&gt;/&lt;version&gt;</code>.
+     * Return the set of Services defined within this Server.
      */
-    public String getInfo() {
+    public Service[] findServices() {
 
-	return (info);
+        return (services);
+
+    }
+
+
+    /**
+     * Remove the specified Service from the set associated from this
+     * Server.
+     *
+     * @param service The Service to be removed
+     */
+    public void removeService(Service service) {
+
+        synchronized (services) {
+            int j = -1;
+            for (int i = 0; i < services.length; i++) {
+                if (service == services[i]) {
+                    j = i;
+                    break;
+                }
+            }
+            if (j < 0)
+                return;
+            if (services[j] instanceof Lifecycle) {
+                try {
+                    ((Lifecycle) services[j]).stop();
+                } catch (LifecycleException e) {
+                    ;
+                }
+            }
+            int k = 0;
+            Service results[] = new Service[services.length - 1];
+            for (int i = 0; i < services.length; i++) {
+                if (i != j)
+                    results[k++] = services[i];
+            }
+            services = results;
+        }
 
     }
 
@@ -434,19 +447,11 @@ public final class StandardServer
 	lifecycle.fireLifecycleEvent(START_EVENT, null);
 	started = true;
 
-	// Start our defined Containers first
-	synchronized (containers) {
-	    for (int i = 0; i < containers.length; i++) {
-		if (containers[i] instanceof Lifecycle)
-		    ((Lifecycle) containers[i]).start();
-	    }
-	}
-
-	// Start our defined Connectors second
-	synchronized (connectors) {
-	    for (int i = 0; i < connectors.length; i++) {
-		if (connectors[i] instanceof Lifecycle)
-		    ((Lifecycle) connectors[i]).start();
+	// Start our defined Services
+	synchronized (services) {
+	    for (int i = 0; i < services.length; i++) {
+		if (services[i] instanceof Lifecycle)
+		    ((Lifecycle) services[i]).start();
 	    }
 	}
 
@@ -472,16 +477,10 @@ public final class StandardServer
 	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
 	started = false;
 
-	// Stop our defined Connectors first
-	for (int i = 0; i < connectors.length; i++) {
-	    if (connectors[i] instanceof Lifecycle)
-		((Lifecycle) connectors[i]).stop();
-	}
-
-	// Stop our defined Containers second
-	for (int i = 0; i < containers.length; i++) {
-	    if (containers[i] instanceof Lifecycle)
-		((Lifecycle) containers[i]).stop();
+	// Stop our defined Services
+	for (int i = 0; i < services.length; i++) {
+	    if (services[i] instanceof Lifecycle)
+		((Lifecycle) services[i]).stop();
 	}
 
     }

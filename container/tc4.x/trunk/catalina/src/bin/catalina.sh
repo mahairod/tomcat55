@@ -33,11 +33,11 @@ fi
 
 # ----- Set Up The System Classpath -------------------------------------------
 
-CP=$CATALINA_HOME/bin/bootstrap.jar
+CP=$CATALINA_HOME/bin/bootstrap.jar:$CATALINA_HOME/bin/servlet.jar
 
-for i in $CATALINA_HOME/lib/*.jar ; do
-  CP=$CP:$i
-done
+#for i in $CATALINA_HOME/lib/*.jar ; do
+#  CP=$CP:$i
+#done
 
 if [ -f $JAVA_HOME/lib/tools.jar ] ; then
   CP=$CP:$JAVA_HOME/lib/tools.jar

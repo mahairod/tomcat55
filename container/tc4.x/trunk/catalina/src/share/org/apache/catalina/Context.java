@@ -212,26 +212,6 @@ public interface Context extends Container {
 
 
     /**
-     * Return the parent class loader (if any) for this web application.
-     * This call is meaningful only <strong>after</strong> a Loader has
-     * been configured.
-     */
-    public ClassLoader getParentClassLoader();
-
-
-    /**
-     * Set the parent class loader (if any) for this web application.
-     * This call is meaningful only <strong>before</strong> a Loader has
-     * been configured, and the specified value (if non-null) should be
-     * passed as an argument to the class loader constructor.
-     *
-     *
-     * @param parent The new parent class loader
-     */
-    public void setParentClassLoader(ClassLoader parent);
-
-
-    /**
      * Return the context path for this web application.
      */
     public String getPath();
