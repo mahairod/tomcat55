@@ -788,6 +788,32 @@ public class WARDirContext extends BaseDirContext {
                 ZipEntry entry = (ZipEntry) entryList.nextElement();
                 String name = normalize(entry);
                 int pos = name.lastIndexOf('/');
+                // Check that parent entries exist and, if not, create them.
+                // This fixes a bug for war files that don't record separate
+                // zip entries for the directories.
+                int currentPos = -1;
+                int lastPos = 0;
+                while ((currentPos = name.indexOf('/', lastPos)) != -1) {
+                    Name parentName = new CompositeName(name.substring(0, lastPos));
+                    Name childName = new CompositeName(name.substring(0, currentPos));
+                    String entryName = name.substring(lastPos, currentPos);
+                    // Parent should have been created in last cycle through
+                    // this loop
+                    Entry parent = treeLookup(parentName);
+                    Entry child = treeLookup(childName);
+                    if (child == null) {
+                        // Create a new entry for missing entry and strip off
+                        // the leading '/' character and appended on by the
+                        // normalize method and add '/' character to end to
+                        // signify that it is a directory entry
+                        String zipName = name.substring(1, currentPos) + "/";
+                        child = new Entry(entryName, new ZipEntry(zipName));
+                        if (parent != null)
+                            parent.addChild(child);
+                    }
+                    // Increment lastPos
+                    lastPos = currentPos + 1;
+                }
                 String entryName = name.substring(pos + 1, name.length());
                 Name compositeName = new CompositeName(name.substring(0, pos));
                 Entry parent = treeLookup(compositeName);
