@@ -447,8 +447,10 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 	    path = path.substring(0,hashP);
 	}
 	StringBuffer sb = new StringBuffer(path);
-	sb.append(";jsessionid=");
-	sb.append(sessionId);
+	if( sb.length() > 0) { // Can't have jsessionid first.
+	    sb.append(";jsessionid=");
+	    sb.append(sessionId);
+	}
 	if(anchor != null) 
 	    sb.append(anchor);
 	if (query != null)
