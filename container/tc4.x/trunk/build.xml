@@ -456,8 +456,16 @@
       <param name="destfile" value="${commons-beanutils.jar}"/>
     </antcall>
     <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-fileupload.loc}"/>
+      <param name="destfile" value="${commons-fileupload.jar}"/>
+    </antcall>
+    <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-collections.loc}"/>
       <param name="destfile" value="${commons-collections.jar}"/>
+    </antcall>
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${tyrex.loc}"/>
+      <param name="destfile" value="${tyrex.jar}"/>
     </antcall>
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-digester.loc}"/>
