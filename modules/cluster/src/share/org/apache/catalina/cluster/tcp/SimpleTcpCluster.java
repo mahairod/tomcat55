@@ -96,6 +96,7 @@ import org.apache.catalina.cluster.io.ListenCallback;
 
 import org.apache.catalina.cluster.SessionMessage;
 import org.apache.catalina.cluster.session.ReplicationStream;
+import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.session.SimpleTcpReplicationManager;
 import org.apache.catalina.cluster.Constants;
 
@@ -670,15 +671,14 @@ public class SimpleTcpCluster
                     java.util.Iterator i = managers.keySet().iterator();
                     while ( i.hasNext() ) {
                         String key = (String)i.next();
-                        SimpleTcpReplicationManager mgr = (SimpleTcpReplicationManager) managers.get(key);
+                        ClusterManager mgr = (ClusterManager) managers.get(key);
                         if (mgr != null)
                             mgr.messageDataReceived(msg);
                         else
                             log.warn("Context manager doesn't exist:" + key);
                     }//while
                 } else {
-                    SimpleTcpReplicationManager mgr = (
-                        SimpleTcpReplicationManager) managers.get(name);
+                    ClusterManager mgr = (ClusterManager) managers.get(name);
                     if (mgr != null)
                         mgr.messageDataReceived(msg);
                     else
