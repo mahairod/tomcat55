@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -81,6 +77,7 @@ import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.modeler.Registry;
+import org.apache.commons.modeler.modules.MbeansSource;
 import java.io.File;
 import java.util.List;
 
@@ -592,8 +589,16 @@ public class StandardEngine
     
     private void readEngineMbeans() {
         try {
-            mbeans=Registry.getRegistry().loadMBeans(new File(mbeansFile));
-            Registry.getRegistry().invoke(mbeans, "init", false);
+            MbeansSource mbeansMB=new MbeansSource();
+            File mbeansF=new File( mbeansFile );
+            mbeansMB.setSource(mbeansF);
+            
+            Registry.getRegistry().registerComponent(mbeansMB, 
+                    domain + ":type=MbeansFile", null);
+            mbeansMB.load();
+            mbeansMB.init();
+            mbeansMB.setRegistry(Registry.getRegistry());
+            mbeans=mbeansMB.getMBeans();
             
         } catch( Throwable t ) {
             log.error( "Error loading " + mbeansFile, t );
