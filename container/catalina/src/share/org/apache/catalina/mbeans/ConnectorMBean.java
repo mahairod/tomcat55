@@ -63,7 +63,6 @@
 
 package org.apache.catalina.mbeans;
 
-import java.lang.reflect.Method;
 import javax.management.Attribute;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -71,9 +70,7 @@ import javax.management.MBeanException;
 import javax.management.ReflectionException;
 import javax.management.RuntimeOperationsException;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
-import org.apache.catalina.Connector;
-import org.apache.catalina.Service;
-import org.apache.commons.modeler.BaseModelMBean;
+
 import org.apache.coyote.ProtocolHandler;
 import org.apache.coyote.tomcat5.CoyoteConnector;
 import org.apache.tomcat.util.IntrospectionUtils;

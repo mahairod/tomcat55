@@ -67,21 +67,14 @@ package org.apache.catalina.core;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.StringTokenizer;
+
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
-import javax.naming.StringRefAddr;
-import org.apache.naming.NamingContext;
-import org.apache.naming.ContextBindings;
-import org.apache.naming.ContextAccessController;
-import org.apache.naming.EjbRef;
-import org.apache.naming.ResourceRef;
-import org.apache.naming.ResourceEnvRef;
-import org.apache.naming.ResourceLinkRef;
-import org.apache.naming.TransactionRef;
+
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerEvent;
 import org.apache.catalina.ContainerListener;
@@ -99,9 +92,16 @@ import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.util.StringManager;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.naming.ContextAccessController;
+import org.apache.naming.ContextBindings;
+import org.apache.naming.EjbRef;
+import org.apache.naming.NamingContext;
+import org.apache.naming.ResourceEnvRef;
+import org.apache.naming.ResourceLinkRef;
+import org.apache.naming.ResourceRef;
+import org.apache.naming.TransactionRef;
 
 
 /**

@@ -65,14 +65,9 @@
 package org.apache.catalina.core;
 
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Locale;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletResponse;
 import javax.servlet.ServletResponseWrapper;
-import org.apache.catalina.Response;
-import org.apache.catalina.connector.ResponseFacade;
+
 import org.apache.catalina.util.StringManager;
 
 

@@ -64,9 +64,8 @@
 
 package org.apache.naming;
 
-import java.util.Hashtable;
-import javax.naming.Reference;
 import javax.naming.Context;
+import javax.naming.Reference;
 import javax.naming.StringRefAddr;
 
 /**

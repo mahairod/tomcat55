@@ -67,20 +67,18 @@ package org.apache.catalina.realm;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.security.Principal;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.security.cert.X509Certificate;
-import java.io.IOException;
-import java.util.Set;
-import java.util.List;
 import java.util.ArrayList;
 
+import javax.management.MBeanRegistration;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.management.ObjectName;
-import javax.management.MBeanServer;
-import javax.management.MBeanRegistration;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -91,18 +89,13 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
-import org.apache.catalina.core.StandardEngine;
-import org.apache.catalina.core.StandardHost;
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.ContainerBase;
-
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
-
 import org.apache.catalina.util.HexUtils;
 import org.apache.catalina.util.LifecycleSupport;
-import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.MD5Encoder;
+import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.modeler.Registry;

@@ -66,15 +66,15 @@ package org.apache.catalina.loader;
 
 import java.io.File;
 import java.io.FilePermission;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
-import java.net.URLStreamHandlerFactory;
 import java.net.URLStreamHandler;
+import java.net.URLStreamHandlerFactory;
 import java.security.AccessControlException;
 import java.security.CodeSource;
 import java.security.Permission;
@@ -85,9 +85,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.jar.JarFile;
-import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+
 import org.apache.naming.JndiPermission;
 
 

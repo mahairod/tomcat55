@@ -62,11 +62,12 @@ package org.apache.catalina.core;
 
 
 import java.io.IOException;
-import java.net.URL;
 import java.lang.reflect.Method;
-import javax.management.ObjectName;
+import java.net.URL;
+
 import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
@@ -74,7 +75,6 @@ import org.apache.catalina.Deployer;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Valve;
-import org.apache.catalina.Realm;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.modeler.Registry;
 

@@ -66,12 +66,12 @@ package org.apache.catalina.connector;
 
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Locale;
-import javax.servlet.ServletException;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletResponse;
+
 import org.apache.catalina.Response;
 
 

@@ -62,13 +62,11 @@ package org.apache.catalina.startup;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import org.apache.catalina.loader.StandardClassLoader;
+
 import org.apache.catalina.security.SecurityClassLoad;
 
 

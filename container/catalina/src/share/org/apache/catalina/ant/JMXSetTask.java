@@ -63,9 +63,7 @@
 package org.apache.catalina.ant;
 
 
-import java.net.URLEncoder;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
 
 /**

@@ -68,7 +68,6 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
-import java.util.List;
 
 import org.apache.catalina.deploy.SecurityConstraint;
 /**
