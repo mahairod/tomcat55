@@ -46,7 +46,7 @@
     <p>
       <b>Tomcat 4.1.x</b> is no longer actively developed.  It is maintained to address
       only showstopper, security, and Servlet Specification compliance issues.  Maintenance
-      for Tomcat 4.1.x will likely cease once a stable release or two of Tomcat 5.1 are out.
+      for Tomcat 4.1.x will likely cease once a stable release or two of Tomcat 5.5 are out.
       Users of Tomcat 4.1.x are strongly encouraged to upgrade to the latest stable Tomcat
       5.0 release.
     </p>
