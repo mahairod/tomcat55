@@ -1,7 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
  *
  * ====================================================================
  *
@@ -413,7 +410,8 @@ public final class ContextConfig
                 Pipeline pipeline = ((ContainerBase) context).getPipeline();
                 if (pipeline != null) {
                     ((ContainerBase) context).addValve(authenticator);
-                    log.info(sm.getString("contextConfig.authenticatorConfigured",
+                    if( log.isDebugEnabled() )
+                        log.debug(sm.getString("contextConfig.authenticatorConfigured",
                                      loginConfig.getAuthMethod()));
                 }
             }
@@ -491,6 +489,7 @@ public final class ContextConfig
                     ((ContainerBase) context).addValve(certificates);
                     log.error(sm.getString
                         ("contextConfig.certificatesConfig.added"));
+                    
                 }
             }
         } catch (Throwable t) {
@@ -565,7 +564,6 @@ public final class ContextConfig
      * web application deployment descriptor (web.xml).
      */
     private static Digester createWebDigester() {
-        long t1=System.currentTimeMillis();
         URL url = null;
         Digester webDigester = new Digester();
         webDigester.setNamespaceAware(xmlNamespaceAware);
@@ -594,8 +592,6 @@ public final class ContextConfig
 
         webDigester.setEntityResolver(webEntityResolver);
         webDigester.addRuleSet(new WebRuleSet());
-        long t2=System.currentTimeMillis();
-        //log.info("Create web digester " + ( t2-t1));
         return (webDigester);
     }
 
@@ -1071,14 +1067,15 @@ public final class ContextConfig
             // FIXME - Closing the JAR file messes up the class loader???
             //            jarFile.close();
         } catch (Exception e) {
+            // XXX Why do we wrap it ? The signature is 'throws Exception'
             if (name == null) {
                 throw new ServletException
                     (sm.getString("contextConfig.tldJarException",
-                                  resourcePath), e);
+                                  resourcePath, context.getPath()), e);
             } else {
                 throw new ServletException
                     (sm.getString("contextConfig.tldEntryException",
-                                  name, resourcePath), e);
+                                  name, resourcePath, context.getPath()), e);
             }
         } finally {
             if (inputStream != null) {
@@ -1156,9 +1153,9 @@ public final class ContextConfig
             inputStream.close();
             inputStream = null;
         } catch (Exception e) {
-            throw new ServletException
-                (sm.getString("contextConfig.tldFileException", resourcePath),
-                 e);
+             throw new ServletException
+                 (sm.getString("contextConfig.tldFileException", resourcePath, context.getPath()),
+                  e);
         } finally {
             if (inputStream != null) {
                 try {
