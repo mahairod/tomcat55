@@ -93,7 +93,7 @@ import java.util.jar.Manifest;
  * Subclass implementation of <b>java.net.URLClassLoader</b> that knows how
  * to load classes from disk directories, as well as local and remote JAR
  * files.  It also implements the <code>Reloader</code> interface, to provide
- * automatic reloading support to <code>StandardLoader</code>.
+ * automatic reloading support to the associated loader.
  * <p>
  * In all cases, URLs must conform to the contract specified by
  * <code>URLClassLoader</code> - any URL that ends with a "/" character is

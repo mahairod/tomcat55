@@ -68,7 +68,7 @@ package org.apache.catalina.loader;
 /**
  * Internal interface that <code>ClassLoader</code> implementations may
  * optionally implement to support the auto-reload functionality of
- * <code>StandardLoader</code>.
+ * the classloader associated with the context.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$

@@ -855,7 +855,7 @@ final class CopyParentClassLoaderAction extends XmlAction {
 
 
 /**
- * Class that creates a new StandardLoader instance, with the parent class
+ * Class that creates a new loader instance, with the parent class
  * loader associated with the top object on the stack (which must be a
  * Container), and pushes it on to the stack.
  */
