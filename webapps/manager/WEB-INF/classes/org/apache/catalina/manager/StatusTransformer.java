@@ -82,9 +82,9 @@ public class StatusTransformer {
      * Write the header body. XML output doesn't bother
      * to output this stuff, since it's just title.
      * 
-     * @param PrintWriter writer
-     * @param Object[] args
-     * @param int mode
+     * @param writer The output writer
+     * @param args What to write
+     * @param mode 0 means write 
      */
     public static void writeBody(PrintWriter writer, Object[] args, int mode) {
         if (mode == 0){
@@ -97,9 +97,9 @@ public class StatusTransformer {
     /**
      * Write the manager webapp information.
      * 
-     * @param PrintWriter writer
-     * @param Object[] args
-     * @param int mode
+     * @param writer The output writer
+     * @param args What to write
+     * @param mode 0 means write
      */
     public static void writeManager(PrintWriter writer, Object[] args, 
                                     int mode) {
@@ -748,7 +748,7 @@ public class StatusTransformer {
      * in HTML.  This avoids potential attacks caused by including JavaScript
      * codes in the request URL that is often reported in error messages.
      *
-     * @param message The message string to be filtered
+     * @param obj The message string to be filtered
      */
     public static String filter(Object obj) {
 

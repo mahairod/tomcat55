@@ -611,8 +611,6 @@ public final class JDBCAccessLogValve
 
     /**
      * Close the specified database connection.
-     *
-     * @param dbConnection The connection to be closed
      */
     protected void close() {
 

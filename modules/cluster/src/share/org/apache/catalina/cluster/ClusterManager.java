@@ -54,7 +54,7 @@ public interface ClusterManager extends Manager {
     * When the manager expires session not tied to a request.
     * The cluster will periodically ask for a list of sessions
     * that should expire and that should be sent across the wire.
-    * @return
+    * @return String[] The invalidated sessions
     */
    public String[] getInvalidatedSessions();
    

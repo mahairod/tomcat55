@@ -73,7 +73,7 @@ public class McastService implements MembershipService,MembershipListener {
      * 5. msgFrequency - the frequency of sending messages<BR>
      * 6. tcpListenPort - the port this member listens to<BR>
      * 7. tcpListenHost - the bind address of this member<BR>
-     * @exception throws a java.lang.IllegalArgumentException if a property is missing.
+     * @exception java.lang.IllegalArgumentException if a property is missing.
      */
     public void setProperties(Properties properties) {
         hasProperty(properties,"mcastPort");
@@ -87,7 +87,6 @@ public class McastService implements MembershipService,MembershipListener {
 
     /**
      * Return the properties, see setProperties
-     * @return
      */
     public Properties getProperties() {
         return properties;
@@ -103,7 +102,6 @@ public class McastService implements MembershipService,MembershipListener {
     
     /**
      * Sets the local member properties for broadcasting
-     * @return
      */
     public void setLocalMemberProperties(String listenHost, int listenPort) {
         properties.setProperty("tcpListenHost",listenHost);
@@ -135,8 +133,8 @@ public class McastService implements MembershipService,MembershipListener {
 
     /**
      * Check if a required property is available.
-     * @param properties
-     * @param name
+     * @param properties The set of properties
+     * @param name The property to check for
      */
     protected void hasProperty(Properties properties, String name){
         if ( properties.getProperty(name)==null) throw new IllegalArgumentException("Required property \""+name+"\" is missing.");
@@ -217,7 +215,6 @@ public class McastService implements MembershipService,MembershipListener {
 
     /**
      * Return all the members
-     * @return
      */
     public Member[] getMembers() {
         if ( impl == null || impl.membership == null ) return null;
@@ -226,7 +223,7 @@ public class McastService implements MembershipService,MembershipListener {
     /**
      * Add a membership listener, this version only supports one listener per service,
      * so calling this method twice will result in only the second listener being active.
-     * @param listener
+     * @param listener The listener
      */
     public void addMembershipListener(MembershipListener listener) {
         this.listener = listener;
@@ -244,7 +241,7 @@ public class McastService implements MembershipService,MembershipListener {
 
     /**
      * Callback from the impl when a new member has been received
-     * @param member
+     * @param member The member
      */
     public void memberDisappeared(Member member)
     {
@@ -253,8 +250,8 @@ public class McastService implements MembershipService,MembershipListener {
 
     /**
      * Simple test program
-     * @param args
-     * @throws Exception
+     * @param args Command-line arguments
+     * @throws Exception If an error occurs
      */
     public static void main(String args[]) throws Exception {
         log.info("Usage McastService hostname tcpport");
