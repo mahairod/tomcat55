@@ -1,0 +1,33 @@
+<!-- 
+    Author:  dIon Gillard (dion@apache.org)
+    Version: $Id$
+
+    alter this file to add new custom tests 
+
+    There is an entity defined here called 'custom-tests' which has a list of
+    top-level elements for the tests. These top-level elements will be defined
+    in the resulting DTD to appear as children of the <validate> element in 
+    a Latka Suite
+
+    Each custom test top-level element should be entered, with a vertical
+    bar ( '|' ) separating each.
+-->
+
+<!--top level element only, e.g.
+    the vertical bar is VERY important
+### example only
+    custom-tests " | myvalidator" >
+
+    default is no custom tests i.e. blank
+ -->
+<!ENTITY % custom-tests "" >
+
+<!-- 
+now for custom test element and attribute definitions, e.g.
+
+### example only
+<!ELEMENT myvalidator EMPTY>
+<!ATTLIST myvalidator name  CDATA #REQUIRED
+                      value CDATA #IMPLIED
+                      label CDATA #IMPLIED>
+-->

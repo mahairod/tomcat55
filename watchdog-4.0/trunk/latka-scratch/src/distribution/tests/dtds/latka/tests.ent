@@ -1,0 +1,61 @@
+
+<!ENTITY % custom-tests.ent SYSTEM "custom-tests.ent">
+%custom-tests.ent;
+
+<!-- all Latka test top level elements are here -->
+<!ENTITY % tests "byteLength | cookie | goldenFile | maxRequestTime | regexp | 
+                  responseHeader | statusCode | statusText | xpath">
+
+<!-- null HTTP response bodies will have a byteLength of -1 -->
+<!ELEMENT byteLength EMPTY>
+<!ATTLIST byteLength min   CDATA "0"
+                      max   CDATA #IMPLIED
+                      label CDATA #IMPLIED>
+
+<!-- start cookie validator-->
+<!ELEMENT cookie EMPTY>
+<!ATTLIST cookie name  CDATA #REQUIRED
+                 value CDATA #IMPLIED
+                 cond       (true | false) "true"
+                 label CDATA #IMPLIED>
+<!-- end cookie validator -->
+
+<!ELEMENT goldenFile EMPTY>
+<!ATTLIST goldenFile fileName         CDATA          #REQUIRED
+                      ignoreWhitespace (true | false) "false"
+                      label            CDATA          #IMPLIED>
+
+<!ELEMENT maxRequestTime EMPTY>
+<!-- defaults to 30 seconds -->
+<!ATTLIST maxRequestTime millis CDATA "30000"
+                           label  CDATA #IMPLIED>
+
+<!ELEMENT regexp EMPTY>
+<!ATTLIST regexp pattern    CDATA          #REQUIRED
+                 cond       (true | false) "true"
+                 ignoreCase (true | false) "false"
+                 label      CDATA          #IMPLIED>
+
+<!-- 
+  if you omit the headerValue, Latka assumes that you
+  simply want to make sure the header exists 
+-->
+<!ELEMENT responseHeader EMPTY>
+<!ATTLIST responseHeader headerName  CDATA #REQUIRED
+                         headerValue CDATA #IMPLIED
+                         cond       (true | false) "true"
+                         label       CDATA #IMPLIED>
+
+<!ELEMENT statusCode EMPTY>
+<!ATTLIST statusCode code  CDATA "200"
+                      label CDATA #IMPLIED>
+
+<!ELEMENT statusText EMPTY>
+<!ATTLIST statusText text  CDATA #REQUIRED
+                     label CDATA #IMPLIED>
+
+<!ELEMENT xpath EMPTY>
+<!ATTLIST xpath select    CDATA          #REQUIRED
+                cond       (true | false) "true"
+                value     CDATA          #IMPLIED  
+                label     CDATA          #IMPLIED>

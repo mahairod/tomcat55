@@ -1,0 +1,20 @@
+<!-- This module contains a set of standard validation entities for Latka tests. -->
+
+<!-- standard set -->
+<!ENTITY commonValidations "<statusCode/>">
+
+<!-- response time -->
+<!ENTITY fast "<maxRequestTime millis='2500' label='Response in at most 2.5 seconds.'/>">
+<!ENTITY slow "<maxRequestTime millis='5000' label='Response in at most 5 seconds.'/>">
+
+<!-- byte size -->
+<!ENTITY tiny   "<byteLength min=    '1' max= '1000' label='Less than 1 KB long.'/>">
+<!ENTITY small  "<byteLength min= '1000' max='10000' label='Between 1 and 10 KB long.'/>">
+<!ENTITY medium "<byteLength min='8000' max='22000' label='Between 8 and 22 KB long.'/>">
+<!ENTITY large  "<byteLength min='18000' max='32000' label='Between 18 and 32 KB long.'/>">
+<!ENTITY huge   "<byteLength min='30000' label='More than 30 KB long.'/>">
+
+<!-- regexp -->
+
+
+
