@@ -1,7 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
  *
  * ====================================================================
  *
@@ -193,18 +190,24 @@ public class JMXProxyServlet extends HttpServlet  {
                 for( int i=0; i< attrs.length; i++ ) {
                     if( ! attrs[i].isReadable() ) continue;
                     if( ! isSupported( attrs[i].getType() )) continue;
-
+                    String attName=attrs[i].getName();
+                    if( attName.indexOf( "=") >=0 ||
+                            attName.indexOf( ":") >=0 ||
+                            attName.indexOf( " ") >=0 ) {
+                        continue;
+                    }
+            
                     try {
-                        value=mBeanServer.getAttribute(oname, attrs[i].getName());
+                        value=mBeanServer.getAttribute(oname, attName);
                     } catch( Throwable t) {
                         System.out.println("Error getting attribute " + oname +
-                                " " + attrs[i].getName() + " " + t.toString());
+                                " " + attName + " " + t.toString());
                         continue;
                     }
                     if( value==null ) continue;
-                    if( "modelerType".equals( attrs[i].getName())) continue;
+                    if( "modelerType".equals( attName)) continue;
                     String valueString=value.toString();
-                    writer.println( attrs[i].getName() + ": " + escape(valueString));
+                    writer.println( attName + ": " + escape(valueString));
                 }
                 writer.println();
             }
