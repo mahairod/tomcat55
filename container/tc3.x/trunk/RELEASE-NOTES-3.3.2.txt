@@ -72,6 +72,9 @@ Bug No.  Description
          Updated DecodeInterceptor to treat URL paths containing null
          characters as unsafe.
 
+	 Fix problem where the AccessLog was printing the content-length of the
+	 Request instead of the Response.
+
 Jasper:
 
 Bug No.  Description
