@@ -86,7 +86,6 @@ import org.apache.catalina.util.MD5Encoder;
 import org.apache.catalina.util.xml.SaxContext;
 import org.apache.catalina.util.xml.XmlAction;
 import org.apache.catalina.util.xml.XmlMapper;
-import org.xml.sax.AttributeList;
 
 
 /**
