@@ -353,7 +353,7 @@ int ajp13_marshal_into_msgb(jk_msg_buf_t *msg,
        0 != jk_b_append_string(msg, s->remote_addr)     ||
        0 != jk_b_append_string(msg, s->remote_host)     ||
        0 != jk_b_append_string(msg, s->server_name)     ||
-       0 != jk_b_append_int(msg, s->server_port)        ||
+       0 != jk_b_append_int(msg, (unsigned short)s->server_port) ||
        0 != jk_b_append_byte(msg, (unsigned char)(s->is_ssl)) ||
        0 != jk_b_append_int(msg, (unsigned short)(s->num_headers))) {
         return JK_FALSE;

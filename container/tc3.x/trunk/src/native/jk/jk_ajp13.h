@@ -102,6 +102,11 @@ extern "C" {
  */
 #define JK_AJP13_END_RESPONSE       (unsigned char)5
 
+/*
+ * Marks the end of response.
+ */
+#define JK_AJP13_GET_BODY_CHUNK     (unsigned char)6
+
 struct jk_res_data {
     int         status;
     const char *msg;
