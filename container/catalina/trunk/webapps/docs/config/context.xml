@@ -53,7 +53,9 @@
   reconfiguration of the web application, since the main 
   <code>conf/server.xml</code> file cannot be reloaded without restarting
   Tomcat. <b>Please note that for tomcat 5.x, unlike tomcat 4.x, it is NOT
-  recommended to place &lt;Context&gt; elements directory in the server.xml file.</b>
+  recommended to place &lt;Context&gt; elements directly in the server.xml file.</b>
+  Instead, put them in the META-INF/context.xml directory of your WAR file or
+  the conf directory as described above.
   </p>
 
   <p>In addition to explicitly specified Context elements, there are
