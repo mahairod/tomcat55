@@ -577,7 +577,7 @@ public class StatusTransformer {
             iterator = hostsON.iterator();
             while (iterator.hasNext()) {
                 ObjectName contextON = (ObjectName) iterator.next();
-                writer.print("<a class=\"A.name\" name=\"#" 
+                writer.print("<a class=\"A.name\" name=\"" 
                              + (count++) + ".0\">");
                 writeContext(writer, contextON, mBeanServer, mode);
             }
