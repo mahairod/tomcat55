@@ -178,7 +178,7 @@
    description="Build and deploy Jasper component">
  
    <!-- Jasper Compiler JAR File -->
-   <jar  jarfile="${jasper.deploy}/shared/lib/jasper-compiler.jar">
+   <jar  jarfile="${jasper.deploy}/common/lib/jasper-compiler.jar">
       <fileset dir="${jasper.build}/shared/classes">
         <include name="org/apache/jasper/compiler/**" />
         <include name="org/apache/jasper/parser/**" />
@@ -188,11 +188,9 @@
         <include name="org/apache/jasper/*.class" />
       </fileset>
     </jar>
-    <copy file="${jasper.deploy}/shared/lib/jasper-compiler.jar"
-         todir="${jasper.deploy}/server/lib" />
 
     <!-- Jasper Runtime JAR File -->
-    <jar  jarfile="${jasper.deploy}/shared/lib/jasper-runtime.jar">
+    <jar  jarfile="${jasper.deploy}/common/lib/jasper-runtime.jar">
       <fileset dir="${jasper.build}/shared/classes">
         <include name="org/apache/jasper/Constants.class" />
         <include name="org/apache/jasper/JasperException.class" />
@@ -203,8 +201,6 @@
         <include name="org/apache/jasper/util/**" />
       </fileset>
     </jar>
-    <copy file="${jasper.deploy}/shared/lib/jasper-runtime.jar"
-         todir="${jasper.deploy}/server/lib" />
 
   </target>
 
