@@ -561,6 +561,10 @@ public class StatusTransformer {
                 if (webModuleName.startsWith("//")) {
                     webModuleName = webModuleName.substring(2);
                 }
+                int slash = webModuleName.indexOf("/");
+                if (slash == -1) {
+                    continue;
+                }
 
                 writer.print("<a href=\"#" + (count++) + ".0\">");
                 writer.print(webModuleName);
