@@ -33,7 +33,7 @@ that you feel may be of use to the wider audience, or if you feel we can
 improve this section
 in anyway.</p>
 <ul>
-<li>DBCP Nightly build > 20020523</li>
+<li>DBCP Nightly build &gt; 20020523</li>
 <li>collections 2.0</li>
 <li>pool 1.0</li>
 </ul>
@@ -378,8 +378,17 @@ These notes are untested as yet and we would appreciate feedback.</p>
 </section>
 
 
-<section name="Tyrex Resources">
 
+
+
+<section name="Non DBCP Solutions">
+<p>
+These solutions either utilise a single connection to the database (not recommended for anything other
+than testing!) or some other pooling technology.
+</p>
+</section>
+
+<section name="Tyrex Connection Pool">
 <subsection name="Introduction">
 
 <p>
@@ -499,7 +508,7 @@ Making use of your Tyrex resource should now be relatively simple.  To obtain yo
 InitialContext initCtx = new InitialContext();
 DataSource ds = (DataSource) initCtx.lookup("java:comp/env/my-datasource");
 Connection conn = ds.getConnection();
-..and so on.
+...and so on.
 </source>
 <p>
 Tyrex also provides a <code>javax.transaction.UserTransaction</code>,
@@ -512,13 +521,72 @@ Tyrex also provides a <code>javax.transaction.UserTransaction</code>,
 </section>
 
 
-<section name="Non DBCP Solutions">
+<section name="Oracle 8i with OCI client">
+<subsection name="Introduction">
+<p>Whilst not strictly addressing the creation of a JNDI DataSource using the OCI client, these notes can be combined with the
+Oracle and DBCP solution above.</p>
 <p>
-These solutions either utilise a single connection to the database (not recommended for anything other
-than testing!) or some other pooling technology.
+In order to use OCI driver, you should have an Oracle client installed. You should have installed
+Oracle8i(8.1.7) client from cd,  and download the suitable JDBC/OCI
+driver(Oracle8i 8.1.7.1 JDBC/OCI Driver) from <a href="http://otn.oracle.com/">otn.oracle.com</a>. 
 </p>
-</section>
+<p>
+After renaming <code>classes12.zip</code> file to <code>classes12.jar</code>
+for Tomcat, copy it into <code>$CATALINA_HOME/common/lib</code>. 
+You may also have to remove the <code>javax.sql.*</code> classes
+from this file depending upon the version of Tomcat and JDK you are using.
+</p>
+</subsection>
 
+<subsection name="Putting it all together">
+<p>
+Ensure that you have the <code>ocijdbc8.dll</code> or <code>.so</code> in your <code>$PATH</code> or <code>LD_LIBRARY_PATH</code>
+ (possibly in <code>$ORAHOME\bin</code>) and also confirm that the native library can be loaded by a simple test program 
+using <code>System.loadLibrary("ocijdbc8");</code>
+</p>
+<p>
+You should next create a simple test servlet or jsp that has these <b>critical lines</b>:
+</p>
+<source>
+DriverManager.registerDriver(new
+oracle.jdbc.driver.OracleDriver());
+conn =
+DriverManager.getConnection("jdbc:oracle:oci8:@database","username","password");
+</source>
+<p>
+where database is of the form <code>host:port:SID</code> Now if you try to access the URL of your 
+test servlet/jsp and what you get is a 
+<code>ServletException</code> with a root cause of <code>java.lang.UnsatisfiedLinkError:get_env_handle</code>.
+</p>
+<p>
+First, the <code>UnsatisfiedLinkError</code> indicates that you have 
+<ul>
+<li>a mismatch between your JDBC classes file and
+your Oracle client version. The giveaway here is the message stating that a needed library file cannot be
+found. For example, you may be using a classes12.zip file from Oracle Version 8.1.6 with a Version 8.1.5
+Oracle client. The classeXXXs.zip file and Oracle client software versions must match.
+</li>
+<li>A <code>$PATH</code>, <code>LD_LIBRARY_PATH</code> problem.</li>
+<li>It has been reported that ignoring the driver you have downloded from otn and using 
+the classes12.zip file from the directory <code>$ORAHOME\jdbc\lib</code> will also work.
+</li>
+</ul>
+</p>
+<p>
+Next you may experience the error <code>ORA-06401 NETCMN: invalid driver designator</code>
+</p>
+<p>
+The Oracle documentation says : "Cause: The login (connect) string contains an invalid
+driver designator. Action: Correct the string and re-submit."
+
+Change the database connect string (of the form <code>host:port:SID</code>) with this one:
+<code>(description=(address=(host=myhost)(protocol=tcp)(port=1521))(connect_data=(sid=orcl)))</code>
+</p>
+<p>
+<i>Ed. Hmm, I don't think this is really needed if you sort out your TNSNames - but I'm not an Oracle DBA :-)</i>
+</p>
+</subsection>
+</section>
 
 </body>
 </document>
