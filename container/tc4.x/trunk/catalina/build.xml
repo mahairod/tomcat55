@@ -226,7 +226,12 @@
 
     <!-- JAR files availability flags -->
     <available property="daemon.jar.present" file="${commons-daemon.jar}" />
-    <available property="dbcp.jar.present" file="${commons-dbcp.jar}" />
+    <condition  property="dbcp.jar.present">
+      <and>
+        <available file="${commons-dbcp.jar}" />
+        <available file="${commons-lang.jar}" />
+      </and>
+    </condition>
     <available property="jaas.jar.present" file="${jaas.jar}" />
     <condition property="javamail.jar.present">
       <and>
@@ -679,6 +684,7 @@
   </target>
   <target name="copy-dbcp.jar" if="copy.dbcp.jar">
     <copy todir="${catalina.build}/common/lib" file="${commons-dbcp.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${commons-lang.jar}"/>
   </target>
   <target name="copy-jaas.jar" if="copy.jaas.jar">
     <copy todir="${catalina.build}/server/lib" file="${jaas.jar}"/>
