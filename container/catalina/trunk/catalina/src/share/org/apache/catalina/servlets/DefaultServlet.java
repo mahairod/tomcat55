@@ -92,6 +92,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
@@ -99,6 +100,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import javax.naming.NamingException;
 import javax.naming.InitialContext;
 import javax.naming.Context;
@@ -107,10 +109,13 @@ import javax.naming.NameClassPair;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
+
+import org.apache.tomcat.util.http.FastHttpDateFormat;
+
 import org.apache.naming.resources.Resource;
 import org.apache.naming.resources.ResourceAttributes;
+
 import org.apache.catalina.Globals;
-import org.apache.catalina.util.FastHttpDateFormat;
 import org.apache.catalina.util.MD5Encoder;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ServerInfo;
@@ -183,18 +188,6 @@ public class DefaultServlet
 
 
     /**
-     * The set of SimpleDateFormat formats to use in getDateHeader().
-     */
-    protected static final SimpleDateFormat formats[] = {
-        new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US),
-        new SimpleDateFormat("EEEEEE, dd-MMM-yy HH:mm:ss zzz", Locale.US),
-        new SimpleDateFormat("EEE MMMM d HH:mm:ss yyyy", Locale.US)
-    };
-
-
-    protected final static TimeZone gmtZone = TimeZone.getTimeZone("GMT");
-
-    /**
      * Array containing the safe characters set.
      */
     protected static URLEncoder urlEncoder;
@@ -205,10 +198,6 @@ public class DefaultServlet
      */
     // ----------------------------------------------------- Static Initializer
     static {
-        formats[0].setTimeZone(gmtZone);
-        formats[1].setTimeZone(gmtZone);
-        formats[2].setTimeZone(gmtZone);
-
         urlEncoder = new URLEncoder();
         urlEncoder.addSafeCharacter('-');
         urlEncoder.addSafeCharacter('_');
@@ -1216,23 +1205,20 @@ public class DefaultServlet
 
         // Checking If-Range
         String headerValue = request.getHeader("If-Range");
+
         if (headerValue != null) {
+
+            long headerValueTime = (-1L);
+            try {
+                headerValueTime = request.getDateHeader("If-Range");
+            } catch (Exception e) {
+                ;
+            }
 
             String eTag = getETag(resourceInfo);
             long lastModified = resourceInfo.date;
 
-            Date date = null;
-
-            // Parsing the HTTP Date
-            for (int i = 0; (date == null) && (i < formats.length); i++) {
-                try {
-                    date = formats[i].parse(headerValue);
-                } catch (ParseException e) {
-                    ;
-                }
-            }
-
-            if (date == null) {
+            if (headerValueTime == (-1L)) {
 
                 // If the ETag the client gave does not match the entity
                 // etag, then the entire entity is returned.
@@ -1244,7 +1230,7 @@ public class DefaultServlet
                 // If the timestamp of the entity the client got is older than
                 // the last modification date of the entity, the entire entity
                 // is returned.
-                if (lastModified > (date.getTime() + 1000))
+                if (lastModified > (headerValueTime + 1000))
                     return null;
 
             }
@@ -2289,8 +2275,9 @@ public class DefaultServlet
                             creationDate = tempDate.getTime();
                         tempDate = tempAttrs.getLastModifiedDate();
                         if (tempDate != null) {
-                            httpDate = FastHttpDateFormat.getDate(tempDate);
                             date = tempDate.getTime();
+                            httpDate = 
+                                FastHttpDateFormat.formatDate(date, null);
                         } else {
                             httpDate = FastHttpDateFormat.getCurrentDate();
                         }

@@ -89,11 +89,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
@@ -101,9 +103,11 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import javax.naming.NamingException;
 import javax.naming.InitialContext;
 import javax.naming.Context;
@@ -112,8 +116,12 @@ import javax.naming.NameClassPair;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
+
+import org.apache.tomcat.util.http.FastHttpDateFormat;
+
 import org.apache.naming.resources.Resource;
 import org.apache.naming.resources.ResourceAttributes;
+
 import org.apache.catalina.util.MD5Encoder;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.XMLWriter;
@@ -2329,7 +2337,8 @@ public class WebdavServlet
             generatedXML.writeProperty(null, "getcontentlanguage",
                                        Locale.getDefault().toString());
             generatedXML.writeProperty(null, "getlastmodified",
-                                       formats[0].format(lock.creationDate));
+                                       FastHttpDateFormat.formatDate
+                                       (lock.creationDate.getTime(), null));
             generatedXML.writeProperty
                 (null, "getcontentlength", String.valueOf(0));
             generatedXML.writeProperty(null, "getcontenttype", "");
@@ -2439,7 +2448,8 @@ public class WebdavServlet
                 } else if (property.equals("getlastmodified")) {
                     generatedXML.writeProperty
                         (null, "getlastmodified",
-                         formats[0].format(lock.creationDate));
+                          FastHttpDateFormat.formatDate
+                         (lock.creationDate.getTime(), null));
                 } else if (property.equals("resourcetype")) {
                     generatedXML.writeElement(null, "resourcetype",
                                               XMLWriter.OPENING);
@@ -2633,8 +2643,8 @@ public class WebdavServlet
             result += "Scope:" + scope + "\n";
             result += "Depth:" + depth + "\n";
             result += "Owner:" + owner + "\n";
-            result += "Expiration:" +
-                formats[0].format(new Date(expiresAt)) + "\n";
+            result += "Expiration:" 
+                + FastHttpDateFormat.formatDate(expiresAt, null) + "\n";
             Enumeration tokensList = tokens.elements();
             while (tokensList.hasMoreElements()) {
                 result += "Token:" + tokensList.nextElement() + "\n";
@@ -2815,8 +2825,8 @@ class WebdavStatus {
      * moved to another location, but that future references should
      * still use the original URI to access the resource.
      */
-    public static final int SC_FOUND =
-        HttpServletResponse.SC_FOUND;
+    public static final int SC_MOVED_TEMPORARILY =
+        HttpServletResponse.SC_MOVED_TEMPORARILY;
 
 
     /**
@@ -2998,7 +3008,7 @@ class WebdavStatus {
         addStatusCodeMap(SC_ACCEPTED, "Accepted");
         addStatusCodeMap(SC_NO_CONTENT, "No Content");
         addStatusCodeMap(SC_MOVED_PERMANENTLY, "Moved Permanently");
-        addStatusCodeMap(SC_FOUND, "Moved Temporarily");
+        addStatusCodeMap(SC_MOVED_TEMPORARILY, "Moved Temporarily");
         addStatusCodeMap(SC_NOT_MODIFIED, "Not Modified");
         addStatusCodeMap(SC_BAD_REQUEST, "Bad Request");
         addStatusCodeMap(SC_UNAUTHORIZED, "Unauthorized");
