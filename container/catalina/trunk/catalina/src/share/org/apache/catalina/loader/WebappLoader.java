@@ -164,6 +164,12 @@ public class WebappLoader
 
 
     /**
+     * First load of the class.
+     */
+    private static boolean first = true;
+
+
+    /**
      * The class loader being managed by this Loader component.
      */
     private WebappClassLoader classLoader = null;
@@ -253,11 +259,18 @@ public class WebappLoader
     protected PropertyChangeSupport support = new PropertyChangeSupport(this);
 
 
-    // Classpath set in the loader
-    private String classpath=null;
+    /**
+     * Classpath set in the loader.
+     */
+    private String classpath = null;
 
-    // repositories that are set in the loader, for jmx
-    private ArrayList loaderRepositories;
+
+    /**
+     * Repositories that are set in the loader, for JMX.
+     */
+    private ArrayList loaderRepositories = null;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -690,10 +703,18 @@ public class WebappLoader
         // Register a stream handler factory for the JNDI protocol
         URLStreamHandlerFactory streamHandlerFactory =
             new DirContextURLStreamHandlerFactory();
-        try {
-            URL.setURLStreamHandlerFactory(streamHandlerFactory);
-        } catch (Throwable t) {
-            // Ignore the error here.
+        if (first) {
+            first = false;
+            try {
+                URL.setURLStreamHandlerFactory(streamHandlerFactory);
+            } catch (Exception e) {
+                // Log and continue anyway, this is not critical
+                log.error("Error registering jndi stream handler", e);
+            } catch (Throwable t) {
+                // This is likely a dual registration
+                log.info("Dual registration of jndi stream handler: " 
+                         + t.getMessage());
+            }
         }
 
         // Construct a class loader based on our current repositories list
