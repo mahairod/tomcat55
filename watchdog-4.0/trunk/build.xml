@@ -38,6 +38,9 @@
   <patternset id="compat.servlet.tests"
     includes="**/compat/**"/>
 
+  <patternset id="jsp.classes"
+    excludes="**/tld_URI*"/>
+
   <!-- ===================== Verify Dependencies ========================= -->
   <target name="deps">
     <available file="${servlet23.jar}" property="servlet23.is.available"/>
@@ -125,8 +128,10 @@
 
     <!-- Web application static files -->
     <copy    todir="${watchdog.build}/webapps/jsp-tests">
-      <fileset dir="src/server/jsp-tests"/>
+      <fileset dir="src/server/jsp-tests" excludes="Counter.ser,**/tld_uri*,**/tld_URI*"/>
     </copy>
+    <copy    file="src/server/jsp-tests/WEB-INF/classes/core_syntax/actions/useBean/Counter.ser"
+             todir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"/>
     <copy    todir="${watchdog.build}/webapps/servlet-tests">
       <fileset dir="src/server/servlet-tests">
         <patternset refid="standard.servlet.tests"/>
@@ -158,14 +163,57 @@
       <fileset dir="src/clients" includes="**/*.properties"/>
     </copy>
 
-    <!-- JSP tests -->
+    <!-- JSP tests - includes dependant jars -->
     <javac srcdir="src/server/jsp-tests/WEB-INF/classes"
           destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"
            debug="${compile.debug}"
      deprecation="${compile.deprecation}"
         optimize="${compile.optimize}">
       <classpath refid="compile.classpath"/>
+      <patternset refid="jsp.classes"/>
     </javac>
+    
+    <mkdir dir="${watchdog.build}/tmp"/>
+    <mkdir dir="${watchdog.build}/tmp/META-INF"/>
+    <mkdir dir="${watchdog.build}/tmp/tags"/>
+    <mkdir dir="${watchdog.build}/tmp/tags/tld_resource_path"/>
+    <copy file="src/server/jsp-tests/WEB-INF/tlds/tld_uri.tld"
+          tofile="${watchdog.build}/tmp/META-INF/taglib.tld"/>
+    <copy file="src/server/jsp-tests/WEB-INF/classes/tags/tld_resource_path/tld_URI.java"
+          todir="${watchdog.build}/tmp/tags/tld_resource_path"/>
+    <javac srcdir="${watchdog.build}/tmp"
+          destdir="${watchdog.build}/tmp"
+            debug="${compile.debug}"
+      deprecation="${complie.deprecation}"
+         optimize="${compile.optimize}">
+      <classpath refid="compile.classpath"/>
+    </javac>
+    <jar jarfile="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/tld_resource.jar"
+         basedir="${watchdog.build}/tmp"/>
+    <delete dir="${watchdog.build}/tmp"/>
+
+    <mkdir dir="${watchdog.build}/tmp"/>
+    <mkdir dir="${watchdog.build}/tmp/META-INF"/>
+    <mkdir dir="${watchdog.build}/tmp/tags"/>
+    <mkdir dir="${watchdog.build}/tmp/tags/tld_resource_path_one"/>
+    <mkdir dir="${watchdog.build}/tmp/tags/tld_resource_path_two"/>
+    <copy todir="${watchdog.build}/tmp/META-INF">
+      <fileset dir="src/server/jsp-tests/WEB-INF/tlds" includes="**/tld_uri_*"/>
+    </copy>
+    <copy file="src/server/jsp-tests/WEB-INF/classes/tags/tld_resource_path_one/tld_URI.java"
+          todir="${watchdog.build}/tmp/tags/tld_resource_path_one"/>
+    <copy file="src/server/jsp-tests/WEB-INF/classes/tags/tld_resource_path_two/tld_URI.java"
+          todir="${watchdog.build}/tmp/tags/tld_resource_path_two"/>
+    <javac srcdir="${watchdog.build}/tmp"
+          destdir="${watchdog.build}/tmp"
+            debug="${compile.debug}"
+      deprecation="${complie.deprecation}"
+         optimize="${compile.optimize}">
+      <classpath refid="compile.classpath"/>
+    </javac>
+    <jar jarfile="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/tld_uri.jar"
+         basedir="${watchdog.build}/tmp"/>
+    <delete dir="${watchdog.build}/tmp"/>
 
     <!-- Servlet tests -->
     <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
@@ -176,6 +224,15 @@
       <classpath refid="compile.classpath"/>
       <patternset refid="standard.servlet.tests"/>
     </javac>
+    <mkdir dir="${watchdog.build}/tmp"/>
+    <mkdir dir="${watchdog.build}/tmp/tests"/>
+    <mkdir dir="${watchdog.build}/tmp/tests/webapps"/>
+    <mkdir dir="${watchdog.build}/tmp/tests/webapps/dirstruct"/>
+    <move file="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes/tests/webapps/dirstruct/JarFileTestServlet.class"
+          todir="${watchdog.build}/tmp/tests/webapps/dirstruct"/>
+    <jar jarfile="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib/jarfiletest.jar"
+         basedir="${watchdog.build}/tmp"/>
+    <delete dir="${watchdog.build}/tmp"/>
 
     <!-- Compat Servlet tests -->
     <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
