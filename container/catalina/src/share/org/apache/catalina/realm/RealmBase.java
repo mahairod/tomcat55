@@ -702,7 +702,7 @@ public abstract class RealmBase
         LoginConfig config = context.getLoginConfig();
         if ((config != null) &&
             (Constants.FORM_METHOD.equals(config.getAuthMethod()))) {
-            String requestURI = request.getDecodedRequestURI();
+            String requestURI = request.getRequestPathMB().toString();
             String loginPage = context.getPath() + config.getLoginPage();
             if (loginPage.equals(requestURI)) {
                 if (log.isDebugEnabled())
