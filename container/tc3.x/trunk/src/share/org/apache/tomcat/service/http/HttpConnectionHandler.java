@@ -177,20 +177,10 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 		contextM.initRequest( reqA, resA );
 	    }
 	    
-	    resA.setRequest(reqA);
-	    reqA.setResponse( resA );
-	    
 	    reqA.setSocket( socket );
 	    resA.setOutputStream( out );
 
 	    reqA.readNextRequest(resA);
-
-	    int contentLength = reqA.getContentLength();
-	    if (contentLength != -1) {
-		BufferedServletInputStream sis =
-		    (BufferedServletInputStream)reqA.getInputStream();
-		sis.setLimit(contentLength);
-	    }
 
 	    contextM.service( reqA, resA );
 

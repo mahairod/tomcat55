@@ -161,13 +161,6 @@ public class JNIConnectionHandler {
     		    return;
     	    }
 
-    	    int contentLength = reqA.getFacade().getIntHeader("content-length");
-    	    if (contentLength != -1) {
-    		    BufferedServletInputStream sis =
-    		        (BufferedServletInputStream)reqA.getInputStream();
-    		    sis.setLimit(contentLength);
-    	    }
-
     	    contextM.service( reqA, resA );
     	} catch(Exception ex) {
     	    ex.printStackTrace();
@@ -323,14 +316,14 @@ class JNIRequestAdapter extends RequestImpl {
 	    contentType = headers.getHeader("content-type");
     }
 
-    public ServletInputStream getInputStream() throws IOException {
-        if(contentLength <= 0) {
-            throw new IOException("Empty input stream");
-        }
+//     public ServletInputStream getInputStream() throws IOException {
+//         if(contentLength <= 0) {
+//             throw new IOException("Empty input stream");
+//         }
 
-        in = new BufferedServletInputStream(this);
-    	return in;
-    }
+//         in = new BufferedServletInputStream(this);
+//     	return in;
+//     }
 }
 
 

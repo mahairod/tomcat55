@@ -232,7 +232,7 @@ public class Ajp13ConnectorRequest extends RequestImpl
 
         contentLength = headers.getIntHeader("content-length");
         contentType = headers.getHeader("content-type");
-    	((BufferedServletInputStream)this.in).setLimit(contentLength);
+	//    	((BufferedServletInputStream)this.in).setLimit(contentLength);
     	if(contentLength > 0) {
     		/* Read present data */
     		int err = con.receive(msg);
@@ -280,7 +280,7 @@ public class Ajp13ConnectorRequest extends RequestImpl
     {
         this.con = con;
         pos = 0;
-        this.in = new BufferedServletInputStream(this);
+	//        this.in = new BufferedServletInputStream(this);
     }   
     
     public void refeelReadBuffer() throws IOException 
