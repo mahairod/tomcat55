@@ -46,7 +46,7 @@
       </td>
       <td align="right" nowrap>
         <div class="page-title-text">
-          <controls:actions>
+          <controls:actions label="Mail Session Actions">
             <controls:action selected="true">
               ----<bean:message key="actions.available.actions"/>----
             </controls:action>
@@ -54,7 +54,7 @@
               ---------------------------------
             </controls:action>
 
-  	    <controls:action url='<%= "/resources/setUpMailSession.do?resourcetype=" +
+        <controls:action url='<%= "/resources/setUpMailSession.do?resourcetype=" +
                             URLEncoder.encode(resourcetypeInfo) + "&path="+
                             URLEncoder.encode(pathInfo) + "&host="+
                             URLEncoder.encode(hostInfo) + "&service="+
@@ -96,7 +96,7 @@
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="name">
             <controls:label>
               <bean:message key="resources.mailsession.name"/>:
             </controls:label>
@@ -106,18 +106,18 @@
                 <html:hidden property="name"/>
               </logic:present>
               <logic:notPresent name="mailSessionForm" property="objectName">
-                <html:text property="name" size="35" maxlength="56"/>
+                <html:text property="name" size="35" maxlength="56" styleId="name"/>
               </logic:notPresent>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="mailhost">
             <controls:label>
               <bean:message key="resources.mailsession.mailhost"/>:
             </controls:label>
             <controls:data>
-                <html:textarea property="mailhost" cols="35" rows="2"/>
+                <html:textarea property="mailhost" cols="35" rows="2" styleId="mailhost"/>
             </controls:data>
           </controls:row>
 

@@ -39,9 +39,9 @@
           </logic:equal>
        </div>
       </td>
-      <td width="19%">
-        <div align="right">
-      <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+      <controls:actions label="Connector Actions">
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
             <logic:notEqual name="connectorForm" property="adminAction" value="Create">
@@ -71,11 +71,11 @@
             <controls:data>&nbsp;</controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="connectorType">
             <controls:label><bean:message key="connector.type"/>:</controls:label>
             <controls:data>
                  <logic:equal name="connectorForm" property="adminAction" value="Create">
-                    <html:select property="connectorType" onchange="IA_jumpMenu('self',this)">
+                    <html:select property="connectorType" onchange="IA_jumpMenu('self',this)" styleId="connectorType">
                      <bean:define id="connectorTypeVals" name="connectorForm" property="connectorTypeVals"/>
                      <html:options collection="connectorTypeVals" property="value" labelProperty="label"/>
                     </html:select>
@@ -96,25 +96,25 @@
         </controls:row>
      </logic:notEqual>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="acceptCount">
             <controls:label><bean:message key="connector.accept.count"/>:</controls:label>
             <controls:data>
-              <html:text property="acceptCountText" size="5" maxlength="5"/>
+              <html:text property="acceptCountText" size="5" maxlength="5" styleId="acceptCount"/>
             </controls:data>
         </controls:row>
 
-       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="timeout">
             <controls:label><bean:message key="connector.connection.timeout"/><br>
                 (<bean:message key="connector.milliseconds"/>) :</controls:label>
             <controls:data>
-               <html:text property="connTimeOutText" size="10"/>
+               <html:text property="connTimeOutText" size="10" styleId="timeout"/>
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
-               <html:select property="debugLvl">
+               <html:select property="debugLvl" styleId="debuglevel">
                      <bean:define id="debugLvlVals" name="connectorForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                         labelProperty="label"/>
@@ -122,17 +122,17 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="buffersize">
             <controls:label><bean:message key="connector.default.buffer"/>:</controls:label>
             <controls:data>
-               <html:text property="bufferSizeText" size="5"/>
+               <html:text property="bufferSizeText" size="5" styleId="buffersize"/>
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="enableDNS">
             <controls:label><bean:message key="connector.enable.dns"/>:</controls:label>
             <controls:data>
-                <html:select property="enableLookups">
+                <html:select property="enableLookups" styleId="enableDNS">
                      <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -141,11 +141,11 @@
         </controls:row>
 
         <%-- Input only allowed on create transaction --%>
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="address">
             <controls:label><bean:message key="connector.address.ip"/>:</controls:label>
             <controls:data>
              <logic:equal name="connectorForm" property="adminAction" value="Create">
-               <html:text property="address" size="20"/>
+               <html:text property="address" size="20" styleId="address"/>
              </logic:equal>
              <logic:equal name="connectorForm" property="adminAction" value="Edit">
                &nbsp;<bean:write name="connectorForm" property="address"/>
@@ -160,11 +160,11 @@
         </controls:row>
 
         <%-- Input only allowed on create transaction --%>
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="portnumber">
             <controls:label><bean:message key="server.portnumber"/>:</controls:label>
             <controls:data>
              <logic:equal name="connectorForm" property="adminAction" value="Create">
-               <html:text property="portText" size="5"/>
+               <html:text property="portText" size="5" styleId="portnumer"/>
              </logic:equal>
              <logic:equal name="connectorForm" property="adminAction" value="Edit">
                <bean:write name="connectorForm" property="portText"/>
@@ -173,10 +173,10 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="redirectport">
             <controls:label><bean:message key="connector.redirect.portnumber"/>:</controls:label>
             <controls:data>
-               <html:text property="redirectPortText" size="5"/>
+               <html:text property="redirectPortText" size="5" styleId="redirectport"/>
             </controls:data>
         </controls:row>
 
@@ -185,17 +185,17 @@
             <controls:data>&nbsp;</controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="minProcessor">
             <controls:label><bean:message key="connector.min"/>:</controls:label>
             <controls:data>
-               <html:text property="minProcessorsText" size="5"/>
+               <html:text property="minProcessorsText" size="5" styleId="minProcessor"/>
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="connectorMax">
             <controls:label><bean:message key="connector.max"/>:</controls:label>
             <controls:data>
-               <html:text property="maxProcessorsText" size="5"/>
+               <html:text property="maxProcessorsText" size="5" styleId="connectorMax"/>
             </controls:data>
         </controls:row>
 
@@ -207,17 +207,17 @@
             <controls:data>&nbsp;</controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="proxyName">
             <controls:label><bean:message key="connector.proxy.name"/>:</controls:label>
             <controls:data>
-               <html:text property="proxyName" size="30"/>
+               <html:text property="proxyName" size="30" styleId="proxyName"/>
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="portNumber">
             <controls:label><bean:message key="connector.proxy.portnumber"/>:</controls:label>
             <controls:data>
-                <html:text property="proxyPortText" size="5"/>
+                <html:text property="proxyPortText" size="5" styleId="portNumber"/>
             </controls:data>
         </controls:row>
         </logic:notEqual>
@@ -231,10 +231,10 @@
             <controls:data>&nbsp;</controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="clientauth">
             <controls:label><bean:message key="connector.client.auth"/>:</controls:label>
             <controls:data>
-                <html:select property="clientAuthentication">
+                <html:select property="clientAuthentication" styleId="clientauth">
                      <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
@@ -243,11 +243,11 @@
         </controls:row>
 
         <%-- Input allowed only on create --%>
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="keystore">
             <controls:label><bean:message key="connector.keystore.filename"/>:</controls:label>
             <controls:data>
             <logic:equal name="connectorForm" property="adminAction" value="Create">
-                <html:text property="keyStoreFileName" size="30"/>
+                <html:text property="keyStoreFileName" size="30" styleId="keystore"/>
              </logic:equal>
              <logic:equal name="connectorForm" property="adminAction" value="Edit">
                <bean:write name="connectorForm" property="keyStoreFileName"/>
@@ -257,10 +257,10 @@
 
         <%-- input password allowed only while creating connector --%>
         <logic:equal name="connectorForm" property="adminAction" value="Create">
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="password">
             <controls:label><bean:message key="connector.keystore.password"/>:</controls:label>
             <controls:data>
-                <html:password property="keyStorePassword" size="30"/>
+                <html:password property="keyStorePassword" size="30" styleId="password"/>
                 <%--
                 <logic:equal name="connectorForm" property="adminAction" value="Edit">
                    <bean:write name="connectorForm" property="keyStorePassword"/>

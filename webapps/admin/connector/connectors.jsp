@@ -25,9 +25,9 @@
           <bean:message key="actions.connectors.delete"/>
         </div>
       </td>
-      <td width="19%">
-        <div align="right">
-            <controls:actions>
+      <td align="right" nowrap>
+        <div class="page-title-text">
+            <controls:actions label="Connector Actions">
               <controls:action selected="true">
                 ----<bean:message key="actions.available.actions"/>----
               </controls:action>
@@ -70,8 +70,9 @@
                 <font color='red'>*</font>
               </logic:match>
             <logic:notMatch name="connector" value='<%= Integer.toString(request.getServerPort()) %>'>
+              <label for="connectors"></label>
               <html:multibox property="connectors"
-                                value="<%= connector.toString() %>"/>
+                                value="<%= connector.toString() %>" styleId="connectors"/>
             </logic:notMatch>
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;

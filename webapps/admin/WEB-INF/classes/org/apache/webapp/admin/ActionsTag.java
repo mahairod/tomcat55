@@ -163,8 +163,21 @@ public class ActionsTag extends BodyTagSupport {
     }
 
 
-    // --------------------------------------------------------- Public Methods
+    /**
+     *  HTML Label tag text.
+     */
+    protected String label = null;
 
+    public String getLabel() {
+        return (this.label);
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+
+    // --------------------------------------------------------- Public Methods
 
     public int doStartTag() throws JspException {
 
@@ -173,10 +186,10 @@ public class ActionsTag extends BodyTagSupport {
         this.urls.clear();
 
         return (EVAL_BODY_TAG);
-
+       
     }
-
-
+    
+    
     /**
      * Render this instant actions control.
      *
@@ -205,6 +218,13 @@ public class ActionsTag extends BodyTagSupport {
                 pageContext.setAttribute(FUNCTION_TAG, Boolean.TRUE);
             }
 
+            // Render LABEL element for section 508 accessibility
+            
+            if (label != null) {
+                out.print("<label for=\"labelId\">");
+                out.print(label);
+                out.println("</label>");
+            }
             // Render the beginning of this element
             out.println();
             out.print("<select");
@@ -218,6 +238,12 @@ public class ActionsTag extends BodyTagSupport {
                 out.print(style);
                 out.print("\"");
             }
+            if (label != null) {
+                out.print(" id=\"");
+                out.print("labelId");
+                out.print("\"");
+            }
+            
             out.print(" onchange=\"IA_jumpMenu('self',this)\"");
             out.println(">");
 

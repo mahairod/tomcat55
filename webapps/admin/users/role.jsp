@@ -31,7 +31,7 @@
       </td>
       <td align="right" nowrap>
         <div class="page-title-text">
-          <controls:actions>
+          <controls:actions label="Role Actions">
             <controls:action selected="true">
               ----<bean:message key="actions.available.actions"/>----
             </controls:action>
@@ -74,7 +74,7 @@
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="rolename">
             <controls:label>
               <bean:message key="users.prompt.rolename"/>
             </controls:label>
@@ -84,18 +84,18 @@
                 <html:hidden property="rolename"/>
               </logic:present>
               <logic:notPresent name="roleForm" property="objectName">
-                <html:text property="rolename" size="24" maxlength="32"/>
+                <html:text property="rolename" size="24" maxlength="32" styleId="rolename"/>
               </logic:notPresent>
             </controls:data>
           </controls:row>
 
           <controls:row labelStyle="table-label-text"
-                         dataStyle="table-normal-text">
+                         dataStyle="table-normal-text" styleId="description">
             <controls:label>
               <bean:message key="users.prompt.description"/>:
             </controls:label>
             <controls:data>
-              <html:text property="description" size="24" maxlength="128"/>
+              <html:text property="description" size="24" maxlength="128" styleId="description"/>
             </controls:data>
           </controls:row>
 

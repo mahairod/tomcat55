@@ -24,8 +24,9 @@
       <tr class="line-row">
         <logic:present name="checkboxes">
           <td><div align="center" class="table-normal-text">
+            <label for="dataSources"></label>
             <input type="checkbox" name="dataSources"
-                  value="<%= dataSource %>">
+                  value="<%= dataSource %>" styleId="dataSources">
           </td>
         </logic:present>
         <td><div align="left" class="table-normal-text">

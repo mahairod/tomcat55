@@ -153,7 +153,21 @@ public class RowTag extends BodyTagSupport {
     public void setdataStyle(String dataStyle) {
         this.dataStyle = dataStyle;
     }
+ 
+    /**
+     * The styleId for the label.
+     */
+    protected String styleId = null;
     
+    public String getStyleId() {
+        return (this.styleId);
+    }
+    
+    public void setStyleId(String styleId) {
+        this.styleId = styleId;
+    }
+    
+        
     // --------------------------------------------------------- Public Methods
     
     
@@ -203,7 +217,7 @@ public class RowTag extends BodyTagSupport {
         // this row
         HttpServletResponse response =
         (HttpServletResponse) pageContext.getResponse();
-        table.addRow(header, label, data, labelStyle, dataStyle);
+        table.addRow(header, label, data, labelStyle, dataStyle, styleId);
         
         return (EVAL_PAGE);
         
@@ -222,6 +236,7 @@ public class RowTag extends BodyTagSupport {
         this.data = null;
         this.labelStyle = null;
         this.dataStyle = null;
+        this.styleId = null;
         
     }
     
