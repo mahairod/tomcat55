@@ -70,15 +70,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.catalina.Container;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
-import org.apache.catalina.Realm;
-import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -95,9 +91,9 @@ import org.apache.commons.digester.Digester;
  * @version $Revision$ $Date$
  */
 
-public final class MemoryRealm
-    extends RealmBase {
+public class MemoryRealm  extends RealmBase {
 
+    private static Log log = LogFactory.getLog(MemoryRealm.class);
 
     // ----------------------------------------------------- Instance Variables
 
@@ -215,18 +211,18 @@ public final class MemoryRealm
                 validated = (digest(credentials)
                              .equalsIgnoreCase(principal.getPassword()));
             } else {
-                validated = 
+                validated =
                     (digest(credentials).equals(principal.getPassword()));
             }
         }
 
         if (validated) {
-            if (debug >= 2)
-                log(sm.getString("memoryRealm.authenticateSuccess", username));
+            if (log.isDebugEnabled())
+                log.debug(sm.getString("memoryRealm.authenticateSuccess", username));
             return (principal);
         } else {
-            if (debug >= 2)
-                log(sm.getString("memoryRealm.authenticateFailure", username));
+            if (log.isDebugEnabled())
+                log.debug(sm.getString("memoryRealm.authenticateFailure", username));
             return (null);
         }
 
@@ -342,8 +338,8 @@ public final class MemoryRealm
                               file.getAbsolutePath()));
 
         // Load the contents of the database file
-        if (debug >= 1)
-            log(sm.getString("memoryRealm.loadPath",
+        if (log.isDebugEnabled())
+            log.debug(sm.getString("memoryRealm.loadPath",
                              file.getAbsolutePath()));
         Digester digester = getDigester();
         try {
