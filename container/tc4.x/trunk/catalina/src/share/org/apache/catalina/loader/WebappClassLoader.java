@@ -552,7 +552,7 @@ public class WebappClassLoader
 
             long lastModified =
                 ((ResourceAttributes) resources.getAttributes(jar))
-                .getLastModified().getTime();
+                .getLastModified();
 
             String[] result = new String[paths.length + 1];
             for (i = 0; i < paths.length; i++) {
@@ -700,7 +700,7 @@ public class WebappClassLoader
             try {
                 long lastModified =
                     ((ResourceAttributes) resources.getAttributes(paths[i]))
-                    .getLastModified().getTime();
+                    .getLastModified();
                 if (lastModified != lastModifiedDates[i]) {
                     log("  Resource '" + paths[i]
                         + "' was modified; Date is now: "
@@ -1553,7 +1553,7 @@ public class WebappClassLoader
                 ResourceAttributes attributes =
                     (ResourceAttributes) resources.getAttributes(fullPath);
                 contentLength = (int) attributes.getContentLength();
-                entry.lastModified = attributes.getLastModified().getTime();
+                entry.lastModified = attributes.getLastModified();
                 try {
                     binaryStream = resource.streamContent();
                 } catch (IOException e) {

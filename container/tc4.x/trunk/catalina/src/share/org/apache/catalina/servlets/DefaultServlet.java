@@ -2175,7 +2175,7 @@ public class DefaultServlet
                         Date tempDate = tempAttrs.getCreationDate();
                         if (tempDate != null)
                             creationDate = tempDate.getTime();
-                        tempDate = tempAttrs.getLastModified();
+                        tempDate = tempAttrs.getLastModifiedDate();
                         if (tempDate != null) {
                             date = tempDate.getTime();
                             httpDate = formats[0].format(tempDate);
