@@ -269,7 +269,8 @@ public final class TldConfig  {
             FileInputStream in=new FileInputStream(tldCache);
             ObjectInputStream ois=new ObjectInputStream( in );
             String list[]=(String [])ois.readObject();
-            log.info("Reusing tldCache " + tldCache + " " + list.length);
+            if( log.isDebugEnabled() )
+                log.debug("Reusing tldCache " + tldCache + " " + list.length);
             for( int i=0; list!=null && i<list.length; i++ ) {
                 context.addApplicationListener(list[i]);
             }
