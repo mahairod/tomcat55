@@ -20,6 +20,7 @@
   <path id="admin.classpath">
     <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${jmx.jar}"/>
+    <pathelement location="${regexp.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${struts.jar}"/>
     <pathelement location="${commons-beanutils.jar}"/>
@@ -55,6 +56,9 @@
     <available property="modeler.present"
      classname="org.apache.commons.modeler.Registry"
      classpath="${commons-modeler.jar}"/>
+    <available property="regexp.present"
+     classname="org.apache.regexp.RE"
+     classpath="${regexp.jar}" />
     <available property="servlet.present"
      classname="javax.servlet.Servlet"
      classpath="${servlet.jar}" />
@@ -69,6 +73,7 @@
     <!-- JAR files availability flags -->
     <available property="jmx.jar.present"   file="${jmx.jar}" />
     <available property="modeler.jar.present" file="${commons-modeler.jar}" />
+    <available property="regexp.jar.present" file="${regexp.jar}" />
     <available property="servlet.jar.present" file="${servlet.jar}" />
     <available property="struts.jar.present"  file="${struts.jar}" />
     <available property="beanutils.jar.present" file="${commons-beanutils.jar}" />
@@ -82,6 +87,7 @@
           <equals arg1="${struts.present}" arg2="true" />
           <equals arg1="${jmx.present}" arg2="true" />
           <equals arg1="${modeler.present}" arg2="true" />
+          <equals arg1="${regexp.present}" arg2="true" />
           <available file="${struts.lib}/struts-bean.tld" />
           <available file="${struts.lib}/struts-html.tld" />
           <available file="${struts.lib}/struts-logic.tld" />
@@ -126,11 +132,13 @@
     <echo message="jaxp.present=${jaxp.present}" />
     <echo message="jmx.present=${jmx.present}" />
     <echo message="modeler.present=${modeler.present}" />
+    <echo message="regexp.present=${regexp.present}" />
     <echo message="servlet.present=${servlet.present}" />
 
     <echo message="--- Required JARs ---" />
     <echo message="jmx.jar.present=${jmx.jar.present}" />
     <echo message="modeler.jar.present=${modeler.jar.present}" />
+    <echo message="regexp.jar.present=${regexp.jar.present}" />
     <echo message="servlet.jar.present=${servlet.jar.present}" />
     <echo message="struts.jar.present=${struts.jar.present}" />
     <echo message="beanutils.jar.present=${beanutils.jar.present}" />
@@ -154,7 +162,6 @@
     <copy todir="${webapps.build}/${webapp.name}/WEB-INF" file="${struts.lib}/struts-html.tld"/>
     <copy todir="${webapps.build}/${webapp.name}/WEB-INF" file="${struts.lib}/struts-logic.tld"/>
   </target>
-
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">

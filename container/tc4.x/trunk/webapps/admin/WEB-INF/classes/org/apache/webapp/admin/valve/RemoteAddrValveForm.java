@@ -61,13 +61,16 @@
 
 package org.apache.webapp.admin.valve;
 
+import java.lang.IllegalArgumentException;
+import java.net.InetAddress;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.regexp.RE;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import java.net.InetAddress;
-import java.util.List;
+
 
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.LabelValueBean;
@@ -83,6 +86,7 @@ public final class RemoteAddrValveForm extends ValveForm {
     
     // ----------------------------------------------------- Instance Variables
     
+    
     /**
      * The text for the allow IP addresses.
      * A comma-separated list of regular expression patterns
@@ -94,6 +98,17 @@ public final class RemoteAddrValveForm extends ValveForm {
      * The text for the deny IP addresses.
      */
     private String deny = "";
+    
+    /**
+     * The set of <code>allow</code> regular expressions we will evaluate.
+     */
+    private RE allows[] = new RE[0];
+
+    /**
+     * The set of <code>deny</code> regular expressions we will evaluate.
+     */
+    private RE denies[] = new RE[0];
+
 
     // ------------------------------------------------------------- Properties
 
@@ -135,6 +150,7 @@ public final class RemoteAddrValveForm extends ValveForm {
 
     // --------------------------------------------------------- Public Methods
     
+    
     /**
      * Reset all properties to their default values.
      *
@@ -146,6 +162,8 @@ public final class RemoteAddrValveForm extends ValveForm {
         super.reset(mapping, request);
         this.allow = null;
         this.deny = null;
+        this.allows = null;
+        this.denies = null;
         
     }
     
@@ -188,10 +206,64 @@ public final class RemoteAddrValveForm extends ValveForm {
         String submit = request.getParameter("submit");
         
         // front end validation when save is clicked.        
-         if (submit != null) {
-         // validate allow/deny patterns?
-         }
-                 
+        if (submit != null) {
+            // validate allow/deny patterns
+            if ((allow == null) || (allow.length() < 1)) {
+                if ((deny == null) || (deny.length() < 1)) {
+                    errors.add("allow",
+                    new ActionError("error.allow.deny.required"));
+                }
+            }                
+        }
+        
+        try {
+            allows = ValveUtil.precalculate(allow);            
+        } catch (IllegalArgumentException e) {
+            errors.add("allow", new ActionError("error.syntax"));
+            return errors;
+        }
+         
+        try {   
+            denies = ValveUtil.precalculate(deny);
+        } catch (IllegalArgumentException e) {
+            errors.add("allow", new ActionError("error.syntax"));
+            return errors;
+        }
+        
+        String ip = request.getRemoteAddr();
+        
+        if (ip == null) {
+            return errors;
+        }
+        
+        for (int i = 0; i < denies.length; i++) {
+            if (denies[i].match("127.0.0.1")) {
+                errors.add("deny",
+                new ActionError("error.denyIP"));
+            }
+            if (denies[i].match(ip)) {
+                for (int j = 0; j < allows.length; j++) {
+                    if (!allows[j].match(ip)) { 
+                        errors.add("deny",
+                        new ActionError("error.denyIP"));
+                    }
+                }
+            }    
+        }
+        
+        boolean allowMatch = true;
+        if (allows.length > 0) {
+            allowMatch = false;
+        }
+        for (int i = 0; i < allows.length; i++) {
+            if (allows[i].match(ip)) {
+                allowMatch = true;       
+            }
+        }       
+        if (!allowMatch) {
+            errors.add("allow", new ActionError("error.allowIP"));
+        }
+        
         return errors;
     }
 }
