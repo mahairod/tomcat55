@@ -186,7 +186,7 @@ public class FileDirContext extends BaseDirContext {
 	if (!base.exists() || !base.isDirectory() || !base.canRead())
 	    throw new IllegalArgumentException
 		(sm.getString("fileResources.base", docBase));
-        this.absoluteBase = normalize(base.getAbsolutePath());
+        this.absoluteBase = base.getAbsolutePath();
         super.setDocBase(docBase);
 
     }
@@ -854,28 +854,38 @@ public class FileDirContext extends BaseDirContext {
      */
     protected File file(String name) {
 
+/*
         name = normalize(name);
         if (name == null)
             return (null);
 
 	if (File.separatorChar == '\\')
             name = name.replace('/', File.separatorChar);
+*/
 
         File file = new File(base, name);
         if (file.exists() && file.canRead()) {
+
+            // Check that this file belongs to our root path
+            String canPath = null;
+            try {
+                canPath = file.getCanonicalPath();
+            } catch (IOException e) {
+            }
+            if (canPath == null)
+                return null;
+
+            if (!canPath.startsWith(absoluteBase))
+                return null;
+
             // Windows only check
             if ((caseSensitive) && (File.separatorChar  == '\\')) {
                 String fileAbsPath = file.getAbsolutePath();
                 if (fileAbsPath.endsWith("."))
                     fileAbsPath = fileAbsPath + "/";
                 String absPath = normalize(fileAbsPath);
-                String canPath = null;
-                try {
-                    canPath = file.getCanonicalPath();
-                    if (canPath != null)
-                        canPath = normalize(canPath);
-                } catch (IOException e) {
-                }
+                if (canPath != null)
+                    canPath = normalize(canPath);
                 if ((absoluteBase.length() < absPath.length()) 
                     && (absoluteBase.length() < canPath.length())) {
                     absPath = absPath.substring(absoluteBase.length());
@@ -890,6 +900,7 @@ public class FileDirContext extends BaseDirContext {
                         return null;
                 }
             }
+
         } else {
             return null;
         }
