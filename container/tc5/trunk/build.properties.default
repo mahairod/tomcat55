@@ -150,6 +150,13 @@ commons-pool.jar=${commons-pool.lib}/commons-pool.jar
 commons-pool.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-pool/v1.0.1/commons-pool-1.0.1.tar.gz
 
 
+# ----- Commons FileUpload, nightly build -----
+commons-fileupload.home=${base.path}/commons-fileupload
+commons-fileupload.lib=${commons-fileupload.home}
+commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0-dev.jar
+#commons-fileupload.loc=http://jakarta.apache.org/builds/jakarta-commons/nightly/commons-fileupload/commons-fileupload-20030106.zip
+
+
 # ----- JavaGroups, version 2.0.3 or later -----
 javagroups.home=${base.path}/JavaGroups-2.0.3.bin
 javagroups.lib=${javagroups.home}
