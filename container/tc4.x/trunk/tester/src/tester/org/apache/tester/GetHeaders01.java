@@ -82,8 +82,15 @@ public class GetHeaders01 extends HttpServlet {
         ArrayList values = new ArrayList();
         Enumeration headers = request.getHeaders("Accept-Language");
         while (headers.hasMoreElements()) {
-            String header = (String) headers.nextElement();
-            values.add(header);
+            String header = (String) headers.nextElement() + ",";
+            while (true) {
+                int comma = header.indexOf(",");
+                if (comma < 0)
+                    break;
+                String value = header.substring(0, comma).trim();
+                values.add(value);
+                header = header.substring(comma + 1).trim();
+            }
         }
         if (values.size() != 2)
             writer.println("GetHeaders01 FAILED - Returned " + values.size()
