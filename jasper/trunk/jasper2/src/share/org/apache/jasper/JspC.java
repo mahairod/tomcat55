@@ -830,28 +830,22 @@ public class JspC implements Options {
             Enumeration e = pages.elements();
             while (e.hasMoreElements()) {
                 String nextjsp = e.nextElement().toString();
-                try {
-                    File fjsp = new File(nextjsp);
-                    if (!fjsp.exists()) {
-                        if (log.isWarnEnabled()) {
-                            log.warn(Localizer.getMessage("jspc.error.fileDoesNotExist",
-                                          fjsp.toString()));
-                        }
-                        continue;
+                File fjsp = new File(nextjsp);
+                if (!fjsp.exists()) {
+                    if (log.isWarnEnabled()) {
+                        log.warn
+                            (Localizer.getMessage
+                             ("jspc.error.fileDoesNotExist", fjsp.toString()));
                     }
-                    String s = fjsp.getCanonicalPath();
-                    //System.out.println("**" + s);
-                    if (s.startsWith(uriRoot)) {
-                        nextjsp = s.substring(uriRoot.length());
-                    }
-                } catch (IOException ioe) {
-                    // if we got problems dont change the file name
+                    continue;
                 }
-
+                String s = fjsp.getAbsolutePath();
+                if (s.startsWith(uriRoot)) {
+                    nextjsp = s.substring(uriRoot.length());
+                }
                 if (nextjsp.startsWith("." + File.separatorChar)) {
                     nextjsp = nextjsp.substring(2);
                 }
-
                 processFile(nextjsp);
             }
 
