@@ -154,16 +154,16 @@ public class WebappClassLoader
     protected class PrivilegedFindResource
         implements PrivilegedAction {
 
-        private String name;
+        private File file;
         private String path;
 
-        PrivilegedFindResource(String name, String path) {
-            this.name = name;
+        PrivilegedFindResource(File file, String path) {
+            this.file = file;
             this.path = path;
         }
 
         public Object run() {
-            return findResourceInternal(name, path);
+            return findResourceInternal(file, path);
         }
 
     }
@@ -895,13 +895,7 @@ public class WebappClassLoader
 
         ResourceEntry entry = (ResourceEntry) resourceEntries.get(name);
         if (entry == null) {
-            if (securityManager != null) {
-                PrivilegedAction dp =
-                    new PrivilegedFindResource(name, name);
-                entry = (ResourceEntry)AccessController.doPrivileged(dp);
-            } else {
-                entry = findResourceInternal(name, name);
-            }
+            entry = findResourceInternal(name, name);
         }
         if (entry != null) {
             url = entry.source;
@@ -1484,13 +1478,7 @@ public class WebappClassLoader
 
         ResourceEntry entry = null;
 
-        if (securityManager != null) {
-            PrivilegedAction dp =
-                new PrivilegedFindResource(name, classPath);
-            entry = (ResourceEntry)AccessController.doPrivileged(dp);
-        } else {
-            entry = findResourceInternal(name, classPath);
-        }
+        entry = findResourceInternal(name, classPath);
 
         if ((entry == null) || (entry.binaryContent == null))
             throw new ClassNotFoundException(name);
@@ -1565,6 +1553,23 @@ public class WebappClassLoader
 
     }
 
+    /**
+     * Find specified resource in local repositories. This block
+     * will execute under an AccessControl.doPrivilege block.
+     *
+     * @return the loaded resource, or null if the resource isn't found
+     */
+    private ResourceEntry findResourceInternal(File file, String path){
+        ResourceEntry entry = new ResourceEntry();
+        try {
+            entry.source = getURL(new File(file, path));
+            entry.codeBase = entry.source;
+        } catch (MalformedURLException e) {
+            return null;
+        }   
+        return entry;
+    }
+    
 
     /**
      * Find specified resource in local repositories.
@@ -1607,14 +1612,14 @@ public class WebappClassLoader
 
                 // Note : Not getting an exception here means the resource was
                 // found
+                 if (securityManager != null) {
+                    PrivilegedAction dp =
+                        new PrivilegedFindResource(files[i], path);
+                    entry = (ResourceEntry)AccessController.doPrivileged(dp);
+                 } else {
+                    entry = findResourceInternal(files[i], path);                     
+                 }
 
-                entry = new ResourceEntry();
-                try {
-                    entry.source = getURL(new File(files[i], path));
-                    entry.codeBase = entry.source;
-                } catch (MalformedURLException e) {
-                    return null;
-                }
                 ResourceAttributes attributes =
                     (ResourceAttributes) resources.getAttributes(fullPath);
                 contentLength = (int) attributes.getContentLength();
