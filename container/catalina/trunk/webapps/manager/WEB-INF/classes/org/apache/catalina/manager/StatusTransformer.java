@@ -563,6 +563,7 @@ public class StatusTransformer {
                 }
                 int slash = webModuleName.indexOf("/");
                 if (slash == -1) {
+                    count++;
                     continue;
                 }
 
