@@ -181,12 +181,11 @@ public final class SaveDataSourceAction extends Action {
             String resourcetype = dataSourceForm.getResourcetype();
             String path = dataSourceForm.getPath();
             String host = dataSourceForm.getHost();
-            String service = dataSourceForm.getService();
+            String domain = dataSourceForm.getDomain();
 
             ObjectName oname = null;
 
             try {
-                String domain = (new ObjectName(objectName)).getDomain();
                 oname = ResourceUtils.getNamingResourceObjectName(domain,
                             resourcetype, path, host);
                 // Create the new object and associated MBean

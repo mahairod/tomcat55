@@ -37,8 +37,8 @@
                                URLEncoder.encode(envEntry) + "&resourcetype=" +
                                URLEncoder.encode(resourcetypeInfo) + "&path="+
                                URLEncoder.encode(pathInfo) + "&host="+
-                               URLEncoder.encode(hostInfo) + "&service="+
-                               URLEncoder.encode(serviceInfo) %>'>
+                               URLEncoder.encode(hostInfo) + "&domain="+
+                               URLEncoder.encode(domainInfo) %>'>
             <controls:attribute name="envEntry" attribute="name"/>
           </html:link>
         </div></td>

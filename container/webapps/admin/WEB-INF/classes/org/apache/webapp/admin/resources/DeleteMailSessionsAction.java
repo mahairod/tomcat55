@@ -177,7 +177,6 @@ public final class DeleteMailSessionsAction extends Action {
             String resourcetype = mailSessionsForm.getResourcetype();
             String path = mailSessionsForm.getPath();
             String host = mailSessionsForm.getHost();
-            String service = mailSessionsForm.getService();
             
             ObjectName dname = null;
 

@@ -234,6 +234,10 @@ public final class SaveServiceAction extends Action {
                                     values, createStandardEngineServiceTypes);
                 eoname = (ObjectName)onames.get(0);
                 soname = (ObjectName)onames.get(1);
+                //Enumeration enum = onames.elements();
+                //while (enum.hasMoreElements()) {
+                //    getServlet().log("save service "+enum.nextElement());
+                //}
                 sObjectName = soname.toString();
                 eObjectName = eoname.toString();
                 
@@ -269,7 +273,8 @@ public final class SaveServiceAction extends Action {
                     TreeControlNode parentNode = control.findNode(parentName);
                     if (parentNode != null) {
                         String nodeLabel =
-                            "Service (" + oname.getDomain() + ")";
+                            "Service (" + soname.getKeyProperty("serviceName") 
+                                    + ")";
                         String encodedName =
                             URLEncoder.encode(sObjectName);
                         TreeControlNode childNode =
@@ -309,6 +314,9 @@ public final class SaveServiceAction extends Action {
         // Perform attribute updates as requested
         String attribute = null;
         try {
+        
+            eoname = new ObjectName(eObjectName);
+            soname = new ObjectName(sObjectName);
 
             attribute = "debug";
             int debug = 0;

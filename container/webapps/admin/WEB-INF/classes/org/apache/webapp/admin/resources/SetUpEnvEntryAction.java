@@ -156,13 +156,13 @@ public final class SetUpEnvEntryAction extends Action {
         String resourcetype = request.getParameter("resourcetype");
         String path = request.getParameter("path");
         String host = request.getParameter("host");
-        String service = request.getParameter("service");
+        String domain = request.getParameter("domain");
         
         EnvEntryForm envEntryForm = new EnvEntryForm();           
         envEntryForm.setResourcetype(resourcetype);
         envEntryForm.setPath(path);
         envEntryForm.setHost(host);
-        envEntryForm.setService(service);
+        envEntryForm.setDomain(domain);
         if (objectName == null) {
             envEntryForm.setNodeLabel
                 (resources.getMessage(locale, "resources.actions.env.create"));

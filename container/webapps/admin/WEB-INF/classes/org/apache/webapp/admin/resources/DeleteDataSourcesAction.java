@@ -177,7 +177,7 @@ public final class DeleteDataSourcesAction extends Action {
             String resourcetype = dataSourcesForm.getResourcetype();
             String path = dataSourcesForm.getPath();
             String host = dataSourcesForm.getHost();
-            String service = dataSourcesForm.getService();
+            //String domain = dataSourcesForm.getDomain();
             
             ObjectName dname = null;
 

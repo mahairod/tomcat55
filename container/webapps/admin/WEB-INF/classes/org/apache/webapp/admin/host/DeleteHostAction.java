@@ -154,7 +154,6 @@ public class DeleteHostAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
-        String serviceName = request.getParameter("serviceName");
         // Set up a form bean containing the currently selected
         // objects to be deleted
         HostsForm hostsForm = new HostsForm();

@@ -177,7 +177,6 @@ public final class DeleteResourceLinksAction extends Action {
             String resourcetype = resourceLinksForm.getResourcetype();
             String path = resourceLinksForm.getPath();
             String host = resourceLinksForm.getHost();
-            String service = resourceLinksForm.getService();
             
             ObjectName dname = null;
 

@@ -173,22 +173,22 @@ public final class MailSessionForm extends BaseForm {
     
        
     /**
-     * The service of this mail session.
+     * The domain of this mail session.
      */
-    private String service = null;
+    private String domain = null;
     
     /**
-     * Return the service of the mail session this bean refers to.
+     * Return the domain of the mail session this bean refers to.
      */
-    public String getService() {
-        return this.service;
+    public String getDomain() {
+        return this.domain;
     }
 
     /**
-     * Set the service of the mail session this bean refers to.
+     * Set the domain of the mail session this bean refers to.
      */
-    public void setService(String service) {
-        this.service = service;
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
     
     /**
