@@ -1015,6 +1015,10 @@
           description="The connection URL for the server we will contact"
                  type="java.lang.String"/>
 
+    <attribute   name="contextFactory"
+          description="The JNDI context factory for this Realm"
+                 type="java.lang.String"/>
+
     <attribute   name="debug"
           description="The debugging detail level for this component"
                  type="int"/>
@@ -1028,17 +1032,12 @@
           description="The base element for role searches"
                  type="java.lang.String"/>
 
-    <attribute   name="roleSearch"
-          description="The message format used to select roles for a user"
-                 type="java.lang.String"/>
-
-     <attribute   name="userRoleName"
-          description="The name of the attribute in the user's entry containing
-                       roles for that user"
-                 type="java.lang.String"/>
-
     <attribute   name="roleName"
           description="The name of the attribute containing roles held elsewhere"
+                 type="java.lang.String"/>
+
+    <attribute   name="roleSearch"
+          description="The message format used to select roles for a user"
                  type="java.lang.String"/>
 
     <attribute   name="roleSubtree"
@@ -1046,10 +1045,9 @@
                         memberships?"
                  type="boolean"/>
 
-    <attribute   name="userSubtree"
-          description="Should we search the entire subtree for matching
-                       users?"
-                 type="boolean"/>
+    <attribute   name="userBase"
+          description="The base element for user searches"
+                 type="java.lang.String"/>
 
     <attribute   name="userPassword"
           description="The attribute name used to retrieve the user password"
@@ -1059,13 +1057,19 @@
           description="The message format used to select a user"
                  type="java.lang.String"/>
 
+     <attribute   name="userRoleName"
+          description="The name of the attribute in the user's entry containing
+                       roles for that user"
+                 type="java.lang.String"/>
+
    <attribute   name="userSearch"
          description="The message format used to search for a user"
                 type="java.lang.String"/>
 
-    <attribute   name="contextFactory"
-          description="The JNDI context factory for this Realm"
-                 type="java.lang.String"/>
+    <attribute   name="userSubtree"
+          description="Should we search the entire subtree for matching
+                       users?"
+                 type="boolean"/>
 
   </mbean>
 
