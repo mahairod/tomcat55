@@ -415,9 +415,11 @@ public class ErrorDispatcher {
 	boolean hasLocation = false;
 
 	// Localize
-	
 	if (errCode != null) {
 	    errMsg = getString(errCode, args);
+	} else if (e != null) {
+	    // give a hint about what's wrong
+	    errMsg = e.getMessage();
 	}
 
 	// Get error location
