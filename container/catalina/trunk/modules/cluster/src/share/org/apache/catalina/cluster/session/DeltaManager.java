@@ -718,6 +718,7 @@ public class DeltaManager
         if( initialized ) {
             destroy();
         }
+        getCluster().removeManager(getName());
     }
 
 
