@@ -116,6 +116,10 @@ if [ "$oldCP" != "" ]; then
     CLASSPATH=${CLASSPATH}:${oldCP}
 fi
 
+if [ -f ${JAVA_HOME}/jre/lib/rt.jar ] ; then
+    CLASSPATH=${CLASSPATH}:${JAVA_HOME}/jre/lib/rt.jar
+fi
+
 export CLASSPATH
 
 ## -------------------- Process options -------------------- 
