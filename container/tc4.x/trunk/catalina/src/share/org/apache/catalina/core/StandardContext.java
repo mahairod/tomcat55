@@ -2502,6 +2502,9 @@ public class StandardContext
         }
         setPaused(false);
 
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent("reload", null);
+
     }
 
 
