@@ -249,8 +249,8 @@ public final class SaveContextAction extends Action {
                     mBServer.invoke(fname, operation,
                                     values, createStandardManagerTypes);
                 
-                // Add the new Default Context to our tree control node
-                addToTreeControlNode(oname, "DefaultContext", parentName, 
+                // Add the new Context to our tree control node
+                addToTreeControlNode(oname, cObjectName, parentName, 
                                     resources, session);
 
             } catch (Exception e) {
