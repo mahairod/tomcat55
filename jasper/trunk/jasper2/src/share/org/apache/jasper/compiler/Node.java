@@ -2103,6 +2103,7 @@ abstract class Node implements TagConstants {
 
 	private List list;
 	private Node.Root root;		// null if this is not a page
+	private boolean generatedInBuffer;
 
 	public Nodes() {
 	    list = new Vector();
@@ -2158,6 +2159,14 @@ abstract class Node implements TagConstants {
 	
 	public Node.Root getRoot() {
 	    return root;
+	}
+
+	public boolean isGeneratedInBuffer() {
+	    return generatedInBuffer;
+	}
+
+	public void setGeneratedInBuffer(boolean g) {
+	    generatedInBuffer = g;
 	}
     }
 

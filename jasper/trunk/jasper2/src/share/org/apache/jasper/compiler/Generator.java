@@ -91,7 +91,7 @@ class Generator {
 
     private static final Class[] OBJECT_CLASS = { Object.class};
     private ServletWriter out;
-    private MethodsBuffer methodsBuffer;
+    private ArrayList methodsBuffered;
     private FragmentHelperClass fragmentHelperClass;
     private ErrorDispatcher err;
     private BeanRepository beanInfo;
@@ -695,7 +695,7 @@ class Generator {
 	private boolean isFragment;
 	private boolean isTagFile;
 	private ServletWriter out;
-	private MethodsBuffer methodsBuffer;
+	private ArrayList methodsBuffered;
 	private FragmentHelperClass fragmentHelperClass;
 	private int methodNesting;
 	private TagInfo tagInfo;
@@ -706,13 +706,13 @@ class Generator {
 	 */
 	public GenerateVisitor(boolean isTagFile,
 			       ServletWriter out, 
-			       MethodsBuffer methodsBuffer, 
+			       ArrayList methodsBuffered,
 			       FragmentHelperClass fragmentHelperClass,
 			       ClassLoader loader,
 			       TagInfo tagInfo) {
 	    this.isTagFile = isTagFile;
 	    this.out = out;
-	    this.methodsBuffer = methodsBuffer;
+	    this.methodsBuffered = methodsBuffered;
 	    this.fragmentHelperClass = fragmentHelperClass;
 	    this.loader = loader;
 	    this.tagInfo = tagInfo;
@@ -1485,7 +1485,6 @@ class Generator {
 	    // If the tag contains no scripting element, generate its codes
 	    // to a method.
 	    ServletWriter outSave = null;
-	    MethodsBuffer methodsBufferSave = null;
             Node.ChildInfo ci = n.getChildInfo();
 	    if (ci.isScriptless() && !ci.hasScriptingVars()) {
 		// The tag handler and its body code can reside in a separate
@@ -1515,9 +1514,10 @@ class Generator {
 
 		// Set up new buffer for the method
 		outSave = out;
-		out = methodsBuffer.getOut();
-		methodsBufferSave = methodsBuffer;
-		methodsBuffer = new MethodsBuffer();
+		GenBuffer genBuffer = new GenBuffer(
+			n.implementsSimpleTag()? null:n.getBody());
+		methodsBuffered.add(genBuffer);
+		out = genBuffer.getOut();
 
 		methodNesting++;
 		// Generate code for method declaration
@@ -1590,12 +1590,7 @@ class Generator {
 
 		methodNesting--;
 
-		// Append any methods that got generated in the body to the
-		// current buffer
-		out.print(methodsBuffer.toString());
-
-		// restore previous buffer
-		methodsBuffer = methodsBufferSave;
+		// restore previous writer
 		out = outSave;
 	    }
         }
@@ -2722,7 +2717,7 @@ class Generator {
                 fragmentHelperClass.openFragment(n, tagHandlerVar,
 						 methodNesting);
             ServletWriter outSave = out;
-	    out = fragment.getMethodsBuffer().getOut();
+	    out = fragment.getGenBuffer().getOut();
 	    String tmpParent = parent;
 	    parent = tagHandlerVar;
 	    boolean tmpIsFragment = isFragment;
@@ -2851,12 +2846,17 @@ class Generator {
      * Common part of postamble, shared by both servlets and tag files.
      */
     private void genCommonPostamble() {
-	// Append any methods that were generated
-	out.printMultiLn(methodsBuffer.toString());
+	// Append any methods that were generated in the buffer.
+	for (int i = 0; i < methodsBuffered.size(); i++) {
+	    GenBuffer methodBuffer = (GenBuffer) methodsBuffered.get(i);
+	    methodBuffer.adjustJavaLines(out.getJavaLine()-1);
+	    out.printMultiLn(methodBuffer.toString());
+	}
 
         // Append the helper class
         if( fragmentHelperClass.isUsed() ) {
             fragmentHelperClass.generatePostamble();
+            fragmentHelperClass.adjustJavaLines(out.getJavaLine()-1);
             out.printMultiLn(fragmentHelperClass.toString());
         }
 
@@ -2910,7 +2910,7 @@ class Generator {
      */
     Generator(ServletWriter out, Compiler compiler) {
 	this.out = out;
-	methodsBuffer = new MethodsBuffer();
+	methodsBuffered = new ArrayList();
 	err = compiler.getErrorDispatcher();
 	ctxt = compiler.getCompilationContext();
 	fragmentHelperClass = new FragmentHelperClass( 
@@ -2949,7 +2949,7 @@ class Generator {
 	    gen.fragmentHelperClass.generatePreamble();
 	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(),
 					       out,
-					       gen.methodsBuffer,
+					       gen.methodsBuffered,
 					       gen.fragmentHelperClass,
 					       gen.ctxt.getClassLoader(),
 					       tagInfo));
@@ -2960,7 +2960,7 @@ class Generator {
 	    gen.fragmentHelperClass.generatePreamble();
 	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(),
 					       out,
-					       gen.methodsBuffer, 
+					       gen.methodsBuffered,
 					       gen.fragmentHelperClass,
 					       gen.ctxt.getClassLoader(),
 					       null));
@@ -3406,12 +3406,20 @@ class Generator {
 	}
     }
 
-    private static class MethodsBuffer {
+    /**
+     * A class for generating codes to a buffer.
+     */
+    private static class GenBuffer {
 
+	private Node.Nodes body;
 	private java.io.CharArrayWriter charWriter;
 	protected ServletWriter out;
 
-	MethodsBuffer() {
+	GenBuffer(Node.Nodes body) {
+	    this.body = body;
+	    if (body != null) {
+		body.setGeneratedInBuffer(true);
+	    }
 	    charWriter = new java.io.CharArrayWriter();
 	    out = new ServletWriter(new java.io.PrintWriter(charWriter));
 	}
@@ -3423,6 +3431,38 @@ class Generator {
 	public String toString() {
 	    return charWriter.toString();
 	}
+
+	/**
+	 * Adjust the Java Lines.  This is necessary because the Java lines
+	 * stored with the nodes are relative the beginning of this buffer
+	 * and need to be adjusted when this buffer is inserted into the
+	 * source.
+	 */
+	public void adjustJavaLines(final int offset) {
+
+	    if (body != null) {
+		try {
+		    body.visit(new Node.Visitor() {
+			public void doVisit(Node n) {
+			    if (n.getBeginJavaLine() > 0) {
+				n.setBeginJavaLine(n.getBeginJavaLine() + offset);
+				n.setEndJavaLine(n.getEndJavaLine() + offset);
+			    }
+			}
+
+			public void visit(Node.CustomTag n) 
+						throws JasperException {
+			    doVisit(n);
+			    Node.Nodes body = n.getBody();
+			    if (body != null && !body.isGeneratedInBuffer()) {
+				body.visit(this);
+			    }
+			}
+		    });
+		} catch (JasperException ex) {
+		}
+	    }
+	}
     }
 
     /**
@@ -3431,16 +3471,16 @@ class Generator {
     private static class FragmentHelperClass {
         
         private static class Fragment {
-            private MethodsBuffer methodsBuffer;
+            private GenBuffer genBuffer;
             private int id;
             
-            public Fragment( int id ) {
+            public Fragment( int id, Node.Nodes body ) {
                 this.id = id;
-                methodsBuffer = new MethodsBuffer();
+                genBuffer = new GenBuffer(body);
             }
             
-            public MethodsBuffer getMethodsBuffer() {
-                return this.methodsBuffer;
+            public GenBuffer getGenBuffer() {
+                return this.genBuffer;
             }
             
             public int getId() {
@@ -3456,7 +3496,7 @@ class Generator {
         private String className;
 
         // Buffer for entire helper class
-        private MethodsBuffer classBuffer = new MethodsBuffer();
+        private GenBuffer classBuffer = new GenBuffer(null);
         
 	public FragmentHelperClass( String className ) {
             this.className = className;
@@ -3497,11 +3537,11 @@ class Generator {
 				     int methodNesting) 
             throws JasperException 
         {
-            Fragment result = new Fragment( fragments.size() );
+            Fragment result = new Fragment( fragments.size(), parent.getBody());
             fragments.add( result );
             this.used = true;
 
-            ServletWriter out = result.getMethodsBuffer().getOut();
+            ServletWriter out = result.getGenBuffer().getOut();
             out.pushIndent();
             out.pushIndent();
             // XXX - Returns boolean because if a tag is invoked from
@@ -3532,7 +3572,7 @@ class Generator {
         }
         
         public void closeFragment( Fragment fragment, int methodNesting ) {
-            ServletWriter out = fragment.getMethodsBuffer().getOut();
+            ServletWriter out = fragment.getGenBuffer().getOut();
             // XXX - See comment in openFragment()
 	    if (methodNesting > 0) {
 		out.printil( "return false;" );
@@ -3548,7 +3588,8 @@ class Generator {
             // Generate all fragment methods:
             for( int i = 0; i < fragments.size(); i++ ) {
                 Fragment fragment = (Fragment)fragments.get( i );
-                out.printMultiLn( fragment.getMethodsBuffer().toString() );
+                fragment.getGenBuffer().adjustJavaLines(out.getJavaLine()-1);
+                out.printMultiLn( fragment.getGenBuffer().toString() );
             }
             
             // Generate postamble:
@@ -3610,6 +3651,13 @@ class Generator {
         
         public String toString() {
             return classBuffer.toString();
+        }
+
+        public void adjustJavaLines(int offset) {
+            for( int i = 0; i < fragments.size(); i++ ) {
+                Fragment fragment = (Fragment)fragments.get(i);
+                fragment.getGenBuffer().adjustJavaLines(offset);
+            }
         }
     }
 }
