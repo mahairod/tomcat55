@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="deployer-howto.html">
+
+    &project;
+
+    <properties>
+        <author email="remm@apache.org">Remy Maucherat</author>
+        <title>Deployer HOW-TO</title>
+    </properties>
+
+<body>
+
+<section name="Table of Contents">
+
+<p>
+<a href="#Introduction">Introduction</a><br />
+<a href="#Configuring Manager Application Access">
+Configuring Manager Application Access</a><br />
+<blockquote>
+</blockquote>
+</p>
+
+</section>
+
+<section name="Introduction">
+
+</section>
+
+<section name="Configuring Manager Application Access">
+
+    <blockquote><em>
+    <p>The description below uses the variable name $CATALINA_HOME
+    to refer to the directory into which you have installed Tomcat 4,
+    and is the base directory against which most relative paths are
+    resolved.  However, if you have configured Tomcat 4 for multiple
+    instances by setting a CATALINA_BASE directory, you should use
+    $CATALINA_BASE instead of $CATALINA_HOME for each of these
+    references.</p>
+    </em></blockquote>
+
+<p>It would be quite unsafe to ship Tomcat with default settings that allowed
+anyone on the Internet to execute the Manager application on your server.
+Therefore, the Manager application is shipped with the requirement that anyone
+who attempts to use it must authenticate themselves, using a username and
+password that have the role <strong>manager</strong> associated with them.
+Further, there is no username in the default users file
+(<conf>$CATALINA_HOME/conf/tomcat-users.xml</conf>) that is assigned this
+role.  Therefore, access to the Manager application is completely disabled
+by default.</p>
+
+<p>To enable access to the Manager web application, you must either create
+a new username/password combination and associate the role name
+<strong>manager</strong> with it, or add the <strong>manager</strong> role
+to some existing username/password combination.  Exactly where this is done
+depends on which <code>Realm</code> implementation you are using:</p>
+<ul>
+<li><em>MemoryRealm</em> - If you have not customized your
+    <code>$CATALINA_HOME/conf/server.xml</code> to select a different one,
+    Tomcat 4 defaults to an XML-format file stored at
+    <code>$CATALINA_HOME/conf/tomcat-users.xml</code>, which can be
+    edited with any text editor.  This file contains an XML
+    <code>&lt;user&gt;</code> for each individual user, which might
+    look something like this:
+<source>
+&lt;user name="craigmcc" password="secret" roles="standard,manager" /&gt;
+</source>
+    which defines the username and password used by this individual to
+    log on, and the role names he or she is associated with.  You can
+    add the <strong>manager</strong> role to the comma-delimited
+    <code>roles</code> attribute for one or more existing users, and/or
+    create new users with that assigned role.</li>
+<li><em>JDBCRealm</em> - Your user and role information is stored in
+    a database accessed via JDBC.  Add the <strong>manager</strong> role
+    to one or more existing users, and/or create one or more new users
+    with this role assigned, following the standard procedures for your
+    environment.</li>
+<li><em>JNDIRealm</em> - Your user and role information is stored in
+    a directory server accessed via LDAP.  Add the <strong>manager</strong>
+    role to one or more existing users, and/or create one or more new users
+    with this role assigned, following the standard procedures for your
+    environment.</li>
+</ul>
+
+<p>The first time you attempt to issue one of the Manager commands
+described in the next section, you will be challenged to log on using
+BASIC authentication.  The username and password you enter do not matter,
+as long as they identify a valid user in the users database who possesses
+the role <strong>manager</strong>.</p>
+
+<p>In addition to the password restrictions the manager web application
+could be restricted by the remote IP address or host by adding a
+<code>RemoteAddrValve</code> or <code>RemoteHostValve</code>.  Here is
+an example of restricting access to the localhost by IP address:
+<pre>
+&lt;Context path="/manager" debug="0" privileged="true"
+         docBase="/usr/local/kinetic/tomcat4/server/webapps/manager"&gt;
+         &lt;Valve className="org.apache.catalina.valves.RemoteAddrValve"
+                allow="127.0.0.1"/&gt;
+&lt;/Context&gt;
+</pre>
+</p>
+</section>
+
+
+</body>
+
+</document>
