@@ -236,7 +236,7 @@ public class JspUtil {
 	    return null;
 	
 	String escString    = "";
-	String shellSpChars = "&;`'\"|*?~<>^()[]{}$\\\n";
+	String shellSpChars = "\\\"";
 	
 	for(int index=0; index<unescString.length(); index++) {
 	    char nextChar = unescString.charAt(index);
