@@ -10,6 +10,23 @@
 
 <section name="News &amp; Status">
 
+<h3>22 October 2001 - Apache Tomcat 3.3 Final Released</h3>
+
+<p>At long last, Tomcat 3.3 has reached "Final Release"!  With its
+refactored set of core classes and modules, it offers a number of
+new features, better performance, and more flexible configuration
+over its predecessors.  Also, it can be updated with add-on modules.
+The PasswordPrompter add-on module is a simple example and is
+available with this release.  You can find everything
+<a href="http://www.apache.org/dist/jakarta/jakarta-tomcat/release/v3.3/bin">here</a>.</p>
+
+<p>Note: Additional documentation updates are planned (as well as
+maintenance bug fixes).  You can get the latest documentation at the
+<a href="http://jakarta.apache.org/tomcat/tomcat-3.3-doc/index.html">
+Tomcat 3.3 Documentation</a> site.</p>
+
+<hr noshade="" size="1"/>
+
 <h3>14 October 2001 - Tomcat 4.0.1 Final Released</h3>
 <p>This is the final release of Tomcat 4.0.1, which is a maintenance release
 of Tomcat 4.0. Download it 
