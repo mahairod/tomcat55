@@ -75,6 +75,7 @@ import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -114,7 +115,7 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision$ $Date$
  */
 
-public final class ApplicationContext
+public class ApplicationContext
     implements ServletContext {
 
 
@@ -175,6 +176,25 @@ public final class ApplicationContext
         }
         
     }
+
+
+    protected class PrivilegedGetResourcePaths
+        implements PrivilegedAction {
+
+        private String path;
+        private DirContext resources;
+
+        PrivilegedGetResourcePaths(DirContext resources, String path) {
+            this.resources = resources;
+            this.path = path;
+        }
+
+        public Object run() {
+            return (getResourcePathsInternal(resources, path));
+        }
+
+    }
+
 
     protected class PrivilegedLogMessage
         implements PrivilegedAction {
@@ -625,32 +645,6 @@ public final class ApplicationContext
 
 
     /**
-     * Return a Set containing the resource paths of all resources defined
-     * within this web application.  Each path will be a String starting with
-     * a "/" character.  The returned set is immutable.
-     */
-    public Set getResourcePaths() {
-
-        ResourceSet set = new ResourceSet();
-        DirContext resources = context.getResources();
-        if (resources == null) {
-            set.setLocked(true);
-            return (set);
-        }
-        
-        try {
-            listPaths(set, resources, "");
-        } catch (NamingException e) {
-            // Ignore
-        }
-        
-        set.setLocked(true);
-        return (set);
-
-    }
-
-
-    /**
      * Return a Set containing the resource paths of resources member of the
      * specified collection. Each path will be a String starting with
      * a "/" character. The returned set is immutable.
@@ -659,19 +653,35 @@ public final class ApplicationContext
      */
     public Set getResourcePaths(String path) {
 
-        ResourceSet set = new ResourceSet();
         DirContext resources = context.getResources();
-        if (resources == null) {
-            set.setLocked(true);
-            return (set);
+        if (resources != null) {
+            if (System.getSecurityManager() != null) {
+                PrivilegedAction dp =
+                    new PrivilegedGetResourcePaths(resources, path);
+                return ((Set) AccessController.doPrivileged(dp));
+            } else {
+                return (getResourcePathsInternal(resources, path));
+            }
         }
-        
+        return (null);
+
+    }
+
+
+    /**
+     * Internal implementation of getResourcesPath() logic.
+     *
+     * @param resources Directory context to search
+     * @param path Collection path
+     */
+    private Set getResourcePathsInternal(DirContext resources, String path) {
+
+        ResourceSet set = new ResourceSet();
         try {
             listCollectionPaths(set, resources, path);
         } catch (NamingException e) {
-            // Ignore
+            ; // Ignore
         }
-        
         set.setLocked(true);
         return (set);
 
