@@ -121,6 +121,7 @@ public class ReplicationTransmitter
             if ( sender!=null) v.addElement(sender);
         }
         IDataSender[] result = new IDataSender[v.size()];
+        v.copyInto(result);
         return result;
     }
     
