@@ -865,16 +865,12 @@ public class WebappLoader
         WebappClassLoader classLoader = null;
 
         if (parentClassLoader == null) {
-            // Will cause a ClassCast is the class does not extend WCL, but
-            // this is on purpose (the exception will be caught and rethrown)
-            log.info( "Creating loader with no parent ");
-            classLoader = (WebappClassLoader) clazz.newInstance();
-        } else {
-            Class[] argTypes = { ClassLoader.class };
-            Object[] args = { parentClassLoader };
-            Constructor constr = clazz.getConstructor(argTypes);
-            classLoader = (WebappClassLoader) constr.newInstance(args);
+            parentClassLoader = Thread.currentThread().getContextClassLoader();
         }
+        Class[] argTypes = { ClassLoader.class };
+        Object[] args = { parentClassLoader };
+        Constructor constr = clazz.getConstructor(argTypes);
+        classLoader = (WebappClassLoader) constr.newInstance(args);
 
         return classLoader;
 
@@ -1193,6 +1189,16 @@ public class WebappLoader
             ((Context) container).getServletContext();
         if (servletContext == null)
             return;
+
+        if (container instanceof StandardContext) {
+            String baseClasspath = 
+                ((StandardContext) container).getCompilerClasspath();
+            if (baseClasspath != null) {
+                servletContext.setAttribute(Globals.CLASS_PATH_ATTR,
+                                            baseClasspath);
+                return;
+            }
+        }
 
         StringBuffer classpath = new StringBuffer();
 
