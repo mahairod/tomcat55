@@ -1,7 +1,7 @@
 $Id$
 
 
-                Running The Watchdog Validation Test Suite
+                Running The Watchdog 4.0 Validation Test Suite
                 ==========================================
 
 This subproject contains a set of tests to assist you in validating whether
