@@ -49,12 +49,14 @@
                                  "select=" + URLEncoder.encode(thisObjectName) + 
                                  "&parent="+ URLEncoder.encode(thisParentName) %>'>  
                 <bean:message key="actions.valves.delete"/> 
+              </controls:action>
               </logic:notEqual>          
        </controls:actions>   
          </div>
       </td>
     </tr>
   </table>
+
     <%@ include file="../buttons.jsp" %>
   <br>
 
