@@ -97,7 +97,11 @@ public class ReplicationListener extends Thread
                                int port,
                                long timeout)
     {
-        pool = new ThreadPool(poolSize);
+        try {
+            pool = new ThreadPool(poolSize, TcpReplicationThread.class);
+        }catch ( Exception x ) {
+            log.fatal("Unable to start thread pool for TCP listeners, session replication will fail! msg="+x.getMessage());
+        }
         this.callback = callback;
         this.bind = bind;
         this.port = port;
@@ -206,7 +210,7 @@ public class ReplicationListener extends Thread
     protected void readDataFromSocket (SelectionKey key)
         throws Exception
     {
-        WorkerThread worker = pool.getWorker();
+        TcpReplicationThread worker = (TcpReplicationThread)pool.getWorker();
         if (worker == null) {
             // No threads available, do nothing, the selection
             // loop will keep calling this method until a

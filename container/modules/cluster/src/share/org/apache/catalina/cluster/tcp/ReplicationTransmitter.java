@@ -63,14 +63,6 @@
 
 package org.apache.catalina.cluster.tcp;
 
-/**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author not attributable
- * @version 1.0
- */
 import org.apache.catalina.cluster.io.XByteBuffer;
 
 
@@ -131,18 +123,29 @@ public class ReplicationTransmitter
         IDataSender[] result = new IDataSender[v.size()];
         return result;
     }
+    
+    protected void sendMessageData(String sessionId, byte[] data, IDataSender sender) throws java.io.IOException  {
+        if ( sender == null ) throw new java.io.IOException("Sender not available. Make sure sender information is available to the ReplicationTransmitter.");
+        try
+        {
+            if (!sender.isConnected())
+                sender.connect();
+            sender.sendMessage(sessionId,data);
+        }catch ( Exception x)
+        {
+            log.warn("Unable to send replicated message, is server down?",x);
+        }
 
-    public void sendMessage(byte[] indata, java.net.InetAddress addr, int port) throws java.io.IOException
+    }
+    public void sendMessage(String sessionId, byte[] indata, java.net.InetAddress addr, int port) throws java.io.IOException
     {
         byte[] data = XByteBuffer.createDataPackage(indata);
         String key = addr.getHostAddress()+":"+port;
         IDataSender sender = (IDataSender)map.get(key);
-        if ( sender == null ) throw new java.io.IOException("Sender not available. Make sure sender information is available to the ReplicationTransmitter.");
-        if ( !sender.isConnected() ) sender.connect();
-        sender.sendMessage(data);
+        sendMessageData(sessionId,data,sender);
     }
 
-    public void sendMessage(byte[] indata) throws java.io.IOException
+    public void sendMessage(String sessionId, byte[] indata) throws java.io.IOException
     {
         java.util.Iterator i = map.entrySet().iterator();
         java.util.Vector v = new java.util.Vector();
@@ -152,14 +155,11 @@ public class ReplicationTransmitter
             IDataSender sender = (IDataSender)((java.util.Map.Entry)i.next()).getValue();
             try
             {
-                if (!sender.isConnected())
-                    sender.connect();
-                sender.sendMessage(data);
+                sendMessageData(sessionId,data,sender);
             }catch ( Exception x)
             {
-                log.warn("Unable to send replicated message, is server down?",x);
+                log.warn("Unable to send replicated message to "+sender+", is server down?",x);
             }
-
         }//while
     }
 

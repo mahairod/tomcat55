@@ -62,22 +62,22 @@
  */
 
 package org.apache.catalina.cluster.tcp;
+import org.apache.catalina.cluster.Member;
+import java.net.InetAddress;
+public class IDataSenderFactory {
+    private IDataSenderFactory() {
+    }
+    public static final String SYNC_MODE="synchronous";
+    public static final String ASYNC_MODE="asynchronous";
+    public synchronized static IDataSender getIDataSender(String mode, Member mbr) 
+    throws java.io.IOException {
+        if (SYNC_MODE.equals(mode) )
+            return new SocketSender(InetAddress.getByName(mbr.getHost()),mbr.getPort());
+        else if ( ASYNC_MODE.equals(mode) )
+            return new AsyncSocketSender(InetAddress.getByName(mbr.getHost()),mbr.getPort());
+        else
+            throw new java.io.IOException("Invalid replication mode="+mode);
+    }
+    
 
-/**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author not attributable
- * @version 1.0
- */
-
-public interface IDataSender
-{
-    public java.net.InetAddress getAddress();
-    public int getPort();
-    public void connect() throws java.io.IOException;
-    public void disconnect();
-    public void sendMessage(String sessionId, byte[] data) throws java.io.IOException;
-    public boolean isConnected();
 }
