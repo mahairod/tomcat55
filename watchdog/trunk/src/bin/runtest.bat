@@ -18,7 +18,7 @@ set stest=.\conf\servlet-testlist.txt
 set jtest=.\conf\jsp-testlist.txt
 set default=all
 
-set miscJars=.\lib\xml.jar;.\lib\moo.jar;.\check-client.jar
+set miscJars=.\lib\xml.jar;.\lib\moo.jar;.\lib\client.jar
 set appJars=%miscJars%
 set sysJars=%JAVA_HOME%\lib\tools.jar
 

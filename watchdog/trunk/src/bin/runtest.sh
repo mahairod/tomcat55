@@ -28,7 +28,7 @@ cp=$CLASSPATH
 if [ -d ${baseDir}/clients ]; then
     appClassPath=${baseDir}/clients:${appClassPath}
 else
-    appClassPath=${baseDir}/check-client.jar:${appClassPath}
+    appClassPath=${baseDir}/lib/client.jar:${appClassPath}
 fi
 
 if [ -d ${baseDir}/webapps/servlet-tests ]; then
