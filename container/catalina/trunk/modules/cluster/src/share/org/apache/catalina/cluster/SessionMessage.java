@@ -38,7 +38,7 @@ package org.apache.catalina.cluster;
  */
  import java.security.Principal;
  import org.apache.catalina.cluster.Member;
-public interface SessionMessage extends java.io.Serializable
+public interface SessionMessage extends ClusterMessage, java.io.Serializable
 {
 
     /**
@@ -73,18 +73,7 @@ public interface SessionMessage extends java.io.Serializable
      */
     public static final int EVT_ALL_SESSION_DATA = 12;
     
-    /**
-     * Get the address that this message originated from.  This would be set
-     * if the message was being relayed from a host other than the one
-     * that originally sent it.
-     */
-    public Member getAddress();
-    /**
-     * Called by the cluster before sending it to the other
-     * nodes
-     * @param member Member
-     */
-    public void setAddress(Member member);
+
     
     public String getContextName();
     
@@ -104,24 +93,6 @@ public interface SessionMessage extends java.io.Serializable
      */
     public String getSessionID();
     
-    /**
-     * Timestamp message 
-     * @return long
-     */
-    public long getTimestamp();
-    /**
-     * Called by the cluster before sending out 
-     * the message
-     * @param timestamp long
-     */
-    public void setTimestamp(long timestamp);
-
-    /**
-     * Each message must have a unique ID, in case of using async replication,
-     * and a smart queue, this id is used to replace messages not yet sent 
-     * @return String
-     */
-    public String getUniqueId();
 
 
 }//SessionMessage
