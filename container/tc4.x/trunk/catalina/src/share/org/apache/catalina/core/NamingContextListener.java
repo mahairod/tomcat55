@@ -691,8 +691,10 @@ public class NamingContextListener
         if (debug >= 1)
             log("Creating JNDI naming context");
 
-        if (namingResources == null)
+        if (namingResources == null) {
             namingResources = new NamingResources();
+            namingResources.setContainer(container);
+        }
 
         // Resource links
         ContextResourceLink[] resourceLinks = 

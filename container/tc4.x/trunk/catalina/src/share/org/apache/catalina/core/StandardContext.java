@@ -165,6 +165,7 @@ public class StandardContext
 
         super();
         pipeline.setBasic(new StandardContextValve());
+        namingResources.setContainer(this);
 
     }
 

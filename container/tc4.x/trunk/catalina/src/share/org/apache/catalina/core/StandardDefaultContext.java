@@ -113,6 +113,9 @@ public class StandardDefaultContext
      * Create the DefaultContext
      */
     public StandardDefaultContext() {
+
+        namingResources.setContainer(this);
+
     }
 
 
