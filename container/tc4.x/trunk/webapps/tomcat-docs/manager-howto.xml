@@ -734,18 +734,18 @@ file might look something like this:</p>
 <tr><td><pre>
 &lt;project name="My Application" default="compile" basedir="."&gt;
 
-  &lt;-- Configure the directory into which the web application is built --&gt;
+  &lt;!-- Configure the directory into which the web application is built --&gt;
   &lt;property name="build"    value="${basedir}/build"/&gt;
 
-  &lt;-- Configure the context path for this application --&gt;
+  &lt;!-- Configure the context path for this application --&gt;
   &lt;property name="path"     value="/myapp"/&gt;
 
-  &lt;-- Configure properties to access the Manager application --&gt;
+  &lt;!-- Configure properties to access the Manager application --&gt;
   &lt;property name="url"      value="http://localhost:8080/manager"/&gt;
   &lt;property name="username" value="myusername"/&gt;
   &lt;property name="password" value="mypassword"/&gt;
 
-  &lt;-- Configure the custom Ant tasks for the Manager application --&gt;
+  &lt;!-- Configure the custom Ant tasks for the Manager application --&gt;
   &lt;taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask"/&gt;
   &lt;taskdef name="install"   classname="org.apache.catalina.ant.InstallTask"/&gt;
   &lt;taskdef name="list"      classname="org.apache.catalina.ant.ListTask"/&gt;
@@ -757,9 +757,9 @@ file might look something like this:</p>
   &lt;taskdef name="stop"      classname="org.apache.catalina.ant.StopTask"/&gt;
   &lt;taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask"/&gt;
 
-  &lt;-- Executable Targets --&gt;
+  &lt;!-- Executable Targets --&gt;
   &lt;target name="compile" description="Compile web application"&gt;
-    ... construct web application in ${build} subdirectory ...
+    &lt;!-- ... construct web application in ${build} subdirectory ... --&gt;
   &lt;/target&gt;
 
   &lt;target name="install" description="Install web application"
