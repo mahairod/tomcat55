@@ -18,8 +18,6 @@
 package org.apache.catalina.deploy;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Iterator;
 
 
 /**
@@ -27,28 +25,14 @@ import java.util.Iterator;
  * an <code>&lt;res-env-refy&gt;</code> element in the deployment descriptor.
  *
  * @author Craig R. McClanahan
+ * @author Peter Rossbach (pero@apache.org)
  * @version $Revision$ $Date$
  */
 
-public class ContextResourceEnvRef implements Serializable {
+public class ContextResourceEnvRef extends ContextBase implements Serializable {
 
 
     // ------------------------------------------------------------- Properties
-
-
-    /**
-     * The name of this environment entry.
-     */
-    private String name = null;
-
-    public String getName() {
-        return (this.name);
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
 
     /**
      * Does this environment entry allow overrides by the application
@@ -63,55 +47,6 @@ public class ContextResourceEnvRef implements Serializable {
     public void setOverride(boolean override) {
         this.override = override;
     }
-
-
-    /**
-     * The type of this environment entry.
-     */
-    private String type = null;
-
-    public String getType() {
-        return (this.type);
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-
-    /**
-     * Holder for our configured properties.
-     */
-    private HashMap properties = new HashMap();
-
-    /**
-     * Return a configured property.
-     */
-    public Object getProperty(String name) {
-        return properties.get(name);
-    }
-
-    /**
-     * Set a configured property.
-     */
-    public void setProperty(String name, Object value) {
-        properties.put(name, value);
-    }
-
-    /** 
-     * remove a configured property.
-     */
-    public void removeProperty(String name) {
-        properties.remove(name);
-    }
-
-    /**
-     * List properties.
-     */
-    public Iterator listProperties() {
-        return properties.keySet().iterator();
-    }
-    
     
     // --------------------------------------------------------- Public Methods
 
@@ -123,10 +58,10 @@ public class ContextResourceEnvRef implements Serializable {
 
         StringBuffer sb = new StringBuffer("ContextResourceEnvRef[");
         sb.append("name=");
-        sb.append(name);
-        if (type != null) {
+        sb.append(getName());
+        if (getType() != null) {
             sb.append(", type=");
-            sb.append(type);
+            sb.append(getType());
         }
         sb.append(", override=");
         sb.append(override);
@@ -135,22 +70,6 @@ public class ContextResourceEnvRef implements Serializable {
 
     }
 
-
-    // -------------------------------------------------------- Package Methods
-
-
-    /**
-     * The NamingResources with which we are associated (if any).
-     */
-    protected NamingResources resources = null;
-
-    public NamingResources getNamingResources() {
-        return (this.resources);
-    }
-
-    void setNamingResources(NamingResources resources) {
-        this.resources = resources;
-    }
 
 
 }

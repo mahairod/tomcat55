@@ -18,8 +18,6 @@
 package org.apache.catalina.deploy;
 
 import java.io.Serializable;
-import java.util.Iterator;
-import java.util.HashMap;
 
 
 /**
@@ -28,27 +26,15 @@ import java.util.HashMap;
  * deployment descriptor.
  *
  * @author Craig R. McClanahan
+ * @author Peter Rossbach (pero@apache.org)
  * @version $Revision$ $Date$
  */
 
-public class ContextEjb implements Serializable {
+public class ContextEjb extends ContextBase implements Serializable {
 
 
     // ------------------------------------------------------------- Properties
 
-
-    /**
-     * The description of this EJB.
-     */
-    private String description = null;
-
-    public String getDescription() {
-        return (this.description);
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
 
     /**
@@ -78,21 +64,6 @@ public class ContextEjb implements Serializable {
         this.link = link;
     }
 
-
-    /**
-     * The name of this EJB.
-     */
-    private String name = null;
-
-    public String getName() {
-        return (this.name);
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
     /**
      * The name of the EJB remote implementation class.
      */
@@ -106,54 +77,6 @@ public class ContextEjb implements Serializable {
         this.remote = remote;
     }
 
-
-    /**
-     * The name of the EJB bean implementation class.
-     */
-    private String type = null;
-
-    public String getType() {
-        return (this.type);
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-
-    /**
-     * Holder for our configured properties.
-     */
-    private HashMap properties = new HashMap();
-
-    /**
-     * Return a configured property.
-     */
-    public Object getProperty(String name) {
-        return properties.get(name);
-    }
-
-    /**
-     * Set a configured property.
-     */
-    public void setProperty(String name, Object value) {
-        properties.put(name, value);
-    }
-
-    /** 
-     * remove a configured property.
-     */
-    public void removeProperty(String name) {
-        properties.remove(name);
-    }
-
-    /**
-     * List properties.
-     */
-    public Iterator listProperties() {
-        return properties.keySet().iterator();
-    }
-    
     
     // --------------------------------------------------------- Public Methods
 
@@ -165,14 +88,14 @@ public class ContextEjb implements Serializable {
 
         StringBuffer sb = new StringBuffer("ContextEjb[");
         sb.append("name=");
-        sb.append(name);
-        if (description != null) {
+        sb.append(getName());
+        if (getDescription() != null) {
             sb.append(", description=");
-            sb.append(description);
+            sb.append(getDescription());
         }
-        if (type != null) {
+        if (getType() != null) {
             sb.append(", type=");
-            sb.append(type);
+            sb.append(getType());
         }
         if (home != null) {
             sb.append(", home=");
@@ -189,23 +112,6 @@ public class ContextEjb implements Serializable {
         sb.append("]");
         return (sb.toString());
 
-    }
-
-
-    // -------------------------------------------------------- Package Methods
-
-
-    /**
-     * The NamingResources with which we are associated (if any).
-     */
-    protected NamingResources resources = null;
-
-    public NamingResources getNamingResources() {
-        return (this.resources);
-    }
-
-    void setNamingResources(NamingResources resources) {
-        this.resources = resources;
     }
 
 
