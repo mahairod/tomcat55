@@ -87,6 +87,10 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>Manager</servlet-name>
+      <url-pattern>/save</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Manager</servlet-name>
       <url-pattern>/serverinfo</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
@@ -139,6 +143,7 @@
       <url-pattern>/deploy</url-pattern>
       <url-pattern>/undeploy</url-pattern>
       <url-pattern>/reload</url-pattern>
+      <url-pattern>/save</url-pattern>
       <url-pattern>/serverinfo</url-pattern>
       <url-pattern>/status/*</url-pattern>
       <url-pattern>/roles</url-pattern>
