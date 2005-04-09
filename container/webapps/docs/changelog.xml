@@ -68,7 +68,7 @@
         to it would leak a minimal amount of memory) (remm)
       </fix>
       <update>
-        Read patch causing Session.getId to throw an ISE, and make all internal components
+        Re-aad patch causing Session.getId to throw an ISE, and make all internal components
         use a safe getIdInternal method (remm)
       </update>
       <update>
@@ -82,6 +82,14 @@
     </changelog>
   </subsection>
   
+   <subsection name="Coyote">
+     <changelog>
+      <update>
+        Add support for using "Smart Cards" as trust/keyStore. (billbarker)
+      </update>
+     </changelog>
+  </subsection>
+
   <subsection name="Jasper">
     <changelog>
       <fix>
