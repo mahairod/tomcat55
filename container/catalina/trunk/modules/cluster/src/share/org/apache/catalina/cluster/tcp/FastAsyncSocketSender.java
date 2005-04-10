@@ -401,15 +401,15 @@ public class FastAsyncSocketSender extends DataSender {
             return queuedNrOfBytes ;
         }
         
-        protected void setQueuedNrOfBytes(long queuedNrOfBytes) {
+        protected synchronized void setQueuedNrOfBytes(long queuedNrOfBytes) {
             this.queuedNrOfBytes = queuedNrOfBytes;
         }
 
-        protected void incQueuedNrOfBytes(long size) {
+        protected synchronized void incQueuedNrOfBytes(long size) {
             queuedNrOfBytes += size;
         }
         
-        protected void decQueuedNrOfBytes(long size) {
+        protected synchronized void decQueuedNrOfBytes(long size) {
             queuedNrOfBytes -= size;
         }
 
