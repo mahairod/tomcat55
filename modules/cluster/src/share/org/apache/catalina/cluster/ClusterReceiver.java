@@ -62,6 +62,9 @@ public interface ClusterReceiver
      */
     public void setSendAck(boolean isSendAck);
     
+    public boolean isCompress() ;
+    public void setCompress(boolean compress);
+
     /**
      * get the listing ip interface
      * @return

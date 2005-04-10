@@ -22,37 +22,25 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Session;
-import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.MessageListener;
 import org.apache.catalina.core.StandardEngine;
-import org.apache.catalina.util.StringManager;
 
 /**
  * Receive SessionID cluster change from other backup node after primary session
  * node is failed.
  * 
  * @author Peter Rossbach
- * @version 1.0
+ * @version $Revision$ $Date$
  */
-public class JvmRouteSessionIDBinderListener implements MessageListener {
-    /*--Static Variables----------------------------------------*/
-    public static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
-            .getLog(JvmRouteSessionIDBinderListener.class);
-
+public class JvmRouteSessionIDBinderListener extends ClusterListener {
+ 
     /**
      * The descriptive information about this implementation.
      */
-    protected static final String info = "org.apache.catalina.session.JvmRouteSessionIDBinderListener/1.0";
+    protected static final String info = "org.apache.catalina.session.JvmRouteSessionIDBinderListener/1.1";
 
-    /*--Instance Variables--------------------------------------*/
+    //--Instance Variables--------------------------------------
 
-    /**
-     * The string manager for this package.
-     */
-    private StringManager sm = StringManager.getManager(Constants.Package);
-
-    protected CatalinaCluster cluster = null;
 
     protected boolean started = false;
 
@@ -61,12 +49,12 @@ public class JvmRouteSessionIDBinderListener implements MessageListener {
      */
     private long numberOfSessions = 0;
 
-    /*--Constructor---------------------------------------------*/
+    //--Constructor---------------------------------------------
 
     public JvmRouteSessionIDBinderListener() {
     }
 
-    /*--Logic---------------------------------------------------*/
+    //--Logic---------------------------------------------------
 
     /**
      * Return descriptive information about this implementation.
@@ -165,23 +153,5 @@ public class JvmRouteSessionIDBinderListener implements MessageListener {
     public boolean accept(ClusterMessage msg) {
         return (msg instanceof SessionIDMessage);
     }
-
-    /*--Instance Getters/Setters--------------------------------*/
-    public CatalinaCluster getCluster() {
-        return cluster;
-    }
-
-    public void setCluster(CatalinaCluster cluster) {
-        this.cluster = cluster;
-    }
-
-    public boolean equals(Object listener) {
-        return super.equals(listener);
-    }
-
-    public int hashCode() {
-        return super.hashCode();
-    }
-
 }
 

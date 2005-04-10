@@ -29,9 +29,8 @@ package org.apache.catalina.cluster.session;
  *               <href="http://www.filip.net/tomcat/">Filip's Tomcat Page</a><BR>
  *
  * Copyright:    See apache license
- * Company:      www.filip.net
- * @author  <a href="mailto:mail@filip.net">Filip Hanik</a>
- * @version 1.0 for TC 4.0
+ * @author  Filip Hanik
+ * @version $Revision$ $Date$
  * Description:<BR>
  * The ReplicatedSession class is a simple extension of the StandardSession class
  * It overrides a few methods (setAttribute, removeAttribute, expire, access) and has

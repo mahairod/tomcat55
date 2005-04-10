@@ -16,6 +16,8 @@
 
 package org.apache.catalina.cluster;
 
+import java.util.Map;
+
 import org.apache.catalina.Cluster;
 import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.LifecycleException;
@@ -105,10 +107,15 @@ public interface CatalinaCluster
     
     public ClusterDeployer getClusterDeployer();
     
+    /**
+     * @return
+     */
+    public Map getManagers();
     public Manager getManager(String name);
     public void removeManager(String name);
     public void addManager(String name, ClusterManager manager);
-    public Valve getValve();
+    public Valve[] getValves();
 
+ 
     
 }

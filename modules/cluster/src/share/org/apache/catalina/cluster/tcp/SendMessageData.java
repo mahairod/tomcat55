@@ -25,7 +25,7 @@ import org.apache.catalina.cluster.Member;
  */
 public class SendMessageData {
 
-    private ClusterMessage message ;
+    private Object message ;
     private Member destination ;
     private Exception exception ;
     
@@ -35,7 +35,7 @@ public class SendMessageData {
      * @param destination
      * @param exception
      */
-    public SendMessageData(ClusterMessage message, Member destination,
+    public SendMessageData(Object message, Member destination,
             Exception exception) {
         super();
         this.message = message;
@@ -70,13 +70,13 @@ public class SendMessageData {
     /**
      * @return Returns the message.
      */
-    public ClusterMessage getMessage() {
+    public Object getMessage() {
         return message;
     }
     /**
      * @param message The message to set.
      */
-    public void setMessage(ClusterMessage message) {
+    public void setMessage(Object message) {
         this.message = message;
     }
 }

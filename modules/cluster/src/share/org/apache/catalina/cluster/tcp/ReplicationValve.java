@@ -28,6 +28,7 @@ import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.ClusterSession;
+import org.apache.catalina.cluster.ClusterValve;
 import org.apache.catalina.cluster.session.DeltaManager;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
@@ -54,12 +55,12 @@ import org.apache.catalina.valves.ValveBase;
  */
 
 public class ReplicationValve
-    extends ValveBase {
+    extends ValveBase implements ClusterValve {
+    
     private static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( ReplicationValve.class );
 
     // ----------------------------------------------------- Instance Variables
-
 
     /**
      * The descriptive information related to this implementation.
@@ -74,6 +75,8 @@ public class ReplicationValve
     protected static StringManager sm =
         StringManager.getManager(Constants.Package);
 
+    private CatalinaCluster cluster = null ;
+
     /**
      * holds file endings to not call for like images and others
      */
@@ -85,7 +88,6 @@ public class ReplicationValve
     protected long nrOfRequests =0;
     protected long lastSendTime =0;
     protected long nrOfFilterRequests=0;
-    
     protected boolean primaryIndicator = false ;
     protected String primaryIndicatorName = "org.apache.catalina.cluster.tcp.isPrimarySession";
    
@@ -102,6 +104,20 @@ public class ReplicationValve
 
     }
     
+    /**
+     * @return Returns the cluster.
+     */
+    public CatalinaCluster getCluster() {
+        return cluster;
+    }
+    
+    /**
+     * @param cluster The cluster to set.
+     */
+    public void setCluster(CatalinaCluster cluster) {
+        this.cluster = cluster;
+    }
+ 
     /**
      * @return Returns the filter
      */
