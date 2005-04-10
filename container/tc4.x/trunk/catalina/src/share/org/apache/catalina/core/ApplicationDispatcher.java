@@ -861,7 +861,8 @@ final class ApplicationDispatcher
         if ((current instanceof ApplicationHttpRequest) ||
             (current instanceof HttpRequest) ||
             (current instanceof HttpServletRequest))
-            wrapper = new ApplicationHttpRequest((HttpServletRequest) current);
+            wrapper = new ApplicationHttpRequest(
+                    (HttpServletRequest) current, context);
         else
             wrapper = new ApplicationRequest(current);
         if (previous == null)

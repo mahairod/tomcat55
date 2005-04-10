@@ -23,8 +23,12 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+
+import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.RequestUtil;
@@ -49,7 +53,6 @@ import org.apache.catalina.util.StringManager;
 
 class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
-
     // ------------------------------------------------------- Static Variables
 
 
@@ -62,24 +65,28 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
       Globals.QUERY_STRING_ATTR };
 
 
+
     // ----------------------------------------------------------- Constructors
 
-
     /**
-     * Construct a new wrapped request around the specified servlet request.
+     * Construct a new wrapped request around the specified servlet request in
+     * the specified context.
      *
      * @param request The servlet request being wrapped
+     * @param context The Context this ApplicationHttpRequest is associated with
      */
-    public ApplicationHttpRequest(HttpServletRequest request) {
-
+    public ApplicationHttpRequest(HttpServletRequest request, Context context) {
         super(request);
         setRequest(request);
-
+        this.context = context;
     }
-
 
     // ----------------------------------------------------- Instance Variables
 
+    /**
+     * The Context this ApplicationHttpRequest is associated with.
+     */
+    protected Context context;
 
     /**
      * The request attributes for this request.  This is initialized from the
@@ -376,6 +383,42 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     }
 
 
+    /**
+     * Return a RequestDispatcher that wraps the resource at the specified
+     * path, which may be interpreted as relative to the current request path.
+     *
+     * @param path Path of the resource to be wrapped
+     */
+    public RequestDispatcher getRequestDispatcher(String path) {
+
+        if (context == null)
+            return (null);
+
+        // If the path is already context-relative, just pass it through
+        if (path == null)
+            return (null);
+        else if (path.startsWith("/"))
+            return (context.getServletContext().getRequestDispatcher(path));
+
+        // Convert a request-relative path to a context-relative one
+        String servletPath = (String) getAttribute(Globals.SERVLET_PATH_ATTR);
+        if (servletPath == null)
+            servletPath = getServletPath();
+
+        int pos = servletPath.lastIndexOf('/');
+        String relative = null;
+        if (pos >= 0) {
+            relative = RequestUtil.normalize
+                (servletPath.substring(0, pos + 1) + path);
+        } else {
+            relative = RequestUtil.normalize(servletPath + path);
+        }
+
+        return (context.getServletContext().getRequestDispatcher(relative));
+
+    }
+    
+    
     /**
      * Perform a shallow copy of the specified Map, and return the result.
      *
