@@ -56,7 +56,8 @@
           [Modified patch from Ralf Hauser] (yoavs)
       </add>
       <add>
-          Add MessageListener and LifecylceListener cluster saving to storeconfig module (pero)
+          Add MessageListener and LifecylceListener cluster saving to storeconfig module
+          (&lt;Cluster ... &gt;&lt;ClusterListener className="org.apache.catalina.cluster.session.JvmRouteSessionIDBinderListener" &gt;) (pero)
       </add>  
       <fix>
         <bug>33743</bug>: Add additional synchronization in webapp classloader to avoid
@@ -87,6 +88,9 @@
       <update>
         Add support for using "Smart Cards" as trust/keyStore. (billbarker)
       </update>
+      <update>
+        Add some Mbean attributes and operations to ChannelSocket (pero)
+      </update>    
      </changelog>
   </subsection>
 
@@ -109,12 +113,42 @@
   </subsection>
   
   <subsection name="Cluster">
-    <changelog>
+    <changelog>        
+      <add>
+        DataSender doWaitAckStats for better understanding wait ack problems (pero)   
+      </add>  
+      <update>
+        Refactor DeltaManager and add counter for cluster message send/receive message (pero)  
+      </update>          
+      <fix>
+        <bug>34389</bug>:Porting Clustering fix pack to 5.5.10 code base.
+        Remove synchonized from DataSender.pushMessage(). Very offen the 
+        complete cluster blocking after replicated a bulk of new session messages under heavy load.
+        All cluster node standing for a lot of time and made nothing. 
+        Fix it for pooled, asynchronous and fastasyncqueue replication mode. Very bad thing, sorry! (pero)  
+      </fix>
+      <add>
+        Add notifySessionListenersOnReplication attribute to SimpleTcpCluster to stop notify 
+        event to SessionListener at backup nodes from create and destroy replicated session (pero)
+      </add>
+      <add>
+        Add compress attribute to ClusterSender and ClusterReceiver interface. Now compress config
+        transfer from sender to receiver at SimpleTcpCluster. (pero) 
+      </add>    
+      <add>
+        Add ClusterValve interface and implement it as ReplicationValve and JvmRouteBinderValve. Now both
+        Valves can be directly configured at server.xml Host/Cluster/Valve subelements.
+        Also this configuration are correctly handled with the StoreConfig module. (pero)  
+      </add>    
+      <update>
+        Deactivate DataSender keepAliveMaxRequestCount change default to -1. 
+        Cluster replication sockets are fast and very stable! (pero)  
+      </update>          
       <update>
         Setup JvmRouteBinderValve as host valve instead context valve. Refactor the API a little bit. (pero)
       </update>
       <fix>
-        Don't increment open socket counter before socket is really open, counte socket open failures (pero) 
+        Don't increment open socket counter before socket is really open. Add socket open failures counter (pero) 
       </fix>  
       <add>
         Add MessageListener support to cluster server.xml element (ClusterListener) to 
@@ -130,9 +164,11 @@
         at ReplicationTransmitter.  Check frequency can be change with attribute 
         processSenderFrequency (default 2). (pero)
       </add>
-      <fix>
-        Jdk13ReplicationListener active threads closed, when stop called (pero)
-      </fix>
+      <add>
+        Remove useless Jdk13ReplicationListener,Jdk13ObjectReader. 
+        Add SocketReplicationListener and SocketObjectReader to have nativ socket ClusterReceiver. 
+        Also extract ClusterReceiverBase superclass for SocketReplicationListener and ReplicationListener (pero) 
+      </add>
       <update>
         Add and update some API documentation (pero)
       </update>
