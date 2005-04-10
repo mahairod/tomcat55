@@ -48,7 +48,7 @@ public class AsyncSocketSender extends DataSender {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "AsyncSocketSender/1.2";
+    private static final String info = "AsyncSocketSender/1.3";
 
     // ----------------------------------------------------- Instance Variables
 
@@ -71,11 +71,6 @@ public class AsyncSocketSender extends DataSender {
      * Count all successfull push messages from queue
      */
     private long outQueueCounter = 0;
-
-    /**
-     * Current number of bytes from all queued messages
-     */
-    private long queuedNrOfBytes = 0;
 
     // ------------------------------------------------------------- Constructor
 
@@ -129,7 +124,9 @@ public class AsyncSocketSender extends DataSender {
      * @return Returns the queuedNrOfBytes.
      */
     public long getQueuedNrOfBytes() {
-        return queuedNrOfBytes;
+        if(queueThread != null)
+            return queueThread.getQueuedNrOfBytes();
+        return 0l ;
     }
 
     // --------------------------------------------------------- Public Methods
@@ -160,12 +157,14 @@ public class AsyncSocketSender extends DataSender {
      * @see org.apache.catalina.cluster.tcp.IDataSender#sendMessage(java.lang.String,
      *      byte[])
      */
-    public synchronized void sendMessage(String messageid, byte[] data)
+    public void sendMessage(String messageid, byte[] data)
             throws java.io.IOException {
         SmartQueue.SmartEntry entry = new SmartQueue.SmartEntry(messageid, data);
         queue.add(entry);
-        inQueueCounter++;
-        queuedNrOfBytes += data.length;
+        synchronized (this) {
+            inQueueCounter++;
+            queueThread.incQueuedNrOfBytes(data.length);
+       }
         if (log.isTraceEnabled())
             log.trace(sm.getString("AsyncSocketSender.queue.message",
                     getAddress().getHostAddress(), new Integer(getPort()), messageid, new Long(
@@ -217,13 +216,6 @@ public class AsyncSocketSender extends DataSender {
         }
     }
 
-    /*
-     * Reduce queued message date size counter
-     */
-    protected void reduceQueuedCounter(int size) {
-        queuedNrOfBytes -= size;
-    }
-
     // -------------------------------------------------------- Inner Class
 
     private class QueueThread extends Thread {
@@ -231,9 +223,30 @@ public class AsyncSocketSender extends DataSender {
 
         private boolean keepRunning = true;
 
+        /**
+         * Current number of bytes from all queued messages
+         */
+        private long queuedNrOfBytes = 0;
+
         public QueueThread(AsyncSocketSender sender) {
             this.sender = sender;
             setName("Cluster-AsyncSocketSender-" + (threadCounter++));
+        }
+
+        protected long getQueuedNrOfBytes() {
+            return queuedNrOfBytes ;
+        }
+        
+        protected synchronized void setQueuedNrOfBytes(long queuedNrOfBytes) {
+            this.queuedNrOfBytes = queuedNrOfBytes;
+        }
+
+        protected synchronized void incQueuedNrOfBytes(long size) {
+            queuedNrOfBytes += size;
+        }
+        
+        protected synchronized void decQueuedNrOfBytes(long size) {
+            queuedNrOfBytes -= size;
         }
 
         public void stopRunning() {
@@ -259,7 +272,7 @@ public class AsyncSocketSender extends DataSender {
                         log.warn(sm.getString("AsyncSocketSender.send.error",
                                 entry.getKey()));
                     } finally {
-                        reduceQueuedCounter(messagesize);
+                        decQueuedNrOfBytes(messagesize);
                     }
                 }
             }

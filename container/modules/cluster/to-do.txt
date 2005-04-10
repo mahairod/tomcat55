@@ -1,4 +1,54 @@
-1. Fix farm deployment for 5.5
+Next Steps:
+
+- Documentation
+	wrote a complete new how-to
+	add example configurations
+	add complete attribute descriptions
+	add JMX information
+	add deployment help
+	Need help ( pero)
+- add cluster setup template (src)	
+- filter all Cluster Message 
+         Filtering that no all message goes to all member.
+         Setup a Valve set periodic send the cluster stage!
+- build a tool that receive the stage and present it as simple web app.
+    	detect some problems
+    	different active sessions
+    	long queues
+    	detect long wait acks     
+- Implement fragmentation of large replication objects
+	Compress at message level 
+	s. FarmDeployer war handling
+- reduce memory consume
+    - set new compress sender flag at default=false
+    - don't copy the buffer to add message header
+        transfer this from SimpleTcpCluster to DataSender pushMessage
+    - make it possible that a subclass cryp the transferd messages
+- add a message type to the message header.
+    - filtering at receiver that drop message before build Object
+- add test cluster project
+    Junit test ( started)
+    automated regression testing with some standard configs
+- add support to dynamic property transfer from SimpleTcpCluster to the Manager
+    like ReplicationTransmitter
+                        	
+Nice to have:
+- Implement a NonSerializable interface for session attributes that do not
+wish to be replicated
+        Then we must have ClusterNonSerializable at common classloader
+- Setup the cluster without SessionReplication Manager
+         Only a Message bus.         
+- Extend StandardSession if possible
+- Implement primary/secondary replication logic
+- Implement context attribute replication (?)
+	pero:
+		Also send Start/Stop messages from Context to complete cluster!
+        With 5.5.10 you can wrote a Cluster Lifecycle Manager that do this.
+            Register for AFTER_MANAGERREGISTER_EVENT and AFTER_MANAGERUNREGISTER_EVENT
+            and also to the context ServletContextAttributeEvent Listener
+            Access the Context
+            	((Manager)event.getData()).getContainer()                     	
+- Fix farm deployment for 5.5
    pero:
      Every start all application are deployed only to all running cluster nodes
      	New registered nodes don't get the applications!
@@ -21,25 +71,26 @@ would not make sense to transfer the same webapp over and over again.
      	Fixed!		
      Last FileMessage fragment need longe ackTimeout	
     	<Cluster ..> <Sender ... ackTimeout="60000"/> </Cluster> 	
-2. Extend StandardSession if possible
-3. Implement primary/secondary replication logic
-4. Implement fragmentation of large replication objects
-5. Implement a NonSerializable interface for session attributes that do not
-wish to be replicated
-6. Implement context attribute replication (?)
-	pero:
-		Also send Start/Stop messages from Context to complete cluster!
-7. JMX friendly
-    pero:  Add some MBeanSupport to SimpleTCPCluster, ReplicationTransmitter and Senders
-8. Documentation
-9. Add a flag for replicated  attribute events, to enable or disable them -
-	pero:
-		Why different defaults from notifyListenersOnReplication at SimpleTcpCluster and DeltaManager exists?
+
 COMPLETED
-10. Add single sign on support
-11. Add Keep Alive and WaitForAck at async mode implementation.
+- Add a flag for replicated  attribute events, to enable or disable them 
+     Now can configued with notifyListenersOnReplication=false at SimpleTCPCluster
+     Also can drop HttpSessionLsitener events
+         can configued with notifySessionListenersOnReplication=false at SimpleTCPCluster
+- JMX friendly
+    pero:  Add some MBeanSupport to SimpleTCPCluster, ReplicationTransmitter and Senders
+- Refactoring DeltaManager
+- Fix at 5.5.9 cluster hang bug! 
+- Add more Valve to direct cluster config
+- Add Lifecycle Listener support to direct cluster config
+- Add ClusterListener support to direct cluster config
+- Add new SocketReplicationListener
+- Add Stats to DeltaManager
+- Add single sign on support
+- Add Keep Alive and WaitForAck at async mode implementation.
        Make this feature configurable to Sender element at server.xml
        Is include with 5.5.8
-12. Add support to new Async Mode from Rainer Jung
+- Add support to new Async Mode from Rainer Jung
        Integrated with 5.5.9
-       
+       fastasyncqueue mode
+ 

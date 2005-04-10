@@ -46,6 +46,9 @@ public interface ClusterSender
     public boolean isWaitForAck();
     public void setWaitForAck(boolean isWaitForAck);
 
+    public boolean isCompress() ;
+    public void setCompress(boolean compress);
+
     /**
      * @param cluster
      */

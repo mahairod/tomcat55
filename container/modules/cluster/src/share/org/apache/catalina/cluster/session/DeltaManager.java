@@ -107,8 +107,6 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
 
     int rejectedSessions = 0;
 
-    int expiredSessions = 0;
-
     long processingTime = 0;
 
     private CatalinaCluster cluster = null;
@@ -123,13 +121,125 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
 
     private boolean notifyListenersOnReplication = false;
 
+    private boolean notifySessionListenersOnReplication = true;
+
+    private int counterReceive_EVT_GET_ALL_SESSIONS = 0 ;
+
+    private int counterSend_EVT_ALL_SESSION_DATA = 0 ;
+
+    private int counterReceive_EVT_ALL_SESSION_DATA = 0 ;
+
+    private int counterReceive_EVT_SESSION_CREATED = 0 ;
+
+    private int counterReceive_EVT_SESSION_EXPIRED = 0;
+
+    private int counterReceive_EVT_SESSION_ACCESSED = 0 ;
+
+    private int counterReceive_EVT_SESSION_DELTA = 0;
+
+    private int counterSend_EVT_GET_ALL_SESSIONS = 0 ;
+
+    private int counterSend_EVT_SESSION_CREATED = 0;
+
+    private int counterSend_EVT_SESSION_DELTA = 0 ;
+
+    private int counterSend_EVT_SESSION_ACCESSED = 0;
+
+    private int counterSend_EVT_SESSION_EXPIRED = 0;
+
     // ------------------------------------------------------------- Constructor
+  
     public DeltaManager() {
         super();
     }
 
     // ------------------------------------------------------------- Properties
+    
+    /**
+     * @return Returns the counterSend_EVT_GET_ALL_SESSIONS.
+     */
+    public int getCounterSend_EVT_GET_ALL_SESSIONS() {
+        return counterSend_EVT_GET_ALL_SESSIONS;
+    }
+    
+    /**
+     * @return Returns the counterSend_EVT_SESSION_ACCESSED.
+     */
+    public int getCounterSend_EVT_SESSION_ACCESSED() {
+        return counterSend_EVT_SESSION_ACCESSED;
+    }
+    
+    /**
+     * @return Returns the counterSend_EVT_SESSION_CREATED.
+     */
+    public int getCounterSend_EVT_SESSION_CREATED() {
+        return counterSend_EVT_SESSION_CREATED;
+    }
 
+    /**
+     * @return Returns the counterSend_EVT_SESSION_DELTA.
+     */
+    public int getCounterSend_EVT_SESSION_DELTA() {
+        return counterSend_EVT_SESSION_DELTA;
+    }
+
+    /**
+     * @return Returns the counterSend_EVT_SESSION_EXPIRED.
+     */
+    public int getCounterSend_EVT_SESSION_EXPIRED() {
+        return counterSend_EVT_SESSION_EXPIRED;
+    }
+ 
+    /**
+     * @return Returns the counterSend_EVT_ALL_SESSION_DATA.
+     */
+    public int getCounterSend_EVT_ALL_SESSION_DATA() {
+        return counterSend_EVT_ALL_SESSION_DATA;
+    }
+
+    /**
+     * @return Returns the counterReceive_EVT_ALL_SESSION_DATA.
+     */
+    public int getCounterReceive_EVT_ALL_SESSION_DATA() {
+        return counterReceive_EVT_ALL_SESSION_DATA;
+    }
+    
+    /**
+     * @return Returns the counterReceive_EVT_GET_ALL_SESSIONS.
+     */
+    public int getCounterReceive_EVT_GET_ALL_SESSIONS() {
+        return counterReceive_EVT_GET_ALL_SESSIONS;
+    }
+    
+    /**
+     * @return Returns the counterReceive_EVT_SESSION_ACCESSED.
+     */
+    public int getCounterReceive_EVT_SESSION_ACCESSED() {
+        return counterReceive_EVT_SESSION_ACCESSED;
+    }
+    
+    /**
+     * @return Returns the counterReceive_EVT_SESSION_CREATED.
+     */
+    public int getCounterReceive_EVT_SESSION_CREATED() {
+        return counterReceive_EVT_SESSION_CREATED;
+    }
+    
+    /**
+     * @return Returns the counterReceive_EVT_SESSION_DELTA.
+     */
+    public int getCounterReceive_EVT_SESSION_DELTA() {
+        return counterReceive_EVT_SESSION_DELTA;
+    }
+    
+    /**
+     * @return Returns the counterReceive_EVT_SESSION_EXPIRED.
+     */
+    public int getCounterReceive_EVT_SESSION_EXPIRED() {
+        return counterReceive_EVT_SESSION_EXPIRED;
+    }
+    
+ 
     /**
      * Set the Container with which this Manager has been associated. If it is a
      * Context (the usual case), listen for changes to the session timeout
@@ -177,19 +287,6 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     }
 
     /**
-     * Number of session creations that failed due to maxActiveSessions
-     * 
-     * @return The count
-     */
-    public int getRejectedSessions() {
-        return rejectedSessions;
-    }
-
-    public void setRejectedSessions(int rejectedSessions) {
-        this.rejectedSessions = rejectedSessions;
-    }
-
-    /**
      * Set the maximum number of actives Sessions allowed, or -1 for no limit.
      * 
      * @param max
@@ -205,6 +302,19 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     }
 
     /**
+     * Number of session creations that failed due to maxActiveSessions
+     * 
+     * @return The count
+     */
+    public int getRejectedSessions() {
+        return rejectedSessions;
+    }
+
+    public void setRejectedSessions(int rejectedSessions) {
+        this.rejectedSessions = rejectedSessions;
+    }
+
+    /**
      * Return the descriptive short name of this Manager implementation.
      */
     public String getName() {
@@ -213,6 +323,81 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
 
     }
 
+    public boolean getUseDirtyFlag() {
+        return useDirtyFlag;
+    }
+
+    public void setUseDirtyFlag(boolean useDirtyFlag) {
+        this.useDirtyFlag = useDirtyFlag;
+    }
+
+    /**
+     * @return Returns the notifySessionListenersOnReplication.
+     */
+    public boolean isNotifySessionListenersOnReplication() {
+        return notifySessionListenersOnReplication;
+    }
+    
+    /**
+     * @param notifySessionListenersOnReplication The notifySessionListenersOnReplication to set.
+     */
+    public void setNotifySessionListenersOnReplication(
+            boolean notifyListenersCreateSessionOnReplication) {
+        this.notifySessionListenersOnReplication = notifyListenersCreateSessionOnReplication;
+    }
+    
+    /**
+     * @return Returns the processingTime.
+     */
+    public long getProcessingTime() {
+        return processingTime;
+    }
+    
+    public boolean getExpireSessionsOnShutdown() {
+        return expireSessionsOnShutdown;
+    }
+
+    public void setExpireSessionsOnShutdown(boolean expireSessionsOnShutdown) {
+        this.expireSessionsOnShutdown = expireSessionsOnShutdown;
+    }
+
+    public boolean getPrintToScreen() {
+        return printToScreen;
+    }
+
+    public void setPrintToScreen(boolean printToScreen) {
+        this.printToScreen = printToScreen;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean getNotifyListenersOnReplication() {
+        return notifyListenersOnReplication;
+    }
+
+    public void setNotifyListenersOnReplication(
+            boolean notifyListenersOnReplication) {
+        this.notifyListenersOnReplication = notifyListenersOnReplication;
+    }
+
+    public boolean getStateTransferred() {
+        return stateTransferred;
+    }
+
+    public void setStateTransferred(boolean stateTransferred) {
+        this.stateTransferred = stateTransferred;
+    }
+
+    public CatalinaCluster getCluster() {
+        return cluster;
+    }
+
+    public void setCluster(CatalinaCluster cluster) {
+        this.cluster = cluster;
+    }
+    
     // --------------------------------------------------------- Public Methods
 
     /**
@@ -283,6 +468,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
             if (log.isDebugEnabled())
                 log.debug(sm.getString("deltaManager.sendMessage.newSession",
                         name, sessionId));
+            counterSend_EVT_SESSION_CREATED++;
             cluster.send(msg);
             session.resetDeltaRequest();
         }
@@ -301,7 +487,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         return new DeltaSession(this);
     }
 
-    private DeltaRequest loadDeltaRequest(DeltaSession session, byte[] data)
+    protected DeltaRequest loadDeltaRequest(DeltaSession session, byte[] data)
             throws ClassNotFoundException, IOException {
         ByteArrayInputStream fis = null;
         ReplicationStream ois = null;
@@ -324,7 +510,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         return session.getDeltaRequest();
     }
 
-    private byte[] unloadDeltaRequest(DeltaRequest deltaRequest)
+    protected byte[] unloadDeltaRequest(DeltaRequest deltaRequest)
             throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -344,7 +530,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      * @exception IOException
      *                if an input/output error occurs
      */
-    private void doLoad(byte[] data) throws ClassNotFoundException, IOException {
+    protected void doLoad(byte[] data) throws ClassNotFoundException, IOException {
 
         // Initialize our internal data structures
         //sessions.clear(); //should not do this
@@ -459,7 +645,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      * @exception IOException
      *                if an input/output error occurs
      */
-    private byte[] doUnload() throws IOException {
+    protected byte[] doUnload() throws IOException {
 
         // Open an output stream to the specified pathname, if any
         ByteArrayOutputStream fos = null;
@@ -585,52 +771,60 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
             // createManager
             getCluster().addManager(getName(), this);
 
-            if (cluster.getMembers().length > 0) {
-                Member mbr = cluster.getMembers()[0];
-                SessionMessage msg = new SessionMessageImpl(this.getName(),
-                        SessionMessage.EVT_GET_ALL_SESSIONS, null, "GET-ALL",
-                        "GET-ALL-" + getName());
-                //just to make sure the other server has the context started
-                //                long timetowait = 20000-mbr.getMemberAliveTime();
-                //                if ( timetowait > 0 ) {
-                //                    log.info("The other server has not been around more than 20
-                // seconds, will sleep for "+timetowait+" ms. in order to let it
-                // startup");
-                //                    try { Thread.currentThread().sleep(timetowait); } catch (
-                // Exception x ) {}
-                //                }//end if
-
-                //request session state
-                cluster.send(msg, mbr);
-                if (log.isWarnEnabled())
-                    log.warn(sm.getString("deltaManager.waitForSessionState",
-                            getName(), mbr));
-                long reqStart = System.currentTimeMillis();
-                long reqNow = 0;
-                boolean isTimeout = false;
-                do {
-                    try {
-                        Thread.sleep(100);
-                    } catch (Exception sleep) {
-                    }
-                    reqNow = System.currentTimeMillis();
-                    isTimeout = ((reqNow - reqStart) > (1000 * 60));
-                } while ((!getStateTransferred()) && (!isTimeout));
-                if (isTimeout || (!getStateTransferred())) {
-                    log.error(sm.getString("deltaManager.noSessionState",
-                            getName()));
-                } else {
-                    if (log.isInfoEnabled())
-                        log.info(sm.getString("deltaManager.sessionReceived",
-                                getName(), new Long(reqNow - reqStart)));
-                }
-            } else {
-                if (log.isInfoEnabled())
-                    log.info(sm.getString("deltaManager.noMembers", getName()));
-            }//end if
+            getAllClusterSessions();
 
         } catch (Throwable t) {
             log.error(sm.getString("deltaManager.managerLoad"), t);
+        }
+    }
+
+    /**
+     * get from first member all Sessions
+     */
+    public void getAllClusterSessions() {
+        if (cluster != null && cluster.getMembers().length > 0) {
+            Member mbr = cluster.getMembers()[0];
+            SessionMessage msg = new SessionMessageImpl(this.getName(),
+                    SessionMessage.EVT_GET_ALL_SESSIONS, null, "GET-ALL",
+                    "GET-ALL-" + getName());
+            //just to make sure the other server has the context started
+            //                long timetowait = 20000-mbr.getMemberAliveTime();
+            //                if ( timetowait > 0 ) {
+            //                    log.info("The other server has not been around more than 20
+            // seconds, will sleep for "+timetowait+" ms. in order to let it
+            // startup");
+            //                    try { Thread.currentThread().sleep(timetowait); } catch (
+            // Exception x ) {}
+            //                }//end if
+
+            //request session state
+            counterSend_EVT_GET_ALL_SESSIONS++;
+            cluster.send(msg, mbr);
+            if (log.isWarnEnabled())
+                log.warn(sm.getString("deltaManager.waitForSessionState",
+                        getName(), mbr));
+            long reqStart = System.currentTimeMillis();
+            long reqNow = 0;
+            boolean isTimeout = false;
+            do {
+                try {
+                    Thread.sleep(100);
+                } catch (Exception sleep) {
+                }
+                reqNow = System.currentTimeMillis();
+                isTimeout = ((reqNow - reqStart) > (1000 * 60));
+            } while ((!getStateTransferred()) && (!isTimeout));
+            if (isTimeout || (!getStateTransferred())) {
+                log.error(sm.getString("deltaManager.noSessionState",
+                        getName()));
+            } else {
+                if (log.isInfoEnabled())
+                    log.info(sm.getString("deltaManager.sessionReceived",
+                            getName(), new Long(reqNow - reqStart)));
+            }
+        } else {
+            if (log.isInfoEnabled())
+                log.info(sm.getString("deltaManager.noMembers", getName()));
         }
     }
 
@@ -744,6 +938,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
             SessionMessage msg = null;
             if (deltaRequest.getSize() > 0) {
 
+                counterSend_EVT_SESSION_DELTA++;
                 byte[] data = unloadDeltaRequest(deltaRequest);
                 msg = new SessionMessageImpl(name,
                         SessionMessage.EVT_SESSION_DELTA, data, sessionId,
@@ -754,7 +949,9 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                             "deltaManager.createMessage.delta",
                             getName(), sessionId));
                 }
+                
             } else if (!session.isPrimarySession()) {
+                counterSend_EVT_SESSION_ACCESSED++;
                 msg = new SessionMessageImpl(getName(),
                         SessionMessage.EVT_SESSION_ACCESSED, null, sessionId,
                         sessionId + System.currentTimeMillis());
@@ -770,6 +967,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 long replDelta = System.currentTimeMillis()
                         - session.getLastTimeReplicated();
                 if (replDelta > (getMaxInactiveInterval() * 1000)) {
+                    counterSend_EVT_SESSION_ACCESSED++;
                     msg = new SessionMessageImpl(getName(),
                             SessionMessage.EVT_SESSION_ACCESSED, null,
                             sessionId, sessionId + System.currentTimeMillis());
@@ -794,7 +992,29 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         }
 
     }
-
+    /**
+     * Reset manager statistics
+     */
+    public synchronized void resetStatistics() {
+        processingTime = 0 ;
+        expiredSessions = 0 ;
+        rejectedSessions = 0 ;
+        maxActive = getActiveSessions() ;
+        sessionCounter = getActiveSessions() ;
+        counterReceive_EVT_ALL_SESSION_DATA = 0;
+        counterReceive_EVT_GET_ALL_SESSIONS = 0;
+        counterReceive_EVT_SESSION_ACCESSED = 0 ;
+        counterReceive_EVT_SESSION_CREATED = 0 ;
+        counterReceive_EVT_SESSION_DELTA = 0 ;
+        counterReceive_EVT_SESSION_EXPIRED = 0 ;
+        counterSend_EVT_ALL_SESSION_DATA = 0;
+        counterSend_EVT_GET_ALL_SESSIONS = 0;
+        counterSend_EVT_SESSION_ACCESSED = 0 ;
+        counterSend_EVT_SESSION_CREATED = 0 ;
+        counterSend_EVT_SESSION_DELTA = 0 ;
+        counterSend_EVT_SESSION_EXPIRED = 0 ;
+    }
+    
     /**
      * send session expired to other cluster nodes
      * 
@@ -802,6 +1022,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      *            session id
      */
     protected void sessionExpired(String id) {
+        counterSend_EVT_SESSION_EXPIRED++ ;
         SessionMessage msg = new SessionMessageImpl(getName(),
                 SessionMessage.EVT_SESSION_EXPIRED, null, id, id
                         + "-EXPIRED-MSG");
@@ -840,6 +1061,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                         getName(), msg.getEventTypeString(), sender));
             switch (msg.getEventType()) {
             case SessionMessage.EVT_GET_ALL_SESSIONS: {
+                counterReceive_EVT_GET_ALL_SESSIONS++;
                 //get a list of all the session from this manager
                 if (log.isDebugEnabled())
                     log.debug(sm.getString(
@@ -857,10 +1079,12 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                     log.debug(sm.getString(
                             "deltaManager.createMessage.allSessionData",
                             getName()));
+                counterSend_EVT_ALL_SESSION_DATA++;
                 cluster.send(newmsg, sender);
                 break;
             }
             case SessionMessage.EVT_ALL_SESSION_DATA: {
+                counterReceive_EVT_ALL_SESSION_DATA++;
                 if (log.isDebugEnabled())
                     log.debug(sm.getString(
                             "deltaManager.receiveMessage.allSessionDataBegin",
@@ -875,21 +1099,24 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 break;
             }
             case SessionMessage.EVT_SESSION_CREATED: {
+                counterReceive_EVT_SESSION_CREATED++;
                 if (log.isDebugEnabled())
                     log.debug(sm.getString(
                             "deltaManager.receiveMessage.createNewSession",
                             getName(), msg.getSessionID()));
                 DeltaSession session = (DeltaSession) createSession(msg
                         .getSessionID(), false);
-                // Q: Why inform all session listener at replicate node?
-                session.setId(msg.getSessionID());
+                if(notifySessionListenersOnReplication)
+                    session.setId(msg.getSessionID());
+                else
+                    session.getDeltaRequest().setSessionId(msg.getSessionID());
                 session.setNew(false);
                 session.setPrimarySession(false);
-                // Q: Why generate a delta data structure?
                 session.resetDeltaRequest();
                 break;
             }
             case SessionMessage.EVT_SESSION_EXPIRED: {
+                counterReceive_EVT_SESSION_EXPIRED++;
                 DeltaSession session = (DeltaSession) findSession(msg
                         .getSessionID());
                 if (session != null) {
@@ -897,12 +1124,12 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                         log.debug(sm.getString(
                                 "deltaManager.receiveMessage.expired",
                                 getName(), msg.getSessionID()));
-                    // Q: Why not only remove from manager?
-                    session.expire(true, false);
-                } //end if
+                    session.expire(notifySessionListenersOnReplication, false);
+                }
                 break;
             }
             case SessionMessage.EVT_SESSION_ACCESSED: {
+                counterReceive_EVT_SESSION_ACCESSED++;
                 DeltaSession session = (DeltaSession) findSession(msg
                         .getSessionID());
                 if (session != null) {
@@ -917,7 +1144,8 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 break;
             }
             case SessionMessage.EVT_SESSION_DELTA: {
-                byte[] delta = msg.getSession();
+               counterReceive_EVT_SESSION_DELTA++;
+               byte[] delta = msg.getSession();
                 DeltaSession session = (DeltaSession) findSession(msg
                         .getSessionID());
                 if (session != null) {
@@ -943,21 +1171,6 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
 
     // -------------------------------------------------------- Private Methods
 
-    public boolean getStateTransferred() {
-        return stateTransferred;
-    }
-
-    public void setStateTransferred(boolean stateTransferred) {
-        this.stateTransferred = stateTransferred;
-    }
-
-    public CatalinaCluster getCluster() {
-        return cluster;
-    }
-
-    public void setCluster(CatalinaCluster cluster) {
-        this.cluster = cluster;
-    }
 
     public void load() {
 
@@ -966,42 +1179,4 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     public void unload() {
 
     }
-
-    public boolean getUseDirtyFlag() {
-        return useDirtyFlag;
-    }
-
-    public void setUseDirtyFlag(boolean useDirtyFlag) {
-        this.useDirtyFlag = useDirtyFlag;
-    }
-
-    public boolean getExpireSessionsOnShutdown() {
-        return expireSessionsOnShutdown;
-    }
-
-    public void setExpireSessionsOnShutdown(boolean expireSessionsOnShutdown) {
-        this.expireSessionsOnShutdown = expireSessionsOnShutdown;
-    }
-
-    public boolean getPrintToScreen() {
-        return printToScreen;
-    }
-
-    public void setPrintToScreen(boolean printToScreen) {
-        this.printToScreen = printToScreen;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean getNotifyListenersOnReplication() {
-        return notifyListenersOnReplication;
-    }
-
-    public void setNotifyListenersOnReplication(
-            boolean notifyListenersOnReplication) {
-        this.notifyListenersOnReplication = notifyListenersOnReplication;
-    }
-
 }

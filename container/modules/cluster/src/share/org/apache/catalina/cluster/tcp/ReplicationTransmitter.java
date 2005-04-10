@@ -104,7 +104,7 @@ public class ReplicationTransmitter implements ClusterSender {
     /**
      * autoConnect sender when next message send
      */
-    private boolean autoConnect = true;
+    private boolean autoConnect = false;
 
     /**
      * Compress message data bytes
@@ -699,8 +699,13 @@ public class ReplicationTransmitter implements ClusterSender {
             throw new java.io.IOException(
                     "Sender not available. Make sure sender information is available to the ReplicationTransmitter.");
         try {
-            if (autoConnect && !sender.isConnected())
-                sender.connect();
+            // deprecated not needed DataSender#pushMessage can handle connection
+            if (autoConnect) {
+                synchronized(sender) {
+                    if(!sender.isConnected())
+                        sender.connect();
+                }
+            }
             sender.sendMessage(sessionId, data);
             sender.setSuspect(false);
             addStats(data.length);

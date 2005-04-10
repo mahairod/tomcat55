@@ -13,34 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.catalina.cluster.tcp;
-
+package org.apache.catalina.cluster;
 
 /**
- * @author Filip Hanik
- * @version $Revision$ $Date$
+ * Cluster Valve Interface to mark all Cluster Valves 
+ * Only those Valve can'be configured as Cluster Valves
+ * @author Peter Rossbach
+ * @version $Revision$, $Date$
  */
-public class WorkerThread extends Thread
-{
-    private static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog( WorkerThread.class );
-    protected ThreadPool pool;
-    protected boolean doRun = true;
+public interface ClusterValve {
+    /**
+     * Returns the cluster the cluster deployer is associated with
+     * @return CatalinaCluster
+     */
+    public CatalinaCluster getCluster();
 
-
-    public void setPool(ThreadPool pool) {
-        this.pool = pool;
-    }
-    
-    public ThreadPool getPool() {
-        return pool;
-    }
-
-    public void close()
-    {
-        doRun = false;
-        notify();
-
-    }
+    /**
+     * Associates the cluster deployer with a cluster
+     * @param cluster CatalinaCluster
+     */
+    public void setCluster(CatalinaCluster cluster);
 }
