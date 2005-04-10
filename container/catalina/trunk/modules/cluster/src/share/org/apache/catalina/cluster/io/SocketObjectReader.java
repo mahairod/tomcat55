@@ -33,7 +33,7 @@ import org.apache.catalina.cluster.io.XByteBuffer;
  * @author Peter Rossbach
  * @version $Revision$, $Date$
  */
-public class Jdk13ObjectReader
+public class SocketObjectReader
 {
     private Socket socket;
     private ListenCallback callback;
@@ -45,7 +45,7 @@ public class Jdk13ObjectReader
      * @param callback SimpleTcpCluster listener
      * @param compress is send message data compress or flat.
      */
-    public Jdk13ObjectReader( Socket socket,
+    public SocketObjectReader( Socket socket,
                                ListenCallback callback, boolean compress)  {
         this.socket = socket;
         this.callback = callback;
@@ -82,7 +82,7 @@ public class Jdk13ObjectReader
     
     /**
      * send message to callback
-     * @see Jdk13ObjectReader#append(byte[], int, int)
+     * @see SocketObjectReader#append(byte[], int, int)
      * @return
      * @throws java.io.IOException
      */
@@ -92,7 +92,7 @@ public class Jdk13ObjectReader
 
     /**
      * write data to socket (ack)
-     * @see org.apache.catalina.cluster.tcp.Jdk13ReplicationListener#sendAck
+     * @see org.apache.catalina.cluster.tcp.SocketReplicationListener#sendAck
      * @param data
      * @return
      * @throws java.io.IOException

@@ -47,7 +47,7 @@ public class DataSender implements IDataSender {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "DataSender/1.3";
+    private static final String info = "DataSender/1.4";
 
     /**
      * receiver address
@@ -130,14 +130,34 @@ public class DataSender implements IDataSender {
     protected long maxProcessingTime = 0;
    
     /**
+     * doWaitAckStats
+     */
+    protected boolean doWaitAckStats = false;
+
+    /**
+     * waitAckTime
+     */
+    protected long waitAckTime = 0;
+    
+    /**
+     * min waitAckTime
+     */
+    protected long minWaitAckTime = Long.MAX_VALUE ;
+
+    /**
+     * max waitAckTime
+     */
+    protected long maxWaitAckTime = 0;
+
+    /**
      * keep socket open for no more than one min
      */
     private long keepAliveTimeout = 60 * 1000;
 
     /**
-     * max 100 requests before reconnecting
+     * max requests before reconnecting (default -1 unlimited)
      */
-    private int keepAliveMaxRequestCount = 100;
+    private int keepAliveMaxRequestCount = -1;
 
     /**
      * Last connect timestamp
@@ -209,8 +229,8 @@ public class DataSender implements IDataSender {
     /**
      * @return Returns the avg processingTime/nrOfRequests.
      */
-    public long getAvgProcessingTime() {
-        return processingTime / nrOfRequests;
+    public double getAvgProcessingTime() {
+        return ((double)processingTime) / nrOfRequests;
     }
  
     /**
@@ -248,6 +268,49 @@ public class DataSender implements IDataSender {
         this.doProcessingStats = doProcessingStats;
     }
  
+ 
+    /**
+     * @return Returns the doWaitAckStats.
+     */
+    public boolean isDoWaitAckStats() {
+        return doWaitAckStats;
+    }
+    
+    /**
+     * @param doWaitAckStats The doWaitAckStats to set.
+     */
+    public void setDoWaitAckStats(boolean doWaitAckStats) {
+        this.doWaitAckStats = doWaitAckStats;
+    }
+    
+    /**
+     * @return Returns the avg waitAckTime/nrOfRequests.
+     */
+    public double getAvgWaitAckTime() {
+        return ((double)waitAckTime) / nrOfRequests;
+    }
+ 
+    /**
+     * @return Returns the maxWaitAckTime.
+     */
+    public long getMaxWaitAckTime() {
+        return maxWaitAckTime;
+    }
+    
+    /**
+     * @return Returns the minWaitAckTime.
+     */
+    public long getMinWaitAckTime() {
+        return minWaitAckTime;
+    }
+    
+    /**
+     * @return Returns the waitAckTime.
+     */
+    public long getWaitAckTime() {
+        return waitAckTime;
+    }
+    
     /**
      * @return Returns the connectCounter.
      */
@@ -400,7 +463,7 @@ public class DataSender implements IDataSender {
      * Connect other cluster member receiver 
      * @see org.apache.catalina.cluster.tcp.IDataSender#connect()
      */
-    public void connect() throws java.io.IOException {
+    public synchronized void connect() throws java.io.IOException {
         openSocket();
         if(isConnected()) {
             connectCounter++;
@@ -417,7 +480,7 @@ public class DataSender implements IDataSender {
      * @see org.apache.catalina.cluster.tcp.IDataSender#disconnect()
      * @see DataSender#closeSocket()
      */
-    public void disconnect() {
+    public synchronized void disconnect() {
         boolean connect = isConnected() ;
         closeSocket();
         if(connect) {
@@ -477,6 +540,9 @@ public class DataSender implements IDataSender {
         processingTime = 0 ;
         minProcessingTime = Long.MAX_VALUE ;
         maxProcessingTime = 0 ;
+        waitAckTime = 0 ;
+        minWaitAckTime = Long.MAX_VALUE ;
+        maxWaitAckTime = 0 ;
     }
 
     /**
@@ -492,12 +558,13 @@ public class DataSender implements IDataSender {
  
     /**
      * open real socket and set time out when waitForAck is enabled
+     * is socket open return directly
      * @throws IOException
      * @throws SocketException
      */
     protected void openSocket() throws IOException, SocketException {
        if(isConnected())
-           closeSocket() ;
+           return ;
        try {
             createSocket();
             if (isWaitForAck())
@@ -560,13 +627,13 @@ public class DataSender implements IDataSender {
     protected void addStats(int length) {
         nrOfRequests++;
         totalBytes += length;
-        if (log.isDebugEnabled() && (nrOfRequests % 100) == 0) {
-            log.debug(sm.getString("IDataSender.stats", new Object[] {
+        if (log.isInfoEnabled() && (nrOfRequests % 100) == 0) {
+            log.info(sm.getString("IDataSender.stats", new Object[] {
                     getAddress().getHostAddress(), new Integer(getPort()),
                     new Long(totalBytes), new Long(nrOfRequests),
                     new Long(totalBytes / nrOfRequests),
                     new Long(getProcessingTime()),
-                    new Long(getAvgProcessingTime())}));
+                    new Double(getAvgProcessingTime())}));
         }
     }
 
@@ -584,32 +651,47 @@ public class DataSender implements IDataSender {
     }
     
     /**
+     * Add waitAck stats times
+     * @param startTime
+     */
+    protected void addWaitAckStats(long startTime) {
+        long time = System.currentTimeMillis() - startTime ;
+        if(time < minWaitAckTime)
+            minWaitAckTime = time ;
+        if( time > maxWaitAckTime)
+            maxWaitAckTime = time ;
+        waitAckTime += time ;
+    }
+    /**
      * Push messages with only one socket at a time
      * Wait for ack is needed and make auto retry when write message is failed.
      * After sending error close and reopen socket again.
      * 
      * After successfull sending update stats
      * 
+     * WARNING: Subclasses must be very carefull that only one thread call this pushMessage at once!!!
+     * 
      * @see #checkIfCloseSocket()
      * @see #openSocket()
      * @see #writeData(byte[])
      * 
-     * FIXME Handling of java.net.SocketTimeoutException from waitForAck()
      * @param messageid
      *            unique message id / need only for log message )
      * @param data
      *            data to send
      * @throws java.io.IOException
      */
-    protected synchronized void pushMessage(String messageid, byte[] data)
+    protected void pushMessage(String messageid, byte[] data)
             throws java.io.IOException {
         long time = 0 ;
         if(doProcessingStats) {
             time = System.currentTimeMillis();
         }
-        checkIfCloseSocket();
-        if (!isConnected())
-            openSocket();
+        synchronized(this) {
+            checkIfCloseSocket();
+            if (!isConnected())
+                openSocket();
+        }
         try {
             writeData(data);
         } catch (java.io.IOException x) {
@@ -617,21 +699,24 @@ public class DataSender implements IDataSender {
             dataResendCounter++;
             if (log.isTraceEnabled())
                 log.trace(sm.getString("IDataSender.send.again", address.getHostAddress(),
-                        new Integer(port)));
-            closeSocket();
-            openSocket();
+                        new Integer(port)),x);
+            synchronized(this) {
+                closeSocket();
+                openSocket();
+            }
             writeData(data);
+        } finally {
+            this.keepAliveCount++;
+            checkIfCloseSocket();
+            if(doProcessingStats) {
+                addProcessingStats(time);
+            }
+            addStats(data.length);
+            if (log.isTraceEnabled()) {
+                log.trace(sm.getString("IDataSender.send.message", address.getHostAddress(),
+                        new Integer(port), messageid, new Long(data.length)));
+            }
         }
-        this.keepAliveCount++;
-        checkIfCloseSocket();
-        if(doProcessingStats) {
-            addProcessingStats(time);
-        }
-        addStats(data.length);
-        if (log.isTraceEnabled())
-            log.trace(sm.getString("IDataSender.send.message", address.getHostAddress(),
-                    new Integer(port), messageid, new Long(data.length)));
-
     }
 
     /**
@@ -643,6 +728,7 @@ public class DataSender implements IDataSender {
         socket.getOutputStream().flush();
         if (isWaitForAck())
             waitForAck(ackTimeout);
+        
     }
 
     /**
@@ -653,16 +739,41 @@ public class DataSender implements IDataSender {
      * @throws java.net.SocketTimeoutException
      */
     protected void waitForAck(long timeout) throws java.io.IOException {
+        long time = 0 ;
+        if(doWaitAckStats) {
+            time = System.currentTimeMillis();
+        }
         try {
+             int bytesRead = 0;
             int i = socket.getInputStream().read();
-            while ((i != -1) && (i != 3)) {
+            while ((i != -1) && (i != 3) && bytesRead < 10) {
+                bytesRead++;
                 i = socket.getInputStream().read();
             }
-        } catch (java.net.SocketTimeoutException x) {
+            if (i != 3) {
+                if (i == -1) {
+                    throw new IOException(sm.getString("IDataSender.ack.eof",
+                            getAddress(), new Integer(socket.getLocalPort())));
+                } else {
+                    throw new IOException(sm.getString("IDataSender.ack.wrong",
+                            getAddress(), new Integer(socket.getLocalPort())));
+                }
+            } else {
+                if (log.isTraceEnabled()) {
+                    log.trace(sm.getString("IDataSender.ack.receive", address,
+                            new Integer(socket.getLocalPort())));
+                }
+            }
+        } catch (IOException x) {
             missingAckCounter++;
-            log.warn(sm.getString("IDataSender.missing.ack", getAddress(),
-                    new Integer(getPort()), new Long(this.ackTimeout)));
+            log.warn(sm.getString("IDataSender.ack.missing", getAddress(),
+                    new Integer(socket.getLocalPort()), new Long(
+                            this.ackTimeout)),x);
             throw x;
+        } finally {
+            if(doWaitAckStats) {
+                addWaitAckStats(time);
+            }
         }
     }
 }

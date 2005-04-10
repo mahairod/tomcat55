@@ -33,6 +33,7 @@ import org.apache.catalina.cluster.io.ObjectReader;
  * thread returns itself to its parent pool.
  * 
  * @author Filip Hanik
+ * 
  * @version $Revision$, $Date$
  */
 public class TcpReplicationThread extends WorkerThread {
@@ -41,8 +42,9 @@ public class TcpReplicationThread extends WorkerThread {
         org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
     private ByteBuffer buffer = ByteBuffer.allocate (1024);
     private SelectionKey key;
-    private boolean waitForAck=true;
+    private boolean sendAck=true;
 
+    
     TcpReplicationThread ()
     {
     }
@@ -94,10 +96,10 @@ public class TcpReplicationThread extends WorkerThread {
      * to ignore read-readiness for this channel while the
      * worker thread is servicing it.
      */
-    synchronized void serviceChannel (SelectionKey key, boolean waitForAck)
+    synchronized void serviceChannel (SelectionKey key, boolean sendAck)
     {
         this.key = key;
-        this.waitForAck=waitForAck;
+        this.sendAck=sendAck;
         key.interestOps (key.interestOps() & (~SelectionKey.OP_READ));
         key.interestOps (key.interestOps() & (~SelectionKey.OP_WRITE));
         this.notify();		// awaken the thread
@@ -127,7 +129,10 @@ public class TcpReplicationThread extends WorkerThread {
         }
         //check to see if any data is available
         int pkgcnt = reader.execute();
-        if (waitForAck) {
+        if (log.isTraceEnabled()) {
+            log.trace("sending " + pkgcnt + " ack packages to " + channel.socket().getLocalPort() );
+        }
+        if (sendAck) {
             while ( pkgcnt > 0 ) {
                 sendAck(key,channel);
                 pkgcnt--;
@@ -161,6 +166,9 @@ public class TcpReplicationThread extends WorkerThread {
         
         try {
             channel.write(ByteBuffer.wrap(ACK_COMMAND));
+            if (log.isTraceEnabled()) {
+                log.trace("ACK sent to " + channel.socket().getPort());
+            }
         } catch ( java.io.IOException x ) {
             log.warn("Unable to send ACK back through channel, channel disconnected?: "+x.getMessage());
         }

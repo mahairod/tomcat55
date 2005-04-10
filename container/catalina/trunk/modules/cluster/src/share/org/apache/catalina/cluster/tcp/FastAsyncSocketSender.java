@@ -78,10 +78,7 @@ public class FastAsyncSocketSender extends DataSender {
      */
     private long outQueueCounter = 0;
 
-    /**
-     * Current number of bytes from all queued messages
-     */
-    private long queuedNrOfBytes = 0;
+    private int threadPriority = Thread.NORM_PRIORITY;;
 
     // ------------------------------------------------------------- Constructor
 
@@ -233,10 +230,46 @@ public class FastAsyncSocketSender extends DataSender {
     }
 
     /**
+     * change active the queue Thread priority 
+     * @param threadPriority value must be between MIN and MAX Thread Priority
+     * @exception IllegalArgumentException
+     */
+    public void setThreadPriority(int threadPriority) {
+        if (log.isDebugEnabled())
+            log.debug(sm.getString("FastAsyncSocketSender.setThreadPriority",
+                    getAddress().getHostAddress(), new Integer(getPort()),
+                    new Integer(threadPriority)));
+        if (threadPriority < Thread.MIN_PRIORITY) {
+            throw new IllegalArgumentException(sm.getString(
+                    "FastAsyncSocketSender.min.exception", getAddress()
+                            .getHostAddress(), new Integer(getPort()),
+                    new Integer(threadPriority)));
+        } else if (threadPriority > Thread.MAX_PRIORITY) {
+            throw new IllegalArgumentException(sm.getString(
+                    "FastAsyncSocketSender.max.exception", getAddress()
+                            .getHostAddress(), new Integer(getPort()),
+                    new Integer(threadPriority)));
+        }
+        this.threadPriority = threadPriority;
+        if (queueThread != null)
+            queueThread.setPriority(threadPriority);
+    }
+
+    /**
+     * Get the current threadPriority
+     * @return
+     */
+    public int getThreadPriority() {
+        return threadPriority;
+    }
+
+      /**
      * @return Returns the queuedNrOfBytes.
      */
     public long getQueuedNrOfBytes() {
-        return queuedNrOfBytes;
+        if(queueThread != null)
+            return queueThread.getQueuedNrOfBytes();
+        return 0l ;
     }
 
     // --------------------------------------------------------- Public Methods
@@ -259,28 +292,30 @@ public class FastAsyncSocketSender extends DataSender {
      */
     public void disconnect() {
         stopThread();
-        queue.stop() ; // FIXME what is when message in queue => auto reconnect after one sending failure?
+        queue.stop() ;
         super.disconnect();
     }
 
-    /*
+    /**
      * Send message to queue for later sending
      * 
      * @see org.apache.catalina.cluster.tcp.IDataSender#sendMessage(java.lang.String,
      *      byte[])
      */
-    public synchronized void sendMessage(String messageid, byte[] data)
+    public void sendMessage(String messageid, byte[] data)
             throws java.io.IOException {
         queue.add(messageid, data);
-        inQueueCounter++;
-        queuedNrOfBytes += data.length;
-        if (log.isTraceEnabled())
+        synchronized (this) {
+            inQueueCounter++;
+            queueThread.incQueuedNrOfBytes(data.length);
+       }
+       if (log.isTraceEnabled())
             log.trace(sm.getString("AsyncSocketSender.queue.message",
                     getAddress().getHostAddress(), new Integer(getPort()), messageid, new Long(
                             data.length)));
     }
 
-    /*
+    /**
      * Reset sender statistics
      */
     public synchronized void resetStatistics() {
@@ -311,6 +346,7 @@ public class FastAsyncSocketSender extends DataSender {
                         getAddress(), new Integer(getPort())));
             queueThread = new FastQueueThread(this, queue);
             queueThread.setDaemon(true);
+            queueThread.setPriority(getThreadPriority());
             queueThread.start();
         }
     }
@@ -323,13 +359,6 @@ public class FastAsyncSocketSender extends DataSender {
             queueThread.stopRunning();
             queueThread = null;
         }
-    }
-
-    /*
-     * Reduce queued message date size counter
-     */
-    protected void reduceQueuedCounter(int size) {
-        queuedNrOfBytes -= size;
     }
 
     // -------------------------------------------------------- Inner Class
@@ -353,6 +382,11 @@ public class FastAsyncSocketSender extends DataSender {
         private boolean keepRunning = true;
 
         /**
+         * Current number of bytes from all queued messages
+         */
+        private long queuedNrOfBytes = 0;
+
+        /**
          * Only use inside FastAsyncSocketSender
          * @param sender
          * @param queue
@@ -362,6 +396,23 @@ public class FastAsyncSocketSender extends DataSender {
             this.queue = queue;
             this.sender = sender;
         }
+
+        protected long getQueuedNrOfBytes() {
+            return queuedNrOfBytes ;
+        }
+        
+        protected void setQueuedNrOfBytes(long queuedNrOfBytes) {
+            this.queuedNrOfBytes = queuedNrOfBytes;
+        }
+
+        protected void incQueuedNrOfBytes(long size) {
+            queuedNrOfBytes += size;
+        }
+        
+        protected void decQueuedNrOfBytes(long size) {
+            queuedNrOfBytes -= size;
+        }
+
 
         public void stopRunning() {
             keepRunning = false;
@@ -373,7 +424,11 @@ public class FastAsyncSocketSender extends DataSender {
         public void run() {
             while (keepRunning) {
                 // get a link list of all queued objects
+		if(log.isTraceEnabled())
+                    log.trace("Queuesize before=" + ((FastQueue)queue).getSize());
                 LinkObject entry = queue.remove();
+  		if(log.isTraceEnabled())
+		   log.trace("Queuesize after=" + ((FastQueue)queue).getSize());
                 if (entry != null) {
                     do {
                         int messagesize = 0;
@@ -387,12 +442,16 @@ public class FastAsyncSocketSender extends DataSender {
                                     "AsyncSocketSender.send.error", entry
                                             .getKey()),x);
                         } finally {
-                            reduceQueuedCounter(messagesize);
+                            decQueuedNrOfBytes(messagesize);
                         }
                         entry = entry.next();
                     } while (entry != null);
                 } else {
-                    log.error(sm.getString("AsyncSocketSender.queue.empty",sender.getAddress(), new Integer(sender.getPort())));
+                    if (keepRunning) {
+                        log.warn(sm.getString("AsyncSocketSender.queue.empty",
+                                sender.getAddress(), new Integer(sender
+                                        .getPort())));
+                    }
                 }
             }
         }

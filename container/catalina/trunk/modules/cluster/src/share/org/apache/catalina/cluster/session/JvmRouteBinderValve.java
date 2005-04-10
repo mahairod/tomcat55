@@ -31,6 +31,7 @@ import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.ClusterValve;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.session.ManagerBase;
@@ -48,17 +49,24 @@ import org.apache.catalina.valves.ValveBase;
  * other cluster nodes. Well, now the session stickyness work directly to the
  * backup node and traffic don't go back too restarted cluster nodes!
  * 
- * At all cluster node you must configure the
+ * At all cluster node you must configure the as ClusterListener since 5.5.10
  * {@link org.apache.catalina.cluster.session.JvmRouteSessionIDBinderListener JvmRouteSessionIDBinderListener}
- * with
+ * or before with
  * {@link org.apache.catalina.cluster.session.JvmRouteSessionIDBinderListenerLifecycle JvmRouteSessionIDBinderListenerLifecycle}
  * 
  * Add this Valve to your host definition at conf/server.xml 
  * 
+ * since 5.5.10 as direct cluster valve
  * <pre>
- *  &lt;Host&gt;
+ *  &lt;Cluster&gt;
  *  &lt;Valve className=&quot;org.apache.catalina.cluster.session.JvmRouteBinderValve&quot; /&gt;  
- *  &lt;/Host&gt;
+ *  &lt;/Cluster&gt;
+ * </pre>
+ * before  as Host element
+ * <pre>
+ *  &lt;Hostr&gt;
+ *  &lt;Valve className=&quot;org.apache.catalina.cluster.session.JvmRouteBinderValve&quot; /&gt;  
+ *  &lt;/Hostr&gt;
  * </pre>
  * 
  * Trick:<br/>
@@ -70,7 +78,7 @@ import org.apache.catalina.valves.ValveBase;
  * @author Peter Rossbach
  * @version $Revision$ $Date$
  */
-public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
+public class JvmRouteBinderValve extends ValveBase implements ClusterValve, Lifecycle {
 
     /*--Static Variables----------------------------------------*/
     public static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
@@ -182,7 +190,7 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
     public void invoke(Request request, Response response) throws IOException,
             ServletException {
 
-         if (getEnabled()) {
+         if (getEnabled() && request.getContext().getDistributable() ) {
             handlePossibleTurnover(request, response);
         }
         // Pass this request on to the next valve in our pipeline
@@ -251,6 +259,20 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
         return manager;
     }
 
+    /**
+     * @return Returns the cluster.
+     */
+    public CatalinaCluster getCluster() {
+        return cluster;
+    }
+    
+    /**
+     * @param cluster The cluster to set.
+     */
+    public void setCluster(CatalinaCluster cluster) {
+        this.cluster = cluster;
+    }
+    
     /**
      * Handle jvmRoute stickyness after tomcat instance failed. After this
      * correction a new Cookie send to client with new jvmRoute and the
@@ -455,22 +477,24 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
                     .getString("jvmRoute.valve.alreadyStarted"));
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
-        Container container = getContainer() ;
-        // compatibility with JvmRouteBinderValve version 1.1 
-        // ( setup at context.xml or context.xml.default )
-        if(!(container instanceof Host) ) {
-            if (log.isWarnEnabled())
-                log.warn(sm.getString("jvmRoute.configure.warn"));
-            container = container.getParent() ;
+        if (cluster != null) {
+            Container hostContainer = getContainer();
+            // compatibility with JvmRouteBinderValve version 1.1
+            // ( setup at context.xml or context.xml.default )
+            if (!(hostContainer instanceof Host)) {
+                if (log.isWarnEnabled())
+                    log.warn(sm.getString("jvmRoute.configure.warn"));
+                hostContainer = hostContainer.getParent();
+            }
+            if (hostContainer instanceof Host
+                    && ((Host) hostContainer).getCluster() != null)
+                cluster = (CatalinaCluster) ((Host) hostContainer).getCluster();
         }
-        if (container instanceof Host
-                && ((Host) container).getCluster() != null)
-            cluster = (CatalinaCluster) ((Host) container).getCluster();
         if (cluster == null) {
             throw new RuntimeException("No clustering support at container "
                     + container.getName());
         }
-
+        
         if (log.isInfoEnabled())
             log.info(sm.getString("jvmRoute.valve.started"));
 

@@ -45,8 +45,12 @@ public class DataSenderTest extends TestCase {
         assertEquals(1,sender.getSocketOpenCounter());
         assertEquals(0,sender.getSocketCloseCounter());
         sender.openSocket() ;
-        assertEquals(2,sender.getSocketOpenCounter());
+        assertEquals(1,sender.getSocketOpenCounter());
+        assertEquals(0,sender.getSocketCloseCounter());
+        sender.closeSocket() ;
+        sender.openSocket() ;
         assertEquals(1,sender.getSocketCloseCounter());
+        assertEquals(2,sender.getSocketOpenCounter());
     }
     
     /**

@@ -107,6 +107,12 @@ public class PooledSocketSender extends DataSender {
      */
     public void sendMessage(String messageId, byte[] data) throws IOException {
         //get a socket sender from the pool
+        if(!isConnected()) {
+            synchronized(this) {
+            if(!isConnected())
+                connect();
+            }
+        }
         SocketSender sender = senderQueue.getSender(0);
         if (sender == null) {
             log.warn(sm.getString("PoolSocketSender.noMoreSender", this

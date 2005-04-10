@@ -26,12 +26,8 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
-import org.apache.catalina.cluster.CatalinaCluster;
-import org.apache.catalina.cluster.ClusterReceiver;
-import org.apache.catalina.cluster.tcp.Constants;
-import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.io.ObjectReader;
-import org.apache.catalina.util.StringManager;
+
 /**
 * FIXME i18n log messages
 * FIXME jmx support
@@ -39,106 +35,81 @@ import org.apache.catalina.util.StringManager;
 * @author Filip Hanik
 * @version $Revision$ $Date$
 */
-public class ReplicationListener implements Runnable,ClusterReceiver
+public class ReplicationListener extends ClusterReceiverBase
 {
-    private static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog( ReplicationListener.class );
 
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "ReplicationListener/1.1";
-
-    /**
-     * The string manager for this package.
-     */
-    protected StringManager sm = StringManager.getManager(Constants.Package);
-
+    private static final String info = "ReplicationListener/1.2";
     
     private ThreadPool pool = null;
-    private boolean doListen = false;
-    private ListenCallback callback;
-    private java.net.InetAddress bind;
-    private String tcpListenAddress;
     private int tcpThreadCount;
-    private long tcpSelectorTimeout;
-    private int tcpListenPort;
-    private boolean sendAck;
-    /**
-     * Compress message data bytes
-     */
-    private boolean compress = true ;
-    
+    private long tcpSelectorTimeout;    
     private Selector selector = null;
     
     private Object interestOpsMutex = new Object();
     
     public ReplicationListener() {
     }
+    
+    /**
+     * Return descriptive information about this implementation and the
+     * corresponding version number, in the format
+     * <code>&lt;description&gt;/&lt;version&gt;</code>.
+     */
+    public String getInfo() {
+
+        return (info);
+
+    }
+ 
+    public long getTcpSelectorTimeout() {
+        return tcpSelectorTimeout;
+    }
+    public void setTcpSelectorTimeout(long tcpSelectorTimeout) {
+        this.tcpSelectorTimeout = tcpSelectorTimeout;
+    }
+    public int getTcpThreadCount() {
+        return tcpThreadCount;
+    }
+    public void setTcpThreadCount(int tcpThreadCount) {
+        this.tcpThreadCount = tcpThreadCount;
+    }
+    public Object getInterestOpsMutex() {
+        return interestOpsMutex;
+    }
 
     /**
-     * @return Returns the compress.
-     */
-    public boolean isCompress() {
-        return compress;
-    }
-    
-    /**
-     * @param compress The compress to set.
-     */
-    public void setCompress(boolean compressMessageData) {
-        this.compress = compressMessageData;
-    }
-    
-    /**
      * start cluster receiver
+     * @throws Exception
      * @see org.apache.catalina.cluster.ClusterReceiver#start()
      */
     public void start() {
-        try {
-            pool = new ThreadPool(tcpThreadCount, TcpReplicationThread.class, interestOpsMutex);
-            if ( "auto".equals(tcpListenAddress) ) {
-                tcpListenAddress = java.net.InetAddress.getLocalHost().
-                    getHostAddress();
+            try {
+                pool = new ThreadPool(tcpThreadCount, TcpReplicationThread.class, interestOpsMutex);
+            } catch (Exception e) {
+                log.error("ThreadPool can initilzed. Listener not started",e);
+                return ;
             }
-            if(log.isDebugEnabled())
-                log.debug("Starting replication listener on address:"+tcpListenAddress);
-            bind = java.net.InetAddress.getByName(tcpListenAddress);
-            Thread t = new Thread(this,"ClusterReceiver");
-            t.setDaemon(true);
-            t.start();
-        } catch ( Exception x ) {
-            log.fatal("Unable to start cluster receiver",x);
-        }
-
-    }
+            super.start() ;
+     }
     
-    public void stop() {
-        stopListening();
-    }
-    
-
-    public void run()
-    {
-        try
-        {
-            listen();
-        }
-        catch ( Exception x )
-        {
-            log.error("Unable to start cluster listener.",x);
-        }
-    }
 
     /**
      * get data from channel and store in byte array
      * send it to cluster
-     * @throws Exception
+     * @throws IOException
+     * @throws java.nio.channels.ClosedChannelException
      */
-    public void listen ()
+    protected void listen ()
         throws Exception
     {
-        doListen = true;
+        if (doListen) {
+            log.warn("ServerSocketChannel allready started");
+            return;
+        }
+        doListen=true;
         // allocate an unbound server socket channel
         ServerSocketChannel serverChannel = ServerSocketChannel.open();
         // Get the associated ServerSocket to bind it with
@@ -146,7 +117,7 @@ public class ReplicationListener implements Runnable,ClusterReceiver
         // create a new Selector for use below
         selector = Selector.open();
         // set the port the server channel will listen to
-        serverSocket.bind (new InetSocketAddress (bind,tcpListenPort));
+        serverSocket.bind (new InetSocketAddress (getBind(),getTcpListenPort()));
         // set non-blocking mode for the listening socket
         serverChannel.configureBlocking (false);
         // register the ServerSocketChannel with the Selector
@@ -180,8 +151,8 @@ public class ReplicationListener implements Runnable,ClusterReceiver
                         ServerSocketChannel server =
                             (ServerSocketChannel) key.channel();
                         SocketChannel channel = server.accept();
-                        Object attach  = attach = new ObjectReader(channel, selector,
-                                    callback,isCompress()) ;
+                        Object attach = new ObjectReader(channel, selector,
+                                    getCatalinaCluster(),isCompress()) ;
                         registerChannel(selector,
                                         channel,
                                         SelectionKey.OP_READ,
@@ -211,26 +182,23 @@ public class ReplicationListener implements Runnable,ClusterReceiver
         selector.close();
     }
 
-    public void stopListening(){
-        doListen = false;
+    /**
+     * Close Selector
+     * @see org.apache.catalina.cluster.tcp.ClusterReceiverBase#stopListening()
+     */
+    protected void stopListening(){
         if ( selector != null ) {
             try {
                 selector.close();
-                selector = null;
             } catch ( Exception x ) {
                 log.error("Unable to close cluster receiver selector.",x);
+            } finally {
+                selector = null;                
             }
         }
-    }
-    
-    public void setCatalinaCluster(CatalinaCluster cluster) {
-        callback = cluster;
-    }
-
-    public CatalinaCluster getCatalinaCluster() {
-        return (CatalinaCluster)callback ;
-    }
-    
+        doListen = false;
+   }
+        
     // ----------------------------------------------------------
 
     /**
@@ -272,49 +240,8 @@ public class ReplicationListener implements Runnable,ClusterReceiver
                 log.debug("No TcpReplicationThread available");
         } else {
             // invoking this wakes up the worker thread then returns
-            worker.serviceChannel(key, sendAck);
+            worker.serviceChannel(key, isSendAck());
         }
-    }
-    public String getTcpListenAddress() {
-        return tcpListenAddress;
-    }
-    public void setTcpListenAddress(String tcpListenAddress) {
-        this.tcpListenAddress = tcpListenAddress;
-    }
-    public int getTcpListenPort() {
-        return tcpListenPort;
-    }
-    public void setTcpListenPort(int tcpListenPort) {
-        this.tcpListenPort = tcpListenPort;
-    }
-    public long getTcpSelectorTimeout() {
-        return tcpSelectorTimeout;
-    }
-    public void setTcpSelectorTimeout(long tcpSelectorTimeout) {
-        this.tcpSelectorTimeout = tcpSelectorTimeout;
-    }
-    public int getTcpThreadCount() {
-        return tcpThreadCount;
-    }
-    public void setTcpThreadCount(int tcpThreadCount) {
-        this.tcpThreadCount = tcpThreadCount;
-    }
-    public boolean isSendAck() {
-        return sendAck;
-    }
-    public void setSendAck(boolean sendAck) {
-        this.sendAck = sendAck;
-    }
-    
-    public String getHost() {
-        return getTcpListenAddress();
-    }
-
-    public int getPort() {
-        return getTcpListenPort();
-    }
-    public Object getInterestOpsMutex() {
-        return interestOpsMutex;
     }
 
 }
