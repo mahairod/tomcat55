@@ -17,6 +17,8 @@
 package org.apache.catalina.storeconfig;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
@@ -25,6 +27,7 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Valve;
+import org.apache.catalina.cluster.ClusterValve;
 import org.apache.catalina.core.StandardHost;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,7 +86,14 @@ public class StandardHostSF extends StoreFactoryBase {
             // Store nested <Valve> elements
             if (host instanceof Pipeline) {
                 Valve valves[] = ((Pipeline) host).getValves();
-                storeElementArray(aWriter, indent, valves);
+                if(valves != null && valves.length > 0 ) {
+                    List hostValves = new ArrayList() ;
+                    for(int i = 0 ; i < valves.length ; i++ ) {
+                        if(!( valves[i] instanceof ClusterValve))
+                            hostValves.add(valves[i]);
+                    }                
+                    storeElementArray(aWriter, indent, hostValves.toArray());
+                }
             }
 
             // store all <Cluster> elements

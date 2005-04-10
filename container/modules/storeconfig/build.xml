@@ -5,13 +5,13 @@
 
 	<!-- See "build.properties.sample" in the top level directory for all     -->
 	<!-- property values you must customize for successful building!!!        -->
-	<!--property file="build.properties"/>
-  <property file="../build.properties"/>
-  <property file="${user.home}/build.properties"/-->
+    <property file="../../../build.properties" />
+    <property file="../../../jakarta-tomcat-5/build.properties.default" />
 
-	<!-- Build Defaults -->
-	<property name="catalina.build" location="../.." />
-	<property name="config.build" value="${catalina.home}/modules/storeconfig/build" />
+    <!-- Build Defaults -->
+    <property name="catalina.home"  location="../.."/>
+    <property name="catalina.build" location="../../../jakarta-tomcat-5/build"/>
+    <property name="config.build" value="${catalina.home}/modules/storeconfig/build" />
 	<property name="config.dist" value="${catalina.home}/modules/storeconfig/dist" />
 
 	<!-- Construct Catalina classpath -->
@@ -118,6 +118,10 @@
             <exclude name="**/LocalStrings_*" />
 		</jar>
 	</target>
+
+    <target name="copy" depends="dist" >
+       <copy file="${cluster.dist}/catalina-storeconfig.jar" todir="${catalina.build}/server/lib" />
+   </target>
 
 	<!-- ======================== DIST: Clean Directory ===================== -->
 
