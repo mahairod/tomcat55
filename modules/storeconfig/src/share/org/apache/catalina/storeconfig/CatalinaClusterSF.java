@@ -81,24 +81,10 @@ public class CatalinaClusterSF extends StoreFactoryBase {
                 storeElement(aWriter, indent, deployer);
             }
             // Store nested <Valve> element
-            // ReplicationValve are not store at Hosts element, see
-            // Host transient child list!
-            Valve valve = cluster.getValve();
-            if (valve != null) {
-                IStoreFactory elementFactory = getRegistry().findStoreFactory(
-                        valve.getClass());
-                if (elementFactory != null) {
-                    StoreDescription desc = getRegistry().findDescription(
-                            valve.getClass());
-                    elementFactory.store(aWriter, indent, valve);
-                }
-            }
-            // Store nested <Valve> pipeline elements
-            /*           if (aCluster instanceof SimpleTcpCluster) {
-                           Valve valves[] = ((Pipeline) ((SimpleTcpCluster)cluster).getValves();
-                           storeElementArray(aWriter, indent, valves);
-                       }
-           */
+            // ClusterValve are not store at Hosts element, see
+            Valve valves[] = cluster.getValves();
+            storeElementArray(aWriter, indent, valves);
+ 
             if (aCluster instanceof SimpleTcpCluster) {
                 // Store nested <Listener> elements
                 LifecycleListener listeners[] = ((SimpleTcpCluster)cluster).findLifecycleListeners();
@@ -106,8 +92,7 @@ public class CatalinaClusterSF extends StoreFactoryBase {
                 // Store nested <ClusterListener> elements
                 MessageListener mlisteners[] = ((SimpleTcpCluster)cluster).findClusterListeners();
                 storeElementArray(aWriter, indent, mlisteners);
-            }
-            
+            }            
         }
     }
 }
