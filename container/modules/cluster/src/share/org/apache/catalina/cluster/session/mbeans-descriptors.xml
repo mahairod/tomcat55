@@ -215,6 +215,18 @@
                  type="java.lang.String"/>
     </operation>
     
+	<operation name="expireAllLocalSessions"
+               description="Exipre all active local sessions and replicate the invalid sessions"
+               impact="ACTION"
+               returnType="void">
+    </operation>
+
+	<operation name="processExpires"
+               description="force process to expire sessions"
+               impact="ACTION"
+               returnType="void">
+    </operation>
+    
 	<operation name="resetStatistics"
                description="Reset all statistics"
                impact="ACTION"

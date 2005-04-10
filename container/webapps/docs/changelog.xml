@@ -115,6 +115,10 @@
   <subsection name="Cluster">
     <changelog>        
       <add>
+        DeltaManager has now JMX expireAllLocalSessions and processExipre operation 
+        for better cluster node shutdown handling (pero)   
+      </add>  
+      <add>
         DataSender doWaitAckStats for better understanding wait ack problems (pero)   
       </add>  
       <update>
