@@ -1033,6 +1033,37 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     }
 
     /**
+     * Exipre all find sessions.
+     */
+    public void expireAllLocalSessions()
+    {
+        long timeNow = System.currentTimeMillis();
+        Session sessions[] = findSessions();
+        int expireDirect  = 0 ;
+        int expireIndirect = 0 ;
+        
+        if(log.isDebugEnabled())
+            log.debug("Start expire all sessions " + getName() + " at " + timeNow + " sessioncount " + sessions.length);
+        for (int i = 0; i < sessions.length; i++) {
+            if (sessions[i] instanceof DeltaSession) {
+                DeltaSession session = (DeltaSession) sessions[i];
+                if (session.isPrimarySession()) {
+                    if (session.isValid()) {
+                        session.expire();
+                        expireDirect++;
+                    } else {
+                        expireIndirect++;
+                    }
+                }
+            }
+        }
+        long timeEnd = System.currentTimeMillis();
+        if(log.isDebugEnabled())
+             log.debug("End expire sessions " + getName() + " exipre processingTime " + (timeEnd - timeNow) + " expired direct sessions: " + expireDirect + " expired direct sessions: " + expireIndirect);
+      
+    }
+    
+    /**
      * When the manager expires session not tied to a request. The cluster will
      * periodically ask for a list of sessions that should expire and that
      * should be sent across the wire.
