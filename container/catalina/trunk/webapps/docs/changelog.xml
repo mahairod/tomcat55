@@ -69,7 +69,7 @@
         to it would leak a minimal amount of memory) (remm)
       </fix>
       <update>
-        Re-aad patch causing Session.getId to throw an ISE, and make all internal components
+        Re-add patch causing Session.getId to throw an ISE, and make all internal components
         use a safe getIdInternal method (remm)
       </update>
       <update>
