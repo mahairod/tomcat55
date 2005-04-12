@@ -42,6 +42,9 @@
       <update>
         Update to JDT from Eclipse 3.1M6, which is now feature complete (remm)
       </update>
+     <update>
+        Start refactoring, redesign and extend the cluster module (pero)
+      </update>
     </changelog>
   </subsection>
   
@@ -114,6 +117,17 @@
   
   <subsection name="Cluster">
     <changelog>        
+      <update>
+        update to-do.txt (pero)  
+      </update>          
+      <update>
+        Small refactorings at FastAsyncSocketSender (pero)  
+      </update>          
+      <update>
+        Refactor cluster message sending to lesser cpu and memory usage. 
+        Set at ReplicationTransmitter#compress=false as default. Change API from
+        ClusterSender, ReplicaitonTransmitter, DataSender, SimpleTcpCluster (pero)  
+      </update>          
       <add>
         DeltaManager has now JMX expireAllLocalSessions and processExipre operation 
         for better cluster node shutdown handling (pero)   
