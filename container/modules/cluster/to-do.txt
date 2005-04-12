@@ -1,5 +1,16 @@
-Next Steps:
+==============================
+Next actions
+==============================
 
+- reduce cpu and memory consume (Receiver)
+    - set new compress sender flag at default=false ( < CPU usage)
+    - Make compact algo 
+        currently message receive data is split at XbyteBuffer#extractPackage and
+        SimpleTcpCluster#messageDataReceived     
+- when a lot of messages expire it comes to burst of messages 
+     - all 60 Sec when ManagerBase#processExpires is called!
+     - Better is to transfer a spezial Epxire Message with an array of expired messages.
+     - This reduce message transfer and reduce waits for acks.     
 - Documentation
 	wrote a complete new how-to
 	add example configurations
@@ -18,12 +29,7 @@ Next Steps:
     	detect long wait acks     
 - Implement fragmentation of large replication objects
 	Compress at message level 
-	s. FarmDeployer war handling
-- reduce memory consume
-    - set new compress sender flag at default=false
-    - don't copy the buffer to add message header
-        transfer this from SimpleTcpCluster to DataSender pushMessage
-    - make it possible that a subclass cryp the transferd messages
+	Splitting Messages ala FarmDeployer war handling
 - add a message type to the message header.
     - filtering at receiver that drop message before build Object
 - add test cluster project
@@ -31,8 +37,11 @@ Next Steps:
     automated regression testing with some standard configs
 - add support to dynamic property transfer from SimpleTcpCluster to the Manager
     like ReplicationTransmitter
-                        	
+- better restart szenario after failure.
+        
+==============================
 Nice to have:
+==============================
 - Implement a NonSerializable interface for session attributes that do not
 wish to be replicated
         Then we must have ClusterNonSerializable at common classloader
@@ -71,8 +80,24 @@ would not make sense to transfer the same webapp over and over again.
      	Fixed!		
      Last FileMessage fragment need longe ackTimeout	
     	<Cluster ..> <Sender ... ackTimeout="60000"/> </Cluster> 	
+- ReplicationListener and SocketReplicationListener only accept data from cluster member (low level ip restriction)
+- Change Message protocol (risk)
+   Currently 6 byte header, data.length 4 bytes , data, 6 byte end header
+   Optimized to 2 type header, data.length 4 bytes, data
+   change at DataSender.writeData and XByteBuffer
 
+==============================   
 COMPLETED
+==============================
+5.5.10
+- reduce memory and cpu consume (send message)
+    - set new compress sender flag at default=false ( < CPU usage)
+    - don't copy the buffer to add message header
+        transfer this from SimpleTcpCluster to DataSender pushMessage
+        successfull refactored
+    - make it possible that a subclass crypt the transfered messages
+       sub class ReplicationTransmitter and override createMessageData
+    - don't copy START and END Header for every message, instead send dirctly and DataSender.writeData.   
 - Add a flag for replicated  attribute events, to enable or disable them 
      Now can configued with notifyListenersOnReplication=false at SimpleTCPCluster
      Also can drop HttpSessionLsitener events
@@ -87,6 +112,7 @@ COMPLETED
 - Add new SocketReplicationListener
 - Add Stats to DeltaManager
 - Add single sign on support
+5.5.9
 - Add Keep Alive and WaitForAck at async mode implementation.
        Make this feature configurable to Sender element at server.xml
        Is include with 5.5.8
