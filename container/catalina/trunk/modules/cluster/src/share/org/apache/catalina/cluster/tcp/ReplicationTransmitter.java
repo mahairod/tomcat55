@@ -16,14 +16,18 @@
 
 package org.apache.catalina.cluster.tcp;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.ClusterSender;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.io.XByteBuffer;
@@ -49,7 +53,7 @@ public class ReplicationTransmitter implements ClusterSender {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "ReplicationTransmitter/1.3";
+    private static final String info = "ReplicationTransmitter/2.0";
 
     /**
      * The string manager for this package.
@@ -109,8 +113,28 @@ public class ReplicationTransmitter implements ClusterSender {
     /**
      * Compress message data bytes
      */
-    private boolean compress = true;
+    private boolean compress = false;
 
+    /**
+     * doTransmitterProcessingStats
+     */
+    protected boolean doTransmitterProcessingStats = false;
+
+    /**
+     * proessingTime
+     */
+    protected long processingTime = 0;
+    
+    /**
+     * min proessingTime
+     */
+    protected long minProcessingTime = Long.MAX_VALUE ;
+
+    /**
+     * max proessingTime
+     */
+    protected long maxProcessingTime = 0;
+   
     /**
      * dynamic sender <code>properties</code>
      */
@@ -185,6 +209,49 @@ public class ReplicationTransmitter implements ClusterSender {
             throw new IllegalArgumentException(msg);
 
     }
+
+    /**
+     * @return Returns the avg processingTime/nrOfRequests.
+     */
+    public double getAvgProcessingTime() {
+        return ((double)processingTime) / nrOfRequests;
+    }
+ 
+    /**
+     * @return Returns the maxProcessingTime.
+     */
+    public long getMaxProcessingTime() {
+        return maxProcessingTime;
+    }
+    
+    /**
+     * @return Returns the minProcessingTime.
+     */
+    public long getMinProcessingTime() {
+        return minProcessingTime;
+    }
+    
+    /**
+     * @return Returns the processingTime.
+     */
+    public long getProcessingTime() {
+        return processingTime;
+    }
+    
+    /**
+     * @return Returns the doTransmitterProcessingStats.
+     */
+    public boolean isDoTransmitterProcessingStats() {
+        return doTransmitterProcessingStats;
+    }
+    
+    /**
+     * @param doTransmitterProcessingStats The doTransmitterProcessingStats to set.
+     */
+    public void setDoTransmitterProcessingStats(boolean doProcessingStats) {
+        this.doTransmitterProcessingStats = doProcessingStats;
+    }
+ 
 
     /**
      * Transmitter ObjectName
@@ -344,42 +411,59 @@ public class ReplicationTransmitter implements ClusterSender {
     }
 
     // ------------------------------------------------------------- public
-
+    
     /**
      * Send data to one member
-     * 
-     * @see org.apache.catalina.cluster.ClusterSender#sendMessage(java.lang.String,
-     *      byte[], org.apache.catalina.cluster.Member)
+     * FIXME set filtering messages
+     * @see org.apache.catalina.cluster.ClusterSender#sendMessage(org.apache.catalina.cluster.ClusterMessage, org.apache.catalina.cluster.Member)
      */
-    public void sendMessage(String sessionId, byte[] indata, Member member)
-            throws java.io.IOException {
-        byte[] data = convertSenderData(indata);
-        String key = getKey(member);
-        IDataSender sender = (IDataSender) map.get(key);
-        sendMessageData(sessionId, data, sender);
+    public void sendMessage(ClusterMessage message, Member member)
+            throws java.io.IOException {       
+        long time = 0 ;
+        if(doTransmitterProcessingStats) {
+            time = System.currentTimeMillis();
+        }
+        try {
+            byte[] data = createMessageData(message);
+            String key = getKey(member);
+            IDataSender sender = (IDataSender) map.get(key);
+            sendMessageData(message.getUniqueId(), data, sender);
+        } finally {
+            if (doTransmitterProcessingStats) {
+                addProcessingStats(time);
+            }
+        }
     }
 
     /**
      * send message to all senders (broadcast)
-     * 
-     * @see org.apache.catalina.cluster.ClusterSender#sendMessage(java.lang.String,
-     *      byte[])
+     * @see org.apache.catalina.cluster.ClusterSender#sendMessage(org.apache.catalina.cluster.ClusterMessage)
      */
-    public void sendMessage(String sessionId, byte[] indata)
+    public void sendMessage(ClusterMessage message)
             throws java.io.IOException {
-        IDataSender[] senders = getSenders();
-        byte[] data = convertSenderData(indata);
-        for (int i = 0; i < senders.length; i++) {
+        long time = 0;
+        if (doTransmitterProcessingStats) {
+            time = System.currentTimeMillis();
+        }
+        try {
+            byte[] data = createMessageData(message);
+            IDataSender[] senders = getSenders();
+            for (int i = 0; i < senders.length; i++) {
 
-            IDataSender sender = senders[i];
-            try {
-                sendMessageData(sessionId, data, sender);
-            } catch (Exception x) {
-
-                if (!sender.getSuspect())
-                    log.warn("Unable to send replicated message to " + sender
-                            + ", is server down?", x);
-                sender.setSuspect(true);
+                IDataSender sender = senders[i];
+                try {
+                    sendMessageData(message.getUniqueId(), data, sender);
+                } catch (Exception x) {
+                    if (!sender.getSuspect()) {
+                        log.warn("Unable to send replicated message to "
+                                + sender + ", is server down?", x);
+                        sender.setSuspect(true);
+                    }
+                }
+            }
+        } finally {
+            if (doTransmitterProcessingStats) {
+                addProcessingStats(time);
             }
         }
     }
@@ -518,6 +602,9 @@ public class ReplicationTransmitter implements ClusterSender {
         nrOfRequests = 0;
         totalBytes = 0;
         failureCounter = 0;
+        processingTime = 0;
+        minProcessingTime = Long.MAX_VALUE;
+        maxProcessingTime = 0;
     }
 
     /*
@@ -640,6 +727,7 @@ public class ReplicationTransmitter implements ClusterSender {
         }
     }
 
+    
     /**
      * build sender ObjectName (
      * engine.domain:type=IDataSender,host="host",senderAddress="receiver.address",senderPort="port" )
@@ -664,17 +752,32 @@ public class ReplicationTransmitter implements ClusterSender {
     }
 
     /**
-     * compress data
-     * 
+     * Send Message create Timestamp and generate message bytes form msg
      * @see XByteBuffer#createDataPackage(byte[])
-     * @param indata
-     * @return
+     * @param msg cluster message
+     * @return cluster message as byte array
      * @throws IOException
-     *             FIXME get CompressMessageDate from cluster instanz
      */
-    protected byte[] convertSenderData(byte[] data) throws IOException {
-        return XByteBuffer.createDataPackage(data, isCompress());
+    protected byte[] createMessageData(ClusterMessage msg) throws IOException {
+        msg.setTimestamp(System.currentTimeMillis());
+        ByteArrayOutputStream outs = new ByteArrayOutputStream();
+        ObjectOutputStream out;
+        GZIPOutputStream gout = null;
+        if (isCompress()) {
+            gout = new GZIPOutputStream(outs);
+            out = new ObjectOutputStream(gout);
+        } else {
+            out = new ObjectOutputStream(outs);
+        }
+        out.writeObject(msg);
+        // flush out the gzip stream to byte buffer
+        if(gout != null) {
+            gout.flush();
+            gout.close();
+        }
+        return outs.toByteArray();
     }
+ 
 
     /**
      * Send message to concrete sender. If autoConnect is true, check is
@@ -723,5 +826,18 @@ public class ReplicationTransmitter implements ClusterSender {
         }
 
     }
-
+    /**
+     * Add processing stats times
+     * @param startTime
+     */
+    protected void addProcessingStats(long startTime) {
+        long time = System.currentTimeMillis() - startTime ;
+        if(time < minProcessingTime)
+            minProcessingTime = time ;
+        if( time > maxProcessingTime)
+            maxProcessingTime = time ;
+        processingTime += time ;
+    }
+ 
+ 
 }

@@ -39,9 +39,9 @@ public interface ClusterSender
 
     public void backgroundProcess() ;
 
-    public void sendMessage(String messageId, byte[] indata, Member member) throws java.io.IOException;
+    public void sendMessage(ClusterMessage message, Member member) throws java.io.IOException;
 
-    public void sendMessage(String messageId, byte[] indata) throws java.io.IOException;
+    public void sendMessage(ClusterMessage message) throws java.io.IOException;
     
     public boolean isWaitForAck();
     public void setWaitForAck(boolean isWaitForAck);

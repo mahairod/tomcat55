@@ -54,7 +54,7 @@ public class FastAsyncSocketSender extends DataSender {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "FastAsyncSocketSender/1.1";
+    private static final String info = "FastAsyncSocketSender/2.0";
 
     // ----------------------------------------------------- Instance Variables
 
@@ -109,6 +109,7 @@ public class FastAsyncSocketSender extends DataSender {
 
     }
  
+
     /**
      * get current add wait timeout 
      * @return current wait timeout
@@ -386,6 +387,8 @@ public class FastAsyncSocketSender extends DataSender {
          */
         private long queuedNrOfBytes = 0;
 
+       
+
         /**
          * Only use inside FastAsyncSocketSender
          * @param sender
@@ -396,9 +399,12 @@ public class FastAsyncSocketSender extends DataSender {
             this.queue = queue;
             this.sender = sender;
         }
-
-        protected long getQueuedNrOfBytes() {
-            return queuedNrOfBytes ;
+        
+        /**
+         * @return Returns the queuedNrOfBytes.
+         */
+        public long getQueuedNrOfBytes() {
+            return queuedNrOfBytes;
         }
         
         protected synchronized void setQueuedNrOfBytes(long queuedNrOfBytes) {
@@ -417,35 +423,17 @@ public class FastAsyncSocketSender extends DataSender {
         public void stopRunning() {
             keepRunning = false;
         }
-
+        
+        
         /* Get the objects from queue and send all mesages to the sender.
          * @see java.lang.Runnable#run()
          */
         public void run() {
             while (keepRunning) {
-                // get a link list of all queued objects
-		if(log.isTraceEnabled())
-                    log.trace("Queuesize before=" + ((FastQueue)queue).getSize());
-                LinkObject entry = queue.remove();
-  		if(log.isTraceEnabled())
-		   log.trace("Queuesize after=" + ((FastQueue)queue).getSize());
+                long queueSize;
+                LinkObject entry = getQueuedMessage();
                 if (entry != null) {
-                    do {
-                        int messagesize = 0;
-                        try {
-                            byte[] data = (byte[]) entry.data();
-                            messagesize = data.length;
-                            sender.pushMessage((String) entry.getKey(), data);
-                            outQueueCounter++;
-                        } catch (Exception x) {
-                            log.warn(sm.getString(
-                                    "AsyncSocketSender.send.error", entry
-                                            .getKey()),x);
-                        } finally {
-                            decQueuedNrOfBytes(messagesize);
-                        }
-                        entry = entry.next();
-                    } while (entry != null);
+                    pushQueuedMessages(entry);
                 } else {
                     if (keepRunning) {
                         log.warn(sm.getString("AsyncSocketSender.queue.empty",
@@ -454,6 +442,41 @@ public class FastAsyncSocketSender extends DataSender {
                     }
                 }
             }
+        }
+
+        /**
+         * @return
+         */
+        protected LinkObject getQueuedMessage() {
+            // get a link list of all queued objects
+            if (log.isTraceEnabled())
+                log.trace("Queuesize before=" + ((FastQueue) queue).getSize());
+            LinkObject entry = queue.remove();
+            if (log.isTraceEnabled())
+                log.trace("Queuesize after=" + ((FastQueue) queue).getSize());
+            return entry;
+        }
+
+        /**
+         * @param entry
+         */
+        protected void pushQueuedMessages(LinkObject entry) {
+            do {
+                int messagesize = 0;
+                try {
+                    byte[] data = (byte[]) entry.data();
+                    messagesize = data.length;
+                    sender.pushMessage((String) entry.getKey(), data);
+                    outQueueCounter++;
+                } catch (Exception x) {
+                    log.warn(sm.getString(
+                            "AsyncSocketSender.send.error", entry
+                                    .getKey()), x);
+                } finally {
+                    decQueuedNrOfBytes(messagesize);
+                }
+                entry = entry.next();
+            } while (entry != null);
         }
 
     }

@@ -9,7 +9,10 @@
                domain="Catalina"
                 group="Cluster"
                  type="org.apache.catalina.cluster.tcp.SimpleTcpCluster">
-
+    <attribute   name="info"
+          description="Class version info"
+                 type="java.lang.String"
+                 writeable="false"/>
     <attribute   name="notifyListenersOnReplication"
           description="notify session attribute listener at backups"
                  type="boolean"/>
@@ -71,7 +74,10 @@
                domain="Catalina"
                 group="ClusterSender"
                  type="org.apache.catalina.cluster.tcp.ReplicationTransmitter">
-
+    <attribute   name="info"
+          description="Class version info"
+                 type="java.lang.String"
+                 writeable="false"/>
     <attribute   name="replicationMode"
           description="replication mode (synchnous,pooled.asynchnous)"
                  type="java.lang.String"/>
@@ -87,6 +93,26 @@
 			     is="true"
                  type="boolean"
                  writeable="false" />
+    <attribute   name="processingTime"
+          description="sending processing time"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="minProcessingTime"
+          description="minimal sending processing time"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="avgProcessingTime"
+          description="processing time / nrOfRequests"
+                 type="double"
+                 writeable="false"/>
+    <attribute   name="maxProcessingTime"
+          description="maximal sending processing time"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="doTransmitterProcessingStats"
+          description="create processing time stats"
+			     is="true"
+                 type="boolean" />                
     <attribute   name="nrOfRequests"
           description="number of send messages to other members"
                  type="long"
@@ -152,6 +178,10 @@
                  writeable="false"/>
     <attribute   name="ackTimeout"
           description="acknowledge timeout"
+                 type="long"/>                 
+    <attribute   name="avgMessageSize"
+                 writeable="false"
+          description="avg message size (totalbytes/nrOfRequests"
                  type="long"/>
     <attribute   name="queueSize"
                  writeable="false"
@@ -318,6 +348,10 @@
     <attribute   name="ackTimeout"
           description="acknowledge timeout"
                  type="long"/>
+    <attribute   name="avgMessageSize"
+                 writeable="false"
+          description="avg message size (totalbytes/nrOfRequests"
+                 type="long" />
     <attribute   name="queueSize"
                  writeable="false"
           description="queue size"
@@ -458,7 +492,7 @@
           description="queue remove wait time (queue thread waits)"
                  type="long"
                  writeable="false"/>
-	<operation name="connect"
+ 	<operation name="connect"
                description="connect to other replication node"
                impact="ACTION"
                returnType="void">
@@ -519,6 +553,10 @@
           description="socket connected"
                  type="boolean"
                  writeable="false"/>
+    <attribute   name="avgMessageSize"
+                 writeable="false"
+          description="avg message size (totalbytes/nrOfRequests"
+                 type="long"/>
     <attribute   name="nrOfRequests"
           description="number of send messages to other members"
                  type="long"
@@ -577,9 +615,6 @@
 			     is="true"
                  type="boolean"
                  writeable="false" />
-    <attribute   name="maxPoolSocketLimit"
-          description="Max parallel sockets"
-                 type="int"/>
     <attribute   name="keepAliveTimeout"
           description="active socket keep alive timeout"
                  type="long"/>
@@ -599,6 +634,10 @@
           description="socket connected"
                  type="boolean"
                  writeable="false"/>
+    <attribute   name="avgMessageSize"
+                 writeable="false"
+          description="avg message size (totalbytes/nrOfRequests"
+                 type="long"/>
     <attribute   name="nrOfRequests"
           description="number of send messages to other members"
                  type="long"

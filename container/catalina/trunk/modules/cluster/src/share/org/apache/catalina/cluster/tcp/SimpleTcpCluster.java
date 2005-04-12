@@ -91,7 +91,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     /**
      * Descriptive information about this component implementation.
      */
-    protected static final String info = "SimpleTcpCluster/1.2";
+    protected static final String info = "SimpleTcpCluster/2.0";
 
     public static final String BEFORE_MEMBERREGISTER_EVENT = "before_member_register";
 
@@ -598,64 +598,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     }
 
     /**
-     * send a cluster message to one member
-     * 
-     * @param msg message to transfer
-     * @param dest Receiver member
-     * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage,
-     *      org.apache.catalina.cluster.Member)
-     */
-    public void send(ClusterMessage msg, Member dest) {
-        try {
-            msg.setAddress(membershipService.getLocalMember());
-            Member destination = dest;
-
-            if (msg instanceof SessionMessage) {
-                SessionMessage smsg = (SessionMessage) msg;
-                //if we request session state, send to the oldest of members
-                if ((destination == null)
-                        && (smsg.getEventType() == SessionMessage.EVT_GET_ALL_SESSIONS)
-                        && (membershipService.getMembers().length > 0)) {
-                    destination = membershipService.getMembers()[0];
-                }
-            }
-            byte[] data = createMessageData(msg);
-            if (destination != null) {
-                Member tcpdest = dest;
-                if ((tcpdest != null)
-                        && (!membershipService.getLocalMember().equals(tcpdest))) {
-                    clusterSender.sendMessage(msg.getUniqueId(), data, tcpdest);
-                }
-            } else {
-                clusterSender.sendMessage(msg.getUniqueId(), data);
-            }
-        } catch (Exception x) {
-            if(notifyLifecycleListenerOnFailure) {
-                // Notify our interested LifecycleListeners
-                lifecycle.fireLifecycleEvent(SEND_MESSAGE_FAILURE_EVENT, 
-                 new SendMessageData(msg,dest,x));                
-            }
-            log.error("Unable to send message through cluster sender.", x);
-        }
-    }
-
-    /**
-     * Send Message create Timestamp and generate message bytes form msg
-     * @param msg cluster message
-     * @return cluster message as byte array
-     * @throws IOException
-     */
-    protected byte[] createMessageData(ClusterMessage msg) throws IOException {
-        msg.setTimestamp(System.currentTimeMillis());
-        java.io.ByteArrayOutputStream outs = new java.io.ByteArrayOutputStream();
-        java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(
-                outs);
-        out.writeObject(msg);
-        byte[] data = outs.toByteArray();
-        return data;
-    }
-
-    /**
      * send message to all cluster members
      * 
      * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage)
@@ -664,6 +606,33 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         send(msg, null);
     }
 
+    /**
+     * send a cluster message to one member
+     * @param msg message to transfer
+     * @param dest Receiver member
+     * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage,
+     *      org.apache.catalina.cluster.Member)
+     */
+    public void send(ClusterMessage msg, Member dest) {
+        try {
+            msg.setAddress(membershipService.getLocalMember());
+            if (dest != null) {
+                if (!membershipService.getLocalMember().equals(dest)) {
+                    clusterSender.sendMessage(msg, dest);
+                } else
+                    log.error("Unable to send message to local member " + msg);
+            } else {
+                clusterSender.sendMessage(msg);
+            }
+        } catch (Exception x) {
+            if (notifyLifecycleListenerOnFailure) {
+                // Notify our interested LifecycleListeners
+                lifecycle.fireLifecycleEvent(SEND_MESSAGE_FAILURE_EVENT,
+                        new SendMessageData(msg, dest, x));
+            }
+            log.error("Unable to send message through cluster sender.", x);
+        }
+    }
 
     /* New cluster member is registered
      * FIXME notify someone (JMX(Listener)

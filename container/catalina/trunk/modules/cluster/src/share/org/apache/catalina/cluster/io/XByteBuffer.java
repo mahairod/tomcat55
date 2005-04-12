@@ -366,6 +366,7 @@ public class XByteBuffer
      * @param indata - the message data to be contained within the package
      * @param compress - compress message data or not
      * @return - a full package (header,size,data,footer)
+     * @deprecated since 5.5.10
      */
     public static byte[] createDataPackage(byte[] indata, boolean compress)
             throws java.io.IOException {

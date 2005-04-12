@@ -17,10 +17,12 @@
 package org.apache.catalina.cluster.tcp;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
+import org.apache.catalina.cluster.io.XByteBuffer;
 import org.apache.catalina.util.StringManager;
 
 /**
@@ -47,7 +49,7 @@ public class DataSender implements IDataSender {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "DataSender/1.4";
+    private static final String info = "DataSender/2.0";
 
     /**
      * receiver address
@@ -224,6 +226,13 @@ public class DataSender implements IDataSender {
      */
     public long getTotalBytes() {
         return totalBytes;
+    }
+
+    /**
+     * @return Returns the avg totalBytes/nrOfRequests.
+     */
+    public double getAvgMessageSize() {
+        return ((double)totalBytes) / nrOfRequests;
     }
 
     /**
@@ -693,7 +702,7 @@ public class DataSender implements IDataSender {
                 openSocket();
         }
         try {
-            writeData(data);
+             writeData(data);
         } catch (java.io.IOException x) {
             // second try with fresh connection
             dataResendCounter++;
@@ -724,8 +733,12 @@ public class DataSender implements IDataSender {
      * @throws IOException
      */
     protected void writeData(byte[] data) throws IOException {
-        socket.getOutputStream().write(data);
-        socket.getOutputStream().flush();
+        OutputStream out = socket.getOutputStream();
+        out.write(XByteBuffer.START_DATA);
+        out.write(XByteBuffer.toBytes(data.length));
+        out.write(data);
+        out.write(XByteBuffer.END_DATA);
+        out.flush();
         if (isWaitForAck())
             waitForAck(ackTimeout);
         
@@ -733,7 +746,6 @@ public class DataSender implements IDataSender {
 
     /**
      * Wait for Acknowledgement from other server
-     * FIXME Handle SocketTimeoutException - Retry message ?
      * @param timeout
      * @throws java.io.IOException
      * @throws java.net.SocketTimeoutException
