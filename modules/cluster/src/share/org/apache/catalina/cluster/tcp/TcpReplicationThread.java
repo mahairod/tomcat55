@@ -113,7 +113,7 @@ public class TcpReplicationThread extends WorkerThread {
      * re-enables OP_READ and calls wakeup() on the selector
      * so the selector will resume watching this channel.
      */
-    private void drainChannel (SelectionKey key)
+    protected void drainChannel (SelectionKey key)
         throws Exception
     {
         boolean packetReceived=false;
@@ -162,7 +162,7 @@ public class TcpReplicationThread extends WorkerThread {
      * @param key
      * @param channel
      */
-    private void sendAck(SelectionKey key, SocketChannel channel) {
+    protected void sendAck(SelectionKey key, SocketChannel channel) {
         
         try {
             channel.write(ByteBuffer.wrap(ACK_COMMAND));
