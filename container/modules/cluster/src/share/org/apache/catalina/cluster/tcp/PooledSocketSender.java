@@ -197,8 +197,7 @@ public class PooledSocketSender extends DataSender {
                         try {
                             mutex.wait(timeout);
                         } catch (Exception x) {
-                            PooledSocketSender.log
-                                    .warn(sm.getString("PoolSocketSender.senderQueue.sender.failed",parent.getAddress(),new Integer(parent.getPort())),x);
+                            PooledSocketSender.log.warn(sm.getString("PoolSocketSender.senderQueue.sender.failed",parent.getAddress(),new Integer(parent.getPort())),x);
                         }//catch
                     }//end if
                     if (sender != null) {

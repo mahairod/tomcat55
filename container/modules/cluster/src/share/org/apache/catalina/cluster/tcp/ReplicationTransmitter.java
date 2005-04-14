@@ -545,8 +545,6 @@ public class ReplicationTransmitter implements ClusterSender {
      */
     public void checkIfCloseSocket() {
         if (map.size() > 0) {
-            if (log.isTraceEnabled())
-                log.trace("check sender close socket");
             java.util.Iterator iter = map.entrySet().iterator();
             while (iter.hasNext()) {
                 IDataSender sender = (IDataSender) ((java.util.Map.Entry) iter
