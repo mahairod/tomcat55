@@ -511,10 +511,8 @@ public class DataSender implements IDataSender {
     public synchronized boolean checkKeepAlive() {
         boolean isCloseSocket = true ;
         if(isConnected()) {
-            if ((keepAliveTimeout > -1 
-                    && (System.currentTimeMillis() - this.keepAliveConnectTime) > this.keepAliveTimeout)
-                || (keepAliveMaxRequestCount > -1 
-                    && this.keepAliveCount >= this.keepAliveMaxRequestCount)) {
+            if ((keepAliveTimeout > -1 && (System.currentTimeMillis() - keepAliveConnectTime) > keepAliveTimeout)
+                || (keepAliveMaxRequestCount > -1 && keepAliveCount >= keepAliveMaxRequestCount)) {
                 closeSocket();
             } else
                 isCloseSocket = false ;
