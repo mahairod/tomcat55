@@ -508,7 +508,7 @@ public class DataSender implements IDataSender {
      * @return true, is socket close
      * @see DataSender#closeSocket()
      */
-    public synchronized boolean checkIfCloseSocket() {
+    public synchronized boolean checkKeepAlive() {
         boolean isCloseSocket = true ;
         if(isConnected()) {
             if ((keepAliveTimeout > -1 
@@ -697,7 +697,7 @@ public class DataSender implements IDataSender {
             time = System.currentTimeMillis();
         }
         synchronized(this) {
-            checkIfCloseSocket();
+            checkKeepAlive();
             if (!isConnected())
                 openSocket();
         }
@@ -716,7 +716,7 @@ public class DataSender implements IDataSender {
             writeData(data);
         } finally {
             this.keepAliveCount++;
-            checkIfCloseSocket();
+            checkKeepAlive();
             if(doProcessingStats) {
                 addProcessingStats(time);
             }
