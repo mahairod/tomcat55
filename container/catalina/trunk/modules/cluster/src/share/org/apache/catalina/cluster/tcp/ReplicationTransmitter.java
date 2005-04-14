@@ -535,7 +535,7 @@ public class ReplicationTransmitter implements ClusterSender {
     public void backgroundProcess() {
         count = (count + 1) % processSenderFrequency;
         if (count == 0) {
-            checkIfCloseSocket();
+            checkKeepAlive();
         }
     }
 
@@ -543,7 +543,7 @@ public class ReplicationTransmitter implements ClusterSender {
      * Check all DataSender Socket to close socket at keepAlive mode
      * @see DataSender#checkIfCloseSocket()
      */
-    public void checkIfCloseSocket() {
+    public void checkKeepAlive() {
         if (map.size() > 0) {
             java.util.Iterator iter = map.entrySet().iterator();
             while (iter.hasNext()) {
