@@ -204,6 +204,13 @@ public class StatusTransformer {
             writer.print(mBeanServer.getAttribute(tpName, "currentThreadCount"));
             writer.print(" Current thread busy: ");
             writer.print(mBeanServer.getAttribute(tpName, "currentThreadsBusy"));
+            try {
+                Object value = mBeanServer.getAttribute(tpName, "keepAliveCount");
+                writer.print(" Keeped alive sockets count: ");
+                writer.print(value);
+            } catch (Exception e) {
+                // Ignore
+            }
             
             writer.print("<br>");
 
