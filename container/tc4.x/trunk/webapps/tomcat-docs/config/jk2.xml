@@ -16,6 +16,10 @@
 
 <section name="Introduction">
 
+  <p><b>IMPORTANT NOTE: The Coyote JK 2 connector is now deprecated. Use the 
+  JK connector instead or, for Apache http 2.x only, use mod_proxy with AJP
+  enabled.</b></p>
+
   <p>The <strong>JK 2 Connector</strong> element represents a
   <strong>Connector</strong> component that communicates with a web
   connector via the <code>AJP</code> protocol.  This is used for cases

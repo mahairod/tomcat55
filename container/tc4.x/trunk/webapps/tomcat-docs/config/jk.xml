@@ -16,9 +16,6 @@
 
 <section name="Introduction">
 
-  <p><b>IMPORTANT NOTE: The JK connector is now deprecated. Use the 
-  Coyote JK 2 connector instead.</b></p>
-
   <p>The <strong>JK Connector</strong> element represents a
   <strong>Connector</strong> component that communicates with a web
   connector via the <code>JK</code> protocol (also known as the AJP protocol).
@@ -27,9 +24,10 @@
   the static content contained in the web application, and/or utilize 
   Apache's SSL processing.  In many application environments, this will 
   result in better overall performance than running your applications under
-  Tomcat stand-alone using the <a href="http11.html">HTTP/1.1 Connector</a>.  
-  However, the only way to know for sure whether it will provide better 
-  performance for <strong>your</strong> application is to try it both ways.</p>
+  Tomcat stand-alone using the <a href="coyote.html">Coyote HTTP/1.1
+  Connector</a>. However, the only way to know for sure whether it will
+  provide better performance for <strong>your</strong> application is to try
+  it both ways.</p>
 
   <p>This connector supports load balancing when used in conjunction with
   the <code>jvmRoute</code> attribute of the 
