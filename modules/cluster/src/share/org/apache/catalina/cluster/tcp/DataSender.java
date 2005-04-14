@@ -756,24 +756,23 @@ public class DataSender implements IDataSender {
             time = System.currentTimeMillis();
         }
         try {
-             int bytesRead = 0;
+            int bytesRead = 0;
+            if ( log.isDebugEnabled() ) log.debug("Waiting for ACK message");
             int i = socket.getInputStream().read();
             while ((i != -1) && (i != 3) && bytesRead < 10) {
+                if ( log.isDebugEnabled() ) log.debug("Read ack byte:"+i);
                 bytesRead++;
                 i = socket.getInputStream().read();
             }
             if (i != 3) {
                 if (i == -1) {
-                    throw new IOException(sm.getString("IDataSender.ack.eof",
-                            getAddress(), new Integer(socket.getLocalPort())));
+                    throw new IOException(sm.getString("IDataSender.ack.eof",getAddress(), new Integer(socket.getLocalPort())));
                 } else {
-                    throw new IOException(sm.getString("IDataSender.ack.wrong",
-                            getAddress(), new Integer(socket.getLocalPort())));
+                    throw new IOException(sm.getString("IDataSender.ack.wrong",getAddress(), new Integer(socket.getLocalPort())));
                 }
             } else {
                 if (log.isTraceEnabled()) {
-                    log.trace(sm.getString("IDataSender.ack.receive", address,
-                            new Integer(socket.getLocalPort())));
+                    log.trace(sm.getString("IDataSender.ack.receive", address,new Integer(socket.getLocalPort())));
                 }
             }
         } catch (IOException x) {
