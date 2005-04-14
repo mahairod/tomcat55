@@ -815,10 +815,7 @@ public class ReplicationTransmitter implements ClusterSender {
         } catch (Exception x) {
             if (log.isWarnEnabled()) {
                 if (!sender.getSuspect()) {
-                    log
-                            .warn(
-                                    "Unable to send replicated message, is server down?",
-                                    x);
+                    log.warn("Unable to send replicated message, is server down?",x);
                 }
             }
             sender.setSuspect(true);
