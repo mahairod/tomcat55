@@ -550,7 +550,7 @@ public class ReplicationTransmitter implements ClusterSender {
                 IDataSender sender = (IDataSender) ((java.util.Map.Entry) iter
                         .next()).getValue();
                 if (sender != null && sender instanceof DataSender)
-                    ((DataSender) sender).checkIfCloseSocket();
+                    ((DataSender) sender).checkKeepAlive();
             }
         }
     }
