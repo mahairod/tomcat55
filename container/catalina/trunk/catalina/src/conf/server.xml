@@ -312,6 +312,8 @@
                       deployDir="/tmp/war-deploy/"
                       watchDir="/tmp/war-listen/"
                       watchEnabled="false"/>
+                      
+            <ClusterListener className="org.apache.catalina.cluster.session.ClusterSessionListener"/>
         </Cluster>
         -->        
 
