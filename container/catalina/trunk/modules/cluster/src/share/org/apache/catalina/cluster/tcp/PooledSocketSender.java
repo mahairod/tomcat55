@@ -115,8 +115,7 @@ public class PooledSocketSender extends DataSender {
         }
         SocketSender sender = senderQueue.getSender(0);
         if (sender == null) {
-            log.warn(sm.getString("PoolSocketSender.noMoreSender", this
-                    .getAddress(), new Integer(this.getPort())));
+            log.warn(sm.getString("PoolSocketSender.noMoreSender", this.getAddress(), new Integer(this.getPort())));
             return;
         }
         //send the message
@@ -199,14 +198,7 @@ public class PooledSocketSender extends DataSender {
                             mutex.wait(timeout);
                         } catch (Exception x) {
                             PooledSocketSender.log
-                                    .warn(
-                                            sm
-                                                    .getString(
-                                                            "PoolSocketSender.senderQueue.sender.failed",
-                                                            parent.getAddress(),
-                                                            new Integer(parent
-                                                                    .getPort())),
-                                            x);
+                                    .warn(sm.getString("PoolSocketSender.senderQueue.sender.failed",parent.getAddress(),new Integer(parent.getPort())),x);
                         }//catch
                     }//end if
                     if (sender != null) {
