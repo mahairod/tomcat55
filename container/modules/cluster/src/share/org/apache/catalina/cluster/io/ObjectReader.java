@@ -48,11 +48,11 @@ public class ObjectReader {
      * @param selector
      * @param callback
      */
-    public ObjectReader(SocketChannel channel, Selector selector, ListenCallback callback, boolean isCompressed) {
+    public ObjectReader(SocketChannel channel, Selector selector, ListenCallback callback) {
         this.channel = channel;
         this.selector = selector;
         this.callback = callback;
-        this.buffer = new XByteBuffer(isCompressed);
+        this.buffer = new XByteBuffer();
     }
 
     /**

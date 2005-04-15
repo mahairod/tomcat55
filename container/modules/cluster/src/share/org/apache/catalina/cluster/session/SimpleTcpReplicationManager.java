@@ -20,9 +20,11 @@ import java.io.IOException;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Session;
 import org.apache.catalina.cluster.CatalinaCluster;
+import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.realm.GenericPrincipal;
+import org.apache.catalina.session.StandardManager;
 
 /**
  * Title:        Tomcat Session Replication for Tomcat 4.0 <BR>
@@ -54,8 +56,8 @@ import org.apache.catalina.realm.GenericPrincipal;
  * When a session is replicated (not an attribute added/removed) the session is serialized into
  * a byte array using the StandardSession.readObjectData, StandardSession.writeObjectData methods.
  */
-public class SimpleTcpReplicationManager extends org.apache.catalina.session.StandardManager
-implements org.apache.catalina.cluster.ClusterManager
+public class SimpleTcpReplicationManager extends StandardManager
+implements ClusterManager
 {
     public static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( SimpleTcpReplicationManager.class );
@@ -605,10 +607,20 @@ implements org.apache.catalina.cluster.ClusterManager
     public void setName(String name) {
         this.name = name;
     }
-    public boolean getNotifyListenersOnReplication() {
+    public boolean isNotifyListenersOnReplication() {
         return notifyListenersOnReplication;
     }
     public void setNotifyListenersOnReplication(boolean notifyListenersOnReplication) {
         this.notifyListenersOnReplication = notifyListenersOnReplication;
     }
+
+
+    /* 
+     * @see org.apache.catalina.cluster.ClusterManager#getCluster()
+     */
+    public CatalinaCluster getCluster() {
+        return cluster;
+    }
+
+
 }

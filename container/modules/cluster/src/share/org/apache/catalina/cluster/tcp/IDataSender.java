@@ -36,5 +36,6 @@ public interface IDataSender
     public long getAckTimeout();
     public boolean isWaitForAck();
     public void setWaitForAck(boolean isWaitForAck);
+    public boolean checkKeepAlive();
 
 }

@@ -16,10 +16,6 @@
 
 package org.apache.catalina.cluster.io;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * The XByteBuffer provides a dual functionality.
@@ -34,6 +30,10 @@ import java.util.zip.GZIPOutputStream;
  * <li><b>DATA</b>      - should be as many bytes as the prev SIZE</li>
  * <li><b>END_DATA</b>  - 7 bytes - <i>TLF2003</i></lI>
  * </ul>
+ * FIXME: Why we not use a list of byte buffers?
+ * FIXME: Used a pool of buffers instead, every time new generation
+ * FIXME: Compress mode send real data length at the first bytes
+ * FIXME: s to-do.txt for new format proposal
  *
  * @author Filip Hanik
  * @author Peter Rossbach
@@ -74,11 +74,6 @@ public class XByteBuffer
      * Current length of data in the buffer
      */
     protected int bufSize = 0;
-
-    /**
-     * Compress/Decompress user data
-     */
-    protected boolean compress = true ;
     
     /**
      * Constructs a new XByteBuffer
@@ -93,15 +88,6 @@ public class XByteBuffer
      */
     public XByteBuffer()  {
         this(DEF_SIZE);
-    }
-
-    /**
-     * Create Buffer and switch compress mode (off)
-     * @param compress
-     */
-    public XByteBuffer(boolean compress)  {
-        this(DEF_SIZE);
-        this.compress = compress ;
     }
 
     /**
@@ -218,28 +204,7 @@ public class XByteBuffer
             bufSize = bufSize - totalsize;
             System.arraycopy(buf, totalsize, buf, 0, bufSize);
         }
-        byte[] result;
-        if (compress) { // decompress user data
-            // FIXME: This generate a lot of garbagge for messages larger than 1024 bytes
-            ByteArrayInputStream bin = 
-                new ByteArrayInputStream(data);
-            GZIPInputStream gin = 
-                new GZIPInputStream(bin);
-            byte[] tmp = new byte[1024];
-            int length = gin.read(tmp);
-            result = new byte[0];
-            while (length > 0) {
-                byte[] tmpdata = result;
-                result = new byte[result.length + length];
-                System.arraycopy(tmpdata, 0, result, 0, tmpdata.length);
-                System.arraycopy(tmp, 0, result, tmpdata.length, length);
-                length = gin.read(tmp);
-            }
-            gin.close();
-        } else { // send data direct 
-            result = data;
-        }
-        return result;
+        return data;
     }
 
     /**
@@ -364,24 +329,13 @@ public class XByteBuffer
     /**
      * Creates a complete data package
      * @param indata - the message data to be contained within the package
-     * @param compress - compress message data or not
      * @return - a full package (header,size,data,footer)
      * @deprecated since 5.5.10
      */
-    public static byte[] createDataPackage(byte[] indata, boolean compress)
+    public static byte[] createDataPackage(byte[] indata)
             throws java.io.IOException {
         byte[] data;
-        if (compress) {
-            ByteArrayOutputStream bout = new ByteArrayOutputStream(
-                    indata.length / 2);
-            GZIPOutputStream gout = new GZIPOutputStream(bout);
-            gout.write(indata);
-            gout.flush();
-            gout.close();
-            data = bout.toByteArray();
-        } else {
-            data = indata;
-        }
+        data = indata;
         byte[] result = new byte[START_DATA.length + 4 + data.length
                 + END_DATA.length];
         System.arraycopy(START_DATA, 0, result, 0, START_DATA.length);

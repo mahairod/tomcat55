@@ -78,6 +78,7 @@ public interface Cluster {
      * Set the protocol parameters.
      *
      * @param protocol The protocol used by the cluster
+     * @deprecated
      */
     public void setProtocol(String protocol);
 
@@ -85,6 +86,7 @@ public interface Cluster {
      * Get the protocol used by the cluster.
      *
      * @return The protocol
+     * @deprecated
      */
     public String getProtocol();
 
@@ -123,6 +125,7 @@ public interface Cluster {
      *  not identify a currently installed web application
      * @exception IOException if an input/output error occurs during
      *  startup
+     * @deprecated
      */
     public void startContext(String contextPath) throws IOException;
 
@@ -151,6 +154,7 @@ public interface Cluster {
      *  is malformed (it must be "" or start with a slash)
      * @exception IllegalStateException if the specified context path
      *  is already attached to an existing web application
+     * @deprecated
      */
     public void installContext(String contextPath, URL war);
 
@@ -166,6 +170,7 @@ public interface Cluster {
      *  not identify a currently installed web application
      * @exception IOException if an input/output error occurs while stopping
      *  the web application
+     * @deprecated
      */
     public void stop(String contextPath) throws IOException;
 

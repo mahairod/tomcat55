@@ -32,7 +32,7 @@ public class SocketReplicationListener extends ClusterReceiverBase {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "SocketReplicationListener/1.0";
+    private static final String info = "SocketReplicationListener/1.1";
 
     private ServerSocket serverSocket = null;
 
@@ -73,7 +73,7 @@ public class SocketReplicationListener extends ClusterReceiverBase {
                     if (doListen) {
                         SocketReplicationThread t = new SocketReplicationThread(
                                 this, socket, new SocketObjectReader(socket,
-                                        getCatalinaCluster(), isCompress()), isSendAck());
+                                        this), isSendAck());
                         t.setDaemon(true);
                         t.start();
                     }

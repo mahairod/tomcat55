@@ -26,7 +26,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
+
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
@@ -34,15 +36,14 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Session;
-import org.apache.catalina.util.CustomObjectInputStream;
-import org.apache.catalina.util.LifecycleSupport;
-import org.apache.catalina.util.StringManager;
-
-import org.apache.catalina.session.ManagerBase;
+import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
-import org.apache.catalina.cluster.CatalinaCluster;
+import org.apache.catalina.session.ManagerBase;
+import org.apache.catalina.util.CustomObjectInputStream;
+import org.apache.catalina.util.LifecycleSupport;
+import org.apache.catalina.util.StringManager;
 
 /**
  * The DeltaManager manages replicated sessions by only replicating the deltas
@@ -59,6 +60,7 @@ import org.apache.catalina.cluster.CatalinaCluster;
  * @author Filip Hanik
  * @author Craig R. McClanahan
  * @author Jean-Francois Arcand
+ * @author Peter Rossbach
  * @version $Revision$ $Date$
  */
 
@@ -81,7 +83,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "DeltaManager/1.1";
+    private static final String info = "DeltaManager/1.2";
 
     /**
      * The lifecycle event support for this component.
@@ -113,15 +115,13 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
 
     private boolean stateTransferred;
 
-    private boolean useDirtyFlag;
+    private boolean expireSessionsOnShutdown = false;
 
-    private boolean expireSessionsOnShutdown;
-
-    private boolean printToScreen;
-
-    private boolean notifyListenersOnReplication = false;
+    private boolean notifyListenersOnReplication = true;
 
     private boolean notifySessionListenersOnReplication = true;
+
+    private int timeoutAllSession = 60;
 
     private int counterReceive_EVT_GET_ALL_SESSIONS = 0 ;
 
@@ -241,6 +241,19 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     
  
     /**
+     * @return Returns the timeoutAllSession.
+     */
+    public int getTimeoutAllSession() {
+        return timeoutAllSession;
+    }
+    /**
+     * @param timeoutAllSession The timeoutAllSession to set.
+     */
+    public void setTimeoutAllSession(int timeoutAllSession) {
+        this.timeoutAllSession = timeoutAllSession;
+    }
+    
+    /**
      * Set the Container with which this Manager has been associated. If it is a
      * Context (the usual case), listen for changes to the session timeout
      * property.
@@ -323,14 +336,6 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
 
     }
 
-    public boolean getUseDirtyFlag() {
-        return useDirtyFlag;
-    }
-
-    public void setUseDirtyFlag(boolean useDirtyFlag) {
-        this.useDirtyFlag = useDirtyFlag;
-    }
-
     /**
      * @return Returns the notifySessionListenersOnReplication.
      */
@@ -353,27 +358,19 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         return processingTime;
     }
     
-    public boolean getExpireSessionsOnShutdown() {
+    public boolean isExpireSessionsOnShutdown() {
         return expireSessionsOnShutdown;
     }
 
     public void setExpireSessionsOnShutdown(boolean expireSessionsOnShutdown) {
         this.expireSessionsOnShutdown = expireSessionsOnShutdown;
     }
-
-    public boolean getPrintToScreen() {
-        return printToScreen;
-    }
-
-    public void setPrintToScreen(boolean printToScreen) {
-        this.printToScreen = printToScreen;
-    }
-
+    
     public void setName(String name) {
         this.name = name;
     }
 
-    public boolean getNotifyListenersOnReplication() {
+    public boolean isNotifyListenersOnReplication() {
         return notifyListenersOnReplication;
     }
 
@@ -438,48 +435,44 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                     .getString("deltaManager.createSession.ise"));
         }
 
-        // Recycle or create a Session instance
-        DeltaSession session = getNewDeltaSession();
-        if (sessionId == null) {
-            sessionId = generateSessionId();
-            synchronized (sessions) {
-                while (sessions.get(sessionId) != null) { // Guarantee
-                    // uniqueness
-                    duplicates++;
-                    sessionId = generateSessionId();
-                }
-            }
-        }
-
-        session.setNew(true);
-        session.setValid(true);
-        session.setCreationTime(System.currentTimeMillis());
-        session.setMaxInactiveInterval(this.maxInactiveInterval);
-        session.setId(sessionId);
+        DeltaSession session = (DeltaSession) super.createSession(sessionId) ;
         session.resetDeltaRequest();
-        // Initialize the properties of the new session and return it
-
-        sessionCounter++;
-
         if (distribute) {
-            SessionMessage msg = new SessionMessageImpl(getName(),
-                    SessionMessage.EVT_SESSION_CREATED, null, sessionId,
-                    sessionId + System.currentTimeMillis());
-            if (log.isDebugEnabled())
-                log.debug(sm.getString("deltaManager.sendMessage.newSession",
-                        name, sessionId));
-            counterSend_EVT_SESSION_CREATED++;
-            cluster.send(msg);
-            session.resetDeltaRequest();
+            sendCreateSession(session.getId(), session);
         }
         if (log.isDebugEnabled())
             log.debug(sm.getString("deltaManager.createSession.newSession",
-                    sessionId, new Integer(sessions.size())));
+                    session.getId(), new Integer(sessions.size())));
 
         return (session);
 
     }
 
+    /**
+     * Send create session evt to all backup node
+     * @param sessionId
+     * @param session
+     */
+    protected void sendCreateSession(String sessionId, DeltaSession session) {
+        SessionMessage msg = new SessionMessageImpl(getName(),
+                SessionMessage.EVT_SESSION_CREATED, null, sessionId,
+                sessionId + System.currentTimeMillis());
+        if (log.isDebugEnabled())
+            log.debug(sm.getString("deltaManager.sendMessage.newSession",
+                    name, sessionId));
+        counterSend_EVT_SESSION_CREATED++;
+        cluster.send(msg);
+        session.resetDeltaRequest();
+    }
+    
+    /**
+     * Create DeltaSession
+     * @see org.apache.catalina.Manager#createEmptySession()
+     */
+    public Session createEmptySession() {
+        return getNewDeltaSession() ;
+    }
+    
     /**
      * Get new session class to be used in the doLoad() method.
      */
@@ -487,6 +480,16 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         return new DeltaSession(this);
     }
 
+    /**
+     * Load Deltarequest from external node
+     * Load the Class at container classloader
+     * @see DeltaRequest#readExternal(java.io.ObjectInput)
+     * @param session
+     * @param data message data
+     * @return
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
     protected DeltaRequest loadDeltaRequest(DeltaSession session, byte[] data)
             throws ClassNotFoundException, IOException {
         ByteArrayInputStream fis = null;
@@ -510,6 +513,14 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         return session.getDeltaRequest();
     }
 
+    /**
+     * serialize DeltaRequest
+     * @see DeltaRequest#writeExternal(java.io.ObjectOutput)
+     * 
+     * @param deltaRequest
+     * @return serialized delta request
+     * @throws IOException
+     */
     protected byte[] unloadDeltaRequest(DeltaRequest deltaRequest)
             throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -521,10 +532,9 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     }
 
     /**
-     * Load any currently active sessions that were previously unloaded to the
-     * appropriate persistence mechanism, if any. If persistence is not
-     * supported, this method returns without doing anything.
-     * 
+     * Load sessions from other cluster node.
+     * FIXME replace currently sessions with same id without notifcation.
+     * FIXME SSO handling is not really correct with the session replacement!
      * @exception ClassNotFoundException
      *                if a serialized class cannot be found during the reload
      * @exception IOException
@@ -535,54 +545,18 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         // Initialize our internal data structures
         //sessions.clear(); //should not do this
         // Open an input stream to the specified pathname, if any
-        ByteArrayInputStream fis = null;
-        ObjectInputStream ois = null;
-        Loader loader = null;
-        ClassLoader classLoader = null;
         ClassLoader originalLoader = Thread.currentThread()
                 .getContextClassLoader();
         try {
 
-            try {
-                fis = new ByteArrayInputStream(data);
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                if (container != null)
-                    loader = container.getLoader();
-                if (loader != null)
-                    classLoader = loader.getClassLoader();
-                if (classLoader != null) {
-                    if (log.isTraceEnabled())
-                        log.trace(sm.getString(
-                                "deltaManager.loading.withContextClassLoader",
-                                getName()));
-                    ois = new CustomObjectInputStream(bis, classLoader);
-                    Thread.currentThread().setContextClassLoader(classLoader);
-                } else {
-                    if (log.isTraceEnabled())
-                        log.trace(sm.getString(
-                                "deltaManager.loading.withoutClassLoader",
-                                getName()));
-                    ois = new ObjectInputStream(bis);
-                }
-            } catch (IOException e) {
-                log.error(sm.getString("deltaManager.loading.ioe", e), e);
-                if (ois != null) {
-                    try {
-                        ois.close();
-                    } catch (IOException f) {
-                        ;
-                    }
-                    ois = null;
-                }
-                throw e;
-            }
+            ObjectInputStream ois = openDoLoadObjectStream(data);
             // Load the previously unloaded active sessions
             synchronized (sessions) {
                 try {
                     Integer count = (Integer) ois.readObject();
                     int n = count.intValue();
                     for (int i = 0; i < n; i++) {
-                        DeltaSession session = getNewDeltaSession();
+                        DeltaSession session = (DeltaSession)createEmptySession();
                         session.readObjectData(ois);
                         session.setManager(this);
                         session.setValid(true);
@@ -596,29 +570,21 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                         // needed
                         session.setAccessCount(0);
                         session.resetDeltaRequest();
-                        sessions.put(session.getId(), session);
+                        // FIXME How inform other session id cache like SingleSignOn
+                        // increment sessionCounter to correct stats report
+                        if(!sessions.containsKey(session.getIdInternal()))
+                            sessionCounter++ ;
+                        else 
+                            // FIXME better is to grap this sessions again !
+                            if(log.isWarnEnabled())
+                                log.warn(sm.getString("deltaManager.loading.existing.session", session.getIdInternal()));
+                        sessions.put(session.getIdInternal(), session);
                     }
                 } catch (ClassNotFoundException e) {
                     log.error(sm.getString("deltaManager.loading.cnfe", e), e);
-                    if (ois != null) {
-                        try {
-                            ois.close();
-                        } catch (IOException f) {
-                            ;
-                        }
-                        ois = null;
-                    }
                     throw e;
                 } catch (IOException e) {
                     log.error(sm.getString("deltaManager.loading.ioe", e), e);
-                    if (ois != null) {
-                        try {
-                            ois.close();
-                        } catch (IOException f) {
-                            ;
-                        }
-                        ois = null;
-                    }
                     throw e;
                 } finally {
                     // Close the input stream
@@ -628,6 +594,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                     } catch (IOException f) {
                         // ignored
                     }
+                    ois = null ;
                 }
             }
         } finally {
@@ -635,6 +602,54 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 Thread.currentThread().setContextClassLoader(originalLoader);
         }
 
+    }
+
+    /**
+     * Open Stream and use correct ClassLoader (Container)
+     * Switch ThreadClassLoader
+     * @param data
+     * @return
+     * @throws IOException
+     */
+    protected ObjectInputStream openDoLoadObjectStream(byte[] data) throws IOException {
+        ObjectInputStream ois = null;
+        ByteArrayInputStream fis = null;
+        try {
+            Loader loader = null;
+            ClassLoader classLoader = null;
+            fis = new ByteArrayInputStream(data);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            if (container != null)
+                loader = container.getLoader();
+            if (loader != null)
+                classLoader = loader.getClassLoader();
+            if (classLoader != null) {
+                if (log.isTraceEnabled())
+                    log.trace(sm.getString(
+                            "deltaManager.loading.withContextClassLoader",
+                            getName()));
+                ois = new CustomObjectInputStream(bis, classLoader);
+                Thread.currentThread().setContextClassLoader(classLoader);
+            } else {
+                if (log.isTraceEnabled())
+                    log.trace(sm.getString(
+                            "deltaManager.loading.withoutClassLoader",
+                            getName()));
+                ois = new ObjectInputStream(bis);
+            }
+        } catch (IOException e) {
+            log.error(sm.getString("deltaManager.loading.ioe", e), e);
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException f) {
+                    ;
+                }
+                ois = null;
+            }
+            throw e;
+        }
+        return ois;
     }
 
     /**
@@ -781,8 +796,9 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     /**
      * get from first member all Sessions
      */
-    public void getAllClusterSessions() {
+    public synchronized void getAllClusterSessions() {
         if (cluster != null && cluster.getMembers().length > 0) {
+            // FIXME Why only the first Member?
             Member mbr = cluster.getMembers()[0];
             SessionMessage msg = new SessionMessageImpl(this.getName(),
                     SessionMessage.EVT_GET_ALL_SESSIONS, null, "GET-ALL",
@@ -799,32 +815,43 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
 
             //request session state
             counterSend_EVT_GET_ALL_SESSIONS++;
+            stateTransferred = false ;
+            long beforeSendTime = System.currentTimeMillis();
+            // FIXME This send call block the deploy thread, when sender waitForAck is enabled
             cluster.send(msg, mbr);
             if (log.isWarnEnabled())
                 log.warn(sm.getString("deltaManager.waitForSessionState",
                         getName(), mbr));
-            long reqStart = System.currentTimeMillis();
-            long reqNow = 0;
-            boolean isTimeout = false;
-            do {
-                try {
-                    Thread.sleep(100);
-                } catch (Exception sleep) {
-                }
-                reqNow = System.currentTimeMillis();
-                isTimeout = ((reqNow - reqStart) > (1000 * 60));
-            } while ((!getStateTransferred()) && (!isTimeout));
-            if (isTimeout || (!getStateTransferred())) {
-                log.error(sm.getString("deltaManager.noSessionState",
-                        getName()));
-            } else {
-                if (log.isInfoEnabled())
-                    log.info(sm.getString("deltaManager.sessionReceived",
-                            getName(), new Long(reqNow - reqStart)));
-            }
+            // FIXME At sender ack mode this method check only the state transfer!! 
+            waitForSendAllSessions(beforeSendTime);
         } else {
             if (log.isInfoEnabled())
                 log.info(sm.getString("deltaManager.noMembers", getName()));
+        }
+    }
+
+    /**
+     * Wait that cluster session state is transfer or timeout after 60 Sec
+     */
+    protected void waitForSendAllSessions(long beforeSendTime) {
+        long reqStart = System.currentTimeMillis();
+        long reqNow = 0;
+        boolean isTimeout = false;
+        do {
+            try {
+                Thread.sleep(100);
+            } catch (Exception sleep) {
+            }
+            reqNow = System.currentTimeMillis();
+            isTimeout = ((reqNow - reqStart) > (1000 * getTimeoutAllSession()));
+        } while ((!getStateTransferred()) && (!isTimeout));
+        if (isTimeout || (!getStateTransferred())) {
+            log.error(sm.getString("deltaManager.noSessionState",
+                    getName(),new Date(beforeSendTime),new Long(reqNow - beforeSendTime)));
+        } else {
+            if (log.isInfoEnabled())
+                log.info(sm.getString("deltaManager.sessionReceived",
+                        getName(), new Date(beforeSendTime), new Long(reqNow - beforeSendTime)));
         }
     }
 
@@ -860,7 +887,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
             if (!session.isValid())
                 continue;
             try {
-                session.expire(true, this.getExpireSessionsOnShutdown());
+                session.expire(true, isExpireSessionsOnShutdown());
             } catch (Throwable t) {
                 ;
             } //catch

@@ -16,18 +16,18 @@
 
 package org.apache.catalina.cluster;
 
+
+import org.apache.catalina.Manager;
+
+
 /**
  * The common interface used by all cluster manager.
  * This is so that we can have a more pluggable way
  * of swapping session managers for different algorithms.
  *
  * @author Filip Hanik
-
+ * @author Peter Rossbach
  */
-
-import org.apache.catalina.Manager;
-
-
 public interface ClusterManager extends Manager {
 
    /**
@@ -65,15 +65,8 @@ public interface ClusterManager extends Manager {
    public String getName();
    
    public void setName(String name);
-   
-   public void setExpireSessionsOnShutdown(boolean expireSessionsOnShutdown);
-   
-   public void setUseDirtyFlag(boolean useDirtyFlag);
-   
+         
+   public CatalinaCluster getCluster();
    public void setCluster(CatalinaCluster cluster);
    
-   public boolean getNotifyListenersOnReplication();
-   
-   public void setNotifyListenersOnReplication(boolean notifyListenersOnReplication);
-
 }
