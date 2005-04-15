@@ -31,6 +31,7 @@ import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.ClusterSender;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.io.XByteBuffer;
+import org.apache.catalina.cluster.util.IDynamicProperty;
 import org.apache.catalina.util.StringManager;
 import org.apache.tomcat.util.IntrospectionUtils;
 
@@ -46,7 +47,7 @@ import org.apache.tomcat.util.IntrospectionUtils;
  * @author Filip Hanik
  * @version $Revision$ $Date$
  */
-public class ReplicationTransmitter implements ClusterSender {
+public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
             .getLog(ReplicationTransmitter.class);
 
@@ -375,7 +376,7 @@ public class ReplicationTransmitter implements ClusterSender {
     public void setProperty(String name, Object value) {
         if (log.isTraceEnabled())
             log.trace(sm.getString("ReplicationTransmitter.setProperty", name,
-                    value));
+                    value, properties.get(name)));
 
         properties.put(name, value);
     }
@@ -549,8 +550,8 @@ public class ReplicationTransmitter implements ClusterSender {
             while (iter.hasNext()) {
                 IDataSender sender = (IDataSender) ((java.util.Map.Entry) iter
                         .next()).getValue();
-                if (sender != null && sender instanceof DataSender)
-                    ((DataSender) sender).checkKeepAlive();
+                if (sender != null)
+                    sender.checkKeepAlive();
             }
         }
     }

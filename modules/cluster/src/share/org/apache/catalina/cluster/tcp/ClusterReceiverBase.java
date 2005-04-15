@@ -17,9 +17,20 @@
 package org.apache.catalina.cluster.tcp;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.GZIPInputStream;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.apache.catalina.cluster.CatalinaCluster;
+import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.ClusterReceiver;
 import org.apache.catalina.cluster.io.ListenCallback;
+import org.apache.catalina.cluster.session.ClusterSessionListener;
+import org.apache.catalina.cluster.session.ReplicationStream;
 import org.apache.catalina.util.StringManager;
 
 /**
@@ -28,7 +39,7 @@ import org.apache.catalina.util.StringManager;
 * @version $Revision$ $Date$
 */
 
-public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver {
+public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,ListenCallback {
     
     protected static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( ClusterReceiverBase.class );
@@ -38,7 +49,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver {
      */
     protected StringManager sm = StringManager.getManager(Constants.Package);
 
-    private ListenCallback callback;
+    private CatalinaCluster cluster;
     private java.net.InetAddress bind;
     private String tcpListenAddress;
     private int tcpListenPort;
@@ -46,9 +57,49 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver {
     protected boolean doListen = false;
 
     /**
+     * total bytes to recevied
+     */
+    protected long totalReceivedBytes = 0;
+    
+    /**
+     * doProcessingStats
+     */
+    protected boolean doReceivedProcessingStats = false;
+
+    /**
+     * proessingTime
+     */
+    protected long receivedProcessingTime = 0;
+    
+    /**
+     * min proessingTime
+     */
+    protected long minReceivedProcessingTime = Long.MAX_VALUE ;
+
+    /**
+     * max proessingTime
+     */
+    protected long maxReceivedProcessingTime = 0;
+    
+    /**
+     * Sending Stats
+     */
+    private long nrOfMsgsReceived = 0;
+
+    private long receivedTime = 0;
+
+    private long lastChecked = System.currentTimeMillis();
+
+
+    /**
      * Compress message data bytes
      */
     private boolean compress = true ;
+
+    /**
+     * Transmitter Mbean name
+     */
+    private ObjectName objectName;
 
     /**
      * @return Returns the doListen.
@@ -71,11 +122,28 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver {
         this.bind = bind;
     }
     public void setCatalinaCluster(CatalinaCluster cluster) {
-        callback = cluster;
+        this.cluster = cluster;
     }
 
     public CatalinaCluster getCatalinaCluster() {
-        return (CatalinaCluster) callback;
+        return (CatalinaCluster) cluster;
+    }
+    
+    /**
+     *  set Receiver ObjectName
+     * 
+     * @param name
+     */
+    public void setObjectName(ObjectName name) {
+        objectName = name;
+    }
+
+    /**
+     * Receiver ObjectName
+     * 
+     */
+    public ObjectName getObjectName() {
+        return objectName;
     }
     
     /**
@@ -133,6 +201,79 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver {
     public int getPort() {
         return getTcpListenPort();
     }
+    // ------------------------------------------------------------- stats
+
+    /**
+     * @return Returns the doReceivedProcessingStats.
+     */
+    public boolean isDoReceivedProcessingStats() {
+        return doReceivedProcessingStats;
+    }
+    /**
+     * @param doReceivedProcessingStats The doReceivedProcessingStats to set.
+     */
+    public void setDoReceivedProcessingStats(boolean doReceiverProcessingStats) {
+        this.doReceivedProcessingStats = doReceiverProcessingStats;
+    }
+    /**
+     * @return Returns the maxReceivedProcessingTime.
+     */
+    public long getMaxReceivedProcessingTime() {
+        return maxReceivedProcessingTime;
+    }
+    /**
+     * @return Returns the minReceivedProcessingTime.
+     */
+    public long getMinReceivedProcessingTime() {
+        return minReceivedProcessingTime;
+    }
+    /**
+     * @return Returns the receivedProcessingTime.
+     */
+    public long getReceivedProcessingTime() {
+        return receivedProcessingTime;
+    }
+    /**
+     * @return Returns the totalReceivedBytes.
+     */
+    public long getTotalReceivedBytes() {
+        return totalReceivedBytes;
+    }
+    
+    /**
+     * @return Returns the avg receivedProcessingTime/nrOfMsgsReceived.
+     */
+    public double getAvgReceivedProcessingTime() {
+        return ((double)receivedProcessingTime) / nrOfMsgsReceived;
+    }
+
+    /**
+     * @return Returns the avg totalReceivedBytes/nrOfMsgsReceived.
+     */
+    public long getAvgTotalReceivedBytes() {
+        return ((long)totalReceivedBytes) / nrOfMsgsReceived;
+    }
+
+    /**
+     * @return Returns the receivedTime.
+     */
+    public long getReceivedTime() {
+        return receivedTime;
+    }
+
+    /**
+     * @return Returns the lastChecked.
+     */
+    public long getLastChecked() {
+        return lastChecked;
+    }
+
+    /**
+     * @return Returns the nrOfMsgsReceived.
+     */
+    public long getNrOfMsgsReceived() {
+        return nrOfMsgsReceived;
+    }
 
     /**
      * start cluster receiver
@@ -155,8 +296,10 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver {
         } catch (Exception x) {
             log.fatal("Unable to start cluster receiver", x);
         }
+        registerReceiverMBean();
     }
 
+ 
     /**
      * Stop accept
      * 
@@ -165,18 +308,73 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver {
      */
     public void stop() {
         stopListening();
+        unregisterRecevierMBean();
+     
     }
     
-    
     /**
-     * 
+     * Register Recevier MBean
+     * <domain>:type=ClusterReceiver,host=<host>
+     */
+    protected void registerReceiverMBean() {
+        if (cluster != null && cluster instanceof SimpleTcpCluster) {
+            SimpleTcpCluster scluster = (SimpleTcpCluster) cluster;
+            ObjectName clusterName = scluster.getObjectName();
+            try {
+                MBeanServer mserver = scluster.getMBeanServer();
+                ObjectName receiverName = new ObjectName(clusterName
+                        .getDomain()
+                        + ":type=ClusterReceiver,host="
+                        + clusterName.getKeyProperty("host"));
+                if (mserver.isRegistered(receiverName)) {
+                    if (log.isWarnEnabled())
+                        log.warn(sm.getString(
+                                "cluster.mbean.register.allready",
+                                receiverName));
+                    return;
+                }
+                setObjectName(receiverName);
+                mserver.registerMBean(scluster.getManagedBean(this),
+                        getObjectName());
+            } catch (Exception e) {
+                log.warn(e);
+            }
+        }
+    }
+   
+    /**
+     * UnRegister Recevier MBean
+     * <domain>:type=ClusterReceiver,host=<host>
+     */
+    protected void unregisterRecevierMBean() {
+        if (cluster != null && getObjectName() != null
+                && cluster instanceof SimpleTcpCluster) {
+            SimpleTcpCluster scluster = (SimpleTcpCluster) cluster;
+            try {
+                MBeanServer mserver = scluster.getMBeanServer();
+                mserver.unregisterMBean(getObjectName());
+            } catch (Exception e) {
+                log.error(e);
+            }
+        }
+    }
+
+    /**
+     * stop Listener sockets
      */
     protected abstract void stopListening() ;
 
+    /**
+     * Start Listener
+     * @throws Exception
+     */
     protected abstract void listen ()
        throws Exception ;
 
     
+    /**
+     * Start thread and listen
+     */
     public void run()
     {
         try
@@ -188,5 +386,108 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver {
             log.error("Unable to start cluster listener.",x);
         }
     }
+
+    // --------------------------------------------------------- receiver messages
+
+    /**
+     * receiver Message from other node.
+     * All SessionMessage forward to ClusterManager and other message dispatch to all accept MessageListener.
+     *
+     * @see org.apache.catalina.cluster.io.ListenCallback#messageDataReceived(byte[])
+     * @see ClusterSessionListener#messageReceived(ClusterMessage)
+     */
+    public void messageDataReceived(byte[] data) {
+        long timeSent = 0 ;
+        if (doReceivedProcessingStats) {
+            timeSent = System.currentTimeMillis();
+        }
+        try {
+            ClusterMessage message = createRecevierObject(data);
+            cluster.receive(message);
+        } catch (Exception x) {
+            log
+                    .error(
+                            "Unable to deserialize session message or unexpected exception from message listener.",
+                            x);
+        } finally {
+            if (doReceivedProcessingStats) {
+                addReceivedProcessingStats(timeSent);
+            }
+        }
+    }
+
+    /**
+     * create the receieve cluster message
+     * @param data uncompress data
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    protected ClusterMessage createRecevierObject(byte[] data)
+            throws IOException, ClassNotFoundException {
+        Object message = null;
+        if (data != null) {
+            InputStream instream;
+            if (isCompress()) {
+                instream = new GZIPInputStream(new ByteArrayInputStream(data));
+            } else {
+                instream = new ByteArrayInputStream(data);
+            }
+            ReplicationStream stream = new ReplicationStream(instream,
+                    getClass().getClassLoader());
+            message = stream.readObject();
+            // calc stats really received bytes
+            totalReceivedBytes += data.length;
+            nrOfMsgsReceived++;
+            instream.close();
+        }
+        if (message instanceof ClusterMessage)
+            return (ClusterMessage) message;
+        else {
+            if (log.isDebugEnabled())
+                log.debug("Message " + message.toString() + " from type "
+                        + message.getClass().getName()
+                        + " transfered but is not a cluster message");
+            return null;
+        }
+    }
     
+    // --------------------------------------------- Performance Stats
+
+    /**
+     * Reset sender statistics
+     */
+    public synchronized void resetStatistics() {
+        nrOfMsgsReceived = 0;
+        totalReceivedBytes = 0;
+        minReceivedProcessingTime = Long.MAX_VALUE ;
+        maxReceivedProcessingTime = 0 ;
+        receivedProcessingTime = 0 ;
+        receivedTime = 0 ;
+    }
+
+    /**
+     * Add receiver processing stats times
+     * @param startTime
+     */
+    protected void addReceivedProcessingStats(long startTime) {
+        long current = System.currentTimeMillis() ;
+        long time = current - startTime ;
+        synchronized(this) {
+            if(time < minReceivedProcessingTime)
+                minReceivedProcessingTime = time ;
+            if( time > maxReceivedProcessingTime)
+                maxReceivedProcessingTime = time ;
+            receivedProcessingTime += time ;
+        }
+        if (log.isDebugEnabled()) {
+            if ((current - lastChecked) > 5000) {
+                log.debug("Calc msg send time total=" + receivedTime
+                        + "ms num request=" + nrOfMsgsReceived
+                        + " average per msg="
+                        + (receivedTime / nrOfMsgsReceived) + "ms.");
+                lastChecked=current ;
+            }
+        }
+    }
 }

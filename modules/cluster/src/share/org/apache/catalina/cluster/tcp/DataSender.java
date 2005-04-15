@@ -231,8 +231,8 @@ public class DataSender implements IDataSender {
     /**
      * @return Returns the avg totalBytes/nrOfRequests.
      */
-    public double getAvgMessageSize() {
-        return ((double)totalBytes) / nrOfRequests;
+    public long getAvgMessageSize() {
+        return totalBytes / nrOfRequests;
     }
 
     /**
