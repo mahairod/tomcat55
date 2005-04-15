@@ -123,8 +123,7 @@ public class ContextRuleSet extends RuleSetBase {
         } else {
             digester.addRule(prefix + "Context", new SetContextPropertiesRule());
         }
-        digester.addRule(prefix + "Context",
-                         new CopyParentClassLoaderRule());
+
         if (create) {
             digester.addRule(prefix + "Context",
                              new LifecycleListenerRule

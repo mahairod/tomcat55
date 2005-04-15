@@ -42,9 +42,12 @@
       <update>
         Update to JDT from Eclipse 3.1M6, which is now feature complete (remm)
       </update>
-     <update>
+      <update>
         Start refactoring, redesign and extend the cluster module (pero)
       </update>
+      <add>
+        Add Apache Portable Runtime JNI wrapper and helper API (mturk)
+      </add>
     </changelog>
   </subsection>
   
@@ -83,6 +86,10 @@
         <bug>10385</bug>: SSI Servlet now includes better support for files that use character
         encodings other than the platform default.(markt)
       </fix>
+      <fix>
+        Remove CopyParentClassLoader rule, which doesn't seem to be doing anything useful
+        anymore. (remm)
+      </fix>
     </changelog>
   </subsection>
   
@@ -94,6 +101,9 @@
       <update>
         Add some Mbean attributes and operations to ChannelSocket (pero)
       </update>    
+      <add>
+        Add Apache Portable Runtime based HTTP/1.1 protocol handler, without SSL support (remm)
+      </add>    
      </changelog>
   </subsection>
 
