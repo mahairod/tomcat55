@@ -132,7 +132,8 @@
 		default="false" 
         childs="true"
 		tagClass="org.apache.catalina.cluster.CatalinaCluster"
-        storeFactoryClass="org.apache.catalina.storeconfig.CatalinaClusterSF">
+        storeFactoryClass="org.apache.catalina.storeconfig.CatalinaClusterSF"
+        storeAppenderClass="org.apache.catalina.storeconfig.IDynamicPropertyStoreAppender">
      </Description>
      <Description
 	    tag="Realm"
@@ -296,7 +297,7 @@
 		default="false" 
 		tagClass="org.apache.catalina.cluster.tcp.ReplicationTransmitter"
         storeFactoryClass="org.apache.catalina.storeconfig.StoreFactoryBase"
-        storeAppenderClass="org.apache.catalina.storeconfig.ReplicationTransmitterStoreAppender">
+        storeAppenderClass="org.apache.catalina.storeconfig.IDynamicPropertyStoreAppender">
      </Description>
      <Description
 	    tag="Sender"

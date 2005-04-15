@@ -13,9 +13,6 @@
           description="Class version info"
                  type="java.lang.String"
                  writeable="false"/>
-    <attribute   name="notifyListenersOnReplication"
-          description="notify session attribute listener at backups"
-                 type="boolean"/>
     <attribute   name="notifyLifecycleListenerOnFailure"
           description="notify lifecycleListener from message transfer failure"
 			     is="true"
@@ -26,14 +23,18 @@
     <attribute   name="managerClassName"
           description="session mananager classname"
                  type="java.lang.String"/>                 
-    <attribute   name="nrOfMsgsReceived"
-          description="number of messages received from other nodes"
-                 type="long"
-                 writeable="false"/>
-    <attribute   name="msgSendTime"
-          description="total time message received"
-                 type="long"
-                 writeable="false"/>
+    <operation   name="setProperty"
+               description="set a property to all cluster managers"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="key"
+                 description="Property name"
+                 type="java.lang.String"/>
+      <parameter name="value"
+                 description="Property value"
+                 type="java.lang.String"/>
+    </operation>
+
     <operation   name="send"
                description="send message to all cluster members"
                impact="ACTION"
@@ -69,6 +70,158 @@
                  
   </mbean>
 
+  <mbean         name="ReplicationListener"
+           description="Tcp Cluster ReplicationListener implementation"
+               domain="Catalina"
+                group="Cluster"
+                 type="org.apache.catalina.cluster.tcp.ReplicationListener">
+    <attribute   name="info"
+          description="Class version info"
+                 type="java.lang.String"
+                 writeable="false"/>
+    <attribute   name="nrOfMsgsReceived"
+          description="number of messages received from other nodes"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="receivedTime"
+          description="total time message send time"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="receivedProcessingTime"
+          description="received processing time"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="minReceivedProcessingTime"
+          description="minimal received processing time"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="avgReceivedProcessingTime"
+          description="received processing time / nrOfRequests"
+                 type="double"
+                 writeable="false"/>
+    <attribute   name="maxReceivedProcessingTime"
+          description="maximal received processing time"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="doReceivedProcessingStats"
+          description="create received processing time stats"
+			     is="true"
+                 type="boolean" />                
+    <attribute   name="avgTotalReceivedBytes"
+          description="received totalReceivedBytes / nrOfMsgsReceived"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="totalReceivedBytes"
+          description="number of bytes received"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="sendAck"
+          description="send ack after data received"
+			     is="true"
+                 type="boolean"
+                 writeable="false" />
+   <attribute   name="compress"
+          description="data received compressed"
+			     is="true"
+                 type="boolean"
+                 writeable="false" />
+                 
+	<operation name="resetStatistics"
+               description="Reset all statistics"
+               impact="ACTION"
+               returnType="void">
+    </operation>	
+
+    <operation   name="start"
+               description="Start the cluster"
+               impact="ACTION"
+               returnType="void">
+    </operation>
+    
+    <operation name="stop"
+               description="Stop the cluster"
+               impact="ACTION"
+               returnType="void">
+    </operation>
+                 
+  </mbean>
+
+  <mbean         name="SocketReplicationListener"
+           description="Tcp Cluster SocketReplicationListener implementation"
+               domain="Catalina"
+                group="Cluster"
+                 type="org.apache.catalina.cluster.tcp.SocketReplicationListener">
+    <attribute   name="info"
+          description="Class version info"
+                 type="java.lang.String"
+                 writeable="false"/>
+    <attribute   name="nrOfMsgsReceived"
+          description="number of messages received from other nodes"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="receivedTime"
+          description="total time message send time"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="receivedProcessingTime"
+          description="received processing time"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="minReceivedProcessingTime"
+          description="minimal received processing time"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="avgReceivedProcessingTime"
+          description="received processing time / nrOfRequests"
+                 type="double"
+                 writeable="false"/>
+    <attribute   name="maxReceivedProcessingTime"
+          description="maximal received processing time"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="doReceivedProcessingStats"
+          description="create received processing time stats"
+			     is="true"
+                 type="boolean" />                
+    <attribute   name="avgTotalReceivedBytes"
+          description="received totalReceivedBytes / nrOfMsgsReceived"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="totalReceivedBytes"
+          description="number of bytes received"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="sendAck"
+          description="send ack after data received"
+			     is="true"
+                 type="boolean"
+                 writeable="false" />
+   <attribute   name="compress"
+          description="data received compressed"
+			     is="true"
+                 type="boolean"
+                 writeable="false" />
+                 
+	<operation name="resetStatistics"
+               description="Reset all statistics"
+               impact="ACTION"
+               returnType="void">
+    </operation>	
+
+    <operation   name="start"
+               description="Start the cluster"
+               impact="ACTION"
+               returnType="void">
+    </operation>
+    
+    <operation name="stop"
+               description="Stop the cluster"
+               impact="ACTION"
+               returnType="void">
+    </operation>
+                 
+  </mbean>
+  
   <mbean         name="ReplicationTransmitter"
           description="Tcp replicatio transmitter"
                domain="Catalina"
@@ -144,7 +297,7 @@
                impact="ACTION"
                returnType="void">
     </operation>	
-	<operation name="checkIfCloseSocket"
+	<operation name="checkKeepAlive"
                description="Check all sender connection for close socket (keepalive)"
                impact="ACTION"
                returnType="void">
@@ -304,7 +457,7 @@
                impact="ACTION"
                returnType="void">
     </operation>
-	<operation name="checkIfCloseSocket"
+	<operation name="checkKeepAlive"
                description="Check connection for close socket"
                impact="ACTION"
                returnType="boolean">
@@ -502,7 +655,7 @@
                impact="ACTION"
                returnType="void">
     </operation>
-	<operation name="checkIfCloseSocket"
+	<operation name="checkKeepAlive"
                description="Check connection for close socket"
                impact="ACTION"
                returnType="boolean">
@@ -724,7 +877,7 @@
                impact="ACTION"
                returnType="void">
     </operation>
-	<operation name="checkIfCloseSocket"
+	<operation name="checkKeepAlive"
                description="Check connection for close socket"
                impact="ACTION"
                returnType="boolean">

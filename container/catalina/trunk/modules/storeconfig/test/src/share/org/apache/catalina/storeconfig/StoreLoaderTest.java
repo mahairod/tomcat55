@@ -81,7 +81,7 @@ public class StoreLoaderTest extends TestCase {
         assertEquals(ReplicationTransmitter.class.getName(), desc
                 .getTagClass());
         assertNotNull(desc.getStoreFactory());
-        assertEquals(ReplicationTransmitterStoreAppender.class, desc.getStoreFactory().getStoreAppender().getClass()
+        assertEquals(IDynamicPropertyStoreAppender.class, desc.getStoreFactory().getStoreAppender().getClass()
                 );
         
     }

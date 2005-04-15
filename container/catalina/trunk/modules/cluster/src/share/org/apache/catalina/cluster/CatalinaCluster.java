@@ -34,13 +34,13 @@ import org.apache.catalina.Manager;
  */
 
 public interface CatalinaCluster
-    extends Cluster,ListenCallback {
+    extends Cluster{
     // ----------------------------------------------------- Instance Variables
 
     /**
      * Descriptive information about this component implementation.
      */
-    public String info = "CatalinaCluster/1.0";
+    public String info = "CatalinaCluster/2.0";
     
     /**
      * Start the cluster, the owning container will invoke this
@@ -61,14 +61,20 @@ public interface CatalinaCluster
     public Log getLogger();
     
     /**
+     * receive a message to all the members in the cluster
+     * @param msg ClusterMessage
+     */
+    public void receive(ClusterMessage msg);
+ 
+    /**
      * Sends a message to all the members in the cluster
-     * @param msg SessionMessage
+     * @param msg ClusterMessage
      */
     public void send(ClusterMessage msg);
     
     /**
      * Sends a message to a specific member in the cluster
-     * @param msg SessionMessage
+     * @param msg ClusterMessage
      * @param dest Member
      */
     public void send(ClusterMessage msg, Member dest);
@@ -113,9 +119,7 @@ public interface CatalinaCluster
     public Map getManagers();
     public Manager getManager(String name);
     public void removeManager(String name);
-    public void addManager(String name, ClusterManager manager);
+    public void addManager(String name,Manager manager);
     public Valve[] getValves();
 
- 
-    
 }

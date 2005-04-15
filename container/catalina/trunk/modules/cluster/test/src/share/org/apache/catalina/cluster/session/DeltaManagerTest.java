@@ -1,0 +1,61 @@
+/*
+ * Copyright 1999,2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package org.apache.catalina.cluster.session;
+
+import junit.framework.TestCase;
+
+import org.apache.catalina.Session;
+
+/**
+ * @author Peter Rossbach
+ * 
+ * @version $Revision$ $Date$
+ */
+public class DeltaManagerTest extends TestCase {
+
+    public void testCreateSession() {
+        MockDeltaManager manager = new MockDeltaManager() ;
+        Session session = manager.createSession(null,false);
+        assertNotNull(session.getId());
+        assertEquals(32, session.getId().length());
+        session = manager.createSession(null,true);
+        assertEquals(session,manager.session);
+        assertEquals(session.getId(),manager.sessionID);
+    }
+    
+    class MockDeltaManager extends DeltaManager {
+        
+        private String sessionID;
+        private DeltaSession session;
+
+
+        /**
+         * 
+         */
+        public MockDeltaManager() {
+            super();
+        }
+        
+        
+        /* (non-Javadoc)
+         * @see org.apache.catalina.cluster.session.DeltaManager#sendCreateSession(java.lang.String, org.apache.catalina.cluster.session.DeltaSession)
+         */
+        protected void sendCreateSession(String sessionId, DeltaSession session) {
+           this.sessionID = sessionId ;
+           this.session = session ;
+        }
+    }
+}

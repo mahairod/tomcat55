@@ -39,6 +39,10 @@
                 group="Manager"
                  type="org.apache.catalina.cluster.session.DeltaManager">
 
+    <attribute   name="info" 
+		  description="describe version"
+		         type="java.lang.String"
+		    writeable="false"/>
     <attribute   name="algorithm"
           description="The message digest algorithm to be used when generating
                        session identifiers"
@@ -133,51 +137,78 @@
 
     <attribute   name="counterReceive_EVT_GET_ALL_SESSIONS"
           description="Count receive EVT_GET_ALL_SESSIONS messages"
-                 type="long" />
+                 type="long"
+            writeable="false" />
 
     <attribute   name="counterReceive_EVT_ALL_SESSION_DATA"
           description="Count receive EVT_ALL_SESSION_DATA messages"
-                 type="long" />
+                 type="long"
+            writeable="false" />
 
     <attribute   name="counterReceive_EVT_SESSION_CREATED"
           description="Count receive EVT_SESSION_CREATED messages"
-                 type="long" />
+                 type="long"
+            writeable="false" />
 
     <attribute   name="counterReceive_EVT_SESSION_DELTA"
           description="Count receive EVT_SESSION_DELTA messages"
-                 type="long" />
+                 type="long"
+            writeable="false" />
 
     <attribute   name="counterReceive_EVT_SESSION_ACCESSED"
           description="Count receive EVT_SESSION_ACCESSED messages"
-                 type="long" />
+                 type="long"
+            writeable="false" />
 
     <attribute   name="counterReceive_EVT_SESSION_EXPIRED"
           description="Count receive EVT_SESSION_EXPIRED messages"
-                 type="long" />
+                 type="long"
+            writeable="false" />
 
     <attribute   name="counterSend_EVT_GET_ALL_SESSIONS"
           description="Count send EVT_GET_ALL_SESSIONS messages"
-                 type="long" />
+                 type="long"
+            writeable="false" />
 
     <attribute   name="counterSend_EVT_ALL_SESSION_DATA"
           description="Count send EVT_ALL_SESSION_DATA messages"
-                 type="long" />
+                 type="long"
+            writeable="false" />
 
     <attribute   name="counterSend_EVT_SESSION_CREATED"
           description="Count send EVT_SESSION_CREATED messages"
-                 type="long" />
+                 type="long"
+            writeable="false" />
 
     <attribute   name="counterSend_EVT_SESSION_DELTA"
           description="Count send EVT_SESSION_DELTA messages"
-                 type="long" />
+                 type="long"
+            writeable="false" />
 
     <attribute   name="counterSend_EVT_SESSION_ACCESSED"
           description="Count send EVT_SESSION_ACCESSED messages"
-                 type="long" />
+                 type="long"
+            writeable="false" />
 
     <attribute   name="counterSend_EVT_SESSION_EXPIRED"
           description="Count send EVT_SESSION_EXPIRED messages"
-                 type="long" />
+                 type="long"
+            writeable="false" />
+
+    <attribute   name="expireSessionsOnShutdown"
+                   is="true"
+          description="exipre all sessions cluster wide as one node goes down"
+                 type="boolean" />
+
+    <attribute   name="notifyListenersOnReplication"
+                   is="true"
+          description="Send session attribute change events on backup nodes"
+                 type="boolean" />
+
+    <attribute   name="notifySessionListenersOnReplication"
+                   is="true"
+          description="Send session start/stop events on backup nodes"
+                 type="boolean" />
 
     <operation   name="listSessionIds"
           description="Return the list of active session ids"

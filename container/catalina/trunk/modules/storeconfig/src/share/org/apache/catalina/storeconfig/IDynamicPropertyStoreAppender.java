@@ -24,16 +24,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.catalina.cluster.tcp.ReplicationTransmitter;
+import org.apache.catalina.cluster.util.IDynamicProperty;
 import org.apache.tomcat.util.IntrospectionUtils;
 
 /**
- * Store the ReplicationTransmitter attributes. 
+ * Store the IDynamicProperty attributes. 
  * 
  * @author Peter Rossbach
  *  
  */
-public class ReplicationTransmitterStoreAppender extends StoreAppender {
+public class IDynamicPropertyStoreAppender extends StoreAppender {
 
     /**
      * Store the relevant attributes of the specified JavaBean.
@@ -64,30 +64,33 @@ public class ReplicationTransmitterStoreAppender extends StoreAppender {
             writer.print("\"");
         }
 
-        List propertyKeys = getPropertyKeys((ReplicationTransmitter) bean);
-        // Create blank instance
-        Object bean2 = defaultInstance(bean);
-        for (Iterator propertyIterator = propertyKeys.iterator(); propertyIterator
-                .hasNext();) {
-            String key = (String) propertyIterator.next();
-            Object value = (Object) IntrospectionUtils.getProperty(bean, key);
+        if (bean instanceof IDynamicProperty) {
+            List propertyKeys = getPropertyKeys((IDynamicProperty) bean);
+            // Create blank instance
+            Object bean2 = defaultInstance(bean);
+            for (Iterator propertyIterator = propertyKeys.iterator(); propertyIterator
+                    .hasNext();) {
+                String key = (String) propertyIterator.next();
+                Object value = (Object) IntrospectionUtils.getProperty(bean,
+                        key);
 
-            if (desc.isTransientAttribute(key)) {
-                continue; // Skip the specified exceptions
+                if (desc.isTransientAttribute(key)) {
+                    continue; // Skip the specified exceptions
+                }
+                if (value == null) {
+                    continue; // Null values are not persisted
+                }
+                if (!isPersistable(value.getClass())) {
+                    continue;
+                }
+                Object value2 = IntrospectionUtils.getProperty(bean2, key);
+                if (value.equals(value2)) {
+                    // The property has its default value
+                    continue;
+                }
+                if (isPrintValue(bean, bean2, key, desc))
+                    printValue(writer, indent, key, value);
             }
-            if (value == null) {
-                continue; // Null values are not persisted
-            }
-            if (!isPersistable(value.getClass())) {
-                continue;
-            }
-            Object value2 = IntrospectionUtils.getProperty(bean2, key);
-            if (value.equals(value2)) {
-                // The property has its default value
-                continue;
-            }
-            if (isPrintValue(bean, bean2, key, desc))
-                printValue(writer, indent, key, value);
         }
     }
 
@@ -98,7 +101,7 @@ public class ReplicationTransmitterStoreAppender extends StoreAppender {
      * @return List of Connector Properties
      * @throws IntrospectionException
      */
-    protected List getPropertyKeys(ReplicationTransmitter bean)
+    protected List getPropertyKeys(IDynamicProperty bean)
             throws IntrospectionException {
         ArrayList propertyKeys = new ArrayList();
         // Acquire the list of properties for this bean

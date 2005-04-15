@@ -59,26 +59,19 @@ public class XByteBufferTest extends TestCase {
     }
     
     /**
-     * Test create a compress multi message data package and extract it
-     * @throws IOException
-     */
-    public void testSendCompressedMessage() throws IOException {
-        assertSendMessage(true);
-    }
-    /**
      * Test create a uncompressed multi message data package and extract it
      * @throws IOException
      */
     public void testSendUncompressedMessage() throws IOException {
-        assertSendMessage(false);
+        assertSendMessage();
     }
 
     /**
      * @throws IOException
      */
-    private void assertSendMessage(boolean compress) throws IOException {
-        byte[] test = createMessage(compress);
-        XByteBuffer b = new XByteBuffer(compress);
+    private void assertSendMessage() throws IOException {
+        byte[] test = createMessage();
+        XByteBuffer b = new XByteBuffer();
         b.append(test, 0, test.length);
         int s = b.countPackages();
         byte[] d ;
@@ -93,10 +86,10 @@ public class XByteBufferTest extends TestCase {
      * @return
      * @throws IOException
      */
-    private byte[] createMessage(boolean compress) throws IOException {
-        byte[] d1 = XByteBuffer.createDataPackage(new byte[] { 1 }, compress);
-        byte[] d2 = XByteBuffer.createDataPackage(new byte[] { 2 }, compress);
-        byte[] d3 = XByteBuffer.createDataPackage(new byte[] { 3 }, compress);
+    private byte[] createMessage() throws IOException {
+        byte[] d1 = XByteBuffer.createDataPackage(new byte[] { 1 });
+        byte[] d2 = XByteBuffer.createDataPackage(new byte[] { 2 });
+        byte[] d3 = XByteBuffer.createDataPackage(new byte[] { 3 });
         byte[] test = new byte[d1.length + d2.length + d3.length + 5];
         System.arraycopy(d1, 0, test, 0, d1.length);
         System.arraycopy(d2, 0, test, d1.length, d2.length);

@@ -152,7 +152,7 @@ public class ReplicationListener extends ClusterReceiverBase
                             (ServerSocketChannel) key.channel();
                         SocketChannel channel = server.accept();
                         Object attach = new ObjectReader(channel, selector,
-                                    getCatalinaCluster(),isCompress()) ;
+                                    this) ;
                         registerChannel(selector,
                                         channel,
                                         SelectionKey.OP_READ,

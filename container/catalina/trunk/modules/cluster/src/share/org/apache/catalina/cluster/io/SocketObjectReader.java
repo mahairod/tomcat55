@@ -46,10 +46,10 @@ public class SocketObjectReader
      * @param compress is send message data compress or flat.
      */
     public SocketObjectReader( Socket socket,
-                               ListenCallback callback, boolean compress)  {
+                               ListenCallback callback)  {
         this.socket = socket;
         this.callback = callback;
-        this.buffer = new XByteBuffer(compress);
+        this.buffer = new XByteBuffer();
     }
 
     
@@ -66,10 +66,10 @@ public class SocketObjectReader
      * @throws java.io.IOException
      */
     public int append(byte[] data,int off,int len) throws java.io.IOException {
-        boolean result = false;
-        buffer.append(data,off,len);
-        int pkgCnt = 0;
+        if(len > 0)
+            buffer.append(data,off,len);
         boolean pkgExists = buffer.doesPackageExist();
+        int pkgCnt = 0;
         while ( pkgExists ) {
             byte[] b = buffer.extractPackage(true);
             callback.messageDataReceived(b);
@@ -87,7 +87,7 @@ public class SocketObjectReader
      * @throws java.io.IOException
      */
     public int execute() throws java.io.IOException {
-        return append(new byte[0],0,0);
+        return append(null,0,0);
     }
 
     /**

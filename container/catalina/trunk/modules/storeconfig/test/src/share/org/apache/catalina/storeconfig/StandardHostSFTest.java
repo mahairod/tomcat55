@@ -198,8 +198,7 @@ public class StandardHostSFTest extends TestCase {
     public void testCluster() throws Exception {
         SimpleTcpCluster cluster = new SimpleTcpCluster();
         cluster.setClusterName("cluster");
-        cluster.setExpireSessionsOnShutdown(false);
-        cluster.setPrintToScreen(false);
+        cluster.setProperty("expireSessionsOnShutdown","false");
         cluster
                 .setManagerClassName("org.apache.catalina.cluster.session.DeltaManager");
         McastService service = new McastService();

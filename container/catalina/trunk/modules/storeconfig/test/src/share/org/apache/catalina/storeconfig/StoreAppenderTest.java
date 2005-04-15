@@ -80,7 +80,7 @@ public class StoreAppenderTest extends TestCase {
         ReplicationTransmitter bean = new ReplicationTransmitter();
         bean.setReplicationMode("asynchronous");
         bean.setProperty("keepAliveTimeout","80000");
-        new ReplicationTransmitterStoreAppender().printAttributes(writer, 0, true, bean, desc);
+        new IDynamicPropertyStoreAppender().printAttributes(writer, 0, true, bean, desc);
         String aspectedResult =LF.LINE_SEPARATOR           
            + "    replicationMode=\"asynchronous\"" + LF.LINE_SEPARATOR 
            + "    keepAliveTimeout=\"80000\"" ;

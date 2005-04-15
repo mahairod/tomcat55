@@ -2,31 +2,30 @@
 Next actions
 ==============================
 
-- reduce cpu and memory consume (Receiver)
-    - set new compress sender flag at default=false ( < CPU usage)
-    - Make compact algo 
-        currently message receive data is split at XbyteBuffer#extractPackage and
-        SimpleTcpCluster#messageDataReceived     
+- PooledSocketSender
+	Add more stats
+	check all Pooled sender checkKeepAlive
+- add cluster setup template (src)	
+- filter all Cluster Message 
+         Filtering that no all message goes to all member.
+         Setup a Valve set periodic send the cluster stage!
 - when a lot of messages expire it comes to burst of messages 
      - all 60 Sec when ManagerBase#processExpires is called!
-     - Better is to transfer a spezial Epxire Message with an array of expired messages.
-     - This reduce message transfer and reduce waits for acks.     
-- Documentation
+     - Better is to transfer a spezial epxire message with an array of expired session messages.
+     - This reduce message transfer and reduce waits for acks.
+     - complicated thing , sessions expires when call isValid :-(     
+- build a tool that receive the stage and present it as simple web app.
+    	detect some problems
+    	different active sessions
+    	long queues
+    	detect long wait acks     
+- documentation
 	wrote a complete new how-to
 	add example configurations
 	add complete attribute descriptions
 	add JMX information
 	add deployment help
 	Need help ( pero)
-- add cluster setup template (src)	
-- filter all Cluster Message 
-         Filtering that no all message goes to all member.
-         Setup a Valve set periodic send the cluster stage!
-- build a tool that receive the stage and present it as simple web app.
-    	detect some problems
-    	different active sessions
-    	long queues
-    	detect long wait acks     
 - Implement fragmentation of large replication objects
 	Compress at message level 
 	Splitting Messages ala FarmDeployer war handling
@@ -35,8 +34,6 @@ Next actions
 - add test cluster project
     Junit test ( started)
     automated regression testing with some standard configs
-- add support to dynamic property transfer from SimpleTcpCluster to the Manager
-    like ReplicationTransmitter
 - better restart szenario after failure.
         
 ==============================
@@ -45,8 +42,6 @@ Nice to have:
 - Implement a NonSerializable interface for session attributes that do not
 wish to be replicated
         Then we must have ClusterNonSerializable at common classloader
-- Setup the cluster without SessionReplication Manager
-         Only a Message bus.         
 - Extend StandardSession if possible
 - Implement primary/secondary replication logic
 - Implement context attribute replication (?)
@@ -81,15 +76,67 @@ would not make sense to transfer the same webapp over and over again.
      Last FileMessage fragment need longe ackTimeout	
     	<Cluster ..> <Sender ... ackTimeout="60000"/> </Cluster> 	
 - ReplicationListener and SocketReplicationListener only accept data from cluster member (low level ip restriction)
-- Change Message protocol (risk)
-   Currently 6 byte header, data.length 4 bytes , data, 6 byte end header
-   Optimized to 2 type header, data.length 4 bytes, data
-   change at DataSender.writeData and XByteBuffer
+- Change the cluster protocol that developer can add there own data serialzable/deserialzable format (high risk)
+  
+   Currently 
+   	header 		    6 bytes (FLT2002)
+   	data.length     4 bytes
+   	data, 
+   	end header      6 bytes (TLF2003)
+   	
+   Optimized to 
+      header 		2 bytes (TC)
+      type   		1 byte
+      compressflag  1 byte
+      data.length 	4 bytes, 
+      data | <real uncompressed data.length (4 bytes)> data
+      
+      "type" means user defined type and receiver extract bytes and type and sende it to callback
+      	s. ObjectReader or SocketObjectReader
+                       
+       compress     1
+       first data 4 data bytes are the real uncompressed data length. ( Is for better memory management atr recevier side, S. XByteBuffer)
+       
+   change at DataSender.writeData and XByteBuffer and add flexible handling to ClusterSender and ClusterReceiver
+   
+- Add single sign on support
 
 ==============================   
-COMPLETED
+COMPLETED (pero)
 ==============================
 5.5.10
+- add JMX API for ClusteRreceiver
+- ClusterReceiver is now Callback when message is received
+- SimpleTcpCluster only receive ClusterMessage (API change)
+       Redesign SimpleTcpCluster message receiving to ClusterReceiverBase:
+          - optimized data uncompressed
+          - better extendablity
+          - XByteBuffer only buffer bytes and don't uncompress.
+          - Add receiver JMX stats with new attribute 'Receiver.doReceivedProcessingStats'   
+          - optimized createManager and addManager that also can configured normal StandardManager 
+            to use cluster message transfer without replication.
+- add support to dynamic property transfer from SimpleTcpCluster to the Manager
+    like ReplicationTransmitter
+        All manager attributes can be configured:
+          - expireSessionsOnShutdown (false)
+          - notifySessionListenersOnReplication (true)
+          - notifyListenersOnReplication (true)
+          - maxActiveSessions (-1)
+          - timeoutAllSession (60 sec)
+          - sessionIdLength (16)
+          - processExpiresFrequency (6 - exipre all six engine background periodic event (60 sec))
+          - algorithm (MD5)
+          - entropy
+          - randomFile
+          - randomClass
+- Setup the cluster without SessionReplication Manager
+         Only a message bus.
+         Configure the bus with you ClusterListener and valves and a StandardManager         
+- reduce cpu and memory consume (Receiver)
+    - set new compress sender flag at default=false ( < CPU usage)
+    - Make compact algo 
+        currently message receive data is split at XbyteBuffer#extractPackage and
+        SimpleTcpCluster#messageDataReceived     
 - reduce memory and cpu consume (send message)
     - set new compress sender flag at default=false ( < CPU usage)
     - don't copy the buffer to add message header
@@ -98,21 +145,22 @@ COMPLETED
     - make it possible that a subclass crypt the transfered messages
        sub class ReplicationTransmitter and override createMessageData
     - don't copy START and END Header for every message, instead send dirctly and DataSender.writeData.   
-- Add a flag for replicated  attribute events, to enable or disable them 
+- Add a flag for replicated attribute events, to enable or disable them 
      Now can configued with notifyListenersOnReplication=false at SimpleTCPCluster
      Also can drop HttpSessionLsitener events
          can configued with notifySessionListenersOnReplication=false at SimpleTCPCluster
-- JMX friendly
-    pero:  Add some MBeanSupport to SimpleTCPCluster, ReplicationTransmitter and Senders
 - Refactoring DeltaManager
+- Transfer attributes from Cluster config to DeltaManager
 - Fix at 5.5.9 cluster hang bug! 
 - Add more Valve to direct cluster config
 - Add Lifecycle Listener support to direct cluster config
 - Add ClusterListener support to direct cluster config
 - Add new SocketReplicationListener
 - Add Stats to DeltaManager
-- Add single sign on support
+
 5.5.9
+- JMX friendly
+    pero:  Add some MBeanSupport to SimpleTCPCluster, ReplicationTransmitter and Senders
 - Add Keep Alive and WaitForAck at async mode implementation.
        Make this feature configurable to Sender element at server.xml
        Is include with 5.5.8

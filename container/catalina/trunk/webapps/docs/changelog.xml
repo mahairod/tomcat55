@@ -43,11 +43,20 @@
         Update to JDT from Eclipse 3.1M6, which is now feature complete (remm)
       </update>
       <update>
-        Start refactoring, redesign and extend the cluster module (pero)
-      </update>
-      <add>
-        Add Apache Portable Runtime JNI wrapper and helper API (mturk)
-      </add>
+        Refactoring, redesign and extend the cluster module
+          - Optimized performance and reduce memory usage
+          - Better JMX support
+          - add a lot of JMX stats attribute for better monitoring 
+          - more config options
+             LifecycleListener
+             ClusterListener
+             more than one Cluster Valves
+          - better subclass support
+          - change a lot of existing API's (pero)
+       </update>
+       <add>
+         Add Apache Portable Runtime JNI wrapper and helper API (mturk)
+       </add>
     </changelog>
   </subsection>
   
@@ -127,20 +136,32 @@
   
   <subsection name="Cluster">
     <changelog>        
+      <add>
+        Redesign SimpleTcpCluster message receiving to ClusterReceiverBase (pero)
+      </add>      
+      <add>
+        Cluster transfer all attributes to the generate session manager at addManager. 
+        Remove some unused attributes at SimpleTcpCluster and ReplicationTransmitter (pero)
+      </add>    
       <update>
-        update to-do.txt (pero)  
+        Refactor DeltaManager:
+          - createSession call now ManagerBase super class method
+          - extract some long methods (pero)  
+      </update>          
+      <update>
+        Add developer actions at to-do.txt (Proposal of changes) (pero)  
       </update>          
       <update>
         Small refactorings at FastAsyncSocketSender (pero)  
       </update>          
       <update>
-        Refactor cluster message sending to lesser cpu and memory usage. 
+        Redesign cluster message sending to lesser cpu and memory usage. 
         Set at ReplicationTransmitter#compress=false as default. Change API from
         ClusterSender, ReplicaitonTransmitter, DataSender, SimpleTcpCluster (pero)  
       </update>          
       <add>
         DeltaManager has now JMX expireAllLocalSessions and processExipre operation 
-        for better cluster node shutdown handling (pero)   
+        for better cluster node shutdown handling (usefull for testing only) (pero)   
       </add>  
       <add>
         DataSender doWaitAckStats for better understanding wait ack problems (pero)   
