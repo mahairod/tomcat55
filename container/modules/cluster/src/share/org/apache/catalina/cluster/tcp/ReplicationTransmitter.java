@@ -425,7 +425,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
             time = System.currentTimeMillis();
         }
         try {
-            byte[] data = createMessageData(message);
+            byte[] data = serialze(message);
             String key = getKey(member);
             IDataSender sender = (IDataSender) map.get(key);
             sendMessageData(message.getUniqueId(), data, sender);
@@ -447,7 +447,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
             time = System.currentTimeMillis();
         }
         try {
-            byte[] data = createMessageData(message);
+            byte[] data = serialze(message);
             IDataSender[] senders = getSenders();
             for (int i = 0; i < senders.length; i++) {
 
@@ -751,13 +751,13 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     }
 
     /**
-     * Send Message create Timestamp and generate message bytes form msg
-     * @see XByteBuffer#createDataPackage(byte[])
+     * serialze message and add timestamp
+     * @see GZIPOutputStream
      * @param msg cluster message
      * @return cluster message as byte array
      * @throws IOException
      */
-    protected byte[] createMessageData(ClusterMessage msg) throws IOException {
+    protected byte[] serialze(ClusterMessage msg) throws IOException {
         msg.setTimestamp(System.currentTimeMillis());
         ByteArrayOutputStream outs = new ByteArrayOutputStream();
         ObjectOutputStream out;
