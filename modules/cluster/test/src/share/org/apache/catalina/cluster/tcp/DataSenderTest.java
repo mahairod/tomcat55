@@ -132,7 +132,7 @@ public class DataSenderTest extends TestCase {
         DataSender sender = createMockDataSender();
         sender.writeData(new byte[]{ 1,2,3 }) ;
         ByteArrayOutputStream stream = (ByteArrayOutputStream)sender.getSocket().getOutputStream();
-        assertEquals(3,stream.size());
+        assertEquals(21,stream.size());
         ByteArrayInputStream istream = (ByteArrayInputStream)sender.getSocket().getInputStream();
         assertEquals(-1,istream.read());    
         MockSocket socket =((MockSocket)sender.getSocket());
@@ -163,7 +163,7 @@ public class DataSenderTest extends TestCase {
         sender.openSocket();
         sender.writeData(new byte[]{ 1,2,3 }) ;
         ByteArrayOutputStream stream = (ByteArrayOutputStream)sender.getSocket().getOutputStream();
-        assertEquals(3,stream.size());
+        assertEquals(21,stream.size());
         ByteArrayInputStream istream = (ByteArrayInputStream)sender.getSocket().getInputStream();
         assertEquals(3,TcpReplicationThread.ACK_COMMAND.length);
         assertEquals(TcpReplicationThread.ACK_COMMAND[0],istream.read());        
@@ -175,23 +175,23 @@ public class DataSenderTest extends TestCase {
      * Check close socket fro keep alive handling is correct (number of request and timeout
      * @throws Exception
      */
-    public void testCheckIfCloseSocket() throws Exception {
+    public void testcheckKeepAlive() throws Exception {
         DataSender sender = createMockDataSender() ;
-        assertFalse(sender.checkIfCloseSocket()) ;
+        assertFalse(sender.checkKeepAlive()) ;
         sender.setKeepAliveMaxRequestCount(1);
         sender.keepAliveCount = 1;
-        assertTrue(sender.checkIfCloseSocket());
+        assertTrue(sender.checkKeepAlive());
         assertEquals(1,sender.getSocketCloseCounter());
         assertEquals(0,sender.getKeepAliveCount());
         sender.openSocket();
         assertEquals(0,sender.getKeepAliveCount());
         sender.setKeepAliveMaxRequestCount(100);
         sender.keepAliveConnectTime = System.currentTimeMillis() - sender.getKeepAliveTimeout() ;
-        assertFalse(sender.checkIfCloseSocket());
+        assertFalse(sender.checkKeepAlive());
         assertTrue(sender.isConnected());
         assertEquals(1,sender.getSocketCloseCounter());
         sender.keepAliveConnectTime-- ;
-        assertTrue(sender.checkIfCloseSocket());
+        assertTrue(sender.checkKeepAlive());
         assertEquals(2,sender.getSocketCloseCounter());
     }
     
@@ -233,7 +233,7 @@ public class DataSenderTest extends TestCase {
      */
     private void assertPushMessage(DataSender sender) throws IOException {
         ByteArrayOutputStream stream = pushMessage(sender);
-        assertEquals(3,stream.size());
+        assertEquals(21,stream.size());
         assertEquals(1,sender.getKeepAliveCount());
         assertEquals(1,sender.getNrOfRequests());
         assertEquals(0,sender.getProcessingTime());
