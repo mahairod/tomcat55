@@ -634,7 +634,8 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
             // setup the normal Cluster Session  Listener (DeltaManager support)
             if(clusterListeners.size() == 0 ) {
                 if(log.isInfoEnabled()) {
-                   log.info("Add ClusterSessionListener ");
+                   log.info(sm.getString("SimpleTcpCluster.auto.addClusterListener", 
+                       clusterReceiver.getHost(),new Integer(clusterReceiver.getPort())));
                 }
                 addClusterListener(new ClusterSessionListener());
             }
