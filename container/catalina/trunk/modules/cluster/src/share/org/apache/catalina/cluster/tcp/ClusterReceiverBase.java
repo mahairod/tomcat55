@@ -402,7 +402,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
             timeSent = System.currentTimeMillis();
         }
         try {
-            ClusterMessage message = createRecevierObject(data);
+            ClusterMessage message = deserialze(data);
             cluster.receive(message);
         } catch (Exception x) {
             log
@@ -417,13 +417,13 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
     }
 
     /**
-     * create the receieve cluster message
+     * deserialze the receieve cluster message
      * @param data uncompress data
      * @return
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    protected ClusterMessage createRecevierObject(byte[] data)
+    protected ClusterMessage deserialze(byte[] data)
             throws IOException, ClassNotFoundException {
         Object message = null;
         if (data != null) {
