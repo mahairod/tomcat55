@@ -18,6 +18,7 @@
 package org.apache.catalina.manager;
 
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -141,6 +142,55 @@ public class StatusTransformer {
     }
 
 
+    /**
+     * Write the OS state. Mode 0 will generate HTML.
+     * Mode 1 will generate XML.
+     */
+    public static void writeOSState(PrintWriter writer, int mode) {
+        long[] result = new long[14];
+        boolean ok = false;
+        try {
+            String methodName = "info";
+            Class paramTypes[] = new Class[1];
+            paramTypes[0] = result.getClass();
+            Object paramValues[] = new Object[1];
+            paramValues[0] = result;
+            Method method = Class.forName("org.apache.tomcat.jni.OS")
+                .getMethod(methodName, paramTypes);
+            method.invoke(null, paramValues);
+            ok = true;
+        } catch (Throwable t) {
+            // Ignore
+        }
+        
+        if (ok) {
+            if (mode == 0){
+                writer.print("<h1>OS</h1>");
+
+                writer.print("<p>");
+                writer.print(" Physical memory: ");
+                writer.print(formatSize(new Long(result[0]), true));
+                writer.print(" Available memory: ");
+                writer.print(formatSize(new Long(result[1]), true));
+                writer.print(" Total page file: ");
+                writer.print(formatSize(new Long(result[2]), true));
+                writer.print(" Free page file: ");
+                writer.print(formatSize(new Long(result[3]), true));
+                writer.print(" Memory load: ");
+                writer.print(new Long(result[4]));
+                writer.print("<br>");
+                writer.print(" Process kernel time: ");
+                writer.print(formatTime(new Long(result[9] / 1000), true));
+                writer.print(" Process user time: ");
+                writer.print(formatTime(new Long(result[10] / 1000), true));
+                writer.print("</p>");
+            } else if (mode == 1){
+            }
+        }
+        
+    }
+    
+    
     /**
      * Write the VM state. Mode 0 will generate HTML.
      * Mode 1 will generate XML.
@@ -853,7 +903,7 @@ public class StatusTransformer {
         }
 
         if (seconds) {
-            return ((time / 1000) + " s");
+            return ((((float) time ) / 1000) + " s");
         } else {
             return (time + " ms");
         }
