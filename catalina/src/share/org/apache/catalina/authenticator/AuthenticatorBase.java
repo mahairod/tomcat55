@@ -144,6 +144,12 @@ public abstract class AuthenticatorBase
     protected boolean disableProxyCaching = true;
 
     /**
+     * Flag to determine if we disable proxy caching with headers compatible
+     * with IE 
+     */
+    protected boolean IECompatibleProxyCacheDisableHeaders = true;
+    
+    /**
      * The lifecycle event support for this component.
      */
     protected LifecycleSupport lifecycle = new LifecycleSupport(this);
@@ -339,6 +345,25 @@ public abstract class AuthenticatorBase
     public void setDisableProxyCaching(boolean nocache) {
         disableProxyCaching = nocache;
     }
+    
+    /**
+     * Return the flag that states, if proxy caching is disabled, what headers
+     * we add to disable the caching.  
+     */
+    public boolean getIECompatibleProxyCacheDisableHeaders() {
+        return IECompatibleProxyCacheDisableHeaders;
+    }
+
+    /**
+     * Set the value of the flag that states what headers we add to disable
+     * proxy caching.
+     * @param compatible <code>true</code> if we add headers which are
+     * generally compatible, <code>false</code> if add headers which aren't
+     * known to be compatible.
+     */
+    public void setIECompatibleProxyCacheDisableHeaders(boolean compatible) {
+        IECompatibleProxyCacheDisableHeaders = compatible;
+    }    
 
     // --------------------------------------------------------- Public Methods
 
@@ -415,8 +440,15 @@ public abstract class AuthenticatorBase
             // (improper caching issue)
             //!request.isSecure() &&
             !"POST".equalsIgnoreCase(request.getMethod())) {
-            response.setHeader("Pragma", "No-cache");
-            response.setHeader("Cache-Control", "no-cache");
+            if (IECompatibleProxyCacheDisableHeaders) {
+              //this is the standard way to disable caching
+              response.setHeader("Cache-Control", "private");
+            } else {
+              //IE won't render the page under SSL if this header is specified
+              //TODO It was stipulated that these not be removed, not sure why
+              response.setHeader("Pragma", "No-cache");
+              response.setHeader("Cache-Control", "no-cache");
+            }
             response.setHeader("Expires", DATE_ONE);
         }
 
