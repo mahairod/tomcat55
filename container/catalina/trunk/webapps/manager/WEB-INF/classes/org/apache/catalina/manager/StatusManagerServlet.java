@@ -276,6 +276,9 @@ public class StatusManagerServlet
 
         try {
 
+            // Display operating system statistics using APR if available
+            StatusTransformer.writeOSState(writer,mode);
+
             // Display virtual machine statistics
             StatusTransformer.writeVMState(writer,mode);
 
