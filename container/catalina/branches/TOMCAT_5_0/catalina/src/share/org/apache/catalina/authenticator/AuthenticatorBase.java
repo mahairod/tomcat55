@@ -473,8 +473,7 @@ public abstract class AuthenticatorBase
             !"POST".equalsIgnoreCase(hsrequest.getMethod())) {
             HttpServletResponse sresponse = 
                 (HttpServletResponse) response.getResponse();
-            sresponse.setHeader("Pragma", "No-cache");
-            sresponse.setHeader("Cache-Control", "no-cache");
+            sresponse.setHeader("Cache-Control", "private");
             sresponse.setHeader("Expires", DATE_ONE);
         }
 
