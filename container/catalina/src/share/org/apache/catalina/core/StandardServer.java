@@ -55,10 +55,7 @@ import org.apache.tomcat.util.buf.StringCache;
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
- * TODO remove useless code
- * TODO test the new save context backuo saving mode!!
  */
-
 public final class StandardServer
     implements Lifecycle, Server, MBeanRegistration 
  {
