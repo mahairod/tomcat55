@@ -36,7 +36,7 @@ public class ReplicationTransmitterTest extends TestCase {
         transmitter.setCompress(true);
         SessionMessageImpl message= new SessionMessageImpl();
         message.setUniqueId("test");
-        byte [] data = transmitter.serialze(message);
+        byte [] data = transmitter.serialize(message);
         assertTrue(200 < data.length);
         Object myobj = getGZPObject(data);
         assertTrue(myobj instanceof SessionMessageImpl);
