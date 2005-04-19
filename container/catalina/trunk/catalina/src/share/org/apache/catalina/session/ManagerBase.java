@@ -24,6 +24,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -212,7 +213,10 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
      */
     protected PropertyChangeSupport support = new PropertyChangeSupport(this);
     
+    
     // ------------------------------------------------------------- Security classes
+
+
     private class PrivilegedSetRandomFile implements PrivilegedAction{
         
         public Object run(){               
@@ -358,8 +362,31 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     public String getEntropy() {
 
         // Calculate a semi-useful value if this has not been set
-        if (this.entropy == null)
-            setEntropy(this.toString());
+        if (this.entropy == null) {
+            // Use APR to get a crypto secure entropy value
+            byte[] result = new byte[32];
+            boolean apr = false;
+            try {
+                String methodName = "random";
+                Class paramTypes[] = new Class[2];
+                paramTypes[0] = result.getClass();
+                paramTypes[1] = int.class;
+                Object paramValues[] = new Object[2];
+                paramValues[0] = result;
+                paramValues[1] = new Integer(32);
+                Method method = Class.forName("org.apache.tomcat.jni.OS")
+                    .getMethod(methodName, paramTypes);
+                method.invoke(null, paramValues);
+                apr = true;
+            } catch (Throwable t) {
+                // Ignore
+            }
+            if (apr) {
+                setEntropy(new String(result));
+            } else {
+                setEntropy(this.toString());
+            }
+        }
 
         return (this.entropy);
 
@@ -474,29 +501,29 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
      *  - so use it if available.
      */
     public void setRandomFile( String s ) {
-    // as a hack, you can use a static file - and genarate the same
-    // session ids ( good for strange debugging )
+        // as a hack, you can use a static file - and genarate the same
+        // session ids ( good for strange debugging )
         if (System.getSecurityManager() != null){
-                randomIS = (DataInputStream)AccessController.doPrivileged(new PrivilegedSetRandomFile());          
-            } else {
-                try{
-                    devRandomSource=s;
-                    File f=new File( devRandomSource );
-                    if( ! f.exists() ) return;
-                    randomIS= new DataInputStream( new FileInputStream(f));
-                    randomIS.readLong();
-                    if( log.isDebugEnabled() )
-                        log.debug( "Opening " + devRandomSource );
-                } catch( IOException ex ) {
-                    try {
-			randomIS.close();
-		    } catch (Exception e) {
-                        log.warn("Failed to close randomIS.");
-		    }
-
-                    randomIS=null;
+            randomIS = (DataInputStream)AccessController.doPrivileged(new PrivilegedSetRandomFile());          
+        } else {
+            try{
+                devRandomSource=s;
+                File f=new File( devRandomSource );
+                if( ! f.exists() ) return;
+                randomIS= new DataInputStream( new FileInputStream(f));
+                randomIS.readLong();
+                if( log.isDebugEnabled() )
+                    log.debug( "Opening " + devRandomSource );
+            } catch( IOException ex ) {
+                try {
+                    randomIS.close();
+                } catch (Exception e) {
+                    log.warn("Failed to close randomIS.");
                 }
+                
+                randomIS=null;
             }
+        }
     }
 
     public String getRandomFile() {
@@ -509,39 +536,35 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
      * generating session identifiers.  If there is no such generator
      * currently defined, construct and seed a new one.
      */
-    public synchronized Random getRandom() {
+    public Random getRandom() {
         if (this.random == null) {
-            synchronized (this) {
-                if (this.random == null) {
-                    // Calculate the new random number generator seed
-                    long seed = System.currentTimeMillis();
-                    long t1 = seed;
-                    char entropy[] = getEntropy().toCharArray();
-                    for (int i = 0; i < entropy.length; i++) {
-                        long update = ((byte) entropy[i]) << ((i % 8) * 8);
-                        seed ^= update;
-                    }
-                    try {
-                        // Construct and seed a new random number generator
-                        Class clazz = Class.forName(randomClass);
-                        this.random = (Random) clazz.newInstance();
-                        this.random.setSeed(seed);
-                    } catch (Exception e) {
-                        // Fall back to the simple case
-                        log.error(sm.getString("managerBase.random", randomClass),
-                            e);
-                        this.random = new java.util.Random();
-                        this.random.setSeed(seed);
-                    }
-                    if(log.isDebugEnabled()) {
-                        long t2=System.currentTimeMillis();
-                        if( (t2-t1) > 100 )
-                            log.debug(sm.getString("managerBase.seeding", randomClass) + " " + (t2-t1));
-                    }
-                }
+            // Calculate the new random number generator seed
+            long seed = System.currentTimeMillis();
+            long t1 = seed;
+            char entropy[] = getEntropy().toCharArray();
+            for (int i = 0; i < entropy.length; i++) {
+                long update = ((byte) entropy[i]) << ((i % 8) * 8);
+                seed ^= update;
+            }
+            try {
+                // Construct and seed a new random number generator
+                Class clazz = Class.forName(randomClass);
+                this.random = (Random) clazz.newInstance();
+                this.random.setSeed(seed);
+            } catch (Exception e) {
+                // Fall back to the simple case
+                log.error(sm.getString("managerBase.random", randomClass),
+                        e);
+                this.random = new java.util.Random();
+                this.random.setSeed(seed);
+            }
+            if(log.isDebugEnabled()) {
+                long t2=System.currentTimeMillis();
+                if( (t2-t1) > 100 )
+                    log.debug(sm.getString("managerBase.seeding", randomClass) + " " + (t2-t1));
             }
         }
-
+        
         return (this.random);
 
     }
@@ -693,6 +716,10 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
                 log.error("Error registering ",e);
             }
         }
+        
+        // Initialize random number generation
+        getRandomBytes(new byte[16]);
+        
         if(log.isDebugEnabled())
             log.debug("Registering " + oname );
                
@@ -889,32 +916,32 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     }
 
 
-    protected void getRandomBytes( byte bytes[] ) {
+    protected void getRandomBytes(byte bytes[]) {
         // Generate a byte array containing a session identifier
-        if( devRandomSource!=null && randomIS==null ) {
-            setRandomFile( devRandomSource );
+        if (devRandomSource != null && randomIS == null) {
+            setRandomFile(devRandomSource);
         }
-        if(randomIS!=null ) {
+        if (randomIS != null) {
             try {
-                int len=randomIS.read( bytes );
-                if( len==bytes.length ) {
+                int len = randomIS.read(bytes);
+                if (len == bytes.length) {
                     return;
                 }
                 if(log.isDebugEnabled())
                     log.debug("Got " + len + " " + bytes.length );
-            } catch( Exception ex ) {
+            } catch (Exception ex) {
+                // Ignore
             }
-            devRandomSource=null;
- 
+            devRandomSource = null;
+            
             try {
-		randomIS.close();
-	    } catch (Exception e) {
+                randomIS.close();
+            } catch (Exception e) {
                 log.warn("Failed to close randomIS.");
-	    }
-
-            randomIS=null;
+            }
+            
+            randomIS = null;
         }
-        Random random = getRandom();
         getRandom().nextBytes(bytes);
     }
 
