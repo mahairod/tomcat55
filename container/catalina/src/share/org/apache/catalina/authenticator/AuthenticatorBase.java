@@ -147,7 +147,7 @@ public abstract class AuthenticatorBase
      * Flag to determine if we disable proxy caching with headers compatible
      * with IE 
      */
-    protected boolean securePagesAsPrivate = false;
+    protected boolean securePagesWithPragma = false;
     
     /**
      * The lifecycle event support for this component.
@@ -350,8 +350,8 @@ public abstract class AuthenticatorBase
      * Return the flag that states, if proxy caching is disabled, what headers
      * we add to disable the caching.  
      */
-    public boolean getSecurePagesAsPrivate() {
-        return securePagesAsPrivate;
+    public boolean getSecurePagesWithPragma() {
+        return securePagesWithPragma;
     }
 
     /**
@@ -361,8 +361,8 @@ public abstract class AuthenticatorBase
      * generally compatible, <code>false</code> if add headers which aren't
      * known to be compatible.
      */
-    public void setSecurePagesAsPrivate(boolean securePagesAsPrivate) {
-        this.securePagesAsPrivate = securePagesAsPrivate;
+    public void setSecurePagesWithPragma(boolean securePagesWithPragma) {
+        this.securePagesWithPragma = securePagesWithPragma;
     }    
 
     // --------------------------------------------------------- Public Methods
@@ -440,14 +440,11 @@ public abstract class AuthenticatorBase
             // (improper caching issue)
             //!request.isSecure() &&
             !"POST".equalsIgnoreCase(request.getMethod())) {
-            if (securePagesAsPrivate) {
-              //this is the standard way to disable caching
-              response.setHeader("Cache-Control", "private");
+            if (securePagesWithPragma) {
+                response.setHeader("Cache-Control", "private");
             } else {
-              //IE won't render the page under SSL if this header is specified
-              //TODO It was stipulated that these not be removed, not sure why
-              response.setHeader("Pragma", "No-cache");
-              response.setHeader("Cache-Control", "no-cache");
+                response.setHeader("Pragma", "No-cache");
+                response.setHeader("Cache-Control", "no-cache");
             }
             response.setHeader("Expires", DATE_ONE);
         }
