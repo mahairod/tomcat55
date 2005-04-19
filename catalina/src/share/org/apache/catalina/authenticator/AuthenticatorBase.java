@@ -144,10 +144,10 @@ public abstract class AuthenticatorBase
     protected boolean disableProxyCaching = true;
 
     /**
-     * Flag to determine if we disable proxy caching with headers compatible
+     * Flag to determine if we disable proxy caching with headers incompatible
      * with IE 
      */
-    protected boolean securePagesWithPragma = false;
+    protected boolean securePagesWithPragma = true;
     
     /**
      * The lifecycle event support for this component.
@@ -348,7 +348,7 @@ public abstract class AuthenticatorBase
     
     /**
      * Return the flag that states, if proxy caching is disabled, what headers
-     * we add to disable the caching.  
+     * we add to disable the caching.
      */
     public boolean getSecurePagesWithPragma() {
         return securePagesWithPragma;
@@ -357,9 +357,9 @@ public abstract class AuthenticatorBase
     /**
      * Set the value of the flag that states what headers we add to disable
      * proxy caching.
-     * @param compatible <code>true</code> if we add headers which are
-     * generally compatible, <code>false</code> if add headers which aren't
-     * known to be compatible.
+     * @param securePagesWithPragma <code>true</code> if we add headers which 
+     * are incompatible with downloading office documents in IE under SSL but
+     * which fix a caching problem in Mozilla.
      */
     public void setSecurePagesWithPragma(boolean securePagesWithPragma) {
         this.securePagesWithPragma = securePagesWithPragma;
@@ -441,10 +441,13 @@ public abstract class AuthenticatorBase
             //!request.isSecure() &&
             !"POST".equalsIgnoreCase(request.getMethod())) {
             if (securePagesWithPragma) {
-                response.setHeader("Cache-Control", "private");
-            } else {
+                // FIXME: These cause problems with downloading office docs
+                // from IE under SSL and may not be needed for newer Mozilla
+                // clients.
                 response.setHeader("Pragma", "No-cache");
                 response.setHeader("Cache-Control", "no-cache");
+            } else {
+                response.setHeader("Cache-Control", "private");
             }
             response.setHeader("Expires", DATE_ONE);
         }
