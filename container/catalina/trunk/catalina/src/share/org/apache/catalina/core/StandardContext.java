@@ -549,7 +549,8 @@ public class StandardContext
     /**
      * Java class name of the Wrapper class implementation we use.
      */
-    private String wrapperClass = "org.apache.catalina.core.StandardWrapper";
+    private String wrapperClassName = StandardWrapper.class.getName();
+    private Class wrapperClass = null;
 
 
     /**
@@ -1647,7 +1648,7 @@ public class StandardContext
      */
     public String getWrapperClass() {
 
-        return (this.wrapperClass);
+        return (this.wrapperClassName);
 
     }
 
@@ -1656,12 +1657,25 @@ public class StandardContext
      * Set the Java class name of the Wrapper implementation used
      * for servlets registered in this Context.
      *
-     * @param wrapperClass The new wrapper class
+     * @param wrapperClassName The new wrapper class name
+     *
+     * @throws IllegalArgumentException if the specified wrapper class
+     * cannot be found or is not a subclass of StandardWrapper
      */
-    public void setWrapperClass(String wrapperClass) {
+    public void setWrapperClass(String wrapperClassName) {
 
-        this.wrapperClass = wrapperClass;
+        this.wrapperClassName = wrapperClassName;
 
+        try {
+            wrapperClass = Class.forName(wrapperClassName);         
+            if (!StandardWrapper.class.isAssignableFrom(wrapperClass)) {
+                throw new IllegalArgumentException(
+                    sm.getString("standardContext.invalidWrapperClass",
+                                 wrapperClassName));
+            }
+        } catch (ClassNotFoundException cnfe) {
+            throw new IllegalArgumentException(cnfe.getMessage());
+        }
     }
 
 
@@ -2372,8 +2386,18 @@ public class StandardContext
      * will have been called, but no properties will have been set.
      */
     public Wrapper createWrapper() {
-        //log.info( "Create wrapper" );
-        Wrapper wrapper = new StandardWrapper();
+
+        Wrapper wrapper = null;
+        if (wrapperClass != null) {
+            try {
+                wrapper = (Wrapper) wrapperClass.newInstance();
+            } catch (Throwable t) {
+                log.error("createWrapper", t);
+                return (null);
+            }
+        } else {
+            wrapper = new StandardWrapper();
+        }
 
         synchronized (instanceListeners) {
             for (int i = 0; i < instanceListeners.length; i++) {
