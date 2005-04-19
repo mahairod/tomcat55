@@ -863,7 +863,7 @@ public abstract class ContainerBase
      * @exception ServletException if a ServletException was thrown
      *  while processing this request
      */
-    public final void invoke(Request request, Response response)
+    public void invoke(Request request, Response response)
         throws IOException, ServletException {
 
         pipeline.getFirst().invoke(request, response);
