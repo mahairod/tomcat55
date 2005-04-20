@@ -818,7 +818,8 @@ public class DefaultServlet
                     // Silent catch
                 }
                 if (ostream != null) {
-                    copy(cacheEntry, renderResult, ostream);
+                    if (!checkSendfile(request, response, cacheEntry, contentLength, null))
+                        copy(cacheEntry, renderResult, ostream);
                 } else {
                     copy(cacheEntry, renderResult, writer);
                 }
@@ -856,7 +857,8 @@ public class DefaultServlet
                         // Silent catch
                     }
                     if (ostream != null) {
-                        copy(cacheEntry, ostream, range);
+                        if (!checkSendfile(request, response, cacheEntry, range.end - range.start + 1, range))
+                            copy(cacheEntry, ostream, range);
                     } else {
                         copy(cacheEntry, writer, range);
                     }
@@ -1479,6 +1481,35 @@ public class DefaultServlet
     // -------------------------------------------------------- Private Methods
 
 
+    /**
+     * Check if sendfile can be used.
+     */
+    private boolean checkSendfile(HttpServletRequest request,
+                                  HttpServletResponse response,
+                                  CacheEntry entry,
+                                  long length, Range range) {
+        if ((entry.resource != null) 
+            && ((length > 256 * 1024) || (entry.resource.getContent() == null))
+            && (entry.attributes.getCanonicalPath() != null)
+            && (Boolean.TRUE == request.getAttribute("sendfile.support"))
+            && (request.getClass().getName().equals("org.apache.catalina.connector.RequestFacade"))
+            && (response.getClass().getName().equals("org.apache.catalina.connector.ResponseFacade"))) {
+            request.setAttribute("sendfile.filename", entry.attributes.getCanonicalPath());
+            if (range == null) {
+                request.setAttribute("sendfile.start", new Long(0L));
+                request.setAttribute("sendfile.end", new Long(length));
+            } else {
+                request.setAttribute("sendfile.start", new Long(range.start));
+                request.setAttribute("sendfile.end", new Long(range.end + 1));
+            }
+            request.setAttribute("sendfile.token", this);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    
     /**
      * Check if the if-match condition is satisfied.
      *

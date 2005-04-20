@@ -1366,6 +1366,11 @@ public class Request
             replaced = true;
         }
 
+        // Pass special attributes to the native layer
+        if (name.startsWith("sendfile.")) {
+            coyoteRequest.setAttribute(name, value);
+        }
+        
         // Notify interested application event listeners
         Object listeners[] = context.getApplicationEventListeners();
         if ((listeners == null) || (listeners.length == 0))
