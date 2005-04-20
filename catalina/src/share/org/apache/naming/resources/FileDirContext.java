@@ -997,6 +997,9 @@ public class FileDirContext extends BaseDirContext {
         protected boolean accessed = false;
 
 
+        protected String canonicalPath = null;
+
+
         // ----------------------------------------- ResourceAttributes Methods
 
 
@@ -1102,6 +1105,23 @@ public class FileDirContext extends BaseDirContext {
             return super.getResourceType();
         }
 
+        
+        /**
+         * Get canonical path.
+         * 
+         * @return String the file's canonical path
+         */
+        public String getCanonicalPath() {
+            if (canonicalPath == null) {
+                try {
+                    canonicalPath = file.getCanonicalPath();
+                } catch (IOException e) {
+                    // Ignore
+                }
+            }
+            return canonicalPath;
+        }
+        
 
     }
 
