@@ -93,10 +93,12 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
      * @return the session ID for the session
      */
     public String getSessionID(){ return mSessionID; }
+    
     /**
      * @return the name of the attribute
      */
 //    public String getAttributeName() { return mAttributeName; }
+    
     /**
      * the value of the attribute
      */
@@ -106,7 +108,9 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
 
     public void setTimestamp(long time) {serializationTimestamp=time;}
     public long getTimestamp() { return serializationTimestamp;}
+    
     /**
+     * FIXME this mapping is really used?
      * @return the event type in a string representating, useful for debugging
      */
     public String getEventTypeString()
@@ -119,6 +123,7 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
             case EVT_GET_ALL_SESSIONS : return "SESSION-GET-ALL";
             case EVT_SESSION_DELTA : return "SESSION-DELTA";
             case EVT_ALL_SESSION_DATA : return "ALL-SESSION-DATA";
+            case EVT_ALL_SESSION_TRANSFERCOMPLETE : return "SESSION-STATE-TRANSFERED";
             default : return "UNKNOWN-EVENT-TYPE";
         }
     }

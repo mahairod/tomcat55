@@ -18,6 +18,10 @@ package org.apache.catalina.cluster.session;
 import junit.framework.TestCase;
 
 import org.apache.catalina.Session;
+import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.Member;
+import org.apache.catalina.cluster.mcast.McastMember;
+import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
 
 /**
  * @author Peter Rossbach
@@ -34,6 +38,30 @@ public class DeltaManagerTest extends TestCase {
         session = manager.createSession(null,true);
         assertEquals(session,manager.session);
         assertEquals(session.getId(),manager.sessionID);
+    }
+    
+    public void testhandleGET_ALL_SESSIONS() throws Exception {
+        MockDeltaManager manager = new MockDeltaManager() ;
+        Session session = manager.createSession(null,false);
+        assertEquals(session, manager.findSession(session.getId()));
+        for (int i = 0; i < 10; i++) {
+            manager.createSession(null,false);
+        }
+        assertEquals(11,manager.getSessionCounter());
+        Member sender = new McastMember("test","localhost",8080,3000);
+        MockCluster cluster = new MockCluster ();
+        manager.setCluster(cluster);
+        manager.setSendAllSessionsSize(2);
+        manager.handleGET_ALL_SESSIONS(null,sender);
+        // send all session activ - 6 sessions message and one transfer complete
+        assertEquals(2,cluster.sendcounter);
+        
+        // send session blockwise
+        cluster.sendcounter=0;
+        manager.setSendAllSessions(false);
+        manager.handleGET_ALL_SESSIONS(null,sender);
+        // 11 session activ - 6 sessions message and one transfer complete
+        assertEquals(7,cluster.sendcounter);
     }
     
     class MockDeltaManager extends DeltaManager {
@@ -56,6 +84,19 @@ public class DeltaManagerTest extends TestCase {
         protected void sendCreateSession(String sessionId, DeltaSession session) {
            this.sessionID = sessionId ;
            this.session = session ;
-        }
+        }       
+        
     }
+    
+    class MockCluster extends SimpleTcpCluster {
+    
+        private int sendcounter;
+
+        /** don't send only count sends
+         * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage, org.apache.catalina.cluster.Member)
+         */
+        public void send(ClusterMessage msg, Member dest) {
+            sendcounter++ ;
+        }
+}
 }
