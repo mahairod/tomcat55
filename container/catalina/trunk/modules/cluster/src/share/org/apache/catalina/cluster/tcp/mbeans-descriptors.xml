@@ -22,7 +22,14 @@
                  type="java.lang.String"/>
     <attribute   name="managerClassName"
           description="session mananager classname"
-                 type="java.lang.String"/>                 
+                 type="java.lang.String"/>
+    <attribute   name="clusterLogName"
+          description="Name of cluster transfer log device"
+                 type="java.lang.String"/>
+    <attribute   name="doClusterLog"
+			     is="true"
+          description="enable cluster log transfer logging"
+                 type="boolean"/>
     <operation   name="setProperty"
                description="set a property to all cluster managers"
                impact="ACTION"

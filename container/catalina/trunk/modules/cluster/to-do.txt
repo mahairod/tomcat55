@@ -2,13 +2,8 @@
 Next actions
 ==============================
 
-- PooledSocketSender
-	Add more stats
-	check all Pooled sender checkKeepAlive
+- fix resend GET_ALL_SESSIONS when wait ACK failed at receiver side
 - add cluster setup template (src)	
-- filter all Cluster Message 
-         Filtering that no all message goes to all member.
-         Setup a Valve set periodic send the cluster stage!
 - when a lot of messages expire it comes to burst of messages 
      - all 60 Sec when ManagerBase#processExpires is called!
      - Better is to transfer a spezial epxire message with an array of expired session messages.
@@ -25,8 +20,8 @@ Next actions
 	add complete attribute descriptions
 	add JMX information
 	add deployment help
-	Need help ( pero)
-- Implement fragmentation of large replication objects
+	Need help (pero)
+- implement fragmentation of large replication objects
 	Compress at message level 
 	Splitting Messages ala FarmDeployer war handling
 - add a message type to the message header.
@@ -34,11 +29,48 @@ Next actions
 - add test cluster project
     Junit test ( started)
     automated regression testing with some standard configs
-- better restart szenario after failure.
-        
+    wrote a test client that can get a JMX State to verify the different cluster testszenarios
+	 - direct JSR 160 client - preferred option
+	 - via mx4j http adaptor ( xml protocol)
+	 - setup different szenarios
+- filter all cluster messages 
+     - Filtering that no all message send to all member.
+- setup a Cluster LifecycleListener set send/protocol the cluster compact status! (monitoring)
+     - setup cluster Listener set send own state to spezial member (sender from a message)
+     - create a cluster status app (html/xml)
+         - attributes
+            - send message
+            - current members
+            - receive message
+            - active session at differen clustered manager
+            - which app are clusters (registered managers)
+            - avg processing times
+         
+         - operations
+            - resetStats
+            - send a message (String)
+            - getDisplay state from other members??
+            - stop queue to send
+            - queue receiver message from some members ( later send after redeploying)
+            - configure some send parameters
+                 - keepalive
+                 - compress
+                 - wait for ack
+         - other things
+            - based on Cluster JMX API                     
+            - watch some values from complete cluster and display some graphs
+            - display the informations from all nodes
+            - display informations from other cluster domains
+            	via XML documents and http
+            - display stats as xml
+            - operation via JMX (MX4J adaptor)	    
+            
 ==============================
 Nice to have:
-==============================
+==============================		
+- PooledSocketSender
+	Add more stats
+	check all Pooled sender checkKeepAlive
 - Implement a NonSerializable interface for session attributes that do not
 wish to be replicated
         Then we must have ClusterNonSerializable at common classloader
@@ -105,6 +137,13 @@ would not make sense to transfer the same webapp over and over again.
 COMPLETED (pero)
 ==============================
 5.5.10
+- better restart szenario at DeltaManager after failure restart (java service wrapper).
+   queue all other session events
+   as STATE Transfer Complete is received, dequeue all received sessions messages.   
+- restructure methods at DeltaManager
+- extract handleXXS methods for better DeltaManager subclassing.
+- split big get all sessions from one server into blocks of sessions and separate STATE Transfer message!
+- no complete sync sessions when GET ALL Sessions event is received.
 - add JMX API for ClusteRreceiver
 - ClusterReceiver is now Callback when message is received
 - SimpleTcpCluster only receive ClusterMessage (API change)

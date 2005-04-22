@@ -73,6 +73,11 @@ public interface SessionMessage extends ClusterMessage, java.io.Serializable
      */
     public static final int EVT_ALL_SESSION_DATA = 12;
     
+    /**
+     * When a session state is complete transferred, this is the event.
+     */
+    public static final int EVT_ALL_SESSION_TRANSFERCOMPLETE = 14;
+    
 
     
     public String getContextName();
