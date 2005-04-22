@@ -92,7 +92,12 @@ public class JMXProxyServlet extends HttpServlet  {
             setAttribute( writer, qry, name, val );
             return;
         }
-
+        qry=request.getParameter("get");
+        if( qry!= null ) {
+            String name=request.getParameter("att");
+            getAttribute( writer, qry, name );
+            return;
+        }        
         qry=request.getParameter("qry");
         if( qry == null ) {
             qry = "*:*";
@@ -100,6 +105,16 @@ public class JMXProxyServlet extends HttpServlet  {
 
         listBeans( writer, qry );
 
+    }
+
+    public void getAttribute(PrintWriter writer, String onameStr, String att) {
+        try {
+            ObjectName oname = new ObjectName(onameStr);
+            Object value = mBeanServer.getAttribute(oname, att);
+            writer.println("OK - Attribute get '" + onameStr + "' - " + att + "= " + value.toString() );
+        } catch (Exception ex) {
+            writer.println("Error - " + ex.toString());
+        }
     }
 
     public void setAttribute( PrintWriter writer,
