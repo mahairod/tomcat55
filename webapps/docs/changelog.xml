@@ -146,7 +146,9 @@
       <update>
         Refactor DeltaManager:
           - createSession call now ManagerBase super class method
-          - extract some long methods (pero)  
+          - extract some long methods
+          - send GET_ALL_SESSION with session blocks
+          - don't sync sessions map when send all sessions (pero)  
       </update>          
       <update>
         Add developer actions at to-do.txt (Proposal of changes) (pero)  

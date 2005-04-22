@@ -43,12 +43,12 @@
 		  description="describe version"
 		         type="java.lang.String"
 		    writeable="false"/>
+		    
     <attribute   name="algorithm"
           description="The message digest algorithm to be used when generating
                        session identifiers"
                  type="java.lang.String"/>
-
-
+                 
     <attribute   name="randomFile"
           description="File source of random - /dev/urandom or a pipe"
                  type="java.lang.String"/>
@@ -94,10 +94,6 @@
                  type="java.lang.String"
             writeable="false"/>
 
-    <attribute   name="pathname"
-          description="Path name of the disk file in which active sessions"
-                 type="java.lang.String"/>
-
     <attribute   name="activeSessions"
           description="Number of active sessions at this moment"
                  type="int" 
@@ -106,6 +102,10 @@
     <attribute   name="sessionCounter"
           description="Total number of sessions created by this manager"
                  type="int" />
+
+    <attribute   name="sessionReplaceCounter"
+          description="Total number of replaced sessions that load from external nodes"
+                 type="long" />
 
     <attribute   name="maxActive"
           description="Maximum number of active sessions so far"
@@ -126,6 +126,10 @@
     <attribute   name="expiredSessions"
           description="Number of sessions that expired ( doesn't include explicit invalidations )"
                  type="int" />
+
+    <attribute   name="stateTransferTimeout"
+          description="state transfer timeout in sec"
+                 type="integer"/>
 
     <attribute   name="processingTime"
           description="Time spent doing housekeeping and expiration"
@@ -165,6 +169,11 @@
                  type="long"
             writeable="false" />
 
+    <attribute   name="counterReceive_EVT_ALL_SESSION_TRANSFERCOMPLETE"
+          description="Count receive EVT_ALL_SESSION_TRANSFERCOMPLETE messages"
+                 type="long"
+            writeable="false" />
+
     <attribute   name="counterSend_EVT_GET_ALL_SESSIONS"
           description="Count send EVT_GET_ALL_SESSIONS messages"
                  type="long"
@@ -195,6 +204,20 @@
                  type="long"
             writeable="false" />
 
+    <attribute   name="counterSend_EVT_ALL_SESSION_TRANSFERCOMPLETE"
+          description="Count send EVT_ALL_SESSION_TRANSFERCOMPLETE messages"
+                 type="long"
+            writeable="false" />
+    <attribute   name="counterNoStateTransfered"
+          description="Count the failed session transfers noStateTransfered"
+                 type="int"
+            writeable="false" />
+            
+    <attribute   name="receivedQueueSize"
+          description="length of receive queue size when session received from other node"
+                 type="int"
+            writeable="false" />            
+
     <attribute   name="expireSessionsOnShutdown"
                    is="true"
           description="exipre all sessions cluster wide as one node goes down"
@@ -209,6 +232,19 @@
                    is="true"
           description="Send session start/stop events on backup nodes"
                  type="boolean" />
+
+    <attribute   name="sendAllSessions"
+                   is="true"
+          description="Send all sessions at one big block"
+                 type="boolean" />
+
+    <attribute   name="sendAllSessionsSize"
+          description="session block size when sendAllSessions=false (default=1000)"
+                 type="int" />
+
+    <attribute   name="sendAllSessionsWaitTime"
+          description="wait time between send session block (default 2 sec)"
+                 type="int" />
 
     <operation   name="listSessionIds"
           description="Return the list of active session ids"

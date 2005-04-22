@@ -85,20 +85,6 @@ public class DeltaSession implements HttpSession, Session, Serializable,
     protected static StringManager smp = StringManager
             .getManager(Constants.Package);
 
-    // ----------------------------------------------------------- Constructors
-
-    /**
-     * Construct a new Session associated with the specified Manager.
-     * 
-     * @param manager
-     *            The manager with which this Session is associated
-     */
-    public DeltaSession(Manager manager) {
-
-        super();
-        this.manager = manager;
-        this.resetDeltaRequest();
-    }
 
     // ----------------------------------------------------- Instance Variables
 
@@ -201,7 +187,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
     /**
      * Flag indicating whether this session is valid or not.
      */
-    private boolean isValid = false;
+    protected boolean isValid = false;
 
     /**
      * Internal notes associated with this session by Catalina components and
@@ -264,6 +250,21 @@ public class DeltaSession implements HttpSession, Session, Serializable,
      * The access count for this session
      */
     protected transient int accessCount = 0;
+
+    // ----------------------------------------------------------- Constructors
+    
+    /**
+     * Construct a new Session associated with the specified Manager.
+     * 
+     * @param manager
+     *            The manager with which this Session is associated
+     */
+    public DeltaSession(Manager manager) {
+
+        super();
+        this.manager = manager;
+        this.resetDeltaRequest();
+    }
 
     // ----------------------------------------------------- Session Properties
 
@@ -590,14 +591,18 @@ public class DeltaSession implements HttpSession, Session, Serializable,
         if (maxInactiveInterval >= 0) {
             long timeNow = System.currentTimeMillis();
             int timeIdle = (int) ((timeNow - lastAccessedTime) / 1000L);
-            if ((timeIdle >= maxInactiveInterval) && (isPrimarySession())) {
-                expire(true);
-            } else if (timeIdle >= (2 * maxInactiveInterval)) {
+            if (isPrimarySession()) {
+                if(timeIdle >= maxInactiveInterval) {
+                    expire(true);
+                }
+            } else {
+                if (timeIdle >= (2 * maxInactiveInterval)) {
                 //if the session has been idle twice as long as allowed,
                 //the primary session has probably crashed, and no other
                 //requests are coming in. that is why we do this. otherwise
                 //we would have a memory leak
-                expire(true, false);
+                    expire(true, false);
+                }
             }
         }
 

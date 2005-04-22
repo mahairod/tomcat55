@@ -259,18 +259,20 @@ public class ReplicationValve
                     log.warn(sm.getString("ReplicationValve.nocluster"));
                 return;
             }
-            try {
-                // send invalid sessions
-                // DeltaManager returns String[0]
-                if (!(clusterManager instanceof DeltaManager))
-                    sendInvalidSessions(clusterManager, cluster);
-                // send replication
-                sendSessionReplicationMessage(request, clusterManager, cluster);
-            } catch (Exception x) {
-                log.error(sm.getString("ReplicationValve.send.failure"), x);
-            } finally {
-                long stop = System.currentTimeMillis();
-                updateStats(stop - totalstart, stop - start);
+            if(cluster.getMembers().length > 0  ) {
+                try {
+                    // send invalid sessions
+                    // DeltaManager returns String[0]
+                    if (!(clusterManager instanceof DeltaManager))
+                        sendInvalidSessions(clusterManager, cluster);
+                    // send replication
+                    sendSessionReplicationMessage(request, clusterManager, cluster);
+                } catch (Exception x) {
+                    log.error(sm.getString("ReplicationValve.send.failure"), x);
+                } finally {
+                    long stop = System.currentTimeMillis();
+                    updateStats(stop - totalstart, stop - start);
+                }
             }
         }
     }

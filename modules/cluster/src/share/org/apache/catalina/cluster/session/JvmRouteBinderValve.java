@@ -190,7 +190,11 @@ public class JvmRouteBinderValve extends ValveBase implements ClusterValve, Life
     public void invoke(Request request, Response response) throws IOException,
             ServletException {
 
-         if (getEnabled() && request.getContext().getDistributable() ) {
+         if (getEnabled() 
+                 && request.getContext() != null
+                 && request.getContext().getParent() != null
+                 && request.getContext().getParent().getCluster() != null 
+                 && request.getContext().getDistributable() ) {
             handlePossibleTurnover(request, response);
         }
         // Pass this request on to the next valve in our pipeline

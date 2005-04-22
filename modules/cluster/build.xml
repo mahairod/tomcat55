@@ -79,8 +79,10 @@
     <javac srcdir="${basedir}/src/share" destdir="${catalina.build}/classes"
            debug="${compile.debug}" deprecation="${compile.deprecation}"
            optimize="${compile.optimize}"
-           excludes="**/CVS/**">
-      <classpath refid="cluster.classpath" />
+           excludes="**/CVS/**"  	   
+    	>
+  	    <compilerarg line="-Xlint:unchecked" />
+        <classpath refid="cluster.classpath" />
     </javac>
     <copy file="${basedir}/src/share/org/apache/catalina/cluster/LocalStrings.properties"
     	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/LocalStrings.properties"/>
