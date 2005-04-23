@@ -23,6 +23,7 @@ import org.apache.catalina.util.IOTools;
  * @author Amy Roh
  * @author Paul Speed
  * @author Dan Sandberg
+ * @author David Becker
  * @version $Revision$, $Date$
  */
 public class SSIExec implements SSICommand {
@@ -33,16 +34,17 @@ public class SSIExec implements SSICommand {
     /**
      * @see SSICommand
      */
-    public void process(SSIMediator ssiMediator, String commandName,
+    public long process(SSIMediator ssiMediator, String commandName,
             String[] paramNames, String[] paramValues, PrintWriter writer) {
+        long lastModified = 0;
         String configErrMsg = ssiMediator.getConfigErrMsg();
         String paramName = paramNames[0];
         String paramValue = paramValues[0];
         String substitutedValue = ssiMediator.substituteVariables(paramValue);
         if (paramName.equalsIgnoreCase("cgi")) {
-            ssiInclude.process(ssiMediator, "include",
-                    new String[]{"virtual"}, new String[]{substitutedValue},
-                    writer);
+            lastModified = ssiInclude.process(ssiMediator, "include",
+                    			new String[]{"virtual"}, new String[]{substitutedValue},
+								writer);
         } else if (paramName.equalsIgnoreCase("cmd")) {
             boolean foundProgram = false;
             try {
@@ -57,6 +59,7 @@ public class SSIExec implements SSICommand {
                 IOTools.flow(stdErrReader, writer, buf);
                 IOTools.flow(stdOutReader, writer, buf);
                 proc.waitFor();
+                lastModified = System.currentTimeMillis();                
             } catch (InterruptedException e) {
                 ssiMediator.log("Couldn't exec file: " + substitutedValue, e);
                 writer.write(configErrMsg);
@@ -68,5 +71,6 @@ public class SSIExec implements SSICommand {
                 ssiMediator.log("Couldn't exec file: " + substitutedValue, e);
             }
         }
+        return lastModified;
     }
 }

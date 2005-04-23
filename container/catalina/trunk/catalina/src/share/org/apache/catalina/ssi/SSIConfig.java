@@ -18,13 +18,14 @@ import java.io.PrintWriter;
  * @author Bip Thelin
  * @author Paul Speed
  * @author Dan Sandberg
+ * @author David Becker
  * @version $Revision$, $Date$
  */
 public final class SSIConfig implements SSICommand {
     /**
      * @see SSICommand
      */
-    public void process(SSIMediator ssiMediator, String commandName,
+    public long process(SSIMediator ssiMediator, String commandName,
             String[] paramNames, String[] paramValues, PrintWriter writer) {
         for (int i = 0; i < paramNames.length; i++) {
             String paramName = paramNames[i];
@@ -46,5 +47,7 @@ public final class SSIConfig implements SSICommand {
                 writer.write(configErrMsg);
             }
         }
+        // Setting config options doesn't really change the page
+        return 0;
     }
 }

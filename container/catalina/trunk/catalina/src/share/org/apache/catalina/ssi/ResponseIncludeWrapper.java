@@ -13,23 +13,40 @@ package org.apache.catalina.ssi;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+
+import org.apache.catalina.util.DateTool;
 /**
  * A HttpServletResponseWrapper, used from
  * <code>SSIServletExternalResolver</code>
  * 
  * @author Bip Thelin
+ * @author David Becker
  * @version $Revision$, $Date$
  */
 public class ResponseIncludeWrapper extends HttpServletResponseWrapper {
     /**
+     * The names of some headers we want to capture.
+     */
+	private static final String CONTENT_TYPE = "content-type";
+    private static final String LAST_MODIFIED = "last-modified";
+    protected long lastModified = -1;
+    private String contentType = null;
+
+    /**
      * Our ServletOutputStream
      */
-    protected ServletOutputStream originalServletOutputStream;
+    protected ServletOutputStream captureServletOutputStream;
     protected ServletOutputStream servletOutputStream;
     protected PrintWriter printWriter;
+    
+	private ServletContext context;
+	private HttpServletRequest request;
 
 
     /**
@@ -41,10 +58,13 @@ public class ResponseIncludeWrapper extends HttpServletResponseWrapper {
      * @param out
      *            The ServletOutputStream' to use
      */
-    public ResponseIncludeWrapper(HttpServletResponse res,
-            ServletOutputStream originalServletOutputStream) {
-        super(res);
-        this.originalServletOutputStream = originalServletOutputStream;
+    public ResponseIncludeWrapper(ServletContext context, 
+    		HttpServletRequest request, HttpServletResponse response,
+           ServletOutputStream captureServletOutputStream) {
+        super(response);
+        this.context = context;
+        this.request = request;
+        this.captureServletOutputStream = captureServletOutputStream;
     }
 
 
@@ -74,7 +94,7 @@ public class ResponseIncludeWrapper extends HttpServletResponseWrapper {
     public PrintWriter getWriter() throws java.io.IOException {
         if (servletOutputStream == null) {
             if (printWriter == null) {
-                printWriter = new PrintWriter(originalServletOutputStream);
+                printWriter = new PrintWriter(captureServletOutputStream);
             }
             return printWriter;
         }
@@ -93,10 +113,117 @@ public class ResponseIncludeWrapper extends HttpServletResponseWrapper {
     public ServletOutputStream getOutputStream() throws java.io.IOException {
         if (printWriter == null) {
             if (servletOutputStream == null) {
-                servletOutputStream = originalServletOutputStream;
+                servletOutputStream = captureServletOutputStream;
             }
             return servletOutputStream;
         }
         throw new IllegalStateException();
+    }
+    
+    
+    /**
+     * Returns the value of the <code>last-modified</code> header field. The
+     * result is the number of milliseconds since January 1, 1970 GMT.
+     *
+     * @return the date the resource referenced by this
+     *   <code>ResponseIncludeWrapper</code> was last modified, or -1 if not
+     *   known.                                                             
+     */
+    public long getLastModified() {                                                                                                                                                           
+        if (lastModified == -1) {
+            // javadocs say to return -1 if date not known, if you want another
+            // default, put it here
+            return -1;
+        }
+        return lastModified;
+    }
+
+    /**
+     * Sets the value of the <code>last-modified</code> header field.
+     *
+     * @param value The number of milliseconds since January 1, 1970 GMT.
+     */
+    public void setLastModified(long lastModified) {
+        this.lastModified = lastModified;
+        ((HttpServletResponse) getResponse()).setDateHeader(LAST_MODIFIED,
+                lastModified);
+    }
+
+    /**
+     * Returns the value of the <code>content-type</code> header field.
+     *
+     * @return the content type of the resource referenced by this
+     *   <code>ResponseIncludeWrapper</code>, or <code>null</code> if not known.
+     */
+    public String getContentType() {
+        if (contentType == null) {
+            String url = request.getRequestURI();
+            String mime = context.getMimeType(url);
+            if (mime != null)
+            {
+                setContentType(mime);
+            }
+            else
+            {
+            	// return a safe value
+               setContentType("application/x-octet-stream");
+            }
+        }
+        return contentType;
+    }
+    
+    /**
+     * Sets the value of the <code>content-type</code> header field.
+     *
+     * @param mime a mime type
+     */
+    public void setContentType(String mime) {
+        contentType = mime;
+        if (contentType != null) {
+            getResponse().setContentType(contentType);
+        }
+    }
+
+
+    public void addDateHeader(String name, long value) {
+        super.addDateHeader(name, value);
+        String lname = name.toLowerCase();
+        if (lname.equals(LAST_MODIFIED)) {
+            lastModified = value;
+        }
+    }
+
+    public void addHeader(String name, String value) {
+        super.addHeader(name, value);
+        String lname = name.toLowerCase();
+        if (lname.equals(LAST_MODIFIED)) {
+            try {
+                lastModified = DateTool.rfc1123Format.parse(value).getTime();
+            } catch (Throwable ignore) { }
+        } else if (lname.equals(CONTENT_TYPE)) {
+            contentType = value;
+        }
+    }
+
+    public void setDateHeader(String name, long value) {
+        super.setDateHeader(name, value);
+        String lname = name.toLowerCase();
+        if (lname.equals(LAST_MODIFIED)) {
+            lastModified = value;
+        }
+    }
+
+    public void setHeader(String name, String value) {
+        super.setHeader(name, value);
+        String lname = name.toLowerCase();
+        if (lname.equals(LAST_MODIFIED)) {
+            try {
+                lastModified = DateTool.rfc1123Format.parse(value).getTime();
+            } catch (Throwable ignore) { }
+        }
+        else if (lname.equals(CONTENT_TYPE))
+        {
+            contentType = value;
+        }
     }
 }

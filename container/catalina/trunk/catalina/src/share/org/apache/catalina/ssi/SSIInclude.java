@@ -19,14 +19,16 @@ import java.io.PrintWriter;
  * @author Bip Thelin
  * @author Paul Speed
  * @author Dan Sandberg
+ * @author David Becker
  * @version $Revision$, $Date$
  */
 public final class SSIInclude implements SSICommand {
     /**
      * @see SSICommand
      */
-    public void process(SSIMediator ssiMediator, String commandName,
+    public long process(SSIMediator ssiMediator, String commandName,
             String[] paramNames, String[] paramValues, PrintWriter writer) {
+        long lastModified = 0;
         String configErrMsg = ssiMediator.getConfigErrMsg();
         for (int i = 0; i < paramNames.length; i++) {
             String paramName = paramNames[i];
@@ -37,6 +39,8 @@ public final class SSIInclude implements SSICommand {
                 if (paramName.equalsIgnoreCase("file")
                         || paramName.equalsIgnoreCase("virtual")) {
                     boolean virtual = paramName.equalsIgnoreCase("virtual");
+                    lastModified = ssiMediator.getFileLastModified(
+                    		 substitutedValue, virtual);
                     String text = ssiMediator.getFileText(substitutedValue,
                             virtual);
                     writer.write(text);
@@ -51,5 +55,6 @@ public final class SSIInclude implements SSICommand {
                 writer.write(configErrMsg);
             }
         }
+        return lastModified;
     }
 }

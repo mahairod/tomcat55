@@ -99,6 +99,10 @@
         Remove CopyParentClassLoader rule, which doesn't seem to be doing anything useful
         anymore. (remm)
       </fix>
+      <add>
+        Provide an ServletFilter implementation of Server Side Includes (SSI). This was
+        submitted by David Becker under <bug>33106</bug>. (markt)
+      </add>
     </changelog>
   </subsection>
   

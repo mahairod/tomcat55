@@ -17,15 +17,17 @@ import java.io.PrintWriter;
  * 
  * @author Paul Speed
  * @author Dan Sandberg
+ * @author David Becker
  * @version $Revision$, $Date$
  */
 public class SSISet implements SSICommand {
     /**
      * @see SSICommand
      */
-    public void process(SSIMediator ssiMediator, String commandName,
+    public long process(SSIMediator ssiMediator, String commandName,
             String[] paramNames, String[] paramValues, PrintWriter writer)
             throws SSIStopProcessingException {
+        long lastModified = 0;
         String errorMessage = ssiMediator.getConfigErrMsg();
         String variableName = null;
         for (int i = 0; i < paramNames.length; i++) {
@@ -39,6 +41,7 @@ public class SSISet implements SSICommand {
                             .substituteVariables(paramValue);
                     ssiMediator.setVariableValue(variableName,
                             substitutedValue);
+                    lastModified = System.currentTimeMillis();
                 } else {
                     ssiMediator.log("#set--no variable specified");
                     writer.write(errorMessage);
@@ -50,5 +53,6 @@ public class SSISet implements SSICommand {
                 throw new SSIStopProcessingException();
             }
         }
+        return lastModified;
     }
 }

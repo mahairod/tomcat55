@@ -29,6 +29,7 @@ import org.apache.catalina.util.URLEncoder;
  * @author Amy Roh
  * @author Paul Speed
  * @author Dan Sandberg
+ * @author David Becker
  * @version $Revision$, $Date$
  */
 public class SSIMediator {
@@ -41,7 +42,7 @@ public class SSIMediator {
     protected String configSizeFmt = DEFAULT_CONFIG_SIZE_FMT;
     protected String className = getClass().getName();
     protected SSIExternalResolver ssiExternalResolver;
-    protected Date lastModifiedDate;
+    protected long lastModifiedDate;
     protected int debug;
     protected Strftime strftime;
     protected SSIConditionalState conditionalState = new SSIConditionalState();
@@ -64,7 +65,7 @@ public class SSIMediator {
 
 
     public SSIMediator(SSIExternalResolver ssiExternalResolver,
-            Date lastModifiedDate, int debug) {
+            long lastModifiedDate, int debug) {
         this.ssiExternalResolver = ssiExternalResolver;
         this.lastModifiedDate = lastModifiedDate;
         this.debug = debug;
@@ -315,7 +316,7 @@ public class SSIMediator {
             setVariableValue("DATE_LOCAL", null);
             ssiExternalResolver.setVariableValue(className + ".DATE_LOCAL",
                     retVal);
-            retVal = formatDate(lastModifiedDate, null);
+            retVal = formatDate(new Date(lastModifiedDate), null);
             setVariableValue("LAST_MODIFIED", null);
             ssiExternalResolver.setVariableValue(className + ".LAST_MODIFIED",
                     retVal);
