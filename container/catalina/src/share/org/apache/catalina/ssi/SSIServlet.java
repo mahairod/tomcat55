@@ -19,7 +19,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Date;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,6 +32,7 @@ import org.apache.catalina.Globals;
  * @author Bip Thelin
  * @author Amy Roh
  * @author Dan Sandberg
+ * @author David Becker
  * @version $Revision$, $Date$
  */
 public class SSIServlet extends HttpServlet {
@@ -190,8 +190,9 @@ public class SSIServlet extends HttpServlet {
 
     protected void processSSI(HttpServletRequest req, HttpServletResponse res,
             URL resource) throws IOException {
-        SSIExternalResolver ssiExternalResolver = new SSIServletExternalResolver(
-                this, req, res, isVirtualWebappRelative, debug, inputEncoding);
+        SSIExternalResolver ssiExternalResolver =
+            new SSIServletExternalResolver(getServletContext(), req, res,
+                    isVirtualWebappRelative, debug, inputEncoding);
         SSIProcessor ssiProcessor = new SSIProcessor(ssiExternalResolver,
                 debug);
         PrintWriter printWriter = null;
@@ -217,8 +218,11 @@ public class SSIServlet extends HttpServlet {
         }
         BufferedReader bufferedReader = new BufferedReader(isr);
 
-        Date lastModifiedDate = new Date(resourceInfo.getLastModified());
-        ssiProcessor.process(bufferedReader, lastModifiedDate, printWriter);
+        long lastModified = ssiProcessor.process(bufferedReader,
+                resourceInfo.getLastModified(), printWriter);
+        if (lastModified > 0) {
+            res.setDateHeader("last-modified", lastModified);
+        }
         if (buffered) {
             printWriter.flush();
             String text = stringWriter.toString();

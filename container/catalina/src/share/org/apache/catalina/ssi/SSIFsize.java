@@ -20,6 +20,7 @@ import java.text.DecimalFormat;
  * @author Bip Thelin
  * @author Paul Speed
  * @author Dan Sandberg
+ * @author David Becker
  * @version $Revision$, $Date$
  */
 public final class SSIFsize implements SSICommand {
@@ -30,8 +31,9 @@ public final class SSIFsize implements SSICommand {
     /**
      * @see SSICommand
      */
-    public void process(SSIMediator ssiMediator, String commandName,
+    public long process(SSIMediator ssiMediator, String commandName,
             String[] paramNames, String[] paramValues, PrintWriter writer) {
+        long lastModified = 0;
         String configErrMsg = ssiMediator.getConfigErrMsg();
         for (int i = 0; i < paramNames.length; i++) {
             String paramName = paramNames[i];
@@ -42,6 +44,8 @@ public final class SSIFsize implements SSICommand {
                 if (paramName.equalsIgnoreCase("file")
                         || paramName.equalsIgnoreCase("virtual")) {
                     boolean virtual = paramName.equalsIgnoreCase("virtual");
+                    lastModified = ssiMediator.getFileLastModified(
+                            substitutedValue, virtual);
                     long size = ssiMediator.getFileSize(substitutedValue,
                             virtual);
                     String configSizeFmt = ssiMediator.getConfigSizeFmt();
@@ -56,6 +60,7 @@ public final class SSIFsize implements SSICommand {
                 writer.write(configErrMsg);
             }
         }
+        return lastModified;
     }
 
 

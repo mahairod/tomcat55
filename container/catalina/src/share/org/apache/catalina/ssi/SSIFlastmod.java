@@ -22,14 +22,16 @@ import org.apache.catalina.util.Strftime;
  * @author Bip Thelin
  * @author Paul Speed
  * @author Dan Sandberg
+ * @author David Becker
  * @version $Revision$, $Date$
  */
 public final class SSIFlastmod implements SSICommand {
     /**
      * @see SSICommand
      */
-    public void process(SSIMediator ssiMediator, String commandName,
+    public long process(SSIMediator ssiMediator, String commandName,
             String[] paramNames, String[] paramValues, PrintWriter writer) {
+    	long lastModified = 0;
         String configErrMsg = ssiMediator.getConfigErrMsg();
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < paramNames.length; i++) {
@@ -41,7 +43,7 @@ public final class SSIFlastmod implements SSICommand {
                 if (paramName.equalsIgnoreCase("file")
                         || paramName.equalsIgnoreCase("virtual")) {
                     boolean virtual = paramName.equalsIgnoreCase("virtual");
-                    long lastModified = ssiMediator.getFileLastModified(
+                    lastModified = ssiMediator.getFileLastModified(
                             substitutedValue, virtual);
                     Date date = new Date(lastModified);
                     String configTimeFmt = ssiMediator.getConfigTimeFmt();
@@ -58,6 +60,7 @@ public final class SSIFlastmod implements SSICommand {
                 writer.write(configErrMsg);
             }
         }
+        return lastModified;
     }
 
 

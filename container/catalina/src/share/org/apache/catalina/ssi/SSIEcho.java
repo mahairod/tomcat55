@@ -18,6 +18,7 @@ import java.io.PrintWriter;
  * @author Bip Thelin
  * @author Paul Speed
  * @author Dan Sandberg
+ * @author David Becker
  * @version $Revision$, $Date$
  */
 public class SSIEcho implements SSICommand {
@@ -28,8 +29,9 @@ public class SSIEcho implements SSICommand {
     /**
      * @see SSICommand
      */
-    public void process(SSIMediator ssiMediator, String commandName,
+    public long process(SSIMediator ssiMediator, String commandName,
             String[] paramNames, String[] paramValues, PrintWriter writer) {
+    	long lastModified = 0;
         String encoding = DEFAULT_ENCODING;
         String errorMessage = ssiMediator.getConfigErrMsg();
         for (int i = 0; i < paramNames.length; i++) {
@@ -42,6 +44,7 @@ public class SSIEcho implements SSICommand {
                     variableValue = MISSING_VARIABLE_VALUE;
                 }
                 writer.write(variableValue);
+                lastModified = System.currentTimeMillis();
             } else if (paramName.equalsIgnoreCase("encoding")) {
                 if (isValidEncoding(paramValue)) {
                     encoding = paramValue;
@@ -54,6 +57,7 @@ public class SSIEcho implements SSICommand {
                 writer.write(errorMessage);
             }
         }
+        return lastModified;
     }
 
 
