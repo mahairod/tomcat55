@@ -81,7 +81,6 @@
            optimize="${compile.optimize}"
            excludes="**/CVS/**"  	   
     	>
-  	    <compilerarg line="-Xlint:unchecked" />
         <classpath refid="cluster.classpath" />
     </javac>
     <copy file="${basedir}/src/share/org/apache/catalina/cluster/LocalStrings.properties"
