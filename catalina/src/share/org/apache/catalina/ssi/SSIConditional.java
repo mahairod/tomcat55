@@ -18,14 +18,17 @@ import java.text.ParseException;
  * 
  * @version $Revision$
  * @author Paul Speed
+ * @author David Becker
  */
 public class SSIConditional implements SSICommand {
     /**
      * @see SSICommand
      */
-    public void process(SSIMediator ssiMediator, String commandName,
+    public long process(SSIMediator ssiMediator, String commandName,
             String[] paramNames, String[] paramValues, PrintWriter writer)
             throws SSIStopProcessingException {
+    	// Assume anything using conditionals was modified by it
+    	long lastModified = System.currentTimeMillis();
         // Retrieve the current state information
         SSIConditionalState state = ssiMediator.getConditionalState();
         if ("if".equalsIgnoreCase(commandName)) {
@@ -33,7 +36,7 @@ public class SSIConditional implements SSICommand {
             // except count it
             if (state.processConditionalCommandsOnly) {
                 state.nestingCount++;
-                return;
+                return lastModified;
             }
             state.nestingCount = 0;
             // Evaluate the expression
@@ -48,12 +51,12 @@ public class SSIConditional implements SSICommand {
         } else if ("elif".equalsIgnoreCase(commandName)) {
             // No need to even execute if we are nested in
             // a false branch
-            if (state.nestingCount > 0) return;
+            if (state.nestingCount > 0) return lastModified;
             // If a branch was already taken in this if block
             // then disable output and return
             if (state.branchTaken) {
                 state.processConditionalCommandsOnly = true;
-                return;
+                return lastModified;
             }
             // Evaluate the expression
             if (evaluateArguments(paramNames, paramValues, ssiMediator)) {
@@ -68,7 +71,7 @@ public class SSIConditional implements SSICommand {
         } else if ("else".equalsIgnoreCase(commandName)) {
             // No need to even execute if we are nested in
             // a false branch
-            if (state.nestingCount > 0) return;
+            if (state.nestingCount > 0) return lastModified;
             // If we've already taken another branch then
             // disable output otherwise enable it.
             state.processConditionalCommandsOnly = state.branchTaken;
@@ -80,7 +83,7 @@ public class SSIConditional implements SSICommand {
             // one level on the nesting count
             if (state.nestingCount > 0) {
                 state.nestingCount--;
-                return;
+                return lastModified;
             }
             // Turn output back on
             state.processConditionalCommandsOnly = false;
@@ -93,6 +96,7 @@ public class SSIConditional implements SSICommand {
             //throw new SsiCommandException( "Not a conditional command:" +
             // cmdName );
         }
+        return lastModified;
     }
 
 

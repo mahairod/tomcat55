@@ -18,14 +18,16 @@ import java.util.Iterator;
  * Implements the Server-side #printenv command
  * 
  * @author Dan Sandberg
+ * @author David Becker
  * @version $Revision$, $Date$
  */
 public class SSIPrintenv implements SSICommand {
     /**
      * @see SSICommand
      */
-    public void process(SSIMediator ssiMediator, String commandName,
+    public long process(SSIMediator ssiMediator, String commandName,
             String[] paramNames, String[] paramValues, PrintWriter writer) {
+    	long lastModified = 0;
         //any arguments should produce an error
         if (paramNames.length > 0) {
             String errorMessage = ssiMediator.getConfigErrMsg();
@@ -46,7 +48,9 @@ public class SSIPrintenv implements SSICommand {
                 writer.write('=');
                 writer.write(variableValue);
                 writer.write('\n');
+                lastModified = System.currentTimeMillis();
             }
         }
+        return lastModified;
     }
 }

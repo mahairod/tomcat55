@@ -12,6 +12,7 @@ package org.apache.catalina.ssi;
 
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
@@ -21,13 +22,15 @@ import java.util.Enumeration;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.catalina.connector.Request;
+
 /**
  * An implementation of SSIExternalResolver that is used with servlets.
  * 
  * @author Dan Sandberg
+ * @author David Becker
  * @version $Revision$, $Date$
  */
 public class SSIServletExternalResolver implements SSIExternalResolver {
@@ -37,17 +40,17 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
             "QUERY_STRING", "QUERY_STRING_UNESCAPED", "REMOTE_ADDR",
             "REMOTE_HOST", "REMOTE_USER", "REQUEST_METHOD", "SCRIPT_NAME",
             "SERVER_NAME", "SERVER_PORT", "SERVER_PROTOCOL", "SERVER_SOFTWARE"};
-    protected HttpServlet servlet;
+    protected ServletContext context;
     protected HttpServletRequest req;
     protected HttpServletResponse res;
     protected boolean isVirtualWebappRelative;
     protected int debug;
     protected String inputEncoding;
 
-    public SSIServletExternalResolver(HttpServlet servlet,
+    public SSIServletExternalResolver(ServletContext context,
             HttpServletRequest req, HttpServletResponse res,
             boolean isVirtualWebappRelative, int debug, String inputEncoding) {
-        this.servlet = servlet;
+        this.context = context;
         this.req = req;
         this.res = res;
         this.isVirtualWebappRelative = isVirtualWebappRelative;
@@ -61,9 +64,9 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
         //is the same as Servlet.log( message ), since API
         //doesn't seem to say so.
         if (throwable != null) {
-            servlet.log(message, throwable);
+            context.log(message, throwable);
         } else {
-            servlet.log(message);
+            context.log(message);
         }
     }
 
@@ -161,7 +164,35 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
         } else if (name.equalsIgnoreCase("QUERY_STRING_UNESCAPED")) {
             String queryString = req.getQueryString();
             if (queryString != null) {
-                retVal = URLDecoder.decode(queryString);
+                // Use default as a last resort
+            	String queryStringEncoding =
+                    org.apache.coyote.Constants.DEFAULT_CHARACTER_ENCODING;
+                
+                String uriEncoding = null;
+                boolean useBodyEncodingForURI = false;
+                
+                // Get encoding settings from request / connector if possible
+                String requestEncoding = req.getCharacterEncoding();
+                if (req instanceof Request) {
+                    uriEncoding = ((Request)req).getConnector().getURIEncoding();
+                    useBodyEncodingForURI =
+                        ((Request)req).getConnector().getUseBodyEncodingForURI();
+                }
+                
+                // If valid, apply settings from request / connector
+                if (uriEncoding != null) {
+                	queryStringEncoding = uriEncoding;
+                } else if(useBodyEncodingForURI) {
+                    if (requestEncoding != null) {
+                    	queryStringEncoding = requestEncoding;
+                    }
+                }
+                
+                try {
+               	    retVal = URLDecoder.decode(queryString, queryStringEncoding);                       
+				} catch (UnsupportedEncodingException e) {
+					retVal = queryString;
+				}
             }
         } else if (name.equalsIgnoreCase("REMOTE_ADDR")) {
             retVal = req.getRemoteAddr();
@@ -180,8 +211,7 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
         } else if (name.equalsIgnoreCase("SERVER_PROTOCOL")) {
             retVal = req.getProtocol();
         } else if (name.equalsIgnoreCase("SERVER_SOFTWARE")) {
-            ServletContext servletContext = servlet.getServletContext();
-            retVal = servletContext.getServerInfo();
+            retVal = context.getServerInfo();
         }
         return retVal;
     }
@@ -251,26 +281,24 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
                     + nonVirtualPath);
         }
         String path = getAbsolutePath(nonVirtualPath);
-        ServletContext servletContext = servlet.getServletContext();
         ServletContextAndPath csAndP = new ServletContextAndPath(
-                servletContext, path);
+                context, path);
         return csAndP;
     }
 
 
     protected ServletContextAndPath getServletContextAndPathFromVirtualPath(
             String virtualPath) throws IOException {
-        ServletContext servletContext = servlet.getServletContext();
         String path = null;
         if (!virtualPath.startsWith("/") && !virtualPath.startsWith("\\")) {
-            path = getAbsolutePath(virtualPath);
+            return new ServletContextAndPath(context, getAbsolutePath(virtualPath));
         } else {
             String normalized = SSIServletRequestUtil.normalize(virtualPath);
             if (isVirtualWebappRelative) {
-                path = normalized;
+                return new ServletContextAndPath(context, normalized);
             } else {
-                servletContext = servletContext.getContext(normalized);
-                if (servletContext == null) {
+                ServletContext normContext = context.getContext(normalized);
+                if (normContext == null) {
                     throw new IOException("Couldn't get context for path: "
                             + normalized);
                 }
@@ -278,19 +306,19 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
                 // to remove,
                 // ie:
                 // '/file1.shtml' vs '/appName1/file1.shtml'
-                if (!isRootContext(servletContext)) {
-                    path = getPathWithoutContext(normalized);
-                    if (path == null) {
+                if (!isRootContext(normContext)) {
+                    String noContext = getPathWithoutContext(normalized);
+                    if (noContext == null) {
                         throw new IOException(
                                 "Couldn't remove context from path: "
                                         + normalized);
                     }
+                    return new ServletContextAndPath(normContext, noContext);
                 } else {
-                    path = normalized;
+                    return new ServletContextAndPath(normContext, normalized);
                 }
             }
         }
-        return new ServletContextAndPath(servletContext, path);
     }
 
 
@@ -370,9 +398,10 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
                 throw new IOException(
                         "Couldn't get request dispatcher for path: " + path);
             }
-            ByteArrayServletOutputStream basos = new ByteArrayServletOutputStream();
-            ResponseIncludeWrapper responseIncludeWrapper = new ResponseIncludeWrapper(
-                    res, basos);
+            ByteArrayServletOutputStream basos =
+                new ByteArrayServletOutputStream();
+            ResponseIncludeWrapper responseIncludeWrapper =
+                new ResponseIncludeWrapper(context, req, res, basos);
             rd.include(req, responseIncludeWrapper);
             //We can't assume the included servlet flushed its output
             responseIncludeWrapper.flushOutputStreamOrWriter();

@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 import org.apache.catalina.util.IOTools;
@@ -25,6 +24,7 @@ import org.apache.catalina.util.IOTools;
  * necessary[
  * 
  * @author Dan Sandberg
+ * @author David Becker
  * @version $Revision$, $Date$
  */
 public class SSIProcessor {
@@ -76,11 +76,12 @@ public class SSIProcessor {
      *            the reader to read the file containing SSIs from
      * @param writer
      *            the writer to write the file with the SSIs processed.
+     * @return the most current modified date resulting from any SSI commands
      * @throws IOException
      *             when things go horribly awry. Should be unlikely since the
      *             SSICommand usually catches 'normal' IOExceptions.
      */
-    public void process(Reader reader, Date lastModifiedDate,
+    public long process(Reader reader, long lastModifiedDate,
             PrintWriter writer) throws IOException {
         SSIMediator ssiMediator = new SSIMediator(ssiExternalResolver,
                 lastModifiedDate, debug);
@@ -142,8 +143,11 @@ public class SSIProcessor {
                             // command is not conditional
                             if (!ssiMediator.getConditionalState().processConditionalCommandsOnly
                                     || ssiCommand instanceof SSIConditional) {
-                                ssiCommand.process(ssiMediator, strCmd,
-                                        paramNames, paramValues, writer);
+                                long lmd = ssiCommand.process(ssiMediator, strCmd,
+                                               paramNames, paramValues, writer);
+                                if (lmd > lastModifiedDate) {
+                                    lastModifiedDate = lmd;
+                                }                                    
                             }
                         }
                         if (errorMessage != null) {
@@ -160,6 +164,7 @@ public class SSIProcessor {
             //If we are here, then we have already stopped processing, so all
             // is good
         }
+        return lastModifiedDate;
     }
 
 

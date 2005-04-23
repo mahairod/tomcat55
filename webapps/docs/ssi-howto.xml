@@ -29,10 +29,19 @@ during development when you don't want to run a web server like Apache.</p>
 <a href="http://httpd.apache.org/docs/howto/ssi.html#basicssidirectives">
 Apache Introduction to SSI</a> for information on using SSI directives.</p>
 
-<p>SSI support is implemented using the servlet class
+<p>SSI support is available as a servlet and as a filter. You should use one
+or the other to provide SSI support but not both.</p>
+
+<p>Servlet based SSI support is implemented using the class
 <code>org.apache.catalina.ssi.SSIServlet</code>.  Traditionally, this servlet
 is mapped to the URL pattern "*.shtml".</p>
 
+<p>Filter based SSI support is implemented using the class
+<code>org.apache.catalina.ssi.SSIFilter</code>.  Traditionally, this filter
+is mapped to the URL pattern "*.shtml", though it can be mapped to "*" as
+it will selectively enable/disable SSI processing based on mime types.  The
+contentType init param allows you to apply SSI processing to JSP pages,
+javascript, or any other content you wish.</p>
 <p>By default SSI support is disabled in Tomcat.</p>
 </section>
 
@@ -46,11 +55,17 @@ will bypass your security policy configuration in <code>catalina.policy.</code>
 <p>Rename <code>$CATALINA_BASE/server/lib/servlets-ssi.renametojar</code>
 to <code>$CATALINA_BASE/server/lib/servlets-ssi.jar</code>.</p>
 
-<p>Remove the XML comments from around the SSI servlet and servlet-mapping
-configuration in <code>$CATALINA_BASE/conf/web.xml</code>.</p>
+<p>To use the SSI servlet, remove the XML comments from around the SSI servlet
+and servlet-mapping configuration in
+<code>$CATALINA_BASE/conf/web.xml</code>.</p>
+
+<p>To use the SSI filter, remove the XML comments from around the SSI filter
+and filter-mapping configuration in
+<code>$CATALINA_BASE/conf/web.xml</code>.</p>
+
 </section>
 
-<section name="Configuration">
+<section name="Servlet Configuration">
 
 <p>There are several servlet init parameters which can be used to
 configure the behaviour of the SSI servlet.
@@ -75,6 +90,28 @@ of the SSI processing. Default is UTF-8.</li>
 
 </section>
 
+<section name="Filter Configuration">
+
+<p>There are several filter init parameters which can be used to
+configure the behaviour of the SSI filter.
+<ul>
+<li><strong>contentType</strong> - A regex pattern that must be matched before
+SSI processing is applied. When crafting your own pattern, don't forget that a
+mime content type may be followed by an optional character set in the form
+"mime/type; charset=set" that you must take into account.  Default is
+"text/x-server-parsed-html(;.*)?".</li>
+<li><strong>debug</strong> - Debugging detail level for messages logged
+by this servlet. Default 0.</li>
+<li><strong>expires</strong> - The number of seconds before a page with SSI
+directives will expire. Default behaviour is for all SSI directives to be
+evaluated for every request.</li>
+<li><strong>isVirtualWebappRelative</strong> - Should "virtual" SSI directive
+paths be interpreted as relative to the context root, instead of the server
+root? (0=false, 1=true) Default 0 (false).</li>
+</ul>
+</p>
+
+</section>
 </body>
 
 </document>
