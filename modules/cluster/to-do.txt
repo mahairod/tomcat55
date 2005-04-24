@@ -64,7 +64,49 @@ Next actions
             	via XML documents and http
             - display stats as xml
             - operation via JMX (MX4J adaptor)	    
-            
+
+================
+problems
+================   
+- How we can stop the request traffic when restart an application?
+    currently the jk 1.2.10 can only disable the complete loadbalancer,
+    but this detect only the new session request desicion.
+    Request with sessions marks send to tomcat. 
+    
+- Can't stop message replication for a spezial member and application
+   - this need a spezial cluster message and send filter at SimpleTcpCluster
+ 
+- Don't generate cluster message when no member is at cluster!
+   - Register DeltaManager as Cluster LifecycleListener and stop cresting and sending
+   - Reduce memory consume when only one node is active
+   
+- WaitForAck mode and resend probleme
+   - When session serialzisation needs more time then wait ack timeout, 
+     the sender send GETALLSESSIONS again!!
+     Bad for performance and memory, sometimes it drop both nodes very quickly!
+   => Some message need a flag that resend is not allowed!
+     proposed transfer protocol and api change between Transmitter/Senders  and ObjectReader/Receiver
+        not used byte[] instead a better transfer message format
+           header [TC]                            2 bytes
+           type= <A-M> reserved                   1 byte
+           compress = true/false                  1 byte 1 true 0 false
+           resendAllowed = true/false             1 byte
+           isResendPackage = true/false           1 byte
+           splitpackage=true/false                1 byte
+           packagenumber= int                     2 bytes
+           lastpackagenumber= int                 2 bytes
+           length								  4 bytes
+           orignalLength                          4 bytes
+           byte[]                                 length
+           
+           orignalLength != length when compress = true, for better default byte allocation at receiver)                         
+
+		see "Nice to have" also
+		
+    - the resending is also a problem with FarmDeployer.
+       when last package received and starting the application needs time > wait-ack timeout
+       => the last war file packge are resend         
+
 ==============================
 Nice to have:
 ==============================		
