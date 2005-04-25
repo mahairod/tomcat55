@@ -315,7 +315,7 @@ public class Response
      */
     public boolean isAppCommitted() {
         return (this.appCommitted || isCommitted() || isSuspended()
-                || ((getContentLength() != -1) 
+                || ((getContentLength() > 0) 
                     && (getContentCount() >= getContentLength())));
     }
 
