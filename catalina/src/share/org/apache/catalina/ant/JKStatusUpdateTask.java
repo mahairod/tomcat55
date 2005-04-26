@@ -53,6 +53,8 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
 
     private Boolean workerDisabled = Boolean.FALSE;
 
+    private Boolean workerStopped = Boolean.FALSE;
+    
     private boolean isLBMode = true;
 
     private String workerLb;
@@ -216,6 +218,20 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
     }
 
     /**
+     * @return Returns the workerStopped.
+     */
+    public Boolean getWorkerStopped() {
+        return workerStopped;
+    }
+    
+    /**
+     * @param workerStopped The workerStopped to set.
+     */
+    public void setWorkerStopped(Boolean workerStopped) {
+        this.workerStopped = workerStopped;
+    }
+    
+    /**
      * @return Returns the workerLoadFactor.
      */
     public Integer getWorkerLoadFactor() {
@@ -266,7 +282,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
      * <li><b>load balance example:
      * </b>http://localhost/status?cmd=update&mime=txt&w=lb&lf=false&ls=true</li>
      * <li><b>worker example:
-     * </b>http://localhost/status?cmd=update&mime=txt&w=node1&l=lb&wf=1&wd=false
+     * </b>http://localhost/status?cmd=update&mime=txt&w=node1&l=lb&wf=1&wd=false&ws=false
      * </li>
      * </ul>
      * 
@@ -299,7 +315,7 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
                     sb.append(lbForceSession);
                 }
             } else {
-                //http://localhost/status?cmd=update&mime=txt&w=node1&l=lb&wf=1&wd=false
+                //http://localhost/status?cmd=update&mime=txt&w=node1&l=lb&wf=1&wd=false&ws=false
                 if ((workerLb != null)) { // must be configured
                     sb.append("&l=");
                     sb.append(URLEncoder.encode(workerLb, getCharset()));
@@ -311,6 +327,10 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
                 if ((workerDisabled != null)) {
                     sb.append("&wd=");
                     sb.append(workerDisabled);
+                }
+                if ((workerStopped != null)) {
+                    sb.append("&ws=");
+                    sb.append(workerStopped);
                 }
                 if ((workerRedirect != null)) { // other worker conrecte lb's
                     sb.append("&wr=");
@@ -363,18 +383,28 @@ public class JKStatusUpdateTask extends AbstractCatalinaTask {
                 throw new BuildException(
                         "Must specify at a node worker 'workerDisabled' attribute");
             }
-            if (workerLoadFactor == null && workerClusterDomain == null
-                    && workerRedirect == null) {
+            if (workerStopped == null) {
                 throw new BuildException(
-                        "Must specify at a node worker either 'workerClusterDomain',"
-                                + "'workerRedirect' or 'workerLoadFactor'  attribute");
+                        "Must specify at a node worker 'workerStopped' attribute");
+            }
+            if (workerLoadFactor == null ) {
+                throw new BuildException(
+                        "Must specify at a node worker 'workerLoadFactor' attribute");
+            }
+            if (workerClusterDomain == null) {
+                throw new BuildException(
+                        "Must specify at a node worker 'workerClusterDomain' attribute");
+            }
+            if (workerRedirect == null) {
+                throw new BuildException(
+                        "Must specify at a node worker 'workerRedirect' attribute");
             }
             if (workerLb == null) {
                 throw new BuildException("Must specify 'workerLb' attribute");
             }
-            if (null != workerLoadFactor && 1 < workerLoadFactor.intValue()) {
+            if (workerLoadFactor.intValue() < 1) {
                 throw new BuildException(
-                        "The 'workerLoadFactor' must be greater than 1");
+                        "The 'workerLoadFactor' must be greater or equal 1");
             }
             isLBMode = false;
         } else {
