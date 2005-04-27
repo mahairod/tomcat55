@@ -1489,7 +1489,7 @@ public class DefaultServlet
                                   CacheEntry entry,
                                   long length, Range range) {
         if ((entry.resource != null) 
-            && ((length > 256 * 1024) || (entry.resource.getContent() == null))
+            && ((length > 80 * 1024) || (entry.resource.getContent() == null))
             && (entry.attributes.getCanonicalPath() != null)
             && (Boolean.TRUE == request.getAttribute("sendfile.support"))
             && (request.getClass().getName().equals("org.apache.catalina.connector.RequestFacade"))
