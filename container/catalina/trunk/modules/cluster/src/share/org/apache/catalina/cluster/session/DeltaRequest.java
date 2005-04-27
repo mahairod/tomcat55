@@ -163,6 +163,7 @@ public class DeltaRequest implements Externalizable {
             }//switch
         }//for
         session.endAccess();
+        reset();
     }
 
     public synchronized void reset() {
