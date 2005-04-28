@@ -46,6 +46,11 @@
   <!--   readmeFile          File name to display with the directory        -->
   <!--                       contents. [null]                               -->
   <!--                                                                      -->
+  <!--   sendfileSize        If the connector used supports sendfile, this  -->
+  <!--                       represents the minimal file size in KB for     -->
+  <!--                       which sendfile will be used. Use a negative    -->
+  <!--                       value to always disable sendfile.  [48]        -->
+  <!--                                                                      -->
   <!--  For directory listing customization. Checks localXsltFile, then     -->
   <!--  globalXsltFile, then defaults to original behavior.                 -->
   <!--                                                                      -->

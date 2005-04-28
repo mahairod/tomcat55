@@ -114,11 +114,6 @@ else
   fi
 fi
 
-# Set juli LogManager if it is present
-if [ -r "$CATALINA_HOME"/bin/tomcat-juli.jar ]; then
-  JAVA_OPTS="$JAVA_OPTS "-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
-fi
-
 # Add on extra jar files to CLASSPATH
 if [ -n "$JSSE_HOME" ]; then
   CLASSPATH="$CLASSPATH":"$JSSE_HOME"/lib/jcert.jar:"$JSSE_HOME"/lib/jnet.jar:"$JSSE_HOME"/lib/jsse.jar
@@ -144,6 +139,11 @@ if $cygwin; then
   CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
   [ -n "$JSSE_HOME" ] && JSSE_HOME=`cygpath --absolute --windows "$JSSE_HOME"`
   JAVA_ENDORSED_DIRS=`cygpath --path --windows "$JAVA_ENDORSED_DIRS"`
+fi
+
+# Set juli LogManager if it is present
+if [ -r "$CATALINA_HOME"/bin/tomcat-juli.jar ]; then
+  JAVA_OPTS="$JAVA_OPTS "-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" "-Djava.util.logging.config.file="$CATALINA_BASE/conf/logging.properties"
 fi
 
 # ----- Execute The Requested Command -----------------------------------------
