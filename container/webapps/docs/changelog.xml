@@ -115,6 +115,12 @@
         If APR as well as Tomcat's JNI wrapper for APR are present, use APRized protocol handlers
         instead of the regular ones (remm)
       </update>
+      <fix>
+        <bug>22617</bug>: When used with an EJB container and a realm that supports the concept
+        of an unauthenticated user (J2EE.3.4.3) BASIC authentication was always authenticating
+        users as the unauthenticated user without giving them a chance to supply a username and
+        password. (markt)
+      </fix>
     </changelog>
   </subsection>
   
