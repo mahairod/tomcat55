@@ -46,12 +46,6 @@ public class BasicAuthenticator
 
 
     /**
-     * The Base64 helper object for this class.
-     */
-    protected static final Base64 base64Helper = new Base64();
-
-
-    /**
      * Descriptive information about this implementation.
      */
     protected static final String info =
@@ -66,7 +60,7 @@ public class BasicAuthenticator
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 
@@ -125,15 +119,19 @@ public class BasicAuthenticator
         HttpServletResponse hres =
             (HttpServletResponse) response.getResponse();
         String authorization = request.getAuthorization();
-        String username = parseUsername(authorization);
-        String password = parsePassword(authorization);
-        principal = context.getRealm().authenticate(username, password);
-        if (principal != null) {
-            register(request, response, principal, Constants.BASIC_METHOD,
-                     username, password);
-            return (true);
-        }
 
+        // Only authenticate if there is an authorization header
+        if (authorization != null) {
+            String username = parseUsername(authorization);
+            String password = parsePassword(authorization);
+            principal = context.getRealm().authenticate(username, password);
+            if (principal != null) {
+                register(request, response, principal, Constants.BASIC_METHOD,
+                         username, password);
+                return (true);
+            }
+        }
+        
         // Send an "unauthorized" response and an appropriate challenge
         String realmName = config.getRealmName();
         if (realmName == null)
@@ -160,15 +158,13 @@ public class BasicAuthenticator
      */
     protected String parseUsername(String authorization) {
 
-        if (authorization == null)
-            return (null);
         if (!authorization.toLowerCase().startsWith("basic "))
             return (null);
         authorization = authorization.substring(6).trim();
 
         // Decode and parse the authorization credentials
         String unencoded =
-          new String(base64Helper.decode(authorization.getBytes()));
+          new String(Base64.decode(authorization.getBytes()));
         int colon = unencoded.indexOf(':');
         if (colon < 0)
             return (null);
@@ -187,15 +183,13 @@ public class BasicAuthenticator
      */
     protected String parsePassword(String authorization) {
 
-        if (authorization == null)
-            return (null);
         if (!authorization.startsWith("Basic "))
             return (null);
         authorization = authorization.substring(6).trim();
 
         // Decode and parse the authorization credentials
         String unencoded =
-          new String(base64Helper.decode(authorization.getBytes()));
+          new String(Base64.decode(authorization.getBytes()));
         int colon = unencoded.indexOf(':');
         if (colon < 0)
             return (null);
