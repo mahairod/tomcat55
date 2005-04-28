@@ -17,6 +17,7 @@
 
 package org.apache.catalina.connector;
 
+import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.HashMap;
 
@@ -548,9 +549,13 @@ public class Connector
     public String getProtocol() {
 
         if ("org.apache.coyote.http11.Http11Protocol".equals
+            (getProtocolHandlerClassName())
+            || "org.apache.coyote.http11.Http11AprProtocol".equals
             (getProtocolHandlerClassName())) {
             return "HTTP/1.1";
         } else if ("org.apache.jk.server.JkCoyoteHandler".equals
+                   (getProtocolHandlerClassName())
+                   || "org.apache.coyote.ajp.AjpAprProtocol".equals
                    (getProtocolHandlerClassName())) {
             return "AJP/1.3";
         }
@@ -566,14 +571,55 @@ public class Connector
      */
     public void setProtocol(String protocol) {
 
-        if ("HTTP/1.1".equals(protocol)) {
-            setProtocolHandlerClassName
-                ("org.apache.coyote.http11.Http11Protocol");
-        } else if ("AJP/1.3".equals(protocol)) {
-            setProtocolHandlerClassName
-                ("org.apache.jk.server.JkCoyoteHandler");
-        } else if (protocol != null) {
-            setProtocolHandlerClassName(protocol);
+        // Test APR support
+        boolean apr = false;
+        try {
+            String methodName = "initialize";
+            Class paramTypes[] = new Class[1];
+            paramTypes[0] = String.class;
+            Object paramValues[] = new Object[1];
+            paramValues[0] = null;
+            Method method = Class.forName("org.apache.tomcat.jni.Library")
+                .getMethod(methodName, paramTypes);
+            method.invoke(null, paramValues);
+            apr = true;
+        } catch (Throwable t) {
+            if (!log.isDebugEnabled()) {
+                log.info(sm.getString("coyoteConnector.noApr", 
+                        System.getProperty("java.library.path")));
+            } else {
+                log.debug(sm.getString("coyoteConnector.noApr", 
+                        System.getProperty("java.library.path")), t);
+            }
+        }
+
+        if (apr) {
+            if ("HTTP/1.1".equals(protocol)) {
+                setProtocolHandlerClassName
+                    ("org.apache.coyote.http11.Http11AprProtocol");
+            } else if ("AJP/1.3".equals(protocol)) {
+                /*
+                setProtocolHandlerClassName
+                    ("org.apache.coyote.ajp.AjpAprProtocol");
+                */
+                setProtocolHandlerClassName
+                    ("org.apache.jk.server.JkCoyoteHandler");
+            } else if (protocol != null) {
+                setProtocolHandlerClassName(protocol);
+            } else {
+                setProtocolHandlerClassName
+                    ("org.apache.coyote.http11.Http11AprProtocol");
+            }
+        } else {
+            if ("HTTP/1.1".equals(protocol)) {
+                setProtocolHandlerClassName
+                    ("org.apache.coyote.http11.Http11Protocol");
+            } else if ("AJP/1.3".equals(protocol)) {
+                setProtocolHandlerClassName
+                    ("org.apache.jk.server.JkCoyoteHandler");
+            } else if (protocol != null) {
+                setProtocolHandlerClassName(protocol);
+            }
         }
 
     }
