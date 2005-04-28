@@ -57,6 +57,10 @@
        <add>
          Add Apache Portable Runtime JNI wrapper and helper API (mturk)
        </add>
+       <update>
+         Update JULI to provide support for taking over java.util.logging bootstrap configuration,
+         and move the default properties file to ${catalina.base}/conf/logging.properties (remm)
+       </update>
     </changelog>
   </subsection>
   
@@ -103,6 +107,14 @@
         Provide an ServletFilter implementation of Server Side Includes (SSI). This was
         submitted by David Becker under <bug>33106</bug>. (markt)
       </add>
+      <add>
+        Add sendfile support to default servlet, with a sendfileSize configuration attribute.
+        (remm)
+      </add>
+      <update>
+        If APR as well as Tomcat's JNI wrapper for APR are present, use APRized protocol handlers
+        instead of the regular ones (remm)
+      </update>
     </changelog>
   </subsection>
   
@@ -115,8 +127,9 @@
         Add some Mbean attributes and operations to ChannelSocket (pero)
       </update>    
       <add>
-        Add Apache Portable Runtime based HTTP/1.1 protocol handler, without SSL support (remm)
-      </add>    
+        Add Apache Portable Runtime based HTTP/1.1 protocol handler, without SSL support, which
+        provides efficient worker thread usage (remm)
+      </add>
      </changelog>
   </subsection>
 
