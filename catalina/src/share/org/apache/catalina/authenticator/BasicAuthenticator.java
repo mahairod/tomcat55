@@ -176,14 +176,15 @@ public class BasicAuthenticator
                 
                 authorizationBC.setOffset(authorizationBC.getOffset() - 6);
             }
+
+            principal = context.getRealm().authenticate(username, password);
+            if (principal != null) {
+                register(request, response, principal, Constants.BASIC_METHOD,
+                         username, password);
+                return (true);
+            }
         }
         
-        principal = context.getRealm().authenticate(username, password);
-        if (principal != null) {
-            register(request, response, principal, Constants.BASIC_METHOD,
-                     username, password);
-            return (true);
-        }
 
         // Send an "unauthorized" response and an appropriate challenge
         MessageBytes authenticate = 
