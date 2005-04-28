@@ -334,7 +334,7 @@
 	    </jar>
 
 	  	<copy file="${basedir}/resources/logging.properties"
-	  	     todir="${tomcat.build}/common/classes" /> 
+	  	     todir="${tomcat.build}/conf" /> 
 	  	
 	  </target>
 
