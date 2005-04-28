@@ -145,6 +145,13 @@ public class DefaultServlet
      */
     protected String fileEncoding = null;
     
+    
+    /**
+     * Minimum size for sendfile usage in bytes.
+     */
+    protected int sendfileSize = 48 * 1024;
+    
+    
     // ----------------------------------------------------- Static Initializer
 
 
@@ -231,6 +238,12 @@ public class DefaultServlet
         try {
             value = getServletConfig().getInitParameter("output");
             output = Integer.parseInt(value);
+        } catch (Throwable t) {
+            ;
+        }
+        try {
+            value = getServletConfig().getInitParameter("sendfileSize");
+            sendfileSize = Integer.parseInt(value) * 1024;
         } catch (Throwable t) {
             ;
         }
@@ -1488,21 +1501,22 @@ public class DefaultServlet
                                   HttpServletResponse response,
                                   CacheEntry entry,
                                   long length, Range range) {
-        if ((entry.resource != null) 
-            && ((length > 80 * 1024) || (entry.resource.getContent() == null))
+        if ((sendfileSize > 0)
+            && (entry.resource != null)
+            && ((length > sendfileSize) || (entry.resource.getContent() == null))
             && (entry.attributes.getCanonicalPath() != null)
-            && (Boolean.TRUE == request.getAttribute("sendfile.support"))
+            && (Boolean.TRUE == request.getAttribute("org.apache.tomcat.sendfile.support"))
             && (request.getClass().getName().equals("org.apache.catalina.connector.RequestFacade"))
             && (response.getClass().getName().equals("org.apache.catalina.connector.ResponseFacade"))) {
-            request.setAttribute("sendfile.filename", entry.attributes.getCanonicalPath());
+            request.setAttribute("org.apache.tomcat.sendfile.filename", entry.attributes.getCanonicalPath());
             if (range == null) {
-                request.setAttribute("sendfile.start", new Long(0L));
-                request.setAttribute("sendfile.end", new Long(length));
+                request.setAttribute("org.apache.tomcat.sendfile.start", new Long(0L));
+                request.setAttribute("org.apache.tomcat.sendfile.end", new Long(length));
             } else {
-                request.setAttribute("sendfile.start", new Long(range.start));
-                request.setAttribute("sendfile.end", new Long(range.end + 1));
+                request.setAttribute("org.apache.tomcat.sendfile.start", new Long(range.start));
+                request.setAttribute("org.apache.tomcat.sendfile.end", new Long(range.end + 1));
             }
-            request.setAttribute("sendfile.token", this);
+            request.setAttribute("org.apache.tomcat.sendfile.token", this);
             return true;
         } else {
             return false;

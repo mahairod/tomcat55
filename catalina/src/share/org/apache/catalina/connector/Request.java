@@ -1367,7 +1367,7 @@ public class Request
         }
 
         // Pass special attributes to the native layer
-        if (name.startsWith("sendfile.")) {
+        if (name.startsWith("org.apache.tomcat.")) {
             coyoteRequest.setAttribute(name, value);
         }
         
