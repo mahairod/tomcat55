@@ -125,6 +125,15 @@ public class ResponseFacade
     }
 
 
+    /**
+     * Prevent cloning the facade.
+     */
+    protected Object clone()
+        throws CloneNotSupportedException {
+        throw new CloneNotSupportedException();
+    }
+
+
     public void finish() {
 
         if (response == null) {
