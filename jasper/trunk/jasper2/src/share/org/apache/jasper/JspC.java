@@ -114,6 +114,8 @@ public class JspC implements Options {
     private static final String SWITCH_DIE = "-die";
     private static final String SWITCH_POOLING = "-poolingEnabled";
     private static final String SWITCH_ENCODING = "-javaEncoding";
+    private static final String SWITCH_SMAP = "-smap";
+    private static final String SWITCH_DUMP_SMAP = "-dumpsmap";
 
     private static final String SHOW_SUCCESS ="-s";
     private static final String LIST_ERRORS = "-l";
@@ -147,6 +149,8 @@ public class JspC implements Options {
     private int dieLevel;
     private boolean helpNeeded = false;
     private boolean compile = false;
+    private boolean smapSuppressed = true;
+    private boolean smapDumped = false;
 
     private String compiler = null;
 
@@ -293,6 +297,10 @@ public class JspC implements Options {
                 setCompilerSourceVM(nextArg());
             } else if (tok.equals(SWITCH_TARGET)) {
                 setCompilerTargetVM(nextArg());
+            } else if (tok.equals(SWITCH_SMAP)) {
+                smapSuppressed = false;
+            } else if (tok.equals(SWITCH_DUMP_SMAP)) {
+                smapDumped = true;
             } else {
                 if (tok.startsWith("-")) {
                     throw new JasperException("Unrecognized option: " + tok +
@@ -406,16 +414,32 @@ public class JspC implements Options {
      * Is the generation of SMAP info for JSR45 debuggin suppressed?
      */
     public boolean isSmapSuppressed() {
-        return true;
+        return smapSuppressed;
     }
 
+    /**
+     * Set smapSuppressed flag.
+     */
+    public void setSmapSuppressed(boolean smapSuppressed) {
+        this.smapSuppressed = smapSuppressed;
+    }
+
+    
     /**
      * Should SMAP info for JSR45 debugging be dumped to a file?
      */
     public boolean isSmapDumped() {
-        return false;
+        return smapDumped;
     }
 
+    /**
+     * Set smapSuppressed flag.
+     */
+    public void setSmapDumped(boolean smapDumped) {
+        this.smapDumped = smapDumped;
+    }
+
+    
     /**
      * Determines whether text strings are to be generated as char arrays,
      * which improves performance in some cases.
