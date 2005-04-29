@@ -237,6 +237,15 @@ public class RequestFacade implements HttpServletRequest {
         request = null;
     }
 
+    
+    /**
+     * Prevent cloning the facade.
+     */
+    protected Object clone()
+        throws CloneNotSupportedException {
+        throw new CloneNotSupportedException();
+    }
+
 
     // ------------------------------------------------- ServletRequest Methods
 
