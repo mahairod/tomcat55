@@ -239,13 +239,13 @@
                  type="java.lang.String"
                  writeable="false"/>
     <attribute   name="replicationMode"
-          description="replication mode (synchnous,pooled.asynchnous)"
+          description="replication mode (synchnous,pooled.asynchnous,fastasyncqueue)"
                  type="java.lang.String"/>
     <attribute   name="ackTimeout"
           description="acknowledge timeout"
                  type="long"/>
     <attribute   name="autoConnect"
-          description="is sender disabled, fork a new one"
+          description="is sender disabled, fork a new socket"
 			     is="true"
                  type="boolean" />
     <attribute   name="waitForAck"
