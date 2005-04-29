@@ -29,8 +29,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
+import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
@@ -896,6 +898,22 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         // Load unloaded sessions, if any
         try {
             //the channel is already running
+            Cluster cluster = getCluster() ;
+            // stop remove cluster binding
+            if(cluster == null) {
+                Container context = getContainer() ;
+                if(context != null && context instanceof Context) {
+                     Container host = context.getParent() ;
+                     if(host != null && host instanceof Host) {
+                         cluster = host.getCluster();
+                         if(cluster != null && cluster instanceof CatalinaCluster) {
+                             setCluster((CatalinaCluster) cluster) ;
+                         } else {
+                             cluster = null ;
+                         }
+                     }
+                }
+            }
             if (cluster == null) {
                 log.error(sm.getString("deltaManager.noCluster", getName()));
                 return;
@@ -905,7 +923,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                         .getString("deltaManager.startClustering", getName()));
             //to survice context reloads, as only a stop/start is called, not
             // createManager
-            getCluster().addManager(getName(), this);
+            ((CatalinaCluster)cluster).addManager(getName(), this);
 
             getAllClusterSessions();
 
