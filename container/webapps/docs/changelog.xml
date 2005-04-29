@@ -154,6 +154,10 @@
       <update>
         Java 5 will be the source and target for JSPs when running on Java 5 (remm)
       </update>
+      <update>
+        <bug>34652</bug>: Add the ability to get SMAPs when precompiling, submitted by
+        Daryl Robbins (remm)
+      </update>
     </changelog>
   </subsection>
   
