@@ -259,7 +259,17 @@ public class CoyoteAdapter
         }
 
         // Request mapping.
-        connector.getMapper().map(req.serverName(), decodedURI, 
+        MessageBytes serverName;
+        if(connector.getUseIPVHosts()) {
+            serverName = req.localName();
+            if(serverName.isNull()) {
+                // well, they did ask for it
+                res.action(ActionCode.ACTION_REQ_LOCAL_NAME_ATTRIBUTE, null);
+            }
+        } else {
+            serverName = req.serverName();
+        }
+        connector.getMapper().map(serverName, decodedURI, 
                                   request.getMappingData());
         request.setContext((Context) request.getMappingData().context);
         request.setWrapper((Wrapper) request.getMappingData().wrapper);
