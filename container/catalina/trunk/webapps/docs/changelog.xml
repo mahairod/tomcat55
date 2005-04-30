@@ -124,6 +124,9 @@
       <fix>
         Prevent facade objects cloning (remm)
       </fix>
+      <update>
+        Add missing CGI variables to SSI servlet. Patch submitted by Fritz Schneider. (markt)
+      </update>
     </changelog>
   </subsection>
   
