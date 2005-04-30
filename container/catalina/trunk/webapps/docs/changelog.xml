@@ -121,6 +121,9 @@
         users as the unauthenticated user without giving them a chance to supply a username and
         password. (markt)
       </fix>
+      <fix>
+        Prevent facade objects cloning (remm)
+      </fix>
     </changelog>
   </subsection>
   
