@@ -208,6 +208,10 @@ public class Connector
      */
     protected boolean stopped = false;
 
+    /**
+     * Flag to use IP-based virtual hosting.
+     */
+    protected boolean useIPVHosts = false;
 
     /**
      * The background thread.
@@ -853,6 +857,23 @@ public class Connector
         setProperty("xpoweredBy", String.valueOf(xpoweredBy));
     }
 
+    /**
+     * Enable the use of IP-based virtual hosting.
+     *
+     * @param useIPVHosts <code>true</code> if Hosts are identified by IP,
+     *                    <code>false/code> if Hosts are identified by name.
+     */
+    public void setUseIPVHosts(boolean useIPVHosts) {
+        this.useIPVHosts = useIPVHosts;
+        setProperty("useIPVHosts", String.valueOf(useIPVHosts));
+    }
+
+    /**
+     * Test if IP-based virtual hosting is enabled.
+     */
+    public boolean getUseIPVHosts() {
+        return useIPVHosts;
+    }
 
     // --------------------------------------------------------- Public Methods
 
