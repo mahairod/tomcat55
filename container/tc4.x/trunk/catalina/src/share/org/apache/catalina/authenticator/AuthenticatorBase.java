@@ -318,7 +318,7 @@ public abstract class AuthenticatorBase
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

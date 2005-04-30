@@ -58,7 +58,7 @@ public class SSLAuthenticator
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 
