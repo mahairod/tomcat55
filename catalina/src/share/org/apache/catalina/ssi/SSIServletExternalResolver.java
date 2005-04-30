@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.connector.Request;
+import org.apache.coyote.Constants;
 
 /**
  * An implementation of SSIExternalResolver that is used with servlets.
@@ -36,10 +37,14 @@ import org.apache.catalina.connector.Request;
 public class SSIServletExternalResolver implements SSIExternalResolver {
     protected final String VARIABLE_NAMES[] = {"AUTH_TYPE", "CONTENT_LENGTH",
             "CONTENT_TYPE", "DOCUMENT_NAME", "DOCUMENT_URI",
-            "GATEWAY_INTERFACE", "PATH_INFO", "PATH_TRANSLATED",
+            "GATEWAY_INTERFACE", "HTTP_ACCEPT", "HTTP_ACCEPT_ENCODING",
+            "HTTP_ACCEPT_LANGUAGE", "HTTP_CONNECTION", "HTTP_HOST",
+            "HTTP_REFERER", "HTTP_USER_AGENT", "PATH_INFO", "PATH_TRANSLATED",
             "QUERY_STRING", "QUERY_STRING_UNESCAPED", "REMOTE_ADDR",
-            "REMOTE_HOST", "REMOTE_USER", "REQUEST_METHOD", "SCRIPT_NAME",
-            "SERVER_NAME", "SERVER_PORT", "SERVER_PROTOCOL", "SERVER_SOFTWARE"};
+            "REMOTE_HOST", "REMOTE_PORT", "REMOTE_USER", "REQUEST_METHOD",
+            "REQUEST_URI", "SCRIPT_FILENAME", "SCRIPT_NAME", "SERVER_ADDR",
+            "SERVER_NAME", "SERVER_PORT", "SERVER_PROTOCOL", "SERVER_SOFTWARE",
+            "UNIQUE_ID"};
     protected ServletContext context;
     protected HttpServletRequest req;
     protected HttpServletResponse res;
@@ -138,84 +143,184 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
 
     protected String getCGIVariable(String name) {
         String retVal = null;
-        if (name.equalsIgnoreCase("AUTH_TYPE")) {
-            retVal = req.getAuthType();
-        } else if (name.equalsIgnoreCase("CONTENT_LENGTH")) {
-            int contentLength = req.getContentLength();
-            if (contentLength >= 0) {
-                retVal = Integer.toString(contentLength);
+        String[] nameParts = name.toUpperCase().split("_");
+        int requiredParts = 2;
+        if (nameParts.length == 1) {
+            if (nameParts[0].equals("PATH")) {
+                requiredParts = 1;
+                retVal = null; // Not implemented
             }
-        } else if (name.equalsIgnoreCase("CONTENT_TYPE")) {
-            retVal = req.getContentType();
-        } else if (name.equalsIgnoreCase("DOCUMENT_NAME")) {
-            String requestURI = req.getRequestURI();
-            retVal = requestURI.substring(requestURI.lastIndexOf('/') + 1);
-        } else if (name.equalsIgnoreCase("DOCUMENT_URI")) {
-            retVal = req.getRequestURI();
+        }
+        else if (nameParts[0].equals("AUTH")) {
+            if (nameParts[1].equals("TYPE")) {
+                retVal = req.getAuthType();
+            }
+        } else if(nameParts[0].equals("CONTENT")) {
+            if (nameParts[1].equals("LENGTH")) {
+                int contentLength = req.getContentLength();
+                if (contentLength >= 0) {
+                    retVal = Integer.toString(contentLength);
+                }
+            } else if (nameParts[1].equals("TYPE")) {
+                retVal = req.getContentType();
+            }
+        } else if (nameParts[0].equals("DOCUMENT")) {
+            if (nameParts[1].equals("NAME")) {
+                String requestURI = req.getRequestURI();
+                retVal = requestURI.substring(requestURI.lastIndexOf('/') + 1);
+            } else if (nameParts[1].equals("URI")) {
+                retVal = req.getRequestURI();
+            }
         } else if (name.equalsIgnoreCase("GATEWAY_INTERFACE")) {
             retVal = "CGI/1.1";
-        } else if (name.equalsIgnoreCase("PATH_INFO")) {
-            retVal = req.getPathInfo();
-        } else if (name.equalsIgnoreCase("PATH_TRANSLATED")) {
-            retVal = req.getPathTranslated();
-        } else if (name.equalsIgnoreCase("QUERY_STRING")) {
-            //apache displays this as an empty string rather than (none)
-            retVal = nullToEmptyString(req.getQueryString());
-        } else if (name.equalsIgnoreCase("QUERY_STRING_UNESCAPED")) {
-            String queryString = req.getQueryString();
-            if (queryString != null) {
-                // Use default as a last resort
-            	String queryStringEncoding =
-                    org.apache.coyote.Constants.DEFAULT_CHARACTER_ENCODING;
-                
-                String uriEncoding = null;
-                boolean useBodyEncodingForURI = false;
-                
-                // Get encoding settings from request / connector if possible
-                String requestEncoding = req.getCharacterEncoding();
-                if (req instanceof Request) {
-                    uriEncoding = ((Request)req).getConnector().getURIEncoding();
-                    useBodyEncodingForURI =
-                        ((Request)req).getConnector().getUseBodyEncodingForURI();
+        } else if (nameParts[0].equals("HTTP")) {
+            if (nameParts[1].equals("ACCEPT")) {
+                String accept = null;
+                if (nameParts.length == 2) {
+                    accept = "Accept";
+                } else if (nameParts[2].equals("ENCODING")) {
+                    requiredParts = 3;
+                    accept = "Accept-Encoding";
+                } else if (nameParts[2].equals("LANGUAGE")) {
+                    requiredParts = 3;
+                    accept = "Accept-Language";
                 }
-                
-                // If valid, apply settings from request / connector
-                if (uriEncoding != null) {
-                	queryStringEncoding = uriEncoding;
-                } else if(useBodyEncodingForURI) {
-                    if (requestEncoding != null) {
-                    	queryStringEncoding = requestEncoding;
+                if (accept != null) {
+                    Enumeration acceptHeaders = req.getHeaders(accept);
+                    if (acceptHeaders != null)
+                        if (acceptHeaders.hasMoreElements()) {
+                            StringBuffer rv = new StringBuffer(
+                                    (String) acceptHeaders.nextElement());
+                            while (acceptHeaders.hasMoreElements()) {
+                                rv.append(", ");
+                                rv.append((String) acceptHeaders.nextElement());
+                            }
+                        retVal = rv.toString();
                     }
                 }
-                
-                try {
-               	    retVal = URLDecoder.decode(queryString, queryStringEncoding);                       
-				} catch (UnsupportedEncodingException e) {
-					retVal = queryString;
-				}
             }
-        } else if (name.equalsIgnoreCase("REMOTE_ADDR")) {
-            retVal = req.getRemoteAddr();
-        } else if (name.equalsIgnoreCase("REMOTE_HOST")) {
-            retVal = req.getRemoteHost();
-        } else if (name.equalsIgnoreCase("REMOTE_USER")) {
-            retVal = req.getRemoteUser();
-        } else if (name.equalsIgnoreCase("REQUEST_METHOD")) {
-            retVal = req.getMethod();
-        } else if (name.equalsIgnoreCase("SCRIPT_NAME")) {
-            retVal = req.getServletPath();
-        } else if (name.equalsIgnoreCase("SERVER_NAME")) {
-            retVal = req.getServerName();
-        } else if (name.equalsIgnoreCase("SERVER_PORT")) {
-            retVal = Integer.toString(req.getServerPort());
-        } else if (name.equalsIgnoreCase("SERVER_PROTOCOL")) {
-            retVal = req.getProtocol();
-        } else if (name.equalsIgnoreCase("SERVER_SOFTWARE")) {
-            retVal = context.getServerInfo();
-        }
-        return retVal;
-    }
+            else if (nameParts[1].equals("CONNECTION")) {
+                retVal = req.getHeader("Connection");
+            }
+            else if (nameParts[1].equals("HOST")) {
+                retVal = req.getHeader("Host");
+            }
+            else if (nameParts[1].equals("REFERER")) {
+                retVal = req.getHeader("Referer");
+            }
+            else if (nameParts[1].equals("USER"))
+                if (nameParts.length == 3)
+                    if (nameParts[2].equals("AGENT")) {
+                        requiredParts = 3;
+                        retVal = req.getHeader("User-Agent");
+                    }
 
+        } else if (nameParts[0].equals("PATH")) {
+            if (nameParts[1].equals("INFO")) {
+                retVal = req.getPathInfo();
+            } else if (nameParts[1].equals("TRANSLATED")) {
+                retVal = req.getPathTranslated();
+            }
+        } else if (nameParts[0].equals("QUERY")) {
+            if (nameParts[1].equals("STRING")) {
+                String queryString = req.getQueryString();
+                if (nameParts.length == 2) {
+                    //apache displays this as an empty string rather than (none)
+                    retVal = nullToEmptyString(queryString);
+                } else if (nameParts[2].equals("UNESCAPED")) {
+                    requiredParts = 3;
+                    if (queryString != null) {
+                        // Use default as a last resort
+                        String queryStringEncoding =
+                            Constants.DEFAULT_CHARACTER_ENCODING;
+                
+                        String uriEncoding = null;
+                        boolean useBodyEncodingForURI = false;
+                
+                        // Get encoding settings from request / connector if
+                        // possible
+                        String requestEncoding = req.getCharacterEncoding();
+                        if (req instanceof Request) {
+                            uriEncoding =
+                                ((Request)req).getConnector().getURIEncoding();
+                            useBodyEncodingForURI = ((Request)req)
+							        .getConnector().getUseBodyEncodingForURI();
+                        }
+                
+                        // If valid, apply settings from request / connector
+                        if (uriEncoding != null) {
+                            queryStringEncoding = uriEncoding;
+                        } else if(useBodyEncodingForURI) {
+                            if (requestEncoding != null) {
+                                queryStringEncoding = requestEncoding;
+                            }
+                        }
+                
+                        try {
+                            retVal = URLDecoder.decode(queryString,
+                                    queryStringEncoding);                       
+                        } catch (UnsupportedEncodingException e) {
+                            retVal = queryString;
+                        }
+                    }
+                }
+            }
+        } else if(nameParts[0].equals("REMOTE")) {
+            if (nameParts[1].equals("ADDR")) {
+                retVal = req.getRemoteAddr();
+            } else if (nameParts[1].equals("HOST")) {
+                retVal = req.getRemoteHost();
+            } else if (nameParts[1].equals("IDENT")) {
+                retVal = null; // Not implemented
+            } else if (nameParts[1].equals("PORT")) {
+                retVal = Integer.toString( req.getRemotePort());
+            } else if (nameParts[1].equals("USER")) {
+                retVal = req.getRemoteUser();
+            }
+        } else if(nameParts[0].equals("REQUEST")) {
+            if (nameParts[1].equals("METHOD")) {
+                retVal = req.getMethod();
+            }
+            else if (nameParts[1].equals("URI")) {
+                // If this is an error page, get the original URI
+                retVal = (String) req.getAttribute(
+                        "javax.servlet.forward.request_uri");
+                if (retVal == null) retVal=req.getRequestURI();
+            }
+        } else if (nameParts[0].equals("SCRIPT")) {
+            String scriptName = req.getServletPath();
+            if (nameParts[1].equals("FILENAME")) {
+                retVal = context.getRealPath(scriptName);
+            }
+            else if (nameParts[1].equals("NAME")) {
+                retVal = scriptName;
+            }
+        } else if (nameParts[0].equals("SERVER")) {
+            if (nameParts[1].equals("ADDR")) {
+                retVal = req.getLocalAddr();
+            }
+            if (nameParts[1].equals("NAME")) {
+                retVal = req.getServerName();
+            } else if (nameParts[1].equals("PORT")) {
+                retVal = Integer.toString(req.getServerPort());
+            } else if (nameParts[1].equals("PROTOCOL")) {
+                retVal = req.getProtocol();
+            } else if (nameParts[1].equals("SOFTWARE")) {
+                StringBuffer rv = new StringBuffer(context.getServerInfo());
+                rv.append(" ");
+                rv.append(System.getProperty("java.vm.name"));
+                rv.append("/");
+                rv.append(System.getProperty("java.vm.version"));
+                rv.append(" ");
+                rv.append(System.getProperty("os.name"));
+                retVal = rv.toString();
+            }
+        } else if (name.equalsIgnoreCase("UNIQUE_ID")) {
+            retVal = req.getRequestedSessionId();
+        }
+        if (requiredParts != nameParts.length) return null;
+            return retVal;
+    }
 
     public Date getCurrentDate() {
         return new Date();
@@ -291,7 +396,8 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
             String virtualPath) throws IOException {
         String path = null;
         if (!virtualPath.startsWith("/") && !virtualPath.startsWith("\\")) {
-            return new ServletContextAndPath(context, getAbsolutePath(virtualPath));
+            return new ServletContextAndPath(context,
+                    getAbsolutePath(virtualPath));
         } else {
             String normalized = SSIServletRequestUtil.normalize(virtualPath);
             if (isVirtualWebappRelative) {
@@ -434,7 +540,8 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
         protected String path;
 
 
-        public ServletContextAndPath(ServletContext servletContext, String path) {
+        public ServletContextAndPath(ServletContext servletContext,
+                                     String path) {
             this.servletContext = servletContext;
             this.path = path;
         }
