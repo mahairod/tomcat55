@@ -143,6 +143,12 @@
         provides efficient worker thread usage (remm)
       </add>
       <add>
+        Add support for simple file-based CRLs under JDK 1.5 (billbarker)
+      </add>
+      <add>
+        Add experimental NIO-Socket channel for the AJP/1.3 Connector (billbarker)
+      </add>
+      <add>
         <bug>34648</bug>: Add configuration option to enable IP-based Virtual Hosts. (billbarker)
       </add>
      </changelog>
