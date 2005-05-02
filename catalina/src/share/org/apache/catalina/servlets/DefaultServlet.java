@@ -1164,7 +1164,6 @@ public class DefaultServlet
 
                 CacheEntry childCacheEntry =
                     resources.lookupCache(cacheEntry.name + resourceName);
-
                 if (!childCacheEntry.exists) {
                     continue;
                 }
@@ -1330,13 +1329,16 @@ public class DefaultServlet
 
                 NameClassPair ncPair = (NameClassPair) enumeration.nextElement();
                 String resourceName = ncPair.getName();
-                CacheEntry childCacheEntry =
-                    resources.lookupCache(cacheEntry.name + resourceName);
-
                 String trimmed = resourceName/*.substring(trim)*/;
                 if (trimmed.equalsIgnoreCase("WEB-INF") ||
                     trimmed.equalsIgnoreCase("META-INF"))
                     continue;
+
+                CacheEntry childCacheEntry =
+                    resources.lookupCache(cacheEntry.name + resourceName);
+                if (!childCacheEntry.exists) {
+                    continue;
+                }
 
                 sb.append("<tr");
                 if (shade)
