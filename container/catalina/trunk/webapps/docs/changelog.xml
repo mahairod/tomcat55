@@ -136,6 +136,9 @@
       <fix>
         <bug>34273</bug>: Better Bootstrap warning message. [Path from Ralf Hauser] (yoavs)
       </fix>
+      <update>
+        <bug>34675</bug>: Updated Proxy-HowTo page with Servlet API calls. (yoavs)
+      </update>
     </changelog>
   </subsection>
   
