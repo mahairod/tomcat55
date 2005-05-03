@@ -26,6 +26,24 @@
   </p>
 </section>
 
+<section name="Tomcat 5.5.11 (yoavs)">
+  <subsection name="General">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>34578</bug>: Updated JNDIRealm comment. (yoavs)
+      </fix>
+      <add>
+        [Placeholder for HttpAprConnector]
+      </add>
+    </changelog>
+  </subsection>
+</section>
+
 <section name="Tomcat 5.5.10 (yoavs)">
   <subsection name="General">
     <changelog>
