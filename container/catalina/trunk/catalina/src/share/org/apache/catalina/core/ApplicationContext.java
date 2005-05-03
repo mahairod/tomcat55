@@ -355,6 +355,10 @@ public class ApplicationContext
         if (!context.isFilesystemBased())
             return null;
 
+        if (path == null) {
+            return null;
+        }
+
         File file = new File(basePath, path);
         return (file.getAbsolutePath());
 
@@ -546,6 +550,15 @@ public class ApplicationContext
      * @param path Collection path
      */
     public Set getResourcePaths(String path) {
+
+        // Validate the path argument
+        if (path == null) {
+            return null;
+        }
+        if (!path.startsWith("/")) {
+            throw new IllegalArgumentException
+                (sm.getString("applicationContext.resourcePaths.iae", path));
+        }
 
         path = normalize(path);
         if (path == null)
@@ -866,6 +879,10 @@ public class ApplicationContext
      * @param path Path to be normalized
      */
     private String normalize(String path) {
+
+        if (path == null) {
+            return null;
+        }
 
         String normalized = path;
 
