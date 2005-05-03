@@ -133,6 +133,9 @@
       <add>
         [Placeholder for HttpAprConnector]
       </add>
+      <fix>
+        <bug>34273</bug>: Better Bootstrap warning message. [Path from Ralf Hauser] (yoavs)
+      </fix>
     </changelog>
   </subsection>
   
