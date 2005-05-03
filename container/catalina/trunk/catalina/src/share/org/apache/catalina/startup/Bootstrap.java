@@ -409,6 +409,8 @@ public final class Bootstrap {
                 daemon.start();
             } else if (command.equals("stop")) {
                 daemon.stopServer(args);
+            } else {
+                log.warn("Bootsrap: command \"" + command + "\" does not exist.");
             }
         } catch (Throwable t) {
             t.printStackTrace();
