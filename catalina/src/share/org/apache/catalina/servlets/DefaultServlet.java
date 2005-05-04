@@ -1725,6 +1725,16 @@ public class DefaultServlet
         if (cacheEntry.resource != null) {
             byte buffer[] = cacheEntry.resource.getContent();
             if (buffer != null) {
+                if (fileEncoding != null &&
+                    cacheEntry.attributes.getMimeType()!=null &&
+                    cacheEntry.attributes.getMimeType().equals("text/html")) {
+                    /* the "binary" have to be converted from fileEncoding to UTF-8 */
+                    try {
+                        String str = new String(buffer, fileEncoding);
+                        buffer = str.getBytes("UTF-8");
+                    } catch (Exception e) {
+                    }
+                }
                 ostream.write(buffer, 0, buffer.length);
                 return;
             }
