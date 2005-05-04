@@ -354,6 +354,11 @@ public class WebappClassLoader
      */
     protected boolean hasExternalRepositories = false;
 
+    /**
+     * need conversion for properties files
+     */
+    protected boolean needConvert = false;
+
 
     /**
      * All permission.
@@ -1444,6 +1449,15 @@ public class WebappClassLoader
     public void start() throws LifecycleException {
 
         started = true;
+        String encoding = null;
+        try {
+            encoding = System.getProperty("file.encoding");
+        } catch (Exception e) {
+            return;
+        }
+        if (encoding.indexOf("EBCDIC")!=-1) {
+            needConvert = true;
+        }
 
     }
 
@@ -1695,6 +1709,8 @@ public class WebappClassLoader
 
         Resource resource = null;
 
+        boolean fileNeedConvert = false;
+
         for (i = 0; (entry == null) && (i < repositoriesLength); i++) {
             try {
 
@@ -1726,6 +1742,12 @@ public class WebappClassLoader
                         binaryStream = resource.streamContent();
                     } catch (IOException e) {
                         return null;
+                    }
+
+                    if (needConvert) {
+                        if (path.endsWith(".properties")) {
+                            fileNeedConvert = true;
+                        }
                     }
 
                     // Register the full path for modification checking
@@ -1855,8 +1877,8 @@ public class WebappClassLoader
 
                 byte[] binaryContent = new byte[contentLength];
 
+                int pos = 0;
                 try {
-                    int pos = 0;
 
                     while (true) {
                         int n = binaryStream.read(binaryContent, pos,
@@ -1874,6 +1896,14 @@ public class WebappClassLoader
                     return null;
                 }
 
+                if (fileNeedConvert) {
+                    String str = new String(binaryContent,0,pos);
+                    try {
+                        binaryContent = str.getBytes("UTF-8");
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
                 entry.binaryContent = binaryContent;
 
                 // The certificates are only available after the JarEntry 
