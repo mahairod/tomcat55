@@ -133,21 +133,21 @@ public class SSIFilter implements Filter {
 
         // is this an allowed type for SSI processing?
         if (contentTypeRegEx.matcher(contentType).matches()) {
+            String encoding = res.getCharacterEncoding();
 
             // set up SSI processing 
             SSIExternalResolver ssiExternalResolver =
                 new SSIServletExternalResolver(config.getServletContext(), req,
-                        res, isVirtualWebappRelative, debug,
-                        res.getCharacterEncoding());
+                        res, isVirtualWebappRelative, debug, encoding);
             SSIProcessor ssiProcessor = new SSIProcessor(ssiExternalResolver,
                     debug);
             
             // prepare readers/writers
             Reader reader =
-                new InputStreamReader(new ByteArrayInputStream(bytes));
+                new InputStreamReader(new ByteArrayInputStream(bytes), encoding);
             ByteArrayOutputStream ssiout = new ByteArrayOutputStream();
             PrintWriter writer =
-                new PrintWriter(new OutputStreamWriter(ssiout));
+                new PrintWriter(new OutputStreamWriter(ssiout, encoding));
             
             // do SSI processing  
             long lastModified = ssiProcessor.process(reader,

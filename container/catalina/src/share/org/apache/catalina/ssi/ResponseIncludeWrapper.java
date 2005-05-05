@@ -12,6 +12,7 @@ package org.apache.catalina.ssi;
 
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletContext;
@@ -94,7 +95,10 @@ public class ResponseIncludeWrapper extends HttpServletResponseWrapper {
     public PrintWriter getWriter() throws java.io.IOException {
         if (servletOutputStream == null) {
             if (printWriter == null) {
-                printWriter = new PrintWriter(captureServletOutputStream);
+                setCharacterEncoding(getCharacterEncoding());
+                printWriter = new PrintWriter(
+                        new OutputStreamWriter(captureServletOutputStream,
+                                               getCharacterEncoding()));
             }
             return printWriter;
         }
