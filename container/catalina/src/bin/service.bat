@@ -68,6 +68,7 @@ goto end
 rem Install the service
 echo Installing the service '%SERVICE_NAME%' ...
 echo Using CATALINA_HOME:    %CATALINA_HOME%
+echo Using CATALINA_BASE:    %CATALINA_BASE%
 echo Using JAVA_HOME:        %JAVA_HOME%
 
 rem Use the environment variables as an exaple
@@ -75,7 +76,7 @@ rem Each command line option is prefixed with PR_
 
 set PR_DESCRIPTION=Apache Tomcat Server - http://jakarta.apache.org/tomcat
 set PR_INSTALL=%EXECUTABLE%
-set PR_LOGPATH=%CATALINA_HOME%\logs
+set PR_LOGPATH=%CATALINA_BASE%\logs
 set PR_CLASSPATH=%CATALINA_HOME%\bin\bootstrap.jar
 rem Set the server jvm from JAVA_HOME
 set PR_JVM=%JAVA_HOME%\jre\bin\server\jvm.dll
@@ -101,7 +102,7 @@ set PR_JVM=
 rem Set extra parameters
 "%EXECUTABLE%" //US//%SERVICE_NAME% --JvmOptions "-Dcatalina.base=%CATALINA_BASE%;-Dcatalina.home=%CATALINA_HOME%;-Djava.endorsed.dirs=%CATALINA_HOME%\common\endorsed" --StartMode jvm --StopMode jvm
 rem More extra parameters
-set PR_LOGPATH=%CATALINA_HOME%\logs
+set PR_LOGPATH=%CATALINA_BASE%\logs
 set PR_STDOUTPUT=auto
 set PR_STDERROR=auto
 "%EXECUTABLE%" //US//%SERVICE_NAME% ++JvmOptions "-Djava.io.tmpdir=%CATALINA_BASE%\temp" --JvmMs 128 --JvmMx 256
