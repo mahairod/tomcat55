@@ -142,6 +142,9 @@
       <update>
         <bug>34675</bug>: Updated Proxy-HowTo page with Servlet API calls. (yoavs)
       </update>
+      <fix>
+        <bug>34546</bug>: Fix problem where the "first" Valve couldn't be removed from a Pipeline. (billbarker)
+      </fix>
     </changelog>
   </subsection>
   
