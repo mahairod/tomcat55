@@ -515,7 +515,13 @@ public class StandardPipeline
      */
     public void removeValve(Valve valve) {
 
-        Valve current = first;
+        Valve current;
+        if(first == valve) {
+            first = first.getNext();
+            current = null;
+        } else {
+            current = first;
+        }
         while (current != null) {
             if (current.getNext() == valve) {
                 current.setNext(valve.getNext());
