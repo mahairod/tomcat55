@@ -68,7 +68,7 @@ import org.apache.catalina.util.ParameterMap;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.StringParser;
-import org.apache.commons.logging.Log;
+
 
 /**
  * Wrapper object for the Coyote request.
@@ -350,11 +350,6 @@ public class Request
      */
     protected String localName = null;
 
-    /** After the request is mapped to a ServletContext, we can also
-     * map it to a logger.
-     */ 
-    protected Log log=null;
-    
     // --------------------------------------------------------- Public Methods
 
     /**
@@ -399,7 +394,6 @@ public class Request
         requestedSessionCookie = false;
         requestedSessionId = null;
         requestedSessionURL = false;
-        log = null;
 
         parameterMap.setLocked(false);
         parameterMap.clear();
@@ -2347,7 +2341,8 @@ public class Request
         if (len > 0) {
             int maxPostSize = connector.getMaxPostSize();
             if ((maxPostSize > 0) && (len > maxPostSize)) {
-                log.info(sm.getString("coyoteRequest.postTooLarge"));
+                context.getLogger().info
+                    (sm.getString("coyoteRequest.postTooLarge"));
                 throw new IllegalStateException("Post too large");
             }
             try {
