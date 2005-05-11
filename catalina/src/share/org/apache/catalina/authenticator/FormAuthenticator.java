@@ -19,11 +19,11 @@ package org.apache.catalina.authenticator;
 
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
@@ -36,9 +36,12 @@ import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.coyote.InputBuffer;
+import org.apache.coyote.http11.InputFilter;
+import org.apache.coyote.http11.InternalInputBuffer;
+import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.CharChunk;
 import org.apache.tomcat.util.buf.MessageBytes;
-
 
 
 /**
@@ -187,7 +190,8 @@ public class FormAuthenticator
         if (matchRequest(request)) {
             session = request.getSessionInternal(true);
             if (log.isDebugEnabled())
-                log.debug("Restore request from session '" + session.getIdInternal() 
+                log.debug("Restore request from session '"
+                          + session.getIdInternal() 
                           + "'");
             principal = (Principal)
                 session.getNote(Constants.FORM_PRINCIPAL_NOTE);
@@ -273,7 +277,8 @@ public class FormAuthenticator
             session = request.getSessionInternal(false);
         if (session == null) {
             if (containerLog.isDebugEnabled())
-                containerLog.debug("User took so long to log on the session expired");
+                containerLog.debug
+                    ("User took so long to log on the session expired");
             response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT,
                                sm.getString("authenticator.sessionExpired"));
             return (false);
@@ -345,7 +350,8 @@ public class FormAuthenticator
      * @param request The request to be restored
      * @param session The session containing the saved information
      */
-    protected boolean restoreRequest(Request request, Session session) {
+    protected boolean restoreRequest(Request request, Session session)
+        throws IOException {
 
         // Retrieve and remove the SavedRequest object from our session
         SavedRequest saved = (SavedRequest)
@@ -361,7 +367,8 @@ public class FormAuthenticator
         while (cookies.hasNext()) {
             request.addCookie((Cookie) cookies.next());
         }
-        request.clearHeaders();
+
+        request.getCoyoteRequest().getMimeHeaders().recycle();
         Iterator names = saved.getHeaderNames();
         while (names.hasNext()) {
             String name = (String) names.next();
@@ -370,24 +377,39 @@ public class FormAuthenticator
                 request.addHeader(name, (String) values.next());
             }
         }
+        
         request.clearLocales();
         Iterator locales = saved.getLocales();
         while (locales.hasNext()) {
             request.addLocale((Locale) locales.next());
         }
-        request.clearParameters();
+        
+        request.getCoyoteRequest().getParameters().recycle();
+        
         if ("POST".equalsIgnoreCase(saved.getMethod())) {
-            Iterator paramNames = saved.getParameterNames();
-            while (paramNames.hasNext()) {
-                String paramName = (String) paramNames.next();
-                String paramValues[] =
-                    saved.getParameterValues(paramName);
-                request.addParameter(paramName, paramValues);
-            }
+            ByteChunk body = saved.getBody();
+
+            // Set content length
+            request.getCoyoteRequest().setContentLength(body.getLength());
+
+            // Restore body
+            InputFilter savedBody = new SavedRequestInputFilter(body);
+            InternalInputBuffer internalBuffer = (InternalInputBuffer)
+                request.getCoyoteRequest().getInputBuffer();
+            internalBuffer.addActiveFilter(savedBody);
+
+            // Set content type
+            MessageBytes contentType = MessageBytes.newInstance();
+            contentType.setString("application/x-www-form-urlencoded");
+            request.getCoyoteRequest().setContentType(contentType);
         }
-        request.setMethod(saved.getMethod());
-        request.setQueryString(saved.getQueryString());
-        request.setRequestURI(saved.getRequestURI());
+        request.getCoyoteRequest().method().setString(saved.getMethod());
+
+        request.getCoyoteRequest().queryString().setString
+            (saved.getQueryString());
+
+        request.getCoyoteRequest().requestURI().setString
+            (saved.getRequestURI());
         return (true);
 
     }
@@ -398,8 +420,10 @@ public class FormAuthenticator
      *
      * @param request The request to be saved
      * @param session The session to contain the saved information
+     * @throws IOException
      */
-    private void saveRequest(Request request, Session session) {
+    private void saveRequest(Request request, Session session)
+        throws IOException {
 
         // Create and populate a SavedRequest object for this request
         SavedRequest saved = new SavedRequest();
@@ -422,13 +446,22 @@ public class FormAuthenticator
             Locale locale = (Locale) locales.nextElement();
             saved.addLocale(locale);
         }
-        Map parameters = request.getParameterMap();
-        Iterator paramNames = parameters.keySet().iterator();
-        while (paramNames.hasNext()) {
-            String paramName = (String) paramNames.next();
-            String paramValues[] = (String[]) parameters.get(paramName);
-            saved.addParameter(paramName, paramValues);
+
+        if ("POST".equalsIgnoreCase(request.getMethod())) {
+            // Note that the size of the request body is limited by:
+            // request.getConnector().getMaxPostSize()
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            InputStream is = request.getInputStream();
+            ByteChunk body = new ByteChunk();
+            
+            while ( (bytesRead = is.read(buffer) ) >= 0) {
+                body.append(buffer, 0, bytesRead);
+            }
+            saved.setBody(body);
         }
+
         saved.setMethod(request.getMethod());
         saved.setQueryString(request.getQueryString());
         saved.setRequestURI(request.getRequestURI());
@@ -460,5 +493,36 @@ public class FormAuthenticator
 
     }
 
+    protected class SavedRequestInputFilter implements InputFilter {
+
+        protected ByteChunk input = null;
+
+        public SavedRequestInputFilter(ByteChunk input) {
+            this.input = input;
+        }
+
+        public int doRead(ByteChunk chunk, org.apache.coyote.Request request)
+        throws IOException {
+            return input.substract(chunk);
+        }
+
+		public void setRequest(org.apache.coyote.Request request) {
+		}
+
+		public void recycle() {
+            input = null;
+		}
+
+		public ByteChunk getEncodingName() {
+			return null;
+		}
+
+		public void setBuffer(InputBuffer buffer) {
+		}
+
+		public long end() throws IOException {
+			return 0;
+		}
+    }
 
 }
