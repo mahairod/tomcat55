@@ -145,6 +145,9 @@
       <fix>
         <bug>34546</bug>: Fix problem where the "first" Valve couldn't be removed from a Pipeline. (billbarker)
       </fix>
+      <fix>
+        Fix NPE when POST size exceeds limit defined by maxPostSize. (markt)
+      </fix>
     </changelog>
   </subsection>
   
