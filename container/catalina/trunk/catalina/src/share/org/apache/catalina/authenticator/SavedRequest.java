@@ -25,6 +25,8 @@ import java.util.Locale;
 
 import javax.servlet.http.Cookie;
 
+import org.apache.tomcat.util.buf.ByteChunk;
+
 
 /**
  * Object that saves the critical information from a request so that
@@ -34,11 +36,6 @@ import javax.servlet.http.Cookie;
  * <b>IMPLEMENTATION NOTE</b> - It is assumed that this object is accessed
  * only from the context of a single thread, so no synchronization around
  * internal collection classes is performed.
- * <p>
- * <b>FIXME</b> - Currently, this object has no mechanism to save or
- * restore the data content of the request, although it does save
- * request parameters so that a POST transaction can be faithfully
- * duplicated.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
@@ -167,5 +164,17 @@ public final class SavedRequest {
         this.requestURI = requestURI;
     }
 
+    
+    /**
+     * The body of this request.
+     */
+    private ByteChunk body = null;
+    
+    public ByteChunk getBody() {
+        return (this.body);
+    }
 
+    public void setBody(ByteChunk body) {
+        this.body = body;
+    }
 }

@@ -148,6 +148,11 @@
       <fix>
         Fix NPE when POST size exceeds limit defined by maxPostSize. (markt)
       </fix>
+      <fix>
+        Fix FORM authentication so POSTed parameters are not assumed to be encoded with platform
+        default encoding. A side effect of this fix is that the bodies of POST requests that
+        require FORM authentication are now buffered and made available after a sucessful login. (markt)
+      </fix>
     </changelog>
   </subsection>
   
