@@ -53,7 +53,6 @@ import org.apache.tomcat.util.digester.Digester;
  * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
-
 public class HostConfig
     implements LifecycleListener {
     
@@ -575,15 +574,27 @@ public class HostConfig
             context.setPath(contextPath);
             // Add the associated docBase to the redeployed list if it's a WAR
             boolean isWar = false;
+            boolean isExternal = false;
             if (context.getDocBase() != null) {
                 File docBase = new File(context.getDocBase());
                 if (!docBase.isAbsolute()) {
                     docBase = new File(appBase(), context.getDocBase());
                 }
-                deployedApp.redeployResources.put(docBase.getAbsolutePath(),
+                // If external docBase, register .xml as redeploy first
+                if (!docBase.getAbsolutePath().startsWith(appBase().getAbsolutePath())) {
+                    isExternal = true;
+                    deployedApp.redeployResources.put
+                        (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
+                    deployedApp.redeployResources.put(docBase.getAbsolutePath(),
                         new Long(docBase.lastModified()));
-                if (docBase.getAbsolutePath().toLowerCase().endsWith(".war")) {
-                    isWar = true;
+                    if (docBase.getAbsolutePath().toLowerCase().endsWith(".war")) {
+                        isWar = true;
+                    }
+                } else {
+                    log.warn(sm.getString("hostConfig.deployDescriptor.localDocBaseSpecified",
+                             docBase));
+                    // Ignore specified docBase
+                    context.setDocBase(null);
                 }
             }
             host.addChild(context);
@@ -628,8 +639,10 @@ public class HostConfig
                     addWatchedResources(deployedApp, null, context);
                 }
                 // Add the context XML to the list of files which should trigger a redeployment
-                deployedApp.redeployResources.put
-                    (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
+                if (!isExternal) {
+                    deployedApp.redeployResources.put
+                        (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
+                }
             }
         } catch (Throwable t) {
             log.error(sm.getString("hostConfig.deployDescriptor.error",
