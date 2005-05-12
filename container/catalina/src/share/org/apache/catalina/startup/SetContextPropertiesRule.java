@@ -55,7 +55,7 @@ public class SetContextPropertiesRule extends Rule {
             if ("".equals(name)) {
                 name = attributes.getQName(i);
             }
-            if ("path".equals(name)) {
+            if ("path".equals(name) || "docBase".equals(name)) {
                 continue;
             }
             String value = attributes.getValue(i);
