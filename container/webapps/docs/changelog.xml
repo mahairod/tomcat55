@@ -153,6 +153,10 @@
         default encoding. A side effect of this fix is that the bodies of POST requests that
         require FORM authentication are now buffered and made available after a sucessful login. (markt)
       </fix>
+      <fix>
+        <bug>34840</bug>: Better handling of external WARs redeployment, and ignore docBase specified
+        in context file if within the Host appBase (remm)
+      </fix>
     </changelog>
   </subsection>
   
@@ -199,6 +203,9 @@
         <bug>34652</bug>: Add the ability to get SMAPs when precompiling, submitted by
         Daryl Robbins (remm)
       </update>
+      <fix>
+        <bug>34465</bug>: Jspc failure if there is no web.xml, submitted by Yoichi Hirose (remm)
+      </fix>
     </changelog>
   </subsection>
   
