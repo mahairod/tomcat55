@@ -235,7 +235,13 @@ public class JspCServletContext implements ServletContext {
         if (!path.startsWith("/"))
             throw new MalformedURLException("Path '" + path +
                                             "' does not start with '/'");
-        return (new URL(myResourceBaseURL, path.substring(1)));
+        URL url = new URL(myResourceBaseURL, path.substring(1));
+        if ("file".equals(url.getProtocol())) {
+            if (!(new File(url.getFile())).exists()) {
+                return null;
+            }
+        }
+        return url;
 
     }
 
