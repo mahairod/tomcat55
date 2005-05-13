@@ -204,7 +204,7 @@
         Daryl Robbins (remm)
       </update>
       <fix>
-        <bug>34465</bug>: Jspc failure if there is no web.xml, submitted by Yoichi Hirose (remm)
+        <bug>34465</bug>: Jspc failure if there is no web.xml (remm)
       </fix>
     </changelog>
   </subsection>
