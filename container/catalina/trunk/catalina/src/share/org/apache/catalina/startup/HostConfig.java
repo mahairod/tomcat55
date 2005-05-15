@@ -581,7 +581,7 @@ public class HostConfig
                     docBase = new File(appBase(), context.getDocBase());
                 }
                 // If external docBase, register .xml as redeploy first
-                if (!docBase.getAbsolutePath().startsWith(appBase().getAbsolutePath())) {
+                if (!docBase.getCanonicalPath().startsWith(appBase().getAbsolutePath())) {
                     isExternal = true;
                     deployedApp.redeployResources.put
                         (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
