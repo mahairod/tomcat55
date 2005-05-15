@@ -181,6 +181,9 @@
       <add>
         <bug>34648</bug>: Add configuration option to enable IP-based Virtual Hosts. (billbarker)
       </add>
+      <update>
+        Refactor the AJP/1.3 Connector to be able to handle more advanced Actions. (billbarker)
+      </update>
      </changelog>
   </subsection>
 
