@@ -6,7 +6,7 @@
     <logo href="./images/tomcat.gif">The Apache Tomcat Project</logo>
 
     <body>
-    <menu name="Tomcat">
+    <menu name="Apache Tomcat">
         <item name="Home"                 href="/index.html"/>
         <item name="Bug Database"         href="/bugreport.html"/>
         <item name="Resources"            href="/resources.html"/>
@@ -15,22 +15,22 @@
     </menu>
 
     <menu name="Documentation">
-        <item name="Tomcat 5.5"           href="/tomcat-5.5-doc/index.html"/>
-        <item name="Tomcat 5.0"           href="/tomcat-5.0-doc/index.html"/>
-        <item name="Tomcat 4.1"           href="/tomcat-4.1-doc/index.html"/>
-        <item name="Tomcat 3.3"           href="/tomcat-3.3-doc/index.html"/>
+        <item name="Apache Tomcat 5.5"           href="/tomcat-5.5-doc/index.html"/>
+        <item name="Apache Tomcat 5.0"           href="/tomcat-5.0-doc/index.html"/>
+        <item name="Apache Tomcat 4.1"           href="/tomcat-4.1-doc/index.html"/>
+        <item name="Apache Tomcat 3.3"           href="/tomcat-3.3-doc/index.html"/>
     </menu>
 
     <menu name="Download">
         <item name="Current Releases"     href="/site/downloads/downloads_tomcat-5.cgi" />
-        <item name="Tomcat 5.x"    href="http://archive.apache.org/dist/jakarta/tomcat-5/" />
-        <item name="Tomcat 4.x"    href="http://archive.apache.org/dist/jakarta/tomcat-4/" />
-        <item name="Tomcat 3.x"    href="http://archive.apache.org/dist/jakarta/tomcat-3/" />
+        <item name="Apache Tomcat 5.x"    href="http://archive.apache.org/dist/jakarta/tomcat-5/" />
+        <item name="Apache Tomcat 4.x"    href="http://archive.apache.org/dist/jakarta/tomcat-4/" />
+        <item name="Apache Tomcat 3.x"    href="http://archive.apache.org/dist/jakarta/tomcat-3/" />
     </menu>
 
     <menu name="Archives">
-        <item name="Tomcat 4.0"           href="/tomcat-4.0-doc/index.html"/>
-        <item name="Tomcat 3.2"           href="/tomcat-3.2-doc/index.html"/>
+        <item name="Apache Tomcat 4.0"           href="/tomcat-4.0-doc/index.html"/>
+        <item name="Apache Tomcat 3.2"           href="/tomcat-3.2-doc/index.html"/>
     </menu>
 
     <menu name="Jakarta">

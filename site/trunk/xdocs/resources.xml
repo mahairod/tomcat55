@@ -3,7 +3,7 @@
 
   <properties>
     <author email="remm@apache.org">Remy Maucherat</author>
-    <title>Tomcat Resources</title>
+    <title>Apache Tomcat Resources</title>
   </properties>
 
 <body>
@@ -37,7 +37,7 @@
     <li>
       <b><a href="http://johnturner.com/howto/apache-tomcat-howto.html">mod_jk HOWTOs</a></b>, 
       by John Turner.  Please note that this is one of many documents explaining how to 
-      connect Apache HTTPD and Tomcat in various environment.  A list is maintained in
+      connect Apache HTTP Server and Apache Tomcat in various environment.  A list is maintained in
       the tomcat <a href="http://wiki.apache.org/jakarta-tomcat/Tomcat_2fLinks">wiki links page.</a>
     </li>
     <li>
