@@ -120,7 +120,7 @@
 	</target>
 
     <target name="copy" depends="dist" >
-       <copy file="${cluster.dist}/catalina-storeconfig.jar" todir="${catalina.build}/server/lib" />
+       <copy file="${config.dist}/catalina-storeconfig.jar" todir="${catalina.build}/server/lib" />
    </target>
 
 	<!-- ======================== DIST: Clean Directory ===================== -->

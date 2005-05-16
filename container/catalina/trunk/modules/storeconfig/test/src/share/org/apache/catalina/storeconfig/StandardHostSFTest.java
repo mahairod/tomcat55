@@ -99,7 +99,6 @@ public class StandardHostSFTest extends TestCase {
         String skippables[] = { "org.apache.catalina.core.StandardHostValve",
                 "org.apache.catalina.valves.CertificatesValve",
                 "org.apache.catalina.valves.ErrorReportValve",
-                "org.apache.catalina.cluster.tcp.ReplicationValve",
                 "org.apache.catalina.valves.RequestListenerValve", };
         for (int i = 0; i < skippables.length; i++)
             valvedesc.addTransientChild(skippables[i]);

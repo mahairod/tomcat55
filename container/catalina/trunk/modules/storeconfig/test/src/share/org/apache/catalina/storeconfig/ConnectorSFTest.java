@@ -15,8 +15,10 @@
  */
 package org.apache.catalina.storeconfig;
 
+import java.beans.IntrospectionException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -108,6 +110,22 @@ public class ConnectorSFTest extends TestCase {
     }
 
     public void testSSL() throws Exception {
+        setupSecureConnector();
+        String aspectedResult = "<Connector" + LF.LINE_SEPARATOR
+                + "    port=\"8443\"" + LF.LINE_SEPARATOR
+                + "    scheme=\"https\"" + LF.LINE_SEPARATOR
+                + "    secure=\"true\"" + LF.LINE_SEPARATOR
+                + "    minSpareThreads=\"30\"" + LF.LINE_SEPARATOR
+                + "    clientAuth=\"false\"" + LF.LINE_SEPARATOR
+                + "    keystorePass=\"changeit\"" + LF.LINE_SEPARATOR
+                + "    keystoreFile=\"conf/catalina.keystore\""
+                + LF.LINE_SEPARATOR + "    maxSpareThreads=\"175\""
+                + LF.LINE_SEPARATOR + "    sslProtocol=\"TLS\">"
+                + LF.LINE_SEPARATOR + "</Connector>" + LF.LINE_SEPARATOR;
+        check(aspectedResult);
+    }
+
+    protected void setupSecureConnector() {
         connector.setPort(8443);
         connector.setProperty("minSpareThreads", "30");
         connector.setProperty("maxSpareThreads", "175");
@@ -120,20 +138,15 @@ public class ConnectorSFTest extends TestCase {
         connector.setProperty("sslProtocol", "TLS");
         connector.setProperty("keystoreFile", "conf/catalina.keystore");
         connector.setProperty("keystorePass", "changeit");
-
-        String aspectedResult = "<Connector" + LF.LINE_SEPARATOR
-                + "    port=\"8443\"" + LF.LINE_SEPARATOR
-                + "    scheme=\"https\"" + LF.LINE_SEPARATOR
-                + "    secure=\"true\"" + LF.LINE_SEPARATOR
-                + "    minSpareThreads=\"30\"" + LF.LINE_SEPARATOR
-                + "    clientAuth=\"false\"" + LF.LINE_SEPARATOR
-                + "    keystorePass=\"changeit\"" + LF.LINE_SEPARATOR
-                + "    keystoreFile=\"conf/catalina.keystore\""
-                + LF.LINE_SEPARATOR + "    maxSpareThreads=\"175\">"
-                + LF.LINE_SEPARATOR + "</Connector>" + LF.LINE_SEPARATOR;
-        check(aspectedResult);
     }
 
+    public void testConnectorAppender() throws IntrospectionException {
+        setupSecureConnector();
+        ConnectorStoreAppender appender = (ConnectorStoreAppender)desc.getStoreFactory().getStoreAppender();
+        List propertyList = appender.getPropertyKeys(connector);
+        assertTrue(propertyList.contains("protocol"));   
+    }
+    
     public void testStoreEmpty() throws Exception {
         String aspectedResult = "<Connector>" + LF.LINE_SEPARATOR
                 + "</Connector>" + LF.LINE_SEPARATOR;

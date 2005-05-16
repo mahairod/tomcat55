@@ -27,10 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.catalina.Container;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.core.StandardHost;
 import org.apache.coyote.ProtocolHandler;
 import org.apache.tomcat.util.IntrospectionUtils;
 
@@ -97,6 +94,9 @@ public class ConnectorStoreAppender extends StoreAppender {
         for (Iterator propertyIterator = propertyKeys.iterator(); propertyIterator
                 .hasNext();) {
             String key = (String) propertyIterator.next();
+            if (replacements.get(key) != null) {
+                key = (String) replacements.get(key);
+            }
             Object value = (Object) IntrospectionUtils.getProperty(bean, key);
 
             if (desc.isTransientAttribute(key)) {
@@ -230,9 +230,8 @@ public class ConnectorStoreAppender extends StoreAppender {
     }
     
     /*
-     * Print Context Values. <ul><li> Spezial handling to default workDir.
-     * </li><li> Don't save path at external context.xml </li><li> Don't
-     * generate docBase for host.appBase webapps <LI></ul>
+     * Print Connector Values. <ul><li> Spezial handling to default jkHome.
+     * </li><li> Don't save catalina.base path at server.xml</li><li></ul>
      * 
      * @see org.apache.catalina.config.StoreAppender#isPrintValue(java.lang.Object,
      *      java.lang.Object, java.lang.String,
