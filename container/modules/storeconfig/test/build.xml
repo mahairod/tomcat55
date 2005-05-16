@@ -70,7 +70,7 @@
 	<target name="test" depends="compile,genstore" description="Run unit tests">
 		<delete dir="${test.results}" />
 		<mkdir dir="${test.results}" />
-		<junit fork="yes" failureProperty="test.failure">
+		<junit fork="yes" failureProperty="test.failure" filtertrace="false" >
 			<jvmarg value="-Dcatalina.base=${basedir}" />
 			<jvmarg value="-Dcatalina.home=${catalina.home}" />
 			<jvmarg value="-Dlog4j.configuration=file:conf/log4j.xml" />

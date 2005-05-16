@@ -18,9 +18,7 @@ package org.apache.catalina.storeconfig;
 
 import java.io.PrintWriter;
 
-import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Pipeline;
 import org.apache.catalina.Valve;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterDeployer;
