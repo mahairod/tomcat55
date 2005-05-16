@@ -37,8 +37,7 @@ import org.apache.catalina.deploy.LoginConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.coyote.InputBuffer;
-import org.apache.coyote.http11.InputFilter;
-import org.apache.coyote.http11.InternalInputBuffer;
+import org.apache.coyote.ActionCode;
 import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.CharChunk;
 import org.apache.tomcat.util.buf.MessageBytes;
@@ -389,14 +388,7 @@ public class FormAuthenticator
         if ("POST".equalsIgnoreCase(saved.getMethod())) {
             ByteChunk body = saved.getBody();
 
-            // Set content length
-            request.getCoyoteRequest().setContentLength(body.getLength());
-
-            // Restore body
-            InputFilter savedBody = new SavedRequestInputFilter(body);
-            InternalInputBuffer internalBuffer = (InternalInputBuffer)
-                request.getCoyoteRequest().getInputBuffer();
-            internalBuffer.addActiveFilter(savedBody);
+	    request.action(ActionCode.ACTION_REQ_SET_BODY_REPLAY, body);
 
             // Set content type
             MessageBytes contentType = MessageBytes.newInstance();
