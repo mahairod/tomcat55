@@ -388,7 +388,7 @@ public class FormAuthenticator
         if ("POST".equalsIgnoreCase(saved.getMethod())) {
             ByteChunk body = saved.getBody();
 
-	    request.action(ActionCode.ACTION_REQ_SET_BODY_REPLAY, body);
+	    request.getCoyoteRequest().action(ActionCode.ACTION_REQ_SET_BODY_REPLAY, body);
 
             // Set content type
             MessageBytes contentType = MessageBytes.newInstance();
@@ -485,36 +485,5 @@ public class FormAuthenticator
 
     }
 
-    protected class SavedRequestInputFilter implements InputFilter {
-
-        protected ByteChunk input = null;
-
-        public SavedRequestInputFilter(ByteChunk input) {
-            this.input = input;
-        }
-
-        public int doRead(ByteChunk chunk, org.apache.coyote.Request request)
-        throws IOException {
-            return input.substract(chunk);
-        }
-
-		public void setRequest(org.apache.coyote.Request request) {
-		}
-
-		public void recycle() {
-            input = null;
-		}
-
-		public ByteChunk getEncodingName() {
-			return null;
-		}
-
-		public void setBuffer(InputBuffer buffer) {
-		}
-
-		public long end() throws IOException {
-			return 0;
-		}
-    }
 
 }
