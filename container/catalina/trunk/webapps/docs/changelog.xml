@@ -29,8 +29,11 @@
 <section name="Tomcat 5.5.10 (yoavs)">
   <subsection name="General">
     <changelog>
+      <fix>
+        StoreConfig save now the Connector.sslProtocol attribute. (pero)
+      </fix>
       <update>
-        change log dir at service.bat to "$CATALINA_BASE/logs" for better multi instance support (pero)
+        Change log dir at service.bat to "$CATALINA_BASE/logs" for better multi instance support. (pero)
       </update>
       <update>
         <bug>33522</bug>: Update jasper-howto to reflect use of javac switch. (yoavs)
