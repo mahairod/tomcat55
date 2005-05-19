@@ -639,7 +639,7 @@ public class OutputBuffer extends Writer
         charsWritten = 0;
         gotEnc = false;
         enc = null;
-
+        state = INITIAL_STATE;
     }
 
 
