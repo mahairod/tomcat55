@@ -899,6 +899,10 @@ public class Connector
 
         Response response = new Response();
         response.setConnector(this);
+        if("AJP/1.3".equals(getProtocol())) {
+            // we can't shrink it, so set to 2*max-ajp-packet-size
+            response.setBufferSize(2*8184);
+        }
         return (response);
 
     }
