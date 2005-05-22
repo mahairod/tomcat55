@@ -36,7 +36,6 @@ import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.coyote.InputBuffer;
 import org.apache.coyote.ActionCode;
 import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.CharChunk;
@@ -233,7 +232,14 @@ public class FormAuthenticator
             session = request.getSessionInternal(true);
             if (log.isDebugEnabled())
                 log.debug("Save request in session '" + session.getIdInternal() + "'");
-            saveRequest(request, session);
+            try {
+                saveRequest(request, session);
+            } catch (IOException ioe) {
+                log.debug("Request body too big to save during authentication");
+                response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                        sm.getString("authenticator.requestBodyTooBig"));
+                return (false);
+            }
             RequestDispatcher disp =
                 context.getServletContext().getRequestDispatcher
                 (config.getLoginPage());
@@ -387,13 +393,16 @@ public class FormAuthenticator
         
         if ("POST".equalsIgnoreCase(saved.getMethod())) {
             ByteChunk body = saved.getBody();
-
-	    request.getCoyoteRequest().action(ActionCode.ACTION_REQ_SET_BODY_REPLAY, body);
-
-            // Set content type
-            MessageBytes contentType = MessageBytes.newInstance();
-            contentType.setString("application/x-www-form-urlencoded");
-            request.getCoyoteRequest().setContentType(contentType);
+            
+            if (body != null) {
+                request.getCoyoteRequest().action
+                    (ActionCode.ACTION_REQ_SET_BODY_REPLAY, body);
+    
+                // Set content type
+                MessageBytes contentType = MessageBytes.newInstance();
+                contentType.setString("application/x-www-form-urlencoded");
+                request.getCoyoteRequest().setContentType(contentType);
+            }
         }
         request.getCoyoteRequest().method().setString(saved.getMethod());
 
@@ -440,14 +449,13 @@ public class FormAuthenticator
         }
 
         if ("POST".equalsIgnoreCase(request.getMethod())) {
-            // Note that the size of the request body is limited by:
-            // request.getConnector().getMaxPostSize()
+            ByteChunk body = new ByteChunk();
+            body.setLimit(request.getConnector().getMaxSavePostSize());
 
             byte[] buffer = new byte[4096];
             int bytesRead;
             InputStream is = request.getInputStream();
-            ByteChunk body = new ByteChunk();
-            
+        
             while ( (bytesRead = is.read(buffer) ) >= 0) {
                 body.append(buffer, 0, bytesRead);
             }
