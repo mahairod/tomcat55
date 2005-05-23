@@ -55,7 +55,7 @@ configure the behaviour of the CGI servlet.
 <ul>
 <li><strong>cgiPathPrefix</strong> - The CGI search path will start at
 the web application root directory + File.separator + this prefix.
-The default cgiPathPrefix is <code>/WEB-INF/cgi</code></li>
+The default cgiPathPrefix is <code>WEB-INF/cgi</code></li>
 <li><strong>debug</strong> - Debugging detail level for messages logged
 by this servlet. Default 0.</li>
 <li><strong>executable</strong> - The of the executable to be used to
