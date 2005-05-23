@@ -29,6 +29,8 @@ during development when you don't want to run a web server like Apache.</p>
 this servlet is mapped to the URL pattern "/cgi-bin/*".</p>
 
 <p>By default CGI support is disabled in Tomcat.</p>
+
+<p>Note that the CGI Servlet requires a 1.3 or later JDK.</p>
 </section>
 
 <section name="Installation">
