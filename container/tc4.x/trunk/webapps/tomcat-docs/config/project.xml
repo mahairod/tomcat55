@@ -21,13 +21,21 @@
         <item name="Service"               href="service.html"/>
     </menu>
 
-    <menu name="Connectors">
+    <menu name="Current Connectors">
         <item name="JTC Connectors"        href="connectors.html"/>
         <item name="Coyote HTTP/1.1"       href="coyote.html"/>
+        <item name="Coyote JK"             href="coyotejk.html"/>
         <item name="JK"                    href="jk.html"/>
+        <item name="mod_proxy_ajp"
+              href="http://httpd.apache.org/docs-2.1/mod/mod_proxy_ajp.html"/>
+    </menu>
+
+    <menu name="Deprecated Connectors">
+        <item name="JTC Connectors"        href="connectors.html"/>
         <item name="HTTP/1.1"              href="http11.html"/>
-        <item name="JK 2"                  href="jk2.html"/>
+        <item name="AJP/1.3"               href="ajp13.html"/>
         <item name="Webapp"                href="webapp.html"/>
+        <item name="JK2"                   href="jk2.html"/>
     </menu>
 
     <menu name="Containers">

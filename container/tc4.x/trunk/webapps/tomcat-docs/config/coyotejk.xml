@@ -2,13 +2,13 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document url="webapp.html">
+<document url="coyotejk.html">
 
   &project;
 
   <properties>
-    <author email="craigmcc@apache.org">Craig R. McClanahan</author>
-    <title>The Webapp Connector</title>
+    <author email="remm@apache.org">Remy Maucherat</author>
+    <title>The Coyote JK Connector</title>
   </properties>
 
 <body>
@@ -16,27 +16,22 @@
 
 <section name="Introduction">
 
-  <p><b>IMPORTANT NOTE: The Webapp connector is now deprecated. Use the 
-  <a href="coyotejk.html">Coyote JK Connector</a> with
-  <a href="jk.html">JK</a> or
-  <a href="http://httpd.apache.org/docs-2.1/mod/mod_proxy_ajp.html">
-  mod_proxy_ajp</a> instead.</b></p>
-
-  <p>The <strong>Webapp Connector</strong> element represents a
+  <p>The <strong>Coyote JK Connector</strong> element represents a
   <strong>Connector</strong> component that communicates with a web
-  connector via the <code>WARP</code> protocol.  This is used for cases
-  where you wish to invisibly integrate Tomcat 4 into an existing (or new)
-  Apache installation, and you want Apache to handle the static content
-  contained in the web application, and/or utilize Apache's SSL
-  processing.  In many application environments, this will result in
-  better overall performance than running your applications under
-  Tomcat stand-alone using the
-  <a href="http11.html">HTTP/1.1 Connector</a>. However, the only way
-  to know for sure whether it will provide better performance for
-  <strong>your</strong> application is to try it both ways.</p>
+  connector via the <code>JK</code> protocol (also known as the AJP protocol).
+  This is used for cases where you wish to invisibly integrate Tomcat 4 into 
+  an existing (or new) web server installation, and you want the web server to
+  handle the static content contained in the web application, and/or utilize 
+  the web server's SSL processing.  In many application environments, this will 
+  result in better overall performance than running your applications under
+  Tomcat stand-alone using the <a href="coyote.html">Coyote HTTP/1.1
+  Connector</a>. However, the only way to know for sure whether it will
+  provide better performance for <strong>your</strong> application is to try
+  it both ways.</p>
 
-  <p><strong>FIXME</strong> - general description of what happens at server
-  startup time when you have the WARP Connector configured.</p>
+  <p>This connector supports load balancing when used in conjunction with
+  the <code>jvmRoute</code> attribute of the 
+  <a href="engine.html">Engine</a>.</p>
 
 </section>
 
@@ -87,18 +82,33 @@
       SSL Connector).  The default value is <code>false</code>.</p>
     </attribute>
 
-  </attributes>
+    <attribute name="URIEncoding" required="false">
+      <p>This specifies the character encoding used to decode the URI bytes,
+      after %xx decoding the URL. If not specified, ISO-8859-1 will be used.
+      </p>
+    </attribute>
 
-  <p><strong>FIXME</strong> - Update the above descriptions for anything
-  that the WARP Connector delegates to Apache.</p>
+    <attribute name="useBodyEncodingForURI" required="false">
+      <p>This specifies if the encoding specified in contentType should be used
+      for URI query parameters, instead of using the URIEncoding. This
+      setting is present for compatibility with Tomcat 4.1.27 and earlier.
+      The default value is <code>true</code>.
+      </p>
+    </attribute>
+
+  </attributes>
 
   </subsection>
 
   <subsection name="Standard Implementation">
 
-  <p>The standard implementation of <strong>Webapp Connector</strong> is
-  <strong>org.apache.catalina.connector.warp.WarpConnector</strong>.
-  It supports the following additional attributes (in addition to the
+  <p>The standard implementation of <strong>Coyote JK Connector</strong> is
+  <strong>org.apache.coyote.tomcat4.CoyoteConnector</strong>, but you
+  must specify the protocolHandlerClassName attribute (see below).</p>
+
+  <p><strong>This implementation supports the AJP/1.3 protocol.</strong></p>
+
+  <p>It supports the following additional attributes (in addition to the
   common attributes listed above):</p>
 
   <attributes>
@@ -137,10 +147,10 @@
       to a particular port number on a particular IP address.</p>
     </attribute>
 
-    <attribute name="appBase" required="false">
-      <p>Set the applications base directory for <strong>Hosts </strong>
-      created via WARP.
-      The default value is "webapps".</p>
+    <attribute name="protocolHandlerClassName" required="false">
+      <p>This attribute value must be 
+      <code>org.apache.jk.server.JkCoyoteHandler</code> to use the JK 2
+      handler.</p>
     </attribute>
 
   </attributes>
@@ -152,28 +162,7 @@
 
 <section name="Nested Components">
 
-  <subsection name="WarpEngine">
-  
-  <p>mod-webapp offers a specific Engine when running the
-  <strong>Webapp Connector</strong> in its own
-  <a href="service.html">service</a>.
-  This Engine allows webapp to create and to map the
-  <a href="host.html">Hosts</a> corresponding to the VirtualHost defined in the
-  httpd.conf file.</p>
-  <p>The standard implementation of <strong>Webapp Engine</strong> is
-  <strong>org.apache.catalina.connector.warp.WarpEngine</strong>.
-  It supports the standard <a href="engine.html">Engine</a>.
-  attributes. </p>
-
-  </subsection>
-
-</section>
-
-
-<section name="Special Features">
-
-  <p><strong>FIXME</strong> - Document any special features supported by the
-  WARP Connector.</p>
+  <p></p>
 
 </section>
 

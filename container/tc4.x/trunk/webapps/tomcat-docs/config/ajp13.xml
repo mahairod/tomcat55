@@ -2,41 +2,38 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document url="webapp.html">
+<document url="ajp13.html">
 
   &project;
 
   <properties>
-    <author email="craigmcc@apache.org">Craig R. McClanahan</author>
-    <title>The Webapp Connector</title>
+    <author email="remm@apache.org">Remy Maucherat</author>
+    <title>The AJP/1.3 Connector</title>
   </properties>
 
 <body>
 
 
 <section name="Introduction">
+  <p><b>IMPORTANT NOTE: The AJP/1.3 Connector is now deprecated. Use the 
+  <a href="coyotejk.html">Coyote JK Connector</a> instead.</b></p>
 
-  <p><b>IMPORTANT NOTE: The Webapp connector is now deprecated. Use the 
-  <a href="coyotejk.html">Coyote JK Connector</a> with
-  <a href="jk.html">JK</a> or
-  <a href="http://httpd.apache.org/docs-2.1/mod/mod_proxy_ajp.html">
-  mod_proxy_ajp</a> instead.</b></p>
-
-  <p>The <strong>Webapp Connector</strong> element represents a
+  <p>The <strong>AJP/1.3 Connector</strong> element represents a
   <strong>Connector</strong> component that communicates with a web
-  connector via the <code>WARP</code> protocol.  This is used for cases
-  where you wish to invisibly integrate Tomcat 4 into an existing (or new)
-  Apache installation, and you want Apache to handle the static content
-  contained in the web application, and/or utilize Apache's SSL
-  processing.  In many application environments, this will result in
-  better overall performance than running your applications under
-  Tomcat stand-alone using the
-  <a href="http11.html">HTTP/1.1 Connector</a>. However, the only way
-  to know for sure whether it will provide better performance for
-  <strong>your</strong> application is to try it both ways.</p>
+  connector via the <code>JK</code> protocol (also known as the AJP protocol).
+  This is used for cases where you wish to invisibly integrate Tomcat 4 into 
+  an existing (or new) web server installation, and you want the web server to
+  handle the static content contained in the web application, and/or utilize 
+  the web server's SSL processing.  In many application environments, this will 
+  result in better overall performance than running your applications under
+  Tomcat stand-alone using the <a href="coyote.html">Coyote HTTP/1.1
+  Connector</a>. However, the only way to know for sure whether it will
+  provide better performance for <strong>your</strong> application is to try
+  it both ways.</p>
 
-  <p><strong>FIXME</strong> - general description of what happens at server
-  startup time when you have the WARP Connector configured.</p>
+  <p>This connector supports load balancing when used in conjunction with
+  the <code>jvmRoute</code> attribute of the 
+  <a href="engine.html">Engine</a>.</p>
 
 </section>
 
@@ -89,16 +86,17 @@
 
   </attributes>
 
-  <p><strong>FIXME</strong> - Update the above descriptions for anything
-  that the WARP Connector delegates to Apache.</p>
-
   </subsection>
 
   <subsection name="Standard Implementation">
 
-  <p>The standard implementation of <strong>Webapp Connector</strong> is
-  <strong>org.apache.catalina.connector.warp.WarpConnector</strong>.
-  It supports the following additional attributes (in addition to the
+  <p>The standard implementation of <strong>JK/AJP Connector</strong> is
+  <strong>org.apache.ajp.tomcat4.Ajp13Connector</strong>.</p>
+
+  <p><strong>This implementation supports the JK 1.3 and 1.4 protocols
+  (also known as AJP 1.3 and 1.4).</strong></p>
+
+  <p>It supports the following additional attributes (in addition to the
   common attributes listed above):</p>
 
   <attributes>
@@ -108,6 +106,13 @@
       all possible request processing threads are in use.  Any requests
       received when the queue is full will be refused.  The default
       value is 10.</p>
+    </attribute>
+
+    <attribute name="address" required="false">
+      <p>For servers with more than one IP address, this attribute
+      specifies which address will be used for listening on the specified
+      port.  By default, this port will be used on all IP addresses
+      associated with the server.</p>
     </attribute>
 
     <attribute name="debug" required="false">
@@ -121,6 +126,10 @@
       by this <strong>Connector</strong>, which therefore determines the
       maximum number of simultaneous requests that can be handled.  If
       not specified, this attribute is set to 20.</p>
+      <p><b>NOTE:</b>For Apache 1.3 on Unix there is a 1 to 1 mapping
+      between httpd processes and Ajp13Processors.  You must configure
+      maxProcessors to be greater than or equal to the maximum number
+      of httpd processes your Apache web server spawns.</p>
     </attribute>
 
     <attribute name="minProcessors" required="false">
@@ -137,10 +146,14 @@
       to a particular port number on a particular IP address.</p>
     </attribute>
 
-    <attribute name="appBase" required="false">
-      <p>Set the applications base directory for <strong>Hosts </strong>
-      created via WARP.
-      The default value is "webapps".</p>
+    <attribute name="tomcatAuthentication" required="false">
+      <p>This flag, which value defaults to <code>true</code>, indicates
+      whether or not authentication will be handled by Tomcat or the native 
+      web server. If the attribute value is <code>true</code>, any pricipal 
+      authenticated by the native web server will be ignored, and Tomcat will 
+      take care of the authentication. If the attribute value 
+      is <code>false</code>, Tomcat will not attempt to authenticate 
+      a principal if the native web server has already authenticated one.</p>
     </attribute>
 
   </attributes>
@@ -152,28 +165,7 @@
 
 <section name="Nested Components">
 
-  <subsection name="WarpEngine">
-  
-  <p>mod-webapp offers a specific Engine when running the
-  <strong>Webapp Connector</strong> in its own
-  <a href="service.html">service</a>.
-  This Engine allows webapp to create and to map the
-  <a href="host.html">Hosts</a> corresponding to the VirtualHost defined in the
-  httpd.conf file.</p>
-  <p>The standard implementation of <strong>Webapp Engine</strong> is
-  <strong>org.apache.catalina.connector.warp.WarpEngine</strong>.
-  It supports the standard <a href="engine.html">Engine</a>.
-  attributes. </p>
-
-  </subsection>
-
-</section>
-
-
-<section name="Special Features">
-
-  <p><strong>FIXME</strong> - Document any special features supported by the
-  WARP Connector.</p>
+  <p></p>
 
 </section>
 

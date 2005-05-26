@@ -17,7 +17,7 @@
 <section name="Introduction">
 
   <p><b>IMPORTANT NOTE: The HTTP/1.1 connector is now deprecated. Use
-  the Coyote HTTP/1.1 connector instead.</b></p>
+  the <a href="coyote.html">Coyote HTTP/1.1 Connector</a> instead.</b></p>
 
   <p><b>IMPORTANT NOTE: This connector MUST NOT be used in conjunction
   with any <a href="context.html">Context</a> element that has the
