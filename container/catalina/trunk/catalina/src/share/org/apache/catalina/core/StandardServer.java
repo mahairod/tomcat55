@@ -734,6 +734,7 @@ public final class StandardServer
                 log.info(sm.getString("standardServer.initialize.initialized"));
             return;
         }
+        lifecycle.fireLifecycleEvent(INIT_EVENT, null);
         initialized = true;
 
         if( oname==null ) {
