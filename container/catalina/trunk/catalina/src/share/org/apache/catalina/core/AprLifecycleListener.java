@@ -78,13 +78,9 @@ public class AprLifecycleListener
         } else if (Lifecycle.AFTER_STOP_EVENT.equals(event.getType())) {
             try {
                 String methodName = "terminate";
-                Class paramTypes[] = new Class[1];
-                paramTypes[0] = Boolean.TYPE;
-                Object paramValues[] = new Object[1];
-                paramValues[0] = Boolean.TRUE;
                 Method method = Class.forName("org.apache.tomcat.jni.Library")
-                    .getMethod(methodName, paramTypes);
-                method.invoke(null, paramValues);
+                    .getMethod(methodName, null);
+                method.invoke(null, null);
             } catch (Throwable t) {
                 if (!log.isDebugEnabled()) {
                     log.info(sm.getString("aprListener.aprDestroy"));
