@@ -57,13 +57,6 @@
 
   <attributes>
  
-    <attribute name="allowedAliasMatches" required="false">
-      <p>Set this attribute to max subdomain alias matches <code>16</code>. 
-      Is this attribute >0 the host alias element support Alias Matches 
-      (&lt;Alias&gt;*.mydomain.net"&lt;/Alias&gt; ).
-      The default value is <code>0</code> no host alias matches support.</p>
-    </attribute>
- 
     <attribute name="allowTrace" required="false">
       <p>A boolean value which can be used to enable or disable the TRACE
       HTTP method. If not specified, this attribute is set to false.</p>
