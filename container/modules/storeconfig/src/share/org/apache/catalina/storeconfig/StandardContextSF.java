@@ -315,9 +315,10 @@ public class StandardContextSF extends StoreFactoryBase {
      * @param wresources
      * @return
      * @throws IOException
-     *             TODO relative watchedresource TODO absolute handling
-     *             configFile TODO Filename case handling for Windows? TODO
-     *             digester variable subsitution $catalina.base, $catalina.home
+     * TODO relative watchedresource
+     * TODO absolute handling configFile
+     * TODO Filename case handling for Windows?
+     * TODO digester variable subsitution $catalina.base, $catalina.home
      */
     protected String[] filterWatchedResources(StandardContext context,
             String[] wresources) throws IOException {
@@ -327,7 +328,8 @@ public class StandardContextSF extends StoreFactoryBase {
         String confHostDefault = new File(configBase, "context.xml.default")
                 .getCanonicalPath();
         String configFile = context.getConfigFile();
-
+        String webxml = "WEB-INF/web.xml" ;
+        
         List resource = new ArrayList();
         for (int i = 0; i < wresources.length; i++) {
 
@@ -336,6 +338,8 @@ public class StandardContextSF extends StoreFactoryBase {
             if (wresources[i].equals(confHostDefault))
                 continue;
             if (wresources[i].equals(configFile))
+                continue;
+            if (wresources[i].equals(webxml))
                 continue;
             resource.add(wresources[i]);
         }
