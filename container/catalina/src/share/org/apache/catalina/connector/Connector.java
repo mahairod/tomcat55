@@ -42,8 +42,6 @@ import org.apache.coyote.ProtocolHandler;
 import org.apache.tomcat.util.IntrospectionUtils;
 import org.apache.tomcat.util.http.mapper.Mapper;
 
-import com.sun.org.apache.bcel.internal.generic.ALOAD;
-
 
 /**
  * Implementation of a Coyote connector for Tomcat 5.x.
@@ -1106,10 +1104,6 @@ public class Connector
         }
 
         if( this.domain != null ) {
-            Object allowedAliasMatches = getProperty("allowedAliasMatches") ;
-            if(allowedAliasMatches != null && allowedAliasMatches instanceof String )
-                IntrospectionUtils.setProperty(mapper, "allowedAliasMatches",
-                    (String)allowedAliasMatches);
             mapperListener.setDomain( domain );
             //mapperListener.setEngine( service.getContainer().getName() );
             mapperListener.init();
@@ -1119,7 +1113,7 @@ public class Connector
                     log.debug(sm.getString(
                             "coyoteConnector.MapperRegistration", mapperOname));
                 Registry.getRegistry(null, null).registerComponent
-                    (mapper, mapperOname, "Mapper");
+                    (mapper, createObjectName(this.domain,"Mapper"), "Mapper");
             } catch (Exception ex) {
                 log.error(sm.getString
                         ("coyoteConnector.protocolRegistrationFailed"), ex);
