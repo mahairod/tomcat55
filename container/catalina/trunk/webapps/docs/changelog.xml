@@ -72,6 +72,11 @@
   
   <subsection name="Catalina">
     <changelog>
+      <add>
+        Support Host Alias matching with Connector attribute allowedAliasMatches="max alias".
+        So we can easier integrate subdomain as host alias &lt;Alias&gt;*.mydomain.net"&lt;/Alias&gt;.
+        Submitted by George Sexton (pero)
+      </add>
       <fix>
         <bug>20380</bug>: Access log timestamps now take account of Daylight Saving
         Time (DST). (markt)
