@@ -813,7 +813,7 @@ public class Connector
     public void setSecure(boolean secure) {
 
         this.secure = secure;
-
+        setProperty("secure", Boolean.toString(secure));
     }
 
      /**
