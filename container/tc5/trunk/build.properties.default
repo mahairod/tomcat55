@@ -59,7 +59,10 @@ base-xml.loc=http://archive.apache.org/dist/xml
 base-struts.loc=http://archive.apache.org/dist/struts
 
 # ----- Sourceforge files base location -----
-base-sf.loc=http://unc.dl.sourceforge.net/sourceforge
+base-sf.loc=http://umn.dl.sourceforge.net/sourceforge
+#base-sf.loc=http://switch.dl.sourceforge.net/sourceforge
+#base-sf.loc=http://heanet.dl.sourceforge.net/sourceforge
+#base-sf.loc=http://internap.dl.sourceforge.net/sourceforge
 
 # --------------------------------------------------
 #                REQUIRED LIBRARIES
