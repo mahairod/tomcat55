@@ -175,7 +175,7 @@
 
     <attribute name="xpoweredBy" required="false">
       <p>Set this attribute to <code>true</code> to cause Tomcat to advertise
-      support for the Srevlet specification using the header recommended in the
+      support for the Servlet specification using the header recommended in the
       specification.  The default value is <code>false</code>.</p>
     </attribute>
 
