@@ -30,6 +30,7 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
 import org.apache.catalina.cluster.CatalinaCluster;
+import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.ClusterValve;
 import org.apache.catalina.connector.Request;
@@ -356,7 +357,8 @@ public class JvmRouteBinderValve extends ValveBase implements ClusterValve, Life
             request.setAttribute(sessionIdAttribute, sessionId);
         }
         // now sending the change to all other clusternode!
-        sendSessionIDClusterBackup(request,sessionId, newSessionID);
+        ClusterManager manager = (ClusterManager)catalinaSession.getManager();
+        sendSessionIDClusterBackup(manager,request,sessionId, newSessionID);
         lifecycle
                 .fireLifecycleEvent("After session migration", catalinaSession);
         if (log.isDebugEnabled()) {
@@ -369,19 +371,24 @@ public class JvmRouteBinderValve extends ValveBase implements ClusterValve, Life
      * Send the changed Sessionid to all clusternodes.
      * 
      * @see JvmRouteSessionIDBinderListener#messageReceived(ClusterMessage)
+     * @param manager
+     *            ClusterManager
      * @param sessionId
      *            current failed sessionid
      * @param newSessionID
      *            new session id, bind to the new cluster node
      */
-    protected void sendSessionIDClusterBackup(Request request,String sessionId,
+    protected void sendSessionIDClusterBackup(ClusterManager manager,Request request,String sessionId,
             String newSessionID) {
         SessionIDMessage msg = new SessionIDMessage();
         msg.setOrignalSessionID(sessionId);
         msg.setBackupSessionID(newSessionID);
         Context context = request.getContext();
         msg.setContextPath(context.getPath());
-        cluster.send(msg);
+        if(manager.isSendClusterDomainOnly())
+            cluster.sendClusterDomain(msg);
+        else
+            cluster.send(msg);
     }
 
     /**

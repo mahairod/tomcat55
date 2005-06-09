@@ -35,9 +35,14 @@ public class SocketSender extends DataSender {
     private static final String info = "SocketSender/1.2";
 
     // ------------------------------------------------------------- Constructor
-
-    public SocketSender(InetAddress host, int port) {
-        super(host, port);
+   
+   /**
+    * @param domain replication cluster domain (session domain)
+    * @param host replication node tcp address
+    * @param port replication node tcp port
+    */
+    public SocketSender(String domain,InetAddress host, int port) {
+        super(domain,host, port);
     }
 
     // ------------------------------------------------------------- Properties

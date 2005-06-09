@@ -80,6 +80,12 @@ public interface CatalinaCluster
     public void send(ClusterMessage msg, Member dest);
     
     /**
+     * Sends a message to a all members at local cluster domain
+     * @param msg ClusterMessage
+     */
+    public void sendClusterDomain(ClusterMessage message);
+
+    /**
      * returns all the members currently participating in the cluster
      * @return Member[]
      */

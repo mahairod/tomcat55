@@ -325,8 +325,13 @@ public class ReplicationValve
                 if (id != null) {
                     ClusterMessage msg = manager.requestCompleted(id);
                     // really send replication send request
-                    if (msg != null)
-                        cluster.send(msg);
+                    // FIXME send directly via ClusterManager.send
+                    if (msg != null) {
+                        if(manager.isSendClusterDomainOnly())
+                            cluster.sendClusterDomain(msg);
+                        else
+                            cluster.send(msg);
+                    }
                 }
             } else
                 nrOfFilterRequests++;
@@ -345,8 +350,13 @@ public class ReplicationValve
             for ( int i=0;i<invalidIds.length; i++ ) {
                 try {
                     ClusterMessage imsg = manager.requestCompleted(invalidIds[i]);
-                    if (imsg != null)
-                        cluster.send(imsg);
+                    // FIXME send directly via ClusterManager.send
+                    if (imsg != null) {
+                        if(manager.isSendClusterDomainOnly())
+                            cluster.sendClusterDomain(imsg);
+                        else
+                            cluster.send(imsg);
+                    }
                 } catch ( Exception x ) {
                     log.error(sm.getString("ReplicationValve.send.invalid.failure",invalidIds[i]),x);
                 }

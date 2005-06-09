@@ -207,6 +207,8 @@ public class McastServiceImpl
         byte[] data = new byte[receivePacket.getLength()];
         System.arraycopy(receivePacket.getData(),receivePacket.getOffset(),data,0,data.length);
         McastMember m = McastMember.getMember(data);
+        if(log.isDebugEnabled())
+            log.debug("Mcast receive ping from member " + m);
         if ( membership.memberAlive(m) ) {
             service.memberAdded(m);
         }
@@ -221,6 +223,8 @@ public class McastServiceImpl
      */
     public void send() throws Exception{
         member.inc();
+        if(log.isDebugEnabled())
+            log.debug("Mcast send ping from member " + member);
         byte[] data = member.getData(this.serviceStartTime);
         DatagramPacket p = new DatagramPacket(data,data.length);
         p.setAddress(address);

@@ -16,9 +16,12 @@
 
 package org.apache.catalina.cluster;
 
+import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
+
 /**
  * The membership service helps the cluster determine the membership
  * logic in the cluster.
+ * @author Peter Rossbach
  * @author Filip Hanik
  * @version $Revision$, $Date$
  */
@@ -82,5 +85,10 @@ public interface MembershipService {
      * removes the membership listener.
      */
     public void removeMembershipListener();
+
+    /**
+     * @param cluster
+     */
+    public void setCatalinaCluster(SimpleTcpCluster cluster);
 
 }

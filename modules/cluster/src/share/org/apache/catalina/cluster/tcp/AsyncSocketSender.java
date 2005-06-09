@@ -78,11 +78,12 @@ public class AsyncSocketSender extends DataSender {
      * start background thread to push incomming cluster messages to replication
      * node
      * 
+     * @param domain replication cluster domain (session domain)
      * @param host replication node tcp address
      * @param port replication node tcp port
      */
-    public AsyncSocketSender(InetAddress host, int port) {
-        super(host, port);
+    public AsyncSocketSender(String domain,InetAddress host, int port) {
+        super(domain,host, port);
         checkThread();
     }
 

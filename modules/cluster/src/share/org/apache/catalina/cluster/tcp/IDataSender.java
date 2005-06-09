@@ -37,5 +37,7 @@ public interface IDataSender
     public boolean isWaitForAck();
     public void setWaitForAck(boolean isWaitForAck);
     public boolean checkKeepAlive();
+    public String getDomain() ;
+    public void setDomain(String domain) ;
 
 }

@@ -16,10 +16,18 @@
 
 package org.apache.catalina.cluster.mcast;
 
-import org.apache.catalina.cluster.MembershipService;
 import java.util.Properties;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
+import org.apache.catalina.Cluster;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
+import org.apache.catalina.cluster.MembershipService;
+import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
+import org.apache.catalina.util.StringManager;
+import org.apache.commons.modeler.Registry;
 
 /**
  * A <b>membership</b> implementation using simple multicast.
@@ -27,6 +35,9 @@ import org.apache.catalina.cluster.MembershipListener;
  * This class is responsible for maintaining a list of active cluster nodes in the cluster.
  * If a node fails to send out a heartbeat, the node will be dismissed.
  *
+ * FIXME i18n messages
+ * 
+ * @author Peter Rossbach
  * @author Filip Hanik
  * @version $Revision$, $Date$
  */
@@ -36,6 +47,17 @@ public class McastService implements MembershipService,MembershipListener {
 
     private static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( McastService.class );
+
+    /**
+     * The string manager for this package.
+     */
+    protected StringManager sm = StringManager.getManager(Constants.Package);
+
+    /**
+     * The descriptive information about this implementation.
+     */
+    private static final String info = "McastService/2.0";
+
     /**
      * The implementation specific properties
      */
@@ -56,27 +78,63 @@ public class McastService implements MembershipService,MembershipListener {
     private int mcastTTL;
 
     /**
+     * my cluster
+     */
+    private SimpleTcpCluster cluster;
+
+    /**
+     * Transmitter Mbean name
+     */
+    private ObjectName objectName;
+
+    private Registry registry;
+
+    /**
      * Create a membership service.
      */
     public McastService() {
+        properties.setProperty("mcastClusterDomain", "catalina");
     }
 
+    /**
+     * Return descriptive information about this implementation and the
+     * corresponding version number, in the format
+     * <code>&lt;description&gt;/&lt;version&gt;</code>.
+     */
+    public String getInfo() {
+        return (info);
+    }
+    
+    /**
+     * Transmitter ObjectName
+     * 
+     * @param name
+     */
+    public void setObjectName(ObjectName name) {
+        objectName = name;
+    }
+
+    public ObjectName getObjectName() {
+        return objectName;
+    }
 
     /**
      *
      * @param properties<BR>All are required<BR>
      * 1. mcastPort - the port to listen to<BR>
      * 2. mcastAddress - the mcast group address<BR>
-     * 3. bindAddress - the bind address if any - only one that can be null<BR>
-     * 4. memberDropTime - the time a member is gone before it is considered gone.<BR>
-     * 5. msgFrequency - the frequency of sending messages<BR>
-     * 6. tcpListenPort - the port this member listens to<BR>
-     * 7. tcpListenHost - the bind address of this member<BR>
+     * 3. mcastClusterDomain - the mcast cluster domain<BR>
+     * 4. bindAddress - the bind address if any - only one that can be null<BR>
+     * 5. memberDropTime - the time a member is gone before it is considered gone.<BR>
+     * 6. msgFrequency - the frequency of sending messages<BR>
+     * 7. tcpListenPort - the port this member listens to<BR>
+     * 8. tcpListenHost - the bind address of this member<BR>
      * @exception java.lang.IllegalArgumentException if a property is missing.
      */
     public void setProperties(Properties properties) {
         hasProperty(properties,"mcastPort");
         hasProperty(properties,"mcastAddress");
+        hasProperty(properties,"mcastClusterDomain");
         hasProperty(properties,"memberDropTime");
         hasProperty(properties,"msgFrequency");
         hasProperty(properties,"tcpListenPort");
@@ -91,6 +149,30 @@ public class McastService implements MembershipService,MembershipListener {
         return properties;
     }
 
+    /*
+     * configured in cluster
+     * 
+     * @see org.apache.catalina.cluster.ClusterSender#setCatalinaCluster(org.apache.catalina.cluster.tcp.SimpleTcpCluster)
+     */
+    public void setCatalinaCluster(SimpleTcpCluster cluster) {
+        this.cluster = cluster;
+
+    }
+
+    /**
+     * Return the cluster for this membership service
+     */
+    public Cluster getCatalinaCluster() {
+        return cluster ;
+    }
+
+    /**
+     * Return the local member name
+     */
+    public String getLocalMemberName() {
+        return localMember.toString() ;
+    }
+ 
     /**
      * Return the local member
      */
@@ -121,6 +203,14 @@ public class McastService implements MembershipService,MembershipListener {
 
     public String getMcastBindAddress() {
         return properties.getProperty("mcastBindAddress");
+    }
+
+    public void setMcastClusterDomain(String clusterDomain) {
+        properties.setProperty("mcastClusterDomain", clusterDomain);
+    }
+
+    public String getMcastClusterDomain() {
+        return properties.getProperty("mcastClusterDomain");
     }
 
     public void setMcastPort(int port) {
@@ -166,6 +256,7 @@ public class McastService implements MembershipService,MembershipListener {
     public void start() throws java.lang.Exception {
         start(1);
         start(2);
+        registerMBean();
     }
     
     public void start(int level) throws java.lang.Exception {
@@ -174,12 +265,14 @@ public class McastService implements MembershipService,MembershipListener {
             return;
         }
         String host = getProperties().getProperty("tcpListenHost");
+        String domain = getProperties().getProperty("mcastClusterDomain");
         int port = Integer.parseInt(getProperties().getProperty("tcpListenPort"));
         String name = "tcp://"+host+":"+port;
         if ( localMember == null ) {
-            localMember = new McastMember(name, host, port, 100);
+            localMember = new McastMember(name, domain, host, port, 100);
         } else {
             localMember.setName(name);
+            localMember.setDomain(domain);
             localMember.setHost(host);
             localMember.setPort(port);
             localMember.setMemberAliveTime(100);
@@ -215,12 +308,14 @@ public class McastService implements MembershipService,MembershipListener {
                                     this);
 
         impl.start(level);
-		if(log.isInfoEnabled())
-            log.info("Sleeping for "+(Long.parseLong(properties.getProperty("msgFrequency"))*4)+" secs to establish cluster membership");
-        Thread.sleep((Long.parseLong(properties.getProperty("msgFrequency"))*4));
+		long memberwait = (Long.parseLong(properties.getProperty("msgFrequency"))*4);
+        if(log.isInfoEnabled())
+            log.info("Sleeping for "+memberwait+" secs to establish cluster membership");
+        Thread.sleep(memberwait);
 
     }
 
+ 
     /**
      * Stop broadcasting and listening to membership pings
      */
@@ -231,8 +326,84 @@ public class McastService implements MembershipService,MembershipListener {
             log.error("Unable to stop the mcast service.",x);
         }
         impl = null;
+        unregisterMBean();
     }
 
+    /**
+     * register mbean descriptor for package mcast 
+     * @throws Exception
+     */
+    protected void initMBeans() throws Exception {
+      if(registry == null) {
+        registry = Registry.getRegistry(null, null);
+        registry.loadMetadata(this.getClass().getResourceAsStream(
+            "mbeans-descriptors.xml"));
+      }
+    }
+    
+    /**
+     * register MBeans for Membership
+     *
+     */
+    protected void registerMBean() {
+        if (cluster != null) {
+            ObjectName clusterName = cluster.getObjectName();
+            try {
+                MBeanServer mserver = cluster.getMBeanServer();
+                initMBeans();
+                ObjectName mcastName = new ObjectName(clusterName
+                        .getDomain()
+                        + ":type=ClusterMembership,host="
+                        + clusterName.getKeyProperty("host"));
+                if (mserver.isRegistered(mcastName)) {
+                    if (log.isWarnEnabled())
+                        log.warn(sm.getString(
+                                "cluster.mbean.register.allready",
+                                mcastName));
+                    return;
+                }
+                setObjectName(mcastName);
+                mserver.registerMBean(cluster.getManagedBean(this),
+                        getObjectName());
+                if (log.isInfoEnabled())
+                    log.info("membership mbean registered (" + mcastName + ")");
+            } catch (Exception e) {
+                log.warn("membership mbean creation failed (" + clusterName + ")" ,e);
+            }
+        }
+    }
+
+    /**
+     * unregister MBeans for Membership
+     *
+     */
+    protected void unregisterMBean() {
+        if (cluster != null && getObjectName() != null) {
+            try {
+                MBeanServer mserver = cluster.getMBeanServer();
+                mserver.unregisterMBean(getObjectName());
+            } catch (Exception e) {
+                log.error(e);
+            }
+        }
+    }
+
+    /**
+     * Return all the members by name
+     */
+    public String[] getMembersByName() {
+        Member[] currentMembers = getMembers();
+        String [] membernames ;
+        if(currentMembers != null) {
+            membernames = new String[currentMembers.length];
+            for (int i = 0; i < currentMembers.length; i++) {
+                membernames[i] = currentMembers[i].toString() ;
+            }
+        } else
+            membernames = new String[0] ;
+        return membernames ;
+    }
+ 
     /**
      * Return all the members
      */
@@ -295,6 +466,7 @@ public class McastService implements MembershipService,MembershipListener {
         java.util.Properties p = new java.util.Properties();
         p.setProperty("mcastPort","5555");
         p.setProperty("mcastAddress","224.10.10.10");
+        p.setProperty("mcastClusterDomain","catalina");
         p.setProperty("bindAddress","localhost");
         p.setProperty("memberDropTime","3000");
         p.setProperty("msgFrequency","500");
