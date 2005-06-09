@@ -730,19 +730,19 @@ List of Cluster Mbeans<br/>
  
   <tr>
     <td>ClusterSender</td>
-    <td>Configuration and stats of the sender infrastractur</td>
+    <td>Configuration and stats of the sender infrastructure</td>
     <td><code>type=ClusterSender,host=${HOST}</code></td>
   </tr>
  
   <tr>
     <td>ClusterReceiver</td>
-    <td>Configuration and stats of the recevier infrastractur</td>
+    <td>Configuration and stats of the recevier infrastructure</td>
     <td><code>type=ClusterReceiver,host=${HOST}</code></td>
   </tr>
 
   <tr>
     <td>ClusterMembership</td>
-    <td>Configuration and stats of the membership infrastractur</td>
+    <td>Configuration and stats of the membership infrastructure</td>
     <td><code>type=ClusterMembership,host=${HOST}</code></td>
   </tr>
 
