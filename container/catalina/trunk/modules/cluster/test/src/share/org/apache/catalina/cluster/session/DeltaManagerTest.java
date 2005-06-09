@@ -15,12 +15,16 @@
  */
 package org.apache.catalina.cluster.session;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.apache.catalina.Session;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.mcast.McastMember;
+import org.apache.catalina.cluster.mcast.McastService;
 import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
 
 /**
@@ -48,7 +52,7 @@ public class DeltaManagerTest extends TestCase {
             manager.createSession(null,false);
         }
         assertEquals(11,manager.getSessionCounter());
-        Member sender = new McastMember("test","localhost",8080,3000);
+        Member sender = new McastMember("test","d10","localhost",8080,3000);
         MockCluster cluster = new MockCluster ();
         manager.setCluster(cluster);
         manager.setSendAllSessionsSize(2);
@@ -62,6 +66,43 @@ public class DeltaManagerTest extends TestCase {
         manager.handleGET_ALL_SESSIONS(null,sender);
         // 11 session activ - 6 sessions message and one transfer complete
         assertEquals(7,cluster.sendcounter);
+    }
+    
+    public void testFirstMemberhandleGET_ALL_SESSIONS() throws Exception {
+        MockDeltaManager manager = new MockDeltaManager() ;
+        MockCluster cluster = new MockCluster ();
+        McastService service = new MockMcastService() ; 
+        cluster.setMembershipService(service);
+        manager.setCluster(cluster);
+        manager.getAllClusterSessions();
+        assertEquals(0,cluster.sendcounter);
+        manager.setSendClusterDomainOnly(false);
+        manager.getAllClusterSessions();
+        assertEquals(0,cluster.sendcounter);
+        manager.setSendClusterDomainOnly(true);
+        service.memberAdded(new McastMember("franz2", "d11", "127.0.0.1", 7002, 100));
+        manager.getAllClusterSessions();
+        assertEquals(0,cluster.sendcounter);
+        service.memberAdded(new McastMember("franz3", "d10", "127.0.0.1", 7003, 100));
+        assertNotNull(manager.findSessionMasterMember());
+    }
+    
+    class MockMcastService extends McastService {
+        List members = new ArrayList();
+        
+        public MockMcastService() {
+            localMember =new McastMember("franz", "d10", "127.0.0.1", 7001, 100) ; 
+       }
+        public void memberAdded(Member member) {
+            members.add(member);
+        }
+        public Member getLocalMember() {
+            return localMember;
+        }
+
+        public Member[] getMembers() {
+            return (Member[]) members.toArray(new Member[members.size()]);
+        }
     }
     
     class MockDeltaManager extends DeltaManager {

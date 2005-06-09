@@ -59,7 +59,7 @@ public class DataSenderTest extends TestCase {
      */
     public void testConnectDisconnect() throws Exception {
         InetAddress host = InetAddress.getByName("127.0.0.1");
-        DataSender sender = new MockDataSender(host, 3434);
+        DataSender sender = new MockDataSender("catalina",host, 3434);
         sender.connect() ;
         assertTrue(sender.isConnected());
         assertEquals(1,sender.getSocketOpenCounter());
@@ -89,7 +89,7 @@ public class DataSenderTest extends TestCase {
      */
     public void testFailedOpenSocketCounter() throws Exception {
         InetAddress host = InetAddress.getByName("127.0.0.1");
-        DataSender sender = new MockFailedDataSender(host, 3434);
+        DataSender sender = new MockFailedDataSender("catalina",host, 3434);
         try {
             sender.openSocket();
             fail("Sender not send expected IOException");
@@ -119,7 +119,7 @@ public class DataSenderTest extends TestCase {
      */
     private DataSender createMockDataSender() throws UnknownHostException, IOException, SocketException {
         InetAddress host = InetAddress.getByName("127.0.0.1");
-        DataSender sender = new MockDataSender(host, 3434);
+        DataSender sender = new MockDataSender("catalina",host, 3434);
         sender.openSocket();
         return sender;
     }
@@ -158,7 +158,7 @@ public class DataSenderTest extends TestCase {
      */
     public void testWriteDataWithOutAck()throws Exception {
         InetAddress host = InetAddress.getByName("127.0.0.1");
-        DataSender sender = new MockDataSender(host, 3434);
+        DataSender sender = new MockDataSender("catalina",host, 3434);
         sender.setWaitForAck(false);
         sender.openSocket();
         sender.writeData(new byte[]{ 1,2,3 }) ;
@@ -202,7 +202,7 @@ public class DataSenderTest extends TestCase {
      */
     public void testPushMessage() throws Exception {
         InetAddress host = InetAddress.getByName("127.0.0.1");
-        DataSender sender = new MockDataSender(host, 3434);
+        DataSender sender = new MockDataSender("catalina",host, 3434);
         assertFalse(sender.isConnected());
         assertPushMessage(sender);
         ((MockSocket)sender.getSocket()).reset();
@@ -219,7 +219,7 @@ public class DataSenderTest extends TestCase {
      */
     public void testPushMessageRetryFailure() throws Exception {
         InetAddress host = InetAddress.getByName("127.0.0.1");
-        DataSender sender = new MockDataSender(host, 3434);
+        DataSender sender = new MockDataSender("catalina",host, 3434);
         sender.openSocket() ;
         ((MockSocket)sender.getSocket()).setWriteIOException(true);
         assertPushMessage(sender);
@@ -261,8 +261,8 @@ public class DataSenderTest extends TestCase {
          * @param host
          * @param port
          */
-        public MockFailedDataSender(InetAddress host, int port) {
-            super(host, port);
+        public MockFailedDataSender(String domain,InetAddress host, int port) {
+            super(domain,host, port);
         }
 
         /*
@@ -285,8 +285,8 @@ public class DataSenderTest extends TestCase {
          * @param host
          * @param port
          */
-        public MockDataSender(InetAddress host, int port) {
-            super(host, port);
+        public MockDataSender(String domain,InetAddress host, int port) {
+            super(domain,host, port);
             
         }
 

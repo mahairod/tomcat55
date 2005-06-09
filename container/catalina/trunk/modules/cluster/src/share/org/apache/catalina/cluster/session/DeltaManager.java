@@ -122,6 +122,8 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     private int stateTransferTimeout = 60;
 
     private boolean sendAllSessions = true;
+
+    private boolean sendClusterDomainOnly = true ;
     
     private int sendAllSessionsSize = 1000 ;
     
@@ -377,6 +379,20 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     }
     
     /**
+     * @return Returns the sendClusterDomainOnly.
+     */
+    public boolean isSendClusterDomainOnly() {
+        return sendClusterDomainOnly;
+    }
+    
+    /**
+     * @param sendClusterDomainOnly The sendClusterDomainOnly to set.
+     */
+    public void setSendClusterDomainOnly(boolean sendClusterDomainOnly) {
+        this.sendClusterDomainOnly = sendClusterDomainOnly;
+    }
+    
+    /**
      * Return the maximum number of active Sessions allowed, or -1 for no limit.
      */
     public int getMaxActiveSessions() {
@@ -562,11 +578,22 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 log.debug(sm.getString("deltaManager.sendMessage.newSession",
                         name, sessionId));
             counterSend_EVT_SESSION_CREATED++;
-            cluster.send(msg);
+            send(msg);
         }
         session.resetDeltaRequest();
     }
     
+    /**
+     * Send messages to other backup member (domain or all)
+     * @param msg Session message
+     */
+    protected void send(SessionMessage msg) {
+        if(isSendClusterDomainOnly())
+            cluster.sendClusterDomain(msg);
+        else
+            cluster.send(msg);
+    }
+
     /**
      * Create DeltaSession
      * @see org.apache.catalina.Manager#createEmptySession()
@@ -937,8 +964,10 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      */
     public synchronized void getAllClusterSessions() {
         if (cluster != null && cluster.getMembers().length > 0) {
-            // FIXME Why only the first Member?
-            Member mbr = cluster.getMembers()[0];
+            Member mbr = findSessionMasterMember();
+            if(mbr == null) { // No domain member found
+                 return;
+            }
             SessionMessage msg = new SessionMessageImpl(this.getName(),
                     SessionMessage.EVT_GET_ALL_SESSIONS, null, "GET-ALL",
                     "GET-ALL-" + getName());
@@ -982,6 +1011,34 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
             if (log.isInfoEnabled())
                 log.info(sm.getString("deltaManager.noMembers", getName()));
         }
+    }
+
+    /**
+     * Find the master óf the session state
+     * @return master member of sessions 
+     */
+    protected Member findSessionMasterMember() {
+        Member mbr = null;
+        Member mbrs[] = cluster.getMembers();
+        String localMemberDomain = cluster.getMembershipService().getLocalMember().getDomain();
+        if(isSendClusterDomainOnly()) {
+            for (int i = 0; mbr == null && i < mbrs.length; i++) {
+                Member member = mbrs[i];
+                if(localMemberDomain.equals(member.getDomain()))
+                    mbr = member ;
+            }
+        } else {
+            // FIXME Why only the first Member?
+            if(mbrs.length != 0 )
+                mbr = mbrs[0];
+        }
+        if(mbr == null && log.isWarnEnabled())
+           log.warn(sm.getString("deltaManager.noMasterMember",
+                    getName(), localMemberDomain));
+        if(mbr != null && log.isDebugEnabled())
+            log.warn(sm.getString("deltaManager.foundMasterMember",
+                     getName(), mbr));
+        return mbr;
     }
 
     /**
@@ -1248,7 +1305,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         if (log.isDebugEnabled())
             log.debug(sm.getString("deltaManager.createMessage.expire",
                     getName(), id));
-        cluster.send(msg);
+        send(msg);
     }
 
     /**
@@ -1296,6 +1353,24 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     //  -------------------------------------------------------- message receive
 
     /**
+     * Test that sender and local domain is the same
+     */
+    protected boolean checkSenderDomain(SessionMessage msg,Member sender) {
+        String localMemberDomain = cluster.getMembershipService().getLocalMember().getDomain();
+        boolean sameDomain= localMemberDomain.equals(sender.getDomain());
+        if (!sameDomain && log.isWarnEnabled()) {
+                log.warn(sm.getString("deltaManager.receiveMessage.fromWrongDomain",
+                        new Object[] {getName(), 
+                        msg.getEventTypeString(), 
+                        sender,
+                        sender.getDomain(),
+                        localMemberDomain }
+                ));
+        }
+        return sameDomain ;
+    }
+
+    /**
      * This method is called by the received thread when a SessionMessage has
      * been received from one of the other nodes in the cluster.
      * 
@@ -1307,10 +1382,14 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      *            requesting node
      */
     protected void messageReceived(SessionMessage msg, Member sender) {
+        if(isSendClusterDomainOnly() && !checkSenderDomain(msg,sender)) {
+            return;
+        }
         try {
             if (log.isDebugEnabled())
                 log.debug(sm.getString("deltaManager.receiveMessage.eventType",
                         getName(), msg.getEventTypeString(), sender));
+ 
             switch (msg.getEventType()) {
             case SessionMessage.EVT_GET_ALL_SESSIONS: {
                 handleGET_ALL_SESSIONS(msg,sender);

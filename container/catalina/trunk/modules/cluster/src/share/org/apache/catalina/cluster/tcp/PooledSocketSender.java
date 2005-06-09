@@ -48,11 +48,16 @@ public class PooledSocketSender extends DataSender {
 
     //  ----------------------------------------------------- Constructor
 
-    public PooledSocketSender(InetAddress host, int port) {
-        super(host, port);
+   /**
+    * @param domain replication cluster domain (session domain)
+    * @param host replication node tcp address
+    * @param port replication node tcp port
+    */
+    public PooledSocketSender(String domain,InetAddress host, int port) {
+        super(domain,host, port);
         senderQueue = new SenderQueue(this, maxPoolSocketLimit);
     }
-
+   
     //  ----------------------------------------------------- Public Properties
 
     /**
@@ -222,7 +227,7 @@ public class PooledSocketSender extends DataSender {
 
         private SocketSender getNewSocketSender() {
             //new SocketSender(
-            SocketSender sender = new SocketSender(parent.getAddress(), parent
+            SocketSender sender = new SocketSender(getDomain(),parent.getAddress(), parent
                     .getPort());
             sender.setKeepAliveMaxRequestCount(parent
                     .getKeepAliveMaxRequestCount());

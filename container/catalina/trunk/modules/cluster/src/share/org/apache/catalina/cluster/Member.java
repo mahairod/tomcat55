@@ -39,6 +39,12 @@ public interface Member {
      * Returns the name of this node, should be unique within the cluster.
      */
     public String getName();
+  
+    /**
+     * Returns the name of the cluster domain from this node
+     */
+    public String getDomain();
+    
     /**
      * Returns the TCP listen host for the TCP implementation
      */

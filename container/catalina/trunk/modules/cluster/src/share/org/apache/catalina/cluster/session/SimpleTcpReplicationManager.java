@@ -103,6 +103,7 @@ implements ClusterManager
      */
     protected boolean stateTransferred = false;
     private boolean notifyListenersOnReplication;
+    private boolean sendClusterDomainOnly = true ;
 
     /**
      * Constructor, just calls super()
@@ -113,7 +114,17 @@ implements ClusterManager
         super();
     }
 
-
+    public boolean isSendClusterDomainOnly() {
+        return sendClusterDomainOnly;
+    }
+    
+    /**
+     * @param sendClusterDomainOnly The sendClusterDomainOnly to set.
+     */
+    public void setSendClusterDomainOnly(boolean sendClusterDomainOnly) {
+        this.sendClusterDomainOnly = sendClusterDomainOnly;
+    }
+  
     public boolean isManagerRunning()
     {
         return mManagerRunning;

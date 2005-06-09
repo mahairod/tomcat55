@@ -34,13 +34,13 @@ public class IDataSenderFactory {
     public synchronized static IDataSender getIDataSender(String mode, Member mbr)
     throws java.io.IOException {
         if (SYNC_MODE.equals(mode) )
-            return new SocketSender(InetAddress.getByName(mbr.getHost()),mbr.getPort());
+            return new SocketSender(mbr.getDomain(),InetAddress.getByName(mbr.getHost()),mbr.getPort());
         else if ( ASYNC_MODE.equals(mode) )
-            return new AsyncSocketSender(InetAddress.getByName(mbr.getHost()),mbr.getPort());
+            return new AsyncSocketSender(mbr.getDomain(),InetAddress.getByName(mbr.getHost()),mbr.getPort());
         else if ( FAST_ASYNC_QUEUE_MODE.equals(mode) )
-            return new FastAsyncSocketSender(InetAddress.getByName(mbr.getHost()),mbr.getPort());
+            return new FastAsyncSocketSender(mbr.getDomain(),InetAddress.getByName(mbr.getHost()),mbr.getPort());
         else if (POOLED_SYNC_MODE.equals(mode) )
-            return new PooledSocketSender(InetAddress.getByName(mbr.getHost()),mbr.getPort());
+            return new PooledSocketSender(mbr.getDomain(),InetAddress.getByName(mbr.getHost()),mbr.getPort());
         else
             throw new java.io.IOException("Invalid replication mode="+mode);
     }
