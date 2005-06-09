@@ -1113,7 +1113,7 @@ public class Connector
                     log.debug(sm.getString(
                             "coyoteConnector.MapperRegistration", mapperOname));
                 Registry.getRegistry(null, null).registerComponent
-                    (mapper, createObjectName(this.domain,"Mapper"), "Mapper");
+                    (mapper, mapperOname, "Mapper");
             } catch (Exception ex) {
                 log.error(sm.getString
                         ("coyoteConnector.protocolRegistrationFailed"), ex);
