@@ -23,7 +23,7 @@ import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
  * 
  * @author Filip Hanik
  * @author Peter Rossbach
- * @version 1.2
+ * @version $Revision$, $Date$
  *
  */
 public interface ClusterSender
@@ -43,6 +43,8 @@ public interface ClusterSender
 
     public void sendMessage(ClusterMessage message) throws java.io.IOException;
     
+    public void sendMessageClusterDomain(ClusterMessage message) throws java.io.IOException;
+
     public boolean isWaitForAck();
     public void setWaitForAck(boolean isWaitForAck);
 

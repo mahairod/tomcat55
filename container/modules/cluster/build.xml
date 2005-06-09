@@ -93,7 +93,11 @@
     	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/session/mbeans-descriptors.xml"/>
     <copy file="${basedir}/src/share/org/apache/catalina/cluster/tcp/mbeans-descriptors.xml"
     	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/tcp/mbeans-descriptors.xml"/>
-  </target>
+    <copy file="${basedir}/src/share/org/apache/catalina/cluster/mcast/LocalStrings.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/mcast/LocalStrings.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/cluster/mcast/mbeans-descriptors.xml"
+     	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/mcast/mbeans-descriptors.xml"/>
+   </target>
 
 
   <!-- ================ BUILD: Create Catalina Javadocs =================== -->

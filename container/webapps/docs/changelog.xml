@@ -221,6 +221,13 @@
   <subsection name="Cluster">
     <changelog>        
       <add>
+        Cluster ping now transfer cluster domain information and DeltaManager only
+        send and receive message from same domain members (pero)
+      </add>      
+      <add>
+        JMX Support for McastService (Membership) (pero)
+      </add>      
+      <add>
         Redesign SimpleTcpCluster message receiving to ClusterReceiverBase (pero)
       </add>      
       <add>

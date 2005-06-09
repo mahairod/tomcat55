@@ -212,17 +212,42 @@ should be completed:</p>
 
 <p>Component Levels:
 <source>
-        Server
-          |
-        Service
-          |
-        Engine
-       /     \
-   Cluster ReplicationValve
-      |
-   Manager
-      |
-  Session
+         Server
+           |
+         Service
+           |
+         Engine
+           |
+         Host
+           |
+         ------
+        /      \
+     Cluster    Context(1-N)                 
+        |             \
+        |             -- Manager
+        |                   \
+        |                   -- DeltaManager
+        |
+     ---------------------------
+     |        |         |       \
+   Sender  Receiver  Membership  \
+                                 -- Valve
+                                 |      \
+                                 |       -- ReplicationValve
+                                 |       -- JvmRouteBinderValve 
+                                 |
+                                 -- LifecycleListener 
+                                 |
+                                 -- ClusterListener 
+                                 |      \
+                                 |       -- ClusterSessionListener
+                                 |       -- JvmRouteSessionIDBinderListener
+                                 |
+                                 -- Deployer 
+                                        \
+                                         -- FarmWarDeployer
+      
+      
 </source></p>
 
 
@@ -287,7 +312,9 @@ List of Attributes<br/>
 
   <tr>
     <td>processSenderFrequency</td>
-    <td></td>
+    <td>Control the sender keepalive status and drop sender socket connection after timeout is reached.
+    Check every processSenderFrequency value engine background ticks.
+    </td>
     <td><code>2</code></td>
   </tr>
 
@@ -573,7 +600,94 @@ Example to get a no processing statistic information, wait for ACK, after 10000 
 </p>  
 </section>
 
+<section name="Cluster Configuration for ReplicationTransmitter ( DeltaManager Attribute)">
+<p>
+List of Attributes<br/>
+<table border="1" cellpadding="5">
+
+  <tr>
+    <th align="center" bgcolor="aqua">Attribute</th>
+    <th align="center" bgcolor="aqua">Description</th>
+    <th align="center" bgcolor="aqua">Default value</th>
+  </tr>
+  
+  <tr>
+    <td>expireSessionsOnShutdown</td>
+    <td>When server stopped, expire all sessions also at backup nodes (only for testing)</td>
+    <td><code>false</code></td>
+  </tr>
+
+  <tr>
+    <td>maxActiveSessions</td>
+    <td>Number of active sessions. (Default is no limit)</td>
+    <td><code>-1</code></td>
+  </tr>  
+
+  <tr>
+    <td>notifyListenersOnReplication</td>
+    <td>Notify application session listener to session creation 
+    and expiring events at backup nodes</td>
+    <td><code>true</code></td>
+  </tr>
+
+  <tr>
+    <td>notifySessionListenersOnReplication</td>
+    <td>Notify application session listener to attribute changes at backup nodes</td>
+    <td><code>true</code></td>
+  </tr>
+
+  <tr>
+    <td>stateTransferTimeout</td>
+    <td>Timeout that session state transfer is complete</td>
+    <td><code>60</code></td>
+  </tr>
+  
+  <tr>
+    <td>sendAllSessions</td>
+    <td>Flag to send sessions as splited blocks</td>
+    <td><code>true</code></td>
+  </tr>
+
+  <tr>
+    <td>sendAllSessionsSize</td>
+    <td>Number of serialize sessions inside a send session message.</td>
+    <td><code>1000</code></td>
+  </tr>
+
+  <tr>
+    <td>sendAllSessionsWaitTime</td>
+    <td>wait time between to session send blocks.</td>
+    <td><code>2000</code></td>
+  </tr>
+
+  <tr>
+    <td>sendClusterDomainOnly</td>
+    <td>Send all session messages only to member inside same cluster domain 
+        (value od Membership attribute mcastClusterDomain). Also don't receive
+        session messages from other domains.</td>
+    <td><code>true</code></td>
+  </tr>  
+
+  
+</table>
+  
+</p>
+<p>
+Example send all sessions at blocks. Serialize and send 100 session inside on block.<br/>
+<source>
+    &lt;Sender
+      className="org.apache.catalina.cluster.tcp.ReplicationTransmitter"
+      replicationMode="fastasyncqueue"
+      sendAllSessions="false"
+      sendAllSessionsSize="100"
+      keepAliveTimeout="-1"
+      keepAliveMaxRequestCount="-1"/&gt;
+</source>
+</p>  
 </section>
+
+</section>
+
 
 <section name="Monitoring your Cluster with JMX">
 <p>Monitoring is a very important question when you use a cluster. Some of the cluster objects are JMX MBeans </p>
@@ -616,14 +730,20 @@ List of Cluster Mbeans<br/>
  
   <tr>
     <td>ClusterSender</td>
-    <td>Configuration and stats of the sender infrastructur</td>
+    <td>Configuration and stats of the sender infrastractur</td>
     <td><code>type=ClusterSender,host=${HOST}</code></td>
   </tr>
  
   <tr>
     <td>ClusterReceiver</td>
-    <td>Configuration and stats of the recevier infrastructur</td>
+    <td>Configuration and stats of the recevier infrastractur</td>
     <td><code>type=ClusterReceiver,host=${HOST}</code></td>
+  </tr>
+
+  <tr>
+    <td>ClusterMembership</td>
+    <td>Configuration and stats of the membership infrastractur</td>
+    <td><code>type=ClusterMembership,host=${HOST}</code></td>
   </tr>
 
   <tr>
@@ -661,7 +781,7 @@ List of Cluster Mbeans<br/>
 <section name="FAQ">
 <p>To be completed once I receive questions about session replication:</p>
 <ol>
-<li>Q: What happens when I pull the network card?<p></p>
+<li>Q: What happens when I pull the network cable?<p></p>
 
     A: Well, the other members will remove the instance from the cluster,
        but when you insert the cable again, the Tomcat instance might have completely flipped out.
@@ -693,6 +813,20 @@ List of Cluster Mbeans<br/>
 
     A: Yes, with sender attribute <code>maxPoolSocketLimit="40"</code> you can have more than the default
        <code>25</code> sockets to transfer more parallel messages. 
+  <p></p>
+  </li>
+<li>Q: At my windows laptop without network my cluster doesn't work?<p></p>
+
+    A: The Membership attribute <code>mcastBindAddress="127.0.0.1"</code> must be set!  
+  <p></p>
+  </li>
+<li>Q: The cluster dosen't work under linux with two nodes at two boxes?<p></p>
+
+    A: Check the the following topics:
+    <p>Is your network interface enabled for multicast? <code>ifconfig eth0 MULTICAST</code></p>
+    <p>Exists a Multicast route to your network interface? <code>route add -host 228.0.0.4 dev eth0 </code></p>
+    <p>Is your firewall on, then check that multicast port is on your UDP open list
+       and the receiver TCP port is also open!</p>
   <p></p>
   </li>
 

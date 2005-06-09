@@ -373,8 +373,11 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
 
     public Member[] getMembers() {
         Member[] members = membershipService.getMembers();
-        //sort by alive time
-        java.util.Arrays.sort(members, memberComparator);
+        if(members != null) {
+            //sort by alive time
+            java.util.Arrays.sort(members, memberComparator);
+        } else 
+            members = new Member[0];
         return members;
     }
 
@@ -656,12 +659,16 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
             clusterReceiver.setCompress(clusterSender.isCompress());
             clusterReceiver.setCatalinaCluster(this);
             clusterReceiver.start();
+     
             clusterSender.setCatalinaCluster(this);
             clusterSender.start();
+            
             membershipService.setLocalMemberProperties(clusterReceiver
                     .getHost(), clusterReceiver.getPort());
             membershipService.addMembershipListener(this);
+            membershipService.setCatalinaCluster(this);
             membershipService.start();
+            
             //set the deployer.
             try {
                 if (clusterDeployer != null) {
@@ -748,6 +755,31 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, this);
         clusterLog = null ;
     }
+
+    /**
+     * send message to all cluster members same cluster domain
+     * 
+     * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage)
+     */
+    public void sendClusterDomain(ClusterMessage msg) {
+        long start = 0;
+        if (doClusterLog)
+            start = System.currentTimeMillis();
+        try {
+            msg.setAddress(membershipService.getLocalMember());
+            clusterSender.sendMessageClusterDomain(msg);
+        } catch (Exception x) {
+            if (notifyLifecycleListenerOnFailure) {
+                // Notify our interested LifecycleListeners
+                lifecycle.fireLifecycleEvent(SEND_MESSAGE_FAILURE_EVENT,
+                        new SendMessageData(msg, null, x));
+            }
+            log.error("Unable to send message through cluster sender.", x);
+        }
+        if (doClusterLog)
+            logSendMessage(msg, start, null);
+    } 
+
 
     /**
      * send message to all cluster members
@@ -1010,7 +1042,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * @return
      * @throws Exception
      */
-    protected MBeanServer getMBeanServer() throws Exception {
+    public MBeanServer getMBeanServer() throws Exception {
         if (mserver == null) {
             if (MBeanServerFactory.findMBeanServer(null).size() > 0) {
                 mserver = (MBeanServer) MBeanServerFactory
@@ -1034,7 +1066,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * @throws Exception
      *             If an error occurs this constructors throws this exception
      */
-    protected ModelMBean getManagedBean(Object object) throws Exception {
+    public ModelMBean getManagedBean(Object object) throws Exception {
         ModelMBean mbean = null;
         if (registry != null) {
             ManagedBean managedBean = registry.findManagedBean(object

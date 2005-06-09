@@ -119,6 +119,11 @@
           description="Average time an expired session had been alive"
                  type="int" />
 
+    <attribute   name="sendClusterDomainOnly"
+                   is="true"
+          description="The sendClusterDomainOnly flag send sessions only to members as same cluster domain"
+                 type="boolean"/>
+
     <attribute   name="rejectedSessions"
           description="Number of sessions we rejected due to maxActive beeing reached"
                  type="int" />
@@ -129,7 +134,7 @@
 
     <attribute   name="stateTransferTimeout"
           description="state transfer timeout in sec"
-                 type="integer"/>
+                 type="int"/>
 
     <attribute   name="processingTime"
           description="Time spent doing housekeeping and expiration"
@@ -208,6 +213,7 @@
           description="Count send EVT_ALL_SESSION_TRANSFERCOMPLETE messages"
                  type="long"
             writeable="false" />
+
     <attribute   name="counterNoStateTransfered"
           description="Count the failed session transfers noStateTransfered"
                  type="int"

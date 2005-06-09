@@ -61,6 +61,12 @@ public class DataSender implements IDataSender {
      */
     private int port;
 
+    
+    /**
+     * cluster domain
+     */
+    private String domain;
+
     /**
      * current sender socket
      */
@@ -193,11 +199,12 @@ public class DataSender implements IDataSender {
 
     // ------------------------------------------------------------- Constructor
 
-    public DataSender(InetAddress host, int port) {
+    public DataSender(String domain,InetAddress host, int port) {
         this.address = host;
         this.port = port;
+        this.domain = domain;
         if (log.isDebugEnabled())
-            log.debug(sm.getString("IDataSender.create", address, new Integer(
+            log.debug(sm.getString("IDataSender.create",address, new Integer(
                     port)));
     }
 
@@ -377,6 +384,20 @@ public class DataSender implements IDataSender {
         return port;
     }
 
+    /**
+     * @return Returns the domain.
+     */
+    public String getDomain() {
+        return domain;
+    }
+    
+    /**
+     * @param domain The domain to set.
+     */
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+    
     public boolean isConnected() {
         return isSocketConnected;
     }

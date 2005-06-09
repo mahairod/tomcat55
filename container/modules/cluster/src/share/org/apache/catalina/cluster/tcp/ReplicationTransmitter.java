@@ -30,7 +30,6 @@ import javax.management.ObjectName;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.ClusterSender;
 import org.apache.catalina.cluster.Member;
-import org.apache.catalina.cluster.io.XByteBuffer;
 import org.apache.catalina.cluster.util.IDynamicProperty;
 import org.apache.catalina.util.StringManager;
 import org.apache.tomcat.util.IntrospectionUtils;
@@ -159,9 +158,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getInfo() {
-
         return (info);
-
     }
 
     /**
@@ -434,6 +431,45 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                 addProcessingStats(time);
             }
         }
+    }
+    
+    /**
+     * Send to all senders at same cluster domain as message from address
+     * @param message Cluster message to send
+     */
+    public void sendMessageClusterDomain(ClusterMessage message) 
+         throws java.io.IOException {
+        long time = 0;
+        if (doTransmitterProcessingStats) {
+            time = System.currentTimeMillis();
+        }
+        try {
+            String domain = message.getAddress().getDomain();
+            if(domain == null)
+                throw new RuntimeException("Domain at member not set");
+            byte[] data = serialize(message);
+            IDataSender[] senders = getSenders();
+            for (int i = 0; i < senders.length; i++) {
+
+                IDataSender sender = senders[i];
+                if(domain.equals(sender.getDomain())) {
+                    try {
+                        sendMessageData(message.getUniqueId(), data, sender);
+                    } catch (Exception x) {
+                        if (!sender.getSuspect()) {
+                            log.warn("Unable to send replicated message to "
+                                    + sender + ", is server down?", x);
+                            sender.setSuspect(true);
+                        }
+                    }
+                }
+            }
+        } finally {
+            if (doTransmitterProcessingStats) {
+                addProcessingStats(time);
+            }
+        }
+    
     }
 
     /**

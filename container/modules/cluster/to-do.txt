@@ -179,6 +179,12 @@ would not make sense to transfer the same webapp over and over again.
 COMPLETED (pero)
 ==============================
 5.5.10
+- Mcast Service as JMX MBean (change cluster domain at runtime)    
+- send cluster domain with mcast ping
+    - With sendClusterDomainOnly=true only session message from same domain are received
+    - Session only replicated to members from same domain, with sendClusterDomainOnly=false
+      at Sender (ReplicationTransmitter) session messages send to all members.
+    - GET ALL Session send to first member inside same cluster domain
 - better restart szenario at DeltaManager after failure restart (java service wrapper).
    queue all other session events
    as STATE Transfer Complete is received, dequeue all received sessions messages.   

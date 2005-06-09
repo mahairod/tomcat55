@@ -68,5 +68,8 @@ public interface ClusterManager extends Manager {
          
    public CatalinaCluster getCluster();
    public void setCluster(CatalinaCluster cluster);
+   public boolean isSendClusterDomainOnly() ;
+   public void setSendClusterDomainOnly(boolean sendClusterDomainOnly) ;
+ 
    
 }
