@@ -372,10 +372,6 @@ final class ApplicationDispatcher
             ApplicationHttpRequest wrequest =
                 (ApplicationHttpRequest) wrapRequest();
             String contextPath = context.getPath();
-            wrequest.setContextPath(contextPath);
-            wrequest.setRequestURI(requestURI);
-            wrequest.setServletPath(servletPath);
-            wrequest.setPathInfo(pathInfo);
 
             if (hrequest.getAttribute(Globals.FORWARD_REQUEST_URI_ATTR) == null) {
                 wrequest.setAttribute(Globals.FORWARD_REQUEST_URI_ATTR,
@@ -390,6 +386,10 @@ final class ApplicationDispatcher
                                       hrequest.getQueryString());
             }
  
+            wrequest.setContextPath(contextPath);
+            wrequest.setRequestURI(requestURI);
+            wrequest.setServletPath(servletPath);
+            wrequest.setPathInfo(pathInfo);
             if (queryString != null) {
                 wrequest.setQueryString(queryString);
                 wrequest.setQueryParams(queryString);
