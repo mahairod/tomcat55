@@ -19,7 +19,6 @@ package org.apache.catalina.ant;
 
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
 
 /**
