@@ -168,7 +168,8 @@ public class AttributeTag extends TagSupport {
             value = mserver.getAttribute(oname, attribute);
         } catch (Throwable t) {
             throw new JspException("Exception retrieving attribute '" +
-                                   attribute + "'");
+                                   attribute + "' from mbean '" +
+                                   oname.toString() + "'");
         }
 
         // Render this value to our current output writer
