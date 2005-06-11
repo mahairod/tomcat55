@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Iterator;
-import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
 

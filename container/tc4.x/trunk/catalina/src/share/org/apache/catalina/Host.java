@@ -18,8 +18,6 @@
 package org.apache.catalina;
 
 
-import javax.servlet.ServletContext;
-
 /**
  * A <b>Host</b> is a Container that represents a virtual host in the
  * Catalina servlet engine.  It is useful in the following types of scenarios:

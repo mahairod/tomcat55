@@ -18,10 +18,8 @@
 package org.apache.catalina;
 
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.Iterator;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
 

@@ -18,9 +18,6 @@
 package org.apache.catalina;
 
 
-import java.util.EventObject;
-
-
 /**
  * Interface defining a listener for significant Session generated events.
  *

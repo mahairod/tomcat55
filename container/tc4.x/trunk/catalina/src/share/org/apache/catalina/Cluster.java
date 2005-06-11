@@ -17,8 +17,6 @@
 package org.apache.catalina;
 
 
-import java.beans.PropertyChangeListener;
-import java.util.Collection;
 import org.apache.catalina.cluster.ClusterMemberInfo;
 import org.apache.catalina.cluster.ClusterReceiver;
 import org.apache.catalina.cluster.ClusterSender;
