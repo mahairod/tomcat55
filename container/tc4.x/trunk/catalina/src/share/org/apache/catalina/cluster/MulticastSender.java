@@ -19,13 +19,10 @@ package org.apache.catalina.cluster;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
 
 
 /**
