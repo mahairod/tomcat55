@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Locale;
-import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletResponse;
 import org.apache.catalina.Connector;
@@ -291,7 +290,7 @@ public abstract class ResponseBase
      */
     public String getInfo() {
 
-        return (this.info);
+        return (ResponseBase.info);
 
     }
 

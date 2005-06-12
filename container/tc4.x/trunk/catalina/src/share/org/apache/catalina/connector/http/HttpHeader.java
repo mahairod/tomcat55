@@ -18,12 +18,6 @@
 package org.apache.catalina.connector.http;
 
 
-import java.io.IOException;
-import java.net.InetAddress;
-import javax.servlet.ServletInputStream;
-import org.apache.catalina.connector.HttpRequestBase;
-
-
 /**
  * HTTP header enum type.
  *

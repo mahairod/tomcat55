@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 // import java.net.URL;
 import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
 import java.text.SimpleDateFormat;
@@ -45,7 +44,6 @@ import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Logger;
 import org.apache.catalina.util.CookieTools;
-import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.URL;
 
 

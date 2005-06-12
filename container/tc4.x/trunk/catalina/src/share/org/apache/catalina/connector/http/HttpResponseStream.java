@@ -20,7 +20,6 @@ package org.apache.catalina.connector.http;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.catalina.Response;
 import org.apache.catalina.connector.ResponseStream;
 
 /**

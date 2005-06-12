@@ -20,8 +20,6 @@ package org.apache.catalina.connector.http;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import javax.servlet.ServletInputStream;

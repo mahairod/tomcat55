@@ -19,8 +19,6 @@ package org.apache.catalina.connector.http;
 
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;

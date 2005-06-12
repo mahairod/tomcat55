@@ -21,7 +21,6 @@ package org.apache.catalina.connector;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.Socket;
-import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
 import org.apache.catalina.Connector;
