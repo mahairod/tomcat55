@@ -1393,6 +1393,13 @@ public class StandardSession
         }
         isValid = isValidSave;
 
+        if (listeners == null) {
+            listeners = new ArrayList();
+        }
+
+        if (notes == null) {
+            notes = new HashMap();
+        }
     }
 
 
