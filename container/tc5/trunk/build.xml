@@ -224,6 +224,7 @@
   	<!-- Protocol handlers - AJP -->
 	<jar jarfile="${tomcat.build}/server/lib/tomcat-ajp.jar" index="true">
       <fileset dir="${tomcat.build}/classes">
+        <include name="org/apache/coyote/ajp/**" />
         <include name="org/apache/jk/**" />
         <exclude name="org/apache/jk/ant/**" />
         <!-- Javadoc and i18n exclusions -->
