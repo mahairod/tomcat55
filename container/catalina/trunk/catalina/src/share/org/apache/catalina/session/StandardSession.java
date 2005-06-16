@@ -53,6 +53,7 @@ import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.StringManager;
 
 import org.apache.catalina.security.SecurityUtil;
+
 /**
  * Standard implementation of the <b>Session</b> interface.  This object is
  * serializable, so that it can be stored in persistent storage or transferred
@@ -1452,7 +1453,7 @@ public class StandardSession
                 saveNames.add(keys[i]);
                 saveValues.add(value);
             } else {
-                removeAttribute(keys[i]);
+                removeAttributeInternal(keys[i], true);
             }
         }
 
