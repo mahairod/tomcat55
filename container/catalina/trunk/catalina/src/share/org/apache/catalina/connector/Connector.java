@@ -619,13 +619,7 @@ public class Connector
             method.invoke(null, paramValues);
             apr = true;
         } catch (Throwable t) {
-            if (!log.isDebugEnabled()) {
-                log.info(sm.getString("coyoteConnector.noApr", 
-                        System.getProperty("java.library.path")));
-            } else {
-                log.debug(sm.getString("coyoteConnector.noApr", 
-                        System.getProperty("java.library.path")), t);
-            }
+            // Ignore
         }
 
         if (apr) {
@@ -633,12 +627,8 @@ public class Connector
                 setProtocolHandlerClassName
                     ("org.apache.coyote.http11.Http11AprProtocol");
             } else if ("AJP/1.3".equals(protocol)) {
-                /*
                 setProtocolHandlerClassName
                     ("org.apache.coyote.ajp.AjpAprProtocol");
-                */
-                setProtocolHandlerClassName
-                    ("org.apache.jk.server.JkCoyoteHandler");
             } else if (protocol != null) {
                 setProtocolHandlerClassName(protocol);
             } else {
