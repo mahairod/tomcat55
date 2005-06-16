@@ -15,11 +15,6 @@ and those who develop and maintain the code for Apache Tomcat.  Almost all those
 who assist on a day to day basis resolving bug reports do this for a
 wide variety of reasons, and almost all of them do this on their own time.</p>
 
-<p>If you have a verified security bug to report please do not post it
-to email lists or submit a bug report.  Security bugs should be reported
-privately by email to <a href="mailto:security@apache.org">security@apache.org</a>.
-</p>
-
 <p>Many bugs reported end up not being a bug in the Apache Tomcat code, but are
 due to misconfiguration, problems caused by installed applications, the
 operating system, etc.
@@ -151,6 +146,15 @@ Report an Apache Tomcat 3 bug
 <a href="http://issues.apache.org/bugzilla/enter_bug.cgi?product=Tomcat%203">
 here</a>.<br />
 </p>
+
+<subsection name="Security Issues">
+<p>Security-related bugs are of special concern.  If you have a verified 
+security bug to report please do not post it
+to email lists or submit a bug report.  Security bugs should be reported
+privately by email to <a href="mailto:security@apache.org">security@apache.org</a>.
+</p>
+</subsection>
+
 </section>
 
 </body>
