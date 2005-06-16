@@ -664,8 +664,8 @@ public class StandardManager
         // Write out sessions
         try {
             unload();
-        } catch (IOException e) {
-            log.error(sm.getString("standardManager.managerUnload"), e);
+        } catch (Throwable t) {
+            log.error(sm.getString("standardManager.managerUnload"), t);
         }
 
         // Expire all active sessions
