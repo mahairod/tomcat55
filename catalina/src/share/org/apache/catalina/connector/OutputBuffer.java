@@ -559,7 +559,7 @@ public class OutputBuffer extends Writer
         conv = (C2BConverter) encoders.get(enc);
         if (conv == null) {
             
-            if (SecurityUtil.isPackageProtectionEnabled()){
+            if (System.getSecurityManager() != null){
                 try{
                     conv = (C2BConverter)AccessController.doPrivileged(
                             new PrivilegedExceptionAction(){
