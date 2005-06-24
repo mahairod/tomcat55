@@ -195,6 +195,7 @@ jmx.home=${base.path}/mx4j-3.0.1
 jmx.lib=${jmx.home}/lib
 jmx.jar=${jmx.lib}/mx4j.jar
 jmx-tools.jar=${jmx.lib}/mx4j-tools.jar
+jmx-remote.jar=${jmx.lib}/mx4j-remote.jar
 jmx.loc=${base-sf.loc}/mx4j/mx4j-3.0.1.tar.gz
 
 
