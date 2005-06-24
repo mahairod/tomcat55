@@ -40,7 +40,7 @@
       <li>Jean-Frederic Clere (jfclere): Connectors</li>
       <li>Kin-Man Chung (kinman): Jasper</li>
       <li>Mladen Turk (mturk): Connectors</li>
-      <li>Peter Rossbach (pero): Catalina, Clustering</li>
+      <li>Peter Rossbach (pero): Catalina, Clustering, JMX</li>
       <li>Remy Maucherat (remm): Catalina, Connectors, Docs</li>
       <li>Tim Funk (funkman): Catalina, Docs</li>
       <li>Yoav Shapira (yoavs): Docs, JMX, Catalina, balancer, Release Manager</li>
