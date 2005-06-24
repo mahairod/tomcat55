@@ -542,7 +542,7 @@
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
-      <fileset dir="src/bin" excludes="*-using-launcher.*,launcher.properties,catalina.xml" />
+      <fileset dir="src/bin" excludes="*-using-launcher.*,launcher.properties,catalina.xml,*-tasks.xml" />
     </copy>
     <fixcrlf srcdir="${catalina.build}/bin" includes="*.sh" eol="lf"/>
     <fixcrlf srcdir="${catalina.build}/bin" includes="*.bat" eol="crlf"/>
@@ -640,6 +640,9 @@
 
   </target>
 
+	
+
+	
   <target name="build-catalina-optional" unless="build.tomcat.base">
     <!-- Compile internal server components -->
     <javac srcdir="src/share" destdir="${classes.dir}"
@@ -1018,7 +1021,7 @@
     <jar jarfile="${catalina.deploy}/server/lib/catalina-ant.jar">
       <fileset dir="${classes.dir}">
         
-      	<include name="org/apache/catalina/ant/**" />
+      	<include name="org/apache/catalina/ant/*" />
         <include name="org/apache/catalina/util/Base64.class" />
 
       	<!-- Javadoc and i18n exclusions -->
@@ -1028,7 +1031,20 @@
       </fileset>
     </jar>
 
-    <!-- Naming - Factory JAR File -->
+  	<!-- Catalina JMX Accessor Ant Tasks JAR File -->
+    <jar jarfile="${catalina.deploy}/server/lib/catalina-ant-jmx.jar">
+      <fileset dir="${classes.dir}">
+        
+      	<include name="org/apache/catalina/ant/jmx/*" />
+
+      	<!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
+      	
+      </fileset>
+    </jar>
+
+  	<!-- Naming - Factory JAR File -->
     <jar jarfile="${catalina.deploy}/common/lib/naming-factory.jar" index="true">
       <fileset dir="${classes.dir}">
         <include name="org/apache/naming/**" />
