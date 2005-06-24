@@ -29,6 +29,15 @@
 <section name="Tomcat 5.5.10 (yoavs)">
   <subsection name="General">
     <changelog>
+      <add>
+         Add JMX remote ant task to control tomcat MBeanserver via ant scripts.
+         Ant lib is included at "server/lib/catalina-ant-jmx.jar" and documentation
+         is added to <a href="monitoring.html">Monitoring and Managing Tomcat How-To</a> (pero)
+      </add>
+      <fix>
+        <bug>34361</bug>: Integrate better antlib and import support for 
+        catalina manager tasks [Modified patch from Daniel Santos]  (pero)
+      </fix>
       <fix>
         StoreConfig save now the Connector.sslProtocol attribute. (pero)
       </fix>
@@ -58,7 +67,7 @@
              ClusterListener
              more than one Cluster Valves
           - better subclass support
-          - change a lot of existing API's (pero)
+          - change a lot of existing Cluster API's (pero)
        </update>
        <add>
          Add Apache Portable Runtime JNI wrapper and helper API (mturk)
