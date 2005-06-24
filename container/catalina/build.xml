@@ -62,6 +62,7 @@
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmx.jar}"/>
+    <pathelement location="${jmx-remote.jar}"/>
     <pathelement location="${jndi.jar}"/>
     <pathelement location="${jnet.jar}"/>
     <pathelement location="${jsse.jar}"/>
