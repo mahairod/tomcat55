@@ -32,6 +32,7 @@ import java.util.Iterator;
 import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
@@ -135,6 +136,10 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     private ArrayList receivedMessageQueue = new ArrayList() ;
     
     private boolean receiverQueue = false ;
+
+    private boolean stateTimestampDrop = true ;
+
+    private long stateTransferCreateSendTime; 
     
     // ------------------------------------------------------------------ stats attributes
     
@@ -173,6 +178,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     private int counterReceive_EVT_ALL_SESSION_TRANSFERCOMPLETE = 0 ;
 
     private int counterNoStateTransfered = 0 ;
+
 
     // ------------------------------------------------------------- Constructor
   
@@ -390,6 +396,20 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      */
     public void setSendClusterDomainOnly(boolean sendClusterDomainOnly) {
         this.sendClusterDomainOnly = sendClusterDomainOnly;
+    }
+
+    /**
+     * @return Returns the stateTimestampDrop.
+     */
+    public boolean isStateTimestampDrop() {
+        return stateTimestampDrop;
+    }
+    
+    /**
+     * @param stateTimestampDrop The stateTimestampDrop to set.
+     */
+    public void setStateTimestampDrop(boolean isTimestampDrop) {
+        this.stateTimestampDrop = isTimestampDrop;
     }
     
     /**
@@ -803,11 +823,12 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
             for(int i=0 ; i < currentSessions.length;i++) {
                 ((DeltaSession)currentSessions[i]).writeObjectData(oos);                
             }
+            // Flush and close the output stream
             oos.flush();
-            oos.close();
-            oos = null;
         } catch (IOException e) {
             log.error(sm.getString("deltaManager.unloading.ioe", e), e);
+            throw e;
+        } finally {
             if (oos != null) {
                 try {
                     oos.close();
@@ -816,50 +837,8 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 }
                 oos = null;
             }
-            throw e;
         }
-/*
-        try {
-            fos = new ByteArrayOutputStream();
-            oos = new ObjectOutputStream(new BufferedOutputStream(fos));
-        } catch (IOException e) {
-            log.error(sm.getString("deltaManager.unloading.ioe", e), e);
-            if (oos != null) {
-                try {
-                    oos.close();
-                } catch (IOException f) {
-                    ;
-                }
-                oos = null;
-            }
-            throw e;
-        }
-        synchronized (sessions) {
-            try {
-                oos.writeObject(new Integer(sessions.size()));           
-                Iterator elements = sessions.values().iterator();
-                while (elements.hasNext()) {
-                    DeltaSession session = (DeltaSession) elements.next();
-                    session.writeObjectData(oos);
-                }
-                oos.flush();
-                oos.close();
-                oos = null;
-            } catch (IOException e) {
-                log.error(sm.getString("deltaManager.unloading.ioe", e), e);
-                if (oos != null) {
-                    try {
-                        oos.close();
-                    } catch (IOException f) {
-                        ;
-                    }
-                    oos = null;
-                }
-                throw e;
-            }
-        }
-*/
-        // Flush and close the output stream
+        // send object data as byte[]
         return fos.toByteArray();
     }
 
@@ -936,7 +915,15 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                          if(cluster != null && cluster instanceof CatalinaCluster) {
                              setCluster((CatalinaCluster) cluster) ;
                          } else {
-                             cluster = null ;
+                             Container engine = host.getParent() ;
+                             if(engine != null && engine instanceof Engine) {
+                                 cluster = engine.getCluster();
+                                 if(cluster != null && cluster instanceof CatalinaCluster) {
+                                     setCluster((CatalinaCluster) cluster) ;
+                                 }
+                             } else {
+                                     cluster = null ;
+                             }
                          }
                      }
                 }
@@ -960,10 +947,12 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     }
 
     /**
-     * get from first member all Sessions
+     * get from first session master the backup from all clustered sessions
+     * @see #findSessionMasterMember()
      */
     public synchronized void getAllClusterSessions() {
         if (cluster != null && cluster.getMembers().length > 0) {
+            long beforeSendTime = System.currentTimeMillis();
             Member mbr = findSessionMasterMember();
             if(mbr == null) { // No domain member found
                  return;
@@ -971,20 +960,13 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
             SessionMessage msg = new SessionMessageImpl(this.getName(),
                     SessionMessage.EVT_GET_ALL_SESSIONS, null, "GET-ALL",
                     "GET-ALL-" + getName());
-            //just to make sure the other server has the context started
-            //                long timetowait = 20000-mbr.getMemberAliveTime();
-            //                if ( timetowait > 0 ) {
-            //                    log.info("The other server has not been around more than 20
-            // seconds, will sleep for "+timetowait+" ms. in order to let it
-            // startup");
-            //                    try { Thread.currentThread().sleep(timetowait); } catch (
-            // Exception x ) {}
-            //                }//end if
-
-            //request session state
+            msg.setResend(ClusterMessage.FLAG_FORBIDDEN);
+            // set reference time
+            msg.setTimestamp(beforeSendTime);
+            stateTransferCreateSendTime = beforeSendTime ;
+            // request session state
             counterSend_EVT_GET_ALL_SESSIONS++;
             stateTransferred = false ;
-            long beforeSendTime = System.currentTimeMillis();
             // FIXME This send call block the deploy thread, when sender waitForAck is enabled
             try {
                 synchronized(receivedMessageQueue) {
@@ -998,10 +980,33 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 waitForSendAllSessions(beforeSendTime);
             } finally {
                 synchronized(receivedMessageQueue) {
-                    for (Iterator iter = receivedMessageQueue.iterator(); iter.hasNext();) {
+                    for (Iterator iter = receivedMessageQueue.iterator(); iter
+                            .hasNext();) {
                         SessionMessage smsg = (SessionMessage) iter.next();
-                        messageReceived(smsg, smsg.getAddress() != null ? (Member) smsg
-                            .getAddress() : null);
+                        if (!stateTimestampDrop) {
+                            messageReceived(smsg,
+                                    smsg.getAddress() != null ? (Member) smsg
+                                            .getAddress() : null);
+                        } else {
+                            if (smsg.getEventType() != SessionMessage.EVT_GET_ALL_SESSIONS
+                                    && smsg.getTimestamp() >= stateTransferCreateSendTime) {
+                                // FIXME handle EVT_GET_ALL_SESSIONS later
+                                messageReceived(
+                                        smsg,
+                                        smsg.getAddress() != null ? (Member) smsg
+                                                .getAddress()
+                                                : null);
+                            } else {
+                                if (log.isWarnEnabled()) {
+                                    log.warn(sm.getString(
+                                            "deltaManager.dropMessage",
+                                            getName(), smsg
+                                                    .getEventTypeString(),
+                                            new Date(stateTransferCreateSendTime), new Date(
+                                                    smsg.getTimestamp())));
+                                }
+                            }
+                        }
                     }        
                     receivedMessageQueue.clear();
                     receiverQueue = false ;
@@ -1043,19 +1048,34 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
 
     /**
      * Wait that cluster session state is transfer or timeout after 60 Sec
+     * With stateTransferTimeout == -1 wait that backup is transfered (forever mode)
      */
     protected void waitForSendAllSessions(long beforeSendTime) {
         long reqStart = System.currentTimeMillis();
-        long reqNow = 0;
+        long reqNow = reqStart ;
         boolean isTimeout = false;
-        do {
-            try {
-                Thread.sleep(100);
-            } catch (Exception sleep) {
+        if(getStateTransferTimeout() > 0) {
+            // wait that state is transfered with timeout check
+            do {
+                try {
+                    Thread.sleep(100);
+                } catch (Exception sleep) {
+                }
+                reqNow = System.currentTimeMillis();
+                isTimeout = ((reqNow - reqStart) > (1000 * getStateTransferTimeout()));
+            } while ((!getStateTransferred()) && (!isTimeout));
+        } else {
+            if(getStateTransferTimeout() == -1) {
+                // wait that state is transfered
+                do {
+                    try {
+                        Thread.sleep(100);
+                    } catch (Exception sleep) {
+                    }
+                } while ((!getStateTransferred()));
+                reqNow = System.currentTimeMillis();
             }
-            reqNow = System.currentTimeMillis();
-            isTimeout = ((reqNow - reqStart) > (1000 * getStateTransferTimeout()));
-        } while ((!getStateTransferred()) && (!isTimeout));
+        }
         if (isTimeout || (!getStateTransferred())) {
             counterNoStateTransfered++ ;
             log.error(sm.getString("deltaManager.noSessionState",
@@ -1444,7 +1464,8 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
             log.debug(sm.getString(
                     "deltaManager.receiveMessage.transfercomplete",
                     getName(), sender.getHost(), new Integer(sender.getPort())));
-       stateTransferred = true ; 
+        stateTransferCreateSendTime = msg.getTimestamp() ;
+        stateTransferred = true ;
     }
 
     /**
@@ -1571,8 +1592,9 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         // Write the number of active sessions, followed by the details
         // get all sessions and serialize without sync
         Session[] currentSessions = findSessions();
+        long findSessionTimestamp = System.currentTimeMillis() ;
         if (isSendAllSessions()) {
-            sendSessions(sender, currentSessions);
+            sendSessions(sender, currentSessions, findSessionTimestamp);
         } else {
             // send session at blocks
             int len = currentSessions.length < getSendAllSessionsSize() ? currentSessions.length
@@ -1583,7 +1605,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                         - i 
                         : getSendAllSessionsSize();
                 System.arraycopy(currentSessions, i, sendSessions, 0, len);
-                sendSessions(sender, sendSessions);
+                sendSessions(sender, sendSessions,findSessionTimestamp);
                 if (getSendAllSessionsWaitTime() > 0) {
                     try {
                         Thread.sleep(getSendAllSessionsWaitTime());
@@ -1597,6 +1619,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 SessionMessage.EVT_ALL_SESSION_TRANSFERCOMPLETE, null,
                 "SESSION-STATE-TRANSFERED", "SESSION-STATE-TRANSFERED"
                         + getName());
+        newmsg.setTimestamp(findSessionTimestamp);
         if (log.isDebugEnabled())
             log.debug(sm.getString(
                     "deltaManager.createMessage.allSessionTransfered",
@@ -1610,9 +1633,11 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      * send a block of session to sender
      * @param sender
      * @param currentSessions
+     * @param sendTimeStamp
      * @throws IOException
      */
-    protected void sendSessions(Member sender, Session[] currentSessions) throws IOException {
+    protected void sendSessions(Member sender, Session[] currentSessions,
+            long sendTimestamp) throws IOException {
         byte[] data = serializeSessions(currentSessions);
         if (log.isDebugEnabled())
             log.debug(sm.getString(
@@ -1621,6 +1646,10 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         SessionMessage newmsg = new SessionMessageImpl(name,
                 SessionMessage.EVT_ALL_SESSION_DATA, data,
                 "SESSION-STATE", "SESSION-STATE-" + getName());
+        newmsg.setTimestamp(sendTimestamp);
+        //if(isSendSESSIONSTATEcompressed()) {
+        //    newmsg.setCompress(ClusterMessage.FLAG_ALLOWED);
+        //}
         if (log.isDebugEnabled())
             log.debug(sm.getString(
                     "deltaManager.createMessage.allSessionData",

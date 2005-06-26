@@ -33,6 +33,7 @@ import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.util.IDynamicProperty;
 import org.apache.catalina.util.StringManager;
 import org.apache.tomcat.util.IntrospectionUtils;
+import org.apache.tomcat.util.digester.SetTopRule;
 
 /**
  * Transmit message to ohter cluster members create sender from replicationMode
@@ -53,7 +54,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "ReplicationTransmitter/2.0";
+    private static final String info = "ReplicationTransmitter/3.0";
 
     /**
      * The string manager for this package.
@@ -422,10 +423,10 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
             time = System.currentTimeMillis();
         }
         try {
-            byte[] data = serialize(message);
+            ClusterData data = serialize(message);
             String key = getKey(member);
             IDataSender sender = (IDataSender) map.get(key);
-            sendMessageData(message.getUniqueId(), data, sender);
+            sendMessageData(data, sender);
         } finally {
             if (doTransmitterProcessingStats) {
                 addProcessingStats(time);
@@ -436,6 +437,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     /**
      * Send to all senders at same cluster domain as message from address
      * @param message Cluster message to send
+     * @since 5.5.10
      */
     public void sendMessageClusterDomain(ClusterMessage message) 
          throws java.io.IOException {
@@ -447,14 +449,14 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
             String domain = message.getAddress().getDomain();
             if(domain == null)
                 throw new RuntimeException("Domain at member not set");
-            byte[] data = serialize(message);
+            ClusterData data = serialize(message);
             IDataSender[] senders = getSenders();
             for (int i = 0; i < senders.length; i++) {
 
                 IDataSender sender = senders[i];
                 if(domain.equals(sender.getDomain())) {
                     try {
-                        sendMessageData(message.getUniqueId(), data, sender);
+                        sendMessageData(data, sender);
                     } catch (Exception x) {
                         if (!sender.getSuspect()) {
                             log.warn("Unable to send replicated message to "
@@ -483,13 +485,13 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
             time = System.currentTimeMillis();
         }
         try {
-            byte[] data = serialize(message);
+            ClusterData data = serialize(message);
             IDataSender[] senders = getSenders();
             for (int i = 0; i < senders.length; i++) {
 
                 IDataSender sender = senders[i];
                 try {
-                    sendMessageData(message.getUniqueId(), data, sender);
+                    sendMessageData(data, sender);
                 } catch (Exception x) {
                     if (!sender.getSuspect()) {
                         log.warn("Unable to send replicated message to "
@@ -792,13 +794,23 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * @param msg cluster message
      * @return cluster message as byte array
      * @throws IOException
+     * @since 5.5.10
      */
-    protected byte[] serialize(ClusterMessage msg) throws IOException {
+    protected ClusterData serialize(ClusterMessage msg) throws IOException {
         msg.setTimestamp(System.currentTimeMillis());
         ByteArrayOutputStream outs = new ByteArrayOutputStream();
         ObjectOutputStream out;
         GZIPOutputStream gout = null;
-        if (isCompress()) {
+        ClusterData data = new ClusterData();
+        data.setType(msg.getClass().getName());
+        data.setUniqueId(msg.getUniqueId());
+        data.setTimestamp(msg.getTimestamp());
+        data.setCompress(msg.getCompress());
+        data.setResend(msg.getResend());
+        // FIXME add Stats how much comress and uncompress messages and bytes are transfered
+        if ((isCompress() && msg.getCompress() != ClusterMessage.FLAG_FORBIDDEN)
+                || msg.getCompress() == ClusterMessage.FLAG_ALLOWED) {
+            System.out.println("msg compress: " + msg.getUniqueId() );
             gout = new GZIPOutputStream(outs);
             out = new ObjectOutputStream(gout);
         } else {
@@ -810,7 +822,8 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
             gout.flush();
             gout.close();
         }
-        return outs.toByteArray();
+        data.setMessage(outs.toByteArray());
+        return data;
     }
  
 
@@ -831,7 +844,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      *            concrete message sender
      * @throws java.io.IOException
      */
-    protected void sendMessageData(String sessionId, byte[] data,
+    protected void sendMessageData(ClusterData data,
             IDataSender sender) throws java.io.IOException {
         if (sender == null)
             throw new java.io.IOException(
@@ -844,9 +857,9 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                         sender.connect();
                 }
             }
-            sender.sendMessage(sessionId, data);
+            sender.sendMessage(data);
             sender.setSuspect(false);
-            addStats(data.length);
+            addStats(data.getMessage().length);
         } catch (Exception x) {
             if (log.isWarnEnabled()) {
                 if (!sender.getSuspect()) {

@@ -1388,6 +1388,14 @@ public class DeltaSession implements HttpSession, Session, Serializable,
             }
         }
         isValid = isValidSave;
+        
+        if (listeners == null) {
+            listeners = new ArrayList();
+        }
+        
+        if (notes == null) {
+            notes = new HashMap();
+        }
     }
 
     /**

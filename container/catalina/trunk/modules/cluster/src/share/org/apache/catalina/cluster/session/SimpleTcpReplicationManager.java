@@ -186,7 +186,7 @@ implements ClusterManager
      *
      * @see ReplicatedSession
      */
-    protected Session createSession(boolean notify, boolean setId)
+    protected Session createSession(String sessionId, boolean notify, boolean setId)
     {
 
         //inherited from the basic manager
@@ -202,7 +202,8 @@ implements ClusterManager
         session.setValid(true);
         session.setCreationTime(System.currentTimeMillis());
         session.setMaxInactiveInterval(this.maxInactiveInterval);
-        String sessionId = generateSessionId();
+        if(sessionId == null)
+            sessionId = generateSessionId();
         if ( setId ) session.setId(sessionId);
         if ( notify && (cluster!=null) ) {
             ((ReplicatedSession)session).setIsDirty(true);
@@ -224,10 +225,10 @@ implements ClusterManager
      * @exception IllegalStateException if a new session cannot be
      *  instantiated for any reason
      */
-    public Session createSession()
+    public Session createSession(String sessionId)
     {
         //create a session and notify the other nodes in the cluster
-        Session session =  createSession(getDistributable(),true);
+        Session session =  createSession(sessionId,getDistributable(),true);
         add(session);
         return session;
     }
@@ -372,7 +373,7 @@ implements ClusterManager
             }//end if
 
             if (session==null) {
-                session = createSession(false, false);
+                session = createSession(null,false, false);
                 sessions.remove(session.getIdInternal());
             }
             
@@ -393,10 +394,11 @@ implements ClusterManager
             rsession.setThisAccessedTime(System.currentTimeMillis());
             ((ReplicatedSession)session).setAccessCount(0);
             session.setNew(false);
-//            System.out.println("Session loaded id="+sessionId +
-//                               " actualId="+session.getId()+ 
-//                               " exists="+this.sessions.containsKey(sessionId)+
-//                               " valid="+rsession.isValid());
+            if(log.isTraceEnabled())
+                 log.trace("Session loaded id="+sessionId +
+                               " actualId="+session.getId()+ 
+                               " exists="+this.sessions.containsKey(sessionId)+
+                               " valid="+rsession.isValid());
             return session;
 
         }
@@ -632,6 +634,5 @@ implements ClusterManager
     public CatalinaCluster getCluster() {
         return cluster;
     }
-
 
 }

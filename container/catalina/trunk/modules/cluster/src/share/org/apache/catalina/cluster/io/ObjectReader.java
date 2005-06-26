@@ -19,6 +19,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
+import org.apache.catalina.cluster.tcp.ClusterData;
+
 /**
  * The object reader object is an object used in conjunction with
  * java.nio TCP messages. This object stores the message bytes in a
@@ -89,7 +91,7 @@ public class ObjectReader {
     /**
      * Send buffer to cluster listener (callback)
      * Is message complete receiver send message to callback
-     * @see org.apache.catalina.cluster.tcp.SimpleTcpCluster#messageDataReceived(byte[])
+     * @see org.apache.catalina.cluster.tcp.ClusterReceiverBase#messageDataReceived(ClusterData)
      * @see XByteBuffer#doesPackageExist()
      * @see XByteBuffer#extractPackage()
      * @return number of received packages/messages
@@ -99,8 +101,8 @@ public class ObjectReader {
         int pkgCnt = 0;
         boolean pkgExists = buffer.doesPackageExist();
         while ( pkgExists ) {
-            byte[] b = buffer.extractPackage(true);
-            getCallback().messageDataReceived(b);
+            ClusterData data = buffer.extractPackage(true);
+            getCallback().messageDataReceived(data);
             pkgCnt++;
             pkgExists = buffer.doesPackageExist();
         }

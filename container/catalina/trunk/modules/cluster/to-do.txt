@@ -2,18 +2,19 @@
 Next actions
 ==============================
 
-- fix resend GET_ALL_SESSIONS when wait ACK failed at receiver side
-- add cluster setup template (src)	
+- add mapping sender mapping properties file
+	- let people eaiser extend sender mode
 - when a lot of messages expire it comes to burst of messages 
-     - all 60 Sec when ManagerBase#processExpires is called!
+     - all 60 Sec when ManagerBase#processExpires is called a lot of messages are send!
      - Better is to transfer a spezial epxire message with an array of expired session messages.
      - This reduce message transfer and reduce waits for acks.
-     - complicated thing , sessions expires when call isValid :-(     
+     - complicated implementation thing , sessions expires when call isValid :-(     
 - build a tool that receive the stage and present it as simple web app.
     	detect some problems
     	different active sessions
     	long queues
-    	detect long wait acks     
+    	detect long wait acks
+- add cluster setup template (src)	
 - documentation
 	wrote a complete new how-to
 	add example configurations
@@ -26,17 +27,29 @@ Next actions
 	Splitting Messages ala FarmDeployer war handling
 - add a message type to the message header.
     - filtering at receiver that drop message before build Object
+    - define short type definition.
+       - Every Session message with differenz type
+       - type with String
 - add test cluster project
+	functional testing a lot of szenarios
+		differen replication mode
+		restart after failure
+		crash under load
+		compress and uncompressed
     Junit test ( started)
     automated regression testing with some standard configs
     wrote a test client that can get a JMX State to verify the different cluster testszenarios
 	 - direct JSR 160 client - preferred option
 	 - via mx4j http adaptor ( xml protocol)
 	 - setup different szenarios
+	use new remote jmx ant tasks to grab information from mbeans 
 - filter all cluster messages 
      - Filtering that no all message send to all member.
-- setup a Cluster LifecycleListener set send/protocol the cluster compact status! (monitoring)
-     - setup cluster Listener set send own state to spezial member (sender from a message)
+     - Now with domain mode registeration session message only send to
+       members from same domain.
+- setup a Cluster LifecycleListener to send the cluster status! (monitoring)
+     - Make the compact state via JMX API avialable first.
+     - setup cluster Listener that send own state to spezial member (sender from a message like GET_ALL_SESSIONS)
      - create a cluster status app (html/xml)
          - attributes
             - send message
@@ -72,44 +85,28 @@ problems
     currently the jk 1.2.10 can only disable the complete loadbalancer,
     but this detect only the new session request desicion.
     Request with sessions marks send to tomcat. 
-    
+    Fix: jk > 1.2.11 has a stopped flag, but then all application stop traffic
+    and session transfer from other nodes not stopped!!
 - Can't stop message replication for a spezial member and application
-   - this need a spezial cluster message and send filter at SimpleTcpCluster
- 
+   - this need a spezial cluster message and send filter at SimpleTcpCluster 
 - Don't generate cluster message when no member is at cluster!
    - Register DeltaManager as Cluster LifecycleListener and stop cresting and sending
-   - Reduce memory consume when only one node is active
+   - Reduce memory consume when only local node is active
+   - Important feature when nodes crashed, and only one server exists under load...
    
-- WaitForAck mode and resend probleme
-   - When session serialzisation needs more time then wait ack timeout, 
-     the sender send GETALLSESSIONS again!!
-     Bad for performance and memory, sometimes it drop both nodes very quickly!
-   => Some message need a flag that resend is not allowed!
-     proposed transfer protocol and api change between Transmitter/Senders  and ObjectReader/Receiver
-        not used byte[] instead a better transfer message format
-           header [TC]                            2 bytes
-           type= <A-M> reserved                   1 byte
-           compress = true/false                  1 byte 1 true 0 false
-           resendAllowed = true/false             1 byte
-           isResendPackage = true/false           1 byte
-           splitpackage=true/false                1 byte
-           packagenumber= int                     2 bytes
-           lastpackagenumber= int                 2 bytes
-           length								  4 bytes
-           orignalLength                          4 bytes
-           byte[]                                 length
-           
-           orignalLength != length when compress = true, for better default byte allocation at receiver)                         
-
-		see "Nice to have" also
-		
-    - the resending is also a problem with FarmDeployer.
-       when last package received and starting the application needs time > wait-ack timeout
-       => the last war file packge are resend         
-
 ==============================
 Nice to have:
-==============================		
+==============================
+- Replication ContextAttributes
+- Cluster config at engine level (user request 06/05)
+	 Register a cluster infrastructur for many vhosts
+	 configure backup systems!
+	 Add Cluster Element to digister		
+- Configure the McastService no accept every member.
+	- receive a secret key
+	- have a allow or deny list like RequestFilterValve
+	- Also receiver don't accept request from not allowed members
+- ReplicationListener and SocketReplicationListener only accept data from cluster member (low level ip restriction)
 - PooledSocketSender
 	Add more stats
 	check all Pooled sender checkKeepAlive
@@ -118,6 +115,9 @@ wish to be replicated
         Then we must have ClusterNonSerializable at common classloader
 - Extend StandardSession if possible
 - Implement primary/secondary replication logic
+	Now we have a domain sending mode, but we can send a broadcast when 
+	local node have no backup.
+		Wait a time periode, then find a backup
 - Implement context attribute replication (?)
 	pero:
 		Also send Start/Stop messages from Context to complete cluster!
@@ -149,11 +149,11 @@ would not make sense to transfer the same webapp over and over again.
      	Fixed!		
      Last FileMessage fragment need longe ackTimeout	
     	<Cluster ..> <Sender ... ackTimeout="60000"/> </Cluster> 	
-- ReplicationListener and SocketReplicationListener only accept data from cluster member (low level ip restriction)
 - Change the cluster protocol that developer can add there own data serialzable/deserialzable format (high risk)
   
    Currently 
    	header 		    6 bytes (FLT2002)
+    compressflag    4 byte
    	data.length     4 bytes
    	data, 
    	end header      6 bytes (TLF2003)
@@ -179,6 +179,29 @@ would not make sense to transfer the same webapp over and over again.
 COMPLETED (pero)
 ==============================
 5.5.10
+- Session serialization eat memory but now we can send session messages with blocks...
+	When all sessions serialze after GET_ALL_SESSION is received following works
+	- find all sessions
+	- serialize a block or all sessions as byte array
+	- serialize the complete SessionMessageImpl to transfer message
+- WaitForAck mode and resend probleme
+   - Now message creator can configure resend and compress mode!
+- Add a default simple cluster config with good defaults and only
+  one cluster element inside server.xml. Setup with fastasyncmode.
+  Service Elements
+  	ReplicationTransmitter,
+  	SocketReplicationListener,
+  	McastService,
+  	ClusterSessionListener
+  	ReplicationValve
+  You can change property setting with SimpleTcpCluster prefix "sender.XXX, receiver.XXX, valve.XXX, listener.XXX, service.XXX"	
+- Fix resend GET_ALL_SESSIONS when wait ACK failed at receiver side
+- Fix that ClusterValve not remove when cluster stops 
+- Set timestamp only at first time inside SessionMessageImpl
+- Set timestamp from findsessions when handling GET_ALL_SESSION
+    - Set this timestamp to all SEND_SESSION_DATA and TRANSFER Complete messages
+    - Drop all received message inside GET_ALL_SESSION message queue (DeltaManager)    
+
 - Mcast Service as JMX MBean (change cluster domain at runtime)    
 - send cluster domain with mcast ping
     - With sendClusterDomainOnly=true only session message from same domain are received

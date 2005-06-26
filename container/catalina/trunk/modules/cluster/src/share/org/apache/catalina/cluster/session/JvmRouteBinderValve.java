@@ -22,6 +22,7 @@ import javax.servlet.http.Cookie;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
@@ -155,7 +156,7 @@ public class JvmRouteBinderValve extends ValveBase implements ClusterValve, Life
     }
 
     /**
-     * @return Returns the numberOfSessions.
+     * @return Returns the number of migrated sessions.
      */
     public long getNumberOfSessions() {
         return numberOfSessions;
@@ -192,9 +193,8 @@ public class JvmRouteBinderValve extends ValveBase implements ClusterValve, Life
             ServletException {
 
          if (getEnabled() 
+                 && getCluster() != null
                  && request.getContext() != null
-                 && request.getContext().getParent() != null
-                 && request.getContext().getParent().getCluster() != null 
                  && request.getContext().getDistributable() ) {
             handlePossibleTurnover(request, response);
         }
@@ -488,7 +488,7 @@ public class JvmRouteBinderValve extends ValveBase implements ClusterValve, Life
                     .getString("jvmRoute.valve.alreadyStarted"));
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
-        if (cluster != null) {
+        if (cluster == null) {
             Container hostContainer = getContainer();
             // compatibility with JvmRouteBinderValve version 1.1
             // ( setup at context.xml or context.xml.default )
@@ -498,8 +498,15 @@ public class JvmRouteBinderValve extends ValveBase implements ClusterValve, Life
                 hostContainer = hostContainer.getParent();
             }
             if (hostContainer instanceof Host
-                    && ((Host) hostContainer).getCluster() != null)
+                    && ((Host) hostContainer).getCluster() != null) {
                 cluster = (CatalinaCluster) ((Host) hostContainer).getCluster();
+            } else {
+                Container engine = hostContainer.getParent() ;
+                if (engine instanceof Engine
+                        && ((Engine) engine).getCluster() != null) {
+                    cluster = (CatalinaCluster) ((Engine) engine).getCluster();
+                }
+            }
         }
         if (cluster == null) {
             throw new RuntimeException("No clustering support at container "

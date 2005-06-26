@@ -51,7 +51,7 @@
                  type="org.apache.catalina.cluster.ClusterMessage"/>
     </operation>
         
-    <operation   name="send"
+    <operation   name="sendToMember"
                description="send message to one cluster member"
                impact="ACTION"
                returnType="void">
@@ -60,7 +60,7 @@
                  type="org.apache.catalina..cluster.ClusterMessage"/>
       <parameter name="member"
                  description="cluster member"
-                 type="org.apache.catalina.cluster.Member"/>
+                 type="java.lang.String"/>
     </operation>
 
     <operation   name="start"
@@ -86,6 +86,18 @@
           description="Class version info"
                  type="java.lang.String"
                  writeable="false"/>
+    <attribute   name="tcpListenAddress"
+          description="tcp listener address"
+                 type="java.lang.String"/>
+    <attribute   name="tcpListenPort"
+          description="tcp listener port"
+                 type="int"/>
+    <attribute   name="tcpThreadCount"
+          description="number of tcp listener worker threads"
+                 type="int"/>
+    <attribute   name="tcpSelectorTimeout"
+          description="tcp listener Selector timeout"
+                 type="long"/>
     <attribute   name="nrOfMsgsReceived"
           description="number of messages received from other nodes"
                  type="long"
@@ -127,8 +139,13 @@
 			     is="true"
                  type="boolean"
                  writeable="false" />
-   <attribute   name="compress"
+    <attribute   name="compress"
           description="data received compressed"
+			     is="true"
+                 type="boolean"
+                 writeable="false" />
+    <attribute   name="doListen"
+          description="is port really started"
 			     is="true"
                  type="boolean"
                  writeable="false" />
@@ -162,6 +179,15 @@
           description="Class version info"
                  type="java.lang.String"
                  writeable="false"/>
+    <attribute   name="tcpListenAddress"
+          description="tcp listener address"
+                 type="java.lang.String"/>
+    <attribute   name="tcpListenPort"
+          description="tcp listener port"
+                 type="int"/>
+    <attribute   name="tcpListenMaxPort"
+          description="max tcp listen used port"
+                 type="int"/>
     <attribute   name="nrOfMsgsReceived"
           description="number of messages received from other nodes"
                  type="long"
@@ -205,6 +231,11 @@
                  writeable="false" />
    <attribute   name="compress"
           description="data received compressed"
+			     is="true"
+                 type="boolean"
+                 writeable="false" />
+   <attribute   name="doListen"
+          description="is port really started"
 			     is="true"
                  type="boolean"
                  writeable="false" />

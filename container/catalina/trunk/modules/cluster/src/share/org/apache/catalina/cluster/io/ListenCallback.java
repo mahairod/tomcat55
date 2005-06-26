@@ -16,11 +16,14 @@
 
 package org.apache.catalina.cluster.io;
 
+import org.apache.catalina.cluster.tcp.ClusterData ;
+
 /**
  * The listen callback interface is used by the replication system
  * when data has been received. The interface does not care about
  * objects and marshalling and just passes the bytes straight through.
  * @author Filip Hanik
+ * @author Peter Rossbach
  * @version $Revision$, $Date$
  */
 
@@ -32,5 +35,6 @@ public interface ListenCallback
      * been received from one of the cluster nodes.
      * @param data - the message bytes received from the cluster/replication system
      */
-    public void messageDataReceived(byte[] data);
+   // public void messageDataReceived(byte[] data);
+     public void messageDataReceived(ClusterData data);
 }

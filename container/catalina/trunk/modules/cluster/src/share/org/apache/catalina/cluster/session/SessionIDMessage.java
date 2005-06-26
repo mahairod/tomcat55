@@ -37,6 +37,8 @@ public class SessionIDMessage implements ClusterMessage {
 	private String backupSessionID;
 
 	private String contextPath;
+    private int resend = ClusterMessage.FLAG_DEFAULT ;
+    private int compress = ClusterMessage.FLAG_DEFAULT ;
 
 	public org.apache.catalina.cluster.Member getAddress() {
 		return address;
@@ -128,5 +130,36 @@ public class SessionIDMessage implements ClusterMessage {
 	public void setOrignalSessionID(String orignalSessionID) {
 		this.orignalSessionID = orignalSessionID;
 	}
+
+    /**
+     * @return Returns the compress.
+     * @since 5.5.10 
+     */
+    public int getCompress() {
+        return compress;
+    }
+    /**
+     * @param compress The compress to set.
+     * @since 5.5.10
+     */
+    public void setCompress(int compress) {
+        this.compress = compress;
+    }
+    /**
+     * @return Returns the resend.
+     * @since 5.5.10
+     */
+    public int getResend() {
+        return resend;
+    }
+    /**
+     * @param resend The resend to set.
+     * @since 5.5.10
+     */
+    public void setResend(int resend) {
+        this.resend = resend;
+    }
+
+
 }
 
