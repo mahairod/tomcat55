@@ -48,7 +48,7 @@ public class AsyncSocketSender extends DataSender {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "AsyncSocketSender/1.3";
+    private static final String info = "AsyncSocketSender/2.0";
 
     // ----------------------------------------------------- Instance Variables
 
@@ -158,18 +158,18 @@ public class AsyncSocketSender extends DataSender {
      * @see org.apache.catalina.cluster.tcp.IDataSender#sendMessage(java.lang.String,
      *      byte[])
      */
-    public void sendMessage(String messageid, byte[] data)
+    public void sendMessage(String messageid, ClusterData data)
             throws java.io.IOException {
         SmartQueue.SmartEntry entry = new SmartQueue.SmartEntry(messageid, data);
         queue.add(entry);
         synchronized (this) {
             inQueueCounter++;
-            queueThread.incQueuedNrOfBytes(data.length);
+            queueThread.incQueuedNrOfBytes(data.getMessage().length);
        }
         if (log.isTraceEnabled())
             log.trace(sm.getString("AsyncSocketSender.queue.message",
                     getAddress().getHostAddress(), new Integer(getPort()), messageid, new Long(
-                            data.length)));
+                            data.getMessage().length)));
     }
 
     /*
@@ -265,9 +265,9 @@ public class AsyncSocketSender extends DataSender {
                 if (entry != null) {
                     int messagesize = 0;
                     try {
-                        byte[] data = (byte[]) entry.getValue();
-                        messagesize = data.length;
-                        sender.pushMessage((String) entry.getKey(), data);
+                        ClusterData data = (ClusterData) entry.getValue();
+                        messagesize = data.getMessage().length;
+                        sender.pushMessage(data);
                         outQueueCounter++;
                     } catch (Exception x) {
                         log.warn(sm.getString("AsyncSocketSender.send.error",

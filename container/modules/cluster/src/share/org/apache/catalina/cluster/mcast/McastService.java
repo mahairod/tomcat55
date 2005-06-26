@@ -405,6 +405,18 @@ public class McastService implements MembershipService,MembershipListener {
     }
  
     /**
+     * Return the member by name
+     */
+    public Member findMemberByName(String name) {
+        Member[] currentMembers = getMembers();
+        for (int i = 0; i < currentMembers.length; i++) {
+            if (name.equals(currentMembers[i].toString()))
+                return currentMembers[i];
+        }
+        return null;
+    }
+ 
+    /**
      * Return all the members
      */
     public Member[] getMembers() {

@@ -16,6 +16,8 @@
 
 package org.apache.catalina.cluster.io;
 
+import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.tcp.ClusterData;
 
 /**
  * The XByteBuffer provides a dual functionality.
@@ -32,7 +34,7 @@ package org.apache.catalina.cluster.io;
  * </ul>
  * FIXME: Why we not use a list of byte buffers?
  * FIXME: Used a pool of buffers instead, every time new generation
- * FIXME: Compress mode send real data length at the first bytes
+ * FIXME: Compress mode send real data length at the first bytes?
  * FIXME: s to-do.txt for new format proposal
  *
  * @author Filip Hanik
@@ -158,10 +160,11 @@ public class XByteBuffer
             //the buffer isn't even 10 bytes
             if ( index != start || ((bufSize-start)<10) ) break;
             //then get the size 4 bytes
-            int size = toInt(buf, pos);
+            int compress = toInt(buf, pos);
+            int size = toInt(buf, pos+4);
             //now the total buffer has to be long enough to hold
-            //START_DATA.length+4+size+END_DATA.length
-            pos = start + START_DATA.length + 4 + size;
+            //START_DATA.length+8+size+END_DATA.length
+            pos = start + START_DATA.length + 8 + size;
             if ( (pos + END_DATA.length) > bufSize) break;
             //and finally check the footer of the package END_DATA
             int newpos = firstIndexOf(buf, pos, END_DATA);
@@ -190,21 +193,31 @@ public class XByteBuffer
      * @param clearFromBuffer - if true, the package will be removed from the byte buffer
      * @return - returns the actual message bytes (header, size and footer not included).
      */
-    public byte[] extractPackage(boolean clearFromBuffer)
+    public ClusterData extractPackage(boolean clearFromBuffer)
             throws java.io.IOException {
         int psize = countPackages();
         if (psize == 0)
             throw new java.lang.IllegalStateException(
                     "No package exists in XByteBuffer");
-        int size = toInt(buf, START_DATA.length);
+        int compress = toInt(buf, START_DATA.length);
+        int size = toInt(buf, START_DATA.length +4);
         byte[] data = new byte[size];
-        System.arraycopy(buf, START_DATA.length + 4, data, 0, size);
+        System.arraycopy(buf, START_DATA.length + 8, data, 0, size);
+        ClusterData cdata = new ClusterData() ;
+        cdata.setMessage(data);
+        cdata.setCompress(compress);
         if (clearFromBuffer) {
-            int totalsize = START_DATA.length + 4 + size + END_DATA.length;
+            int totalsize = START_DATA.length + 8 + size + END_DATA.length;
             bufSize = bufSize - totalsize;
             System.arraycopy(buf, totalsize, buf, 0, bufSize);
         }
-        return data;
+        //int size = toInt(buf, START_DATA.length);
+        //byte[] data = new byte[size];
+        //System.arraycopy(buf, START_DATA.length + 4, data, 0, size);
+        //if (clearFromBuffer) {
+        //    int totalsize = START_DATA.length + 4 + size + END_DATA.length;
+
+        return cdata;
     }
 
     /**
@@ -329,24 +342,22 @@ public class XByteBuffer
     /**
      * Creates a complete data package
      * @param indata - the message data to be contained within the package
-     * @return - a full package (header,size,data,footer)
+     * @return - a full package (header,compress,size,data,footer)
      * @deprecated since 5.5.10
      */
     public static byte[] createDataPackage(byte[] indata)
             throws java.io.IOException {
         byte[] data;
         data = indata;
-        byte[] result = new byte[START_DATA.length + 4 + data.length
+        byte[] result = new byte[START_DATA.length + 8 + data.length
                 + END_DATA.length];
         System.arraycopy(START_DATA, 0, result, 0, START_DATA.length);
-        System.arraycopy(toBytes(data.length), 0, result, START_DATA.length, 4);
-        System.arraycopy(data, 0, result, START_DATA.length + 4, data.length);
-        System.arraycopy(END_DATA, 0, result, START_DATA.length + 4
+        System.arraycopy(toBytes(ClusterMessage.FLAG_FORBIDDEN), 0, result, START_DATA.length, 4);
+        System.arraycopy(toBytes(data.length), 0, result, START_DATA.length, 8);
+        System.arraycopy(data, 0, result, START_DATA.length + 8, data.length);
+        System.arraycopy(END_DATA, 0, result, START_DATA.length + 8
                 + data.length, END_DATA.length);
 
         return result;
-
     }
-
-
 }

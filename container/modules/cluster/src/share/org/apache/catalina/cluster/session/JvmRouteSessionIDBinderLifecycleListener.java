@@ -44,7 +44,7 @@ import org.apache.commons.modeler.Registry;
  *          &lt;Cluster ...&gt;
  *        &lt;/Host&gt;
  * </pre>
- * 
+ * @deprecated
  * @author Peter Rossbach
  */
 public class JvmRouteSessionIDBinderLifecycleListener implements

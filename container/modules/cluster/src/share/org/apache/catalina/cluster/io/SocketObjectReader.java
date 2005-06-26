@@ -18,7 +18,8 @@ package org.apache.catalina.cluster.io;
 
 
 import java.net.Socket;
-import org.apache.catalina.cluster.io.XByteBuffer;
+
+import org.apache.catalina.cluster.tcp.ClusterData;
 
 /**
  * The object reader object is an object used in conjunction with
@@ -32,6 +33,7 @@ import org.apache.catalina.cluster.io.XByteBuffer;
  * @author Filip Hanik
  * @author Peter Rossbach
  * @version $Revision$, $Date$
+ * @since 5.5.10
  */
 public class SocketObjectReader
 {
@@ -42,7 +44,7 @@ public class SocketObjectReader
     /**
      * use this socket and callback to receive messages
      * @param socket listener socket
-     * @param callback SimpleTcpCluster listener
+     * @param callback ClusterReceiverBase listener
      * @param compress is send message data compress or flat.
      */
     public SocketObjectReader( Socket socket,
@@ -56,7 +58,7 @@ public class SocketObjectReader
     /**
      * Append new bytes to buffer. 
      * Is message complete receiver send message to callback
-     * @see org.apache.catalina.cluster.tcp.SimpleTcpCluster#messageDataReceived(byte[])
+     * @see org.apache.catalina.cluster.tcp.ClusterReceiverBase#messageDataReceived(ClusterData)
      * @see XByteBuffer#doesPackageExist()
      * @see XByteBuffer#extractPackage(boolean)
      * @param data new transfer buffer
@@ -71,8 +73,8 @@ public class SocketObjectReader
         boolean pkgExists = buffer.doesPackageExist();
         int pkgCnt = 0;
         while ( pkgExists ) {
-            byte[] b = buffer.extractPackage(true);
-            callback.messageDataReceived(b);
+            ClusterData cdata = buffer.extractPackage(true);
+            callback.messageDataReceived(cdata);
             pkgCnt++;
             pkgExists = buffer.doesPackageExist();
         }

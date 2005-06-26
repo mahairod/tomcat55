@@ -72,6 +72,16 @@ public interface MembershipService {
     public Member getLocalMember();
 
     /**
+     * Return all members by name
+     */
+    public String[] getMembersByName() ; 
+    
+    /**
+     * Return the member by name
+     */
+    public Member findMemberByName(String name) ;
+
+    /**
      * Sets the local member properties for broadcasting
      */
     public void setLocalMemberProperties(String listenHost, int listenPort);

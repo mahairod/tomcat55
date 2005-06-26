@@ -112,7 +112,22 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
      * @return Returns the bind.
      */
     public java.net.InetAddress getBind() {
-        return bind;
+        if (bind == null) {
+            try {
+                if ("auto".equals(tcpListenAddress)) {
+                    tcpListenAddress = java.net.InetAddress.getLocalHost()
+                            .getHostAddress();
+                }
+                if (log.isDebugEnabled())
+                    log.debug("Starting replication listener on address:"
+                            + tcpListenAddress);
+                bind = java.net.InetAddress.getByName(tcpListenAddress);
+            } catch (IOException ioe) {
+                log.error("Failed bind replication listener on address:"
+                        + tcpListenAddress, ioe);
+            }
+        }
+      return bind;
     }
     
     /**
@@ -282,14 +297,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
      */
     public void start() {
         try {
-            if ("auto".equals(tcpListenAddress)) {
-                tcpListenAddress = java.net.InetAddress.getLocalHost()
-                        .getHostAddress();
-            }
-            if (log.isDebugEnabled())
-                log.debug("Starting replication listener on address:"
-                        + tcpListenAddress);
-            bind = java.net.InetAddress.getByName(tcpListenAddress);
+            getBind();
             Thread t = new Thread(this, "ClusterReceiver");
             t.setDaemon(true);
             t.start();
@@ -396,7 +404,8 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
      * @see org.apache.catalina.cluster.io.ListenCallback#messageDataReceived(byte[])
      * @see ClusterSessionListener#messageReceived(ClusterMessage)
      */
-    public void messageDataReceived(byte[] data) {
+    public void messageDataReceived(ClusterData data) {
+    //public void messageDataReceived(byte[] data) {
         long timeSent = 0 ;
         if (doReceivedProcessingStats) {
             timeSent = System.currentTimeMillis();
@@ -423,21 +432,23 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    protected ClusterMessage deserialize(byte[] data)
+    //protected ClusterMessage deserialize(byte[] data)
+    protected ClusterMessage deserialize(ClusterData data)
             throws IOException, ClassNotFoundException {
         Object message = null;
         if (data != null) {
             InputStream instream;
-            if (isCompress()) {
-                instream = new GZIPInputStream(new ByteArrayInputStream(data));
+            if (isCompress() || data.getCompress() == ClusterMessage.FLAG_ALLOWED ) {
+                instream = new GZIPInputStream(new ByteArrayInputStream(data.getMessage()));
             } else {
-                instream = new ByteArrayInputStream(data);
+                instream = new ByteArrayInputStream(data.getMessage());
             }
             ReplicationStream stream = new ReplicationStream(instream,
                     getClass().getClassLoader());
             message = stream.readObject();
             // calc stats really received bytes
-            totalReceivedBytes += data.length;
+            totalReceivedBytes += data.getMessage().length;
+            //totalReceivedBytes += data.length;
             nrOfMsgsReceived++;
             instream.close();
         }

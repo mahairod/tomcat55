@@ -22,6 +22,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
+import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.io.XByteBuffer;
 import org.apache.catalina.util.StringManager;
 
@@ -32,6 +33,7 @@ import org.apache.catalina.util.StringManager;
  * @author Peter Rossbach
  * @author Filip Hanik
  * @version $Revision$ $Date$
+ * @since 5.5.7
  */
 public class DataSender implements IDataSender {
 
@@ -49,7 +51,7 @@ public class DataSender implements IDataSender {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "DataSender/2.0";
+    private static final String info = "DataSender/2.1";
 
     /**
      * receiver address
@@ -544,12 +546,12 @@ public class DataSender implements IDataSender {
     /**
      * Send message
      * 
-     * @see org.apache.catalina.cluster.tcp.IDataSender#sendMessage(java.lang.String,
-     *      byte[])
+     * @see org.apache.catalina.cluster.tcp.IDataSender#sendMessage(,
+     *      ClusterData)
      */
-    public synchronized void sendMessage(String messageid, byte[] data)
+    public synchronized void sendMessage(ClusterData data)
             throws java.io.IOException {
-        pushMessage(messageid, data);
+        pushMessage(data);
     }
 
     /**
@@ -703,59 +705,82 @@ public class DataSender implements IDataSender {
      * @see #openSocket()
      * @see #writeData(byte[])
      * 
-     * @param messageid
-     *            unique message id / need only for log message )
      * @param data
      *            data to send
      * @throws java.io.IOException
+     * @since 5.5.10
      */
-    protected void pushMessage(String messageid, byte[] data)
+    protected void pushMessage( ClusterData data)
             throws java.io.IOException {
         long time = 0 ;
         if(doProcessingStats) {
             time = System.currentTimeMillis();
         }
+        boolean messageTransfered = false ;
         synchronized(this) {
             checkKeepAlive();
             if (!isConnected())
                 openSocket();
         }
+        Exception exception = null;
         try {
              writeData(data);
+             messageTransfered = true ;
         } catch (java.io.IOException x) {
-            // second try with fresh connection
-            dataResendCounter++;
-            if (log.isTraceEnabled())
-                log.trace(sm.getString("IDataSender.send.again", address.getHostAddress(),
-                        new Integer(port)),x);
-            synchronized(this) {
-                closeSocket();
-                openSocket();
+            if(data.getResend() != ClusterMessage.FLAG_FORBIDDEN) {
+                // second try with fresh connection
+                dataResendCounter++;
+                if (log.isTraceEnabled())
+                    log.trace(sm.getString("IDataSender.send.again", address.getHostAddress(),
+                            new Integer(port)),x);
+                synchronized(this) {
+                    closeSocket();
+                    openSocket();
+                }
+                try {
+                    writeData(data);
+                    messageTransfered = true;
+                } catch (IOException xx) {
+                    exception = xx;
+                    throw xx ;
+                }
+            } else {
+                exception = x;
+                // FIXME Hmm, throw the exception or not?
             }
-            writeData(data);
         } finally {
             this.keepAliveCount++;
             checkKeepAlive();
             if(doProcessingStats) {
                 addProcessingStats(time);
             }
-            addStats(data.length);
-            if (log.isTraceEnabled()) {
-                log.trace(sm.getString("IDataSender.send.message", address.getHostAddress(),
-                        new Integer(port), messageid, new Long(data.length)));
+            if(messageTransfered) {
+                addStats(data.getMessage().length);
+                if (log.isTraceEnabled()) {
+                    log.trace(sm.getString("IDataSender.send.message", address.getHostAddress(),
+                        new Integer(port), data.getUniqueId(), new Long(data.getMessage().length)));
+                }
+            } else {
+                if (log.isWarnEnabled())
+                    log.warn(sm.getString("IDataSender.send.lost",  address.getHostAddress(),
+                            new Integer(port), data.getType(), data.getUniqueId()),exception);
             }
         }
     }
 
     /**
+     * Sent real cluster Message to socket stream
+     * FIXME send compress
      * @param data
      * @throws IOException
+     * @since 5.5.10
      */
-    protected void writeData(byte[] data) throws IOException {
+    protected void writeData(ClusterData data) throws IOException {
         OutputStream out = socket.getOutputStream();
         out.write(XByteBuffer.START_DATA);
-        out.write(XByteBuffer.toBytes(data.length));
-        out.write(data);
+        out.write(XByteBuffer.toBytes(data.getCompress()));
+        out.write(XByteBuffer.toBytes(data.getMessage().length));
+        out.write(data.getMessage());
         out.write(XByteBuffer.END_DATA);
         out.flush();
         if (isWaitForAck())
@@ -765,6 +790,7 @@ public class DataSender implements IDataSender {
 
     /**
      * Wait for Acknowledgement from other server
+     * FIXME Please, not wait only for three charcters, better control that the wait ack message is correct.
      * @param timeout
      * @throws java.io.IOException
      * @throws java.net.SocketTimeoutException
@@ -776,10 +802,12 @@ public class DataSender implements IDataSender {
         }
         try {
             int bytesRead = 0;
-            if ( log.isDebugEnabled() ) log.debug("Waiting for ACK message");
+            if ( log.isTraceEnabled() ) 
+                log.trace(sm.getString("IDataSender.ack.start",getAddress(), new Integer(socket.getLocalPort())));
             int i = socket.getInputStream().read();
             while ((i != -1) && (i != 3) && bytesRead < 10) {
-                if ( log.isDebugEnabled() ) log.debug("Read ack byte:"+i);
+                if ( log.isTraceEnabled() ) 
+                    log.trace(sm.getString("IDataSender.ack.read",getAddress(), new Integer(socket.getLocalPort()),new Character((char) i)));
                 bytesRead++;
                 i = socket.getInputStream().read();
             }
@@ -791,7 +819,7 @@ public class DataSender implements IDataSender {
                 }
             } else {
                 if (log.isTraceEnabled()) {
-                    log.trace(sm.getString("IDataSender.ack.receive", address,new Integer(socket.getLocalPort())));
+                    log.trace(sm.getString("IDataSender.ack.receive", getAddress(),new Integer(socket.getLocalPort())));
                 }
             }
         } catch (IOException x) {
