@@ -62,12 +62,13 @@
           - Optimized performance and reduce memory usage
           - Better JMX support
           - add a lot of JMX stats attribute for better monitoring 
+          - add a single element default cluster configuration
           - more config options
              LifecycleListener
              ClusterListener
-             more than one Cluster Valves
+             more than one cluster valves
           - better subclass support
-          - change a lot of existing Cluster API's (pero)
+          - change a lot of existing cluster API's (pero)
        </update>
        <add>
          Add Apache Portable Runtime JNI wrapper and helper API (mturk)
@@ -230,6 +231,26 @@
   <subsection name="Cluster">
     <changelog>        
       <add>
+        Add single cluster default configuration element - discussed at JAX 2005 conference Cluster Workshop (pero)
+      </add>      
+      <fix>
+        Fix resend GET_ALL_SESSIONS when wait ACK failed at receiver side (pero)
+      </fix>  
+      <fix>
+        ClusterValve now remove from container element when cluster stops and added with next start again. (pero)
+      </fix>     
+      <add>
+        Set timestamp only at first time inside SessionMessageImpl (pero)
+      </add>    
+      <add>
+       Set timestamp from findsessions method call, when handling GET_ALL_SESSION
+       to all SEND_SESSION_DATA and TRANSFER complete messages. (pero>
+      </add>
+      <add> 
+       Drop all received message inside GET_ALL_SESSION message queue before state 
+       transfer message timestamp. (pero)
+      </add>      
+      <add>
         Cluster ping now transfer cluster domain information and DeltaManager only
         send and receive message from same domain members (pero)
       </add>      
@@ -321,7 +342,7 @@
         Also extract ClusterReceiverBase superclass for SocketReplicationListener and ReplicationListener (pero) 
       </add>
       <update>
-        Add and update some API documentation (pero)
+        Add and update some API and the <a href="cluster-howto.html">cluster howto documentation</a> (pero)
       </update>
       <update>
         Refactor ReplicationValve for better understanding and small optimization (pero)
@@ -333,7 +354,7 @@
         Fix ant build.xml to direct compile at cluster module directory (pero)
       </fix>
       <fix>
-        Fix some I18N messages (pero)
+        Fix some I18N messages, but a lot of work is waiting for fix (pero)
       </fix>
       <add>
         Add ReplicationValve Mbeans stats attribute getter and resetStatistics operation (pero)
