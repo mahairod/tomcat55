@@ -54,7 +54,7 @@ public class FastAsyncSocketSender extends DataSender {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "FastAsyncSocketSender/2.0";
+    private static final String info = "FastAsyncSocketSender/3.0";
 
     // ----------------------------------------------------- Instance Variables
 
@@ -300,19 +300,19 @@ public class FastAsyncSocketSender extends DataSender {
      * Send message to queue for later sending
      * 
      * @see org.apache.catalina.cluster.tcp.IDataSender#sendMessage(java.lang.String,
-     *      byte[])
+     *      ClusterData)
      */
-    public void sendMessage(String messageid, byte[] data)
+    public void sendMessage(String messageid, ClusterData data)
             throws java.io.IOException {
         queue.add(messageid, data);
         synchronized (this) {
             inQueueCounter++;
-            queueThread.incQueuedNrOfBytes(data.length);
+            queueThread.incQueuedNrOfBytes(data.getMessage().length);
        }
        if (log.isTraceEnabled())
             log.trace(sm.getString("AsyncSocketSender.queue.message",
                     getAddress().getHostAddress(), new Integer(getPort()), messageid, new Long(
-                            data.length)));
+                            data.getMessage().length)));
     }
 
     /**
@@ -463,9 +463,9 @@ public class FastAsyncSocketSender extends DataSender {
             do {
                 int messagesize = 0;
                 try {
-                    byte[] data = (byte[]) entry.data();
-                    messagesize = data.length;
-                    sender.pushMessage((String) entry.getKey(), data);
+                    ClusterData data = (ClusterData) entry.data();
+                    messagesize = data.getMessage().length;
+                    sender.pushMessage(data);
                     outQueueCounter++;
                 } catch (Exception x) {
                     log.warn(sm.getString(

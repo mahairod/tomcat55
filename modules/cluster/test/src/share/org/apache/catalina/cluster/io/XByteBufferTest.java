@@ -19,6 +19,8 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.apache.catalina.cluster.tcp.ClusterData;
+
 /**
  * @author Peter Rossbach
  * 
@@ -75,9 +77,11 @@ public class XByteBufferTest extends TestCase {
         b.append(test, 0, test.length);
         int s = b.countPackages();
         byte[] d ;
+        ClusterData data ;
         assertEquals(3, s);
         for (byte i = 1; i < 4; i++) {
-            d = b.extractPackage(true);
+            data = b.extractPackage(true);
+            d = data.getMessage();
             assertEquals(i, d[0]);
         }
     }

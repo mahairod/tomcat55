@@ -38,7 +38,7 @@ public class PooledSocketSender extends DataSender {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "PooledSocketSender/1.2";
+    private static final String info = "PooledSocketSender/2.0";
 
     // ----------------------------------------------------- Instance Variables
 
@@ -110,7 +110,7 @@ public class PooledSocketSender extends DataSender {
      * @param data Message data
      * @throws java.io.IOException
      */
-    public void sendMessage(String messageId, byte[] data) throws IOException {
+    public void sendMessage(String messageId, ClusterData data) throws IOException {
         //get a socket sender from the pool
         if(!isConnected()) {
             synchronized(this) {
@@ -125,12 +125,12 @@ public class PooledSocketSender extends DataSender {
         }
         //send the message
         try {
-            sender.sendMessage(messageId, data);
+            sender.sendMessage(data);
         } finally {
             //return the connection to the pool
             senderQueue.returnSender(sender);
         }
-        addStats(data.length);
+        addStats(data.getMessage().length);
     }
 
     public String toString() {

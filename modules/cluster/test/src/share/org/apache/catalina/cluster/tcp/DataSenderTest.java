@@ -130,7 +130,8 @@ public class DataSenderTest extends TestCase {
      */
     public void testWriteData()throws Exception {
         DataSender sender = createMockDataSender();
-        sender.writeData(new byte[]{ 1,2,3 }) ;
+        ClusterData data = new ClusterData("test", "123",new byte[]{ 1,2,3 }, System.currentTimeMillis() );
+        sender.writeData(data) ;
         ByteArrayOutputStream stream = (ByteArrayOutputStream)sender.getSocket().getOutputStream();
         assertEquals(21,stream.size());
         ByteArrayInputStream istream = (ByteArrayInputStream)sender.getSocket().getInputStream();
@@ -139,14 +140,14 @@ public class DataSenderTest extends TestCase {
         socket.reset();
         socket.setReadIOException(true);
         try {
-            sender.writeData(new byte[]{ 1,2,3 });
+            sender.writeData(data);
             fail("Missing Ack IOExcpetion") ;
         } catch (IOException ioe) {} ;
         socket.reset();
         socket.setReadIOException(false);
         socket.setReadSocketTimeoutException(true);
         try {
-            sender.writeData(new byte[]{ 1,2,3 });
+            sender.writeData(data);
             fail("Missing Ack SocketTimeoutException") ;
         } catch (SocketTimeoutException soe) {} ;               
 
@@ -161,7 +162,8 @@ public class DataSenderTest extends TestCase {
         DataSender sender = new MockDataSender("catalina",host, 3434);
         sender.setWaitForAck(false);
         sender.openSocket();
-        sender.writeData(new byte[]{ 1,2,3 }) ;
+        ClusterData data = new ClusterData("test", "123",new byte[]{ 1,2,3 }, System.currentTimeMillis() );
+        sender.writeData(data) ;
         ByteArrayOutputStream stream = (ByteArrayOutputStream)sender.getSocket().getOutputStream();
         assertEquals(21,stream.size());
         ByteArrayInputStream istream = (ByteArrayInputStream)sender.getSocket().getInputStream();
@@ -246,7 +248,8 @@ public class DataSenderTest extends TestCase {
      * @throws IOException
      */
     private ByteArrayOutputStream pushMessage(DataSender sender) throws IOException {
-        sender.pushMessage("unique-id",new byte[] { 1,2,3} );
+        ClusterData data = new ClusterData("unique-id", "123",new byte[]{ 1,2,3 }, System.currentTimeMillis() );
+        sender.pushMessage(data );
         assertTrue(sender.isConnected());
         ByteArrayOutputStream stream = (ByteArrayOutputStream)sender.getSocket().getOutputStream();
         return stream;

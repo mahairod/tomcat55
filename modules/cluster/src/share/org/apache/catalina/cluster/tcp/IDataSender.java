@@ -28,7 +28,7 @@ public interface IDataSender
     public int getPort();
     public void connect() throws java.io.IOException;
     public void disconnect();
-    public void sendMessage(String sessionId, byte[] data) throws java.io.IOException;
+    public void sendMessage(ClusterData data) throws java.io.IOException;
     public boolean isConnected();
     public void setSuspect(boolean suspect);
     public boolean getSuspect();

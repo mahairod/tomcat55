@@ -1,17 +1,34 @@
+/*
+ * Copyright 1999,2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.catalina.cluster.session;
 
 
+import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
-/**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: </p>
- * @author not attributable
- * @version 1.0
- */
 
+/**
+ * Session cluster message
+ * 
+ * @author Filip Hanik
+ * @author Peter Rossbach
+ * 
+ * @version $Revision$ $Date$
+ */
 public class SessionMessageImpl implements SessionMessage, java.io.Serializable {
+    
     public SessionMessageImpl() {
     }
     
@@ -26,38 +43,12 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
     private Member mSrc;
     private String mContextName;
     private long serializationTimestamp;
+    private boolean timestampSet = false ;
     private String uniqueId;
+    private int resend = ClusterMessage.FLAG_DEFAULT ;
+    private int compress = ClusterMessage.FLAG_DEFAULT ;
 
 
-    /**
-     * Creates a session message. Depending on what event type you want this
-     * message to represent, you populate the different parameters in the constructor<BR>
-     * The following rules apply dependent on what event type argument you use:<BR>
-     * <B>EVT_SESSION_CREATED</B><BR>
-     *    The parameters: session, sessionID must be set.<BR>
-     * <B>EVT_SESSION_EXPIRED</B><BR>
-     *    The parameters: sessionID must be set.<BR>
-     * <B>EVT_SESSION_ACCESSED</B><BR>
-     *    The parameters: sessionID must be set.<BR>
-     * <B>EVT_SESSION_EXPIRED_XXXX</B><BR>
-     *    The parameters: sessionID must be set.<BR>
-     * <B>EVT_ATTRIBUTE_ADDED</B><BR>
-     *    The parameters: sessionID, attrName, attrValue must be set.<BR>
-     * <B>EVT_ATTRIBUTE_REMOVED</B><BR>
-     *    The parameters: sessionID, attrName must be set.<BR>
-     * <B>EVT_SET_USER_PRINCIPAL</B><BR>
-     *    The parameters: sessionID, principal<BR>
-     * <B>EVT_REMOVE_SESSION_NOTE</B><BR>
-     *    The parameters: sessionID, attrName<
-     * <B>EVT_SET_SESSION_NOTE</B><BR>
-     *    The parameters: sessionID, attrName, attrValue
-     * @param eventtype - one of the 8 event type defined in this class
-     * @param session - the serialized byte array of the session itself
-     * @param sessionID - the id that identifies this session
-     * @param attrName - the name of the attribute added/removed
-     * @param attrValue - the value of the attribute added
-
-     */
     private SessionMessageImpl( String contextName,
                            int eventtype,
                            byte[] session,
@@ -70,6 +61,32 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
         uniqueId = sessionID;
     }
 
+    /**
+     * Creates a session message. Depending on what event type you want this
+     * message to represent, you populate the different parameters in the constructor<BR>
+      * The following rules apply dependent on what event type argument you use:<BR>
+     * <B>EVT_SESSION_CREATED</B><BR>
+     *    The parameters: session, sessionID must be set.<BR>
+     * <B>EVT_SESSION_EXPIRED</B><BR>
+     *    The parameters: sessionID must be set.<BR>
+     * <B>EVT_SESSION_ACCESSED</B><BR>
+     *    The parameters: sessionID must be set.<BR>
+     * <B>EVT_SESSION_EXPIRED_XXXX</B><BR>
+     *    The parameters: sessionID must be set.<BR>
+     * <B>EVT_SESSION_DELTA</B><BR>
+     *    Send attribute delta (add,update,remove attribute or principal, ...).<BR>
+     * <B>EVT_ALL_SESSION_DATA</B><BR>
+     *    Send complete serializes session list<BR>
+     * <B>EVT_ALL_SESSION_TRANSFERCOMPLETE</B><BR>
+     *    send that all session state information are transfered
+     *    after GET_ALL_SESSION received from this sender.<BR>
+     * @param contextName - the name of the context (application
+     * @param eventtype - one of the 8 event type defined in this class
+     * @param session - the serialized byte array of the session itself
+     * @param sessionID - the id that identifies this session
+     * @param uniqueID - the id that identifies this message
+
+     */
     public SessionMessageImpl( String contextName,
                            int eventtype,
                            byte[] session,
@@ -95,22 +112,21 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
     public String getSessionID(){ return mSessionID; }
     
     /**
-     * @return the name of the attribute
+     * set message send time but only the first setting works (one shot)
      */
-//    public String getAttributeName() { return mAttributeName; }
+    public void setTimestamp(long time) {
+        synchronized(this) {
+            if(!timestampSet) {
+                serializationTimestamp=time;
+                timestampSet = true ;
+            }
+        }
+    }
     
-    /**
-     * the value of the attribute
-     */
-//    public Object getAttributeValue() {return mAttributeValue; }
-
-//    public SerializablePrincipal getPrincipal() { return mPrincipal;}
-
-    public void setTimestamp(long time) {serializationTimestamp=time;}
     public long getTimestamp() { return serializationTimestamp;}
     
     /**
-     * FIXME this mapping is really used?
+     * clear text event type name (for logging purpose only) 
      * @return the event type in a string representating, useful for debugging
      */
     public String getEventTypeString()
@@ -158,5 +174,33 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
         this.uniqueId = uniqueId;
     }
 
+    /**
+     * @return Returns the compress.
+     * @since 5.5.10 
+     */
+    public int getCompress() {
+        return compress;
+    }
+    /**
+     * @param compress The compress to set.
+     * @since 5.5.10
+     */
+    public void setCompress(int compress) {
+        this.compress = compress;
+    }
+    /**
+     * @return Returns the resend.
+     * @since 5.5.10
+     */
+    public int getResend() {
+        return resend;
+    }
+    /**
+     * @param resend The resend to set.
+     * @since 5.5.10
+     */
+    public void setResend(int resend) {
+        this.resend = resend;
+    }
 
 }

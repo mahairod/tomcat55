@@ -18,7 +18,6 @@ package org.apache.catalina.cluster.tcp;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -32,10 +31,12 @@ public class SocketReplicationListener extends ClusterReceiverBase {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "SocketReplicationListener/1.1";
+    private static final String info = "SocketReplicationListener/1.2";
 
     private ServerSocket serverSocket = null;
 
+    private int tcpListenMaxPort ;
+    
     public SocketReplicationListener() {
     }
 
@@ -50,7 +51,20 @@ public class SocketReplicationListener extends ClusterReceiverBase {
 
     }
     
-
+    /**
+     * @return Returns the tcpListenMaxPort.
+     */
+    public int getTcpListenMaxPort() {
+        return tcpListenMaxPort;
+    }
+    
+    /**
+     * @param tcpListenMaxPort The tcpListenMaxPort to set.
+     */
+    public void setTcpListenMaxPort(int maxListenPort) {
+        this.tcpListenMaxPort = maxListenPort;
+    }
+    
     /**
      * Master/Slave Sender handling / bind Server Socket at addres and port
      * 
@@ -64,24 +78,28 @@ public class SocketReplicationListener extends ClusterReceiverBase {
 
         // Get the associated ServerSocket to bind it with
         try {
-            serverSocket = new ServerSocket();
-            serverSocket.bind(new InetSocketAddress(getBind(), getTcpListenPort()));
-            doListen = true;
-            while (doListen) {
-                try {
-                    Socket socket = serverSocket.accept();
-                    if (doListen) {
-                        SocketReplicationThread t = new SocketReplicationThread(
-                                this, socket, new SocketObjectReader(socket,
-                                        this), isSendAck());
-                        t.setDaemon(true);
-                        t.start();
+            serverSocket = createServerSocket();
+            if(serverSocket != null) {
+                doListen = true;
+                while (doListen) {
+                    try {
+                        Socket socket = serverSocket.accept();
+                        if (doListen) {
+                            SocketReplicationThread t = new SocketReplicationThread(
+                                    this, socket, new SocketObjectReader(socket,
+                                            this), isSendAck());
+                            t.setDaemon(true);
+                            t.start();
+                        }
+                    } catch (IOException iex) {
+                        log.warn("Exception to start thread", iex);
                     }
-                } catch (IOException iex) {
-                    log.warn("Exception to start thread", iex);
                 }
-            }
-            serverSocket.close();
+                serverSocket.close();
+            } else {
+                log.fatal("Fatal error: Receiver socket not bound - address=" +  getTcpListenAddress()
+                        + " port=" + getTcpListenPort() + " maxport=" + getTcpListenMaxPort() );
+            }                
         } catch (IOException iex) {
             log.warn("Exception at start or close server socket", iex);
         } finally {
@@ -89,6 +107,36 @@ public class SocketReplicationListener extends ClusterReceiverBase {
             serverSocket = null;
         }
     }
+
+    /**
+     * create a Server Socket between tcpListenerPort and tcpListenMaxPort
+     */
+    protected ServerSocket createServerSocket() {
+        int startPort = getTcpListenPort() ;
+        int maxPort = getTcpListenMaxPort() ;
+        InetAddress inet = getBind() ;
+        ServerSocket sSocket = null ;
+        if (maxPort < startPort)
+            maxPort = startPort;
+        for( int i=startPort; i<=maxPort; i++ ) {
+            try {
+                if( inet == null ) {
+                    sSocket = new ServerSocket( i, 0 );
+                } else {
+                    sSocket=new ServerSocket( i, 0, inet );
+                }
+                setTcpListenPort(i);
+                break;
+            } catch( IOException ex ) {
+                if(log.isDebugEnabled())
+                    log.debug("Port busy at [" + inet.getHostAddress() + "." + i + "] - reason: "  + ex.toString());
+                continue;
+            }
+        }
+        if(sSocket != null && log.isInfoEnabled())
+            log.info("Open Socket at [" + inet.getHostAddress() + "." + getTcpListenPort() + "]");
+        return sSocket ;
+   }
 
     /**
      * Need to create a connection to unlock the ServerSocker#accept(). Very
