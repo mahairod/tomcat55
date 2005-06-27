@@ -43,6 +43,7 @@
         <item name="21) Monitoring and Management"         
               href="monitoring.html"/>
         <item name="22) Logging"            href="logging.html"/>
+        <item name="23) APR"                href="apr.html"/>
     </menu>
 
     <menu name="Reference">
