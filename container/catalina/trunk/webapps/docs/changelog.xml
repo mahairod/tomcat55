@@ -170,6 +170,10 @@
         <bug>34840</bug>: Better handling of external WARs redeployment, and ignore docBase specified
         in context file if within the Host appBase (remm)
       </fix>
+      <fix>
+        Fix handling of symbolic links when the DefaultServlet is generating directory
+        listings.
+      </fix>
     </changelog>
   </subsection>
   
