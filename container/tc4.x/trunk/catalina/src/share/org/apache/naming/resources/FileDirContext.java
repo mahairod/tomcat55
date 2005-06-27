@@ -212,6 +212,8 @@ public class FileDirContext extends BaseDirContext {
         if (file.isDirectory()) {
             FileDirContext tempContext = new FileDirContext(env);
             tempContext.setDocBase(file.getPath());
+            tempContext.setAllowLinking(getAllowLinking());
+            tempContext.setCaseSensitive(isCaseSensitive());
             result = tempContext;
         } else {
             result = new FileResource(file);
@@ -892,6 +894,8 @@ public class FileDirContext extends BaseDirContext {
             if (currentFile.isDirectory()) {
                 FileDirContext tempContext = new FileDirContext(env);
                 tempContext.setDocBase(file.getPath());
+                tempContext.setAllowLinking(getAllowLinking());
+                tempContext.setCaseSensitive(isCaseSensitive());
                 object = tempContext;
             } else {
                 object = new FileResource(currentFile);
