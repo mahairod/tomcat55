@@ -147,7 +147,7 @@ public class StatusTransformer {
      * Mode 1 will generate XML.
      */
     public static void writeOSState(PrintWriter writer, int mode) {
-        long[] result = new long[14];
+        long[] result = new long[16];
         boolean ok = false;
         try {
             String methodName = "info";
@@ -177,12 +177,12 @@ public class StatusTransformer {
                 writer.print(" Free page file: ");
                 writer.print(formatSize(new Long(result[3]), true));
                 writer.print(" Memory load: ");
-                writer.print(new Long(result[4]));
+                writer.print(new Long(result[6]));
                 writer.print("<br>");
                 writer.print(" Process kernel time: ");
-                writer.print(formatTime(new Long(result[9] / 1000), true));
+                writer.print(formatTime(new Long(result[11] / 1000), true));
                 writer.print(" Process user time: ");
-                writer.print(formatTime(new Long(result[10] / 1000), true));
+                writer.print(formatTime(new Long(result[12] / 1000), true));
                 writer.print("</p>");
             } else if (mode == 1){
             }
