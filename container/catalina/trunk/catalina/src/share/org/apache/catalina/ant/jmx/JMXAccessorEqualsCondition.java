@@ -7,6 +7,7 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.taskdefs.condition.Condition;
 
 /**
@@ -51,7 +52,7 @@ import org.apache.tools.ant.taskdefs.condition.Condition;
  * @since 5.5.10
  *
  */
-public class JMXAccessorEqualsCondition implements Condition {
+public class JMXAccessorEqualsCondition  extends ProjectComponent  implements Condition {
 
     // ----------------------------------------------------- Instance Variables
 
