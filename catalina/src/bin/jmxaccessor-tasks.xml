@@ -1,6 +1,6 @@
 <!--
   XML file for importing Catalina jmx ant tasks.
-  <import file="${catalina.home}/bin/jxmaccessor-tasks.xml"/>
+  <import file="${catalina.home}/bin/jmxaccessor-tasks.xml"/>
 -->
 
 <project name="jmxaccessor-tasks" >
@@ -15,10 +15,20 @@
     </classpath>
   </taskdef>
   <typedef
-        name="jmxAccessorEquals"
-        classname="org.apache.catalina.ant.jmxJMXAccessorEqualsCondition">
+        name="jmxEquals"
+        classname="org.apache.catalina.ant.jmx.JMXAccessorEqualsCondition">
     <classpath>
+      <fileset file="${catalina.home}/server/lib/catalina-ant.jar"/>
       <fileset file="${catalina.home}/server/lib/catalina-ant-jmx.jar"/>
     </classpath>
   </typedef>
+  <typedef
+        name="jmxCondition"
+        classname="org.apache.catalina.ant.jmx.JMXAccessorCondition">
+    <classpath>
+      <fileset file="${catalina.home}/server/lib/catalina-ant.jar"/>
+      <fileset file="${catalina.home}/server/lib/catalina-ant-jmx.jar"/>
+    </classpath>
+  </typedef>
+
 </project>
