@@ -329,6 +329,7 @@ public class Catalina extends Embedded {
         // When the 'engine' is found, set the parentClassLoader.
         digester.addRule("Server/Service/Engine",
                          new SetParentClassLoaderRule(parentClassLoader));
+        digester.addRuleSet(new ClusterRuleSet("Server/Service/Engine/Cluster/"));
 
         long t2=System.currentTimeMillis();
         if (log.isDebugEnabled())
@@ -495,7 +496,8 @@ public class Catalina extends Embedded {
         }
 
         long t2 = System.currentTimeMillis();
-        log.info("Initialization processed in " + (t2 - t1) + " ms");
+        if(log.isInfoEnabled())
+            log.info("Initialization processed in " + (t2 - t1) + " ms");
 
     }
 
@@ -542,7 +544,8 @@ public class Catalina extends Embedded {
         }
 
         long t2 = System.currentTimeMillis();
-        log.info("Server startup in " + (t2 - t1) + " ms");
+        if(log.isInfoEnabled())
+            log.info("Server startup in " + (t2 - t1) + " ms");
 
         try {
             // Register shutdown hook

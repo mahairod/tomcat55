@@ -27,10 +27,12 @@ import java.util.zip.GZIPOutputStream;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.catalina.Container;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.ClusterSender;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.util.IDynamicProperty;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 import org.apache.tomcat.util.IntrospectionUtils;
 import org.apache.tomcat.util.digester.SetTopRule;
@@ -517,10 +519,12 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
             ObjectName clusterName = cluster.getObjectName();
             try {
                 MBeanServer mserver = cluster.getMBeanServer();
-                ObjectName transmitterName = new ObjectName(clusterName
-                        .getDomain()
-                        + ":type=ClusterSender,host="
-                        + clusterName.getKeyProperty("host"));
+                Container container = cluster.getContainer();
+                String name = clusterName.getDomain() + ":type=ClusterSender";
+                if (container instanceof StandardHost) {
+                    name += ",host=" + clusterName.getKeyProperty("host");
+                }
+                ObjectName transmitterName = new ObjectName(name);
                 if (mserver.isRegistered(transmitterName)) {
                     if (log.isWarnEnabled())
                         log.warn(sm.getString(
@@ -535,7 +539,6 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                 log.warn(e);
             }
         }
-
     }
 
     /*
@@ -776,10 +779,12 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
         ObjectName senderName = null;
         try {
             ObjectName clusterName = cluster.getObjectName();
-            MBeanServer mserver = cluster.getMBeanServer();
-            senderName = new ObjectName(clusterName.getDomain()
-                    + ":type=IDataSender,host="
-                    + clusterName.getKeyProperty("host") + ",senderAddress="
+            Container container = cluster.getContainer();
+            String name = clusterName.getDomain() + ":type=IDataSender";
+            if (container instanceof StandardHost) {
+                name += ",host=" + clusterName.getKeyProperty("host");
+            }
+            senderName = new ObjectName(name + ",senderAddress="
                     + sender.getAddress().getHostAddress() + ",senderPort="
                     + sender.getPort());
         } catch (Exception e) {
