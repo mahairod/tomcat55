@@ -193,10 +193,15 @@ public class JvmRouteBinderValve extends ValveBase implements ClusterValve, Life
             ServletException {
 
          if (getEnabled() 
-                 && getCluster() != null
-                 && request.getContext() != null
-                 && request.getContext().getDistributable() ) {
-            handlePossibleTurnover(request, response);
+             && getCluster() != null
+             && request.getContext() != null
+             && request.getContext().getDistributable() ) {
+             // valve cluster can access manager - other cluster handle turnover 
+             // at host level - hopefully!
+             Manager manager = request.getContext().getManager();
+             if (manager != null && manager instanceof ClusterManager
+                     && getCluster().getManager(((ClusterManager)manager).getName()) != null)
+                 handlePossibleTurnover(request, response);
         }
         // Pass this request on to the next valve in our pipeline
         getNext().invoke(request, response);

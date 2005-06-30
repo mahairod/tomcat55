@@ -22,10 +22,12 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.catalina.Cluster;
+import org.apache.catalina.Container;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MembershipService;
 import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.modeler.Registry;
 
@@ -351,15 +353,16 @@ public class McastService implements MembershipService,MembershipListener {
             try {
                 MBeanServer mserver = cluster.getMBeanServer();
                 initMBeans();
-                ObjectName mcastName = new ObjectName(clusterName
-                        .getDomain()
-                        + ":type=ClusterMembership,host="
-                        + clusterName.getKeyProperty("host"));
+                Container container = cluster.getContainer();
+                String name = clusterName.getDomain() + ":type=ClusterMembership";
+                if (container instanceof StandardHost) {
+                    name += ",host=" + clusterName.getKeyProperty("host");
+                }
+                ObjectName mcastName = new ObjectName(name);
                 if (mserver.isRegistered(mcastName)) {
                     if (log.isWarnEnabled())
                         log.warn(sm.getString(
-                                "cluster.mbean.register.allready",
-                                mcastName));
+                                "cluster.mbean.register.allready", mcastName));
                     return;
                 }
                 setObjectName(mcastName);

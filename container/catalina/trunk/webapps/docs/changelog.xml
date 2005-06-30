@@ -59,6 +59,7 @@
       </update>
       <update>
         Refactoring, redesign and extend the cluster module
+          - Cluster can be configured as subelement from Engine and Host.
           - Optimized performance and reduce memory usage
           - Better JMX support
           - add a lot of JMX stats attribute for better monitoring 
@@ -235,7 +236,10 @@
   <subsection name="Cluster">
     <changelog>        
       <add>
-        Add single cluster default configuration element - discussed at JAX 2005 conference Cluster Workshop (pero)
+        Add that cluster can configure as Engine and Host element. (pero)
+      </add>      
+      <add>
+        Add single cluster default configuration element - discussed at JAX 2005 conference Cluster Workshop. (pero)
       </add>      
       <fix>
         Fix resend GET_ALL_SESSIONS when wait ACK failed at receiver side (pero)

@@ -259,6 +259,10 @@ public class ReplicationValve
                     log.warn(sm.getString("ReplicationValve.nocluster"));
                 return;
             }
+            // valve cluster can access manager - other clusterhandle replication 
+            // at host level - hopefully!
+            if(cluster.getManager(clusterManager.getName()) == null)
+                return ;
             if(cluster.getMembers().length > 0  ) {
                 try {
                     // send invalid sessions

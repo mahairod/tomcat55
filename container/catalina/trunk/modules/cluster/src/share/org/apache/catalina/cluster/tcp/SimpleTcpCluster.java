@@ -52,6 +52,7 @@ import org.apache.catalina.cluster.mcast.McastService;
 import org.apache.catalina.cluster.session.ClusterSessionListener;
 import org.apache.catalina.cluster.session.DeltaManager;
 import org.apache.catalina.cluster.util.IDynamicProperty;
+import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
@@ -478,6 +479,11 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         properties.remove(key);
     }
 
+    /**
+     * transfer properties from cluster configuration to subelement bean.
+     * @param prefix
+     * @param bean
+     */
     protected void transferProperty(String prefix, Object bean) {
         if (prefix != null) {
             for (Iterator iter = getPropertyNames(); iter.hasNext();) {
@@ -1209,6 +1215,10 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
             if (container instanceof StandardHost) {
                 domain = ((StandardHost) container).getDomain();
                 name += ",host=" + container.getName();
+            } else {
+                if (container instanceof StandardEngine) {
+                    domain = ((StandardEngine) container).getDomain();
+                }
             }
             ObjectName clusterName = new ObjectName(domain + name);
 

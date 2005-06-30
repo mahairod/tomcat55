@@ -44,6 +44,7 @@ import org.apache.commons.modeler.Registry;
  *          &lt;Cluster ...&gt;
  *        &lt;/Host&gt;
  * </pre>
+ * FIXME add Engine support
  * @deprecated
  * @author Peter Rossbach
  */
