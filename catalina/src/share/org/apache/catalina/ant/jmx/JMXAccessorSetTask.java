@@ -38,7 +38,7 @@ import org.apache.tools.ant.BuildException;
  * Examples:
  * Set a Mbean Manager attribute maxActiveSessions.
  * Set this attribute with fresh jmx connection without save reference 
- * <code>
+ * <pre>
  *   &lt;jmx:set
  *           host="127.0.0.1"
  *           port="9014"
@@ -49,7 +49,7 @@ import org.apache.tools.ant.BuildException;
  *           type="int"
  *           echo="false"&gt;
  *       /&gt;
- * </code>
+ * </pre>
  * </p>
  * <p>
  * First call to a remote MBeanserver save the JMXConnection a referenz <em>jmx.server</em>
