@@ -210,11 +210,16 @@ public class McastServiceImpl
         if(log.isDebugEnabled())
             log.debug("Mcast receive ping from member " + m);
         if ( membership.memberAlive(m) ) {
+            if(log.isDebugEnabled())
+                log.debug("Mcast add member " + m);
             service.memberAdded(m);
         }
         McastMember[] expired = membership.expire(timeToExpiration);
-        for ( int i=0; i<expired.length; i++)
+        for ( int i=0; i<expired.length; i++) {
+            if(log.isDebugEnabled())
+                log.debug("Mcast exipre  member " + m);
             service.memberDisappeared(expired[i]);
+        }
     }
 
     /**

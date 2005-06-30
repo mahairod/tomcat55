@@ -25,12 +25,14 @@ import java.util.zip.GZIPInputStream;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.catalina.Container;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.ClusterReceiver;
 import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.session.ClusterSessionListener;
 import org.apache.catalina.cluster.session.ReplicationStream;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 
 /**
@@ -330,10 +332,12 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
             ObjectName clusterName = scluster.getObjectName();
             try {
                 MBeanServer mserver = scluster.getMBeanServer();
-                ObjectName receiverName = new ObjectName(clusterName
-                        .getDomain()
-                        + ":type=ClusterReceiver,host="
-                        + clusterName.getKeyProperty("host"));
+                Container container = cluster.getContainer();
+                String name = clusterName.getDomain() + ":type=ClusterReceiver";
+                if (container instanceof StandardHost) {
+                    name += ",host=" + clusterName.getKeyProperty("host");
+                }
+                ObjectName receiverName = new ObjectName(name);
                 if (mserver.isRegistered(receiverName)) {
                     if (log.isWarnEnabled())
                         log.warn(sm.getString(
