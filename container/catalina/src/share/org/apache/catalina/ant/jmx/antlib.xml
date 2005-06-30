@@ -18,4 +18,7 @@
   <typedef
         name="equals"
         classname="org.apache.catalina.ant.jmx.JMXAccessorEqualsCondition" />
+  <typedef
+        name="condition"
+        classname="org.apache.catalina.ant.jmx.JMXAccessorCondition" />
 </antlib>

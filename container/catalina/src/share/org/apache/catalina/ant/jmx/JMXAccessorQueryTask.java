@@ -40,13 +40,13 @@ import org.apache.tools.ant.BuildException;
  * </ul>
  * <br/>
  * Query a list of Mbean 
- * <code>
+ * <pre>
  *   &lt;jmxQuery
  *           host="127.0.0.1"
  *           port="9014"
  *           name="Catalina:type=Manager,* 
  *           resultproperty="manager" /&gt;
- * </code>
+ * </pre>
  * with attribute <em>attributebinding="true"</em> you can get 
  * all attributes also from result objects.<br/>
  * The poperty manager.lenght show the size of the result 
