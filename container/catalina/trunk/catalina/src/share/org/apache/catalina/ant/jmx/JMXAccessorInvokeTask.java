@@ -44,7 +44,7 @@ import org.apache.tools.ant.BuildException;
  * <li>
  * Get a session attribute hello from session with ref <em>${sessionid.0}</em> form 
  * app <em>Catalina:type=Manager,path=/ClusterTest,host=localhost</em> 
- * <code>
+ * <pre>
  *   &lt;jmx:invoke
  *           name="Catalina:type=Manager,path=/ClusterTest,host=localhost" 
  *           operation="getSessionAttribute"
@@ -52,7 +52,7 @@ import org.apache.tools.ant.BuildException;
  *         &lt;arg value="${sessionid.0}"/&gt;
  *         &lt;arg value="Hello"/&gt;
  *   &lt;/jmx:invoke&gt;
- * </code>
+ * </pre>
  * </li>
  * <li>
  * Create new AccessLogger at localhost 

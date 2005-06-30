@@ -7,11 +7,12 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.taskdefs.condition.Condition;
 
 /**
  *
- * Definition
+ * <b>Definition</b>:
  * <pre> 
  *   &lt;path id="catalina_ant">
  *       &lt;fileset dir="${catalina.home}/server/lib">
@@ -21,22 +22,33 @@ import org.apache.tools.ant.taskdefs.condition.Condition;
  *   &lt;/path>
  *
  *   &lt;typedef
- *       name="jmxEquals"
- *       classname="org.apache.catalina.ant.jmx.JMXAccessorEqualsCondition"
+ *       name="jmxCondition"
+ *       classname="org.apache.catalina.ant.jmx.JMXAccessorCondition"
+ *       classpathref="catalina_ant"/>
+ *   &lt;taskdef
+ *       name="jmxOpen"
+ *       classname="org.apache.catalina.ant.jmx.JMXAccessorTask"
  *       classpathref="catalina_ant"/>
  * </pre>
  * 
- * usage: Wait for start backup node
+ * <b>Usage</b>: Wait for start backup node
  * <pre>
  *     &lt;target name="wait"&gt;
+ *       &lt;jmxOpen
+ *               host="${jmx.host}" port="${jmx.port}" username="${jmx.username}" password="${jmx.password}" /&gt;
  *        &lt;waitfor maxwait="${maxwait}" maxwaitunit="second" timeoutproperty="server.timeout" &gt;
  *           &lt;and&gt;
  *               &lt;socket server="${server.name}" port="${server.port}"/&gt;
  *               &lt;http url="${url}"/&gt;
- *               &lt;jmxEquals 
- *                   host="localhost" port="9014" username="controlRole" password="tomcat"
+ *               &lt;jmxCondition
  *                   name="Catalina:type=IDataSender,host=localhost,senderAddress=192.168.111.1,senderPort=9025"
+ *                   operation="==" 
  *                   attribute="connected" value="true"
+ *               /&gt;
+ *               &lt;jmxCondition
+ *                   operation="&amp;lt;"
+ *                   name="Catalina:j2eeType=WebModule,name=//${tomcat.application.host}${tomcat.application.path},J2EEApplication=none,J2EEServer=none"
+ *                   attribute="startupTime" value="250"
  *               /&gt;
  *           &lt;/and&gt;
  *       &lt;/waitfor&gt;
@@ -45,13 +57,23 @@ import org.apache.tools.ant.taskdefs.condition.Condition;
  *   &lt;/target&gt;
  *
  * </pre>
- * 
+ * Allowed operation between jmx attribute and reference value:
+ * <ul>
+ * <li>==  equals</li>
+ * <li>!=  not equals</li>
+ * <li>&gt; greater than (&amp;gt;)</li>
+ * <li>&gt;= greater than or equals (&amp;gt;=)</li>
+ * <li>&lt; lesser than (&amp;lt;)</li>
+ * <li>&lt;= lesser than or equals (&amp;lt;=)</li>
+ * </ul> 
+ * <b>NOTE</b>:  For numeric expressions the type must be set and use xml entities as operations.<br/>
+ * As type we currently support <em>long</em> and <em>double</em>.
  * @author Peter Rossbach
  * @version $Revision$ $Date$
  * @since 5.5.10
  *
  */
-public class JMXAccessorEqualsCondition implements Condition {
+public class JMXAccessorCondition extends ProjectComponent implements Condition {
 
     // ----------------------------------------------------- Instance Variables
 
@@ -63,13 +85,16 @@ public class JMXAccessorEqualsCondition implements Condition {
     private String name = null;
     private String attribute;
     private String value;
-    private String ref = "jmx.server" ;
+    private String operation = "==" ;
+    private String type = "long" ;
+    private String ref = "jmx.server";
+    
     // ----------------------------------------------------- Instance Info
 
     /**
      * Descriptive information describing this implementation.
      */
-    private static final String info = "org.apache.catalina.ant.JMXAccessorEqualsCondition/1.1";
+    private static final String info = "org.apache.catalina.ant.JMXAccessorCondition/1.1";
 
     /**
      * Return descriptive information about this implementation and the
@@ -83,6 +108,31 @@ public class JMXAccessorEqualsCondition implements Condition {
     }
     // ----------------------------------------------------- Properties
 
+    /**
+     * @return Returns the operation.
+     */
+    public String getOperation() {
+        return operation;
+    }
+    /**
+     * @param operation The operation to set.
+     */
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    /**
+     * @return Returns the type.
+     */
+    public String getType() {
+        return type;
+    }
+    /**
+     * @param type The type to set.
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
     /**
      * @return Returns the attribute.
      */
@@ -177,7 +227,7 @@ public class JMXAccessorEqualsCondition implements Condition {
     public void setValue(String value) {
         this.value = value;
     }
-
+ 
     /**
      * @return Returns the ref.
      */
@@ -216,6 +266,9 @@ public class JMXAccessorEqualsCondition implements Condition {
 
     // This method evaluates the condition
     public boolean eval() {
+        if (operation == null) {
+            throw new BuildException("operation attribute is not set");
+        }
         if (value == null) {
             throw new BuildException("value attribute is not set");
         }
@@ -225,9 +278,41 @@ public class JMXAccessorEqualsCondition implements Condition {
         }
         //FIXME check url or host/parameter
         String jmxValue = accessJMXValue();
-        if(jmxValue != null)
-            return jmxValue.equals(value);
+        String op = getOperation() ;
+        if(jmxValue != null) {
+            if("==".equals(op)) {
+                return jmxValue.equals(value);
+            } else if("!=".equals(op)) {
+                return !jmxValue.equals(value);
+            } else { 
+                if("long".equals(type)) {
+                    long jvalue = Long.parseLong(jmxValue);                                       
+                    long lvalue = Long.parseLong(value);
+                    if(">".equals(op)) {
+                        return jvalue > lvalue ;
+                    } else if(">=".equals(op)) {
+                        return jvalue >= lvalue ;                        
+                    } else if("<".equals(op)) {
+                        return jvalue < lvalue ;                        
+                    } else if ("<=".equals(op)) {
+                        return jvalue <= lvalue;
+                    }
+                } else if("double".equals(type)) {
+                    double jvalue = Double.parseDouble(jmxValue);                                       
+                    double dvalue = Double.parseDouble(value);
+                    if(">".equals(op)) {
+                        return jvalue > dvalue ;
+                    } else if(">=".equals(op)) {
+                        return jvalue >= dvalue ;                        
+                    } else if("<".equals(op)) {
+                        return jvalue < dvalue ;                        
+                    } else if ("<=".equals(op)) {
+                        return jvalue <= dvalue;
+                    }
+                }
+            }
+        }
         return false;
     }
-}
+ }
 

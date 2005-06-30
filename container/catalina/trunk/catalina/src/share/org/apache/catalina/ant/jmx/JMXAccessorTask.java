@@ -52,7 +52,7 @@ import org.apache.tools.ant.Project;
  *
  * Examples:
  * open server with reference and autorisation 
- * <code>
+ * <pre>
  *   &lt;jmxOpen
  *           host="127.0.0.1"
  *           port="9014"
@@ -60,12 +60,15 @@ import org.apache.tools.ant.Project;
  *           password="mysecret"
  *           ref="jmx.myserver" 
  *       /&gt;
- * </code>
+ * </pre>
  * All calls after opening with same refid reuse the connection.
  * <p>
  * First call to a remote MBeanserver save the JMXConnection a referenz <em>jmx.server</em>
  * </p>
- * These tasks require Ant 1.6 or later interface.
+ * All JMXAccessorXXXTask support the attribute <em>if</em> and <em>unless</em>. With <em>if</em>
+ * the task is only execute when property exist and with <em>unless</em> when property not exists. 
+ * <br/>
+ * <b>NOTE</b>: These tasks require Ant 1.6 or later interface.
  *
  * @author Peter Rossbach
  * @version $Revision$ $Date$
@@ -91,7 +94,9 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     private boolean echo = false;
     private boolean separatearrayresults = true;
     private String delimiter;
-
+    private String unlessCondition;
+    private String ifCondition;
+    
     // ----------------------------------------------------- Instance Info
 
     /**
@@ -239,7 +244,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     public void setPort(String port) {
         this.port = port;
     }
-
+ 
     /**
      * @return Returns the useRef.
      */
@@ -261,6 +266,41 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     }
  
   
+    /**
+     * @return Returns the ifCondition.
+     */
+    public String getIf() {
+        return ifCondition;
+    }
+    /**
+     * Only fail if a property of the given name exists in the current project.
+     * @param c property name
+     */
+    public void setIf(String c) {
+        ifCondition = c;
+    }
+   /**
+     * @return Returns the unlessCondition.
+     */
+    public String getUnless() {
+        return unlessCondition;
+    }
+    /**
+     * @param unlessCondition The unlessCondition to set.
+     */
+    public void setUnlessCondition(String unlessCondition) {
+        this.unlessCondition = unlessCondition;
+    }
+ 
+    /**
+     * Only fail if a property of the given name does not
+     * exist in the current project.
+     * @param c property name
+     */
+    public void setUnless(String c) {
+        unlessCondition = c;
+    }
+
     // --------------------------------------------------------- Public Methods
 
     /**
@@ -271,25 +311,26 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
      * @exception BuildException if a validation error occurs
      */
     public void execute() throws BuildException {
+        if (testIfCondition() && testUnlessCondition()) {
+            try {
+                String error = null;
 
-        try {
-            String error = null;
-
-            MBeanServerConnection jmxServerConnection = getJMXConnection();
-            error = jmxExecute(jmxServerConnection);
-            if (error != null && isFailOnError()) {
-                // exception should be thrown only if failOnError == true
-                // or error line will be logged twice
-                throw new BuildException(error);
+                MBeanServerConnection jmxServerConnection = getJMXConnection();
+                error = jmxExecute(jmxServerConnection);
+                if (error != null && isFailOnError()) {
+                    // exception should be thrown only if failOnError == true
+                    // or error line will be logged twice
+                    throw new BuildException(error);
+                }
+            } catch (Throwable t) {
+                if (isFailOnError()) {
+                    throw new BuildException(t);
+                } else {
+                    handleErrorOutput(t.getMessage());
+                }
+            } finally {
+                closeRedirector();
             }
-        } catch (Throwable t) {
-            if (isFailOnError()) {
-                throw new BuildException(t);
-            } else {
-                handleErrorOutput(t.getMessage());
-            }
-        } finally {
-            closeRedirector();
         }
     }
       
@@ -318,6 +359,30 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
 
     }
 
+
+    /**
+     * test the if condition
+     * @return true if there is no if condition, or the named property exists
+     */
+    protected boolean testIfCondition() {
+        if (ifCondition == null || "".equals(ifCondition)) {
+            return true;
+        }
+        return getProject().getProperty(ifCondition) != null;
+    }
+
+    /**
+     * test the unless condition
+     * @return true if there is no unless condition,
+     *  or there is a named property but it doesn't exist
+     */
+    protected boolean testUnlessCondition() {
+        if (unlessCondition == null || "".equals(unlessCondition)) {
+            return true;
+        }
+        return getProject().getProperty(unlessCondition) == null;
+    }
+
     /**
      * Get Current Connection from <em>ref</em> parameter or create a new
      * one!
@@ -331,14 +396,16 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
             String password, String refId) throws MalformedURLException,
             IOException {
         MBeanServerConnection jmxServerConnection = null;
-        boolean isRef = refId != null;
+        boolean isRef = project !=  null && refId != null && refId.length() > 0 ;
         if (isRef) {
             Object pref = project.getReference(refId);
             try {
                 jmxServerConnection = (MBeanServerConnection) pref;
             } catch (ClassCastException cce) {
-                project.log("wrong object reference " + refId + " - "
+                if(project != null ) {
+                    project.log("wrong object reference " + refId + " - "
                         + pref.getClass());
+                }
                 return null;
             }
         }
