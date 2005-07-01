@@ -303,7 +303,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
             Thread t = new Thread(this, "ClusterReceiver");
             t.setDaemon(true);
             t.start();
-         } catch (Exception x) {
+        } catch (Exception x) {
             log.fatal("Unable to start cluster receiver", x);
         }
         registerReceiverMBean();
