@@ -919,7 +919,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                              if(engine != null && engine instanceof Engine) {
                                  cluster = engine.getCluster();
                                  if(cluster != null && cluster instanceof CatalinaCluster) {
-                                     setCluster((CatalinaCluster) cluster) ;
+                                         setCluster((CatalinaCluster) cluster) ;
                                  }
                              } else {
                                      cluster = null ;
@@ -931,6 +931,17 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
             if (cluster == null) {
                 log.error(sm.getString("deltaManager.noCluster", getName()));
                 return;
+            } else {
+                if (log.isInfoEnabled()) {
+                    String type = "unknown" ;
+                    if( cluster.getContainer() instanceof Host){
+                        type = "Host" ;
+                    } else if( cluster.getContainer() instanceof Engine){
+                        type = "Engine" ;
+                    }
+                    log.info(sm
+                            .getString("deltaManager.registerCluster", getName(), type, cluster.getClusterName()));
+                }
             }
             if (log.isInfoEnabled())
                 log.info(sm
