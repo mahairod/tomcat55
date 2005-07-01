@@ -22,23 +22,47 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import org.apache.catalina.cluster.io.SocketObjectReader;
+import org.apache.catalina.util.StringManager;
 
 /**
  * @author Peter Rossbach
  * @version $Revision$, $Date$
  */
 public class SocketReplicationListener extends ClusterReceiverBase {
+
+    // ---------------------------------------------------- Statics
+
+    public static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
+            .getLog(SocketReplicationListener.class);
+
+    /**
+     * The string manager for this package.
+     */
+    protected static StringManager sm = StringManager
+            .getManager(Constants.Package);
+   
     /**
      * The descriptive information about this implementation.
      */
     private static final String info = "SocketReplicationListener/1.2";
 
+    //  ---------------------------------------------------- Properties
     private ServerSocket serverSocket = null;
 
     private int tcpListenMaxPort ;
     
+    /**
+     * 
+     * One second timeout to wait that socket started
+     */
+    private int tcpListenTimeout = 1 ;
+    
+    //  ---------------------------------------------------- Constructor
+
     public SocketReplicationListener() {
     }
+
+    //  ---------------------------------------------------- Properties
 
     /**
      * Return descriptive information about this implementation and the
@@ -46,9 +70,7 @@ public class SocketReplicationListener extends ClusterReceiverBase {
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getInfo() {
-
         return (info);
-
     }
     
     /**
@@ -64,7 +86,48 @@ public class SocketReplicationListener extends ClusterReceiverBase {
     public void setTcpListenMaxPort(int maxListenPort) {
         this.tcpListenMaxPort = maxListenPort;
     }
+     
+    /**
+     * @return Returns the tcpListenTimeout.
+     */
+    public int getTcpListenTimeout() {
+        return tcpListenTimeout;
+    }
+    /**
+     * @param tcpListenTimeout The tcpListenTimeout to set.
+     */
+    public void setTcpListenTimeout(int tcpListenTimeout) {
+        this.tcpListenTimeout = tcpListenTimeout;
+    }
+
+    //  ---------------------------------------------------- public methods
+
+    /**
+     * Wait the createServerSocket find the correct socket port when default config is used.
+     * @see org.apache.catalina.cluster.ClusterReceiver#start()
+     * @see #createServerSocket()
+     */
+    public void start() {
+        super.start();
+        long reqStart = System.currentTimeMillis();
+        long reqNow = 0 ;
+        boolean isTimeout = true ;
+        do {
+            try {
+                Thread.sleep(50);
+            } catch (Exception sleep) {
+            }
+            reqNow = System.currentTimeMillis();
+            isTimeout = ((reqNow - reqStart) > (1000 * getTcpListenTimeout()));
+        } while (doListen && (!isTimeout));
+        if (isTimeout || (!doListen)) {
+            log.error(sm.getString("SocketReplictionListener.timeout",
+                    getTcpListenAddress(),Integer.toString(getTcpListenPort())));
+        }
+    }
     
+    //  ---------------------------------------------------- protected methods
+
     /**
      * Master/Slave Sender handling / bind Server Socket at addres and port
      * 
@@ -72,7 +135,8 @@ public class SocketReplicationListener extends ClusterReceiverBase {
      */
     protected void listen() {
         if (doListen) {
-            log.warn("ServerSocket allready started");
+            log.warn(sm.getString("SocketReplictionListener.allreadyExists",
+                    getTcpListenAddress(),Integer.toString(getTcpListenPort())));
             return;
         }
 
@@ -92,16 +156,22 @@ public class SocketReplicationListener extends ClusterReceiverBase {
                             t.start();
                         }
                     } catch (IOException iex) {
-                        log.warn("Exception to start thread", iex);
+                        log.warn(sm.getString("SocketReplictionListener.accept.failure",
+                                getTcpListenAddress(),
+                                Integer.toString(getTcpListenPort())), iex);
                     }
                 }
                 serverSocket.close();
             } else {
-                log.fatal("Fatal error: Receiver socket not bound - address=" +  getTcpListenAddress()
-                        + " port=" + getTcpListenPort() + " maxport=" + getTcpListenMaxPort() );
+                log.fatal(sm.getString("SocketReplictionListener.serverSocket.notExists",
+                        getTcpListenAddress(),
+                        Integer.toString(getTcpListenPort()),
+                        Integer.toString(getTcpListenMaxPort())));
             }                
         } catch (IOException iex) {
-            log.warn("Exception at start or close server socket", iex);
+            log.warn(sm.getString("SocketReplictionListener.openclose.failure",
+                    getTcpListenAddress(),
+                    Integer.toString(getTcpListenPort())), iex);
         } finally {
             doListen = false;
             serverSocket = null;
@@ -129,12 +199,17 @@ public class SocketReplicationListener extends ClusterReceiverBase {
                 break;
             } catch( IOException ex ) {
                 if(log.isDebugEnabled())
-                    log.debug("Port busy at [" + inet.getHostAddress() + "." + i + "] - reason: "  + ex.toString());
+                    log.debug(sm.getString("SocketReplictionListener.portbusy",
+                            inet.getHostAddress(),
+                            Integer.toString(i), 
+                            ex.toString()));
                 continue;
             }
         }
         if(sSocket != null && log.isInfoEnabled())
-            log.info("Open Socket at [" + inet.getHostAddress() + "." + getTcpListenPort() + "]");
+            log.info(sm.getString("SocketReplictionListener.open",
+                    inet.getHostAddress(),
+                    Integer.toString(getTcpListenPort())));
         return sSocket ;
    }
 
@@ -158,7 +233,9 @@ public class SocketReplicationListener extends ClusterReceiverBase {
             s.setSoLinger(true, 0);
 
         } catch (IOException iex) {
-            log.warn("UnLocksocket failure", iex);
+            log.warn(sm.getString("SocketReplictionListener.unlockSocket.failure",
+                    getTcpListenAddress(),
+                    Integer.toString(getTcpListenPort())), iex);
         } finally {
             try {
                 if (s != null)
@@ -169,8 +246,8 @@ public class SocketReplicationListener extends ClusterReceiverBase {
     }
 
     /**
-     * Close serverSockets FIXME the channelSocket to connect own socket to
-     * terminate accpet loop!
+     * Close serverSockets
+     * FIXME the channelSocket to connect own socket to terminate accpet loop!
      */
     protected void stopListening() {
         unLockSocket();
