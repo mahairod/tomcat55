@@ -574,7 +574,7 @@ public class JspC implements Options {
                     
                     String fParent = f.getParent();
                     if (fParent == null) {
-                        f = new File(args[argPos]);
+                        f = new File(args[argPos-1]);
                         fParent = f.getParent();
                         if (fParent == null) {
                             fParent = File.separator;
