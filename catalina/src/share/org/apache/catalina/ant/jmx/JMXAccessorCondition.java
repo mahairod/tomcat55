@@ -88,7 +88,9 @@ public class JMXAccessorCondition extends ProjectComponent implements Condition 
     private String operation = "==" ;
     private String type = "long" ;
     private String ref = "jmx.server";
-    
+    private String unlessCondition;
+    private String ifCondition;
+     
     // ----------------------------------------------------- Instance Info
 
     /**
@@ -240,7 +242,41 @@ public class JMXAccessorCondition extends ProjectComponent implements Condition 
     public void setRef(String refId) {
         this.ref = refId;
     }
-    
+    /**
+     * @return Returns the ifCondition.
+     */
+    public String getIf() {
+        return ifCondition;
+    }
+    /**
+     * Only fail if a property of the given name exists in the current project.
+     * @param c property name
+     */
+    public void setIf(String c) {
+        ifCondition = c;
+    }
+   /**
+     * @return Returns the unlessCondition.
+     */
+    public String getUnless() {
+        return unlessCondition;
+    }
+ 
+    /**
+     * Only fail if a property of the given name does not
+     * exist in the current project.
+     * @param c property name
+     */
+    public void setUnless(String c) {
+        unlessCondition = c;
+    }
+
+    /**
+     * Get JMXConnection (default look at <em>jmx.server</em> project reference from jmxOpen Task)
+     * @return active JMXConnection
+     * @throws MalformedURLException
+     * @throws IOException
+     */
     protected MBeanServerConnection getJMXConnection()
             throws MalformedURLException, IOException {
         return JMXAccessorTask.accessJMXConnection(
@@ -250,6 +286,7 @@ public class JMXAccessorCondition extends ProjectComponent implements Condition 
     }
 
     /**
+     * Get value from MBeans attribute 
      * @return
      */
     protected String accessJMXValue() {
@@ -264,7 +301,34 @@ public class JMXAccessorCondition extends ProjectComponent implements Condition 
         return null;
     }
 
-    // This method evaluates the condition
+    /**
+     * test the if condition
+     * @return true if there is no if condition, or the named property exists
+     */
+    protected boolean testIfCondition() {
+        if (ifCondition == null || "".equals(ifCondition)) {
+            return true;
+        }
+        return getProject().getProperty(ifCondition) != null;
+    }
+
+    /**
+     * test the unless condition
+     * @return true if there is no unless condition,
+     *  or there is a named property but it doesn't exist
+     */
+    protected boolean testUnlessCondition() {
+        if (unlessCondition == null || "".equals(unlessCondition)) {
+            return true;
+        }
+        return getProject().getProperty(unlessCondition) == null;
+    }
+
+    /**
+     * This method evaluates the condition
+     * It support for operation ">,>=,<,<=" the types <code>long</code> and <code>double</code>.
+     * @return expression <em>jmxValue</em> <em>operation</em> <em>value</em>
+     */
     public boolean eval() {
         if (operation == null) {
             throw new BuildException("operation attribute is not set");
@@ -276,43 +340,45 @@ public class JMXAccessorCondition extends ProjectComponent implements Condition 
             throw new BuildException(
                     "Must specify a 'attribute', name for equals condition");
         }
-        //FIXME check url or host/parameter
-        String jmxValue = accessJMXValue();
-        String op = getOperation() ;
-        if(jmxValue != null) {
-            if("==".equals(op)) {
-                return jmxValue.equals(value);
-            } else if("!=".equals(op)) {
-                return !jmxValue.equals(value);
-            } else { 
-                if("long".equals(type)) {
-                    long jvalue = Long.parseLong(jmxValue);                                       
-                    long lvalue = Long.parseLong(value);
-                    if(">".equals(op)) {
-                        return jvalue > lvalue ;
-                    } else if(">=".equals(op)) {
-                        return jvalue >= lvalue ;                        
-                    } else if("<".equals(op)) {
-                        return jvalue < lvalue ;                        
-                    } else if ("<=".equals(op)) {
-                        return jvalue <= lvalue;
-                    }
-                } else if("double".equals(type)) {
-                    double jvalue = Double.parseDouble(jmxValue);                                       
-                    double dvalue = Double.parseDouble(value);
-                    if(">".equals(op)) {
-                        return jvalue > dvalue ;
-                    } else if(">=".equals(op)) {
-                        return jvalue >= dvalue ;                        
-                    } else if("<".equals(op)) {
-                        return jvalue < dvalue ;                        
-                    } else if ("<=".equals(op)) {
-                        return jvalue <= dvalue;
+        if (testIfCondition() && testUnlessCondition()) {
+            String jmxValue = accessJMXValue();
+            if (jmxValue != null) {
+                String op = getOperation();
+                if ("==".equals(op)) {
+                    return jmxValue.equals(value);
+                } else if ("!=".equals(op)) {
+                    return !jmxValue.equals(value);
+                } else {
+                    if ("long".equals(type)) {
+                        long jvalue = Long.parseLong(jmxValue);
+                        long lvalue = Long.parseLong(value);
+                        if (">".equals(op)) {
+                            return jvalue > lvalue;
+                        } else if (">=".equals(op)) {
+                            return jvalue >= lvalue;
+                        } else if ("<".equals(op)) {
+                            return jvalue < lvalue;
+                        } else if ("<=".equals(op)) {
+                            return jvalue <= lvalue;
+                        }
+                    } else if ("double".equals(type)) {
+                        double jvalue = Double.parseDouble(jmxValue);
+                        double dvalue = Double.parseDouble(value);
+                        if (">".equals(op)) {
+                            return jvalue > dvalue;
+                        } else if (">=".equals(op)) {
+                            return jvalue >= dvalue;
+                        } else if ("<".equals(op)) {
+                            return jvalue < dvalue;
+                        } else if ("<=".equals(op)) {
+                            return jvalue <= dvalue;
+                        }
                     }
                 }
             }
+            return false;
         }
-        return false;
+        return true;
     }
  }
 
