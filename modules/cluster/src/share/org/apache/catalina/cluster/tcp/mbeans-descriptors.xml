@@ -197,6 +197,9 @@
     <attribute   name="tcpListenMaxPort"
           description="max tcp listen used port"
                  type="int"/>
+    <attribute   name="tcpListenTimeout"
+          description="max tcp listen timeout (sec) wait for ServerSocket start"
+                 type="int"/>                
     <attribute   name="nrOfMsgsReceived"
           description="number of messages received from other nodes"
                  type="long"
