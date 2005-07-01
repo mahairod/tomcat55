@@ -249,7 +249,7 @@ public class JMXAccessorCondition extends ProjectComponent implements Condition 
         return ifCondition;
     }
     /**
-     * Only fail if a property of the given name exists in the current project.
+     * Only execute if a property of the given name exists in the current project.
      * @param c property name
      */
     public void setIf(String c) {
@@ -263,7 +263,7 @@ public class JMXAccessorCondition extends ProjectComponent implements Condition 
     }
  
     /**
-     * Only fail if a property of the given name does not
+     * Only execute if a property of the given name does not
      * exist in the current project.
      * @param c property name
      */
