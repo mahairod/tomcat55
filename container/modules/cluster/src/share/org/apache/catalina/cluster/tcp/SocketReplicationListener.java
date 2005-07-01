@@ -111,7 +111,7 @@ public class SocketReplicationListener extends ClusterReceiverBase {
         super.start();
         long reqStart = System.currentTimeMillis();
         long reqNow = 0 ;
-        boolean isTimeout = true ;
+        boolean isTimeout = false ;
         do {
             try {
                 Thread.sleep(50);
@@ -119,10 +119,11 @@ public class SocketReplicationListener extends ClusterReceiverBase {
             }
             reqNow = System.currentTimeMillis();
             isTimeout = ((reqNow - reqStart) > (1000 * getTcpListenTimeout()));
-        } while (doListen && (!isTimeout));
+        } while (!doListen && (!isTimeout));
         if (isTimeout || (!doListen)) {
             log.error(sm.getString("SocketReplictionListener.timeout",
-                    getTcpListenAddress(),Integer.toString(getTcpListenPort())));
+                    getTcpListenAddress(),Integer.toString(getTcpListenPort()),
+                    Long.toString(reqNow - reqStart), Boolean.toString(doListen)));
         }
     }
     
