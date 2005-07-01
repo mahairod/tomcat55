@@ -149,7 +149,7 @@
 
     <attribute name="protocolHandlerClassName" required="false">
       <p>This attribute value must be 
-      <code>org.apache.jk.server.JkCoyoteHandler</code> to use the JK 2
+      <code>org.apache.jk.server.JkCoyoteHandler</code> to use the JK
       handler.</p>
     </attribute>
 
