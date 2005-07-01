@@ -218,6 +218,8 @@ should be completed:</p>
          Service
            |
          Engine
+           |  \ 
+           |  --- Cluster --*
            |
          Host
            |
@@ -229,26 +231,46 @@ should be completed:</p>
         |                   \
         |                   -- DeltaManager
         |
-     ---------------------------
-     |        |         |       \
-   Sender  Receiver  Membership  \
-                                 -- Valve
-                                 |      \
-                                 |       -- ReplicationValve
-                                 |       -- JvmRouteBinderValve 
-                                 |
-                                 -- LifecycleListener 
-                                 |
-                                 -- ClusterListener 
-                                 |      \
-                                 |       -- ClusterSessionListener
-                                 |       -- JvmRouteSessionIDBinderListener
-                                 |
-                                 -- Deployer 
-                                        \
-                                         -- FarmWarDeployer
+     -----------------------------
+     |          |         |       \
+   Receiver    Sender   Membership  \
+     \                               -- Valve
+     -- SocketReplicationListener    |      \
+     -- ReplicationListener          |       -- ReplicationValve
+                                     |       -- JvmRouteBinderValve 
+                                     |
+                                     -- LifecycleListener 
+                                     |
+                                     -- ClusterListener 
+                                     |      \
+                                     |       -- ClusterSessionListener
+                                     |       -- JvmRouteSessionIDBinderListener
+                                     |
+                                     -- Deployer 
+                                            \
+                                             -- FarmWarDeployer
       
       
+</source>
+<source>
+   Sender
+    \
+    -- ReplicationTransmitter 
+             |
+             ---------
+                      \
+                   IDataSender
+                          \
+                          |
+                          --- (sync)
+                          |  \
+                          |   -- PooledSocketSender   (pooled)
+                          |   -- SockerSender         (synchronous)
+                          |                                
+                          --- (async)
+                             \
+                              -- AsyncSocketSender     (synchronous)
+                              -- FastAsyncSocketSender (fastasyncqueue)         
 </source>
 </p>
 
@@ -375,6 +397,45 @@ case you need also the defaultmode Cluster listener <em>ClusterSessionListener</
 </p>
 </section>
 
+<section name="Simple Engine Cluster Configuration for all hosts">
+<p>
+Simple one line engine configuration<br/>
+<source>
+   &lt;Server                 port="8011" 
+                       shutdown="SHUTDOWN" &gt;
+    &lt;GlobalNamingResources&gt;
+    &lt;Resource              name="UserDatabase" auth="Container"
+                           type="org.apache.catalina.UserDatabase"
+                    description="User database that can be updated and saved"
+                        factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+                        pathname="conf/tomcat-users.xml" /&gt;
+  &lt;/GlobalNamingResources&gt;
+    &lt;Service              name="Catalina"&gt;
+        &lt;Connector        port="9012" 
+                      protocol="AJP/1.3"
+        &lt;Connector         port="9013"
+                     maxThreads="10"
+                minSpareThreads="4"
+                maxSpareThreads="4"
+        /&gt;
+        &lt;Engine            name="Catalina" 
+                   defaultHost="localhost" 
+                        jvmRoute="node1"&gt;
+        &lt;Realm        className="org.apache.catalina.realm.UserDatabaseRealm"
+                   resourceName="UserDatabase" /&gt;
+        &lt;Cluster      className="org.apache.catalina.cluster.tcp.SimpleTcpCluster"
+                    defaultMode="true" /&gt;
+            &lt;Host          name="localhost"
+                        appBase="webapps"/&gt;
+        &lt;/Engine&gt;
+    &lt;/Service&gt;
+&lt;/Server&gt;
+</source>
+<br/>
+See default mode configuration description as simple host cluster example before.
+</p>
+</section>
+
 <section name="Complex Cluster Configuration">
 <p>
 <br/><b>Example</b> Configure cluster with complete sub elements. Activate this node
@@ -477,7 +538,7 @@ List of Attributes<br/>
 
   <tr>
     <td>replicationMode</td>
-    <td>replication mode (synchronous,pooled.asynchronous,fastasyncqueue)
+    <td>replication mode (<em>synchronous</em>, <em>pooled</em>, <em>asynchronous</em> or <em>fastasyncqueue</em>)
     </td>
     <td><code>pooled</code></td>
   </tr>
@@ -863,7 +924,15 @@ Example send all sessions at blocks. Serialize and send 100 session inside on bl
       keepAliveTimeout="-1"
       keepAliveMaxRequestCount="-1"/&gt;
 </source>
-</p>  
+</p>
+<p>
+<b>Note:</b><br/>
+As <em>Cluster.defaultMode=true</em> you can configure the manager attributes with prefix <em>manager.</em>. 
+<br/>
+<b>Note:</b><br/>
+With <em>Cluster.setProperty(&lt;String&gt;,&lt;String&gt;)</em> you can modify 
+attributes for all register managers. The method exists as MBeans operation.
+</p>
 </section>
 
 </section>
@@ -873,9 +942,10 @@ Example send all sessions at blocks. Serialize and send 100 session inside on bl
 <p>Monitoring is a very important question when you use a cluster. Some of the cluster objects are JMX MBeans </p>
 <p>Add the following parameter to your startup script with Java 5:
 <source>
--Dcom.sun.management.jmxremote
--Dcom.sun.management.jmxremote.port=%my.jmx.port%
--Dcom.sun.management.jmxremote.ssl=false
+set CATALINA_OPTS=\
+-Dcom.sun.management.jmxremote \
+-Dcom.sun.management.jmxremote.port=%my.jmx.port% \
+-Dcom.sun.management.jmxremote.ssl=false \
 -Dcom.sun.management.jmxremote.authenticate=false
 </source>
 </p>
@@ -899,30 +969,35 @@ List of Cluster Mbeans<br/>
   <tr>
     <th align="center" bgcolor="aqua">Name</th>
     <th align="center" bgcolor="aqua">Description</th>
-    <th align="center" bgcolor="aqua">MBean ObjectName</th>
+    <th align="center" bgcolor="aqua">MBean ObjectName - Engine</th>
+    <th align="center" bgcolor="aqua">MBean ObjectName - Host</th>
   </tr>
 
   <tr>
     <td>Cluster</td>
     <td>The complete cluster element</td>
+    <td><code>type=Cluster</code></td>
     <td><code>type=Cluster,host=${HOST}</code></td>
   </tr>
  
   <tr>
     <td>ClusterSender</td>
     <td>Configuration and stats of the sender infrastructure</td>
+    <td><code>type=ClusterSender</code></td>
     <td><code>type=ClusterSender,host=${HOST}</code></td>
   </tr>
  
   <tr>
     <td>ClusterReceiver</td>
     <td>Configuration and stats of the recevier infrastructure</td>
+    <td><code>type=ClusterReceiver</code></td>
     <td><code>type=ClusterReceiver,host=${HOST}</code></td>
   </tr>
 
   <tr>
     <td>ClusterMembership</td>
     <td>Configuration and stats of the membership infrastructure</td>
+    <td><code>type=ClusterMembership</code></td>
     <td><code>type=ClusterMembership,host=${HOST}</code></td>
   </tr>
 
@@ -930,6 +1005,9 @@ List of Cluster Mbeans<br/>
     <td>IDataSender</td>
     <td>For every cluster member it exist a sender mbeans. 
     It exists speziall MBeans to all replication modes</td>
+    <td><code>type=IDataSender,
+        senderAddress=${MEMBER.SENDER.IP},
+        senderPort=${MEMBER.SENDER.PORT}</code></td>
     <td><code>type=IDataSender,host=${HOST},
         senderAddress=${MEMBER.SENDER.IP},
         senderPort=${MEMBER.SENDER.PORT}</code></td>
@@ -939,17 +1017,21 @@ List of Cluster Mbeans<br/>
     <td>DeltaManager</td>
     <td>This manager control the sessions and handle session replication </td>
     <td><code>type=Manager,path=${APP.CONTEXT.PATH},host=${HOST}</code></td>
+    <td><code>type=Manager,path=${APP.CONTEXT.PATH},host=${HOST}</code></td>
   </tr>
 
   <tr>
     <td>ReplicationValve</td>
     <td>This valve control the replication to the backup nodes</td>
+    <td><code>type=Valve,name=ReplicationValve</code></td>
     <td><code>type=Valve,name=ReplicationValve,host=${HOST}</code></td>
   </tr>
 
   <tr>
     <td>JvmRouteBinderValve</td>
     <td>This is a cluster fallback valve to change the Session ID to the current tomcat jvmroute.</td>
+    <td><code>type=Valve,name=JvmRouteBinderValve,
+              path=${APP.CONTEXT.PATH}</code></td>
     <td><code>type=Valve,name=JvmRouteBinderValve,host=${HOST},
               path=${APP.CONTEXT.PATH}</code></td>
   </tr>
@@ -961,13 +1043,15 @@ List of Cluster Mbeans<br/>
 <section name="FAQ">
 <p>To be completed once we receive questions about session replication:</p>
 <ol>
-<li>Q: What happens when I pull the network cable?<p></p>
+<li>Q: Can I configure as engine level?<p></p>
 
-    A: Well, the other members will remove the instance from the cluster,
-       but when you insert the cable again, the Tomcat instance might have completely flipped out.
-       This is because the OS might start going 100% CPU when a multicast message is sent.
-       There has not yet been a good solution for this, I will let you know when I have come up with one.
-       (pero: I test this and I works correct with java 5 and exists when you use the cluster with JDK 1.4.x)
+    A: Since Tomcat 5.5.10 you can configure a cluster as engine and host level.
+    This helps to support clustering at a web hosting szenario.
+  <p></p>
+  </li>
+<li>Q: What is the simples cluster config?<p></p>
+
+    A: Since Tomcat 5.5.10 you can configure a cluster with following: <code>&lt;Cluster className="org.apache.catalina.cluster.tcp.SimpleTcpCluster" defaultMode="true" /&gt;</code>
   <p></p>
   </li>
 <li>Q: How can I activated transparent logging?<p></p>
@@ -995,6 +1079,15 @@ List of Cluster Mbeans<br/>
 
     A: Yes, with sender attribute <code>maxPoolSocketLimit="40"</code> you can have more than the default
        <code>25</code> sockets to transfer more parallel messages. 
+  <p></p>
+  </li>
+<li>Q: What happens when I pull the network cable?<p></p>
+
+    A: Well, the other members will remove the instance from the cluster,
+       but when you insert the cable again, the Tomcat instance might have completely flipped out.
+       This is because the OS might start going 100% CPU when a multicast message is sent.
+       There has not yet been a good solution for this, I will let you know when I have come up with one.
+       (pero: I test this and I works correct with java 5 and exists when you use the cluster with JDK 1.4.x)
   <p></p>
   </li>
 <li>Q: At my windows laptop without network my cluster doesn't work?<p></p>
