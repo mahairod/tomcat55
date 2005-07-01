@@ -285,12 +285,6 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     public String getUnless() {
         return unlessCondition;
     }
-    /**
-     * @param unlessCondition The unlessCondition to set.
-     */
-    public void setUnlessCondition(String unlessCondition) {
-        this.unlessCondition = unlessCondition;
-    }
  
     /**
      * Only fail if a property of the given name does not
