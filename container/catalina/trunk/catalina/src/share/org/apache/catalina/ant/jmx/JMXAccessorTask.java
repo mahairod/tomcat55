@@ -273,7 +273,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
         return ifCondition;
     }
     /**
-     * Only fail if a property of the given name exists in the current project.
+     * Only execute if a property of the given name exists in the current project.
      * @param c property name
      */
     public void setIf(String c) {
@@ -287,7 +287,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     }
  
     /**
-     * Only fail if a property of the given name does not
+     * Only execute if a property of the given name does not
      * exist in the current project.
      * @param c property name
      */
