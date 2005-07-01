@@ -4,6 +4,9 @@ Next actions
 
 - add mapping sender mapping properties file
 	- let people eaiser extend sender mode
+- Add MbeanFactory to generate dynamic cluster at runtime.
+    Problem: How we can start those central services?
+    - StandardEngine support load Mbean from external file.     
 - when a lot of messages expire it comes to burst of messages 
      - all 60 Sec when ManagerBase#processExpires is called a lot of messages are send!
      - Better is to transfer a spezial epxire message with an array of expired session messages.
@@ -14,6 +17,7 @@ Next actions
     	different active sessions
     	long queues
     	detect long wait acks
+        Idea: Wrote a ant script with the new jmx tasks!
 - add cluster setup template (src)	
 - documentation
 	wrote a complete new how-to
