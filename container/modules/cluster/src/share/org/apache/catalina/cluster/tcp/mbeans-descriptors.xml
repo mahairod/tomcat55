@@ -31,7 +31,7 @@
           description="enable cluster log transfer logging"
                  type="boolean"/>
     <operation   name="setProperty"
-               description="set a property to all cluster managers"
+               description="set a property to all cluster managers (with prefix 'manager.')"
                impact="ACTION"
                returnType="void">
       <parameter name="key"
@@ -44,6 +44,15 @@
 
     <operation   name="send"
                description="send message to all cluster members"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="message"
+                 description="replication message"
+                 type="org.apache.catalina.cluster.ClusterMessage"/>
+    </operation>
+    
+    <operation   name="sendClusterDomain"
+               description="send message to all cluster members with same domain"
                impact="ACTION"
                returnType="void">
       <parameter name="message"

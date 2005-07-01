@@ -68,8 +68,7 @@ import org.apache.tomcat.util.IntrospectionUtils;
  * receiver/sender.
  * 
  * FIXME remove install/remove/start/stop context dummys
- * 
- * FIXME wrote testcases FIXME Propertychange support
+ * FIXME wrote testcases 
  * 
  * @author Filip Hanik
  * @author Remy Maucherat
@@ -678,7 +677,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         getClusterLog();
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, this);
-
         try {
             if(isDefaultMode() && valves.size() == 0) {
                 createDefaultClusterValves() ;
@@ -698,36 +696,39 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
                 createDefaultClusterSender();
             }
             // start the receiver.
-            clusterReceiver.setSendAck(clusterSender.isWaitForAck());
-            clusterReceiver.setCompress(clusterSender.isCompress());
-            clusterReceiver.setCatalinaCluster(this);
-            clusterReceiver.start();
+            if(clusterReceiver != null) {
+                clusterReceiver.setSendAck(clusterSender.isWaitForAck());
+                clusterReceiver.setCompress(clusterSender.isCompress());
+                clusterReceiver.setCatalinaCluster(this);
+                clusterReceiver.start();
+            } else 
      
             // start the sender.
-            clusterSender.setCatalinaCluster(this);
-            clusterSender.start();
+            if(clusterSender != null && clusterReceiver != null) {
+                clusterSender.setCatalinaCluster(this);
+                clusterSender.start();
+            }
             
             // start the membership service.
             if(isDefaultMode() && membershipService == null) {
                 createDefaultMembershipService();
             }
-            membershipService.setLocalMemberProperties(clusterReceiver
-                    .getHost(), clusterReceiver.getPort());
-            membershipService.addMembershipListener(this);
-            membershipService.setCatalinaCluster(this);
-            membershipService.start();
             
-            // start the deployer.
-            try {
-                if (clusterDeployer != null) {
-                    clusterDeployer.setCluster(this);
-                    clusterDeployer.start();
+            if(membershipService != null && clusterReceiver != null) {
+                membershipService.setLocalMemberProperties(clusterReceiver
+                    .getHost(), clusterReceiver.getPort());
+                membershipService.addMembershipListener(this);
+                membershipService.setCatalinaCluster(this);
+                membershipService.start();
+                // start the deployer.
+                try {
+                    if (clusterDeployer != null) {
+                        clusterDeployer.setCluster(this);
+                        clusterDeployer.start();
+                    }
+                } catch (Throwable x) {
+                    log.fatal("Unable to retrieve the container deployer. Cluster deployment disabled.",x);
                 }
-            } catch (Throwable x) {
-                log
-                        .fatal(
-                                "Unable to retrieve the container deployer. Cluster deployment disabled.",
-                                x);
             }
             this.started = true;
             // Notify our interested LifecycleListeners
@@ -739,13 +740,15 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     }
 
     /**
-     * 
+     * Create default membership service:
+     * <pre>
      * &lt;Membership 
      *             className="org.apache.catalina.cluster.mcast.McastService"
      *             mcastAddr="228.0.0.4"
      *             mcastPort="8012"
      *             mcastFrequency="500"
      *             mcastDropTime="3000"/&gt;
+     * </pre>
      */
     protected void createDefaultMembershipService() {
         if (log.isInfoEnabled()) {
@@ -765,13 +768,14 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
 
     
     /**
-     * <code>
+     * Create default cluster sender
+     * <pre>
      *  &lt;Sender
-     *             className="org.apache.catalina.cluster.tcp.ReplicationTransmitter"
-     *             replicationMode="fastasyncqueue"
-     *             doTransmitterProcessingStats="true"
-     *             doProcessingStats="true"/&gt;
-     *  </code>
+     *     className="org.apache.catalina.cluster.tcp.ReplicationTransmitter"
+     *     replicationMode="fastasyncqueue"
+     *     doTransmitterProcessingStats="true"
+     *     doProcessingStats="true"/&gt;
+     *  </pre>
      */
     protected void createDefaultClusterSender() {
         if (log.isInfoEnabled()) {
@@ -788,15 +792,16 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     }
 
     /**
-     * <code>
+     * Create default receiver:
+     * <pre>
      *   &lt;Receiver 
-     *   className="org.apache.catalina.cluster.tcp.SocketReplicationListener"
-     *   tcpListenAddress="auto"
-     *   tcpListenPort="8015"
-     *   tcpListenMaxPort="8019"
-     *   doReceivedProcessingStats="true"
+     *     className="org.apache.catalina.cluster.tcp.SocketReplicationListener"
+     *     tcpListenAddress="auto"
+     *     tcpListenPort="8015"
+     *     tcpListenMaxPort="8019"
+     *     doReceivedProcessingStats="true"
      *   /&gt;
-     * </code>
+     * </pre>
      */
     protected void createDefaultClusterReceiver() {
         if (log.isInfoEnabled()) {
@@ -815,10 +820,11 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     }
 
     /**
-     *  <code>
+     * Create default session cluster listener:
+     *  <pre>
      * &lt;ClusterListener 
      *   className="org.apache.catalina.cluster.session.ClusterSessionListener" /&gt;
-     * </code>
+     * </pre>
      */
     protected void createDefaultClusterListener() {
         if (log.isInfoEnabled()) {
@@ -833,12 +839,13 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     }
 
     /**
-     * <code>
+     * Create default ReplicationValve
+     * <pre>
      * &lt;Valve 
      *    className="org.apache.catalina.cluster.tcp.ReplicationValve"
      *    filter=".*\.gif;.*\.js;.*\.css;.*\.png;.*\.jpeg;.*\.jpg;.*\.htm;.*\.html;.*\.txt;"
      *    primaryIndicator="true" /&gt;
-     * </code>
+     * </pre>
      */
     protected void createDefaultClusterValves() {
         if (log.isInfoEnabled()) {
@@ -855,6 +862,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     }
 
     /**
+     * register all cluster valve to host or engine
      * @throws Exception
      * @throws ClassNotFoundException
      */
@@ -876,6 +884,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     }
 
     /**
+     * unregister all cluster valve to host or engine
      * @throws Exception
      * @throws ClassNotFoundException
      */
@@ -897,11 +906,11 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     }
 
     /**
-     * Gracefully terminate the active use of the public methods of this
-     * component. This method should be the last one called on a given instance
-     * of this component. <BR>
-     * This will disconnect the cluster communication channel and stop the
-     * listener thread.
+     * Gracefully terminate the active cluster component.<br/>
+     * This will disconnect the cluster communication channel, stop the
+     * listener and deregister the valves from host or engine.<br/><br/>
+     * <b>Note:</b><br/>The sub elements receiver, sender, membership,
+     * listener or valves are not removed. You can easily start the cluster again.
      * 
      * @exception IllegalStateException
      *                if this component has not been started
@@ -919,18 +928,24 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         if (clusterDeployer != null) {
             clusterDeployer.stop();
         }
-        membershipService.stop();
-        membershipService.removeMembershipListener();
-        try {
-            clusterSender.stop();
-        } catch (Exception x) {
-            log.error("Unable to stop cluster sender.", x);
+        if(membershipService != null) {
+            membershipService.stop();
+            membershipService.removeMembershipListener();
         }
-        try {
-            clusterReceiver.stop();
-            clusterReceiver.setCatalinaCluster(null);
-        } catch (Exception x) {
-            log.error("Unable to stop cluster receiver.", x);
+        if(clusterSender != null) {
+            try {
+                clusterSender.stop();
+            } catch (Exception x) {
+                log.error("Unable to stop cluster sender.", x);
+            }
+        }
+        if(clusterReceiver != null ){
+            try {
+                clusterReceiver.stop();
+                clusterReceiver.setCatalinaCluster(null);
+            } catch (Exception x) {
+                log.error("Unable to stop cluster receiver.", x);
+            }
         }
         unregisterMBeans();
         try {
@@ -1160,6 +1175,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     }
 
     /**
+     * log received message to cluster transfer log
      * @param message
      * @param start
      * @param accepted
@@ -1177,6 +1193,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     }
 
     /**
+     * log sended message to cluster transfer log
      * @param message
      * @param start
      * @param dest
