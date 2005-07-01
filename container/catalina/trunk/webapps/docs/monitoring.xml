@@ -41,9 +41,9 @@
     <ol>
     <li>When you think authorisation is a good, add and change this :
     <source>
-    -Dcom.sun.management.jmxremote.authenticate=true
-    -Dcom.sun.management.jmxremote.password.file=..\conf\jmxremote.password
-    -Dcom.sun.management.jmxremote.access.file=..\conf\jmxremote.access
+    -Dcom.sun.management.jmxremote.authenticate=true \
+    -Dcom.sun.management.jmxremote.password.file=../conf/jmxremote.password \
+    -Dcom.sun.management.jmxremote.access.file=../conf/jmxremote.access \
     </source>
     </li>
     <li>edit the access allow file <em>$CATALINA_BASE/conf/jmxremote.access</em> :
@@ -79,6 +79,8 @@ controlRole tomcat
       </source>
       </p>
       <p><b>Tipp</b>: With <em>${AJP.PORT}=0</em> no ajp connection where started. 
+      </p>
+      <p><b>Note</b>: MX4J JSR 160 RMI Adaptor to support JDK 1.4 currently not integrated.
       </p>
       </li>
       <li>Start your tomcat and look with a browser at http://${JMX.HOST}:${JMX.PORT}</li>
@@ -194,9 +196,9 @@ controlRole tomcat
    </td></tr>
 </table>
    <p><b>import:</b> Import the JMX Accessor Projekt with 
-   <em>&lt;import file="${CATALINA.HOME}/bin/jxmaccessor.xml" /&gt;</em> and
+   <em>&lt;import file="${CATALINA.HOME}/bin/jmxaccessor-tasks.xml" /&gt;</em> and
    reference the tasks with <em>jmxOpen</em>, <em>jmxSet</em>, <em>jmxGet</em>,
-    <em>jmxQuery</em>, <em>jmxInvoke</em> and <em>jmxEquals</em>. </p>
+    <em>jmxQuery</em>, <em>jmxInvoke</em>,<em>jmxEquals</em> and <em>jmxCondition</em>. </p>
 
   </section>
 
@@ -264,10 +266,24 @@ List of Attributes<br/>
     <td><code>false</code></td>
   </tr>
   
+  <tr>
+    <td>if</td>
+    <td>Only execute if a property of the given name <b>exists</b> in the current project.
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>unless</td>
+    <td>Only execute if a property of the given name <b>not exists</b> in the current project.
+    </td>
+    <td></td>
+  </tr>
+
 </table>
 </p>
 <p>
-Example of open a new jmx connection<br/>
+Example to open a new jmx connection<br/>
 <source>
     &lt;jmx:open
             host="${jmx.server.name}"
@@ -276,7 +292,7 @@ Example of open a new jmx connection<br/>
 </source>
 </p>  
 <p>
-Example of open a jmx connection from url, with authorisation and 
+Example to open a jmx connection from url, with authorisation and 
 store at other reference <br/>
 <source>
     &lt;jmx:open
@@ -287,6 +303,26 @@ store at other reference <br/>
     /&gt;
 </source>
 </p>  
+
+<p>
+Example to open a jmx connection from url, with authorisation and 
+store at other reference, but only when property <em>jmx.if</em> exists and 
+<em>jmx.unless</em> not exists<br/>
+<source>
+    &lt;jmx:open
+            url="service:jmx:rmi:///jndi/rmi://localhost:9024/jmxrmi"
+            ref="jmx.server.9024"
+            username="controlRole"
+            password="tomcat"    
+            if="jmx.if"    
+            unless="jmx.unless"    
+    /&gt;
+</source>
+</p> 
+<p><b>Note</b>: All properties from <em>jmxOpen</em> task also exists at all 
+other tasks and conditions. 
+</p>
+
 </section>
 
 <!-- Get ######################################################################### 
@@ -379,6 +415,22 @@ Access the senderObjectNames properties with:
 <source>
     ${senderObjectNames.lenght} give the number of returned sender list.
     ${senderObjectNames.[0..N]} found all sender object names
+</source>
+</p>  
+
+<p>
+Example to get IDataSender attribute connected only when cluster is configured.
+<source>
+&lt;jmx:query
+    failonerror="false"
+    name="Catalina:type=Cluster,host=${tomcat.application.host}"
+    resultproperty="cluster"
+/>
+&lt;jmx:get
+    name="Catalina:type=IDataSender,host=${tomcat.application.host},senderAddress=${cluster.backup.address},senderPort=${cluster.backup.port}" 
+    attribute="connected"
+    resultproperty="datasender.connected"
+    if="cluster.0.name" />
 </source>
 </p>  
 
@@ -704,6 +756,150 @@ Example to get all MBeans from a server and store inside an external xml propert
 &lt;/project&gt;
 </source>
 Now you can find all MBeans inside the file <em>mbeans.properties</em>.
+</p>  
+
+</section>
+
+<!-- condition ######################################################################### 
+-->
+
+<section name="JMXAccessorCondition:  express condition">
+<p>
+List of Attributes<br/>
+<table border="1" cellpadding="5">
+
+  <tr>
+    <th align="center" bgcolor="aqua">Attribute</th>
+    <th align="center" bgcolor="aqua">Description</th>
+    <th align="center" bgcolor="aqua">Default value</th>
+  </tr>
+
+ <tr>
+    <td>url</td>
+    <td>Set jmx connection url - <em>service:jmx:rmi:///jndi/rmi://localhost:8050/jmxrmi</em>
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>host</td>
+    <td>Set the host, shortcut the very long url syntax.
+    </td>
+    <td><code>localhost</code></td>
+  </tr>
+
+  <tr>
+    <td>port</td>
+    <td>Set the remote connection port 
+    </td>
+    <td><code>8050</code></td>
+  </tr>
+
+  <tr>
+    <td>username</td>
+    <td>remote jmx connection user name.
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>password</td>
+    <td>remote jmx connection password.
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>ref</td>
+    <td>Name of the internal connection reference. With this attribute you can
+        configure more the one connection inside the same ant projekt.
+    </td>
+    <td><code>jmx.server</code></td>
+  </tr>
+
+  <tr>
+    <td>name</td>
+    <td>Full qualified JMX ObjectName -- <em>Catalina:type=Server</em>
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>echo</td>
+    <td>Echo condition usage (access and result)
+    </td>
+    <td><code>false</code></td>
+  </tr>
+
+  <tr>
+    <td>if</td>
+    <td>Only execute if a property of the given name <b>exists</b> in the current project.
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>unless</td>
+    <td>Only execute if a property of the given name <b>not exists</b> in the current project.
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>value (requiered)</td>
+    <td>Second arg for operation
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>type</td>
+    <td>Value type to express operation (support <em>long</em> and <em>double</em>)
+    </td>
+    <td><code>long</code></td>
+  </tr>
+
+  <tr>
+    <td>operation</td>
+    <td> express one 
+    <ul>
+    <li>==  equals</li>
+    <li>!=  not equals</li>
+    <li>&gt; greater than (&amp;gt;)</li>
+    <li>&gt;= greater than or equals (&amp;gt;=)</li>
+    <li>&lt; lesser than (&amp;lt;)</li>
+    <li>&lt;= lesser than or equals (&amp;lt;=)</li>
+    </ul>         
+    </td>
+    <td><code>==</code></td>
+  </tr>
+
+</table>
+</p>
+<p>
+Wait for server connection and that cluster backup node is accessable<br/>
+<source>
+      &lt;target name="wait"&gt;
+         &lt;waitfor maxwait="${maxwait}" maxwaitunit="second" timeoutproperty="server.timeout" &gt;
+            &lt;and&gt;
+                &lt;socket server="${server.name}" port="${server.port}"/&gt;
+                &lt;http url="${url}"/&gt;
+                &lt;jmx:condition
+                    operation="==" 
+                    host="localhost" 
+                    port="9014"
+                    username="controlRole"
+                    password="tomcat"
+                    name="Catalina:type=IDataSender,host=localhost,senderAddress=192.168.111.1,senderPort=9025"
+                    attribute="connected"
+                    value="true"
+                /&gt;
+            &lt;/and&gt;
+        &lt;/waitfor&gt;
+        &lt;fail if="server.timeout" message="Server ${url} don't answer inside ${maxwait} sec" /&gt;
+        &lt;echo message="Server ${url} alive" /&gt;
+    &lt;/target&gt;
+</source>
 </p>  
 
 </section>
