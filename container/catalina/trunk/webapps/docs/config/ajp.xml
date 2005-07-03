@@ -193,8 +193,7 @@ with AJP enabled</li>
     <attribute name="address" required="false">
       <p>For servers with more than one IP address, this attribute
       specifies which address will be used for listening on the specified
-      port.  By default, this pAuthenticating with public key "rsa-key-20031223"
-ort will be used on all IP addresses
+      port.  By default, this port will be used on all IP addresses
       associated with the server. A value of <code>127.0.0.1</code>
       indicates that the Connector will only listen on the loopback
       interface.</p>
