@@ -14,11 +14,17 @@
 <body>
 
   <section name="Introduction">
+
   <p>
       Tomcat can use the <a href="http://apr.apache.org/">Apache Portable Runtime</a> to 
       provide superior scalability, performance, and better integration with native server 
       technologies. The Apache Portable Runtime is a highly portable library that is at 
-      the heart of Apache HTTP Server 2.x.
+      the heart of Apache HTTP Server 2.x. APR has many uses, including access to advanced IO
+      functionality (such as sendfile, epoll and OpenSSL), OS level functionality (random number
+      generation, system status, etc), and native process handling (shared memory, NT
+      pipes and Unix sockets). These features will allow making Tomcat a general purpose
+      webserver, and go far beyond simply allowing a slightly more scalable HTTP
+      connector.
   </p>
 
   </section>
@@ -26,15 +32,11 @@
   <section name="Installation">
 
     <p>
-      FIXME !!!
-    </p>
-
-    <p>
-      APR support requires three main components to be installed:
+      APR support requires three main native components to be installed:
       <ul>
         <li>APR library (libapr)</li>
         <li>JNI wrappers for APR used by Tomcat (libtcnative)</li>
-        <li>OpenSSL library</li>
+        <li>OpenSSL libraries</li>
       </ul>
     </p>
 
