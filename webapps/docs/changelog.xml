@@ -55,7 +55,7 @@
         <bug>34248</bug>: Update JavaMail download instructions to include JAF. (yoavs)
       </update>
       <update>
-        Update to JDT from Eclipse 3.1M6, which is now feature complete (remm)
+        Update to JDT from Eclipse 3.1, with support for Java 5 (remm)
       </update>
       <update>
         Refactoring, redesign and extend the cluster module
@@ -173,7 +173,7 @@
       </fix>
       <fix>
         Fix handling of symbolic links when the DefaultServlet is generating directory
-        listings.
+        listings. (markt)
       </fix>
     </changelog>
   </subsection>
@@ -187,8 +187,7 @@
         Add some Mbean attributes and operations to ChannelSocket (pero)
       </update>    
       <add>
-        Add Apache Portable Runtime based HTTP/1.1 protocol handler, without SSL support, which
-        provides efficient worker thread usage (remm)
+        Apache Portable Runtime based HTTP/1.1 protocol handler (remm)
       </add>
       <add>
         Add support for simple file-based CRLs under JDK 1.5 (billbarker)
@@ -207,6 +206,9 @@
       </fix>
       <add>
         Add bufferSize option to the AJP/1.3 Java connector to control output buffering. (billbarker)
+      </add>
+      <add>
+        Apache Portable Runtime based AJP/1.3 protocol handler (remm)
       </add>
      </changelog>
   </subsection>
