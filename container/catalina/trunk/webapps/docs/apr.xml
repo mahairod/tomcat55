@@ -22,9 +22,13 @@
       the heart of Apache HTTP Server 2.x. APR has many uses, including access to advanced IO
       functionality (such as sendfile, epoll and OpenSSL), OS level functionality (random number
       generation, system status, etc), and native process handling (shared memory, NT
-      pipes and Unix sockets). These features will allow making Tomcat a general purpose
-      webserver, and go far beyond simply allowing a slightly more scalable HTTP
-      connector.
+      pipes and Unix sockets).
+  </p>
+  
+  <p>
+      These features allows making Tomcat a general purpose webserver, will enable much better 
+      integration with other native web technologies, and overall make Java much more viable as
+      a full fledged webserver platform rather than simply a backend focused technology.
   </p>
 
   </section>
@@ -34,7 +38,7 @@
     <p>
       APR support requires three main native components to be installed:
       <ul>
-        <li>APR library (libapr)</li>
+        <li>APR library</li>
         <li>JNI wrappers for APR used by Tomcat (libtcnative)</li>
         <li>OpenSSL libraries</li>
       </ul>
@@ -44,7 +48,7 @@
     
     <p>
       Windows binaries are provided for libapr and libtcnative. Windows OpenSSL
-      binaries are linked from the <a href="http://www.openssl.org">official OpenSSL website</a>
+      binaries are linked from the <a href="http://www.openssl.org">Official OpenSSL website</a>
       (see related/binaries).
     </p>
     
@@ -53,8 +57,22 @@
     <subsection name="Linux">
     
     <p>
-      Most Linux distributions will ship packages for APR and OpenSSL. The JNI wrapper will then have
-      to be compiled. It depends on APR, OpenSSL, and the Java headers.
+      Most Linux distributions will ship packages for APR and OpenSSL. The JNI wrapper (libtcnative) will 
+      then have to be compiled. It depends on APR, OpenSSL, and the Java headers.
+    </p>
+    
+    <p>
+      Requirements:
+      <ul>
+        <li>APR 1.1+ development headers (libapr1-dev package)</li>
+        <li>OpenSSL 0.9.7+ development headers (libssl-dev package)</li>
+        <li>GNU development environment (gcc, make)</li>
+      </ul>
+    </p>
+    
+    <p>
+      Once the build environment is installed, the wrapper library can be compiled using:
+      <source>./configure &amp;&amp; make &amp;&amp; make install</source>
     </p>
     
     </subsection>
@@ -67,7 +85,8 @@
     Once the libraries are properly installed and available to Java (if loading fails, the library path
     will be displayed), the Tomcat connectors will automatically use APR. Configuration of the connectors
     is similar to the regular connectors, but have a few extra attributes which are used to configure
-    APR components.
+    APR components. Note that the defaults should be well tuned for most use cases, and additional
+    tweaking shouldn't be required.
   </p>
 
     <subsection name="HTTP">
@@ -120,7 +139,8 @@
     <p>
       The HTTPS APR connector has the same basic attributes than the HTTP APR connector, but adds 
       OpenSSL specific ones. For the full details on using OpenSSL, please refer to OpenSSL documentations
-      and the many books available for it. The SSL specific attributes for the connector are:
+      and the many books available for it (see the <a href="http://www.openssl.org">Official OpenSSL 
+      website</a>). The SSL specific attributes for the connector are:
     </p>
     
     <attributes>
