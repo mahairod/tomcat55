@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.regexp.RE;
+import org.apache.regexp.REProgram;
 import org.apache.regexp.RESyntaxException;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
@@ -79,15 +81,17 @@ public abstract class RequestFilterValve
 
 
     /**
-     * The set of <code>allow</code> regular expressions we will evaluate.
+     * The set of <code>allow</code> pre-compiled regular expressions we will
+     * evaluate.
      */
-    protected RE allows[] = new RE[0];
+    protected REProgram allows[] = new REProgram[0];
 
 
     /**
-     * The set of <code>deny</code> regular expressions we will evaluate.
+     * The set of <code>deny</code> pre-compiled regular expressions we will
+     * evaluate.
      */
-    protected RE denies[] = new RE[0];
+    protected REProgram denies[] = new REProgram[0];
 
 
     /**
@@ -199,32 +203,32 @@ public abstract class RequestFilterValve
 
 
     /**
-     * Return an array of regular expression objects initialized from the
-     * specified argument, which must be <code>null</code> or a comma-delimited
-     * list of regular expression patterns.
+     * Return an array of pre-compiled regular expression objects initialized
+     * from the specified argument, which must be <code>null</code> or a
+     * comma-delimited list of regular expression patterns.
      *
      * @param list The comma-separated list of patterns
      *
      * @exception IllegalArgumentException if one of the patterns has
      *  invalid syntax
      */
-    protected RE[] precalculate(String list) {
+    protected REProgram[] precalculate(String list) {
 
         if (list == null)
-            return (new RE[0]);
+            return (new REProgram[0]);
         list = list.trim();
         if (list.length() < 1)
-            return (new RE[0]);
+            return (new REProgram[0]);
         list += ",";
 
-        ArrayList reList = new ArrayList();
+        ArrayList reProgramList = new ArrayList();
         while (list.length() > 0) {
             int comma = list.indexOf(',');
             if (comma < 0)
                 break;
             String pattern = list.substring(0, comma).trim();
             try {
-                reList.add(new RE(pattern));
+                reProgramList.add(new RE(pattern).getProgram());
             } catch (RESyntaxException e) {
                 throw new IllegalArgumentException
                     (sm.getString("requestFilterValve.syntax", pattern));
@@ -232,8 +236,8 @@ public abstract class RequestFilterValve
             list = list.substring(comma + 1);
         }
 
-        RE reArray[] = new RE[reList.size()];
-        return ((RE[]) reList.toArray(reArray));
+        REProgram reProgramArray[] = new REProgram[reProgramList.size()];
+        return ((REProgram[]) reProgramList.toArray(reProgramArray));
 
     }
 
@@ -268,9 +272,14 @@ public abstract class RequestFilterValve
             return;
         }
 
+        
+        // Create local RE since RE is not thread safe
+        RE re = new RE();
+        
         // Check the deny patterns, if any
         for (int i = 0; i < denies.length; i++) {
-            if (denies[i].match(property)) {
+            re.setProgram(denies[i]);
+            if (re.match(property)) {
                 ServletResponse sres = response.getResponse();
                 if (sres instanceof HttpServletResponse) {
                     HttpServletResponse hres = (HttpServletResponse) sres;
@@ -282,7 +291,8 @@ public abstract class RequestFilterValve
 
         // Check the allow patterns, if any
         for (int i = 0; i < allows.length; i++) {
-            if (allows[i].match(property)) {
+            re.setProgram(allows[i]);
+            if (re.match(property)) {
                 context.invokeNext(request, response);
                 return;
             }
