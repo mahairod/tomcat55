@@ -79,7 +79,7 @@
 	
   </section>
 
-  <section name="Configuration">
+  <section name="APR Components">
 
   <p>
     Once the libraries are properly installed and available to Java (if loading fails, the library path
@@ -89,10 +89,25 @@
     tweaking shouldn't be required.
   </p>
 
+  <p>
+    When APR is enabled, the following features are also enabled in Tomcat:
+    <ul>
+      <li>Secure session ID generation by default on all platforms (platforms other than Linux required
+          random number generation using a configured entropy)</li>
+      <li>OS level statistics on memory usage and CPU usage by the Tomcat process are displayed by
+          the status servlet</li>
+    </ul>
+  </p>
+
+  </section>
+
+  <section name="APR Connectors Configuration">
+
     <subsection name="HTTP">
     
     <p>
-      The following attributes are new in the HTTP APR connector:
+      The following attributes are supported in the HTTP APR connector in addition to the ones supported
+      in the regular HTTP connector:
     </p>
 
     <attributes>
@@ -152,7 +167,8 @@
     <subsection name="AJP">
     
     <p>
-      The following attributes are new in the AJP APR connector:
+      The following attributes are supported in the AJP APR connector in addition to the ones supported
+      in the regular AJP connector:
     </p>
 
     <attributes>
