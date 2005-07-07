@@ -19,7 +19,9 @@ package org.apache.catalina.realm;
 
 
 import java.security.Principal;
+import java.security.acl.Group;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import javax.security.auth.Subject;
 import javax.security.auth.login.AccountExpiredException;
@@ -270,7 +272,7 @@ public class JAASRealm
         }
 
         // Return the appropriate Principal for this authenticated Subject
-        Principal principal = createPrincipal(subject);
+        Principal principal = createPrincipal(username, subject);
         if (principal == null) {
             log(sm.getString("jaasRealm.authenticateError", username));
             return (null);
@@ -326,9 +328,8 @@ public class JAASRealm
      *
      * @param subject The Subject representing the logged in user
      */
-    protected Principal createPrincipal(Subject subject) {
+    protected Principal createPrincipal(String username, Subject subject) {
         // Prepare to scan the Principals for this Subject
-        String username = null;
         String password = null; // Will not be carried forward
         ArrayList roles = new ArrayList();
 
@@ -336,12 +337,27 @@ public class JAASRealm
         Iterator principals = subject.getPrincipals().iterator();
         while (principals.hasNext()) {
             Principal principal = (Principal) principals.next();
+            if (principal instanceof GenericPrincipal) {
+                // No need to look any further
+                return principal;
+            }
             String principalClass = principal.getClass().getName();
-            if ((username == null) && userClasses.contains(principalClass)) {
+            if (userClasses.contains(principalClass)) {
+                // Override the default which is the original user, accepted by
+                // the LoginManager
                 username = principal.getName();
             }
             if (roleClasses.contains(principalClass)) {
                 roles.add(principal.getName());
+            }
+            if ((principal instanceof Group) &&
+                    "Roles".equals(principal.getName())) {
+                Group grp = (Group) principal;
+                Enumeration en = grp.members();
+                while (en.hasMoreElements()) {
+                    Principal roleP = (Principal) en.nextElement();
+                    roles.add(roleP.getName());
+                }
             }
         }
 

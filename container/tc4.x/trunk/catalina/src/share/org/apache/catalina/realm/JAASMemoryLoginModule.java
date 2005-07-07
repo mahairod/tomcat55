@@ -18,14 +18,11 @@
 package org.apache.catalina.realm;
 
 
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.security.Principal;
-import java.security.cert.X509Certificate;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -35,8 +32,6 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
-import org.apache.catalina.Container;
-import org.apache.catalina.Realm;
 import org.apache.commons.digester.Digester;
 
 
@@ -69,7 +64,13 @@ import org.apache.commons.digester.Digester;
  * @version $Revision$ $Date$
  */
 
-public class JAASMemoryLoginModule implements LoginModule, Realm {
+public class JAASMemoryLoginModule extends MemoryRealm implements LoginModule {
+
+    /**
+     * Descriptive information about this Realm implementation.
+     */
+    protected final String info =
+        "org.apache.catalina.realm.JAASMemoryLoginModule/1.0";
 
 
     // ----------------------------------------------------- Instance Variables
@@ -132,35 +133,6 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
 
 
     // --------------------------------------------------------- Public Methods
-
-
-    /**
-     * Add a new user to the in-memory database.
-     *
-     * @param username User's username
-     * @param password User's password (clear text)
-     * @param roles Comma-delimited set of roles associated with this user
-     */
-    void addUser(String username, String password, String roles) {
-
-        // Accumulate the list of roles for this user
-        ArrayList list = new ArrayList();
-        roles += ",";
-        while (true) {
-            int comma = roles.indexOf(',');
-            if (comma < 0)
-                break;
-            String role = roles.substring(0, comma).trim();
-            list.add(role);
-            roles = roles.substring(comma + 1);
-        }
-
-        // Construct and cache the Principal for this user
-        GenericPrincipal principal =
-            new GenericPrincipal(this, username, password, list);
-        principals.put(username, principal);
-
-    }
 
 
     /**
@@ -283,7 +255,7 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
         }
 
         // Validate the username and password we have received
-        principal = null; // FIXME - look up and check password
+        principal = super.authenticate(username, password);
 
         // Report results based on success or failure
         if (principal != null) {
@@ -316,29 +288,6 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
 
     // ---------------------------------------------------------- Realm Methods
 
-
-    /**
-     * Return the Container with which this Realm has been associated.
-     */
-    public Container getContainer() {
-
-        return (null);
-
-    }
-
-
-    /**
-     * Set the Container with which this Realm has been associated.
-     *
-     * @param container The associated Container
-     */
-    public void setContainer(Container container) {
-
-        ;
-
-    }
-
-
     /**
      * Return descriptive information about this Realm implementation and
      * the corresponding version number, in the format
@@ -346,113 +295,7 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
      */
     public String getInfo() {
 
-        return (null);
-
-    }
-
-
-    /**
-     * Add a property change listener to this component.
-     *
-     * @param listener The listener to add
-     */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-
-        ;
-
-    }
-
-
-    /**
-     * Return the Principal associated with the specified username and
-     * credentials, if there is one; otherwise return <code>null</code>.
-     *
-     * @param username Username of the Principal to look up
-     * @param credentials Password or other credentials to use in
-     *  authenticating this username
-     */
-    public Principal authenticate(String username, String credentials) {
-
-        return (null);
-
-    }
-
-
-    /**
-     * Return the Principal associated with the specified username and
-     * credentials, if there is one; otherwise return <code>null</code>.
-     *
-     * @param username Username of the Principal to look up
-     * @param credentials Password or other credentials to use in
-     *  authenticating this username
-     */
-    public Principal authenticate(String username, byte[] credentials) {
-
-        return (null);
-
-    }
-
-
-    /**
-     * Return the Principal associated with the specified username, which
-     * matches the digest calculated using the given parameters using the
-     * method described in RFC 2069; otherwise return <code>null</code>.
-     *
-     * @param username Username of the Principal to look up
-     * @param digest Digest which has been submitted by the client
-     * @param nonce Unique (or supposedly unique) token which has been used
-     * for this request
-     * @param realm Realm name
-     * @param md5a2 Second MD5 digest used to calculate the digest :
-     * MD5(Method + ":" + uri)
-     */
-    public Principal authenticate(String username, String digest,
-                                  String nonce, String nc, String cnonce,
-                                  String qop, String realm,
-                                  String md5a2) {
-
-        return (null);
-
-    }
-
-
-    /**
-     * Return the Principal associated with the specified chain of X509
-     * client certificates.  If there is none, return <code>null</code>.
-     *
-     * @param certs Array of client certificates, with the first one in
-     *  the array being the certificate of the client itself.
-     */
-    public Principal authenticate(X509Certificate certs[]) {
-
-        return (null);
-
-    }
-
-
-    /**
-     * Return <code>true</code> if the specified Principal has the specified
-     * security role, within the context of this Realm; otherwise return
-     * <code>false</code>.
-     *
-     * @param principal Principal for whom the role is to be checked
-     * @param role Security role to be checked
-     */
-    public boolean hasRole(Principal principal, String role) {
-
-        return (false);
-
-    }
-
-
-    /**
-     * Remove a property change listener from this component.
-     *
-     * @param listener The listener to remove
-     */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-
-        ;
+        return info;
 
     }
 
@@ -485,34 +328,9 @@ public class JAASMemoryLoginModule implements LoginModule, Realm {
             log("Error processing configuration file " +
                 file.getAbsolutePath(), e);
             return;
+        } finally {
+            digester.push(null);
         }
-
-    }
-
-
-    /**
-     * Log a message.
-     *
-     * @param message The message to be logged
-     */
-    protected void log(String message) {
-
-        System.out.print("JAASMemoryLoginModule: ");
-        System.out.println(message);
-
-    }
-
-
-    /**
-     * Log a message and associated exception.
-     *
-     * @param message The message to be logged
-     * @param exception The associated exception
-     */
-    protected void log(String message, Throwable exception) {
-
-        log(message);
-        exception.printStackTrace(System.out);
 
     }
 

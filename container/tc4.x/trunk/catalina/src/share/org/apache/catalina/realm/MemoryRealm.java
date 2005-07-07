@@ -42,7 +42,7 @@ import org.apache.commons.digester.Digester;
  * @version $Revision$ $Date$
  */
 
-public final class MemoryRealm
+public class MemoryRealm
     extends RealmBase {
 
 
