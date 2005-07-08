@@ -23,12 +23,15 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import javax.management.openmbean.CompositeDataSupport;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
@@ -461,8 +464,10 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
 
         if ((jmxServerConnection == null)) {
                 throw new BuildException("Must open a connection!");
+        } else if (isEcho()) {
+            handleOutput("JMX Connection ref=" + ref + " is open!");
         }
-        return null;
+       return null;
     }
 
     /**
@@ -552,40 +557,84 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
 
     /**
      * create result as property with name from attribute resultproperty 
-     * When result is an array and isSeparateArrayResults is true,
-     * resultproperty used as prefix (<code>resultproperty.0-array.length</code> 
-     * and store the result array length at <code>resultproperty.length</code>.
-     * Other option is that you delemit your result with a delimiter (java.util.StringTokenizer is used).
      * @param result
+     * @see #createProperty(String, Object)
      */
     protected void createProperty(Object result) {
         if (resultproperty != null) {
-            if (result.getClass().isArray()) {
-                if (isSeparatearrayresults()) {
-                    Object array[] = (Object[]) result;
-                    for (int i = 0; i < array.length; i++) {
-                        getProject().setNewProperty(resultproperty + "." + i,
-                                array[i].toString());
-                    }
-                    getProject().setNewProperty(resultproperty + ".length",
-                            Integer.toString(array.length));
-                    return ;
-                }
-            }
-            String delim = getDelimiter();
-            if(delim != null) {
-                StringTokenizer tokenizer = new StringTokenizer(result.toString(),delim);
-                int len = 0;
-                for (; tokenizer.hasMoreTokens(); len++) {
-                     String token = tokenizer.nextToken();
-                     getProject().setNewProperty(resultproperty + "." + len,
-                            token);
-                }
-                getProject().setNewProperty(resultproperty + ".length",
-                        Integer.toString(len));                
-            } else
-                getProject().setNewProperty(resultproperty, result.toString());
+           createProperty(resultproperty,result);
         }
     }
     
+   /**    
+    * create result as property with name from property prefix  
+    * When result is an array and isSeparateArrayResults is true,
+    * resultproperty used as prefix (<code>resultproperty.0-array.length</code> 
+    * and store the result array length at <code>resultproperty.length</code>.
+    * Other option is that you delemit your result with a delimiter (java.util.StringTokenizer is used).
+    * @param propertyPrefix
+    * @param result
+    */
+    protected void createProperty(String propertyPrefix, Object result) {
+        if (propertyPrefix == null)
+            propertyPrefix = "";
+        if (result instanceof CompositeDataSupport) {
+            CompositeDataSupport data = (CompositeDataSupport) result ;
+            Set keys = data.getCompositeType().keySet() ;
+            for (Iterator iter = keys.iterator(); iter.hasNext();) {
+                String key = (String) iter.next();  
+                Object value = data.get(key);
+                setProperty(propertyPrefix + "." + key , value);                
+            }
+        } else if (result.getClass().isArray()) {
+            if (isSeparatearrayresults()) {
+                Object array[] = (Object[]) result;
+                int size = 0 ;
+                for (int i = 0; i < array.length; i++) {
+                    if(setProperty(propertyPrefix + "." + size , array[i])) {
+                        size++;
+                    }
+                }
+                if(size > 0) {
+                    setProperty(propertyPrefix + ".Length",
+                        Integer.toString(size));
+                }
+            }
+        } else {
+            String delim = getDelimiter();
+            if (delim != null) {
+                StringTokenizer tokenizer = new StringTokenizer(result.toString(),
+                        delim);
+                int size = 0;
+                for (; tokenizer.hasMoreTokens();) {
+                    String token = tokenizer.nextToken();
+                    if(setProperty(propertyPrefix + "." + size, token)) {
+                        size++;
+                    }
+                }
+                if(size>0)
+                    setProperty(propertyPrefix + ".Length",
+                        Integer.toString(size));
+            } else {
+                setProperty(propertyPrefix, result.toString());
+            }
+        }
+    }
+
+    /**
+     * @param propertyPrefix
+     * @param value
+     */
+    protected boolean setProperty(String property, Object value) {
+        if(property != null ) {
+            if(value == null )
+                 value="" ;
+            if (isEcho()) {
+                handleOutput(property + "=" + value.toString());
+            }
+            getProject().setNewProperty(property,value.toString());
+            return true ;
+        }
+        return false ;
+    }
 }
