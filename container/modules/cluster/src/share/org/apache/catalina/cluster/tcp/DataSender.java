@@ -120,6 +120,11 @@ public class DataSender implements IDataSender {
     protected long dataResendCounter = 0;
 
     /**
+     * number of data failure sends 
+     */
+    protected long dataFailureCounter = 0;
+    
+    /**
      * doProcessingStats
      */
     protected boolean doProcessingStats = false;
@@ -182,7 +187,7 @@ public class DataSender implements IDataSender {
     /**
      * wait for receiver Ack
      */
-    private boolean waitForAck = true;
+    private boolean waitForAck = false;
 
     /**
      * number of socket close
@@ -199,6 +204,12 @@ public class DataSender implements IDataSender {
      */
     private int socketOpenFailureCounter = 0 ;
 
+    /**
+     * After failure make a resend
+     */
+    private boolean resend = false ;
+
+    
     // ------------------------------------------------------------- Constructor
 
     public DataSender(String domain,InetAddress host, int port) {
@@ -378,6 +389,13 @@ public class DataSender implements IDataSender {
         return dataResendCounter;
     }
 
+    /**
+     * @return Returns the dataFailureCounter.
+     */
+    public long getDataFailureCounter() {
+        return dataFailureCounter;
+    }
+    
     public InetAddress getAddress() {
         return address;
     }
@@ -478,6 +496,18 @@ public class DataSender implements IDataSender {
     }
 
     /**
+     * @return Returns the resend.
+     */
+    public boolean isResend() {
+        return resend;
+    }
+    /**
+     * @param resend The resend to set.
+     */
+    public void setResend(boolean resend) {
+        this.resend = resend;
+    }
+    /**
      * @return Returns the socket.
      */
     public Socket getSocket() {
@@ -564,6 +594,7 @@ public class DataSender implements IDataSender {
         connectCounter = isConnected() ? 1 : 0;
         missingAckCounter = 0;
         dataResendCounter = 0;
+        dataFailureCounter = 0 ;
         socketOpenCounter =isConnected() ? 1 : 0;
         socketOpenFailureCounter = 0 ;
         socketCloseCounter = 0;
@@ -727,7 +758,8 @@ public class DataSender implements IDataSender {
              writeData(data);
              messageTransfered = true ;
         } catch (java.io.IOException x) {
-            if(data.getResend() != ClusterMessage.FLAG_FORBIDDEN) {
+            if(data.getResend() == ClusterMessage.FLAG_ALLOWED || 
+                    (data.getResend() == ClusterMessage.FLAG_DEFAULT && isResend() )) {
                 // second try with fresh connection
                 dataResendCounter++;
                 if (log.isTraceEnabled())
@@ -761,6 +793,7 @@ public class DataSender implements IDataSender {
                         new Integer(port), data.getUniqueId(), new Long(data.getMessage().length)));
                 }
             } else {
+                dataFailureCounter++;
                 if (log.isWarnEnabled())
                     log.warn(sm.getString("IDataSender.send.lost",  address.getHostAddress(),
                             new Integer(port), data.getType(), data.getUniqueId()),exception);

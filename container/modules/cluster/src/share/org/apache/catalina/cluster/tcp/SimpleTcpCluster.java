@@ -181,7 +181,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
 
     private org.apache.catalina.cluster.ClusterDeployer clusterDeployer;
 
-    private boolean defaultMode = false ;
+    private boolean defaultMode = true ;
     
     /**
      * Listeners of messages
@@ -701,7 +701,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
                 clusterReceiver.setCompress(clusterSender.isCompress());
                 clusterReceiver.setCatalinaCluster(this);
                 clusterReceiver.start();
-            } else 
+            }
      
             // start the sender.
             if(clusterSender != null && clusterReceiver != null) {
@@ -746,8 +746,8 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      *             className="org.apache.catalina.cluster.mcast.McastService"
      *             mcastAddr="228.0.0.4"
      *             mcastPort="8012"
-     *             mcastFrequency="500"
-     *             mcastDropTime="3000"/&gt;
+     *             mcastFrequency="1000"
+     *             mcastDropTime="30000"/&gt;
      * </pre>
      */
     protected void createDefaultMembershipService() {
@@ -760,8 +760,8 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         McastService mService= new McastService();
         mService.setMcastAddr("228.0.0.4");
         mService.setMcastPort(8012);
-        mService.setMcastFrequency(500);
-        mService.setMcastDropTime(3000);
+        mService.setMcastFrequency(1000);
+        mService.setMcastDropTime(30000);
         transferProperty("service",mService);        
         setMembershipService(mService);          
     }

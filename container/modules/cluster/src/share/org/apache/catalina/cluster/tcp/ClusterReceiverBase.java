@@ -505,4 +505,12 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
             }
         }
     }
+    
+    /* (non-Javadoc)
+     * @see org.apache.catalina.cluster.io.ListenCallback#sendAck()
+     */
+    public void sendAck() throws IOException {
+        // do nothing
+    }
+
 }
