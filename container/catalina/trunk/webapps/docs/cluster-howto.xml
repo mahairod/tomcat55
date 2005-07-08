@@ -342,8 +342,7 @@ Simple one line configuration<br/>
                    resourceName="UserDatabase" /&gt;
             &lt;Host          name="localhost"
                         appBase="webapps"&gt;
-             &lt;Cluster className="org.apache.catalina.cluster.tcp.SimpleTcpCluster"
-                    defaultMode="true" /&gt;
+             &lt;Cluster className="org.apache.catalina.cluster.tcp.SimpleTcpCluster"/&gt;
             &lt;/Host&gt;
         &lt;/Engine&gt;
     &lt;/Service&gt;
@@ -353,7 +352,8 @@ Simple one line configuration<br/>
 The default mode configuration setup a <em>fastasyncmode</em> cluster configuration with following
 parameters:
 <ul>
-    <li>Open Membership receiver at <em>228.0.0.4</em> and send to multicast udp port <em>8012</em>.</li>
+    <li>Open Membership receiver at <em>228.0.0.4</em> and send to multicast udp port <em>8012</em></li>
+    <li>Send membership every 1 sec and drop member after 30sec.</li>
     <li>Open message receiver at default ip interface at first free port between <em>8015</em> and <em>8019</em>.</li>
     <li>Receiver message with <em>SocketReplicationListener</em> </li>
     <li>Configure a <em>ReplicationTransmitter</em> with <em>fastasyncmode</em> sender mode.</li>
@@ -372,8 +372,7 @@ change receiver port range<br/>
 &lt;Cluster                 className="org.apache.catalina.cluster.tcp.SimpleTcpCluster"
           service.mcastBindAddress="127.0.0.1" 
             receiver.tcpListenPort="9070" 
-         receiver.tcpListenMaxPort="9075" 
-                       defaultMode="true" /&gt;
+         receiver.tcpListenMaxPort="9075" /&gt;
 </source>    
 <br/>       
 <b>WARNING</b>: When you add you sub elements, there overwrite the defaults complete.
@@ -383,8 +382,7 @@ case you need also the defaultmode Cluster listener <em>ClusterSessionListener</
 &lt;Cluster                 className="org.apache.catalina.cluster.tcp.SimpleTcpCluster"
           service.mcastBindAddress="127.0.0.1" 
             receiver.tcpListenPort="9070" 
-         receiver.tcpListenMaxPort="9075" 
-                       defaultMode="true" &gt;
+         receiver.tcpListenMaxPort="9075" &gt;
        &lt;ClusterListener  className="org.apache.catalina.cluster.session.ClusterSessionListener" /&gt;
        &lt;ClusterListener  className="org.apache.catalina.cluster.session.JvmRouteSessionIDBinderListener" /&gt;
        &lt;Valve            className="org.apache.catalina.cluster.tcp.ReplicationValve"
@@ -423,8 +421,7 @@ Simple one line engine configuration<br/>
                         jvmRoute="node1"&gt;
         &lt;Realm        className="org.apache.catalina.realm.UserDatabaseRealm"
                    resourceName="UserDatabase" /&gt;
-        &lt;Cluster      className="org.apache.catalina.cluster.tcp.SimpleTcpCluster"
-                    defaultMode="true" /&gt;
+        &lt;Cluster      className="org.apache.catalina.cluster.tcp.SimpleTcpCluster"/&gt;
             &lt;Host          name="localhost"
                         appBase="webapps"/&gt;
         &lt;/Engine&gt;
@@ -474,7 +471,7 @@ worker threads.
                    manager.expireSessionsOnShutdown="false"
                manager.notifyListenersOnReplication="false"
         manager.notifySessionListenersOnReplication="false"
-                           manager.sendAllSessions="false"
+                            manager.sendAllSessions="false"
                         manager.sendAllSessionsSize="500"
                     manager.sendAllSessionsWaitTime="20"&gt;
                   &lt;Membership 
@@ -483,8 +480,8 @@ worker threads.
                                    mcastBindAddress="127.0.0.1" 
                                  mcastClusterDomain="d10" 
                                           mcastPort="45564"
-                                     mcastFrequency="500"
-                                      mcastDropTime="3000"/&gt;
+                                     mcastFrequency="1000"
+                                      mcastDropTime="30000"/&gt;
                   &lt;Receiver 
                                            className="org.apache.catalina.cluster.tcp.ReplicationListener"
                                     tcpListenAddress="auto"
@@ -566,7 +563,7 @@ List of Attributes<br/>
   <tr>
     <td>waitForAck</td>
     <td>Wait for ack after data send</td>
-    <td><code>true</code></td>
+    <td><code>false</code></td>
   </tr>
 
   <tr>
@@ -583,7 +580,7 @@ List of Attributes<br/>
 </table>
 </p>
 <p>
-Example to get statistic information and transfer is compressed<br/>
+Example to get statistic information, wait for ack at every message send and transfer at compressed mode<br/>
 <source>
     &lt;Sender
       className="org.apache.catalina.cluster.tcp.ReplicationTransmitter"
@@ -629,7 +626,13 @@ List of Attributes<br/>
   <tr>
     <td>doWaitAckStats</td>
     <td>create waitAck time stats</td>
-    <td><code>true</code></td>
+    <td><code>false</code></td>
+  </tr>
+
+  <tr>
+    <td>resend</td>
+    <td>resend message after failure, can overwrite at message</td>
+    <td><code>false</code></td>
   </tr>
 
   <tr>
@@ -720,18 +723,26 @@ List of Attributes<br/>
   <tr>
     <td>doWaitAckStats</td>
     <td>create waitAck time stats</td>
-    <td><code>true</code></td>
+    <td><code>false</code></td>
   </tr>
+  
+  <tr>
+    <td>resend</td>
+    <td>resend message after failure, can overwrite at message</td>
+    <td><code>false</code></td>
+  </tr>
+
 </table>
 </p>
 <p>
-Example to get a processing statistic information and wait for ACK<br/>
+Example to get a processing statistic information, resend after failure and wait for ACK<br/>
 <source>
     &lt;Sender
       className="org.apache.catalina.cluster.tcp.ReplicationTransmitter"
       replicationMode="asynchronous"
       doProcessingStats="true"
       doWaitAckStats="true"
+      resend="true"
       keepAliveTimeout="320000"
       keepAliveMaxRequestCount="-1"/&gt;
 </source>
@@ -772,11 +783,18 @@ List of Attributes<br/>
     <td>create waitAck time stats</td>
     <td><code>true</code></td>
   </tr>
+
+  <tr>
+    <td>resend</td>
+    <td>resend message after failure, can overwrite at message</td>
+    <td><code>false</code></td>
+  </tr>
+
 </table>
   
 </p>
 <p>
-Example to get a no processing statistic information, wait for ACK, after 10000 request renew socket and autoconnect before first request is send.<br/>
+Example to get a no processing statistic information, no wait for ACK, after 10000 request renew socket and autoconnect before first request is send.<br/>
 <source>
     &lt;Sender
       className="org.apache.catalina.cluster.tcp.ReplicationTransmitter"
@@ -816,6 +834,13 @@ List of Attributes<br/>
     <td>max pooled sockets (Sender Sockets)</td>
     <td><code>25</code></td>
   </tr>
+  
+  <tr>
+    <td>resend</td>
+    <td>resend message after failure, can overwrite at message</td>
+    <td><code>false</code></td>
+  </tr>
+  
 </table>
   
 </p>
