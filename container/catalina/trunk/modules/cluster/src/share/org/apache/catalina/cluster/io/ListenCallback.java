@@ -26,8 +26,6 @@ import org.apache.catalina.cluster.tcp.ClusterData ;
  * @author Peter Rossbach
  * @version $Revision$, $Date$
  */
-
-
 public interface ListenCallback
 {
     /**
@@ -35,6 +33,15 @@ public interface ListenCallback
      * been received from one of the cluster nodes.
      * @param data - the message bytes received from the cluster/replication system
      */
-   // public void messageDataReceived(byte[] data);
      public void messageDataReceived(ClusterData data);
+     
+    /** receiver must be send ack
+      */
+     public boolean isSendAck() ;
+     
+     /** send ack
+      *
+      */
+     public void sendAck() throws java.io.IOException ;
+
 }

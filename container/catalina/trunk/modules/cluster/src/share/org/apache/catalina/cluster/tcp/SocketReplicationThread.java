@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
+import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.io.SocketObjectReader;
 
 /**
@@ -27,7 +28,7 @@ import org.apache.catalina.cluster.io.SocketObjectReader;
  * FIXME Socket timeout
  * @version $Revision$, $Date$
  */
-public class SocketReplicationThread extends Thread {
+public class SocketReplicationThread extends Thread implements ListenCallback {
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
             .getLog(SocketReplicationThread.class);
 
@@ -43,8 +44,6 @@ public class SocketReplicationThread extends Thread {
 
     private boolean keepRunning = true;
 
-    private boolean sendAck;
-
     /**
      * Fork Listen Worker Thread!
      * 
@@ -52,13 +51,12 @@ public class SocketReplicationThread extends Thread {
      * @param reader
      * @param sendAck
      */
-    SocketReplicationThread(SocketReplicationListener master, Socket socket,
-            SocketObjectReader reader, boolean sendAck) {
+    SocketReplicationThread(SocketReplicationListener master, Socket socket
+           ) {
         super("ClusterListenThread-" + count++);
         this.master = master;
         this.socket = socket;
-        this.reader = reader;
-        this.sendAck = sendAck;
+        this.reader =  new SocketObjectReader(socket,this);
     }
 
     /**
@@ -83,6 +81,7 @@ public class SocketReplicationThread extends Thread {
                     if (log.isTraceEnabled()) {
                         log.trace("sending " + ack + " ack packages to " + socket.getLocalPort() );
                     }
+                    /**
                     if (sendAck) {
                         // ack only when message is complete receive
                         while (ack > 0) {
@@ -90,6 +89,7 @@ public class SocketReplicationThread extends Thread {
                             ack--;
                         }
                     }
+                    **/
                     keepRunning = master.isDoListen();
                 } else
                     // EOF
@@ -110,13 +110,21 @@ public class SocketReplicationThread extends Thread {
             socket = null;
         }
     }
-
+    
+    public void messageDataReceived(ClusterData data) {
+        master.messageDataReceived(data);
+    }   
+    
+    public boolean isSendAck() {
+        return master.isSendAck();
+    }
+    
     /**
      * send a reply-acknowledgement
      * 
      * @throws java.io.IOException
      */
-    private void sendAck() throws java.io.IOException {
+    public void sendAck() throws java.io.IOException {
         socket.getOutputStream().write(ACK_COMMAND);
         if (log.isTraceEnabled()) {
             log.trace("ACK sent to " + socket.getPort());

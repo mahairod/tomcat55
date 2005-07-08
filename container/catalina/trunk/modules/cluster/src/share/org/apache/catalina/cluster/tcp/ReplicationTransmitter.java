@@ -35,7 +35,6 @@ import org.apache.catalina.cluster.util.IDynamicProperty;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 import org.apache.tomcat.util.IntrospectionUtils;
-import org.apache.tomcat.util.digester.SetTopRule;
 
 /**
  * Transmit message to ohter cluster members create sender from replicationMode
@@ -517,6 +516,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     public void start() throws java.io.IOException {
         if (cluster != null) {
             ObjectName clusterName = cluster.getObjectName();
+            ObjectName transmitterName = null ;
             try {
                 MBeanServer mserver = cluster.getMBeanServer();
                 Container container = cluster.getContainer();
@@ -524,7 +524,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                 if (container instanceof StandardHost) {
                     name += ",host=" + clusterName.getKeyProperty("host");
                 }
-                ObjectName transmitterName = new ObjectName(name);
+                transmitterName = new ObjectName(name);
                 if (mserver.isRegistered(transmitterName)) {
                     if (log.isWarnEnabled())
                         log.warn(sm.getString(
@@ -535,6 +535,10 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                 setObjectName(transmitterName);
                 mserver.registerMBean(cluster.getManagedBean(this),
                         getObjectName());
+                if(log.isInfoEnabled())
+                    log.info(sm.getString("ReplicationTransmitter.started",
+                            clusterName, transmitterName));
+
             } catch (Exception e) {
                 log.warn(e);
             }
@@ -565,6 +569,9 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
             } catch (Exception e) {
                 log.error(e);
             }
+            if(log.isInfoEnabled())
+                log.info(sm.getString("ReplicationTransmitter.stopped",
+                        cluster.getObjectName(), getObjectName()));
         }
 
     }

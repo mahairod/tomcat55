@@ -21,7 +21,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.apache.catalina.cluster.io.SocketObjectReader;
 import org.apache.catalina.util.StringManager;
 
 /**
@@ -32,7 +31,7 @@ public class SocketReplicationListener extends ClusterReceiverBase {
 
     // ---------------------------------------------------- Statics
 
-    public static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
+    private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
             .getLog(SocketReplicationListener.class);
 
     /**
@@ -151,8 +150,7 @@ public class SocketReplicationListener extends ClusterReceiverBase {
                         Socket socket = serverSocket.accept();
                         if (doListen) {
                             SocketReplicationThread t = new SocketReplicationThread(
-                                    this, socket, new SocketObjectReader(socket,
-                                            this), isSendAck());
+                                    this, socket);
                             t.setDaemon(true);
                             t.start();
                         }
@@ -254,5 +252,5 @@ public class SocketReplicationListener extends ClusterReceiverBase {
         unLockSocket();
         doListen = false;
     }
-
-}
+    
+ }

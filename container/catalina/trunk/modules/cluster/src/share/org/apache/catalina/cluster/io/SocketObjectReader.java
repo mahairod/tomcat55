@@ -74,6 +74,8 @@ public class SocketObjectReader
         int pkgCnt = 0;
         while ( pkgExists ) {
             ClusterData cdata = buffer.extractPackage(true);
+            if(callback.isSendAck())
+                callback.sendAck() ;
             callback.messageDataReceived(cdata);
             pkgCnt++;
             pkgExists = buffer.doesPackageExist();

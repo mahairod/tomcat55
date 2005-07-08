@@ -408,6 +408,10 @@
           description="Connect time for keep alive"
                  type="long"
                  writeable="false"/>
+    <attribute   name="resend"
+          description="after send failure make a resend"
+			     is="true"
+                 type="boolean" />
     <attribute   name="connected"
                  is="true"
           description="socket connected"
@@ -487,6 +491,10 @@
                  writeable="false"/>
     <attribute   name="dataResendCounter"
           description="counts data resends"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="dataFailureCounter"
+          description="counts data send failures"
                  type="long"
                  writeable="false"/>
     <attribute   name="inQueueCounter"
@@ -598,6 +606,10 @@
           description="Connect time for keep alive"
                  type="long"
                  writeable="false"/>
+    <attribute   name="resend"
+          description="after send failure make a resend"
+			     is="true"
+                 type="boolean" />
     <attribute   name="connected"
                  is="true"
           description="socket connected"
@@ -679,6 +691,10 @@
           description="counts data resends"
                  type="long"
                  writeable="false"/>
+    <attribute   name="dataFailureCounter"
+          description="counts data send failures"
+                 type="long"
+                 writeable="false"/>
     <attribute   name="inQueueCounter"
           description="counts all queued messages"
                  type="long"
@@ -751,6 +767,10 @@
     <attribute   name="keepAliveMaxRequestCount"
           description="max request over this socket"
                  type="int"/>
+    <attribute   name="resend"
+          description="after send failure make a resend"
+			     is="true"
+                 type="boolean" />
     <attribute   name="connected"
                  is="true"
           description="socket connected"
@@ -832,6 +852,10 @@
           description="Connect time for keep alive"
                  type="long"
                  writeable="false"/>
+    <attribute   name="resend"
+          description="after send failure make a resend"
+			     is="true"
+                 type="boolean" />
     <attribute   name="connected"
                  is="true"
           description="socket connected"
@@ -915,6 +939,10 @@
                  writeable="false"/>
     <attribute   name="dataResendCounter"
           description="counts data resends"
+                 type="long"
+                 writeable="false"/>
+    <attribute   name="dataFailureCounter"
+          description="counts data send failures"
                  type="long"
                  writeable="false"/>
 	<operation name="connect"

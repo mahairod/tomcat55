@@ -16,7 +16,6 @@
 
 package org.apache.catalina.cluster.tcp;
 
-import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
 
 /**
