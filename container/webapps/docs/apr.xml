@@ -159,9 +159,33 @@
     </p>
     
     <attributes>
- 
+
+    <attribute name="SSLEngine" required="false">
+    <p>
+      Name of the SSLEngine to use. off: Do not use SSL, on: Use SSL but no specific ENGINE.
+      The default value is off.
+    </p>
+    </attribute>
+    <attribute name="SSLCertificateFile" required="true">
+    <p>
+      Name of the file that contains the server certificate. The format is PEM-encoded.
+    </p>
+    </attribute>
+    <attribute name="SSLCertificateKeyFile" required="false">
+    <p>
+      Name of the file that contains the server private key. The format is PEM-encoded.
+      The default value is the value of "SSLCertificateFile" and in this case both certificate
+      and private key have to be in this file (NOT RECOMMENDED).
+    </p>
+    </attribute>
+    <attribute name="SSLPassword" required="false">
+    <p>
+      Pass phrase for the encrypted private key. If "SSLPassword" is not provided, the callback fonction
+      should prompt for the pass phrase.
+    </p>
+    </attribute>
+
     </attributes>
-    
     </subsection>
 	
     <subsection name="AJP">
