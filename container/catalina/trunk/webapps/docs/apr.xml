@@ -66,6 +66,7 @@
       <ul>
         <li>APR 1.1+ development headers (libapr1-dev package)</li>
         <li>OpenSSL 0.9.7+ development headers (libssl-dev package)</li>
+        <li>JNI headers from Java compatible JDK 1.4+</li>
         <li>GNU development environment (gcc, make)</li>
       </ul>
     </p>
@@ -166,6 +167,19 @@
       The default value is off.
     </p>
     </attribute>
+    <attribute name="SSLProtocol" required="false">
+    <p>
+      Protocol which may be used for communicating with clients. The default is "all", with
+      other acceptable values being "SSLv2", "SSLv3", "TLSv1", and "SSLv2+SSLv3".
+    </p>
+    </attribute>
+    <attribute name="SSLCipherSuite" required="false">
+    <p>
+      Ciphers which may be used for communicating with clients. The default is "ALL", with
+      other acceptable values being a list of ciphers, with ":" used as the delimiter
+      (see OpenSSL documentation for the list of ciphers supported).
+    </p>
+    </attribute>
     <attribute name="SSLCertificateFile" required="true">
     <p>
       Name of the file that contains the server certificate. The format is PEM-encoded.
@@ -182,6 +196,17 @@
     <p>
       Pass phrase for the encrypted private key. If "SSLPassword" is not provided, the callback fonction
       should prompt for the pass phrase.
+    </p>
+    </attribute>
+    <attribute name="SSLVerifyClient" required="false">
+    <p>
+      Ask client for certificate. The default is "none", meaning the client will not have the opportunity
+      to submit a certificate. Other acceptable values include "optional", "require" and "optionalNoCA".
+    </p>
+    </attribute>
+    <attribute name="SSLVerifyDepth" required="false">
+    <p>
+      Maximum verification depth for client certificates. The default is "10".
     </p>
     </attribute>
 
