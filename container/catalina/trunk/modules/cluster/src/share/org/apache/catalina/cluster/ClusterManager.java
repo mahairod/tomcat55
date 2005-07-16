@@ -59,17 +59,42 @@ public interface ClusterManager extends Manager {
    public String[] getInvalidatedSessions();
    
    /**
-    * Return the name of the manager, typically the context name such as /replicator
+    * Return the name of the manager, at host /context name and at engine hostname+/context
     * @return String
+    * @since 5.5.10
     */
    public String getName();
    
+   /**
+    * Set the name of the manager, at host /context name and at engine hostname+/context
+    * @param name
+    * @since 5.5.10
+    */
    public void setName(String name);
          
    public CatalinaCluster getCluster();
    public void setCluster(CatalinaCluster cluster);
+   
+   /**
+    * @return Manager send only to same cluster domain
+    * @since 5.5.10
+    */
    public boolean isSendClusterDomainOnly() ;
+   /**
+    * @param boolean
+    * @since 5.5.10
+    */
    public void setSendClusterDomainOnly(boolean sendClusterDomainOnly) ;
- 
+   /**
+    * @param mode
+    * @since 5.5.10
+    */
+   public void setDefaultMode(boolean  mode) ;
+   /**
+    * @param overwrite properties from SimpleTcpCluster
+    * @since 5.5.10
+    */
+   public boolean isDefaultMode() ;
+   
    
 }

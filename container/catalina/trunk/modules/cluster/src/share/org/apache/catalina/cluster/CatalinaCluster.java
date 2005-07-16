@@ -19,11 +19,10 @@ package org.apache.catalina.cluster;
 import java.util.Map;
 
 import org.apache.catalina.Cluster;
-import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.Manager;
 import org.apache.catalina.Valve;
 import org.apache.commons.logging.Log;
-import org.apache.catalina.Manager;
 
 /**
  * A <b>CatalinaCluster</b> interface allows to plug in and out the 
@@ -124,7 +123,7 @@ public interface CatalinaCluster
      */
     public Map getManagers();
     public Manager getManager(String name);
-    public void removeManager(String name);
+    public void removeManager(String name,Manager manager);
     public void addManager(String name,Manager manager);
     public Valve[] getValves();
 
