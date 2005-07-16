@@ -89,6 +89,8 @@
     	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/session/LocalStrings.properties"/>
     <copy file="${basedir}/src/share/org/apache/catalina/cluster/tcp/LocalStrings.properties"
     	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/tcp/LocalStrings.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/cluster/tcp/DataSenders.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/tcp/DataSenders.properties"/>
     <copy file="${basedir}/src/share/org/apache/catalina/cluster/session/mbeans-descriptors.xml"
     	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/session/mbeans-descriptors.xml"/>
     <copy file="${basedir}/src/share/org/apache/catalina/cluster/tcp/mbeans-descriptors.xml"

@@ -18,13 +18,15 @@ package org.apache.catalina.cluster.tcp;
 
 /**
  * @author Peter Rossbach
- * @version 1.0
+ * @version $Revision$ $Date$
  * @since 5.5.7
  */
 
 public interface IDataSender
 {
+    public void setAddress(java.net.InetAddress address);
     public java.net.InetAddress getAddress();
+    public void setPort(int port);
     public int getPort();
     public void connect() throws java.io.IOException;
     public void disconnect();

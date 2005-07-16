@@ -211,7 +211,7 @@ public class DataSender implements IDataSender {
 
     
     // ------------------------------------------------------------- Constructor
-
+    
     public DataSender(String domain,InetAddress host, int port) {
         this.address = host;
         this.port = port;
@@ -396,10 +396,25 @@ public class DataSender implements IDataSender {
         return dataFailureCounter;
     }
     
+    /**
+     * @param address The address to set.
+     */
+    public void setAddress(InetAddress address) {
+        this.address = address;
+    }
+
     public InetAddress getAddress() {
         return address;
     }
 
+    
+    /**
+     * @param port The port to set.
+     */
+    public void setPort(int port) {
+        this.port = port;
+    }
+    
     public int getPort() {
         return port;
     }
