@@ -100,6 +100,8 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
 
     protected String name = null;
     
+    protected boolean defaultMode = false;
+
     private CatalinaCluster cluster = null;
 
     /**
@@ -497,6 +499,20 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         this.notifyListenersOnReplication = notifyListenersOnReplication;
     }
 
+    
+    /**
+     * @return Returns the defaultMode.
+     */
+    public boolean isDefaultMode() {
+        return defaultMode;
+    }
+    /**
+     * @param defaultMode The defaultMode to set.
+     */
+    public void setDefaultMode(boolean defaultMode) {
+        this.defaultMode = defaultMode;
+    }
+    
     public CatalinaCluster getCluster() {
         return cluster;
     }
@@ -1112,7 +1128,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         if (log.isDebugEnabled())
             log.debug(sm.getString("deltaManager.stopped", getName()));
 
-        getCluster().removeManager(getName());
+        getCluster().removeManager(getName(),this);
 
         // Validate and update our current component state
         if (!started)

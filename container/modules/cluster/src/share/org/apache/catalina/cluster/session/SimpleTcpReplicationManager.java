@@ -74,7 +74,7 @@ implements ClusterManager
     //log to screen
     protected boolean mPrintToScreen = true;
 
-
+    protected boolean defaultMode = false;
 
     protected boolean mManagerRunning = false;
 
@@ -125,6 +125,19 @@ implements ClusterManager
         this.sendClusterDomainOnly = sendClusterDomainOnly;
     }
   
+    /**
+     * @return Returns the defaultMode.
+     */
+    public boolean isDefaultMode() {
+        return defaultMode;
+    }
+    /**
+     * @param defaultMode The defaultMode to set.
+     */
+    public void setDefaultMode(boolean defaultMode) {
+        this.defaultMode = defaultMode;
+    }
+    
     public boolean isManagerRunning()
     {
         return mManagerRunning;
@@ -495,7 +508,7 @@ implements ClusterManager
         try
         {
             this.sessions.clear();
-            cluster.removeManager(getName());
+            cluster.removeManager(getName(),this);
 //            mReplicationListener.stopListening();
 //            mReplicationTransmitter.stop();
 //            service.stop();

@@ -32,6 +32,9 @@ import javax.management.ObjectName;
 import javax.management.modelmbean.ModelMBean;
 
 import org.apache.catalina.Container;
+import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
@@ -335,11 +338,20 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         this.membershipService = membershipService;
     }
 
+    /**
+     * Add cluster valve 
+     * Cluster Valves are only add to container when cluster is started!
+     * @param new cluster Valve.
+     */
     public void addValve(Valve valve) {
         if (valve instanceof ClusterValve)
             valves.add(valve);
     }
 
+    /**
+     * get all cluster valves
+     * @return current cluster valves
+     */
     public Valve[] getValves() {
         return (Valve[]) valves.toArray(new Valve[valves.size()]);
     }
@@ -392,6 +404,10 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         this.clusterDeployer = clusterDeployer;
     }
 
+    /**
+     * Get all current cluster members
+     * @return all members or empty array 
+     */
     public Member[] getMembers() {
         Member[] members = membershipService.getMembers();
         if(members != null) {
@@ -437,12 +453,17 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
 
         properties.put(name, value);
         if(started) {
+            // FIXME Hmm, is that correct when some DeltaManagers are direct configured inside Context?
+            // Why we not support it for other elements, like sender, receiver or membership?
+            // Must we restart element after change?
             if (name.startsWith("manager")) {
                 String key = name.substring("manager".length() + 1);
                 String pvalue = value.toString();
                 for (Iterator iter = managers.values().iterator(); iter.hasNext();) {
                     Manager manager = (Manager) iter.next();
-                    IntrospectionUtils.setProperty(manager, key, pvalue );
+                    if(manager instanceof DeltaManager && ((ClusterManager) manager).isDefaultMode()) {
+                        IntrospectionUtils.setProperty(manager, key, pvalue );
+                    }
                 }
             } 
         }
@@ -529,8 +550,10 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
             if(manager != null) {
                 manager.setDistributable(true);
                 if (manager instanceof ClusterManager) {
-                    ((ClusterManager) manager).setName(name);
-                    ((ClusterManager) manager).setCluster(this);
+                    ClusterManager cmanager = (ClusterManager) manager ;
+                    cmanager.setDefaultMode(true);
+                    cmanager.setName(getManagerName(name,manager));
+                    cmanager.setCluster(this);
                 }
             }
         }
@@ -540,15 +563,14 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     /**
      * remove an application form cluster replication bus
      * 
-     * @see org.apache.catalina.cluster.CatalinaCluster#removeManager(java.lang.String)
+     * @see org.apache.catalina.cluster.CatalinaCluster#removeManager(java.lang.String,Manager)
      */
-    public void removeManager(String name) {
-        Manager manager = getManager(name);
+    public void removeManager(String name,Manager manager) {
         if (manager != null) {
             // Notify our interested LifecycleListeners
             lifecycle.fireLifecycleEvent(BEFORE_MANAGERUNREGISTER_EVENT,
                     manager);
-            managers.remove(name);
+            managers.remove(getManagerName(name,manager));
             if (manager instanceof ClusterManager)
                 ((ClusterManager) manager).setCluster(null);
             // Notify our interested LifecycleListeners
@@ -575,14 +597,35 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         }
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_MANAGERREGISTER_EVENT, manager);
+        String clusterName = getManagerName(name, manager);
         if (manager instanceof ClusterManager) {
-            ((ClusterManager) manager).setName(name);
-            ((ClusterManager) manager).setCluster(this);
+            ClusterManager cmanager = (ClusterManager) manager ;
+            cmanager.setName(clusterName);
+            cmanager.setCluster(this);
+            if(cmanager.isDefaultMode())
+                transferProperty("manager",cmanager);
         }
-        transferProperty("manager",manager);
-        managers.put(name, manager);
+        managers.put(clusterName, manager);
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_MANAGERREGISTER_EVENT, manager);
+    }
+
+    /**
+     * @param name
+     * @param manager
+     * @return
+     */
+    private String getManagerName(String name, Manager manager) {
+        String clusterName = name ;
+        if(getContainer() instanceof Engine) {
+            Container context = manager.getContainer() ;
+            if(context != null && context instanceof Context) {
+                Container host = ((Context)context).getParent();
+                if(host != null && host instanceof Host)
+                    clusterName = host.getName()  + name ;
+            }
+        }
+        return clusterName;
     }
 
     /*
@@ -928,6 +971,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         if (clusterDeployer != null) {
             clusterDeployer.stop();
         }
+        // FIXME remove registered managers!!
         if(membershipService != null) {
             membershipService.stop();
             membershipService.removeMembershipListener();
