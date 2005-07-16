@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -31,7 +32,12 @@ import java.util.StringTokenizer;
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenType;
+import javax.management.openmbean.SimpleType;
+import javax.management.openmbean.TabularDataSupport;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
@@ -105,7 +111,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     /**
      * Descriptive information describing this implementation.
      */
-    private static final String info = "org.apache.catalina.ant.JMXAccessorTask/1.0";
+    private static final String info = "org.apache.catalina.ant.JMXAccessorTask/1.1";
 
     /**
      * Return descriptive information about this implementation and the
@@ -580,12 +586,34 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
             propertyPrefix = "";
         if (result instanceof CompositeDataSupport) {
             CompositeDataSupport data = (CompositeDataSupport) result ;
-            Set keys = data.getCompositeType().keySet() ;
+            CompositeType compositeType = data.getCompositeType();
+            Set keys = compositeType.keySet() ;
             for (Iterator iter = keys.iterator(); iter.hasNext();) {
                 String key = (String) iter.next();  
                 Object value = data.get(key);
-                setProperty(propertyPrefix + "." + key , value);                
-            }
+                OpenType type = compositeType.getType(key);
+                if(type instanceof SimpleType ) {
+                    setProperty(propertyPrefix + "." + key , value);                
+                } else { 
+                    createProperty(propertyPrefix + "." + key, value );
+                }
+            }                
+        } else if (result instanceof TabularDataSupport) {
+            TabularDataSupport data = (TabularDataSupport) result ;
+            for (Iterator iter = data.keySet().iterator(); iter.hasNext();) {
+                Object key = iter.next();
+                for(Iterator iter1 = ((List)key).iterator(); iter1.hasNext();) {
+                    Object key1= iter1.next();
+                    CompositeData valuedata = data.get(new Object[] { key1 } );
+                    Object value = valuedata.get("value");
+                    OpenType type = valuedata.getCompositeType().getType("value");
+                    if(type instanceof SimpleType ) {
+                        setProperty(propertyPrefix + "." + key1 , value);                
+                    } else { 
+                        createProperty(propertyPrefix + "." + key1, value );
+                    }
+                }
+            }                            
         } else if (result.getClass().isArray()) {
             if (isSeparatearrayresults()) {
                 Object array[] = (Object[]) result;
