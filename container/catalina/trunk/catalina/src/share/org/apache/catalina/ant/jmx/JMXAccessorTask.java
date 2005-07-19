@@ -19,6 +19,7 @@ package org.apache.catalina.ant.jmx;
 
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
@@ -554,7 +555,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
             if (result.getClass().isArray()) {
                 Object array[] = (Object[]) result;
                 for (int i = 0; i < array.length; i++) {
-                    handleOutput(name + "." + i + "=" + array[i]);
+                    handleOutput(name + "." + i + "=" + Array.get(result, i));
                 }
             } else
                 handleOutput(name + "=" + result);
@@ -619,7 +620,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
                 Object array[] = (Object[]) result;
                 int size = 0 ;
                 for (int i = 0; i < array.length; i++) {
-                    if(setProperty(propertyPrefix + "." + size , array[i])) {
+                    if(setProperty(propertyPrefix + "." + size , Array.get(result, i))) {
                         size++;
                     }
                 }
