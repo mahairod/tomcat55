@@ -172,6 +172,10 @@
         Fix handling of symbolic links when the DefaultServlet is generating directory
         listings. (markt)
       </fix>
+      <fix>
+        <bug>35769</bug>: Correct implementation of javax.naming.Context.composeName( Name, Name)
+        in multiple places. Patch provided by Laurent Simon. (markt)
+      </fix>
     </changelog>
   </subsection>
   
