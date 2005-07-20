@@ -241,8 +241,8 @@ public class NamingContext implements Context {
         throws NamingException {
         checkWritable();
         
-	while ((!name.isEmpty()) && (name.get(0).length() == 0))
-	    name = name.getSuffix(1);
+        while ((!name.isEmpty()) && (name.get(0).length() == 0))
+            name = name.getSuffix(1);
         if (name.isEmpty())
             throw new NamingException
                 (sm.getString("namingContext.invalidName"));
@@ -450,8 +450,8 @@ public class NamingContext implements Context {
         
         checkWritable();
         
-	while ((!name.isEmpty()) && (name.get(0).length() == 0))
-	    name = name.getSuffix(1);
+        while ((!name.isEmpty()) && (name.get(0).length() == 0))
+            name = name.getSuffix(1);
         if (name.isEmpty())
             throw new NamingException
                 (sm.getString("namingContext.invalidName"));
@@ -586,8 +586,8 @@ public class NamingContext implements Context {
     public NameParser getNameParser(Name name)
         throws NamingException {
 
-	while ((!name.isEmpty()) && (name.get(0).length() == 0))
-	    name = name.getSuffix(1);
+        while ((!name.isEmpty()) && (name.get(0).length() == 0))
+            name = name.getSuffix(1);
         if (name.isEmpty())
             return nameParser;
 
@@ -637,8 +637,8 @@ public class NamingContext implements Context {
      */
     public Name composeName(Name name, Name prefix)
         throws NamingException {
-	prefix = (Name) name.clone();
-	return prefix.addAll(name);
+        prefix = (Name) name.clone();
+        return prefix.addAll(name);
     }
 
 
@@ -829,8 +829,8 @@ public class NamingContext implements Context {
         
         checkWritable();
         
-	while ((!name.isEmpty()) && (name.get(0).length() == 0))
-	    name = name.getSuffix(1);
+        while ((!name.isEmpty()) && (name.get(0).length() == 0))
+            name = name.getSuffix(1);
         if (name.isEmpty())
             throw new NamingException
                 (sm.getString("namingContext.invalidName"));
