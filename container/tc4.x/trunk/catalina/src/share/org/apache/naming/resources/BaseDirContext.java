@@ -120,7 +120,7 @@ public abstract class BaseDirContext implements DirContext {
      * Return the debugging detail level for this component.
      */
     public int getDebug() {
-	return (this.debug);
+        return (this.debug);
     }
 
 
@@ -130,7 +130,7 @@ public abstract class BaseDirContext implements DirContext {
      * @param debug The new debugging detail level
      */
     public void setDebug(int debug) {
-	this.debug = debug;
+        this.debug = debug;
     }
 
 
@@ -138,7 +138,7 @@ public abstract class BaseDirContext implements DirContext {
      * Return the document root for this component.
      */
     public String getDocBase() {
-	return (this.docBase);
+        return (this.docBase);
     }
 
 
@@ -154,13 +154,13 @@ public abstract class BaseDirContext implements DirContext {
      */
     public void setDocBase(String docBase) {
 
-	// Validate the format of the proposed document root
-	if (docBase == null)
-	    throw new IllegalArgumentException
-		(sm.getString("resources.null"));
+        // Validate the format of the proposed document root
+        if (docBase == null)
+            throw new IllegalArgumentException
+                (sm.getString("resources.null"));
 
-	// Change the document root property
-	this.docBase = docBase;
+        // Change the document root property
+        this.docBase = docBase;
 
     }
 
@@ -617,8 +617,8 @@ public abstract class BaseDirContext implements DirContext {
      */
     public Name composeName(Name name, Name prefix)
         throws NamingException {
-	prefix = (Name) name.clone();
-	return prefix.addAll(name);
+        prefix = (Name) name.clone();
+        return prefix.addAll(name);
     }
 
 
