@@ -147,9 +147,6 @@
       <fix>
         <bug>34578</bug>: Updated JNDIRealm comment. (yoavs)
       </fix>
-      <add>
-        [Placeholder for HttpAprConnector]
-      </add>
       <fix>
         <bug>34273</bug>: Better Bootstrap warning message. [Path from Ralf Hauser] (yoavs)
       </fix>
@@ -187,7 +184,7 @@
         Add some Mbean attributes and operations to ChannelSocket (pero)
       </update>    
       <add>
-        Apache Portable Runtime based HTTP/1.1 protocol handler (remm)
+        Apache Portable Runtime based HTTP/1.1 protocol handler, with SSL support (remm)
       </add>
       <add>
         Add support for simple file-based CRLs under JDK 1.5 (billbarker)
