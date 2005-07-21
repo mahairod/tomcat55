@@ -249,6 +249,9 @@
         <bug>35696</bug>: Make certain that release is called for custom tags 
          when tag-pooling is disabled. (billbarker)
       </fix>
+      <fix>
+        <bug>35386</bug>: Make useBean resources use consistent spelling, from Kurt Huwig. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   
