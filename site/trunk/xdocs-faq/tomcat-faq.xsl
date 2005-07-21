@@ -161,26 +161,30 @@
 	  <xsl:if test="$project-menu = 'menu'">
 		  <tr>
 			<td colspan="2" align='center'>
-				<form method="GET" name='searchForm' onsubmit="return t_search()" action="http://www.google.com/search">
-				<input type="hidden" name="ie" value="UTF-8"/>
-				<input type="hidden" name="oe" value="UTF-8"/>
-				<table bgcolor="#FFFFFF"><tr><td>
-				<a href="http://www.google.com/">
-				<img src="http://www.google.com/logos/Logo_40wht.gif"
-				border="0" alt="Google" align="absmiddle"/></a>
-				<input type="text" name="q" size="25" maxlength="255" value=""/>
-				<input type="submit" name="btnG" value="Google Search"/>
-				</td></tr></table>
-				<script>
-				/* Append inurl:tomcat/faq site:jakarta.apache.org */
-				function t_search() {
-					if(!document.searchForm.q.value.match(/inurl:tomcat\/faq/)) {
-						document.searchForm.q.value = document.searchForm.q.value + " inurl:tomcat/faq site:jakarta.apache.org";
-					}
-					return true;
-				}
-				</script>
-				</form>
+                          <xsl:comment>Google Search Form: see Bugzilla 35788</xsl:comment>
+	                  <form method="GET" name='searchForm' action="http://www.google.com/search">
+	                    <input type="hidden" name="ie" value="UTF-8"/>
+		            <input type="hidden" name="oe" value="UTF-8"/>
+				
+                            <table bgcolor="#FFFFFF">
+                            <tr>
+                              <td>
+			        <a href="http://www.google.com/">
+			          <img src="http://www.google.com/logos/Logo_40wht.gif"
+				       border="0" alt="Google" align="absmiddle"/>
+                                </a>
+                              </td>
+                              <td>
+		                <input type="text" name="q" size="25" maxlength="255" value=""/>
+                                <input type="hidden" name="domains" value="http://jakarta.apache.org/tomcat/faq"/>
+                                <input type="hidden" name="sitesearch" value="http://jakarta.apache.org/tomcat/faq"/>
+                                <input type="submit" name="btnG" value="Google Search"/>
+                                <br/>
+                                Search the Tomcat FAQ
+			      </td>
+                            </tr>
+                            </table>
+			  </form>
 			</td>
 		  </tr>
 		  <tr>
