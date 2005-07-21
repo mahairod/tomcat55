@@ -78,6 +78,9 @@
          Update JULI to provide support for taking over java.util.logging bootstrap configuration,
          and move the default properties file to ${catalina.base}/conf/logging.properties (remm)
        </update>
+       <fix>
+         <bug>34746</bug>: Updated catalina.properties instructions per Bill Edwards' suggestion. (yoavs)
+       </fix>
     </changelog>
   </subsection>
   
