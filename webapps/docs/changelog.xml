@@ -81,6 +81,9 @@
        <fix>
          <bug>34746</bug>: Updated catalina.properties instructions per Bill Edwards' suggestion. (yoavs)
        </fix>
+       <fix>
+         <bug>35090</bug>: Minor documentation typo fix. (yoavs)
+       </fix>
     </changelog>
   </subsection>
   
