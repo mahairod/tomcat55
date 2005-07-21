@@ -1240,7 +1240,9 @@ public final class ContextConfig
         // Called from StandardContext.destroy()
         if (log.isDebugEnabled())
             log.debug(sm.getString("contextConfig.destroy"));
-        String workDir = ((StandardContext) context).getWorkDir();
+
+        // Changed to getWorkPath per Bugzilla 35819.
+        String workDir = ((StandardContext) context).getWorkPath();
         if (workDir != null)
             ExpandWar.delete(new File(workDir));
     }
