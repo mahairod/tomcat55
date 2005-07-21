@@ -182,6 +182,10 @@
       <add>
         <bug>34805</bug>: Add warning for suspicious security patterns, as suggested by Ralf Hauser. (yoavs)
       </add>
+      <fix>
+        <bug>35819</bug>: Use getWorkPath for deleting work directory on context destroy, as suggested
+          by Rob Steele. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   
