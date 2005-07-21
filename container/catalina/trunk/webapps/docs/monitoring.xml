@@ -61,6 +61,8 @@ controlRole tomcat
     other user! Remove all other users under windows to access this file.
     </li>
     </ol>
+    <b>Note:</b>The JSR 160 JMX-Adaptor opens a second data protocol port. That is a problem
+    when you have installed a local firewall.<br/>
     </p>
     <p>Activate JMX MX4J Http Adaptor with Java 1.4:
     <ol>
@@ -425,12 +427,12 @@ Example to get IDataSender attribute connected only when cluster is configured.
     failonerror="false"
     name="Catalina:type=Cluster,host=${tomcat.application.host}"
     resultproperty="cluster"
-/>
+/&gt;
 &lt;jmx:get
     name="Catalina:type=IDataSender,host=${tomcat.application.host},senderAddress=${cluster.backup.address},senderPort=${cluster.backup.port}" 
     attribute="connected"
     resultproperty="datasender.connected"
-    if="cluster.0.name" />
+    if="cluster.0.name" /&gt;
 </source>
 </p>  
 
@@ -608,7 +610,7 @@ Example to get remote mbean session attribute from session ${sessionid.0}<br/>
         operation="getSessionAttribute"
         resultproperty="hello"&gt;
          &lt;arg value="${sessionid.0}"/&gt;
-         &lt;arg value="Hello"/&gt;
+         &lt;arg value="Hello" /&gt;
  &lt;/jmx:invoke&gt;
 </source>
 </p>
