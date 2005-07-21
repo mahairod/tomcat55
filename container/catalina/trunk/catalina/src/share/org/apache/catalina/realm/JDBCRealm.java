@@ -487,6 +487,11 @@ public class JDBCRealm
             sb.append(" WHERE ");
             sb.append(userNameCol);
             sb.append(" = ?");
+
+            if(containerLog.isDebugEnabled()) {
+                containerLog.debug("credentials query: " + sb.toString());
+            }
+
             preparedCredentials =
                 dbConnection.prepareStatement(sb.toString());
         }
