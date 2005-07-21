@@ -554,7 +554,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
         if(isEcho()) {
             if (result.getClass().isArray()) {
                 Object array[] = (Object[]) result;
-                for (int i = 0; i < array.length; i++) {
+                for (int i = 0; i < Array.getLength(result); i++) {
                     handleOutput(name + "." + i + "=" + Array.get(result, i));
                 }
             } else
@@ -619,7 +619,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
             if (isSeparatearrayresults()) {
                 Object array[] = (Object[]) result;
                 int size = 0 ;
-                for (int i = 0; i < array.length; i++) {
+                for (int i = 0; i < Array.getLength(result); i++) {
                     if(setProperty(propertyPrefix + "." + size , Array.get(result, i))) {
                         size++;
                     }
