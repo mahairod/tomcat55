@@ -72,6 +72,8 @@
     </p>
     
     <p>
+      The wrapper library sources are located in the Tomcat sources bundle, in the 
+      <code>jakarta-tomcat-connectors/jni/native</code>.
       Once the build environment is installed, the wrapper library can be compiled using:
       <source>./configure &amp;&amp; make &amp;&amp; make install</source>
     </p>
