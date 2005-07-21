@@ -19,6 +19,10 @@ package org.apache.catalina.deploy;
 
 
 import org.apache.catalina.util.RequestUtil;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.Serializable;
 
 
@@ -38,6 +42,8 @@ import java.io.Serializable;
  */
 
 public class SecurityCollection implements Serializable {
+
+    private static Log log = LogFactory.getLog(SecurityCollection.class);
 
 
     // ----------------------------------------------------------- Constructors
@@ -180,10 +186,23 @@ public class SecurityCollection implements Serializable {
 
         if (pattern == null)
             return;
+
+        // Bugzilla 34805: add friendly warning.
+        if(pattern.endsWith("*")) {
+          if (pattern.charAt(pattern.length()-1) != '/') {
+            if (log.isDebugEnabled()) {
+              log.warn("Suspicious url pattern: \"" + pattern + "\"" +
+                       " - see http://java.sun.com/aboutJava/communityprocess/first/jsr053/servlet23_PFD.pdf" +
+                       "  section 11.2" );
+            }
+          }
+        }
+
         pattern = RequestUtil.URLDecode(pattern);
         String results[] = new String[patterns.length + 1];
-        for (int i = 0; i < patterns.length; i++)
+        for (int i = 0; i < patterns.length; i++) {
             results[i] = patterns[i];
+        }
         results[patterns.length] = pattern;
         patterns = results;
 
