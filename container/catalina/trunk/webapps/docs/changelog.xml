@@ -179,6 +179,9 @@
         <bug>35769</bug>: Correct implementation of javax.naming.Context.composeName( Name, Name)
         in multiple places. Patch provided by Laurent Simon. (markt)
       </fix>
+      <add>
+        <bug>34805</bug>: Add warning for suspicious security patterns, as suggested by Ralf Hauser. (yoavs)
+      </add>
     </changelog>
   </subsection>
   
