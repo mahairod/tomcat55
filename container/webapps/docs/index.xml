@@ -26,7 +26,7 @@ additional features that make it a useful platform for developing and deploying
 web applications and web services.</p>
 
 <p>Select one of the links from the navigation menu (to the left) to drill
-down to the more detailed documenation that is available.  Each available
+down to the more detailed documentation that is available.  Each available
 manual is described in more detail below.</p>
 
 </section>
@@ -120,7 +120,7 @@ are responsible for installing, configuring, and operating a Apache Tomcat 5 ser
     - Reference manual that documents all available elements and attributes
       that may be placed into a Apache Tomcat 5 <code>conf/server.xml</code> file.
     </li>
-<li><a href="http://jakarta.apache.org/tomcat/connectors-doc/index.html"><strong>JK Documenation</strong></a>
+<li><a href="http://jakarta.apache.org/tomcat/connectors-doc/index.html"><strong>JK Documentation</strong></a>
     - Complete documentation and HOWTOs on the JK native webserver connector,
       used to interface Apache Tomcat with servers like Apache HTTPd, IIS
       and others.</li>
