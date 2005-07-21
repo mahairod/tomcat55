@@ -211,6 +211,9 @@
       <add>
         Apache Portable Runtime based AJP/1.3 protocol handler (remm)
       </add>
+      <fix>
+        Delay reading the inital request body packet by default for the AJP/1.3 Java connector. (billbarker)
+      </fix>
      </changelog>
   </subsection>
 
@@ -235,6 +238,10 @@
       </update>
       <fix>
         <bug>34465</bug>: Jspc failure if there is no web.xml (remm)
+      </fix>
+      <fix>
+        <bug>35696</bug>: Make certain that release is called for custom tags 
+         when tag-pooling is disabled. (billbarker)
       </fix>
     </changelog>
   </subsection>
