@@ -510,13 +510,13 @@ class Validator {
 	    BeanRepository beanInfo = pageInfo.getBeanRepository();
 
 	    if (className == null && type == null)
-		err.jspError(n, "jsp.error.useBean.missingType");
+		err.jspError(n, "jsp.error.usebean.missingType");
 
 	    if (beanInfo.checkVariable(name))
-		err.jspError(n, "jsp.error.useBean.duplicate");
+		err.jspError(n, "jsp.error.usebean.duplicate");
 
 	    if ("session".equals(scope) && !pageInfo.isSession())
-		err.jspError(n, "jsp.error.useBean.noSession");
+		err.jspError(n, "jsp.error.usebean.noSession");
 
 	    Node.JspAttribute jattr
 		= getJspAttribute("beanName", null, null,
@@ -524,7 +524,7 @@ class Validator {
 				  java.lang.String.class, n, false);
 	    n.setBeanName(jattr);
 	    if (className != null && jattr != null)
-		err.jspError(n, "jsp.error.useBean.notBoth");
+		err.jspError(n, "jsp.error.usebean.notBoth");
 
 	    if (className == null)
 		className = type;
