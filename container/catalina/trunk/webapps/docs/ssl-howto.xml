@@ -429,7 +429,7 @@ as "secure". To create a CSR follow these steps:</p>
 </li>
 </ul>
 <p>Now you have a file called <code>certreq.csr</code> that you can submit to the Certificate Authority (look at the
-documenation of the Certificate Authority website on how to do this). In return you get a Certificate.</p>
+documentation of the Certificate Authority website on how to do this). In return you get a Certificate.</p>
 </subsection>
 
 <subsection name="Importing the Certificate">
