@@ -547,14 +547,17 @@ public class HostConfig
      * @param file
      */
     protected void deployDescriptor(String contextPath, File contextXml, String file) {
-        DeployedApplication deployedApp = new DeployedApplication(contextPath);
-        
-        if (deploymentExists(contextPath))
+        if (deploymentExists(contextPath)) {
             return;
+        }
+        
+        DeployedApplication deployedApp = new DeployedApplication(contextPath);
 
         // Assume this is a configuration descriptor and deploy it
-        if(log.isDebugEnabled())
+        if(log.isDebugEnabled()) {
             log.debug(sm.getString("hostConfig.deployDescriptor", file));
+        }
+
         Context context = null;
         try {
             synchronized (digester) {
