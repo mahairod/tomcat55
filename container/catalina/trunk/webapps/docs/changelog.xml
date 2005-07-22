@@ -266,6 +266,9 @@
       <add>
         <bug>35114</bug>: Add failOnError flag to JspC, by ziweth. (yoavs)
       </add>
+      <fix>
+        <bug>35410</bug>: Fixed NPE in JspWriterImpl. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   
