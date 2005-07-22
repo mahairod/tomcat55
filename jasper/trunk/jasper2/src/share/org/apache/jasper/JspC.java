@@ -46,7 +46,10 @@ import org.apache.jasper.compiler.Localizer;
 import org.apache.jasper.compiler.TagPluginManager;
 import org.apache.jasper.compiler.TldLocationsCache;
 import org.apache.jasper.servlet.JspCServletContext;
+
 import org.apache.tools.ant.AntClassLoader;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.util.FileUtils;
 
 /**
  * Shell for the jspc compiler.  Handles all options associated with the
@@ -146,6 +149,7 @@ public class JspC implements Options {
     private String targetClassName;
     private String uriBase;
     private String uriRoot;
+    private Project project;
     private int dieLevel;
     private boolean helpNeeded = false;
     private boolean compile = false;
@@ -602,18 +606,37 @@ public class JspC implements Options {
     }
 
     /**
+     * Sets the project.
+     *
+     * @param theProject The project
+     */
+    public void setProject(final Project theProject) {
+        project = theProject;
+    }
+
+    /**
+     * Returns the project: may be null if not running
+     * inside an Ant project.
+     *
+     * @return The project
+     */
+    public Project getProject() {
+        return project;
+    }
+
+    /**
      * Base dir for the webapp. Used to generate class names and resolve
      * includes
      */
     public void setUriroot( String s ) {
         if( s==null ) {
-            uriRoot=s;
+            uriRoot = s;
             return;
         }
         try {
-            uriRoot=new File( s ).getCanonicalPath();
+            uriRoot = resolveFile(s).getCanonicalPath();
         } catch( Exception ex ) {
-            uriRoot=s;
+            uriRoot = s;
         }
     }
 
@@ -654,7 +677,7 @@ public class JspC implements Options {
 
     public void setOutputDir( String s ) {
         if( s!= null ) {
-            scratchDir = new File(s).getAbsoluteFile();
+            scratchDir = resolveFile(s).getAbsoluteFile();
         } else {
             scratchDir=null;
         }
@@ -677,7 +700,7 @@ public class JspC implements Options {
      * File where we generate a web.xml fragment with the class definitions.
      */
     public void setWebXmlFragment( String s ) {
-        webxmlFile=s;
+        webxmlFile=resolveFile(s).getAbsolutePath();
         webxmlLevel=INC_WEBXML;
     }
 
@@ -685,7 +708,7 @@ public class JspC implements Options {
      * File where we generate a complete web.xml with the class definitions.
      */
     public void setWebXml( String s ) {
-        webxmlFile=s;
+        webxmlFile=resolveFile(s).getAbsolutePath();
         webxmlLevel=ALL_WEBXML;
     }
 
@@ -1280,4 +1303,24 @@ public class JspC implements Options {
             // pass straight through
         }
     }
+
+    /**
+     * Resolves the relative or absolute pathname correctly
+     * in both Ant and command-line situations.  If Ant launched
+     * us, we should use the basedir of the current project
+     * to resolve relative paths.
+     *
+     * See Bugzilla 35571.
+     *
+     * @param s The file
+     * @return The file resolved
+     */
+     protected File resolveFile(final String s) {
+         if(getProject() == null) {
+             // Note FileUtils.getFileUtils replaces FileUtils.newFileUtils in Ant 1.6.3
+             return FileUtils.newFileUtils().resolveFile(null, s);
+         } else {
+             return FileUtils.newFileUtils().resolveFile(getProject().getBaseDir(), s);
+         }
+     }
 }
