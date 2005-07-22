@@ -23,6 +23,7 @@
   <path id="host-manager.classpath">
     <pathelement location="${catalina.deploy}/classes"/>
     <pathelement location="${commons-fileupload.jar}"/>
+    <pathelement location="${commons-logging.jar}"/>   
     <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${jmx.jar}"/>
     <pathelement location="${servlet-api.jar}"/>
