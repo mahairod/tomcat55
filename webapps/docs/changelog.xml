@@ -421,6 +421,10 @@
       <add>
         <bug>34250</bug>: Admin webapp Commit Changes button now asks for confirmation. (yoavs)
       </add>
+      <add>
+        <bug>34818</bug>: Alternating row for apps in HTML manager, as suggested by Jeff
+          Domeyer. (yoavs)
+      </add>
     </changelog>
   </subsection>
  </section>

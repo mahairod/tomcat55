@@ -65,21 +65,18 @@ public class Constants {
         "    vertical-align: middle;\n" +
         "    font-family:sans-serif,Tahoma,Arial;\n" +
         "    color: black;\n" +
-        "    background: white;\n" +
         "  }\n" +
         "  td.row-center {\n" +
         "    text-align: center;\n" +
         "    vertical-align: middle;\n" +
         "    font-family:sans-serif,Tahoma,Arial;\n" +
         "    color: black;\n" +
-        "    background: white;\n" +
         "  }\n" +
         "  td.row-right {\n" +
         "    text-align: right;\n" +
         "    vertical-align: middle;\n" +
         "    font-family:sans-serif,Tahoma,Arial;\n" +
         "    color: black;\n" +
-        "    background: white;\n" +
         "  }\n" +
         "  TH {\n" +
         "    text-align: center;\n" +
@@ -93,7 +90,6 @@ public class Constants {
         "    vertical-align: middle;\n" +
         "    font-family:sans-serif,Tahoma,Arial;\n" +
         "    color: black;\n" +
-        "    background: white;\n" +
         "  }\n" +
         "</style>\n";
 

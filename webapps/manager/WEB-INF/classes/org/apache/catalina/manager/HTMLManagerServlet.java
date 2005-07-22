@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -332,7 +332,18 @@ public final class HTMLManagerServlet extends ManagerServlet {
         String appsUndeploy = sm.getString("htmlManagerServlet.appsUndeploy");
 
         Iterator iterator = sortedContextPathsMap.entrySet().iterator();
+        boolean isHighlighted = true;
+        String highlightColor = null;
+
         while (iterator.hasNext()) {
+            // Bugzilla 34818, alternating row colors
+            isHighlighted = !isHighlighted;
+            if(isHighlighted) {
+                highlightColor = "#C3F3C3";
+            } else {
+                highlightColor = "#FFFFFF";
+            }
+
             Map.Entry entry = (Map.Entry) iterator.next();
             String displayPath = (String) entry.getKey();
             String contextPath = (String) entry.getKey();
@@ -342,7 +353,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
             }
 
             if (context != null ) {
-                args = new Object[5];
+                args = new Object[6];
                 args[0] = displayPath;
                 args[1] = context.getDisplayName();
                 if (args[1] == null) {
@@ -358,10 +369,13 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 } else {
                     args[4] = new Integer(0);
                 }
+
+                args[5] = highlightColor;
+
                 writer.print
                     (MessageFormat.format(APPS_ROW_DETAILS_SECTION, args));
 
-                args = new Object[8];
+                args = new Object[9];
                 args[0] = response.encodeURL
                     (request.getContextPath() +
                      "/html/start?path=" + displayPath);
@@ -378,6 +392,9 @@ public final class HTMLManagerServlet extends ManagerServlet {
                     (request.getContextPath() +
                      "/html/undeploy?path=" + displayPath);
                 args[7] = appsUndeploy;
+                
+                args[8] = highlightColor;
+
                 if (context.getPath().equals(this.context.getPath())) {
                     writer.print(MessageFormat.format(
                         MANAGER_APP_ROW_BUTTON_SECTION, args));
@@ -551,15 +568,13 @@ public final class HTMLManagerServlet extends ManagerServlet {
 
     private static final String APPS_ROW_DETAILS_SECTION =
         "<tr>\n" +
-        " <td class=\"row-left\"><small><a href=\"{0}\">{0}</a>" +
-        "</small></td>\n" +
-        " <td class=\"row-left\"><small>{1}</small></td>\n" +
-        " <td class=\"row-center\"><small>{2}</small></td>\n" +
-        " <td class=\"row-center\">" +
-        "<small><a href=\"{3}\">{4}</a></small></td>\n";
+        " <td class=\"row-left\" bgcolor=\"{5}\"><small><a href=\"{0}\">{0}</a></small></td>\n" +
+        " <td class=\"row-left\" bgcolor=\"{5}\"><small>{1}</small></td>\n" +
+        " <td class=\"row-center\" bgcolor=\"{5}\"><small>{2}</small></td>\n" +
+        " <td class=\"row-center\" bgcolor=\"{5}\"><small><a href=\"{3}\">{4}</a></small></td>\n";
 
     private static final String MANAGER_APP_ROW_BUTTON_SECTION =
-        " <td class=\"row-left\">\n" +
+        " <td class=\"row-left\" bgcolor=\"{8}\">\n" +
         "  <small>\n" +
         "  &nbsp;{1}&nbsp;\n" +
         "  &nbsp;{3}&nbsp;\n" +
@@ -570,7 +585,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         "</tr>\n";
 
     private static final String STARTED_APPS_ROW_BUTTON_SECTION =
-        " <td class=\"row-left\">\n" +
+        " <td class=\"row-left\" bgcolor=\"{8}\">\n" +
         "  <small>\n" +
         "  &nbsp;{1}&nbsp;\n" +
         "  &nbsp;<a href=\"{2}\" onclick=\"return(confirm('''Are you sure?'''))\">{3}</a>&nbsp;\n" +
@@ -581,7 +596,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         "</tr>\n";
 
     private static final String STOPPED_APPS_ROW_BUTTON_SECTION =
-        " <td class=\"row-left\">\n" +
+        " <td class=\"row-left\" bgcolor=\"{8}\">\n" +
         "  <small>\n" +
         "  &nbsp;<a href=\"{0}\" onclick=\"return(confirm('''Are you sure?'''))\">{1}</a>&nbsp;\n" +
         "  &nbsp;{3}&nbsp;\n" +
