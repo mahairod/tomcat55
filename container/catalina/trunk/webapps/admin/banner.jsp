@@ -22,7 +22,7 @@
       </td>
       <form method='post' action='<%=request.getContextPath()%>/commitChanges.do' target='_self'>
       <td align="right" valign="middle">
-        <html:submit>
+        <html:submit onclick="if(confirm('Are you sure?  Committing changes will restart modified web applications.')) { return true; } else { return false; }">
           <bean:message key="button.commit"/>
         </html:submit>
       </td>
