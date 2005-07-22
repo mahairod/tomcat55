@@ -228,49 +228,51 @@ public final class SaveJDBCRealmAction extends Action {
 
         // Perform attribute updates as requested
         String attribute = null;
+        String value = null;
+
         try {
 
             ObjectName roname = new ObjectName(rObjectName);
 
             attribute = "digest";
-            mBServer.setAttribute(roname,
-                                  new Attribute("digest",  rform.getDigest()));
+            value = rform.getDigest();
+            setAttributeIfPresent(mBServer, roname, attribute, value);
 
             attribute = "driverName";
-            mBServer.setAttribute(roname,
-                                  new Attribute("driverName",  rform.getDriver()));
+            value = rform.getDriver();
+            setAttributeIfPresent(mBServer, roname, attribute, value);
 
             attribute = "roleNameCol";
-            mBServer.setAttribute(roname,
-                                  new Attribute("roleNameCol",  rform.getRoleNameCol()));
+            value = rform.getRoleNameCol();
+            setAttributeIfPresent(mBServer, roname, attribute, value);
 
             attribute = "userNameCol";
-            mBServer.setAttribute(roname,
-                                  new Attribute("userNameCol",  rform.getUserNameCol()));
+            value = rform.getUserNameCol();
+            setAttributeIfPresent(mBServer, roname, attribute, value);
 
             attribute = "userCredCol";
-            mBServer.setAttribute(roname,
-                                  new Attribute("userCredCol",  rform.getPasswordCol()));
+            value = rform.getPasswordCol();
+            setAttributeIfPresent(mBServer, roname, attribute, value);
 
             attribute = "userTable";
-            mBServer.setAttribute(roname,
-                                  new Attribute("userTable",  rform.getUserTable()));
+            value = rform.getUserTable();
+            setAttributeIfPresent(mBServer, roname, attribute, value);
 
             attribute = "userRoleTable";
-            mBServer.setAttribute(roname,
-                                  new Attribute("userRoleTable",  rform.getRoleTable()));
+            value = rform.getRoleTable();
+            setAttributeIfPresent(mBServer, roname, attribute, value);
 
             attribute = "connectionName";
-            mBServer.setAttribute(roname,
-                                  new Attribute("connectionName",  rform.getConnectionName()));
+            value = rform.getConnectionName();
+            setAttributeIfPresent(mBServer, roname, attribute, value);
 
             attribute = "connectionURL";
-            mBServer.setAttribute(roname,
-                                  new Attribute("connectionURL",  rform.getConnectionURL()));
+            value = rform.getConnectionURL();
+            setAttributeIfPresent(mBServer, roname, attribute, value);
 
             attribute = "connectionPassword";
-            mBServer.setAttribute(roname,
-                                  new Attribute("connectionPassword",  rform.getConnectionPassword()));
+            value = rform.getConnectionPassword();
+            setAttributeIfPresent(mBServer, roname, attribute, value);
 
         } catch (Exception e) {
 
@@ -288,6 +290,30 @@ public final class SaveJDBCRealmAction extends Action {
         session.removeAttribute(mapping.getAttribute());
         return (mapping.findForward("Save Successful"));
         
+    }
+
+    /**
+     * Sets the given attribute to the given value
+     * in the given server's object name, if the value
+     * is not null or empty.
+     *
+     * @param theServer The server
+     * @param roname The object name
+     * @param attribute The attribute name
+     * @param value The attribute value
+     * @throws JMException If a JMX error occurs
+     */
+    protected void setAttributeIfPresent(MBeanServer mBServer, ObjectName roname, String attribute, String value)
+        throws JMException {
+
+        if((mBServer == null) || (roname == null) || (attribute == null)) {
+            throw new IllegalArgumentException("MBeanServer, ObjectName, attribute required.");
+        }
+
+        if((value != null) && (value.trim().length() > 0)) {
+            mBServer.setAttribute(roname,
+                                  new Attribute(attribute,  value));
+        }
     }
     
 }

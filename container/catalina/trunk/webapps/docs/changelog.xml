@@ -408,6 +408,14 @@
       </add>
      </changelog>
   </subsection>
+  
+  <subsection name="Webapps">
+    <changelog>
+      <fix>
+        <bug>35758</bug>: Admin webapp mishandling digest attribute of JDBCDataSourceRealm. (yoavs)
+      </fix>
+    </changelog>
+  </subsection>
  </section>
 
 <section name="Tomcat 5.5.9 (yoavs)">
