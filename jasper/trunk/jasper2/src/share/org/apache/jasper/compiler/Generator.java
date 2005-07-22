@@ -2281,8 +2281,15 @@ class Generator {
                 ".doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE) {");
             out.pushIndent();
             if(!n.implementsTryCatchFinally()) {
-                out.printin(tagHandlerVar);
-                out.println(".release();");
+                if(isPoolingEnabled) {
+                    out.printin(n.getTagHandlerPoolName());
+                    out.print(".reuse(");
+                    out.print(tagHandlerVar);
+                    out.println(");");
+                } else {
+                    out.printin(tagHandlerVar);
+                    out.println(".release();");
+                }
             }
             if (isTagFile || isFragment) {
                 out.printil("throw new SkipPageException();");
