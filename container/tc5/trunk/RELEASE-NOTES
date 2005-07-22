@@ -29,7 +29,7 @@ Dependency Changes:
 ===================
 Tomcat 5.5 is designed to run on J2SE 5.0 and later, and requires
 configuration to run on J2SE 1.4.  Make sure to read the "RUNNING.txt" 
-file in this directory if you are using J2SE 1.4.
+file in the fulldocs downloadable file(s) if you are using J2SE 1.4.
 
 In addition, Tomcat 5.5 uses the Eclipse JDT Java compiler for compiling
 JSP pages.  This means you no longer need to have the complete
