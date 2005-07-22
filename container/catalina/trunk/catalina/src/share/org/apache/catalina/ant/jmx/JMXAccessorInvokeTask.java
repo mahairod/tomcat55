@@ -158,7 +158,7 @@ public class JMXAccessorInvokeTask extends JMXAccessorTask {
      * @exception BuildException
      *                if an error occurs
      */
-    protected String jmxExecute(MBeanServerConnection jmxServerConnection)
+    public String jmxExecute(MBeanServerConnection jmxServerConnection)
         throws Exception {
 
         if (getName() == null) {
