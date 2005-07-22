@@ -81,6 +81,10 @@
        <fix>
          <bug>35090</bug>: Minor documentation typo fix. (yoavs)
        </fix>
+       <fix>
+         <bug>34931</bug>: Rewrote ROOT/index.jsp to be XHTML strict compliant, per Richard
+           Beton's patch. (yoavs)
+       </fix>
     </changelog>
   </subsection>
   
