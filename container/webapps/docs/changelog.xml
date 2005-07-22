@@ -425,6 +425,10 @@
         <bug>34818</bug>: Alternating row for apps in HTML manager, as suggested by Jeff
           Domeyer. (yoavs)
       </add>
+      <add>
+        <bug>35379</bug>: Added commons-logging to build path of manager and host-manager apps,
+          to make them build with Jikes, as suggested by Aaron Isotton. (yoavs)
+      </add>
     </changelog>
   </subsection>
  </section>
