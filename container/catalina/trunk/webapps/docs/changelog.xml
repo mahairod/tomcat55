@@ -269,6 +269,10 @@
       <fix>
         <bug>35410</bug>: Fixed NPE in JspWriterImpl. (yoavs)
       </fix>
+      <add>
+        <bug>35571</bug>: JspC resolved uriRoot relative to Ant project basedir, if any, as suggested
+          by Jason Pettiss. (yoavs)
+      </add>
     </changelog>
   </subsection>
   
