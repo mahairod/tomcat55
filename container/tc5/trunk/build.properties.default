@@ -94,10 +94,10 @@ commons-daemon.jsvc.tar.gz=${commons-daemon.lib}/bin/jsvc.tar.gz
 
 
 # ----- Commons Digester, version 1.4 or later -----
-commons-digester.home=${base.path}/commons-digester-1.6
+commons-digester.home=${base.path}/commons-digester-1.7
 commons-digester.lib=${commons-digester.home}
-commons-digester.jar=${commons-digester.lib}/commons-digester.jar
-commons-digester.loc=${base-jakarta.loc}/commons/digester/binaries/commons-digester-1.6.tar.gz
+commons-digester.jar=${commons-digester.lib}/commons-digester-1.7.jar
+commons-digester.loc=${base-jakarta.loc}/commons/digester/binaries/commons-digester-1.7.tar.gz
 
 
 # ----- Commons Expression Language (EL), version 1.0 or later -----
@@ -132,15 +132,15 @@ ldap.jar=${jndi.lib}/ldap.jar
 jaas.jar=${jndi.lib}/jaas.jar
 
 
-# ----- Xerces XML Parser, version 2.6.2 -----
-xerces.home=${base.path}/xerces-2_6_2
+# ----- Xerces XML Parser, version 2.7.0 -----
+xerces.home=${base.path}/xerces-2_7_0
 xerces.lib=${xerces.home}
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xml-apis.jar=${xerces.lib}/xml-apis.jar
-xerces.loc=${base-xml.loc}/xerces-j/binaries/Xerces-J-bin.2.6.2.tar.gz
+xerces.loc=${base-xml.loc}/xerces-j/binaries/Xerces-J-bin.2.7.0.tar.gz
 
 
-# ----- Eclipse JDT, version 3.0 or later -----
+# ----- Eclipse JDT, version 3.1.0 or later -----
 jdt.home=${base.path}/eclipse/plugins
 jdt.lib=${jdt.home}
 jdt.jar=${jdt.lib}/org.eclipse.jdt.core_3.1.0.jar
