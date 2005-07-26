@@ -52,6 +52,9 @@
         hostname does not specify the port, and which were inverted (https was set as 80 
         and http as 443). (remm)
       </fix>
+      <fix>
+        Add missing tomcatAuthentication attribute to the AJP APR implementation. (remm)
+      </fix>
      </changelog>
   </subsection>
 
