@@ -178,6 +178,20 @@ public abstract class ValveBase
     public abstract void invoke(Request request, Response response)
         throws IOException, ServletException;
 
+
+    /**
+     * Return a String rendering of this object.
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(this.getClass().getName());
+        sb.append("[");
+        if (container != null)
+            sb.append(container.getName());
+        sb.append("]");
+        return (sb.toString());
+    }
+
+
     // -------------------- JMX and Registration  --------------------
     protected String domain;
     protected ObjectName oname;

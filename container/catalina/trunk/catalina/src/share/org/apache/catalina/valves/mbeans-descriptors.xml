@@ -234,6 +234,31 @@
                type="java.lang.String"/>
   </mbean>
 
+  <mbean name="SemaphoreValve"
+         description="Valve that does concurrency control"
+         domain="Catalina"
+         group="Valve"
+         type="org.apache.catalina.valves.SemaphoreValve">
+
+    <attribute name="className"
+               description="Fully qualified class name of the managed object"
+               type="java.lang.String"
+               writeable="false"/>
+
+    <attribute name="containerName"
+               description="Object name of the container"
+               type="javax.management.ObjectName"/>
+
+    <attribute name="concurrency"
+               description="Desired concurrency level"
+               type="int"/>
+
+    <attribute name="fairness"
+               description="Use a fair semaphore"
+               type="boolean"/>
+
+  </mbean>
+
   <mbean name="RemoteAddrValve"
          description="Concrete implementation of RequestFilterValve that  filters based on the string representation of the remote client's IP address"
          domain="Catalina"

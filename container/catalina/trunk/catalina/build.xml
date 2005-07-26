@@ -128,6 +128,8 @@
     <available property="jdk.1.3.present" 
      classname="java.lang.reflect.Proxy" />
     <available property="jdk.1.4.present" classname="java.nio.Buffer" />
+    <available property="jdk.1.5.present" 
+     classname="java.util.concurrent.Semaphore" />
 
     <!-- Ant flags -->
     <available property="style.available"
@@ -618,6 +620,7 @@
       <exclude name="org/apache/naming/factory/MailSessionFactory.java"/>
       <exclude name="org/apache/naming/factory/SendMailFactory.java"/>
       <exclude name="org/apache/catalina/launcher/**"/>
+      <exclude name="org/apache/catalina/valves/SemaphoreValve.java"/>
     </javac>
     <tstamp>
         <format property="TODAY" pattern="MMM d yyyy" locale="en"/>
@@ -659,6 +662,8 @@
        unless="compile.javamail"/>
       <exclude name="org/apache/catalina/valves/CertificatesValve.java"
        unless="compile.jsse"/>
+      <exclude name="org/apache/catalina/valves/SemaphoreValve.java" 
+       unless="jdk.1.5.present"/>
     </javac>
 
     <!-- Copy static resource files -->
@@ -976,6 +981,7 @@
         <exclude name="org/apache/catalina/valves/Remote*" />
         <exclude name="org/apache/catalina/valves/RequestDumperValve.class" />
         <exclude name="org/apache/catalina/valves/RequestFilterValve.class" />
+        <exclude name="org/apache/catalina/valves/SemaphoreValve.class" />
 
       </fileset>
     </jar>
@@ -1010,6 +1016,7 @@
         <include name="org/apache/catalina/valves/Remote*" />
         <include name="org/apache/catalina/valves/RequestDumperValve.class" />
         <include name="org/apache/catalina/valves/RequestFilterValve.class" />
+        <include name="org/apache/catalina/valves/SemaphoreValve.class" />
 
         <!-- Javadoc and i18n exclusions -->
         <exclude name="**/package.html" />

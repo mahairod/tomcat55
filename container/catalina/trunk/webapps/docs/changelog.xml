@@ -26,6 +26,51 @@
   </p>
 </section>
 
+<section name="Tomcat 5.5.11 (yoavs)">
+  <subsection name="General">
+    <changelog>
+      <update>
+        Update to Xerces 1.7.0 (remm)
+      </update>
+    </changelog>
+  </subsection>
+  
+  <subsection name="Catalina">
+    <changelog>
+      <add>
+        Add concurrency control valve (o.a.c.valves.SemaphoreValve). As the Tomcat distribution 
+        is not built for Java 5, the valve will have to be compiled from the sources 
+        using Java 5 (remm)
+      </add>
+    </changelog>
+  </subsection>
+  
+   <subsection name="Coyote">
+     <changelog>
+      <fix>
+        Fix default ports for http and https which are set in the request when the parsed
+        hostname does not specify the port, and which were inverted (https was set as 80 
+        and http as 443). (remm)
+      </fix>
+     </changelog>
+  </subsection>
+
+  <subsection name="Jasper">
+    <changelog>
+    </changelog>
+  </subsection>
+  
+  <subsection name="Cluster">
+    <changelog>        
+     </changelog>
+  </subsection>
+  
+  <subsection name="Webapps">
+    <changelog>
+    </changelog>
+  </subsection>
+ </section>
+
 <section name="Tomcat 5.5.10 (yoavs)">
   <subsection name="General">
     <changelog>

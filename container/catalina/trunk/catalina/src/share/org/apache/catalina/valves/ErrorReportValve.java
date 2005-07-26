@@ -141,19 +141,6 @@ public class ErrorReportValve
     }
 
 
-    /**
-     * Return a String rendering of this object.
-     */
-    public String toString() {
-
-        StringBuffer sb = new StringBuffer("ErrorReportValve[");
-        sb.append(container.getName());
-        sb.append("]");
-        return (sb.toString());
-
-    }
-
-
     // ------------------------------------------------------ Protected Methods
 
 
