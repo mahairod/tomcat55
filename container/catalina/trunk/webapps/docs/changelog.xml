@@ -55,6 +55,9 @@
       <fix>
         Add missing tomcatAuthentication attribute to the AJP APR implementation. (remm)
       </fix>
+      <fix>
+        Check filename sendfile attribute only if sendfile is enabled. (remm)
+      </fix>
      </changelog>
   </subsection>
 
