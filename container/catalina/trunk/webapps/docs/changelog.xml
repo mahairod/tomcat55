@@ -65,6 +65,9 @@
       <fix>
         Check filename sendfile attribute only if sendfile is enabled. (remm)
       </fix>
+      <fix>
+        Fix output buffering for APR AJP implementation. (remm)
+      </fix>
      </changelog>
   </subsection>
 
