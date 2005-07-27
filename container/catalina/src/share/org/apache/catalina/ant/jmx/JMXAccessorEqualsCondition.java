@@ -131,7 +131,7 @@ public class JMXAccessorEqualsCondition  extends ProjectComponent  implements Co
         return name;
     }
     /**
-     * @param name The name to set.
+     * @param objectName The name to set.
      */
     public void setName(String objectName) {
         this.name = objectName;
@@ -202,7 +202,7 @@ public class JMXAccessorEqualsCondition  extends ProjectComponent  implements Co
         return ref;
     }
     /**
-     * @param ref The ref to set.
+     * @param refId The ref to set.
      */
     public void setRef(String refId) {
         this.ref = refId;

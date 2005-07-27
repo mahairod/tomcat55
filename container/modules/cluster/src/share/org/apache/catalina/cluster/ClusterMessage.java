@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,7 @@ import java.io.Serializable;
 /**
  * @author Peter Rossbach
  */
-public interface ClusterMessage
-    extends Serializable {
+public interface ClusterMessage extends Serializable {
     
     public final static int FLAG_FORBIDDEN = 0 ;
     public final static int FLAG_ALLOWED = 1 ;
@@ -36,27 +35,31 @@ public interface ClusterMessage
 
     /**
      * Called by the cluster before sending it to the other
-     * nodes
+     * nodes.
+     *
      * @param member Member
      */
     public void setAddress(Member member);
 
     /**
-     * Timestamp message
+     * Timestamp message.
+     *
      * @return long
      */
     public long getTimestamp();
 
     /**
      * Called by the cluster before sending out
-     * the message
-     * @param timestamp long
+     * the message.
+     *
+     * @param timestamp The timestamp
      */
     public void setTimestamp(long timestamp);
 
     /**
      * Each message must have a unique ID, in case of using async replication,
-     * and a smart queue, this id is used to replace messages not yet sent
+     * and a smart queue, this id is used to replace messages not yet sent.
+     *
      * @return String
      */
     public String getUniqueId();
@@ -70,13 +73,15 @@ public interface ClusterMessage
     
     /**
      * set desicion that resend is allowed or not or handle by default.
-     * @param compress 0 Forbidden, 1 allowed, 2 default
+     *
+     * @param resend 0 Forbidden, 1 allowed, 2 default
      * @since 5.5.10
      */
     public void setResend(int resend) ;
 
     /**
      * Each message can made the desicion that compress is allowed or not or handle by default.
+     *
      * @return 0 Forbidden, 1 allowed, 2 default
      * @since 5.5.10
      */
@@ -84,6 +89,7 @@ public interface ClusterMessage
     
     /**
      * set desicion that compress is allowed or not or handle by default.
+     *
      * @param compress 0 Forbidden, 1 allowed, 2 default
      * @since 5.5.10
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -233,8 +233,6 @@ public class ReplicationValve
      *
      * @param request The servlet request to be processed
      * @param response The servlet response to be created
-     * @param context The valve context used to invoke the next valve
-     *  in the current processing pipeline
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
@@ -370,8 +368,8 @@ public class ReplicationValve
     
     /**
      * is request without possible session change
-     * @param request
-     * @return
+     * @param uri The request uri
+     * @return True if no session change
      */
     protected boolean isRequestWithoutSessionChange(String uri) {
 

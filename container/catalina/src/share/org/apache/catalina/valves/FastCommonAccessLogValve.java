@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -592,8 +592,6 @@ public final class FastCommonAccessLogValve
      * has changed since the previous log call.
      *
      * @param message Message to be logged
-     * @param date the current Date object (so this method doesn't need to
-     *        create a new one)
      */
     public void log(String message) {
 

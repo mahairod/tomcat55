@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +27,12 @@ import java.io.ObjectStreamClass;
  * class loader for this web application.  This allows classes defined only
  * with the web application to be found correctly.
  *
- * @@author Craig R. McClanahan
- * @@author Bip Thelin
- * @@version $Revision$, $Date$
+ * @author Craig R. McClanahan
+ * @author Bip Thelin
+ * @version $Revision$, $Date$
  */
 
-public final class ReplicationStream
-    extends ObjectInputStream {
+public final class ReplicationStream extends ObjectInputStream {
 
 
     /**
@@ -44,10 +43,10 @@ public final class ReplicationStream
     /**
      * Construct a new instance of CustomObjectInputStream
      *
-     * @@param stream The input stream we will read from
-     * @@param classLoader The class loader used to instantiate objects
+     * @param stream The input stream we will read from
+     * @param classLoader The class loader used to instantiate objects
      *
-     * @@exception IOException if an input/output error occurs
+     * @exception IOException if an input/output error occurs
      */
     public ReplicationStream(InputStream stream,
                              ClassLoader classLoader)
@@ -61,10 +60,10 @@ public final class ReplicationStream
      * Load the local class equivalent of the specified stream class
      * description, by using the class loader assigned to this Context.
      *
-     * @@param classDesc Class description from the input stream
+     * @param classDesc Class description from the input stream
      *
-     * @@exception ClassNotFoundException if this class cannot be found
-     * @@exception IOException if an input/output error occurs
+     * @exception ClassNotFoundException if this class cannot be found
+     * @exception IOException if an input/output error occurs
      */
     public Class resolveClass(ObjectStreamClass classDesc)
         throws ClassNotFoundException, IOException {

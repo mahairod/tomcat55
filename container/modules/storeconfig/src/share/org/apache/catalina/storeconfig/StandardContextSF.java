@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -172,10 +172,10 @@ public class StandardContextSF extends StoreFactoryBase {
     }
 
     /**
-     * Get explizit writer for context (context.getConfigFile())
+     * Get explicit writer for context (context.getConfigFile()).
      * 
      * @param context
-     * @return
+     * @return The file mover
      * @throws IOException
      */
     protected StoreFileMover getConfigFileWriter(Context context)
@@ -313,7 +313,7 @@ public class StandardContextSF extends StoreFactoryBase {
      * 
      * @param context
      * @param wresources
-     * @return
+     * @return The watched resources
      * @throws IOException
      * TODO relative watchedresource
      * TODO absolute handling configFile

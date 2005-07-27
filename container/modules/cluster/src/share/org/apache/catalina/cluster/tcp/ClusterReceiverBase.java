@@ -171,7 +171,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
     }
     
     /**
-     * @param compress The compress to set.
+     * @param compressMessageData The compress to set.
      */
     public void setCompress(boolean compressMessageData) {
         this.compress = compressMessageData;
@@ -180,7 +180,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
     /**
      * Send ACK to sender
      * 
-     * @return
+     * @return True if sending ACK
      */
     public boolean isSendAck() {
         return sendAck;
@@ -227,7 +227,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
         return doReceivedProcessingStats;
     }
     /**
-     * @param doReceivedProcessingStats The doReceivedProcessingStats to set.
+     * @param doReceiverProcessingStats The doReceivedProcessingStats to set.
      */
     public void setDoReceivedProcessingStats(boolean doReceiverProcessingStats) {
         this.doReceivedProcessingStats = doReceiverProcessingStats;
@@ -405,7 +405,6 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
      * receiver Message from other node.
      * All SessionMessage forward to ClusterManager and other message dispatch to all accept MessageListener.
      *
-     * @see org.apache.catalina.cluster.io.ListenCallback#messageDataReceived(byte[])
      * @see ClusterSessionListener#messageReceived(ClusterMessage)
      */
     public void messageDataReceived(ClusterData data) {
@@ -432,7 +431,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
     /**
      * deserialize the receieve cluster message
      * @param data uncompress data
-     * @return
+     * @return The message
      * @throws IOException
      * @throws ClassNotFoundException
      */

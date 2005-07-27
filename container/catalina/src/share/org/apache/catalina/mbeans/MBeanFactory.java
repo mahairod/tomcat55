@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2002,2004 The Apache Software Foundation.
+ * Copyright 1999-2002,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -698,8 +698,8 @@ public class MBeanFactory extends BaseModelMBean {
      * @param name Unique name of this Host
      * @param appBase Application base directory name
      * @param autoDeploy Should we auto deploy?
+     * @param deployOnStartup Deploy on server startup?
      * @param deployXML Should we deploy Context XML config files property?
-     * @param liveDeploy Should we live deploy?     
      * @param unpackWARs Should we unpack WARs when auto deploying?
      * @param xmlNamespaceAware Should we turn on/off XML namespace awareness?
      * @param xmlValidation Should we turn on/off XML validation?        

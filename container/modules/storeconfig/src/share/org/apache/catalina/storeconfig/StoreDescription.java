@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -140,7 +140,7 @@ public class StoreDescription {
     }
 
     /**
-     * @param myDefault
+     * @param aDefault
      *            The myDefault to set.
      */
     public void setDefault(boolean aDefault) {
@@ -155,7 +155,7 @@ public class StoreDescription {
     }
 
     /**
-     * @param storeFactory
+     * @param storeFactoryClass
      *            The storeFactory to set.
      */
     public void setStoreFactoryClass(String storeFactoryClass) {
@@ -334,7 +334,7 @@ public class StoreDescription {
     }
 
     /**
-     * @return
+     * @return True if it's a separate store
      */
     public boolean isStoreSeparate() {
         return storeSeparate;

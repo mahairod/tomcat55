@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,7 @@ package org.apache.catalina.cluster;
  * @author Peter Rossbach
  * @version $Revision$, $Date$
  */
-public interface ClusterReceiver
-{
-
+public interface ClusterReceiver {
     /**
      * Start message listing
      * @throws java.io.IOException
@@ -38,21 +36,23 @@ public interface ClusterReceiver
     public void stop();
 
     /**
-     * set callback
-     * @see org.apache.catalina.cluster.tcp.SimpleTcpCluster#messageDataReceived(byte[])
-     * @param cluster
+     * set callback.
+     *
+     * @param cluster The cluster
      */
     public void setCatalinaCluster(CatalinaCluster cluster);
     
     /**
-     * get Callback
-     * @return
+     * get Callback.
+     *
+     * @return The cluster
      */
     public CatalinaCluster getCatalinaCluster();
     
     /**
-     * Send Ack to sender or not
-     * @return
+     * Send Ack to sender or not.
+     *
+     * @return The flag value
      */
     public boolean isSendAck();
     
@@ -67,14 +67,14 @@ public interface ClusterReceiver
 
     /**
      * get the listing ip interface
-     * @return
+     * @return The host
      */
     public String getHost();
     
     
     /**
      * get the listing ip port
-     * @return
+     * @return The port
      */
     public int getPort();
 

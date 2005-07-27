@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,8 +39,7 @@ public class NamingResourcesSF extends StoreFactoryBase {
     /**
      * Store the only the NamingResources elements
      * 
-     * @see NamingResourcesSF#storeChilds(PrintWriter, int, Object,
-     *      RegistryDescription)
+     * @see NamingResourcesSF#storeChilds(PrintWriter, int, Object, StoreDescription)
      */
     public void store(PrintWriter aWriter, int indent, Object aElement)
             throws Exception {
@@ -74,8 +73,7 @@ public class NamingResourcesSF extends StoreFactoryBase {
      *                if an exception occurs while storing
      * 
      * @see org.apache.catalina.storeconfig.StoreFactoryBase#storeChilds(java.io.PrintWriter,
-     *      int, java.lang.Object,
-     *      org.apache.catalina.config.RegistryDescription)
+     *      int, java.lang.Object, StoreDescription)
      */
     public void storeChilds(PrintWriter aWriter, int indent, Object aElement,
             StoreDescription elementDesc) throws Exception {

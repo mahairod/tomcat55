@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,6 @@ public class SocketObjectReader
      * use this socket and callback to receive messages
      * @param socket listener socket
      * @param callback ClusterReceiverBase listener
-     * @param compress is send message data compress or flat.
      */
     public SocketObjectReader( Socket socket,
                                ListenCallback callback)  {
@@ -87,7 +86,7 @@ public class SocketObjectReader
     /**
      * send message to callback
      * @see SocketObjectReader#append(byte[], int, int)
-     * @return
+     * @return Count of packages written
      * @throws java.io.IOException
      */
     public int execute() throws java.io.IOException {
@@ -98,7 +97,7 @@ public class SocketObjectReader
      * write data to socket (ack)
      * @see org.apache.catalina.cluster.tcp.SocketReplicationListener#sendAck
      * @param data
-     * @return
+     * @return Always zero
      * @throws java.io.IOException
      */
     public int write(byte[] data)

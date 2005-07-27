@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public interface ClusterManager extends Manager {
     * create a session message and that will be replicated.
     * The cluster determines where it gets sent.
     * @param sessionId - the sessionId that just completed.
-    * @return a SessionMessage to be sent,
+    * @return a SessionMessage to be sent.
     */
    public ClusterMessage requestCompleted(String sessionId);
 
@@ -59,7 +59,7 @@ public interface ClusterManager extends Manager {
    public String[] getInvalidatedSessions();
    
    /**
-    * Return the name of the manager, at host /context name and at engine hostname+/context
+    * Return the name of the manager, at host /context name and at engine hostname+/context.
     * @return String
     * @since 5.5.10
     */
@@ -73,28 +73,29 @@ public interface ClusterManager extends Manager {
    public void setName(String name);
          
    public CatalinaCluster getCluster();
+
    public void setCluster(CatalinaCluster cluster);
    
    /**
-    * @return Manager send only to same cluster domain
+    * @return Manager send only to same cluster domain.
     * @since 5.5.10
     */
-   public boolean isSendClusterDomainOnly() ;
+   public boolean isSendClusterDomainOnly();
+
    /**
-    * @param boolean
+    * @param sendClusterDomainOnly Flag value.
     * @since 5.5.10
     */
-   public void setSendClusterDomainOnly(boolean sendClusterDomainOnly) ;
+   public void setSendClusterDomainOnly(boolean sendClusterDomainOnly);
+
    /**
-    * @param mode
+    * @param mode The mode
     * @since 5.5.10
     */
-   public void setDefaultMode(boolean  mode) ;
+   public void setDefaultMode(boolean mode);
+
    /**
-    * @param overwrite properties from SimpleTcpCluster
     * @since 5.5.10
     */
-   public boolean isDefaultMode() ;
-   
-   
+   public boolean isDefaultMode();
 }

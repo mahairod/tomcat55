@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Store Loader Element *
+ * Store Loader Element.
  * 
  * @author Peter Rossbach
  */
@@ -35,8 +35,7 @@ public class LoaderSF extends StoreFactoryBase {
     /**
      * Store the only the Loader elements, when not default
      * 
-     * @see NamingResourcesSF#storeChilds(PrintWriter, int, Object,
-     *      RegistryDescription)
+     * @see NamingResourcesSF#storeChilds(PrintWriter, int, Object, StoreDescription)
      */
     public void store(PrintWriter aWriter, int indent, Object aElement)
             throws Exception {
