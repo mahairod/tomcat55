@@ -42,6 +42,10 @@
         is not built for Java 5, the valve will have to be compiled from the sources 
         using Java 5 (remm)
       </add>
+      <fix>
+        <bug>35880</bug>: Ignore JSSE15SocketFactory when generating JavaDoc, as it breaks
+          the JDK 1.4 JavaDoc tool. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   
