@@ -741,6 +741,18 @@
   <target name="javadoc" unless="docs.uptodate" >
     <delete dir="${catalina.build}/javadoc"/>
     <mkdir dir="${catalina.build}/javadoc"/>
+
+    <!-- To fix Bugzilla 35880, we need to ensure files that use J2SE 5.0
+         syntax are not JavaDoc'ed.  Even though no other target uses
+         javadoc.sourcepath and I could rewrite the javadoc target below,
+         that might impact users who use javadoc.sourcepath in their own
+         build scripts.  Accordingly, let's try this ugly temporary
+         fix.  When we start building Tomcat with J2SE 5.0, we can remove
+         this ugliness.
+    -->
+    <move file="${jtc.home}/util/java/org/apache/tomcat/util/net/jsse/JSSE15SocketFactory.java"
+          tofile="${jtc.home}/util/java/org/apache/tomcat/util/net/jsse/JSSE15SocketFactory.temp" />
+
     <javadoc packagenames="org.apache.*"
       classpathref="catalina.classpath"
       sourcepathref="javadoc.sourcepath"
@@ -755,7 +767,11 @@
     	<excludepackage name="org.apache.coyote.tomcat3" />
     	<excludepackage name="org.apache.coyote.tomcat4" />
     	<excludepackage name="org.apache.jk.apr" />
+
     </javadoc>
+
+    <move file="${jtc.home}/util/java/org/apache/tomcat/util/net/jsse/JSSE15SocketFactory.temp"
+          tofile="${jtc.home}/util/java/org/apache/tomcat/util/net/jsse/JSSE15SocketFactory.java" />
   </target>
 
 
