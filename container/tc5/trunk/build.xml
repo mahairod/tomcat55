@@ -1713,7 +1713,7 @@
 	    </tar>
 	  </target>
 
-  <target name="package-docs-tgz">
+  <target name="package-docs-tgz" depends="prepare-release">
     <ant dir="${catalina.home}" target="dist-javadoc"/>
     <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api"/>
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api">
