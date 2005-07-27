@@ -132,12 +132,12 @@ ldap.jar=${jndi.lib}/ldap.jar
 jaas.jar=${jndi.lib}/jaas.jar
 
 
-# ----- Xerces XML Parser, version 2.7.0 -----
-xerces.home=${base.path}/xerces-2_7_0
+# ----- Xerces XML Parser, version 2.7.1 -----
+xerces.home=${base.path}/xerces-2_7_1
 xerces.lib=${xerces.home}
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xml-apis.jar=${xerces.lib}/xml-apis.jar
-xerces.loc=${base-xml.loc}/xerces-j/binaries/Xerces-J-bin.2.7.0.tar.gz
+xerces.loc=${base-xml.loc}/xerces-j/binaries/Xerces-J-bin.2.7.1.tar.gz
 
 
 # ----- Eclipse JDT, version 3.1.0 or later -----
