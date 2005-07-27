@@ -554,8 +554,7 @@ public class DataSender implements IDataSender {
     /**
      * disconnect and close socket
      * 
-     * @see org.apache.catalina.cluster.tcp.IDataSender#disconnect()
-     * @see DataSender#closeSocket()
+     * @see IDataSender#disconnect()
      */
     public synchronized void disconnect() {
         boolean connect = isConnected() ;
@@ -674,7 +673,7 @@ public class DataSender implements IDataSender {
      * close socket
      * 
      * @see DataSender#disconnect()
-     * @see DataSender#checkIfCloseSocket()
+     * @see DataSender#closeSocket()
      */
     protected void closeSocket() {
         if(isConnected()) {
@@ -747,7 +746,7 @@ public class DataSender implements IDataSender {
      * 
      * WARNING: Subclasses must be very carefull that only one thread call this pushMessage at once!!!
      * 
-     * @see #checkIfCloseSocket()
+     * @see #closeSocket()
      * @see #openSocket()
      * @see #writeData(byte[])
      * 
