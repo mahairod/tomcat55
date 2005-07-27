@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -647,9 +647,8 @@ public class NamingContextListener
      * Create an <code>ObjectName</code> for this
      * <code>ContextResource</code> object.
      *
-     * @param domain Domain in which this name is to be created
-     * @param resource The ContextResource to be named
-     *
+     * @param resource The resource
+     * @return ObjectName The object name
      * @exception MalformedObjectNameException if a name cannot be created
      */
     protected ObjectName createObjectName(ContextResource resource)

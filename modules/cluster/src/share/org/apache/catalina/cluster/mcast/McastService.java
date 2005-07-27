@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,7 +122,8 @@ public class McastService implements MembershipService,MembershipListener {
 
     /**
      *
-     * @param properties<BR>All are required<BR>
+     * @param properties
+     * <BR/>All are required<BR />
      * 1. mcastPort - the port to listen to<BR>
      * 2. mcastAddress - the mcast group address<BR>
      * 3. mcastClusterDomain - the mcast cluster domain<BR>

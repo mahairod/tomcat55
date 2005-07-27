@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,7 +102,7 @@ public class IDataSenderFactory {
     /**
      * Check that mode is valid
      * @param mode
-     * @return
+     * @return The replication mode (may be null if sender mode)
      */
     public static String validateMode(String mode) {
         if(factory.isSenderMode(mode))

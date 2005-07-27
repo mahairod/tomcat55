@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -286,7 +286,7 @@ public class StoreAppender {
      *            attribute name
      * @param desc
      *            StoreDescription from bean
-     * @return
+     * @return True if it's a printing value
      */
     public boolean isPrintValue(Object bean, Object bean2, String attrName,
             StoreDescription desc) {
@@ -339,7 +339,6 @@ public class StoreAppender {
      * Given a string, this method replaces all occurrences of ' <', '>', '&',
      * and '"'.
      */
-
     public String convertStr(String input) {
 
         StringBuffer filtered = new StringBuffer(input.length());

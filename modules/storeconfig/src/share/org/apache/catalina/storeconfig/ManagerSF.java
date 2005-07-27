@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,7 @@ public class ManagerSF extends StoreFactoryBase {
     /**
      * Store the only the Manager elements
      * 
-     * @see NamingResourcesSF#storeChilds(PrintWriter, int, Object,
-     *      RegistryDescription)
+     * @see NamingResourcesSF#storeChilds(PrintWriter, int, Object, StoreDescription)
      */
     public void store(PrintWriter aWriter, int indent, Object aElement)
             throws Exception {
@@ -62,7 +61,7 @@ public class ManagerSF extends StoreFactoryBase {
      * Is this an instance of the default <code>Manager</code> configuration,
      * with all-default properties?
      * 
-     * @param manager
+     * @param smanager
      *            Manager to be tested
      */
     protected boolean isDefaultManager(StandardManager smanager) {

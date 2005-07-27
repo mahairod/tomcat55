@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -358,7 +358,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         return stateTransferTimeout;
     }
     /**
-     * @param stateTransferTimeout The stateTransferTimeout to set.
+     * @param timeoutAllSession The timeout
      */
     public void setStateTransferTimeout(int timeoutAllSession) {
         this.stateTransferTimeout = timeoutAllSession;
@@ -408,7 +408,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     }
     
     /**
-     * @param stateTimestampDrop The stateTimestampDrop to set.
+     * @param isTimestampDrop The new flag value
      */
     public void setStateTimestampDrop(boolean isTimestampDrop) {
         this.stateTimestampDrop = isTimestampDrop;
@@ -474,7 +474,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     }
     
     /**
-     * @param notifySessionListenersOnReplication The notifySessionListenersOnReplication to set.
+     * @param notifyListenersCreateSessionOnReplication The notifySessionListenersOnReplication to set.
      */
     public void setNotifySessionListenersOnReplication(
             boolean notifyListenersCreateSessionOnReplication) {
@@ -577,7 +577,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      * to other cluster nodes.
      * 
      * @param distribute
-     * @return
+     * @return The session
      */
     public Session createSession(String sessionId, boolean distribute) {
 
@@ -651,7 +651,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      * @see DeltaRequest#readExternal(java.io.ObjectInput)
      * @param session
      * @param data message data
-     * @return
+     * @return The request
      * @throws ClassNotFoundException
      * @throws IOException
      */
@@ -774,7 +774,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      * ThreadClassLoader
      * 
      * @param data
-     * @return
+     * @return The object input stream
      * @throws IOException
      */
     protected ObjectInputStream openDeserializeObjectStream(byte[] data) throws IOException {
@@ -1195,7 +1195,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      * A message was received from another node, this is the callback method to
      * implement if you are interested in receiving replication messages.
      * 
-     * @param msg -
+     * @param cmsg -
      *            the message received.
      */
     public void messageDataReceived(ClusterMessage cmsg) {
@@ -1391,7 +1391,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      * periodically ask for a list of sessions that should expire and that
      * should be sent across the wire.
      * 
-     * @return
+     * @return The invalidated sessions array
      */
     public String[] getInvalidatedSessions() {
         return new String[0];
@@ -1660,7 +1660,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      * send a block of session to sender
      * @param sender
      * @param currentSessions
-     * @param sendTimeStamp
+     * @param sendTimestamp
      * @throws IOException
      */
     protected void sendSessions(Member sender, Session[] currentSessions,

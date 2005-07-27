@@ -182,7 +182,7 @@ public class JMXAccessorCondition extends ProjectComponent implements Condition 
         return name;
     }
     /**
-     * @param name The name to set.
+     * @param objectName The name to set.
      */
     public void setName(String objectName) {
         this.name = objectName;
@@ -253,7 +253,7 @@ public class JMXAccessorCondition extends ProjectComponent implements Condition 
         return ref;
     }
     /**
-     * @param ref The ref to set.
+     * @param refId The ref to set.
      */
     public void setRef(String refId) {
         this.ref = refId;
