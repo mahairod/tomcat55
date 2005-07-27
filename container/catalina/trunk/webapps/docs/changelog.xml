@@ -46,6 +46,9 @@
         <bug>35880</bug>: Ignore JSSE15SocketFactory when generating JavaDoc, as it breaks
           the JDK 1.4 JavaDoc tool. (yoavs)
       </fix>
+      <fix>
+        <bug>35865</bug>: setclasspath.sh cannot be excutive under cygwin (funkman)
+      </fix>
     </changelog>
   </subsection>
   
