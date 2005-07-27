@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -528,14 +528,14 @@ public class JspC implements Options {
     }
 
     /**
-     * @see Options#getCompilerSourceVM.
+     * @see Options#getCompilerSourceVM()
      */
      public String getCompilerSourceVM() {
          return compilerSourceVM;
      }
         
     /**
-     * @see Options#getCompilerSourceVM.
+     * @see Options#getCompilerSourceVM()
      */
     public void setCompilerSourceVM(String vm) {
         compilerSourceVM = vm;
