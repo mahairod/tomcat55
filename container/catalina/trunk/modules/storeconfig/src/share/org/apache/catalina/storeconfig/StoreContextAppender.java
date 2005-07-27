@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,10 +97,10 @@ public class StoreContextAppender extends StoreAppender {
     }
 
     /**
-     * Make default Work Dir
+     * Make default Work Dir.
      * 
      * @param context
-     * @return
+     * @return The default working directory for the context.
      */
     protected String getDefaultWorkDir(StandardContext context) {
         String defaultWorkDir = null;

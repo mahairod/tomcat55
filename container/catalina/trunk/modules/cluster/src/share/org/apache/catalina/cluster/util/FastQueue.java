@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,6 @@ package org.apache.catalina.cluster.util;
  * @author Rainer Jung
  * @author Peter Rossbach
  * @version $Revision$ $Date$
- */
-/**
- * @author peter
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class FastQueue implements IQueue {
 
@@ -195,7 +189,7 @@ public class FastQueue implements IQueue {
     /**
      * get current remove wait timeout
      * 
-     * @return
+     * @return The timeout
      */
     public long getRemoveWaitTimeout() {
         removeWaitTimeout = lock.getRemoveWaitTimeout();
@@ -335,7 +329,7 @@ public class FastQueue implements IQueue {
     }
 
     /**
-     * @return
+     * @return The max size
      */
     public int getMaxSize() {
         return maxSize;
@@ -351,7 +345,7 @@ public class FastQueue implements IQueue {
     
     /**
      * Avg queue size
-     * @return
+     * @return The average queue size
      */
     public long getAvgSize() {
         if (addCounter > 0) {

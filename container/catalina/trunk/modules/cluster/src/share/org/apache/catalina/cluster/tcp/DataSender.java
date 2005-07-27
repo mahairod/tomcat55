@@ -748,7 +748,7 @@ public class DataSender implements IDataSender {
      * 
      * @see #closeSocket()
      * @see #openSocket()
-     * @see #writeData(byte[])
+     * @see #writeData(ClusterData)
      * 
      * @param data
      *            data to send

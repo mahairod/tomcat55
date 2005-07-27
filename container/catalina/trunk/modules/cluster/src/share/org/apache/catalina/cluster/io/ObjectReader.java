@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public class ObjectReader {
 
     /**
      * Get underlying NIO channel
-     * @return
+     * @return The socket
      */
     public SocketChannel getChannel() {
         return this.channel;
@@ -89,11 +89,13 @@ public class ObjectReader {
     }
 
     /**
-     * Send buffer to cluster listener (callback)
-     * Is message complete receiver send message to callback
+     * Send buffer to cluster listener (callback).
+     * Is message complete receiver send message to callback?
+     *
      * @see org.apache.catalina.cluster.tcp.ClusterReceiverBase#messageDataReceived(ClusterData)
      * @see XByteBuffer#doesPackageExist()
-     * @see XByteBuffer#extractPackage()
+     * @see XByteBuffer#extractPackage(boolean)
+     *
      * @return number of received packages/messages
      * @throws java.io.IOException
      */
@@ -112,7 +114,7 @@ public class ObjectReader {
     /**
      * Write Ack to sender
      * @param buf
-     * @return
+     * @return The bytes written count
      * @throws java.io.IOException
      */
     public int write(ByteBuffer buf) throws java.io.IOException {

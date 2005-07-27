@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,17 +54,18 @@ import org.apache.catalina.valves.ValveBase;
  * At all cluster node you must configure the as ClusterListener since 5.5.10
  * {@link org.apache.catalina.cluster.session.JvmRouteSessionIDBinderListener JvmRouteSessionIDBinderListener}
  * or before with
- * {@link org.apache.catalina.cluster.session.JvmRouteSessionIDBinderListenerLifecycle JvmRouteSessionIDBinderListenerLifecycle}
+ * org.apache.catalina.cluster.session.JvmRouteSessionIDBinderListenerLifecycle.
  * 
- * Add this Valve to your host definition at conf/server.xml 
+ * Add this Valve to your host definition at conf/server.xml .
  * 
- * since 5.5.10 as direct cluster valve
+ * Since 5.5.10 as direct cluster valve:<br/>
  * <pre>
  *  &lt;Cluster&gt;
  *  &lt;Valve className=&quot;org.apache.catalina.cluster.session.JvmRouteBinderValve&quot; /&gt;  
  *  &lt;/Cluster&gt;
  * </pre>
- * before  as Host element
+ * <br />
+ * Before 5.5.10 as Host element:<br/>
  * <pre>
  *  &lt;Hostr&gt;
  *  &lt;Valve className=&quot;org.apache.catalina.cluster.session.JvmRouteBinderValve&quot; /&gt;  
@@ -210,8 +211,7 @@ public class JvmRouteBinderValve extends ValveBase implements ClusterValve, Life
     /**
      * handle possible session turn over.
      * 
-     * @see JvmRouteBinderValve#handleJvmRoute(String, String, Request,
-     *      Response)
+     * @see JvmRouteBinderValve#handleJvmRoute(Request, Response, String, String)
      * @param request current request
      * @param response current response
      */
@@ -398,17 +398,14 @@ public class JvmRouteBinderValve extends ValveBase implements ClusterValve, Life
 
     /**
      * Sets a new cookie for the given session id and response and see
-     * {@link org.apache.catalina.connector.Request#configureSessionCookie(javax.servlet.http.Cookie)
+     * {@link org.apache.catalina.connector.Request#configureSessionCookie(javax.servlet.http.Cookie)}
      * 
      * @param request current request
-     * @param response
-     *            Tomcat Response
-     * @param sessionId
-     *            The session id
+     * @param response Tomcat Response
+     * @param sessionId The session id
      */
-
     protected void setNewSessionCookie(Request request,
-            Response response,String sessionId ) {
+                                       Response response, String sessionId) {
         if (response != null) {
             Context context = request.getContext();
             if (context.getCookies()) {

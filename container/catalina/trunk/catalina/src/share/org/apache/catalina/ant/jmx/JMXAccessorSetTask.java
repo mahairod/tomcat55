@@ -1,5 +1,5 @@
 /*
- * Copyright 2002,2004 The Apache Software Foundation.
+ * Copyright 2002,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,7 +126,7 @@ public class JMXAccessorSetTask extends JMXAccessorTask {
     }
     
     /**
-     * @param type The type to set.
+     * @param valueType The type to set.
      */
     public void setType(String valueType) {
         this.type = valueType;
@@ -198,7 +198,7 @@ public class JMXAccessorSetTask extends JMXAccessorTask {
      * @param jmxServerConnection
      * @param name
      * @param attribute
-     * @return
+     * @return The type
      * @throws Exception
      */
     protected String getMBeanAttributeType(

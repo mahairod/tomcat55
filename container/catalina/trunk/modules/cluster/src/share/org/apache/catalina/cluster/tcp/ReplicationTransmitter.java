@@ -187,7 +187,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     /**
      * current replication mode
      * 
-     * @return
+     * @return The mode
      */
     public String getReplicationMode() {
         return replicationMode;
@@ -246,7 +246,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     }
     
     /**
-     * @param doTransmitterProcessingStats The doTransmitterProcessingStats to set.
+     * @param doProcessingStats The doTransmitterProcessingStats to set.
      */
     public void setDoTransmitterProcessingStats(boolean doProcessingStats) {
         this.doTransmitterProcessingStats = doProcessingStats;
@@ -274,7 +274,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     }
 
     /**
-     * @param compress
+     * @param compressMessageData
      *            The compress to set.
      */
     public void setCompress(boolean compressMessageData) {
@@ -299,7 +299,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     }
 
     /**
-     * @return
+     * @return The ack timeout
      */
     public long getAckTimeout() {
         return ackTimeout;
@@ -355,7 +355,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     }
 
     /**
-     * @return
+     * @return True if synchronized sender
      * @deprecated since version 5.5.7
      */
     public boolean getIsSenderSynchronized() {
@@ -384,7 +384,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * get current config
      * 
      * @param key
-     * @return
+     * @return The property
      */
     public Object getProperty(String key) {
         if (log.isTraceEnabled())
@@ -395,7 +395,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     /**
      * Get all properties keys
      * 
-     * @return
+     * @return An iterator over the propery name set
      */
     public Iterator getPropertyNames() {
         return properties.keySet().iterator();
@@ -590,7 +590,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
 
     /**
      * Check all DataSender Socket to close socket at keepAlive mode
-     * @see DataSender#checkIfCloseSocket()
+     * @see DataSender#checkKeepAlive()
      */
     public void checkKeepAlive() {
         if (map.size() > 0) {
@@ -607,7 +607,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     /**
      * get all current senders
      * 
-     * @return
+     * @return The senders
      */
     public IDataSender[] getSenders() {
         java.util.Iterator iter = map.entrySet().iterator();
@@ -626,7 +626,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     /**
      * get all current senders
      * 
-     * @return
+     * @return The sender object names
      */
     public ObjectName[] getSenderObjectNames() {
         java.util.Iterator iter = map.entrySet().iterator();
@@ -642,7 +642,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
         return array;
     }
 
-    /*
+    /**
      * Reset sender statistics
      */
     public synchronized void resetStatistics() {
@@ -654,7 +654,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
         maxProcessingTime = 0;
     }
 
-    /*
+    /**
      * add new cluster member and create sender ( s. replicationMode) transfer
      * current properties to sender
      * 
@@ -780,7 +780,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * engine.domain:type=IDataSender,host="host",senderAddress="receiver.address",senderPort="port" )
      * 
      * @param sender
-     * @return
+     * @return The sender object name
      */
     protected ObjectName getSenderObjectName(IDataSender sender) {
         ObjectName senderName = null;
@@ -848,13 +848,9 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * <li>Stats is only update after sussesfull sending</li>
      * </ul>
      * 
-     * @param sessionId
-     *            Unique Message Id
-     * @param data
-     *            message Data
-     * @param sender
-     *            concrete message sender
-     * @throws java.io.IOException
+     * @param data message Data
+     * @param sender concrete message sender
+     * @throws java.io.IOException If an error occurs
      */
     protected void sendMessageData(ClusterData data,
             IDataSender sender) throws java.io.IOException {

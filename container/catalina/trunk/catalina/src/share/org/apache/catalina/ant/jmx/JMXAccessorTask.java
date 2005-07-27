@@ -164,8 +164,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     }
 
     /**
-     * @param resultproperty
-     *            The resultproperty to set.
+     * @param propertyName The resultproperty to set.
      */
     public void setResultproperty(String propertyName) {
         this.resultproperty = propertyName;
@@ -179,8 +178,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     }
 
     /**
-     * @param delimiter
-     *            The delimiter to set.
+     * @param separator The delimiter to set.
      */
     public void setDelimiter(String separator) {
         this.delimiter = separator;
@@ -209,7 +207,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     }
 
     /**
-     * @param separatearrayresults
+     * @param separateArrayResults
      *            The separatearrayresults to set.
      */
     public void setSeparatearrayresults(boolean separateArrayResults) {
@@ -219,7 +217,6 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     /**
      * The login password for the <code>Manager</code> application.
      */
-
     public String getPassword() {
         return (this.password);
     }
@@ -231,7 +228,6 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     /**
      * The login username for the <code>JMX</code> MBeanServer.
      */
-
     public String getUsername() {
         return (this.username);
     }
@@ -291,8 +287,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     }
 
     /**
-     * @param ref
-     *            The ref to set.
+     * @param refId The ref to set.
      */
     public void setRef(String refId) {
         this.ref = refId;
@@ -309,8 +304,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
      * Only execute if a property of the given name exists in the current
      * project.
      * 
-     * @param c
-     *            property name
+     * @param c property name
      */
     public void setIf(String c) {
         ifCondition = c;
@@ -327,8 +321,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
      * Only execute if a property of the given name does not exist in the
      * current project.
      * 
-     * @param c
-     *            property name
+     * @param c property name
      */
     public void setUnless(String c) {
         unlessCondition = c;
@@ -458,7 +451,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     /**
      * get JMXConnection
      * 
-     * @return
+     * @return The connection
      * @throws MalformedURLException
      * @throws IOException
      */
@@ -516,9 +509,9 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
      * Convert string to datatype FIXME How we can transfer values from ant
      * project reference store (ref)?
      * 
-     * @param value
-     * @param type
-     * @return
+     * @param value The value
+     * @param valueType The type
+     * @return The converted object
      */
     protected Object convertStringToType(String value, String valueType) {
         if ("java.lang.String".equals(valueType))
@@ -580,8 +573,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     }
 
     /**
-     * @param name
-     *            context of result
+     * @param name context of result
      * @param result
      */
     protected void echoResult(String name, Object result) {
@@ -598,7 +590,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     /**
      * create result as property with name from attribute resultproperty
      * 
-     * @param result
+     * @param result The result
      * @see #createProperty(String, Object)
      */
     protected void createProperty(Object result) {
@@ -703,7 +695,7 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     /**
      * get all Properties
      * @param property
-     * @return
+     * @return The property
      */
     public String getProperty(String property) {
         Project currentProject = getProject();
@@ -715,8 +707,9 @@ public class JMXAccessorTask extends BaseRedirectorHelperTask {
     }
 
     /**
-     * @param propertyPrefix
-     * @param value
+     * @param property The property
+     * @param value The value
+     * @return True if successful
      */
     public boolean setProperty(String property, Object value) {
         if (property != null) {

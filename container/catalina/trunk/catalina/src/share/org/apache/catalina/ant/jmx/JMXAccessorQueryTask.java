@@ -1,5 +1,5 @@
 /*
- * Copyright 2002,2004 The Apache Software Foundation.
+ * Copyright 2002,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.apache.tools.ant.BuildException;
 
 
 /**
- * Query for Mbeans . 
+ * Query for Mbeans. 
  * <ul>
  * <li>open no existing JSR 160 rmi jmx connection</li>
  * <li>Get all Mbeans attributes</li>
@@ -39,7 +39,7 @@ import org.apache.tools.ant.BuildException;
  * <li>Bind query result as Ant properties</li>
  * </ul>
  * <br/>
- * Query a list of Mbean 
+ * Query a list of Mbeans.
  * <pre>
  *   &lt;jmxQuery
  *           host="127.0.0.1"
@@ -92,7 +92,7 @@ public class JMXAccessorQueryTask extends JMXAccessorTask {
         return attributebinding;
     }
     /**
-     * @param attributebinding The attributebinding to set.
+     * @param attributeBinding The attributebinding to set.
      */
     public void setAttributebinding(boolean attributeBinding) {
         this.attributebinding = attributeBinding;
@@ -126,7 +126,7 @@ public class JMXAccessorQueryTask extends JMXAccessorTask {
      * as your ant properties
      * @param jmxServerConnection
      * @param qry
-     * @return
+     * @return The query result
      */
     protected String jmxQuery(MBeanServerConnection jmxServerConnection,
             String qry) {

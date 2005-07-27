@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ public class StoreFileMover {
     }
 
     /**
-     * @return
+     * @return The file name
      */
     public String getFilename() {
         return filename;
@@ -94,7 +94,7 @@ public class StoreFileMover {
     }
 
     /**
-     * @return
+     * @return The encoding
      */
     public String getEncoding() {
         return encoding;
@@ -178,8 +178,7 @@ public class StoreFileMover {
     /**
      * Open an output writer for the new configuration file
      * 
-     * @param configNew
-     * @return
+     * @return The writer
      * @throws IOException
      */
     public PrintWriter getWriter() throws IOException {
@@ -203,7 +202,7 @@ public class StoreFileMover {
     /**
      * Time value for backup yyyy-mm-dd.hh-mm-ss
      * 
-     * @return
+     * @return The time
      */
     protected String getTimeTag() {
         String ts = (new Timestamp(System.currentTimeMillis())).toString();

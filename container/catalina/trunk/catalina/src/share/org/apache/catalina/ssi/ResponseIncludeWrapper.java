@@ -1,15 +1,20 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation. Licensed under the
- * Apache License, Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable
- * law or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
+ * Copyright 1999-2002,2004-2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-package org.apache.catalina.ssi;
 
+package org.apache.catalina.ssi;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -34,7 +39,7 @@ public class ResponseIncludeWrapper extends HttpServletResponseWrapper {
     /**
      * The names of some headers we want to capture.
      */
-	private static final String CONTENT_TYPE = "content-type";
+    private static final String CONTENT_TYPE = "content-type";
     private static final String LAST_MODIFIED = "last-modified";
     protected long lastModified = -1;
     private String contentType = null;
@@ -46,18 +51,18 @@ public class ResponseIncludeWrapper extends HttpServletResponseWrapper {
     protected ServletOutputStream servletOutputStream;
     protected PrintWriter printWriter;
     
-	private ServletContext context;
-	private HttpServletRequest request;
+    private ServletContext context;
+    private HttpServletRequest request;
 
 
     /**
      * Initialize our wrapper with the current HttpServletResponse and
      * ServletOutputStream.
      * 
-     * @param res
-     *            The HttpServletResponse to use
-     * @param out
-     *            The ServletOutputStream' to use
+     * @param context The servlet context
+     * @param request The HttpServletResponse to use
+     * @param response The response to use
+     * @param captureServletOutputStream The ServletOutputStream to use
      */
     public ResponseIncludeWrapper(ServletContext context, 
     		HttpServletRequest request, HttpServletResponse response,
@@ -145,7 +150,7 @@ public class ResponseIncludeWrapper extends HttpServletResponseWrapper {
     /**
      * Sets the value of the <code>last-modified</code> header field.
      *
-     * @param value The number of milliseconds since January 1, 1970 GMT.
+     * @param lastModified The number of milliseconds since January 1, 1970 GMT.
      */
     public void setLastModified(long lastModified) {
         this.lastModified = lastModified;

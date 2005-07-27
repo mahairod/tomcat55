@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -278,7 +278,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     }
 
     /**
-     * @param notifyLifecycleListenerOnFailure
+     * @param notifyListenerOnFailure
      *            The notifyLifecycleListenerOnFailure to set.
      */
     public void setNotifyLifecycleListenerOnFailure(
@@ -341,7 +341,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     /**
      * Add cluster valve 
      * Cluster Valves are only add to container when cluster is started!
-     * @param new cluster Valve.
+     * @param valve The new cluster Valve.
      */
     public void addValve(Valve valve) {
         if (valve instanceof ClusterValve)
@@ -473,7 +473,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * get current config
      * 
      * @param key
-     * @return
+     * @return The property
      */
     public Object getProperty(String key) {
         if (log.isTraceEnabled())
@@ -484,7 +484,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     /**
      * Get all properties keys
      * 
-     * @return
+     * @return An iterator over the property names.
      */
     public Iterator getPropertyNames() {
         return properties.keySet().iterator();
@@ -532,7 +532,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * @param name
      *            Context Name of this manager
      * @see org.apache.catalina.Cluster#createManager(java.lang.String)
-     * @see #addManager(String, ClusterManager)
+     * @see #addManager(String, Manager)
      * @see DeltaManager#start()
      */
     public synchronized Manager createManager(String name) {
@@ -1060,7 +1060,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * send a cluster message to one member
      * 
      * @param msg message to transfer
-     * @param des Receiver member
+     * @param dest Receiver member
      * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage,
      *      org.apache.catalina.cluster.Member)
      */
@@ -1263,10 +1263,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     // --------------------------------------------- JMX MBeans
 
     /**
-     * register Means at cluster
-     * 
-     * @param host
-     *            clustered host
+     * register Means at cluster.
      */
     protected void registerMBeans() {
         try {
@@ -1309,7 +1306,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     /**
      * Get current Catalina MBean Server and load mbean registry
      * 
-     * @return
+     * @return The server
      * @throws Exception
      */
     public MBeanServer getMBeanServer() throws Exception {

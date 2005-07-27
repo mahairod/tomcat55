@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -675,7 +675,7 @@ public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
     /**
      * Set the watcher checks frequency.
      * 
-     * @param processDeployFrequency
+     * @param processExpiresFrequency
      *            the new manager checks frequency
      */
     public void setProcessDeployFrequency(int processExpiresFrequency) {

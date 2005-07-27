@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 
 package org.apache.catalina.core;
-
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -1078,7 +1077,7 @@ public class StandardContext
      * If not absolute, it'll be made relative to the engine's base dir
      * ( which defaults to catalina.base system property ).
      *
-     * @param defaultWebXml The default web xml 
+     * @param defaultContextXml The default web xml 
      */
     public void setDefaultContextXml(String defaultContextXml) {
         this.defaultContextXml = defaultContextXml;

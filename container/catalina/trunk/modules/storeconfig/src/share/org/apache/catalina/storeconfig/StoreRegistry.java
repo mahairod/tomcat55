@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ public class StoreRegistry {
      * found.
      * 
      * @param id
-     * @return
+     * @return The description
      */
     public StoreDescription findDescription(String id) {
         if (log.isDebugEnabled())
@@ -130,7 +130,7 @@ public class StoreRegistry {
      * Find Description by class
      * 
      * @param aClass
-     * @return
+     * @return The description
      */
     public StoreDescription findDescription(Class aClass) {
         return findDescription(aClass.getName());
@@ -140,7 +140,7 @@ public class StoreRegistry {
      * Find factory from classname
      * 
      * @param aClassName
-     * @return
+     * @return The factory
      */
     public IStoreFactory findStoreFactory(String aClassName) {
         StoreDescription desc = findDescription(aClassName);
@@ -155,7 +155,7 @@ public class StoreRegistry {
      * find factory from class
      * 
      * @param aClass
-     * @return
+     * @return The factory
      */
     public IStoreFactory findStoreFactory(Class aClass) {
         return findStoreFactory(aClass.getName());
@@ -186,7 +186,7 @@ public class StoreRegistry {
     // Attributes
 
     /**
-     * @return
+     * @return The encoding
      */
     public String getEncoding() {
         return encoding;

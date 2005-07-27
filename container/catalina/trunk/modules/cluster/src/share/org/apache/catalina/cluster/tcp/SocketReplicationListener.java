@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ public class SocketReplicationListener extends ClusterReceiverBase {
     }
     
     /**
-     * @param tcpListenMaxPort The tcpListenMaxPort to set.
+     * @param maxListenPort The tcpListenMaxPort to set.
      */
     public void setTcpListenMaxPort(int maxListenPort) {
         this.tcpListenMaxPort = maxListenPort;
@@ -214,9 +214,9 @@ public class SocketReplicationListener extends ClusterReceiverBase {
 
     /**
      * Need to create a connection to unlock the ServerSocker#accept(). Very
-     * fine trick from channelSocket :-)
-     * 
-     * @see org.apache.jk.common.ChannelSocket#unLockSocket()
+     * fine trick from channelSocket :-)  See
+     * org.apache.jk.common.ChannelSocket's unLockSocket method (it's private,
+     * so you may need to inspect the source).
      */
     protected void unLockSocket() {
         Socket s = null;

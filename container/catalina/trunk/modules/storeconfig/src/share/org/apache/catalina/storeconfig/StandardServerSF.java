@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,8 @@ public class StandardServerSF extends StoreFactoryBase {
      * 
      * @param aWriter
      * @param indent
-     * @param server
+     * @param aObject
+     * @param parentDesc
      * @throws Exception
      */
     public void storeChilds(PrintWriter aWriter, int indent, Object aObject,

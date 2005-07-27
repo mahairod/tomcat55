@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.apache.catalina.cluster.util;
 import java.util.Iterator;
 
 /**
- *
  * @author Peter Rossbach
  * @version $Revision$, $Date$
  */
@@ -38,13 +37,13 @@ public interface IDynamicProperty {
      * get current config
      * 
      * @param key
-     * @return
+     * @return The property
      */
     public Object getProperty(String key) ;
     /**
      * Get all properties keys
      * 
-     * @return
+     * @return An iterator over the property names
      */
     public Iterator getPropertyNames() ;
 

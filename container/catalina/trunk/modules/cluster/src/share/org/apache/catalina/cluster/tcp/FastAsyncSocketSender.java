@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -128,7 +128,7 @@ public class FastAsyncSocketSender extends DataSender {
 
     /**
      * get current remove wait timeout
-     * @return
+     * @return The timeout
      */
     public long getQueueRemoveWaitTimeout() {
         return queue.getRemoveWaitTimeout();
@@ -187,8 +187,7 @@ public class FastAsyncSocketSender extends DataSender {
     }
 
     /**
-     * @param set max
-     *            Queue length
+     * @param length max queue length
      */
     public void setMaxQueueLength(int length) {
         queue.setMaxQueueLength(length);
@@ -257,13 +256,13 @@ public class FastAsyncSocketSender extends DataSender {
 
     /**
      * Get the current threadPriority
-     * @return
+     * @return The thread priority
      */
     public int getThreadPriority() {
         return threadPriority;
     }
 
-      /**
+    /**
      * @return Returns the queuedNrOfBytes.
      */
     public long getQueuedNrOfBytes() {
@@ -297,10 +296,9 @@ public class FastAsyncSocketSender extends DataSender {
     }
 
     /**
-     * Send message to queue for later sending
+     * Send message to queue for later sending.
      * 
-     * @see org.apache.catalina.cluster.tcp.IDataSender#sendMessage(java.lang.String,
-     *      ClusterData)
+     * @see org.apache.catalina.cluster.tcp.IDataSender#sendMessage(ClusterData)
      */
     public void sendMessage(String messageid, ClusterData data)
             throws java.io.IOException {

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,7 @@ import org.apache.commons.logging.Log;
  * @version $Revision$, $Date$
  */
 
-public interface CatalinaCluster
-    extends Cluster{
+public interface CatalinaCluster extends Cluster {
     // ----------------------------------------------------- Instance Variables
 
     /**
@@ -54,13 +53,15 @@ public interface CatalinaCluster
     public void stop() throws LifecycleException;
     
     /**
-     * Returns the associates logger with this cluster
+     * Returns the associates logger with this cluster.
+     *
      * @return Log
      */
     public Log getLogger();
     
     /**
-     * receive a message to all the members in the cluster
+     * receive a message to all the members in the cluster.
+     *
      * @param msg ClusterMessage
      */
     public void receive(ClusterMessage msg);
@@ -72,7 +73,8 @@ public interface CatalinaCluster
     public void send(ClusterMessage msg);
     
     /**
-     * Sends a message to a specific member in the cluster
+     * Sends a message to a specific member in the cluster.
+     *
      * @param msg ClusterMessage
      * @param dest Member
      */
@@ -80,18 +82,21 @@ public interface CatalinaCluster
     
     /**
      * Sends a message to a all members at local cluster domain
+     *
      * @param msg ClusterMessage
      */
-    public void sendClusterDomain(ClusterMessage message);
+    public void sendClusterDomain(ClusterMessage msg);
 
     /**
-     * returns all the members currently participating in the cluster
+     * Returns all the members currently participating in the cluster.
+     *
      * @return Member[]
      */
     public Member[] getMembers();
     
     /**
      * Return the member that represents this node.
+     *
      * @return Member
      */
     public Member getLocalMember();
@@ -119,9 +124,10 @@ public interface CatalinaCluster
     public ClusterDeployer getClusterDeployer();
     
     /**
-     * @return
+     * @return The map of managers
      */
     public Map getManagers();
+
     public Manager getManager(String name);
     public void removeManager(String name,Manager manager);
     public void addManager(String name,Manager manager);

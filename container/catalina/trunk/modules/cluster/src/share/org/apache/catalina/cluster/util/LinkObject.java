@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,9 @@ public class LinkObject {
     /**
      * Construct a new element from the data object.
      * Sets the pointer to null.
-     * @param Object payload The data object.
+     *
+     * @param key The key
+     * @param payload The data object.
      */
     public LinkObject(String key,Object payload) {
         this.payload = payload;
@@ -46,7 +48,7 @@ public class LinkObject {
 
     /**
      * Set the next element.
-     * @param LinkObject next The next element.
+     * @param next The next element.
      */
     public void append(LinkObject next) {
         this.next = next;
