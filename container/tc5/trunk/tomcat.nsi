@@ -162,7 +162,7 @@ Section "Core" SecTomcatCore
 
   InstallRetry:
   ClearErrors
-  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //IS//Tomcat5 --DisplayName "Apache Tomcat" --Description "Apache Tomcat @VERSION@ Server - http://jakarta.apache.org/tomcat/" --LogPath "$INSTDIR\logs" --Install "$INSTDIR\bin\tomcat5.exe" --Jvm "$2"--StartPath "$INSTDIR" --StopPath "$INSTDIR"'
+  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //IS//Tomcat5 --DisplayName "Apache Tomcat" --Description "Apache Tomcat @VERSION@ Server - http://jakarta.apache.org/tomcat/" --LogPath "$INSTDIR\logs" --Install "$INSTDIR\bin\tomcat5.exe" --Jvm "$2" --StartPath "$INSTDIR" --StopPath "$INSTDIR"'
   Pop $0
   StrCmp $0 "0" InstallOk
     MessageBox MB_ABORTRETRYIGNORE|MB_ICONSTOP \
