@@ -145,6 +145,13 @@ jdt.lib=${jdt.home}
 jdt.jar=${jdt.lib}/org.eclipse.jdt.core_3.1.0.jar
 jdt.loc=http://sunsite.informatik.rwth-aachen.de/eclipse/downloads/drops/R-3.1-200506271435/eclipse-JDT-3.1.zip
 
+
+# ----- Tomcat native library -----
+tomcat-native.home=${base.path}/tomcat-native-1.0
+tomcat-native.tar.gz=${tomcat-native.home}/tomcat-native.tar.gz
+tomcat-native.loc=${base-jakarta.loc}/tomcat-connectors/jni/tomcat-native.tar.gz
+
+
 # --------------------------------------------------
 #              CORE OPTIONAL LIBRARIES
 # --------------------------------------------------
