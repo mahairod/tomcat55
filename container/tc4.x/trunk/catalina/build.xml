@@ -23,6 +23,7 @@
   <property name="tomcat-util.home"       value="${jtc.home}/util"/>
   <property name="tomcat-coyote.home"     value="${jtc.home}/coyote"/>
   <property name="tomcat-jk.home"         value="${jtc.home}/jk"/>
+  <property name="tomcat-jni.home"        value="${jtc.home}/jni"/>
   <property name="tomcat-webapp.home"     value="${jtc.home}/webapp"/>
   <property name="tomcat-http11.home"     value="${jtc.home}/http11"/>
 
@@ -42,6 +43,8 @@
            value="${tomcat-jk.home}/build/lib/tomcat-jni.jar"/>
   <property name="jk2.properties"
            value="${tomcat-jk.home}/build/conf/jk2.properties"/>
+  <property name="tomcat-apr.jar"
+           value="${tomcat-jni.home}/dist/tomcat-native-1.0.0.jar"/>
   <property name="tomcat-warp.jar"
            value="${tomcat-webapp.home}/build/tomcat-warp.jar"/>
   <property name="tomcat-http11.jar"
@@ -791,13 +794,26 @@
   </target>
 
 
-  <!-- =================== BUILD: Build tomcat-util ======================= -->
-  <target name="build-tomcat-util">
+  <!-- =================== BUILD: Build tomcat-apr ======================== -->
+  <target name="build-tomcat-apr">
 
-    <ant dir="${tomcat-util.home}" target="build-main">
+    <ant dir="${tomcat-jni.home}" target="jar" inheritAll="false" >
+       <property name="version" value="1.0.0" />
+    </ant>
+
+  </target>
+
+
+  <!-- =================== BUILD: Build tomcat-util ======================= -->
+  <target name="build-tomcat-util" depends="build-tomcat-apr" >
+
+    <ant dir="${tomcat-util.home}" target="build-main" inheritAll="false" >
        <property name="jmx.jar" value="${jmx.jar}" />
        <property name="puretls.jar" value="${puretls.jar}" />
        <property name="jsse.lib" value="${jsse.lib}" />
+       <property name="commons-logging.jar" value="${commons-logging.jar}" />
+       <property name="commons-modeler.jar" value="${commons-modeler.jar}" />
+       <property name="skip.digester" value="true" />
     </ant>
 
     <copy todir="${catalina.build}/server/lib"
@@ -886,6 +902,7 @@
       <property name="commons-logging.jar" value="${commons-logging.jar}"/>
       <property name="jmx.jar" value="${jmx.jar}"/>
       <property name="servlet-api.jar" value="${servlet.jar}"/>
+      <property name="tomcat-apr.jar" value="${tomcat-apr.jar}"/>
     </ant>
 
     <copy todir="${catalina.deploy}/server/lib"
@@ -917,8 +934,25 @@
   <!-- ============== BUILD: Build tomcat-coyote-http11 =================== -->
   <target name="build-tomcat-http11">
 
+    <!-- Replace 1.4 regexp with jakarta-regexp -->
+    <replace file="${tomcat-http11.home}/src/java/org/apache/coyote/http11/Http11Processor.java">
+      <replacefilter
+             token="java.util.regex.Pattern"
+             value="org.apache.regexp.RE" />
+      <replacefilter
+             token="Pattern.compile"
+             value="new RE" />
+      <replacefilter
+             token="Pattern"
+             value="RE" />
+      <replacefilter
+             token="matcher(userAgentValue).matches()"
+             value="match(userAgentValue)" />
+    </replace>
+
     <ant dir="${tomcat-http11.home}" target="compile">
       <property name="commons-logging.jar" value="${commons-logging.jar}"/>
+      <property name="tomcat-jni.jar" value="${tomcat-apr.jar}"/>
     </ant>
 
     <copy todir="${catalina.deploy}/server/lib"
@@ -957,6 +991,7 @@
     <ant dir="${tomcat-util.home}" target="clean"/>
     <ant dir="${tomcat-coyote.home}" target="clean"/>
     <ant dir="${tomcat-jk.home}" target="clean"/>
+    <ant dir="${tomcat-jni.home}" target="clean"/>
     <ant dir="${tomcat-webapp.home}" target="clean"/>
     <ant dir="${tomcat-http11.home}" target="clean"/>
 
