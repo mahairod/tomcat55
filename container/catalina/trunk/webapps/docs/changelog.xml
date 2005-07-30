@@ -32,6 +32,12 @@
       <update>
         Update to Xerces 2.7.1 (remm)
       </update>
+      <add>
+        Add ready to build bin/tomcat-native.tar.gz for the APR JNI wrapper library (remm)
+      </add>
+      <fix>
+        <bug>35930</bug>: Bad logging config used by the Tomcat Windows service (remm)
+      </fix>
     </changelog>
   </subsection>
   
@@ -71,6 +77,13 @@
       </fix>
       <fix>
         Fix output buffering for APR AJP implementation. (remm)
+      </fix>
+      <fix>
+        <bug>35941</bug>: Fix getRemoteAddr for APR AJP implementation. (remm)
+      </fix>
+      <fix>
+        <bug>35942</bug>: Fix NPE retriving cipher suite attribute when no certificate 
+        was submitted (for example with no SSL). (remm)
       </fix>
      </changelog>
   </subsection>
