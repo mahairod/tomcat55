@@ -109,6 +109,12 @@
     <subsection name="HTTP">
     
     <p>
+      When APR is enabled, the HTTP connector will use sendfile for hadling large static files (all such
+      files will be sent ansychronously using high performance kernel level calls), and will use 
+      a socket poller for keepalive, increasing scalability of the server.
+    </p>
+
+    <p>
       The following attributes are supported in the HTTP APR connector in addition to the ones supported
       in the regular HTTP connector:
     </p>
@@ -154,6 +160,14 @@
 	
     <subsection name="HTTPS">
     
+    <p>
+      When APR is enabled, the HTTPS connector will use a socket poller for keepalive, increasing 
+      scalability of the server. It also uses OpenSSL, which may be more optimized than JSSE depending
+      on the processor being used, and can be complemented with many commercial accelerator components.
+      Unlike the HTTP connector, the HTTPS connector cannot use sendfile to optimize static file
+      processing.
+    </p>
+
     <p>
       The HTTPS APR connector has the same basic attributes than the HTTP APR connector, but adds 
       OpenSSL specific ones. For the full details on using OpenSSL, please refer to OpenSSL documentations
@@ -217,6 +231,14 @@
 	
     <subsection name="AJP">
     
+    <p>
+      When APR is enabled, the AJP connector will use a socket poller for keepalive, increasing 
+      scalability of the server. As AJP is designed around a pool of persistent (or almost
+      persistent) connections, this will reduce significantly the amount of processing threads 
+      needed by Tomcat. Unlike the HTTP connector, the AJP connector cannot use sendfile to optimize
+      static file processing.
+    </p>
+
     <p>
       The following attributes are supported in the AJP APR connector in addition to the ones supported
       in the regular AJP connector:
