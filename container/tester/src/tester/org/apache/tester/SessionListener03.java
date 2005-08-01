@@ -56,7 +56,6 @@ public class SessionListener03
     public void valueUnbound(HttpSessionBindingEvent event) {
         event.getSession().getServletContext().log
             ("SessionListener03: valueUnbound(" +
-             event.getSession().getId() + "," +
              event.getName() + ")");
     }
 
