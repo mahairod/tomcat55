@@ -1,0 +1,5 @@
+*** WARNING.txt ***
+As of 1st August 2005, the jakarta-watchdog-4.0 CVS repository is closed.
+
+The repository has been migrated to Subversion
+(http://svn.apache.org/repos/asf/tomcat).
