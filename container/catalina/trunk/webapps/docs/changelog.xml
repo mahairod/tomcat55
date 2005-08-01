@@ -85,6 +85,9 @@
         <bug>35942</bug>: Fix NPE retriving cipher suite attribute when no certificate 
         was submitted (for example with no SSL). (remm)
       </fix>
+      <fix>
+        Internationalization and code cleanups for APR AJP implementation. (remm)
+      </fix>
      </changelog>
   </subsection>
 
