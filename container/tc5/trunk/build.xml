@@ -158,7 +158,8 @@
     <copy todir="${tomcat.build}/bin" file="${commons-daemon.jsvc.tar.gz}" 
             failonerror="false" />
 
-    <copy todir="${tomcat.build}/bin" file="${tomcat-native.tar.gz}" />
+    <copy tofile="${tomcat.build}/bin/tomcat-native.tar.gz"
+    	    file="${tomcat-native.tar.gz}" />
   	
     <!-- <copy todir="${tomcat.build}/common/lib" file="${ant.jar}"/>
     <copy todir="${tomcat.build}/common/lib" file="${ant-launcher.jar}"/> -->
