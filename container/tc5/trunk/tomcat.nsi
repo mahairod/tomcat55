@@ -13,7 +13,7 @@
   ;Product information
   VIAddVersionKey ProductName "Apache Tomcat"
   VIAddVersionKey CompanyName "Apache Software Foundation"
-  VIAddVersionKey LegalCopyright "Copyright (c) 1999-2004 The Apache Software Foundation"
+  VIAddVersionKey LegalCopyright "Copyright (c) 1999-2005 The Apache Software Foundation"
   VIAddVersionKey FileDescription "Apache Tomcat Installer"
   VIAddVersionKey FileVersion "2.0"
   VIAddVersionKey ProductVersion "@VERSION@"
@@ -68,6 +68,7 @@ ${StrRep}
   Page custom SetConfiguration Void "$(TEXT_CONF_PAGETITLE)"
   Page custom SetChooseJVM Void "$(TEXT_JVM_PAGETITLE)"
   !insertmacro MUI_PAGE_INSTFILES
+  Page custom CheckUserType
   !insertmacro MUI_PAGE_FINISH
 
   ;Uninstall Page order
@@ -362,6 +363,37 @@ FunctionEnd
 ;  !insertmacro MUI_DESCRIPTION_TEXT ${SecAdmin} $(DESC_SecAdmin)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecWebapps} $(DESC_SecWebapps)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
+
+
+; =====================
+; CheckUserType Function
+; =====================
+;
+; Check the user type, and warn if it's not an administrator.
+; Taken from Examples/UserInfo that ships with NSIS.
+Function CheckUserType
+  ClearErrors
+  UserInfo::GetName
+  IfErrors Win9x
+  Pop $0
+  UserInfo::GetAccountType
+  Pop $1
+  StrCmp $1 "Admin" 0 +3
+    ; This is OK, do nothing
+    Goto done
+
+    MessageBox MB_OK|MB_ICONEXCLAMATION 'Note: the current user is not an administrator. \
+               To run Tomcat as a Windows service, you must be an administrator. \
+               You can still run Tomcat from the command-line as this type of user.'
+    Goto done
+
+  Win9x:
+    # This one means you don't need to care about admin or
+    # not admin because Windows 9x doesn't either
+    MessageBox MB_OK "Error! This DLL can't run under Windows 9x!"
+
+  done:
+FunctionEnd
 
 
 ; =====================
