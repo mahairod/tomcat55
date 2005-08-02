@@ -1445,6 +1445,7 @@
     </copy>
     <copy file="${nsis.installoptions.dll}" todir="${tomcat.dist}" />
     <copy file="${nsis.nsexec.dll}" todir="${tomcat.dist}" />
+    <copy file="${nsis.nsisdl.dll}" todir="${tomcat.dist}" />
     <copy file="${jtc.home}/procrun/bin/tomcat5.exe" 
         tofile="${tomcat.dist}/bin/tomcat5.exe" />
     <copy file="${jtc.home}/procrun/bin/tomcat5w.exe" 
@@ -1581,6 +1582,7 @@
         <available file="${nsis.exe}" />
         <available file="${nsis.installoptions.dll}" />
         <available file="${nsis.nsexec.dll}" />
+        <available file="${nsis.nsisdl.dll}" />
       </and>
     </condition>
 

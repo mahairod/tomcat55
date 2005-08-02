@@ -83,6 +83,7 @@ ${StrRep}
     LangString DESC_SecTomcat ${LANG_ENGLISH} "Install the Tomcat Servlet container."
     LangString DESC_SecTomcatCore ${LANG_ENGLISH} "Install the Tomcat Servlet container core."
     LangString DESC_SecTomcatService ${LANG_ENGLISH} "Automatically start Tomcat when the computer is started. This requires Windows NT 4.0, Windows 2000 or Windows XP."
+    LangString DESC_SecTomcatNative ${LANG_ENGLISH} "Downloads and installs Tomcat native .dll for better performance and scalability in production environments."
 ;    LangString DESC_SecTomcatSource ${LANG_ENGLISH} "Install the Tomcat source code."
     LangString DESC_SecMenu ${LANG_ENGLISH} "Create a Start Menu program group for Tomcat."
     LangString DESC_SecDocs ${LANG_ENGLISH} "Install the Tomcat documentation bundle. This include documentation on the servlet container and its configuration options, on the Jasper JSP page compiler, as well as on the native webserver connectors."
@@ -193,6 +194,21 @@ Section "Service" SecTomcatService
   nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --Startup auto'
   ; Bahave like Apache Httpd (put the icon in try on login)
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Run" "ApacheTomcatMonitor" '"$INSTDIR\bin\tomcat5w.exe" //MS//Tomcat5'
+
+  ClearErrors
+
+SectionEnd
+
+Section "Native" SecTomcatNative
+
+  SectionIn 3
+
+  NSISdl::download /TIMEOUT=30000 http://blabla/tcnative-1-1.1.0.dll $INSTDIR\bin\tcnative-1.dll
+  Pop $0
+  StrCmp $0 success success
+    SetDetailsView show
+    DetailPrint "download failed from http://blabla/tcnative-1-1.1.0.dll: $0"
+  success:
 
   ClearErrors
 
@@ -355,6 +371,7 @@ FunctionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcat} $(DESC_SecTomcat)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatCore} $(DESC_SecTomcatCore)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatService} $(DESC_SecTomcatService)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatNative} $(DESC_SecTomcatNative)
 ;  !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatSource} $(DESC_SecTomcatSource)
 ;  !insertmacro MUI_DESCRIPTION_TEXT ${SecCompat} $(DESC_SecCompat)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecMenu} $(DESC_SecMenu)
