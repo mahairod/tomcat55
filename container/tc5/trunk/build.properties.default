@@ -42,6 +42,9 @@ compile.optimize=off
 cvsroot=:pserver:anoncvs@cvs.apache.org:/home/cvspublic
 
 # ----- Default Base Path for Dependent Packages -----
+# Please note this path must be absolute, not relative,
+# as it is referenced with different working directory
+# contexts by the various build scripts.
 base.path=/usr/share/java
 #base.path=C:/path/to/the/repository
 #base.path=/usr/local
