@@ -53,12 +53,15 @@
           the JDK 1.4 JavaDoc tool. (yoavs)
       </fix>
       <fix>
-        <bug>35865</bug>: setclasspath.sh cannot be excutive under cygwin (funkman)
+        <bug>35865</bug>: setclasspath.sh cannot be excutive under cygwin. (funkman)
       </fix>
       <fix>
         <bug>33267</bug>: Set working path in service installer, as suggested by Dominik
           Drzewiecki. (yoavs)
       </fix>
+      <update>
+        <bug>34794</bug>: Update connector documentation to include clientAuth attribute. (yoavs)
+      </update>
     </changelog>
   </subsection>
   
