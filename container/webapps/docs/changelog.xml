@@ -38,6 +38,9 @@
       <fix>
         <bug>35930</bug>: Bad logging config used by the Tomcat Windows service (remm)
       </fix>
+      <add>
+        <bug>33261</bug>: Windows installer now checks the user type and warns non-admins as needed. (yoavs)
+      </add>
     </changelog>
   </subsection>
   
