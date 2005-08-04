@@ -17,7 +17,6 @@
 package org.apache.catalina.ssi;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import javax.servlet.ServletOutputStream;
 
 
