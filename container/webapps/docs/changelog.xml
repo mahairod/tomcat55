@@ -41,6 +41,10 @@
       <add>
         <bug>33261</bug>: Windows installer now checks the user type and warns non-admins as needed. (yoavs)
       </add>
+      <update>
+        The Windows installer will now optionally download a (32bit) Windows .dll for Tomcat native
+        from HEAnet (remm)
+      </update>
     </changelog>
   </subsection>
   
@@ -67,6 +71,9 @@
       </update>
       <fix>
         <bug>35894</bug>: Fix CNFE when starting in a sandbox. (billbarker)
+      </fix>
+      <fix>
+        Add version check for Tomcat native so that incompatible API changes are detected early (remm)
       </fix>
     </changelog>
   </subsection>
@@ -96,6 +103,10 @@
       </fix>
       <fix>
         Internationalization and code cleanups for APR AJP implementation. (remm)
+      </fix>
+      <fix>
+        Security exception in APR AJP implementation when running with the security
+        manager enabled. (remm)
       </fix>
      </changelog>
   </subsection>
