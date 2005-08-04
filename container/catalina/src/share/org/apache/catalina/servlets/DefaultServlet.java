@@ -809,7 +809,12 @@ public class DefaultServlet
                 if (debug > 0)
                     log("DefaultServlet.serveFile:  contentLength=" +
                         contentLength);
-                response.setContentLength((int) contentLength);
+                if (contentLength < Integer.MAX_VALUE) {
+                    response.setContentLength((int) contentLength);
+                } else {
+                    // Set the content-length as String to be able to use a long
+                    response.setHeader("content-length", "" + contentLength);
+                }
             }
 
             InputStream renderResult = null;
@@ -854,7 +859,13 @@ public class DefaultServlet
                                    + range.start
                                    + "-" + range.end + "/"
                                    + range.length);
-                response.setContentLength((int) (range.end - range.start + 1));
+                long length = range.end - range.start + 1;
+                if (length < Integer.MAX_VALUE) {
+                    response.setContentLength((int) length);
+                } else {
+                    // Set the content-length as String to be able to use a long
+                    response.setHeader("content-length", "" + length);
+                }
 
                 if (contentType != null) {
                     if (debug > 0)
