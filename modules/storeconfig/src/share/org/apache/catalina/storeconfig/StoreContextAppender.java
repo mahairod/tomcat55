@@ -18,8 +18,6 @@ package org.apache.catalina.storeconfig;
 import java.io.File;
 import java.io.IOException;
 
-import javax.print.DocPrintJob;
-
 import org.apache.catalina.Container;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
