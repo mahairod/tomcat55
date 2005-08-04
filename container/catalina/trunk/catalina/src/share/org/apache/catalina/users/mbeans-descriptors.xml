@@ -159,6 +159,17 @@
                  type="[Ljava.lang.String;"
             writeable="false"/>
 
+    <attribute   name="readonly"
+          description="No persistant save of the user database"
+                 type="boolean"
+            writeable="false"/>
+
+    <attribute   name="writeable"
+          description="Check if user database is writeable"
+               impact="INFO"
+                   is="true"
+           writeable="false"/>
+
     <operation   name="createGroup"
           description="Create new group and return MBean name"
                impact="ACTION"
@@ -250,17 +261,6 @@
       <parameter name="username"
           description="User name of the user to remove"
                  type="java.lang.String"/>
-    </operation>
-
-    <attribute   name="readonly"
-          description="No persistant save of the user database"
-                 type="boolean"
-            writeable="false"/>
-
-    <operation   name="isPersistable"
-          description="Check if user database is writable"
-               impact="INFO"
-           returnType="boolean">
     </operation>
 
     <operation   name="save"
