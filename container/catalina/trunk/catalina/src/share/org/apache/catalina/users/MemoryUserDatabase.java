@@ -31,6 +31,8 @@ import org.apache.catalina.Role;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomcat.util.digester.ObjectCreationFactory;
 import org.xml.sax.Attributes;
@@ -48,6 +50,8 @@ import org.xml.sax.Attributes;
 
 public class MemoryUserDatabase implements UserDatabase {
 
+
+    private static Log log = LogFactory.getLog(MemoryUserDatabase.class);
 
     // ----------------------------------------------------------- Constructors
 
@@ -111,6 +115,11 @@ public class MemoryUserDatabase implements UserDatabase {
      */
     protected String pathnameNew = pathname + ".new";
 
+
+    /**
+     * A flag, indicating if the user database is read only.
+     */
+    protected boolean readonly = false;
 
     /**
      * The set of {@link Role}s defined in this database, keyed by
@@ -178,6 +187,28 @@ public class MemoryUserDatabase implements UserDatabase {
         this.pathname = pathname;
         this.pathnameOld = pathname + ".old";
         this.pathnameNew = pathname + ".new";
+
+    }
+
+
+    /**
+     * Returning the readonly status of the user database
+     */
+    public boolean getReadonly() {
+
+        return (this.readonly);
+
+    }
+
+
+    /**
+     * Setting the readonly status of the user database
+     *
+     * @param pathname The new pathname
+     */
+    public void setReadonly(boolean readonly) {
+
+        this.readonly = readonly;
 
     }
 
@@ -442,12 +473,39 @@ public class MemoryUserDatabase implements UserDatabase {
 
 
     /**
+     * Check for permissions to save this user database
+     * to persistent storage location
+     *
+     */
+    public boolean isPersistable() {
+
+        File file = new File(pathname);
+        if (!file.isAbsolute()) {
+            file = new File(System.getProperty("catalina.base"),
+                            pathname);
+        }
+        File dir = file.getParentFile();
+        return dir.exists() && dir.isDirectory() && dir.canWrite();
+
+    }
+
+
+    /**
      * Save any updated information to the persistent storage location for
      * this user database.
      *
      * @exception Exception if any exception is thrown during saving
      */
     public void save() throws Exception {
+
+        if ( getReadonly() ) {
+            return;
+        }
+
+        if ( ! isPersistable() ) {
+            log.warn(sm.getString("memoryUserDatabase.notPersistable"));
+            return;
+        }
 
         // Write out contents to a temporary file
         File fileNew = new File(pathnameNew);

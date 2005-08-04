@@ -252,6 +252,17 @@
                  type="java.lang.String"/>
     </operation>
 
+    <attribute   name="readonly"
+          description="No persistant save of the user database"
+                 type="boolean"
+            writeable="false"/>
+
+    <operation   name="isPersistable"
+          description="Check if user database is writable"
+               impact="INFO"
+           returnType="boolean">
+    </operation>
+
     <operation   name="save"
           description="Save current users and groups to persistent storage"
                impact="ACTION"

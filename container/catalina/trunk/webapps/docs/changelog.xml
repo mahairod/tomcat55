@@ -75,6 +75,10 @@
       <fix>
         Add version check for Tomcat native so that incompatible API changes are detected early (remm)
       </fix>
+      <fix>
+        <bug>36020</bug>: Allow MemoryUserDatabase to work better on write protected mediums,
+        submitted by Rainer Jung (remm)
+      </fix>
     </changelog>
   </subsection>
   
