@@ -477,7 +477,7 @@ public class MemoryUserDatabase implements UserDatabase {
      * to persistent storage location
      *
      */
-    public boolean isPersistable() {
+    public boolean isWriteable() {
 
         File file = new File(pathname);
         if (!file.isAbsolute()) {
@@ -498,11 +498,11 @@ public class MemoryUserDatabase implements UserDatabase {
      */
     public void save() throws Exception {
 
-        if ( getReadonly() ) {
+        if (getReadonly()) {
             return;
         }
 
-        if ( ! isPersistable() ) {
+        if (!isWriteable()) {
             log.warn(sm.getString("memoryUserDatabase.notPersistable"));
             return;
         }
