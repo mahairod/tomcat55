@@ -43,7 +43,6 @@ public final class SecurityClassLoad {
         loadJavaxPackage(loader);
         loadCoyotePackage(loader);        
         loadHttp11Package(loader);        
-        loadJkPackage(loader);
     }
     
     
@@ -198,15 +197,5 @@ public final class SecurityClassLoad {
              "Response$3");
     }
 
-    private final static void loadJkPackage(ClassLoader loader)
-        throws Exception {
-        String basePackage = "org.apache.jk.";
-        loader.loadClass
-            (basePackage +
-             "server.JkCoyoteHandler$1");
-        loader.loadClass
-            (basePackage +
-             "server.JkCoyoteHandler$StatusLinePrivilegedAction");
-    }
 }
 
