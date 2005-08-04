@@ -65,6 +65,9 @@
       <update>
         <bug>34794</bug>: Update connector documentation to include clientAuth attribute. (yoavs)
       </update>
+      <fix>
+        <bug>35894</bug>: Fix CNFE when starting in a sandbox. (billbarker)
+      </fix>
     </changelog>
   </subsection>
   
