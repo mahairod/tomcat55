@@ -66,6 +66,10 @@ public class Response
 
     // ----------------------------------------------------------- Constructors
 
+    static {
+        // Ensure that URL is loaded for SM
+        URL.isSchemeChar('c');
+    }
 
     public Response() {
         urlEncoder.addSafeCharacter('/');
