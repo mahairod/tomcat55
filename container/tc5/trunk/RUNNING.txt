@@ -72,9 +72,9 @@ subdirectory of your source distribution.
 
 
 
-===========================================
-Running Tomcat With J2SE Version 1.4 or 1.3
-===========================================
+====================================
+Running Tomcat With J2SE Version 1.4
+====================================
 
 (1) Obtain the compat package:
 
@@ -93,9 +93,9 @@ Running Tomcat With J2SE Version 1.4 or 1.3
     server as if you were using J2SE 5.0.
 
 
-====================================================
+==================================================
 Advanced Configuration - Multiple Tomcat Instances
-====================================================
+==================================================
 
 In many circumstances, it is desirable to have a single copy of a Tomcat
 binary distribution shared among multiple users on the same server.  To make
