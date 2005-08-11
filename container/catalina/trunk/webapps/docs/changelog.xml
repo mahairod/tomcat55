@@ -121,6 +121,10 @@
 
   <subsection name="Jasper">
     <changelog>
+      <fix>
+        <bug>36127</bug>: Validation compatibility with Xerces 2.7.1, submitted 
+        by Florent Benoit (remm)
+      </fix>
     </changelog>
   </subsection>
   
