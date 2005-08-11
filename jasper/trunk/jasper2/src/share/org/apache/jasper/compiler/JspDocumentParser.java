@@ -1370,10 +1370,11 @@ class JspDocumentParser
         factory.setFeature(
             "http://xml.org/sax/features/namespace-prefixes",
             true);
-        factory.setFeature(
-            "http://xml.org/sax/features/validation",
-            validating);
-
+        factory.setValidating(validating);
+        //factory.setFeature(
+        //    "http://xml.org/sax/features/validation",
+        //    validating);
+        
         // Configure the parser
         SAXParser saxParser = factory.newSAXParser();
         XMLReader xmlReader = saxParser.getXMLReader();
