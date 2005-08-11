@@ -439,7 +439,7 @@ if ( cxt == null ) {
 
 DataSource ds = (DataSource) cxt.lookup( "java:/comp/env/jdbc/postgres" );
 
-if ( cxt == null ) {
+if ( ds == null ) {
    throw new Exception("Data source not found!");
 }
 </source>
