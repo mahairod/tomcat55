@@ -45,6 +45,9 @@
         The Windows installer will now optionally download a (32bit) Windows .dll for Tomcat native
         from HEAnet (remm)
       </update>
+      <fix>
+        Declaration of jspc Ant task to fix the deployer package (remm)
+      </fix>
     </changelog>
   </subsection>
   
