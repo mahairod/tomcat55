@@ -9,6 +9,7 @@ start=org.apache.catalina.ant.StartTask
 stop=org.apache.catalina.ant.StopTask
 undeploy=org.apache.catalina.ant.UndeployTask
 validator=org.apache.catalina.ant.ValidatorTask
+
 #Jk Task
 jkstatus=org.apache.catalina.ant.JKStatusUpdateTask
 
@@ -17,3 +18,5 @@ jmxManagerSet=org.apache.catalina.ant.JMXSetTask
 jmxManagerGet=org.apache.catalina.ant.JMXGetTask
 jmxManagerQuery=org.apache.catalina.ant.JMXQueryTask
 
+# Jasper tasks
+jasper2=org.apache.jasper.JspC
