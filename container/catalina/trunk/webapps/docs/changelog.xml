@@ -119,6 +119,10 @@
         Security exception in APR AJP implementation when running with the security
         manager enabled. (remm)
       </fix>
+      <fix>
+        <bug>36173</bug>: Add missing sync in FastHttpDateFormat.formatDate, submitted 
+        by Alexei (remm)
+      </fix>
      </changelog>
   </subsection>
 
