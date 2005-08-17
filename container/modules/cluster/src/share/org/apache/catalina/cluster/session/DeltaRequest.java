@@ -30,14 +30,20 @@ import java.io.Externalizable;
 import java.security.Principal;
 import java.util.LinkedList;
 
-import org.apache.catalina.Realm;
 import org.apache.catalina.realm.GenericPrincipal;
+import org.apache.catalina.util.StringManager;
 
 
 public class DeltaRequest implements Externalizable {
 
     public static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( DeltaRequest.class );
+
+    /**
+     * The string manager for this package.
+     */
+    protected static StringManager sm = StringManager
+            .getManager(Constants.Package);
 
     public static final int TYPE_ATTRIBUTE = 0;
     public static final int TYPE_PRINCIPAL = 1;
@@ -83,14 +89,22 @@ public class DeltaRequest implements Externalizable {
         addAction(TYPE_MAXINTERVAL,action,NAME_MAXINTERVAL,new Integer(interval));
     }
     
+    /**
+     * convert principal at SerializablePrincipal for backup nodes.
+     * Only support principals from type {@link GenericPrincipal GenericPrincipal}
+     * @param p Session principal
+     * @see GenericPrincipal
+     */
     public void setPrincipal(Principal p) {
         int action = (p==null)?ACTION_REMOVE:ACTION_SET;
         SerializablePrincipal sp = null;
         if ( p != null ) {
-            if(p instanceof GenericPrincipal)
+            if(p instanceof GenericPrincipal) {
                 sp = SerializablePrincipal.createPrincipal((GenericPrincipal)p);
-            else
-                log.error("Only principal class GenericPrincipal currently supported use MemoryRealm" );
+                if(log.isDebugEnabled())
+                    log.debug(sm.getString("deltaRequest.showPrincipal", p.getName() , getSessionId()));
+            } else
+                log.error(sm.getString("deltaRequest.wrongPrincipalClass",p.getClass().getName()));
         }
         addAction(TYPE_PRINCIPAL,action,NAME_PRINCIPAL,sp);
     }
