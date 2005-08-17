@@ -73,7 +73,7 @@
         <bug>34794</bug>: Update connector documentation to include clientAuth attribute. (yoavs)
       </update>
       <fix>
-        <bug>35894</bug>: Fix CNFE when starting in a sandbox. (billbarker)
+        <bug>35894</bug>, <bug>36228</bug>: Fix CNFE when starting in a sandbox. (billbarker, remm)
       </fix>
       <fix>
         Add version check for Tomcat native so that incompatible API changes are detected early (remm)
@@ -121,7 +121,7 @@
       </fix>
       <fix>
         <bug>36173</bug>: Add missing sync in FastHttpDateFormat.formatDate, submitted 
-        by Alexei (remm)
+        by Alexei Krainiouk (remm)
       </fix>
      </changelog>
   </subsection>
