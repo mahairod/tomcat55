@@ -624,10 +624,12 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      * @param msg Session message
      */
     protected void send(SessionMessage msg) {
-        if(isSendClusterDomainOnly())
-            cluster.sendClusterDomain(msg);
-        else
-            cluster.send(msg);
+        if(cluster != null) {
+            if(isSendClusterDomainOnly())
+                cluster.sendClusterDomain(msg);
+            else
+                cluster.send(msg);
+        }
     }
 
     /**
@@ -1128,7 +1130,6 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         if (log.isDebugEnabled())
             log.debug(sm.getString("deltaManager.stopped", getName()));
 
-        getCluster().removeManager(getName(),this);
 
         // Validate and update our current component state
         if (!started)
@@ -1154,7 +1155,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
 
         // Require a new random number generator if we are restarted
         this.random = null;
-
+        getCluster().removeManager(getName(),this);
         if (initialized) {
             destroy();
         }
