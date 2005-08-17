@@ -9,7 +9,7 @@ Please follow the directions below for updating the website.
 ***NOTE***
 
 The Tomcat web site is based on .xml files which are transformed
-into .html files using XLST and Ant. 
+into .html files using XSLT and Ant. 
 
 In order to make modifications to the Tomcat web site, you need
 to first check out the jakarta-tomcat-site modules from CVS:

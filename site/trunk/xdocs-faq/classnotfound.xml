@@ -23,9 +23,9 @@
         <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/class-loader-howto.html">
           Tomcat 4.1</a>,
         <a href="http://jakarta.apache.org/tomcat/tomcat-5.0-doc/class-loader-howto.html">
-          Tocmat 5.0</a>,
+          Tomcat 5.0</a>,
         <a href="http://jakarta.apache.org/tomcat/tomcat-5.5-doc/class-loader-howto.html">
-          Tocmat 5.5</a>.
+          Tomcat 5.5</a>.
       </li>
       <li>
          <a href="http://marc.theaimsgroup.com/?t=104317529200004&amp;r=1&amp;w=2">
@@ -67,8 +67,8 @@
       </li>
     </ul>
     If you get a
-    <code>NoClassDefFoundError</code> exception, the root might be the
-    same reason as a <code>ClassNotFound</code> exception.
+    <code>NoClassDefFoundError</code> exception, the root cause might be the
+    same as for a <code>ClassNotFound</code> exception.
 </section>
 
 <section name="Questions">
