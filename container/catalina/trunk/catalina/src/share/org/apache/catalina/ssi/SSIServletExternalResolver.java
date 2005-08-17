@@ -244,7 +244,7 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
                             uriEncoding =
                                 ((Request)req).getConnector().getURIEncoding();
                             useBodyEncodingForURI = ((Request)req)
-							        .getConnector().getUseBodyEncodingForURI();
+                                    .getConnector().getUseBodyEncodingForURI();
                         }
                 
                         // If valid, apply settings from request / connector
@@ -394,7 +394,7 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
 
     protected ServletContextAndPath getServletContextAndPathFromVirtualPath(
             String virtualPath) throws IOException {
-        String path = null;
+
         if (!virtualPath.startsWith("/") && !virtualPath.startsWith("\\")) {
             return new ServletContextAndPath(context,
                     getAbsolutePath(virtualPath));
@@ -475,16 +475,24 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
     public long getFileLastModified(String path, boolean virtual)
             throws IOException {
         long lastModified = 0;
-        URLConnection urlConnection = getURLConnection(path, virtual);
-        lastModified = urlConnection.getLastModified();
+        try {
+            URLConnection urlConnection = getURLConnection(path, virtual);
+            lastModified = urlConnection.getLastModified();
+        } catch (IOException e) {
+            // Ignore this. It will always fail for non-file based includes
+        }
         return lastModified;
     }
 
 
     public long getFileSize(String path, boolean virtual) throws IOException {
         long fileSize = -1;
-        URLConnection urlConnection = getURLConnection(path, virtual);
-        fileSize = urlConnection.getContentLength();
+        try {
+            URLConnection urlConnection = getURLConnection(path, virtual);
+            fileSize = urlConnection.getContentLength();
+        } catch (IOException e) {
+            // Ignore this. It will always fail for non-file based includes
+        }
         return fileSize;
     }
 

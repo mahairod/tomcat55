@@ -34,7 +34,6 @@ public class ExpressionTokenizer {
     public static final int TOKEN_LT = 11;
     public static final int TOKEN_END = 12;
     private char[] expr;
-    private int tokenType = TOKEN_STRING;
     private String tokenVal = null;
     private int index;
     private int length;

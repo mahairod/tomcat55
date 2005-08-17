@@ -33,7 +33,6 @@ public final class SSIFlastmod implements SSICommand {
             String[] paramNames, String[] paramValues, PrintWriter writer) {
     	long lastModified = 0;
         String configErrMsg = ssiMediator.getConfigErrMsg();
-        StringBuffer buf = new StringBuffer();
         for (int i = 0; i < paramNames.length; i++) {
             String paramName = paramNames[i];
             String paramValue = paramValues[i];
