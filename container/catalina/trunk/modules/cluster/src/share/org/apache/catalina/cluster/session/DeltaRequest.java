@@ -26,9 +26,11 @@ package org.apache.catalina.cluster.session;
  * @version 1.0
  */
 
-import java.util.LinkedList;
 import java.io.Externalizable;
 import java.security.Principal;
+import java.util.LinkedList;
+
+import org.apache.catalina.Realm;
 import org.apache.catalina.realm.GenericPrincipal;
 
 
@@ -80,12 +82,15 @@ public class DeltaRequest implements Externalizable {
         int action = ACTION_SET;
         addAction(TYPE_MAXINTERVAL,action,NAME_MAXINTERVAL,new Integer(interval));
     }
-
+    
     public void setPrincipal(Principal p) {
         int action = (p==null)?ACTION_REMOVE:ACTION_SET;
         SerializablePrincipal sp = null;
         if ( p != null ) {
-            sp = SerializablePrincipal.createPrincipal((GenericPrincipal)p);
+            if(p instanceof GenericPrincipal)
+                sp = SerializablePrincipal.createPrincipal((GenericPrincipal)p);
+            else
+                log.error("Only principal class GenericPrincipal currently supported use MemoryRealm" );
         }
         addAction(TYPE_PRINCIPAL,action,NAME_PRINCIPAL,sp);
     }
