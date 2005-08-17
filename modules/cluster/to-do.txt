@@ -101,10 +101,13 @@ Next actions
 
 ================
 problems
-================   
+================
+- MemoryUser principal from UserDatabaseRealm not handled to replicated 
+	- look inside DeltaRequest.setPrincipal(Principal,boolean)
+		 detected by Dirk de Kok (tomdev 16.8.2005)
+	- only GenericPrincipal from all other realms are handled well.
 - We not set SimpleTcpCluster Properties when element exists inside config.
-	Element must have all properties!! - Note inside docs!!   
-			
+	Element must have all properties!! - Note inside docs!!  
 - How we can stop the request traffic when restart an application?
     currently the jk 1.2.10 can only disable the complete loadbalancer,
     but this detect only the new session request desicion.
