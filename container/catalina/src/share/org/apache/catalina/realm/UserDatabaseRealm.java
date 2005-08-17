@@ -19,7 +19,9 @@ package org.apache.catalina.realm;
 
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.naming.Context;
 
@@ -30,6 +32,7 @@ import org.apache.catalina.ServerFactory;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.users.MemoryUser;
 import org.apache.catalina.util.StringManager;
 
 
@@ -200,8 +203,29 @@ public class UserDatabaseRealm
      */
     protected Principal getPrincipal(String username) {
 
-        return (database.findUser(username));
-
+        Principal principal = database.findUser(username);
+        if(principal instanceof GenericPrincipal)
+            return principal ;
+        
+        List roles = new ArrayList();
+        if(principal instanceof MemoryUser) {
+            MemoryUser user = (MemoryUser)principal;
+            Iterator uroles = user.getRoles();
+            while(uroles.hasNext()) {
+                Role role = (Role)uroles.next();
+                roles.add(role.getName());
+            }
+            Iterator groups = user.getGroups();
+            while(groups.hasNext()) {
+                Group group = (Group)groups.next();
+                uroles = user.getRoles();
+                while(uroles.hasNext()) {
+                    Role role = (Role)uroles.next();
+                    roles.add(role.getName());
+                }
+            }
+        }
+        return new GenericPrincipal(this, username, getPassword(username), roles, principal);
     }
 
 
