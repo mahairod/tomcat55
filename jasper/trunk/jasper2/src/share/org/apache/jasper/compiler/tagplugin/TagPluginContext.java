@@ -84,7 +84,7 @@ public interface TagPluginContext {
      */
     void generateAttribute(String attribute);
 
-    /*
+    /**
      * Generate codes for the body of the custom tag
      */
     void generateBody();
