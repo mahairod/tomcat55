@@ -86,6 +86,12 @@
         <bug>35978</bug>: Bad handling of single range requests greater than 2GB in the DefaultServlet
         (remm)
       </fix>
+      <fix>
+        <bug>35984</bug>: Client abort exceptions will now use getCause (remm)
+      </fix>
+      <fix>
+        Fix handling of non-file based includes with SSI, submitted by David Becker (markt)
+      </fix>
     </changelog>
   </subsection>
   
