@@ -142,6 +142,12 @@ public class UserDatabaseRealm
      * @param role Security role to be checked
      */
     public boolean hasRole(Principal principal, String role) {
+        if( principal instanceof GenericPrincipal) {
+            GenericPrincipal gp = (GenericPrincipal)principal;
+            if(gp.getUserPrincipal() instanceof User) {
+                principal = gp.getUserPrincipal();
+            }
+        }
         if(! (principal instanceof User) ) {
             //Play nice with SSO and mixed Realms
             return super.hasRole(principal, role);
@@ -203,29 +209,27 @@ public class UserDatabaseRealm
      */
     protected Principal getPrincipal(String username) {
 
-        Principal principal = database.findUser(username);
-        if(principal instanceof GenericPrincipal)
-            return principal ;
-        
+        User user = database.findUser(username);
+        if(user == null) {
+            return null;
+        }
+
         List roles = new ArrayList();
-        if(principal instanceof MemoryUser) {
-            MemoryUser user = (MemoryUser)principal;
-            Iterator uroles = user.getRoles();
+        Iterator uroles = user.getRoles();
+        while(uroles.hasNext()) {
+            Role role = (Role)uroles.next();
+            roles.add(role.getName());
+        }
+        Iterator groups = user.getGroups();
+        while(groups.hasNext()) {
+            Group group = (Group)groups.next();
+            uroles = user.getRoles();
             while(uroles.hasNext()) {
                 Role role = (Role)uroles.next();
                 roles.add(role.getName());
             }
-            Iterator groups = user.getGroups();
-            while(groups.hasNext()) {
-                Group group = (Group)groups.next();
-                uroles = user.getRoles();
-                while(uroles.hasNext()) {
-                    Role role = (Role)uroles.next();
-                    roles.add(role.getName());
-                }
-            }
         }
-        return new GenericPrincipal(this, username, getPassword(username), roles, principal);
+        return new GenericPrincipal(this, username, user.getPassword(), roles, user);
     }
 
 
