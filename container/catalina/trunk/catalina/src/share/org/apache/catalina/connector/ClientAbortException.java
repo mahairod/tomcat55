@@ -112,15 +112,15 @@ public final class ClientAbortException extends IOException {
 
 
     /**
-     * Returns the throwable that caused this exception, if any.
+     * Returns the cause that caused this exception, if any.
      */
-    public Throwable getThrowable() {
-
+    public Throwable getCause() {
+        
         return (throwable);
-
+        
     }
 
-
+    
     /**
      * Return a formatted string that describes this exception.
      */

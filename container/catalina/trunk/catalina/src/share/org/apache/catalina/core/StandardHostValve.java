@@ -174,10 +174,12 @@ final class StandardHostValve
 
         // If this is an aborted request from a client just log it and return
         if (realError instanceof ClientAbortException ) {
-            log.debug
-                (sm.getString("standardHost.clientAbort",
-                              ((ClientAbortException) realError).getThrowable()
-                              .getMessage()));
+            if (log.isDebugEnabled()) {
+                log.debug
+                    (sm.getString("standardHost.clientAbort",
+                        ((ClientAbortException) realError).getCause()
+                        .getMessage()));
+            }
             return;
         }
 
