@@ -129,6 +129,9 @@
         <bug>36173</bug>: Add missing sync in FastHttpDateFormat.formatDate, submitted 
         by Alexei Krainiouk (remm)
       </fix>
+      <fix>
+        Disable HTTP compression when sendfile is used for a resource (remm)
+      </fix>
      </changelog>
   </subsection>
 
