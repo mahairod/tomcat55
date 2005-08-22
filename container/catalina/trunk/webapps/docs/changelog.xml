@@ -132,6 +132,9 @@
       <fix>
         Disable HTTP compression when sendfile is used for a resource (remm)
       </fix>
+      <fix>
+        AJP secret attribute report only at trace level. (pero)
+      </fix>
      </changelog>
   </subsection>
 
@@ -146,6 +149,13 @@
   
   <subsection name="Cluster">
     <changelog>        
+      <fix>
+        Fix NPE when cluster stops (pero)
+      </fix>
+      <fix>
+        <bug>36218</bug>: MemoryRealm now support also GenericPrincipal, but 
+        JAASRealm with cluster replication still has a problem, detected by Dirk Dekok (pero)
+      </fix>   
      </changelog>
   </subsection>
   
