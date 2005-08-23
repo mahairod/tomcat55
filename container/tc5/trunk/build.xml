@@ -1295,6 +1295,17 @@
     <copy todir="${tomcat.dist}/conf">
       <fileset dir="${tomcat.build}/conf">
         <exclude name="MANIFEST.MF" />
+        <exclude name="jk2.manifest" />
+        <exclude name="jk2.properties" />
+        <exclude name="jkconf.ant.xml" />
+        <exclude name="jkconfig.manifest" />
+        <exclude name="shm.manifest" />
+        <exclude name="tomcat-jk2.manifest" />
+        <exclude name="uriworkermap.properties" />
+        <exclude name="workers2.properties" />
+        <exclude name="workers2.properties.minimal" />
+        <exclude name="workers.properties" />
+        <exclude name="workers.properties.minimal" />
       </fileset>
     </copy>
     <copy todir="${tomcat.dist}/server/lib">
