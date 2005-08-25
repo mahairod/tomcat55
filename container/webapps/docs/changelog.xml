@@ -26,6 +26,47 @@
   </p>
 </section>
 
+<section name="Tomcat 5.5.12 (yoavs)">
+  <subsection name="General">
+    <changelog>
+      <fix>
+        Remove uneeded files in conf (remm)
+      </fix>
+    </changelog>
+  </subsection>
+  
+  <subsection name="Catalina">
+    <changelog>
+    </changelog>
+  </subsection>
+  
+   <subsection name="Coyote">
+     <changelog>
+     </changelog>
+  </subsection>
+
+  <subsection name="Jasper">
+    <changelog>
+      <fix>
+        Fix NPE with an error message when no Java compiler is available (remm)
+      </fix>
+    </changelog>
+  </subsection>
+  
+  <subsection name="Cluster">
+    <changelog>        
+    </changelog>
+  </subsection>
+  
+  <subsection name="Webapps">
+    <changelog>
+      <docs>
+        <bug>36319</bug>: Fix broken link to DBCP docs, submitted by Xavier Poinsard (remm)
+      </docs>
+    </changelog>
+  </subsection>
+ </section>
+
 <section name="Tomcat 5.5.11 (yoavs)">
   <subsection name="General">
     <changelog>
