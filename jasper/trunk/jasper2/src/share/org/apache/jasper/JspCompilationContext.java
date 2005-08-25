@@ -51,6 +51,9 @@ import org.apache.jasper.servlet.JspServletWrapper;
  */
 public class JspCompilationContext {
 
+    protected org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog(JspCompilationContext.class);
+
     private Hashtable tagFileJarUrls;
     private boolean isPackagedTagFile;
 
@@ -224,13 +227,14 @@ public class JspCompilationContext {
         return jspCompiler;
     }
 
-    private static Compiler createCompiler(String className) {
+    private Compiler createCompiler(String className) {
         Compiler compiler = null; 
         try {
             compiler = (Compiler) Class.forName(className).newInstance();
         } catch (Throwable t) {
-            // Log ?
-            // FIXME: log
+            if (log.isDebugEnabled()) {
+                log.debug(Localizer.getMessage("jsp.error.compiler"), t);
+            }
         }
         return compiler;
     }
