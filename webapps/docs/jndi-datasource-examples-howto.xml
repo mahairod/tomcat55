@@ -64,9 +64,8 @@ will support JDBC 3.0. Please let us know if you have used DBCP and its
 JDBC 3.0 features with a 1.4 JVM.
 </p>
 
-<p>See the <a href="http://jakarta.apache.org/commons/dbcp/api/index.html">
-DBCP Javadocs</a> BasicDataSource class for a complete list
-of configuration parameters.
+<p>See the <a href="http://jakarta.apache.org/commons/dbcp/configuration.html">
+DBCP documentation</a> for a complete list of configuration parameters.
 </p>
 
 <subsection name="Installation">
