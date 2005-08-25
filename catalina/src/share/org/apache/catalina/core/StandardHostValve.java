@@ -177,8 +177,7 @@ final class StandardHostValve
             if (log.isDebugEnabled()) {
                 log.debug
                     (sm.getString("standardHost.clientAbort",
-                        ((ClientAbortException) realError).getCause()
-                        .getMessage()));
+                        realError.getCause().getMessage()));
             }
             return;
         }
