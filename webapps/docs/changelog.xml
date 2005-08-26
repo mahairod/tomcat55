@@ -42,6 +42,9 @@
   
    <subsection name="Coyote">
      <changelog>
+       <update>
+         Add support for secret for AJP APR (remm)
+       </update>
      </changelog>
   </subsection>
 
@@ -62,6 +65,9 @@
     <changelog>
       <docs>
         <bug>36319</bug>: Fix broken link to DBCP docs, submitted by Xavier Poinsard (remm)
+      </docs>
+      <docs>
+        Brand new deployer specs, submitted by Allistair Crossley (remm)
       </docs>
     </changelog>
   </subsection>
