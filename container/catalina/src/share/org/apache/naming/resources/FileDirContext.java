@@ -772,7 +772,7 @@ public class FileDirContext extends BaseDirContext {
     String normalized = path;
 
     // Normalize the slashes and add leading slash if necessary
-    if (normalized.indexOf('\\') >= 0)
+    if (File.separatorChar == '\\' && normalized.indexOf('\\') >= 0)
         normalized = normalized.replace('\\', '/');
     if (!normalized.startsWith("/"))
         normalized = "/" + normalized;
