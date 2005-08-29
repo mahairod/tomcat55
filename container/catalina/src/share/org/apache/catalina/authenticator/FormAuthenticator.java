@@ -53,9 +53,8 @@ import org.apache.tomcat.util.buf.MessageBytes;
 
 public class FormAuthenticator
     extends AuthenticatorBase {
+    
     private static Log log = LogFactory.getLog(FormAuthenticator.class);
-
-
 
     // ----------------------------------------------------- Instance Variables
 
@@ -240,15 +239,7 @@ public class FormAuthenticator
                         sm.getString("authenticator.requestBodyTooBig"));
                 return (false);
             }
-            RequestDispatcher disp =
-                context.getServletContext().getRequestDispatcher
-                (config.getLoginPage());
-            try {
-                disp.forward(request.getRequest(), response.getResponse());
-                response.finishResponse();
-            } catch (Throwable t) {
-                log.warn("Unexpected error forwarding to login page", t);
-            }
+            forwardToLoginPage(request, response, config);
             return (false);
         }
 
@@ -264,14 +255,7 @@ public class FormAuthenticator
             log.debug("Authenticating username '" + username + "'");
         principal = realm.authenticate(username, password);
         if (principal == null) {
-            RequestDispatcher disp =
-                context.getServletContext().getRequestDispatcher
-                (config.getErrorPage());
-            try {
-                disp.forward(request.getRequest(), response.getResponse());
-            } catch (Throwable t) {
-                log.warn("Unexpected error forwarding to error page", t);
-            }
+            forwardToErrorPage(request, response, config);
             return (false);
         }
 
@@ -312,6 +296,47 @@ public class FormAuthenticator
 
 
     // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Called to forward to the login page
+     * 
+     * @param request Request we are processing
+     * @param response Response we are creating
+     * @param config    Login configuration describing how authentication
+     *              should be performed
+     */
+    protected void forwardToLoginPage(Request request, Response response, LoginConfig config) {
+        RequestDispatcher disp =
+            context.getServletContext().getRequestDispatcher
+            (config.getLoginPage());
+        try {
+            disp.forward(request.getRequest(), response.getResponse());
+            response.finishResponse();
+        } catch (Throwable t) {
+            log.warn("Unexpected error forwarding to login page", t);
+        }
+    }
+
+
+    /**
+     * Called to forward to the error page
+     * 
+     * @param request Request we are processing
+     * @param response Response we are creating
+     * @param config    Login configuration describing how authentication
+     *              should be performed
+     */
+    protected void forwardToErrorPage(Request request, Response response, LoginConfig config) {
+        RequestDispatcher disp =
+            context.getServletContext().getRequestDispatcher
+            (config.getErrorPage());
+        try {
+            disp.forward(request.getRequest(), response.getResponse());
+        } catch (Throwable t) {
+            log.warn("Unexpected error forwarding to error page", t);
+        }
+    }
 
 
     /**
@@ -423,7 +448,7 @@ public class FormAuthenticator
      * @param session The session to contain the saved information
      * @throws IOException
      */
-    private void saveRequest(Request request, Session session)
+    protected void saveRequest(Request request, Session session)
         throws IOException {
 
         // Create and populate a SavedRequest object for this request
@@ -478,7 +503,7 @@ public class FormAuthenticator
      *
      * @param session Our current session
      */
-    private String savedRequestURL(Session session) {
+    protected String savedRequestURL(Session session) {
 
         SavedRequest saved =
             (SavedRequest) session.getNote(Constants.FORM_REQUEST_NOTE);
