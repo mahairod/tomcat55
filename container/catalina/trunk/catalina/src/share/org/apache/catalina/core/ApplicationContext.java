@@ -335,11 +335,7 @@ public class ApplicationContext
         if (wrapper == null)
             return (null);
         
-        ApplicationDispatcher dispatcher;
-        dispatcher =
-              new ApplicationDispatcher(wrapper, null, null, null, null, name);
-        
-        return ((RequestDispatcher) dispatcher);
+        return new ApplicationDispatcher(wrapper, null, null, null, null, name);
 
     }
 
@@ -450,7 +446,7 @@ public class ApplicationContext
         mappingData.recycle();
         
         // Construct a RequestDispatcher to process this request
-        return (RequestDispatcher) new ApplicationDispatcher
+        return new ApplicationDispatcher
             (wrapper, uriCC.toString(), wrapperPath, pathInfo, 
              queryString, null);
 
