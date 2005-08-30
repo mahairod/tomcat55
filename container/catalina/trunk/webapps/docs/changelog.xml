@@ -56,6 +56,14 @@
       <fix>
         Fix NPE with an error message when no Java compiler is available (remm)
       </fix>
+      <fix>
+        Restrict System err stream capture to the Ant compiler, as the Eclipse compiler
+        does not need it (remm)
+      </fix>
+      <update>
+        JSP compilation speed improvement using tag library information caching, 
+        submitted by Xingbo Gao (remm)
+      </update>
     </changelog>
   </subsection>
   
