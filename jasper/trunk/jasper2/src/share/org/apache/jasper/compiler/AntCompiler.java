@@ -42,7 +42,10 @@ import org.apache.tools.ant.types.PatternSet;
  */
 public class AntCompiler extends Compiler {
 
-    
+    static {
+        System.setErr(new SystemLogHandler(System.err));
+    }
+
     // ----------------------------------------------------- Instance Variables
 
     protected Project project=null;
@@ -223,14 +226,14 @@ public class AntCompiler extends Compiler {
         }
         
         errorReport.append(logger.getReport());
-        
+
         // Stop capturing the System.err output for this thread
         String errorCapture = SystemLogHandler.unsetThread();
         if (errorCapture != null) {
             errorReport.append(System.getProperty("line.separator"));
             errorReport.append(errorCapture);
         }
-        
+
         if (!ctxt.keepGenerated()) {
             File javaFile = new File(javaFileName);
             javaFile.delete();
