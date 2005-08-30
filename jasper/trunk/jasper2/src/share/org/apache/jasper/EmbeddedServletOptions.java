@@ -347,6 +347,14 @@ public final class EmbeddedServletOptions implements Options {
         return tagPluginManager;
     }
     
+    public boolean isCaching() {
+        return false;
+    }
+    
+    public Map getCache() {
+        return null;
+    }
+
     /**
      * Create an EmbeddedServletOptions object using data available from
      * ServletConfig and ServletContext. 

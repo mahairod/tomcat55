@@ -414,14 +414,23 @@ class Parser implements TagConstants {
 			prefix, uri, uriPrev);
 		}
 		if (pageInfo.getTaglib(uri) == null) {
-		    String[] location = ctxt.getTldLocation(uri);
-		    pageInfo.addTaglib(uri,
-				       new TagLibraryInfoImpl(ctxt,
-							      parserController,
-							      prefix,
-							      uri,
-							      location,
-							      err));
+            TagLibraryInfoImpl impl = null;
+            if (ctxt.getOptions().isCaching()) {
+                impl = (TagLibraryInfoImpl) ctxt.getOptions().getCache().get(uri);
+            }
+            if (impl == null) {
+                String[] location = ctxt.getTldLocation(uri);
+                impl = new TagLibraryInfoImpl(ctxt,
+                        parserController,
+                        prefix,
+                        uri,
+                        location,
+                        err);
+                if (ctxt.getOptions().isCaching()) {
+                    ctxt.getOptions().getCache().put(uri, impl);
+                }
+            }
+		    pageInfo.addTaglib(uri, impl);
 		}
 		pageInfo.addPrefixMapping(prefix, uri);
 	    } else {

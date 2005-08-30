@@ -1233,20 +1233,28 @@ class JspDocumentParser
 
             String[] location = ctxt.getTldLocation(uri);
             if (location != null || !isPlainUri) {
-                /*
-                 * If the uri value is a plain uri, a translation error must
-                 * not be generated if the uri is not found in the taglib map.
-                 * Instead, any actions in the namespace defined by the uri
-                 * value must be treated as uninterpreted.
-                 */
-                result =
-                    new TagLibraryInfoImpl(
-                        ctxt,
-                        parserController,
-                        prefix,
-                        uri,
-                        location,
-                        err);
+                if (ctxt.getOptions().isCaching()) {
+                    result = (TagLibraryInfoImpl) ctxt.getOptions().getCache().get(uri);
+                }
+                if (result == null) {
+                    /*
+                     * If the uri value is a plain uri, a translation error must
+                     * not be generated if the uri is not found in the taglib map.
+                     * Instead, any actions in the namespace defined by the uri
+                     * value must be treated as uninterpreted.
+                     */
+                    result =
+                        new TagLibraryInfoImpl(
+                            ctxt,
+                            parserController,
+                            prefix,
+                            uri,
+                            location,
+                            err);
+                    if (ctxt.getOptions().isCaching()) {
+                        ctxt.getOptions().getCache().put(uri, result);
+                    }
+                }
             }
         }
 

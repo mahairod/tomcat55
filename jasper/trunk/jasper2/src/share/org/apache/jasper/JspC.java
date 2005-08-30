@@ -33,6 +33,8 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -100,6 +102,7 @@ public class JspC implements Options {
     private static final String SWITCH_OUTPUT_DIR = "-d";
     private static final String SWITCH_IE_CLASS_ID = "-ieplugin";
     private static final String SWITCH_PACKAGE_NAME = "-p";
+    private static final String SWITCH_CACHE = "-cache";
     private static final String SWITCH_CLASS_NAME = "-c";
     private static final String SWITCH_FULL_STOP = "--";
     private static final String SWITCH_COMPILE = "-compile";
@@ -155,6 +158,8 @@ public class JspC implements Options {
     private boolean compile = false;
     private boolean smapSuppressed = true;
     private boolean smapDumped = false;
+    private boolean caching = true;
+    private Map cache = new HashMap();
 
     private String compiler = null;
 
@@ -282,6 +287,13 @@ public class JspC implements Options {
                 xpoweredBy = true;
             } else if (tok.equals(SWITCH_TRIM_SPACES)) {
                 setTrimSpaces(true);
+            } else if (tok.equals(SWITCH_CACHE)) {
+                tok = nextArg();
+                if ("false".equals(tok)) {
+                    caching = false;
+                } else {
+                    caching = true;
+                }            
             } else if (tok.equals(SWITCH_CLASSPATH)) {
                 setClassPath(nextArg());
             } else if (tok.startsWith(SWITCH_DIE)) {
@@ -397,6 +409,27 @@ public class JspC implements Options {
     public boolean getClassDebugInfo() {
         // compile with debug info
         return classDebugInfo;
+    }
+
+     /**
+      * @see Options#isCaching()
+     */
+    public boolean isCaching() {
+        return caching;
+    }
+
+    /**
+     * @see Options#isCaching()
+     */
+    public void setCaching(boolean caching) {
+        this.caching = caching;
+    }
+
+    /**
+     * @see Options#getCache()
+     */
+    public Map getCache() {
+        return cache;
     }
 
     /**

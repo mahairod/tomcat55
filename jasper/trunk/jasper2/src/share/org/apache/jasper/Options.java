@@ -17,6 +17,7 @@
 package org.apache.jasper;
 
 import java.io.File;
+import java.util.Map;
 
 import org.apache.jasper.compiler.JspConfig;
 import org.apache.jasper.compiler.TagPluginManager;
@@ -169,5 +170,19 @@ public interface Options {
      * Modification test interval.
      */
     public int getModificationTestInterval();
+    
+    /**
+     * Is caching enabled (used for precompilation).
+     */
+    public boolean isCaching();
+    
+    /**
+     * The web-application wide cache for the returned TreeNode
+     * by parseXMLDocument in TagLibraryInfoImpl.parseTLD,
+     * if isCaching returns true.
+     * 
+     * @return the Map(String uri, TreeNode tld) instance.
+     */
+    public Map getCache();
     
 }
