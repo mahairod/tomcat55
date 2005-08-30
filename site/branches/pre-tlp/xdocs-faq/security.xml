@@ -1,0 +1,231 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="security.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
+    <title>Security</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+<p>
+    This FAQ section provides help with some security-related issues.
+    If you hear of a vulnerability or its exploitation, please let us know
+    on the user <a href="http://jakarta.apache.org/site/mail2.html#Tomcat">
+    mailing lists.</a>
+</p>
+
+<subsection name="The Record">
+<p>
+  Tomcat's security record is impeccable.  There have been no public
+  cases of damage done to a company, organization, or individual due
+  to a Tomcat security issue.  There have been no documented cases
+  of data loss or application crashes caused by an intruder.  While
+  there have been numerous analyses conducted on Tomcat, partially
+  because this is easy to do with Tomcat's source code openly available,
+  there have been only a few <strong>theoretical</strong> vulnerabilities
+  found.  All of those were addressed rapidly even though there were no
+  documented cases of actual exploitation of these vulnerabilities.  
+</p>
+</subsection>
+
+<subsection name="Role of Customization">
+<p>
+  We believe, and the evidence suggests, that Tomcat is more than secure
+  enough for most use-cases.  However, like all other components of Tomcat,
+  you can customize any and all of the relevant parts of the server to
+  achieve even higher security.  For example, the session manager implementation
+  is pluggable, and even the default implementation has support for pluggable
+  random number generators.  If you have a special need that you feel is not
+  met by Tomcat out of the box, consider these customization options.  At the
+  same time, please bring up your requirements on the user mailing list, where
+  we'll be glad to discuss it and assist in your approach/design/implementation
+  as needed.
+</p>
+</subsection>
+</section>
+
+
+<section name="Questions">
+  <ul>
+     <li>
+       <a href="#openSSL">
+         How do I use OpenSSL to set up my own Certificate Authority (CA)?
+       </a>
+     </li>
+
+     <li>
+        <a href="#8005">
+         OH NO! PORT 8005 is available for anyone on localhost to
+         shutdown my tomcat!
+        </a>
+     </li>
+
+     <li>
+       <a href="#root">
+         What about Tomcat running as root?
+       </a>
+     </li>
+
+     <li>
+       <a href="#https">
+         How to I force all my pages to run under HTTPS?
+       </a>
+     </li>
+
+     <li>
+       <a href="#login">
+          What is the default login for the manager and admin app?
+       </a>
+     </li>
+
+     <li>
+       <a href="#restrict">
+          How do I restrict access by ip address or remote host?
+       </a>
+     </li>
+
+     <li>
+       <a href="#jsvcExample">
+         How do I use jsvc/procrun to run Tomcat on port 80 securely?
+       </a>
+     </li>
+
+     <li>
+       <a href="#analyses">
+         Has Tomcat's security been independently analyzed or audited?
+       </a>
+     </li>
+
+  </ul>
+
+</section>
+
+
+<section name="Answers">
+  <question>
+    <a name="openSSL">
+      How do I use OpenSSL to set up my own Certificate Authority (CA)?
+    </a>
+  </question>
+  <answer>
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=106293430225790&amp;w=2">
+      Using OpenSSL to set up your own CA.
+    </a>
+  </answer>
+
+  <question>
+    <a name="8005">
+       OH NO! PORT 8005 is available for anyone on localhost to
+       shutdown my tomcat!
+    </a>
+  </question>
+  <answer>
+    See these 2 discussions.
+    <ul>
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=104396653200003&amp;r=1&amp;w=2">
+          Possible to switch off tcp/ip server shutdown?</a>
+      </li>
+      <li>
+        <a href="http://marc.theaimsgroup.com/?t=103126643200005&amp;r=1&amp;w=2">
+          Tomcat shutdown &amp; security
+        </a>
+      </li>
+    </ul>
+  </answer>
+
+
+  <question>
+    <a name="root">
+      What about Tomcat running as root?
+    </a>
+  </question>
+  <answer>
+      See these threads:
+       <ul>
+        <li>
+           <a href="http://marc.theaimsgroup.com/?t=104516038700003&amp;r=1&amp;w=2">
+              Tomcat as root and security issues
+           </a>
+        </li>
+       </ul>
+  </answer>
+
+
+
+  <question>
+    <a name="https">
+      How to I force all my pages to run under HTTPS?
+    </a>
+  </question>
+  <answer>
+      <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=104951559722619&amp;w=2">
+        Use security-constraint in web.xml.
+      </a>
+  </answer>
+
+
+
+  <question>
+    <a name="login">
+      What is the default login for the manager and admin app?
+    </a>
+  </question>
+  <answer>
+    The admin and manager application do not provide a default
+    login. Doing so is a security flaw. You need to edit
+    <code>$CATALINA_HOME/conf/tomcat-users.xml</code>
+    if you are using the default install.
+    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/manager-howto.html#Configuring%20Manager%20Application%20Access">
+        Configuring Manager Application Access</a>
+  </answer>
+
+  <question>
+    <a name="restrict">
+      How do I restrict access by ip address or remote host?
+    </a>
+  </question>
+  <answer>
+    By using the RemoteHostValve or RemoteAddrValve. Warning, these valves rely on
+    accurate incoming ip addresses or hostnames. So they can fall victim to spoofing!
+    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/config/valve.html">
+        Valve Reference Link</a>
+  </answer>
+
+  <question>
+    <a name="jsvcExample">
+      How do I use jsvc/procrun to run Tomcat on port 80 securely?
+    </a>
+  </question>
+  <answer>
+   Fairly easily ;)  See the Setup page in the docs for your tomcat release, and read
+   <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=108566020231438&amp;w=2">
+     this mailing list post
+   </a> for a complete setup example with permissions etc.
+  </answer>
+
+  <question>
+    <a name="analyses">
+      Has Tomcat's security been independently analyzed or audited?
+    </a>
+  </question>
+  <answer>
+    Yes, by numerous organizations and individuals, many times.  Try
+    <a href="http://www.google.com/search?sourceid=navclient&amp;ie=UTF-8&amp;q=is+tomcat+secure">
+    this Google search</a> and you'll see many references, guides, and analyses.
+  </answer>
+
+</section>
+
+
+</body>
+</document>

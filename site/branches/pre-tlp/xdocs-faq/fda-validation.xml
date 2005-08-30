@@ -1,0 +1,187 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="fda-validation.html">
+
+  &project;
+
+  <properties>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
+    <title>FDA (21 CFR Part 11) Validation</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+  <p>
+    This page discusses using Tomcat in an 
+    <a href="http://www.fda.gov">FDA</a>
+    <a href="http://www.fda.gov/cdrh/comp/guidance/938.html">
+    validated</a> environment,
+    i.e. one where 
+    <a href="http://www.21cfrpart11.com/">
+    21 CFR Part 11</a> regulations apply.
+  </p>
+  <p> 
+    Please note that although this page mentions specific companies, we do not explicitly
+    endorse or sell anyone's services.  Tomcat and Apache are not-for-profit organizations.
+    This page is also far from a complete listing of vendors and support options.  It is
+    meant as a demonstration showing that these options do exist and 
+    that running Tomcat in a validated environment is both feasible and reasonable.
+  </p>
+</section>
+
+<section name="Questions">
+<p>
+  <ul>
+    <li><a href="#canItBeDone">Can Tomcat be used in a validated environment?</a></li>
+    <li><a href="#hasAnyoneDoneIt">Has anyone actually done it?</a></li>
+    <li><a href="#isTomcatItselfValidated">Is Tomcat itself validated?</a></li>
+    <li><a href="#supportAroundValidation">What kind of support is there around validating Tomcat?</a></li>
+    <li><a href="#signedReleases">How do I know I have a validated release?  How do I
+        know no one has tampered with the release package?</a></li>
+    <li><a href="#security">What about security? I'm concerned about attacks.</a></li>
+  </ul>
+</p>
+</section>
+
+
+<section name="Answers">
+
+  <question>
+    <a name="canItBeDone">
+      Can Tomcat be used in a validated environment?
+    </a>
+  </question>
+  <answer>
+    <p>
+    Yes.  There's nothing in Tomcat's design or implementation that prevent it
+    from being used in a validated environment.  The same validation procedures
+    and guidelines that apply to most software packages apply to Tomcat as well.
+    Being an open-source application does not preclude Tomcat validation.  In fact,
+    it helps in at least one key aspect: the source code itself can be audited, as
+    can the commit and change logs for the software.
+    </p>
+  </answer>
+
+  <question>
+    <a name="hasAnyoneDoneIt">
+      Has anyone actually done it?
+    </a>
+  </question>
+  <answer>
+    <p>
+    Yes.  As shown in this user mailing list
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=109836874319797&amp;w=2">archive</a>,
+    Merck and other large companies are using Tomcat in a validated environment.  In addition,
+    there is at least one application provider
+    (<a href="http://www.interchangedigital.com">Interchange Digital</a>)
+    whose application runs on Tomcat that has deployed said package in numerous pharma data
+    centers.
+    </p>
+  </answer>
+
+  <question>
+    <a name="isTomcatItselfValidated">
+      Is Tomcat itself validated?
+    </a>
+  </question>
+  <answer>
+    <p>
+    Yes.  Tomcat itself is validated to the extent it can be.  Tomcat implements two
+    Java Specifications: the 
+    <a href="http://java.sun.com/products/servlet">Servlet Specification</a>
+    and the
+    <a href="http://java.sun.com/products/jsp">Java Server Pages (JSP) Specification</a>.
+    Each of these specifications has a Technology Compatbility Kit (TCK), which is a collection
+    of tests to certify a given product meets the Specification fully and accurately.
+    </p>
+    <p>
+    The <a href="http://www.apache.org">Apache Software Foundation</a> is licensed to run
+    these TCKs.  They are run against every single Tomcat release.  <strong>No Tomcat release is
+    pronounced stable unless it has passed both of these TCKs with 100% compliance.</strong>
+    Therefore, every stable Tomcat release is validated to the extent of Tomcat's core functionality.
+    </p>
+    <p>
+    Furthermore, any company of individual may 
+    <a href="http://java.sun.com/scholarship/">apply</a> to obtains and use these
+    TCKs themselves.  That way, you can re-validated Tomcat including any custom patches
+    you have implemented.
+    </p>
+    <p>
+    However, we cannot validate your application's use of Tomcat.  You're on your own there.
+    </p>
+  </answer>
+
+  <question>
+    <a name="supportAroundValidation">
+      What kind of support is there around validating Tomcat?
+    </a>
+  </question>
+  <answer>
+    <p>
+    Several kinds.  They include:
+    <ul>
+      <li>There are numerous <a href="http://jakarta.apache.org/site/vendors.html">smaller vendors</a>
+          and several large ones, including IBM, HP, Sun, and Novell, who offer Tomcat consulting and support
+          services, including application auditing, environment assessments, and risk analysis.</li>
+      <li>There are numerous vendors in addition to the above consultants, 
+          like 
+          <a href="http://www.covalent.net/">Covalent</a> and 
+          <a href="http://www.jboss.org/services/prodsupport">JBoss</a>, 
+          who offer 24/7/365 enterprise-level support for Tomcat.</li>
+      <li>The Tomcat <a href="http://jakarta.apache.org/site/mail2.html#Tomcat">mailing lists</a> are
+          extremely active and contain members of many of the above organizations, including contractors
+          available for hire.</li>
+    </ul>
+    </p>
+  </answer>
+
+  <question>
+    <a name="signedReleases">
+      How do I know I have a validated release?  How do I know no one
+      has tampered with the release package?
+    </a>
+  </question>
+  <answer>
+    <p>
+      All Tomcat releases are signed using the Release Manager's
+      <a href="http://www.pgpi.org/doc/pgpintro">PGP</a> key.  The key
+      is also available in the <i>KEYS</i> file that ships with every
+      Tomcat release.  The same <i>KEYS</i> file is also available in the
+      Tomcat CVS repository 
+      (<a href="http://cvs.apache.org/viewcvs.cgi/jakarta-tomcat-5/KEYS">here</a>).
+      The PGP signatures are available on all the Tomcat download pages, 
+      and can (and should!) be used to verify the release really is the
+      signed distribution.
+    </p>
+    <p>
+      As for tampering: every Tomcat release is also digested using the MD5
+      algorithm as specified in 
+      <a href="http://www.faqs.org/rfcs/rfc1321.html">RFC1321</a>.  The MD5
+      digest is included in all the download pages.  Users run MD5 on their
+      local machine to verify that the digest of what they downlaoded is the
+      same as that published in the Apache download pages.  That way, users
+      are assured the distribution has not been modified since the Release Manager
+      signed it.
+    </p>
+  </answer>
+
+  <question>
+    <a name="security"> 
+      What about security?  I'm concerned about attacks.
+    </a>
+  </question>
+  <answer>
+    <p>
+      There's no need to be.  See the <a href="security.html">security page</a> of
+      this FAQ for more information.
+    </p>
+  </answer>
+</section>
+
+
+</body>
+</document>

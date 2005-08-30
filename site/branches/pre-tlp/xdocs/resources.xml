@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <author email="remm@apache.org">Remy Maucherat</author>
+    <title>Apache Tomcat Resources</title>
+  </properties>
+
+<body>
+
+<section name="Free Tools">
+
+  <p>The Apache Tomcat project doesn't endorse any of the products mentioned
+     here.</p>
+
+  <ul>
+    <li>
+      <a href="http://openknows.free.fr/">Tomcat for Eclipse</a>
+    </li>
+    <li>
+      <a href="http://www.sysdeo.com/eclipse/tomcatPlugin.html">Sysdeo Eclipse Tomcat Launcher plugin</a>
+    </li>
+    <li>
+      <a href="http://www.day.com/en/product/communiqu1/cqenterprise/communiqu1/dnlogin.html">DAY Communique JSP Debugger</a>
+    </li>
+  </ul>
+
+</section>
+
+<section name="Articles">
+
+  <ul>
+    <li>
+      <b><a href="articles/benchmark_summary.pdf">So Much Static</a></b>, 
+      by Peter Lin
+    </li>
+    <li>
+      <b><a href="http://johnturner.com/howto/apache-tomcat-howto.html">mod_jk HOWTOs</a></b>, 
+      by John Turner.  Please note that this is one of many documents explaining how to 
+      connect Apache HTTP Server and Apache Tomcat in various environment.  A list is maintained in
+      the tomcat <a href="http://wiki.apache.org/jakarta-tomcat/Tomcat_2fLinks">wiki links page.</a>
+    </li>
+    <li>
+      <b><a href="articles/performance.pdf">Tomcat Performance</a></b>, 
+      by Peter Lin
+    </li>
+    <li>
+      <b><a href="http://www.ubeans.com/tomcat/index.html">Tomcat 4.0 Load 
+      Balancing with Apache 1.3</a></b>, by Pascal Forget
+    </li>
+    <li>
+      <b><a href="http://www.theserverside.com/resources/article.jsp?l=Tomcat">
+      In Memory Session Replication in Tomcat 4.0</a></b>, by Filip Hanik
+    </li>
+  </ul>
+
+</section>
+
+<section name="Books">
+
+  <p>The Apache Tomcat project doesn't endorse any of the books mentioned
+     here. They are mentioned just because they are Tomcat centric and may
+     be useful references. The books are listed by descending publication
+     date.</p>
+
+  <p>Tomcat committers' names are indicated in bold.</p>
+
+  <ul>
+    <li>
+      <b><a href="http://www.brainysoftware.com/">How Tomcat Works</a></b>, by Budi Kurniawan<br/>
+      <i>? (09/2003)</i>
+    </li>
+    <li>
+      <b><a href="http://www.amazon.com/exec/obidos/tg/detail/-/0764526065/qid=1043089531/sr=1-9/ref=sr_1_9/002-9433156-6683214?v=glance&amp;s=books">Apache Tomcat Bible</a></b>, by Jon Eaves, Warner Godfrey, Rupert Jones<br/>
+      <i>Hungry Minds, Inc (06/2003)</i>
+    </li>
+    <li>
+      <b><a href="http://www.amazon.com/exec/obidos/tg/detail/-/0596003188/qid=1043089531/sr=1-6/ref=sr_1_6/002-9433156-6683214?v=glance&amp;s=books">Tomcat: The Definitive Guide</a></b>, by Jason Brittain, <b>Ian F. Darwin</b><br/>
+      <i>O'Reilly &amp; Associates (03/2003)</i>
+    </li>
+    <li>
+      <b><a href="http://www.amazon.com/exec/obidos/tg/detail/-/1861008309/qid=1043089531/sr=1-8/ref=sr_1_8/002-9433156-6683214?v=glance&amp;s=books">Apache Tomcat Security Handbook</a></b>, by Vivek Chopra, Ben Galbriaths, Gotham Pollysetty, Brian Rickabaugh, <b>John Turner</b><br/>
+      <i>Wrox Press (02/2003)</i>
+    </li>
+    <li>
+      <b><a href="http://www.amazon.com/exec/obidos/tg/detail/-/0672324393/qid=1043089531/sr=1-5/ref=sr_1_5/002-9433156-6683214?v=glance&amp;s=books">Tomcat Kick Start</a></b>, by Martin Bond, Debbie Law<br/>
+      <i>Sams (11/2002)</i>
+    </li>
+    <li>
+      <b><a href="http://www.amazon.com/exec/obidos/tg/detail/-/0471237647/qid=1043089531/sr=1-1/ref=sr_1_1/002-9433156-6683214?v=glance&amp;s=books">Mastering Tomcat Development</a></b>, by Peter Harrison, Ian McFarland<br/>
+      <i>John Wiley &amp; Sons (10/2002)</i>
+    </li>
+    <li>
+      <b><a href="http://www.amazon.com/exec/obidos/tg/detail/-/1861007736/ref=pd_sbs_b_1/002-9433156-6683214?v=glance&amp;s=books">Professional Apache Tomcat</a></b>, by Chanoch Wiggers, Ben Galbraith, Vivek Chopra, Sing Li, Debashish Bhattacharjee, Amit Bakore, Romin Irani, Sandip Bhattacharya, Chad Fowler<br/>
+      <i>Wrox Press (09/2002)</i>
+    </li>
+    <li>
+      <b><a href="http://tomcatbook.sourceforge.net/">Tomcat Book Project</a></b>
+    </li>
+    <li>
+      <b><a href="http://www.amazon.com/exec/obidos/tg/detail/-/1893115364/qid=1043089531/sr=1-4/ref=sr_1_4/002-9433156-6683214?v=glance&amp;s=books">Apache Jakarta-Tomcat</a></b>, by James Goodwill<br/>
+      <i>APress (12/2001)</i>
+    </li>
+  </ul>
+
+</section>
+
+</body>
+</document>

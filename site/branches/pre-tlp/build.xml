@@ -1,0 +1,70 @@
+<project name="build-site" default="docs" basedir=".">
+
+    <!-- ===================== Initialize Property Values =================== -->
+
+    <!-- See "build.properties.sample" in the top level directory for all     -->
+    <!-- property values you must customize for successful building!!!        -->
+    <property file="build.properties"/>
+    <property file="${user.home}/build.properties"/>
+
+    <property name="docs.src" location="xdocs"/>
+    <property name="docs.dest" location="docs"/>
+    <property name="faq.src" location="xdocs-faq"/>
+    <property name="faq.dest" location="${docs.dest}/faq"/>
+
+    <!-- Requires JDK 1.4 -->
+    <target name="docs"
+            description="Render HTML Pages via XSLT">
+
+        <!-- Transform the xml files - requires Ant 1.6.2 -->
+
+        <!-- Transform the top-level directory -->
+        <style  basedir="${docs.src}"
+                destdir="${docs.dest}"
+                extension=".html"
+                style="${docs.src}/stylesheets/tomcat-site.xsl"
+                excludes="project.xml"
+                includes="*.xml">
+            <param name="relative-path" expression="."/>
+        </style>
+
+        <!-- Transform the "faq" subdirectory -->
+        <mkdir  dir="${docs.dest}/faq" />
+        <style  basedir="${faq.src}"
+                destdir="${faq.dest}"
+                extension=".html"
+                style="${faq.src}/tomcat-faq.xsl"
+                excludes="project.xml,build.xml"
+                includes="*.xml">
+            <param name="relative-path" expression=".."/>
+        </style>
+        <mkdir  dir="${docs.dest}/faq/printer" />
+        <style  basedir="${faq.src}"
+                destdir="${faq.dest}/printer"
+                extension=".html"
+                style="${faq.src}/tomcat-faq.xsl"
+                excludes="project.xml,build.xml"
+                includes="*.xml">
+            <param name="relative-path" expression="../.."/>
+            <param name="project-menu" expression="nomenu"/>
+        </style>
+
+        <!-- Copy static resource files -->
+        <copy   todir="${docs.dest}/images" filtering="no">
+            <fileset dir="${docs.src}/images">
+                <include name="**/*.gif"/>
+                <include name="**/*.jpeg"/>
+                <include name="**/*.jpg"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy CSS stylesheets -->
+        <copy    todir="${docs.dest}" filtering="no">
+            <fileset dir="${docs.src}">
+                <include name="**/*.css"/>
+            </fileset>
+        </copy>
+
+  </target>
+
+</project>

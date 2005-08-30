@@ -1,0 +1,188 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Tomcat FAQ - Logging</title><meta value="Tim Funk" name="author"><meta value="funkman@apache.org" name="email"><meta value="Yoav Shapira" name="author"><meta value="yoavs@apache.org" name="email"><style>
+      dt { font-size : larger;  font-weight : bold }
+      dd {padding-bottom : 10px;}
+    </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
+      Tomcat FAQ
+    " align="right" src="../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--LEFT SIDE NAVIGATION--><td nowrap="true" valign="top" width="20%"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="deployment.html">Deployment</a></li><li><a href="development.html">Development</a></li><li><a href="fda-validation.html">FDA Validation</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/HowTo">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="otherOperatingSystems.html">Other Operating Systems</a></li><li><a href="logging.html">Logging</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/UsefulLinks">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/">Wiki</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Logging</h2></td><td nowrap="true" valign="top" align="right"><small><a href="printer/security.html"><img alt="Printer Friendly Version" border="0" src="../images/printer.gif"><br>print-friendly<br>version
+                    </a></small></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+    This FAQ section provides help with logging-related issues.
+</p>
+<p>
+  As you read these questions, please keep in mind that Tomcat's internal
+  logging is separate from your own webapp's logging.  You would typically
+  be concerned only with your own webapp's logging.  You would modify Tomcat's
+  internal logging settings if you are debugging a possible issue or running
+  into other problems.  It is anticipated that Tomcat's out-of-the-box logging
+  configuration will be fine for the vast majority of users and environments.
+</p>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
+  <ul>
+     <li>
+       <a href="#builtIn">
+         Does Tomcat have built-in logging capabilities, and if so how do I 
+         use them?
+       </a>
+     </li>
+
+     <li>
+        <a href="#commonsLoggingConfiguration">
+          How do I configure commons-logging for use with Tomcat?
+        </a>
+     </li>
+
+     <li>
+       <a href="#userWebapps">
+         How should I log in my own webapps?
+       </a>
+     </li>
+
+     <li>
+      <a href="#catalina.out">
+        Where does System.out go? <br>
+        How do I rotate catalina.out?
+      </a>
+     </li>
+  
+     <li>
+       <a href="#windowsService">
+         Where are the logs when running Tomcat as a Windows service?
+       </a>
+     </li>   
+
+     <li>
+       <a href="#externalDocs">
+         Are there external documents, tutorials, or references about logging in Tomcat?
+       </a>
+     </li>
+  </ul>
+
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
+  <b style="font-size: larger">
+    <a name="builtIn">
+      Does Tomcat have built-in logging capabilities, and if so how do I
+      use them?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    The Servlet Specification requires Servlet Containers like Tomcat to provide
+    at least a rudimentary implementation of the ServletContext#log method.  Tomcat
+    provides a much richer implementation than required by the Spec, as follows:
+    <ul>
+      <li>Prior to Tomcat 5.5, Tomcat provided a <code>Logger</code> element
+          that you could configure and extend according to your needs.  If you
+          are using a Tomcat version previous to Tomcat 5.5, make sure to read
+          <a href="http://jakarta.apache.org/tomcat/tomcat-5.0-doc/config/logger.html">
+          the Logger configuration reference.</a></li>
+      <li>Starting with Tomcat 5.5, <code>Logger</code> was removed and 
+          <a href="http://jakarta.apache.org/commons/logging">Jakarta Commons-Logging</a>
+          <code>Log</code> is used everywhere in Tomcat.  Read the Commons-Logging documentation
+          if you'd like to know how to better use and configure Tomcat's internal logging.</li>
+    </ul>
+    
+    In addition, Tomcat does not swallow the <code>System.out</code> and <code>System.err</code>
+    JVM output streams.  You may use these streams for elementary logging if you wish, but a 
+    more robust approach such as commons-logging or 
+    <a href="http://logging.apache.org/log4j">Log4J</a> is recommended for production
+    applications.
+  </div><br>
+
+
+  <b style="font-size: larger">
+    <a name="commonsLoggingConfiguration">
+      How do I configure commons-logging for use with Tomcat?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    You need to specify a commons-logging configuration file and, if you wish, a 
+    logging implementation that supports commons-logging.  JDK 1.4 (and later)
+    java.util.Logging and <a href="http://logging.apache.org/log4j">Log4j</a>
+    are the two most commonly used logging toolkits for Tomcat.  If you supply
+    an external logging toolkit such as Log4J, it needs to be located in the 
+    $CATALINA_HOME/common/lib directory (for Tomcat 5.0 and earlier) or added
+    to the bootstrap classpath by using the scripts in $CATALINA_HOME/bin (this
+    is required for Tomcat 5.5 and later, which uses commons-logging while bootstrapping,
+    and optional for Tomcat 5.0 and earlier).
+    <br><br>
+    For more detailed instructions, see these mailing list discussions:
+    <ul>
+      <li>
+        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=106623436423859&w=2">A log4j example</a> 
+      </li>
+      <li>
+        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=108330970225012&w=2">Logging Configuration</a>
+      </li>
+      <li>
+        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=108578233003073&w=2">Example with JSVC and running on port 80.</a>
+      </li>
+      <li>
+        <a href="http://mail-archives.apache.org/eyebrowse/BrowseList?listName=tomcat-user@jakarta.apache.org&by=thread&from=877025">Need for it to be in bootstrap classpath.</a>
+      </li>
+    </ul>
+  </div><br>
+
+
+  <b style="font-size: larger">
+    <a name="userWebapps">
+      How should I log in my own webapps?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    While you can use <code>System.out</code> and <code>System.err</code> to log, we strongly recommend using a toolkit like <a href="http://logging.apache.org/log4j">Log4J</a> or JDK 1.4's <code>java.util.logging</code> package.  With these toolkits, you have significantly more functionality (for example, sending emails, logging to a database, controlling at runtime the logging level of different classes, inspecting the logs with a graphical viewer, etc.) than with Tomcat's built-in default logging configuration.
+    <p></p>
+    We also recommend that you separate your logging from Tomcat's internal logging.  That means you should bundle your logging toolkit with your webapp.  If you're using Log4J, for example, place the Log4J jar in the WEB-INF/lib directory of your webapp and the Log4J configuration file in the WEB-INF/classes directory of your webapp.  This way different web applications can have different logging configurations and you don't need to worry about them interfering with each other.
+  </div><br>
+
+
+  <b style="font-size: larger">
+      <a name="catalina.out">
+        Where does System.out go? <br>
+        How do I rotate catalina.out?
+      </a>
+  </b>
+  <div style="padding-left : 20px;">
+    <code>System.out</code> and <code>System.err</code> both print to
+    catalina.out. But you can suppress this via the swallowOutput property and
+    sent to different log files.
+    <br>
+    catalina.out does not rotate. But it should not be an issue because
+    nothing should be printing to standard output since you are using a logging
+    package, right?
+  <a href="http://marc.theaimsgroup.com/?t=105544472600001&r=1&w=2">a thread about rotation of catalina.out</a>
+  </div><br>
+
+
+  <b style="font-size: larger">
+    <a name="windowsService">
+      Where are the logs when running Tomcat as a Windows service?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    See these mailing list archive threads:
+    <ul>
+      <li>
+        <a href="http://mail-archives.apache.org/eyebrowse/BrowseList?listName=tomcat-user@jakarta.apache.org&by=thread&from=863525">Where are the Tomcat logs when running as a Windows service?</a>
+      </li>
+    </ul>
+  </div><br>
+
+
+  <b style="font-size: larger">
+    <a name="externalDocs">
+      Are there external documents, tutorials, or references about logging in Tomcat?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    Yes, there are.  You can Google for more, but some such references are:
+    <ul>
+      <li>
+        <a href="http://minaret.biz/tips/tomcatLogging.html">Tomcat 5.0.27, Velocity 1.4, Log4j</a>
+      </li>
+    </ul>
+  </div><br>
+
+</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><td align="center" colspan="2"><!--Google Search Form: see Bugzilla 35788--><form action="http://www.google.com/search" name="searchForm" method="GET"><input value="UTF-8" name="ie" type="hidden"><input value="UTF-8" name="oe" type="hidden"><table bgcolor="#FFFFFF"><tr><td><a href="http://www.google.com/"><img align="absmiddle" alt="Google" border="0" src="http://www.google.com/logos/Logo_40wht.gif"></a></td><td><input value="" maxlength="255" size="25" name="q" type="text"><input value="http://jakarta.apache.org/tomcat/faq" name="domains" type="hidden"><input value="http://jakarta.apache.org/tomcat/faq" name="sitesearch" type="hidden"><input value="Google Search" name="btnG" type="submit"><br>
+                                Search the Tomcat FAQ
+			      </td></tr></table></form></td></tr><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
+        Copyright &copy; 1999-2005, Apache Software Foundation
+        </em></font></div></td></tr></table></body></html>

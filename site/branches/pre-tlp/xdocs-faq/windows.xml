@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="windows.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <title>Windows Questions</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+<p>The will address various windows issues.
+    Please see the
+    <a href="http://wiki.apache.org/jakarta-tomcat/UsefulLinks">
+        Other Resources
+    </a> Link for more links related to Windows.
+</p>
+
+</section>
+
+<section name="Questions">
+  <ul>
+     <li><a href="#out">
+         Why do I get Out of Environment Space?
+      </a> </li>
+
+      <li><a href="#illegal">
+         When I start up tomcat (or when it is running), I get the error
+         <code>java.lang.IllegalMonitorStateException:
+                current thread not owner</code>
+      </a> </li>
+
+      <li><a href="#case">
+         Can I turn off case sensitivity?
+      </a> </li>
+
+      <li><a href="#ntlm">
+         Can I use NTLM authentication?
+      </a> </li>
+
+      <li><a href="#lock">
+         I want to redeploy web applications, how do I prevent resources
+         from getting locked?
+      </a> </li>
+  </ul>
+</section>
+
+
+<section name="Answers">
+
+  <question>
+    <a name="out">
+               Why do I get Out of Environment Space?
+      </a>
+  </question>
+  <answer>
+       Check the Tomcat README, and
+       <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=103918210305702&amp;w=2">
+       this link</a>
+  </answer>
+
+
+  <question>
+    <a name="illegal">
+      When I start up tomcat (or when it is running), I get the error
+      <code>java.lang.IllegalMonitorStateException:
+      current thread not owner</code>
+    </a>
+  </question>
+  <answer>
+      That is weird - but solved.(?) See the
+      <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13723">
+        Tomcat Bug Report
+      </a>
+      and
+      <a href="http://developer.java.sun.com/developer/bugParade/bugs/4776385.html">
+        Sun Bug Parade report
+      </a>
+      for the answer.
+  </answer>
+
+
+  <question>
+    <a name="case">
+         Can I turn off case sensitivity?
+      </a>
+  </question>
+  <answer>
+    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/config/resources.html">
+      Yes
+    </a>
+  </answer>
+
+
+  <question>
+    <a name="ntlm">
+         Can I use NTLM authentication?
+      </a>
+  </question>
+  <answer>
+      With help from the Samba folks,
+      <a href="http://jcifs.samba.org/src/docs/ntlmhttpauth.html">
+        it is possible.</a>
+  </answer>
+
+
+  <question>
+    <a name="lock">
+         I want to redeploy web applications, how do I prevent resources
+         from getting locked?
+      </a>
+  </question>
+  <answer>
+      Most locking issues will occur with JARs from /WEB-INF/lib, and are
+      useally caused by access through URLs. Tomcat has mechanisms to allow
+      avoiding locking. In Tomcat 5.0, a mechanism exists to prevent locking
+      when accessing resources using the getResource method of the URL
+      classloader (many applications, such as Xerces, do not set the use of
+      caching to false before opening the URL connection, causing locking).
+      If such a call occurs, resources inside the JARs will be extracted to
+      the work directory of the web application. In Tomcat 5.5, this mechanism
+      is disabled by default (as it has a non negligible influence on startup
+      times, and is often useless), and can be enabled using the antiJARLocking
+      attribute of the Context element. There is another lock prevention
+      mechanism in Tomcat 5.5 (antiResourceLocking attribute), which will cause
+      the web application files to be copied to the temp folder and run from
+      this location. This has a larger impact on web application startup times,
+      but obviously prevents locking on all resources of the web application.
+      This also allows more flexible management operations as none of the web
+      application resources will be locked, even while the web application is
+      running (as a special note, when making changes JSPs without reloading
+      the application, the changes has to be duplicated to the path where the
+      web application resources have been copied in the temp folder).
+  </answer>
+
+
+</section>
+
+
+</body>
+</document>

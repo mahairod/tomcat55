@@ -1,0 +1,89 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Tomcat FAQ - Bugs</title><meta value="Tim Funk" name="author"><meta value="funkman@apache.org" name="email"><style>
+      dt { font-size : larger;  font-weight : bold }
+      dd {padding-bottom : 10px;}
+    </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
+      Tomcat FAQ
+    " align="right" src="../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--LEFT SIDE NAVIGATION--><td nowrap="true" valign="top" width="20%"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="deployment.html">Deployment</a></li><li><a href="development.html">Development</a></li><li><a href="fda-validation.html">FDA Validation</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/HowTo">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="otherOperatingSystems.html">Other Operating Systems</a></li><li><a href="logging.html">Logging</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/UsefulLinks">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/">Wiki</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Bugs</h2></td><td nowrap="true" valign="top" align="right"><small><a href="printer/bugs.html"><img alt="Printer Friendly Version" border="0" src="../images/printer.gif"><br>print-friendly<br>version
+                    </a></small></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
+If you think you found a bug,
+<a href="http://jakarta.apache.org/tomcat/bugreport.html">read this page</a>.
+
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+  <ul>
+    <li><a href="#gotone">I have a bug, what do I do?</a></li>
+    <li><a href="#feature">Why does feature ABC work
+        in Servlet Container XYZ but not in Tomcat?</a></li>
+    <li><a href="#ignored">I submitted a bug, why is it ignored?</a></li>
+  </ul>
+</p>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
+
+    <b style="font-size: larger">
+        <a name="gotone">I have a bug, what do I do?</a>
+    </b>
+    <div style="padding-left : 20px;">
+    Unless you have the source code reference in Tomcat which is wrong,
+    it may not be a bug. E-mail the
+    <a href="tomcatuser.html">user list</a> and confirm its a bug. Also
+    <a href="http://jakarta.apache.org/tomcat/bugreport.html">
+    read this first</a> from the tomcat site about reporting a bug.
+    </div><br>
+
+    <b style="font-size: larger">
+       <a name="feature">Why does feature ABC work in Servlet
+         Container XYZ but not in Tomcat?
+       </a>
+    </b>
+
+    <div style="padding-left : 20px;">
+    There could be a good chance that the other servlet container could
+    be implementing the spec wrong.
+    </div><br>
+
+    <b style="font-size: larger">
+      <a name="ignored">
+        I submitted a bug, why is it ignored?
+      </a>
+    </b>
+
+    <div style="padding-left : 20px;">
+    Any of the following may affect someone acting on a bug:
+    <ul>
+      <li>
+        Is it a bug?
+      </li>
+      <li>
+        Is your description good?
+      </li>
+      <li>
+        Is your description complete?
+      </li>
+      <li>
+        Can a developer <b>easily</b> reproduce the bug in their own environment?
+      </li>
+      <li>
+        Have you provided a patch? Is it against cvs? Using the correct file? Using
+        <code>cvs diff -u</code>
+      </li>
+      <li>
+        Is your patch coded well?
+      </li>
+      <li>
+        Is your solution "good"?
+      </li>
+    </ul>
+
+    Some developers are uncomfortable submitting patches to code they are
+    unfamiliar with. The committers are not experts in all areas of Tomcat.
+    It may be that the developer who has the ability to adequately review
+    the patch may be too busy or unable to review the bug. That is the bad news,
+    the good news is Tomcat is Open Source and you can build and use your own
+    release until the fix gets back into the official release.
+    </div><br>
+
+</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><td align="center" colspan="2"><!--Google Search Form: see Bugzilla 35788--><form action="http://www.google.com/search" name="searchForm" method="GET"><input value="UTF-8" name="ie" type="hidden"><input value="UTF-8" name="oe" type="hidden"><table bgcolor="#FFFFFF"><tr><td><a href="http://www.google.com/"><img align="absmiddle" alt="Google" border="0" src="http://www.google.com/logos/Logo_40wht.gif"></a></td><td><input value="" maxlength="255" size="25" name="q" type="text"><input value="http://jakarta.apache.org/tomcat/faq" name="domains" type="hidden"><input value="http://jakarta.apache.org/tomcat/faq" name="sitesearch" type="hidden"><input value="Google Search" name="btnG" type="submit"><br>
+                                Search the Tomcat FAQ
+			      </td></tr></table></form></td></tr><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
+        Copyright &copy; 1999-2005, Apache Software Foundation
+        </em></font></div></td></tr></table></body></html>

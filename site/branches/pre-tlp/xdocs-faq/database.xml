@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="database.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <title>Tomcat FAQ: Database</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+    This page is to discuss database error and DBCP. Until more content
+    can appear here, here
+    are some links to the mail archives to perform some searches:
+    <ul>
+      <li>
+        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;w=2&amp;r=1&amp;s=database&amp;q=b">
+            database
+        </a>
+     </li>
+     <li>
+        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;w=2&amp;r=1&amp;s=datasource&amp;q=b">
+            datasource
+        </a>
+     </li>
+     <li>
+        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;w=2&amp;r=1&amp;s=oracle&amp;q=b">
+            oracle
+        </a>
+     </li>
+     <li>
+        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;w=2&amp;r=1&amp;s=mysql&amp;q=b">
+            mysql
+        </a>
+     </li>
+     <li>
+        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;w=2&amp;r=1&amp;s=dbpool&amp;q=b">
+            dbpool
+        </a>
+     </li>
+   </ul>
+
+    <b>Other Links of interest:</b>
+    <ul>
+      <li>
+        <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/jndi-datasource-examples-howto.html">
+            JNDI Datasource HOW-TO</a>
+      </li>
+    </ul>
+
+     <b>Other notes:</b>
+    <ul>
+      <li>
+        <b>Do not use JDBC-ODBC bridge</b> bundled with Sun's JDK with Tomcat. It was never
+        meant for a production server environment. If you ask a question about
+        it, everyone will tell you to not use it. If you do need to use ODBC,
+        there are 3rd party drivers which do a pretty good job at being thread
+        safe.
+      </li>
+
+      <li>
+        If you use the oracle thin driver, be sure to rename it to a jar
+        file from a zip file. Tomcat only auto-magically loads files ending
+        in .jar
+        placed in a lib directory. It ignores all other file
+        extensions.
+       </li>
+    </ul>
+</section>
+
+<section name="Questions">
+<p>
+Sorry, none yet.
+</p>
+</section>
+
+
+<section name="Answers">
+<p>
+Sorry, none yet.
+</p>
+</section>
+
+</body>
+</document>

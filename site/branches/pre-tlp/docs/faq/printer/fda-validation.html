@@ -1,0 +1,169 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Tomcat FAQ - FDA (21 CFR Part 11) Validation</title><meta value="Yoav Shapira" name="author"><meta value="yoavs@apache.org" name="email"><style>
+      dt { font-size : larger;  font-weight : bold }
+      dd {padding-bottom : 10px;}
+    </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
+      Tomcat FAQ
+    " align="right" src="../../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>FDA (21 CFR Part 11) Validation</h2></td><td nowrap="true" valign="top" align="right"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
+  <p>
+    This page discusses using Tomcat in an 
+    <a href="http://www.fda.gov">FDA</a>
+    <a href="http://www.fda.gov/cdrh/comp/guidance/938.html">
+    validated</a> environment,
+    i.e. one where 
+    <a href="http://www.21cfrpart11.com/">
+    21 CFR Part 11</a> regulations apply.
+  </p>
+  <p> 
+    Please note that although this page mentions specific companies, we do not explicitly
+    endorse or sell anyone's services.  Tomcat and Apache are not-for-profit organizations.
+    This page is also far from a complete listing of vendors and support options.  It is
+    meant as a demonstration showing that these options do exist and 
+    that running Tomcat in a validated environment is both feasible and reasonable.
+  </p>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+  <ul>
+    <li><a href="#canItBeDone">Can Tomcat be used in a validated environment?</a></li>
+    <li><a href="#hasAnyoneDoneIt">Has anyone actually done it?</a></li>
+    <li><a href="#isTomcatItselfValidated">Is Tomcat itself validated?</a></li>
+    <li><a href="#supportAroundValidation">What kind of support is there around validating Tomcat?</a></li>
+    <li><a href="#signedReleases">How do I know I have a validated release?  How do I
+        know no one has tampered with the release package?</a></li>
+    <li><a href="#security">What about security? I'm concerned about attacks.</a></li>
+  </ul>
+</p>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
+
+  <b style="font-size: larger">
+    <a name="canItBeDone">
+      Can Tomcat be used in a validated environment?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    <p>
+    Yes.  There's nothing in Tomcat's design or implementation that prevent it
+    from being used in a validated environment.  The same validation procedures
+    and guidelines that apply to most software packages apply to Tomcat as well.
+    Being an open-source application does not preclude Tomcat validation.  In fact,
+    it helps in at least one key aspect: the source code itself can be audited, as
+    can the commit and change logs for the software.
+    </p>
+  </div><br>
+
+  <b style="font-size: larger">
+    <a name="hasAnyoneDoneIt">
+      Has anyone actually done it?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    <p>
+    Yes.  As shown in this user mailing list
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=109836874319797&w=2">archive</a>,
+    Merck and other large companies are using Tomcat in a validated environment.  In addition,
+    there is at least one application provider
+    (<a href="http://www.interchangedigital.com">Interchange Digital</a>)
+    whose application runs on Tomcat that has deployed said package in numerous pharma data
+    centers.
+    </p>
+  </div><br>
+
+  <b style="font-size: larger">
+    <a name="isTomcatItselfValidated">
+      Is Tomcat itself validated?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    <p>
+    Yes.  Tomcat itself is validated to the extent it can be.  Tomcat implements two
+    Java Specifications: the 
+    <a href="http://java.sun.com/products/servlet">Servlet Specification</a>
+    and the
+    <a href="http://java.sun.com/products/jsp">Java Server Pages (JSP) Specification</a>.
+    Each of these specifications has a Technology Compatbility Kit (TCK), which is a collection
+    of tests to certify a given product meets the Specification fully and accurately.
+    </p>
+    <p>
+    The <a href="http://www.apache.org">Apache Software Foundation</a> is licensed to run
+    these TCKs.  They are run against every single Tomcat release.  <strong>No Tomcat release is
+    pronounced stable unless it has passed both of these TCKs with 100% compliance.</strong>
+    Therefore, every stable Tomcat release is validated to the extent of Tomcat's core functionality.
+    </p>
+    <p>
+    Furthermore, any company of individual may 
+    <a href="http://java.sun.com/scholarship/">apply</a> to obtains and use these
+    TCKs themselves.  That way, you can re-validated Tomcat including any custom patches
+    you have implemented.
+    </p>
+    <p>
+    However, we cannot validate your application's use of Tomcat.  You're on your own there.
+    </p>
+  </div><br>
+
+  <b style="font-size: larger">
+    <a name="supportAroundValidation">
+      What kind of support is there around validating Tomcat?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    <p>
+    Several kinds.  They include:
+    <ul>
+      <li>There are numerous <a href="http://jakarta.apache.org/site/vendors.html">smaller vendors</a>
+          and several large ones, including IBM, HP, Sun, and Novell, who offer Tomcat consulting and support
+          services, including application auditing, environment assessments, and risk analysis.</li>
+      <li>There are numerous vendors in addition to the above consultants, 
+          like 
+          <a href="http://www.covalent.net/">Covalent</a> and 
+          <a href="http://www.jboss.org/services/prodsupport">JBoss</a>, 
+          who offer 24/7/365 enterprise-level support for Tomcat.</li>
+      <li>The Tomcat <a href="http://jakarta.apache.org/site/mail2.html#Tomcat">mailing lists</a> are
+          extremely active and contain members of many of the above organizations, including contractors
+          available for hire.</li>
+    </ul>
+    </p>
+  </div><br>
+
+  <b style="font-size: larger">
+    <a name="signedReleases">
+      How do I know I have a validated release?  How do I know no one
+      has tampered with the release package?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    <p>
+      All Tomcat releases are signed using the Release Manager's
+      <a href="http://www.pgpi.org/doc/pgpintro">PGP</a> key.  The key
+      is also available in the <i>KEYS</i> file that ships with every
+      Tomcat release.  The same <i>KEYS</i> file is also available in the
+      Tomcat CVS repository 
+      (<a href="http://cvs.apache.org/viewcvs.cgi/jakarta-tomcat-5/KEYS">here</a>).
+      The PGP signatures are available on all the Tomcat download pages, 
+      and can (and should!) be used to verify the release really is the
+      signed distribution.
+    </p>
+    <p>
+      As for tampering: every Tomcat release is also digested using the MD5
+      algorithm as specified in 
+      <a href="http://www.faqs.org/rfcs/rfc1321.html">RFC1321</a>.  The MD5
+      digest is included in all the download pages.  Users run MD5 on their
+      local machine to verify that the digest of what they downlaoded is the
+      same as that published in the Apache download pages.  That way, users
+      are assured the distribution has not been modified since the Release Manager
+      signed it.
+    </p>
+  </div><br>
+
+  <b style="font-size: larger">
+    <a name="security"> 
+      What about security?  I'm concerned about attacks.
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    <p>
+      There's no need to be.  See the <a href="security.html">security page</a> of
+      this FAQ for more information.
+    </p>
+  </div><br>
+</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
+        Copyright &copy; 1999-2005, Apache Software Foundation
+        </em></font></div></td></tr></table></body></html>

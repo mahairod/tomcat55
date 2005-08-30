@@ -1,0 +1,127 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Tomcat FAQ - Tomcat FAQ: Development</title><meta value="Mark Thomas" name="author"><meta value="markt@apache.org" name="email"><style>
+      dt { font-size : larger;  font-weight : bold }
+      dd {padding-bottom : 10px;}
+    </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
+      Tomcat FAQ
+    " align="right" src="../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--LEFT SIDE NAVIGATION--><td nowrap="true" valign="top" width="20%"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="deployment.html">Deployment</a></li><li><a href="development.html">Development</a></li><li><a href="fda-validation.html">FDA Validation</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/HowTo">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="otherOperatingSystems.html">Other Operating Systems</a></li><li><a href="logging.html">Logging</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/UsefulLinks">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="http://wiki.apache.org/jakarta-tomcat/">Wiki</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Tomcat FAQ: Development</h2></td><td nowrap="true" valign="top" align="right"><small><a href="printer/development.html"><img alt="Printer Friendly Version" border="0" src="../images/printer.gif"><br>print-friendly<br>version
+                    </a></small></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
+    This section of the FAQ discusses common questions related
+    to Tomcat development.
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+  <ul>
+    <li>
+      <a href="#rd">
+        How do I configure Tomcat to support remote debugging?
+      </a>
+    </li>
+    <li>
+      <a href="#rd-eclipse">
+        How do I remotely debug Tomcat using Eclipse?
+      </a>
+    </li>
+    <li>
+      <a href="#rd-netbeans">
+        How do I remotely debug Tomcat using NetBeans IDE?
+      </a>
+    </li>
+  </ul>
+</p>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+  <b style="font-size: larger">
+    <a name="rd">How do I configure Tomcat to support remote debugging?</a>
+  </b>
+  <div style="padding-left : 20px;">
+    <p>
+    The short answer is to add the following options when the JVM is started:<br>
+    <code>-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n</code><br>
+    There are a number of ways you can do this depending on how you normally start
+    Tomcat:
+    <ul>
+      <li>Set environment variables <code>JPDA_ADDRESS=8000</code> and
+          <code>JPDA_TRANSPORT=dt_socket
+</code> and then start tomcat using
+          <code>catalina jpda start</code>.</li>
+
+      <li>If you run Tomcat using service wrapper, check the documentation for the
+          service to determine how to set the required JVM options.
+</li>
+
+      <li>If you start Tomcat from within an IDE, check the documentation for the IDE
+          to determine how to set the required JVM options.</li>
+
+    </ul>
+    </p>
+    <p>The port does not need to be set to 8000, it may be any value appropriate for your
+    system.</p>
+    <p>Whilst this is very useful in development it should not be used in production because
+    of both security and performance implications.</p>
+  </div><br>
+  <b style="font-size: larger">
+    <a name="rd-eclipse">How do I remotely debug Tomcat using Eclipse?</a>
+  </b>
+  <div style="padding-left : 20px;">
+    <p>
+    This answer assumes that you have a project set up with all of the fixings
+    and have some idea of what you're doing in this respect.  If not then 
+    thats really outside the scope of this topic and more in the scope of 
+    you needing to go to <a href="http://www.eclipse.org">eclipse.org</a> and
+    read up on how to use your ide, and maybe practice a little bit before 
+    you come back to this.  We're also going to assume you have some idea of
+    what a debugger is and how to use one.
+    </p>
+    <p>
+    Make sure tomcat is started and that your app is deployed and the sources,
+    etc are all defined as resources in your app.  If you have a servlet or 
+    something, set a breakpoint where its sure to hit on the next request.
+    Go to "Run-&gt;Debug...".  Click on "Remote Java Applications", then click
+    "New". Type in the title and all.  Notice that port 8000 from the Tomcat 
+    instructions.  Save and run.  Eclipse will connect to the VM that Tomcat 
+    is running under.  Wow, that was easy!  Now go type the url to submit to
+    your servlet or whatever in your browser.  Boom you hit the breakpoint right?
+    Have fun!
+    </p>
+  </div><br>
+  <b style="font-size: larger">
+    <a name="rd-netbeans">How do I remotely debug Tomcat using NetBeans IDE?</a>
+  </b>
+  <div style="padding-left : 20px;">
+    <p>
+This answer assumes that you have correctly set up a NetBeans IDE project and
+that you know how to use the NetBeans IDE debugger. If not, please go to
+<a href="http://www.netbeans.org/kb/using-netbeans/40/debug.html">
+http://www.netbeans.org/kb/using-netbeans/40/debug.html</a>
+ and read up on how to use NetBeans IDE and its debugger.
+</p>
+<p>
+Make sure that Tomcat is started in debug mode as described above, that your 
+application is deployed, and that the sources are all defined as resources in 
+your application. If you have a servlet or JSP file, set a breakpoint where you 
+think a problem might be occurring. Go to "Run-&gt;Attach Debugger". A dialog pops 
+up to let you specify the following options:
+<ul>
+    <li> Debugger: JPDA Debugger </li>
+    <li> Connector: SocketAttach </li>
+    <li> Host: The IP address of the host your Tomcat installation is running on
+(127.0.0.1 if it is your local machine). </li>
+    <li> Port: The port of your Tomcat debugging interface, which should be 8000 if
+you've followed the instructions above. </li>
+</ul>
+</p>
+<p>
+When you press OK, you have a debugging connection very similar to local debugging.
+</p>
+<p>
+Note that NetBeans IDE has a second option -- you can debug JSP files and
+servlets locally using a Tomcat server that is bundled with the IDE. When you
+debug a JSP file or servlet in the IDE, the bundled Tomcat server automatically starts
+in debug mode, and the debugger connects to it.
+    </p>
+  </div><br>
+</p>
+</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><td align="center" colspan="2"><!--Google Search Form: see Bugzilla 35788--><form action="http://www.google.com/search" name="searchForm" method="GET"><input value="UTF-8" name="ie" type="hidden"><input value="UTF-8" name="oe" type="hidden"><table bgcolor="#FFFFFF"><tr><td><a href="http://www.google.com/"><img align="absmiddle" alt="Google" border="0" src="http://www.google.com/logos/Logo_40wht.gif"></a></td><td><input value="" maxlength="255" size="25" name="q" type="text"><input value="http://jakarta.apache.org/tomcat/faq" name="domains" type="hidden"><input value="http://jakarta.apache.org/tomcat/faq" name="sitesearch" type="hidden"><input value="Google Search" name="btnG" type="submit"><br>
+                                Search the Tomcat FAQ
+			      </td></tr></table></form></td></tr><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
+        Copyright &copy; 1999-2005, Apache Software Foundation
+        </em></font></div></td></tr></table></body></html>

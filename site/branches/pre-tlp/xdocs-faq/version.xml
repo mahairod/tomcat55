@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="version.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <title>Which Version</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+  <p>
+    This page discusses the differences between the different Tomcat versions.
+    If you
+    want to know more about which connector to use, see the
+    <a href="connectors.html">Connectors</a> section.
+  </p>
+</section>
+<section name="Questions">
+  <ul>
+
+     <li>
+       <a href="#which">
+         Which Tomcat version should I use?
+       </a>
+     </li>
+
+     <li>
+       <a href="#when">
+        When will the next version be released?
+       </a>
+      </li>
+
+  </ul>
+</section>
+
+
+<section name="Answers">
+
+    <question>
+      <a name="which">Which Tomcat version should I use?</a>
+    </question>
+    <answer>
+    It depends on the version of the
+    <a href="http://java.sun.com/products/servlet/">Servlet API</a> you need.
+
+    <ul>
+     <li>Tomcat 3 supports the 2.2 API</li>
+     <li>Tomcat 4 supports the 2.3 API</li>
+     <li>Tomcat 5 supports the 2.4 API</li>
+    </ul>
+
+     As of December 3, 2003 Tomcat 5 has been declared stable.
+
+    <br/><br/>
+
+     There are 2 flavors of Tomcat 4: 4.0.X and 4.1.X - both of which
+     are not receiving enhancments. (Excluding security issues)
+     Both (4.0 and 4.1) are suitable for production.
+     Version 4.1.X is significantly faster than 4.0.X.
+    <br/><br/>
+
+     Tomcat 3 I know nothing about with respect to performance and
+     maintenance. AFAIK - it
+     is still receiving security fixes. The
+     <a href="http://jakarta.apache.org/tomcat/">
+      Tomcat home page </a> should have the correct recommendation.
+    </answer>
+
+
+    <question>
+      <a name="when">
+        When will the next version be released?
+      </a>
+    </question>
+    <answer>
+      <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=102351104906437&amp;w=2">
+        When it is ready.
+      </a>
+    </answer>
+
+</section>
+
+
+</body>
+</document>

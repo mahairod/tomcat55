@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>The Jakarta Site - Reporting Apache Tomcat Bugs</title>
+<meta value="Glenn L. Nielsen" name="author" />
+<meta value="" name="email" />
+</head>
+<body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff">
+<table cellspacing="0" width="100%" border="0">
+<!--PAGE HEADER-->
+<tr>
+<td colspan="2">
+<!--JAKARTA LOGO-->
+<a href="http://jakarta.apache.org/">
+<img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org/images/jakarta-logo.gif" />
+</a>
+<!--PROJECT LOGO-->
+<a href="http://jakarta.apache.org/tomcat/">
+<img border="0" alt="The Apache Tomcat Project" align="right" src="./images/tomcat.gif" />
+</a>
+</td>
+</tr>
+</table>
+<table cellspacing="4" width="100%" border="0">
+<!--HEADER SEPARATOR-->
+<tr>
+<td colspan="2">
+<hr size="1" noshade="" />
+</td>
+</tr>
+<tr>
+<!--LEFT SIDE NAVIGATION-->
+<td nowrap="true" valign="top" width="20%">
+<p>
+<strong>Apache Tomcat</strong>
+</p>
+<ul>
+<li>
+<a href="./index.html">Home</a>
+</li>
+<li>
+<a href="./bugreport.html">Bug Database</a>
+</li>
+<li>
+<a href="./resources.html">Resources</a>
+</li>
+<li>
+<a href="./irc.html">IRC</a>
+</li>
+<li>
+<a href="./faq/">FAQ</a>
+</li>
+</ul>
+<p>
+<strong>Documentation</strong>
+</p>
+<ul>
+<li>
+<a href="./tomcat-5.5-doc/index.html">Apache Tomcat 5.5</a>
+</li>
+<li>
+<a href="./tomcat-5.0-doc/index.html">Apache Tomcat 5.0</a>
+</li>
+<li>
+<a href="./tomcat-4.1-doc/index.html">Apache Tomcat 4.1</a>
+</li>
+<li>
+<a href="./tomcat-3.3-doc/index.html">Apache Tomcat 3.3</a>
+</li>
+</ul>
+<p>
+<strong>Download</strong>
+</p>
+<ul>
+<li>
+<a href="http://jakarta.apache.org/site/downloads/downloads_tomcat-5.cgi">Current Releases</a>
+</li>
+<li>
+<a href="http://jakarta.apache.org/site/downloads/downloads_tomcat-5.cgi">Apache Tomcat 5.x</a>
+</li>
+<li>
+<a href="http://jakarta.apache.org/site/downloads/downloads_tomcat-4.cgi">Apache Tomcat 4.x</a>
+</li>
+<li>
+<a href="http://jakarta.apache.org/site/downloads/downloads_tomcat-3.cgi">Apache Tomcat 3.x</a>
+</li>
+</ul>
+<p>
+<strong>Archives</strong>
+</p>
+<ul>
+<li>
+<a href="./tomcat-4.0-doc/index.html">Apache Tomcat 4.0</a>
+</li>
+<li>
+<a href="./tomcat-3.2-doc/index.html">Apache Tomcat 3.2</a>
+</li>
+</ul>
+<p>
+<strong>Jakarta</strong>
+</p>
+<ul>
+<li>
+<a href="./../index.html">Front Page</a>
+</li>
+<li>
+<a href="http://jakarta.apache.org/site/news.html">News &amp; Status</a>
+</li>
+<li>
+<a href="http://jakarta.apache.org/site/mission.html">Mission</a>
+</li>
+<li>
+<a href="http://jakarta.apache.org/site/guidelines.html">Guidelines Notes</a>
+</li>
+<li>
+<a href="http://jakarta.apache.org/site/faqs.html">FAQs</a>
+</li>
+</ul>
+<p>
+<strong>Get Involved</strong>
+</p>
+<ul>
+<li>
+<a href="http://jakarta.apache.org/site/getinvolved.html">Overview</a>
+</li>
+<li>
+<a href="http://jakarta.apache.org/site/cvsindex.html">CVS Repositories</a>
+</li>
+<li>
+<a href="http://jakarta.apache.org/site/mail.html">Mailing Lists</a>
+</li>
+<li>
+<a href="http://jakarta.apache.org/site/library.html">Reference Library</a>
+</li>
+</ul>
+<p>
+<strong>Misc</strong>
+</p>
+<ul>
+<li>
+<a href="http://jakarta.apache.org/site/whoweare.html">Who We Are</a>
+</li>
+<li>
+<a href="http://jakarta.apache.org/site/acknowledgements.html">Acknowledgements</a>
+</li>
+<li>
+<a href="http://jakarta.apache.org/site/contact.html">Contact</a>
+</li>
+<li>
+<a href="http://jakarta.apache.org/site/legal.html">Legal</a>
+</li>
+</ul>
+</td>
+<!--RIGHT SIDE MAIN BODY-->
+<td align="left" valign="top" width="80%">
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+<tr>
+<td bgcolor="#525D76">
+<font face="arial,helvetica,sanserif" color="#ffffff">
+<a name="Before you report a bug">
+<strong>Before you report a bug</strong>
+</a>
+</font>
+</td>
+</tr>
+<tr>
+<td>
+<p>
+<blockquote>
+<p>The Apache Tomcat community consists of those who use Apache Tomcat, help answer
+questions on discussions lists, contribute documentation and patches,
+and those who develop and maintain the code for Apache Tomcat.  Almost all those
+who assist on a day to day basis resolving bug reports do this for a
+wide variety of reasons, and almost all of them do this on their own time.</p>
+
+<p>Many bugs reported end up not being a bug in the Apache Tomcat code, but are
+due to misconfiguration, problems caused by installed applications, the
+operating system, etc.
+<ul>
+<b>Before reporting a bug please make every effort to resolve the problem
+yourself.</b>
+</ul>
+The remainder of this document points you toward resources you can use to
+resolve the problem you are having.
+</p>
+</blockquote>
+</p>
+</td>
+</tr>
+<tr>
+<td>
+<br />
+</td>
+</tr>
+</table>
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+<tr>
+<td bgcolor="#525D76">
+<font face="arial,helvetica,sanserif" color="#ffffff">
+<a name="Resources to help resolve Apache Tomcat problems">
+<strong>Resources to help resolve Apache Tomcat problems</strong>
+</a>
+</font>
+</td>
+</tr>
+<tr>
+<td>
+<p>
+<blockquote>
+<p>Here are some resources you can use to help you resolve the
+problem you are having before reporting a bug.</p>
+
+  <table width="100%" cellpadding="2" cellspacing="0" border="0">
+<tr>
+<td bgcolor="#828DA6">
+<font face="arial,helvetica,sanserif" color="#ffffff">
+<a name="Problem trouble shooting">
+<strong>Problem trouble shooting</strong>
+</a>
+</font>
+</td>
+</tr>
+<tr>
+<td>
+<blockquote>
+    <p>
+    <li>
+<b>Documentation</b> - Review the documentation for the version
+      of Apache Tomcat you are using.  The problem you are having may already
+      be addressed in the docs.</li>
+    <li>
+<b>Logs</b> - The logs which Apache Tomcat generates can be a valuable
+      resource when trying to diagnose a problem.  Please review them.
+      You may want to enable debug output in your Apache Tomcat configuration
+      so that you have more information to help diagnose the problem.</li>
+    <li>
+<b>FAQ's</b> - Search Frequently Asked Question documents. FAQ's
+      for all Jakarta projects can be found
+      <a href="http://jakarta.apache.org/site/faqs.html">here</a>.</li>
+    </p>
+  </blockquote>
+</td>
+</tr>
+<tr>
+<td>
+<br />
+</td>
+</tr>
+</table>
+
+  <table width="100%" cellpadding="2" cellspacing="0" border="0">
+<tr>
+<td bgcolor="#828DA6">
+<font face="arial,helvetica,sanserif" color="#ffffff">
+<a name="Bug Database">
+<strong>Bug Database</strong>
+</a>
+</font>
+</td>
+</tr>
+<tr>
+<td>
+<blockquote>
+    <p>Please search the bug database to see if the bug you are
+      seeing has already been reported.
+      <ul>
+        <li>The bug may have already been fixed and is available in a later
+        version or nightly build.</li>
+        <li>Someone else may have reported the bug, you could add supporting
+        information to help reproduce and resolve the bug.</li>
+      </ul>
+      Search the Apache Tomcat 3 bug database
+      <a href="http://issues.apache.org/bugzilla/query.cgi?product=Tomcat%203">
+      here</a>.<br />
+      Search the Apache Tomcat 4 bug database
+      <a href="http://issues.apache.org/bugzilla/query.cgi?product=Tomcat%204">
+      here</a>.<br />
+      Search the Apache Tomcat 5 bug database
+      <a href="http://issues.apache.org/bugzilla/query.cgi?product=Tomcat%205">
+      here</a>.<br />
+    </p>
+  </blockquote>
+</td>
+</tr>
+<tr>
+<td>
+<br />
+</td>
+</tr>
+</table>
+
+  <table width="100%" cellpadding="2" cellspacing="0" border="0">
+<tr>
+<td bgcolor="#828DA6">
+<font face="arial,helvetica,sanserif" color="#ffffff">
+<a name="Apache Tomcat discussion lists">
+<strong>Apache Tomcat discussion lists</strong>
+</a>
+</font>
+</td>
+</tr>
+<tr>
+<td>
+<blockquote>
+    <p>It is very likely you are not the first to run into a problem.
+      Others may have already found a solution.  The <b>tomcat-user</b>
+      or <b>tomcat-dev</b> list archives may contain discussions which
+      will help you resolve the problem.
+      Here are four resources to view the Apache Tomcat User List archives:
+       <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;r=1&amp;w=2">Mailing list ARChives</a>,
+       <a href="http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=tomcat-user@jakarta.apache.org">Eyebrowse</a>,
+       <a href="http://www.mail-archive.com/tomcat-user@jakarta.apache.org">Mail Archive</a>,
+       and <a href="http://mikal.org/interests/java/tomcat/">mikal.org</a>.
+
+      Here are four resources to view the Apache Tomcat Developer List archives
+      <a href="http://marc.theaimsgroup.com/?l=tomcat-dev&amp;r=1&amp;w=2">Mailing list ARChives</a>,
+      <a href="http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=tomcat-dev@jakarta.apache.org">Eyebrowse</a>,
+      <a href="http://www.mail-archive.com/tomcat-dev@jakarta.apache.org/">Mail Archive</a>,
+      and <a href="http://www.metronet.com/~wjm/tomcat/">Texas Metronet</a>.
+    </p>
+    <p>If you have already subscribed to the
+      <a href="mailto:tomcat-user@jakarta.apache.org">tomcat-user</a>
+      or <a href="mailto:tomcat-dev@jakarta.apache.org">tomcat-dev</a>
+      discussion lists you can ask about the problem on those lists.
+      If you are not subscribed, you can learn about the lists and subscribe
+      <a href="http://jakarta.apache.org/site/mail.html">here</a>.
+    </p>
+  </blockquote>
+</td>
+</tr>
+<tr>
+<td>
+<br />
+</td>
+</tr>
+</table>
+
+  <table width="100%" cellpadding="2" cellspacing="0" border="0">
+<tr>
+<td bgcolor="#828DA6">
+<font face="arial,helvetica,sanserif" color="#ffffff">
+<a name="Apache Tomcat on IRC">
+<strong>Apache Tomcat on IRC</strong>
+</a>
+</font>
+</td>
+</tr>
+<tr>
+<td>
+<blockquote>
+    <p>An IRC channel dedicated to Apache Tomcat exists on OpenProjects.</p>
+
+    <p>
+<code>#tomcat</code> at <code>irc.us.openprojects.net</code>.
+    Click <a href="irc://irc.us.openprojects.net/tomcat">here</a> to
+    connect to the channel using Mozilla.</p>
+  </blockquote>
+</td>
+</tr>
+<tr>
+<td>
+<br />
+</td>
+</tr>
+</table>
+
+</blockquote>
+</p>
+</td>
+</tr>
+<tr>
+<td>
+<br />
+</td>
+</tr>
+</table>
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+<tr>
+<td bgcolor="#525D76">
+<font face="arial,helvetica,sanserif" color="#ffffff">
+<a name="Reporting Apache Tomcat bugs">
+<strong>Reporting Apache Tomcat bugs</strong>
+</a>
+</font>
+</td>
+</tr>
+<tr>
+<td>
+<p>
+<blockquote>
+<p>If after you have exhausted all other resources to resolve a problem
+with Apache Tomcat you may want to file a bug report.  Please make sure the
+problem is a bug in Apache Tomcat and not a bug in your web application.</p>
+
+<p>Please make sure you provide as much information as possible. Its
+very hard to fix a bug if the person looking into the problem can't
+reproduce it.  Here is a listing of information which should be included:
+<ul>
+  <li>
+<b>Version</b> - Apache Tomcat version, if from a nightly build, version
+    and date of build.</li>
+  <li>
+<b>Component</b> - Apache Tomcat component which has the bug.</li>
+  <li>
+<b>Platform</b> - Hardward platform Tomcat is running on.</li>
+  <li>
+<b>OS</b> - Computer operating system and version.</li>
+  <li>
+<b>JVM</b> - JVM Version</li>
+  <li>
+<b>Web Server</b> - Web Server and version, Apache Tomcat Connector and version.</li>
+  <li>
+<b>Configuration</b> - Attach configuration files if they would help track
+    down the bug.</li>
+  <li>
+<b>Log file excerpts</b> - Review your logs files, reproduce the bug with
+    debugging enabled in your Apache Tomcat configuration.  Then submit any relevant
+    sections of the log which help document the bug.</li>
+  <li>
+<b>Stack Traces</b> - Any stack traces generated by the bug.</li>
+  <li>
+<b>Example</b> - Example configuration files or web applications which
+    demonstrate the bug.  When submitting an example which reproduces the bug,
+    please try to make it as simple as possible.</li>
+  <li>
+<b>Bug Fix Patch</b> - A patch created using <code>diff -u</code> which
+    fixes the bug.
+    (If you have found a bug fix which can be applied to the Apache Tomcat code)</li>
+  <li>
+<b>Miscellaneous</b> - Any other information you feel will help track
+    down the problem.  For example other Java API's and versions being used
+    with Apache Tomcat.</li>
+</ul>
+
+Report an Apache Tomcat 5 bug
+<a href="http://issues.apache.org/bugzilla/enter_bug.cgi?product=Tomcat%205">
+here</a>.<br />
+Report an Apache Tomcat 4 bug
+<a href="http://issues.apache.org/bugzilla/enter_bug.cgi?product=Tomcat%204">
+here</a>.<br />
+Report an Apache Tomcat 3 bug
+<a href="http://issues.apache.org/bugzilla/enter_bug.cgi?product=Tomcat%203">
+here</a>.<br />
+</p>
+
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+<tr>
+<td bgcolor="#828DA6">
+<font face="arial,helvetica,sanserif" color="#ffffff">
+<a name="Security Issues">
+<strong>Security Issues</strong>
+</a>
+</font>
+</td>
+</tr>
+<tr>
+<td>
+<blockquote>
+<p>Security-related bugs are of special concern.  If you have a verified 
+security bug to report please do not post it
+to email lists or submit a bug report.  Security bugs should be reported
+privately by email to <a href="mailto:security@apache.org">security@apache.org</a>.
+</p>
+</blockquote>
+</td>
+</tr>
+<tr>
+<td>
+<br />
+</td>
+</tr>
+</table>
+
+</blockquote>
+</p>
+</td>
+</tr>
+<tr>
+<td>
+<br />
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<!--FOOTER SEPARATOR-->
+<tr>
+<td colspan="2">
+<hr size="1" noshade="" />
+</td>
+</tr>
+<!--PAGE FOOTER-->
+<tr>
+<td colspan="2">
+<div align="center">
+<font size="-1" color="#525D76">
+<em>
+        Copyright © 1999-2005, The Apache Software Foundation
+        </em>
+</font>
+</div>
+</td>
+</tr>
+</table>
+</body>
+</html>

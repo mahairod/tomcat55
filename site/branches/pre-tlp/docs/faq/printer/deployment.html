@@ -1,0 +1,60 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Tomcat FAQ - Tomcat FAQ: Deployment</title><meta value="Yoav Shapira" name="author"><meta value="yoavs@apache.org" name="email"><style>
+      dt { font-size : larger;  font-weight : bold }
+      dd {padding-bottom : 10px;}
+    </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
+      Tomcat FAQ
+    " align="right" src="../../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Tomcat FAQ: Deployment</h2></td><td nowrap="true" valign="top" align="right"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
+    This section of the FAQ discusses common questions related
+    to web application deployment.
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+  <ul>
+    <li>
+      <a href="#tc5Conf">
+        Why does tomcat 5 create context configuration files?
+      </a>
+    </li>
+    <li>
+      <a href="deployMemIncrease">
+        Why does the memory usage increase when I redeploy a web application?
+      </a>
+    </li>
+  </ul>
+</p>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+  <b style="font-size: larger">
+    <a name="tc5Conf">Why does tomcat 5 create context configuration files?</a>
+  </b>
+  <div style="padding-left : 20px;">
+    Unlike tomcat 4.x, tomcat 5.x creates context configuration files for you
+    in its conf/[Engine name]/[Host name] directory.  This is part of the change
+    in tomcat's configuration mechanism from version 4.x to make overall configuration
+    more robust, flexible, and enterprise-friendly.  Note, however, that this
+    has changed the recommended deployment practices for web applications.
+
+    These context configuration files are created by tomcat, but not removed
+    by tomcat, because the user may have changed them or other files in the conf
+    directory.  The suggested practice for tomcat 5
+    is to place context configuration files in the META-INF/context.xml directory
+    of your webapp, and use Tomcat's Manager webapp to deploy/undeploy your applications.
+    More details can be found here:
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=107590945807699&w=2">MARC Archive</a>
+  </div><br>
+
+  <b style="font-size: larger">
+    <a name="deployMemIncrease">
+      Why does the memory usage increase when I redeploy a web application?
+    </a>
+  </b>
+
+  <div style="padding-left : 20px;">
+    Because the Classloader (and the Class objects it loaded) cannot be
+    recycled.  They are stored in the permanent heap generation by the JVM,
+    and when you redepoy a new class loader is created, which loads another
+    copy of all these classes.  This can cause OufOfMemoryErrors eventually.
+  </div><br>
+</p>
+</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
+        Copyright &copy; 1999-2005, Apache Software Foundation
+        </em></font></div></td></tr></table></body></html>

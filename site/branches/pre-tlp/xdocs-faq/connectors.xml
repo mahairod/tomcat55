@@ -1,0 +1,341 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="connectors.html">
+
+  &project;
+
+  <properties>
+    <author email="funkman@apache.org">Tim Funk</author>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
+    <title>Connectors</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+  <p>
+    Please see the
+    <a href="http://wiki.apache.org/jakarta-tomcat/UsefulLinks">
+        Other Resources
+    </a> Link for other pages describing how they were able to link
+    Tomcat with a connector. With luck, someone documented their experience
+    in an environment which is similar to yours.
+
+  </p>
+  <p>
+    <a href="http://jakarta.apache.org/tomcat/connectors-doc/">JK docs.</a>
+  </p>
+</section>
+
+
+<section name="Questions">
+<p>
+  <ul>
+    <li>
+      <a href="#jk">
+        What is JK (or AJP)?
+      </a>
+    </li>
+    <li>
+      <a href="#vs">
+        Which connector: mod_jserv, JK, JK2, mod_webapp or mod_proxy?
+      </a>
+    </li>
+    <li>
+      <a href="#integrate">
+        Why should  I integrate Apache  with Tomcat? (or not)
+      </a>
+    </li>
+    <li>
+      <a href="#boot">
+        At boot, is order of start up (Apache vs Tomcat) important?
+      </a>
+    </li>
+    <li>
+      <a href="#jkloc">
+     JK2 doesn't seem to be using my settings in my
+     <code>workers2.properties</code> file
+     such as creating the shm file or mapping the URIs listed to Tomcat,
+     what's wrong?
+      </a>
+    </li>
+
+    <li>
+      <a href="#generated">
+      Is there any way to control the content of automatically generated
+      <code>mod_jk.conf-auto</code>? I need my own specific commands added to it.
+      </a>
+    </li>
+
+
+    <li>
+      <a href="#bind">
+      How do I bind to a specific ip address?
+      </a>
+    </li>
+
+    <li>
+      <a href="#binary">
+      Where is the binary distribution of my connector?
+      </a>
+    </li>
+
+    <li>
+      <a href="#utf8">
+      I'm having strange UTF-8 issues with my request parameters.
+      </a>
+    </li>
+
+  </ul>
+</p>
+</section>
+
+
+<section name="Answers">
+
+  <question>
+    <a name="jk">What is JK (or AJP)?</a>
+  </question>
+  <answer>
+    AJP is a wire protocol. It an optimized version of the HTTP protocol to
+    allow a standalone web server such as Apache talk to Tomcat. Historically,
+    Apache has always been much faster than Tomcat at serving static content.
+    The idea is to let Apache serve the static content when possible, then
+    proxy the request back to Tomcat for Tomcat related content.
+  </answer>
+
+  <question>
+    <a name="vs">
+      Which connector: mod_jserv, JK, JK2, mod_webapp or mod_proxy?
+    </a>
+  </question>
+  <answer>
+    <ul>
+      <li>
+        Stay away from mod_webapp, aka warp. It is deprecated and unsupported
+        due to lack of developer interest and there are better options such
+        as jk and jk2. It WILL NOT run on windows.
+      </li>
+      <li>
+        mod_jserv is unsupported and will not be supported
+        in Tomcat 5. mod_jserv was the original connector which supported
+        the ajp protocol.
+      </li>
+      <li>
+        jk2 is a refactoring of mod_jk and uses the Apache Portable
+        Runtime (apr). But due to lack of developer interest, it is unsupported.
+        The alternative is mod_jk or mod_proxy_ajp.
+      </li>
+      <li>
+        <b>mod_jk is great and should be used for production. It is getting
+        fixes as needed (which is now rare). </b>
+      </li>
+      <li>mod_proxy. A cheap way to proxy without the hassles of configuring JK.
+        This solution lacks sticky session load balancing. If you don't
+        need some of the features of jk, jk2 - this is a very simple
+        alternative.
+      </li>
+      <li>mod_proxy_ajp. With apache 2.2, mod_proxy was rewritten to support
+          load balancing as well as a new transport called mod_proxy_ajp.
+          This module is distributed with the Apache http server, not
+          the Tomcat server.
+      </li>
+    </ul>
+  </answer>
+
+   <question>
+     <a name="integrate">
+        Why should  I integrate Apache  with Tomcat? (or not)
+     </a>
+   </question>
+   <answer>
+    There are many reasons to integrate Tomcat with Apache. And there are
+    reasons why it
+    should not be done too. Needless to say, everyone will disagree with
+    the opinions here.
+    With the upcoming performance of Tomcat 5, performance reasons
+    become harder to justify. So here are the issues to discuss in
+    integrating vs not.
+   <br/><br/>
+
+  <ul>
+    <li>
+      Clustering. By using Apache as a front end you can let Apache act as a
+      front door to your content to multiple Tomcat instances. If one of your
+      Tomcats fails, Apache
+      ignores it and your Sysadmin can sleep through the night. This point
+      could be ignored if you use a hardware loadbalancer and Tomcat's
+      clustering capabilities.
+    </li>
+    <li>
+      Clustering/Security. You can also use Apache as a front door to different
+      Tomcats for
+      different URL namespaces (/app1/, /app2/, /app3/, or virtual hosts).
+      The Tomcats can then be each in a protected area
+      and from a security point of view, you only need to worry about the
+      Apache server. Essentially, Apache becomes a smart proxy server.
+    </li>
+    <li>
+       Security. This topic can sway one either way. Java has the security
+       manager while Apache has a larger mindshare and more tricks with
+       respect to security. I won't go into this
+       in more detail, but let Google be your friend. Depending on your scenario,
+       one might be better than the other. But also keep in mind, if you run
+       Apache with
+       Tomcat - you have two systems to defend, not one.
+    </li>
+    <li>
+       Add-ons. Adding on CGI, perl, PHP is very natural to Apache. Its
+       slower and more
+       of a kludge for Tomcat. Apache also has hundreds of modules that can
+       be plugged in
+       at will. Tomcat can have this ability, but the code hasn't been
+       written yet.
+    </li>
+    <li>
+       Decorators! With Apache in front of Tomcat, you can perform any number
+       of decorators that
+       Tomcat doesn't support or doesn't have the immediate code support.
+       For example,
+       mod_headers, mod_rewrite, and mod_alias could be written for Tomcat,
+       but why reinvent the wheel when Apache has done it so well?
+    </li>
+    <li>
+      Speed. Apache is faster at serving static content than Tomcat. But unless
+      you have a high traffic site, this point is useless. But in some scenarios,
+      tomcat can be faster than apache. So benchmark YOUR site.
+    </li>
+    <li>
+       Socket handling/system stability. Apache has better socket handling
+       with respect
+       to error conditions than Tomcat. The main reason is Tomcat must perform
+       all its socket handling via the JVM which needs to be cross platform.
+       The problem
+       is socket optimization is a platform specific ordeal. Most of the
+       time the java
+       code is fine, but when you are also bombarded with dropped connections,
+       invalid
+       packets, invalid requests from invalid IP's, Apache does a better job
+       at dropping these error conditions than JVM based program. (YMMV)
+    </li>
+    <li>
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=104874913017036&amp;w=2">Here </a>
+    is a great response from Craig R. McClanahan. If you have free time,
+    read emails by him in any of the list archives. You'll learn a lot.
+    </li>
+    </ul>
+  </answer>
+
+  <question>
+    <a name="boot">
+      At boot, is order of start up (Apache vs Tomcat) important?
+    </a>
+  </question>
+  <answer>
+    No. This way - either apache or tomcat can be restarted at any time
+    independent of one another.
+  </answer>
+
+  <question>
+    <a name="jkloc">
+     JK2 doesn't seem to be using my settings in my
+     <code>workers2.properties</code> file
+     such as creating the shm file or mapping the URIs listed to Tomcat,
+     what's wrong?
+    </a>
+  </question>
+  <answer>
+    JK2 is not finding your <code>workers2.properties</code> file.
+    Specify it's location in your <code>httpd.conf</code> file by adding:
+
+    <br /><br />
+    <code>
+        JkSet config.file /full/system/path/to/workers2.properties
+    </code>
+    <br /><br />
+    <a href='http://marc.theaimsgroup.com/?t=105784893200003&amp;r=1&amp;w=2'>
+        Thread which spawned this question.
+    </a> <br />
+    <b>Please note the JK2 is unsupported.</b>
+  </answer>
+
+
+  <question>
+    <a name="generated">
+    Is there any way to control the content of automatically generated
+    <code>mod_jk.conf-auto</code>? I need my own specific commands added
+    to it.
+    </a>
+  </question>
+  <answer>
+    There really is no need to. Just copy the automatically generated
+    <code>mod_jk.conf-auto</code> and edit it manually to your preference.
+    None of production tomcat installations really use <code>mod_jk.conf-auto</code>
+    as it is.
+  </answer>
+
+  <question>
+    <a name="bind">
+    How do I bind to a specific ip address?
+    </a>
+  </question>
+  <answer>
+    Each Connector element allows an <tt>address</tt> property. For example:
+<source>
+&lt;Connector className="org.apache.coyote.tomcat4.CoyoteConnector"
+           address="192.168.1.1"
+           port="8080" minProcessors="5" maxProcessors="75"
+           enableLookups="true" redirectPort="8443"
+           acceptCount="100" debug="0" connectionTimeout="20000"
+           useURIValidationHack="false" disableUploadTimeout="true" /&gt;
+</source>
+
+    For a more complete description of the Connector config,
+    <a href="http://jakarta.apache.org/tomcat/tomcat-5.0-doc/config/http.html">see the
+    HTTP Connector docs</a>
+    or the
+    <a href="http://jakarta.apache.org/tomcat/tomcat-5.0-doc/config/http.html">see the
+    AJP Connector docs</a>.
+
+
+  </answer>
+
+  <question>
+    <a name="binary">
+    Where can I download a binary distribution of my connector?
+    </a>
+  </question>
+  <answer>
+    You can't: you need to download the source and compile it
+    for your platform.  The source distributions are available
+    from the <a href="http://jakarta.apache.org/site/sourceindex.cgi">standard location.</a>
+    Note that JPackage.org has RPM distributions for the connectors
+    as well as tomcat itself: <a href="http://www.jpackage.org">JPackage.org</a>
+  </answer>
+
+  <question>
+    <a name="utf8">
+    I'm having strange UTF-8 issues with my request parameters.
+    </a>
+  </question>
+  <answer>
+    In tomcat 5 - does your connector have Connector declaration have
+    <tt>URIEncoding="UTF-8"</tt>. For example:
+    <pre>
+&lt;Connector port="80"
+           maxThreads="50" minSpareThreads="5" maxSpareThreads="15"
+           disableUploadTimeout="true"
+           URIEncoding="UTF-8"/&gt;
+    </pre>
+  </answer>
+
+
+
+</section>
+
+
+</body>
+</document>
