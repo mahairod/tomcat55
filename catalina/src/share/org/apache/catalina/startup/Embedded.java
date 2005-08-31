@@ -46,6 +46,7 @@ import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.IntrospectionUtils;
+import org.apache.tomcat.util.log.SystemLogHandler;
 
 
 /**
@@ -140,6 +141,12 @@ public class Embedded  extends StandardService implements Lifecycle {
 
 
     /**
+     * Is standard streams redirection enabled ?
+     */
+    protected boolean redirectStreams = true;
+
+
+    /**
      * The set of Engines that have been deployed in this server.  Normally
      * there will only be one.
      */
@@ -214,6 +221,31 @@ public class Embedded  extends StandardService implements Lifecycle {
         this.useNaming = useNaming;
         support.firePropertyChange("useNaming", new Boolean(oldUseNaming),
                                    new Boolean(this.useNaming));
+
+    }
+
+
+    /**
+     * Return true if redirction of standard streams is enabled.
+     */
+    public boolean isRedirectStreams() {
+
+        return (this.redirectStreams);
+
+    }
+
+
+    /**
+     * Enables or disables naming support.
+     *
+     * @param useNaming The new use naming value
+     */
+    public void setRedirectStreams(boolean redirectStreams) {
+
+        boolean oldRedirectStreams = this.redirectStreams;
+        this.redirectStreams = redirectStreams;
+        support.firePropertyChange("redirectStreams", new Boolean(oldRedirectStreams),
+                                   new Boolean(this.redirectStreams));
 
     }
 
@@ -932,6 +964,16 @@ public class Embedded  extends StandardService implements Lifecycle {
 
     }
 
+    
+    protected void initStreams() {
+        if (redirectStreams) {
+            // Replace System.out and System.err with a custom PrintStream
+            SystemLogHandler systemlog = new SystemLogHandler(System.out);
+            System.setOut(systemlog);
+            System.setErr(systemlog);
+        }
+    }
+    
 
     // -------------------------------------------------------- Private Methods
 

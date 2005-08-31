@@ -31,7 +31,6 @@ import org.apache.catalina.Server;
 import org.apache.catalina.core.StandardServer;
 import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomcat.util.digester.Rule;
-import org.apache.tomcat.util.log.SystemLogHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 
@@ -480,11 +479,8 @@ public class Catalina extends Embedded {
             return;
         }
 
-        // Replace System.out and System.err with a custom PrintStream
-        // TODO: move to Embedded, make it configurable
-        SystemLogHandler systemlog = new SystemLogHandler(System.out);
-        System.setOut(systemlog);
-        System.setErr(systemlog);
+        // Stream redirection
+        initStreams();
 
         // Start the new server
         if (server instanceof Lifecycle) {
