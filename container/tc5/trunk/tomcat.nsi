@@ -17,8 +17,8 @@
   VIAddVersionKey FileDescription "Apache Tomcat Installer"
   VIAddVersionKey FileVersion "2.0"
   VIAddVersionKey ProductVersion "@VERSION@"
-  VIAddVersionKey Comments "jakarta.apache.org/tomcat"
-  VIAddVersionKey InternalName "jakarta-tomcat-@VERSION@.exe"
+  VIAddVersionKey Comments "tomcat.apache.org"
+  VIAddVersionKey InternalName "apache-tomcat-@VERSION@.exe"
   VIProductVersion @VERSION_NUMBER@
 
 !include "MUI.nsh"
@@ -164,7 +164,7 @@ Section "Core" SecTomcatCore
 
   InstallRetry:
   ClearErrors
-  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //IS//Tomcat5 --DisplayName "Apache Tomcat" --Description "Apache Tomcat @VERSION@ Server - http://jakarta.apache.org/tomcat/" --LogPath "$INSTDIR\logs" --Install "$INSTDIR\bin\tomcat5.exe" --Jvm "$2" --StartPath "$INSTDIR" --StopPath "$INSTDIR"'
+  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //IS//Tomcat5 --DisplayName "Apache Tomcat" --Description "Apache Tomcat @VERSION@ Server - http://tomcat.apache.org/" --LogPath "$INSTDIR\logs" --Install "$INSTDIR\bin\tomcat5.exe" --Jvm "$2" --StartPath "$INSTDIR" --StopPath "$INSTDIR"'
   Pop $0
   StrCmp $0 "0" InstallOk
     MessageBox MB_ABORTRETRYIGNORE|MB_ICONSTOP \
@@ -233,7 +233,7 @@ Section "Start Menu Items" SecMenu
   SetOutPath "$SMPROGRAMS\Apache Tomcat 5.5"
 
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Tomcat Home Page.lnk" \
-                 "http://jakarta.apache.org/tomcat"
+                 "http://tomcat.apache.org/"
 
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Welcome.lnk" \
                  "http://127.0.0.1:$R0/"

@@ -20,7 +20,7 @@
   <property name="version"               value="5.5.0-dev" />
   <property name="version.number"        value="${version.major}.${version.minor}.${version.build}.${version.patch}" />
 
-  <property name="project"               value="jakarta-tomcat" />
+  <property name="project"               value="apache-tomcat" />
   <property name="final.name"            value="${project}-${version}" />
   <property name="final-src.name"        value="${project}-${version}-src" />
 
