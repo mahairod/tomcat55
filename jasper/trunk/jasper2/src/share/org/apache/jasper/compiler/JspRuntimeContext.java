@@ -338,6 +338,10 @@ public final class JspRuntimeContext implements Runnable {
         }
 
         classpath = cpath.toString() + cp;
+
+        if(log.isDebugEnabled()) {
+            log.debug("Compilation classpath initialized: " + getClassPath());
+        }
     }
 
     /**
@@ -511,7 +515,7 @@ public final class JspRuntimeContext implements Runnable {
             try {
                 checkCompile();
             } catch (Throwable t) {
-                t.printStackTrace();
+                log.error("Exception checking if recompile needed: ", t);
             }
         }
         
