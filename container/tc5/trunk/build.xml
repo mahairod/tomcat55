@@ -1748,6 +1748,7 @@
         <include name="LICENSE" />
         <include name="NOTICE" />
         <include name="README.txt" />
+        <include name="RUNNING.txt" />
       </tarfileset>
       <tarfileset dir="${tomcat.dist}/webapps/tomcat-docs" prefix="tomcat-5.5-doc">
         <include name="**" />
