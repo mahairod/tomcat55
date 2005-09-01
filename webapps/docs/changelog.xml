@@ -30,8 +30,11 @@
   <subsection name="General">
     <changelog>
       <fix>
-        Remove uneeded files in conf (remm)
+        Remove uneeded files in conf. (remm)
       </fix>
+      <update>
+        Change distribution file names from jakarta-* to apache-*.
+      </update>
     </changelog>
   </subsection>
   
@@ -41,8 +44,11 @@
         <bug>36343</bug>: Only normalize out backslash on Windows platforms. (billbarker)
       </fix>
       <fix>
-        Allow configuring standard stream redirection (remm)
+        Allow configuring standard stream redirection. (remm)
       </fix>
+      <add>
+        <bug>36088</bug>: Add RUNNING.txt and RELEASE-NOTES.txt to fulldocs distro. (yoavs)
+      </add>
     </changelog>
   </subsection>
   
