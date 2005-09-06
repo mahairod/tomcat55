@@ -77,7 +77,10 @@
   </subsection>
   
   <subsection name="Cluster">
-    <changelog>        
+    <changelog>
+      <fix>
+        <bug>36518</bug>: Classname typos for senders, submitted by Christoph Bachhuber-Haller (remm)
+      </fix>
     </changelog>
   </subsection>
   
