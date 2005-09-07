@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document><properties><title>Tomcat Connectors (mod_jk, mod_jk2) Downloads</title></properties><body><section name="Tomcat Connectors (mod_jk, mod_jk2) Downloads"><p>We recommend you use a mirror to download our release
+            builds, but you <strong>must</strong> verify the integrity of
+            the downloaded files using signatures downloaded from our main 
+            distribution directories. Recent releases (48 hours) may not yet be available from the mirrors. </p><p>You are currently using <b>[preferred]</b>.  If you
+            encounter a problem with this mirror, please select another
+            mirror.  If all mirrors are failing, there are <i>backup</i>
+            mirrors (at the end of the mirrors list) that should be
+            available.<br/>[if-any logo]<a href="[link]"><img align="right" src="[logo]" border="0"/></a>[end]</p><p><form action="[location]" method="get" id="SelectMirror">
+              Other mirrors: <select name="Preferred">
+              [if-any http]
+                [for http]<option value="[http]">[http]</option>[end]
+              [end]
+              [if-any ftp]
+                [for ftp]<option value="[ftp]">[ftp]</option>[end]
+              [end]
+              [if-any backup]
+                [for backup]<option value="[backup]">[backup] (backup)</option>[end]
+              [end]
+              </select><input type="submit" value="Change"/></form></p><p>
+            The <code>KEYS</code> link links to the code signing keys used to sign the product. The <code>PGP</code> link downloads the OpenPGP compatible signature from our main site. 
+        </p><p>For more information concerning Tomcat Connectors (mod_jk, mod_jk2), see the <a href="http://jakarta.apache.org/tomcat/connectors-doc/" class="name">Tomcat Connectors (mod_jk, mod_jk2)</a> site. </p><div class="links"><span class="link"><a href="http://www.apache.org/dist/jakarta/tomcat-connectors/KEYS">KEYS</a></span></div><ul class="downloads"><li class="group"><div class="links"><span class="label">JK 1.2</span></div><ul><li class="group"><div class="links"><span class="label">Source</span></div><ul><li class="download"><a href="[preferred]/jakarta/tomcat-connectors/jk/source/jk-1.2.14/jakarta-tomcat-connectors-1.2.14.1-src.tar.gz">JK 1.2.14 Source Release tar.gz</a><ul class="attributes"><li><span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-connectors/jk/source/jk-1.2.14/jakarta-tomcat-connectors-1.2.14.1-src.tar.gz.asc">pgp</a>]</span></li></ul></li><li class="download"><a href="[preferred]/jakarta/tomcat-connectors/jk/source/jk-1.2.14/jakarta-tomcat-connectors-1.2.14.1-src.zip">JK 1.2.14 Source Release zip</a><ul class="attributes"><li><span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-connectors/jk/source/jk-1.2.14/jakarta-tomcat-connectors-1.2.14.1-src.zip.asc">pgp</a>]</span></li></ul></li></ul></li><li class="download"><a href="[preferred]/jakarta/tomcat-connectors/jk/binaries/">JK 1.2 Binary Releases</a></li></ul></li><li class="group"><div class="links"><span class="label">JK 2 (deprecated)</span></div><ul><li class="group"><div class="links"><span class="label">Source</span></div><ul><li class="download"><a href="[preferred]/jakarta/tomcat-connectors/jk2/jakarta-tomcat-connectors-jk2-src-current.tar.gz">JK2 2.0.4 Source Release tar.gz</a><ul class="attributes"><li><span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-connectors/jk2/jakarta-tomcat-connectors-jk2-src-current.tar.gz.asc">pgp</a>]</span></li></ul></li><li class="download"><a href="[preferred]/jakarta/tomcat-connectors/jk2/jakarta-tomcat-connectors-jk2-src-current.zip">JK2 2.0.4 Source Release zip</a><ul class="attributes"><li><span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-connectors/jk2/jakarta-tomcat-connectors-jk2-src-current.zip.asc">pgp</a>]</span></li></ul></li></ul></li><li class="download"><a href="[preferred]/jakarta/tomcat-connectors/jk2/binaries/">JK 2 Binary Releases</a></li></ul></li><li class="download"><a href="[preferred]/jakarta/tomcat-connectors/">browse download area</a></li><li><a href="http://archive.apache.org/dist/jakarta/tomcat-connectors/">archives...</a></li></ul></section></body></document>

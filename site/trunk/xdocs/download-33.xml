@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document><properties><title>Tomcat 3 Downloads</title></properties><body><section name="Tomcat 3 Downloads"><p>We recommend you use a mirror to download our release
+            builds, but you <strong>must</strong> verify the integrity of
+            the downloaded files using signatures downloaded from our main 
+            distribution directories. Recent releases (48 hours) may not yet be available from the mirrors. </p><p>You are currently using <b>[preferred]</b>.  If you
+            encounter a problem with this mirror, please select another
+            mirror.  If all mirrors are failing, there are <i>backup</i>
+            mirrors (at the end of the mirrors list) that should be
+            available.<br/>[if-any logo]<a href="[link]"><img align="right" src="[logo]" border="0"/></a>[end]</p><p><form action="[location]" method="get" id="SelectMirror">
+              Other mirrors: <select name="Preferred">
+              [if-any http]
+                [for http]<option value="[http]">[http]</option>[end]
+              [end]
+              [if-any ftp]
+                [for ftp]<option value="[ftp]">[ftp]</option>[end]
+              [end]
+              [if-any backup]
+                [for backup]<option value="[backup]">[backup] (backup)</option>[end]
+              [end]
+              </select><input type="submit" value="Change"/></form></p><p>
+            The <code>KEYS</code> link links to the code signing keys used to sign the product. The <code>PGP</code> link downloads the OpenPGP compatible signature from our main site. 
+        </p><p>For more information concerning Tomcat 3, see the <a href="http://jakarta.apache.org/tomcat/tomcat-3.3-doc/" class="name">Tomcat 3</a> site. </p><div class="links"><span class="link"><a href="http://www.apache.org/dist/jakarta/tomcat-3/v3.3.2/KEYS">KEYS</a></span></div><ul class="downloads"><li class="group"><div class="links"><span class="label">Binary</span></div><ul><li class="download"><a href="[preferred]/jakarta/tomcat-3/v3.3.2/bin/jakarta-tomcat-3.3.2.tar.gz">3.3.2 tar.gz</a><ul class="attributes"><li><span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-3/v3.3.2/bin/jakarta-tomcat-3.3.2.tar.gz.asc">pgp</a>]</span></li></ul></li><li class="download"><a href="[preferred]/jakarta/tomcat-3/v3.3.2/bin/jakarta-tomcat-3.3.2.zip">3.3.2 zip</a><ul class="attributes"><li><span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-3/v3.3.2/bin/jakarta-tomcat-3.3.2.zip.asc">pgp</a>]</span></li></ul></li></ul></li><li class="group"><div class="links"><span class="label">Source</span></div><ul><li class="download"><a href="[preferred]/jakarta/tomcat-3/v3.3.2/src/jakarta-tomcat-3.3.2-src.tar.gz">3.3.2 tar.gz</a><ul class="attributes"><li><span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-3/v3.3.2/src/jakarta-tomcat-3.3.2-src.tar.gz.asc">pgp</a>]</span></li></ul></li><li class="download"><a href="[preferred]/jakarta/tomcat-3/v3.3.2/src/jakarta-tomcat-3.3.2-src.zip">3.3.2 zip</a><ul class="attributes"><li><span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-3/v3.3.2/src/jakarta-tomcat-3.3.2-src.zip.asc">pgp</a>]</span></li></ul></li></ul></li><li class="download"><a href="[preferred]/jakarta/tomcat-3/">browse download area</a></li><li><a href="http://archive.apache.org/dist/jakarta/tomcat-3/">archives...</a></li></ul></section></body></document>

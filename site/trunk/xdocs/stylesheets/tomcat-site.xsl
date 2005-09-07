@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- Content Stylesheet for "jakarta-site2" Documentation -->
-
-<!-- NOTE:  Changes here should also be reflected in "site.vsl" and vice
-     versa, so either Anakia or XSLT can be used for document generation.   -->
-
-
-<!-- Outstanding Compatibility Issues (with Anakia-based stylesheets):
-
-* Handling of the <image> element to insert relative path prefixes
-
--->
-
+<!-- Content Stylesheet for "tomcat-site" Documentation -->
 
 <!-- $Id$ -->
 
@@ -72,34 +61,29 @@
     <table border="0" width="100%" cellspacing="0">
 
       <xsl:comment>PAGE HEADER</xsl:comment>
-      <tr><td colspan="2">
-
-        <xsl:comment>JAKARTA LOGO</xsl:comment>
-        <a href="http://jakarta.apache.org/">
-          <img src="http://jakarta.apache.org/images/jakarta-logo.gif"
-             align="left" alt="The Jakarta Project" border="0"/>
-        </a>
-        <xsl:if test="$project/logo">
-          <xsl:variable name="alt">
-            <xsl:value-of select="$project/logo"/>
-          </xsl:variable>
-          <xsl:variable name="home">
-            <xsl:value-of select="$project/@href"/>
-          </xsl:variable>
-          <xsl:variable name="src">
-            <xsl:value-of select="$project/logo/@href"/>
-          </xsl:variable>
-
+      <tr>
+        <td>
           <xsl:comment>PROJECT LOGO</xsl:comment>
-          <a href="{$home}">
-            <img src="{$src}" align="right" alt="{$alt}" border="0"/>
+          <a href="http://tomcat.apache.org/">
+            <img src="./images/tomcat.gif" align="left" alt="Tomcat Logo" border="0"/>
           </a>
-        </xsl:if>
+        </td>
+        <td>
+          <font face="arial,helvetica,sanserif">
+            <h1><xsl:value-of select="$project/title"/></h1>
+          </font>
+        </td>
+        <td>
+          <xsl:comment>APACHE LOGO</xsl:comment>
+          <a href="http://www.apache.org/">
+            <img src="http://www.apache.org/images/asf-logo.gif"
+                 align="right" alt="Apache Logo" border="0"/>
+          </a>
+        </td>
+      </tr>
+    </table>
 
-      </td></tr>
-
-      </table>
-      <table border="0" width="100%" cellspacing="4">
+    <table border="0" width="100%" cellspacing="4">
 
       <xsl:comment>HEADER SEPARATOR</xsl:comment>
       <tr>

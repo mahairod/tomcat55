@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <title>Apache Tomcat</title>
+  </properties>
+
+<body>
+
+<section name="TODO">
+<p>Where the Tomcat project came from. This needs work from someone who
+was there or at least knows more than I do.</p>
+<p>Start from Sun.</p>
+<p>Grow in Jakarta</p>
+<p>Become TLP</p>
+</section>
+
+</body>
+</document>
