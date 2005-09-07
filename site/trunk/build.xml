@@ -58,10 +58,11 @@
             </fileset>
         </copy>
 
-        <!-- Copy CSS stylesheets -->
+        <!-- Copy CSS stylesheets and download CGI -->
         <copy    todir="${docs.dest}" filtering="no">
             <fileset dir="${docs.src}">
                 <include name="**/*.css"/>
+                <include name="download.cgi"/>
             </fileset>
         </copy>
 
