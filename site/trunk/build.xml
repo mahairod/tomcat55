@@ -58,13 +58,21 @@
             </fileset>
         </copy>
 
+        <!-- Copy static PDFs -->
+        <copy    todir="${docs.dest}" filtering="no">
+            <fileset dir="${docs.src}">
+                <include name="**/*.pdf"/>
+            </fileset>
+        </copy>
+
         <!-- Copy CSS stylesheets and download CGI -->
         <copy    todir="${docs.dest}" filtering="no">
             <fileset dir="${docs.src}">
                 <include name="**/*.css"/>
-                <include name="download.cgi"/>
+                <include name="**/*.cgi"/>
             </fileset>
         </copy>
+
 
   </target>
 
