@@ -33,7 +33,7 @@
         Remove uneeded files in conf. (remm)
       </fix>
       <update>
-        Change distribution file names from jakarta-* to apache-*.
+        Change distribution file names from jakarta-* to apache-*. (remm)
       </update>
     </changelog>
   </subsection>
@@ -49,6 +49,9 @@
       <add>
         <bug>36088</bug>: Add RUNNING.txt and RELEASE-NOTES.txt to fulldocs distro. (yoavs)
       </add>
+      <fix>
+        <bug>36534</bug>: fix equals for URLs returned by ServletContext.getResource() (luehe)
+      </fix>
     </changelog>
   </subsection>
   

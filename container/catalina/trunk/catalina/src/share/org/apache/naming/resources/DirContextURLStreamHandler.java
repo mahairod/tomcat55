@@ -89,6 +89,41 @@ public class DirContextURLStreamHandler
     }
     
     
+    // ------------------------------------------------------------ URL Methods
+    
+    
+    /**
+     * Override as part of the fix for 36534, to ensure toString is correct.
+     */
+    protected String toExternalForm(URL u) {
+        // pre-compute length of StringBuffer
+        int len = u.getProtocol().length() + 1;
+        if (u.getPath() != null) {
+            len += u.getPath().length();
+        }
+        if (u.getQuery() != null) {
+            len += 1 + u.getQuery().length();
+        }
+        if (u.getRef() != null) 
+            len += 1 + u.getRef().length();
+        StringBuffer result = new StringBuffer(len);
+        result.append(u.getProtocol());
+        result.append(":");
+        if (u.getPath() != null) {
+            result.append(u.getPath());
+        }
+        if (u.getQuery() != null) {
+            result.append('?');
+            result.append(u.getQuery());
+        }
+        if (u.getRef() != null) {
+            result.append("#");
+            result.append(u.getRef());
+        }
+        return result.toString();
+    }
+
+
     // --------------------------------------------------------- Public Methods
     
     
