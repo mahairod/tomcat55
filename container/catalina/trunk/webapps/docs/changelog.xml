@@ -52,6 +52,10 @@
       <fix>
         <bug>36534</bug>: fix equals for URLs returned by ServletContext.getResource() (luehe)
       </fix>
+      <fix>
+        <bug>36558</bug>: Clear IntrospectionUtils cache when stopping a webapp, as it 
+        could leak to keeping a reference to the classloader (remm)
+      </fix>
     </changelog>
   </subsection>
   
