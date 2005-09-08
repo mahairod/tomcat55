@@ -69,15 +69,19 @@ public final class ReplicationStream extends ObjectInputStream {
         throws ClassNotFoundException, IOException {
         String name = classDesc.getName();
         boolean tryRepFirst = name.startsWith("org.apache.catalina.cluster");
-        try
-        {
-            if ( tryRepFirst ) return findReplicationClass(name);
-            else return findWebappClass(name);
-        }
-        catch ( Exception x )
-        {
-            if ( tryRepFirst ) return findWebappClass(name);
-            else return findReplicationClass(name);
+        try {
+            try
+            {
+                if ( tryRepFirst ) return findReplicationClass(name);
+                else return findWebappClass(name);
+            }
+            catch ( Exception x )
+            {
+                if ( tryRepFirst ) return findWebappClass(name);
+                else return findReplicationClass(name);
+            }
+        } catch (ClassNotFoundException e) {
+            return super.resolveClass(classDesc);
         }
     }
     
