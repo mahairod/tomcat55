@@ -21,7 +21,7 @@
     <menu name="Problems?">
         <item name="Find help"             href="/findhelp.html"/>
         <item name="FAQ"                   href="/faq/"/>
-        <item name="Mailing Lists"         href="/mail.html"/>
+        <item name="Mailing Lists"         href="/lists.html#tomcat-user"/>
         <item name="Bug Database"          href="/bugreport.html"/>
         <item name="IRC"                   href="/irc.html"/>
     </menu>
