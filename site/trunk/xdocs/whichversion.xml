@@ -53,6 +53,29 @@ be interested or able to support you.
 
 </section>
 
+<section name="Alpha / Beta / Stable">
+
+<p>Every Tomcat release is initially released as an Alpha release. After a week or
+so of testing a vote is held to gather views on the stability of the release. If a
+major issue is identified during testing, then the vote may not take place and the
+release will remain as an Alpha release.</p>
+
+<p>Stability is a subjective judgement and you should always read carefully the
+release notes for any version you intend to make use of.</p>
+
+<p><strong>Alpha</strong> releases may contain large amounts of untested/missing
+functionality required by the specification and/or signifcant bugs and are not
+expected to run stably for any length of time.</p>
+
+<p><strong>Beta</strong> releases may contain some untested functionlaity and/or a
+number of relatively minor bugs. Beta releases are not expected to run stably.</p>
+
+<p><strong>Stable</strong> releases may contain a small number of relatively minor
+bugs. Stable releases are intended for production use and are expected to run
+stably for extended periods of time.</p>
+
+</section>
+
 <section name="Apache Tomcat 5.x">
 
 <p><strong>Apache Tomcat 5.5.x</strong>.  Apache Tomcat 5.5 is the current focus of
