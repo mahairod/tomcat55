@@ -497,7 +497,7 @@ public class ApplicationContext
                 try {
                     resources.lookup(path);
                     return new URL
-                        ("jndi", null, 0, getJNDIUri(hostName, fullPath),
+                        ("jndi", "", 0, getJNDIUri(hostName, fullPath),
                          new DirContextURLStreamHandler(resources));
                 } catch (Exception e) {
                     // Ignore
