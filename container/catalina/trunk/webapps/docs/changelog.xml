@@ -56,6 +56,10 @@
         <bug>36558</bug>: Clear IntrospectionUtils cache when stopping a webapp, as it 
         could leak to keeping a reference to the classloader (remm)
       </fix>
+      <fix>
+        <bug>36113</bug>: Session persistence for objects with primitive types could fail in
+        some rare cases (remm)
+      </fix>
     </changelog>
   </subsection>
   
