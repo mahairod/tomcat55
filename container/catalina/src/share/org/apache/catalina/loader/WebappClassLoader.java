@@ -56,6 +56,7 @@ import org.apache.catalina.util.StringManager;
 import org.apache.naming.JndiPermission;
 import org.apache.naming.resources.Resource;
 import org.apache.naming.resources.ResourceAttributes;
+import org.apache.tomcat.util.IntrospectionUtils;
 import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
@@ -1514,6 +1515,8 @@ public class WebappClassLoader
         org.apache.commons.logging.LogFactory.release(this);
         // Clear the classloader reference in the VM's bean introspector
         java.beans.Introspector.flushCaches();
+        // Clear the IntrospectionUtils cache
+        IntrospectionUtils.clear();
 
     }
 
