@@ -1596,7 +1596,7 @@ public class ProxyDirContext implements DirContext {
         // Add new entry to cache
         synchronized (cache) {
             // Check cache size, and remove elements if too big
-            if (cache.allocate(entry.size)) {
+            if ((cache.lookup(name) == null) && cache.allocate(entry.size)) {
                 cache.load(entry);
             }
         }
