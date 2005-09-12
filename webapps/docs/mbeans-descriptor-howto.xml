@@ -2,7 +2,7 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document url="mbean-descriptor-howto.html">
+<document url="mbeans-descriptor-howto.html">
 
     &project;
 
