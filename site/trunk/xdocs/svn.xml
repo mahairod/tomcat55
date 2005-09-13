@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <title>Apache Tomcat</title>
+  </properties>
+
+<body>
+
+<section name="Subversion">
+
+<p>All of the Apache Tomcat source code, documentation and this web site are
+managed under version control using Subversion. This page explains the structure
+of the Apache Tomcat Subversion repository. The page assumes you are familiar
+with the general
+<a href="http://www.apache.org/dev/version-control.html#anon-svn">Apache
+guidance for Subversion</a>.</p>
+
+<p>All Subversion links in this page use anonymous access.</p>
+
+</section>
+
+
+<section name="Repository Structure">
+
+<p>The root of the repository is
+<a href="http://svn.apache.org/repos/asf/tomcat">
+http://svn.apache.org/repos/asf/tomcat</a>.</p>
+
+<p>The directories below this level are:</p>
+<table>
+  <tr>
+    <th>Directory</th><th>Contents</th>
+  </tr>
+  <tr>
+    <td><a href="http://svn.apache.org/repos/asf/tomcat/archive">
+        <code>/archive/</code></a></td>
+    <td>Modules that are no longer maintained</td>
+  </tr>
+  <tr>
+    <td><a href="http://svn.apache.org/repos/asf/tomcat/container">
+        <code>/container/</code></a></td>
+    <td>The core Tomcat code</td>
+  </tr>
+  <tr>
+    <td><a href="http://svn.apache.org/repos/asf/tomcat/connectors">
+        <code>/connectors/</code></a></td>
+    <td>The HTTP and AJP implmentation code</td>
+  </tr>
+  <tr>
+    <td><a href="http://svn.apache.org/repos/asf/tomcat/jasper">
+        <code>/jasper/</code></a></td>
+    <td>Apache Tomcat's JSP engine</td>
+  </tr>
+  <tr>
+    <td><a href="http://svn.apache.org/repos/asf/tomcat/servletapi">
+        <code>/servletapi/</code></a></td>
+    <td>The Servlet and JSP APIs</td>
+  </tr>
+  <tr>
+    <td><a href="http://svn.apache.org/repos/asf/tomcat/site">
+        <code>/site/</code></a></td>
+    <td>The Apache Tomcat website</td>
+  </tr>
+  <tr>
+    <td><a href="http://svn.apache.org/repos/asf/tomcat/watchdog">
+        <code>/watchdog/</code></a></td>
+    <td>Specification compliance test harness for Apache Tomcat 3.x and 4.x</td>
+  </tr>
+</table>
+
+</section>
+
+
+<section name="Principals">  <p>The Subversion repository has been structured using the following
+principles:
+</p>
+
+<ul>
+  <li>Each current module should appear directly under the 
+      <code>tomcat</code> directory.</li>
+  <li>Modules no longer used (eg tools service) should be clearly marked as
+      archived.</li>
+  <li>The <code>trunk</code> for each module should be the the development
+      branch of the latest Apache Tomcat version. Since there are always
+      several active versions at any one time, rather than be called
+      <code>trunk
+</code> this directory should be named using the Apache Tomcat
+      version it represents, eg <code>tc5.5.x</code>.</li>
+  <li>The development branches for the other Apache Tomcat versions
+      will be placed in the <code>branches</code> directory for each
+      component.</li>
+  <li>Other (non-development) branches will be placed in the
+      <code>branches/other</code> directory in sub-directories that group the
+      other branches by the
+ Apache Tomcat version from whcih they were
+      created.</li>
+  <li>Tags will be treated in exactly the same way as branches.</li> 
+
+</ul>
+
+</section>
+
+</body>
+</document>

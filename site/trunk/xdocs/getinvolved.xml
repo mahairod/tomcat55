@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <title>Apache Tomcat</title>
+  </properties>
+
+<body>
+
+<section name="Get Involved">
+
+<p>If you would like to become involved in the development and support of Apache
+Tomcat there are many different ways in which you can contribute. The following
+are just a few of them.</p>
+
+<ul>
+  <li>Answer questions posted to the mailing lists.</li>
+  <li>Contribute to the FAQ.</li>
+  <li>Contribute other documentation patches, either for the website or for the
+      Apache Tomcat user documentation.</li>
+  <li>Investigate bugs that have been reported and provide patches were
+      appropriate.</li>
+  <li>Help with development for the next release of the Servlet and JSP
+      specifications.</li>
+</ul>
+</section>
+
+</body>
+</document>
