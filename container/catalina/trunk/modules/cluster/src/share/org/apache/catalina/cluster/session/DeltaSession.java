@@ -789,7 +789,9 @@ public class DeltaSession implements HttpSession, Session, Serializable,
     public void recycle() {
 
         // Reset the instance variables associated with this Session
-        attributes.clear();
+        synchronized (attributes) {
+            attributes.clear();
+        }
         setAuthType(null);
         creationTime = 0L;
         expiring = false;
@@ -797,7 +799,9 @@ public class DeltaSession implements HttpSession, Session, Serializable,
         lastAccessedTime = 0L;
         maxInactiveInterval = -1;
         accessCount = 0;
-        notes.clear();
+        synchronized (notes) {
+            notes.clear();
+        }
         setPrincipal(null);
         isNew = false;
         isValid = false;
