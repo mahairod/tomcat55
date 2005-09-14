@@ -90,6 +90,9 @@
   <subsection name="Cluster">
     <changelog>
       <fix>
+        <bug>36541</bug>: Sync all session attribute access (read and write) at DeltaSession (pero)
+      </fix>
+      <fix>
         <bug>36518</bug>: Classname typos for senders, submitted by Christoph Bachhuber-Haller (remm)
       </fix>
     </changelog>
