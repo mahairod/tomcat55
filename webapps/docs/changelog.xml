@@ -40,6 +40,9 @@
   
   <subsection name="Catalina">
     <changelog>
+      <add>
+        Add JMX Remote create and unregister ant tasks (pero)
+      </add>
       <fix>
         <bug>36343</bug>: Only normalize out backslash on Windows platforms. (billbarker)
       </fix>
