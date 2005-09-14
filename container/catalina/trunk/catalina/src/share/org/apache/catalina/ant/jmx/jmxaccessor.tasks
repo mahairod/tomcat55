@@ -4,3 +4,5 @@ jmxSet=org.apache.catalina.ant.jmx.JMXAccessorSetTask
 jmxGet=org.apache.catalina.ant.jmx.JMXAccessorGetTask
 jmxInvoke=org.apache.catalina.ant.jmx.JMXAccessorInvokeTask
 jmxQuery=org.apache.catalina.ant.jmx.JMXAccessorQueryTask
+jmxCreate=org.apache.catalina.ant.jmx.JMXAccessorCreateTask
+jmxUnregister=org.apache.catalina.ant.jmx.JMXAccessorUnregisterTask
