@@ -106,7 +106,7 @@ public class JMXAccessorQueryTask extends JMXAccessorTask {
      * input stream will be closed upon completion of this task, whether it was
      * executed successfully or not.
      * 
-     * @exception BuildException
+     * @exception Exception
      *                if an error occurs
      */
     public String jmxExecute(MBeanServerConnection jmxServerConnection)
