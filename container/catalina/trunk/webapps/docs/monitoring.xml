@@ -762,6 +762,132 @@ Now you can find all MBeans inside the file <em>mbeans.properties</em>.
 
 </section>
 
+<!-- Create ######################################################################### 
+-->
+
+<section name="JMXAccessorCreateTask:  remote create mbean ant task">
+<p>
+List of Attributes<br/>
+<table border="1" cellpadding="5">
+
+  <tr>
+    <th align="center" bgcolor="aqua">Attribute</th>
+    <th align="center" bgcolor="aqua">Description</th>
+    <th align="center" bgcolor="aqua">Default value</th>
+  </tr>
+
+  <tr>
+    <td>name</td>
+    <td>Full qualified JMX ObjectName -- <em>Catalina:type=MBeanFactory</em>
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>className</td>
+    <td>Existing MBean full qualified classname (see Tomcat mbean description above)
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>classLoader</td>
+    <td>ObjectName of server or web application classloader <br/>
+    ( <em>Catalina:type=ServerClassLoader,name=[server,common,shared]</em> or<br/>
+     <em>Catalina:type=WebappClassLoader,path=/myapps,host=localhost</em>) 
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>ref</td>
+    <td>JMX Connection reference
+    </td>
+    <td><code>jmx.server</code></td>
+  </tr>
+
+  <tr>
+    <td>echo</td>
+    <td>Echo command usage (access and result)
+    </td>
+    <td><code>false</code></td>
+  </tr>
+
+</table>
+</p>
+<p>
+Example to create remote mbean<br/>
+<source>
+    &lt;jmx:create
+             ref="${jmx.reference}"
+             name="Catalina:type=MBeanFactory"
+             className="org.apache.commons.modeler.BaseModelMBean"
+             classLoader="Catalina:type=ServerClassLoader,name=server"&gt;             
+             &lt;Arg value="org.apache.catalina.mbeans.MBeanFactory" /&gt;
+    &lt;/jmx:create&gt; 
+</source>
+</p>  
+<p>
+    <b>Warning</b>: A lot of tomcat mbeans can't be really create and connect with <br/>
+    the parent. The valve, cluster or realm Mbeans are not autconnect with there parent.<br/> 
+    Use <em>MBeanFacrory</em> create operation instead.
+</p>
+
+</section>
+
+<!-- Unregister ######################################################################### 
+-->
+
+<section name="JMXAccessorUnregisterTask:  remote unregister mbean ant task">
+<p>
+List of Attributes<br/>
+<table border="1" cellpadding="5">
+
+  <tr>
+    <th align="center" bgcolor="aqua">Attribute</th>
+    <th align="center" bgcolor="aqua">Description</th>
+    <th align="center" bgcolor="aqua">Default value</th>
+  </tr>
+
+  <tr>
+    <td>name</td>
+    <td>Full qualified JMX ObjectName -- <em>Catalina:type=MBeanFactory</em>
+    </td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>ref</td>
+    <td>JMX Connection reference
+    </td>
+    <td><code>jmx.server</code></td>
+  </tr>
+
+  <tr>
+    <td>echo</td>
+    <td>Echo command usage (access and result)
+    </td>
+    <td><code>false</code></td>
+  </tr>
+
+</table>
+</p>
+<p>
+Example to unregister remote mbean<br/>
+<source>
+    &lt;jmx:unregister
+        name="Catalina:type=MBeanFactory" 
+    /&gt;
+</source>
+</p>  
+<p>
+    <b>Warning</b>: A lot of tomcat mbeans can't be really unregister. <br/>
+    The Mbeans are not deregister from parent. Use <em>MBeanFacrory</em> <br/>
+    remove operation instead.
+</p>
+
+</section>
+
 <!-- condition ######################################################################### 
 -->
 
