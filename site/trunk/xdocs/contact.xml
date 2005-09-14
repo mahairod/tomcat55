@@ -7,11 +7,56 @@
 
 <body>
 
-<section name="TODO">
-<p>Copy and paste from Jakarta</p>
-<p>Point to mailing lists</p>
-<p>Security issues</p>
-<p>point to Apache contact details</p>
+<section name="Product Support">
+
+<p>
+If you have questions or comments about the software or documentation on this site, 
+please subscribe to the appropriate mailing list: 
+</p>
+
+<p> 
+<a href="./lists.html">Mailing lists</a>
+</p>
+
+</section>
+
+<section name="Security Issues">
+
+<p>
+If you would like to report a security issues with Apache Tomcat,
+you may contact: 
+</p>
+ 
+<p>
+<a href="mailto:security.AT.apache.DOT.org">security.AT.apache.DOT.org</a>
+</p>
+
+</section>
+
+<section name="The Apache Software Foundation">
+
+<p>
+The Tomcat Project is an effort of the 
+<a href="http://apache.org/foundation/">Apache Software Foundation</a>. The 
+address for general ASF correspondence and licensing questions is:
+</p>
+
+<p>
+<a href="mailto:apache.AT.apache.DOT.org">apache.AT.apache.DOT.org</a>
+</p>
+
+<p>
+You can find more contact information for the Apache Software Foundation 
+on the <a href="http://www.apache.org/foundation/contact.html">contact 
+page of the main Apache site</a>.
+</p>
+
+<p>
+You may also use 
+<a href="http://search.apache.org/">Apache Site Search</a> to scan all the 
+Apache sites at once. 
+</p>
+
 </section>
 
 </body>

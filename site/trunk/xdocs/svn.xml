@@ -45,7 +45,7 @@ http://svn.apache.org/repos/asf/tomcat</a>.</p>
   <tr>
     <td><a href="http://svn.apache.org/repos/asf/tomcat/connectors">
         <code>/connectors/</code></a></td>
-    <td>The HTTP and AJP implmentation code</td>
+    <td>The HTTP and AJP implementation code</td>
   </tr>
   <tr>
     <td><a href="http://svn.apache.org/repos/asf/tomcat/jasper">
@@ -72,7 +72,7 @@ http://svn.apache.org/repos/asf/tomcat</a>.</p>
 </section>
 
 
-<section name="Principals">  <p>The Subversion repository has been structured using the following
+<section name="Principles">  <p>The Subversion repository has been structured using the following
 principles:
 </p>
 
