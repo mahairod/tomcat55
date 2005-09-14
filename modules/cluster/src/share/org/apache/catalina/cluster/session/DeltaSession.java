@@ -1003,9 +1003,10 @@ public class DeltaSession implements HttpSession, Session, Serializable,
                     .getString("standardSession.getAttributeNames.ise"));
 
         synchronized (attributes) {
-            return (new Enumerator(attributes.keySet(), true));
+            // create a copy from orginal attribute keySet, otherwise internal HaspMap datastructure
+            // can be inconsistence by other threads.
+            return (new Enumerator(new ArrayList(attributes.keySet()), true));
         }
-
     }
 
     /**
@@ -1253,8 +1254,10 @@ public class DeltaSession implements HttpSession, Session, Serializable,
         }
 
         // Replace or add this attribute
-        Object unbound = attributes.put(name, value);
-
+        Object unbound = null ;
+        synchronized (attributes) {
+            unbound = attributes.put(name, value);
+        }
         // Call the valueUnbound() method if necessary
         if ((unbound != null) && notify
                 && (unbound instanceof HttpSessionBindingListener)) {
@@ -1577,7 +1580,10 @@ public class DeltaSession implements HttpSession, Session, Serializable,
             boolean addDeltaRequest) {
 
         // Remove this attribute from our collection
-        Object value = attributes.remove(name);
+        Object value = null;
+        synchronized (attributes) {
+            value = attributes.remove(name);
+        }
         if (value == null)
             return;
 
