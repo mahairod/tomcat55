@@ -95,6 +95,10 @@ public final class Bootstrap {
     private void initClassLoaders() {
         try {
             commonLoader = createClassLoader("common", null);
+            if( commonLoader == null ) {
+                // no config file, default to this loader - we might be in a 'single' env.
+                commonLoader=this.getClass().getClassLoader();
+            }
             catalinaLoader = createClassLoader("server", commonLoader);
             sharedLoader = createClassLoader("shared", commonLoader);
         } catch (Throwable t) {
@@ -122,10 +126,10 @@ public final class Bootstrap {
             // Local repository
             boolean packed = false;
             if (repository.startsWith(CATALINA_HOME_TOKEN)) {
-                repository = getCatalinaHome() 
+                repository = getCatalinaHome()
                     + repository.substring(CATALINA_HOME_TOKEN.length());
             } else if (repository.startsWith(CATALINA_BASE_TOKEN)) {
-                repository = getCatalinaBase() 
+                repository = getCatalinaBase()
                     + repository.substring(CATALINA_BASE_TOKEN.length());
             }
 
@@ -159,14 +163,14 @@ public final class Bootstrap {
         // Retrieving MBean server
         MBeanServer mBeanServer = null;
         if (MBeanServerFactory.findMBeanServer(null).size() > 0) {
-            mBeanServer = 
+            mBeanServer =
                 (MBeanServer) MBeanServerFactory.findMBeanServer(null).get(0);
         } else {
             mBeanServer = MBeanServerFactory.createMBeanServer();
         }
 
         // Register the server classloader
-        ObjectName objectName = 
+        ObjectName objectName =
             new ObjectName("Catalina:type=ServerClassLoader,name=" + name);
         mBeanServer.registerMBean(classLoader, objectName);
 
