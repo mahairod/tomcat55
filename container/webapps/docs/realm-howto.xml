@@ -270,8 +270,9 @@ Tomcat administrator specifically assigns this role to one or more users.</p>
 
 <p>Debugging and exception messages logged by a <code>Realm</code> will
    be recorded by the logging configuration associated with the container
-   for the realm: its surrounding <a href="context.html">Context</a>,
-   <a href="host.html">Host</a>, or <a href="engine.html">Engine</a>.</p>
+   for the realm: its surrounding <a href="config/context.html">Context</a>,
+   <a href="config/host.html">Host</a>, or
+   <a href="config/engine.html">Engine</a>.</p>
 
 </subsection>
 
