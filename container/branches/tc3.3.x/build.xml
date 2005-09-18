@@ -92,6 +92,7 @@
   <property name="tomcat-util.jar"
             location="${jtc.util.build}/lib/tomcat-util.jar"/>
 
+  <property name="skip.digester" value="true" />
   <property name="jtc.coyote.home" location="${jakarta-tomcat-connectors}/coyote"/>
   <property name="jtc.coyote.lib" location="${jtc.coyote.home}/build/lib"/>
 
