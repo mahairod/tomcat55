@@ -63,6 +63,9 @@
         <bug>36113</bug>: Session persistence for objects with primitive types could fail in
         some rare cases (remm)
       </fix>
+      <fix>
+        <bug>36541</bug>: Full synchronization for session objects attributes collections (remm)
+      </fix>
     </changelog>
   </subsection>
   
