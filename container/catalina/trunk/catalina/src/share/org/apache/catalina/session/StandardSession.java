@@ -31,7 +31,9 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -115,7 +117,7 @@ public class StandardSession
     /**
      * The collection of user data attributes associated with this Session.
      */
-    protected HashMap attributes = new HashMap();
+    protected Map attributes = new Hashtable();
 
 
     /**
@@ -229,7 +231,7 @@ public class StandardSession
      * and event listeners.  <b>IMPLEMENTATION NOTE:</b> This object is
      * <em>not</em> saved and restored across session serializations!
      */
-    protected transient HashMap notes = new HashMap();
+    protected transient Map notes = new Hashtable();
 
 
     /**
@@ -1266,10 +1268,7 @@ public class StandardSession
         }
 
         // Replace or add this attribute
-        Object unbound = null;
-        synchronized (attributes) {
-            unbound = attributes.put(name, value);
-        }
+        Object unbound = attributes.put(name, value);
 
         // Call the valueUnbound() method if necessary
         if ((unbound != null) && (unbound != value) &&
@@ -1376,7 +1375,7 @@ public class StandardSession
 
         // Deserialize the attribute count and attribute values
         if (attributes == null)
-            attributes = new HashMap();
+            attributes = new Hashtable();
         int n = ((Integer) stream.readObject()).intValue();
         boolean isValidSave = isValid;
         isValid = true;
@@ -1388,9 +1387,7 @@ public class StandardSession
             if (manager.getContainer().getLogger().isDebugEnabled())
                 manager.getContainer().getLogger().debug("  loading attribute '" + name +
                     "' with value '" + value + "'");
-            synchronized (attributes) {
-                attributes.put(name, value);
-            }
+            attributes.put(name, value);
         }
         isValid = isValidSave;
 
@@ -1399,7 +1396,7 @@ public class StandardSession
         }
 
         if (notes == null) {
-            notes = new HashMap();
+            notes = new Hashtable();
         }
     }
 
@@ -1442,10 +1439,7 @@ public class StandardSession
         ArrayList saveNames = new ArrayList();
         ArrayList saveValues = new ArrayList();
         for (int i = 0; i < keys.length; i++) {
-            Object value = null;
-            synchronized (attributes) {
-                value = attributes.get(keys[i]);
-            }
+            Object value = attributes.get(keys[i]);
             if (value == null)
                 continue;
             else if ( (value instanceof Serializable) 
@@ -1599,10 +1593,7 @@ public class StandardSession
     protected void removeAttributeInternal(String name, boolean notify) {
 
         // Remove this attribute from our collection
-        Object value = null;
-        synchronized (attributes) {
-            value = attributes.remove(name);
-        }
+        Object value = attributes.remove(name);
 
         // Do we need to do valueUnbound() and attributeRemoved() notification?
         if (!notify || (value == null)) {
