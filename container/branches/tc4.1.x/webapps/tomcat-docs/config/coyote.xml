@@ -141,6 +141,12 @@
       2048 bytes will be provided.</p>
     </attribute>
 
+    <attribute name="compressableMimeType" required="false">
+      <p>The value is a comma separated list of MIME types for which HTTP
+      compression may be used.
+      The default value is <code>text/html,text/xml,text/plain</code>.</p>
+    </attribute>
+
     <attribute name="compression" required="false">
       <p>The <strong>Connector</strong> may use HTTP/1.1 GZIP compression in
       an attempt to save server bandwidth. The acceptable values for the
@@ -177,6 +183,21 @@
       allows either the servlet a longer amount of time to complete its
       execution, or a longer timeout during data upload. If not specified, 
       this attribute is set to "false".</p>
+    </attribute>
+
+    <attribute name="maxHttpHeaderSize" required="false">
+      <p>The maximum size of the request and response HTTP header, specified
+      in bytes.
+      If not specified, this attribute is set to 4096 (4 KB).</p>
+    </attribute>
+
+    <attribute name="maxKeepAliveRequests" required="false">
+      <p>The maximum number of HTTP requests which can be pipelined until
+      the connection is closed by the server. Setting this attribute to 1 will
+      disable HTTP/1.0 keep-alive, as well as HTTP/1.1 keep-alive and
+      pipelining. Setting this to -1 will allow an unlimited amount of
+      pipelined or keep-alive HTTP requests.
+      If not specified, this attribute is set to 100.</p>
     </attribute>
 
     <attribute name="maxProcessors" required="false">
