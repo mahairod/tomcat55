@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package org.apache.jasper.tagplugins.jstl;
+
+package org.apache.jasper.tagplugins.jstl.core;
 
 import org.apache.jasper.compiler.tagplugin.*;
 
-public final class Otherwise implements TagPlugin {
-
+public final class Choose implements TagPlugin {
+    
     public void doTag(TagPluginContext ctxt) {
-
-	// See When.java for the reason whey "}" is need at the beginng and
-	// not at the end.
-	ctxt.generateJavaSource("} else {");
-	ctxt.generateBody();
+        
+        // Not much to do here, much of the work will be done in the
+        // containing tags, <c:when> and <c:otherwise>.
+        
+        ctxt.generateBody();
+        // See comments in When.java for the reason "}" is generated here.
+        ctxt.generateJavaSource("}");
     }
 }
