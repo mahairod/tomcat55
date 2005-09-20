@@ -90,6 +90,10 @@
         JSP compilation speed improvement using tag library information caching, 
         submitted by Xingbo Gao (remm)
       </update>
+      <add>
+        Initial contribution of JSTL tag plugins supporting the core tag library of
+        JSTL, submitted by Jing Li (remm)
+      </add>
     </changelog>
   </subsection>
   
