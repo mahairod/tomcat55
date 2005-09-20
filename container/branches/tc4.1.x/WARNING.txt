@@ -1,5 +1,0 @@
-*** WARNING.txt ***
-As of 12th September 2005, the jakarta-tomcat-4 CVS repository is closed.
-
-The repository has been migrated to Subversion
-(http://svn.apache.org/repos/asf/tomcat).
