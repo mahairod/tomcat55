@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="cluster.html">
+
+  &project;
+
+  <properties>
+    <author email="yoavs[at]apache[dot]org">Yoav Shapira</author>
+    <title>Cluster</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+  <p>
+    This page discusses cluster- and clustering-related questions.  Please make
+    sure to read the Clustering HowTo page in the main Tomcat documentation
+    bundle as well.
+  </p>
+</section>
+<section name="Questions">
+<p>
+  <ul>
+    <li><a href="#1">Can I configure a cluster at the <code>Engine</code> level?</a></li>
+    <li><a href="#2">Show me a simple cluster configuration example.</a></li>
+    <li><a href="#3">How do I turn on transport logging?</a></li>
+    <li><a href="#4">How do I use JMX to monitor the cluster?</a></li>
+    <li><a href="#5">Can I pause the message sending?</a></li>
+    <li><a href="#6">Can I add more senders?</a></li>
+    <li><a href="#7">What happens when I pull the network cable?</a></li>
+    <li><a href="#8">At my windows laptop without network my cluster doesn't work?</a></li>
+    <li><a href="#9">The cluster dosen't work under linux with two nodes at two boxes?</a></li>
+    <li><a href="#10">I get "localhost" rather than "eth0" or another interface when using tcpListenAddress="auto".</a></li>
+  </ul>
+</p>
+</section>
+
+<section name="Answers">
+  <question>
+    <a name="1">Can I configure a cluster at the <code>Engine</code> level?</a>
+  </question>
+  <answer>
+    Yes, beginning with Tomcat 5.5.10 you can configure clusters at both the
+    <code>Engine</code> and <code>Host</code> levels.  This helps support
+    clustering for web hosting companies.
+  </answer>
+
+  <question>
+    <a neme="2">Show me a simple cluster configuration example.</a>
+  </question>
+  <answer>
+    For Tomcat 5.5.10 and later:<br/>
+    <code>&lt;Cluster className="org.apache.catalina.cluster.tcp.SimpleTcpCluster" defaultMode="true" /&gt;</code>
+  </answer>
+
+  <question>
+    <a name="3">How do I turn on transport logging?</a>
+  </question>
+  <answer>
+    <ol>
+      <li>Use "org.apache.catalina.cluster" as logger category and switch to info, debug or trace as log level.</li>
+      <li>Configure the <b>clusterLog</b> attribute (logging category) to get and send and receive message log.</li>
+    </ol>
+  </answer>
+
+  <question>
+    <a name="4">How do I use JMX to monitor the cluster?</a>
+  </question>
+  <answer>
+    With Java 5 you can use the <b>jconsole</b> application to look inside the runnnig cluster: please see the
+    JMX configuration section in the Clustering HowTo document. <br/>
+
+    In <i>fastasyncmode</i> replication mode you can got more information with 
+    sender attributes <code>doProcessingStats="true"</code> and <code>queueDoStats="true"</code>.
+    Finally, with the new JMX remote ant task you can access the state and call operations. 
+  </answer>
+
+  <question>
+    <a name="5">Can I pause the message sending?</a>
+  </question>
+  <answer>
+    Yes, the async senders buffer the messages, but make sure the membership ping is active.  With fastasyncqueue 
+    mode you can limit the max queue size. 
+  </answer>
+
+  <question>
+    <a name="6">Can I add more senders?</a>
+  </question>
+  <answer>
+    Yes, with sender attribute <code>maxPoolSocketLimit="40"</code> you can have more than the default
+    <code>25</code> sockets to transfer more parallel messages. 
+  </answer>
+
+  <question>
+    <a name="7">What happens when I pull the network cable?</a>
+  </question>
+  <answer>
+    The other members will remove the instance from the cluster,
+    but when you insert the cable again, the Tomcat instance might have completely flipped out.
+    This is because the OS might start using 100% of the CPU when a multicast message is sent.
+    There has not yet been a good solution for this, I will let you know when I have come up with one.
+    (pero: I test this and I works correct with java 5 and exists when you use the cluster with JDK 1.4.x)
+  </answer>
+
+  <question>
+    <a name="8">At my windows laptop without network my cluster doesn't work?</a>
+  </question>
+  <answer>
+    The Membership attribute <code>mcastBindAddress="127.0.0.1"</code> must be set!  
+  </answer>
+
+  <question>
+    <a name="9">The cluster dosen't work under linux with two nodes at two boxes?</a>
+  </question>
+  <answer>
+    Check the the following:
+    <ul>
+      <li>Is your network interface enabled for multicast? <code>ifconfig eth0 MULTICAST</code></li>
+      <li>Exists a multicast route to your network interface? <code>route add -host 228.0.0.4 dev eth0</code></li>
+      <li>Is your firewall active? Then check that multicast port is on your UDP open list
+          and the receiver TCP port is also for both machines open!</li>
+    </ul>   
+  </answer>
+
+  <question>
+    <a name="#10">I get "localhost" rather than "eth0" or another interface when using tcpListenAddress="auto".</a>
+  </question>
+  <answer>
+    Change /etc/hosts so that the localhost domain resolves to the actual IP address of the NIC, eth0.  
+     Please see <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=35613">Bugzilla</a> for more.
+  </answer>
+</section>
+
+</body>
+</document>
