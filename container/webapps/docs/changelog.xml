@@ -66,6 +66,10 @@
       <fix>
         <bug>36541</bug>: Full synchronization for session objects attributes collections (remm)
       </fix>
+      <fix>
+        <bug>35609</bug>: service.bat echo command when wrong arguments given [patch by Robert
+        Longson] (yoavs)
+      </fix>
     </changelog>
   </subsection>
   
