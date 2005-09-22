@@ -1066,78 +1066,7 @@ List of Cluster Mbeans<br/>
 </section>
 
 <section name="FAQ">
-<p>To be completed once we receive questions about session replication:</p>
-<ol>
-<li>Q: Can I configure as engine level?<p></p>
-
-    A: Since Tomcat 5.5.10 you can configure a cluster as engine and host level.
-    This helps to support clustering at a web hosting szenario.
-  <p></p>
-  </li>
-<li>Q: What is the simples cluster config?<p></p>
-
-    A: Since Tomcat 5.5.10 you can configure a cluster with following: <code>&lt;Cluster className="org.apache.catalina.cluster.tcp.SimpleTcpCluster" defaultMode="true" /&gt;</code>
-  <p></p>
-  </li>
-<li>Q: How can I activated transparent logging?<p></p>
-
-    A: Use "org.apache.catalina.cluster" as logger category and switch to info, debug or trace as log level.
-    A: Configure the <b>clusterLog</b> attribute (logging category) to get and send and receive message log.
-  <p></p>
-  </li>
-<li>Q: How can I used JMX information to monitor the cluster?<p></p>
-
-    A: Yes, it exists a lot ot usefull information to the cluster as MBeans. With Java 5 you can use the
-       jconsole to look inside the runnnig cluster (s. JMX section above).
-       At fastasyncmode replication mode you can got more information with 
-       sender attributes <code>doProcessingStats="true"</code> and <code>queueDoStats="true"</code>.
-       With the new JMX remote ant task you can access the state and call operations. 
-  <p></p>
-  </li>
-<li><p></p>Q: Can I pause the message sending?<p></p>
-
-    A: Yes, the async senders buffer the messages, but make sure the membership ping is active. 
-       With fastasyncqueue mode you can limit the max queue size. 
-  <p></p>
-  </li>
-<li>Q: Can I at more pooled senders?<p></p>
-
-    A: Yes, with sender attribute <code>maxPoolSocketLimit="40"</code> you can have more than the default
-       <code>25</code> sockets to transfer more parallel messages. 
-  <p></p>
-  </li>
-<li>Q: What happens when I pull the network cable?<p></p>
-
-    A: Well, the other members will remove the instance from the cluster,
-       but when you insert the cable again, the Tomcat instance might have completely flipped out.
-       This is because the OS might start going 100% CPU when a multicast message is sent.
-       There has not yet been a good solution for this, I will let you know when I have come up with one.
-       (pero: I test this and I works correct with java 5 and exists when you use the cluster with JDK 1.4.x)
-  <p></p>
-  </li>
-<li>Q: At my windows laptop without network my cluster doesn't work?<p></p>
-
-    A: The Membership attribute <code>mcastBindAddress="127.0.0.1"</code> must be set!  
-  <p></p>
-  </li>
-<li>Q: The cluster dosen't work under linux with two nodes at two boxes?<p></p>
-
-    A: Check the the following topics:
-    <ul>
-    <li>Is your network interface enabled for multicast? <code>ifconfig eth0 MULTICAST</code></li>
-    <li>Exists a multicast route to your network interface? <code>route add -host 228.0.0.4 dev eth0</code></li>
-    <li>Is your firewall active? Then check that multicast port is on your UDP open list
-       and the receiver TCP port is also for both machines open!</li>
-    </ul>   
-  <p></p>
-  </li>
-<li>Q: I get "localhost" rather than "eth0" or another interface when using tcpListenAddress="auto".<p></p>
-    A: Change /etc/hosts so that the localhost domain resolves to the actual IP address of the NIC, eth0.  
-       Please see <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=35613">Bugzilla</a> for more.
-    <p></p>
-</li>
-
-</ol>
+<p>Please see <a href="http://jakarta.apache.org/tomcat/faq/cluster.html">the clustering section of the FAQ</a>.</p>
 </section>
 
 </body>

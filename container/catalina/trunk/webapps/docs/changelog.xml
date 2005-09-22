@@ -112,6 +112,9 @@
       <add>
         <bug>35613</bug>: Added FAQ question and answer about tcpListenAddress="auto" and /etc/hosts (yoavs)
       </add>
+      <update>
+        Moved FAQ section for Clustering from Clustering HowTo page to its own FAQ page. (yoavs)
+      </update>
     </changelog>
   </subsection>
   
