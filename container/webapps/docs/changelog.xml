@@ -109,6 +109,9 @@
       <fix>
         <bug>36518</bug>: Classname typos for senders, submitted by Christoph Bachhuber-Haller (remm)
       </fix>
+      <add>
+        <bug>35613</bug>: Added FAQ question and answer about tcpListenAddress="auto" and /etc/hosts (yoavs)
+      </add>
     </changelog>
   </subsection>
   
