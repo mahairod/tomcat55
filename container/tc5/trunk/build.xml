@@ -779,7 +779,9 @@
 
     <mkdir dir="${tomcat.build}/webapps/jsp-examples"/>
     <copy todir="${tomcat.build}/webapps/jsp-examples">
-      <fileset dir="${api.home}/jsr152/build/examples" includes="**"/>
+      <fileset dir="${api.home}/jsr152/build/examples">
+        <exclude name="WEB-INF/tagPlugins.xml" />
+      </fileset>
     </copy>
 
     <ant dir="${catalina.home}/webapps/ROOT" target="build-main">
