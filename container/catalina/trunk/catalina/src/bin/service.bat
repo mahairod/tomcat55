@@ -54,7 +54,7 @@ if %1 == remove goto doRemove
 if %1 == uninstall goto doRemove
 echo Unknown parameter "%1"
 :displayUsage
-echo 
+echo.
 echo Usage: service.bat install/remove [service_name]
 goto end
 
@@ -71,7 +71,7 @@ echo Using CATALINA_HOME:    %CATALINA_HOME%
 echo Using CATALINA_BASE:    %CATALINA_BASE%
 echo Using JAVA_HOME:        %JAVA_HOME%
 
-rem Use the environment variables as an exaple
+rem Use the environment variables as an example
 rem Each command line option is prefixed with PR_
 
 set PR_DESCRIPTION=Apache Tomcat Server - http://jakarta.apache.org/tomcat
