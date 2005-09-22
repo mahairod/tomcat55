@@ -1131,6 +1131,11 @@ List of Cluster Mbeans<br/>
     </ul>   
   <p></p>
   </li>
+<li>Q: I get "localhost" rather than "eth0" or another interface when using tcpListenAddress="auto".<p></p>
+    A: Change /etc/hosts so that the localhost domain resolves to the actual IP address of the NIC, eth0.  
+       Please see <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=35613">Bugzilla</a> for more.
+    <p></p>
+</li>
 
 </ol>
 </section>
