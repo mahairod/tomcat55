@@ -70,6 +70,9 @@
         <bug>35609</bug>: service.bat echo command when wrong arguments given [patch by Robert
         Longson] (yoavs)
       </fix>
+      <fix>
+        <bug>34749</bug>: jsessionid dropped on trailing slash (/) redirect (remm)
+      </fix>
     </changelog>
   </subsection>
   

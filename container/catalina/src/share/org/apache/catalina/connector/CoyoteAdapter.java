@@ -305,6 +305,12 @@ public class CoyoteAdapter
         if (!redirectPathMB.isNull()) {
             String redirectPath = redirectPathMB.toString();
             String query = request.getQueryString();
+            if (request.isRequestedSessionIdFromURL()) {
+                // This is not optimal, but as this is not very common, it
+                // shouldn't matter
+                redirectPath = redirectPath + ";jsessionid=" 
+                    + request.getRequestedSessionId();
+            }
             if (query != null) {
                 // This is not optimal, but as this is not very common, it
                 // shouldn't matter
