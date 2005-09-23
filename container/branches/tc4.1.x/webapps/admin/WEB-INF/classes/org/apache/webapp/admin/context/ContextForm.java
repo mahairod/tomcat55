@@ -156,6 +156,11 @@ public final class ContextForm extends ActionForm {
     private String mgrMaxSessions = "0";
     
     /**
+     * The text for the anti jar locking flag.
+     */
+    private String antiJarLocking = "false";
+
+    /**
      * Set of valid values for debug level.
      */
     private List debugLvlVals = null;
@@ -656,6 +661,20 @@ public final class ContextForm extends ActionForm {
         
     }
         
+    /**
+     * Get the anti jar locking flag
+     */
+    public String getAntiJarLocking() {
+        return antiJarLocking;
+    }
+
+    /**
+     * Set the anti jar locking flag
+     */
+    public void setAntiJarLocking(String ajl) {
+        antiJarLocking = ajl;
+    }
+
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -680,6 +699,7 @@ public final class ContextForm extends ActionForm {
         this.path = null;
         this.reloadable = "false";
         this.swallowOutput = "false";        
+        this.antiJarLocking = "false";
         
         // loader properties
         this.ldrCheckInterval = "15";

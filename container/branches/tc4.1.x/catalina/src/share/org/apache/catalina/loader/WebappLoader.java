@@ -32,7 +32,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLStreamHandlerFactory;
-import java.security.Permission;
 import java.util.jar.JarFile;
 import javax.servlet.ServletContext;
 import javax.naming.NamingException;
@@ -48,11 +47,11 @@ import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
@@ -609,6 +608,8 @@ public class WebappLoader
             classLoader.setResources(container.getResources());
             classLoader.setDebug(this.debug);
             classLoader.setDelegate(this.delegate);
+            if (container instanceof StandardContext)
+                classLoader.setAntiJARLocking(((StandardContext) container).getAntiJARLocking());
 
             for (int i = 0; i < repositories.length; i++) {
                 classLoader.addRepository(repositories[i]);
@@ -913,6 +914,8 @@ public class WebappLoader
             return;
 
         log(sm.getString("webappLoader.deploy", workDir.getAbsolutePath()));
+
+        classLoader.setWorkDir(workDir);
 
         DirContext resources = container.getResources();
 

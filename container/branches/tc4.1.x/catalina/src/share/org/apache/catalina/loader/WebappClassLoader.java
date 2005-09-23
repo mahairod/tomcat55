@@ -18,6 +18,7 @@
 package org.apache.catalina.loader;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilePermission;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
@@ -312,6 +313,12 @@ public class WebappClassLoader
 
 
     /**
+     * Path where resources loaded from JARs will be extracted.
+     */
+    protected File loaderDir = null;
+
+
+    /**
      * The PermissionCollection for each CodeSource for a web
      * application context.
      */
@@ -353,6 +360,13 @@ public class WebappClassLoader
      */
     private Permission allPermission = new java.security.AllPermission();
 
+
+    /**
+     * Use anti JAR locking code, which does URL rerouting when accessing
+     * resources.
+     */
+    boolean antiJARLocking = false; 
+    
 
     // ------------------------------------------------------------- Properties
 
@@ -421,6 +435,22 @@ public class WebappClassLoader
     }
 
 
+    /**
+     * @return Returns the antiJARLocking.
+     */
+    public boolean getAntiJARLocking() {
+        return antiJARLocking;
+    }
+    
+    
+    /**
+     * @param antiJARLocking The antiJARLocking to set.
+     */
+    public void setAntiJARLocking(boolean antiJARLocking) {
+        this.antiJARLocking = antiJARLocking;
+    }
+
+    
     /**
      * If there is a Java SecurityManager create a read FilePermission
      * or JndiPermission for the file directory path.
@@ -495,6 +525,14 @@ public class WebappClassLoader
 
         this.jarPath = jarPath;
 
+    }
+
+
+    /**
+     * Change the work directory.
+     */
+    public void setWorkDir(File workDir) {
+        this.loaderDir = new File(workDir, "loader");
     }
 
 
@@ -1130,6 +1168,22 @@ public class WebappClassLoader
             log("  Searching local repositories");
         url = findResource(name);
         if (url != null) {
+            // Locating the repository for special handling in the case 
+            // of a JAR
+            if (antiJARLocking) {
+                ResourceEntry entry = (ResourceEntry) resourceEntries.get(name);
+                try {
+                    String repository = entry.codeBase.toString();
+                    if ((repository.endsWith(".jar")) 
+                            && (!(name.endsWith(".class")))) {
+                        // Copy binary content to the work directory if not present
+                        File resourceFile = new File(loaderDir, name);
+                        url = resourceFile.toURL();
+                    }
+                } catch (Exception e) {
+                    // Ignore
+                }
+            }
             if (debug >= 2)
                 log("  --> Returning '" + url.toString() + "'");
             return (url);
@@ -1559,6 +1613,10 @@ public class WebappClassLoader
         permissionList.clear();
         loaderPC.clear();
 
+        if (loaderDir != null) {
+            deleteDir(loaderDir);
+        }
+
     }
 
 
@@ -1780,6 +1838,57 @@ public class WebappClassLoader
                     binaryStream = jarFiles[i].getInputStream(jarEntry);
                 } catch (IOException e) {
                     return null;
+                }
+
+                // Extract resources contained in JAR to the workdir
+                if (antiJARLocking && !(path.endsWith(".class"))) {
+                    byte[] buf = new byte[1024];
+                    File resourceFile = new File
+                        (loaderDir, jarEntry.getName());
+                    if (!resourceFile.exists()) {
+                        Enumeration entries = jarFiles[i].entries();
+                        while (entries.hasMoreElements()) {
+                            JarEntry jarEntry2 = 
+                                (JarEntry) entries.nextElement();
+                            if (!(jarEntry2.isDirectory()) 
+                                && (!jarEntry2.getName().endsWith
+                                    (".class"))) {
+                                resourceFile = new File
+                                    (loaderDir, jarEntry2.getName());
+                                resourceFile.getParentFile().mkdirs();
+                                FileOutputStream os = null;
+                                InputStream is = null;
+                                try {
+                                    is = jarFiles[i].getInputStream
+                                        (jarEntry2);
+                                    os = new FileOutputStream
+                                        (resourceFile);
+                                    while (true) {
+                                        int n = is.read(buf);
+                                        if (n <= 0) {
+                                            break;
+                                        }
+                                        os.write(buf, 0, n);
+                                    }
+                                } catch (IOException e) {
+                                    // Ignore
+                                } finally {
+                                    try {
+                                        if (is != null) {
+                                            is.close();
+                                        }
+                                    } catch (IOException e) {
+                                    }
+                                    try {
+                                        if (os != null) {
+                                            os.close();
+                                        }
+                                    } catch (IOException e) {
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -2074,6 +2183,29 @@ public class WebappClassLoader
 
     }
 
+    /**
+     * Delete the specified directory, including all of its contents and
+     * subdirectories recursively.
+     *
+     * @param dir File object representing the directory to be deleted
+     */
+    protected static void deleteDir(File dir) {
+
+        String files[] = dir.list();
+        if (files == null) {
+            files = new String[0];
+        }
+        for (int i = 0; i < files.length; i++) {
+            File file = new File(dir, files[i]);
+            if (file.isDirectory()) {
+                deleteDir(file);
+            } else {
+                file.delete();
+            }
+        }
+        dir.delete();
+
+    }
 
 }
 

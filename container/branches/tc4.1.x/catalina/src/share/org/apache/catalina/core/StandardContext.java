@@ -111,6 +111,12 @@ public class StandardContext
 
 
     /**
+     * The antiJARLocking flag for this Context.
+     */
+    private boolean antiJARLocking = false;
+
+    
+    /**
      * The set of application listener class names configured for this
      * application, in the order they were encountered in the web.xml file.
      */
@@ -545,6 +551,32 @@ public class StandardContext
     }
 
 
+    /**
+     * Return the antiJARLocking flag for this Context.
+     */
+    public boolean getAntiJARLocking() {
+
+        return (this.antiJARLocking);
+
+    }
+
+
+    /**
+     * Set the antiJARLocking feature for this Context.
+     *
+     * @param antiJARLocking The new flag value
+     */
+    public void setAntiJARLocking(boolean antiJARLocking) {
+
+        boolean oldAntiJARLocking = this.antiJARLocking;
+        this.antiJARLocking = antiJARLocking;
+        support.firePropertyChange("antiJARLocking",
+                                   new Boolean(oldAntiJARLocking),
+                                   new Boolean(this.antiJARLocking));
+
+    }
+    
+    
     /**
      * Return the set of initialized application listener objects,
      * in the order they were specified in the web application deployment

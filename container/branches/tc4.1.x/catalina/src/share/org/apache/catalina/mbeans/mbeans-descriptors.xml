@@ -2077,6 +2077,10 @@
                    is="true"
                  type="boolean"/>
 
+    <attribute name="antiJARLocking"
+               description="Take care to not lock jar files"
+               type="boolean" />
+
     <attribute   name="cacheTTL"
           description="Time interval in ms between cache refeshes"
                  type="int"/>

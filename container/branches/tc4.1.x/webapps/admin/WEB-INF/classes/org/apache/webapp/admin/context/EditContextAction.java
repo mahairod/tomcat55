@@ -206,6 +206,9 @@ public class EditContextAction extends Action {
             attribute = "privileged";
             contextFm.setOverride
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
+            attribute = "antiJARLocking";
+            contextFm.setAntiJarLocking
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
 
             // loader properties
             attribute = "debug";

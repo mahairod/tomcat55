@@ -325,6 +325,16 @@ public final class SaveContextAction extends Action {
             mBServer.setAttribute(coname,
                                   new Attribute("useNaming", new Boolean(useNaming)));
 
+            attribute = "antiJARLocking";
+            String antiJarLocking = "false";
+            try {
+                antiJarLocking = cform.getAntiJarLocking();
+            } catch (Throwable t) {
+                antiJarLocking = "false";
+            }
+            mBServer.setAttribute(coname,
+                                  new Attribute("antiJARLocking", new Boolean(antiJarLocking)));
+
             // Loader properties            
             attribute = "reloadable";
             try {
