@@ -36,19 +36,41 @@
     {
         response.setContentType(&quot;<font color="#009900">text/html</font>&quot;);
         PrintWriter out = response.getWriter();
-        out.println(&quot;GET Request. No Form Data Posted&quot;);
+        out.println(&quot;<font color="#009900">&lt;html&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">&lt;head&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">&lt;title&gt;Request Parameters Example&lt;/title&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">&lt;/head&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">&lt;body&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">&lt;h3&gt;Request Parameters Example&lt;/h3&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">Parameters in this request:&lt;br&gt;</font>&quot;);
+        if (firstName != null || lastName != null) {
+            out.println(&quot;<font color="#009900">First Name:</font>&quot;);
+            out.println(&quot;<font color="#009900"> = </font>&quot; + HTMLFilter.filter(firstName) + &quot;<font color="#009900">&lt;br&gt;</font>&quot;);
+            out.println(&quot;<font color="#009900">Last Name:</font>&quot;);
+            out.println(&quot;<font color="#009900"> = </font>&quot; + HTMLFilter.filter(lastName));
+        } else {
+            out.println(&quot;<font color="#009900">No Parameters, Please enter some</font>&quot;);
+        }
+        out.println(&quot;<font color="#009900">&lt;P&gt;</font>&quot;);
+        out.print(&quot;<font color="#009900">&lt;form action=\"</font>&quot;);
+        out.print(&quot;<font color="#009900">RequestParamExample\" </font>&quot;);
+        out.println(&quot;<font color="#009900">method=POST&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">First Name:</font>&quot;);
+        out.println(&quot;<font color="#009900">&lt;input type=text size=20 name=firstname&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">&lt;br&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">Last Name:</font>&quot;);
+        out.println(&quot;<font color="#009900">&lt;input type=text size=20 name=lastname&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">&lt;br&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">&lt;input type=submit&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">&lt;/form&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">&lt;/body&gt;</font>&quot;);
+        out.println(&quot;<font color="#009900">&lt;/html&gt;</font>&quot;);
     }
 
     <font color="#0000FF">public void</font> doPost(HttpServletRequest request, HttpServletResponse res)
     <font color="#0000FF">throws</font> IOException, ServletException
     {
-        Enumeration e = request.getParameterNames();
-	PrintWriter out = res.getWriter ();
-        while (e.hasMoreElements()) {
-            String name = (String)e.nextElement();
-            String value = request.getParameter(name);
-            out.println(name + &quot;<font color="#009900"> = </font>&quot; + value);
-        }
+        doGet(request, response);
     }
 }</pre>
 </body>
