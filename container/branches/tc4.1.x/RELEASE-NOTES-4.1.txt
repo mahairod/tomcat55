@@ -85,6 +85,9 @@ General New Features:
 [4.1.31] JTA
          Upgrade to 1.0.1b
 
+[4.1.32] Commons Daemon
+         Upgrade to 1.0
+
 
 ---------------------
 Catalina New Features:
@@ -163,6 +166,14 @@ Catalina New Features:
          CGI Servlet
          Add support for optionally passing the shell environment
          variables to the CGI script
+
+[4.1.32] #31201
+         Default Servlet
+         New option to set file encoding for static resources
+
+[4.1.32] #28305
+         Startup scripts
+         Provide greater control over redirection of stdout and stderr
 
 
 -------------------
@@ -448,6 +459,61 @@ Generic Bug Fixes:
          Docs
          Clarify that the cached Principal is not retained across
          session serialisation
+
+[4.1.32] #6582
+         Examples webapp
+         Align sample source code with actual code for reqparams example
+
+[4.1.32] Examples webapp
+         Fix possible XSS issues
+
+[4.1.32] Manager webapp
+         Fix XSS issues
+
+[4.1.32] #28867
+         Docs
+         Correct manager how-to to show correct way to reference ROOT webapp
+
+[4.1.32] #28830
+         Manager webapp
+         Fix deploy and undeploy
+
+[4.1.32] #33085
+         Admin webapp
+         Expose privileged attribute of context elements
+
+[4.1.32] Docs
+         Clarify global resources documentation
+
+[4.1.32] #23277
+         Windows installer
+         Make clear that the WebDAV servlet is one of the examples
+
+[4.1.32] #26558
+         Scripts
+         Improve error message when there is a problem with JAVA_HOME
+
+[4.1.32] Docs
+         Add warnings re use of deprecated connector and allowLinking
+
+[4.1.32] #28178, #34033
+         Admin webapp
+         Correctly handle users/groups with = in the name
+
+[4.1.32] #33768
+         Docs
+         Update docs to make clear JK2 is deprecated
+
+[4.1.32] #13240
+         Docs
+         Note that CGI Servlet requires JDK 1.3+
+
+[4.1.32] Docs
+         Clarify connector docs for linking web servers and Tomcat and seperate
+         out the deprecated connectors
+
+[4.1.32] Admin webapp
+         Improve error message when a resource is missing an attribute
 
 
 ------------------
@@ -1257,6 +1323,136 @@ Catalina Bug Fixes:
 [4.1.31] #20758
          StandardContext
          Fix sources of memory leaks associated with deploy/undeploy
+
+[4.1.32] Revert #27090
+         CGIServlet
+         Reverted as it introduced at JDK 1.4 dependency
+
+[4.1.32] #31273
+         JNDIRealm
+         Added support for derefAliases
+
+[4.1.32] #31886
+         JDBCStore
+         Prevent ConcurrentModificationExceptions causing Tomcat to hang
+
+[4.1.32] #31711
+         Utils
+         Correct use of clone flag in Enumerator. It was having the inverse of
+         the expected effect
+
+[4.1.32] #21818
+         Standard Context
+         allowLinking, caseSensitive, cached and cacheTTL settings retained
+         across web application reload
+
+[4.1.32] #32023
+         CGI Servlet
+         Fix uploading of large files
+
+[4.1.32] Default Servlet
+         Ensure mime boundaries start with a new line
+
+[4.1.32] #19767
+         Realms
+         Add suport for DIGEST authentication to JDBC and Datasource realms
+
+[4.1.32] #32429
+         CGI Servlet
+         Set stderr line count correctly
+
+[4.1.32] #32431
+         CGI Servlet
+         Fixed typo
+
+[4.1.32] #32340
+         CGI Servlet
+         Fix class cast exceptions
+
+[4.1.32] WebDAV servlet
+         Add support for arbitary mapping (eg /webdav/*)
+
+[4.1.32] #32453
+         ContainerBase
+         Ensure cross-context calls to getContext during initialisation do not
+         return null
+
+[4.1.32] #32559, #33463
+         Standard Context
+         Make reload and stop/start more similar
+
+[4.1.32] #32779
+         Standard Host Deployer
+         Fix NPE on undeploy of app deployed with a context.xml file
+
+[4.1.32] #31198
+         Realms
+         Support non-ASCII user names and passwords with FORM and DIGEST
+         authentication
+
+[4.1.32] #28849
+         Various
+         Update French translations
+
+[4.1.32] #28222
+         Core
+         Fix request.getRequestURL() so it complies with SRV.8.4
+
+[4.1.32] #25508
+         Standard Context
+         Fix JNDI when multiple engines exist with the same name
+
+[4.1.32] #33357
+         DataSource Realm
+         Fix connection leaks and make more efficient
+
+[4.1.32] #10982
+         Naming
+         Include o.a.naming.resources.jndi.Handler in naming-resources.jar
+
+[4.1.32] #27128
+         FORM authenticator
+         Request parameters restored after auth when cache=false
+
+[4.1.32] #22041
+         Sessions
+         Correctly handle dynamic proxies as session objects
+
+[4.1.32] #20380
+         Access Log Valve
+         Timezone should include DST
+
+[4.1.32] #10385
+         SSI servlet
+         Improve support for non-platform default encodings
+
+[4.1.32] #22013
+         Core
+         Fix RequestDispatcher.forward() handling of relative paths
+
+[4.1.32] #22617
+         Basic Authenticator
+         Fix handling of unauthenticated users when integrated with an EJB
+         container
+
+[4.1.32] Default Servlet
+         Correctly handle symbolic links
+
+[4.1.32] #25835
+         Request Filter Valve
+         Make regular expression usage thread safe
+
+[4.1.32] #13274
+         JAAS realm
+         Various fixes to get this realm to a state where it actually works
+
+[4.1.32] #35769
+         Naming
+         Fix implementation of composeName(Name, Name)
+
+[4.1.32] #10026
+         Webapp classloader
+         Fix struts JAR locking issue (fixes other locking issues too)
 
 
 ----------------
