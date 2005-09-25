@@ -5034,6 +5034,10 @@ public class StandardContext
                 destroy();
                 throw e;
             }
+            // It's possible that addChild may have started us
+            if( initialized ) {
+                return;
+            }
         }
         super.init();
         
