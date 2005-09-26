@@ -272,6 +272,12 @@
     information from the directory:</p>
 
     <attributes>
+       <attribute name="alternateURL" required="false">
+         <p>If a socket connection can not be made to the provider at
+         the <code>connectionURL</code> an attempt will be made to use the
+         <code>alternateURL</code>.</p>
+       </attribute>
+
        <attribute name="authentication" required="false">
          <p>A string specifying the type of authentication to use.
          "none", "simple", "strong" or a provider specific definition
