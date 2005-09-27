@@ -309,7 +309,7 @@ final class StandardHostValve
             return (null);
         Class clazz = exception.getClass();
         String name = clazz.getName();
-        while (!"java.lang.Object".equals(clazz)) {
+        while (!Object.class.equals(clazz)) {
             ErrorPage errorPage = context.findErrorPage(name);
             if (errorPage != null)
                 return (errorPage);
