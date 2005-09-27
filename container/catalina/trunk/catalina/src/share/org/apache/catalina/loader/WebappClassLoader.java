@@ -1470,6 +1470,21 @@ public class WebappClassLoader
      */
     public void stop() throws LifecycleException {
 
+        /*
+         * Clear the IntrospectionUtils cache.
+         *
+         * Implementation note:
+         * Any reference to IntrospectionUtils which may cause the static
+         * initalizer of that class to be invoked must occur prior to setting
+         * the started flag to FALSE, because the static initializer of
+         * IntrospectionUtils makes a call to
+         * org.apache.commons.logging.LogFactory.getLog(), which ultimately
+         * calls the loadClass() method of the thread context classloader,
+         * which is the same as this classloader, whose impl throws a
+         * ThreadDeath if the started flag has been set to FALSE.
+         */
+        IntrospectionUtils.clear();
+
         started = false;
 
         int length = files.length;
@@ -1515,8 +1530,6 @@ public class WebappClassLoader
         org.apache.commons.logging.LogFactory.release(this);
         // Clear the classloader reference in the VM's bean introspector
         java.beans.Introspector.flushCaches();
-        // Clear the IntrospectionUtils cache
-        IntrospectionUtils.clear();
 
     }
 
