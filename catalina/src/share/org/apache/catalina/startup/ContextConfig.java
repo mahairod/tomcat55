@@ -589,7 +589,19 @@ public final class ContextConfig
                     source = new InputSource
                             (getClass().getClassLoader()
                             .getResource(defaultWebXml).toString());
-                } else {
+                } 
+                if( stream== null ) { 
+                    // maybe embedded
+                    stream = getClass().getClassLoader()
+                        .getResourceAsStream("web-embed.xml");
+                    if( stream != null ) {
+                        source = new InputSource
+                        (getClass().getClassLoader()
+                                .getResource("web-embed.xml").toString());
+                    }                                         
+                }
+                
+                if( stream== null ) {
                     log.info("No default web.xml");
                 }
             } else {
