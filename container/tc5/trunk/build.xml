@@ -192,6 +192,7 @@
        <property name="tomcat-util.build" value="${tomcat.build}" />
        <property name="tomcat-util.lib" value="${tomcat.build}/server/lib" />
     </ant>
+
   </target>
 
   <target name="build-tomcatjk" unless="tomcatjk.build.notrequired" 
@@ -658,7 +659,7 @@
     <!-- <antcall target="build-commons-modeler" /> -->
     <!-- <antcall target="build-commons-daemon"  /> -->
 
-  	<antcall target="downloadgz">
+    <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-collections-src.loc}"/>
       <param name="destfile" value="${tomcat-dbcp.jar}" />
     </antcall>
@@ -1166,6 +1167,90 @@
       <property name="catalina.home" value="${tomcat.build}"/>
     </ant>
   </target>
+
+  <!-- ======================= Single-jar tomcat =========== -->
+   <target name="prepare-runtime-once" 
+     description="Do once before single jar tomcat">
+    <mkdir dir="runtime/deps" />
+    <mkdir dir="runtime/classes" />
+    <unjar dest="runtime/deps" src="${base.path}/servlet-api-2.4/lib/servlet-api.jar" />
+    <!-- unjar dest="runtime/deps" src="${base.path}/commons-logging-1.0.4/commons-logging.jar"/ -->
+    <unjar dest="runtime/deps" src="${base.path}/commons-modeler-1.1/commons-modeler.jar"/>
+    <unjar dest="runtime/deps" src="${base.path}/jsp-api-2.0/lib/jsp-api.jar"/>
+   </target>
+
+
+   <target name="compile-runtime" 
+           description="Build single jar tomcat">
+  
+      <javac destdir="runtime/classes" deprecation="false" debug="false"  >
+            <!-- classpath path="${base.path}/commons-beanutils-1.6.1/commons-beanutils.jar"/ -->
+            <!-- classpath path="${base.path}/commons-logging-1.0.4/commons-logging.jar"/ -->
+            <classpath path="${base.path}/commons-modeler-1.1/commons-modeler.jar"/>
+            <classpath path="${base.path}/jsp-api-2.0/lib/jsp-api.jar"/>
+            <classpath path="${base.path}/servlet-api-2.4/lib/servlet-api.jar"/>
+            <classpath path="${base.path}/jmxri-1.2.1.jar"/>
+
+            <src>
+                <pathelement path="${jtc.home}/util/java"/>              
+                <pathelement path="${jtc.home}/mini/java" />
+                <!-- pathelement path="${jtc.home}/naming/src"/ -->
+                <pathelement path="${jtc.home}/coyote/src/java"/>
+                <pathelement path="${jtc.home}/http11/src/java"/>
+                <pathelement path="${catalina.home}/catalina/src/share"/>
+            </src>
+            <exclude name="org/apache/naming/*.java"/>
+            <exclude name="org/apache/naming/ant/**"/>
+            <exclude name="org/apache/tomcat/util/net/puretls/**"/>
+            <exclude name="org/apache/tomcat/util/net/jsse/JSSE15SocketFactory.java"/>
+            <exclude name="org/apache/tomcat/util/net/jsse/JSSE15Factory.java"/>
+            <exclude name="org/apache/tomcat/util/net/AprEndpoint.java"/>
+            <exclude name="org/apache/coyote/tomcat3/**"/>
+            <exclude name="org/apache/coyote/tomcat4/**"/>
+            <exclude name="org/apache/coyote/memory/**"/>
+            <exclude name="org/apache/coyote/standalone/**"/>
+            <exclude name="org/apache/coyote/http11/Http11AprProcessor.java"/>
+            <exclude name="org/apache/coyote/http11/Http11AprProtocol.java"/>
+            <exclude name="org/apache/coyote/http11/InternalAprInputBuffer.java"/>
+            <exclude name="org/apache/coyote/http11/InternalAprOutputBuffer.java"/>
+            <exclude name="**/CatalinaLaunchFilter.java"/>
+            <exclude name="**/MailSessionFactory.java"/>
+            <exclude name="**/SendMailFactory.java"/>
+            <exclude name="**/SemaphoreValve.java"/>
+            <exclude name="org/apache/catalina/ant/**"/>
+            <exclude name="org/apache/catalina/ssi/**"/>
+            <exclude name="org/apache/catalina/loader/CatalinaModuleListener.java"/>
+        </javac>
+
+        <copy todir="runtime/classes" >
+            <fileset dir="${jtc.home}/util/java" includes="**/*.properties **/*.xml"/>
+            <fileset dir="${jtc.home}/naming/src" includes="**/*.properties **/*.xml"/>
+            <fileset dir="${jtc.home}/coyote/src/java" includes="**/*.properties **/*.xml" >
+              <exclude name="org/apache/coyote/tomcat4/**"/>
+            </fileset>
+            <fileset dir="${jtc.home}/http11/src/java" includes="**/*.properties **/*.xml"/>
+            <fileset dir="${catalina.home}/catalina/src/share" includes="**/*.properties **/*.xml"/>
+        </copy>
+
+        <jar jarfile="runtime/tomcat-runtime.jar" manifest="resources/runtime.MF">
+          <fileset dir="runtime/classes" includes="**" />
+          <fileset dir="runtime/deps" includes="**" >
+        
+             <exclude name="META-INF/**" />
+             <exclude name="**/*.html" />
+             <exclude name="org/apache/commons/modeler/ant/**" />
+             <exclude name="org/apache/catalina/ant/**" />
+           
+          </fileset>
+          <fileset dir="resources" >
+             <include name="server-embed.xml"/>
+             <include name="web-embed.xml"/>
+          </fileset>
+        </jar>
+
+    </target>
+  
+    <target name="runtime" depends="prepare-runtime-once,compile-runtime"/>
 
   <!-- ======================= TESTER: Run Catalina Tester Tests=========== -->
   
@@ -2050,5 +2135,6 @@
 
   <target name="gumpy-build" description="HACK: to stop gumpy from nagging"
        depends="prepare-release,dist,dist-source,installer,package-zip,package-tgz,package-src-zip,package-src-tgz" />
+
 
 </project>
