@@ -928,6 +928,10 @@ public class Embedded  extends StandardService implements Lifecycle {
                 }
             }
         }
+        // last resort - for minimal/embedded cases. 
+        if(catalinaHome==null) {
+            catalinaHome=System.getProperty("user.dir");
+        }
         if (catalinaHome != null) {
             File home = new File(catalinaHome);
             if (!home.isAbsolute()) {
@@ -942,7 +946,7 @@ public class Embedded  extends StandardService implements Lifecycle {
 
         if (System.getProperty("catalina.base") == null) {
             System.setProperty("catalina.base",
-                               System.getProperty("catalina.home"));
+                               catalinaHome);
         } else {
             String catalinaBase = System.getProperty("catalina.base");
             File base = new File(catalinaBase);
