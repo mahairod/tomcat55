@@ -101,7 +101,7 @@ public class StringManager {
      * @param key The resource name
      */
     public String getString(String key) {
-        return MessageFormat.format(getStringInternal(key), null);
+        return MessageFormat.format(getStringInternal(key), (Object [])null);
     }
 
 
