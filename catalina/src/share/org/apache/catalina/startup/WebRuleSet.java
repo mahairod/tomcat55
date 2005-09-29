@@ -576,7 +576,7 @@ final class SetPublicIdRule extends Rule {
             return;
         }
 
-        m.invoke(top, paramValues);
+        m.invoke(top, (Object [])paramValues);
         if (digester.getLogger().isDebugEnabled())
             digester.getLogger().debug("" + top.getClass().getName() + "." 
                                        + method + "(" + paramValues[0] + ")");

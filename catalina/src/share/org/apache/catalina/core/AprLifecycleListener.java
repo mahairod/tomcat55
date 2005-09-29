@@ -101,8 +101,8 @@ public class AprLifecycleListener
             try {
                 String methodName = "terminate";
                 Method method = Class.forName("org.apache.tomcat.jni.Library")
-                    .getMethod(methodName, null);
-                method.invoke(null, null);
+                    .getMethod(methodName, (Class [])null);
+                method.invoke(null, (Object []) null);
             } catch (Throwable t) {
                 if (!log.isDebugEnabled()) {
                     log.info(sm.getString("aprListener.aprDestroy"));
