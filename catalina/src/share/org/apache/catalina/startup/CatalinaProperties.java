@@ -126,12 +126,12 @@ public class CatalinaProperties {
         if ((is == null) || (error != null)) {
             // Do something
             log.warn("Failed to load catalina.properties", error);
-	    // That's fine - we have reasonable defaults.
-	    properties=new Properties();
+            // That's fine - we have reasonable defaults.
+            properties=new Properties();
         }
 
         // Register the properties as system properties
-	Enumeration enumeration = properties.propertyNames();
+        Enumeration enumeration = properties.propertyNames();
         while (enumeration.hasMoreElements()) {
             String name = (String) enumeration.nextElement();
             String value = properties.getProperty(name);
