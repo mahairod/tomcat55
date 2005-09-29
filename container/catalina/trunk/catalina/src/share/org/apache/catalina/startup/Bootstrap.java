@@ -271,8 +271,8 @@ public final class Bootstrap {
         throws Exception {
         if( catalinaDaemon==null ) init();
 
-        Method method = catalinaDaemon.getClass().getMethod("start", null);
-        method.invoke(catalinaDaemon, null);
+        Method method = catalinaDaemon.getClass().getMethod("start", (Class [] )null);
+        method.invoke(catalinaDaemon, (Object [])null);
 
     }
 
@@ -283,8 +283,8 @@ public final class Bootstrap {
     public void stop()
         throws Exception {
 
-        Method method = catalinaDaemon.getClass().getMethod("stop", null);
-        method.invoke(catalinaDaemon, null);
+        Method method = catalinaDaemon.getClass().getMethod("stop", (Class [] ) null);
+        method.invoke(catalinaDaemon, (Object [] ) null);
 
     }
 
@@ -296,8 +296,8 @@ public final class Bootstrap {
         throws Exception {
 
         Method method = 
-            catalinaDaemon.getClass().getMethod("stopServer", null);
-        method.invoke(catalinaDaemon, null);
+            catalinaDaemon.getClass().getMethod("stopServer", (Class []) null);
+        method.invoke(catalinaDaemon, (Object []) null);
 
     }
 
