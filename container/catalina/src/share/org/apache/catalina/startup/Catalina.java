@@ -463,6 +463,21 @@ public class Catalina extends Embedded {
             }
         }
 
+        // This should be included in catalina.jar
+        // Alternative: don't bother with xml, just create it manually.
+        if( inputStream==null ) {
+            try {
+                inputStream = getClass().getClassLoader()
+                .getResourceAsStream("server-embed.xml");
+                inputSource = new InputSource
+                (getClass().getClassLoader()
+                        .getResource("server-embed.xml").toString());
+            } catch (Exception e) {
+                ;
+            }
+        }
+        
+
         if ((inputStream == null) && (file != null)) {
             log.warn("Can't load server.xml from " + file.getAbsolutePath());
             return;
