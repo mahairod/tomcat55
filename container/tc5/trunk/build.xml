@@ -1252,6 +1252,51 @@
   
     <target name="runtime" depends="prepare-runtime-once,compile-runtime"/>
 
+    <!-- ======================= Coyote standalone =========== -->
+    <!--
+        This is only the http connector, for testing/experimental purposes. 
+      -->
+
+    <target name="tomcat-http11" >
+        <mkdir dir="runtime/http11"/>
+        <javac destdir="runtime/http11" debug="false" >
+            <src>
+                <pathelement path="${jtc.home}/util/java"/>
+                <pathelement path="${jtc.home}/util/loader"/>
+                <pathelement path="${jtc.home}/mini/java"/>
+                <pathelement path="${jtc.home}/coyote/src/java"/>
+                <pathelement path="${jtc.home}/http11/src/java"/>
+            </src>
+            <exclude name="org/apache/coyote/http11/Http11Protocol.java"/>
+            <exclude name="org/apache/coyote/http11/Http11AprProcessor.java"/>
+            <exclude name="org/apache/coyote/http11/Http11AprProtocol.java"/>
+            <exclude name="org/apache/coyote/http11/InternalAprInputBuffer.java"/>
+            <exclude name="org/apache/coyote/http11/InternalAprOutputBuffer.java"/>
+            <exclude name="org/apache/tomcat/util/net/puretls/**"/>
+            <exclude name="org/apache/tomcat/util/net/jsse/JSSE15SocketFactory.java"/>
+            <exclude name="org/apache/tomcat/util/net/jsse/JSSE15Factory.java"/>
+            <exclude name="org/apache/tomcat/util/net/AprEndpoint.java"/>
+            <exclude name="org/apache/tomcat/util/digester/**"/>
+            <exclude name="org/apache/tomcat/util/compat/**"/>
+            <exclude name="org/apache/tomcat/util/jmx/**"/>
+            <exclude name="org/apache/tomcat/util/log/**"/>
+            <exclude name="org/apache/tomcat/util/IntrospectionUtils.java"/>
+            <exclude name="org/apache/coyote/tomcat3/**"/>
+            <exclude name="org/apache/coyote/tomcat4/**"/>
+            <exclude name="org/apache/coyote/memory/**"/>
+        </javac>
+        <copy todir="runtime/http11" >
+            <fileset dir="${jtc.home}/http11/src/java" includes="**/*.properties **/*.xml"/>
+            <fileset dir="${jtc.home}/util/java" includes="**/*.properties **/*.xml"/>
+        </copy>
+
+        <jar jarfile="runtime/tomcat-http11.jar" manifest="resources/coyote-http11.MF" 
+             basedir="runtime/http11" 
+             includes="**" />
+
+    </target>
+
+
   <!-- ======================= TESTER: Run Catalina Tester Tests=========== -->
   
    <target name="dist-tester" 
