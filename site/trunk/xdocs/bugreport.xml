@@ -151,7 +151,8 @@ here</a>.<br />
 <p>Security-related bugs are of special concern.  If you have a verified 
 security bug to report please do not post it
 to email lists or submit a bug report.  Security bugs should be reported
-privately by email to <a href="mailto:security@apache.org">security@apache.org</a>.
+privately by email to <a href="mailto:security@tomcat.apache.org">
+security@tomcat.apache.org</a>.
 </p>
 </subsection>
 
