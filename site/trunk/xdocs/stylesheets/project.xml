@@ -10,41 +10,42 @@
     </menu>
 
     <menu name="Download">
-        <item name="Which version?"        href="/whichversion.html"/>
-        <item name="Apache Tomcat 5.5"     href="/download-55.cgi"/>
-        <item name="Apache Tomcat 4.1"     href="/download-41.cgi"/>
-        <item name="Apache Tomcat 3.3"     href="/download-33.cgi"/>
+        <item name="Which version?"           href="/whichversion.html"/>
+        <item name="Apache Tomcat 5.5"        href="/download-55.cgi"/>
+        <item name="Apache Tomcat 4.1"        href="/download-41.cgi"/>
+        <item name="Apache Tomcat 3.3"        href="/download-33.cgi"/>
+        <item name="Apache Tomcat Connectors" href="/download-connectors.cgi"/>
 <!-- TODO Move Tomcat archives to Tomcat sub-dir of this location -->
-        <item name="Archives"              href="http://archive.apache.org/dist/"/>
+        <item name="Archives"                 href="http://archive.apache.org/dist/"/>
     </menu>
 
     <menu name="Problems?">
-        <item name="Find help"             href="/findhelp.html"/>
-        <item name="FAQ"                   href="/faq/"/>
-        <item name="Mailing Lists"         href="/lists.html#tomcat-user"/>
-        <item name="Bug Database"          href="/bugreport.html"/>
-        <item name="IRC"                   href="/irc.html"/>
+        <item name="Find help"                href="/findhelp.html"/>
+        <item name="FAQ"                      href="/faq/"/>
+        <item name="Mailing Lists"            href="/lists.html#tomcat-user"/>
+        <item name="Bug Database"             href="/bugreport.html"/>
+        <item name="IRC"                      href="/irc.html"/>
     </menu>
 
     <menu name="Documentation">
-        <item name="Apache Tomcat 5.5"     href="/tomcat-5.5-doc/index.html"/>
-        <item name="Apache Tomcat 4.1"     href="/tomcat-4.1-doc/index.html"/>
-        <item name="Apache Tomcat 3.3"     href="/tomcat-3.3-doc/index.html"/>
+        <item name="Apache Tomcat 5.5"        href="/tomcat-5.5-doc/index.html"/>
+        <item name="Apache Tomcat 4.1"        href="/tomcat-4.1-doc/index.html"/>
+        <item name="Apache Tomcat 3.3"        href="/tomcat-3.3-doc/index.html"/>
     </menu>
 
     <menu name="Get Involved">
-        <item name="Overview"              href="/getinvolved.html"/>
-        <item name="SVN Repositories"      href="/svn.html"/>
-        <item name="Mailing Lists"         href="/lists.html"/>
+        <item name="Overview"                 href="/getinvolved.html"/>
+        <item name="SVN Repositories"         href="/svn.html"/>
+        <item name="Mailing Lists"            href="/lists.html"/>
     </menu>
 
     <menu name="Misc">
-        <item name="Who We Are"            href="/whoweare.html"/>
-        <item name="Heritage"              href="/heritage.html"/>
-        <item name="Apache Home"           href="http://www.apache.org"/>
-        <item name="Resources"             href="/resources.html"/>
-        <item name="Contact"               href="/contact.html"/>
-        <item name="Legal"                 href="/legal.html"/>
+        <item name="Who We Are"               href="/whoweare.html"/>
+        <item name="Heritage"                 href="/heritage.html"/>
+        <item name="Apache Home"              href="http://www.apache.org"/>
+        <item name="Resources"                href="/resources.html"/>
+        <item name="Contact"                  href="/contact.html"/>
+        <item name="Legal"                    href="/legal.html"/>
     </menu>
 
     </body>
