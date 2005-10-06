@@ -1,1 +1,0 @@
-/* On most platform this file is overwritten when doing configure */

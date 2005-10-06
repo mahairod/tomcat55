@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-
-<index>
-  <document href="index.xml"/>
-  <document href="common/AJPv13.xml"/>
-  <document href="jk2/configtc.xml"/>
-  <document href="jk2/configweb.xml"/>
-</index>

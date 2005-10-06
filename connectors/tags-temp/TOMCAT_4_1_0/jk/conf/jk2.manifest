@@ -1,2 +1,0 @@
-Main-Class: org.apache.jk.apr.TomcatStarter
-Class-Path: ../lib/tomcat.jar bootstrap.jar 
