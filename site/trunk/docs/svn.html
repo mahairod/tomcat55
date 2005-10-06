@@ -227,6 +227,14 @@ http://svn.apache.org/repos/asf/tomcat</a>.</p>
   </tr>
   <tr>
     <td>
+<a href="http://svn.apache.org/repos/asf/tomcat/current">
+        <code>/current/</code>
+</a>
+</td>
+    <td>Single directory checkouts for each major version</td>
+  </tr>
+  <tr>
+    <td>
 <a href="http://svn.apache.org/repos/asf/tomcat/connectors">
         <code>/connectors/</code>
 </a>
@@ -267,6 +275,65 @@ http://svn.apache.org/repos/asf/tomcat</a>.</p>
   </tr>
 </table>
 
+</blockquote>
+</p>
+</td>
+</tr>
+<tr>
+<td>
+<br />
+</td>
+</tr>
+</table>
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+<tr>
+<td bgcolor="#525D76">
+<font face="arial,helvetica,sanserif" color="#ffffff">
+<a name="Convenience directories">
+<strong>Convenience directories</strong>
+</a>
+</font>
+</td>
+</tr>
+<tr>
+<td>
+<p>
+<blockquote>
+<p>To simplify checkouts of the latest sources for each major version of Apache
+Tomcat, a Subversion feature called externals has been used. This groups all 
+the modules for a major Apache Tomcat release as sub-directories of a single
+directory and enables them to be checked out in a single command. The modules
+included for each version are listed in the section below.</p>
+
+<p>There are some caveats to remember. Since all the subdirectories are still
+really different slices from the repository, relative paths won't always work
+as expected, for example. See the
+<a href="http://svnbook.red-bean.com/en/1.1/ch07s04.html">Externals
+Definitions</a> section of the <a href="http://svnbook.red-bean.com/">
+Subversion Book</a> for details.</p>
+
+<p>The URLs to use to checkout each version are:</p>
+<table>
+  <tr>
+    <th>Apache Tomcat Version</th>
+<th>URL</th>
+  </tr>
+  <tr>
+    <td>5.5.x</td>
+    <td>http://svn.apache.org/repos/asf/tomcat/current/tc5.5.x</td>
+  </tr>
+  <tr>
+    <td>4.1.x</td>
+    <td>http://svn.apache.org/repos/asf/tomcat/current/tc4.1.x</td>
+  </tr>
+  <tr>
+    <td>3.3.x</td>
+    <td>http://svn.apache.org/repos/asf/tomcat/current/tc3.3.x</td>
+  </tr>
+</table>
+
+<p>Note that if you view these directories in your browser they will
+appear to be empty.</p>
 </blockquote>
 </p>
 </td>
