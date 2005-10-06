@@ -1,0 +1,10 @@
+.DS_Store
+Makedefs
+Makefile
+apr
+build
+config.cache
+config.log
+config.status
+configure
+localmake.bat
