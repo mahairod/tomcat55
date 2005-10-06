@@ -1,0 +1,84 @@
+<h2>Jasper code generator</h2>
+
+<h3>Components</h3>
+
+<table>
+<tr><th>
+Component<th>Description<th>Notes
+<tr><td>
+core<td>Main entry point and liaison interfaces. A servlet container will
+probably use only this package to plug in jasper and integrate it. It provides
+a rich API that controls all aspects of code generation and interfaces that
+allow the container to plug in specialized implementations.
+
+<tr><td>
+jsptree<td>Internal representation of the JSP page. All the information 
+collected by the parser will be stored in JspPageInfo. Visitors will be
+ used to generate code, validate, etc. 
+<td>Result of refactoring of JspParseEventListner and generators. Used to
+be a tree of Generator objects, which generated the code itself. 
+
+
+<tr><td>
+parser<td>The "clasic" JSP1.1 parser. Treat it as a black box that reads
+JSP and generates a jsptree ( the code is very stable but a bit complex ).
+A SAX parser will be used when JSP1.2 code will be merged in addition to 
+this parser. 
+<td>It can be greatly simplified - but it's not a big priority until we need
+to do some major change.
+
+<tr><td>
+javacompiler<td>Adapter to a javac compiler. 
+<td>Generic component, not specific to jasper ( could be moved to commons ).
+
+<tr><td>
+javagen<td>Java code generator. Can manage line numbers and generate mappings
+and comments ( soon :-). The API will allow it to collect information about
+the java class and methods, and will have the hacks to allow BCEL to be
+used ( if possible ) to generate bytecode directly.
+ 
+<td>Generic component, not specific to jasper. 
+
+<tr><td>
+generator<td>The "classic" code generator for JSP, outputing java by processing
+the jsptree ( right now jsptree is a tree of generators that is traversed
+to generate the code ).
+<td>
+
+<tr><td>
+<tr><td>
+</table>
+
+<h3>Dependencies</h3>
+
+( this is the intended target, right now it's much worse )
+
+<pre>
+liaison -> core
+
+core -> all ( puts everything togheter )
+
+jsptree -> nothing
+
+javacompiler -> nothing ( general purpose util )
+
+parser -> jsptree
+
+generator -> jsptree
+
+</pre>
+
+<h3>New components</h3>
+
+<ul>
+<li>SAX parser - merge from 4.0, will generate the jsptree. Part of it
+ will be refactored as general "validators".
+<li>Direct bytecode generators - similar with generator. Will work only for 
+"pure" JSP ( traverse the tree and detect if it can, if not fallback to the 
+old generator )
+<li>Add new generators as merge from 4.0, for the new JSP1.2 features.
+<li>XSLT facade - allow XSLT transformations on the jsptree and on the 
+java tree ( advanced optimizations, replace common tags with efficient
+in-line code, etc ). This will not be required for "normal" operation, but
+is an optional component ( long term ).
+</ul>

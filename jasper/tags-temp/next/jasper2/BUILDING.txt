@@ -1,0 +1,9 @@
+1.  Build tomcat 4
+
+    cd jakarta-tomcat-4.0
+    ant
+
+2.  Build jasper2
+
+    cd ../jakarta-tomcat-jasper/jasper2
+    ant

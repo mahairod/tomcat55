@@ -1,0 +1,318 @@
+package org.apache.jasper.compiler;
+
+import org.apache.jasper.JasperException;
+import org.xml.sax.Attributes;
+
+public class Validator {
+
+    static class ValidateVisitor extends Node.Visitor {
+
+	private Compiler.PageInfo pageInfo;
+	private ErrorDispatcher err;
+	
+	private static final JspUtil.ValidAttribute[] pageDirectiveAttrs = {
+	    new JspUtil.ValidAttribute("language"),
+	    new JspUtil.ValidAttribute("extends"),
+	    new JspUtil.ValidAttribute("import"),
+	    new JspUtil.ValidAttribute("session"),
+	    new JspUtil.ValidAttribute("buffer"),
+	    new JspUtil.ValidAttribute("autoFlush"),
+	    new JspUtil.ValidAttribute("isThreadSafe"),
+	    new JspUtil.ValidAttribute("info"),
+	    new JspUtil.ValidAttribute("errorPage"),
+	    new JspUtil.ValidAttribute("isErrorPage"),
+	    new JspUtil.ValidAttribute("contentType"),
+	    new JspUtil.ValidAttribute("pageEncoding") };
+
+	private static final JspUtil.ValidAttribute[] includeDirectiveAttrs = {
+	    new JspUtil.ValidAttribute("file", true) };
+
+	private static final JspUtil.ValidAttribute[] taglibDirectiveAttrs = {
+	    new JspUtil.ValidAttribute("uri", true),
+	    new JspUtil.ValidAttribute("prefix", true) };
+
+	private static final JspUtil.ValidAttribute[] includeActionAttrs = {
+	    new JspUtil.ValidAttribute("page", true),
+	    new JspUtil.ValidAttribute("flush") };
+
+	private static final JspUtil.ValidAttribute[] paramActionAttrs = {
+	    new JspUtil.ValidAttribute("name", true),
+	    new JspUtil.ValidAttribute("value", true) };
+
+	private static final JspUtil.ValidAttribute[] forwardActionAttrs = {
+	    new JspUtil.ValidAttribute("page", true) };
+
+	private static final JspUtil.ValidAttribute[] getPropertyAttrs = {
+	    new JspUtil.ValidAttribute("name", true),
+	    new JspUtil.ValidAttribute("property", true) };
+
+	private static final JspUtil.ValidAttribute[] setPropertyAttrs = {
+	    new JspUtil.ValidAttribute("name", true),
+	    new JspUtil.ValidAttribute("property", true),
+	    new JspUtil.ValidAttribute("value"),
+	    new JspUtil.ValidAttribute("param") };
+
+	private static final JspUtil.ValidAttribute[] useBeanAttrs = {
+	    new JspUtil.ValidAttribute("id", true),
+	    new JspUtil.ValidAttribute("scope"),
+	    new JspUtil.ValidAttribute("class"),
+	    new JspUtil.ValidAttribute("type"),
+	    new JspUtil.ValidAttribute("beanName") };
+
+	private static final JspUtil.ValidAttribute[] plugInAttrs = {
+	    new JspUtil.ValidAttribute("type",true),
+	    new JspUtil.ValidAttribute("code", true),
+	    new JspUtil.ValidAttribute("codebase"),
+	    new JspUtil.ValidAttribute("align"),
+	    new JspUtil.ValidAttribute("archive"),
+	    new JspUtil.ValidAttribute("height"),
+	    new JspUtil.ValidAttribute("hspace"),
+	    new JspUtil.ValidAttribute("jreversion"),
+	    new JspUtil.ValidAttribute("name"),
+	    new JspUtil.ValidAttribute("vspace"),
+	    new JspUtil.ValidAttribute("width"),
+	    new JspUtil.ValidAttribute("nspluginurl"),
+	    new JspUtil.ValidAttribute("iepluginurl") };
+
+	private boolean languageSeen = false;
+	private boolean extendsSeen = false;
+	private boolean sessionSeen = false;
+ 	private boolean bufferSeen = false;
+	private boolean autoFlushSeen = false;
+	private boolean isThreadSafeSeen = false;
+	private boolean errorPageSeen = false;
+	private boolean isErrorPageSeen = false;
+	private boolean contentTypeSeen = false;
+	private boolean infoSeen = false;
+	
+
+	public void visit(Node.PageDirective n) throws JasperException {    
+
+	    JspUtil.checkAttributes("Page directive", n.getAttributes(),
+				    pageDirectiveAttrs, n.getStart());
+
+	    // JSP.2.10.1
+	    Attributes attrs = n.getAttributes();
+	    for (int i = 0; i < attrs.getLength(); i++) {
+		String attr = attrs.getQName(i);
+		String value = attrs.getValue(i);
+
+		if ("language".equals(attr)) {
+		    if (languageSeen)
+			err.jspError(n.getStart(), "jsp.error.language.multiple");
+		    languageSeen = true;
+		    if (!"java".equalsIgnoreCase(value))
+			err.jspError(n.getStart(), "jsp.error.language.nonjava");
+		    pageInfo.setLanguage(value);
+		}
+		else if ("extends".equals(attr)) {
+		    if (extendsSeen)
+			err.jspError(n.getStart(), "jsp.error.extends.multiple");
+		    extendsSeen = true;
+		    pageInfo.setExtends(value);
+		    /*
+		     * If page superclass is top level class (i.e. not in a pkg)
+		     * explicitly import it. If this is not done, the compiler
+		     * will assume the extended class is in the same pkg as
+		     * the generated servlet.
+		     */
+		    if (value.indexOf('.') < 0)
+			n.addImport(value);
+		}
+		else if ("contentType".equals(attr)) {
+		    if (contentTypeSeen) 
+			err.jspError(n.getStart(), "jsp.error.contentType.multiple");
+		    contentTypeSeen = true;
+		    pageInfo.setContentType(value);
+		}
+		else if ("session".equals(attr)) {
+		    if (sessionSeen)
+			err.jspError(n.getStart(), "jsp.error.session.multiple");
+		    sessionSeen = true;
+		    if ("true".equalsIgnoreCase(value))
+			pageInfo.setSession(true);
+		    else if ("false".equalsIgnoreCase(value))
+			pageInfo.setSession(false);
+		    else
+			err.jspError(n.getStart(), "jsp.error.session.invalid");
+		}
+		else if ("buffer".equals(attr)) {
+		    if (bufferSeen)
+			err.jspError(n.getStart(), "jsp.error.buffer.multiple");
+		    bufferSeen = true;
+
+		    if ("none".equalsIgnoreCase(attr))
+			pageInfo.setBuffer(0);
+		    else {
+			if (value == null || !value.endsWith("kb"))
+			    err.jspError(n.getStart(), "jsp.error.buffer.invalid");
+
+			try {
+			    Integer k = new Integer(
+				      value.substring(0, value.length()-2));
+			    pageInfo.setBuffer(k.intValue()*1024);
+			} catch (NumberFormatException e) {
+			    err.jspError(n.getStart(), "jsp.error.buffer.invalid");
+			}
+		    }
+		}
+		else if ("autoFlush".equals(attr)) {
+		    if (autoFlushSeen)
+			err.jspError(n.getStart(), "jsp.error.autoFlush.multiple");
+		    autoFlushSeen = true;
+		    if ("true".equalsIgnoreCase(value))
+			pageInfo.setAutoFlush(true);
+		    else if ("false".equalsIgnoreCase(value))
+			pageInfo.setAutoFlush(false);
+		    else
+			err.jspError(n.getStart(), "jsp.error.autoFlush.invalid");
+		}
+		else if ("isthreadSafe".equals(attr)) {
+		    if (isThreadSafeSeen)
+			err.jspError(n.getStart(), "jsp.error.isThreadSafe.multiple");
+		    isThreadSafeSeen = true;
+		    if ("true".equalsIgnoreCase(value))
+			pageInfo.setThreadSafe(true);
+		    else if ("false".equalsIgnoreCase(value))
+			pageInfo.setThreadSafe(false);
+		    else
+			err.jspError(n.getStart(), "jsp.error.isThreadSafe.invalid");
+		}
+		else if ("isErrorPage".equals(attr)) {
+		    if (isErrorPageSeen)
+			err.jspError(n.getStart(), "jsp.error.isErrorPage.multiple");
+		    isErrorPageSeen = true;
+		    if ("true".equalsIgnoreCase(value))
+			pageInfo.setIsErrorPage(true);
+		    else if ("false".equalsIgnoreCase(value))
+			pageInfo.setIsErrorPage(false);
+		    else
+			err.jspError(n.getStart(), "jsp.error.isErrorPage.invalid");
+		}
+		else if ("errorPage".equals(attr)) {
+		    if (errorPageSeen) 
+			err.jspError(n.getStart(), "jsp.error.errorPage.multiple");
+		    errorPageSeen = true;
+		    pageInfo.setErrorPage(value);
+		}
+		else if ("info".equals(attr)) {
+		    if (infoSeen) 
+			err.jspError(n.getStart(), "jsp.error.info.multiple");
+		    infoSeen = true;
+		    pageInfo.setInfo(value);
+		}
+	    }
+	    // Check for bad combinations
+	    if (pageInfo.getBuffer() == 0 && pageInfo.isAutoFlush())
+		err.jspError(n.getStart(), "jsp.error.page.badCombo");
+	}
+
+	public void visit(Node.IncludeDirective n) throws JasperException {
+	    JspUtil.checkAttributes("Include directive", n.getAttributes(),
+				    includeDirectiveAttrs, n.getStart());
+	}
+
+	public void visit(Node.TaglibDirective n) throws JasperException {
+	    JspUtil.checkAttributes("Taglib directive", n.getAttributes(),
+				    taglibDirectiveAttrs, n.getStart());
+	}
+
+	public void visit(Node.ParamAction n) throws JasperException {
+	    JspUtil.checkAttributes("Param action", n.getAttributes(),
+				    paramActionAttrs, n.getStart());
+	    n.setValue(getJspAttribute("value", n.getAttributeValue("value"),
+				n.isXmlSyntax()));
+	}
+
+	public void visit(Node.IncludeAction n) throws JasperException {
+	    JspUtil.checkAttributes("Include action", n.getAttributes(),
+				    includeActionAttrs, n.getStart());
+	    n.setPage(getJspAttribute("page", n.getAttributeValue("page"),
+				n.isXmlSyntax()));
+        };
+
+	public void visit(Node.ForwardAction n) throws JasperException {
+            JspUtil.checkAttributes("Forward", n.getAttributes(),
+				    forwardActionAttrs, n.getStart());
+	    n.setPage(getJspAttribute("page", n.getAttributeValue("page"),
+				n.isXmlSyntax()));
+	}
+
+	public void visit(Node.GetProperty n) throws JasperException {
+	    JspUtil.checkAttributes("GetProperty", n.getAttributes(),
+				    getPropertyAttrs, n.getStart());
+	}
+
+	public void visit(Node.SetProperty n) throws JasperException {
+	    JspUtil.checkAttributes("SetProperty", n.getAttributes(),
+				    setPropertyAttrs, n.getStart());
+	    String name = n.getAttributeValue("name");
+	    String property = n.getAttributeValue("property");
+	    String param = n.getAttributeValue("param");
+	    String value = n.getAttributeValue("value");
+
+	    if ("*".equals(property)){
+		if (param != null || value != null)
+		    err.jspError(n.getStart(), "jsp.error.setProperty.invalid");
+		
+	    }
+	    else if (param != null && value != null)
+		err.jspError(n.getStart(), "jsp.error.setProperty.invalid");
+	    n.setValue(getJspAttribute("value", value, n.isXmlSyntax()));
+	}
+
+	public void visit(Node.UseBean n) throws JasperException {
+	    JspUtil.checkAttributes("UseBean", n.getAttributes(),
+				    useBeanAttrs, n.getStart());
+
+	    String name = n.getAttributeValue ("id");
+	    String scope = getAttributeValue ("scope");
+	    String classsName = getAttributeValue ("class");
+	    String type = getAttributeValue ("type");
+
+	    if (className == null && type == null)
+		err.jspError(n.getStart(), "jsp.error.useBean.missing.type");
+
+	    if (beanInfo.checkVariable(name)) {
+		err.jspError(n.getStart(), "jsp.error.useBean.deplicate")
+
+            String  varname    = name;
+            String  serfile    = name;
+	}
+
+	public void visit(Node.PlugIn n) throws JasperException {
+	    JspUtil.checkAttributes("Plugin", n.getAttributes(),
+				    plugInAttrs, n.getStart());
+	}
+
+	/************************
+	 */
+	private Node.JspAttribute getJspAttribute(String name, String value,
+					boolean isXml) {
+	    // XXX Is it an error to see "%=foo%" in non-Xml page?
+	    // (We won't see "<%=foo%> in xml page because '<' is not a
+	    // valid attribute value in xml).
+
+	    if (isXml && value.startsWith("%="))
+		return new Node.JspAttribute(name,
+				value.substring(2, value.length()-1), true);
+	    if (!isXml && value.startsWith("<="))
+		return new Node.JspAttribute(name,
+				value.substring(3, value.length()-2), true);
+	    return new Node.JspAttribute(name, value, false);
+	}
+
+
+	ValidateVisitor(Compiler compiler) {
+	    this.pageInfo = compiler.getPageInfo();
+	    this.err = compiler.getErrorDispatcher();
+	}
+    }
+
+    public static void validate(Compiler compiler, Node.Nodes page)
+						throws JasperException {
+	ValidateVisitor visitor = new ValidateVisitor(compiler);
+	page.visit(visitor);
+    }
+}
+

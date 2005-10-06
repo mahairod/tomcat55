@@ -1,0 +1,753 @@
+package org.apache.jasper.compiler;
+
+import java.util.*;
+import java.io.CharArrayWriter;
+import org.xml.sax.Attributes;
+import org.apache.jasper.JasperException;
+
+/**
+ * An internal data representation of a JSP page or a JSP docuement (XML).
+ * Also included here is a visitor class for tranversing nodes.
+ *
+ * @author Kin-man CHung
+ * @author Jan Luehe
+ */
+
+public abstract class Node {
+    
+    private Attributes attrs;
+    private Nodes body;
+    private char[] text;
+    private Mark startMark;
+    private Mark endMark;
+    private int beginJavaLine;
+    private int endJavaLine;
+    protected Node parent;
+
+    /**
+     * The root node of this page.
+     */
+    private static Root currentRoot;
+
+    /*
+     * Constructor.
+     */
+    public Node(Mark start, Node parent) {
+	this.startMark = start;
+	addToParent(parent);
+    }
+
+    /*
+     * Constructor.
+     */
+    public Node(Attributes attrs, Mark start, Node parent) {
+	this.attrs = attrs;
+	this.startMark = start;
+	addToParent(parent);
+    }
+
+    /*
+     * Constructor.
+     */
+    public Node(char[] text, Mark start, Node parent) {
+	this.text = text;
+	this.startMark = start;
+	addToParent(parent);
+    }
+
+    public Attributes getAttributes() {
+	return attrs;
+    }
+
+    public void setAttributes(Attributes attrs) {
+	this.attrs = attrs;
+    }
+
+    public String getAttributeValue(String name) {
+	return (attrs==null)? null: attrs.getValue(name);
+    }
+
+    public Nodes getBody() {
+	return body;
+    }
+
+    public void setBody(Nodes body) {
+	this.body = body;
+    }
+
+    public char[] getText() {
+	return text;
+    }
+
+    public Mark getStart() {
+	return startMark;
+    }
+
+    public Node getParent() {
+	return parent;
+    }
+
+    public Node getCurrentRoot() {
+	return currentRoot;
+    }
+
+    public int getBeginJavaLine() {
+	return beginJavaLine;
+    }
+
+    public void setBeginJavaLine(int begin) {
+	beginJavaLine = begin;
+    }
+
+    public int getEndJavaLine() {
+	return endJavaLine;
+    }
+
+    public void setEndJavaLine(int end) {
+	endJavaLine = end;
+    }
+
+    /**
+     * Warning: This method is valid only when used from the correct context,
+     * namely when the Root node for the current page has been visited first,
+     * and the proper bookkeeping (<tt>pushCurrentRoot/popCurrentRoot</tt>)
+     * has been performed.
+     *
+     * @return true if the current page is in xml syntax, false otherwise.
+     */
+    public boolean isXmlSyntax() {
+	return currentRoot.isXmlSyntax();
+    }
+
+    public static void pushCurrentRoot(Root root) {
+	root.setParentRoot(currentRoot);
+	currentRoot = root;
+    }
+
+    public static Root popCurrentRoot() {
+	currentRoot = currentRoot.getParentRoot();
+	return currentRoot;
+    }
+
+    abstract void accept(Visitor v) throws JasperException;
+
+
+    //*********************************************************************
+    // Private utility methods
+
+    /*
+     * Adds this Node to the body of the given parent.
+     */
+    private void addToParent(Node parent) {
+	if (parent != null) {
+	    this.parent = parent;
+	    Nodes parentBody = parent.getBody();
+	    if (parentBody == null) {
+		parentBody = new Nodes();
+		parent.setBody(parentBody);
+	    }
+	    parentBody.add(this);
+	}
+    }
+
+
+    /*********************************************************************
+     * Child classes
+     */
+    
+    public static class Root extends Node {
+
+	private Root parentRoot;
+
+	Root(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+
+	public boolean isXmlSyntax() {
+	    return false;
+	}
+
+	public Root getParentRoot() {
+	    return parentRoot;
+	}
+
+	public void setParentRoot(Root root) {
+	    parentRoot = root;
+	}
+    }
+    
+    public static class JspRoot extends Root {
+
+	public JspRoot(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+
+	public boolean isXmlSyntax() {
+	    return true;
+	}
+
+    }
+
+    public static class PageDirective extends Node {
+
+	private Vector imports;
+
+	public PageDirective(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	    imports = new Vector();
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+
+	/*
+	 * Parses the comma-separated list of class or package names in the
+	 * given attribute value and adds each component to this
+	 * PageDirective's vector of imported classes and packages.
+	 */
+	void addImport(String value) {
+	    int start = 0;
+	    int index;
+	    while ((index = value.indexOf(',', start)) != -1) {
+		imports.add(value.substring(start, index).trim());
+		start = index + 1;
+	    }
+	    if (start == 0) {
+		// No comma found
+		imports.add(value.trim());
+	    } else {
+		imports.add(value.substring(start).trim());
+	    }
+	}
+
+	List getImports() {
+	    return imports;
+	}
+    }
+
+    public static class IncludeDirective extends Node {
+
+	public IncludeDirective(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    public static class TaglibDirective extends Node {
+
+	public TaglibDirective(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    public static class Comment extends Node {
+
+	public Comment(char[] text, Mark start, Node parent) {
+	    super(text, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    public static abstract class ScriptingElement extends Node {
+
+	public ScriptingElement(char[] text, Mark start, Node parent) {
+	    super(text, start, parent);
+	}
+
+	public ScriptingElement(Mark start, Node parent) {
+	    super(start, parent);
+	}
+
+	/*
+	 * When this node was created from a JSP page in JSP syntax, its text
+	 * was stored as a String in the "text" field, whereas when this node
+	 * was created from a JSP document, its text was stored as one or more
+	 * TemplateText nodes in its body. This method handles either case.
+	 */
+	public char[] getText() {
+	    char[] ret = text;
+	    if ((ret == null) && (body != null)) {
+		CharArrayWriter chars = new CharArrayWriter();
+		int size = body.size();
+		for (int i=0; i<size; i++) {
+		    chars.write(body.getNode(i).getText(), 0,
+				body.getNode(i).getText().length);
+		}
+		ret = chars.toCharArray();
+	    }
+	    return ret;
+	}
+    }
+
+    public static class Declaration extends ScriptingElement {
+
+	public Declaration(char[] text, Mark start, Node parent) {
+	    super(text, start, parent);
+	}
+
+	public Declaration(Mark start, Node parent) {
+	    super(start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    public static class Expression extends ScriptingElement {
+
+	public Expression(char[] text, Mark start, Node parent) {
+	    super(text, start, parent);
+	}
+
+	public Expression(Mark start, Node parent) {
+	    super(start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    public static class Scriptlet extends ScriptingElement {
+
+	public Scriptlet(char[] text, Mark start, Node parent) {
+	    super(text, start, parent);
+	}
+
+	public Scriptlet(Mark start, Node parent) {
+	    super(start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    public static class ParamAction extends Node {
+
+	JspAttribute value;
+
+	public ParamAction(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+
+	public void setValue(JspAttribute page) {
+	    this.value = value;
+	}
+
+	public JspAttribute getValue() {
+	    return value;
+	}
+    }
+
+    public static class ParamsAction extends Node {
+
+	public ParamsAction(Mark start, Node parent) {
+	    super(start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    public static class FallBackAction extends Node {
+
+	public FallBackAction(Mark start, char[] text, Node parent) {
+	    super(text, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    public static class IncludeAction extends Node {
+
+	private JspAttribute page;
+
+	public IncludeAction(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+
+	public void setPage(JspAttribute page) {
+	    this.page = page;
+	}
+
+	public JspAttribute getPage() {
+	    return page;
+	}
+    }
+
+    public static class ForwardAction extends Node {
+
+	private JspAttribute page;
+
+	public ForwardAction(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+
+	public void setPage(JspAttribute page) {
+	    this.page = page;
+	}
+
+	public JspAttribute getPage() {
+	    return page;
+	}
+    }
+
+    public static class GetProperty extends Node {
+
+	public GetProperty(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    public static class SetProperty extends Node {
+
+	private JspAttribute value;
+
+	public SetProperty(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+
+	public void setValue(JspAttribute page) {
+	    this.value = value;
+	}
+
+	public JspAttribute getValue() {
+	    return value;
+	}
+    }
+
+    public static class UseBean extends Node {
+
+	public UseBean(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    public static class PlugIn extends Node {
+
+	public PlugIn(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    public static class UninterpretedTag extends Node {
+	private String tagName;
+
+	public UninterpretedTag(Attributes attrs, Mark start, String name,
+				Node parent) {
+	    super(attrs, start, parent);
+	    tagName = name;
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+
+	public String getTagName() {
+	    return tagName;
+	}
+    }
+
+    public static class CustomTag extends Node {
+	private String prefix;
+	private String tagName;
+
+	public CustomTag(Attributes attrs, Mark start, String pref,
+			 String name, Node parent) {
+	    super(attrs, start, parent);
+	    prefix = pref;
+	    tagName = name;
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+
+	public String getPrefix() {
+	    return prefix;
+	}
+
+	public String getTagName() {
+	    return tagName;
+	}
+    }
+
+    public static class JspText extends Node {
+
+	public JspText(Mark start, Node parent) {
+	    super(start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    public static class TemplateText extends Node {
+
+	public TemplateText(char[] text, Mark start, Node parent) {
+	    super(text, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    /*********************************************************************
+     * Auxillary classes used in Node
+     */
+
+    /**
+     * Jsp attributes, used for attributes that can be a runtime expression.
+     */
+
+    public static class JspAttribute {
+
+	private String name;
+	private String value;
+	private boolean expression;
+
+	JspAttribute(String name, String value, boolean expr) {
+	    this.name = name;
+	    this.value = value;
+	    this.expression = expr;
+	}
+
+	public String getName() {
+	    return name;
+	}
+
+	/**
+	 * @return the value for the attribute, or the expression string
+	 *	   (stripped of "<%=", "%>", "%=", or "%")
+	 */
+	public String getValue() {
+	    return value;
+	}
+
+	/**
+	 * @return true is the value represents an expression
+	 */
+	public boolean isExpression() {
+	    return expression;
+	}
+    }
+
+    /**
+     * XXX
+     */
+    public static class Nodes {
+	private List list;
+	private Node.Root root;
+
+	public Nodes() {
+	    list = new Vector();
+	}
+
+	public Nodes(Node.Root root) {
+	    this.root = root;
+	    list = new Vector();
+	    list.add(root);
+	}
+
+	public void add(Node n) {
+	    list.add(n);
+	}
+
+	public void visit(Visitor v) throws JasperException {
+	    Iterator iter = list.iterator();
+	    while (iter.hasNext()) {
+		Node n = (Node) iter.next();
+		n.accept(v);
+	    }
+	}
+
+	public int size() {
+	    return list.size();
+	}
+
+	public Node getNode(int index) {
+	    Node n = null;
+	    try {
+		n = (Node) list.get(index);
+	    } catch (ArrayIndexOutOfBoundsException e) {
+	    }
+	    return n;
+	}
+	
+	public Node.Root getRoot() {
+	    return root;
+	}
+    }
+
+    /**
+     * XXX
+     */
+    public static class Visitor {
+
+	public void doVisit(Node n) throws JasperException {
+	}
+
+	protected void visitBody(Node n) throws JasperException {
+	    if (n.getBody() != null) {
+		n.getBody().visit(this);
+	    }
+	}
+
+	public void visit(Root n) throws JasperException {
+	    Node.pushCurrentRoot(n);
+	    doVisit(n);
+	    visitBody(n);
+	    Node.popCurrentRoot();
+	}
+
+	public void visit(JspRoot n) throws JasperException {
+	    Node.pushCurrentRoot(n);
+	    doVisit(n);
+	    visitBody(n);
+	    Node.popCurrentRoot();
+	}
+
+	public void visit(PageDirective n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(IncludeDirective n) throws JasperException {
+	    doVisit(n);
+	    visitBody(n);
+	}
+
+	public void visit(TaglibDirective n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(Comment n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(Declaration n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(Expression n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(Scriptlet n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(IncludeAction n) throws JasperException {
+	    doVisit(n);
+	    visitBody(n);
+	}
+
+	public void visit(ForwardAction n) throws JasperException {
+	    doVisit(n);
+	    visitBody(n);
+	}
+
+	public void visit(GetProperty n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(SetProperty n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(ParamAction n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(ParamsAction n) throws JasperException {
+	    doVisit(n);
+	    visitBody(n);
+	}
+
+	public void visit(FallBackAction n) throws JasperException {
+	    doVisit(n);
+	    visitBody(n);
+	}
+
+	public void visit(UseBean n) throws JasperException {
+	    doVisit(n);
+	    visitBody(n);
+	}
+
+	public void visit(PlugIn n) throws JasperException {
+	    doVisit(n);
+	    visitBody(n);
+	}
+
+	public void visit(CustomTag n) throws JasperException {
+	    doVisit(n);
+	    visitBody(n);
+	}
+
+	public void visit(UninterpretedTag n) throws JasperException {
+	    doVisit(n);
+	    visitBody(n);
+	}
+
+	public void visit(JspText n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(TemplateText n) throws JasperException {
+	    doVisit(n);
+	}
+    }
+}

@@ -1,0 +1,617 @@
+package org.apache.jasper.compiler;
+
+import java.io.FileNotFoundException;
+import org.xml.sax.Attributes;
+import org.apache.jasper.JspCompilationContext;
+import org.apache.jasper.JasperException;
+
+import javax.servlet.jsp.tagext.TagLibraryInfo;
+import javax.servlet.jsp.tagext.TagInfo;
+
+/**
+ * This class implements a parser for a JSP page (non-xml view).
+ * JSP page grammar is included here for reference.  The token '#'
+ * that appears in the production indicates the current input token
+ * location in the production.
+ * 
+ * @author Kin-man Chung
+ */
+
+public class Parser {
+
+    private ParserController parserController;
+    private JspCompilationContext ctxt;
+    private JspReader reader;
+    private String currentFile;
+    private Mark start;
+    private TagLibraries libraries;
+    private ErrorDispatcher errDispatcher;
+
+    public Parser(ParserController pc, JspReader reader) {
+	this.parserController = pc;
+	this.ctxt = pc.getJspCompilationContext();
+	this.libraries = pc.getCompiler().getPageInfo().getTagLibraries();
+	this.errDispatcher = pc.getCompiler().getErrorDispatcher();
+	this.reader = reader;
+	this.currentFile = reader.mark().getFile();
+        start = reader.mark();
+    }
+
+    /**
+     * XXX
+     */
+    public static Node.Nodes parse(ParserController pc,
+				   JspReader reader,
+				   Node parent) throws JasperException {
+	Parser parser = new Parser(pc, reader);
+	parser.preScan();
+
+	Node.Root root = new Node.Root(null, reader.mark(), parent);
+
+	while (reader.hasMoreInput()) {
+	    parser.parseElements(root);
+	}
+
+	Node.Nodes page = new Node.Nodes(root);
+	return page;
+    }
+
+    /*
+     * XXX
+     */
+    public void parseError(Mark where, String errCode)
+		throws JasperException {
+	errDispatcher.jspError(where, errCode);
+    }
+
+    /*
+     * XXX
+     */
+    public void parseError(Mark where, String errCode, String msgArg)
+		throws JasperException {
+	errDispatcher.jspError(where, errCode, new Object[] { msgArg });
+    }
+    
+    /*
+     * XXX
+     */
+    private void processIncludeDirective(String file, Node parent) 
+		throws JasperException {
+	if (file == null) {
+	    return;
+	}
+
+	try {
+	    parserController.parse(file, parent);
+	} catch (FileNotFoundException ex) {
+	    parseError(start, "jsp.error.file.not.found", file);
+	} catch (Exception ex) {
+	    parseError(start, ex.getMessage());
+	}
+    }
+
+    /*
+     * Parses a page directive with the following syntax:
+     *   PageDirective ::= ( S Attribute)*
+     */
+    private void parsePageDirective(Node parent) throws JasperException {
+	Attributes attrs = reader.parseTagAttributes();
+	Node.PageDirective n = new Node.PageDirective(attrs, start, parent);
+
+	/*
+	 * A page directive may contain multiple 'import' attributes, each of
+	 * which consists of a comma-separated list of package names.
+	 * Store each list with the node, where it is parsed.
+	 */
+	for (int i = 0; i < attrs.getLength(); i++) {
+	    if ("import".equals(attrs.getQName(i))) {
+		n.addImport(attrs.getValue(i));
+	    }
+	}
+    }
+
+    /*
+     * Parses an include directive with the following syntax:
+     *   IncludeDirective ::= ( S Attribute)*
+     */
+    private void parseIncludeDirective(Node parent) throws JasperException {
+	Attributes attrs = reader.parseTagAttributes();
+
+	// Included file expanded here
+	Node includeNode = new Node.IncludeDirective(attrs, start, parent);
+	processIncludeDirective(attrs.getValue("file"), includeNode);
+    }
+
+    /*
+     * Parses a taglib directive with the following syntax:
+     *   Directive ::= ( S Attribute)*
+     */
+    private void parseTaglibDirective(Node parent) throws JasperException {
+	Attributes attrs = reader.parseTagAttributes();
+	new Node.TaglibDirective(attrs, start, parent);
+    }
+
+    /*
+     * Parses a directive with the following syntax:
+     *   Directive ::= S? (   'page' PageDirective
+     *			    | 'include' IncludeDirective
+     *			    | 'taglib' TagLibDirective)
+     *		       S? '%>'
+     */
+    private void parseDirective(Node parent) throws JasperException {
+	reader.skipSpaces();
+
+	String directive = null;
+	if (reader.matches("page")) {
+	    directive = "<%@ page";
+	    parsePageDirective(parent);
+	} else if (reader.matches("include")) {
+	    directive = "<%@ include";
+	    parseIncludeDirective(parent);
+	} else if (reader.matches("taglib")) {
+	    directive = "<%@ taglib";
+	    parseTaglibDirective(parent);
+	} else {
+	    parseError(reader.mark(), "jsp.error.invalid.directive");
+	}
+
+	reader.skipSpaces();
+	if (!reader.matches("%>")) {
+	    parseError(start, "jsp.error.unterminated", directive);
+	}
+    }
+	
+    /*
+     * JSPCommentBody ::= (Char* - (Char* '--%>')) '--%>'
+     */
+    private void parseComment(Node parent) throws JasperException {	
+	start = reader.mark();
+	Mark stop = reader.skipUntil("--%>");
+	if (stop == null) {
+	    parseError(start, "jsp.error.unterminated", "<%--");
+	}
+
+	new Node.Comment(reader.getText(start, stop), start, parent);
+    }
+
+    /*
+     * DeclarationBody ::= (Char* - (char* '%>')) '%>'
+     */
+    private void parseDeclaration(Node parent) throws JasperException {
+	start = reader.mark();
+	Mark stop = reader.skipUntil("%>");
+	if (stop == null) {
+	    parseError(start, "jsp.error.unterminated", "<%!");
+	}
+
+	new Node.Declaration(reader.getText(start, stop), start, parent);
+    }
+
+    /*
+     * ExpressionBody ::= (Char* - (char* '%>')) '%>'
+     */
+    private void parseExpression(Node parent) throws JasperException {
+	start = reader.mark();
+	Mark stop = reader.skipUntil("%>");
+	if (stop == null) {
+	    parseError(start, "jsp.error.unterminated", "<%=");
+	}
+
+	new Node.Expression(reader.getText(start, stop), start, parent);
+    }
+	
+    /*
+     * Scriptlet ::= (Char* - (char* '%>')) '%>'
+     */
+    private void parseScriptlet(Node parent) throws JasperException {
+	start = reader.mark();
+	Mark stop = reader.skipUntil("%>");
+	if (stop == null) {
+	    parseError(start, "jsp.error.unterminated", "<%");
+	}
+
+	new Node.Scriptlet(reader.getText(start, stop), start, parent);
+    }
+	
+    /**
+     *  Param ::= '<jsp:param' Attributes* '/>'
+     */
+    private void parseParam(Node parent) throws JasperException {
+
+	if (!reader.matches("<jsp:param")) {
+	    parseError(reader.mark(), "jsp.error.paramexpectedonly");
+	}
+	Attributes attrs = reader.parseTagAttributes();
+	reader.skipSpaces();
+
+	if (!reader.matches("/>"))
+	    parseError(reader.mark(), "jsp.error.unterminated", "<jsp:param");
+
+	new Node.ParamAction(attrs, start, parent);
+    }
+
+    /**
+     *  Params ::= (Param S?)*
+     */
+    private void parseParams(Node parent, String tag) throws JasperException {
+
+	Mark start = reader.mark();
+
+	while (reader.hasMoreInput()) {
+	    if (reader.matchesETag(tag)) {
+		break;
+	    }
+
+	    parseParam(parent);
+	    reader.skipSpaces();
+	}
+    }
+
+    /*
+     * IncludeAction ::= Attributes
+     *			 (   '/>'
+     *			   | '>' S? Params '</jsp:include' S? '>'
+     *			 )
+     */
+    private void parseInclude(Node parent) throws JasperException {
+	Attributes attrs = reader.parseTagAttributes();
+	reader.skipSpaces();
+
+	if (reader.matches("/>")) {
+	    // No body
+	    new Node.IncludeAction(attrs, start, parent);
+	    return;
+	}
+	    
+	if (!reader.matches(">")) {
+	    parseError(reader.mark(), "jsp.error.unterminated",
+		       "<jsp:include");
+	}
+
+	reader.skipSpaces();
+	Node includeNode = new Node.IncludeAction(attrs, start, parent);
+	parseParams(includeNode, "jsp:include");
+    }
+   
+    /*
+     * ForwardAction ::= Attributes
+     *			 (  '/>'
+     *			  | '>' S? Params '<jsp:forward' S? '>'
+     *			 )
+     */
+    private void parseForward(Node parent) throws JasperException {
+
+	Attributes attrs = reader.parseTagAttributes();
+	reader.skipSpaces();
+
+	if (reader.matches("/>")) {
+	    // No body
+	    new Node.ForwardAction(attrs, start, parent);
+	    return;
+	}
+
+	if (!reader.matches(">")) {
+	    parseError(reader.mark(), "jsp.error.unterminated",
+		       "<jsp:forward");
+	}
+
+	reader.skipSpaces();
+	Node forwardNode = new Node.ForwardAction(attrs, start, parent);
+	parseParams(forwardNode, "jsp:forward");
+    }
+
+    /*
+     * GetProperty ::= (S? Attribute)* S? '/>/
+     */
+    private void parseGetProperty(Node parent) throws JasperException {
+	Attributes attrs = reader.parseTagAttributes();
+	reader.skipSpaces();
+
+	if (!reader.matches("/>")) {
+	    parseError(reader.mark(), "jsp.error.unterminated",
+		       "<jsp:getProperty");
+	}
+
+	new Node.GetProperty(attrs, start, parent);
+    }
+
+    /*
+     * SetProperty ::= (S Attribute)* S? '/>'
+     */
+    private void parseSetProperty(Node parent) throws JasperException {
+	Attributes attrs = reader.parseTagAttributes();
+	reader.skipSpaces();
+
+	if (!reader.matches("/>")) {
+	    parseError(reader.mark(), "jsp.error.unterminated",
+		       "<jsp:setProperty");
+	}
+
+	new Node.SetProperty(attrs, start, parent);
+    }
+
+    /*
+     * UseBean ::= (S Attribute)* S?
+     *		   ('/>' | ( '>' Body '</jsp:useBean' S? '>' ))
+     */
+    private void parseUseBean(Node parent) throws JasperException {
+	Attributes attrs = reader.parseTagAttributes();
+	reader.skipSpaces();
+
+	if (reader.matches("/>")) {
+	    new Node.UseBean(attrs, start, parent);
+	    return;
+	}
+
+	if (!reader.matches(">")) {
+	    parseError(reader.mark(), "jsp.error.unterminated",
+		       "<jsp:useBean");
+	}
+
+	Node beanNode = new Node.UseBean(attrs, start, parent);
+	parseBody(parent, "jsp:useBean");
+    }
+
+    /*
+     * JspParams ::=  S? '>' Params+ </jsp:params' S? '>'
+     */
+    private void parseJspParams(Node parent) throws JasperException {
+	reader.skipSpaces();
+
+	if (!reader.matches(">")) {
+	    parseError(reader.mark(), "jsp.error.params.notclosed");
+	}
+
+	Node jspParamsNode = new Node.ParamsAction(start, parent);
+	parseParams(jspParamsNode, "jsp:params");
+    }
+
+    /*
+     * FallBack ::= S? '>' Char* '</jsp:fallback' S? '>'
+     */
+    private void parseFallBack(Node parent) throws JasperException {
+	if (!reader.matches(">")) {
+	    parseError(reader.mark(), "jsp.error.plugin.notclosed");
+	}
+
+	reader.skipSpaces();
+	Mark bodyStart = reader.mark();
+        Mark bodyEnd = reader.skipUntilETag("jsp:fallback");
+        if (bodyEnd == null)
+            parseError(start, "jsp.error.unterminated", "<jsp:fallback>");
+	char[] text = reader.getText(bodyStart, bodyEnd);
+        new Node.FallBackAction(start, text, parent);
+    }
+
+    /*
+     * PlugIn ::= Attributes '>' PlugInBody '</jsp:plugin' S? '>'
+     * PlugBody ::= S? ('<jsp:params' JspParams S?)?
+     *			('<jsp:fallback' JspFallack S?)?
+     */
+    private void parsePlugin(Node parent) throws JasperException {
+	Attributes attrs = reader.parseTagAttributes();
+	reader.skipSpaces();
+
+	if (!reader.matches(">")) {
+	    parseError(reader.mark(), "jsp.error.plugin.notclosed");
+	}
+
+	reader.skipSpaces();
+	new Node.PlugIn(attrs, start, parent);
+	if (reader.matchesSTag("jsp:params")) {
+	    parseJspParams(parent);
+	    reader.skipSpaces();
+	}
+
+	if (reader.matches("jsp:fallback")) {
+	    parseFallBack(parent);
+	    reader.skipSpaces();
+	}
+
+	if (!reader.matchesETag("jsp:plugin"))
+	    parseError(reader.mark(), "jsp.error.plugin.notclosed");
+    }
+
+    /*
+     * StandardAction ::=   'include' IncludeAction
+     *			  | 'forward' ForwardAction
+     *			  | 'getProperty' GetPropertyAction
+     *			  | 'setProperty' SetPropertyAction
+     *			  | 'useBean' UseBeanAction
+     *			  | 'plugin' PlugInAction
+     */
+    private void parseAction(Node parent) throws JasperException {
+	Mark start = reader.mark();
+
+	if (reader.matches("include")) {
+	    parseInclude(parent);
+	} else if (reader.matches("forward")) {
+	    parseForward(parent);
+	} else if (reader.matches("getProperty")) {
+	    parseGetProperty(parent);
+	} else if (reader.matches("setProperty")) {
+	    parseSetProperty(parent);
+	} else if (reader.matches("useBean")) {
+	    parseUseBean(parent);
+	} else if (reader.matches("plugin")) {
+	    parsePlugin(parent);
+	} else {
+	    parseError(start, "jsp.error.badaction");
+	}
+    }
+
+    /*
+     * ActionElement ::= EmptyElemTag | Stag Body Etag
+     * EmptyElemTag ::= '<' Name ( S Attribute )* S? '/>'
+     * Stag ::= '<' Name ( S Attribute)* S? '>'
+     * Etag ::= '</' Name S? '>'
+     */
+    private boolean parseCustomTag(Node parent) throws JasperException {
+	if (reader.peekChar() != '<') {
+	    // Note this check is needed only for
+	    // the beginning of a page.  Mm..
+	    return false;
+	}
+
+	reader.nextChar();	// skip '<'
+	String tag = reader.parseToken(false);
+	int i = tag.indexOf(':');
+	if (i == -1) {
+	    reader.reset(start);
+	    return false;
+	}
+
+	String prefix = tag.substring(0, i);
+	String shortTagName = tag.substring(i+1);
+
+	// Check if this is a user-defined tag.
+	if (!libraries.isUserDefinedTag(prefix, shortTagName)) {
+	    reader.reset(start);
+	    return false;
+	}
+
+	// EmptyElemTag ::= '<' Name ( #S Attribute )* S? '/>'
+	// or Stag ::= '<' Name ( #S Attribute)* S? '>'
+	Attributes attrs = reader.parseTagAttributes();
+	reader.skipSpaces();
+	
+	if (reader.matches("/>")) {
+	    // EmptyElemTag ::= '<' Name ( S Attribute )* S? '/>'#
+	    new Node.CustomTag(attrs, start, prefix, shortTagName, parent);
+	    return true;
+	}
+	
+	if (!reader.matches(">")) {
+	    parseError(start, "jsp.error.unterminated.tag");
+	}
+
+	// ActionElement ::= Stag #Body Etag
+	
+	// Looking for a body, it still can be empty; but if there is a
+	// a tag body, its syntax would be dependent on the type of
+	// body content declared in TLD.
+	String bc =
+	  libraries.getTagLibInfo(prefix).getTag(shortTagName).getBodyContent();
+
+	Node tagNode = new Node.CustomTag(attrs, start, prefix, shortTagName,
+					  parent);
+	// There are 3 body content types: empty, jsp, or tag-dependent.
+	if (bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_EMPTY)) {
+	    if (!reader.matchesETag(tag))
+		parseError(start, "jasper.error.emptybodycontent.nonempty");
+	} else if (bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_TAG_DEPENDENT)) {
+	    // parse the body as text
+	    parseBodyText(tagNode, tag);
+	} else if (bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_JSP)) {
+	    // parse body as JSP page
+	    parseBody(tagNode, tag);
+	} else {
+	    parseError(start, "jasper.error.bad.bodycontent.type");
+	}
+
+	return true;
+    }
+
+    /*
+     *
+     */
+    private void parseTemplateText(Node parent) throws JasperException {
+	// Note except for the beginning of a page, the current char is '<'.
+	// Quoting in template text is handled here.
+	// JSP2.6 "A literal <% is quoted by <\%"
+	if (reader.matches("<\\%")) {
+	    char[] content = reader.nextContent();
+	    char[] text = new char[content.length + 2];
+	    text[0] = '<';
+	    text[1] = '%';
+	    System.arraycopy(content, 0, text, 2, content.length);
+	    new Node.TemplateText(text, start, parent);
+	} else {
+	    new Node.TemplateText(reader.nextContent(), start, parent);
+	}
+    }
+	
+    /*
+     * BodyElement ::=	  '<%--' JSPCommentBody
+     *			| '<%@' DirectiveBody
+     *			| '<%!' DeclarationBody
+     *			| '<%=' ExpressionBody
+     *			| '<%' ScriptletBody
+     *			| '<jsp:' StandardAction
+     *			| '<' CustomAction
+     *			| TemplateText
+     */
+    private void parseElements(Node parent) throws JasperException {
+	start = reader.mark();
+	if (reader.matches("<%--")) {
+	    parseComment(parent);
+	} else if (reader.matches("<%@")) {
+	    parseDirective(parent);
+	} else if (reader.matches("<%!")) {
+	    parseDeclaration(parent);
+	} else if (reader.matches("<%=")) {
+	    parseExpression(parent);
+	} else if (reader.matches("<%")) {
+	    parseScriptlet(parent);
+	} else if (reader.matches("<jsp:")) {
+	    parseAction(parent);
+	} else if (!parseCustomTag(parent)) {
+	    parseTemplateText(parent);
+	}
+    }
+
+    /*
+     *
+     */
+    private void parseBodyText(Node parent, String tag) throws JasperException{
+	Mark bodyStart = reader.mark();
+	Mark bodyEnd = reader.skipUntilETag(tag);
+	if (bodyEnd == null)
+	    parseError(start, "jsp.error.unterminated", "<"+tag+">");
+	new Node.TemplateText(reader.getText(bodyStart, bodyEnd), bodyStart,
+			      parent);
+    }
+
+    /*
+     * Parse the body as JSP content.
+     * @param tag The name of the tag whose end tag would terminate the body
+     */
+    private void parseBody(Node parent, String tag) throws JasperException {
+
+	while (reader.hasMoreInput()) {
+	    if (reader.matchesETag(tag)) {
+		return;
+	    }
+	    parseElements(parent);
+	}
+	parseError(start, "jsp.error.unterminated", "<"+tag+">");
+    }
+        
+    /*
+     *
+     */
+    private void preScan() throws JasperException {
+	reader.setSingleFile(true);	// A hack to get pass JspReader for now
+	Mark here = reader.mark();
+
+	while (reader.skipUntil("<%@") != null) {
+	    reader.skipSpaces();
+	    if (reader.matches("taglib")) {
+		Attributes attrs = reader.parseTagAttributes();
+		String uri = attrs.getValue("uri");
+		String prefix = attrs.getValue("prefix");
+		if (uri == null || prefix == null) {
+		    // Errors to be checked in Validator
+		    continue;
+		}
+		String[] location = ctxt.getTldLocation(uri);
+		TagLibraryInfo tl = new TagLibraryInfoImpl(ctxt, prefix, uri,
+							   location);
+		libraries.addTagLibrary(prefix, tl);
+	    }
+	}
+	reader.reset(here);
+	reader.setSingleFile(false);
+    }
+}
+
