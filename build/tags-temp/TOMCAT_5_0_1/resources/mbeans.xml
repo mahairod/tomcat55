@@ -1,0 +1,215 @@
+<project name="modeler-test" default="start" basedir=".">
+
+  <property file="${user.home}/build.properties"/>
+  <property file="build.properties"/>
+  <property file="../build.properties"/>
+  <property file="build.properties.default"/>
+  <property file="../build.properties.default"/>
+
+  <property name="base.dir" location="/usr/share/java" />
+  <property name="base.src" location="../.." />
+  <property name="tomcat.src" location=".." />
+  <property name="catalina.src" location="../../jakarta-tomcat-catalina" />
+  <property name="jakarta-commons" location="${base.src}/jakarta-commons" />
+<!--
+  <property name="jmx.home" location="${base.dir}/mx4j-1.1.1" />
+-->
+  <property name="jmx.home" location="${base.dir}/jmx-ri_1.2" />
+  <property name="tomcat.home" location="${tomcat.src}/build" />
+
+  <property name="commons-modeler.home" location="${jakarta-commons}/modeler/dist" />
+
+  <property name="commons-modeler.jar" location="${commons-modeler.home}/commons-modeler.jar" />
+  <property name="commons-logging.jar" location="${jakarta-commons}/logging/dist/commons-logging.jar" />
+  <property name="log4j.jar" location="${base.dir}/log4j/log4j.jar" />
+
+  <path id="tomcatCP-extra" /> 
+
+  <!--
+  <taskdef name="commons-logger" classname="org.apache.tools.ant.listener.CommonsLoggingListener"/>
+  <commons-logger/>
+  -->
+
+  <target name="init" unless="init.done">
+    <property name="tomcat.home" location=".." />
+
+    <path id="tomcatCP" >
+      <path refid="tomcatCP-extra"/>
+      <!-- Just include everything for now 
+       -->
+      <fileset dir="${jmx.home}/lib" includes="*.jar"/>
+      <fileset dir="${tomcat.home}/common/lib" includes="*.jar"/>
+      <fileset dir="${tomcat.home}/server/lib" includes="*.jar" 
+               excludes="mx4j**"/>
+      <fileset dir="${tomcat.home}/bin" includes="*.jar"/>
+      <fileset dir="${jmx.home}/lib" includes="*.jar"/>
+      <pathelement path="${commons-logging.jar}" />
+      <pathelement path="${log4j.jar}" />
+      <pathelement path="/ws/log4j" />
+      <fileset dir="${commons-modeler.home}" includes="*.jar" />
+
+      <fileset dir="${tomcat.home}/server/lib" >
+        <include name="catalina.jar" />
+        <include name="commons-digester.jar" />
+        <include name="commons-beanutils.jar" />
+
+        <include name="tomcat-coyote.jar" />
+        <include name="tomcat-http11.jar" />
+        <include name="tomcat-jk2.jar" />
+        <include name="tomcat-util.jar" />
+      </fileset>
+
+      <fileset dir="${tomcat.home}/common/lib">
+        <include name="servlet-api.jar" />
+        <include name="jsp-api.jar" />
+        <include name="jasper-runtime.jar" />
+        <include name="naming-common.jar" />
+        <include name="naming-factory.jar" />
+        <include name="naming-java.jar" />
+        <include name="naming-resources.jar" />
+        <include name="commons-collections.jar" />
+      </fileset>
+
+    </path>
+
+    <!-- Ant1.6
+      <classloader classpathRef="tomcatCP"/>
+      <taskdef resource="org/apache/commons/modeler/ant/ant.properties"/>
+     -->
+  
+    <taskdef resource="org/apache/commons/modeler/ant/ant.properties"
+             classpathref="tomcatCP" />
+    <property name="init.done" value="true"/>
+  </target>
+
+
+  <!-- ==================== Info ==================== 
+       Call this target if you want env info
+    -->
+
+  <target name="echo-cp" depends="init" description="Display the classpath that will be used" >
+    <echo message="CLASSPATH=${toString:tomcatCP}" />
+  </target>
+
+  <!-- ==================== Console - for debugging. ==================== 
+       Call this target if you want the console added.
+    -->
+
+  <target name="jmx-console" depends="init" description="Enable JMX-RI console ( web interface )" >
+    <mbean code="com.sun.jdmk.comm.HtmlAdaptorServer"
+           name="jmx-console:type=HtmlAdaptorServer,port=9998">
+    </mbean>
+    <jmx-attribute objectName="jmx-console:type=HtmlAdaptorServer,port=9998" 
+                   attribute="Port" type="int" value="9998"/>
+
+    <jmx-operation objectName="jmx-console:type=HtmlAdaptorServer,port=9998"
+                   operation="start" />
+  </target>
+
+
+  <!-- ==================== Minimal profile. ==================== 
+       The most basic tomcat ( work in progress ! ). 
+    -->
+  <target name="mini-tomcat" depends="init">
+    <!-- Load mbeans -->
+    <!-- Tomcat will fill in the missing pieces - if a component is 
+         needed default values will be created. 
+
+         For example: The ajp connector will create it's own pool, while the http
+         connector is configured with a specific instance.
+      -->
+    <property name="domain" value="tcmini" />
+
+    <mbean code="org.apache.catalina.mbeans.Tomcat"
+           name="${domain}:type=Tomcat" />
+
+    <modeler code="org.apache.coyote.http11.Http11Protocol"
+           name="${domain}:type=HttpConnector,port=9080" />
+
+    <modeler code="org.apache.catalina.core.StandardServer"
+           name="${domain}:type=Server" />
+
+    <modeler code="org.apache.catalina.core.StandardHost"
+           name="${domain}:type=Host,host=default" />
+
+    <modeler code="org.apache.catalina.core.StandardContext"
+           name="${domain}:type=Context,host=default,context=/" />
+
+
+    <!-- Customization -->
+    <!-- This should be made persistent - model mbean should be able to save this
+         ( in the standalone version, not the ant file )
+      -->
+    <!--
+    <jmx-attribute objectName="${domain}:type=HttpConnector,port=9080" 
+                   attribute="poolName" 
+                   value="${domain}:type=ThreadPool,name=HttpConnectorPool" />   
+    -->
+
+    <jmx-attribute objectName="${domain}:type=Host,host=default" 
+                   attribute="appBase" 
+                   value="webapps" />   
+
+    <!-- Start the server -->
+    <!-- 
+      -->
+    <jmx-operation objectName="${domain}:type=Server" 
+                   operation="start" />
+
+  </target>
+
+
+  <!-- ======================= Server.xml based ================ -->
+
+  <target name="run" depends="init"
+        description="Start tomcat as an mbean using server.xml config and returns">
+    <property name="domain" value="Catalina" />
+
+    <modeler code="org.apache.catalina.startup.Catalina"
+          name="${domain}:type=server" />
+
+    <jmxSet objectName="${domain}:type=server"
+            attribute="catalinaHome"
+            value="${tomcat.home}"/>
+  
+    <!-- We could also call init and set other properties - 
+         init should load the modules -->
+
+    <jmx objectName="${domain}:type=server"
+         operation="start" />
+
+
+    <echo message="Tomcat5 running"/>
+
+    <!-- let's add a context - using JMX -->
+    <property name="admin1Name" 
+              value="${domain}:j2eeType=WebModule,name=//localhost/admin1,J2EEApplication=none,J2EEServer=none" />
+
+    <modeler code="org.apache.catalina.core.StandardContext"
+           name="${admin1Name}" />
+
+    <jmxSet objectName="${admin1Name}"
+            attribute="docBase"
+            value="${tomcat.home}/server/webapps/admin" />
+
+    <jmx objectName="${admin1Name}"
+         operation="init" />
+
+    
+  </target>
+
+  <!-- ==================== Await ==================== 
+       Call this target if you want the build file to hung in "await". Tomcat stop or ^C will stop 
+       the ant execution
+    -->
+  <target name="await" depends="init"
+        description="Wait for tomcat stop. Call this target after run">
+
+    <jmx objectName="Catalina:type=server"
+         operation="await" />
+
+  </target>
+
+  <target name="start" depends="init,jmx-console,run,await" description="Start tomcat, wait for stop message"/>
+
+</project>

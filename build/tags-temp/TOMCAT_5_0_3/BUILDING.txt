@@ -1,0 +1,139 @@
+$Id$
+
+
+                 Building The Tomcat 5 Servlet/JSP Container
+                 ===========================================
+
+This subproject contains the source code for Tomcat 5, a container that
+implements the Servlet 2.4 and the JSP 2.0 specifications from the Java
+Community Process (http://www.jcp.org).  In order to build a binary
+distribution version of the container from a source distribution, 
+do the following:
+
+
+(0) Download and Install a Java Development Kit
+
+* If the JDK is already installed, skip to (1).
+
+* Download a Java Development Kit (JDK) release (version 1.4 or later) from:
+
+    http://java.sun.com/j2se/
+
+* Install the JDK according to the instructions included with the release.
+
+* Set an environment variable JAVA_HOME to the pathname of the directory
+  into which you installed the JDK release.
+
+
+(1) Install Apache Ant 1.5.1 on your computer
+
+* If Apache Ant 1.5.1 is already installed on your computer, skip to (2).
+
+(1.1) Download and Install the Ant Binary Distribution
+
+* Download a binary distribution of Ant 1.5.1 from:
+
+    http://jakarta.apache.org/builds/jakarta-ant/release/v1.5.1/bin/
+
+  On a Windows platform, you will need:
+    jakarta-ant-1.5.1-bin.zip
+
+  On a Unix platform, you will need:
+    jakarta-ant-1.5.1-bin.tar.gz
+
+* Unpack the binary distribution into a convenient location so that the
+  Ant release resides in its own directory (conventionally named
+  "jakarta-ant-1.5.1").  For the purposes of the remainder of this document,
+  the symbolic name "${ant.home}" is used to refer to the full pathname of
+  the release directory.
+
+* Modify the PATH environment variable to include directory
+  "${ant.home}/bin" in its list.  This makes the "ant" command line script
+  available, which will be used to actually perform the build.
+
+
+(1.2) Download and Install the Xalan 2 Distribution
+
+* Download a binary distribution of version 2.x from:
+
+  http://xml.apache.org/dist/xalan-j/
+
+  On a Windows platform, you will need:
+    Xerces-J-bin.2.x.y.zip
+
+  On a Unix platform, you will need:
+    Xerces-J-bin.2.x.y.tar.gz
+
+* Unpack the binary distribution into a convenient location so that the
+  distribution resides in its own directory (conventionally named
+  "xalan-2_x_y").
+
+* Copy the xalan.jar file from that distribution to the "${ant.home}/lib"
+  directory.
+
+
+(2) Building Tomcat 5
+
+(2.1) Download main build script and build binary distribution
+
+* Download the main build.xml script from:
+  http://jakarta.apache.org/builds/jakarta-tomcat/build-5/build.xml
+
+* Create a new directory, and copy the newly download build.xml to it. This
+  directory will be referred to as the ${tomcat.source} directory in the rest
+  of this document
+
+(2.2) Building
+
+* Go to that directory, and do:
+
+    cd ${tomcat.source}
+    ant
+
+* NOTE: Users accessing the Internet through a proxy must use a properties
+  file to indicate to Ant the proxy configuration. Read below.
+
+* WARNING: Running this command will checkout the Tomcat 5 sources from CVS, as
+  well as download binaries to the "/usr/local" directory. Make sure this is
+  appropriate to do so on your computer. On Windows, this usually corresponds
+  to the "C:\usr\local" directory, unless Cygwin is used. Read below to 
+  customize the directory used to download the binaries.
+
+* The build can be controlled by creating a ${tomcat.source}/build.properties
+  file, and adding the following content to it:
+
+    # ----- Proxy setup -----
+    # Uncomment if using a proxy server
+    #proxy.host=proxy.domain
+    #proxy.port=8080
+    #proxy.use=on
+
+    # ----- Default Base Path for Dependent Packages -----
+    # Replace this path with the directory path where dependencies binaries
+    # should be downloaded
+    base.path=/usr/local
+
+
+(3) Updating sources
+
+It is recommended to regularly update the downloaded Tomcat 5 sources. 
+To do this, execute the following commands:
+
+    cd ${tomcat.source}
+    ant checkout
+
+
+(4) Rebuilds
+
+For a quick rebuild of only modified code you can use 
+   
+    cd ${tomcat.source}
+    ant build
+
+In addition, "ant build-depends" will build packages that 
+tomcat depends on ( commons-logging for now ), to ease fixes
+and debuging in those packages.
+
+
+
+  

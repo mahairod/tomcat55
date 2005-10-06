@@ -1,0 +1,342 @@
+<project name="Tomcat 5.0-nobin" default="all" basedir=".">
+
+  <!-- 
+       Build 5.0 from sources. No apache binary is used.
+    -->
+
+  <!-- See "build.properties.sample" in the top level directory for all     -->
+  <!-- property values you must customize for successful building!!!        -->
+
+  <property file="${user.home}/build.properties"/>
+  <property file="build.properties"/>
+  <property file="build.properties.default"/>
+  
+  <property name="basedir" location="."/>
+    
+  <!-- Source dependencies -->
+  <property name="api.home"
+           value="${basedir}/../jakarta-servletapi-5"/>
+  <property name="taglibs.home"
+           value="${basedir}/../jakarta-taglibs"/>
+  <property name="commons.home"
+           value="${basedir}/../jakarta-commons"/>
+  <property name="tomcat.home"
+           value="${basedir}/../jakarta-tomcat"/>
+  <property name="catalina.home"
+           value="${basedir}/../jakarta-tomcat-catalina"/>
+  <property name="jasper.home"
+           value="${basedir}/../jakarta-tomcat-jasper/jasper2"/>
+  <property name="jtc.home"
+           value="${basedir}/../jakarta-tomcat-connectors"/>
+
+  <property name="build.dir"   value="${basedir}/build"/>
+
+  <property name="log4j.jar"   value="${base.path}/log4j/log4j.jar"/>
+    
+   
+
+  <path id="alljars" >
+    <pathelement location="${jmx.jar}"/>
+    <pathelement location="${jmx-tools.jar}"/>
+    <pathelement location="${log4j.jar}"/>
+
+    <pathelement location="${mail.jar}"/>
+    <pathelement location="${regexp.jar}"/>
+    <pathelement location="${jsse.jar}"/>
+    <pathelement location="${jnet.jar}"/>
+    <pathelement location="${jcert.jar}"/>
+    <pathelement location="${activation.jar}"/>
+    <pathelement location="${jta.jar}"/>
+
+    <pathelement location="${jasper.home}/lib/jsp20el.jar"/>
+  </path>
+  
+  <patternset id="static.res">
+    <include name="**/*.properties" />
+    <include name="**/*.dtd" />
+    <include name="**/*.tld" />
+    <include name="**/*.xsd" />
+    <include name="**/*.xml" />
+  </patternset>
+
+  <path id="jasperjars" >
+    <pathelement location="${jaxen.jar}"/>
+    <pathelement location="${saxpath.jar}"/>
+  </path>
+
+  <!-- =================== DETECT: Display configuration ================== -->
+  <target name="init"
+          description="Display configuration and conditional compilation flags">
+    <mkdir dir="${build.dir}/classes" />
+    <echo message="Path: ${toString:alljars}"/>
+  </target>
+
+
+  <!-- ====================== COMBO: Clean All Directories ================ -->
+  <target name="clean"
+          description="Clean all components">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <!-- ======================= COMBO: Build All Components ================ -->
+  <target name="all"
+          description="Clean, build, and deploy all components"
+          depends="init,utils,tomcat,jasper" />
+
+  <target name="utils"
+          description="Utils build" >
+
+    <javac destdir="${build.dir}/classes"
+           optimize="off"
+           debug="on"
+           classpathref="alljars" >
+      <src>
+        <path location="${jtc.home}/util/java" />
+        <path location="${commons.home}/modeler/src/java" />
+        <path location="${commons.home}/digester/src/java" />
+        <path location="${commons.home}/collections/src/java" />
+        <path location="${commons.home}/beanutils/src/java" />
+        <path location="${commons.home}/logging/src/java" />
+        <path location="${commons.home}/discovery/src/java" />
+      </src>
+      <exclude name="org/apache/tomcat/util/net/puretls/PureTLS*" />
+      <exclude name="org/apache/commons/logging/impl/LogKitLogger.java" />
+      <exclude name="org/apache/commons/modeler/impl/IntrospectionModeler.java" />
+
+      <!-- Fail with GCJ -->
+      <exclude name="org/apache/commons/collections/DoubleOrderedMap.java" />
+      <exclude name="org/apache/tomcat/util/log/CommonLogHandler.java" />
+
+      <exclude name="org/apache/commons/discovery/D**" />
+      <exclude name="org/apache/commons/discovery/*/**" />
+    </javac>
+    <copy toDir="${build.dir}/classes" >
+      <fileset dir="${commons.home}/modeler/src/java" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${jtc.home}/util/java" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${commons.home}/digester/src/java" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${commons.home}/logging/src/java" >
+        <patternset refid="static.res" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="tomcat"
+          description="Tomcat build" >
+
+    <javac destdir="${build.dir}/classes"
+           optimize="off"
+           debug="on"
+           classpathref="alljars" >
+      <src>
+        <path location="${api.home}/jsr152/src/share" />
+        <path location="${api.home}/jsr154/src/share" />
+        <path location="${catalina.home}/catalina/src/share" />
+        <path location="${jtc.home}/coyote/src/java" />
+        <path location="${jtc.home}/jk/java" />
+        <path location="${jtc.home}/http11/src/java" />
+        <path location="${tomcat.home}/src/share" />
+      </src>
+      <exclude name="org/apache/ajp/**" />
+      <exclude name="org/apache/jasper/**" />
+      <exclude name="org/apache/coyote/tomcat4/**" />
+      <exclude name="org/apache/naming/factory/Tyrex*" />
+      <exclude name="org/apache/tomcat/ant/Tomcat3Precompiler.java" />
+      <exclude name="org/apache/catalina/launcher/**" />
+      <exclude name="org/apache/catalina/startup/BootstrapService.java" />
+    </javac>
+
+    <copy toDir="${build.dir}/classes" >
+      <fileset dir="${catalina.home}/catalina/src/share" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${jtc.home}/coyote/src/java" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${jtc.home}/http11/src/java" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${jtc.home}/jk/java" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="resources" includes="log4j.properties"/>
+    </copy>
+
+    <copy toDir="${build.dir}/classes" >
+        <fileset dir="${api.home}/jsr154/src/share">
+          <include name="**/*.properties"/>
+        </fileset>
+        <fileset dir="${api.home}/jsr152/src/share">
+          <include name="**/*.properties"/>
+        </fileset>
+    </copy>
+
+    <!-- Servlet/JSP resources - work around stupid src layout  -->
+    <copy todir="${build.dir}/classes/javax/servlet/resources">
+        <fileset dir="${api.home}/jsr154/src/share/dtd">
+          <include name="*.xsd"/>
+          <include name="*.dtd"/>
+        </fileset>
+    </copy>
+    <copy todir="${build.dir}/classes/javax/servlet/jsp/resources">
+      <fileset dir="${api.home}/jsr152/src/share/dtd">
+        <include name="*.xsd"/>
+        <include name="*.dtd"/>
+      </fileset>
+    </copy>
+  </target>
+
+
+  <target name="jasper"
+          description="Jasper build">
+    <javac destdir="${build.dir}/classes"
+           optimize="off"
+           debug="on"
+           classpathref="alljars" >
+      <classpath refid="jasperjars"/>
+      <src>
+        <path location="${jasper.home}/src/share" />
+        <path location="${taglibs.home}/standard/src" />
+      </src>
+      <exclude name="org/apache/taglibs/standard/tag/common/xml/**" />
+      <exclude name="org/apache/taglibs/standard/lang/jstl/test/**" />
+      <exclude name="org/apache/taglibs/standard/lang/jstl/parser/jsp20/ELParser.java" />
+    </javac>
+    <copy toDir="${build.dir}/classes" >
+      <fileset dir="${jasper.home}/src/share" >
+        <patternset refid="static.res" />
+      </fileset>
+      <fileset dir="${taglibs.home}/standard/src" >
+        <patternset refid="static.res" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jar"
+          description="Create jars" >
+    <mkdir dir="${build.dir}/lib" />
+    <jar file="${build.dir}/lib/servlet.jar" >
+      <fileset dir="${build.dir}/classes" >
+        <include name="javax/servlet/**"/>
+      </fileset>
+    </jar>
+
+    <jar file="${build.dir}/lib/tomcat-commons.jar" >
+      <fileset dir="${build.dir}/classes" >
+        <include name="org/apache/commons/**"/>
+      </fileset>
+    </jar>
+    <jar file="${build.dir}/lib/tomcat.jar" >
+      <fileset dir="${build.dir}/classes" >
+        <include name="org/apache/tomcat/**"/>
+        <include name="org/apache/jk/**"/>
+        <include name="org/apache/coyote/**"/>
+        <include name="org/apache/naming/**"/>
+        <include name="org/apache/catalina/**"/>
+      </fileset>
+    </jar>
+    <jar file="${build.dir}/lib/jasper.jar" >
+      <fileset dir="${build.dir}/classes" >
+        <include name="org/apache/jasper/**"/>
+        <include name="org/apache/taglibs/standard/**"/>
+      </fileset>
+    </jar>
+
+    <jar file="${build.dir}/tomcat-full.jar" manifest="resources/catalina-main.manifest">
+      <fileset dir="${build.dir}/classes" >
+        <include name="**"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="run" >
+    <property name="tools.jar" location="${java.home}/../lib/tools.jar" />
+    <path id="tomcatcp" >
+      <path refid="alljars" />
+      <path refid="jasperjars" />
+      <pathelement location="${build.dir}/classes"/>
+      <!-- <pathelement location="${ant.home}/lib/xercesImpl.jar" />
+      <pathelement location="${ant.home}/lib/xml-apis.jar" />
+      -->
+      <pathelement location="${ant.home}/lib/ant.jar" />
+      <pathelement location="${tools.jar}" />
+    </path>
+ 
+    <taskdef name="tomcat5" classname="org.apache.catalina.startup.CatalinaService" 
+             classpathref="tomcatcp" />
+    <tomcat5 do="start" home="${build.dir}" wait="true" compiler="jikes"/>
+    <!--    
+    <java classname="org.apache.catalina.startup.CatalinaService" fork="false">
+      <classpath refid="tomcatcp" />
+      <arg value="start" />
+      <sysproperty key="catalina.home" value="${build.dir}"/>
+      <sysproperty key="build.compiler" value="jikes"/>
+      <sysproperty key="java.endorsed.dirs" value="${ant.home}/lib:${java.home}/lib"/>
+    </java>
+    -->
+    <echo message="==================== Tomcat5 up and running ==================== "/>
+  </target>
+
+  <target name="discovery" >
+  </target>
+
+  <target name="jdepend" description="Document the dependency graph ">
+    <mkdir dir="${build.dir}/doc/jdepend" />
+    <property name="jdepend.home" location="${base.path}/jdepend" />
+    <property name="jdepend.jar" location="${jdepend.home}/lib/jdepend.jar" />
+
+    <java classname="jdepend.xmlui.JDepend" >
+      <classpath location="${jdepend.jar}"/>
+      <arg line="-file ${build.dir}/doc/jdepend/jdepend.xml" />
+      <arg value="${jtc.home}/util/java" />
+      <arg value="${commons.home}/modeler/src/java" />
+      <arg value="${commons.home}/digester/src/java" />
+      <arg value="${commons.home}/collections/src/java" />
+      <arg value="${commons.home}/beanutils/src/java" />
+      <arg value="${commons.home}/logging/src/java" />
+      <arg value="${api.home}/src/share" />
+      <arg value="${catalina.home}/catalina/src/share" />
+      <arg value="${jtc.home}/coyote/src/java" />
+      <arg value="${jtc.home}/jk/java" />
+      <arg value="${jtc.home}/http11/src/java" />
+      <arg value="${tomcat.home}/src/share" />
+      <arg value="${jasper.home}/src/share" />
+      <arg value="${taglibs.home}/standard/src" />
+    </java>
+
+    <!-- Stylesheet stolen from krystalis -->
+    <style basedir="${build.dir}/doc/jdepend" 
+           destdir="${build.dir}/doc/jdepend"
+           includes="jdepend.xml"
+           style="${jdepend.home}/jdepend.xsl" />
+
+  </target>
+
+  <target name="update" 
+          description="Update or checkout required package from CVS">
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P jakarta-tomcat-catalina" 
+         dest=".."/>
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P jakarta-tomcat-jasper" 
+         dest=".."/>
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P jakarta-commons" 
+         dest=".."/>
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P jakarta-tomcat-connectors" 
+         dest=".."/>
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P jakarta-taglibs" 
+         dest=".."/>
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P jakarta-servletapi-5" 
+         dest=".."/>
+  </target>
+
+</project>

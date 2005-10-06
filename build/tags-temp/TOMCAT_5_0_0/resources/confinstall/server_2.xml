@@ -1,0 +1,166 @@
+               minProcessors="5" maxProcessors="75"
+               enableLookups="true" redirectPort="8443"
+               acceptCount="10" debug="0" connectionTimeout="20000"
+               useURIValidationHack="false" />
+    <!-- Note : To disable connection timeouts, set connectionTimeout value 
+     to -1 -->
+
+    <!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 -->
+    <!--
+    <Connector className="org.apache.coyote.tomcat4.CoyoteConnector"
+               port="8443" minProcessors="5" maxProcessors="75"
+               enableLookups="true"
+	       acceptCount="10" debug="0" scheme="https" secure="true"
+               useURIValidationHack="false">
+      <Factory className="org.apache.coyote.tomcat4.CoyoteServerSocketFactory"
+               clientAuth="false" protocol="TLS" />
+    </Connector>
+    -->
+
+    <!-- Define a Coyote/JK2 AJP 1.3 Connector on port 8009 -->
+    <Connector className="org.apache.coyote.tomcat5.CoyoteConnector"
+               port="8009" minProcessors="5" maxProcessors="75"
+               enableLookups="true" redirectPort="8443"
+               acceptCount="10" debug="0" connectionTimeout="20000"
+               useURIValidationHack="false"
+               protocolHandlerClassName="org.apache.jk.server.JkCoyoteHandler"/>
+
+    <!-- Define a Proxied HTTP/1.1 Connector on port 8082 -->
+    <!-- See proxy documentation for more information about using this. -->
+    <!--
+    <Connector className="org.apache.coyote.tomcat4.CoyoteConnector"
+               port="8082" minProcessors="5" maxProcessors="75"
+               enableLookups="true"
+               acceptCount="10" debug="0" connectionTimeout="20000"
+               proxyPort="80" useURIValidationHack="false" />
+    -->
+
+    <!-- An Engine represents the entry point (within Catalina) that processes
+         every request.  The Engine implementation for Tomcat stand alone
+         analyzes the HTTP headers included with the request, and passes them
+         on to the appropriate Host (virtual host). -->
+
+    <!-- Define the top level container in our container hierarchy -->
+    <Engine name="Standalone" defaultHost="localhost" debug="0">
+
+      <!-- The request dumper valve dumps useful debugging information about
+           the request headers and cookies that were received, and the response
+           headers and cookies that were sent, for all requests received by
+           this instance of Tomcat.  If you care only about requests to a
+           particular virtual host, or a particular application, nest this
+           element inside the corresponding <Host> or <Context> entry instead.
+
+           For a similar mechanism that is portable to all Servlet 2.4
+           containers, check out the "RequestDumperFilter" Filter in the
+           example application (the source for this filter may be found in
+           "$CATALINA_HOME/webapps/examples/WEB-INF/classes/filters").
+
+           Request dumping is disabled by default.  Uncomment the following
+           element to enable it. -->
+      <!--
+      <Valve className="org.apache.catalina.valves.RequestDumperValve"/>
+      -->
+
+      <!-- Global logger unless overridden at lower levels -->
+      <Logger className="org.apache.catalina.logger.FileLogger"
+              prefix="catalina_log." suffix=".txt"
+              timestamp="true"/>
+
+      <!-- Because this Realm is here, an instance will be shared globally -->
+
+      <!-- This Realm uses the UserDatabase configured in the global JNDI
+           resources under the key "UserDatabase".  Any edits
+           that are performed against this UserDatabase are immediately
+           available for use by the Realm.  -->
+      <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+                 debug="0" resourceName="UserDatabase"/>
+
+      <!-- Comment out the old realm but leave here for now in case we
+           need to go back quickly -->
+      <!--
+      <Realm className="org.apache.catalina.realm.MemoryRealm" />
+      -->
+
+      <!-- Replace the above Realm with one of the following to get a Realm
+           stored in a database and accessed via JDBC -->
+
+      <!--
+      <Realm  className="org.apache.catalina.realm.JDBCRealm" debug="99"
+             driverName="org.gjt.mm.mysql.Driver"
+          connectionURL="jdbc:mysql://localhost/authority"
+         connectionName="test" connectionPassword="test"
+              userTable="users" userNameCol="user_name" userCredCol="user_pass"
+          userRoleTable="user_roles" roleNameCol="role_name" />
+      -->
+
+      <!--
+      <Realm  className="org.apache.catalina.realm.JDBCRealm" debug="99"
+             driverName="oracle.jdbc.driver.OracleDriver"
+          connectionURL="jdbc:oracle:thin:@ntserver:1521:ORCL"
+         connectionName="scott" connectionPassword="tiger"
+              userTable="users" userNameCol="user_name" userCredCol="user_pass"
+          userRoleTable="user_roles" roleNameCol="role_name" />
+      -->
+
+      <!--
+      <Realm  className="org.apache.catalina.realm.JDBCRealm" debug="99"
+             driverName="sun.jdbc.odbc.JdbcOdbcDriver"
+          connectionURL="jdbc:odbc:CATALINA"
+              userTable="users" userNameCol="user_name" userCredCol="user_pass"
+          userRoleTable="user_roles" roleNameCol="role_name" />
+      -->
+
+      <!-- Define the default virtual host -->
+      <Host name="localhost" debug="0" appBase="webapps" 
+       unpackWARs="true" autoDeploy="true">
+
+        <!-- Normally, users must authenticate themselves to each web app
+             individually.  Uncomment the following entry if you would like
+             a user to be authenticated the first time they encounter a
+             resource protected by a security constraint, and then have that
+             user identity maintained across *all* web applications contained
+             in this virtual host. -->
+        <!--
+        <Valve className="org.apache.catalina.authenticator.SingleSignOn"
+                   debug="0"/>
+        -->
+
+        <!-- Access log processes all requests for this virtual host.  By
+             default, log files are created in the "logs" directory relative to
+             $CATALINA_HOME.  If you wish, you can specify a different
+             directory with the "directory" attribute.  Specify either a relative
+             (to $CATALINA_HOME) or absolute path to the desired directory.
+        -->
+        <!--
+        <Valve className="org.apache.catalina.valves.AccessLogValve"
+                 directory="logs"  prefix="localhost_access_log." suffix=".txt"
+                 pattern="common" resolveHosts="false"/>
+        -->
+
+        <!-- Logger shared by all Contexts related to this virtual host.  By
+             default (when using FileLogger), log files are created in the "logs"
+             directory relative to $CATALINA_HOME.  If you wish, you can specify
+             a different directory with the "directory" attribute.  Specify either a
+             relative (to $CATALINA_HOME) or absolute path to the desired
+             directory.-->
+        <Logger className="org.apache.catalina.logger.FileLogger"
+                 directory="logs"  prefix="localhost_log." suffix=".txt"
+	        timestamp="true"/>
+
+        <!-- Define properties for each web application.  This is only needed
+             if you want to set non-default properties, or have web application
+             document roots in places other than the virtual host's appBase
+             directory.  -->
+
+        <!-- Tomcat Root Context -->
+        <!--
+          <Context path="" docBase="ROOT" debug="0"/>
+        -->
+
+      </Host>
+
+    </Engine>
+
+  </Service>
+
+</Server>
