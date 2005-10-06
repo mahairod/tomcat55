@@ -1,6 +1,0 @@
-<tag-plugins>
-  <tag-plugin>
-    <tag-class>org.apache.taglibs.standard.tag.rt.core.ForEachTag</tag-class>
-    <plugin-class>org.apache.jasper.tagplugins.jstl.ForEach</plugin-class>
-  </tag-plugin>
-</tag-plugins>
