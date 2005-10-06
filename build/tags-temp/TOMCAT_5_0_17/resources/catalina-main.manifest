@@ -1,2 +1,0 @@
-Main-Class: org.apache.catalina.startup.Catalina
-Class-Path: classes/ ../classes/ log4j.jar 
