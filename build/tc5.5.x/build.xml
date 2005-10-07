@@ -25,11 +25,11 @@
   <property name="final-src.name"        value="${project}-${version}-src" />
 
   <!-- Subprojects -->
-  <property name="api.project"           value="jakarta-servletapi-5" />
-  <property name="tomcat.project"        value="jakarta-tomcat-5" />
-  <property name="catalina.project"      value="jakarta-tomcat-catalina" />
-  <property name="jtc.project"           value="jakarta-tomcat-connectors" />
-  <property name="jasper.project"        value="jakarta-tomcat-jasper" />
+  <property name="api.project"           value="servletapi" />
+  <property name="tomcat.project"        value="build" />
+  <property name="catalina.project"      value="container" />
+  <property name="jtc.project"           value="connectors" />
+  <property name="jasper.project"        value="jasper" />
   <property name="ant.jar"               value="${ant.home}/lib/ant.jar"/>
   <property name="ant-launcher.jar"      value="${ant.home}/lib/ant-launcher.jar"/>
   <property name="cvstag"                value="" />
