@@ -60,7 +60,7 @@
 
   <!-- External repositories -->
   <property name="jakarta-tomcat-connectors"
-            location="${ws}/jakarta-tomcat-connectors" />
+            location="../connectors" />
   <property name="jakarta-commons"
             location="${ws}/jakarta-commons" />
 
