@@ -11,12 +11,12 @@
 
   <!-- Project Properties -->
   <property name="name"                  value="Apache Tomcat" />
-  <property name="year"                  value="2001" />
+  <property name="year"                  value="2005" />
   <property name="version"               value="4.1" />
-  <property name="project"               value="jakarta-tomcat" />
+  <property name="project"               value="apache-tomcat" />
   <property name="final.name"            value="${project}-${version}" />
   <property name="final-src.name"        value="${project}-${version}-src" />
-  <property name="jtc.project"           value="jakarta-tomcat-connectors" />
+  <property name="jtc.project"           value="apache-tomcat-connectors" />
   <property name="jtc.final.name"        value="${jtc.project}-${version}" />
   <property name="jtc.final-src.name"    value="${jtc.project}-${version}-src" />
   <property name="servlet.doc"           value="${servlet.home}/docs/api" />
@@ -26,7 +26,7 @@
   <property name="jasper.build"     value="${basedir}/jasper/build"/>
   <property name="javaservice.home" value="../javaservice"/>
   <property name="nsis.home"        value="c:\program files\nsis"/>
-  <property name="servlet.home"     value="../jakarta-servletapi-4/dist"/>
+  <property name="servlet.home"     value="${basedir}/../servletapi/dist"/>
   <property name="tomcat.build"     value="${basedir}/build"/>
   <property name="tomcat.dist"      value="${basedir}/dist"/>
   <property name="webapps.build"    value="${basedir}/webapps/build"/>
@@ -34,10 +34,8 @@
 
 
   <!-- Source dependencies -->
-  <property name="jasper.home"
-           value="${basedir}/../jakarta-tomcat-jasper/jasper2"/>
-  <property name="jtc.home"
-           value="${basedir}/../jakarta-tomcat-connectors"/>
+  <property name="jasper.home"      value="${basedir}/../jasper/jasper2"/>
+  <property name="jtc.home"         value="${basedir}/../connectors"/>
 
 
   <!-- =================== DETECT: Display configuration ================== -->

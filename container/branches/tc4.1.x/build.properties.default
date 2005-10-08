@@ -119,7 +119,7 @@ regexp.loc=${base-jakarta.loc}/regexp/binaries/jakarta-regexp-1.3.tar.gz
 
 
 # ----- Jakarta Servlet API Classes (Servlet 2.3 / JSP 1.2) -----
-servlet.home=${base.path}/jakarta-servletapi-4/dist
+servlet.home=${basedir}/../servletapi/dist
 servlet.lib=${servlet.home}/lib
 servlet.jar=${servlet.lib}/servlet.jar
 servlet.loc=jakarta-servletapi-4
