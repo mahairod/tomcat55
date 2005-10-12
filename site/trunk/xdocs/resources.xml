@@ -11,7 +11,8 @@
 <section name="Free Tools">
 
   <p>The Apache Tomcat project doesn't endorse any of the products mentioned
-     here.</p>
+     here.  Please also see (and edit as you wish) the 
+     <a href="http://wiki.apache.org">Wiki</a> pages.</p>
 
   <ul>
     <li>
@@ -31,8 +32,8 @@
 
   <ul>
     <li>
-      <b><a href="articles/benchmark_summary.pdf">So Much Static</a></b>, 
-      by Peter Lin
+      <b><a href="articles/benchmark_summary.pdf">So Much Static</a></b>, a traffic and performance benchmark
+      analysis by Peter Lin.
     </li>
     <li>
       <b><a href="http://johnturner.com/howto/apache-tomcat-howto.html">mod_jk HOWTOs</a></b>, 

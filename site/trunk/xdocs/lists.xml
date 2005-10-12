@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <document>
   <properties>
-    <author>HTTPD Documentation Group</author>
+    <author>Apache Tomcat Team</author>
     <title>Apache Tomcat Mailing Lists</title>
   </properties>
 <body>
 <section name="Apache Tomcat Mailing Lists">
 
 <p>The following mailing lists relate to the Apache Tomcat
-project.  Users should consider subscribing to the <a
-href="#tomcat-announce">Announcements</a> or <a href="#tomcat-user">User
-Support</a> mailing lists.  The <a href="#tomcat-user">Developer</a>
-list is for people interested in helping with the development and
+project.  Users should consider subscribing to the 
+<a href="#tomcat-user">User Support</a> mailing list.  
+
+The <a href="#tomcat-user">Developer</a> list is for people interested in helping with the development and
 debugging of the server.</p>
 
 <p>Formatted archives are available in several places including <a
@@ -23,57 +23,10 @@ href="http://news.gmane.org/index.php?match=gmane.comp.apache">GMANE</a>
 to access most of the lists with a news reader.</p>
 
     <ul>
-     <li><a href="#tomcat-announce">Announcements</a></li>
      <li><a href="#tomcat-user">User support and discussion</a></li>
      <li><a href="#tomcat-dev">Development mailing list and source change reports</a></li>
     </ul>
 
-</section>
-
-<section name="tomcat-announce">
-
-<p>
-The <code>announce@tomcat.apache.org</code> mailing list is used to announce
-major releases and other important information about the Apache Tomcat
-project. Messages are posted only by the Apache Tomcat PMC members; there is
-no discussion.
-</p>
-<table>
- <tr>
-  <td>Volume:</td>
-  <td>Very low</td>
- </tr>
- <tr>
-  <td>Subscription address:</td>
-  <td><a href="mailto:announce-subscribe@tomcat.apache.org"
-      >announce-subscribe@tomcat.apache.org</a></td>
- </tr>
- <tr>
-  <td>Unsubscription address:</td>
-  <td><a href="mailto:announce-unsubscribe@tomcat.apache.org"
-      >announce-unsubscribe@tomcat.apache.org</a></td>
- </tr>
- <tr>
-  <td>Getting help with the list:</td>
-  <td><a href="mailto:announce-help@tomcat.apache.org"
-      >announce-help@tomcat.apache.org</a></td>
- </tr>
- <tr>
-  <td>Archives:</td>
-  <td>
-   <ul>   
-    <li><a href="http://mail-archives.apache.org/mod_mbox/tomcat-announce/"
-      >Apache mailing list archives</a></li>
-    <li><a href="http://marc.theaimsgroup.com/?l=apache-tomcat-announce"
-        >Mailing list archives</a> at MARC</li>
-    <li>Available back to 27 October 1999.  Send a message to
-      <a href="mailto:announce-help@tomcat.apache.org"
-      >announce-help@tomcat.apache.org</a> for information about accessing
-      the archives.</li>
-   </ul>
-  </td>
- </tr>
-</table>
 </section>
 
 <section name="tomcat-user">

@@ -10,7 +10,7 @@
 <section name="Get Involved">
 
 <p>If you would like to become involved in the development and support of Apache
-Tomcat there are many different ways in which you can contribute. The fist step
+Tomcat there are many different ways in which you can contribute. The first step
 is to <a href="lists.html">join the mailing lists</a>. The following are just a
 few areas ways in which you can help:</p>
 
@@ -24,6 +24,9 @@ few areas ways in which you can help:</p>
   <li>Help with development for the next release of the Servlet and JSP
       specifications.</li>
 </ul>
+
+You should also read <a href="http://www.apache.org/foundation/how-it-works.html">How Apache Works</a>.
+
 </section>
 
 </body>

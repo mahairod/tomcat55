@@ -144,7 +144,7 @@
                 <xsl:value-of select="@href"/>
             </xsl:when>
             <xsl:when test="starts-with(@href, '/site')">
-                <xsl:text>http://jakarta.apache.org</xsl:text><xsl:value-of select="@href"/>
+                <xsl:text>http://tomcat.apache.org</xsl:text><xsl:value-of select="@href"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="$relative-path"/><xsl:value-of select="@href"/>
