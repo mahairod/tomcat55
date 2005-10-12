@@ -53,7 +53,7 @@
 <a href="./whichversion.html">Which version?</a>
 </li>
 <li>
-<a href="./download-55.cgi">Tomcat 5.5</a>
+<a href="./download-55.cgi">Tomcat 5.x</a>
 </li>
 <li>
 <a href="./download-41.cgi">Tomcat 4.1</a>
@@ -159,339 +159,245 @@
 <td>
 <p>
 <blockquote>
-<p>We recommend you use a mirror to download our release
-            builds, but you <strong>must</strong> verify the integrity of
-            the downloaded files using signatures downloaded from our main 
-            distribution directories. Recent releases (48 hours) may not yet be available from the mirrors. </p>
-<p>You are currently using <b>[preferred]</b>.  If you
-            encounter a problem with this mirror, please select another
-            mirror.  If all mirrors are failing, there are <i>backup</i>
-            mirrors (at the end of the mirrors list) that should be
-            available.<br />[if-any logo]<a href="[link]">
-<img align="right" src="[logo]" border="0" />
-</a>[end]</p>
-<p>
-<form action="[location]" method="get" id="SelectMirror">
-              Other mirrors: <select name="Preferred">
-              [if-any http]
-                [for http]<option value="[http]">[http]</option>[end]
-              [end]
-              [if-any ftp]
-                [for ftp]<option value="[ftp]">[ftp]</option>[end]
-              [end]
-              [if-any backup]
-                [for backup]<option value="[backup]">[backup] (backup)</option>[end]
-              [end]
-              </select>
-<input type="submit" value="Change" />
-</form>
-</p>
-<p>
-            The <code>KEYS</code> link links to the code signing keys used to sign the product. The <code>PGP</code> link downloads the OpenPGP compatible signature from our main site. 
-        
-            The <code>MD5</code> link downloads the checksum from the main site.
-        </p>
-<p>For more information concerning Tomcat 5, see the <a href="http://jakarta.apache.org/tomcat/" class="name">Tomcat 5</a> site. </p>
-<div class="links">
-<span class="link">
-<a href="http://www.apache.org/dist/jakarta/tomcat-5/KEYS">KEYS</a>
+      <p>We recommend you use a mirror to download our release builds, but you 
+      <strong>must</strong> verify the integrity of the downloaded files using signatures 
+      downloaded from our main distribution directories. Recent releases (48 hours old or less) 
+      may not yet be available from the mirrors.</p>
+
+      <p>You are currently using <b>[preferred]</b>.  If you encounter a problem with this mirror, 
+      please select another.  If all mirrors are failing, there are <i>backup</i> mirrors (at the 
+      end of the mirrors list) that should be available.<br />
+
+      [if-any logo]
+      <a href="[link]">
+        <img align="right" src="[logo]" border="0" />
+      </a>
+      [end]
+      </p>
+
+      <p>
+        <form action="[location]" method="get" id="SelectMirror">
+        Other mirrors: 
+        <select name="Preferred">
+          [if-any http]
+            [for http]<option value="[http]">[http]</option>[end]
+          [end]
+          [if-any ftp]
+            [for ftp]<option value="[ftp]">[ftp]</option>[end]
+          [end]
+          [if-any backup]
+            [for backup]<option value="[backup]">[backup] (backup)</option>[end]
+          [end]
+        </select>
+        <input type="submit" value="Change" />
+        </form>
+      </p>
+
+      <p>
+      The <code>KEYS</code> link links to the code signing keys used to sign the product. 
+      The <code>PGP</code> link downloads the OpenPGP compatible signature from our main site. 
+      The <code>MD5</code> link downloads the checksum from the main site.
+      </p>
+
+      <p>For more information concerning Tomcat 5, see the 
+      <a href="http://jakarta.apache.org/tomcat/" class="name">Tomcat 5</a> site.
+      </p>
+
+      <div class="links">
+        <span class="link">
+          <a href="http://www.apache.org/dist/jakarta/tomcat-5/KEYS">KEYS</a>
 </span>
-<span class="link">
+          <span class="link">
 <a href="http://cvs.apache.org/builds/jakarta-tomcat-5/nightly/">Nightly builds</a>
 </span>
+      </div>
+
+      <ul class="downloads">
+        <li class="group">
+
+          <div class="links">
+<span class="label">5.5.12</span>
 </div>
-<ul class="downloads">
-<li class="group">
-<div class="links">
-<span class="label">5.5.11-alpha</span>
-</div>
-<ul>
-<li class="group">
-<div class="links">
+          <ul>
+            <li class="group">
+              <div class="links">
 <span class="label">Binary</span>
 </div>
-<ul>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/README.html">README (contains packaging information)</a>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11.exe">5.5.11-alpha exe</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11.exe.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11.exe.asc">pgp</a>]</span>
-</li>
+              <ul>
+                <li class="download">
+                  <a href="[preferred]/jakarta/tomcat-5/v5.5.12/README.html">README (contains packaging information)</a>
+                </li>
+                <li class="download">
+                  <a href="[preferred]/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12.exe">exe</a>
+                  <ul class="attributes">
+                    <li>
+                      <span class="md5">
+                      [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12.exe.md5">md5</a>]</span>
+                      <span class="pgp">
+                      [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12.exe.asc">pgp</a>]</span>
+                    </li>
+                  </ul>
+                </li>
+                <li class="download">
+                  <a href="[preferred]/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12.tar.gz">tar.gz</a>
+                  <ul class="attributes">
+                    <li>
+                      <span class="md5">
+                      [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12.tar.gz.md5">md5</a>]</span>
+                     <span class="pgp">
+                     [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12.tar.gz.asc">pgp</a>]</span>
+                     </li>
+                   </ul>
+                 </li>
+                 <li class="download">
+                   <a href="[preferred]/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12.zip">zip</a>
+                   <ul class="attributes">
+                     <li>
+                       <span class="md5">
+                       [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12.zip.md5">md5</a>]</span>
+                       <span class="pgp">
+                       [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12.zip.asc">pgp</a>]</span>
+                     </li>
+                   </ul>
+                 </li>
+                 <li class="download">
+                   <a href="[preferred]/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-deployer.tar.gz">deployer tar.gz</a>
+                   <ul class="attributes">
+                   <li>
+                     <span class="md5">
+                     [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-deployer.tar.gz.md5">md5</a>]</span>
+                     <span class="pgp">
+                     [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-deployer.tar.gz.asc">pgp</a>]</span>
+                   </li>
+                 </ul>
+               </li>
+               <li class="download">
+                 <a href="[preferred]/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-deployer.zip">deployer zip</a>
+                 <ul class="attributes">
+                 <li>
+                   <span class="md5">
+                   [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-deployer.zip.md5">md5</a>]</span>
+                   <span class="pgp">
+                   [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-deployer.zip.asc">pgp</a>]</span>
+                 </li>
+               </ul>
+             </li>
+             <li class="download">
+               <a href="[preferred]/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-embed.tar.gz">embed tar.gz</a>
+               <ul class="attributes">
+                 <li>
+                   <span class="md5">
+                   [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-embed.tar.gz.md5">md5</a>]</span>
+                   <span class="pgp">
+                   [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-embed.tar.gz.asc">pgp</a>]</span>
+                 </li>
+               </ul>
+             </li>
+             <li class="download">
+               <a href="[preferred]/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-embed.zip">embed zip</a>
+               <ul class="attributes">
+               <li>
+                 <span class="md5">
+                   [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-embed.zip.md5">md5</a>]</span>
+                 <span class="pgp">
+                 [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-embed.zip.asc">pgp</a>]</span>
+               </li>
+             </ul>
+           </li>
+           <li class="download">
+             <a href="[preferred]/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-admin.tar.gz">admin tar.gz</a>
+             <ul class="attributes">
+             <li>
+               <span class="md5">
+               [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-admin.tar.gz.md5">md5</a>]</span>
+               <span class="pgp">
+               [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-admin.tar.gz.asc">pgp</a>]</span>
+             </li>
+           </ul>
+         </li>
+         <li class="download">
+           <a href="[preferred]/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-admin.zip">admin zip</a>
+           <ul class="attributes">
+           <li>
+             <span class="md5">
+             [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-admin.zip.md5">md5</a>]</span>
+             <span class="pgp">
+             [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-admin.zip.asc">pgp</a>]</span>
+           </li>
+         </ul>
+       </li>
+       <li class="download">
+       <a href="[preferred]/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-compat.tar.gz">JDK 1.4 compat package tar.gz</a>
+       <ul class="attributes">
+       <li>
+         <span class="md5">
+         [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-compat.tar.gz.md5">md5</a>]</span>
+         <span class="pgp">
+         [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-compat.tar.gz.asc">pgp</a>]</span>
+         </li>
+       </ul>
+     </li>
+     <li class="download">
+       <a href="[preferred]/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-compat.zip">JDK 1.4 compat package zip</a>
+       <ul class="attributes">
+       <li>
+         <span class="md5">
+           [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-compat.zip.md5">md5</a>]</span>
+         <span class="pgp">
+         [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-compat.zip.asc">pgp</a>]</span>
+       </li>
+     </ul>
+   </li>
+   <li class="download">
+     <a href="[preferred]/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-fulldocs.tar.gz">documentation tar.gz</a>
+     <ul class="attributes">
+     <li>
+       <span class="md5">
+       [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-fulldocs.tar.gz.md5">md5</a>]</span>
+       <span class="pgp">
+       [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/bin/jakarta-tomcat-5.5.12-fulldocs.tar.gz.asc">pgp</a>]</span>
+     </li>
+   </ul>
+ </li>
 </ul>
 </li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11.tar.gz">5.5.11-alpha tar.gz</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11.tar.gz.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11.tar.gz.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11.zip">5.5.11-alpha zip</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11.zip.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11.zip.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-deployer.tar.gz">5.5.11-alpha Deployer tar.gz</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-deployer.tar.gz.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-deployer.tar.gz.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-deployer.zip">5.5.11-alpha Deployer zip</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-deployer.zip.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-deployer.zip.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-embed.tar.gz">5.5.11-alpha Embed tar.gz</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-embed.tar.gz.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-embed.tar.gz.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-embed.zip">5.5.11-alpha Embed zip</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-embed.zip.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-embed.zip.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-admin.tar.gz">5.5.11-alpha Admin tar.gz</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-admin.tar.gz.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-admin.tar.gz.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-admin.zip">5.5.11-alpha Admin zip</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-admin.zip.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-admin.zip.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-compat.tar.gz">5.5.11-alpha Compat tar.gz</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-compat.tar.gz.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-compat.tar.gz.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-compat.zip">5.5.11-alpha Compat zip</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-compat.zip.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-compat.zip.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-fulldocs.tar.gz">5.5.11-alpha Full Docs tar.gz</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-fulldocs.tar.gz.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/bin/jakarta-tomcat-5.5.11-fulldocs.tar.gz.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-</ul>
-</li>
+
+
 <li class="group">
-<div class="links">
-<span class="label">Source</span>
+  <div class="links">
+  <span class="label">Source</span>
 </div>
-<ul>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/src/jakarta-tomcat-5.5.11-src.tar.gz">5.5.11-alpha tar.gz</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/src/jakarta-tomcat-5.5.11-src.tar.gz.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/src/jakarta-tomcat-5.5.11-src.tar.gz.asc">pgp</a>]</span>
+  <ul>
+    <li class="download">
+      <a href="[preferred]/jakarta/tomcat-5/v5.5.12/src/jakarta-tomcat-5.5.12-src.tar.gz">tar.gz</a>
+      <ul class="attributes">
+        <li>
+          <span class="md5">
+          [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/src/jakarta-tomcat-5.5.12-src.tar.gz.md5">md5</a>]</span>
+          <span class="pgp">
+          [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/src/jakarta-tomcat-5.5.12-src.tar.gz.asc">pgp</a>]</span>
+        </li>
+      </ul>
+    </li>
+    <li class="download">
+      <a href="[preferred]/jakarta/tomcat-5/v5.5.12/src/jakarta-tomcat-5.5.12-src.zip">zip</a>
+      <ul class="attributes">
+        <li>
+          <span class="md5">
+          [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/src/jakarta-tomcat-5.5.12-src.zip.md5">md5</a>]</span>
+          <span class="pgp">
+          [<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.12/src/jakarta-tomcat-5.5.12-src.zip.asc">pgp</a>]</span>
+        </li>
+      </ul>
+    </li>
+  </ul>
 </li>
 </ul>
 </li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.11-alpha/src/jakarta-tomcat-5.5.11-src.zip">5.5.11-alpha zip</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/src/jakarta-tomcat-5.5.11-src.zip.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.11-alpha/src/jakarta-tomcat-5.5.11-src.zip.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="group">
-<div class="links">
-<span class="label">5.5.9</span>
-</div>
-<ul>
-<li class="group">
-<div class="links">
-<span class="label">Binary</span>
-</div>
-<ul>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/README.html">README (contains packaging information)</a>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9.exe">5.5.9 exe</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9.exe.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9.exe.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9.tar.gz">5.5.9 tar.gz</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9.tar.gz.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9.tar.gz.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9.zip">5.5.9 zip</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9.zip.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9.zip.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-deployer.tar.gz">5.5.9 Deployer tar.gz</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-deployer.tar.gz.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-deployer.tar.gz.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-deployer.zip">5.5.9 Deployer zip</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-deployer.zip.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-deployer.zip.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-embed.tar.gz">5.5.9 Embed tar.gz</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-embed.tar.gz.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-embed.tar.gz.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-embed.zip">5.5.9 Embed zip</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-embed.zip.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-embed.zip.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-admin.tar.gz">5.5.9 Admin tar.gz</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-admin.tar.gz.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-admin.tar.gz.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-admin.zip">5.5.9 Admin zip</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-admin.zip.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-admin.zip.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-compat.tar.gz">5.5.9 Compat tar.gz</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-compat.tar.gz.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-compat.tar.gz.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-compat.zip">5.5.9 Compat zip</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-compat.zip.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/bin/jakarta-tomcat-5.5.9-compat.zip.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="group">
-<div class="links">
-<span class="label">Source</span>
-</div>
-<ul>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/src/jakarta-tomcat-5.5.9-src.tar.gz">5.5.9 tar.gz</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/src/jakarta-tomcat-5.5.9-src.tar.gz.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/src/jakarta-tomcat-5.5.9-src.tar.gz.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-<li class="download">
-<a href="[preferred]/jakarta/tomcat-5/v5.5.9/src/jakarta-tomcat-5.5.9-src.zip">5.5.9 zip</a>
-<ul class="attributes">
-<li>
-<span class="md5">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/src/jakarta-tomcat-5.5.9-src.zip.md5">md5</a>]</span>
-<span class="pgp">[<a href="http://www.apache.org/dist/jakarta/tomcat-5/v5.5.9/src/jakarta-tomcat-5.5.9-src.zip.asc">pgp</a>]</span>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
+
+
+
+
 <li class="group">
 <div class="links">
 <span class="label">5.0.30-beta</span>
@@ -606,6 +512,9 @@
 </li>
 </ul>
 </li>
+
+
+
 <li class="group">
 <div class="links">
 <span class="label">5.0.28</span>
@@ -711,11 +620,13 @@
 </li>
 </ul>
 </li>
+
+
 <li class="download">
-<a href="[preferred]/jakarta/tomcat-5/">browse download area</a>
+  <a href="[preferred]/jakarta/tomcat-5/">browse download area</a>
 </li>
 <li>
-<a href="http://archive.apache.org/dist/jakarta/tomcat-5/">archives...</a>
+  <a href="http://archive.apache.org/dist">archives...</a>
 </li>
 </ul>
 </blockquote>

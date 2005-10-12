@@ -11,7 +11,7 @@
 
     <menu name="Download">
         <item name="Which version?"           href="/whichversion.html"/>
-        <item name="Tomcat 5.5"               href="/download-55.cgi"/>
+        <item name="Tomcat 5.x"               href="/download-55.cgi"/>
         <item name="Tomcat 4.1"               href="/download-41.cgi"/>
         <item name="Tomcat 3.3"               href="/download-33.cgi"/>
         <item name="Tomcat Connectors"        href="/download-connectors.cgi"/>
