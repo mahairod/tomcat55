@@ -2,7 +2,7 @@
 <document>
 
   <properties>
-    <title>Apache Tomcat</title>
+    <title>Apache Tomcat -- Find Help</title>
   </properties>
 
 <body>
@@ -14,10 +14,10 @@ purely volunteer basis. This page has been written to help you find the help you
 need whilst making the most efficient use of the resources available. The types
 of help are presented in the same order they are typically used.</p>
 
-<p>The first resource to check is the documentation. As well as the Tomcat
+<p>The first resource to check is the documentation. In addition to the Tomcat
 documentation (make sure you check the documentation for the version you are
-using) you should also check the relevant Servlet and/or JSP version. Much of
-Tomcat's behaviour is determined by these specifcations and the information in
+using) you should also check the relevant Servlet and/or JSP Specification documents.
+Much of Tomcat's behaviour is determined by these specifcations and the information in
 them is not typically duplciated in the Tomcat documentation.</p>
 
 <p>The logs which Apache Tomcat generates can be a valuable resource when trying
@@ -25,7 +25,7 @@ to diagnose a problem. Please review them. You may want to enable debug output
 in your Apache Tomcat configuration so that you have more information to help
 diagnose the problem.</p>
 
-<p>It is unusual to find a problem that no-one else has seen. The chances are
+<p>It is unusual to find a problem that has never been reported.  The chances are
 that your question has been asked and answered by somebody else. Use your
 favourite search engine to try and find it.</p>
 

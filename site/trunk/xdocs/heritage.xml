@@ -2,17 +2,27 @@
 <document>
 
   <properties>
-    <title>Apache Tomcat</title>
+    <title>Apache Tomcat -- Heritage</title>
   </properties>
 
 <body>
 
 <section name="The Tomcat Story">
-<p>Where the Tomcat project came from. This needs work from someone who
-was there or at least knows more than I do.</p>
-<p>Start from Sun.</p>
-<p>Grow in Jakarta</p>
-<p>Become TLP</p>
+<p>The Tomcat projects started at <a href="http://www.sun.com">Sun Microsystems</a> as the reference
+implementation of the Java Servlet and Java Server Pages Specifications.  The 
+<a href="http://www.jcp.org">Java Community Process (JCP)</a> site contains all the details
+of those specifications.
+</p>
+<p>The Tomcat code base was donated by Sun to the Apache Software Foundation in 1999, and
+the first Apache release was version 3.0.  Since then, multiple volunteers from Sun and
+numerous other organizations have contributed to the product.  There have been 
+<a href="whichversion.html">multiple major releases</a> and the product has enjoyed
+considerable industry adoption as well as a healthy and active community.
+</p>
+<p>In 2005, Tomcat became its own top-level Apache project, leaving the Jakarta umbrella
+and oversight structure to manage itself.
+</p>
+
 </section>
 
 </body>

@@ -16,13 +16,13 @@
         <item name="Tomcat 3.3"               href="/download-33.cgi"/>
         <item name="Tomcat Connectors"        href="/download-connectors.cgi"/>
 <!-- TODO Move Tomcat archives to Tomcat sub-dir of this location -->
-        <item name="Archives"                 href="http://archive.apache.org/dist/"/>
+        <item name="Archives"                 href="http://archive.apache.org/dist/tomcat"/>
     </menu>
 
     <menu name="Problems?">
         <item name="Find help"                href="/findhelp.html"/>
         <item name="FAQ"                      href="/faq/"/>
-        <item name="Mailing Lists"            href="/lists.html#tomcat-user"/>
+        <item name="Mailing Lists"            href="/lists.html"/>
         <item name="Bug Database"             href="/bugreport.html"/>
         <item name="IRC"                      href="/irc.html"/>
     </menu>
