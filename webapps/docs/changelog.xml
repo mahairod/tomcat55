@@ -61,6 +61,10 @@
       <fix>
         <bug>36019</bug>: Made clear the Host-Manager HowTo is coming soon, not ready yet. (yoavs)
       </fix>
+      <fix>
+        <bug>36336</bug>: Check WAR extension in both upper and lower case, as suggested by
+        A. Grasoff. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 </section>
