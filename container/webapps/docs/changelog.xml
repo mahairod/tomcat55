@@ -45,6 +45,12 @@
         Gracefully handle the case where some Socket options are disabled at 
         the OS level for the AJP/1.3 Connector. (billbarker)
       </fix>
+      <fix>
+        <bug>36366</bug>: Use rewritten deployer-howto page by Allistair Crossley. (remm)
+      </fix>
+      <add>
+        <bug>36630</bug>: Added extra log output for class instantiation failure. (yoavs)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Jasper">
