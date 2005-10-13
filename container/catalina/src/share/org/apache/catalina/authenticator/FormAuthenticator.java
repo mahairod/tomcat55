@@ -40,6 +40,7 @@ import org.apache.coyote.ActionCode;
 import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.CharChunk;
 import org.apache.tomcat.util.buf.MessageBytes;
+import org.apache.tomcat.util.http.MimeHeaders;
 
 
 /**
@@ -398,13 +399,14 @@ public class FormAuthenticator
             request.addCookie((Cookie) cookies.next());
         }
 
-        request.getCoyoteRequest().getMimeHeaders().recycle();
+        MimeHeaders rmh = request.getCoyoteRequest().getMimeHeaders();
+        rmh.recycle();
         Iterator names = saved.getHeaderNames();
         while (names.hasNext()) {
             String name = (String) names.next();
             Iterator values = saved.getHeaderValues(name);
             while (values.hasNext()) {
-                request.addHeader(name, (String) values.next());
+                rmh.addValue(name).setString( (String)values.next() );
             }
         }
         
