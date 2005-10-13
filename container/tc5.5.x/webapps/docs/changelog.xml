@@ -29,6 +29,9 @@
 <section name="Tomcat 5.5.13 (yoavs)">
   <subsection name="General">
     <changelog>
+      <fix>
+        <bug>36711</bug>: Unused line of code. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Catalina">
