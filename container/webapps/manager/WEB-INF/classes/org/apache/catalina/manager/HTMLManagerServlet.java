@@ -191,7 +191,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 }
                 // Identify the appBase of the owning Host of this Context
                 // (if any)
-                basename = war.substring(0, war.indexOf(".war"));
+                basename = war.substring(0, war.toLowerCase().indexOf(".war"));
                 File file = new File(getAppBase(), war);
                 if (file.exists()) {
                     message = sm.getString
