@@ -19,19 +19,20 @@
         <item name="Archives"                 href="http://archive.apache.org/dist/tomcat"/>
     </menu>
 
+    <menu name="Documentation">
+        <item name="Tomcat 5.5"               href="/tomcat-5.5-doc/index.html"/>
+        <item name="Tomcat 5.0"               href="/tomcat-5.0-doc/index.html"/>
+        <item name="Tomcat 4.1"               href="/tomcat-4.1-doc/index.html"/>
+        <item name="Tomcat 3.3"               href="/tomcat-3.3-doc/index.html"/>
+        <item name="Tomcat Connectors"        href="/connectors-doc"/>
+    </menu>
+
     <menu name="Problems?">
         <item name="Find help"                href="/findhelp.html"/>
         <item name="FAQ"                      href="/faq/"/>
         <item name="Mailing Lists"            href="/lists.html"/>
         <item name="Bug Database"             href="/bugreport.html"/>
         <item name="IRC"                      href="/irc.html"/>
-    </menu>
-
-    <menu name="Documentation">
-        <item name="Tomcat 5.5"               href="/tomcat-5.5-doc/index.html"/>
-        <item name="Tomcat 5.0"               href="/tomcat-5.0-doc/index.html"/>
-        <item name="Tomcat 4.1"               href="/tomcat-4.1-doc/index.html"/>
-        <item name="Tomcat 3.3"               href="/tomcat-3.3-doc/index.html"/>
     </menu>
 
     <menu name="Get Involved">
