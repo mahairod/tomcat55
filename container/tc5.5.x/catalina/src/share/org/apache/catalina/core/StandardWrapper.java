@@ -1053,6 +1053,13 @@ public class StandardWrapper
                     (sm.getString("standardWrapper.notServlet", actualClass), e);
             } catch (Throwable e) {
                 unavailable(null);
+              
+                // Added extra log statement for Bugzilla 36630:
+                // http://issues.apache.org/bugzilla/show_bug.cgi?id=36630
+                if(log.isDebugEnabled()) {
+                    log.debug(sm.getString("standardWrapper.instantiate", actualClass), e);
+                }
+
                 // Restore the context ClassLoader
                 throw new ServletException
                     (sm.getString("standardWrapper.instantiate", actualClass), e);
