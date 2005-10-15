@@ -179,6 +179,7 @@ public final class StandardServer
      */
     protected PropertyChangeSupport support = new PropertyChangeSupport(this);
 
+    private boolean stopAwait = false;
 
     // ------------------------------------------------------------- Properties
 
@@ -331,12 +332,31 @@ public final class StandardServer
 
     }
 
+    public void stopAwait() {
+        stopAwait=true;
+    }
 
     /**
      * Wait until a proper shutdown command is received, then return.
+     * This keeps the main thread alive - the thread pool listening for http 
+     * connections is daemon threads.
      */
     public void await() {
-
+        // Negative values - don't wait on port - tomcat is embedded or we just don't like ports
+        if( port == -2 ) {
+            // undocumented yet - for embedding apps that are around, alive.
+            return;
+        }
+        if( port==-1 ) {
+            while( true ) {
+                try {
+                    Thread.sleep( 100000 );
+                } catch( InterruptedException ex ) {
+                }
+                if( stopAwait ) return;
+            }
+        }
+        
         // Set up a server socket to wait on
         ServerSocket serverSocket = null;
         try {
