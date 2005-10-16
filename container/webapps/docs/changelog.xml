@@ -63,6 +63,10 @@
       <fix>
         <bug>35252</bug>: Jasper PageDataImpl outputs malformed XML.  Patch by Rahul Akolkar. (yoavs)
       </fix>
+      <add>
+        <bug>37062</bug>: Helpful JSP exception message containing file, line numbers.  Patch by
+        Tim Fennell at http://www.tfenne.com/jasper/. (yoavs)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Cluster">
