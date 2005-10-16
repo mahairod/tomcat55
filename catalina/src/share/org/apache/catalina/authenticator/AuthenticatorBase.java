@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 1999-2001,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -731,6 +731,13 @@ public abstract class AuthenticatorBase
             Cookie cookie = new Cookie(Constants.SINGLE_SIGN_ON_COOKIE, ssoId);
             cookie.setMaxAge(-1);
             cookie.setPath("/");
+            
+            // Bugzilla 34724
+            String ssoDomain = sso.getCookieDomain();
+            if(ssoDomain != null) {
+                cookie.setDomain(ssoDomain);
+            }
+
             response.addCookie(cookie);
 
             // Register this principal with our SSO valve

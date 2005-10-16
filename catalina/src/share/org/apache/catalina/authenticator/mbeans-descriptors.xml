@@ -113,11 +113,15 @@
     <attribute name="requireReauthentication"
                description="Should we attempt to reauthenticate each request against the security Realm?"
                type="boolean"/>
+
+    <attribute name="cookieDomain"
+               description="(Optiona) Domain to be used by sso cookies"
+               type="java.lang.String" />
       
   </mbean>
 
 
-  <mbean  name="SSLAuthenticator"
+  <mbean name="SSLAuthenticator"
          description="An Authenticator and Valve implementation of authentication that utilizes SSL certificates to identify client users"
          domain="Catalina"
          group="Valve"

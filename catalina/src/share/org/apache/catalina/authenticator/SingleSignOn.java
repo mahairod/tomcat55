@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 1999-2001,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package org.apache.catalina.authenticator;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -72,7 +73,7 @@ public class SingleSignOn
      * The cache of SingleSignOnEntry instances for authenticated Principals,
      * keyed by the cookie value that is used to select them.
      */
-    protected HashMap cache = new HashMap();
+    protected Map cache = new HashMap();
 
 
     /**
@@ -98,7 +99,7 @@ public class SingleSignOn
      * The cache of single sign on identifiers, keyed by the Session that is
      * associated with them.
      */
-    protected HashMap reverse = new HashMap();
+    protected Map reverse = new HashMap();
 
 
     /**
@@ -113,9 +114,33 @@ public class SingleSignOn
      */
     protected boolean started = false;
 
+    /**
+     * Optional SSO cookie domain.
+     */
+    private String cookieDomain;
 
     // ------------------------------------------------------------- Properties
 
+    /**
+     * Returns the optional cookie domain.
+     * May return null.
+     *
+     * @return The cookie domain
+     */
+    public String getCookieDomain() {
+        return cookieDomain;
+    }
+    /**
+     * Sets the domain to be used for sso cookies.
+     *
+     * @param cookieDomain cookie domain name
+     */
+    public void setCookieDomain(String cookieDomain) {
+        if (cookieDomain != null && cookieDomain.trim().length() == 0) {
+            cookieDomain = null;
+        }
+        this.cookieDomain = cookieDomain;
+    }
 
     /**
      * Gets whether each request needs to be reauthenticated (by an
