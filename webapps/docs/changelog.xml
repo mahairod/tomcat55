@@ -35,6 +35,13 @@
       <update>
         Removed unused SAXPath, Jaxen dependencies. (yoavs)
       </update>
+      <update>
+        Update log4j dependency to version 1.2.12, Struts to 1.2.7. (yoavs)
+      </update>
+      <update>
+        Removed JDBC 2.0 StdExt dependency (only class from there is javax.sql.XADataSource, which is
+        present in JDK 1.4 and later. (yoavs)
+      </update>
     </changelog>
   </subsection>
   <subsection name="Catalina">

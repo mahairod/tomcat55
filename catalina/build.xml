@@ -60,7 +60,6 @@
     <pathelement location="${jaas.jar}"/>
     <pathelement location="${javagroups.jar}"/>
     <pathelement location="${jcert.jar}"/>
-    <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmx.jar}"/>
     <pathelement location="${jmx-remote.jar}"/>
     <pathelement location="${jndi.jar}"/>
@@ -92,7 +91,6 @@
     <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${jaas.jar}"/>
     <pathelement location="${jcert.jar}"/>
-    <pathelement location="${jdbc20ext.jar}"/>
     <pathelement location="${jmx.jar}"/>
     <pathelement location="${jndi.jar}"/>
     <pathelement location="${jnet.jar}"/>
@@ -200,14 +198,9 @@
          classpath="${jsse.jar}" />
       </and>
     </condition>
-    <condition property="jta.present">
-      <and>
-        <available classname="javax.sql.XADataSource"
-         classpath="${jdbc20ext.jar}" />
-        <available classname="javax.transaction.UserTransaction"
-         classpath="${jta.jar}" />
-      </and>
-    </condition>
+    <available property="jta.present"
+      classname="javax.transaction.UserTransaction"
+      classpath="${jta.jar}" />
     <available property="junit.present"
      classname="junit.framework.TestCase"
      classpath="${junit.jar}" />
@@ -234,7 +227,6 @@
         <available file="${mail.jar}" />
       </and>
     </condition>
-    <available property="jdbc20ext.jar.present" file="${jdbc20ext.jar}" />
     <available property="jmx.jar.present" file="${jmx.jar}" />
     <available property="jcert.jar.present" file="${jcert.jar}" />
     <available property="jndi.jar.present" file="${jndi.jar}" />
@@ -448,7 +440,6 @@
     <echo message="fileupload.jar.present=${fileupload.jar.present}" />
     <echo message="jaas.jar.present=${jaas.jar.present}" />
     <echo message="javamail.jar.present=${javamail.jar.present}" />
-    <echo message="jdbc20ext.jar.present=${jdbc20ext.jar.present}" />
     <echo message="jmx.jar.present=${jmx.jar.present}" />
     <echo message="jta.jar.present=${jta.jar.present}" />
     <echo message="junit.jar.present=${junit.jar.present}" />
