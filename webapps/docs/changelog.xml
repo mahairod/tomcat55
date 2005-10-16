@@ -33,6 +33,9 @@
       <fix>
         <bug>37039</bug>: typo on JK Quick configuration how-to. (yoavs)
       </fix>
+      <add>
+        <bug>37035</bug>: Add a placeholder file in the temp directory for WinZip tar.gz handling. (yoavs)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Catalina">
