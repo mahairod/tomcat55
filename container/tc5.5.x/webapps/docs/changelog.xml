@@ -40,8 +40,12 @@
       </fix>
       <fix>
         <bug>36840</bug>: Provide information as to which web.xml is being processed on startup to
-          help debug parsing errors. (yoavs)
+        help debug parsing errors. (yoavs)
       </fix>
+      <add>
+        <bug>34724</bug>: Ability to set domain for Single-Sign-On cookie.  Patch by Oliver
+        Rossmueller. (yoavs)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Coyote">
