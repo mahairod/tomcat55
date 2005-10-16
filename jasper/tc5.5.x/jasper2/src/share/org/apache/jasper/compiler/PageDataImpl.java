@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -204,15 +204,21 @@ class PageDataImpl extends PageData implements TagConstants {
 	private void addAttributes(Attributes attrs) {
 	    if (attrs != null) {
 		int len = attrs.getLength();
+
 		for (int i=0; i<len; i++) {
-		    if ("version".equals(attrs.getQName(i))) {
+                    String qName = attrs.getQName(i);
+		    if ("version".equals(qName)) {
 			continue;
 		    }
-		    rootAttrs.addAttribute(attrs.getURI(i),
-					   attrs.getLocalName(i),
-					   attrs.getQName(i),
-					   attrs.getType(i),
-					   attrs.getValue(i));
+
+                    // Bugzilla 35252: http://issues.apache.org/bugzilla/show_bug.cgi?id=35252
+                    if(rootAttrs.getIndex(qName) == -1) {
+                        rootAttrs.addAttribute(attrs.getURI(i),
+                                               attrs.getLocalName(i),
+                                               qName,
+                                               attrs.getType(i),
+                                               attrs.getValue(i));
+                    }
 		}
 	    }
 	}
