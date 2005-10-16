@@ -161,10 +161,10 @@ tomcat-native.loc=${base-jakarta.loc}/tomcat-connectors/native/tomcat-native-1.1
 
 
 # ----- Log4j, version 1.2 or later -----
-log4j.home=${base.path}/logging-log4j-1.2.9
+log4j.home=${base.path}/logging-log4j-1.2.12
 log4j.lib=${log4j.home}
-log4j.jar=${log4j.lib}/dist/lib/log4j-1.2.9.jar
-log4j.loc=${base-logging.loc}/log4j/1.2.9/logging-log4j-1.2.9.tar.gz
+log4j.jar=${log4j.lib}/dist/lib/log4j-1.2.12.jar
+log4j.loc=${base-logging.loc}/log4j/1.2.12/logging-log4j-1.2.12.tar.gz
 
 
 # ----- Commons DBCP, version 1.1 or later -----
@@ -225,10 +225,10 @@ nsis.loc=${base-sf.loc}/nsis/nsis20.exe
 
 
 # ----- Struts, version 1.2.4 or later -----
-struts.home=${base.path}/struts-1.2.6
+struts.home=${base.path}/struts-1.2.7
 struts.lib=${struts.home}/lib
 struts.jar=${struts.lib}/struts.jar
-struts.loc=${base-struts.loc}/binaries/struts-1.2.6.tar.gz
+struts.loc=${base-struts.loc}/binaries/struts-1.2.7.tar.gz
 
 
 # --------------------------------------------------
@@ -240,12 +240,6 @@ struts.loc=${base-struts.loc}/binaries/struts-1.2.6.tar.gz
 activation.home=${base.path}/jaf-1.0.1
 activation.lib=${activation.home}
 activation.jar=${activation.lib}/activation.jar
-
-
-# ----- Java Database Connectivity (JDBC) Optional Package, version 2.0 -----
-jdbc20ext.home=${base.path}/jdbc2_0-stdext
-jdbc20ext.lib=${jdbc20ext.home}
-jdbc20ext.jar=${jdbc20ext.lib}/jdbc2_0-stdext.jar
 
 # ----- Java Secure Sockets Extension (JSSE), version 1.0.3 or later -----
 jsse.home=${base.path}/jsse-1.0.3
