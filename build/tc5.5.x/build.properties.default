@@ -119,20 +119,9 @@ commons-logging.loc=${base-jakarta.loc}/commons/logging/binaries/commons-logging
 
 # ----- Commons Modeler, version 1.1 or later -----
 commons-modeler.home=${base.path}/commons-modeler-1.1
-#commons-modeler.lib=${commons-modeler.home}
 commons-modeler.lib=${commons-modeler.home}
 commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
 commons-modeler.loc=${base-jakarta.loc}/commons/modeler/binaries/modeler-1.1.tar.gz
-
-
-# ----- Java Naming and Directory Interface (JNDI), version 1.2 or later -----
-# Note: Optional with JDK 1.3+
-jndi.home=${base.path}/jndi-1.2.1
-jndi.lib=${jndi.home}/lib
-jndi.jar=${jndi.lib}/jndi.jar
-ldap.jar=${jndi.lib}/ldap.jar
-jaas.jar=${jndi.lib}/jaas.jar
-
 
 # ----- Xerces XML Parser, version 2.7.1 -----
 xerces.home=${base.path}/xerces-2_7_1
