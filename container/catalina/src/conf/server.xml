@@ -200,7 +200,7 @@
 
              className = the fully qualified name of the cluster class
 
-             name = a descriptive name for your cluster, can be anything
+             clusterName = a descriptive name for your cluster, can be anything
 
              mcastAddr = the multicast address, has to be the same for all the nodes
 
