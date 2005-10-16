@@ -1432,6 +1432,9 @@
       </fileset>
     </copy>
 
+    <!-- Bugzilla 37035: http://issues.apache.org/bugzilla/show_bug.cgi?id=37035 -->
+    <touch file="${tomcat.dist}/temp/bugzilla37035-safeToDelete.tmp" />
+
     <!-- Correct permissions and line endings on "bin" scripts -->
     <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.sh"  eol="lf"/>
     <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.bat" eol="crlf"/>
