@@ -1996,16 +1996,6 @@
       <param name="destfile" value="${commons-daemon.jar}"/>
     </antcall>
 
-    <antcall target="downloadgz">
-      <param name="sourcefile" value="${jaxen.loc}"/>
-      <param name="destfile" value="${jaxen.jar}"/>
-    </antcall>
-
-    <antcall target="downloadgz">
-      <param name="sourcefile" value="${saxpath.loc}"/>
-      <param name="destfile" value="${saxpath.jar}"/>
-    </antcall>
-
     <antcall target="downloadfile">
       <param name="sourcefile" value="${tomcat-native.loc}"/>
       <param name="destfile" value="${tomcat-native.tar.gz}"/>
