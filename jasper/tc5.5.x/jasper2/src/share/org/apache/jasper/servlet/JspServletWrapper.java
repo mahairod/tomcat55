@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,16 @@
 
 package org.apache.jasper.servlet;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -35,6 +42,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Options;
+import org.apache.jasper.compiler.ErrorDispatcher;
+import org.apache.jasper.compiler.JavacErrorDetail;
 import org.apache.jasper.compiler.JspRuntimeContext;
 import org.apache.jasper.compiler.Localizer;
 import org.apache.jasper.runtime.JspSourceDependent;
@@ -54,6 +63,7 @@ import org.apache.jasper.runtime.JspSourceDependent;
  * @author Remy Maucherat
  * @author Kin-man Chung
  * @author Glenn Nielsen
+ * @author Tim Fennell
  */
 
 public class JspServletWrapper {
@@ -361,13 +371,29 @@ public class JspServletWrapper {
                 }
             }
         } catch (ServletException ex) {
-	    throw ex;
+            if(options.getDevelopment()) {
+                throw handleJspException(ex);
+            } else {
+                throw ex;
+            }
         } catch (IOException ex) {
-            throw ex;
+            if(options.getDevelopment()) {
+                throw handleJspException(ex);
+            } else {
+                throw ex;
+            }
         } catch (IllegalStateException ex) {
-            throw ex;
+            if(options.getDevelopment()) {
+                throw handleJspException(ex);
+            } else {
+                throw ex;
+            }
         } catch (Exception ex) {
-            throw new JasperException(ex);
+            if(options.getDevelopment()) {
+                throw handleJspException(ex);
+            } else {
+                throw new JasperException(ex);
+            }
         }
     }
 
@@ -389,5 +415,116 @@ public class JspServletWrapper {
     public void setLastModificationTest(long lastModificationTest) {
         this.lastModificationTest = lastModificationTest;
     }
-    
+
+    /**
+     * <p>Attempts to construct a JasperException that contains helpful information
+     * about what went wrong. Uses the JSP compiler system to translate the line
+     * number in the generated servlet that originated the exception to a line
+     * number in the JSP.  Then constructs an exception containing that
+     * information, and a snippet of the JSP to help debugging.
+     * Please see http://issues.apache.org/bugzilla/show_bug.cgi?id=37062 and
+     * http://www.tfenne.com/jasper/ for more details.
+     *</p>
+     *
+     * @param ex the exception that was the cause of the problem.
+     * @return a JasperException with more detailed information
+     */
+    protected JasperException handleJspException(Exception ex) {
+        try {
+            Throwable realException = ex;
+            if (ex instanceof ServletException) {
+                realException = ((ServletException) ex).getRootCause();
+            }
+
+            // First identify the stack frame in the trace that represents the JSP
+            StackTraceElement[] frames = realException.getStackTrace();
+            StackTraceElement jspFrame = null;
+
+            for (int i=0; i<frames.length; ++i) {
+                if ( frames[i].getClassName().equals(this.getServlet().getClass().getName()) ) {
+                    jspFrame = frames[i];
+                    break;
+                }
+            }
+
+            if (jspFrame == null) {
+                // If we couldn't find a frame in the stack trace corresponding
+                // to the generated servlet class, we can't really add anything
+                return new JasperException(ex);
+            }
+            else {
+                int javaLineNumber = jspFrame.getLineNumber();
+                JavacErrorDetail detail = ErrorDispatcher.createJavacError(
+                                                                           jspFrame.getMethodName(),
+                                                                           this.ctxt.getCompiler().getPageNodes(),
+                                                                           null,
+                                                                           javaLineNumber);
+
+                // If the line number is less than one we couldn't find out
+                // where in the JSP things went wrong
+                int jspLineNumber = detail.getJspBeginLineNumber();
+                if (jspLineNumber < 1) {
+                    throw new JasperException(ex);
+                }
+
+                // Read both files in, so we can inspect them
+                String[] jspLines = readFile
+                    (this.ctxt.getResourceAsStream(this.ctxt.getJspFile()));
+
+                String[] javaLines = readFile
+                    (new FileInputStream(this.ctxt.getServletJavaFileName()));
+
+                // If the line contains the opening of a multi-line scriptlet
+                // block, then the JSP line number we got back is probably
+                // faulty.  Scan forward to match the java line...
+                if (jspLines[jspLineNumber-1].lastIndexOf("<%") >
+                    jspLines[jspLineNumber-1].lastIndexOf("%>")) {
+                    String javaLine = javaLines[javaLineNumber-1].trim();
+
+                    for (int i=jspLineNumber-1; i<jspLines.length; i++) {
+                        if (jspLines[i].indexOf(javaLine) != -1) {
+                            jspLineNumber = i+1;
+                            break;
+                        }
+                    }
+                }
+
+                // copy out a fragment of JSP to display to the user
+                StringBuffer buffer = new StringBuffer(1024);
+                int startIndex = Math.max(0, jspLineNumber-1-3);
+                int endIndex = Math.min(jspLines.length-1, jspLineNumber-1+3);
+
+                for (int i=startIndex;i<=endIndex; ++i) {
+                    buffer.append(i+1);
+                    buffer.append(": ");
+                    buffer.append(jspLines[i]);
+                    buffer.append("\n");
+                }
+
+                return new JasperException(
+                                           "Exception in JSP: " + detail.getJspFileName() + ":" +
+                                           jspLineNumber + "\n\n" + buffer + "\n\nStacktrace:", ex);
+            }
+        } catch (Exception je) {
+            // If anything goes wrong, just revert to the original behaviour
+            return new JasperException(ex);
+        }
+    }
+
+    /**
+     * Reads a text file from an input stream into a String[]. Used to read in
+     * the JSP and generated Java file when generating error messages.
+     */
+    private String[] readFile(InputStream s) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(s));
+        List lines = new ArrayList();
+        String line;
+
+        while ( (line = reader.readLine()) != null ) {
+            lines.add(line);
+        }
+
+        return (String[]) lines.toArray( new String[lines.size()] );
+    }
+
 }

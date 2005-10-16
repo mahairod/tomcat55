@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +76,15 @@ public abstract class Compiler {
 
     // --------------------------------------------------------- Public Methods
 
+    /**
+     * <p>Retrieves the parsed nodes of the JSP page, if they are available.
+     * May return null.  Used in development mode for generating detailed
+     * error messages.  http://issues.apache.org/bugzilla/show_bug.cgi?id=37062.
+     * </p>
+     */
+    public Node.Nodes getPageNodes() {
+        return this.pageNodes;
+    }
 
     /** 
      * Compile the jsp file into equivalent servlet in .java file
@@ -298,7 +307,15 @@ public abstract class Compiler {
             tfp = null;
             errDispatcher = null;
             pageInfo = null;
-            pageNodes = null;
+
+            // Only get rid of the pageNodes if in production.
+            // In development mode, they are used for detailed
+            // error messages.
+            // http://issues.apache.org/bugzilla/show_bug.cgi?id=37062
+            if(!this.options.getDevelopment()) {
+                pageNodes = null;
+            }
+
             if (ctxt.getWriter() != null) {
                 ctxt.getWriter().close();
                 ctxt.setWriter(null);
