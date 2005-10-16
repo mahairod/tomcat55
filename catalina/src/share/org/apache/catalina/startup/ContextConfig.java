@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 1999-2001,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -181,7 +181,10 @@ public final class ContextConfig
      * Return the location of the default deployment descriptor
      */
     public String getDefaultWebXml() {
-        if( defaultWebXml == null ) defaultWebXml=Constants.DefaultWebXml;
+        if( defaultWebXml == null ) {
+            defaultWebXml=Constants.DefaultWebXml;
+        }
+
         return (this.defaultWebXml);
 
     }
@@ -203,7 +206,10 @@ public final class ContextConfig
      * Return the location of the default context file
      */
     public String getDefaultContextXml() {
-        if( defaultContextXml == null ) defaultContextXml=Constants.DefaultContextXml;
+        if( defaultContextXml == null ) {
+            defaultContextXml=Constants.DefaultContextXml;
+        }
+
         return (this.defaultContextXml);
 
     }
@@ -336,7 +342,13 @@ public final class ContextConfig
                     }
                     webDigester.push(context);
                     webDigester.setErrorHandler(new ContextErrorHandler());
+
+                    if(log.isDebugEnabled()) {
+                        log.debug("Parsing application web.xml file at " + url.toExternalForm());
+                    }
+
                     webDigester.parse(is);
+
                     if (parseException != null) {
                         ok = false;
                     }
@@ -344,13 +356,13 @@ public final class ContextConfig
                     log.info("No web.xml, using defaults " + context );
                 }
             } catch (SAXParseException e) {
-                log.error(sm.getString("contextConfig.applicationParse"), e);
+                log.error(sm.getString("contextConfig.applicationParse", url.toExternalForm()), e);
                 log.error(sm.getString("contextConfig.applicationPosition",
                                  "" + e.getLineNumber(),
                                  "" + e.getColumnNumber()));
                 ok = false;
             } catch (Exception e) {
-                log.error(sm.getString("contextConfig.applicationParse"), e);
+                log.error(sm.getString("contextConfig.applicationParse", url.toExternalForm()), e);
                 ok = false;
             } finally {
                 webDigester.reset();
@@ -1055,7 +1067,7 @@ public final class ContextConfig
 
         // Dump the contents of this pipeline if requested
         if ((log.isDebugEnabled()) && (context instanceof ContainerBase)) {
-            log.debug("Pipline Configuration:");
+            log.debug("Pipeline Configuration:");
             Pipeline pipeline = ((ContainerBase) context).getPipeline();
             Valve valves[] = null;
             if (pipeline != null)
