@@ -14,18 +14,6 @@
 
 <body>
 
-<section name="Preface">
-  <p>
-  This is the Changelog for Tomcat 5.5.x, which was branched based on Tomcat 5.0.27.
-  For changes in Tomcat version 5.0.x, which preceded version 5.5.0, please see
-  <a href="http://jakarta.apache.org/tomcat/tomcat-5.0-doc/changelog.html">The
-  Tomcat 5.0.x Changelog</a>.  As maintenance releases are cut on the 5.0.x branch,
-  most fixes will be ported into a 5.5.x release and noted both here and in the
-  above Changelog.  However, bugs fixed in Tomcat 5.0.28 and earlier are noted
-  only in the above changelog.
-  </p>
-</section>
-
 <section name="Tomcat 5.5.13 (yoavs)">
   <subsection name="General">
     <changelog>
@@ -49,6 +37,10 @@
       <fix>
         <bug>36802</bug>: Fix problem of double-init when JMX-deploying a 
         Context into a started Host. (billbarker)
+      </fix>
+      <fix>
+        <bug>36840</bug>: Provide information as to which web.xml is being processed on startup to
+          help debug parsing errors. (yoavs)
       </fix>
     </changelog>
   </subsection>
