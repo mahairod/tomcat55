@@ -32,6 +32,9 @@
       <fix>
         <bug>36711</bug>: Unused line of code. (yoavs)
       </fix>
+      <update>
+        Removed unused SAXPath, Jaxen dependencies. (yoavs)
+      </update>
     </changelog>
   </subsection>
   <subsection name="Catalina">
@@ -58,6 +61,9 @@
   </subsection>
   <subsection name="Jasper">
     <changelog>
+      <fix>
+        <bug>35252</bug>: Jasper PageDataImpl outputs malformed XML.  Patch by Rahul Akolkar. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Cluster">
