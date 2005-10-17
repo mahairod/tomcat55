@@ -723,7 +723,7 @@ public abstract class RealmBase
         }
 
         // Which user principal have we already authenticated?
-        Principal principal = request.getUserPrincipal();
+        Principal principal = request.getPrincipal();
         for(int i=0; i < constraints.length; i++) {
             SecurityConstraint constraint = constraints[i];
             String roles[] = constraint.findAuthRoles();
