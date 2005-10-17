@@ -52,6 +52,11 @@
         <bug>34724</bug>: Ability to set domain for Single-Sign-On cookie.  Patch by Oliver
         Rossmueller. (yoavs)
       </add>
+      <fix>
+        <bug>37044</bug>: RealmBase.hasResourcePermission needs to access the GenericPrincipal as
+        set by the realm unless hasRole is overriden, which was no longer being done properly for
+        the JAAS realm (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
