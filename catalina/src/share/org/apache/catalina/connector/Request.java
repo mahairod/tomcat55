@@ -2133,6 +2133,14 @@ public class Request
     /**
      * Return the principal that has been authenticated for this Request.
      */
+    public Principal getPrincipal() {
+        return (userPrincipal);
+    }
+
+
+    /**
+     * Return the principal that has been authenticated for this Request.
+     */
     public Principal getUserPrincipal() {
         if (userPrincipal instanceof GenericPrincipal) {
             return ((GenericPrincipal) userPrincipal).getUserPrincipal();
