@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Session;
 import org.apache.catalina.cluster.ClusterMessage;
@@ -37,7 +38,7 @@ public class JvmRouteSessionIDBinderListener extends ClusterListener {
     /**
      * The descriptive information about this implementation.
      */
-    protected static final String info = "org.apache.catalina.session.JvmRouteSessionIDBinderListener/1.1";
+    protected static final String info = "org.apache.catalina.cluster.session.JvmRouteSessionIDBinderListener/1.1";
 
     //--Instance Variables--------------------------------------
 
@@ -114,7 +115,13 @@ public class JvmRouteSessionIDBinderListener extends ClusterListener {
                                 .getOrignalSessionID(), sessionmsg
                                 .getBackupSessionID(), sessionmsg
                                 .getContextPath()));
-            Container host = getCluster().getContainer();
+            Container container = getCluster().getContainer();
+            Container host = null ;
+            if(container instanceof Engine) {
+                host = container.findChild(sessionmsg.getHost());
+            } else {
+                host = container ;
+            }
             if (host != null) {
                 Context context = (Context) host.findChild(sessionmsg
                         .getContextPath());
