@@ -8,6 +8,7 @@
 
   <properties>
     <author email="yoavs[at]apache[dot]org">Yoav Shapira</author>
+    <author email="pero[at]apache[dot]org">Peter Rossbach</author>
     <title>Cluster</title>
   </properties>
 
@@ -29,7 +30,7 @@
     <li><a href="#3">How do I turn on transport logging?</a></li>
     <li><a href="#4">How do I use JMX to monitor the cluster?</a></li>
     <li><a href="#5">Can I pause the message sending?</a></li>
-    <li><a href="#6">Can I add more senders?</a></li>
+    <li><a href="#6">Can I add more senders (pooled mode)?</a></li>
     <li><a href="#7">What happens when I pull the network cable?</a></li>
     <li><a href="#8">At my windows laptop without network my cluster doesn't work?</a></li>
     <li><a href="#9">The cluster dosen't work under linux with two nodes at two boxes?</a></li>
@@ -87,7 +88,7 @@
   </answer>
 
   <question>
-    <a name="6">Can I add more senders?</a>
+    <a name="6">Can I add more senders (pooled mode)?</a>
   </question>
   <answer>
     Yes, with sender attribute <code>maxPoolSocketLimit="40"</code> you can have more than the default
