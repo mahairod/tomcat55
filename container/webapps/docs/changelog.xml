@@ -71,6 +71,10 @@
       <add>
         <bug>36630</bug>: Added extra log output for class instantiation failure. (yoavs)
       </add>
+      <fix>
+        <bug>37121</bug>: Sendfile always needs to be given the length of data to write,
+        which fixes ranged requests. (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
