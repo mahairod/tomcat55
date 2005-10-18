@@ -1553,10 +1553,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
             boolean addDeltaRequest) {
 
         // Remove this attribute from our collection
-        Object value = null;
-        synchronized (attributes) {
-            value = attributes.remove(name);
-        }
+        Object value = attributes.remove(name);
         if (value == null)
             return;
 
