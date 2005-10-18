@@ -36,6 +36,7 @@ public class SessionIDMessage implements ClusterMessage {
 
 	private String backupSessionID;
 
+	private String host ;
 	private String contextPath;
     private int resend = ClusterMessage.FLAG_DEFAULT ;
     private int compress = ClusterMessage.FLAG_DEFAULT ;
@@ -51,7 +52,9 @@ public class SessionIDMessage implements ClusterMessage {
 	public String getUniqueId() {
 		StringBuffer result = new StringBuffer(getOrignalSessionID());
 		result.append("#-#");
-		result.append(getBackupSessionID());
+		result.append(getHost());
+                result.append("#-#");
+                result.append(getContextPath());
 		result.append("#-#");
 		result.append(getMessageNumber());
 		result.append("#-#");
@@ -59,6 +62,20 @@ public class SessionIDMessage implements ClusterMessage {
 		return result.toString();
 	}
 
+	/**
+         * @return Returns the host.
+         */
+        public String getHost() {
+             return host;
+        }
+    
+        /**
+         * @param host The host to set.
+         */
+         public void setHost(String host) {
+             this.host = host;
+        }
+    
 	/**
 	 * @return Returns the contextPath.
 	 */

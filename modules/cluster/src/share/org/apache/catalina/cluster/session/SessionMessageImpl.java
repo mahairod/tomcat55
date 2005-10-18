@@ -85,7 +85,6 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
      * @param session - the serialized byte array of the session itself
      * @param sessionID - the id that identifies this session
      * @param uniqueID - the id that identifies this message
-
      */
     public SessionMessageImpl( String contextName,
                            int eventtype,
@@ -102,10 +101,12 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
      * @return one of the event types EVT_XXXX
      */
     public int getEventType() { return mEvtType; }
+
     /**
      * @return the serialized data for the session
      */
     public byte[] getSession() { return mSession;}
+
     /**
      * @return the session ID for the session
      */

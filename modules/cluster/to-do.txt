@@ -76,7 +76,7 @@ Next actions
             - send message
             - current members
             - receive message
-            - active session at differen clustered manager
+            - active session at different clustered manager
             - which app are clusters (registered managers)
             - avg processing times
          
@@ -101,19 +101,17 @@ Next actions
 
 ================
 problems
-================
-- MemoryUser principal from UserDatabaseRealm not handled to replicated 
-	- look inside DeltaRequest.setPrincipal(Principal,boolean)
-		 detected by Dirk de Kok (tomdev 16.8.2005)
-	- only GenericPrincipal from all other realms are handled well.
-- We not set SimpleTcpCluster Properties when element exists inside config.
-	Element must have all properties!! - Note inside docs!!  
+================ 
 - How we can stop the request traffic when restart an application?
     currently the jk 1.2.10 can only disable the complete loadbalancer,
     but this detect only the new session request desicion.
     Request with sessions marks send to tomcat. 
     Fix: jk > 1.2.11 has a stopped flag, but then all application stop traffic
     and session transfer from other nodes not stopped!!
+    	Stop MembershipService via JMX and after redeploying application,
+    	start MembershipService and restart the application Session Manager or send GETALL Session from backup?
+    	then enable apache worker again !! :-(
+    	easier stop tomcats, deploy new app and start again... 
 - Can't stop message replication for a spezial member and application
    - this need a spezial cluster message and send filter at SimpleTcpCluster 
 - Don't generate cluster message when no member is at cluster!
@@ -124,11 +122,7 @@ problems
 ==============================
 Nice to have:
 ==============================
-- Replication ContextAttributes
-- Cluster config at engine level (user request 06/05)
-	 Register a cluster infrastructur for many vhosts
-	 configure backup systems!
-	 Add Cluster Element to digister		
+- Replication ContextAttributes	
 - Configure the McastService no accept every member.
 	- receive a secret key
 	- have a allow or deny list like RequestFilterValve
@@ -205,7 +199,17 @@ would not make sense to transfer the same webapp over and over again.
 ==============================   
 COMPLETED
 ==============================
+5.5.11 (pero)
+- MemoryUser principal from UserDatabaseRealm not handled to replicated 
+	- look inside DeltaRequest.setPrincipal(Principal,boolean)
+		 detected by Dirk de Kok (tomdev 16.8.2005)
+	- only GenericPrincipal from all other realms are handled well.
+    - change JAASRealm and UserDatabaseRealm that also used GenericPrincipal
 5.5.10 (pero)
+- Cluster config at engine level (user request 06/05)
+	 Register a cluster infrastructur for many vhosts
+	 configure backup systems!
+	 Add Cluster Element to digister		
 - add mapping sender mapping properties file (IDataSenderFactory)
 	- let advanced people eaiser implemented there own sender mode
 - We register different application with same name from different host?
