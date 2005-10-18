@@ -87,6 +87,12 @@
   <subsection name="Cluster">
     <changelog>
       <fix>
+        <bug>36541</bug>: Used also Hashtable at DeltaSession (pero)
+      </fix>
+      <fix>
+        Better support cluster at engine level. (pero)
+      </fix>
+      <fix>
         <bug>36866</bug>: Correct attribute name in conf/server.xml documentation for Cluster element. (yoavs)
       </fix>
     </changelog>
