@@ -29,7 +29,9 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -89,6 +91,11 @@ public class DeltaSession implements HttpSession, Session, Serializable,
     // ----------------------------------------------------- Instance Variables
 
     /**
+     * Type array.
+     */
+    protected static final String EMPTY_ARRAY[] = new String[0];
+
+    /**
      * The dummy attribute value serialized when a NotSerializableException is
      * encountered in <code>writeObject()</code>.
      */
@@ -97,7 +104,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
     /**
      * The collection of user data attributes associated with this Session.
      */
-    private HashMap attributes = new HashMap();
+    private Map attributes = new Hashtable();
 
     /**
      * The authentication type used to authenticate our cached Principal, if
@@ -194,7 +201,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
      * event listeners. <b>IMPLEMENTATION NOTE: </b> This object is <em>not</em>
      * saved and restored across session serializations!
      */
-    private transient HashMap notes = new HashMap();
+    private transient Map notes = new Hashtable();
 
     /**
      * The authenticated Principal associated with this session, if any.
@@ -352,13 +359,12 @@ public class DeltaSession implements HttpSession, Session, Serializable,
 
 
     /**
-     * Set the session identifier for this session.
+     * Set the session identifier for this session without notify listeners.
      * 
      * @param id
      *            The new session identifier
      */
-    public void setId(String id) {
-
+    public void setIdInternal(String id) {
         if ((this.id != null) && (manager != null))
             manager.remove(this);
 
@@ -366,10 +372,20 @@ public class DeltaSession implements HttpSession, Session, Serializable,
 
         if (manager != null)
             manager.add(this);
-        tellNew();
         if ( deltaRequest == null ) resetDeltaRequest();
         else deltaRequest.setSessionId(id);
     }
+
+    /**
+     * Set the session identifier for this session.
+     * 
+     * @param id
+     *            The new session identifier
+     */
+    public void setId(String id) {
+        setIdInternal(id);
+        tellNew();
+     }
 
     /**
      * Inform the listeners about the new session.
@@ -763,11 +779,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
      *            Name of the note to be returned
      */
     public Object getNote(String name) {
-
-        synchronized (notes) {
             return (notes.get(name));
-        }
-
     }
 
     /**
@@ -775,11 +787,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
      * exist for this session.
      */
     public Iterator getNoteNames() {
-
-        synchronized (notes) {
             return (notes.keySet().iterator());
-        }
-
     }
 
     /**
@@ -789,9 +797,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
     public void recycle() {
 
         // Reset the instance variables associated with this Session
-        synchronized (attributes) {
-            attributes.clear();
-        }
+        attributes.clear();
         setAuthType(null);
         creationTime = 0L;
         expiring = false;
@@ -799,9 +805,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
         lastAccessedTime = 0L;
         maxInactiveInterval = -1;
         accessCount = 0;
-        synchronized (notes) {
-            notes.clear();
-        }
+        notes.clear();
         setPrincipal(null);
         isNew = false;
         isValid = false;
@@ -818,11 +822,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
      *            Name of the note to be removed
      */
     public void removeNote(String name) {
-
-        synchronized (notes) {
-            notes.remove(name);
-        }
-
+        notes.remove(name);
     }
 
     /**
@@ -846,11 +846,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
      *            Object to be bound to the specified name
      */
     public void setNote(String name, Object value) {
-
-        synchronized (notes) {
-            notes.put(name, value);
-        }
-
+        notes.put(name, value);
     }
 
     /**
@@ -859,7 +855,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
     public String toString() {
 
         StringBuffer sb = new StringBuffer();
-        sb.append("StandardSession[");
+        sb.append("DeltaSession[");
         sb.append(id);
         sb.append("]");
         return (sb.toString());
@@ -986,11 +982,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
         if (!isValid())
             throw new IllegalStateException(sm
                     .getString("standardSession.getAttribute.ise"));
-
-        synchronized (attributes) {
-            return (attributes.get(name));
-        }
-
+        return (attributes.get(name));
     }
 
     /**
@@ -1005,12 +997,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
         if (!isValid())
             throw new IllegalStateException(sm
                     .getString("standardSession.getAttributeNames.ise"));
-
-        synchronized (attributes) {
-            // create a copy from orginal attribute keySet, otherwise internal HaspMap datastructure
-            // can be inconsistence by other threads.
-            return (new Enumerator(new ArrayList(attributes.keySet()), true));
-        }
+        return (new Enumerator(attributes.keySet(), true));
     }
 
     /**
@@ -1258,10 +1245,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
         }
 
         // Replace or add this attribute
-        Object unbound = null ;
-        synchronized (attributes) {
-            unbound = attributes.put(name, value);
-        }
+        Object unbound = attributes.put(name, value);
         // Call the valueUnbound() method if necessary
         if ((unbound != null) && notify
                 && (unbound instanceof HttpSessionBindingListener)) {
@@ -1379,7 +1363,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
 
         // Deserialize the attribute count and attribute values
         if (attributes == null)
-            attributes = new HashMap();
+            attributes = new Hashtable();
         int n = ((Integer) stream.readObject()).intValue();
         boolean isValidSave = isValid;
         isValid = true;
@@ -1388,11 +1372,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
             Object value = (Object) stream.readObject();
             if ((value instanceof String) && (value.equals(NOT_SERIALIZED)))
                 continue;
-            //if (log.isTraceEnabled())
-            //    log.trace(smp.getString("deltaSession.readAttribute", id,name,value));
-            synchronized (attributes) {
-                attributes.put(name, value);
-            }
+            attributes.put(name, value);
         }
         isValid = isValidSave;
         
@@ -1401,7 +1381,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
         }
         
         if (notes == null) {
-            notes = new HashMap();
+            notes = new Hashtable();
         }
     }
 
@@ -1451,9 +1431,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
         ArrayList saveValues = new ArrayList();
         for (int i = 0; i < keys.length; i++) {
             Object value = null;
-            synchronized (attributes) {
-                value = attributes.get(keys[i]);
-            }
+            value = attributes.get(keys[i]);
             if (value == null)
                 continue;
             else if (value instanceof Serializable) {
@@ -1561,23 +1539,14 @@ public class DeltaSession implements HttpSession, Session, Serializable,
      * returned.
      */
     protected String[] keys() {
-
-        String results[] = new String[0];
-        synchronized (attributes) {
-            return ((String[]) attributes.keySet().toArray(results));
-        }
-
+        return ((String[]) attributes.keySet().toArray(EMPTY_ARRAY));
     }
 
     /**
      * Return the value of an attribute without a check for validity.
      */
     protected Object getAttributeInternal(String name) {
-
-        synchronized (attributes) {
-            return (attributes.get(name));
-        }
-
+        return (attributes.get(name));  
     }
 
     protected void removeAttributeInternal(String name, boolean notify,

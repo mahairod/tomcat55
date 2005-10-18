@@ -609,7 +609,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         if(cluster.getMembers().length > 0 ) {
             SessionMessage msg = new SessionMessageImpl(getName(),
                     SessionMessage.EVT_SESSION_CREATED, null, sessionId,
-                    sessionId + System.currentTimeMillis());
+                    sessionId + "-" + System.currentTimeMillis());
             if (log.isDebugEnabled())
                 log.debug(sm.getString("deltaManager.sendMessage.newSession",
                         name, sessionId));
@@ -1048,7 +1048,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     }
 
     /**
-     * Find the master óf the session state
+     * Find the master of the session state
      * @return master member of sessions 
      */
     protected Member findSessionMasterMember() {
@@ -1249,7 +1249,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 byte[] data = unloadDeltaRequest(deltaRequest);
                 msg = new SessionMessageImpl(name,
                         SessionMessage.EVT_SESSION_DELTA, data, sessionId,
-                        sessionId + System.currentTimeMillis());
+                        sessionId + "-" + System.currentTimeMillis());
                 session.resetDeltaRequest();
                 if (log.isDebugEnabled()) {
                     log.debug(sm.getString(
@@ -1261,7 +1261,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 counterSend_EVT_SESSION_ACCESSED++;
                 msg = new SessionMessageImpl(getName(),
                         SessionMessage.EVT_SESSION_ACCESSED, null, sessionId,
-                        sessionId + System.currentTimeMillis());
+                        sessionId + "-" + System.currentTimeMillis());
                 if (log.isDebugEnabled()) {
                     log.debug(sm.getString(
                             "deltaManager.createMessage.accessChangePrimary",
@@ -1277,7 +1277,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                     counterSend_EVT_SESSION_ACCESSED++;
                     msg = new SessionMessageImpl(getName(),
                             SessionMessage.EVT_SESSION_ACCESSED, null,
-                            sessionId, sessionId + System.currentTimeMillis());
+                            sessionId, sessionId + "-" + System.currentTimeMillis());
                     if (log.isDebugEnabled()) {
                         log.debug(sm.getString(
                                 "deltaManager.createMessage.access", getName(),
@@ -1568,15 +1568,18 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
             log.debug(sm.getString(
                     "deltaManager.receiveMessage.createNewSession",
                     getName(), msg.getSessionID()));
-        DeltaSession session = (DeltaSession) createSession(msg
-                .getSessionID(), false);
+        DeltaSession session = (DeltaSession) createEmptySession();
+        session.setManager(this);
+        session.setValid(true);
+        session.setPrimarySession(false);
+        session.access();
         if(notifySessionListenersOnReplication)
             session.setId(msg.getSessionID());
         else
-            session.getDeltaRequest().setSessionId(msg.getSessionID());
-        session.setNew(false);
-        session.setPrimarySession(false);
+            session.setIdInternal(msg.getSessionID());
         session.resetDeltaRequest();
+        session.endAccess();
+
     }
 
     /**
