@@ -1140,7 +1140,7 @@
     <mkdir dir="runtime/deps" />
     <mkdir dir="runtime/classes" />
     <unjar dest="runtime/deps" src="${base.path}/servlet-api-2.4/lib/servlet-api.jar" />
-    <!-- unjar dest="runtime/deps" src="${base.path}/commons-logging-1.0.4/commons-logging.jar"/ -->
+    <unjar dest="runtime/deps" src="${base.path}/commons-logging-1.0.4/commons-logging.jar"/>
     <unjar dest="runtime/deps" src="${base.path}/commons-modeler-1.1/commons-modeler.jar"/>
     <unjar dest="runtime/deps" src="${base.path}/jsp-api-2.0/lib/jsp-api.jar"/>
    </target>
@@ -1150,23 +1150,20 @@
            description="Build single jar tomcat">
 
       <javac destdir="runtime/classes" deprecation="false" debug="false"  >
-            <!-- classpath path="${base.path}/commons-beanutils-1.6.1/commons-beanutils.jar"/ -->
-            <!-- classpath path="${base.path}/commons-logging-1.0.4/commons-logging.jar"/ -->
+            <classpath path="runtime/deps" />
+            <!-- classpath path="${base.path}/commons-logging-1.0.4/commons-logging.jar"/>
             <classpath path="${base.path}/commons-modeler-1.1/commons-modeler.jar"/>
             <classpath path="${base.path}/jsp-api-2.0/lib/jsp-api.jar"/>
-            <classpath path="${base.path}/servlet-api-2.4/lib/servlet-api.jar"/>
+            <classpath path="${base.path}/servlet-api-2.4/lib/servlet-api.jar"/ -->
             <classpath path="${base.path}/jmxri-1.2.1.jar"/>
 
             <src>
                 <pathelement path="${jtc.home}/util/java"/>
-                <pathelement path="${jtc.home}/mini/java" />
-                <!-- pathelement path="${jtc.home}/naming/src"/ -->
+                <!-- pathelement path="${jtc.home}/mini/java" /-->
                 <pathelement path="${jtc.home}/coyote/src/java"/>
                 <pathelement path="${jtc.home}/http11/src/java"/>
                 <pathelement path="${catalina.home}/catalina/src/share"/>
             </src>
-            <exclude name="org/apache/naming/*.java"/>
-            <exclude name="org/apache/naming/ant/**"/>
             <exclude name="org/apache/tomcat/util/net/puretls/**"/>
             <exclude name="org/apache/tomcat/util/net/jsse/JSSE15SocketFactory.java"/>
             <exclude name="org/apache/tomcat/util/net/jsse/JSSE15Factory.java"/>
@@ -1186,6 +1183,8 @@
             <exclude name="org/apache/catalina/ant/**"/>
             <exclude name="org/apache/catalina/ssi/**"/>
             <exclude name="org/apache/catalina/loader/CatalinaModuleListener.java"/>
+            <exclude name="org/apache/catalina/core/NamingContextListener.java"/>
+            <exclude name="org/apache/naming/**"/>
         </javac>
 
         <copy todir="runtime/classes" >
