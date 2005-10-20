@@ -91,6 +91,9 @@
   <subsection name="Cluster">
     <changelog>
       <fix>
+        <bug>34984</bug>: HttpSessionBindingEvent.getValue() get correct value (pero)
+      </fix>    
+      <fix>
         <bug>35916</bug>: send sessionCreated to SessionListener after cluster node recovery (pero)
       </fix>
       <fix>
