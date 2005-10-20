@@ -1214,6 +1214,10 @@ public class DeltaSession implements HttpSession, Session, Serializable,
             return;
         }
 
+        // Validate our current state
+        if (!isValid())
+            throw new IllegalStateException(sm
+                    .getString("standardSession.setAttribute.ise"));
         if (!(value instanceof java.io.Serializable)) {
             throw new IllegalArgumentException("Attribute [" + name
                     + "] is not serializable");
@@ -1222,32 +1226,28 @@ public class DeltaSession implements HttpSession, Session, Serializable,
         if (addDeltaRequest && (deltaRequest != null))
             deltaRequest.setAttribute(name, value);
 
-        // Validate our current state
-        if (!isValid())
-            throw new IllegalStateException(sm
-                    .getString("standardSession.setAttribute.ise"));
-        if ((manager != null) && manager.getDistributable()
-                && !(value instanceof Serializable))
-            throw new IllegalArgumentException(sm
-                    .getString("standardSession.setAttribute.iae"));
 
         // Construct an event with the new value
         HttpSessionBindingEvent event = null;
 
         // Call the valueBound() method if necessary
         if (value instanceof HttpSessionBindingListener && notify) {
-            event = new HttpSessionBindingEvent(getSession(), name, value);
-            try {
-                ((HttpSessionBindingListener) value).valueBound(event);
-            } catch (Exception x) {
-                log.error(smp.getString("deltaSession.valueBound.ex"), x);
+            // Don't call any notification if replacing with the same value
+            Object oldValue = attributes.get(name);
+            if (value != oldValue) {
+                event = new HttpSessionBindingEvent(getSession(), name, value);
+                try {
+                    ((HttpSessionBindingListener) value).valueBound(event);
+                } catch (Exception x) {
+                    log.error(smp.getString("deltaSession.valueBound.ex"), x);
+                }
             }
         }
 
         // Replace or add this attribute
         Object unbound = attributes.put(name, value);
         // Call the valueUnbound() method if necessary
-        if ((unbound != null) && notify
+        if ((unbound != null) && (unbound != value) && notify
                 && (unbound instanceof HttpSessionBindingListener)) {
             try {
                 ((HttpSessionBindingListener) unbound)
@@ -1290,7 +1290,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
                                 "beforeSessionAttributeAdded", listener);
                         if (event == null) {
                             event = new HttpSessionBindingEvent(getSession(),
-                                    name, unbound);
+                                    name, value);
                         }
                         listener.attributeAdded(event);
                         fireContainerEvent(context,
@@ -1566,15 +1566,16 @@ public class DeltaSession implements HttpSession, Session, Serializable,
         }
 
         // Call the valueUnbound() method if necessary
-        HttpSessionBindingEvent event = new HttpSessionBindingEvent(
+         HttpSessionBindingEvent event = null;
+         if (value instanceof HttpSessionBindingListener) {
+            event = new HttpSessionBindingEvent(
                 (HttpSession) getSession(), name, value);
-        if ((value != null) && (value instanceof HttpSessionBindingListener))
             try {
                 ((HttpSessionBindingListener) value).valueUnbound(event);
             } catch (Exception x) {
                 log.error(smp.getString("deltaSession.valueUnbound.ex"), x);
             }
-
+        }
         // Notify interested application event listeners
         Context context = (Context) manager.getContainer();
         //fix for standalone manager without container
@@ -1589,6 +1590,10 @@ public class DeltaSession implements HttpSession, Session, Serializable,
                 try {
                     fireContainerEvent(context,
                             "beforeSessionAttributeRemoved", listener);
+                    if (event == null) {
+                        event = new HttpSessionBindingEvent
+                            (getSession(), name, value);
+                    }
                     listener.attributeRemoved(event);
                     fireContainerEvent(context, "afterSessionAttributeRemoved",
                             listener);
