@@ -601,7 +601,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         "  &nbsp;<a href=\"{0}\" onclick=\"return(confirm('''Are you sure?'''))\">{1}</a>&nbsp;\n" +
         "  &nbsp;{3}&nbsp;\n" +
         "  &nbsp;{5}&nbsp;\n" +
-        "  &nbsp;<a href=\"{6}\" onclick=\"return(confirm('''Are you sure?'''))\">{7}</a>&nbsp;\n" +
+        "  &nbsp;<a href=\"{6}\" onclick=\"return(confirm('''Are you sure?  This will delete the application.'''))\">{7}</a>&nbsp;\n" +
         "  </small>\n" +
         " </td>\n" +
         "</tr>\n";
