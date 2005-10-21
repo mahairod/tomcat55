@@ -18,15 +18,21 @@
   <property name="final-src.name"        value="${project}-${version}-src" />
 
   <!-- CVSROOT -->
-  <property name="cvsroot" 
-           value=":pserver:anoncvs@cvs.apache.org:/home/cvspublic" />
+  <property name="svnroot" 
+           value="http://svn.apache.org/repos/asf/" />
 
   <!-- Subprojects -->
-  <property name="api.project"           value="jakarta-servletapi-5" />
-  <property name="tomcat.project"        value="jakarta-tomcat-5" />
-  <property name="catalina.project"      value="jakarta-tomcat-catalina" />
-  <property name="jtc.project"           value="jakarta-tomcat-connectors" />
-  <property name="jasper.project"        value="jakarta-tomcat-jasper" />
+  <property name="api.project"           value="servletapi" />
+  <property name="tomcat.project"        value="build" />
+  <property name="catalina.project"      value="container" />
+  <property name="jtc.project"           value="connectors" />
+  <property name="jasper.project"        value="jasper" />
+
+  <property name="api.loc"           value="tomcat/servletapi/servlet2.4-jsp2.0-tc5.x/" />
+  <property name="tomcat.loc"        value="tomcat/build/tc5.5.x/" />
+  <property name="catalina.loc"      value="tomcat/container/tc5.5.x/" />
+  <property name="jtc.loc"           value="tomcat/connectors/trunk/" />
+  <property name="jasper.loc"        value="tomcat/jasper/tc5.5.x/jasper2/" />
 
   <!-- Dependent projects -->
   <property name="commons-daemon.project"  value="jakarta-commons/daemon" />
@@ -37,7 +43,7 @@
   <property name="catalina.home" 
            value="${basedir}/${catalina.project}"/>
   <property name="jasper.home"
-           value="${basedir}/${jasper.project}/jasper2"/>
+           value="${basedir}/${jasper.project}"/>
   <property name="jtc.home"
            value="${basedir}/${jtc.project}"/>
   <property name="tomcat.home"
@@ -63,38 +69,37 @@
   </target>
 
   <target name="checkout"
-          description="Update or checkout required sources from CVS">
+          description="Update or checkout required sources from SVN">
 
     <echo level="info"
-        message="If the checkout fails, run `cvs -d ${cvsroot} login` and try again. The password for the anonymous CVS access is `anoncvs`" />
+        message="If the checkout fails, - todo - " />
 
-    <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P ${tomcat.project}" 
-         dest="${basedir}" compression="true" />
-    <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P ${catalina.project}" 
-         dest="${basedir}" compression="true" />
-    <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P ${jasper.project}" 
-         dest="${basedir}" compression="true" />
-    <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P ${jtc.project}" 
-         dest="${basedir}" compression="true" />
-    <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P ${api.project}" 
-         dest="${basedir}" compression="true" />
+    <exec dir="${basedir}" executable="svn">
+         <arg line="checkout ${svnroot}/${tomcat.loc} ${tomcat.project}" />
+    </exec>
+
+    <exec dir="${basedir}" executable="svn">
+         <arg line="checkout ${svnroot}/${catalina.loc} ${catalina.project}" />
+    </exec>
+
+    <exec dir="${basedir}" executable="svn">
+         <arg line="checkout ${svnroot}/${jasper.loc} ${jasper.project}" />
+    </exec>
+
+    <exec dir="${basedir}" executable="svn">
+         <arg line="checkout ${svnroot}/${jtc.loc} ${jtc.project}" />
+    </exec>
+
+    <exec dir="${basedir}" executable="svn">
+         <arg line="checkout ${svnroot}/${api.loc} ${api.project}" />
+    </exec>
 
   </target>
 
   <target name="checkout.depends"
           description="Update or checkout dependent sources from CVS">
 
-    <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P jakarta-commons/LICENSE" 
-         dest="${basedir}" compression="true" />
-    <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P ${commons-daemon.project}" 
-         dest="${basedir}" compression="true" />
+  <!-- Still needed -->
 
   </target>
 
