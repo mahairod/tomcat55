@@ -505,7 +505,7 @@
     </javac>
   </target>
 
-  <target name="build-catalina" depends="init"
+  <target name="build-catalina" depends="init" 
           description="Builds catalina">
     <echo>========== Building: catalina in ${tomcat.build}</echo>
 
@@ -2072,8 +2072,22 @@
               out="build/classes/org/apache/coyote/tomcat5/mbeans-descriptors.xml.ser" />
   </target>
 
-  <target name="gumpy-build" description="HACK: to stop gumpy from nagging"
-       depends="prepare-release,dist,dist-source,installer,package-zip,package-tgz,package-src-zip,package-src-tgz" />
+  <target name="gumpy-build" description="Target for Gump builds"
+       depends="gumpy-prepare,prepare-release,dist,dist-source,installer,package-zip,package-tgz,package-src-zip,package-src-tgz" />
 
-
+  <target name="gumpy-prepare" description="Collect Gump-built jar files" >
+    <mkdir dir="${tomcat.build}"/>
+    <mkdir dir="${tomcat.build}/classes" />
+    <mkdir dir="${tomcat.build}/server/lib" />
+    <mkdir dir="${tomcat.build}/common/lib" />
+    <copy file="${tomcat-util.jar}" tofile="${tomcat.build}/server/lib/tomcat-util.jar"/>
+    <copy file="${tomcat-ajp.jar}" tofile="${tomcat.build}/server/lib/tomcat-ajp.jar"/>
+    <copy file="${tomcat-coyote.jar}" tofile="${tomcat.build}/server/lib/tomcat-coyote.jar"/>
+    <copy file="${tomcat-http11.jar}" tofile="${tomcat.build}/server/lib/tomcat-http11.jar"/>
+    <copy file="${tomcat-jni.jar}" tofile="${tomcat.build}/server/lib/tomcat-apr.jar" /> 
+    <property name="tomcat.aprbuild.notrequired" value="true" />
+    <copy file="${jasper-runtime.jar}" tofile="${tomcat.build}/common/lib/jasper-runtime.jar"/>
+    <copy file="${jasper-compiler.jar}" tofile="${tomcat.build}/common/lib/jasper-compiler.jar"/>
+    <property name="jasper.build.notrequired" value="true" />
+  </target>
 </project>
