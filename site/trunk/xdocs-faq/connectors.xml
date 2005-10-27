@@ -18,7 +18,7 @@
 <section name="Preface">
   <p>
     Please see the
-    <a href="http://wiki.apache.org/jakarta-tomcat/UsefulLinks">
+    <a href="http://wiki.apache.org/tomcat/UsefulLinks">
         Other Resources
     </a> Link for other pages describing how they were able to link
     Tomcat with a connector. With luck, someone documented their experience

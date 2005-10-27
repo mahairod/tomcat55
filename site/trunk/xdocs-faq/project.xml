@@ -25,7 +25,7 @@
         <item name="Deployment"                 href="deployment.html" />
         <item name="Development"                href="development.html" />
         <item name="FDA Validation"             href="fda-validation.html" />
-        <item name="How do I"                   href="http://wiki.apache.org/jakarta-tomcat/HowTo"/>
+        <item name="How do I"                   href="http://wiki.apache.org/tomcat/HowTo"/>
         <item name="Linux / Unix"               href="unix.html"/>
         <item name="Other Operating Systems"    href="otherOperatingSystems.html" />
         <item name="Logging"                    href="logging.html" />
@@ -33,11 +33,11 @@
         <item name="Meta"                       href="meta.html"/>
         <item name="Miscellaneous"              href="misc.html"/>
         <item name="Monitoring / Performance"   href="performance.html"/>
-        <item name="Other Resources"            href="http://wiki.apache.org/jakarta-tomcat/UsefulLinks"/>
+        <item name="Other Resources"            href="http://wiki.apache.org/tomcat/UsefulLinks"/>
         <item name="Security"                   href="security.html"/>
         <item name="Which Version"              href="version.html"/>
         <item name="Tomcat User List"           href="tomcatuser.html"/>
-        <item name="Wiki"                       href="http://wiki.apache.org/jakarta-tomcat/"/>
+        <item name="Wiki"                       href="http://wiki.apache.org/tomcat/"/>
         <item name="Windows"                    href="windows.html"/>
     </menu>
 
