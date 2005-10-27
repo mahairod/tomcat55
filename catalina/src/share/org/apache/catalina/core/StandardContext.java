@@ -4271,6 +4271,9 @@ public class StandardContext
         // Stop our filters
         filterStop();
 
+        // Stop our application listeners
+        listenerStop();
+
         // Stop ContainerBackgroundProcessor thread
         super.threadStop();
 
@@ -4301,9 +4304,6 @@ public class StandardContext
                 if (children[i] instanceof Lifecycle)
                     ((Lifecycle) children[i]).stop();
             }
-
-            // Stop our application listeners
-            listenerStop();
 
             // Clear all application-originated servlet context attributes
             if (context != null)

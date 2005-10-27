@@ -57,6 +57,10 @@
         set by the realm unless hasRole is overriden, which was no longer being done properly for
         the JAAS realm (remm)
       </fix>
+      <fix>
+        <bug>37264</bug>: JNDI resources were no longer available when stopping listeners,
+        submitted by Bogdan Calmac (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
