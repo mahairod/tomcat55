@@ -196,6 +196,9 @@ public class Compiler {
             // Determine which custom tag needs to declare which scripting vars
             ScriptingVariabler.set(pageNodes);
 
+            // Optimization: concatenate contiguous template texts.
+            TextOptimizer.concatenate(this, pageNodes);
+            
             // generate servlet .java file
             Generator.generate(writer, this, pageNodes);
             writer.close();

@@ -231,9 +231,7 @@ public class JspDocumentParser extends DefaultHandler
         if ((current instanceof Node.JspText) || !isAllSpace) {
             Mark start = new Mark(path, locator.getLineNumber(),
                                   locator.getColumnNumber());
-            char[] bufCopy = new char[len];
-            System.arraycopy(buf, offset, bufCopy, 0, len);
-            new Node.TemplateText(bufCopy, start, current);
+            new Node.TemplateText(new String(buf, offset, len), start, current);
         }
     }
 
@@ -268,9 +266,7 @@ public class JspDocumentParser extends DefaultHandler
         if (!inDTD) {
             Mark start = new Mark(path, locator.getLineNumber(),
                                   locator.getColumnNumber());
-            char[] bufCopy = new char[len];
-            System.arraycopy(buf, offset, bufCopy, 0, len);
-            new Node.Comment(bufCopy, start, current);
+            new Node.TemplateText(new String(buf, offset, len), start, current);
         }
     }
 

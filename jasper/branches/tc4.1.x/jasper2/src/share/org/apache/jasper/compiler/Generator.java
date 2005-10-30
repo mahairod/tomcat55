@@ -597,7 +597,7 @@ public class Generator {
 
         public void visit(Node.Scriptlet n) throws JasperException {
             n.setBeginJavaLine(out.getJavaLine());
-            out.printMultiLn(new String(n.getText()));
+            out.printMultiLn(n.getText());
             out.println();
             n.setEndJavaLine(out.getJavaLine());
         }
@@ -1225,8 +1225,7 @@ public class Generator {
 
         public void visit(Node.TemplateText n) throws JasperException {
 
-            char[] chars = n.getText();
-            int size = chars.length;
+            String text = n.getText();
 
             n.setBeginJavaLine(out.getJavaLine());
 
@@ -1234,8 +1233,8 @@ public class Generator {
             StringBuffer sb = new StringBuffer("out.write(\"");
             int initLength = sb.length();
             int count = CHUNKSIZE;
-            for (int i = 0 ; i < size ; i++) {
-                char ch = chars[i];
+            for (int i = 0 ; i < text.length() ; i++) {
+                char ch = text.charAt(i);
                 --count;
                 switch(ch) {
                 case '"':

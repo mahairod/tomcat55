@@ -33,7 +33,7 @@ public abstract class Node {
     
     protected Attributes attrs;
     protected Nodes body;
-    protected char[] text;
+    protected String text;
     protected Mark startMark;
     protected int beginJavaLine;
     protected int endJavaLine;
@@ -67,7 +67,7 @@ public abstract class Node {
      * @param start The location of the jsp page
      * @param parent The enclosing node
      */
-    public Node(char[] text, Mark start, Node parent) {
+    public Node(String text, Mark start, Node parent) {
         this.text = text;
         this.startMark = start;
         addToParent(parent);
@@ -93,7 +93,7 @@ public abstract class Node {
         this.body = body;
     }
 
-    public char[] getText() {
+    public String getText() {
         return text;
     }
 
@@ -295,7 +295,7 @@ public abstract class Node {
      */
     public static class Comment extends Node {
 
-        public Comment(char[] text, Mark start, Node parent) {
+        public Comment(String text, Mark start, Node parent) {
             super(text, start, parent);
         }
 
@@ -309,7 +309,7 @@ public abstract class Node {
      */
     public static abstract class ScriptingElement extends Node {
 
-        public ScriptingElement(char[] text, Mark start, Node parent) {
+        public ScriptingElement(String text, Mark start, Node parent) {
             super(text, start, parent);
         }
 
@@ -324,16 +324,14 @@ public abstract class Node {
          * TemplateText nodes in its body. This method handles either case.
          * @return The text string
          */
-        public char[] getText() {
-            char[] ret = text;
+        public String getText() {
+            String ret = text;
             if ((ret == null) && (body != null)) {
-                CharArrayWriter chars = new CharArrayWriter();
-                int size = body.size();
-                for (int i=0; i<size; i++) {
-                    chars.write(body.getNode(i).getText(), 0,
-                                body.getNode(i).getText().length);
+                StringBuffer buf = new StringBuffer();
+                for (int i=0; i<body.size(); i++) {
+                    buf.append(body.getNode(i).getText());
                 }
-                ret = chars.toCharArray();
+                ret = buf.toString();
             }
             return ret;
         }
@@ -344,7 +342,7 @@ public abstract class Node {
      */
     public static class Declaration extends ScriptingElement {
 
-        public Declaration(char[] text, Mark start, Node parent) {
+        public Declaration(String text, Mark start, Node parent) {
             super(text, start, parent);
         }
 
@@ -363,7 +361,7 @@ public abstract class Node {
      */
     public static class Expression extends ScriptingElement {
 
-        public Expression(char[] text, Mark start, Node parent) {
+        public Expression(String text, Mark start, Node parent) {
             super(text, start, parent);
         }
 
@@ -381,7 +379,7 @@ public abstract class Node {
      */
     public static class Scriptlet extends ScriptingElement {
 
-        public Scriptlet(char[] text, Mark start, Node parent) {
+        public Scriptlet(String text, Mark start, Node parent) {
             super(text, start, parent);
         }
 
@@ -892,13 +890,32 @@ public abstract class Node {
      */
     public static class TemplateText extends Node {
 
-        public TemplateText(char[] text, Mark start, Node parent) {
+        public TemplateText(String text, Mark start, Node parent) {
             super(text, start, parent);
         }
 
         public void accept(Visitor v) throws JasperException {
             v.visit(this);
         }
+        
+        public void setText(String text) {
+            this.text = text;
+        }
+        
+        /**
+         * Returns true if this template text contains whitespace only.
+         */
+        public boolean isAllSpace() {
+            boolean isAllSpace = true;
+            for (int i=0; i<text.length(); i++) {
+                if (!Character.isWhitespace(text.charAt(i))) {
+                    isAllSpace = false;
+                    break;
+                }
+            }
+            return isAllSpace;
+        }
+
     }
 
     /*********************************************************************

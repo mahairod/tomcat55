@@ -190,19 +190,21 @@ public class Parser {
      *                | '\>'
      *                | Char
      */
-    private String parseQuoted(char[] tx) {
+    private String parseQuoted(String tx) {
         StringBuffer buf = new StringBuffer();
-        int size = tx.length;
+        int size = tx.length();
         int i = 0;
         while (i < size) {
-            char ch = tx[i];
+            char ch =tx.charAt(i);
             if (ch == '&') {
-                if (i+5 < size && tx[i+1] == 'a' && tx[i+2] == 'p' &&
-                        tx[i+3] == 'o' && tx[i+4] == 's' && tx[i+5] == ';') {
+                if (i+5 < size && tx.charAt(i+1) == 'a'
+                        && tx.charAt(i+2) == 'p' && tx.charAt(i+3) == 'o'
+                        && tx.charAt(i+4) == 's' && tx.charAt(i+5) == ';') {
                     buf.append('\'');
                     i += 6;
-                } else if (i+5 < size && tx[i+1] == 'q' && tx[i+2] == 'u' &&
-                        tx[i+3] == 'o' && tx[i+4] == 't' && tx[i+5] == ';') {
+                } else if (i+5 < size && tx.charAt(i+1) == 'q'
+                        && tx.charAt(i+2) == 'u' && tx.charAt(i+3) == 'o'
+                        && tx.charAt(i+4) == 't' && tx.charAt(i+5) == ';') {
                     buf.append('"');
                     i += 6;
                 } else {
@@ -210,7 +212,7 @@ public class Parser {
                     ++i;
                 }
             } else if (ch == '\\' && i+1 < size) {
-                ch = tx[i+1];
+                ch = tx.charAt(i+1);
                 if (ch == '\\' || ch == '\"' || ch == '\'' || ch == '>') {
                     buf.append(ch);
                     i += 2;
@@ -226,13 +228,14 @@ public class Parser {
         return buf.toString();
     }
 
-    private char[] parseScriptText(char[] tx) {
+    private String parseScriptText(String tx) {
         CharArrayWriter cw = new CharArrayWriter();
-        int size = tx.length;
+        int size = tx.length();
         int i = 0;
         while (i < size) {
-            char ch = tx[i];
-            if (i+2 < size && ch == '%' && tx[i+1] == '\\' && tx[i+2] == '>') {
+            char ch = tx.charAt(i);
+            if (i+2 < size && ch == '%' && tx.charAt(i+1) == '\\'
+                    && tx.charAt(i+2) == '>') {
                 cw.write('%');
                 cw.write('>');
                 i += 3;
@@ -242,7 +245,7 @@ public class Parser {
             }
         }
         cw.close();
-        return cw.toCharArray();
+        return cw.toString();
     }
 
     /*
@@ -721,12 +724,8 @@ public class Parser {
         // Quoting in template text is handled here.
         // JSP2.6 "A literal <% is quoted by <\%"
         if (reader.matches("<\\%")) {
-            char[] content = reader.nextContent();
-            char[] text = new char[content.length + 2];
-            text[0] = '<';
-            text[1] = '%';
-            System.arraycopy(content, 0, text, 2, content.length);
-            new Node.TemplateText(text, start, parent);
+            String content = reader.nextContent();
+            new Node.TemplateText("<%" + content, start, parent);
         } else {
             new Node.TemplateText(reader.nextContent(), start, parent);
         }

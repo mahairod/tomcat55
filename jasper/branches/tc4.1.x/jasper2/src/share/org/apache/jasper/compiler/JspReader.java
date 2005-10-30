@@ -197,7 +197,7 @@ public class JspReader {
      * Gets Content until the next potential JSP element.  Because all elements
      * begin with a '&lt;' we can just move until we see the next one.
      */
-    char[] nextContent() {
+    String nextContent() {
         int cur_cursor = current.cursor;
         int len = current.stream.length;
          char ch;
@@ -221,13 +221,11 @@ public class JspReader {
         }
 
         len = current.cursor - cur_cursor;
-        char[] content = new char[len];
-        System.arraycopy(current.stream, cur_cursor, content, 0, len);
         
-        return content;
+        return new String (current.stream, cur_cursor, len);
     }
 
-    char[] getText(Mark start, Mark stop) throws JasperException {
+    String getText(Mark start, Mark stop) throws JasperException {
         Mark oldstart = mark();
         reset(start);
         CharArrayWriter caw = new CharArrayWriter();
@@ -235,7 +233,7 @@ public class JspReader {
             caw.write(nextChar());
         caw.close();
         reset(oldstart);
-        return caw.toCharArray();
+        return caw.toString();
     }
 
     public int peekChar() {
