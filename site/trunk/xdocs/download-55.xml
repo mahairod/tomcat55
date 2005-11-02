@@ -35,43 +35,28 @@
     </p>
   </section>
 
-      <section name="Mirrors">
-      <p>You are currently using the <b>[preferred]</b> server for downloads.  Please note that
-      new releases can take as long as two days to be available on all the mirrors.
-      If you encounter a problem with this mirror, please select another from the dropdown list
-      below.  If all mirrors are failing, there are <i>backup</i> mirrors (at the 
-      end of the mirrors list) that should be available.
-      <br/>
-
-      [if-any logo]
-      <a href="[link]">
-        <img align="right" src="[logo]" border="0"/>
-      </a>
-      [end]
-      </p>
- 
-      <!-- Begin mirror list -->
-      <p>
-        <form action="[location]" method="get" id="SelectMirror">
-        Other mirrors: 
-        <select name="Preferred">
-          [if-any http]
-            [for http]<option value="[http]">[http]</option>[end]
-          [end]
-          [if-any ftp]
-            [for ftp]<option value="[ftp]">[ftp]</option>[end]
-          [end]
-          [if-any backup]
-            [for backup]<option value="[backup]">[backup] (backup)</option>[end]
-          [end]
-        </select>
-        <input type="submit" value="Change"/>
-        </form>
-      </p>
+  <section name="Mirrors">
+    <!-- Note: the following CGI code is sensitive to line breaks.  Don't "prettify" it. -->   
+    <p>You are currently using <b>[preferred]</b>.  If you
+       encounter a problem with this mirror, please select another
+       mirror.  If all mirrors are failing, there are <i>backup</i>
+       mirrors (at the end of the mirrors list) that should be
+       available.<br/>[if-any logo]<a href="[link]"><img align="right" src="[logo]" border="0"/></a>[end]</p><p><form action="[location]" method="get" id="SelectMirror">
+       Other mirrors: <select name="Preferred">
+         [if-any http]
+           [for http]<option value="[http]">[http]</option>[end]
+         [end]
+         [if-any ftp]
+           [for ftp]<option value="[ftp]">[ftp]</option>[end]
+         [end]
+         [if-any backup]
+           [for backup]<option value="[backup]">[backup] (backup)</option>[end]
+           [end]
+         </select><input type="submit" value="Change"/></form></p>
       <!-- End mirror list -->
    
-      </section>
-      <!-- End mirrors section -->
+  </section>
+  <!-- End mirrors section -->
 
       <!-- Begin 5.5.12 section -->
       <section name="5.5.12">
@@ -150,12 +135,12 @@
          <ul>
          <li>
            <a href="[preferred]/tomcat/tomcat-5/v5.5.12/bin/apache-tomcat-5.5.12-compat.zip">zip</a> 
-           <a href="http://www.apache.org/dist/tomcat/tomcat-5/v5.5.12/bin/apache-tomcat-5.5.12-compat.zip.asc">pgp</a>, 
+           (<a href="http://www.apache.org/dist/tomcat/tomcat-5/v5.5.12/bin/apache-tomcat-5.5.12-compat.zip.asc">pgp</a>, 
            <a href="http://www.apache.org/dist/tomcat/tomcat-5/v5.5.12/bin/apache-tomcat-5.5.12-compat.zip.md5">md5</a>)
          </li>
          <li>
            <a href="[preferred]/tomcat/tomcat-5/v5.5.12/bin/apache-tomcat-5.5.12-compat.tar.gz">tar.gz</a> 
-           <a href="http://www.apache.org/dist/tomcat/tomcat-5/v5.5.12/bin/apache-tomcat-5.5.12-compat.tar.gz.asc">pgp</a>, 
+           (<a href="http://www.apache.org/dist/tomcat/tomcat-5/v5.5.12/bin/apache-tomcat-5.5.12-compat.tar.gz.asc">pgp</a>, 
            <a href="http://www.apache.org/dist/tomcat/tomcat-5/v5.5.12/bin/apache-tomcat-5.5.12-compat.tar.gz.md5">md5</a>)
          </li>
          </ul>
