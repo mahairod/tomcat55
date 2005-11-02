@@ -53,6 +53,9 @@
     <xsl:if test="properties/base">
       <base href="{properties/base/@href}"/>
     </xsl:if>
+
+    <!-- YS 20051102: Add a stylesheet -->
+    <link type="text/css" href="stylesheets/tomcat.css" rel="stylesheet" />
     </head>
 
     <body bgcolor="{$body-bg}" text="{$body-fg}" link="{$body-link}"
@@ -82,6 +85,16 @@
         </td>
       </tr>
     </table>
+
+    <!-- Search box: uses CSS positioning -->
+    <div class="searchbox">
+      <form action="http://www.google.com/search" method="get">
+        <input value="tomcat.apache.org" name="sitesearch" type="hidden" />
+        <input value="Search the Site" size="25" name="q" id="query" type="text" />
+        <input name="Search" value="Search Site" type="submit" />
+      </form>
+    </div>
+    <!-- End search box -->
 
     <table border="0" width="100%" cellspacing="4">
 

@@ -19,6 +19,7 @@
         <!-- Transform the xml files - requires Ant 1.6.2 -->
 
         <!-- Transform the top-level directory -->
+        <echo message="Transforming the site documents..." />
         <style  basedir="${docs.src}"
                 destdir="${docs.dest}"
                 extension=".html"
@@ -30,6 +31,7 @@
 
         <!-- Transform the "faq" subdirectory -->
         <mkdir  dir="${docs.dest}/faq" />
+        <echo message="Transforming the FAQ documents..." />
         <style  basedir="${faq.src}"
                 destdir="${faq.dest}"
                 extension=".html"
@@ -50,7 +52,8 @@
         </style>
 
         <!-- Copy static resource files -->
-        <copy   todir="${docs.dest}/images" filtering="no">
+        <echo message="Copying static resource files..." />
+        <copy todir="${docs.dest}/images" filtering="no">
             <fileset dir="${docs.src}/images">
                 <include name="**/*.gif"/>
                 <include name="**/*.jpeg"/>
@@ -59,14 +62,16 @@
         </copy>
 
         <!-- Copy static PDFs -->
-        <copy    todir="${docs.dest}" filtering="no">
+        <echo message="Copying PDFs..." />
+        <copy todir="${docs.dest}" filtering="no">
             <fileset dir="${docs.src}">
                 <include name="**/*.pdf"/>
             </fileset>
         </copy>
 
         <!-- Copy CSS stylesheets and download CGI -->
-        <copy    todir="${docs.dest}" filtering="no">
+        <echo message="Copying CSS and CGI files..." />
+        <copy todir="${docs.dest}" filtering="no">
             <fileset dir="${docs.src}">
                 <include name="**/*.css"/>
                 <include name="**/*.cgi"/>
