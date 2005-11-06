@@ -11,22 +11,21 @@
 	<classpathentry kind="src" path="webapps/manager/WEB-INF/classes"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ServletAPI"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/apache-ant-1.6.2/lib/ant.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/commons-logging-1.0.4/commons-logging-api.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/apache-ant-1.6.5/lib/ant.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/commons-logging-1.0.4/commons-logging-api.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Connectors"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/commons-modeler-1.1/commons-modeler.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/mx4j-3.0.1/lib/mx4j.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/commons-launcher-0.9/bin/commons-launcher.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/jakarta-struts-1.2.4/lib/antlr.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/jakarta-struts-1.2.4/lib/commons-beanutils.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/jakarta-struts-1.2.4/lib/commons-collections.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/jakarta-struts-1.2.4/lib/commons-digester.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/jakarta-struts-1.2.4/lib/commons-fileupload.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/jakarta-struts-1.2.4/lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/jakarta-struts-1.2.4/lib/commons-validator.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/jakarta-struts-1.2.4/lib/jakarta-oro.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/jakarta-struts-1.2.4/lib/struts.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/javamail-1.3.3_01/mail.jar"/>
-	<classpathentry kind="lib" path="D:/JavaDev/libs/jaf-1.0.2/activation.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/commons-modeler-1.1/commons-modeler.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/mx4j-3.0.1/lib/mx4j.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/commons-launcher-0.9/bin/commons-launcher.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/struts-1.2.7/lib/antlr.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/struts-1.2.7/lib/commons-beanutils.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/struts-1.2.7/lib/commons-digester.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/struts-1.2.7/lib/commons-fileupload.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/struts-1.2.7/lib/commons-logging.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/struts-1.2.7/lib/commons-validator.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/struts-1.2.7/lib/jakarta-oro.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/struts-1.2.7/lib/struts.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/jaf-1.0.2/activation.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/javamail-1.3.3_01/mail.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
