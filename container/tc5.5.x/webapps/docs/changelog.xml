@@ -36,6 +36,9 @@
       <add>
         <bug>37035</bug>: Add a placeholder file in the temp directory for WinZip tar.gz handling. (yoavs)
       </add>
+      <update>
+        Update JAF dependency to 1.0.2, JTA to 1.0.1b and JavaMail to 1.3.3_01. (markt)
+      </update>
     </changelog>
   </subsection>
   <subsection name="Catalina">
