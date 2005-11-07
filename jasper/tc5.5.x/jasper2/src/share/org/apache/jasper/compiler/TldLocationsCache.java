@@ -17,9 +17,9 @@
 package org.apache.jasper.compiler;
 
 import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.JarURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import org.xml.sax.InputSource;
 
 import javax.servlet.ServletContext;
 
@@ -265,10 +266,11 @@ public class TldLocationsCache {
             // Acquire input stream to web application deployment descriptor
             String altDDName = (String)ctxt.getAttribute(
                                                     Constants.ALT_DD_ATTR);
+            URL uri = null;
             if (altDDName != null) {
                 try {
-                    is = new FileInputStream(altDDName);
-                } catch (FileNotFoundException e) {
+                    uri = new URL(FILE_PROTOCOL+altDDName.replace('\\', '/'));
+                } catch (MalformedURLException e) {
                     if (log.isWarnEnabled()) {
                         log.warn(Localizer.getMessage(
                                             "jsp.error.internal.filenotfound",
@@ -276,25 +278,28 @@ public class TldLocationsCache {
                     }
                 }
             } else {
-                is = ctxt.getResourceAsStream(WEB_XML);
-                if (is == null && log.isWarnEnabled()) {
+                uri = ctxt.getResource(WEB_XML);
+                if (uri == null && log.isWarnEnabled()) {
                     log.warn(Localizer.getMessage(
                                             "jsp.error.internal.filenotfound",
                                             WEB_XML));
                 }
             }
 
-            if (is == null) {
+            if (uri == null) {
                 return;
             }
+	    is = uri.openStream();
+            InputSource ip = new InputSource(is);
+            ip.setSystemId(uri.toExternalForm()); 
 
             // Parse the web application deployment descriptor
             TreeNode webtld = null;
             // altDDName is the absolute path of the DD
             if (altDDName != null) {
-                webtld = new ParserUtils().parseXMLDocument(altDDName, is);
+                webtld = new ParserUtils().parseXMLDocument(altDDName, ip);
             } else {
-                webtld = new ParserUtils().parseXMLDocument(WEB_XML, is);
+                webtld = new ParserUtils().parseXMLDocument(WEB_XML, ip);
             }
 
             // Allow taglib to be an element of the root or jsp-config (JSP2.0)
