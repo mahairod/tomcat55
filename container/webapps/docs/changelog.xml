@@ -82,6 +82,12 @@
         <bug>37121</bug>: Sendfile always needs to be given the length of data to write,
         which fixes ranged requests. (remm)
       </fix>
+      <fix>
+        Optimized direct byte buffers association with the socket for APR connectors. (mturk)
+      </fix>
+      <fix>
+        Fix hidden NPEs when using the APR connectors and there's no host header. (pero, remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
