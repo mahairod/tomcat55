@@ -39,7 +39,7 @@
   <property name="catalina.home"
            value="${basedir}/../${catalina.project}"/>
   <property name="jasper.home"
-           value="${basedir}/../${jasper.project}/jasper2"/>
+           value="${basedir}/../${jasper.project}"/>
   <property name="jtc.home"
            value="${basedir}/../${jtc.project}"/>
   <property name="tomcat.home"
