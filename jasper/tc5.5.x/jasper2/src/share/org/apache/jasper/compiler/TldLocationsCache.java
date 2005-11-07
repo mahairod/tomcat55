@@ -289,7 +289,7 @@ public class TldLocationsCache {
             if (uri == null) {
                 return;
             }
-	    is = uri.openStream();
+            is = uri.openStream();
             InputSource ip = new InputSource(is);
             ip.setSystemId(uri.toExternalForm()); 
 
