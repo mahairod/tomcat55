@@ -260,9 +260,9 @@ public class CoyoteAdapter
 
         // Request mapping.
         MessageBytes serverName;
-        if(connector.getUseIPVHosts()) {
+        if (connector.getUseIPVHosts()) {
             serverName = req.localName();
-            if(serverName.isNull()) {
+            if (serverName.isNull()) {
                 // well, they did ask for it
                 res.action(ActionCode.ACTION_REQ_LOCAL_NAME_ATTRIBUTE, null);
             }
