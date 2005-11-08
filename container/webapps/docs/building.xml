@@ -16,7 +16,7 @@
 <section name="Introduction">
 
 <p>
-Building Tomcat from CVS is very easy, and is the first step to contributing to
+Building Tomcat from SVN is very easy, and is the first step to contributing to
 Tomcat. The following is a step by step TODO list.
 </p>
 
@@ -25,9 +25,10 @@ Tomcat. The following is a step by step TODO list.
 <section name="Download and install a Java Development Kit 1.4.x or later">
 
 <p>
-Earlier releases would also work, but are harder to work with due to the need to
-download additional dependencies. Tomcat also runs much faster on 
-the latest 1.4 JDK.
+The default distribution of Tomcat 5.5.x requires a 5.0 or later JDK. Tomcat
+can be built using a 1.4.x JDK but you will need to copy the contents of the
+compat directory (created by the build process) to your build directory before
+Tomcat will start.
 </p>
 
 <p>
@@ -51,7 +52,7 @@ Download a binary distribution of Ant 1.6.x from
 <p>
 Unpack the binary distribution into a convenient location so that the
 Ant release resides in its own directory (conventionally named
-"jakarta-ant-1.6.2").  For the purposes of the remainder of this document,
+"apache-ant-1.6.x").  For the purposes of the remainder of this document,
 the symbolic name "${ant.home}" is used to refer to the full pathname of
  the release directory.
 </p>
@@ -91,7 +92,7 @@ NOTE: Users accessing the Internet through a proxy must use a properties
 </p>
 
 <p>
-WARNING: Running this command will checkout the Tomcat 5 sources from CVS, as
+WARNING: Running this command will checkout the Tomcat 5 sources from SVN, as
   well as download binaries to the <code>/usr/share/java</code> directory. 
   Make sure this is appropriate to do so on your computer. On Windows, 
   this usually corresponds to the <code>C:\usr\share\java</code> directory, 
@@ -157,7 +158,7 @@ and the following steps have been used by some developers.
 Note that you <b>must</b> complete all the above steps to fetch
 the repositories and build some JAR files the first time.
 After you have completed the above steps, you can set up a
-series of Eclipse 3 projects.
+series of Eclipse 4 projects.
 <b>Note</b> that this will not let you build everything under Eclipse;
 the build process requires use of Ant for the many stages that aren't
 simple Java compilations.
@@ -167,18 +168,19 @@ under the IDE, and so on.
 </p>
 
 <p>
+Use Windows-&gt;Preferences and then Java-&gt;Build Path-&gt;Classpath
+Variables to add a new Classpath variable called "TOMCAT_LIBS_BASE" and
+set this to the base path where the binary dependencies have been
+downloaded.
 Use File-&gt;New Project to create a new Java project 
 for each of the binaries repository (e.g., /usr/share/java), 
-tomcat-connectors, tomcat-catalina, jasper, servletapi.
+container, connectors, jasper, servletapi. 
 Unless you thought ahead to make the ${tomcat.source} directory be under
 your Workspace folder, tell Eclipse the external location.
-The obvious dependencies will be needed; the "repository" project
-needs to export all its jars, and be referred to by the other projects.
-Eclipse will find all source trees and jars, and
-hopefully compile without problems
-You will need to add ${ant-home}/lib/ant.jar as an "External Jar"
-under Project Properties for some of these projects (notably those that fail
-to compile for want of BuildException).
+Eclipse .project and .classpath files are provided in each of these
+directories so Eclipse should find all source trees and jars, and
+hopefully compile without problems. <b>Note</b> that these
+files assume you are using Eclipse with a 5.0 or later JDK.
 </p>
 
 <p>
@@ -191,9 +193,9 @@ as VM arguments.
 
 <p>
 Note also that due to the way the Tomcat source is assembled
-from several CVS projects, you may not be able to use the Eclipse
-CVS client to update (nor to commit, if you are a committer).
-Use the external CVS client of your choice, then use the
+from several SVN projects, you may not be able to use the Eclipse
+SVN client to update (nor to commit, if you are a committer).
+Use the external SVN client of your choice, then use the
 Eclipse PackageExplorer or Navigator "Refresh" context menu item
 to tell Eclipse that you've updated the files.
 </p>
