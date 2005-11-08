@@ -16,7 +16,7 @@
 
 <section name="Preface">
 If you think you found a bug,
-<a href="http://jakarta.apache.org/tomcat/bugreport.html">read this page</a>.
+<a href="http://tomcat.apache.org/bugreport.html">read this page</a>.
 
 </section>
 
@@ -41,7 +41,7 @@ If you think you found a bug,
     Unless you have the source code reference in Tomcat which is wrong,
     it may not be a bug. E-mail the
     <a href="tomcatuser.html">user list</a> and confirm its a bug. Also
-    <a href="http://jakarta.apache.org/tomcat/bugreport.html">
+    <a href="http://tomcat.apache.org/bugreport.html">
     read this first</a> from the tomcat site about reporting a bug.
     </answer>
 
