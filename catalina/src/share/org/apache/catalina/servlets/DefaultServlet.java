@@ -424,9 +424,6 @@ public class DefaultServlet
         // Temp. content file used to support partial PUT
         File contentFile = null;
 
-        // Input stream for temp. content file used to support partial PUT
-        FileInputStream contentFileInStream = null;
-
         Range range = parseContentRange(req, resp);
 
         InputStream resourceInputStream = null;
@@ -1161,8 +1158,11 @@ public class DefaultServlet
         try {
 
             // Render the directory entries within this directory
-            DirContext directory = cacheEntry.context;
             NamingEnumeration enumeration = resources.list(cacheEntry.name);
+            
+            // rewriteUrl(contextPath) is expensive. cache result for later reuse
+            String rewrittenContextPath =  rewriteUrl(contextPath);
+
             while (enumeration.hasMoreElements()) {
 
                 NameClassPair ncPair = (NameClassPair) enumeration.nextElement();
@@ -1184,7 +1184,7 @@ public class DefaultServlet
                   .append((childCacheEntry.context != null)?"dir":"file")
                   .append("'");
                 sb.append(" urlPath='")
-                  .append(rewriteUrl(contextPath))
+                  .append(rewrittenContextPath)
                   .append(rewriteUrl(cacheEntry.name + resourceName))
                   .append((childCacheEntry.context != null)?"/":"")
                   .append("'");
@@ -1273,6 +1273,9 @@ public class DefaultServlet
         PrintWriter writer = new PrintWriter(osWriter);
 
         StringBuffer sb = new StringBuffer();
+        
+        // rewriteUrl(contextPath) is expensive. cache result for later reuse
+        String rewrittenContextPath =  rewriteUrl(contextPath);
 
         // Render the page header
         sb.append("<html>\r\n");
@@ -1298,7 +1301,7 @@ public class DefaultServlet
         if (slash >= 0) {
             String parent = name.substring(0, slash);
             sb.append(" - <a href=\"");
-            sb.append(rewriteUrl(contextPath));
+            sb.append(rewrittenContextPath);
             if (parent.equals(""))
                 parent = "/";
             sb.append(rewriteUrl(parent));
@@ -1333,7 +1336,6 @@ public class DefaultServlet
         try {
 
             // Render the directory entries within this directory
-            DirContext directory = cacheEntry.context;
             NamingEnumeration enumeration = resources.list(cacheEntry.name);
             boolean shade = false;
             while (enumeration.hasMoreElements()) {
@@ -1359,7 +1361,7 @@ public class DefaultServlet
 
                 sb.append("<td align=\"left\">&nbsp;&nbsp;\r\n");
                 sb.append("<a href=\"");
-                sb.append(rewriteUrl(contextPath));
+                sb.append(rewrittenContextPath);
                 resourceName = rewriteUrl(name + resourceName);
                 sb.append(resourceName);
                 if (childCacheEntry.context != null)
