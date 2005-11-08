@@ -142,6 +142,13 @@
       <li> Not actually a reason - but on your particular platform, look at the
           <code>java -X</code> options. They may be VERY helpful.
       </li>
+      <li>
+        <a href="http://opensource2.atlassian.com/confluence/spring/pages/viewpage.action?pageId=2669">
+            Your classloaders are not being garbage collected.</a>
+      </li>
+
+
+
     </ul>
   </answer>
 
