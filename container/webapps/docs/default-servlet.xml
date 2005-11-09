@@ -89,6 +89,10 @@ The DefaultServlet allows the following initParamters:
         value may be <b>true</b> or <b>false</b>
         <br />
         Welcome files are part of the servlet api.
+        <br />
+        <b>WARNING:</b> Listings of directories containing many entries are
+        expensive. Multiple requests for large directory listings can consume
+        significant proportions of server resources.
     </td>
   </tr>
   <tr>
