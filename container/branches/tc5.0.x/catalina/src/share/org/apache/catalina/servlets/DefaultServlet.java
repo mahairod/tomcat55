@@ -98,7 +98,7 @@ public class DefaultServlet
     /**
      * Should we generate directory listings?
      */
-    protected boolean listings = true;
+    protected boolean listings = false;
 
 
     /**
