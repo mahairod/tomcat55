@@ -93,7 +93,7 @@ public class DefaultServlet
     /**
      * Should we generate directory listings when no welcome file is present?
      */
-    protected boolean listings = true;
+    protected boolean listings = false;
 
 
     /**
@@ -552,9 +552,6 @@ public class DefaultServlet
         File contentFile = null;
 
         // Input stream for temp. content file used to support partial PUT
-        FileInputStream contentFileInStream = null;
-
-        ResourceInfo resourceInfo = new ResourceInfo(path, resources);
         Range range = parseContentRange(req, resp);
 
         InputStream resourceInputStream = null;
