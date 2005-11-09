@@ -64,6 +64,10 @@
         <bug>37264</bug>: JNDI resources were no longer available when stopping listeners,
         submitted by Bogdan Calmac (remm)
       </fix>
+      <fix>
+        <bug>37150</bug>: Turn off directory listing by default and add a warning
+        regarding enabling listing of directories with many entries. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">

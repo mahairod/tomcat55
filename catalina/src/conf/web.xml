@@ -34,7 +34,10 @@
   <!--                       resources to be served.  [2048]                -->
   <!--                                                                      -->
   <!--   listings            Should directory listings be produced if there -->
-  <!--                       is no welcome file in this directory?  [true]  -->
+  <!--                       is no welcome file in this directory?  [false] -->
+  <!--                       WARNING: Listings for directories with many    -->
+  <!--                       entries can be slow and may consume            -->
+  <!--                       significant proportions of server resources.   -->
   <!--                                                                      -->
   <!--   output              Output buffer size (in bytes) when writing     -->
   <!--                       resources to be served.  [2048]                -->
@@ -74,7 +77,7 @@
         </init-param>
         <init-param>
             <param-name>listings</param-name>
-            <param-value>true</param-value>
+            <param-value>false</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
