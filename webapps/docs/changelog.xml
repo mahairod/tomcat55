@@ -68,6 +68,10 @@
         <bug>37150</bug>: Turn off directory listing by default and add a warning
         regarding enabling listing of directories with many entries. (markt)
       </fix>
+      <fix>
+        <bug>37319</bug>: Fix catalina.bat reference to CATALINA_BASE for logging.properties.  Thanks
+        to Pierre-Yves Benzaken. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
