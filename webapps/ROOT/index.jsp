@@ -194,11 +194,11 @@
 
             <p>Included with this release are a host of sample Servlets and JSPs (with associated source code), extensive documentation (including the Servlet 2.4 and JSP 2.0 API JavaDoc), and an introductory guide to developing web applications.</p>
 
-            <p>Tomcat mailing lists are available at the Jakarta project web site:</p>
+            <p>Tomcat mailing lists are available at the Tomcat project web site:</p>
 
            <ul>
-               <li><b><a href="mailto:tomcat-user-subscribe@jakarta.apache.org">tomcat-user@jakarta.apache.org</a></b> for general questions related to configuring and using Tomcat</li>
-               <li><b><a href="mailto:tomcat-dev-subscribe@jakarta.apache.org">tomcat-dev@jakarta.apache.org</a></b> for developers working on Tomcat</li>
+               <li><b><a href="mailto:users-subscribe@tomcat.apache.org">users@tomcat.apache.org</a></b> for general questions related to configuring and using Tomcat</li>
+               <li><b><a href="mailto:dev-subscribe@tomcat.apache.org">dev@tomcat.apache.org</a></b> for developers working on Tomcat</li>
            </ul>
 
             <p>Thanks for using Tomcat!</p>
