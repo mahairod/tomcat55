@@ -138,6 +138,9 @@
         <bug>36336</bug>: Check WAR extension in both upper and lower case, as suggested by
         A. Grasoff. (yoavs)
       </fix>
+      <fix>
+        <bug>35982</bug>: Can't delete mail sessions in admin webapp. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 </section>
