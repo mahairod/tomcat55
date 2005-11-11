@@ -141,6 +141,9 @@
       <fix>
         <bug>35982</bug>: Can't delete mail sessions in admin webapp. (yoavs)
       </fix>
+      <fix>
+        <bug>36673</bug>: Similar to the one above, for data sources. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 </section>
