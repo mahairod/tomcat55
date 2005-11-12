@@ -4,11 +4,12 @@
   <!-- ===================== Initialize Property Values =================== -->
 
   <property file="../../../build.properties" />
-  <property file="../../../jakarta-tomcat-5/build.properties.default" />
+  <property file="../../../build/build.properties" />
+  <property file="../../../build/build.properties.default" />
 
   <!-- Build Defaults -->
   <property name="catalina.home"  location="../.."/>
-  <property name="catalina.build" location="../../../jakarta-tomcat-5/build"/>
+  <property name="catalina.build" location="../../../build/build"/>
   <property name="cluster.build"  value="${catalina.home}/modules/cluster/build"/>
   <property name="cluster.dist"   value="${catalina.home}/modules/cluster/dist"/>
 
