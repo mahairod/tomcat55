@@ -26,5 +26,6 @@
 	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/struts-1.2.7/lib/struts.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/connectors"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/servletapi"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/build"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
