@@ -246,9 +246,6 @@ public final class CGIServlet extends HttpServlet {
 
     /* some vars below copied from Craig R. McClanahan's InvokerServlet */
 
-    /** the Context container associated with our web application. */
-    private ServletContext context = null;
-
     /** the debugging detail level for this servlet. */
     private int debug = 0;
 
@@ -322,6 +319,7 @@ public final class CGIServlet extends HttpServlet {
             } catch (IOException ioe) {
                 ServletException e = new ServletException(
                         "Unable to read shell environment variables", ioe);
+                throw e;
             }
         }
 
@@ -334,9 +332,6 @@ public final class CGIServlet extends HttpServlet {
         if (value != null) {
             parameterEncoding = value;
         }
-
-        // Identify the internal container resources we need
-        context = config.getServletContext();
 
     }
 
@@ -1888,7 +1883,6 @@ public final class CGIServlet extends HttpServlet {
          */
 
         protected String getPostInput(ArrayList params) {
-            String lineSeparator = System.getProperty("line.separator");
             StringBuffer qs = new StringBuffer("");
             for (int i=0; i < params.size(); i++) {
                 NameValuePair nvp = (NameValuePair) this.params.get(i); 
