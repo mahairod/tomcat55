@@ -99,6 +99,9 @@
       <fix>
         Http11Protocol now register RequestProcessor at JMX and show current usage inside manager app. (pero)
       </fix>
+      <add>
+        JkStatus Ant tasks for mod_jk 1.2.15. (pero)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Jasper">
