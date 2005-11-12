@@ -96,6 +96,9 @@
       <fix>
         Fix hidden NPEs when using the APR connectors and there's no host header. (pero, remm)
       </fix>
+      <fix>
+        Http11Protocol now register RequestProcessor at JMX and show current usage inside manager app. (pero)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
