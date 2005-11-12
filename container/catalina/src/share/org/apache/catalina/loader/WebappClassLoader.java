@@ -23,6 +23,8 @@ import java.io.FileOutputStream;
 import java.io.FilePermission;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -33,6 +35,9 @@ import java.security.Permission;
 import java.security.PermissionCollection;
 import java.security.Policy;
 import java.security.PrivilegedAction;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -1470,20 +1475,9 @@ public class WebappClassLoader
      */
     public void stop() throws LifecycleException {
 
-        /*
-         * Clear the IntrospectionUtils cache.
-         *
-         * Implementation note:
-         * Any reference to IntrospectionUtils which may cause the static
-         * initalizer of that class to be invoked must occur prior to setting
-         * the started flag to FALSE, because the static initializer of
-         * IntrospectionUtils makes a call to
-         * org.apache.commons.logging.LogFactory.getLog(), which ultimately
-         * calls the loadClass() method of the thread context classloader,
-         * which is the same as this classloader, whose impl throws a
-         * ThreadDeath if the started flag has been set to FALSE.
-         */
-        IntrospectionUtils.clear();
+        // Clearing references should be done before setting started to
+        // false, due to possible side effects
+        clearReferences();
 
         started = false;
 
@@ -1526,11 +1520,6 @@ public class WebappClassLoader
             deleteDir(loaderDir);
         }
 
-        // Clear the classloader reference in common-logging
-        org.apache.commons.logging.LogFactory.release(this);
-        // Clear the classloader reference in the VM's bean introspector
-        java.beans.Introspector.flushCaches();
-
     }
 
 
@@ -1561,6 +1550,61 @@ public class WebappClassLoader
 
     // ------------------------------------------------------ Protected Methods
 
+    
+    /**
+     * Clear references.
+     */
+    protected void clearReferences() {
+
+        // Unregister any JDBC drivers loaded by this classloader
+        Enumeration drivers = DriverManager.getDrivers();
+        while (drivers.hasMoreElements()) {
+            Driver driver = (Driver) drivers.nextElement();
+            if (driver.getClass().getClassLoader() == this) {
+                try {
+                    DriverManager.deregisterDriver(driver);
+                } catch (SQLException e) {
+                    log.warn("SQL driver deregistration failed", e);
+                }
+            }
+        }
+        
+        // Null out any static or final fields from loaded classes,
+        // as a workaround for apparent garbage collection bugs
+        Iterator loadedClasses = resourceEntries.values().iterator();
+        while (loadedClasses.hasNext()) {
+            ResourceEntry entry = (ResourceEntry) loadedClasses.next();
+            if (entry.loadedClass != null) {
+                Field[] fields = entry.loadedClass.getDeclaredFields();
+                for (int i = 0; i < fields.length; i++) {
+                    Field field = fields[i];
+                    int mods = field.getModifiers();
+                    if (!(!Modifier.isStatic(mods) || !Modifier.isFinal(mods) 
+                            || field.getType().isPrimitive() 
+                            || field.getName().indexOf("$") != -1)) {
+                        field.setAccessible(true);
+                        try {
+                            field.set(null, null);
+                        } catch (Exception e) {
+                            log.info("Could not set field " + field.getName() 
+                                    + " to null in class " + entry.loadedClass.getName(), e);
+                        }
+                    }
+                }
+            }
+        }
+        
+         // Clear the IntrospectionUtils cache.
+        IntrospectionUtils.clear();
+        
+        // Clear the classloader reference in common-logging
+        org.apache.commons.logging.LogFactory.release(this);
+        
+        // Clear the classloader reference in the VM's bean introspector
+        java.beans.Introspector.flushCaches();
+
+    }
+    
 
     /**
      * Used to periodically signal to the classloader to release JAR resources.
