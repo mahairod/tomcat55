@@ -5,6 +5,10 @@
 <mbeans-descriptors>
     <mbean name="JvmRouteBinderValve" description="mod_jk jvmRoute jsessionid cookie backup correction" domain="Catalina"
         group="Valve" type="org.apache.catalina.cluster.session.JvmRouteBinderValve">
+        <attribute name="className"
+               description="Fully qualified class name of the managed object"
+               type="java.lang.String"
+               writeable="false"/>        
         <attribute name="info" 
 		           description="describe version" type="java.lang.String" writeable="false"/>
         <attribute name="enabled" 

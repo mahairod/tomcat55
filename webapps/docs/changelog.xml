@@ -115,6 +115,12 @@
   <subsection name="Cluster">
     <changelog>
       <fix>
+        Fix cluster module build.xml script for new svn repository structure (pero)
+      </fix>    
+      <fix>
+        Fix closed socket exceptions inside async message transfer modes (pero)
+      </fix>    
+      <fix>
         <bug>34984</bug>: HttpSessionBindingEvent.getValue() get correct value (pero)
       </fix>    
       <fix>

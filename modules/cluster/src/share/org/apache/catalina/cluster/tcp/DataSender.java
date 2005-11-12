@@ -80,6 +80,11 @@ public class DataSender implements IDataSender {
     private boolean isSocketConnected = false;
 
     /**
+     * Message transfer over socket ?
+     */
+    private boolean isMessageTransferStarted = false;
+
+    /**
      * sender is in suspect state (last transfer failed)
      */
     private boolean suspect;
@@ -438,6 +443,13 @@ public class DataSender implements IDataSender {
     }
 
     /**
+     * @return Is DataSender send a message
+     */
+    public boolean isMessageTransferStarted() {
+        return isMessageTransferStarted;
+    }
+    
+    /**
      * @param isSocketConnected
      *            The isSocketConnected to set.
      */
@@ -577,13 +589,17 @@ public class DataSender implements IDataSender {
      */
     public synchronized boolean checkKeepAlive() {
         boolean isCloseSocket = true ;
-        if(isConnected()) {
-            if ((keepAliveTimeout > -1 && (System.currentTimeMillis() - keepAliveConnectTime) > keepAliveTimeout)
-                || (keepAliveMaxRequestCount > -1 && keepAliveCount >= keepAliveMaxRequestCount)) {
-                closeSocket();
-            } else
-                isCloseSocket = false ;
-        }
+        if(!isMessageTransferStarted) {
+            if(isConnected()) {
+                if ((keepAliveTimeout > -1 && (System.currentTimeMillis() - keepAliveConnectTime) > keepAliveTimeout)
+                    || (keepAliveMaxRequestCount > -1 && keepAliveCount >= keepAliveMaxRequestCount)) {
+                        closeSocket();
+               } else
+                    isCloseSocket = false ;
+            }
+        } else
+            isCloseSocket = false ;
+        
         return isCloseSocket;
     }
 
@@ -766,6 +782,8 @@ public class DataSender implements IDataSender {
             checkKeepAlive();
             if (!isConnected())
                 openSocket();
+            else if(keepAliveTimeout > -1)
+                this.keepAliveConnectTime = System.currentTimeMillis();
         }
         Exception exception = null;
         try {
@@ -822,17 +840,25 @@ public class DataSender implements IDataSender {
      * @throws IOException
      * @since 5.5.10
      */
-    protected void writeData(ClusterData data) throws IOException {
-        OutputStream out = socket.getOutputStream();
-        out.write(XByteBuffer.START_DATA);
-        out.write(XByteBuffer.toBytes(data.getCompress()));
-        out.write(XByteBuffer.toBytes(data.getMessage().length));
-        out.write(data.getMessage());
-        out.write(XByteBuffer.END_DATA);
-        out.flush();
-        if (isWaitForAck())
-            waitForAck(ackTimeout);
-        
+    protected void writeData(ClusterData data) throws IOException { 
+        synchronized(this) {
+            isMessageTransferStarted = true ;
+        }
+        try {
+            OutputStream out = socket.getOutputStream();
+            out.write(XByteBuffer.START_DATA);
+            out.write(XByteBuffer.toBytes(data.getCompress()));
+            out.write(XByteBuffer.toBytes(data.getMessage().length));
+            out.write(data.getMessage());
+            out.write(XByteBuffer.END_DATA);
+            out.flush();
+            if (isWaitForAck())
+                waitForAck(ackTimeout);
+        } finally {
+            synchronized(this) {
+                isMessageTransferStarted = false ;
+            }
+        }
     }
 
     /**
