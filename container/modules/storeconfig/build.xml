@@ -5,12 +5,12 @@
 
 	<!-- See "build.properties.sample" in the top level directory for all     -->
 	<!-- property values you must customize for successful building!!!        -->
-    <property file="../../../build.properties" />
-    <property file="../../../jakarta-tomcat-5/build.properties.default" />
+    <property file="../../../build/build.properties" />
+    <property file="../../../build/build.properties.default" />
 
     <!-- Build Defaults -->
     <property name="catalina.home"  location="../.."/>
-    <property name="catalina.build" location="../../../jakarta-tomcat-5/build"/>
+    <property name="catalina.build" location="../../../build/build"/>
     <property name="config.build" value="${catalina.home}/modules/storeconfig/build" />
 	<property name="config.dist" value="${catalina.home}/modules/storeconfig/dist" />
 
@@ -100,7 +100,13 @@
 
 	<!-- ======================= BUILD: Clean Directory ===================== -->
 	<target name="build-clean">
-		<delete dir="${catalina.build}" />
+		<delete dir="${config.build}" />
+		<delete dir="${config.dist}" />
+        <delete>
+            <fileset dir="${catalina.build}/classes">
+                <include name="org/apache/catalina/storeconfig/**/*" />
+            </fileset>
+        </delete>
 	</target>
 
 
