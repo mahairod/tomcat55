@@ -25,7 +25,8 @@
 	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/struts-1.2.7/lib/jakarta-oro.jar"/>
 	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/struts-1.2.7/lib/struts.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/connectors"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/servletapi"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/build"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/servlet-api-2.4/lib/servlet-api.jar"/>
+	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/jsp-api-2.0/lib/jsp-api.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
