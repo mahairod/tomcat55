@@ -17,7 +17,7 @@
   <property name="final.name"            value="${project}-${version}" />
   <property name="final-src.name"        value="${project}-${version}-src" />
 
-  <!-- CVSROOT -->
+  <!-- SVNROOT -->
   <property name="svnroot" 
            value="http://svn.apache.org/repos/asf/" />
 
@@ -28,14 +28,7 @@
   <property name="jtc.project"           value="connectors" />
   <property name="jasper.project"        value="jasper" />
 
-  <property name="api.loc"           value="tomcat/servletapi/servlet2.4-jsp2.0-tc5.x/" />
-  <property name="tomcat.loc"        value="tomcat/build/tc5.5.x/" />
-  <property name="catalina.loc"      value="tomcat/container/tc5.5.x/" />
-  <property name="jtc.loc"           value="tomcat/connectors/trunk/" />
-  <property name="jasper.loc"        value="tomcat/jasper/tc5.5.x/jasper2/" />
-
-  <!-- Dependent projects -->
-  <property name="commons-daemon.project"  value="jakarta-commons/daemon" />
+  <property name="current.loc"           value="tomcat/current/tc5.5.x" />
 
   <!-- Source dependencies -->
   <property name="api.home"
@@ -49,7 +42,7 @@
   <property name="tomcat.home"
            value="${basedir}/${tomcat.project}"/>
 
-  <target name="build" depends="check.source,check.source.depends,get.source,get.source.depends"
+  <target name="build" depends="check.source,get.source"
    description="Builds all components">
 
     <ant dir="${tomcat.home}" target="download" />
@@ -75,31 +68,8 @@
         message="If the checkout fails, - todo - " />
 
     <exec dir="${basedir}" executable="svn">
-         <arg line="checkout ${svnroot}/${tomcat.loc} ${tomcat.project}" />
+         <arg line="checkout ${svnroot}/${current.loc} ${basedir}" />
     </exec>
-
-    <exec dir="${basedir}" executable="svn">
-         <arg line="checkout ${svnroot}/${catalina.loc} ${catalina.project}" />
-    </exec>
-
-    <exec dir="${basedir}" executable="svn">
-         <arg line="checkout ${svnroot}/${jasper.loc} ${jasper.project}" />
-    </exec>
-
-    <exec dir="${basedir}" executable="svn">
-         <arg line="checkout ${svnroot}/${jtc.loc} ${jtc.project}" />
-    </exec>
-
-    <exec dir="${basedir}" executable="svn">
-         <arg line="checkout ${svnroot}/${api.loc} ${api.project}" />
-    </exec>
-
-  </target>
-
-  <target name="checkout.depends"
-          description="Update or checkout dependent sources from CVS">
-
-  <!-- Still needed -->
 
   </target>
 
@@ -112,22 +82,9 @@
 
   </target>
 
-  <target name="check.source.depends">
-
-    <available property="source.depends.exists" 
-                   file="${basedir}/${commons-daemon.project}" type="dir" />
-
-  </target>
-
   <target name="get.source" unless="source.exists">
 
     <antcall target="checkout" />
-
-  </target>
-
-  <target name="get.source.depends" unless="source.depends.exists">
-
-    <antcall target="checkout.depends" />
 
   </target>
 
