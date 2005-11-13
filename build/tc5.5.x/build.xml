@@ -1856,12 +1856,6 @@
       <param name="destdir" value="${base.path}"/>
     </antcall>
     
-    <antcall target="downloadzip">
-       <param name="sourcefile" value="${rhino.loc}"/>
-       <param name="destfile" value="${rhino.jar}"/>
-       <param name="destdir" value="${base.path}"/>
-     </antcall> 
-
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-launcher.loc}"/>
       <param name="destfile" value="${commons-launcher.jar}"/>
