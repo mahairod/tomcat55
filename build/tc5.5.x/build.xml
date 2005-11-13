@@ -1159,134 +1159,6 @@
     </ant>
   </target>
 
-  <!-- ======================= Single-jar tomcat =========== -->
-   <target name="prepare-runtime-once"
-     description="Do once before single jar tomcat">
-    <mkdir dir="runtime/deps" />
-    <mkdir dir="runtime/classes" />
-    <unjar dest="runtime/deps" src="${base.path}/servlet-api-2.4/lib/servlet-api.jar" />
-    <unjar dest="runtime/deps" src="${base.path}/commons-logging-1.0.4/commons-logging.jar"/>
-    <unjar dest="runtime/deps" src="${base.path}/commons-modeler-1.1/commons-modeler.jar"/>
-    <unjar dest="runtime/deps" src="${base.path}/jsp-api-2.0/lib/jsp-api.jar"/>
-   </target>
-
-
-   <target name="compile-runtime"
-           description="Build single jar tomcat">
-
-      <javac destdir="runtime/classes" deprecation="false" debug="false"  >
-            <classpath path="runtime/deps" />
-            <!-- classpath path="${base.path}/commons-logging-1.0.4/commons-logging.jar"/>
-            <classpath path="${base.path}/commons-modeler-1.1/commons-modeler.jar"/>
-            <classpath path="${base.path}/jsp-api-2.0/lib/jsp-api.jar"/>
-            <classpath path="${base.path}/servlet-api-2.4/lib/servlet-api.jar"/ -->
-            <classpath path="${base.path}/jmxri-1.2.1.jar"/>
-
-            <src>
-                <pathelement path="${jtc.home}/util/java"/>
-                <!-- pathelement path="${jtc.home}/mini/java" /-->
-                <pathelement path="${jtc.home}/coyote/src/java"/>
-                <pathelement path="${jtc.home}/http11/src/java"/>
-                <pathelement path="${catalina.home}/catalina/src/share"/>
-            </src>
-            <exclude name="org/apache/tomcat/util/net/puretls/**"/>
-            <exclude name="org/apache/tomcat/util/net/jsse/JSSE15SocketFactory.java"/>
-            <exclude name="org/apache/tomcat/util/net/jsse/JSSE15Factory.java"/>
-            <exclude name="org/apache/tomcat/util/net/AprEndpoint.java"/>
-            <exclude name="org/apache/coyote/tomcat3/**"/>
-            <exclude name="org/apache/coyote/tomcat4/**"/>
-            <exclude name="org/apache/coyote/memory/**"/>
-            <exclude name="org/apache/coyote/standalone/**"/>
-            <exclude name="org/apache/coyote/http11/Http11AprProcessor.java"/>
-            <exclude name="org/apache/coyote/http11/Http11AprProtocol.java"/>
-            <exclude name="org/apache/coyote/http11/InternalAprInputBuffer.java"/>
-            <exclude name="org/apache/coyote/http11/InternalAprOutputBuffer.java"/>
-            <exclude name="**/CatalinaLaunchFilter.java"/>
-            <exclude name="**/MailSessionFactory.java"/>
-            <exclude name="**/SendMailFactory.java"/>
-            <exclude name="**/SemaphoreValve.java"/>
-            <exclude name="org/apache/catalina/ant/**"/>
-            <exclude name="org/apache/catalina/ssi/**"/>
-            <exclude name="org/apache/catalina/loader/CatalinaModuleListener.java"/>
-            <exclude name="org/apache/catalina/core/NamingContextListener.java"/>
-            <exclude name="org/apache/naming/**"/>
-        </javac>
-
-        <copy todir="runtime/classes" >
-            <fileset dir="${jtc.home}/util/java" includes="**/*.properties **/*.xml"/>
-            <fileset dir="${jtc.home}/naming/src" includes="**/*.properties **/*.xml"/>
-            <fileset dir="${jtc.home}/coyote/src/java" includes="**/*.properties **/*.xml" >
-              <exclude name="org/apache/coyote/tomcat4/**"/>
-            </fileset>
-            <fileset dir="${jtc.home}/http11/src/java" includes="**/*.properties **/*.xml"/>
-            <fileset dir="${catalina.home}/catalina/src/share" includes="**/*.properties **/*.xml"/>
-        </copy>
-
-        <jar jarfile="runtime/tomcat-runtime.jar" manifest="resources/runtime.MF">
-          <fileset dir="runtime/classes" includes="**" />
-          <fileset dir="runtime/deps" includes="**" >
-
-             <exclude name="META-INF/**" />
-             <exclude name="**/*.html" />
-             <exclude name="org/apache/commons/modeler/ant/**" />
-             <exclude name="org/apache/catalina/ant/**" />
-
-          </fileset>
-          <fileset dir="resources" >
-             <include name="server-embed.xml"/>
-             <include name="web-embed.xml"/>
-          </fileset>
-        </jar>
-
-    </target>
-
-    <target name="runtime" depends="prepare-runtime-once,compile-runtime"/>
-
-    <!-- ======================= Coyote standalone =========== -->
-    <!--
-        This is only the http connector, for testing/experimental purposes.
-      -->
-
-    <target name="tomcat-http11" >
-        <mkdir dir="runtime/http11"/>
-        <javac destdir="runtime/http11" debug="false" >
-            <src>
-                <pathelement path="${jtc.home}/util/java"/>
-                <pathelement path="${jtc.home}/util/loader"/>
-                <pathelement path="${jtc.home}/mini/java"/>
-                <pathelement path="${jtc.home}/coyote/src/java"/>
-                <pathelement path="${jtc.home}/http11/src/java"/>
-            </src>
-            <exclude name="org/apache/coyote/http11/Http11Protocol.java"/>
-            <exclude name="org/apache/coyote/http11/Http11AprProcessor.java"/>
-            <exclude name="org/apache/coyote/http11/Http11AprProtocol.java"/>
-            <exclude name="org/apache/coyote/http11/InternalAprInputBuffer.java"/>
-            <exclude name="org/apache/coyote/http11/InternalAprOutputBuffer.java"/>
-            <exclude name="org/apache/tomcat/util/net/puretls/**"/>
-            <exclude name="org/apache/tomcat/util/net/jsse/JSSE15SocketFactory.java"/>
-            <exclude name="org/apache/tomcat/util/net/jsse/JSSE15Factory.java"/>
-            <exclude name="org/apache/tomcat/util/net/AprEndpoint.java"/>
-            <exclude name="org/apache/tomcat/util/digester/**"/>
-            <exclude name="org/apache/tomcat/util/compat/**"/>
-            <exclude name="org/apache/tomcat/util/jmx/**"/>
-            <exclude name="org/apache/tomcat/util/log/**"/>
-            <exclude name="org/apache/tomcat/util/IntrospectionUtils.java"/>
-            <exclude name="org/apache/coyote/tomcat3/**"/>
-            <exclude name="org/apache/coyote/tomcat4/**"/>
-            <exclude name="org/apache/coyote/memory/**"/>
-        </javac>
-        <copy todir="runtime/http11" >
-            <fileset dir="${jtc.home}/http11/src/java" includes="**/*.properties **/*.xml"/>
-            <fileset dir="${jtc.home}/util/java" includes="**/*.properties **/*.xml"/>
-        </copy>
-
-        <jar jarfile="runtime/tomcat-http11.jar" manifest="resources/coyote-http11.MF"
-             basedir="runtime/http11"
-             includes="**" />
-
-    </target>
-
-
   <!-- ======================= TESTER: Run Catalina Tester Tests=========== -->
 
    <target name="dist-tester"
@@ -1983,6 +1855,12 @@
       <param name="destfile" value="${junit.jar}"/>
       <param name="destdir" value="${base.path}"/>
     </antcall>
+    
+    <antcall target="downloadzip">
+       <param name="sourcefile" value="${rhino.loc}"/>
+       <param name="destfile" value="${rhino.jar}"/>
+       <param name="destdir" value="${base.path}"/>
+     </antcall> 
 
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-launcher.loc}"/>
@@ -2069,6 +1947,7 @@
     <unzip src="${base.path}/file.zip" dest="${destdir}"/>
     <delete file="${base.path}/file.zip"/>
   </target>
+  
 
   <target name="downloadfile" unless="exist" depends="setproxy,testexist">
     <!-- Download extract the file -->

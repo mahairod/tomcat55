@@ -204,6 +204,11 @@ junit.jar=${junit.lib}/junit.jar
 junit.loc=${base-sf.loc}/junit/junit3.8.1.zip
 
 
+# ----- Rhino ------
+rhino.home=${base.path}/rhino1_6R2
+rhino.jar=${rhino.home}/js.jar
+rhino.loc=http://ftp.mozilla.org/pub/mozilla.org/js/rhino1_6R2.zip
+
 # ----- NSIS, version 2.0 or later -----
 nsis.home=${base.path}/nsis-2.0
 nsis.exe=${nsis.home}/makensis.exe
