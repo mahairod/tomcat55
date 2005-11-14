@@ -311,7 +311,7 @@
         <servlet-class>org.apache.catalina.servlets.CGIServlet</servlet-class>
         <init-param>
           <param-name>debug</param-name>
-          <param-value>6</param-value>
+          <param-value>0</param-value>
         </init-param>
         <init-param>
           <param-name>cgiPathPrefix</param-name>
