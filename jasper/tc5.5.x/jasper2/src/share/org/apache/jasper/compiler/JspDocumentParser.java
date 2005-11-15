@@ -459,7 +459,7 @@ class JspDocumentParser
 
     private void processChars() throws SAXException {
 
-        if (charBuffer == null) {
+        if (charBuffer == null || directivesOnly) {
             return;
         }
 
@@ -758,6 +758,11 @@ class JspDocumentParser
     public void startPrefixMapping(String prefix, String uri)
         throws SAXException {
         TagLibraryInfo taglibInfo;
+
+        if (directivesOnly && !(JSP_URI.equals(uri))) {
+            return;
+        }
+        
         try {
             taglibInfo = getTaglibInfo(prefix, uri);
         } catch (JasperException je) {
@@ -781,6 +786,14 @@ class JspDocumentParser
      * Receives notification of the end of a Namespace mapping. 
      */
     public void endPrefixMapping(String prefix) throws SAXException {
+
+        if (directivesOnly) {
+            String uri = pageInfo.getURI(prefix);
+            if (!JSP_URI.equals(uri)) {
+                return;
+            }
+        }
+
         pageInfo.popPrefixMapping(prefix);
     }
 
