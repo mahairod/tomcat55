@@ -39,6 +39,10 @@
       <update>
         Update JAF dependency to 1.0.2, JTA to 1.0.1b and JavaMail to 1.3.3_01. (markt)
       </update>
+      <add>
+        Added Eclipse .project, .classpath, and associated files to make building Tomcat from
+        Eclipse significantly easier. (markt)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Catalina">
@@ -71,6 +75,10 @@
       <fix>
         <bug>37319</bug>: Fix catalina.bat reference to CATALINA_BASE for logging.properties.  Thanks
         to Pierre-Yves Benzaken. (yoavs)
+      </fix>
+      <fix>
+        <bug>36852</bug>: Custom classloaders don't honor Contet privileged attribute.  Thanks to
+        Matt Brinkley for the analysis and patch. (yoavs)
       </fix>
     </changelog>
   </subsection>

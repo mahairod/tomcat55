@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2001,2004 The Apache Software Foundation.
+ * Copyright 1999-2001,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -251,6 +251,12 @@ final class CreateLoaderRule extends Rule {
         Object ojb = digester.peek();
         if (ojb instanceof Container) {
             parentClassLoader = ((Container)ojb).getParentClassLoader();
+        }
+
+        // Bugzilla 36852: http://issues.apache.org/bugzilla/show_bug.cgi?id=36852
+        if((ojb instanceof org.apache.catalina.Context) &&
+           (((org.apache.catalina.Context) ojb).getPrivileged())) {
+            parentClassLoader = ojb.getClass().getClassLoader();
         }
 
         // Instantiate a new Loader implementation object
