@@ -977,16 +977,17 @@ public class WebappClassLoader
 
         // Looking at the JAR files
         synchronized (jarFiles) {
-            openJARs();
-            for (i = 0; i < jarFilesLength; i++) {
-                JarEntry jarEntry = jarFiles[i].getJarEntry(name);
-                if (jarEntry != null) {
-                    try {
-                        String jarFakeUrl = getURI(jarRealFiles[i]).toString();
-                        jarFakeUrl = "jar:" + jarFakeUrl + "!/" + name;
-                        result.addElement(new URL(jarFakeUrl));
-                    } catch (MalformedURLException e) {
-                        // Ignore
+            if (openJARs()) {
+                for (i = 0; i < jarFilesLength; i++) {
+                    JarEntry jarEntry = jarFiles[i].getJarEntry(name);
+                    if (jarEntry != null) {
+                        try {
+                            String jarFakeUrl = getURI(jarRealFiles[i]).toString();
+                            jarFakeUrl = "jar:" + jarFakeUrl + "!/" + name;
+                            result.addElement(new URL(jarFakeUrl));
+                        } catch (MalformedURLException e) {
+                            // Ignore
+                        }
                     }
                 }
             }
@@ -1539,7 +1540,9 @@ public class WebappClassLoader
                             		jarFiles[i] = null;
                             	}
                             } catch (IOException e) {
-                                log.warn("Failed to close JAR", e);
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Failed to close JAR", e);
+                                }
                             }
                         }
                     }
@@ -1666,19 +1669,23 @@ public class WebappClassLoader
     /**
      * Used to periodically signal to the classloader to release JAR resources.
      */
-    protected void openJARs() {
+    protected boolean openJARs() {
         if (started && (jarFiles.length > 0)) {
             lastJarAccessed = System.currentTimeMillis();
             if (jarFiles[0] == null) {
                 for (int i = 0; i < jarFiles.length; i++) {
                 	try {
-                		jarFiles[i] = new JarFile(jarRealFiles[i]);
+                        jarFiles[i] = new JarFile(jarRealFiles[i]);
                 	} catch (IOException e) {
-                		log.warn("Failed to open JAR", e);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Failed to open JAR", e);
+                        }
+                        return false;
                 	}
                 }
             }
         }
+        return true;
     }
 
 
@@ -1903,7 +1910,9 @@ public class WebappClassLoader
 
         synchronized (jarFiles) {
 
-            openJARs();
+            if (!openJARs()) {
+                return null;
+            }
             for (i = 0; (entry == null) && (i < jarFilesLength); i++) {
 
                 jarEntry = jarFiles[i].getJarEntry(path);
