@@ -129,6 +129,9 @@
         Fix cluster module build.xml script for new svn repository structure (pero)
       </fix>    
       <fix>
+        Fix closed socket exceptions at normal server shutdown, reported by Olve Hansen (pero)
+      </fix>    
+      <fix>
         Fix closed socket exceptions inside async message transfer modes (pero)
       </fix>    
       <fix>
