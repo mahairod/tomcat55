@@ -72,6 +72,18 @@
         <bug>37150</bug>: Turn off directory listing by default and add a warning
         regarding enabling listing of directories with many entries. (markt)
       </fix>
+      <update>
+        Add configurability for the amount of time that the container will wait for requests
+        to complete when unloading servlets, using the unloadDelay property. (remm)
+      </update>
+      <update>
+        Add code to set to null fields in loaded classes when stopping a web application, as a
+        possible workaround for suspicious garbage collection behavior. (remm)
+      </update>
+      <update>
+        Update messages and stack traces for classloading errors which may occur when removing
+        a web application. (remm)
+      </update>
       <fix>
         <bug>37319</bug>: Fix catalina.bat reference to CATALINA_BASE for logging.properties.  Thanks
         to Pierre-Yves Benzaken. (yoavs)
