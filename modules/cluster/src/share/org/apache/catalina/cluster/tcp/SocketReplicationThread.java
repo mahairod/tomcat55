@@ -18,6 +18,7 @@ package org.apache.catalina.cluster.tcp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.io.SocketObjectReader;
@@ -95,6 +96,8 @@ public class SocketReplicationThread extends Thread implements ListenCallback {
                     // EOF
                     keepRunning = false;
             }
+        } catch (SocketException se) {
+            // ignore this: normal shutdown or stop listen socket 
         } catch (IOException x) {
             log.error("Unable to read data from client, disconnecting.", x);
         } finally {

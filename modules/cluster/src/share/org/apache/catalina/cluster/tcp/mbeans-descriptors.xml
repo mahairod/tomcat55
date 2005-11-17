@@ -273,7 +273,7 @@
   </mbean>
   
   <mbean         name="ReplicationTransmitter"
-          description="Tcp replicatio transmitter"
+          description="Tcp replication transmitter"
                domain="Catalina"
                 group="ClusterSender"
                  type="org.apache.catalina.cluster.tcp.ReplicationTransmitter">
@@ -394,6 +394,11 @@
                  writeable="false"
           description="number of bytes over all queued messages"
                  type="long"/>
+    <attribute   name="messageTransferStarted"
+          description="message is in transfer"
+                 type="boolean"
+                 is="true"
+                 writeable="false"/>
     <attribute   name="keepAliveTimeout"
           description="active socket keep alive timeout"
                  type="long"/>
@@ -571,6 +576,11 @@
                  writeable="false"
           description="number of bytes over all queued messages"
                  type="long"/>
+    <attribute   name="messageTransferStarted"
+          description="message is in transfer"
+                 type="boolean"
+                 is="true"
+                 writeable="false"/>
     <attribute   name="keepAliveTimeout"
           description="active socket keep alive timeout"
                  type="long"/>
@@ -844,6 +854,11 @@
     <attribute   name="keepAliveMaxRequestCount"
           description="max request over this socket"
                  type="int"/>
+    <attribute   name="messageTransferStarted"
+          description="message is in transfer"
+                 type="boolean"
+                 is="true"
+                 writeable="false"/>
     <attribute   name="keepAliveCount"
           description="keep Alive request count"
                  type="int"
