@@ -222,6 +222,12 @@ public class StandardWrapper
      */
     private Stack instancePool = null;
 
+    
+    /**
+     * Wait time for servlet unload in ms.
+     */
+    private long unloadDelay = 2000;
+    
 
     /**
      * True if this StandardWrapper is for the JspServlet
@@ -466,6 +472,7 @@ public class StandardWrapper
                 (sm.getString("standardWrapper.notContext"));
         if (container instanceof StandardContext) {
             swallowOutput = ((StandardContext)container).getSwallowOutput();
+            unloadDelay = ((StandardContext)container).getUnloadDelay();
         }
         super.setParent(container);
 
@@ -1286,13 +1293,14 @@ public class StandardWrapper
         // (possibly more than once if non-STM)
         if (countAllocated > 0) {
             int nRetries = 0;
+            long delay = unloadDelay / 20;
             while ((nRetries < 21) && (countAllocated > 0)) {
                 if ((nRetries % 10) == 0) {
                     log.info(sm.getString("standardWrapper.waiting",
                                           new Integer(countAllocated)));
                 }
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(delay);
                 } catch (InterruptedException e) {
                     ;
                 }
