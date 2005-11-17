@@ -82,15 +82,6 @@ public class SocketReplicationThread extends Thread implements ListenCallback {
                     if (log.isTraceEnabled()) {
                         log.trace("sending " + ack + " ack packages to " + socket.getLocalPort() );
                     }
-                    /**
-                    if (sendAck) {
-                        // ack only when message is complete receive
-                        while (ack > 0) {
-                            sendAck();
-                            ack--;
-                        }
-                    }
-                    **/
                     keepRunning = master.isDoListen();
                 } else
                     // EOF
