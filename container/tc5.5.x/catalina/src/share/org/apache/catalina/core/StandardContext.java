@@ -513,6 +513,12 @@ public class StandardContext
 
 
     /**
+     * Amount of ms that the container will wait for servlets to unload.
+     */
+    private long unloadDelay = 2000;
+
+
+    /**
      * The watched resources for this application.
      */
     private String watchedResources[] = new String[0];
@@ -1618,6 +1624,35 @@ public class StandardContext
         support.firePropertyChange("swallowOutput",
                                    new Boolean(oldSwallowOutput),
                                    new Boolean(this.swallowOutput));
+
+    }
+
+
+    /**
+     * Return the value of the unloadDelay flag.
+     */
+    public long getUnloadDelay() {
+
+        return (this.unloadDelay);
+
+    }
+
+
+    /**
+     * Set the value of the unloadDelay flag, which represents the amount
+     * of ms that the container will wait when unloading servlets.
+     * Setting this to a small value may cause more requests to fail 
+     * to complete when stopping a web application.
+     *
+     * @param unloadDelay The new value
+     */
+    public void setUnloadDelay(long unloadDelay) {
+
+        long oldUnloadDelay = this.unloadDelay;
+        this.unloadDelay = unloadDelay;
+        support.firePropertyChange("unloadDelay",
+                                   new Long(oldUnloadDelay),
+                                   new Long(this.unloadDelay));
 
     }
 
