@@ -122,7 +122,7 @@ public class ReplicationListener extends ClusterReceiverBase
         serverChannel.configureBlocking (false);
         // register the ServerSocketChannel with the Selector
         serverChannel.register (selector, SelectionKey.OP_ACCEPT);
-        while (doListen) {
+        while (doListen && selector != null) {
             // this may block for a long time, upon return the
             // selected set contains keys of the ready channels
             try {
@@ -168,18 +168,19 @@ public class ReplicationListener extends ClusterReceiverBase
                     // remove key from selected set, it's been handled
                     it.remove();
                 }
-            }
-            catch (java.nio.channels.CancelledKeyException nx) {
+            } catch (java.nio.channels.ClosedSelectorException cse) {
+                // ignore is normal at shutdown or stop listen socket
+            } catch (java.nio.channels.CancelledKeyException nx) {
                 log.warn(
                     "Replication client disconnected, error when polling key. Ignoring client.");
-            }
-            catch (Exception x) {
+            } catch (Exception x) {
                 log.error("Unable to process request in ReplicationListener", x);
             }
 
         }
         serverChannel.close();
-        selector.close();
+        if(selector != null)
+            selector.close();
     }
 
     /**

@@ -917,9 +917,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
                         + " with class=" + valve.getClass().getName());
             if (valve != null) {
                 IntrospectionUtils.callMethodN(getContainer(), "addValve",
-                        new Object[] { valve }, new Class[] { Thread
-                                .currentThread().getContextClassLoader()
-                                .loadClass("org.apache.catalina.Valve") });
+                        new Object[] { valve }, new Class[] { org.apache.catalina.Valve.class });
 
             }
             valve.setCluster(this);
@@ -938,11 +936,8 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
                 log.debug("Invoking removeValve on " + getContainer()
                         + " with class=" + valve.getClass().getName());
             if (valve != null) {
-                IntrospectionUtils.callMethodN(getContainer(), "removeValve",
-                        new Object[] { valve }, new Class[] { Thread
-                                .currentThread().getContextClassLoader()
-                                .loadClass("org.apache.catalina.Valve") });
-
+                    IntrospectionUtils.callMethodN(getContainer(), "removeValve",
+                        new Object[] { valve }, new Class[] { org.apache.catalina.Valve.class });
             }
             valve.setCluster(this);
         }

@@ -553,13 +553,17 @@ public class DataSender implements IDataSender {
      * @see org.apache.catalina.cluster.tcp.IDataSender#connect()
      */
     public synchronized void connect() throws java.io.IOException {
-        openSocket();
-        if(isConnected()) {
-            connectCounter++;
-            if (log.isDebugEnabled())
-                log.debug(sm.getString("IDataSender.connect", address.getHostAddress(),
-                        new Integer(port),new Long(connectCounter)));
-        }
+        if(!isMessageTransferStarted) {
+            openSocket();
+            if(isConnected()) {
+                connectCounter++;
+                if (log.isDebugEnabled())
+                    log.debug(sm.getString("IDataSender.connect", address.getHostAddress(),
+                            new Integer(port),new Long(connectCounter)));
+            }
+        } else 
+            if (log.isWarnEnabled())
+               log.warn(sm.getString("IDataSender.message.create", address.getHostAddress(),new Integer(port)));
    }
 
  
@@ -569,14 +573,19 @@ public class DataSender implements IDataSender {
      * @see IDataSender#disconnect()
      */
     public synchronized void disconnect() {
-        boolean connect = isConnected() ;
-        closeSocket();
-        if(connect) {
-            disconnectCounter++;
-            if (log.isDebugEnabled())
-                log.debug(sm.getString("IDataSender.disconnect", address.getHostAddress(),
-                    new Integer(port),new Long(disconnectCounter)));
-        }
+        if(!isMessageTransferStarted) {
+            boolean connect = isConnected() ;
+            closeSocket();
+            if(connect) {
+                disconnectCounter++;
+                if (log.isDebugEnabled())
+                    log.debug(sm.getString("IDataSender.disconnect", address.getHostAddress(),
+                        new Integer(port),new Long(disconnectCounter)));
+            }
+        } else 
+            if (log.isWarnEnabled())
+               log.warn(sm.getString("IDataSender.message.disconnect", address.getHostAddress(),new Integer(port)));
+        
     }
 
     /**
