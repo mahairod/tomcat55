@@ -65,19 +65,10 @@ public class FastQueue implements IQueue {
      */
     private boolean doStats = false;
 
-    /**
-     *  
-     */
     private boolean inAdd = false;
 
-    /**
-     *  
-     */
     private boolean inRemove = false;
 
-    /**
-     *  
-     */
     private boolean inMutex = false;
 
     /**
@@ -141,14 +132,8 @@ public class FastQueue implements IQueue {
      */
     private long avgSize = 0;
 
-    /*
-     *  
-     */
     private int maxSizeSample = 0;
 
-    /*
-     *  
-     */
     private long avgSizeSample = 0;
 
     /**
@@ -206,7 +191,7 @@ public class FastQueue implements IQueue {
         lock.setRemoveWaitTimeout(removeWaitTimeout);
     }
 
-    /*
+    /**
      * get Max Queue length
      * 
      * @see org.apache.catalina.cluster.util.IQueue#getMaxQueueLength()
@@ -230,42 +215,42 @@ public class FastQueue implements IQueue {
         }
     }
 
-    /*
+    /**
      * @return Returns the checkLock.
      */
     public boolean isCheckLock() {
         return checkLock;
     }
 
-    /*
+    /**
      * @param checkLock The checkLock to set.
      */
     public void setCheckLock(boolean checkLock) {
         this.checkLock = checkLock;
     }
 
-    /*
+    /**
      * @return Returns the doStats.
      */
     public boolean isDoStats() {
         return doStats;
     }
 
-    /*
+    /**
      * @param doStats The doStats to set.
      */
     public void setDoStats(boolean doStats) {
         this.doStats = doStats;
     }
 
-    /*
+    /**
      * @return Returns the timeWait.
      */
     public boolean isTimeWait() {
         return timeWait;
     }
 
-    /*
+    /**
      * @param timeWait The timeWait to set.
      */
     public void setTimeWait(boolean timeWait) {
@@ -426,7 +411,8 @@ public class FastQueue implements IQueue {
         return sz;
     }
 
-    /* Add new data to the queue
+    /**
+     * Add new data to the queue
      * @see org.apache.catalina.cluster.util.IQueue#add(java.lang.String, java.lang.Object)
      * FIXME extract some method
      */
@@ -436,7 +422,7 @@ public class FastQueue implements IQueue {
 
         if (!enabled) {
             if (log.isInfoEnabled())
-                log.info("FastQueue: queue disabled, add aborted");
+                log.info("FastQueue.add: queue disabled, add aborted");
             return false;
         }
 
@@ -450,7 +436,7 @@ public class FastQueue implements IQueue {
             }
 
             if (log.isTraceEnabled()) {
-                log.trace("FastQueue: add starting with size " + size);
+                log.trace("FastQueue.add: starting with size " + size);
             }
             if (checkLock) {
                 if (inAdd)
@@ -464,7 +450,7 @@ public class FastQueue implements IQueue {
             if ((maxQueueLength > 0) && (size >= maxQueueLength)) {
                 ok = false;
                 if (log.isTraceEnabled()) {
-                    log.trace("FastQueue: Could not add, since queue is full ("
+                    log.trace("FastQueue.add: Could not add, since queue is full ("
                             + size + ">=" + maxQueueLength + ")");
                 }
 
@@ -477,7 +463,7 @@ public class FastQueue implements IQueue {
                     if (last == null) {
                         ok = false;
                         log
-                                .error("FastQueue: Could not add, since last is null although size is "
+                                .error("FastQueue.add: Could not add, since last is null although size is "
                                         + size + " (>0)");
                     } else {
                         last.append(element);
@@ -509,24 +495,24 @@ public class FastQueue implements IQueue {
             }
 
             if (first == null) {
-                log.error("FastQueue: first is null, size is " + size
+                log.error("FastQueue.add: first is null, size is " + size
                         + " at end of add");
             }
             if (last == null) {
-                log.error("FastQueue: last is null, size is " + size
+                log.error("FastQueue.add: last is null, size is " + size
                         + " at end of add");
             }
 
             if (checkLock) {
                 if (!inMutex)
-                    log.warn("FastQueue: Cancelled by other mutex in add");
+                    log.warn("FastQueue.add: Cancelled by other mutex in add");
                 inMutex = false;
                 if (!inAdd)
-                    log.warn("FastQueue: Cancelled by other add");
+                    log.warn("FastQueue.add: Cancelled by other add");
                 inAdd = false;
             }
             if (log.isTraceEnabled()) {
-                log.trace("FastQueue: add ending with size " + size);
+                log.trace("FastQueue.add: add ending with size " + size);
             }
 
             if (timeWait) {
@@ -541,7 +527,8 @@ public class FastQueue implements IQueue {
         return ok;
     }
 
-    /* remove the complete queued object list
+    /**
+     * remove the complete queued object list
      * @see org.apache.catalina.cluster.util.IQueue#remove()
      * FIXME extract some method
      */
@@ -552,7 +539,7 @@ public class FastQueue implements IQueue {
 
         if (!enabled) {
             if (log.isInfoEnabled())
-                log.info("FastQueue: queue disabled, remove aborted");
+                log.info("FastQueue.remove: queue disabled, remove aborted");
             return null;
         }
 
@@ -571,11 +558,10 @@ public class FastQueue implements IQueue {
                         removeErrorCounter++;
                     }
                     if (log.isInfoEnabled())
-                        log
-                                .info("FastQueue: Remove aborted although queue enabled");
+                        log.info("FastQueue.remove: Remove aborted although queue enabled");
                 } else {
                     if (log.isInfoEnabled())
-                        log.info("FastQueue: queue disabled, remove aborted");
+                        log.info("FastQueue.remove: queue disabled, remove aborted");
                 }
                 return null;
             }
@@ -585,14 +571,14 @@ public class FastQueue implements IQueue {
             }
 
             if (log.isTraceEnabled()) {
-                log.trace("FastQueue: remove starting with size " + size);
+                log.trace("FastQueue.remove: remove starting with size " + size);
             }
             if (checkLock) {
                 if (inRemove)
-                    log.warn("FastQueue: Detected other remove");
+                    log.warn("FastQueue.remove: Detected other remove");
                 inRemove = true;
                 if (inMutex)
-                    log.warn("FastQueue: Detected other mutex in remove");
+                    log.warn("FastQueue.remove: Detected other mutex in remove");
                 inMutex = true;
             }
 
@@ -604,7 +590,7 @@ public class FastQueue implements IQueue {
                 } else {
                     removeErrorCounter++;
                     log
-                            .error("FastQueue: Could not remove, since first is null although size is "
+                            .error("FastQueue.remove: Could not remove, since first is null although size is "
                                     + size + " (>0)");
                 }
             }
@@ -614,14 +600,14 @@ public class FastQueue implements IQueue {
 
             if (checkLock) {
                 if (!inMutex)
-                    log.warn("FastQueue: Cancelled by other mutex in remove");
+                    log.warn("FastQueue.remove: Cancelled by other mutex in remove");
                 inMutex = false;
                 if (!inRemove)
-                    log.warn("FastQueue: Cancelled by other remove");
+                    log.warn("FastQueue.remove: Cancelled by other remove");
                 inRemove = false;
             }
             if (log.isTraceEnabled()) {
-                log.trace("FastQueue: remove ending with size " + size);
+                log.trace("FastQueue.remove: remove ending with size " + size);
             }
 
             if (timeWait) {

@@ -666,6 +666,11 @@ public class DataSender implements IDataSender {
        if(isConnected())
            return ;
        try {
+           throw new Exception("open socket") ;
+       } catch ( Exception ex2) {
+           log.debug("open socket exception",ex2);
+       }
+       try {
             createSocket();
             if (isWaitForAck())
                 socket.setSoTimeout((int) ackTimeout);

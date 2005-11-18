@@ -273,15 +273,16 @@ public class FastAsyncSocketSender extends DataSender {
 
     // --------------------------------------------------------- Public Methods
 
-    /*
-     * Connect to socket and start background thread to ppush queued messages
+    /**
+     * Connect to socket and start background thread to push queued messages
      * 
      * @see org.apache.catalina.cluster.tcp.IDataSender#connect()
      */
     public void connect() throws java.io.IOException {
         super.connect();
         checkThread();
-        queue.start() ;
+        if(!queue.isEnabled())
+            queue.start() ;
     }
 
     /**
@@ -291,25 +292,30 @@ public class FastAsyncSocketSender extends DataSender {
      */
     public void disconnect() {
         stopThread();
+        // delete "remove" lock at queue
         queue.stop() ;
+        // enable that sendMessage can add new messages
+        queue.start() ;
+        // close socket
         super.disconnect();
     }
 
     /**
      * Send message to queue for later sending.
      * 
-     * @see org.apache.catalina.cluster.tcp.IDataSender#sendMessage(ClusterData)
+     * @see org.apache.catalina.cluster.tcp.DataSender#pushMessage(ClusterData)
      */
-    public void sendMessage(String messageid, ClusterData data)
+    public void sendMessage(ClusterData data)
             throws java.io.IOException {
-        queue.add(messageid, data);
+        queue.add(data.getUniqueId(), data);
         synchronized (this) {
             inQueueCounter++;
-            queueThread.incQueuedNrOfBytes(data.getMessage().length);
-       }
-       if (log.isTraceEnabled())
+            if(queueThread != null)
+                queueThread.incQueuedNrOfBytes(data.getMessage().length);
+        }
+        if (log.isTraceEnabled())
             log.trace(sm.getString("AsyncSocketSender.queue.message",
-                    getAddress().getHostAddress(), new Integer(getPort()), messageid, new Long(
+                    getAddress().getHostAddress(), new Integer(getPort()), data.getUniqueId(), new Long(
                             data.getMessage().length)));
     }
 
@@ -417,17 +423,20 @@ public class FastAsyncSocketSender extends DataSender {
         }
 
 
-        public void stopRunning() {
+        /**
+         * Stop backend thread!
+         */
+         public void stopRunning() {
             keepRunning = false;
         }
         
         
-        /* Get the objects from queue and send all mesages to the sender.
+        /**
+         * Get the objects from queue and send all mesages to the sender.
          * @see java.lang.Runnable#run()
          */
         public void run() {
             while (keepRunning) {
-                long queueSize;
                 LinkObject entry = getQueuedMessage();
                 if (entry != null) {
                     pushQueuedMessages(entry);
@@ -442,7 +451,8 @@ public class FastAsyncSocketSender extends DataSender {
         }
 
         /**
-         * @return
+         * Get List of queue cluster messages
+         * @return list of cluster messages
          */
         protected LinkObject getQueuedMessage() {
             // get a link list of all queued objects
