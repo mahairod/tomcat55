@@ -43,6 +43,9 @@
         Added Eclipse .project, .classpath, and associated files to make building Tomcat from
         Eclipse significantly easier. (markt)
       </add>
+      <add> 
+        <bug>37284</bug>: Guess JSE 5.0 location on Mac OS X, patch by Stepan Koltsov. (yoavs)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Catalina">
