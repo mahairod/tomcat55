@@ -90,32 +90,32 @@ public class PooledSocketSender extends DataSender {
 
     //  ----------------------------------------------------- Public Methode
 
-    public void connect() throws java.io.IOException {
+    public synchronized void connect() throws java.io.IOException {
         //do nothing, happens in the socket sender itself
         senderQueue.open();
         setSocketConnected(true);
         connectCounter++;
     }
 
-    public void disconnect() {
+    public synchronized void disconnect() {
         senderQueue.close();
         setSocketConnected(false);
         disconnectCounter++;
     }
 
     /**
-     * send Message and use a pool of SocketSenders
+     * send message and use a pool of SocketSenders
      * 
      * @param messageId Message unique identifier
      * @param data Message data
      * @throws java.io.IOException
      */
-    public void sendMessage(String messageId, ClusterData data) throws IOException {
+    public void sendMessage(ClusterData data) throws IOException {
         //get a socket sender from the pool
         if(!isConnected()) {
             synchronized(this) {
-            if(!isConnected())
-                connect();
+                if(!isConnected())
+                    connect();
             }
         }
         SocketSender sender = senderQueue.getSender(0);
