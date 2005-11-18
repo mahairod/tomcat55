@@ -145,6 +145,13 @@
   <subsection name="Cluster">
     <changelog>
       <fix>
+        Fix that sendMessage signature at all DataSender subclasses must be changed.
+        Now pooled and async modes working as expected. (pero)
+      </fix>
+      <fix>
+        Fix that socket at o.a.c.cluster.tcp.FastAsyncSocketSender can be disconnect/connect. (pero)
+      </fix>    
+      <fix>
         Fix cluster module build.xml script for new svn repository structure (pero)
       </fix>    
       <fix>

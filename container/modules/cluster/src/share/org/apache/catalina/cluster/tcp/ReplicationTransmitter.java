@@ -822,7 +822,6 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
         // FIXME add Stats how much comress and uncompress messages and bytes are transfered
         if ((isCompress() && msg.getCompress() != ClusterMessage.FLAG_FORBIDDEN)
                 || msg.getCompress() == ClusterMessage.FLAG_ALLOWED) {
-            System.out.println("msg compress: " + msg.getUniqueId() );
             gout = new GZIPOutputStream(outs);
             out = new ObjectOutputStream(gout);
         } else {

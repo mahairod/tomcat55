@@ -196,6 +196,7 @@ public class SingleRemoveSynchronizedAddLock {
      */
     public synchronized boolean lockRemove() {
         removeLocked=false;
+        removeEnabled=true;
         if ( ( addLocked || ! dataAvailable ) && removeEnabled ) {
             remover=Thread.currentThread();
             do {

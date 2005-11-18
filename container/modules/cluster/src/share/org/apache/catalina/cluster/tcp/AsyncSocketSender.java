@@ -152,23 +152,23 @@ public class AsyncSocketSender extends DataSender {
         super.disconnect();
     }
 
-    /*
+    /**
      * Send message to queue for later sending
      * 
-     * @see org.apache.catalina.cluster.tcp.IDataSender#sendMessage(java.lang.String,
-     *      byte[])
+     * @see org.apache.catalina.cluster.tcp.DataSender#pushMessage(ClusterData)
      */
-    public void sendMessage(String messageid, ClusterData data)
+    public void sendMessage(ClusterData data)
             throws java.io.IOException {
-        SmartQueue.SmartEntry entry = new SmartQueue.SmartEntry(messageid, data);
+        SmartQueue.SmartEntry entry = new SmartQueue.SmartEntry(data.getUniqueId(), data);
         queue.add(entry);
         synchronized (this) {
             inQueueCounter++;
-            queueThread.incQueuedNrOfBytes(data.getMessage().length);
+            if(queueThread != null)
+                queueThread.incQueuedNrOfBytes(data.getMessage().length);
        }
         if (log.isTraceEnabled())
             log.trace(sm.getString("AsyncSocketSender.queue.message",
-                    getAddress().getHostAddress(), new Integer(getPort()), messageid, new Long(
+                    getAddress().getHostAddress(), new Integer(getPort()), data.getUniqueId(), new Long(
                             data.getMessage().length)));
     }
 
