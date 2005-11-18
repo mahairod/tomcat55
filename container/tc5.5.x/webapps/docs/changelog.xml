@@ -133,6 +133,10 @@
         <bug>37062</bug>: Helpful JSP exception message containing file, line numbers.  Patch by
         Tim Fennell at http://www.tfenne.com/jasper/. (yoavs)
       </add>
+      <fix>
+        <bug>37407</bug>: File descriptor leak in JspReader.  Thanks to Fred for the patch.  I also
+        did some minor cleanup in the class. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Cluster">
