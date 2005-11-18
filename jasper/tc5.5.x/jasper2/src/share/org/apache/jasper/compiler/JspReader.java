@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.io.CharArrayWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Vector;
 import java.util.jar.JarFile;
 import java.net.URL;
@@ -48,26 +49,64 @@ import org.apache.jasper.JspCompilationContext;
 
 class JspReader {
 
-    // Logger
+    /**
+     * Logger.
+     */
     private Log log = LogFactory.getLog(JspReader.class);
 
+    /**
+     * The current spot in the file.
+     */
     private Mark current;
+
+    /**
+     * What is this?
+     */
     private String master;
-    private Vector sourceFiles;
+
+    /**
+     * The list of source files.
+     */
+    private List sourceFiles;
+
+    /**
+     * The current file ID (-1 indicates an error or no file).
+     */
     private int currFileId;
+
+    /**
+     * Seems redundant.
+     */
     private int size;
+
+    /**
+     * The compilation context.
+     */
     private JspCompilationContext context;
+
+    /**
+     * The Jasper error dispatcher.
+     */
     private ErrorDispatcher err;
 
-    /*
+    /**
      * Set to true when using the JspReader on a single file where we read up
      * to the end and reset to the beginning many times.
      * (as in ParserController.figureOutJspDocument()).
      */
     private boolean singleFile;
 
-    /*
+    /**
      * Constructor.
+     *
+     * @param ctxt The compilation context
+     * @param fname The file name
+     * @param encoding The file encoding
+     * @param jarFile ?
+     * @param err The error dispatcher
+     * @throws JasperException If a Jasper-internal error occurs
+     * @throws FileNotFoundException If the JSP file is not found (or is unreadable)
+     * @throws IOException If an IO-level error occurs, e.g. reading the file
      */
     public JspReader(JspCompilationContext ctxt,
                      String fname,
@@ -81,8 +120,9 @@ class JspReader {
              err);
     }
 
-    /*
-     * Constructor.
+    /**
+     * Constructor: same as above constructor but with initialized reader
+     * to the file given.
      */
     public JspReader(JspCompilationContext ctxt,
                      String fname,
@@ -100,7 +140,7 @@ class JspReader {
         pushFile(fname, encoding, reader);
     }
 
-    /*
+    /**
      * @return JSP compilation context with which this JspReader is 
      * associated
      */
@@ -108,10 +148,22 @@ class JspReader {
         return context;
     }
     
-    String getFile(int fileid) {
-        return (String) sourceFiles.elementAt(fileid);
+    /**
+     * Returns the file at the given position in the list.
+     *
+     * @param fileid The file position in the list
+     * @return The file at that position, if found, null otherwise
+     */
+    String getFile(final int fileid) {
+        return (String) sourceFiles.get(fileid);
     }
-        
+       
+    /**
+     * Checks if the current file has more input.
+     *
+     * @return True if more reading is possible
+     * @throws JasperException if an error occurs
+     */ 
     boolean hasMoreInput() throws JasperException {
         if (current.cursor >= current.stream.length) {
             if (singleFile) return false; 
@@ -476,11 +528,14 @@ class JspReader {
      *
      * @return The index of the now registered file.
      */
-    private int registerSourceFile(String file) {
-        if (sourceFiles.contains(file))
+    private int registerSourceFile(final String file) {
+        if (sourceFiles.contains(file)) {
             return -1;
-        sourceFiles.addElement(file);
+        }
+
+        sourceFiles.add(file);
         this.size++;
+
         return sourceFiles.size() - 1;
     }
     
@@ -493,10 +548,12 @@ class JspReader {
      *
      * @return The index of the now registered file.
      */
-    private int unregisterSourceFile(String file) {
-        if (!sourceFiles.contains(file))
+    private int unregisterSourceFile(final String file) {
+        if (!sourceFiles.contains(file)) {
             return -1;
-        sourceFiles.removeElement(file);
+        }
+
+        sourceFiles.remove(file);
         this.size--;
         return sourceFiles.size() - 1;
     }
@@ -515,6 +572,17 @@ class JspReader {
         int fileid = registerSourceFile(longName);
 
         if (fileid == -1) {
+            // Bugzilla 37407: http://issues.apache.org/bugzilla/show_bug.cgi?id=37407
+            if(reader != null) {
+                try {
+                    reader.close();
+                } catch (Exception any) {
+                    if(log.isDebugEnabled()) {
+                        log.debug("Exception closing reader: ", any);
+                    }
+                }
+            }
+
             err.jspError("jsp.error.file.already.registered", file);
         }
 
@@ -542,7 +610,11 @@ class JspReader {
             if (reader != null) {
                 try {
                     reader.close();
-                } catch (Exception any) {}
+                } catch (Exception any) {
+                    if(log.isDebugEnabled()) {
+                        log.debug("Exception closing reader: ", any);
+                    }
+                }
             }
         }
     }
@@ -551,7 +623,7 @@ class JspReader {
      * Pop a file from the file stack.  The field "current" is retored
      * to the value to point to the previous files, if any, and is set
      * to null otherwise.
-     * @return true is there is a previous file on the stck.
+     * @return true is there is a previous file on the stack.
      *         false otherwise.
      */
     private boolean popFile() throws JasperException {
