@@ -724,26 +724,26 @@ public abstract class RealmBase
 
         // Which user principal have we already authenticated?
         Principal principal = request.getPrincipal();
+        boolean status = false;
+        boolean denyfromall = false;
         for(int i=0; i < constraints.length; i++) {
             SecurityConstraint constraint = constraints[i];
             String roles[] = constraint.findAuthRoles();
             if (roles == null)
                 roles = new String[0];
 
-            if (constraint.getAllRoles())
-                return (true);
+            if (constraint.getAllRoles() && !denyfromall)
+                status = true;
 
             if (log.isDebugEnabled())
                 log.debug("  Checking roles " + principal);
 
             if (roles.length == 0) {
                 if(constraint.getAuthConstraint()) {
-                    response.sendError
-                        (HttpServletResponse.SC_FORBIDDEN,
-                         sm.getString("realmBase.forbidden"));
                     if( log.isDebugEnabled() )
                         log.debug("No roles ");
-                    return (false); // No listed roles means no access at all
+                    status = false; // No listed roles means no access at all
+                    denyfromall = true;
                 } else {
                     if(log.isDebugEnabled())
                         log.debug("Passing all access");
@@ -752,25 +752,24 @@ public abstract class RealmBase
             } else if (principal == null) {
                 if (log.isDebugEnabled())
                     log.debug("  No user authenticated, cannot grant access");
-                response.sendError
-                    (HttpServletResponse.SC_FORBIDDEN,
-                     sm.getString("realmBase.notAuthenticated"));
-                return (false);
-            }
+                status = false;
+            } else if(!denyfromall) {
 
-
-            for (int j = 0; j < roles.length; j++) {
-                if (hasRole(principal, roles[j]))
-                    return (true);
-                if( log.isDebugEnabled() )
-                    log.debug( "No role found:  " + roles[j]);
+                for (int j = 0; j < roles.length; j++) {
+                    if (hasRole(principal, roles[j]))
+                        status = true;
+                    if( log.isDebugEnabled() )
+                        log.debug( "No role found:  " + roles[j]);
+                }
             }
         }
         // Return a "Forbidden" message denying access to this resource
-        response.sendError
-            (HttpServletResponse.SC_FORBIDDEN,
-             sm.getString("realmBase.forbidden"));
-        return (false);
+        if(!status) {
+            response.sendError
+                (HttpServletResponse.SC_FORBIDDEN,
+                 sm.getString("realmBase.forbidden"));
+        }
+        return status;
 
     }
     
