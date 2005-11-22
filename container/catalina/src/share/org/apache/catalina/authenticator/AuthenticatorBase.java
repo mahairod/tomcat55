@@ -468,28 +468,33 @@ public abstract class AuthenticatorBase
              */
             return;
         }
-       
-        for(i=0; i < constraints.length; i++) {
-            // Authenticate based upon the specified login configuration
-            if (constraints[i].getAuthConstraint()) {
-                if (log.isDebugEnabled()) {
-                    log.debug(" Calling authenticate()");
-                }
-                if (!authenticate(request, response, config)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug(" Failed authenticate() test");
-                    }
-                    /*
-                     * ASSERT: Authenticator already set the appropriate
-                     * HTTP status code, so we do not have to do anything
-                     * special
-                     */
-                    return;
-                } else {
-                    break;
-                }
-            }
+
+        // Since authenticate modifies the response on failure,
+        // we have to check for allow-from-all first.
+        boolean authRequired = true;
+        for(i=0; i < constraints.length && authRequired; i++) {
+            if(!constraints[i].getAuthConstraint()) {
+                authRequired = false;
+            } 
         }
+             
+        if(authRequired) {  
+            if (log.isDebugEnabled()) {
+                log.debug(" Calling authenticate()");
+            }
+            if (!authenticate(request, response, config)) {
+                if (log.isDebugEnabled()) {
+                    log.debug(" Failed authenticate() test");
+                }
+                /*
+                 * ASSERT: Authenticator already set the appropriate
+                 * HTTP status code, so we do not have to do anything
+                 * special
+                 */
+                return;
+            } 
+        }
+    
         if (log.isDebugEnabled()) {
             log.debug(" Calling accessControl()");
         }
