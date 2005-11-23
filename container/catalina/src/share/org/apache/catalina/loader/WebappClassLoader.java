@@ -835,6 +835,11 @@ public class WebappClassLoader
         if (log.isDebugEnabled())
             log.debug("    findClass(" + name + ")");
 
+        // Cannot load anything from local repositories if class loader is stopped
+        if (!started) {
+            throw new ClassNotFoundException(name);
+        }
+
         // (1) Permission to define this class when using a SecurityManager
         if (securityManager != null) {
             int i = name.lastIndexOf('.');
@@ -1227,10 +1232,13 @@ public class WebappClassLoader
             log.debug("loadClass(" + name + ", " + resolve + ")");
         Class clazz = null;
 
-        // Don't load classes if class loader is stopped
+        // Log access to stopped classloader
         if (!started) {
-            log.info(sm.getString("webappClassLoader.stopped", name));
-            throw new ThreadDeath();
+            try {
+                throw new IllegalStateException();
+            } catch (IllegalStateException e) {
+                log.info(sm.getString("webappClassLoader.stopped", name), e);
+            }
         }
 
         // (0) Check our previously loaded local class cache
