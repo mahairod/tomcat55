@@ -85,7 +85,7 @@
       </update>
       <update>
         Update messages and stack traces for classloading errors which may occur when removing
-        a web application. (remm)
+        a web application, and for stopped web applications. (remm)
       </update>
       <fix>
         <bug>37319</bug>: Fix catalina.bat reference to CATALINA_BASE for logging.properties.  Thanks
@@ -132,6 +132,10 @@
       </add>
       <update>Connection Timeout is normal, so reduce logging to DEBUG (billbarker) 
       </update>
+      <fix>
+        Fix crash which could occur with the HTTP APR connector when accessing request JMX objects
+        outside of the processing of the said request (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
