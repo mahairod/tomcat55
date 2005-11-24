@@ -136,6 +136,10 @@
         Fix crash which could occur with the HTTP APR connector when accessing request JMX objects
         outside of the processing of the said request (remm)
       </fix>
+      <fix>
+        <bug>37627</bug>: Fix buffering issue in the HTTP APR connector when a large buffer size was
+        used for servlets (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
