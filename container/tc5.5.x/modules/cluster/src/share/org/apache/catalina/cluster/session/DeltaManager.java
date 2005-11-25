@@ -1509,7 +1509,8 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         byte[] delta = msg.getSession();
         DeltaSession session = (DeltaSession) findSession(msg.getSessionID());
         if (session != null) {
-            log.debug(sm.getString("deltaManager.receiveMessage.delta",
+            if (log.isDebugEnabled())
+                log.debug(sm.getString("deltaManager.receiveMessage.delta",
                     getName(), msg.getSessionID()));
             DeltaRequest dreq = loadDeltaRequest(session, delta);
             dreq.execute(session, notifyListenersOnReplication);
