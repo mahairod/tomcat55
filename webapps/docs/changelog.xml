@@ -160,6 +160,9 @@
   <subsection name="Cluster">
     <changelog>
       <fix>
+        Fix that session replace messages are logged after node recovery get all session from master node. (pero)
+      </fix>
+      <fix>
         Fix that sendMessage signature at all DataSender subclasses must be changed.
         Now pooled and async modes working as expected. (pero)
       </fix>
