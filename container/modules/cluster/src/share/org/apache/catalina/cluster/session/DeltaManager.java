@@ -738,7 +738,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 session.resetDeltaRequest();
                 // FIXME How inform other session id cache like SingleSignOn
                 // increment sessionCounter to correct stats report
-                if (findSession(session.getIdInternal()) != null ) {
+                if (findSession(session.getIdInternal()) == null ) {
                     sessionCounter++;
                 } else {
                     sessionReplaceCounter++;
