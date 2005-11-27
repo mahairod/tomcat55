@@ -347,12 +347,12 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
     }
 
 
-    protected String getPathWithoutContext(String contextPath, String servletPath) {
+    protected String getPathWithoutContext(String servletPath) {
         String retVal = null;
-        
-        if (contextPath.length() >= 0) {
+        int secondSlash = servletPath.indexOf('/', 1);
+        if (secondSlash >= 0) {
             //cut off context
-            retVal = servletPath.substring(contextPath.length());
+            retVal = servletPath.substring(secondSlash);
         }
         return retVal;
     }
@@ -403,19 +403,17 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
             if (isVirtualWebappRelative) {
                 return new ServletContextAndPath(context, normalized);
             } else {
-                String contextPath = getContextPath(normalized);
-                if (contextPath == null) {
+                ServletContext normContext = context.getContext(normalized);
+                if (normContext == null) {
                     throw new IOException("Couldn't get context for path: "
                             + normalized);
                 }
-                ServletContext normContext = context.getContext(contextPath);
-
                 //If it's the root context, then there is no context element
                 // to remove,
                 // ie:
                 // '/file1.shtml' vs '/appName1/file1.shtml'
                 if (!isRootContext(normContext)) {
-                    String noContext = getPathWithoutContext(contextPath, normalized);
+                    String noContext = getPathWithoutContext(normalized);
                     if (noContext == null) {
                         throw new IOException(
                                 "Couldn't remove context from path: "
@@ -429,38 +427,17 @@ public class SSIServletExternalResolver implements SSIExternalResolver {
         }
     }
 
-    // Looks for the longest matching context path
-    protected String getContextPath(String uri) {
-        String candidatePath = uri;
-        ServletContext contextFound = null;
-        String result = null;
-        
-        while (true) {
-            contextFound = context.getContext(candidatePath);
-            if (contextFound != null) {
-                result = candidatePath;
-                break;
-            }
-            
-            int slash = candidatePath.lastIndexOf('/');
-            if (slash < 0)
-                break;
-            
-            candidatePath = candidatePath.substring(0, slash);
-        }
-        return result;
-    }
 
     //Assumes servletContext is not-null
     //Assumes that identity comparison will be true for the same context
-    //Assuming the above, getContext("") will be non-null as long as the root
+    //Assuming the above, getContext("/") will be non-null as long as the root
     // context is
     // accessible.
     //If it isn't, then servletContext can't be the root context anyway, hence
     // they will
     // not match.
     protected boolean isRootContext(ServletContext servletContext) {
-        return servletContext == servletContext.getContext("");
+        return servletContext == servletContext.getContext("/");
     }
 
 
