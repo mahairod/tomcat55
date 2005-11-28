@@ -29,9 +29,10 @@
 
   <section name="Current Status Summary">
     <p>
-      <b>Tomcat 5.0.29</b> was released on October 6th, 2004.  Work on the 5.0 branch is primarily
-      for maintenance and bug fixes.  It is still considered the best branch for production use, but
-      Tomcat 5.5 is rapidly nearing a stable release.
+      Tomcat 5.0 is in maintenance-only mode, with no regular release schedule.  
+      <b>Tomcat 5.0.30</b> was the last Tomcat release: it was voted as Beta quality, so 
+      <b>Tomcat 5.0.28</b> is the latest stable one for users of the 5.0 branch.  All users
+      are encouraged to update to Tomcat 5.5.
     </p>
     <p>
       <b>Tomcat 5.5</b> has several major goals.  They are discussed in the tomcat-dev
