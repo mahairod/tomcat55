@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -184,12 +184,18 @@ public class ReplicationListener extends ClusterReceiverBase
     }
 
     /**
-     * Close Selector
+     * Close Selector.
+     *
      * @see org.apache.catalina.cluster.tcp.ClusterReceiverBase#stopListening()
      */
-    protected void stopListening(){
+    protected void stopListening() {
+        // Bugzilla 37529: http://issues.apache.org/bugzilla/show_bug.cgi?id=37529
+        doListen = false;
         if ( selector != null ) {
             try {
+                for(int i = 0; i < getTcpThreadCount(); i++) {
+                    selector.wakeup();
+                }
                 selector.close();
             } catch ( Exception x ) {
                 log.error("Unable to close cluster receiver selector.",x);
@@ -197,7 +203,6 @@ public class ReplicationListener extends ClusterReceiverBase
                 selector = null;                
             }
         }
-        doListen = false;
    }
         
     // ----------------------------------------------------------
