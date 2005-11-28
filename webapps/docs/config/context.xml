@@ -231,6 +231,11 @@
         but allows full webapp hot deploy and undeploy on platforms 
         or configurations where file locking can occur.
         If not specified, the default value is <code>false</code>.</p>
+   
+        <p>Please note that setting this to <code>true</code> has some side effects,
+        including the disabling of JSP reloading in a running server: see
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=37668">Bugzilla 37668</a>.
+        </p>
       </attribute>
 
       <attribute name="cacheMaxSize" required="false">
