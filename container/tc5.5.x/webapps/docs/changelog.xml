@@ -107,6 +107,9 @@
       <fix>
         <bug>37591</bug>: Typo in Engine configuration reference. (yoavs)
       </fix>
+      <fix>
+        <bug>37668</bug>: Added note about JSP recompilation to Context configuration documentation. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
