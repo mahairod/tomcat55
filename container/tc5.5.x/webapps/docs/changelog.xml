@@ -110,6 +110,10 @@
       <fix>
         <bug>37668</bug>: Added note about JSP recompilation to Context configuration documentation. (yoavs)
       </fix>
+      <fix>
+        <bug>37132</bug>: Have DigestAuthenticator Handle user names with commas.  Thanks to 
+          Robert Wille for the patch. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
