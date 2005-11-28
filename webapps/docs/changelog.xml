@@ -46,6 +46,9 @@
       <add> 
         <bug>37284</bug>: Guess JSE 5.0 location on Mac OS X, patch by Stepan Koltsov. (yoavs)
       </add>
+      <fix>
+        <bug></bug>: Wrong class name in antlib.xml for JkStatusUpdateTask. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Catalina">
