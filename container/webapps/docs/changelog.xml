@@ -114,6 +114,10 @@
         <bug>37132</bug>: Have DigestAuthenticator Handle user names with commas.  Thanks to 
           Robert Wille for the patch. (yoavs)
       </fix>
+      <fix>
+        <bug>37212</bug>: Better error reporting in Connector.java.  Thanks to Ralf Hauser for
+        the patch. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
