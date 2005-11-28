@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -221,9 +221,8 @@ public class DigestAuthenticator
             return (null);
         authorization = authorization.substring(7).trim();
 
-
-        StringTokenizer commaTokenizer =
-            new StringTokenizer(authorization, ",");
+        // Bugzilla 37132: http://issues.apache.org/bugzilla/show_bug.cgi?id=37132
+        String[] tokens = authorization.split(",(?=(?:[^\"]*\"[^\"]*\")+$)");
 
         String userName = null;
         String realmName = null;
@@ -235,8 +234,11 @@ public class DigestAuthenticator
         String response = null;
         String method = request.getMethod();
 
-        while (commaTokenizer.hasMoreTokens()) {
-            String currentToken = commaTokenizer.nextToken();
+        for (int i = 0; i < tokens.length; i++) {
+            String currentToken = tokens[i];
+            if (currentToken.length() == 0)
+                continue;
+
             int equalSign = currentToken.indexOf('=');
             if (equalSign < 0)
                 return null;
