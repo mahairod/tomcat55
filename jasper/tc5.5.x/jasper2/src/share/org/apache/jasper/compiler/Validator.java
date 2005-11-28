@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1531,7 +1531,7 @@ class Validator {
 		}
                 errMsg.append("<h3>");
                 errMsg.append(Localizer.getMessage("jsp.error.tlv.invalid.page",
-						   tli.getShortName()));
+						   tli.getShortName(), compiler.getPageInfo().getJspFile()));
                 errMsg.append("</h3>");
                 for (int i=0; i<errors.length; i++) {
 		    if (errors[i] != null) {
