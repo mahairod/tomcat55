@@ -69,7 +69,7 @@
 
       <attribute name="jvmRoute" required="false">
         <p>Identifier which must be used in load balancing scenarios to enable
-        session affinity. The indetifier, which must be unique across all
+        session affinity. The identifier, which must be unique across all
         Tomcat 5 servers which participate in the cluster, will be appended to
         the generated session identifier, therefore allowing the front end
         proxy to always forward a particular session to the same Tomcat 5

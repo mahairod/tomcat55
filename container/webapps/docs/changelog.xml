@@ -101,7 +101,11 @@
       <fix>Fix for a couple of (mostly silly) edge-cases in testing auth.
            Thanks to Nam T. Nguyen for the report. (billbarker) 
       </fix>
-      <fix><bug>37060</bug>: Actually copy the Request headers when replaying after Form auth. (billbarker)
+      <fix>
+        <bug>37060</bug>: Actually copy the Request headers when replaying after Form auth. (billbarker)
+      </fix>
+      <fix>
+        <bug>37591</bug>: Typo in Engine configuration reference. (yoavs)
       </fix>
     </changelog>
   </subsection>
