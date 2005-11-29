@@ -158,6 +158,10 @@
         <bug>37627</bug>: Fix buffering issue in the HTTP APR connector when a large buffer size was
         used for servlets (remm)
       </fix>
+      <fix>
+        <bug>37673</bug>: Fix implementation of getLocalPort and getLocalAddr in the HTTP APR connector
+        (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
