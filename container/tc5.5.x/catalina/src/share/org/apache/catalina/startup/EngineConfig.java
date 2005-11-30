@@ -33,11 +33,11 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision$ $Date$
  */
 
-public final class EngineConfig
+public class EngineConfig
     implements LifecycleListener {
 
 
-    private static org.apache.commons.logging.Log log=
+    protected static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( EngineConfig.class );
 
     // ----------------------------------------------------- Instance Variables
@@ -46,13 +46,13 @@ public final class EngineConfig
     /**
      * The Engine we are associated with.
      */
-    private Engine engine = null;
+    protected Engine engine = null;
 
 
     /**
      * The string resources for this package.
      */
-    private static final StringManager sm =
+    protected static final StringManager sm =
         StringManager.getManager(Constants.Package);
 
 
@@ -83,13 +83,13 @@ public final class EngineConfig
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // -------------------------------------------------------- Protected Methods
 
 
     /**
      * Process a "start" event for this Engine.
      */
-    private void start() {
+    protected void start() {
 
         if (engine.getLogger().isDebugEnabled())
             engine.getLogger().debug(sm.getString("engineConfig.start"));
@@ -100,7 +100,7 @@ public final class EngineConfig
     /**
      * Process a "stop" event for this Engine.
      */
-    private void stop() {
+    protected void stop() {
 
         if (engine.getLogger().isDebugEnabled())
             engine.getLogger().debug(sm.getString("engineConfig.stop"));

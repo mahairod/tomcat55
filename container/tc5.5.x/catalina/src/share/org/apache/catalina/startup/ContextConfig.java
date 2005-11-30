@@ -67,7 +67,7 @@ import org.xml.sax.SAXParseException;
  * @version $Revision$ $Date$
  */
 
-public final class ContextConfig
+public class ContextConfig
     implements LifecycleListener {
 
     protected static org.apache.commons.logging.Log log=
@@ -79,7 +79,7 @@ public final class ContextConfig
     /*
      * Custom mappings of login methods to authenticators
      */
-    private Map customAuthenticators;
+    protected Map customAuthenticators;
 
 
     /**
@@ -170,7 +170,7 @@ public final class ContextConfig
     protected static long deploymentCount = 0L;
     
     
-    private static final LoginConfig DUMMY_LOGIN_CONFIG =
+    protected static final LoginConfig DUMMY_LOGIN_CONFIG =
                                 new LoginConfig("NONE", null, null, null);
 
 
