@@ -27,6 +27,7 @@ import java.util.HashMap;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import org.apache.naming.resources.ResourceAttributes;
+import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
 import org.apache.catalina.Host;
@@ -37,6 +38,7 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.digester.Digester;
 
 
 /**
@@ -62,6 +64,12 @@ public class HostConfig
 
 
     /**
+     * The <code>Context</code> that was added via a call to
+     * <code>addChild()</code> while parsing the configuration descriptor.
+     */
+    private Context context = null;
+
+    /**
      * The Java class name of the Context implementation we should use.
      */
     protected String contextClass = "org.apache.catalina.core.StandardContext";
@@ -80,6 +88,15 @@ public class HostConfig
     protected ArrayList deployed = new ArrayList();
 
 
+    /**
+     * The <code>Digester</code> instance to use for parsing web application
+     * deployment descriptors.  <strong>WARNING</strong> - Usage of this
+     * instance must be appropriately synchronized to prevent simultaneous
+     * access by multiple threads.
+     */
+    private Digester digester = null;
+
+    
     /**
      * The Host we are associated with.
      */
@@ -382,6 +399,10 @@ public class HostConfig
                 String contextPath = "/" + file;
                 if (file.equals("ROOT")) {
                     contextPath = "";
+                } else {
+                	String path = getContextPath(dir);
+                	if (path != null)
+                		contextPath = path;
                 }
                 if (host.findChild(contextPath) != null) {
                     continue;
@@ -404,6 +425,74 @@ public class HostConfig
 
     }
 
+    
+    /**
+     * Get the path from a context defined by an XML context descriptor.
+     */
+    protected synchronized String getContextPath(File configFile) {
+        InputStream stream = null;
+        String contextPath = null;
+        try {
+            URL config = new URL("file", null, configFile.getCanonicalPath());
+            stream = config.openStream();
+            Digester digester = createDigester();
+            digester.setDebug(getDebug());
+            digester.clear();
+            digester.push(this);
+            digester.parse(stream);
+            stream.close();
+            stream = null;
+            if (context !=null) {
+            	contextPath = context.getPath();
+            }
+        } catch (Exception e) {
+          log( "Parse exception :", e );
+          return null;
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (Throwable t) {
+                    ;
+                }
+            }
+        	digester.push(null);
+            context = null;
+        }
+        return contextPath;
+    }
+
+
+    /**
+     * Create (if necessary) and return a Digester configured to process the
+     * context configuration descriptor for an application.
+     */
+    protected Digester createDigester() {
+
+        if (digester == null) {
+            digester = new Digester();
+            digester.setValidating(false);
+            digester.addRuleSet(new ContextRuleSet(""));
+            digester.addRuleSet(new NamingRuleSet("Context/"));
+        }
+        return (digester);
+    }
+
+    
+    /**
+     * Used by digester to add a context in {@link getContextPath}.
+     */
+    public void addChild(Container child) {
+        context = (Context) child;
+    }
+
+
+    /**
+     * Delegate a request for the parent class loader to our associated Host.
+     */
+    public ClassLoader getParentClassLoader() {
+        return (host.getParentClassLoader());
+    }
 
     /**
      * Deploy WAR files.
