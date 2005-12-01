@@ -232,6 +232,19 @@
     </attribute>
 
     </attributes>
+    
+    <p>
+    An example SSL Connector declaration can be:
+    <source>
+    &lt;Connector port="443" maxHttpHeaderSize="8192"
+               maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+               enableLookups="false" disableUploadTimeout="true"
+               acceptCount="100" scheme="https" secure="true"
+               SSLEngine="on" 
+               SSLCertificateFile="${catalina.base}/conf/localhost.crt"
+               SSLCertificateKeyFile="${catalina.base}/conf/localhost.key" /&gt;</source>
+    </p>
+    
     </subsection>
 	
     <subsection name="AJP">
