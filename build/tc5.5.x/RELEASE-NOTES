@@ -158,7 +158,7 @@ definition.
 
 Using the invoker servlet in a production environment is not recommended and
 is unsupported.  More details are available on the Tomcat FAQ at
-http://jakarta.apache.org/tomcat/faq/misc.html#invoker.
+http://tomcat.apache.org/faq/misc.html#invoker.
 
 
 ==============================
@@ -171,4 +171,4 @@ See changelog.html in this directory.
 When all else fails:
 ====================
 See the FAQ
-http://jakarta.apache.org/tomcat/faq/
+http://tomcat.apache.org/faq/
