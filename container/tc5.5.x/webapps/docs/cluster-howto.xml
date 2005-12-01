@@ -940,15 +940,18 @@ List of Attributes<br/>
   
 </p>
 <p>
-Example send all sessions at blocks. Serialize and send 100 session inside on block.<br/>
+Example send all sessions at separate blocks. Serialize and send 100 session inside one block.
+Wait maximale two minutes before the complete backup sessions are loaded inside tomcat boot process.
+Between send blocks wait 5 secs to transfers the session block to other node. This save memory
+when you use the async modes with queues.<br/>
 <source>
-    &lt;Sender
-      className="org.apache.catalina.cluster.tcp.ReplicationTransmitter"
-      replicationMode="fastasyncqueue"
-      sendAllSessions="false"
-      sendAllSessionsSize="100"
-      keepAliveTimeout="-1"
-      keepAliveMaxRequestCount="-1"/&gt;
+    &lt;Cluster className="org.apache.catalina.tcp.SimpleTcpCluster"
+      managerClassName="org.apache.catalina.cluster.session.DeltaManager"
+      manager.stateTransferTimeout="120"
+      manager.sendAllSessions="false"
+      manager.sendAllSessionsSize="100"
+      manager.sendAllSessionsWaitTime="5000"
+      "/&gt;
 </source>
 </p>
 <p>
@@ -981,7 +984,12 @@ set CATALINA_OPTS=\
 <li>Install the mx4j-tools.jar at common/lib (use the same mx4j version as your tomcat release)</li>
 <li>Configure a MX4J JMX HTTP Adaptor at your AJP Connector<p></p>
 <source>
-&lt;Connector port="${AJP.PORT}" handler.list="mx" mx.enabled="true" mx.httpHost="${JMX.HOST}" mx.httpPort="${JMX.PORT}" protocol="AJP/1.3" /&gt;
+&lt;Connector port="${AJP.PORT}" 
+   handler.list="mx"
+   mx.enabled="true" 
+   mx.httpHost="${JMX.HOST}" 
+   mx.httpPort="${JMX.PORT}" 
+   protocol="AJP/1.3" /&gt;
 </source>
 </li>
 <li>Start your tomcat and look with your browser to http://${JMX.HOST}:${JMX.PORT}</li>
@@ -1042,8 +1050,8 @@ List of Cluster Mbeans<br/>
   <tr>
     <td>DeltaManager</td>
     <td>This manager control the sessions and handle session replication </td>
-    <td><code>type=Manager,path=${APP.CONTEXT.PATH},host=${HOST}</code></td>
-    <td><code>type=Manager,path=${APP.CONTEXT.PATH},host=${HOST}</code></td>
+    <td><code>type=Manager,path=${APP.CONTEXT.PATH}, host=${HOST}</code></td>
+    <td><code>type=Manager,path=${APP.CONTEXT.PATH}, host=${HOST}</code></td>
   </tr>
 
   <tr>
