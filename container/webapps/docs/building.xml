@@ -169,14 +169,26 @@ under the IDE, and so on.
 
 <p>
 Use Windows-&gt;Preferences and then Java-&gt;Build Path-&gt;Classpath
-Variables to add a new Classpath variable called "TOMCAT_LIBS_BASE" and
-set this to the base path where the binary dependencies have been
-downloaded.
+Variables to add two new Classpath variables:
+</p>
+
+<p>
+<table border="1">
+ <tr><td>TOMCAT_LIBS_BASE</td><td>the base path where the binary dependencies have been downloaded</td></tr>
+ <tr><td>ANT_HOME</td><td>the base path of Ant 1.6.2 or later</td></tr>
+</table>
+</p>
+
+<p>
 Use File-&gt;New Project to create a new Java project 
 for each of the binaries repository (e.g., /usr/share/java), 
 container, connectors, jasper, servletapi. 
 Unless you thought ahead to make the ${tomcat.source} directory be under
-your Workspace folder, tell Eclipse the external location.
+your Workspace folder, tell Eclipse the external location using &quot;Import/Export...&quot;,
+General-&gt;Existing Project into Workspace.
+</p>
+
+<p>
 Eclipse .project and .classpath files are provided in each of these
 directories so Eclipse should find all source trees and jars, and
 hopefully compile without problems. <b>Note</b> that these
