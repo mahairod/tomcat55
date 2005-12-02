@@ -31,7 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -180,7 +180,15 @@ public class JspC implements Options {
      */
     private List extensions;
 
-    private Vector pages = new Vector();
+    /**
+     * The pages.
+     */
+    private List pages = new Vector();
+
+    /**
+     * Needs better documentation, this data member does.
+     * True by default.
+     */
     private boolean errorOnUseBeanInvalidClassAttribute = true;
 
     /**
@@ -198,9 +206,15 @@ public class JspC implements Options {
     private CharArrayWriter servletout;
     private CharArrayWriter mappingout;
 
+    /**
+     * The servlet context.
+     */
     private JspCServletContext context;
 
-    // Maintain a dummy JspRuntimeContext for compiling tag files
+    /**
+     * The runtime context.
+     * Maintain a dummy JspRuntimeContext for compiling tag files.
+     */
     private JspRuntimeContext rctxt;
 
     /**
@@ -339,8 +353,10 @@ public class JspC implements Options {
         // Add all extra arguments to the list of files
         while( true ) {
             String file = nextFile();
-            if( file==null ) break;
-            pages.addElement( file );
+            if( file==null ) {
+                break;
+            }
+            pages.add( file );
         }
     }
 
@@ -673,26 +689,43 @@ public class JspC implements Options {
         }
     }
 
-    /*
-     * Parses comma-separated list of JSP files to be processed.
+    /**
+     * Parses comma-separated list of JSP files to be processed.  If the argument
+     * is null, nothing is done.
      *
      * <p>Each file is interpreted relative to uriroot, unless it is absolute,
-     * in which case it must start with uriroot.
+     * in which case it must start with uriroot.</p>
      *
      * @param jspFiles Comma-separated list of JSP files to be processed
      */
-    public void setJspFiles(String jspFiles) {
-        StringTokenizer tok = new StringTokenizer(jspFiles, " ,");
+    public void setJspFiles(final String jspFiles) {
+        if(jspFiles == null) {
+            return;
+        }
+
+        StringTokenizer tok = new StringTokenizer(jspFiles, ",");
         while (tok.hasMoreTokens()) {
-            pages.addElement(tok.nextToken());
+            pages.add(tok.nextToken());
         }
     }
 
-    public void setCompile( boolean b ) {
-        compile=b;
+    /**
+     * Sets the compile flag.
+     *
+     * @param b Flag value
+     */
+    public void setCompile( final boolean b ) {
+        compile = b;
     }
 
-    public void setVerbose( int level ) {
+    /**
+     * Sets the verbosity level.  The actual number doesn't
+     * matter: if it's greater than zero, the verbose flag will
+     * be true.
+     *
+     * @param level Positive means verbose
+     */
+    public void setVerbose( final int level ) {
         if (level > 0) {
             verbose = true;
             showSuccess = true;
@@ -1021,7 +1054,7 @@ public class JspC implements Options {
                         ext = files[i].substring(files[i].lastIndexOf('.') +1);
                         if (getExtensions().contains(ext) ||
                             jspConfig.isJspPage(uri)) {
-                            pages.addElement(path);
+                            pages.add(path);
                         }
                     }
                 }
@@ -1029,7 +1062,15 @@ public class JspC implements Options {
         }
     }
 
+    /**
+     * Executes the compilation.
+     *
+     * @throws JasperException If an error occurs
+     */
     public void execute() throws JasperException {
+        if(log.isDebugEnabled()) {
+            log.debug("execute() starting for " + pages.size() + " pages.");
+        }
 
         try {
             if (uriRoot == null) {
@@ -1037,7 +1078,7 @@ public class JspC implements Options {
                     throw new JasperException(
                         Localizer.getMessage("jsp.error.jspc.missingTarget"));
                 }
-                String firstJsp=(String)pages.elementAt( 0 );
+                String firstJsp = (String) pages.get( 0 );
                 File firstJspF = new File( firstJsp );
                 if (!firstJspF.exists()) {
                     throw new JasperException(
@@ -1069,9 +1110,9 @@ public class JspC implements Options {
 
             initWebXml();
 
-            Enumeration e = pages.elements();
-            while (e.hasMoreElements()) {
-                String nextjsp = e.nextElement().toString();
+            Iterator iter = pages.iterator();
+            while (iter.hasNext()) {
+                String nextjsp = iter.next().toString();
                 File fjsp = new File(nextjsp);
                 if (!fjsp.isAbsolute()) {
                     fjsp = new File(uriRootF, nextjsp);
