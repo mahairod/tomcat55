@@ -10,9 +10,8 @@
 	<classpathentry kind="src" path="webapps/jmxremote/WEB-INF/src"/>
 	<classpathentry kind="src" path="webapps/manager/WEB-INF/classes"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/apache-ant-1.6.5/lib/ant.jar"/>
+	<classpathentry kind="var" path="ANT_HOME/lib/ant.jar"/>
 	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/commons-logging-1.0.4/commons-logging-api.jar"/>
-	<classpathentry kind="src" path="connectors"/>
 	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/commons-modeler-1.1/commons-modeler.jar"/>
 	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/mx4j-3.0.1/lib/mx4j.jar"/>
 	<classpathentry kind="var" path="TOMCAT_LIBS_BASE/commons-launcher-0.9/bin/commons-launcher.jar"/>
