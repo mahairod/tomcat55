@@ -1,5 +1,5 @@
 /*
- *  Copyright 1999-2004 The Apache Software Foundation
+ *  Copyright 1999-2005 The Apache Software Foundation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,7 +36,12 @@ import org.apache.coyote.Request;
  * @author <a href="mailto:remm@apache.org">Remy Maucherat</a>
  */
 public class InternalInputBuffer implements InputBuffer {
-
+    /**
+     * Logger.
+     */
+    private static org.apache.commons.logging.Log log 
+        = org.apache.commons.logging.LogFactory.getLog(InternalInputBuffer.class);
+    
 
     // -------------------------------------------------------------- Constants
 
@@ -730,8 +735,14 @@ public class InternalInputBuffer implements InputBuffer {
         if (parsingHeader) {
 
             if (lastValid == buf.length) {
-                throw new IOException
-                    (sm.getString("iib.requestheadertoolarge.error"));
+                // Bugzilla 36742: http://issues.apache.org/bugzilla/show_bug.cgi?id=36742
+                String err = sm.getString("iib.requestheadertoolarge.error");
+
+                if(log.isDebugEnabled()) {
+                    log.debug(err);
+                }
+
+                throw new IOException(err);
             }
 
             nRead = inputStream.read(buf, pos, buf.length - lastValid);
