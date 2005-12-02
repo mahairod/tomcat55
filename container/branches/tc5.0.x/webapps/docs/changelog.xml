@@ -14,19 +14,6 @@
 
 <body>
 
-<section name="Tomcat 5.0.32 (yoavs)">
-  <subsection name="General">
-    <changelog>
-      <fix>
-        <bug>32210</bug>: Fixed Realm HowTo. (yoavs)
-      </fix>
-      <fix>
-        <bug>33204</bug>: Fixed SSL HowTo. (yoavs)
-      </fix>
-    </changelog>
-  </subsection>
-</section>
-
 <section name="Tomcat 5.0.31 (yoavs)">
   <subsection name="General">
     <changelog>
@@ -45,6 +32,12 @@
       <fix>
         <bug>32603</bug>: Updated Host doc to reflect appBase resolution. (yoavs)
       </fix>
+      <fix>
+        <bug>32210</bug>: Fixed Realm HowTo. (yoavs)
+      </fix>
+      <fix>
+        <bug>33204</bug>: Fixed SSL HowTo. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
@@ -56,6 +49,15 @@
       <fix>
         <bug>32137</bug>: Possible thread-safety issue in RealmBase. (yoavs)
       </fix>
+    </changelog>
+  </subsection>
+
+  <subsection name="Coyote">
+    <changelog>
+      <add>
+        <bug>36742</bug>: Add DEBUG-level warning message to InternalInputBuffer, as suggested by
+        Greg Steuck. (yoavs)
+      </add>
     </changelog>
   </subsection>
 
