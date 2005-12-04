@@ -22,6 +22,10 @@
 
   <subsection name="Catalina">
     <changelog>
+      <fix>
+        <bug>13040</bug>Fix getContext() when used to obtain a context that is a sub-context
+        of the current context. Ported from TC4. (markt) 
+      </fix>
     </changelog>
   </subsection>
 
