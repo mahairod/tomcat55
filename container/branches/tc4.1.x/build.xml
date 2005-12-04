@@ -21,9 +21,13 @@
   <property name="jtc.final-src.name"    value="${jtc.project}-${version}-src" />
   <property name="servlet.doc"           value="${servlet.home}/docs/api" />
 
+  <!-- Source dependencies -->
+  <property name="jasper.home"      value="${basedir}/../jasper/jasper2"/>
+  <property name="jtc.home"         value="${basedir}/../connectors"/>
+
   <!-- Build Defaults -->
   <property name="catalina.build"   value="${basedir}/catalina/build"/>
-  <property name="jasper.build"     value="${basedir}/jasper/build"/>
+  <property name="jasper.build"     value="${jasper.home}/build"/>
   <property name="javaservice.home" value="../javaservice"/>
   <property name="nsis.home"        value="c:\program files\nsis"/>
   <property name="servlet.home"     value="${basedir}/../servletapi/dist"/>
@@ -31,11 +35,6 @@
   <property name="tomcat.dist"      value="${basedir}/dist"/>
   <property name="webapps.build"    value="${basedir}/webapps/build"/>
   <property name="webapps.dist"     value="${basedir}/webapps/dist"/>
-
-
-  <!-- Source dependencies -->
-  <property name="jasper.home"      value="${basedir}/../jasper/jasper2"/>
-  <property name="jtc.home"         value="${basedir}/../connectors"/>
 
 
   <!-- =================== DETECT: Display configuration ================== -->
@@ -224,13 +223,14 @@
       <fileset dir="${basedir}">
         <exclude name="**/build/**"/>
         <exclude name="**/dist/**"/>
-        <exclude name="jasper/**"/>
         <exclude name="build.properties"/>
       </fileset>
     </copy>
     <mkdir  dir="${tomcat.dist}/src/jasper"/>
     <copy todir="${tomcat.dist}/src/jasper">
-      <fileset dir="${jasper.home}"/>
+      <fileset dir="${jasper.home}">
+        <exclude name="**/build/**"/>
+      </fileset>
     </copy>
     <mkdir  dir="${tomcat.dist}/jtc-src"/>
     <copy todir="${tomcat.dist}/jtc-src">
