@@ -705,7 +705,7 @@
   </target>
   <target name="copy-jmx.jar" if="copy.jmx.jar">
     <copy todir="${catalina.build}/server/lib" file="${jmx.jar}"/>
-    <copy todir="${catalina.build}/server/lib" file="../lib/mx4j.license"/>
+    <copy tofile="${catalina.build}/server/lib/mx4j.license" file="${jmx.license}"/>
   </target>
   <target name="copy-jndi.jar" if="copy.jndi.jar">
     <copy todir="${catalina.build}/common/lib" file="${jndi.jar}"/>

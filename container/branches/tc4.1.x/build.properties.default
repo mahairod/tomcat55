@@ -189,6 +189,7 @@ jdbc20ext.jar=${jdbc20ext.lib}/jdbc2_0-stdext.jar
 jmx.home=${base.path}/mx4j-1.1.1
 jmx.lib=${jmx.home}/lib
 jmx.jar=${jmx.lib}/mx4j-jmx.jar
+jmx.license=${jmx.home}/LICENSE
 jmx.loc=http://telia.dl.sourceforge.net/sourceforge/mx4j/mx4j-1.1.1.tar.gz
 
 
