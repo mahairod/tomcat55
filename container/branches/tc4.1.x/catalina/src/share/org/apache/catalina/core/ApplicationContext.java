@@ -404,8 +404,8 @@ public class ApplicationContext implements ServletContext {
      * obtain <code>RequestDispatcher</code> objects or resources from the
      * context.  The given path must be absolute (beginning with a "/"),
      * and is interpreted based on our virtual host's document root.
-     *
-     * @param uri Absolute URI of a resource on the server
+     * @param uri a <code>String</code> specifying the context path of a web
+     * application in the container.
      */
     public ServletContext getContext(String uri) {
 
@@ -413,26 +413,24 @@ public class ApplicationContext implements ServletContext {
         if ((uri == null) || (!uri.startsWith("/")))
             return (null);
 
-        // Return the current context if requested
-        String contextPath = context.getPath();
-        if (!contextPath.endsWith("/"))
-            contextPath = contextPath + "/";
-
-        if (((contextPath.length() > 1) && (uri.startsWith(contextPath))) ||
-            ((contextPath.equals("/")) && (uri.equals("/")))) {
-            return (this);
-        }
-
-        // Return other contexts only if allowed
-        if (!context.getCrossContext())
-            return (null);
+        // Use the host mapper to match the uri to a context
         try {
             Host host = (Host) context.getParent();
             Context child = host.map(uri);
-            if (child != null)
-                return (child.getServletContext());
-            else
-                return (null);
+            if (child != null) {
+            	// Without crossContext, can only return the current context
+                if (context.getCrossContext()) {
+                	return child.getServletContext();
+                } else {
+                	if (context == child) {
+                		return (this);
+                	} else {
+                		return (null);
+                	}
+                }
+            } else {
+            	return (null);
+            }
         } catch (Throwable t) {
             return (null);
         }
@@ -1105,28 +1103,6 @@ public class ApplicationContext implements ServletContext {
             }
         }
         parameters = results;
-
-    }
-
-
-    /**
-     * List resource paths (recursively), and store all of them in the given
-     * Set.
-     */
-    private static void listPaths(Set set, DirContext resources, String path)
-        throws NamingException {
-
-        Enumeration childPaths = resources.listBindings(path);
-        while (childPaths.hasMoreElements()) {
-            Binding binding = (Binding) childPaths.nextElement();
-            String name = binding.getName();
-            String childPath = path + "/" + name;
-            set.add(childPath);
-            Object object = binding.getObject();
-            if (object instanceof DirContext) {
-                listPaths(set, resources, childPath);
-            }
-        }
 
     }
 
