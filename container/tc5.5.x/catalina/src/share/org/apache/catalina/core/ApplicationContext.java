@@ -208,22 +208,9 @@ public class ApplicationContext
         if ((uri == null) || (!uri.startsWith("/")))
             return (null);
 
-        // Return the current context if requested
-        String contextPath = context.getPath();
-        if (!contextPath.endsWith("/"))
-            contextPath = contextPath + "/";
-
-        if (((contextPath.length() > 1) && (uri.startsWith(contextPath))) ||
-            ((contextPath.equals("/")) && (uri.equals("/")))) {
-            return (this);
-        }
-
-        // Return other contexts only if allowed
-        if (!context.getCrossContext())
-            return (null);
+        Context child = null;
         try {
             Host host = (Host) context.getParent();
-            Context child = null;
             String mapuri = uri;
             while (true) {
                 child = (Context) host.findChild(mapuri);
@@ -234,17 +221,23 @@ public class ApplicationContext
                     break;
                 mapuri = mapuri.substring(0, slash);
             }
-            if (child == null) {
-                child = (Context) host.findChild("");
-            }
-            if (child != null)
-                return (child.getServletContext());
-            else
-                return (null);
         } catch (Throwable t) {
             return (null);
         }
 
+        if (child == null)
+            return (null);
+
+        if (context.getCrossContext()) {
+            // If crossContext is enabled, can always return the context
+            return child.getServletContext();
+        } else if (child == context) {
+            // Can still return the current context
+            return context.getServletContext();
+        } else {
+            // Nothing to return
+            return (null);
+        }
     }
 
 
@@ -929,28 +922,6 @@ public class ApplicationContext
             }
         }
         parameters = results;
-
-    }
-
-
-    /**
-     * List resource paths (recursively), and store all of them in the given
-     * Set.
-     */
-    private static void listPaths(Set set, DirContext resources, String path)
-        throws NamingException {
-
-        Enumeration childPaths = resources.listBindings(path);
-        while (childPaths.hasMoreElements()) {
-            Binding binding = (Binding) childPaths.nextElement();
-            String name = binding.getName();
-            String childPath = path + "/" + name;
-            set.add(childPath);
-            Object object = binding.getObject();
-            if (object instanceof DirContext) {
-                listPaths(set, resources, childPath);
-            }
-        }
 
     }
 
