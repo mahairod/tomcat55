@@ -52,7 +52,7 @@ public class AprLifecycleListener
 
     protected static final int REQUIRED_MAJOR = 1;
     protected static final int REQUIRED_MINOR = 1;
-    protected static final int REQUIRED_PATCH = 0;
+    protected static final int REQUIRED_PATCH = 1;
 
 
     // ---------------------------------------------- LifecycleListener Methods
