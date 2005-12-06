@@ -1763,7 +1763,7 @@
   <target name="package-src-tgz">
     <!-- Package Tomcat Source -->
     <fixcrlf srcdir="${tomcat.dist}"
-     excludes="**/*.jar,**/*.gif,**/*.bmp,**/*.jpg,**/*.ico" eol="lf"/>
+     excludes="**/*.jar,**/*.gif,**/*.bmp,**/*.jpg,**/*.ico,**/*.war" eol="lf"/>
     <tar longfile="gnu" compression="gzip"
           tarfile="${tomcat.release}/v${version}/src/${final-src.name}.tar.gz">
       <tarfileset dir="${tomcat.dist}/src" mode="755" prefix="${final-src.name}">
