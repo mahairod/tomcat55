@@ -47,9 +47,13 @@
     <copy    todir="${webapps.build}/${webapp.name}/appdev">
       <fileset dir="appdev" includes="*.txt"/>
     </copy>
+
+    <!-- This copy includes a binary file (sample.war) so it should not have a filter token -->
+    <!-- See Bugzilla 36318: http://issues.apache.org/bugzilla/show_bug.cgi?id=36318 -->
     <copy    todir="${webapps.build}/${webapp.name}/appdev/sample">
       <fileset dir="appdev/sample"/>
     </copy>
+
     <copy   tofile="${webapps.build}/${webapp.name}/appdev/sample/build.xml"
               file="appdev/build.xml.txt"/>
 
