@@ -17,6 +17,12 @@
 <section name="Tomcat 5.5.14 (yoavs)">
   <subsection name="General">
     <changelog>
+      <update>
+        Update optional native APR connector version to 1.1.1. (mturk)
+      </update>
+      <update>
+        Update build.properties.default to get native connector from new location. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
