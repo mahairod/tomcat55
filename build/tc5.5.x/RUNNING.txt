@@ -34,11 +34,11 @@ subdirectory of your source distribution.
 
 (2.1) Download a binary distribution of Tomcat from:
 
-      http://jakarta.apache.org/site/binindex.cgi
+      http://tomcat.apache.org
 
 (2.2) Unpack the binary distribution into a convenient location so that the
       distribution resides in its own directory (conventionally named
-      "jakarta-tomcat-5").  For the purposes of the remainder of this document,
+      "apache-tomcat-[version]").  For the purposes of the remainder of this document,
       the symbolic name "$CATALINA_HOME" is used to refer to the full
       pathname of the release directory.
 
@@ -59,7 +59,7 @@ subdirectory of your source distribution.
 (3.3) Further information about configuring and running Tomcat can be found in
       the documentation included here, as well as on the Tomcat web site:
 
-      http://jakarta.apache.org/tomcat/
+      http://tomcat.apache.org
 
 
 (4) Shut Down Tomcat
@@ -79,7 +79,7 @@ Running Tomcat With J2SE Version 1.4
 (1) Obtain the compat package:
 
 (1.1) Download the compat package from the binary download site:
-      http://jakarta.apache.org/site/binindex.cgi
+      http://tomcat.apache.org
 
       * Or build this package yourself from the source code: see 
         "BUILDING.txt" in this directory.

@@ -1382,7 +1382,7 @@
       </fileset>
     </copy>
 
-    <!-- jakarta-tomcat-5 source -->
+    <!-- tomcat-5 source -->
     <copy todir="${tomcat.dist}/src/${tomcat.project}">
       <fileset dir="${basedir}">
         <exclude name="build/**"/>
@@ -1395,7 +1395,7 @@
       </fileset>
     </copy>
 
-    <!-- jakarta-servletapi-5 source -->
+    <!-- servletapi-5 source -->
     <copy todir="${tomcat.dist}/src/${api.project}">
       <fileset dir="${api.home}">
         <include name="jsr154/**"/>
@@ -1406,7 +1406,7 @@
       </fileset>
     </copy>
 
-    <!-- jakarta-tomcat-5 source -->
+    <!-- tomcat container source -->
     <copy todir="${tomcat.dist}/src/${catalina.project}">
       <fileset dir="${catalina.home}">
         <exclude name="**/build/**"/>
@@ -1414,7 +1414,7 @@
       </fileset>
     </copy>
 
-    <!-- jakarta-tomcat-jasper source -->
+    <!-- tomcat jasper source -->
     <copy todir="${tomcat.dist}/src/${jasper.project}/jasper2">
       <fileset dir="${jasper.home}">
         <exclude name="**/build/**"/>
@@ -1422,7 +1422,7 @@
       </fileset>
     </copy>
 
-    <!-- jakarta-tomcat-connectors source -->
+    <!-- tomcat connectors source -->
     <copy todir="${tomcat.dist}/src/${jtc.project}">
       <fileset dir="${jtc.home}">
         <exclude name="coyote/build/**"/>

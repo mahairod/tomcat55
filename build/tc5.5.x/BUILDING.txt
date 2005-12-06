@@ -35,7 +35,7 @@ do the following:
 
 * Unpack the binary distribution into a convenient location so that the
   Ant release resides in its own directory (conventionally named
-  "jakarta-ant-1.5.x").  For the purposes of the remainder of this document,
+  "apache-ant-[version]").  For the purposes of the remainder of this document,
   the symbolic name "${ant.home}" is used to refer to the full pathname of
   the release directory.
 
@@ -52,7 +52,7 @@ do the following:
 (2.1) Download main build script and build binary distribution
 
 * Download the main build.xml script from:
-  http://jakarta.apache.org/tomcat/tomcat-5.5-doc/build.xml
+  http://tomcat.apache.org/tomcat-5.5-doc/build.xml
 
 * Create a new directory, and copy the newly download build.xml to it. This
   directory will be referred to as the ${tomcat.source} directory in the rest
