@@ -37,6 +37,17 @@
       </fix>
     </changelog>
   </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+       <bug>36863</bug>: Strip quotes when parsing Cookie values, even for v0 Cookies. (billbarker)
+      </fix>
+      <fix>
+       <bug>37803</bug>: Don't claim that we have a string value in MessageBytes until we actually do. 
+           Patch by Doug Rand (billbarker)
+      </fix>
+    </changelog>
+  </subsection>
 </section>
 
 <section name="Tomcat 5.5.13 (yoavs)">
