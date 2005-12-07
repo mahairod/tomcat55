@@ -18,49 +18,58 @@ package org.apache.jasper.runtime;
 
 import java.lang.IllegalStateException;
 import java.io.PrintWriter;
+import java.io.IOException;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import javax.servlet.jsp.*;
+import javax.servlet.jsp.JspWriter;
 
 /**
- * ServletResponseWrapper used for the JSP 'include' action.
+ * ServletResponseWrapper used by the JSP 'include' action.
  *
- * This 'wrapped' response object is passed as the second argument 
- * to the internal RequestDispatcher.include(). It channels
- * all output text into the current JspWriter.
+ * This wrapper response object is passed to RequestDispatcher.include(), so 
+ * that the output of the included resource is appended to that of the
+ * including page.
  *
  * @author Pierre Delisle
  */
 
-public class ServletResponseWrapperInclude
-    extends HttpServletResponseWrapper
-{
+public class ServletResponseWrapperInclude extends HttpServletResponseWrapper {
+	
     /**
      * The PrintWriter writes all output to the JspWriter of the 
      * including page.
      */
-    PrintWriter printWriter;
+    private PrintWriter printWriter;
+    
+    private JspWriter jspWriter;
 
     public ServletResponseWrapperInclude(ServletResponse response, 
-                                         JspWriter jspWriter) 
-    {
+                                         JspWriter jspWriter) {
         super((HttpServletResponse)response);
         this.printWriter = new PrintWriter(jspWriter);
+        this.jspWriter = jspWriter;
     }
 
     /**
      * Returns a wrapper around the JspWriter of the including page.
      */
-    public java.io.PrintWriter getWriter()
-        throws java.io.IOException 
-    {
+    public PrintWriter getWriter() throws java.io.IOException {
         return printWriter;
     }
 
-    public ServletOutputStream getOutputStream()
-        throws java.io.IOException
-    {
+    public ServletOutputStream getOutputStream() throws java.io.IOException {
         throw new IllegalStateException();
+    }
+    
+    /**
+     * Clears the output buffer of the JspWriter associated with the including
+     * page.
+     */
+    public void resetBuffer() {
+	try {
+	    jspWriter.clearBuffer();
+	} catch (IOException ioe) {
+	}
     }
 }
