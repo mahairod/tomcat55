@@ -63,10 +63,6 @@ public final class ApplicationContextFacade
     private HashMap objectCache;
     
     
-    private static org.apache.commons.logging.Log sysLog=
-        org.apache.commons.logging.LogFactory.getLog( ApplicationContextFacade.class );
-
-        
     // ----------------------------------------------------------- Constructors
 
 
@@ -486,22 +482,18 @@ public final class ApplicationContextFacade
 	    throws Throwable {
 
         Throwable realException;
-
-        if (sysLog.isDebugEnabled()) {   
-            sysLog.debug("ApplicationContextFacade." + methodName, ex);
-        }
-
-	if (ex instanceof PrivilegedActionException) {
+        
+        if (ex instanceof PrivilegedActionException) {
             ex = ((PrivilegedActionException) ex).getException();
-	}
-
+        }
+        
         if (ex instanceof InvocationTargetException) {
             realException =
-		((InvocationTargetException) ex).getTargetException();
+                ((InvocationTargetException) ex).getTargetException();
         } else {
             realException = ex;
         }   
-
+        
         throw realException;
     }
 }

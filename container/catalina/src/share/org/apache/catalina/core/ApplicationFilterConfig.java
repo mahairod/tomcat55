@@ -46,9 +46,7 @@ import org.apache.tomcat.util.log.SystemLogHandler;
 
 final class ApplicationFilterConfig implements FilterConfig, Serializable {
 
-    private static org.apache.commons.logging.Log log=
-        org.apache.commons.logging.LogFactory.getLog( ApplicationFilterConfig.class );
- 
+
     // ----------------------------------------------------------- Constructors
 
 
@@ -248,12 +246,11 @@ final class ApplicationFilterConfig implements FilterConfig, Serializable {
         if (this.filter != null){
              if( System.getSecurityManager() != null) {
                 try{
-                    SecurityUtil.doAsPrivilege("destroy",
-                                               filter); 
-                    SecurityUtil.remove(filter);
+                    SecurityUtil.doAsPrivilege("destroy", filter); 
                 } catch(java.lang.Exception ex){                    
-                    log.error("ApplicationFilterConfig.doAsPrivilege", ex);
+                    context.getLogger().error("ApplicationFilterConfig.doAsPrivilege", ex);
                 }
+                SecurityUtil.remove(filter);
             } else { 
                 filter.destroy();
             }
@@ -290,12 +287,11 @@ final class ApplicationFilterConfig implements FilterConfig, Serializable {
             if (this.filter != null){
                  if( System.getSecurityManager() != null) {
                     try{
-                        SecurityUtil.doAsPrivilege("destroy",
-                                                   filter);  
-                        SecurityUtil.remove(filter);
+                        SecurityUtil.doAsPrivilege("destroy", filter);  
                     } catch(java.lang.Exception ex){    
-                        log.error("ApplicationFilterConfig.doAsPrivilege", ex);
+                        context.getLogger().error("ApplicationFilterConfig.doAsPrivilege", ex);
                     }
+                    SecurityUtil.remove(filter);
                 } else { 
                     filter.destroy();
                 }
