@@ -22,6 +22,13 @@
       </fix>
     </changelog>
   </subsection>
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+       <bug>37852</bug>: Fix regression where the magic role '*' was denying all access. Patch by xrcat (billbarker)
+      </fix>
+    </changelog>
+  </subsection>
 </section>
 
 <section name="Tomcat 5.5.14 (yoavs)">
