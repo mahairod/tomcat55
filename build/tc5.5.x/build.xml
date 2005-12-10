@@ -71,6 +71,7 @@
   <property name="compile.debug"        value="true" />
   <property name="compile.deprecation"  value="false" />
   <property name="compile.source"       value="1.4" />
+  <property name="tester.delay"         value="8" />
 
   <!-- =================== DETECT: Display configuration ================== -->
   <target name="detect"
@@ -1204,7 +1205,7 @@
 
         <sequential>
             <!-- Let tomcat starts before starting Tester -->
-            <sleep seconds="8"/>
+            <sleep seconds="${tester.delay}"/>
 
             <ant dir="${catalina.home}/tester/dist/bin" antfile="tester.xml"
                  target="all">
