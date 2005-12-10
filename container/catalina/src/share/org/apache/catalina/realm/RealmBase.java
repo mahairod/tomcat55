@@ -738,7 +738,7 @@ public abstract class RealmBase
             if (log.isDebugEnabled())
                 log.debug("  Checking roles " + principal);
 
-            if (roles.length == 0) {
+            if (roles.length == 0 && !constraint.getAllRoles()) {
                 if(constraint.getAuthConstraint()) {
                     if( log.isDebugEnabled() )
                         log.debug("No roles ");
