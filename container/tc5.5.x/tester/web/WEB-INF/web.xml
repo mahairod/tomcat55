@@ -508,6 +508,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>Authentication06</servlet-name>
+        <servlet-class>org.apache.tester.Authentication06</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>Context00</servlet-name>
         <servlet-class>org.apache.tester.Context00</servlet-class>
         <load-on-startup>99</load-on-startup>
@@ -1106,6 +1111,21 @@
     <servlet-mapping>
         <servlet-name>Authentication05</servlet-name>
         <url-pattern>/disallowed/Authentication05</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Authentication05</servlet-name>
+        <url-pattern>/disallowed/private/Authentication05</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Authentication06</servlet-name>
+        <url-pattern>/allowed/public/Authentication06</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Authentication05</servlet-name>
+        <url-pattern>/allowed/private/Authentication05</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -1987,6 +2007,56 @@
         <web-resource-collection>
             <web-resource-name>No Users Allowed Area</web-resource-name>
             <url-pattern>/disallowed/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Really No Users Allowed Area</web-resource-name>
+            <url-pattern>/disallowed/private/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Really No Users Allowed Area</web-resource-name>
+            <url-pattern>/disallowed/private/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>*</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>All Users Allowed Area</web-resource-name>
+            <url-pattern>/allowed/public/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>*</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>All Users Allowed Area</web-resource-name>
+            <url-pattern>/allowed/public/*</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>All Users Allowed Area</web-resource-name>
+            <url-pattern>/allowed/private/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>*</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>All Users Allowed Area</web-resource-name>
+            <url-pattern>/allowed/private/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
         </auth-constraint>
