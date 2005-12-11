@@ -101,6 +101,22 @@
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
           status="403"/>
 
+    <!-- ========== Combining Constraint Access ============= -->
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+          debug="${debug}"
+         request="${context.path}/disallowed/private/Authentication05"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+          status="403"/>
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+          debug="${debug}"
+         request="${context.path}/allowed/public/Authentication06"
+      outContent="Authentication06 PASSED"/>
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+          debug="${debug}"
+         request="${context.path}/allowed/private/Authentication05"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+          status="403"/>
+
   </target>
 
 
