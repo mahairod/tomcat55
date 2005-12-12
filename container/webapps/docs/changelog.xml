@@ -29,7 +29,7 @@
       </fix>
     </changelog>
   </subsection>
-    <subsection name="Cluster">
+  <subsection name="Cluster">
     <changelog>
       <fix>
        <bug>37808</bug>: Fix ArrayIndexOutOfBoundsException inside XByteBuffer. Reported by Dietmar Mueller (pero)
