@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004 The Apache Software Foundation.
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,14 +28,13 @@ import org.apache.catalina.cluster.tcp.ClusterData;
  * Transfer package:
  * <ul>
  * <li><b>START_DATA/b> - 7 bytes - <i>FLT2002</i></li>
+ * <li><b>COMPRESS</b>  - 4 bytes - is message compressed flag</li>
  * <li><b>SIZE</b>      - 4 bytes - size of the data package</li>
  * <li><b>DATA</b>      - should be as many bytes as the prev SIZE</li>
  * <li><b>END_DATA</b>  - 7 bytes - <i>TLF2003</i></lI>
  * </ul>
  * FIXME: Why we not use a list of byte buffers?
  * FIXME: Used a pool of buffers instead, every time new generation
- * FIXME: Compress mode send real data length at the first bytes?
- * FIXME: s to-do.txt for new format proposal
  *
  * @author Filip Hanik
  * @author Peter Rossbach
@@ -145,7 +144,7 @@ public class XByteBuffer
     /**
      * Internal mechanism to make a check if a complete package exists
      * within the buffer
-     * @return - true if a complete package (header,size,data,footer) exists within the buffer
+     * @return - true if a complete package (header,compress,size,data,footer) exists within the buffer
      */
     public int countPackages()
     {
@@ -157,10 +156,11 @@ public class XByteBuffer
             //first check start header
             int index = XByteBuffer.firstIndexOf(buf,start,START_DATA);
             //if the header (START_DATA) isn't the first thing or
-            //the buffer isn't even 10 bytes
-            if ( index != start || ((bufSize-start)<10) ) break;
-            //then get the size 4 bytes
+            //the buffer isn't even 14 bytes
+            if ( index != start || ((bufSize-start)<14) ) break;
+            //then get the compress 4 bytes
             int compress = toInt(buf, pos);
+            //then get the size 4 bytes
             int size = toInt(buf, pos+4);
             //now the total buffer has to be long enough to hold
             //START_DATA.length+8+size+END_DATA.length
@@ -181,7 +181,7 @@ public class XByteBuffer
 
     /**
      * Method to check if a package exists in this byte buffer.
-     * @return - true if a complete package (header,size,data,footer) exists within the buffer
+     * @return - true if a complete package (header,compress,size,data,footer) exists within the buffer
      */
     public boolean doesPackageExist()  {
         return (countPackages()>0);
@@ -191,7 +191,7 @@ public class XByteBuffer
      * Extracts the message bytes from a package.
      * If no package exists, a IllegalStateException will be thrown.
      * @param clearFromBuffer - if true, the package will be removed from the byte buffer
-     * @return - returns the actual message bytes (header, size and footer not included).
+     * @return - returns the actual message bytes (header, compress,size and footer not included).
      */
     public ClusterData extractPackage(boolean clearFromBuffer)
             throws java.io.IOException {
@@ -211,12 +211,6 @@ public class XByteBuffer
             bufSize = bufSize - totalsize;
             System.arraycopy(buf, totalsize, buf, 0, bufSize);
         }
-        //int size = toInt(buf, START_DATA.length);
-        //byte[] data = new byte[size];
-        //System.arraycopy(buf, START_DATA.length + 4, data, 0, size);
-        //if (clearFromBuffer) {
-        //    int totalsize = START_DATA.length + 4 + size + END_DATA.length;
-
         return cdata;
     }
 
