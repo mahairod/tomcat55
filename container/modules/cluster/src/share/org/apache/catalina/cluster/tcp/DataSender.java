@@ -818,6 +818,9 @@ public class DataSender implements IDataSender {
                     throw xx ;
                 }
             } else {
+                synchronized(this) {
+                    closeSocket();
+                }
                 exception = x;
                 // FIXME Hmm, throw the exception or not?
             }

@@ -29,6 +29,16 @@
       </fix>
     </changelog>
   </subsection>
+    <subsection name="Cluster">
+    <changelog>
+      <fix>
+       <bug>37808</bug>: Fix ArrayIndexOutOfBoundsException inside XByteBuffer. Reported by Dietmar Mueller (pero)
+      </fix>
+      <add>
+        DataSender starts new Socket after IOException. (pero)
+      </add>
+    </changelog>
+  </subsection>
 </section>
 
 <section name="Tomcat 5.5.14 (yoavs)">
