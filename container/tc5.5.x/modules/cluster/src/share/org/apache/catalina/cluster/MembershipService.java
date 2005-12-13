@@ -62,10 +62,18 @@ public interface MembershipService {
      * Stops the membership service
      */
     public void stop();
+    
+    /**
+     * Returns that cluster has members.
+     */
+    public boolean hasMembers();
+    
     /**
      * Returns a list of all the members in the cluster.
      */
+    
     public Member[] getMembers();
+    
     /**
      * Returns the member object that defines this member
      */
@@ -85,12 +93,14 @@ public interface MembershipService {
      * Sets the local member properties for broadcasting
      */
     public void setLocalMemberProperties(String listenHost, int listenPort);
+    
     /**
      * Sets the membership listener, only one listener can be added.
      * If you call this method twice, the last listener will be used.
      * @param listener The listener
      */
     public void addMembershipListener(MembershipListener listener);
+    
     /**
      * removes the membership listener.
      */

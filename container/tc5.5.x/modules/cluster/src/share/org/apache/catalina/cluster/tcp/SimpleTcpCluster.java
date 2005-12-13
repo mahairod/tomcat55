@@ -165,9 +165,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      */
     protected Map managers = new HashMap();
 
-    //sort members by alive time
-    protected MemberComparator memberComparator = new MemberComparator();
-
     private String managerClassName = "org.apache.catalina.cluster.session.DeltaManager";
 
     /**
@@ -395,27 +392,34 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         }
     }
 
+    /**
+     * get current Deployer
+     */
     public org.apache.catalina.cluster.ClusterDeployer getClusterDeployer() {
         return clusterDeployer;
     }
 
+    /**
+     * set a new Deployer, must be set before cluster started!
+     */
     public void setClusterDeployer(
             org.apache.catalina.cluster.ClusterDeployer clusterDeployer) {
         this.clusterDeployer = clusterDeployer;
     }
 
     /**
+     * has members
+     */
+    public boolean hasMembers() {
+        return membershipService.hasMembers();
+    }
+    
+    /**
      * Get all current cluster members
      * @return all members or empty array 
      */
     public Member[] getMembers() {
-        Member[] members = membershipService.getMembers();
-        if(members != null) {
-            //sort by alive time
-            java.util.Arrays.sort(members, memberComparator);
-        } else 
-            members = new Member[0];
-        return members;
+        return membershipService.getMembers();
     }
 
     /**
@@ -1345,31 +1349,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     public ObjectName getObjectName() {
         return objectName;
     }
-
-    // --------------------------------------------- Inner Class
-
-    private class MemberComparator implements java.util.Comparator {
-
-        public int compare(Object o1, Object o2) {
-            try {
-                return compare((Member) o1, (Member) o2);
-            } catch (ClassCastException x) {
-                return 0;
-            }
-        }
-
-        public int compare(Member m1, Member m2) {
-            //longer alive time, means sort first
-            long result = m2.getMemberAliveTime() - m1.getMemberAliveTime();
-            if (result < 0)
-                return -1;
-            else if (result == 0)
-                return 0;
-            else
-                return 1;
-        }
-    }
- 
 
     // ------------------------------------------------------------- deprecated
 

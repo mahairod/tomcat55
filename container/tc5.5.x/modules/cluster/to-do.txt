@@ -1,7 +1,11 @@
 ==============================
 Next actions
 ==============================
-
+- support CrossContext session replication
+    Idea: use endAccess to signal replicationValve that session from other app has changed.
+    refactor ReplicationValve 
+    When session is serialzed from other app, set right app classloader
+    endaccess is also send at CoyoteAdpater for context session as recycle the request
 - Add MbeanFactory to generate dynamic cluster at runtime.
     Problem: How we can start those central services?
     - StandardEngine support load Mbean from external file.     
@@ -199,6 +203,11 @@ would not make sense to transfer the same webapp over and over again.
 ==============================   
 COMPLETED
 ==============================
+5.5.15 (pero)
+- Optimized getMembers access from McastMembership
+    Member list was copied at every access. (Used inside ReplicationValve.invoke)
+    SimpleTcpCluster need a alive time sorted array
+
 5.5.11 (pero)
 - MemoryUser principal from UserDatabaseRealm not handled to replicated 
 	- look inside DeltaRequest.setPrincipal(Principal,boolean)
