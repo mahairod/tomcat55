@@ -58,7 +58,7 @@ public class McastService implements MembershipService,MembershipListener {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "McastService/2.0";
+    private static final String info = "McastService/2.1";
 
     /**
      * The implementation specific properties
@@ -419,7 +419,15 @@ public class McastService implements MembershipService,MembershipListener {
         }
         return null;
     }
- 
+
+    /**
+     * has members?
+     */
+    public boolean hasMembers() {
+       if ( impl == null || impl.membership == null ) return false;
+       return impl.membership.hasMembers();
+    }
+
     /**
      * Return all the members
      */

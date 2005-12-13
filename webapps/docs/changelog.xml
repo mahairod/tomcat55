@@ -37,6 +37,9 @@
       <add>
         DataSender starts new Socket after IOException. (pero)
       </add>
+      <update>
+        Reduce memory usage at membership service. (pero)
+      </update>
     </changelog>
   </subsection>
 </section>
