@@ -16,6 +16,13 @@
 
 package org.apache.catalina.cluster.mcast;
 
+
+import java.net.MulticastSocket;
+import java.io.IOException;
+import java.net.InetAddress ;
+import java.net.DatagramPacket;
+import org.apache.catalina.cluster.MembershipListener;
+
 /**
  * A <b>membership</b> implementation using simple multicast.
  * This is the representation of a multicast membership service.
@@ -27,12 +34,6 @@ package org.apache.catalina.cluster.mcast;
  * @author Filip Hanik
  * @version $Revision$, $Date$
  */
-
-import java.net.MulticastSocket;
-import java.io.IOException;
-import java.net.InetAddress ;
-import java.net.DatagramPacket;
-import org.apache.catalina.cluster.MembershipListener;
 public class McastServiceImpl
 {
     private static org.apache.commons.logging.Log log =

@@ -243,32 +243,32 @@ public class ReplicationValve
         long totalstart = System.currentTimeMillis();
         //this happens before the request
         if (primaryIndicator)
-            createPrimaryIndicator( request) ;
+            createPrimaryIndicator(request) ;
         getNext().invoke(request, response);
         //this happens after the request
         long start = System.currentTimeMillis();
         Manager manager = request.getContext().getManager();
         if (manager != null && manager instanceof ClusterManager) {
             ClusterManager clusterManager = (ClusterManager) manager;
-            CatalinaCluster cluster = (CatalinaCluster) getContainer()
+            CatalinaCluster containerCluster = (CatalinaCluster) getContainer()
                     .getCluster();
-            if (cluster == null) {
+            if (containerCluster == null) {
                 if (log.isWarnEnabled())
                     log.warn(sm.getString("ReplicationValve.nocluster"));
                 return;
             }
-            // valve cluster can access manager - other clusterhandle replication 
+            // valve cluster can access manager - other cluster handle replication 
             // at host level - hopefully!
-            if(cluster.getManager(clusterManager.getName()) == null)
+            if(containerCluster.getManager(clusterManager.getName()) == null)
                 return ;
-            if(cluster.getMembers().length > 0  ) {
+            if(containerCluster.getMembers().length > 0  ) {
                 try {
                     // send invalid sessions
                     // DeltaManager returns String[0]
                     if (!(clusterManager instanceof DeltaManager))
-                        sendInvalidSessions(clusterManager, cluster);
+                        sendInvalidSessions(clusterManager, containerCluster);
                     // send replication
-                    sendSessionReplicationMessage(request, clusterManager, cluster);
+                    sendSessionReplicationMessage(request, clusterManager, containerCluster);
                 } catch (Exception x) {
                     log.error(sm.getString("ReplicationValve.send.failure"), x);
                 } finally {
