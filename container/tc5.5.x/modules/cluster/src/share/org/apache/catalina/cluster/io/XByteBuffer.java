@@ -158,8 +158,7 @@ public class XByteBuffer
             //if the header (START_DATA) isn't the first thing or
             //the buffer isn't even 14 bytes
             if ( index != start || ((bufSize-start)<14) ) break;
-            //then get the compress 4 bytes
-            int compress = toInt(buf, pos);
+            //next 4 bytes are compress flag not needed for count packages
             //then get the size 4 bytes
             int size = toInt(buf, pos+4);
             //now the total buffer has to be long enough to hold
