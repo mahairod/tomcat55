@@ -32,7 +32,7 @@
   <subsection name="Jasper">
     <changelog>
       <fix>
-        <bug>35351</bug>: Fix problem using an inner class for a &lt;jsp:bean /&gt;. (kinman).
+        <bug>35351</bug>: Fix problem using an inner class for a &lt;jsp:useBean /&gt;. (kinman).
       </fix>
     </changelog>
   </subsection>
