@@ -29,6 +29,13 @@
       </fix>
     </changelog>
   </subsection>
+  <subsection name="Jasper">
+    <changelog>
+      <fix>
+        <bug>35351</bug>: Fix problem using an inner class for a &lt;jsp:bean /&gt;. (kinman).
+      </fix>
+    </changelog>
+  </subsection>
   <subsection name="Cluster">
     <changelog>
       <fix>
