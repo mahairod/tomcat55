@@ -74,19 +74,18 @@ problem you are having before reporting a bug.</p>
       will help you resolve the problem.
       Here are four resources to view the Apache Tomcat User List archives:
        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;r=1&amp;w=2">Mailing list ARChives</a>,
-       <a href="http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=tomcat-user@jakarta.apache.org">Eyebrowse</a>,
-       <a href="http://www.mail-archive.com/tomcat-user@jakarta.apache.org">Mail Archive</a>,
+       <a href="http://mail-archives.apache.org/mod_mbox/tomcat-users/">Eyebrowse</a>,
+       <a href="http://www.mail-archive.com/users@tomcat.apache.org/">Mail Archive</a>,
        and <a href="http://mikal.org/interests/java/tomcat/">mikal.org</a>.
 
       Here are four resources to view the Apache Tomcat Developer List archives
       <a href="http://marc.theaimsgroup.com/?l=tomcat-dev&amp;r=1&amp;w=2">Mailing list ARChives</a>,
-      <a href="http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=tomcat-dev@jakarta.apache.org">Eyebrowse</a>,
-      <a href="http://www.mail-archive.com/tomcat-dev@jakarta.apache.org/">Mail Archive</a>,
-      and <a href="http://www.metronet.com/~wjm/tomcat/">Texas Metronet</a>.
+      <a href="http://mail-archives.apache.org/mod_mbox/tomcat-dev/">Eyebrowse</a>,
+      and <a href="http://www.mail-archive.com/dev@tomcat.apache.org/">Mail Archive</a>.
     </p>
     <p>If you have already subscribed to the
-      <a href="mailto:user@tomcat.apache.org">tomcat-user</a>
-      or <a href="mailto:dev@tomcat.apache.org">tomcat-dev</a>
+      <a href="mailto:users@tomcat.apache.org">Tomcat User</a>
+      or <a href="mailto:dev@tomcat.apache.org">Tomcat Developer</a>
       discussion lists you can ask about the problem on those lists.
       If you are not subscribed, you can learn about the lists and subscribe
       <a href="lists.html">here</a>.
@@ -148,7 +147,7 @@ here</a>.<br />
 </p>
 
 <subsection name="Security Issues">
-<p>Security-related bugs are of special concern.  If you have a verified 
+<p>Security-related bugs are of special concern.  If you have a verified
 security bug to report please do not post it
 to email lists or submit a bug report.  Security bugs should be reported
 privately by email to <a href="mailto:security@tomcat.apache.org">

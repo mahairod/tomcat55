@@ -26,7 +26,7 @@
 
   </p>
   <p>
-    <a href="http://jakarta.apache.org/tomcat/connectors-doc/">JK docs.</a>
+    <a href="http://tomcat.apache.org/connectors-doc/">JK docs.</a>
   </p>
 </section>
 
@@ -294,10 +294,10 @@
 </source>
 
     For a more complete description of the Connector config,
-    <a href="http://jakarta.apache.org/tomcat/tomcat-5.0-doc/config/http.html">see the
+    <a href="http://tomcat.apache.org/tomcat-5.0-doc/config/http.html">see the
     HTTP Connector docs</a>
     or the
-    <a href="http://jakarta.apache.org/tomcat/tomcat-5.0-doc/config/http.html">see the
+    <a href="http://tomcat.apache.org/tomcat-5.0-doc/config/http.html">see the
     AJP Connector docs</a>.
 
 
@@ -311,7 +311,7 @@
   <answer>
     You can't: you need to download the source and compile it
     for your platform.  The source distributions are available
-    from the <a href="http://jakarta.apache.org/site/sourceindex.cgi">standard location.</a>
+    from the <a href="http://tomcat.apache.org/download-connectors.cgi">standard location.</a>
     Note that JPackage.org has RPM distributions for the connectors
     as well as tomcat itself: <a href="http://www.jpackage.org">JPackage.org</a>
   </answer>

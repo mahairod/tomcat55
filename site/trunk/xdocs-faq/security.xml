@@ -19,8 +19,8 @@
 <p>
     This FAQ section provides help with some security-related issues.
     If you hear of a vulnerability or its exploitation, please let us know
-    on the user <a href="http://jakarta.apache.org/site/mail2.html#Tomcat">
-    mailing lists.</a>
+    on the <a href="mailto:security@tomcat.apache.org">
+    security@tomcat.apache.org</a>  mailing list.
 </p>
 
 <subsection name="The Record">
@@ -33,7 +33,7 @@
   because this is easy to do with Tomcat's source code openly available,
   there have been only a few <strong>theoretical</strong> vulnerabilities
   found.  All of those were addressed rapidly even though there were no
-  documented cases of actual exploitation of these vulnerabilities.  
+  documented cases of actual exploitation of these vulnerabilities.
 </p>
 </subsection>
 
@@ -185,7 +185,7 @@
     login. Doing so is a security flaw. You need to edit
     <code>$CATALINA_HOME/conf/tomcat-users.xml</code>
     if you are using the default install.
-    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/manager-howto.html#Configuring%20Manager%20Application%20Access">
+    <a href="http://tomcat.apache.org/tomcat-4.1-doc/manager-howto.html#Configuring%20Manager%20Application%20Access">
         Configuring Manager Application Access</a>
   </answer>
 
@@ -197,7 +197,7 @@
   <answer>
     By using the RemoteHostValve or RemoteAddrValve. Warning, these valves rely on
     accurate incoming ip addresses or hostnames. So they can fall victim to spoofing!
-    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/config/valve.html">
+    <a href="http://tomcat.apache.org/tomcat-4.1-doc/config/valve.html">
         Valve Reference Link</a>
   </answer>
 

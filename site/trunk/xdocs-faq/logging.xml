@@ -34,7 +34,7 @@
   <ul>
      <li>
        <a href="#builtIn">
-         Does Tomcat have built-in logging capabilities, and if so how do I 
+         Does Tomcat have built-in logging capabilities, and if so how do I
          use them?
        </a>
      </li>
@@ -57,12 +57,12 @@
         How do I rotate catalina.out?
       </a>
      </li>
-  
+
      <li>
        <a href="#windowsService">
          Where are the logs when running Tomcat as a Windows service?
        </a>
-     </li>   
+     </li>
 
      <li>
        <a href="#externalDocs">
@@ -89,17 +89,17 @@
       <li>Prior to Tomcat 5.5, Tomcat provided a <code>Logger</code> element
           that you could configure and extend according to your needs.  If you
           are using a Tomcat version previous to Tomcat 5.5, make sure to read
-          <a href="http://jakarta.apache.org/tomcat/tomcat-5.0-doc/config/logger.html">
+          <a href="http://tomcat.apache.org/tomcat-5.0-doc/config/logger.html">
           the Logger configuration reference.</a></li>
-      <li>Starting with Tomcat 5.5, <code>Logger</code> was removed and 
+      <li>Starting with Tomcat 5.5, <code>Logger</code> was removed and
           <a href="http://jakarta.apache.org/commons/logging">Jakarta Commons-Logging</a>
           <code>Log</code> is used everywhere in Tomcat.  Read the Commons-Logging documentation
           if you'd like to know how to better use and configure Tomcat's internal logging.</li>
     </ul>
-    
+
     In addition, Tomcat does not swallow the <code>System.out</code> and <code>System.err</code>
-    JVM output streams.  You may use these streams for elementary logging if you wish, but a 
-    more robust approach such as commons-logging or 
+    JVM output streams.  You may use these streams for elementary logging if you wish, but a
+    more robust approach such as commons-logging or
     <a href="http://logging.apache.org/log4j">Log4J</a> is recommended for production
     applications.
   </answer>
@@ -111,11 +111,11 @@
     </a>
   </question>
   <answer>
-    You need to specify a commons-logging configuration file and, if you wish, a 
+    You need to specify a commons-logging configuration file and, if you wish, a
     logging implementation that supports commons-logging.  JDK 1.4 (and later)
     java.util.Logging and <a href="http://logging.apache.org/log4j">Log4j</a>
     are the two most commonly used logging toolkits for Tomcat.  If you supply
-    an external logging toolkit such as Log4J, it needs to be located in the 
+    an external logging toolkit such as Log4J, it needs to be located in the
     $CATALINA_HOME/common/lib directory (for Tomcat 5.0 and earlier) or added
     to the bootstrap classpath by using the scripts in $CATALINA_HOME/bin (this
     is required for Tomcat 5.5 and later, which uses commons-logging while bootstrapping,
@@ -124,7 +124,7 @@
     For more detailed instructions, see these mailing list discussions:
     <ul>
       <li>
-        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=106623436423859&amp;w=2">A log4j example</a> 
+        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=106623436423859&amp;w=2">A log4j example</a>
       </li>
       <li>
         <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=108330970225012&amp;w=2">Logging Configuration</a>

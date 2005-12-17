@@ -474,7 +474,7 @@
     </a>
   </question>
   <answer>
-    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/config/manager.html">
+    <a href="http://tomcat.apache.org/tomcat-4.1-doc/config/manager.html">
         Look at the Session manager component and tweak accordingly.
         One way is to tell tomcat to persist sessions to a path
         which does not exist. (So tomcat will not store, or be able to load the sessions)
@@ -544,11 +544,11 @@
      RTFM! [Add the property <code>address='127.0.0.1'</code>
      to your Connector config.]
      For more detail:
-     <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/config/jk.html">
+     <a href="http://tomcat.apache.org/tomcat-4.1-doc/config/jk.html">
         JK</a>,
-     <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/config/http11.html">
+     <a href="http://tomcat.apache.org/tomcat-4.1-doc/config/http11.html">
         http</a> (legacy),
-     <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/config/coyote.html">
+     <a href="http://tomcat.apache.org/tomcat-4.1-doc/config/coyote.html">
         http</a> (coyote).
   </answer>
 
