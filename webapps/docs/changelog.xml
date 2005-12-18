@@ -27,12 +27,18 @@
       <fix>
        <bug>37852</bug>: Fix regression where the magic role '*' was denying all access. Patch by xrcat (billbarker)
       </fix>
+      <fix>
+       <bug>37934</bug>: Don't ask for authentication if deny-from-all is in effect. (billbarker)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
     <changelog>
       <fix>
         <bug>35351</bug>: Fix problem using an inner class for a &lt;jsp:useBean /&gt;. (kinman).
+      </fix>
+      <fix>
+        <bug>37929</bug>: Don't stop on the generic attribute methods just because the session is invalid. Patch by Pierre Delisle. (billbarker)
       </fix>
     </changelog>
   </subsection>
