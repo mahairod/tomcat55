@@ -40,6 +40,9 @@
       <fix>
         <bug>37929</bug>: Don't stop on the generic attribute methods just because the session is invalid. Patch by Pierre Delisle. (billbarker)
       </fix>
+      <fix>
+        <bug>37933</bug>: Restrict &lt;jsp:getAttribute /&gt; to only look in PAGE_SCOPE. (billbarker)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Cluster">
