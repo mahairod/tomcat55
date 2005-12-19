@@ -1028,9 +1028,9 @@ class Generator {
                 out.printil(
                     "out.write(org.apache.jasper.runtime.JspRuntimeLibrary.toString"
                         + "(org.apache.jasper.runtime.JspRuntimeLibrary.handleGetProperty"
-                        + "(_jspx_page_context.findAttribute(\""
+                        + "(_jspx_page_context.getAttribute(\""
                         + name
-                        + "\"), \""
+                        + "\", PageContext.PAGE_SCOPE), \""
                         + property
                         + "\")));");
             }
