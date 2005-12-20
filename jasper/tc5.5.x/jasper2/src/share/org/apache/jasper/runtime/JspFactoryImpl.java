@@ -40,9 +40,10 @@ public class JspFactoryImpl extends JspFactory {
     private Log log = LogFactory.getLog(JspFactoryImpl.class);
 
     private static final String SPEC_VERSION = "2.0";
-    private static final boolean USE_POOL = true;
+    private static final boolean USE_POOL = 
+        Boolean.parseBoolean(System.getProperty("org.apache.jasper.runtime.JspFactoryImpl.USE_POOL", "true"));
 
-    private SimplePool pool = new SimplePool( 100 );
+    private SimplePool pool = new SimplePool(100);
     
     public PageContext getPageContext(Servlet servlet,
 				      ServletRequest request,
@@ -51,7 +52,6 @@ public class JspFactoryImpl extends JspFactory {
                                       boolean needsSession,
 				      int bufferSize,
                                       boolean autoflush) {
-
 	if( System.getSecurityManager() != null ) {
 	    PrivilegedGetPageContext dp = new PrivilegedGetPageContext(
 		(JspFactoryImpl)this, servlet, request, response, errorPageURL,

@@ -40,6 +40,8 @@ public class BodyContentImpl extends BodyContent {
     
     private static final String LINE_SEPARATOR = 
         System.getProperty("line.separator");
+    private static final boolean LIMIT_BUFFER = 
+        Boolean.parseBoolean(System.getProperty("org.apache.jasper.runtime.BodyContentImpl.LIMIT_BUFFER", "false"));
     
     private char[] cb;
     private int nextChar;
@@ -468,6 +470,10 @@ public class BodyContentImpl extends BodyContent {
             throw new IOException();
         } else {
             nextChar = 0;
+            if (LIMIT_BUFFER && (cb.length > Constants.DEFAULT_TAG_BUFFER_SIZE)) {
+                bufferSize = Constants.DEFAULT_TAG_BUFFER_SIZE;
+                cb = new char[bufferSize];
+            }
         }
     }
     
