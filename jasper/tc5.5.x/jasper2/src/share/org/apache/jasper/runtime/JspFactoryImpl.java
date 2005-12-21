@@ -41,7 +41,7 @@ public class JspFactoryImpl extends JspFactory {
 
     private static final String SPEC_VERSION = "2.0";
     private static final boolean USE_POOL = 
-        Boolean.parseBoolean(System.getProperty("org.apache.jasper.runtime.JspFactoryImpl.USE_POOL", "true"));
+        Boolean.valueOf(System.getProperty("org.apache.jasper.runtime.JspFactoryImpl.USE_POOL", "true")).booleanValue();
 
     private SimplePool pool = new SimplePool(100);
     

@@ -41,7 +41,7 @@ public class BodyContentImpl extends BodyContent {
     private static final String LINE_SEPARATOR = 
         System.getProperty("line.separator");
     private static final boolean LIMIT_BUFFER = 
-        Boolean.parseBoolean(System.getProperty("org.apache.jasper.runtime.BodyContentImpl.LIMIT_BUFFER", "false"));
+        Boolean.valueOf(System.getProperty("org.apache.jasper.runtime.BodyContentImpl.LIMIT_BUFFER", "false")).booleanValue();
     
     private char[] cb;
     private int nextChar;
