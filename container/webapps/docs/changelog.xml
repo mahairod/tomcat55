@@ -30,6 +30,21 @@
       <fix>
        <bug>37934</bug>: Don't ask for authentication if deny-from-all is in effect. (billbarker)
       </fix>
+      <fix>
+       Remove leftover static logger which was used to log application level messages in
+       ApplicationContextFacade (remm)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+       Report binding errors in the APR endpoint as strings rather than platform specific
+       status codes (remm)
+      </fix>
+      <fix>
+       <bug>37934</bug>: Don't ask for authentication if deny-from-all is in effect. (billbarker)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
@@ -40,6 +55,11 @@
       <fix>
         <bug>37929</bug>: Don't stop on the generic attribute methods just because the session is invalid. Patch by Pierre Delisle. (billbarker)
       </fix>
+      <update>
+        Add system properties org.apache.jasper.runtime.BodyContentImpl.LIMIT_BUFFER and
+        org.apache.jasper.runtime.JspFactoryImpl.USE_POOL to allow configuring Jasper
+        memory usage (remm)
+      </update>
       <fix>
         <bug>37933</bug>: Restrict &lt;jsp:getAttribute /&gt; to only look in PAGE_SCOPE. (billbarker)
       </fix>
