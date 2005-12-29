@@ -1772,10 +1772,7 @@ public final class CGIServlet extends HttpServlet {
                             log("runCGI: addHeader(\"" + line + "\")");
                         }
                         if (line.startsWith("HTTP")) {
-                            //TODO: should set status codes (NPH support)
-                            /*
-                             * response.setStatus(getStatusCode(line));
-                             */
+                            response.setStatus(getStatus(line));
                         } else if (line.indexOf(":") >= 0) {
                             String header =
                                 line.substring(0, line.indexOf(":")).trim();
@@ -1851,6 +1848,36 @@ public final class CGIServlet extends HttpServlet {
             }
         }
 
+        /**
+         * Parses the status header and extracts the status code.
+         * 
+         * @param line The HTTP Status-Line (RFC2616, section 6.1)
+         * @return The extracted status code or the code representing an
+         * internal error if a valid status code cannot be extracted. 
+         */
+        private int getStatus(String line) {
+            int statusStart = line.indexOf(' ');
+            
+            if (statusStart < 0 || line.length() < statusStart + 4) {
+                // Not a valid status line
+                log ("runCGI: invalid status line:" + line);
+                return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            }
+            
+            String status = line.substring(statusStart + 1, statusStart + 4);
+            
+            int statusCode;
+            try {
+                statusCode = Integer.parseInt(status);
+            } catch (NumberFormatException nfe) {
+                // Not a valid status code
+                log ("runCGI: invalid status code:" + status);
+                return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            }
+            
+            return statusCode;
+        }
+        
         private void sendToLog(BufferedReader rdr) {
             String line = null;
             int lineCount = 0 ;
