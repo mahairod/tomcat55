@@ -1419,10 +1419,6 @@ public class CGIServlet extends HttpServlet {
      * @version   $Revision$, $Date$
      */
 
-    /**
-     * @author Mark
-     *
-     */
     protected class CGIRunner {
 
         /** script/command to be executed */
