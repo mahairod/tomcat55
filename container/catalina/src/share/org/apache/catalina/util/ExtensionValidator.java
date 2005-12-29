@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
@@ -64,7 +63,6 @@ public final class ExtensionValidator {
     
     private static HashMap containerAvailableExtensions = null;
     private static ArrayList containerManifestResources = new ArrayList();
-    private static ResourceBundle messages = null;
 
 
     // ----------------------------------------------------- Static Initializer
@@ -136,7 +134,6 @@ public final class ExtensionValidator {
 
         String appName = context.getPath();
         ArrayList appManifestResources = new ArrayList();
-        ManifestResource appManifestResource = null;
         // If the application context is null it does not exist and 
         // therefore is not valid
         if (dirContext == null) return false;
