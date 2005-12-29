@@ -1772,13 +1772,17 @@ public final class CGIServlet extends HttpServlet {
                             log("runCGI: addHeader(\"" + line + "\")");
                         }
                         if (line.startsWith("HTTP")) {
-                            response.setStatus(getStatus(line));
+                            response.setStatus(getSCFromHttpStatusLine(line));
                         } else if (line.indexOf(":") >= 0) {
                             String header =
                                 line.substring(0, line.indexOf(":")).trim();
                             String value =
                                 line.substring(line.indexOf(":") + 1).trim(); 
-                            response.addHeader(header , value);
+                            if (header.equalsIgnoreCase("status")) {
+                                response.setStatus(getSCFromCGIStatusHeader(value));
+                            } else {
+                                response.addHeader(header , value);
+                            }
                             if ((header.toLowerCase().equals("content-type"))
                                 && (!value.toLowerCase().startsWith("text"))) {
                                 isBinaryContent = true;
@@ -1849,22 +1853,51 @@ public final class CGIServlet extends HttpServlet {
         }
 
         /**
-         * Parses the status header and extracts the status code.
+         * Parses the Status-Line and extracts the status code.
          * 
          * @param line The HTTP Status-Line (RFC2616, section 6.1)
          * @return The extracted status code or the code representing an
          * internal error if a valid status code cannot be extracted. 
          */
-        private int getStatus(String line) {
-            int statusStart = line.indexOf(' ');
+        private int getSCFromHttpStatusLine(String line) {
+            int statusStart = line.indexOf(' ') + 1;
             
-            if (statusStart < 0 || line.length() < statusStart + 4) {
-                // Not a valid status line
-                log ("runCGI: invalid status line:" + line);
+            if (statusStart < 1 || line.length() < statusStart + 3) {
+                // Not a valid HTTP Status-Line
+                log ("runCGI: invalid HTTP Status-Line:" + line);
                 return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
             }
             
-            String status = line.substring(statusStart + 1, statusStart + 4);
+            String status = line.substring(statusStart, statusStart + 3);
+            
+            int statusCode;
+            try {
+                statusCode = Integer.parseInt(status);
+            } catch (NumberFormatException nfe) {
+                // Not a valid status code
+                log ("runCGI: invalid status code:" + status);
+                return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            }
+            
+            return statusCode;
+        }
+
+        /**
+         * Parses the CGI Status Header value and extracts the status code.
+         * 
+         * @param value The CGI Status value of the form <code>
+         *             digit digit digit SP reason-phrase</code>
+         * @return The extracted status code or the code representing an
+         * internal error if a valid status code cannot be extracted. 
+         */
+        private int getSCFromCGIStatusHeader(String value) {
+            if (value.length() < 3) {
+                // Not a valid status value
+                log ("runCGI: invalid status value:" + value);
+                return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            }
+            
+            String status = value.substring(0, 3);
             
             int statusCode;
             try {
