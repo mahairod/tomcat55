@@ -34,6 +34,9 @@
        Remove leftover static logger which was used to log application level messages in
        ApplicationContextFacade (remm)
       </fix>
+      <fix>
+        <bug>38012</bug>: Where a CGI script sets a response code, use it. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
