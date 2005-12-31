@@ -18,6 +18,7 @@
 package org.apache.catalina.loader;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilePermission;
 import java.io.InputStream;
@@ -37,9 +38,12 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.jar.JarFile;
 import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
@@ -724,14 +728,21 @@ public class WebappClassLoader
             loader = loader.getParent();
             if (loader == null)
                 break;
-            if (!(loader instanceof WebappClassLoader))
+            Extension[] extensions;
+            if (loader instanceof WebappClassLoader) {
+                extensions = ((WebappClassLoader) loader).findAvailable();
+            } else if (loader instanceof StandardClassLoader) {
+                extensions = ((StandardClassLoader) loader).findAvailable();
+            } else { 
                 continue;
-            Extension extensions[] =
-                ((WebappClassLoader) loader).findAvailable();
+            }
             for (int i = 0; i < extensions.length; i++)
                 results.add(extensions[i]);
         }
 
+        // Add the JDK/JRE extensions
+        results.addAll(addFolderList("java.ext.dirs"));
+        
         // Return the results as an array
         Extension extensions[] = new Extension[results.size()];
         return ((Extension[]) results.toArray(extensions));
@@ -739,6 +750,72 @@ public class WebappClassLoader
     }
 
 
+    /**
+     * Add the JARs specified to the extension list.
+     */
+    private List addFolderList(String property) {
+
+        // get the files in the extensions directory
+        ArrayList results = new ArrayList();
+        String extensionsDir = System.getProperty(property);
+        if (extensionsDir != null) {
+            StringTokenizer extensionsTok
+                = new StringTokenizer(extensionsDir, File.pathSeparator);
+            while (extensionsTok.hasMoreTokens()) {
+                File targetDir = new File(extensionsTok.nextToken());
+                if (!targetDir.exists() || !targetDir.isDirectory()) {
+                    continue;
+                }
+                File[] files = targetDir.listFiles();
+                for (int i = 0; i < files.length; i++) {
+                    if (files[i].getName().toLowerCase().endsWith(".jar")) {
+                        try {
+                            Manifest manifest = getManifest(new FileInputStream(files[i]));
+                            if (manifest != null)  {
+                                results.addAll(Extension.getAvailable(manifest));
+                            }
+                        } catch (IOException e) {
+                            log("addFolderList failed for " + files[i], e);
+                        }
+                    }
+                }
+            }
+        }
+        return results;
+    }
+
+    
+    /**
+     * Return the Manifest from a jar file or war file
+     *
+     * @param inStream Input stream to a WAR or JAR file
+     * @return The WAR's or JAR's manifest
+     */
+    private static Manifest getManifest(InputStream inStream)
+            throws IOException {
+
+        Manifest manifest = null;
+        JarInputStream jin = null;
+
+        try {
+            jin = new JarInputStream(inStream);
+            manifest = jin.getManifest();
+            jin.close();
+            jin = null;
+        } finally {
+            if (jin != null) {
+                try {
+                    jin.close();
+                } catch (Throwable t) {
+                    // Ignore
+                }
+            }
+        }
+
+        return manifest;
+    }
+
+    
     /**
      * Return a String array of the current repositories for this class
      * loader.  If there are no repositories, a zero-length array is
@@ -829,10 +906,12 @@ public class WebappClassLoader
         if (getJarPath() != null) {
 
             try {
-                NamingEnumeration enum = resources.listBindings(getJarPath());
+                NamingEnumeration enumeration =
+                    resources.listBindings(getJarPath());
                 int i = 0;
-                while (enum.hasMoreElements() && (i < length)) {
-                    NameClassPair ncPair = (NameClassPair) enum.nextElement();
+                while (enumeration.hasMoreElements() && (i < length)) {
+                    NameClassPair ncPair =
+                        (NameClassPair) enumeration.nextElement();
                     String name = ncPair.getName();
                     // Ignore non JARs present in the lib folder
                     if (!name.endsWith(".jar"))
@@ -845,10 +924,10 @@ public class WebappClassLoader
                     }
                     i++;
                 }
-                if (enum.hasMoreElements()) {
-                    while (enum.hasMoreElements()) {
+                if (enumeration.hasMoreElements()) {
+                    while (enumeration.hasMoreElements()) {
                         NameClassPair ncPair = 
-                            (NameClassPair) enum.nextElement();
+                            (NameClassPair) enumeration.nextElement();
                         String name = ncPair.getName();
                         // Additional non-JAR files are allowed
                         if (name.endsWith(".jar")) {

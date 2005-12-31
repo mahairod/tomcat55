@@ -177,19 +177,28 @@ public final class Extension {
         if (!extensionName.equals(required.getExtensionName()))
             return (false);
 
-        // Available specification version must be >= required
-        if (!isNewer(specificationVersion, required.getSpecificationVersion()))
-            return (false);
+        // If specified, available specification version must be >= required
+        if (required.getSpecificationVersion() != null) {
+            if (!isNewer(specificationVersion,
+                         required.getSpecificationVersion()))
+                return (false);
+        }
 
-        // Implementation Vendor ID must match
-        if (implementationVendorId == null)
-            return (false);
-        if (!implementationVendorId.equals(required.getImplementationVendorId()))
-            return (false);
+        // If specified, Implementation Vendor ID must match
+        if (required.getImplementationVendorId() != null) {
+            if (implementationVendorId == null)
+                return (false);
+            if (!implementationVendorId.equals(required
+                    .getImplementationVendorId()))
+                return (false);
+        }
 
-        // Implementation version must be >= required
-        if (!isNewer(implementationVersion, required.getImplementationVersion()))
-            return (false);
+        // If specified, Implementation version must be >= required
+        if (required.getImplementationVersion() != null) {
+            if (!isNewer(implementationVersion,
+                         required.getImplementationVersion()))
+                return (false);
+        }
 
         // This available optional package satisfies the requirements
         return (true);
