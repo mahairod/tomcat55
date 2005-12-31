@@ -37,7 +37,7 @@ import javax.naming.directory.SearchControls;
 
 import org.apache.naming.StringManager;
 
-import org.apache.commons.collections.LRUMap;
+import org.apache.commons.collections.map.LRUMap;
 
 /**
  * Proxy Directory Context implementation.
