@@ -15,7 +15,6 @@
  */
 package org.apache.catalina.util;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.jar.Manifest;
 import java.util.jar.Attributes;
@@ -39,7 +38,7 @@ public class ManifestResource {
     public static final int WAR = 2;
     public static final int APPLICATION = 3;
     
-    private HashMap availableExtensions = null;
+    private ArrayList availableExtensions = null;
     private ArrayList requiredExtensions = null;
     
     private String resourceName = null;
@@ -62,11 +61,11 @@ public class ManifestResource {
     }
 
     /**
-     * Gets the map of available extensions
+     * Gets the list of available extensions
      *
-     * @return Map of available extensions
+     * @return List of available extensions
      */
-    public HashMap getAvailableExtensions() {
+    public ArrayList getAvailableExtensions() {
         return availableExtensions;
     }
     
@@ -107,19 +106,6 @@ public class ManifestResource {
      */
     public boolean requiresExtensions() {
         return (requiredExtensions != null) ? true : false;
-    }
-    
-    /**
-     * Convienience method to check if this <code>ManifestResource</code>
-     * has an extension available.
-     *
-     * @param key extension identifier
-     *
-     * @return true if extension available
-     */
-    public boolean containsExtension(String key) {
-        return (availableExtensions != null) ?
-                availableExtensions.containsKey(key) : false;
     }
     
     /**
@@ -222,17 +208,17 @@ public class ManifestResource {
      *
      * @param manifest Manifest to be parsed
      *
-     * @return Map of available extensions, or null if the web application
+     * @return List of available extensions, or null if the web application
      * does not bundle any extensions
      */
-    private HashMap getAvailableExtensions(Manifest manifest) {
+    private ArrayList getAvailableExtensions(Manifest manifest) {
 
         Attributes attributes = manifest.getMainAttributes();
         String name = attributes.getValue("Extension-Name");
         if (name == null)
             return null;
 
-        HashMap extensionMap = new HashMap();
+        ArrayList extensionList = new ArrayList();
 
         Extension extension = new Extension();
         extension.setExtensionName(name);
@@ -247,11 +233,9 @@ public class ManifestResource {
         extension.setSpecificationVersion(
             attributes.getValue("Specification-Version"));
 
-        if (!extensionMap.containsKey(extension.getUniqueId())) {
-            extensionMap.put(extension.getUniqueId(), extension);
-        }
+        extensionList.add(extension);
 
-        return extensionMap;
+        return extensionList;
     }
     
 }
