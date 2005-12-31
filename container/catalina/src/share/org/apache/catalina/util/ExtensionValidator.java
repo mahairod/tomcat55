@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -61,7 +60,7 @@ public final class ExtensionValidator {
     private static StringManager sm =
         StringManager.getManager("org.apache.catalina.util");
     
-    private static HashMap containerAvailableExtensions = null;
+    private static ArrayList containerAvailableExtensions = null;
     private static ArrayList containerManifestResources = new ArrayList();
 
 
@@ -243,7 +242,7 @@ public final class ExtensionValidator {
                                                      ArrayList resources) {
         boolean passes = true;
         int failureCount = 0;        
-        HashMap availableExtensions = null;
+        ArrayList availableExtensions = null;
 
         Iterator it = resources.iterator();
         while (it.hasNext()) {
@@ -255,38 +254,46 @@ public final class ExtensionValidator {
 
             // build the list of available extensions if necessary
             if (availableExtensions == null) {
-                availableExtensions = buildAvailableExtensionsMap(resources);
+                availableExtensions = buildAvailableExtensionsList(resources);
             }
 
             // load the container level resource map if it has not been built
             // yet
             if (containerAvailableExtensions == null) {
                 containerAvailableExtensions
-                    = buildAvailableExtensionsMap(containerManifestResources);
+                    = buildAvailableExtensionsList(containerManifestResources);
             }
 
             // iterate through the list of required extensions
             Iterator rit = requiredList.iterator();
             while (rit.hasNext()) {
+                boolean found = false;
                 Extension requiredExt = (Extension)rit.next();
-                String extId = requiredExt.getUniqueId();
                 // check the applicaion itself for the extension
-                if (availableExtensions != null
-                                && availableExtensions.containsKey(extId)) {
-                   Extension targetExt = (Extension)
-                       availableExtensions.get(extId);
-                   if (targetExt.isCompatibleWith(requiredExt)) {
-                       requiredExt.setFulfilled(true);
-                   }
+                if (availableExtensions != null) {
+                    Iterator ait = availableExtensions.iterator();
+                    while (ait.hasNext()) {
+                        Extension targetExt = (Extension) ait.next();
+                        if (targetExt.isCompatibleWith(requiredExt)) {
+                            requiredExt.setFulfilled(true);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
                 // check the container level list for the extension
-                } else if (containerAvailableExtensions != null
-                        && containerAvailableExtensions.containsKey(extId)) {
-                   Extension targetExt = (Extension)
-                       containerAvailableExtensions.get(extId);
-                   if (targetExt.isCompatibleWith(requiredExt)) {
-                       requiredExt.setFulfilled(true);
-                   }
-                } else {
+                if (!found && containerAvailableExtensions != null) {
+                    Iterator cit = containerAvailableExtensions.iterator();
+                    while (cit.hasNext()) {
+                        Extension targetExt = (Extension) cit.next();
+                        if (targetExt.isCompatibleWith(requiredExt)) {
+                            requiredExt.setFulfilled(true);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (!found) {
                     // Failure
                     log.info(sm.getString(
                         "extensionValidator.extension-not-found-error",
@@ -324,29 +331,29 @@ public final class ExtensionValidator {
     *
     * @return HashMap Map of available extensions
     */
-    private static HashMap buildAvailableExtensionsMap(ArrayList resources) {
+    private static ArrayList buildAvailableExtensionsList(ArrayList resources) {
 
-        HashMap availableMap = null;
+        ArrayList availableList = null;
 
         Iterator it = resources.iterator();
         while (it.hasNext()) {
             ManifestResource mre = (ManifestResource)it.next();
-            HashMap map = mre.getAvailableExtensions();
-            if (map != null) {
-                Iterator values = map.values().iterator();
+            ArrayList list = mre.getAvailableExtensions();
+            if (list != null) {
+                Iterator values = list.iterator();
                 while (values.hasNext()) {
                     Extension ext = (Extension) values.next();
-                    if (availableMap == null) {
-                        availableMap = new HashMap();
-                        availableMap.put(ext.getUniqueId(), ext);
-                    } else if (!availableMap.containsKey(ext.getUniqueId())) {
-                        availableMap.put(ext.getUniqueId(), ext);
+                    if (availableList == null) {
+                        availableList = new ArrayList();
+                        availableList.add(ext);
+                    } else {
+                        availableList.add(ext);
                     }
                 }
             }
         }
 
-        return availableMap;
+        return availableList;
     }
     
     /**
