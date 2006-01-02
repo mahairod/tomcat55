@@ -728,12 +728,17 @@ public abstract class RealmBase
         boolean denyfromall = false;
         for(int i=0; i < constraints.length; i++) {
             SecurityConstraint constraint = constraints[i];
-            String roles[] = constraint.findAuthRoles();
+
+            String roles[];
+            if (constraint.getAllRoles()) {
+                // * means all roles defined in web.xml
+                roles = request.getContext().findSecurityRoles();
+            } else {
+                roles = constraint.findAuthRoles();
+            }
+
             if (roles == null)
                 roles = new String[0];
-
-            if (constraint.getAllRoles() && !denyfromall)
-                status = true;
 
             if (log.isDebugEnabled())
                 log.debug("  Checking roles " + principal);
