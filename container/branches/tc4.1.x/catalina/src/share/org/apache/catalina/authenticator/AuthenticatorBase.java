@@ -566,10 +566,14 @@ public abstract class AuthenticatorBase
         }
 
         // Check each role included in this constraint
-        if (constraint.getAllRoles())
-            return (true);
+        String roles[];
+        if (constraint.getAllRoles()) {
+            // * means all roles defined in web.xml
+            roles = context.findSecurityRoles();
+        } else {
+            roles = constraint.findAuthRoles();
+        }
         
-        String roles[] = constraint.findAuthRoles();
         if (roles == null)
             roles = new String[0];
 
