@@ -1448,7 +1448,6 @@
   <target name="installer"
    description="Create Windows installer" if="execute.installer">
     <echo message="Builds a Windows installer based on Nullsoft Installer"/>
-    <echo message="NSIS must be installed in the default directory"/>
     <copy todir="${tomcat.dist}">
       <fileset dir="resources" />
     </copy>
@@ -1459,16 +1458,19 @@
         tofile="${tomcat.dist}/bin/tomcat5.exe" />
     <copy file="${jtc.home}/procrun/bin/tomcat5w.exe"
         tofile="${tomcat.dist}/bin/tomcat5w.exe" />
+
     <filter token="VERSION" value="${version}"/>
     <filter token="VERSION_NUMBER" value="${version.number}"/>
-    <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi"
-     filtering="true"/>
+
+    <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" filtering="true"/>
     <exec dir="${tomcat.dist}" executable="${nsis.exe}">
       <arg value="/DNSISDIR=${nsis.home}" />
       <arg value="tomcat.nsi" />
     </exec>
-    <move file="${tomcat.dist}/tomcat-installer.exe"
-     tofile="${tomcat.release}/v${version}/bin/${final.name}.exe" />
+
+    <move file="${tomcat.dist}/tomcat-installer.exe" tofile="${tomcat.release}/v${version}/bin/${final.name}.exe" />
+
+    <checksum file="${tomcat.release}/v${version}/bin/${final.name}.exe" />
   </target>
 
 
@@ -1491,6 +1493,7 @@
 
   </target>
 
+  <!-- Packages the core zip distro -->
   <target name="package-zip">
     <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}.zip">
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}">
@@ -1513,8 +1516,11 @@
         <exclude name="conf/Catalina/localhost/admin.xml"/>
       </zipfileset>
     </zip>
+
+    <checksum file="${tomcat.release}/v${version}/bin/${final.name}.zip"/>
   </target>
 
+  <!-- Packages the embedded Tomcat distro in zip format -->
   <target name="package-embed-zip">
     <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-embed.zip">
       <zipfileset dir="${tomcat.embed}" prefix="${final.name}-embed"
@@ -1528,63 +1534,62 @@
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}-embed"
        includes="RELEASE-NOTES" />
     </zip>
+
+    <checksum file="${tomcat.release}/v${version}/bin/${final.name}-embed.zip"/>
   </target>
 
+  <!-- Packages the deployer distribution in zip format -->
   <target name="package-deployer-zip">
     <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-deployer.zip">
-      <zipfileset dir="${tomcat.deployer}" prefix="${final.name}-deployer"
-                  includes="**" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer"
-       includes="LICENSE" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer"
-       includes="NOTICE" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer"
-       includes="README.txt" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer"
-       includes="RELEASE-NOTES" />
+      <zipfileset dir="${tomcat.deployer}" prefix="${final.name}-deployer" includes="**" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer" includes="LICENSE" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer" includes="NOTICE" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer" includes="README.txt" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer" includes="RELEASE-NOTES" />
     </zip>
+
+    <checksum file="${tomcat.release}/v${version}/bin/${final.name}-deployer.zip"/>
   </target>
 
-      <target name="package-compat-zip">
-        <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-compat.zip">
-          <zipfileset dir="${tomcat.compat}" prefix="${final.name}"
-                      includes="**" />
-          <zipfileset dir="${tomcat.dist}" prefix="${final.name}"
-           includes="LICENSE" />
-          <zipfileset dir="${tomcat.dist}" prefix="${final.name}"
-           includes="NOTICE" />
-          <zipfileset dir="${tomcat.dist}" prefix="${final.name}"
-           includes="README.txt" />
-          <zipfileset dir="${tomcat.dist}" prefix="${final.name}"
-           includes="RELEASE-NOTES" />
-        </zip>
-      </target>
+  <!-- Packages the JDK 1.4 compatibility distro in zip format -->
+  <target name="package-compat-zip">
+    <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-compat.zip">
+      <zipfileset dir="${tomcat.compat}" prefix="${final.name}" includes="**" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" includes="LICENSE" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" includes="NOTICE" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" includes="README.txt" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" includes="RELEASE-NOTES" />
+    </zip>
+ 
+    <checksum file="${tomcat.release}/v${version}/bin/${final.name}-compat.zip"/>
+  </target>
 
-      <target name="package-admin-zip">
-        <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-admin.zip">
-          <zipfileset dir="${tomcat.dist}" prefix="${final.name}">
-            <include name="server/webapps/admin/**"/>
-            <include name="conf/Catalina/localhost/admin.xml"/>
-            <exclude name="*.jsp" />
-          </zipfileset>
-          <zipfileset dir="${tomcat.dist}" prefix="${final.name}"
-           includes="LICENSE" />
-          <zipfileset dir="${tomcat.dist}" prefix="${final.name}"
-           includes="NOTICE" />
-          <zipfileset dir="${tomcat.dist}" prefix="${final.name}"
-           includes="README.txt" />
-          <zipfileset dir="${tomcat.dist}" prefix="${final.name}"
-           includes="RELEASE-NOTES" />
-        </zip>
-      </target>
+  <!-- Packages the admin webapp distro in zip format -->
+  <target name="package-admin-zip">
+    <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-admin.zip">
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}">
+        <include name="server/webapps/admin/**"/>
+        <include name="conf/Catalina/localhost/admin.xml"/>
+        <exclude name="*.jsp" />
+      </zipfileset>
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" includes="LICENSE" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" includes="NOTICE" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" includes="README.txt" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" includes="RELEASE-NOTES" />
+    </zip>
+   
+    <checksum file="${tomcat.release}/v${version}/bin/${final.name}-admin.zip"/>
+  </target>
 
+  <!-- Prepares for cutting the release -->
   <target name="prepare-release">
-
     <mkdir dir="${tomcat.release}"/>
     <mkdir dir="${tomcat.release}/v${version}"/>
     <mkdir dir="${tomcat.release}/v${version}/bin"/>
     <mkdir dir="${tomcat.release}/v${version}/src"/>
 
+    <!-- This is why releasing must be done on a Windows box: 
+         otherwise this check fails and the .exe distro is not generated -->
     <condition property="execute.installer">
       <and>
         <os family="windows" />
@@ -1597,12 +1602,12 @@
 
   </target>
 
+  <!-- Packages the core tar.gz distro -->
   <target name="package-tgz">
-    <fixcrlf srcdir="${tomcat.dist}"
-     includes="*.txt,LICENSE,NOTICE" eol="lf"/>
+    <fixcrlf srcdir="${tomcat.dist}" includes="*.txt,LICENSE,NOTICE" eol="lf"/>
     <fixcrlf srcdir="${tomcat.dist}/conf" eol="lf"/>
     <tar longfile="gnu" compression="gzip"
-          tarfile="${tomcat.release}/v${version}/bin/${final.name}.tar.gz">
+         tarfile="${tomcat.release}/v${version}/bin/${final.name}.tar.gz">
       <tarfileset dir="${tomcat.dist}" mode="755" prefix="${final.name}">
         <include name="bin/catalina.sh" />
         <include name="bin/digest.sh" />
@@ -1651,14 +1656,17 @@
         <exclude name="server/webapps/admin/**" />
       </tarfileset>
     </tar>
+
+    <checksum file="${tomcat.release}/v${version}/bin/${final.name}.tar.gz"/>
   </target>
 
+  <!-- Packages the embedded Tomcat distro in tar.gz format -->
   <target name="package-embed-tgz">
     <fixcrlf srcdir="${tomcat.dist}"
      includes="*.txt,LICENSE,NOTICE" eol="lf"/>
     <fixcrlf srcdir="${tomcat.embed}" includes="*.xml" eol="lf"/>
     <tar longfile="gnu" compression="gzip"
-          tarfile="${tomcat.release}/v${version}/bin/${final.name}-embed.tar.gz">
+         tarfile="${tomcat.release}/v${version}/bin/${final.name}-embed.tar.gz">
       <tarfileset dir="${tomcat.dist}" prefix="${final.name}-embed">
         <include name="LICENSE" />
         <include name="NOTICE" />
@@ -1669,14 +1677,18 @@
         <include name="**" />
       </tarfileset>
     </tar>
+
+    <checksum file="${tomcat.release}/v${version}/bin/${final.name}-embed.tar.gz"/>
   </target>
 
+  <!-- Packages the deployer Tomcat distro in tar.gz format -->
   <target name="package-deployer-tgz">
     <fixcrlf srcdir="${tomcat.dist}"
      includes="*.txt,LICENSE,NOTICE" eol="lf"/>
     <fixcrlf srcdir="${tomcat.deployer}" includes="*.xml" eol="lf"/>
+
     <tar longfile="gnu" compression="gzip"
-          tarfile="${tomcat.release}/v${version}/bin/${final.name}-deployer.tar.gz">
+         tarfile="${tomcat.release}/v${version}/bin/${final.name}-deployer.tar.gz">
       <tarfileset dir="${tomcat.dist}" prefix="${final.name}-deployer">
         <include name="LICENSE" />
         <include name="NOTICE" />
@@ -1687,47 +1699,57 @@
         <include name="**" />
       </tarfileset>
     </tar>
+
+    <checksum file="${tomcat.release}/v${version}/bin/${final.name}-deployer.tar.gz"/>
   </target>
 
-      <target name="package-compat-tgz">
-        <fixcrlf srcdir="${tomcat.dist}"
-         includes="*.txt,LICENSE,NOTICE" eol="lf"/>
-        <tar longfile="gnu" compression="gzip"
-              tarfile="${tomcat.release}/v${version}/bin/${final.name}-compat.tar.gz">
-          <tarfileset dir="${tomcat.dist}" prefix="${final.name}">
-            <include name="LICENSE" />
-            <include name="NOTICE" />
-            <include name="README.txt" />
-            <include name="RELEASE-NOTES" />
-          </tarfileset>
-          <tarfileset dir="${tomcat.compat}" prefix="${final.name}">
-            <include name="**" />
-          </tarfileset>
-        </tar>
-      </target>
+  <!-- Packages the 1.4 compatibility distro in tar.gz format -->
+  <target name="package-compat-tgz">
+    <fixcrlf srcdir="${tomcat.dist}" includes="*.txt,LICENSE,NOTICE" eol="lf"/>
 
-      <target name="package-admin-tgz">
-        <fixcrlf srcdir="${tomcat.dist}"
-         includes="*.txt,LICENSE,NOTICE" eol="lf"/>
-        <tar longfile="gnu" compression="gzip"
-              tarfile="${tomcat.release}/v${version}/bin/${final.name}-admin.tar.gz">
-          <tarfileset dir="${tomcat.dist}" prefix="${final.name}">
-            <include name="LICENSE" />
-            <include name="NOTICE" />
-            <include name="README.txt" />
-            <include name="RELEASE-NOTES" />
-          </tarfileset>
-          <tarfileset dir="${tomcat.dist}" prefix="${final.name}">
-            <include name="server/webapps/admin/**" />
-            <exclude name="*.jsp" />
-          </tarfileset>
-            <tarfileset dir="${tomcat.dist}" mode="600" prefix="${final.name}">
-              <include name="conf/Catalina/localhost/admin.xml" />
-            </tarfileset>
-        </tar>
-      </target>
+    <tar longfile="gnu" compression="gzip"
+         tarfile="${tomcat.release}/v${version}/bin/${final.name}-compat.tar.gz">
+      <tarfileset dir="${tomcat.dist}" prefix="${final.name}">
+        <include name="LICENSE" />
+        <include name="NOTICE" />
+        <include name="README.txt" />
+        <include name="RELEASE-NOTES" />
+      </tarfileset>
+      <tarfileset dir="${tomcat.compat}" prefix="${final.name}">
+        <include name="**" />
+      </tarfileset>
+    </tar>
 
+    <checksum file="${tomcat.release}/v${version}/bin/${final.name}-compat.tar.gz"/>
+  </target>
+
+  <!-- Packages the admin webapp distro in tar.gz format -->
+  <target name="package-admin-tgz">
+    <fixcrlf srcdir="${tomcat.dist}" includes="*.txt,LICENSE,NOTICE" eol="lf"/>
+
+    <tar longfile="gnu" compression="gzip"
+         tarfile="${tomcat.release}/v${version}/bin/${final.name}-admin.tar.gz">
+      <tarfileset dir="${tomcat.dist}" prefix="${final.name}">
+        <include name="LICENSE" />
+        <include name="NOTICE" />
+        <include name="README.txt" />
+        <include name="RELEASE-NOTES" />
+      </tarfileset>
+      <tarfileset dir="${tomcat.dist}" prefix="${final.name}">
+        <include name="server/webapps/admin/**" />
+        <exclude name="*.jsp" />
+      </tarfileset>
+      <tarfileset dir="${tomcat.dist}" mode="600" prefix="${final.name}">
+        <include name="conf/Catalina/localhost/admin.xml" />
+      </tarfileset>
+    </tar>
+
+    <checksum file="${tomcat.release}/v${version}/bin/${final.name}-admin.tar.gz"/>
+  </target>
+
+  <!-- Packages the documentation distro in tar.gz format -->
   <target name="package-docs-tgz" depends="prepare-release">
+    <!-- Generate docs -->
     <ant dir="${catalina.home}" target="dist-javadoc"/>
     <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api"/>
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api">
@@ -1738,10 +1760,12 @@
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/jasper/docs/api">
       <fileset dir="${jasper.build}/javadoc" />
     </copy>
-    <fixcrlf srcdir="${tomcat.dist}"
-     includes="*.txt,LICENSE,NOTICE" eol="lf"/>
+
+    <!-- Package gocs -->
+    <fixcrlf srcdir="${tomcat.dist}" includes="*.txt,LICENSE,NOTICE" eol="lf"/>
+
     <tar longfile="gnu" compression="gzip"
-          tarfile="${tomcat.release}/v${version}/bin/${final.name}-fulldocs.tar.gz">
+         tarfile="${tomcat.release}/v${version}/bin/${final.name}-fulldocs.tar.gz">
       <tarfileset dir="${tomcat.dist}" prefix="tomcat-5.5-doc">
         <include name="LICENSE" />
         <include name="NOTICE" />
@@ -1752,21 +1776,26 @@
         <include name="**" />
       </tarfileset>
     </tar>
+
+    <checksum file="${tomcat.release}/v${version}/bin/${final.name}-fulldocs.tar.gz"/>
   </target>
 
- <target name="package-src-zip">
-    <!-- Package Tomcat Source -->
+  <!-- Packages the source code distribution in zip format -->
+  <target name="package-src-zip">
     <zip zipfile="${tomcat.release}/v${version}/src/${final-src.name}.zip">
       <zipfileset dir="${tomcat.dist}/src" prefix="${final-src.name}" />
     </zip>
+
+    <checksum file="${tomcat.release}/v${version}/src/${final-src.name}.zip"/>
   </target>
 
+  <!-- Packages the source code distribution in tar.gz format -->
   <target name="package-src-tgz">
-    <!-- Package Tomcat Source -->
     <fixcrlf srcdir="${tomcat.dist}"
      excludes="**/*.jar,**/*.gif,**/*.bmp,**/*.jpg,**/*.ico,**/*.war" eol="lf"/>
+
     <tar longfile="gnu" compression="gzip"
-          tarfile="${tomcat.release}/v${version}/src/${final-src.name}.tar.gz">
+         tarfile="${tomcat.release}/v${version}/src/${final-src.name}.tar.gz">
       <tarfileset dir="${tomcat.dist}/src" mode="755" prefix="${final-src.name}">
         <include name="${jtc.project}/jk/native/buildconf.sh" />
         <include name="${jtc.project}/jk/native/apache-1.3/build-hpux-cc.sh" />
@@ -1786,6 +1815,8 @@
         <exclude name="${jtc.project}/jk/native/domino/mkini.sh" />
       </tarfileset>
     </tar>
+
+    <checksum file="${tomcat.release}/v${version}/src/${final-src.name}.tar.gz"/>
   </target>
 
   <!-- ==================== Download or build the required binary packages ==================== -->
