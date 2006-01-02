@@ -31,11 +31,18 @@
        <bug>37934</bug>: Don't ask for authentication if deny-from-all is in effect. (billbarker)
       </fix>
       <fix>
+        <bug>15570</bug>: auth-constraint of * was interpretted as all
+        authenticated users rather than as all roles defined in web.xml. (markt)
+      </fix>
+      <fix>
        Remove leftover static logger which was used to log application level messages in
        ApplicationContextFacade (remm)
       </fix>
       <fix>
         <bug>38012</bug>: Where a CGI script sets a response code, use it. (markt)
+      </fix>
+      <fix>
+        <bug>37854</bug>: Extension-List checking was too strict. (markt)
       </fix>
     </changelog>
   </subsection>
