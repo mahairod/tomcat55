@@ -32,6 +32,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.util.StringManager;
+import org.apache.naming.ContextBindings;
 
 /**
 *
@@ -78,6 +79,12 @@ public class DataSourceRealm
         "org.apache.catalina.realm.DataSourceRealm/1.0";
 
 
+    /**
+     * Does this realm use a context local datasource.
+     */
+    protected boolean localDataSource = false;
+    
+    
     /**
      * Descriptive information about this Realm implementation.
      */
@@ -139,6 +146,23 @@ public class DataSourceRealm
      */
     public void setDataSourceName( String dataSourceName) {
       this.dataSourceName = dataSourceName;
+    }
+
+    /**
+     * Return if the datasource will be looked up in the webapp JNDI Context.
+     */
+    public boolean getLocalDataSource() {
+        return localDataSource;
+    }
+    
+    /**
+     * Set to true to cause the datasource to be looked up in the webapp JNDI
+     * Context.
+     *
+     * @param localDataSource the new flag value
+     */
+    public void setLocalDataSource(boolean localDataSource) {
+        this.localDataSource = localDataSource;
     }
 
     /**
@@ -360,8 +384,15 @@ public class DataSourceRealm
     private Connection open() {
 
         try {
-            StandardServer server = (StandardServer) ServerFactory.getServer();
-            Context context = server.getGlobalNamingContext();
+            Context context = null;
+            if (localDataSource) {
+                context = ContextBindings.getClassLoader();
+                context = (Context) context.lookup("comp/env");
+            } else {
+                StandardServer server = 
+                    (StandardServer) ServerFactory.getServer();
+                context = server.getGlobalNamingContext();
+            }
             DataSource dataSource = (DataSource)context.lookup(dataSourceName);
             return dataSource.getConnection();
         } catch (Exception e) {

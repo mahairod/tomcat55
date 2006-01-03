@@ -56,6 +56,9 @@
 
     <!-- ============= Realm Module ============= -->
 
+    <form-bean      name="dataSourceRealmForm"
+                    type="org.apache.webapp.admin.realm.DataSourceRealmForm"/>
+
     <form-bean      name="jdbcRealmForm"
                     type="org.apache.webapp.admin.realm.JDBCRealmForm"/>
 
@@ -286,6 +289,10 @@
 
     <!-- ============ Realm Module ============== -->
 
+    <forward        name="DataSourceRealm"
+                    path="/realm/dataSourceRealm.jsp"
+                redirect="false"/>
+                
     <forward        name="JDBCRealm"
                     path="/realm/jdbcRealm.jsp"
                 redirect="false"/>
@@ -652,6 +659,13 @@
                type="org.apache.webapp.admin.realm.SaveUserDatabaseRealmAction"
                name="userDatabaseRealmForm"
               input="/realm/userDatabaseRealm.jsp"
+               scope="session"/>
+
+   <!-- Perform Save DataSource Realm transaction -->
+    <action    path="/SaveDataSourceRealm"
+               type="org.apache.webapp.admin.realm.SaveDataSourceRealmAction"
+               name="dataSourceRealmForm"
+              input="/realm/dataSourceRealm.jsp"
                scope="session"/>
 
    <!-- Perform Save JDBC Realm transaction -->

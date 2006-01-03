@@ -81,11 +81,12 @@ public class AddRealmAction extends Action {
 
         // Fill in the form values for display and editing
 
-        String realmTypes[] = new String[4];
+        String realmTypes[] = new String[5];
         realmTypes[0] = "UserDatabaseRealm";
         realmTypes[1] = "JNDIRealm";
         realmTypes[2] = "MemoryRealm";
         realmTypes[3] = "JDBCRealm";
+        realmTypes[4] = "DataSourceRealm";
 
         String parent = request.getParameter("parent");
         String type = request.getParameter("type");
@@ -111,9 +112,10 @@ public class AddRealmAction extends Action {
             createJNDIRealm(session, parent);
         } else if ("MemoryRealm".equalsIgnoreCase(type)) {
             createMemoryRealm(session, parent);
-        } else {
-            //JDBC
+        } else if ("JDBCRealm".equalsIgnoreCase(type)){
             createJDBCRealm(session, parent);
+        } else if ("DataSourceRealm".equalsIgnoreCase(type)) {
+            createDataSourceRealm(session, parent);
         }
         // Forward to the realm display page
         return (mapping.findForward(type));
@@ -208,6 +210,28 @@ public class AddRealmAction extends Action {
         realmFm.setRealmTypeVals(types);
     }
 
+    private void createDataSourceRealm(HttpSession session, String parent) {
+        DataSourceRealmForm realmFm = new DataSourceRealmForm();
+        session.setAttribute("dataSourceRealmForm", realmFm);
+        realmFm.setAdminAction("Create");
+        realmFm.setObjectName("");
+        realmFm.setParentObjectName(parent);
+        String realmType = "DataSourceRealm";
+        realmFm.setNodeLabel("Realm (" + realmType + ")");
+        realmFm.setRealmType(realmType);
+        realmFm.setDebugLvl("0");
+        realmFm.setDataSourceName("");
+        realmFm.setDigest("");
+        realmFm.setLocalDataSource("false");
+        realmFm.setRoleNameCol("");
+        realmFm.setUserCredCol("");
+        realmFm.setUserNameCol("");
+        realmFm.setUserRoleTable("");
+        realmFm.setUserTable("");
+        realmFm.setDebugLvlVals(Lists.getDebugLevels());
+        realmFm.setRealmTypeVals(types);
+        realmFm.setBooleanVals(Lists.getBooleanValues());
+    }
 
 
 }

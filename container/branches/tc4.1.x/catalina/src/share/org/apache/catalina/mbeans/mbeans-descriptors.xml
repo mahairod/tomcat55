@@ -353,6 +353,11 @@
                 group="Realm"
                  type="org.apache.catalina.realm.DataSourceRealm">
 
+    <attribute   name="className"
+          description="Fully qualified class name of the managed object"
+                 type="java.lang.String"
+            writeable="false"/>
+
     <attribute   name="dataSourceName"
           description="The JNDI named JDBC DataSource for your database"
                  type="java.lang.String"/>
@@ -365,6 +370,10 @@
           description="Digest algorithm used in storing passwords in a
                         non-plaintext format"
                  type="java.lang.String"/>
+
+    <attribute   name="localDataSource"
+          description="Configures if the DataSource is local to the webapp"
+                 type="boolean"/>
 
     <attribute   name="roleNameCol"
           description="The column in the user role table that names a role"

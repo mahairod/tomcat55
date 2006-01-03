@@ -189,6 +189,13 @@
         user passwords are assumed to be stored in clear-text.</p>
       </attribute>
 
+      <attribute name="localDataSource" required="false">
+        <p>When the realm is nested inside a Context element, this allows the
+        realm to use a DataSource defined for the Context rather than a global
+        DataSource.  If not specified, the default is <code>false</code>: use a
+        global DataSource.</p>
+      </attribute>
+
       <attribute name="roleNameCol" required="true">
         <p>Name of the column, in the "user roles" table, which contains
         a role name assigned to the corresponding user.</p>

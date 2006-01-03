@@ -143,8 +143,10 @@ public class EditRealmAction extends Action {
                setUpMemoryRealm(rname, response);
         } else if ("JDBCRealm".equalsIgnoreCase(realmType)) {
                setUpJDBCRealm(rname, response);
-        } else {
+        } else if ("JNDIRealm".equalsIgnoreCase(realmType)) {
                setUpJNDIRealm(rname, response);
+        } else if ("DataSourceRealm".equalsIgnoreCase(realmType)) {
+               setUpDataSourceRealm(rname, response);
         }
 
         return (mapping.findForward(realmType));
@@ -371,6 +373,70 @@ public class EditRealmAction extends Action {
                 ((String) mBServer.getAttribute(rname, attribute));
             attribute = "connectionURL";
             realmFm.setConnectionURL
+                ((String) mBServer.getAttribute(rname, attribute));
+
+        } catch (Throwable t) {
+            getServlet().log
+                (resources.getMessage(locale, "users.error.attribute.get",
+                                      attribute), t);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage(locale, "users.error.attribute.get",
+                                      attribute));
+        }
+    }
+
+    private void setUpDataSourceRealm(ObjectName rname,
+                                        HttpServletResponse response)
+    throws IOException {
+        // Fill in the form values for display and editing
+        DataSourceRealmForm realmFm = new DataSourceRealmForm();
+        session.setAttribute("dataSourceRealmForm", realmFm);
+        realmFm.setAdminAction("Edit");
+        realmFm.setObjectName(rname.toString());
+        String realmType = "DataSourceRealm";
+        StringBuffer sb = new StringBuffer();
+        sb.append(resources.getMessage(locale,
+                "server.service.treeBuilder.realm"));
+        sb.append(" (");
+        sb.append(realmType);
+        sb.append(")");
+        realmFm.setNodeLabel(sb.toString());
+        realmFm.setRealmType(realmType);
+        realmFm.setDebugLvlVals(Lists.getDebugLevels());
+        realmFm.setAllowDeletion(allowDeletion(rname));
+        realmFm.setBooleanVals(Lists.getBooleanValues());
+        
+        String attribute = null;
+        try {
+
+            // Copy scalar properties
+            attribute = "dataSourceName";
+            realmFm.setDataSourceName
+                ((String) mBServer.getAttribute(rname, attribute));
+            attribute = "debug";
+            realmFm.setDebugLvl
+                (((Integer) mBServer.getAttribute(rname, attribute)).toString());
+            attribute = "digest";
+            realmFm.setDigest
+                ((String) mBServer.getAttribute(rname, attribute));
+            attribute = "localDataSource";
+            realmFm.setLocalDataSource
+                (((Boolean) mBServer.getAttribute(rname, attribute)).toString());
+            attribute = "roleNameCol";
+            realmFm.setRoleNameCol
+                ((String) mBServer.getAttribute(rname, attribute));
+            attribute = "userCredCol";
+            realmFm.setUserCredCol
+                ((String) mBServer.getAttribute(rname, attribute));
+            attribute = "userNameCol";
+            realmFm.setUserNameCol
+                ((String) mBServer.getAttribute(rname, attribute));
+            attribute = "userRoleTable";
+            realmFm.setUserRoleTable
+                ((String) mBServer.getAttribute(rname, attribute));
+            attribute = "userTable";
+            realmFm.setUserTable
                 ((String) mBServer.getAttribute(rname, attribute));
 
         } catch (Throwable t) {
