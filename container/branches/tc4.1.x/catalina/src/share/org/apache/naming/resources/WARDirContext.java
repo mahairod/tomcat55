@@ -319,12 +319,12 @@ public class WARDirContext extends BaseDirContext {
     public NamingEnumeration listBindings(Name name)
         throws NamingException {
         if (name.isEmpty())
-            return new NamingContextBindingsEnumeration(list(entries));
+            return new NamingContextBindingsEnumeration(list(entries), this);
         Entry entry = treeLookup(name);
         if (entry == null)
             throw new NamingException
                 (sm.getString("resources.notFound", name));
-        return new NamingContextBindingsEnumeration(list(entry));
+        return new NamingContextBindingsEnumeration(list(entry), this);
     }
 
 

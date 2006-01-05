@@ -19,6 +19,9 @@ package org.apache.naming;
 
 import java.util.Vector;
 import java.util.Enumeration;
+
+import javax.naming.CompositeName;
+import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.NamingEnumeration;
 import javax.naming.Binding;
@@ -37,13 +40,16 @@ public class NamingContextBindingsEnumeration
     // ----------------------------------------------------------- Constructors
 
 
-    public NamingContextBindingsEnumeration(Vector entries) {
+    public NamingContextBindingsEnumeration(Vector entries, Context ctx) {
         enumeration = entries.elements();
+        this.ctx = ctx;
     }
 
 
-    public NamingContextBindingsEnumeration(Enumeration enumeration) {
+    public NamingContextBindingsEnumeration(Enumeration enumeration,
+            Context ctx) {
         this.enumeration = enumeration;
+        this.ctx = ctx;
     }
 
 
@@ -54,6 +60,12 @@ public class NamingContextBindingsEnumeration
      * Underlying enumeration.
      */
     protected Enumeration enumeration;
+    
+    /**
+     * The context for which this enumeration is being generated.
+     */
+    private Context ctx;
+    
 
 
     // --------------------------------------------------------- Public Methods
@@ -64,7 +76,7 @@ public class NamingContextBindingsEnumeration
      */
     public Object next()
         throws NamingException {
-        return nextElement();
+        return nextElementInternal();
     }
 
 
@@ -89,13 +101,33 @@ public class NamingContextBindingsEnumeration
         return enumeration.hasMoreElements();
     }
 
-
     public Object nextElement() {
+        try {
+            return nextElementInternal();
+        } catch (NamingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+    
+    private Object nextElementInternal() throws NamingException {
         NamingEntry entry = (NamingEntry) enumeration.nextElement();
+        
+        // If the entry is a reference, resolve it
+        if (entry.type == NamingEntry.REFERENCE
+                || entry.type == NamingEntry.LINK_REF) {
+            try {
+                // A lookup will resolve the entry
+                ctx.lookup(new CompositeName(entry.name));
+            } catch (NamingException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new NamingException(e.getMessage());
+            }
+        }
+        
         return new Binding(entry.name, entry.value.getClass().getName(), 
                            entry.value, true);
     }
-
 
 }
 
