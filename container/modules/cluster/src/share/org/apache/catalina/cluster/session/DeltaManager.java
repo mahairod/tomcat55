@@ -34,6 +34,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
+import org.apache.catalina.Valve;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
@@ -44,9 +45,11 @@ import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.session.ManagerBase;
+import org.apache.catalina.cluster.tcp.ReplicationValve;
 import org.apache.catalina.util.CustomObjectInputStream;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.core.StandardContext;
 
 /**
  * The DeltaManager manages replicated sessions by only replicating the deltas
@@ -86,7 +89,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "DeltaManager/2.0";
+    private static final String info = "DeltaManager/2.1";
 
     /**
      * Has this component been started yet?
@@ -105,6 +108,11 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     private CatalinaCluster cluster = null;
 
     /**
+     * cached replication valve cluster container!
+     */
+    private ReplicationValve replicationValve = null ;
+    
+    /**
      * The lifecycle event support for this component.
      */
     protected LifecycleSupport lifecycle = new LifecycleSupport(this);
@@ -120,7 +128,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
 
     private boolean notifySessionListenersOnReplication = true;
 
-    private boolean stateTransferred = false ;
+    private boolean stateTransfered = false ;
 
     private int stateTransferTimeout = 60;
 
@@ -364,12 +372,20 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         this.stateTransferTimeout = timeoutAllSession;
     }
 
-    public boolean getStateTransferred() {
-        return stateTransferred;
+    /**
+     * is session state transfered complete?
+     * 
+     */
+    public boolean getStateTransfered() {
+        return stateTransfered;
     }
 
-    public void setStateTransferred(boolean stateTransferred) {
-        this.stateTransferred = stateTransferred;
+    /**
+     * set that state ist complete transfered  
+     * @param stateTransfered
+     */
+    public void setStateTransfered(boolean stateTransfered) {
+        this.stateTransfered = stateTransfered;
     }
     
     /**
@@ -439,6 +455,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     }
     
     /**
+     * 
      * @return Returns the sendAllSessions.
      */
     public boolean isSendAllSessions() {
@@ -917,7 +934,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         lifecycle.fireLifecycleEvent(START_EVENT, null);
 
         // Force initialization of the random number generator
-        String dummy = generateSessionId();
+        generateSessionId();
 
         // Load unloaded sessions, if any
         try {
@@ -995,7 +1012,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
             stateTransferCreateSendTime = beforeSendTime ;
             // request session state
             counterSend_EVT_GET_ALL_SESSIONS++;
-            stateTransferred = false ;
+            stateTransfered = false ;
             // FIXME This send call block the deploy thread, when sender waitForAck is enabled
             try {
                 synchronized(receivedMessageQueue) {
@@ -1048,6 +1065,35 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
     }
 
     /**
+     * Register cross context session at replication valve thread local
+     * @param session cross context session
+     */
+    protected void registerSessionAtReplicationValve(DeltaSession session) {
+	    	if(replicationValve == null) {
+	    		if(container instanceof StandardContext
+	    				&& ((StandardContext)container).getCrossContext()) {
+	    			Cluster cluster = getCluster() ;
+	    			if(cluster != null && cluster instanceof CatalinaCluster) {
+	    				Valve[] valves = ((CatalinaCluster)cluster).getValves();
+	    				if(valves != null && valves.length > 0) {
+	    					for(int i=0; replicationValve == null && i < valves.length ; i++ ){
+	    						if(valves[i] instanceof ReplicationValve)
+	    							replicationValve = (ReplicationValve)valves[i] ;
+	    					}
+	    					
+	    					if(replicationValve == null && log.isDebugEnabled()) {
+	    						log.debug("no ReplicationValve found for CrossContext Support");
+	    					}
+	    				}
+	    			}
+	    		}
+	    	}
+	    	if(replicationValve != null) {
+	    		replicationValve.registerReplicationSession(session);
+	    	}
+    	}
+    
+    /**
      * Find the master of the session state
      * @return master member of sessions 
      */
@@ -1062,7 +1108,6 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                     mbr = member ;
             }
         } else {
-            // FIXME Why only the first Member?
             if(mbrs.length != 0 )
                 mbr = mbrs[0];
         }
@@ -1092,7 +1137,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 }
                 reqNow = System.currentTimeMillis();
                 isTimeout = ((reqNow - reqStart) > (1000 * getStateTransferTimeout()));
-            } while ((!getStateTransferred()) && (!isTimeout));
+            } while ((!getStateTransfered()) && (!isTimeout));
         } else {
             if(getStateTransferTimeout() == -1) {
                 // wait that state is transfered
@@ -1101,11 +1146,11 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                         Thread.sleep(100);
                     } catch (Exception sleep) {
                     }
-                } while ((!getStateTransferred()));
+                } while ((!getStateTransfered()));
                 reqNow = System.currentTimeMillis();
             }
         }
-        if (isTimeout || (!getStateTransferred())) {
+        if (isTimeout || (!getStateTransfered())) {
             counterNoStateTransfered++ ;
             log.error(sm.getString("deltaManager.noSessionState",
                     getName(),new Date(beforeSendTime),new Long(reqNow - beforeSendTime)));
@@ -1156,6 +1201,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         // Require a new random number generator if we are restarted
         this.random = null;
         getCluster().removeManager(getName(),this);
+        replicationValve = null;
         if (initialized) {
             destroy();
         }
@@ -1174,8 +1220,6 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         // Validate the source of this event
         if (!(event.getSource() instanceof Context))
             return;
-        Context context = (Context) event.getSource();
-
         // Process a relevant property change
         if (event.getPropertyName().equals("sessionTimeout")) {
             try {
@@ -1243,29 +1287,35 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
             DeltaSession session = (DeltaSession) findSession(sessionId);
             DeltaRequest deltaRequest = session.getDeltaRequest();
             SessionMessage msg = null;
-            if (deltaRequest.getSize() > 0) {
-
-                counterSend_EVT_SESSION_DELTA++;
-                byte[] data = unloadDeltaRequest(deltaRequest);
-                msg = new SessionMessageImpl(name,
-                        SessionMessage.EVT_SESSION_DELTA, data, sessionId,
-                        sessionId + "-" + System.currentTimeMillis());
-                session.resetDeltaRequest();
+            boolean isDeltaRequest = false ;
+            synchronized(deltaRequest) {
+                isDeltaRequest = deltaRequest.getSize() > 0 ;
+                if (isDeltaRequest) {    
+                    counterSend_EVT_SESSION_DELTA++;
+                    byte[] data = unloadDeltaRequest(deltaRequest);
+                    msg = new SessionMessageImpl(getName(),
+                            SessionMessage.EVT_SESSION_DELTA, data, sessionId,
+                            sessionId + "-" + System.currentTimeMillis());
+                    session.resetDeltaRequest();
+                }  
+            }
+            if(!isDeltaRequest) {
+                if(!session.isPrimarySession()) {               
+                    counterSend_EVT_SESSION_ACCESSED++;
+                    msg = new SessionMessageImpl(getName(),
+                            SessionMessage.EVT_SESSION_ACCESSED, null, sessionId,
+                            sessionId + "-" + System.currentTimeMillis());
+                    if (log.isDebugEnabled()) {
+                        log.debug(sm.getString(
+                                "deltaManager.createMessage.accessChangePrimary",
+                                getName(), sessionId));
+                    }
+                }    
+            } else { // log only outside synch block!
                 if (log.isDebugEnabled()) {
                     log.debug(sm.getString(
-                            "deltaManager.createMessage.delta",
-                            getName(), sessionId));
-                }
-                
-            } else if (!session.isPrimarySession()) {
-                counterSend_EVT_SESSION_ACCESSED++;
-                msg = new SessionMessageImpl(getName(),
-                        SessionMessage.EVT_SESSION_ACCESSED, null, sessionId,
-                        sessionId + "-" + System.currentTimeMillis());
-                if (log.isDebugEnabled()) {
-                    log.debug(sm.getString(
-                            "deltaManager.createMessage.accessChangePrimary",
-                            getName(), sessionId));
+                        "deltaManager.createMessage.delta",
+                        getName(), sessionId));
                 }
             }
             session.setPrimarySession(true);
@@ -1493,7 +1543,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                     "deltaManager.receiveMessage.transfercomplete",
                     getName(), sender.getHost(), new Integer(sender.getPort())));
         stateTransferCreateSendTime = msg.getTimestamp() ;
-        stateTransferred = true ;
+        stateTransfered = true ;
     }
 
     /**

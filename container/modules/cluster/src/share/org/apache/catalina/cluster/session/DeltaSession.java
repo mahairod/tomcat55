@@ -42,12 +42,14 @@ import javax.servlet.http.HttpSessionContext;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
 import org.apache.catalina.SessionEvent;
 import org.apache.catalina.SessionListener;
 import org.apache.catalina.cluster.ClusterSession;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.StringManager;
@@ -136,12 +138,6 @@ public class DeltaSession implements HttpSession, Session, Serializable,
     private long creationTime = 0L;
 
     /**
-     * The debugging detail level for this component. NOTE: This value is not
-     * included in the serialized version of this object.
-     */
-    private transient int debug = 0;
-
-    /**
      * We are currently processing a session expiration, so bypass certain
      * IllegalStateException tests. NOTE: This value is not included in the
      * serialized version of this object.
@@ -162,7 +158,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
     /**
      * Descriptive information describing this Session implementation.
      */
-    private static final String info = "DeltaSession/1.0";
+    private static final String info = "DeltaSession/1.1";
 
     /**
      * The last accessed time for this Session.
@@ -426,9 +422,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
                     }
                 }
             }
-        }//end if
-        //end fix
-
+        }
     }
 
     /**
@@ -656,6 +650,8 @@ public class DeltaSession implements HttpSession, Session, Serializable,
     public void endAccess() {
         isNew = false;
         accessCount--;
+        if(manager instanceof DeltaManager)
+            ((DeltaManager)manager).registerSessionAtReplicationValve(this);
     }
 
     /**
