@@ -914,17 +914,20 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * @throws ClassNotFoundException
      */
     protected void registerClusterValve() throws Exception {
-        for (Iterator iter = valves.iterator(); iter.hasNext();) {
-            ClusterValve valve = (ClusterValve) iter.next();
-            if (log.isDebugEnabled())
-                log.debug("Invoking addValve on " + getContainer()
-                        + " with class=" + valve.getClass().getName());
-            if (valve != null) {
-                IntrospectionUtils.callMethodN(getContainer(), "addValve",
-                        new Object[] { valve }, new Class[] { org.apache.catalina.Valve.class });
+        if(container != null ) {
+            for (Iterator iter = valves.iterator(); iter.hasNext();) {
+                ClusterValve valve = (ClusterValve) iter.next();
+                if (log.isDebugEnabled())
+                    log.debug("Invoking addValve on " + getContainer()
+                            + " with class=" + valve.getClass().getName());
+                if (valve != null) {
+                    IntrospectionUtils.callMethodN(getContainer(), "addValve",
+                            new Object[] { valve },
+                            new Class[] { org.apache.catalina.Valve.class });
 
+                }
+                valve.setCluster(this);
             }
-            valve.setCluster(this);
         }
     }
 
