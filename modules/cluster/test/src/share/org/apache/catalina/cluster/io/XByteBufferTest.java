@@ -82,12 +82,14 @@ public class XByteBufferTest extends TestCase {
         for (byte i = 1; i < 4; i++) {
             data = b.extractPackage(true);
             d = data.getMessage();
-            assertEquals(i, d[0]);
+            assertEquals("wrong message content",i, d[0]);
         }
     }
 
     /**
-     * @return
+     * create three message inside one byte buffer
+     * @return three clustermessage at one byte array
+     * @see XByteBuffer#createDataPackage(byte[])
      * @throws IOException
      */
     private byte[] createMessage() throws IOException {
@@ -105,7 +107,7 @@ public class XByteBufferTest extends TestCase {
     /**
      * Test the type convertes to and from byte array
      */
-    public void testTypeconverter() {
+    public void testTypeConverter() {
         byte[] d = XByteBuffer.toBytes(Integer.MAX_VALUE);
         assertEquals(4, d.length);
         assertEquals(Integer.MAX_VALUE, XByteBuffer.toInt(d, 0));
