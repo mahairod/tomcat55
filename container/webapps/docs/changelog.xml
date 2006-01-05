@@ -20,6 +20,10 @@
       <fix>
         <bug>23950</bug>: Context.listBindings() should return objects not references. (markt)
       </fix>
+      <fix>
+        <bug>38124</bug>: Add support for Windows 20xx when reading environment
+        variables in CGIServlet. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Cluster">
