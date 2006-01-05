@@ -387,7 +387,7 @@ public class NamingContext implements Context {
         while ((!name.isEmpty()) && (name.get(0).length() == 0))
             name = name.getSuffix(1);
         if (name.isEmpty()) {
-            return new NamingContextBindingsEnumeration(bindings.values().iterator());
+            return new NamingContextBindingsEnumeration(bindings.values().iterator(), this);
         }
         
         NamingEntry entry = (NamingEntry) bindings.get(name.get(0));

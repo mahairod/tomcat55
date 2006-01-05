@@ -15,6 +15,13 @@
 <body>
 
 <section name="Tomcat 5.5.16">
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>23950</bug>: Context.listBindings() should return objects not references. (markt)
+      </fix>
+    </changelog>
+  </subsection>
   <subsection name="Cluster">
     <changelog>
       <add>
@@ -26,7 +33,7 @@
       </update>
       <update>
         DataSender close connection and throw exception also even if waitForAck is false.  (pero)
-      </upodate>
+      </update>
       <fix>
         Active cluster junit test again. (pero)
       </fix>
