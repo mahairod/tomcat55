@@ -822,7 +822,7 @@ public class DataSender implements IDataSender {
                     closeSocket();
                 }
                 exception = x;
-                // FIXME Hmm, throw the exception or not?
+                throw x ;
             }
         } finally {
             this.keepAliveCount++;
