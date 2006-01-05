@@ -88,6 +88,11 @@ public interface CatalinaCluster extends Cluster {
     public void sendClusterDomain(ClusterMessage msg);
 
     /**
+     * Returns that cluster has members.
+     */
+    public boolean hasMembers();
+
+    /**
      * Returns all the members currently participating in the cluster.
      *
      * @return Member[]
