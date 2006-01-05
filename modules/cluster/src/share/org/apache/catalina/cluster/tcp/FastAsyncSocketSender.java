@@ -474,12 +474,12 @@ public class FastAsyncSocketSender extends DataSender {
                     ClusterData data = (ClusterData) entry.data();
                     messagesize = data.getMessage().length;
                     sender.pushMessage(data);
-                    outQueueCounter++;
                 } catch (Exception x) {
                     log.warn(sm.getString(
                             "AsyncSocketSender.send.error", entry
                                     .getKey()), x);
                 } finally {
+                    outQueueCounter++;
                     decQueuedNrOfBytes(messagesize);
                 }
                 entry = entry.next();

@@ -439,6 +439,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * Send to all senders at same cluster domain as message from address
      * @param message Cluster message to send
      * @since 5.5.10
+     * FIXME Refactor with sendMessage get a sender list from
      */
     public void sendMessageClusterDomain(ClusterMessage message) 
          throws java.io.IOException {
@@ -459,15 +460,12 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                     try {
                         sendMessageData(data, sender);
                     } catch (Exception x) {
-                        if (!sender.getSuspect()) {
-                            log.warn("Unable to send replicated message to "
-                                    + sender + ", is server down?", x);
-                            sender.setSuspect(true);
-                        }
+                        // FIXME remember exception and send it at finally
                     }
                 }
             }
         } finally {
+            // FIXME better exception handling
             if (doTransmitterProcessingStats) {
                 addProcessingStats(time);
             }
@@ -478,6 +476,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     /**
      * send message to all senders (broadcast)
      * @see org.apache.catalina.cluster.ClusterSender#sendMessage(org.apache.catalina.cluster.ClusterMessage)
+     * FIXME Refactor with sendMessageClusterDomain!
      */
     public void sendMessage(ClusterMessage message)
             throws java.io.IOException {
@@ -494,14 +493,11 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                 try {
                     sendMessageData(data, sender);
                 } catch (Exception x) {
-                    if (!sender.getSuspect()) {
-                        log.warn("Unable to send replicated message to "
-                                + sender + ", is server down?", x);
-                        sender.setSuspect(true);
-                    }
+                    // FIXME remember exception and send it at finally
                 }
             }
         } finally {
+            // FIXME better exception handling
             if (doTransmitterProcessingStats) {
                 addProcessingStats(time);
             }
@@ -801,7 +797,8 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     }
 
     /**
-     * serialize message and add timestamp
+     * serialize message and add timestamp from message
+     * handle compression
      * @see GZIPOutputStream
      * @param msg cluster message
      * @return cluster message as byte array
@@ -819,7 +816,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
         data.setTimestamp(msg.getTimestamp());
         data.setCompress(msg.getCompress());
         data.setResend(msg.getResend());
-        // FIXME add Stats how much comress and uncompress messages and bytes are transfered
+        // FIXME add stats: How much comress and uncompress messages and bytes are transfered
         if ((isCompress() && msg.getCompress() != ClusterMessage.FLAG_FORBIDDEN)
                 || msg.getCompress() == ClusterMessage.FLAG_ALLOWED) {
             gout = new GZIPOutputStream(outs);

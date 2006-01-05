@@ -23,8 +23,6 @@ package org.apache.catalina.cluster.tcp;
  */
 public class WorkerThread extends Thread
 {
-    private static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog( WorkerThread.class );
     protected ThreadPool pool;
     protected boolean doRun = true;
 
