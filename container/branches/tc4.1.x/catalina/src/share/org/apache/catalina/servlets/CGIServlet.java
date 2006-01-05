@@ -661,7 +661,7 @@ public class CGIServlet extends HttpServlet {
             p = r.exec( "command.com /c set" );
             ignoreCase = true;
         } else if ( (OS.indexOf("nt") > -1)
-                || (OS.indexOf("windows 2000") > -1)
+                || (OS.indexOf("windows 20") > -1)
                 || (OS.indexOf("windows xp") > -1) ) {
             // thanks to JuanFran for the xp fix!
             p = r.exec( "cmd.exe /c set" );
