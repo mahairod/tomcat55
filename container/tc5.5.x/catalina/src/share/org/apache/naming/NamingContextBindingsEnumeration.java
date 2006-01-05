@@ -20,6 +20,8 @@ package org.apache.naming;
 import java.util.Iterator;
 
 import javax.naming.Binding;
+import javax.naming.CompositeName;
+import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
@@ -37,10 +39,10 @@ public class NamingContextBindingsEnumeration
     // ----------------------------------------------------------- Constructors
 
 
-    public NamingContextBindingsEnumeration(Iterator entries) {
+    public NamingContextBindingsEnumeration(Iterator entries, Context ctx) {
     	iterator = entries;
+        this.ctx = ctx;
     }
-
 
     // -------------------------------------------------------------- Variables
 
@@ -49,6 +51,12 @@ public class NamingContextBindingsEnumeration
      * Underlying enumeration.
      */
     protected Iterator iterator;
+
+    
+    /**
+     * The context for which this enumeration is being generated.
+     */
+    private Context ctx;
 
 
     // --------------------------------------------------------- Public Methods
@@ -59,7 +67,7 @@ public class NamingContextBindingsEnumeration
      */
     public Object next()
         throws NamingException {
-        return nextElement();
+        return nextElementInternal();
     }
 
 
@@ -86,7 +94,31 @@ public class NamingContextBindingsEnumeration
 
 
     public Object nextElement() {
+        try {
+            return nextElementInternal();
+        } catch (NamingException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+    
+    private Object nextElementInternal() throws NamingException {
         NamingEntry entry = (NamingEntry) iterator.next();
+        
+        // If the entry is a reference, resolve it
+        if (entry.type == NamingEntry.REFERENCE
+                || entry.type == NamingEntry.LINK_REF) {
+            try {
+                // A lookup will resolve the entry
+                ctx.lookup(new CompositeName(entry.name));
+            } catch (NamingException e) {
+                throw e;
+            } catch (Exception e) {
+                NamingException ne = new NamingException(e.getMessage());
+                ne.initCause(e);
+                throw ne;
+            }
+        }
+        
         return new Binding(entry.name, entry.value.getClass().getName(), 
                            entry.value, true);
     }

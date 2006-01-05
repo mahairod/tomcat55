@@ -334,7 +334,8 @@ public class FileDirContext extends BaseDirContext {
             throw new NamingException
                 (sm.getString("resources.notFound", name));
 
-        return new NamingContextBindingsEnumeration(list(file).iterator());
+        return new NamingContextBindingsEnumeration(list(file).iterator(),
+                this);
 
     }
 
