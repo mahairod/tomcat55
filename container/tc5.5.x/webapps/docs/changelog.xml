@@ -14,6 +14,26 @@
 
 <body>
 
+<section name="Tomcat 5.5.16">
+  <subsection name="Cluster">
+    <changelog>
+      <add>
+       <bug>35710</bug>: Add session replication for cross context session changes.
+       The portlet api need this support, see refactored ReplicationValve. (pero)
+      </add>
+      <update>
+        ReplicationValve reset DeltaSession when cluster node has no backup node. (pero)
+      </update>
+      <update>
+        DataSender close connection and throw exception also even if waitForAck is false.  (pero)
+      </upodate>
+      <fix>
+        Active cluster junit test again. (pero)
+      </fix>
+    </changelog>
+  </subsection>
+</section>
+
 <section name="Tomcat 5.5.15">
   <subsection name="General">
     <changelog>
