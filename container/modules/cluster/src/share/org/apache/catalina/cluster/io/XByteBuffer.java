@@ -346,7 +346,7 @@ public class XByteBuffer
                 + END_DATA.length];
         System.arraycopy(START_DATA, 0, result, 0, START_DATA.length);
         System.arraycopy(toBytes(ClusterMessage.FLAG_FORBIDDEN), 0, result, START_DATA.length, 4);
-        System.arraycopy(toBytes(data.length), 0, result, START_DATA.length, 8);
+        System.arraycopy(toBytes(data.length), 0, result, START_DATA.length + 4, 4);
         System.arraycopy(data, 0, result, START_DATA.length + 8, data.length);
         System.arraycopy(END_DATA, 0, result, START_DATA.length + 8
                 + data.length, END_DATA.length);

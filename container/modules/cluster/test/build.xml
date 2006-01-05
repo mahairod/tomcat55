@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!-- @author Peter Rossbach -->
 <project name="Tomcat: Cluster Testcases" basedir="." default="test">
-	<property file="../../../../build.properties" />
-	<property file="../../../../jakarta-tomcat-5/build.properties.default" />
+	<property file="../../../../build/build.properties" />
+	<property file="../../../../build/build.properties.default" />
 	<property name="test.report.logs" value="logs/reports" />
 	<property name="test.results" value="logs/test-results" />
 
@@ -14,7 +14,7 @@
 	<property name="compile.encoding" value="ISO-8859-1" />
 	<property name="build.dir" value="build/test" />
 	<property name="src.dir" value="src/share" />
-	<property name="catalina.home" value="../../../../jakarta-tomcat-5/build" />
+	<property name="catalina.home" value="../../../../build/build" />
 
 	<!-- Build the classpath -->
 	<path id="project.classpath">
