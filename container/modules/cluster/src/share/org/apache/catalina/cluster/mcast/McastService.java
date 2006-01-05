@@ -313,7 +313,7 @@ public class McastService implements MembershipService,MembershipListener {
         impl.start(level);
 		long memberwait = (Long.parseLong(properties.getProperty("msgFrequency"))*4);
         if(log.isInfoEnabled())
-            log.info("Sleeping for "+memberwait+" secs to establish cluster membership");
+            log.info("Sleeping for "+memberwait+" milliseconds to establish cluster membership");
         Thread.sleep(memberwait);
 
     }
