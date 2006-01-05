@@ -133,15 +133,16 @@ public class DataSenderTest extends TestCase {
         ClusterData data = new ClusterData("test", "123",new byte[]{ 1,2,3 }, System.currentTimeMillis() );
         sender.writeData(data) ;
         ByteArrayOutputStream stream = (ByteArrayOutputStream)sender.getSocket().getOutputStream();
-        assertEquals(21,stream.size());
+        assertEquals(25,stream.size());
         ByteArrayInputStream istream = (ByteArrayInputStream)sender.getSocket().getInputStream();
-        assertEquals(-1,istream.read());    
+        assertEquals(6,istream.read());    
         MockSocket socket =((MockSocket)sender.getSocket());
         socket.reset();
+        sender.setWaitForAck(true);
         socket.setReadIOException(true);
         try {
             sender.writeData(data);
-            fail("Missing Ack IOExcpetion") ;
+            fail("Missing Ack IOException") ;
         } catch (IOException ioe) {} ;
         socket.reset();
         socket.setReadIOException(false);
@@ -165,7 +166,7 @@ public class DataSenderTest extends TestCase {
         ClusterData data = new ClusterData("test", "123",new byte[]{ 1,2,3 }, System.currentTimeMillis() );
         sender.writeData(data) ;
         ByteArrayOutputStream stream = (ByteArrayOutputStream)sender.getSocket().getOutputStream();
-        assertEquals(21,stream.size());
+        assertEquals(25,stream.size());
         ByteArrayInputStream istream = (ByteArrayInputStream)sender.getSocket().getInputStream();
         assertEquals(3,TcpReplicationThread.ACK_COMMAND.length);
         assertEquals(TcpReplicationThread.ACK_COMMAND[0],istream.read());        
@@ -177,7 +178,7 @@ public class DataSenderTest extends TestCase {
      * Check close socket fro keep alive handling is correct (number of request and timeout
      * @throws Exception
      */
-    public void testcheckKeepAlive() throws Exception {
+    public void testCheckKeepAlive() throws Exception {
         DataSender sender = createMockDataSender() ;
         assertFalse(sender.checkKeepAlive()) ;
         sender.setKeepAliveMaxRequestCount(1);
@@ -222,6 +223,7 @@ public class DataSenderTest extends TestCase {
     public void testPushMessageRetryFailure() throws Exception {
         InetAddress host = InetAddress.getByName("127.0.0.1");
         DataSender sender = new MockDataSender("catalina",host, 3434);
+        sender.setResend(true);
         sender.openSocket() ;
         ((MockSocket)sender.getSocket()).setWriteIOException(true);
         assertPushMessage(sender);
@@ -230,15 +232,33 @@ public class DataSenderTest extends TestCase {
     }
     
     /**
+     * Test socket closed after socket write failure without retry
+     * @throws Exception
+     */
+    public void testPushMessageFailure() throws Exception {
+        InetAddress host = InetAddress.getByName("127.0.0.1");
+        DataSender sender = new MockDataSender("catalina",host, 3434);
+        sender.openSocket() ;
+        ((MockSocket)sender.getSocket()).setWriteIOException(true);
+        try {
+            assertPushMessage(sender);
+            fail("No IOException is thrown");
+        } catch (IOException ioe) {}
+        assertFalse(sender.isConnected());
+        assertEquals(1,sender.getSocketOpenCounter());
+        assertEquals(1,sender.getSocketCloseCounter());
+    }
+
+    /**
      * @param sender
      * @throws IOException
      */
     private void assertPushMessage(DataSender sender) throws IOException {
         ByteArrayOutputStream stream = pushMessage(sender);
-        assertEquals(21,stream.size());
-        assertEquals(1,sender.getKeepAliveCount());
-        assertEquals(1,sender.getNrOfRequests());
-        assertEquals(0,sender.getProcessingTime());
+        assertEquals("message format is wrong",25,stream.size());
+        assertEquals("socket is not at keep alive mode",1,sender.getKeepAliveCount());
+        assertEquals("no stats or wrong number of request message counter",1,sender.getNrOfRequests());
+        assertEquals("to long operation",0,sender.getProcessingTime());
         assertEquals(Long.MAX_VALUE,sender.getMinProcessingTime());
     }
 
@@ -250,7 +270,7 @@ public class DataSenderTest extends TestCase {
     private ByteArrayOutputStream pushMessage(DataSender sender) throws IOException {
         ClusterData data = new ClusterData("unique-id", "123",new byte[]{ 1,2,3 }, System.currentTimeMillis() );
         sender.pushMessage(data );
-        assertTrue(sender.isConnected());
+        assertTrue("sender is not connect after message pushed!",sender.isConnected());
         ByteArrayOutputStream stream = (ByteArrayOutputStream)sender.getSocket().getOutputStream();
         return stream;
     }
