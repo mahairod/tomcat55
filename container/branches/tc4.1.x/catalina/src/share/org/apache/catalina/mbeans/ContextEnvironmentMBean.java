@@ -17,13 +17,10 @@
 package org.apache.catalina.mbeans;
 
 
-import java.util.ArrayList;
 import javax.management.Attribute;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
-import javax.management.MalformedObjectNameException;
 import javax.management.MBeanException;
-import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.management.RuntimeOperationsException;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;

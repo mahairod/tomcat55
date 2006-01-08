@@ -19,9 +19,7 @@ package org.apache.catalina.mbeans;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import javax.management.MBeanException;
-import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.ObjectInstance;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
@@ -29,9 +27,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
-import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
-import org.apache.catalina.Manager;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
@@ -39,13 +35,10 @@ import org.apache.catalina.Service;
 import org.apache.catalina.Valve;
 import org.apache.catalina.authenticator.SingleSignOn;
 import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.core.StandardService;
 import org.apache.catalina.core.StandardDefaultContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
-import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.core.StandardService;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.logger.FileLogger;
 import org.apache.catalina.logger.SystemErrLogger;
@@ -75,11 +68,6 @@ import org.apache.commons.modeler.Registry;
  */
 
 public class MBeanFactory extends BaseModelMBean {
-
-    /**
-     * The <code>MBeanServer</code> for this application.
-     */
-    private static MBeanServer mserver = MBeanUtils.createServer();
 
     /**
      * The configuration information registry for our managed beans.
@@ -268,7 +256,6 @@ public class MBeanFactory extends BaseModelMBean {
 
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
         Server server = ServerFactory.getServer();
         String serviceName = pname.getKeyProperty("service");
         if (serviceName == null) {

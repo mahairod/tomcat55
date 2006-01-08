@@ -19,14 +19,8 @@ package org.apache.catalina.mbeans;
 
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
-import org.apache.catalina.Logger;
-import org.apache.catalina.Realm;
 import org.apache.catalina.Valve;
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.commons.modeler.BaseModelMBean;
 import org.apache.commons.modeler.Registry;

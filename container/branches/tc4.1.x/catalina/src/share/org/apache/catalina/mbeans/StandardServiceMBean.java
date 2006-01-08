@@ -18,11 +18,7 @@ package org.apache.catalina.mbeans;
 
 
 import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
-import org.apache.catalina.Connector;
-import org.apache.catalina.Service;
 import org.apache.commons.modeler.BaseModelMBean;
 
 
@@ -35,11 +31,6 @@ import org.apache.commons.modeler.BaseModelMBean;
  */
 
 public class StandardServiceMBean extends BaseModelMBean {
-
-    /**
-     * The <code>MBeanServer</code> for this application.
-     */
-    private static MBeanServer mserver = MBeanUtils.createServer();
     
     // ----------------------------------------------------------- Constructors
 

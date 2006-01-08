@@ -19,7 +19,6 @@ package org.apache.catalina.mbeans;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
-import javax.management.MBeanServer;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
@@ -36,15 +35,6 @@ import org.apache.commons.modeler.BaseModelMBean;
  */
 
 public class StandardServerMBean extends BaseModelMBean {
-
-
-    // ------------------------------------------------------- Static Variables
-
-
-    /**
-     * The <code>MBeanServer</code> for this application.
-     */
-    private static MBeanServer mserver = MBeanUtils.createServer();
 
 
     // ----------------------------------------------------------- Constructors

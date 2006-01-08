@@ -19,22 +19,14 @@ package org.apache.catalina.mbeans;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
-import org.apache.catalina.Group;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
@@ -42,15 +34,11 @@ import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Realm;
-import org.apache.catalina.Role;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
-import org.apache.catalina.User;
-import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
-import org.apache.catalina.Contained;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.ContainerEvent;
 import org.apache.catalina.Lifecycle;
@@ -61,12 +49,10 @@ import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.core.StandardService;
 import org.apache.catalina.core.StandardWrapper;
-import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.deploy.ResourceParams;
 
 
 /**

@@ -19,9 +19,6 @@ package org.apache.catalina.mbeans;
 import java.lang.reflect.Method;
 import javax.management.MBeanException;
 import javax.management.RuntimeOperationsException;
-import org.apache.catalina.Connector;
-import org.apache.catalina.Service;
-import org.apache.commons.modeler.BaseModelMBean;
 
 
 /**
