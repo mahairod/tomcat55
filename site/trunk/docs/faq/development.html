@@ -1,7 +1,7 @@
 <html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Tomcat FAQ - Tomcat FAQ: Development</title><meta value="Mark Thomas" name="author"><meta value="markt@apache.org" name="email"><style>
       dt { font-size : larger;  font-weight : bold }
       dd {padding-bottom : 10px;}
-    </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
+    </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--TOMCAT LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://tomcat.apache.org/faq/"><img border="0" alt="
       Tomcat FAQ
     " align="right" src="../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--LEFT SIDE NAVIGATION--><td nowrap="true" valign="top" width="20%"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="cluster.html">Clustering</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="deployment.html">Deployment</a></li><li><a href="development.html">Development</a></li><li><a href="fda-validation.html">FDA Validation</a></li><li><a href="http://wiki.apache.org/tomcat/HowTo">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="otherOperatingSystems.html">Other Operating Systems</a></li><li><a href="logging.html">Logging</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="http://wiki.apache.org/tomcat/UsefulLinks">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="http://wiki.apache.org/tomcat/">Wiki</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Tomcat FAQ: Development</h2></td><td nowrap="true" valign="top" align="right"><small><a href="printer/development.html"><img alt="Printer Friendly Version" border="0" src="../images/printer.gif"><br>print-friendly<br>version
                     </a></small></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
@@ -23,6 +23,11 @@
     <li>
       <a href="#rd-netbeans">
         How do I remotely debug Tomcat using NetBeans IDE?
+      </a>
+    </li>
+    <li>
+      <a href="#reloadInterval">
+        How do I change the monitoring interval for modified resources and application reloading?
       </a>
     </li>
   </ul>
@@ -58,6 +63,8 @@
     <p>Whilst this is very useful in development it should not be used in production because
     of both security and performance implications.</p>
   </div><br>
+
+
   <b style="font-size: larger">
     <a name="rd-eclipse">How do I remotely debug Tomcat using Eclipse?</a>
   </b>
@@ -83,6 +90,8 @@
     Have fun!
     </p>
   </div><br>
+
+
   <b style="font-size: larger">
     <a name="rd-netbeans">How do I remotely debug Tomcat using NetBeans IDE?</a>
   </b>
@@ -120,6 +129,20 @@ in debug mode, and the debugger connects to it.
     </p>
   </div><br>
 </p>
+
+
+<b style="font-size: larger">
+  <a name="reloadInterval">
+    How do I change the monitoring interval for modified resources and application reloading?
+  </a>
+</b>
+<div style="padding-left : 20px;">
+  Modify the <code>checkInterval</code> attribute value on the relevant <code>Loader</code>
+  element in your web application configuration file (yourapp.xml), or in the main configuration
+  file (<code>%CATALINA_HOME%/conf/server.xml</code>) if that is the one you're using.  For
+  more information, please see the <a href="config/loader.html">Loader configuration reference</a>.
+</div><br>
+
 </blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><td align="center" colspan="2"><!--Google Search Form: see Bugzilla 35788--><form action="http://www.google.com/search" name="searchForm" method="GET"><input value="UTF-8" name="ie" type="hidden"><input value="UTF-8" name="oe" type="hidden"><table bgcolor="#FFFFFF"><tr><td><a href="http://www.google.com/"><img align="absmiddle" alt="Google" border="0" src="http://www.google.com/logos/Logo_40wht.gif"></a></td><td><input value="" maxlength="255" size="25" name="q" type="text"><input value="http://jakarta.apache.org/tomcat/faq" name="domains" type="hidden"><input value="http://jakarta.apache.org/tomcat/faq" name="sitesearch" type="hidden"><input value="Google Search" name="btnG" type="submit"><br>
                                 Search the Tomcat FAQ
 			      </td></tr></table></form></td></tr><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>

@@ -37,6 +37,11 @@
         How do I remotely debug Tomcat using NetBeans IDE?
       </a>
     </li>
+    <li>
+      <a href="#reloadInterval">
+        How do I change the monitoring interval for modified resources and application reloading?
+      </a>
+    </li>
   </ul>
 </p>
 </section>
@@ -73,6 +78,8 @@
     <p>Whilst this is very useful in development it should not be used in production because
     of both security and performance implications.</p>
   </answer>
+
+
   <question>
     <a name="rd-eclipse">How do I remotely debug Tomcat using Eclipse?</a>
   </question>
@@ -98,6 +105,8 @@
     Have fun!
     </p>
   </answer>
+
+
   <question>
     <a name="rd-netbeans">How do I remotely debug Tomcat using NetBeans IDE?</a>
   </question>
@@ -135,6 +144,20 @@ in debug mode, and the debugger connects to it.
     </p>
   </answer>
 </p>
+
+
+<question>
+  <a name="reloadInterval">
+    How do I change the monitoring interval for modified resources and application reloading?
+  </a>
+</question>
+<answer>
+  Modify the <code>checkInterval</code> attribute value on the relevant <code>Loader</code>
+  element in your web application configuration file (yourapp.xml), or in the main configuration
+  file (<code>%CATALINA_HOME%/conf/server.xml</code>) if that is the one you're using.  For
+  more information, please see the <a href="config/loader.html">Loader configuration reference</a>.
+</answer>
+
 </section>
 
 </body>
