@@ -14,7 +14,14 @@
 
 <body>
 
-<section name="Tomcat 5.5.16">
+<section name="Tomcat 5.5.16 (yoavs)">
+  <subsection name="General">
+    <changelog>
+      <update>
+        Updated / enhanced docs to remove old FIXME references. (yoavs)
+      </update>
+    </changelog>
+  </subsection>
   <subsection name="Catalina">
     <changelog>
       <fix>
@@ -45,7 +52,7 @@
   </subsection>
 </section>
 
-<section name="Tomcat 5.5.15">
+<section name="Tomcat 5.5.15 (yoavs)">
   <subsection name="General">
     <changelog>
       <fix>

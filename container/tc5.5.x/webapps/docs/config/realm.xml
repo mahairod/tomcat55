@@ -31,11 +31,10 @@
   containers, unless explicitly overridden.</p>
 
   <p>For more in-depth information about container managed security in web
-  applications, see <strong>FIXME - link to "Container Managed Security Guide"
-  in the application developer's section</strong>.  For more in-depth
-  information about configuing and using the standard Realm component
-  implementations, see <strong>FIXME - link to "Realm Configuration HOW-TO"
-  in the administrator's section</strong>.</p>
+  applications, as well as more information on configuring and using the 
+  standard realm component implementations, please see the 
+  <a href="../realm-howto.html">Container-Managed Security Guide</a>.
+  </p>
 
     <blockquote><em>
     <p>The description below uses the variable name $CATALINA_HOME
@@ -155,7 +154,7 @@
 
     </attributes>
 
-    <p>See <strong>FIXME - Nested pointer into HOW-TO</strong> for more
+    <p>See the <a href="../realm-howto.html">Container-Managed Security Guide</a> for more
     information on setting up container managed security using the
     JDBC Database Realm component.</p>
 
@@ -418,7 +417,7 @@
 
     </attributes>
 
-    <p>See <strong>FIXME - Nested pointer into HOW-TO</strong> for more
+    <p>See the <a href="../realm-howto.html">Container-Managed Security Guide</a> for more
     information on setting up container managed security using the
     JNDI Directory Realm component.</p>
 
@@ -466,7 +465,7 @@
         </ul></li>
     </ul>
 
-    <p>See <strong>FIXME - Nested pointer into HOW-TO</strong> for more
+    <p>See the <a href="../realm-howto.html">Container-Managed Security Guide</a> for more
     information on setting up container managed security using the
     Memory Based Realm component.</p>
 
