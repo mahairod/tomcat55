@@ -219,9 +219,9 @@ public class Response
     private boolean isCharacterEncodingSet = false;
     
     /**
-     * The contextType flag
+     * The contentLength flag
      */    
-    private boolean isContentTypeSet = false;
+    private boolean isContentLengthSet = false;
 
     
     /**
@@ -275,7 +275,7 @@ public class Response
         appCommitted = false;
         included = false;
         error = false;
-        isContentTypeSet = false;
+        isContentLengthSet = false;
         isCharacterEncodingSet = false;
         
         cookies.clear();
@@ -651,6 +651,7 @@ public class Response
 
         coyoteResponse.reset();
         outputBuffer.reset();
+        isContentLengthSet = false;
     }
 
 
@@ -708,6 +709,8 @@ public class Response
             return;
         
         coyoteResponse.setContentLength(length);
+        
+        isContentLengthSet = true;
 
     }
 
@@ -744,7 +747,8 @@ public class Response
             if (index != -1) {
                 int len = type.length();
                 index++;
-                while (index < len && Character.isSpace(type.charAt(index))) {
+                while (index < len
+                        && Character.isWhitespace(type.charAt(index))) {
                     index++;
                 }
                 if (index+7 < len
@@ -760,8 +764,6 @@ public class Response
                 }
             }
         }
-
-        isContentTypeSet = true;    
     }
 
 
@@ -1011,6 +1013,12 @@ public class Response
 
         coyoteResponse.addHeader(name, value);
 
+        char cc=name.charAt(0);
+        if(cc=='C' || cc=='c') {
+            if(name.equalsIgnoreCase("Content-Length")) {
+                isContentLengthSet = true;
+            }
+        }
     }
 
 
@@ -1040,6 +1048,20 @@ public class Response
      * @param name Name of the header to check
      */
     public boolean containsHeader(String name) {
+        // Need special handling for Content-Type and Content-Length due to
+        // special handling of these in coyoteResponse
+        char cc=name.charAt(0);
+        if(cc=='C' || cc=='c') {
+            if(name.equalsIgnoreCase("Content-Type")) {
+                // Will return null if this has not been set
+                return (coyoteResponse.getContentType() != null);
+            }
+            if(name.equalsIgnoreCase("Content-Length")) {
+                // Can't use null test since this header is an int
+                return isContentLengthSet;
+            }
+        }
+
         return coyoteResponse.containsHeader(name);
     }
 
@@ -1268,6 +1290,13 @@ public class Response
             return;
 
         coyoteResponse.setHeader(name, value);
+
+        char cc=name.charAt(0);
+        if(cc=='C' || cc=='c') {
+            if(name.equalsIgnoreCase("Content-Length")) {
+                isContentLengthSet = true;
+            }
+        }
 
     }
 
