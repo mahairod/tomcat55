@@ -25,11 +25,16 @@
   <subsection name="Catalina">
     <changelog>
       <fix>
-        <bug>23950</bug>: Context.listBindings() should return objects not references. (markt)
+        <bug>23950</bug>: Context.listBindings() should return objects not
+        references. (markt)
       </fix>
       <fix>
         <bug>38124</bug>: Add support for Windows 20xx when reading environment
         variables in CGIServlet. (markt)
+      </fix>
+      <fix>
+        <bug>29214</bug>: response.containsHeader() now returns the correct
+        value for Content-Type and Content-Length headers. (markt)
       </fix>
     </changelog>
   </subsection>
