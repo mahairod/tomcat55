@@ -168,6 +168,11 @@
         I'm getting java.lang.ThreadDeath exceptions when reloading my webapp.
       </a>
     </li>
+    <li>
+      <a href="#stop">
+        Help! Even though I run shutdown.sh (or shutdown.bat), Tomcat does not stop!
+      </a>
+    </li>
   </ul>
 </p>
 
@@ -764,6 +769,19 @@
   <div style="padding-left : 20px;">
     See <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=26372">Bugzilla discussion of this</a>.
   </div><br>
+
+
+  <b style="font-size: larger">
+      <a name="stop">
+        Help! Even though I run shutdown.sh (or shutdown.bat), Tomcat does not stop!
+      </a>
+  </b>
+  <div style="padding-left : 20px;">
+    Most likely, a non-daemon thread is running. JVM's do not shutdown until there are
+    0 non-daemon threads. You will need to perform a thread dump [<tt>kill -3 pid</tt> for Unix or
+    <tt>CTRL+Break</tt> for Windows] to determine the code which started the thread.
+  </div><br>
+
 </blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
         Copyright &copy; 1999-2005, Apache Software Foundation
         </em></font></div></td></tr></table></body></html>

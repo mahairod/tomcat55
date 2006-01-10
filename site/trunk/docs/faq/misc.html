@@ -169,6 +169,11 @@
         I'm getting java.lang.ThreadDeath exceptions when reloading my webapp.
       </a>
     </li>
+    <li>
+      <a href="#stop">
+        Help! Even though I run shutdown.sh (or shutdown.bat), Tomcat does not stop!
+      </a>
+    </li>
   </ul>
 </p>
 
@@ -765,6 +770,19 @@
   <div style="padding-left : 20px;">
     See <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=26372">Bugzilla discussion of this</a>.
   </div><br>
+
+
+  <b style="font-size: larger">
+      <a name="stop">
+        Help! Even though I run shutdown.sh (or shutdown.bat), Tomcat does not stop!
+      </a>
+  </b>
+  <div style="padding-left : 20px;">
+    Most likely, a non-daemon thread is running. JVM's do not shutdown until there are
+    0 non-daemon threads. You will need to perform a thread dump [<tt>kill -3 pid</tt> for Unix or
+    <tt>CTRL+Break</tt> for Windows] to determine the code which started the thread.
+  </div><br>
+
 </blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><td align="center" colspan="2"><!--Google Search Form: see Bugzilla 35788--><form action="http://www.google.com/search" name="searchForm" method="GET"><input value="UTF-8" name="ie" type="hidden"><input value="UTF-8" name="oe" type="hidden"><table bgcolor="#FFFFFF"><tr><td><a href="http://www.google.com/"><img align="absmiddle" alt="Google" border="0" src="http://www.google.com/logos/Logo_40wht.gif"></a></td><td><input value="" maxlength="255" size="25" name="q" type="text"><input value="http://jakarta.apache.org/tomcat/faq" name="domains" type="hidden"><input value="http://jakarta.apache.org/tomcat/faq" name="sitesearch" type="hidden"><input value="Google Search" name="btnG" type="submit"><br>
                                 Search the Tomcat FAQ
 			      </td></tr></table></form></td></tr><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
