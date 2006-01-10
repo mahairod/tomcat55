@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.Stack;
 import java.util.TreeMap;
 
+import javax.management.AttributeNotFoundException;
 import javax.management.ListenerNotFoundException;
 import javax.management.MBeanNotificationInfo;
 import javax.management.MBeanRegistrationException;
@@ -5057,11 +5058,31 @@ public class StandardContext
                     .registerComponent(host, parentName, null);
                 mserver.invoke(parentName, "init", new Object[] {}, new String[] {} );
             }
-            ContextConfig config = new ContextConfig();
+            
+            // Add the main configuration listener
+            LifecycleListener config = null;
+            try {
+                Object configClassname = null;
+                try {
+                    configClassname = mserver.getAttribute(parentName, "configClass");
+                } catch (AttributeNotFoundException e) {
+                    // Ignore, it's normal a host may not have this optional attribute
+                }
+                if (configClassname != null) {
+                    Class clazz = Class.forName(String.valueOf(configClassname));
+                    config = (LifecycleListener) clazz.newInstance();
+                } else {
+                    config = new ContextConfig();
+                }
+            } catch (Exception e) {
+                log.warn("Error creating ContextConfig for " + parentName, e);
+                throw e;
+            }
             this.addLifecycleListener(config);
 
-            if(log.isDebugEnabled())
-                 log.debug( "AddChild " + parentName + " " + this);
+            if (log.isDebugEnabled()) {
+                log.debug("AddChild " + parentName + " " + this);
+            }
             try {
                 mserver.invoke(parentName, "addChild", new Object[] { this },
                                new String[] {"org.apache.catalina.Container"});

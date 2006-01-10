@@ -248,6 +248,24 @@
                  type="org.apache.catalina.Valve"/>
     </operation>
     
+    <operation   name="addLifecycleListener"
+               description="Add a lifecycle listener to this Context"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="listener"
+                 description="New lifecycle listener to be added"
+                 type="org.apache.catalina.LifecycleListener"/>
+    </operation>
+    
+    <operation   name="removeLifecycleListener"
+               description="Remove a lifecycle listener from this Context"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="listener"
+                 description="New lifecycle listener to be removed"
+                 type="org.apache.catalina.LifecycleListener"/>
+    </operation>
+    
     <operation   name="reload"
                description="Reload the webapplication"
                impact="ACTION"
@@ -384,6 +402,10 @@
                description="The auto deploy flag for this Host"
                type="boolean"/>
                  
+    <attribute name="configClass"
+               description="The configuration class for contexts"
+               type="java.lang.String"/>
+      
     <attribute name="deployOnStartup"
                description="The deploy on startup flag for this Host"
                type="boolean"/>
