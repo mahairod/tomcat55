@@ -72,6 +72,9 @@
   <property name="compile.deprecation"  value="false" />
   <property name="compile.source"       value="1.4" />
   <property name="tester.delay"         value="8" />
+  
+  <!-- constant to declare a file binary for md5sum -->
+  <property name="md5sum.binary-prefix" value=" *" />
 
   <!-- =================== DETECT: Display configuration ================== -->
   <target name="detect"
@@ -1471,6 +1474,8 @@
     <move file="${tomcat.dist}/tomcat-installer.exe" tofile="${tomcat.release}/v${version}/bin/${final.name}.exe" />
 
     <checksum file="${tomcat.release}/v${version}/bin/${final.name}.exe" />
+    <echo     file="${tomcat.release}/v${version}/bin/${final.name}.exe.MD5" 
+                      message="${md5sum.binary-prefix}${final.name}.exe${line.separator}" append="true" />
   </target>
 
 
@@ -1518,6 +1523,8 @@
     </zip>
 
     <checksum file="${tomcat.release}/v${version}/bin/${final.name}.zip"/>
+    <echo     file="${tomcat.release}/v${version}/bin/${final.name}.zip.MD5"
+                      message="${md5sum.binary-prefix}${final.name}.zip${line.separator}" append="true" />
   </target>
 
   <!-- Packages the embedded Tomcat distro in zip format -->
@@ -1536,6 +1543,8 @@
     </zip>
 
     <checksum file="${tomcat.release}/v${version}/bin/${final.name}-embed.zip"/>
+    <echo     file="${tomcat.release}/v${version}/bin/${final.name}-embed.zip.MD5"
+                      message="${md5sum.binary-prefix}${final.name}-embed.zip${line.separator}" append="true" />
   </target>
 
   <!-- Packages the deployer distribution in zip format -->
@@ -1549,6 +1558,8 @@
     </zip>
 
     <checksum file="${tomcat.release}/v${version}/bin/${final.name}-deployer.zip"/>
+    <echo     file="${tomcat.release}/v${version}/bin/${final.name}-deployer.zip.MD5"
+                      message="${md5sum.binary-prefix}${final.name}-deployer.zip${line.separator}" append="true" />
   </target>
 
   <!-- Packages the JDK 1.4 compatibility distro in zip format -->
@@ -1562,6 +1573,8 @@
     </zip>
  
     <checksum file="${tomcat.release}/v${version}/bin/${final.name}-compat.zip"/>
+    <echo     file="${tomcat.release}/v${version}/bin/${final.name}-compat.zip.MD5"
+                      message="${md5sum.binary-prefix}${final.name}-compat.zip${line.separator}" append="true" />
   </target>
 
   <!-- Packages the admin webapp distro in zip format -->
@@ -1579,6 +1592,8 @@
     </zip>
    
     <checksum file="${tomcat.release}/v${version}/bin/${final.name}-admin.zip"/>
+    <echo     file="${tomcat.release}/v${version}/bin/${final.name}-admin.zip.MD5"
+                      message="${md5sum.binary-prefix}${final.name}-admin.zip${line.separator}" append="true" />
   </target>
 
   <!-- Prepares for cutting the release -->
@@ -1658,6 +1673,8 @@
     </tar>
 
     <checksum file="${tomcat.release}/v${version}/bin/${final.name}.tar.gz"/>
+    <echo     file="${tomcat.release}/v${version}/bin/${final.name}.tar.gz.MD5"
+                      message="${md5sum.binary-prefix}${final.name}.tar.gz${line.separator}" append="true" />
   </target>
 
   <!-- Packages the embedded Tomcat distro in tar.gz format -->
@@ -1679,6 +1696,8 @@
     </tar>
 
     <checksum file="${tomcat.release}/v${version}/bin/${final.name}-embed.tar.gz"/>
+    <echo     file="${tomcat.release}/v${version}/bin/${final.name}-embed.tar.gz.MD5"
+                      message="${md5sum.binary-prefix}${final.name}-embed.tar.gz${line.separator}" append="true" />
   </target>
 
   <!-- Packages the deployer Tomcat distro in tar.gz format -->
@@ -1701,6 +1720,8 @@
     </tar>
 
     <checksum file="${tomcat.release}/v${version}/bin/${final.name}-deployer.tar.gz"/>
+    <echo     file="${tomcat.release}/v${version}/bin/${final.name}-deployer.tar.gz.MD5"
+                      message="${md5sum.binary-prefix}${final.name}-deployer.tar.gz${line.separator}" append="true" />
   </target>
 
   <!-- Packages the 1.4 compatibility distro in tar.gz format -->
@@ -1721,6 +1742,8 @@
     </tar>
 
     <checksum file="${tomcat.release}/v${version}/bin/${final.name}-compat.tar.gz"/>
+    <echo     file="${tomcat.release}/v${version}/bin/${final.name}-compat.tar.gz.MD5"
+                      message="${md5sum.binary-prefix}${final.name}-compat.tar.gz${line.separator}" append="true" />
   </target>
 
   <!-- Packages the admin webapp distro in tar.gz format -->
@@ -1745,6 +1768,8 @@
     </tar>
 
     <checksum file="${tomcat.release}/v${version}/bin/${final.name}-admin.tar.gz"/>
+    <echo     file="${tomcat.release}/v${version}/bin/${final.name}-admin.tar.gz.MD5"
+                      message="${md5sum.binary-prefix}${final.name}-admin.tar.gz${line.separator}" append="true" />
   </target>
 
   <!-- Packages the documentation distro in tar.gz format -->
@@ -1778,6 +1803,8 @@
     </tar>
 
     <checksum file="${tomcat.release}/v${version}/bin/${final.name}-fulldocs.tar.gz"/>
+    <echo     file="${tomcat.release}/v${version}/bin/${final.name}-fulldocs.tar.gz.MD5"
+                      message="${md5sum.binary-prefix}${final.name}-fulldocs.tar.gz${line.separator}" append="true" />
   </target>
 
   <!-- Packages the source code distribution in zip format -->
@@ -1787,6 +1814,8 @@
     </zip>
 
     <checksum file="${tomcat.release}/v${version}/src/${final-src.name}.zip"/>
+    <echo     file="${tomcat.release}/v${version}/src/${final-src.name}.zip.MD5"
+                      message="${md5sum.binary-prefix}${final-src.name}.zip${line.separator}" append="true" />
   </target>
 
   <!-- Packages the source code distribution in tar.gz format -->
@@ -1817,6 +1846,8 @@
     </tar>
 
     <checksum file="${tomcat.release}/v${version}/src/${final-src.name}.tar.gz"/>
+    <echo     file="${tomcat.release}/v${version}/src/${final-src.name}.tar.gz.MD5"
+                      message="${md5sum.binary-prefix}${final-src.name}.tar.gz${line.separator}" append="true" />
   </target>
 
   <!-- ==================== Download or build the required binary packages ==================== -->
