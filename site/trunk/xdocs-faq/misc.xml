@@ -187,6 +187,11 @@
         Help! Even though I run shutdown.sh (or shutdown.bat), Tomcat does not stop!
       </a>
     </li>
+    <li>
+      <a href="#adminJspErrors">
+        How do I debug JSP errors in the Admin web application?
+      </a>
+    </li>
   </ul>
 </p>
 
@@ -797,6 +802,39 @@
     Most likely, a non-daemon thread is running. JVM's do not shutdown until there are
     0 non-daemon threads. You will need to perform a thread dump [<tt>kill -3 pid</tt> for Unix or
     <tt>CTRL+Break</tt> for Windows] to determine the code which started the thread.
+  </answer>
+
+  <question>
+      <a href="#adminJspErrors">
+        How do I debug JSP errors in the Admin web application?
+      </a>
+  </question>
+  <answer>
+    The admin web application that ships with Tomcat's binary distribution contains
+    pre-compiled JSPs and mappings for them.  In order to debug these JSPs, you need
+    to get the source versions, place them in the admin webapp directory, and disable
+    the JSPC-generated web.xml servlet mappings.  Here's how to do it from scratch
+    for a clean Tomcat installation:
+
+    <ol>
+      <li>Download Tomcat's base and admin webapp distributions (binaries), unzip to a directory
+          of your choice.  We'll use <code>c:\temp</code> in this example.</li>
+      <li>Edit c:\temp\server\webapps\admin\WEB-INF\web.xml to remove the JSPC-generated servlet mappings.
+          These are marked in the web.xml file with comments indicating the beginning and end of the JSPC
+          section.  You can simply comment out all these <code>servlet-mappping</code> elements.  Be careful not to 
+          comment out other servlet mappings such as the Struts dispatcher servlet.</li>
+      <li>Open c:\temp\server\webapps\admin\WEB-INF\lib\catalina-admin.jar with a zip file program like
+          WinZip.  Remove the files named *_jsp.class, as these are the compiled JSPs.  Do not remove
+          the other class files, the ones under the org/apache/ paths.</li>
+      <li>Download a Tomcat source distribution and unzip it to a directory of your choice, but not
+          the same directory that you used above.  We'll use <code>c:\src</code> in this example.</li>
+      <li>Copy everything <b>except</b> the WEB-INF/lib directory from c:\src\container\webapps\admin
+          to c:\temp\server\webapps\admin.  Now you will have the uncompiled admin webapp JSPs.</li>
+      <li>If you haven't already, define an admin user in <code>%CATALINA_HOME%\conf\tomcat-users.xml</code>.</li>
+      <li>Start Tomcat, navigate to http://localhost:8080 (or your actual server:port if you have modified
+          the default values), and access the admin web application.  It will run slower because Tomcat is
+          now compiling the JSPs on-demand the first time you access them, but should otherwise appear normal.</li>
+    </ol>
   </answer>
 
 </section>
