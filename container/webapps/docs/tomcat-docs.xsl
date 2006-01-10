@@ -14,9 +14,9 @@
 
 
   <!-- Defined parameters (overrideable) -->
-  <xsl:param    name="home-name"        select="'The Jakarta Project'"/>
-  <xsl:param    name="home-href"        select="'http://jakarta.apache.org/'"/>
-  <xsl:param    name="home-logo"        select="'/images/jakarta-logo.gif'"/>
+  <xsl:param    name="home-name"        select="'The Tomcat Project'"/>
+  <xsl:param    name="home-href"        select="'http://tomcat.apache.org/'"/>
+  <xsl:param    name="home-logo"        select="'/images/tomcat.gif'"/>
   <xsl:param    name="printer-logo"     select="'/images/printer.gif'"/>
   <xsl:param    name="relative-path"    select="'.'"/>
   <xsl:param    name="void-image"       select="'/images/void.gif'"/>
@@ -62,7 +62,7 @@
       <xsl:comment>PAGE HEADER</xsl:comment>
       <tr><td colspan="2">
 
-        <xsl:comment>JAKARTA LOGO</xsl:comment>
+        <xsl:comment>TOMCAT LOGO</xsl:comment>
         <xsl:variable name="alt">
           <xsl:value-of select="$home-name"/>
         </xsl:variable>
@@ -159,7 +159,7 @@
       <xsl:comment>PAGE FOOTER</xsl:comment>
       <tr><td colspan="2">
         <div align="center"><font color="{$body-link}" size="-1"><em>
-        Copyright &#169; 1999-2005, Apache Software Foundation
+        Copyright &#169; 1999-2006, Apache Software Foundation
         </em></font></div>
       </td></tr>
 

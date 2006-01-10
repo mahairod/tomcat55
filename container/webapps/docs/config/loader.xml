@@ -35,7 +35,7 @@
   created automatically, which is sufficient for most requirements.</p>
 
   <p>For a more in-depth description of the class loader hierarchy
-  that is implemented by Catalina, see <strong>FIXME - Reference</strong>.</p>
+  that is implemented by Catalina, see <a href="../class-loader-howto.html">the ClassLoader HowTo</a>.</p>
 
     <blockquote><em>
     <p>The description below uses the variable name $CATALINA_HOME
