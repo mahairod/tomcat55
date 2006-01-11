@@ -219,12 +219,6 @@ public class Response
     private boolean isCharacterEncodingSet = false;
     
     /**
-     * The contentLength flag
-     */    
-    private boolean isContentLengthSet = false;
-
-    
-    /**
      * The error flag.
      */
     protected boolean error = false;
@@ -275,7 +269,6 @@ public class Response
         appCommitted = false;
         included = false;
         error = false;
-        isContentLengthSet = false;
         isCharacterEncodingSet = false;
         
         cookies.clear();
@@ -651,7 +644,6 @@ public class Response
 
         coyoteResponse.reset();
         outputBuffer.reset();
-        isContentLengthSet = false;
     }
 
 
@@ -709,8 +701,6 @@ public class Response
             return;
         
         coyoteResponse.setContentLength(length);
-        
-        isContentLengthSet = true;
 
     }
 
@@ -1013,12 +1003,6 @@ public class Response
 
         coyoteResponse.addHeader(name, value);
 
-        char cc=name.charAt(0);
-        if(cc=='C' || cc=='c') {
-            if(name.equalsIgnoreCase("Content-Length")) {
-                isContentLengthSet = true;
-            }
-        }
     }
 
 
@@ -1057,8 +1041,8 @@ public class Response
                 return (coyoteResponse.getContentType() != null);
             }
             if(name.equalsIgnoreCase("Content-Length")) {
-                // Can't use null test since this header is an int
-                return isContentLengthSet;
+                // -1 means not known and is not sent to client
+                return (coyoteResponse.getContentLengthLong() != -1);
             }
         }
 
@@ -1290,13 +1274,6 @@ public class Response
             return;
 
         coyoteResponse.setHeader(name, value);
-
-        char cc=name.charAt(0);
-        if(cc=='C' || cc=='c') {
-            if(name.equalsIgnoreCase("Content-Length")) {
-                isContentLengthSet = true;
-            }
-        }
 
     }
 
