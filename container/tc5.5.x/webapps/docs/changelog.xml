@@ -36,6 +36,17 @@
         <bug>29214</bug>: response.containsHeader() now returns the correct
         value for Content-Type and Content-Length headers. (markt)
       </fix>
+      <fix>
+        Allow using a custom ContextConfig when using JMX embedding of Tomcat, as
+        is doen by the regular deployer. (remm)
+      </fix>
+    </changelog>
+  </subsection>
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        Log errors when setting socket options with debug priority rather than error. (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Cluster">
