@@ -54,6 +54,7 @@
       <update>
         Add some useful hints to jasper-howto. (pero).
       </update>
+    </changelog>
   </subsection>
   <subsection name="Cluster">
     <changelog>
