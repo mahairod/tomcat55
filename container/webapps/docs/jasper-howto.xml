@@ -8,6 +8,7 @@
 
     <properties>
         <author email="glenn@apache.org">Glenn L. Nielsen</author>
+        <author email="peron@apache.org">Peter Rossbach</author>
         <title>Jasper 2 JSP Engine How To</title>
     </properties>
 
@@ -115,7 +116,7 @@ performed in a seperate JVM from Tomcat? <code>true</code> or
 <li><strong>javaEncoding</strong> - Java file encoding to use for generating
 java source files. Default <code>UTF8</code>.</li>
 
-<li><strong>genStrAsCharArray</strong> - Should text strings be generated as char
+<li><strong>genStringAsCharArray</strong> - Should text strings be generated as char
 arrays, to improve performance in some cases? Default <code>false</code>.</li>
 
 <li><strong>keepgenerated</strong> - Should we keep the generated Java source
@@ -169,7 +170,7 @@ making the following changes from the default configuration.
 <ul>
 <li><strong>development</strong> - To disable on access checks for JSP
 pages compilation set this to <code>false</code>.</li>
-<li><strong>genStrAsCharArray</strong> - To generate slightly more efficient 
+<li><strong>genStringAsCharArray</strong> - To generate slightly more efficient 
 char arrays, set this to <code>true</code>.</li>
 <li><strong>modificationTestInterval</strong> - If development has to be set to
 <code>true</code> for any reason (such as dynamic generation of JSPs), setting
@@ -253,6 +254,13 @@ download) to precompile a webapp:
   &lt;target name="all" depends="jspc,compile"&gt;
   &lt;/target&gt;
 
+  &lt;target name="cleanup"&gt;
+  	&lt;delete&gt;
+        &lt;fileset dir="${webapp.path}/WEB-INF/src"/&gt;
+        &lt;fileset dir="${webapp.path}/WEB-INF/classes/org/apache/jsp"/&gt;
+  	&lt;/delete&gt;
+  &lt;/target&gt;
+
 &lt;/project&gt;
 </source>
 </p>
@@ -279,6 +287,33 @@ capabilities. This is actually how all the webapps distributed with Tomcat
 are automatically compiled as part of the build process.
 </p>
 
+<p>
+At the jasper2 task you can use the option <code>addWebXmlMappings</code> for 
+automatic merge the <code>${webapp.path}/WEB-INF/generated_web.xml</code>
+with the current web application deployment descriptor at <code>${webapp.path}/WEB-INF/web.xml</code>.
+When you want to use Java 5 feature inside your jsp's, add the following javac compiler task
+attributes: <code>source=&quot;1.5&quot; target=&quot;1.5&quot;</code>. For live application
+you can also compile with <code>optimize=&quot;on&quot;</code> and without debug info
+<code>debug=&quot;off&quot;</code>.
+</p>
+
+<p>
+When you don't want to stop the jsp generation at first jsp syntax error, use   
+<code>failOnError=&quot;false&quot;</code>and with <code>showSuccess=&quot;true&quot;</code>
+all successfull <i>jsp to java</i> generation are printed out. Sometimes it is
+very helpfull, when you cleanup the generate java source files at <code>${webapp.path}/WEB-INF/src</code>
+and the compile jsp servlet classes at <code>${webapp.path}/WEB-INF/classes/org/apache/jsp</code>.
+</p>
+
+<p><strong>Hints:</strong>
+<ul>
+<li> When you switch to another tomcat release, then regenerate and recompile
+your jsp's with this version again!</li>
+<li>Use java system property at server runtime to disable tag pooling <code>org.apache.jasper.runtime.JspFactoryImpl.USE_POOL=false</code>.
+and limit the buffering with <code>org.apache.jasper.runtime.BodyContentImpl.LIMIT_BUFFER=true</code>. Note that changing
+from the defaults may affect performance, but depending on the application.</li>
+</ul>
+</p>
 </section>
 
 <section name="Using Jikes">

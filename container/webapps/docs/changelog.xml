@@ -49,6 +49,12 @@
       </fix>
     </changelog>
   </subsection>
+  <subsection name="Jasper">
+    <changelog>
+      <update>
+        Add some useful hints to jasper-howto. (pero).
+      </update>
+  </subsection>
   <subsection name="Cluster">
     <changelog>
       <add>
