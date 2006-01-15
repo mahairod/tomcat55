@@ -16,6 +16,7 @@
   <property name="jsp-api.dist"     value="dist"/>
   <property name="servlet-api.jar"  value="../jsr154/dist/lib/servlet-api.jar"/>
   <property name="jsp-api.jar" value="${jsp-api.dist}/lib/jsp-api.jar"/>
+  <property name="jsp-anttask.jar" value="${jsp-api.build}/jsp-anttask.jar" />
 
   <path id="examples.classpath">
     <pathelement location="${jsp-api.build}/classes"/>
@@ -113,8 +114,9 @@
             debug="${compile.debug}" deprecation="${compile.deprecation}"
             optimize="${compile.optimize}" 
             classpath="${ant.home}/lib/ant.jar" />
+    <jar jarfile="${jsp-anttask.jar}"  basedir="${jsp-api.build}/ant"  />
     <taskdef    name="txt2html" classname="task.Txt2Html"
-                classpath="${jsp-api.build}/ant" />
+                classpath="${jsp-anttask.jar}" />
   </target>
   
   <target name="examples" depends="prepare,ant">
