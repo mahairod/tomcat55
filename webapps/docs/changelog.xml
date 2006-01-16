@@ -47,6 +47,9 @@
       <fix>
         Log errors when setting socket options with debug priority rather than error. (remm)
       </fix>
+      <fix>
+        <bug>38100</bug>: Make certain that a valid Host name is set, or none at all.
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
