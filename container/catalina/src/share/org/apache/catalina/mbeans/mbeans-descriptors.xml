@@ -225,6 +225,9 @@
       <parameter name="name"
           description="Unique name of this Host"
                  type="java.lang.String"/>
+      <parameter name="appBase"
+          description="set host deployment directory"
+                 type="java.lang.String"/>
       <parameter name="autoDeploy"
           description="The auto deploy flag for this Host"
                type="boolean"/>           
