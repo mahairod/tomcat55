@@ -379,21 +379,37 @@ your hard work.</p>
 
 </subsection>
 
-<subsection name="Oracle 8i">
+<subsection name="Oracle 8i, 9i &amp; 10g">
 <h3>0.    Introduction</h3>
-<p><i>We would appreciate comments on this section as I'm not an Oracle DBA :-)</i></p>
-<p>Oracle requires minimal changes from the MySQL configuration except for the usual gotchas :-) Firstly
-by default, Tomcat will only use <code>*.jar</code> files installed in <code>$CATALINA_HOME/common/lib</code>
- therefore <code>classes111.zip</code> or <code>classes12.zip</code> will need to be renamed with a <code>.jar</code> 
-extension. Since jarfiles are zipfiles, there is no need to unzip and jar these files - a simple rename will suffice.
-Also, you should be aware that some (early) versions of Tomcat 4.0 when used with JDK 1.4 will not load classes12.zip unless
-you unzip the file, remove the <code>javax.sql.*</code> class heirarchy and rejar.</p>
-<h3>1.    server.xml configuration</h3>
-<p>In a similar manner to the mysql config above, you will need to define your Datasource in your server.xml
-file. Here we define a Datasource called myoracle using the thin driver to connect as user scott, password tiger
-to the schema called myschema in the sid called mysid. (Note: with the thin driver this sid is not the same as the tnsname)</p>
 
-<p>Use of the OCI driver should simply involve a changing thin to oci in the URL string.
+<p>Oracle requires minimal changes from the MySQL configuration except for the
+usual gotchas :-)</p>
+<p>Drivers for older Oracle versions may be distributed as *.zip files rather
+than *.jar files. Tomcat will only use <code>*.jar</code> files installed in
+<code>$CATALINA_HOME/common/lib</code>. Therefore <code>classes111.zip</code>
+or <code>classes12.zip</code> will need to be renamed with a <code>.jar</code>
+extension. Since jarfiles are zipfiles, there is no need to unzip and jar these
+files - a simple rename will suffice.</p>
+
+<p>Some early versions of Tomcat 4.0 when used with JDK 1.4 will not load
+classes12.zip unless you unzip the file, remove the <code>javax.sql.*</code>
+class heirarchy and rejar.</p>
+
+<p>For Oracle 9i onwards you should use <code>oracle.jdbc.OracleDriver</code>
+rather than <code>oracle.jdbc.driver.OracleDriver</code> as Oracle have stated
+that <code>oracle.jdbc.driver.OracleDriver</code> is deprecated and support
+for this driver class will be discontinued in the next major release.
+</p>
+
+<h3>1.    server.xml configuration</h3>
+<p>In a similar manner to the mysql config above, you will need to define your
+Datasource in your server.xml file. Here we define a Datasource called myoracle
+using the thin driver to connect as user scott, password tiger to the sid
+called mysid. (Note: with the thin driver this sid is not the same as the
+tnsname). The schema used will be the default schema for the user scott.</p>
+
+<p>Use of the OCI driver should simply involve a changing thin to oci in the URL
+string.
 <source>
 &lt;Resource name="jdbc/myoracle" auth="Container"
               type="javax.sql.DataSource"/&gt; 
@@ -405,11 +421,11 @@ to the schema called myschema in the sid called mysid. (Note: with the thin driv
   &lt;/parameter&gt;
   &lt;parameter&gt;
     &lt;name&gt;driverClassName&lt;/name&gt;
-    &lt;value&gt;oracle.jdbc.driver.OracleDriver&lt;/value&gt;
+    &lt;value&gt;oracle.jdbc.OracleDriver&lt;/value&gt;
   &lt;/parameter&gt;
   &lt;parameter&gt;
     &lt;name&gt;url&lt;/name&gt;
-    &lt;value&gt;jdbc:oracle:thin:myschema@127.0.0.1:1521:mysid&lt;/value&gt;
+    &lt;value&gt;jdbc:oracle:thin:@127.0.0.1:1521:mysid&lt;/value&gt;
   &lt;/parameter&gt;
   &lt;parameter&gt;
     &lt;name&gt;username&lt;/name&gt;
