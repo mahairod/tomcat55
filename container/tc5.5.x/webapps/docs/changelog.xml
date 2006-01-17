@@ -76,6 +76,13 @@
       </fix>
     </changelog>
   </subsection>
+  <subsection name="Webapps">
+    <changelog>
+      <fix>
+        Fix some XSS issues in the JSP examples. (markt)
+      </fix>
+    </changelog>
+  </subsection>
 </section>
 
 <section name="Tomcat 5.5.15 (yoavs)">
