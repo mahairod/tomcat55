@@ -34,11 +34,13 @@ in session <b><%= session.getId() %></b><br><br>
   if (role.length() > 0) {
     if (request.isUserInRole(role)) {
 %>
-      You have been granted role <b><%= role %></b><br><br>
+      You have been granted role
+      <b><%= util.HTMLFilter.filter(role) %></b><br><br>
 <%
     } else {
 %>
-      You have <i>not</i> been granted role <b><%= role %></b><br><br>
+      You have <i>not</i> been granted role
+      <b><%= util.HTMLFilter.filter(role) %></b><br><br>
 <%
     }
   }
@@ -47,7 +49,7 @@ in session <b><%= session.getId() %></b><br><br>
 To check whether your username has been granted a particular role,
 enter it here:
 <form method="GET" action='<%= response.encodeURL("index.jsp") %>'>
-<input type="text" name="role" value="<%= role %>">
+<input type="text" name="role" value="<%= util.HTMLFilter.filter(role) %>">
 </form>
 <br><br>
 
