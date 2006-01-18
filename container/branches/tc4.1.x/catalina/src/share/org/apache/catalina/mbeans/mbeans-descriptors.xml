@@ -2614,6 +2614,11 @@
           description="TCP port for shutdown messages"
                  type="int"/>
 
+    <attribute   name="serverInfo"
+          description="Tomcat server release identifier"
+                 type="java.lang.String"
+            writeable="false"/>
+
     <attribute   name="shutdown"
           description="Shutdown password"
                  type="java.lang.String"/>

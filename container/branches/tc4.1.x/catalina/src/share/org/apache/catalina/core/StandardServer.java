@@ -75,6 +75,7 @@ import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.session.PersistentManager;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.LifecycleSupport;
+import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
 
 
@@ -387,6 +388,17 @@ public final class StandardServer
     }
 
 
+    /**
+     * Report the current Tomcat Server Release number
+     * @return Tomcat release identifier
+     */
+    public String getServerInfo() {
+
+        return ServerInfo.getServerInfo();
+
+    }
+
+    
     /**
      * Return the shutdown command string we are waiting for.
      */
