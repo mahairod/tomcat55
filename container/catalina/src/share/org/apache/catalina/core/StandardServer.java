@@ -42,6 +42,7 @@ import org.apache.catalina.Service;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.modeler.Registry;
@@ -247,6 +248,14 @@ public final class StandardServer
 
     }
 
+    /**
+     * Report the current Tomcat Server Release number
+     * @return Tomcat release identifier
+     */
+    public String getServerInfo() {
+
+        return ServerInfo.getServerInfo();
+    }
 
     /**
      * Return the port number we listen to for shutdown commands.

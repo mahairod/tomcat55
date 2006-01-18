@@ -528,6 +528,11 @@
     <attribute name="serviceNames"
                description="Object names of all services we know about"
                type="[Ljavax.management.ObjectName;"/>
+
+    <attribute name="serverInfo"
+               description="Tomcat server release identifier"
+               type="java.lang.String"
+               writeable="false"/>
       
     <operation name="await"
                description="Wait for the shutdown message"

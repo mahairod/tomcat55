@@ -40,6 +40,13 @@
         Allow using a custom ContextConfig when using JMX embedding of Tomcat, as
         is doen by the regular deployer. (remm)
       </fix>
+      <add>
+         Add JMX serverInfo attribute to Server MBean, that we can identify
+         the tomcat release remotely. (pero)
+      </add>
+      <fix>
+         Fix the JMX MBeanFactory.createStandardHost signature at mbean-descriptors.xml (pero)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
