@@ -189,7 +189,7 @@ public class DigestAuthenticator
         String nOnce = generateNOnce(request);
 
         setAuthenticateHeader(request, response, config, nOnce);
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         //      hres.flushBuffer();
         return (false);
 

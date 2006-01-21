@@ -201,7 +201,7 @@ public class BasicAuthenticator
         }
         authenticateCC.append('\"');        
         authenticate.toChars();
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         //response.flushBuffer();
         return (false);
 
