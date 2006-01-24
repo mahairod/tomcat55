@@ -216,6 +216,7 @@ public class InputBuffer extends Reader
         if (cb.getChars().length > size) {
             cb = new CharChunk(size);
             cb.setLimit(size);
+            cb.setOptimizedWrite(false);
             cb.setCharInputChannel(this);
             cb.setCharOutputChannel(this);
         } else {
@@ -337,6 +338,9 @@ public class InputBuffer extends Reader
             cb.setEnd(0);
         }
 
+        int limit = bb.getLength()+cb.getStart();
+        if( cb.getLimit() < limit ) 
+	    cb.setLimit(limit);
         conv.convert(bb, cb);
         bb.setOffset(bb.getEnd());
         state = CHAR_STATE;
