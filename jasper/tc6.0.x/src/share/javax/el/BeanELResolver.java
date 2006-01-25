@@ -236,7 +236,7 @@ public class BeanELResolver extends ELResolver {
 
 		public Method read(ELContext ctx) {
 			if (this.read == null) {
-				this.read = getMethod(this.owner, descriptor.getWriteMethod());
+				this.read = getMethod(this.owner, descriptor.getReadMethod());
 				if (this.read == null) {
 					throw new PropertyNotFoundException(message(ctx,
 							"propertyNotReadable", new Object[] {
