@@ -61,6 +61,10 @@
   </subsection>
   <subsection name="Jasper">
     <changelog>
+      <fix>
+        <bug>38389</bug>: Set correct JDT Compiler option to java 1.5 compliance. 
+        Patch from Olivier Thomann and Paul Hamer (pero)
+      </fix>
       <update>
         Add some useful hints to jasper-howto. (pero).
       </update>
