@@ -620,6 +620,9 @@ public class DataSourceRealm
      */
     public void start() throws LifecycleException {
 
+        // Perform normal superclass initialization
+        super.start();
+
         // Create the roles PreparedStatement string
         preparedRoles = new StringBuffer("SELECT ");
         preparedRoles.append(roleNameCol);
@@ -637,9 +640,6 @@ public class DataSourceRealm
         preparedCredentials.append(" WHERE ");
         preparedCredentials.append(userNameCol);
         preparedCredentials.append(" = ?");
-
-        // Perform normal superclass initialization
-        super.start();
 
     }
 

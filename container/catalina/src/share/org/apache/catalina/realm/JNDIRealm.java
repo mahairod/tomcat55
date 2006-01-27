@@ -1596,15 +1596,15 @@ public class JNDIRealm extends RealmBase {
      */
     public void start() throws LifecycleException {
 
+        // Perform normal superclass initialization
+        super.start();
+
         // Validate that we can open our connection
         try {
             open();
         } catch (NamingException e) {
             throw new LifecycleException(sm.getString("jndiRealm.open"), e);
         }
-
-        // Perform normal superclass initialization
-        super.start();
 
     }
 
