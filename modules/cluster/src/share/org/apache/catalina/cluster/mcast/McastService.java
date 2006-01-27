@@ -363,7 +363,7 @@ public class McastService implements MembershipService,MembershipListener {
                 if (mserver.isRegistered(mcastName)) {
                     if (log.isWarnEnabled())
                         log.warn(sm.getString(
-                                "cluster.mbean.register.allready", mcastName));
+                                "cluster.mbean.register.already", mcastName));
                     return;
                 }
                 setObjectName(mcastName);
