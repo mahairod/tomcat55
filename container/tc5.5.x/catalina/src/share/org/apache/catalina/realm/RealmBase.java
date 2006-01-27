@@ -175,7 +175,6 @@ public abstract class RealmBase
 
         Container oldContainer = this.container;
         this.container = container;
-        this.containerLog = container.getLogger();
         support.firePropertyChange("container", oldContainer, this.container);
 
     }
@@ -1268,6 +1267,7 @@ public abstract class RealmBase
     protected boolean initialized=false;
     
     public void init() {
+        this.containerLog = container.getLogger();
         if( initialized && container != null ) return;
         
         initialized=true;
