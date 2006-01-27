@@ -757,6 +757,9 @@ public class JDBCRealm
      */
     public void start() throws LifecycleException {
 
+        // Perform normal superclass initialization
+        super.start();
+
         // Validate that we can open our connection - but let tomcat
         // startup in case the database is temporarily unavailable
         try {
@@ -764,9 +767,6 @@ public class JDBCRealm
         } catch (SQLException e) {
             containerLog.error(sm.getString("jdbcRealm.open"), e);
         }
-
-        // Perform normal superclass initialization
-        super.start();
 
     }
 

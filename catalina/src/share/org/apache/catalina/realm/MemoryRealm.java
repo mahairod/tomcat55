@@ -290,6 +290,9 @@ public class MemoryRealm  extends RealmBase {
      */
     public synchronized void start() throws LifecycleException {
 
+        // Perform normal superclass initialization
+        super.start();
+
         // Validate the existence of our database file
         File file = new File(pathname);
         if (!file.isAbsolute())
@@ -314,9 +317,6 @@ public class MemoryRealm  extends RealmBase {
         } finally {
             digester.reset();
         }
-
-        // Perform normal superclass initialization
-        super.start();
 
     }
 
