@@ -116,7 +116,7 @@ public class ReplicationValve
     protected boolean primaryIndicator = false ;
     
     /**
-     * Name of primary change indicator as request attributeâ 
+     * Name of primary change indicator as request attribute
      */
     protected String primaryIndicatorName = "org.apache.catalina.cluster.tcp.isPrimarySession";
    
