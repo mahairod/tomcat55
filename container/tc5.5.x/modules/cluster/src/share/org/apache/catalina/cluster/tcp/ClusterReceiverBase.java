@@ -341,7 +341,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
                 if (mserver.isRegistered(receiverName)) {
                     if (log.isWarnEnabled())
                         log.warn(sm.getString(
-                                "cluster.mbean.register.allready",
+                                "cluster.mbean.register.already",
                                 receiverName));
                     return;
                 }

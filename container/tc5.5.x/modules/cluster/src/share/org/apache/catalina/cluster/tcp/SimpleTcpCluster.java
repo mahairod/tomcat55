@@ -1284,7 +1284,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
 
             if (mserver.isRegistered(clusterName)) {
                 if (log.isWarnEnabled())
-                    log.warn(sm.getString("cluster.mbean.register.allready",
+                    log.warn(sm.getString("cluster.mbean.register.already",
                             clusterName));
                 return;
             }

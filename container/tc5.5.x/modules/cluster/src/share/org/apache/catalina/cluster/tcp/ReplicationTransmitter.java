@@ -524,7 +524,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                 if (mserver.isRegistered(transmitterName)) {
                     if (log.isWarnEnabled())
                         log.warn(sm.getString(
-                                "cluster.mbean.register.allready",
+                                "cluster.mbean.register.already",
                                 transmitterName));
                     return;
                 }
@@ -759,7 +759,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                 if (mserver.isRegistered(senderName)) {
                     if (log.isWarnEnabled())
                         log.warn(sm.getString(
-                                "cluster.mbean.register.allready", senderName));
+                                "cluster.mbean.register.already", senderName));
                     return;
                 }
                 mserver.registerMBean(cluster.getManagedBean(sender),
