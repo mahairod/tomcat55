@@ -244,6 +244,9 @@ public class UserDatabaseRealm
      */
     public synchronized void start() throws LifecycleException {
 
+        // Perform normal superclass initialization
+        super.start();
+
         try {
             StandardServer server = (StandardServer) ServerFactory.getServer();
             Context context = server.getGlobalNamingContext();
@@ -258,9 +261,6 @@ public class UserDatabaseRealm
             throw new LifecycleException
                 (sm.getString("userDatabaseRealm.noDatabase", resourceName));
         }
-
-        // Perform normal superclass initialization
-        super.start();
 
     }
 
