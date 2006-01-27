@@ -445,7 +445,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
     public long getLastAccessedTime() {
         if (!isValid) {
             throw new IllegalStateException(sm
-                    .getString("standardSession.getLastAccessedTime"));
+                    .getString("standardSession.getLastAccessedTime.ise"));
 
         }
         return (this.lastAccessedTime);
