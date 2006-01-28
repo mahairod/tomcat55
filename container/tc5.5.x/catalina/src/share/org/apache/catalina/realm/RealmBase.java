@@ -876,9 +876,11 @@ public abstract class RealmBase
         String protocol = "https";
         String host = request.getServerName();
         // Protocol
-        file.append(protocol).append("://");
+        file.append(protocol).append("://").append(host);
         // Host with port
-        file.append(host).append(":").append(redirectPort);
+        if(redirectPort != 443) {
+            file.append(":").append(redirectPort);
+        }
         // URI
         file.append(request.getRequestURI());
         String requestedSessionId = request.getRequestedSessionId();
