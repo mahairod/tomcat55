@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl"?>
+<rdf:RDF xml:lang="en"
+         xmlns="http://usefulinc.com/ns/doap#" 
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+         xmlns:asfext="http:projects.apache.org/ns/asfext#">
+  <Project rdf:about="http://tomcat.apache.org/">
+    <created>2006-01-27</created>
+    <license rdf:resource="http://usefulinc.com/doap/licenses/asl20" />
+    <name>Apache Tomcat</name>
+    <homepage rdf:resource="http://tomcat.apache.org" />
+    <asfext:pmc rdf:resource="http://tomcat.apache.org" />
+    <shortdesc>A Java Servlet and Java Servet Pages specifications implementation.</shortdesc>
+    <description>Apache Tomcat is the servlet container that is used in the official Reference Implementation for the Java Servlet and JavaServer Pages technologies. The Java Servlet and JavaServer Pages specifications are developed by Sun under the Java Community Process.
+
+Apache Tomcat is developed in an open and participatory environment and released under the Apache Software License. Apache Tomcat is intended to be a collaboration of the best-of-breed developers from around the world. We invite you to participate in this open development project. To learn more about getting involved, click here.
+
+Apache Tomcat powers numerous large-scale, mission-critical web applications across a diverse range of industries and organizations. Some of these users and their stories are listed on the PoweredBy wiki page.</description>
+    <bug-database rdf:resource="http://issues.apache.org/bugzilla" />
+    <mailing-list rdf:resource="http://tomcat.apache.org/lists.html" />
+    <download-page rdf:resource="http://tomcat.apache.org" />
+    <programming-language>java</programming-language>
+    <category rdf:resource="http://projects.apache.org/category/servletcontainerJavaServerPagesJSP" />
+    <release>
+      <Version>
+        <name>5.5.15</name>
+        <created>2006-01-23</created>
+        <revision>5.5.15</revision>
+      </Version>
+    </release>
+    <repository>
+      <SVNRepository>
+        <location rdf:resource="http://svn.apache.org/repos/asf/tomcat"/>
+        <browse rdf:resource="http://svn.apache.org/repos/asf/tomcat/"/>
+      </SVNRepository>
+    </repository>
+  </Project>
+</rdf:RDF>
+
