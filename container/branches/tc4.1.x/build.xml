@@ -22,7 +22,7 @@
   <property name="servlet.doc"           value="${servlet.home}/docs/api" />
 
   <!-- Source dependencies -->
-  <property name="jasper.home"      value="${basedir}/../jasper/jasper2"/>
+  <property name="jasper.home"      value="${basedir}/../jasper"/>
   <property name="jtc.home"         value="${basedir}/../connectors"/>
 
   <!-- Build Defaults -->
