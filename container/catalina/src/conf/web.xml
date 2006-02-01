@@ -1072,7 +1072,7 @@
         <extension>ppt</extension>
         <mime-type>application/vnd.ms-powerpoint</mime-type>
     </mime-mapping>
-a
+
   <!-- ==================== Default Welcome File List ===================== -->
   <!-- When a request URI refers to a directory, the default servlet looks  -->
   <!-- for a "welcome file" within that directory and, if present,          -->
