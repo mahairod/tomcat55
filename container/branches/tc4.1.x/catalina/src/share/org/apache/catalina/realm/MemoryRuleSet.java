@@ -88,9 +88,7 @@ public class MemoryRuleSet extends RuleSetBase {
      */
     public void addRuleInstances(Digester digester) {
 
-        digester.addRule
-            (prefix + "user",
-             new MemoryUserRule(digester));
+        digester.addRule(prefix + "user", new MemoryUserRule());
 
     }
 
@@ -102,18 +100,6 @@ public class MemoryRuleSet extends RuleSetBase {
  * Private class used when parsing the XML database file.
  */
 final class MemoryUserRule extends Rule {
-
-
-    /**
-     * Construct a new instance of this <code>Rule</code>.
-     *
-     * @param digester The <code>Digester</code> we are associated with.
-     */
-    public MemoryUserRule(Digester digester) {
-
-        super(digester);
-
-    }
 
 
     /**

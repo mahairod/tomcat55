@@ -210,7 +210,6 @@ public class MemoryRealm
 
         if (digester == null) {
             digester = new Digester();
-            digester.setDebug(this.debug);
             digester.setValidating(false);
             digester.addRuleSet(new MemoryRuleSet());
         }
