@@ -9,9 +9,48 @@
 # $Id$
 # -----------------------------------------------------------------------------
 
+# ----- Default Base Path for Dependent Packages -----
+# Please note this path must be absolute, not relative,
+# as it is referenced with different working directory
+# contexts by the various build scripts.
+base.path=/usr/share/java
+#base.path=C:/path/to/the/repository
+#base.path=/usr/local
+
 # ----- Pointer to Catalina -----
 catalina.home=../../jakarta-tomcat-5/build
 
 # ----- Pointer to JSP Standard Tag Library distribution -----
 #standard.home=${base.path}/jakarta-taglibs/standard
 #jsp20el.jar=${standard.home}/../dist/jsp20el/jsp20el.jar
+
+compile.source=1.5
+
+# ----- Servlet API v2.4 -----
+servlet-api.home=${base.path}/servlet-api-2.4
+servlet-api.lib=${servlet-api.home}/lib
+servlet-api.jar=${servlet-api.lib}/servlet-api.jar
+
+# ----- JSP API v2.0 -----
+jsp-api.home=${base.path}/jsp-api-2.0
+jsp-api.lib=${jsp-api.home}/lib
+jsp-api.jar=${jsp-api.lib}/jsp-api.jar
+
+# ----- Commons Logging, version 1.0.1 or later -----
+commons-logging.home=${base.path}/commons-logging-1.0.4
+commons-logging.lib=${commons-logging.home}
+commons-logging-api.jar=${commons-logging.lib}/commons-logging-api.jar
+commons-logging.jar=${commons-logging.lib}/commons-logging.jar
+commons-logging.loc=${base-jakarta.loc}/commons/logging/binaries/commons-logging-1.0.4.tar.gz
+
+# ----- Commons Expression Language (EL), version 1.0 or later -----
+commons-el.home=${base.path}/commons-el-1.0
+commons-el.lib=${commons-el.home}
+commons-el.jar=${commons-el.lib}/commons-el.jar
+commons-el.loc=${base-jakarta.loc}/commons/el/binaries/commons-el-1.0.tar.gz
+
+# ----- Eclipse JDT, version 3.1.1 or later -----
+jdt.home=${base.path}/eclipse/plugins
+jdt.lib=${jdt.home}
+jdt.jar=${jdt.lib}/org.eclipse.jdt.core_3.1.1.jar
+jdt.loc=http://sunsite.informatik.rwth-aachen.de/eclipse/downloads/drops/R-3.1.1-200509290840/eclipse-JDT-3.1.1.zip
