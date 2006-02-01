@@ -413,7 +413,7 @@ public abstract class RealmBase
         }
 
         // Check the existence of the client Principal in our database
-        return (getPrincipal(certs[0].getSubjectDN().getName()));
+        return (getPrincipal(certs[0]));
 
     }
 
@@ -673,6 +673,13 @@ public abstract class RealmBase
     protected abstract Principal getPrincipal(String username);
 
 
+    /**
+     * Return the Principal associated with the given certificate.
+     */
+    protected Principal getPrincipal(X509Certificate usercert) {
+        return(getPrincipal(usercert.getSubjectDN().getName()));
+    }
+    
     /**
      * Log a message on the Logger associated with our Container (if any)
      *

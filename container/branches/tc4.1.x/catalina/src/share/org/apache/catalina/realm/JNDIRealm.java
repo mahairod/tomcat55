@@ -998,10 +998,6 @@ public class JNDIRealm extends RealmBase {
             log("  dn=" + dn);
         }
 
-        // Return if no attributes to retrieve
-        if (attrIds == null || attrIds.length == 0)
-            return new User(username, dn, null, null);
-
         // Get required attributes from user entry
         Attributes attrs = null;
         try {
@@ -1474,10 +1470,74 @@ public class JNDIRealm extends RealmBase {
      */
     protected Principal getPrincipal(String username) {
 
-        return (null);
+        DirContext context = null;
+        Principal principal = null;
+
+        try {
+
+            // Ensure that we have a directory context available
+            context = open();
+
+            // Occassionally the directory context will timeout.  Try one more
+            // time before giving up.
+            try {
+
+                // Authenticate the specified username if possible
+                principal = getPrincipal(context, username);
+
+            } catch (CommunicationException e) {
+
+                // log the exception so we know it's there.
+                log(sm.getString("jndiRealm.exception"), e);
+
+                // close the connection so we know it will be reopened.
+                if (context != null)
+                    close(context);
+
+                // open a new directory context.
+                context = open();
+
+                // Try the authentication again.
+                principal = getPrincipal(context, username);
+
+            }
+
+
+            // Release this context
+            release(context);
+
+            // Return the authenticated Principal (if any)
+            return (principal);
+
+        } catch (NamingException e) {
+
+            // Log the problem for posterity
+            log(sm.getString("jndiRealm.exception"), e);
+
+            // Close the connection so that it gets reopened next time
+            if (context != null)
+                close(context);
+
+            // Return "not authenticated" for this request
+            return (null);
+
+        }
 
     }
 
+
+    /**
+     * Return the Principal associated with the given user name.
+     */
+    protected synchronized Principal getPrincipal(DirContext context,
+                                                  String username)
+        throws NamingException {
+        
+        User user = getUser(context, username);
+        
+        return new GenericPrincipal(this, user.username, user.password ,
+                getRoles(context, user));
+    }
 
 
     /**
