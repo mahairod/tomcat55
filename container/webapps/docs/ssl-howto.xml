@@ -17,6 +17,9 @@
 
 <section name="Quick Start">
 
+   <p><b>IMPORTANT NOTE: This Howto refers to usage of JSSE. When using APR, Tomcat will
+   use OpenSSL, which uses a different configuration.</b></p>
+
     <blockquote><em>
     <p>The description below uses the variable name $CATALINA_HOME
     to refer to the directory into which you have installed Tomcat 5,
