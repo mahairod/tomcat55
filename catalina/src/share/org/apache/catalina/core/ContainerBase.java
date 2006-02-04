@@ -993,6 +993,7 @@ public abstract class ContainerBase
         // Start our subordinate components, if any
         if ((loader != null) && (loader instanceof Lifecycle))
             ((Lifecycle) loader).start();
+        logger = null;
         getLogger();
         if ((logger != null) && (logger instanceof Lifecycle))
             ((Lifecycle) logger).start();
