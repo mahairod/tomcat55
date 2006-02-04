@@ -230,6 +230,31 @@
       Maximum verification depth for client certificates. The default is "10".
     </p>
     </attribute>
+    <attribute name="SSLCACertificateFile" required="false">
+    <p>
+      See <a href="http://httpd.apache.org/docs/2.2/mod/mod_ssl.html#sslcacertificatefile">the mod_ssl documentation</a>.
+    </p>
+    </attribute>
+    <attribute name="SSLCACertificatePath" required="false">
+    <p>
+      See <a href="http://httpd.apache.org/docs/2.2/mod/mod_ssl.html#sslcacertificatepath">the mod_ssl documentation</a>.
+    </p>
+    </attribute>
+    <attribute name="SSLCertificateChainFile" required="false">
+    <p>
+      See <a href="http://httpd.apache.org/docs/2.2/mod/mod_ssl.html#sslcertificatechainfile">the mod_ssl documentation</a>.
+    </p>
+    </attribute>
+    <attribute name="SSLCARevocationFile" required="false">
+    <p>
+      See <a href="http://httpd.apache.org/docs/2.2/mod/mod_ssl.html#sslcarevocationfile">the mod_ssl documentation</a>.
+    </p>
+    </attribute>
+    <attribute name="SSLCARevocationPath" required="false">
+    <p>
+      See <a href="http://httpd.apache.org/docs/2.2/mod/mod_ssl.html#sslcarevocationpath">the mod_ssl documentation</a>.
+    </p>
+    </attribute>
 
     </attributes>
     
