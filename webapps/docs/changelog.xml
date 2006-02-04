@@ -20,6 +20,9 @@
       <update>
         Updated / enhanced docs to remove old FIXME references. (yoavs)
       </update>
+      <update>
+        Required tcnative library version upgraded to 1.1.2 (remm)
+      </update>
     </changelog>
   </subsection>
   <subsection name="Catalina">
@@ -47,6 +50,10 @@
       <fix>
          Fix the JMX MBeanFactory.createStandardHost signature at mbean-descriptors.xml (pero)
       </fix>
+      <fix>
+         Fix some cases (for example with realm usage) where the container logger for a context
+         would be retrieved using the wrong classloader (remm)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -57,6 +64,14 @@
       <fix>
         <bug>38100</bug>: Make certain that a valid Host name is set, or none at all. (billbarker)
       </fix>
+      <fix>
+        <bug>38485</bug>: Fix minor regression setting connection timeout (as well as linger and
+        no delay) where the default value was always used when using the regular 
+        HTTP connector (remm)
+      </fix>
+      <update>
+        Pass along more of the SSL related fields to OpenSSL (remm)
+      </update>
     </changelog>
   </subsection>
   <subsection name="Jasper">
