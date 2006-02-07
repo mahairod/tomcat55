@@ -1506,7 +1506,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                 break;
             }
             case SessionMessage.EVT_SESSION_EXPIRED: {
-                handleSESSION_EXPIRRED(msg,sender);
+                handleSESSION_EXPIRED(msg,sender);
                 break;
             }
             case SessionMessage.EVT_SESSION_ACCESSED: {
@@ -1595,7 +1595,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      * @param sender
      * @throws IOException
      */
-    protected void handleSESSION_EXPIRRED(SessionMessage msg,Member sender) throws IOException {
+    protected void handleSESSION_EXPIRED(SessionMessage msg,Member sender) throws IOException {
         counterReceive_EVT_SESSION_EXPIRED++;
         DeltaSession session = (DeltaSession) findSession(msg
                 .getSessionID());
