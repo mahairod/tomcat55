@@ -727,7 +727,7 @@ public class DataSender implements IDataSender {
     protected void addStats(int length) {
         nrOfRequests++;
         totalBytes += length;
-        if (log.isInfoEnabled() && (nrOfRequests % 100) == 0) {
+        if (log.isInfoEnabled() && (nrOfRequests % 1000) == 0) {
             log.info(sm.getString("IDataSender.stats", new Object[] {
                     getAddress().getHostAddress(), new Integer(getPort()),
                     new Long(totalBytes), new Long(nrOfRequests),
