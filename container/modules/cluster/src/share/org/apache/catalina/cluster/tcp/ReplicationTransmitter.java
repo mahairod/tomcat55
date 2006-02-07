@@ -203,7 +203,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
         String msg = IDataSenderFactory.validateMode(mode);
         if (msg == null) {
             if (log.isDebugEnabled())
-                log.debug("Setting replcation mode to " + mode);
+                log.debug("Setting replication mode to " + mode);
             this.replicationMode = mode;
         } else
             throw new IllegalArgumentException(msg);
