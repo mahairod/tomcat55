@@ -359,7 +359,7 @@ public class ReplicationValve
                 if(containerCluster.getManager(clusterManager.getName()) == null)
                     return ;
                 if(containerCluster.hasMembers()) {
-                    sendRepilicationMessage(request, totalstart, isCrossContext, clusterManager, containerCluster);
+                    sendReplicationMessage(request, totalstart, isCrossContext, clusterManager, containerCluster);
                 } else {
                     resetReplicationRequest(request,isCrossContext);
                 }        
@@ -413,7 +413,7 @@ public class ReplicationValve
      * @param clusterManager
      * @param containerCluster
      */
-    protected void sendRepilicationMessage(Request request, long totalstart, boolean isCrossContext, ClusterManager clusterManager, CatalinaCluster containerCluster) {
+    protected void sendReplicationMessage(Request request, long totalstart, boolean isCrossContext, ClusterManager clusterManager, CatalinaCluster containerCluster) {
         //this happens after the request
         long start = 0;
         if(isDoProcessingStats()) {
