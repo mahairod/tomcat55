@@ -347,8 +347,7 @@ public class ReplicationValve
             Manager manager = request.getContext().getManager();
             if (manager != null && manager instanceof ClusterManager) {
                 ClusterManager clusterManager = (ClusterManager) manager;
-                CatalinaCluster containerCluster = (CatalinaCluster) getContainer()
-                        .getCluster();
+                CatalinaCluster containerCluster = (CatalinaCluster) getContainer().getCluster();
                 if (containerCluster == null) {
                     if (log.isWarnEnabled())
                         log.warn(sm.getString("ReplicationValve.nocluster"));

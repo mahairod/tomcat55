@@ -68,8 +68,9 @@ public class TcpReplicationThread extends WorkerThread {
             try {
                 drainChannel (key);
             } catch (Exception e) {
-                log.error ("TCP Worker thread in cluster caught '"
-                    + e + "' closing channel", e);
+                //this is common, since the sockets on the other
+                //end expire after a certain time.
+                log.warn ("TCP Worker thread in cluster caught '" + e + "' closing channel", e);
 
                 // close channel and nudge selector
                 try {
