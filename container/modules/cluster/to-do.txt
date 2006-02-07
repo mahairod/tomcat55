@@ -1,6 +1,40 @@
 ==============================
 Next actions
 ==============================
+- Average message size
+  For my test application, the average message size has increased from
+  526 bytes per message to over 750 bytes per message from version 5.0.28 to 5.5.15.
+  Need to investigate why this is the case and where the 200+ extra bytes are coming from.
+  
+- Implement primary/secondary replication logic (fhanik)
+  Idea for implementation: Cookie stores info primary/backup node.
+  Steps to implement: (coming soon)
+  Scenarios: (coming soon)
+  
+- break out membership/messaging module and improve JMX
+  The clustering code has become very cluttered.
+  We need to break out the membership and the messaging 
+  away from the logic of session handling and JMX.
+  The latter should be built on top of the clustering module, and not baked into it.
+  Steps:
+  1. Build a group object, to allow sending of messages
+     The group object will handle encompass membership and 
+     messaging under one umbrella.
+  2. Enable group RPC
+     Through the group object, enable RPC style messaging
+     This should be used for message like state transfers, instead of waiting for a timeout.
+     RCP strategies - first response, majority response, all response
+  3. JMX  
+     JMX should be added on top of the core code, not inside the core code.
+     The idea of JMX as management should be added outside to the core components.
+     For example, SimpleTCPCluster should not contain JMX code, if I want to create
+     a different cluster class, I have to rewrite all the JMX code again.
+     Instead, create JMX beans that reference core components through interfaces.
+
+- Create stats object
+   Instead of keeping stats embedded in the code, make it reusable in
+   a shared component.
+
 - support CrossContext session replication
     Idea: use endAccess to signal replicationValve that session from other app has changed.
     refactor ReplicationValve 
@@ -139,10 +173,6 @@ Nice to have:
 wish to be replicated
         Then we must have ClusterNonSerializable at common classloader
 - Extend StandardSession if possible
-- Implement primary/secondary replication logic
-	Now we have a domain sending mode, but we can send a broadcast when 
-	local node have no backup.
-		Wait a time periode, then find a backup
 - Implement context attribute replication (?)
 	pero:
 		Also send Start/Stop messages from Context to complete cluster!
