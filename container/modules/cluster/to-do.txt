@@ -175,7 +175,7 @@ would not make sense to transfer the same webapp over and over again.
      Last FileMessage fragment need longe ackTimeout	
     	<Cluster ..> <Sender ... ackTimeout="60000"/> </Cluster> 	
 - Change the cluster protocol that developer can add there own data serialzable/deserialzable format (high risk)
-  
+  Note from Filip: Lets not do this, last attempt caused a broken clustering piece for 4 versions. 
    Currently 
    	header 		    6 bytes (FLT2002)
     compressflag    4 byte
