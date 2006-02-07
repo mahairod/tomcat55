@@ -114,11 +114,19 @@ public class EjbFactory
                     try {
                         factoryClass = tcl.loadClass(factoryClassName);
                     } catch(ClassNotFoundException e) {
+                        NamingException ex = new NamingException
+                            ("Could not load resource factory class");
+                        ex.initCause(e);
+                        throw ex;
                     }
                 } else {
                     try {
                         factoryClass = Class.forName(factoryClassName);
                     } catch(ClassNotFoundException e) {
+                        NamingException ex = new NamingException
+                            ("Could not load resource factory class");
+                        ex.initCause(e);
+                        throw ex;
                     }
                 }
                 if (factoryClass != null) {
@@ -135,6 +143,12 @@ public class EjbFactory
                     factory = (ObjectFactory)
                         Class.forName(javaxEjbFactoryClassName).newInstance();
                 } catch(Throwable t) {
+                    if (t instanceof NamingException)
+                        throw (NamingException) t;
+                    NamingException ex = new NamingException
+                        ("Could not create resource factory instance");
+                    ex.initCause(t);
+                    throw ex;
                 }
             }
 
