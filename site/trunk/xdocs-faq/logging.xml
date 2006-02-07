@@ -2,7 +2,7 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document url="security.html">
+<document url="logging.html">
 
   &project;
 
