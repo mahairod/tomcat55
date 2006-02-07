@@ -7,15 +7,38 @@ Next actions
   Need to investigate why this is the case and where the 200+ extra bytes are coming from.
   
 - Implement primary/secondary replication logic (fhanik)
-  Idea for implementation: Cookie stores info primary/backup node.
+  Idea for implementation: Cookie stores info primary/backup node and hit counter.
   Steps to implement: (coming soon)
-  Scenarios: (coming soon)
+  Scenarios: 
+  1. Request in: new session dest: any
+  2. Request in: existing session dest: primary server
+  3. Request in: existing session dest: non-primary server (fail over)
+  4. Request in: existing session dest: backup server 
+  5. Backup node crash
+  6. Primary node crash (step 3)
+  7. Sequence 6. then 2. (hit counter)
+  8. Sequence 5. then 4. (swap)
+  9. New member joins 
+  10. Backup and primary crash -> death!
+  11. Sequence 2. in: invalid hit counter 
+  12. Sequence 4. in: invalid hit counter
+  Notes:
+  Ability to add a custom "Session expired" redirect for global 
+  redirects to never forward an invalid session into the server
+  when the session data has gone lost.
+  Ie, in a normal scenario, the session is viewed as "new"
+  but they may wanna display a session expired redirect.
+  Security:
+  Dont store any sensitive info in the new cookie.
+  only pointers to members.
+
   
 - break out membership/messaging module and improve JMX
   The clustering code has become very cluttered.
   We need to break out the membership and the messaging 
   away from the logic of session handling and JMX.
   The latter should be built on top of the clustering module, and not baked into it.
+  (maybe complete refactor for Tomcat 6)
   Steps:
   1. Build a group object, to allow sending of messages
      The group object will handle encompass membership and 
@@ -24,7 +47,8 @@ Next actions
      Through the group object, enable RPC style messaging
      This should be used for message like state transfers, instead of waiting for a timeout.
      RCP strategies - first response, majority response, all response
-  3. JMX  
+  3. Group/Message interceptors - to perform logic such as fragmentation, ordering etc.
+  4. JMX  
      JMX should be added on top of the core code, not inside the core code.
      The idea of JMX as management should be added outside to the core components.
      For example, SimpleTCPCluster should not contain JMX code, if I want to create
