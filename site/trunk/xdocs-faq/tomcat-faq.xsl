@@ -155,7 +155,7 @@
 	                  <form method="GET" name='searchForm' action="http://www.google.com/search">
 	                    <input type="hidden" name="ie" value="UTF-8"/>
 		            <input type="hidden" name="oe" value="UTF-8"/>
-				
+
                             <table bgcolor="#FFFFFF">
                             <tr>
                               <td>
@@ -166,8 +166,8 @@
                               </td>
                               <td>
 		                <input type="text" name="q" size="25" maxlength="255" value=""/>
-                                <input type="hidden" name="domains" value="http://jakarta.apache.org/tomcat/faq"/>
-                                <input type="hidden" name="sitesearch" value="http://jakarta.apache.org/tomcat/faq"/>
+                                <input type="hidden" name="domains" value="http://tomcat.apache.org/faq"/>
+                                <input type="hidden" name="sitesearch" value="http://tomcat.apache.org/faq"/>
                                 <input type="submit" name="btnG" value="Google Search"/>
                                 <br/>
                                 Search the Tomcat FAQ
