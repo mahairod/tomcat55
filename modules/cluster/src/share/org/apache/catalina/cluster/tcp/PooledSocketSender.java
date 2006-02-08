@@ -16,9 +16,9 @@
 
 package org.apache.catalina.cluster.tcp;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.util.LinkedList;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 /**
  * Send cluster messages with a pool of sockets (25).
@@ -227,8 +227,10 @@ public class PooledSocketSender extends DataSender {
 
         private SocketSender getNewSocketSender() {
             //new SocketSender(
-            SocketSender sender = new SocketSender(getDomain(),parent.getAddress(), parent
-                    .getPort());
+            SocketSender sender = new SocketSender(getDomain(),
+                                                   parent.getAddress(), 
+                                                   parent.getPort(),
+                                                   parent.getSenderState() );
             sender.setKeepAliveMaxRequestCount(parent
                     .getKeepAliveMaxRequestCount());
             sender.setKeepAliveTimeout(parent.getKeepAliveTimeout());

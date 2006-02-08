@@ -16,15 +16,12 @@
 
 package org.apache.catalina.cluster.tcp;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.SocketException;
+import java.io.*;
+import java.net.*;
 
-import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.io.XByteBuffer;
-import org.apache.catalina.util.StringManager;
+import org.apache.catalina.cluster.*;
+import org.apache.catalina.cluster.io.*;
+import org.apache.catalina.util.*;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
@@ -87,7 +84,7 @@ public class DataSender implements IDataSender {
     /**
      * sender is in suspect state (last transfer failed)
      */
-    private boolean suspect = false;
+    private SenderState senderState = new SenderState();
 
     /**
      * wait time for ack
@@ -221,10 +218,13 @@ public class DataSender implements IDataSender {
         this.port = port;
         this.domain = domain;
         if (log.isDebugEnabled())
-            log.debug(sm.getString("IDataSender.create",address, new Integer(
-                    port)));
+            log.debug(sm.getString("IDataSender.create",address, new Integer(port)));
     }
 
+    public DataSender(String domain,InetAddress host, int port, SenderState state) {
+        this(domain,host,port);
+        if ( state != null ) this.senderState = state;
+    }
     // ------------------------------------------------------------- Properties
 
     /**
@@ -457,15 +457,18 @@ public class DataSender implements IDataSender {
     }
 
     public boolean isSuspect() {
-        return suspect;
+        return senderState.isSuspect() || senderState.isFailing();
     }
 
     public boolean getSuspect() {
-        return suspect;
+        return isSuspect();
     }
 
     public void setSuspect(boolean suspect) {
-        this.suspect = suspect;
+        if ( suspect ) 
+            this.senderState.setSuspect();
+        else
+            this.senderState.setReady();
     }
 
     public long getAckTimeout() {
@@ -539,6 +542,11 @@ public class DataSender implements IDataSender {
     public Socket getSocket() {
         return socket;
     }
+
+    public SenderState getSenderState() {
+        return senderState;
+    }
+
     /**
      * @param socket The socket to set.
      */
@@ -903,11 +911,14 @@ public class DataSender implements IDataSender {
             }
         } catch (IOException x) {
             missingAckCounter++;
+            String errmsg = sm.getString("IDataSender.ack.missing", getAddress(),
+                                         new Integer(socket.getLocalPort()), 
+                                         new Long(this.ackTimeout));
             if ( !this.isSuspect() ) {
-                log.warn(sm.getString("IDataSender.ack.missing", getAddress(),
-                                      new Integer(socket.getLocalPort()), 
-                                      new Long(this.ackTimeout)), x);
                 this.setSuspect(true);
+                if ( log.isWarnEnabled() ) log.warn(errmsg, x);
+            } else {
+                if ( log.isDebugEnabled() )log.debug(errmsg, x);
             }
             throw x;
         } finally {
