@@ -87,7 +87,7 @@ public class DataSender implements IDataSender {
     /**
      * sender is in suspect state (last transfer failed)
      */
-    private boolean suspect;
+    private boolean suspect = false;
 
     /**
      * wait time for ack
@@ -213,7 +213,6 @@ public class DataSender implements IDataSender {
      * After failure make a resend
      */
     private boolean resend = false ;
-
     
     // ------------------------------------------------------------- Constructor
     
@@ -794,7 +793,7 @@ public class DataSender implements IDataSender {
             else if(keepAliveTimeout > -1)
                 this.keepAliveConnectTime = System.currentTimeMillis();
         }
-        Exception exception = null;
+        IOException exception = null;
         try {
              writeData(data);
              messageTransfered = true ;
@@ -838,9 +837,7 @@ public class DataSender implements IDataSender {
                 }
             } else {
                 dataFailureCounter++;
-                if (log.isWarnEnabled())
-                    log.warn(sm.getString("IDataSender.send.lost",  address.getHostAddress(),
-                            new Integer(port), data.getType(), data.getUniqueId()),exception);
+                throw exception;
             }
         }
     }
@@ -857,12 +854,9 @@ public class DataSender implements IDataSender {
             isMessageTransferStarted = true ;
         }
         try {
+            byte[] message = data.getMessage();
             OutputStream out = socket.getOutputStream();
-            out.write(XByteBuffer.START_DATA);
-            out.write(XByteBuffer.toBytes(data.getCompress()));
-            out.write(XByteBuffer.toBytes(data.getMessage().length));
-            out.write(data.getMessage());
-            out.write(XByteBuffer.END_DATA);
+            out.write(XByteBuffer.createDataPackage(message,data.getCompress()));
             out.flush();
             if (isWaitForAck())
                 waitForAck(ackTimeout);
@@ -909,9 +903,12 @@ public class DataSender implements IDataSender {
             }
         } catch (IOException x) {
             missingAckCounter++;
-            log.warn(sm.getString("IDataSender.ack.missing", getAddress(),
-                    new Integer(socket.getLocalPort()), new Long(
-                            this.ackTimeout)),x);
+            if ( !this.isSuspect() ) {
+                log.warn(sm.getString("IDataSender.ack.missing", getAddress(),
+                                      new Integer(socket.getLocalPort()), 
+                                      new Long(this.ackTimeout)), x);
+                this.setSuspect(true);
+            }
             throw x;
         } finally {
             if(doWaitAckStats) {
