@@ -45,6 +45,10 @@ public class SocketSender extends DataSender {
         super(domain,host, port);
     }
 
+    public SocketSender(String domain,InetAddress host, int port, SenderState state) {
+        super(domain,host, port, state);
+    }
+
     // ------------------------------------------------------------- Properties
 
     /**

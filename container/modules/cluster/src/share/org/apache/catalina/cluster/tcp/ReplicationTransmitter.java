@@ -866,10 +866,10 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
             addStats(data.getMessage().length);
             return true;
         } catch (Exception x) {
-            if (log.isErrorEnabled()) {
-                if (!sender.getSuspect()) {
-                    log.error("Unable to send replicated message, is member ["+sender.toString()+"] down?",x);
-                }
+            if (!sender.getSuspect()) {
+                if (log.isErrorEnabled() ) log.error("Unable to send replicated message, is member ["+sender.toString()+"] down?",x);
+            } else if (log.isDebugEnabled() ) {
+                log.debug("Unable to send replicated message, is member ["+sender.toString()+"] down?",x);
             }
             sender.setSuspect(true);
             failureCounter++;
