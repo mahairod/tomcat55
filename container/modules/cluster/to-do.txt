@@ -102,6 +102,7 @@ Next actions
 	add deployment help
 	Need help (pero)
 - implement fragmentation of large replication objects
+  (note this will be done in the Group object, see top.)
 	Compress at message level 
 	Splitting Messages ala FarmDeployer war handling
 - add a message type to the message header.
@@ -253,6 +254,14 @@ would not make sense to transfer the same webapp over and over again.
 ==============================   
 COMPLETED
 ==============================
+5.5.16 (fhanik)
+- Extensive logging when a member crashes
+  When a member crashes and you use pooled socket mode then 
+  the logs are spewing out info.
+  Instead, now we only report one IOException if it happens, and 
+  mark the member as suspect.
+
+5.5.16 (fhanik)
 - Average message size
   For my test application, the average message size has increased from
   526 bytes per message to over 750 bytes per message from version 5.0.28 to 5.5.15.
