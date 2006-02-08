@@ -1,11 +1,7 @@
 ==============================
 Next actions
 ==============================
-- Average message size
-  For my test application, the average message size has increased from
-  526 bytes per message to over 750 bytes per message from version 5.0.28 to 5.5.15.
-  Need to investigate why this is the case and where the 200+ extra bytes are coming from.
-  
+ 
 - Implement primary/secondary replication logic (fhanik)
   Idea for implementation: Cookie stores info primary/backup node and hit counter.
   Steps to implement: (coming soon)
@@ -257,6 +253,13 @@ would not make sense to transfer the same webapp over and over again.
 ==============================   
 COMPLETED
 ==============================
+- Average message size
+  For my test application, the average message size has increased from
+  526 bytes per message to over 750 bytes per message from version 5.0.28 to 5.5.15.
+  Need to investigate why this is the case and where the 200+ extra bytes are coming from.
+  Fix: The default compress value had changed. The new default is that no compression is used.
+  To re-enable compression, <Sender compress="true" in the sender element.
+
 5.5.15 (pero)
 - Optimized getMembers access from McastMembership
     Member list was copied at every access. (Used inside ReplicationValve.invoke)
