@@ -458,9 +458,9 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                 IDataSender sender = senders[i];
                 if(domain.equals(sender.getDomain())) {
                     try {
-                        sendMessageData(data, sender);
+                        boolean success = sendMessageData(data, sender);
                     } catch (Exception x) {
-                        // FIXME remember exception and send it at finally
+                        //THIS WILL NEVER HAPPEN, as sendMessageData swallows the error
                     }
                 }
             }
@@ -846,13 +846,13 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * 
      * @param data message Data
      * @param sender concrete message sender
+     * @return true if the message got sent, false otherwise
      * @throws java.io.IOException If an error occurs
      */
-    protected void sendMessageData(ClusterData data,
-            IDataSender sender) throws java.io.IOException {
+    protected boolean sendMessageData(ClusterData data,
+                                   IDataSender sender) throws java.io.IOException {
         if (sender == null)
-            throw new java.io.IOException(
-                    "Sender not available. Make sure sender information is available to the ReplicationTransmitter.");
+            throw new java.io.IOException("Sender not available. Make sure sender information is available to the ReplicationTransmitter.");
         try {
             // deprecated not needed DataSender#pushMessage can handle connection
             if (autoConnect) {
@@ -864,14 +864,16 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
             sender.sendMessage(data);
             sender.setSuspect(false);
             addStats(data.getMessage().length);
+            return true;
         } catch (Exception x) {
-            if (log.isWarnEnabled()) {
+            if (log.isErrorEnabled()) {
                 if (!sender.getSuspect()) {
-                    log.warn("Unable to send replicated message, is server down?",x);
+                    log.error("Unable to send replicated message, is member ["+sender.toString()+"] down?",x);
                 }
             }
             sender.setSuspect(true);
             failureCounter++;
+            return false;
         }
 
     }

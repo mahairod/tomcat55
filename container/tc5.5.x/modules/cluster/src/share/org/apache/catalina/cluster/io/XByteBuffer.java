@@ -195,9 +195,7 @@ public class XByteBuffer
     public ClusterData extractPackage(boolean clearFromBuffer)
             throws java.io.IOException {
         int psize = countPackages();
-        if (psize == 0)
-            throw new java.lang.IllegalStateException(
-                    "No package exists in XByteBuffer");
+        if (psize == 0) throw new java.lang.IllegalStateException("No package exists in XByteBuffer");
         int compress = toInt(buf, START_DATA.length);
         int size = toInt(buf, START_DATA.length +4);
         byte[] data = new byte[size];
@@ -335,22 +333,26 @@ public class XByteBuffer
     /**
      * Creates a complete data package
      * @param indata - the message data to be contained within the package
+     * @param compressed - compression flag for the indata buffer
      * @return - a full package (header,compress,size,data,footer)
-     * @deprecated since 5.5.10
+     * 
      */
-    public static byte[] createDataPackage(byte[] indata)
+    public static byte[] createDataPackage(byte[] indata, int compressed)
             throws java.io.IOException {
-        byte[] data;
-        data = indata;
-        byte[] result = new byte[START_DATA.length + 8 + data.length
-                + END_DATA.length];
+        byte[] data = indata;
+        byte[] comprdata = XByteBuffer.toBytes(compressed);
+        int length = 
+            START_DATA.length + //header length
+            4 + //compression flag
+            4 + //data length indicator
+            data.length + //actual data length
+            END_DATA.length; //footer length
+        byte[] result = new byte[length];
         System.arraycopy(START_DATA, 0, result, 0, START_DATA.length);
-        System.arraycopy(toBytes(ClusterMessage.FLAG_FORBIDDEN), 0, result, START_DATA.length, 4);
+        System.arraycopy(comprdata, 0, result, START_DATA.length, 4);
         System.arraycopy(toBytes(data.length), 0, result, START_DATA.length + 4, 4);
         System.arraycopy(data, 0, result, START_DATA.length + 8, data.length);
-        System.arraycopy(END_DATA, 0, result, START_DATA.length + 8
-                + data.length, END_DATA.length);
-
+        System.arraycopy(END_DATA, 0, result, START_DATA.length + 8 + data.length, END_DATA.length);
         return result;
     }
 }
