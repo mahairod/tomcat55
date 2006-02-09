@@ -1,12 +1,12 @@
 $Id$
 
 
-               Running The Tomcat 4.0 Servlet/JSP Container
+               Running The Tomcat 4.1 Servlet/JSP Container
                ============================================
 
-This subproject contains Tomcat 4.0, a server that implements the Servlet 2.3
-and JSP 1.2 Specifications from Java Software.  In order to install and run
-this container, you must do the following:
+This subproject contains Tomcat 4.1, a server that implements the Servlet 2.3
+and JSP 1.2 Specifications.  In order to install and run this container, you
+must do the following:
 
 
 (0) Download and Install the J2SE Software Development Kit (SDK)
@@ -30,7 +30,7 @@ release version 1.3 or later.
   into which you installed the SDK release.
 
 
-(1) Download and Install the Tomcat 4.0 Binary Distribution
+(1) Download and Install the Tomcat 4.1 Binary Distribution
 
 NOTE:  As an alternative to downloading a binary distribution, you can create
 your own from the Tomcat source repository, as described in "BUILDING.txt".
@@ -39,28 +39,28 @@ subdirectory of your source distribution.
 
 * Download a binary distribution of Tomcat from:
 
-    http://jakarta.apache.org/builds/jakarta-tomcat-4.0/nightly/
+    http://tomcat.apache.org/download-41.cgi
 
   On a Windows platform, you will need:
-    jakarta-tomcat-4.0-YYYYMMDD.zip
+    4.1.x.zip
 
   On a Unix platform, you will need:
-    jakarta-tomcat-4.0-YYYYMMDD.zip
+    4.1.x.tar.gz
 
 * Unpack the binary distribution into a convenient location so that the
   distribution resides in its own directory (conventionally named
-  "jakarta-tomcat-4.0").  For the purposes of the remainder of this document,
+  "apache-tomcat-4.1").  For the purposes of the remainder of this document,
   the symbolic name "${catalina.home}" is used to refer to the full
   pathname of the release directory.
 
 
-(2) Start Up Tomcat 4.0
+(2) Start Up Tomcat 4.1
 
-There are two techniques by which Tomcat 4.0 can be started:
+There are two techniques by which Tomcat 4.1 can be started:
 
 * Via an environment variable:
   - Set an environment variable CATALINA_HOME to the path of the directory
-    into which you have installed Tomcat 4.0.
+    into which you have installed Tomcat 4.1.
   - Execute the shell command:
 
       %CATALINA_HOME%\bin\startup             (Windows)
@@ -76,24 +76,24 @@ There are two techniques by which Tomcat 4.0 can be started:
       cd $CATALINA_HOME/bin                   (Unix)
       ./startup.sh                            (Unix)
 
-After startup, the default web applications included with Tomcat 4.0 will be
+After startup, the default web applications included with Tomcat 4.1 will be
 available by browsing:
 
     http://localhost:8080/
 
-Further information about configuring and running Tomcat 4.0 can be found in
+Further information about configuring and running Tomcat 4.1 can be found in
 the documentation included here, as well as on the Tomcat web site:
 
-    http://jakarta.apache.org/tomcat/
+    http://tomcat.apache.org/
 
 
-(3) Shut Down Tomcat 4.0
+(3) Shut Down Tomcat 4.1
 
-There are two techniques by which Tomcat 4.0 can be stopped:
+There are two techniques by which Tomcat 4.1 can be stopped:
 
 * Via an environment variable:
   - Set an environment variable CATALINA_HOME to the path of the directory
-    into which you have installed Tomcat 4.0.
+    into which you have installed Tomcat 4.1.
   - Execute the shell command:
 
       %CATALINA_HOME%\bin\shutdown            (Windows)
@@ -155,7 +155,7 @@ not run in that configuration, unless either:
 (5) Troubleshooting:
 
 There are only really 3 things that can go wrong during the stand-alone
-Tomcat 4.0 install:
+Tomcat 4.1 install:
 
 1) The most common hiccup is when another web server (or any process for that
    matter) has laid claim to port 8080.  This is the default HTTP port that
