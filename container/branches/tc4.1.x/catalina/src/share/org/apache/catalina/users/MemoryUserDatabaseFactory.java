@@ -21,7 +21,6 @@ package org.apache.catalina.users;
 import java.util.Hashtable;
 import javax.naming.Name;
 import javax.naming.Context;
-import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.RefAddr;
 import javax.naming.spi.ObjectFactory;

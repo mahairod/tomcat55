@@ -17,7 +17,6 @@ package sessions;
 
 import javax.servlet.http.*;
 import java.util.Vector;
-import java.util.Enumeration;
 
 public class DummyCart {
     Vector v = new Vector();

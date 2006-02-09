@@ -27,11 +27,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.KeyManagementException;
 import java.security.Security;
 import java.security.cert.CertificateException;
-import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.HandshakeCompletedListener;
-import javax.net.ssl.HandshakeCompletedEvent;
 
 import com.sun.net.ssl.KeyManagerFactory;
 import com.sun.net.ssl.SSLContext;

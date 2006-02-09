@@ -15,7 +15,6 @@
  */ 
 package cal;
 
-import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.servlet.http.*;
 
