@@ -442,9 +442,14 @@ After that you can procede with importing your Certificate.</p>
 
 <ul>
 <li>Download a Chain Certificate from the Certificate Authority you obtained the Certificate from.<br/>
-	For Verisign.com go to: http://www.verisign.com/support/install/intermediate.html<br/>
-	For Trustcenter.de go to: http://www.trustcenter.de/certservices/cacerts/en/en.htm#server<br/>
-	For Thawte.com go to: http://www.thawte.com/certs/trustmap.html<br/>
+	For Verisign.com commercial certificates go to:
+            http://www.verisign.com/support/install/intermediate.html<br/>
+        For Verisign.com trial certificates go to:
+            http://www.verisign.com/support/verisign-intermediate-ca/Trial_Secure_Server_Root/index.html
+	For Trustcenter.de go to:
+            http://www.trustcenter.de/certservices/cacerts/en/en.htm#server<br/>
+	For Thawte.com go to:
+            http://www.thawte.com/certs/trustmap.html<br/>
 </li>
 <li>Import the Chain Certificate into you keystore
     <source>keytool -import -alias root -keystore &lt;your_keystore_filename&gt; \
