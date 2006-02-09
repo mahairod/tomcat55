@@ -16,7 +16,6 @@
 package org.apache.jasper.compiler;
 
 import java.util.*;
-import java.io.CharArrayWriter;
 import javax.servlet.jsp.tagext.*;
 import org.xml.sax.Attributes;
 import org.apache.jasper.JasperException;
