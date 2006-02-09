@@ -13,13 +13,13 @@ INTRODUCTION:
 
 This document describes the changes that have been made in the current
 development version of Apache Tomcat, relative to the Tomcat 4.0 release.
-The release notes for all prior releases of Tomcat 4.0 are also included, for
+The release notes for all prior releases of Tomcat 4.1 are also included, for
 your reference.
 
 Bug reports should be entered at the bug reporting system for
 Jakarta projects at:
 
-        http://nagoya.apache.org/bugzilla/
+        http://issues.apache.org/bugzilla/
 
 Please report bugs and feature requests under product name "Tomcat 4".
 
@@ -85,8 +85,41 @@ General New Features:
 [4.1.31] JTA
          Upgrade to 1.0.1b
 
+[4.1.32] Commons Beanutils
+         Upgrade to 1.7.0
+
+[4.1.32] Commons Collections
+         Upgrade to 3.1
+
+[4.1.32] Commons Digester
+         Upgrade to 1.7
+
+[4.1.32] Commons Logging
+         Upgrade to 1.0.4
+
+[4.1.32] Jakarta RegExp
+         Upgrade to 1.4
+
+[4.1.32] Xerces
+         Upgrade to 2.7.1
+
 [4.1.32] Commons Daemon
-         Upgrade to 1.0
+         Upgrade to 1.0.1
+
+[4.1.32] Commons DBCP
+         Upgrade to 1.2.1
+
+[4.1.32] Commons Pool
+         Upgrade to 1.2
+
+[4.1.32] JUnit
+         Upgrade to 3.8.1
+
+[4.1.32] Commons Java Mail
+         Upgrade to 1.3.3_01
+
+[4.1.32] Tyrex Data Source
+         Upgrade to 1.0.2
 
 
 ---------------------
@@ -514,6 +547,26 @@ Generic Bug Fixes:
 
 [4.1.32] Admin webapp
          Improve error message when a resource is missing an attribute
+
+[4.1.32] Docs
+         Document alternateURL attribute for JNDi realm
+
+[4.1.32] Admin webapp
+         Align package name with directory structure for
+         SetCharacterEncodingFilter
+
+[4.1.32] Docs
+         Fix typo in Global Naming Resources documentation
+
+[4.1.32] Docs
+         Update Oracle JBDI DataSource examples
+
+[4.1.32] Examples webapp
+         Correct XSS issues
+
+[4.1.32] Docs
+         Clarify thay Verisign has different CAs for commercial and trial
+         certificates
 
 
 ------------------
@@ -1453,6 +1506,48 @@ Catalina Bug Fixes:
 [4.1.32] #10026
          Webapp classloader
          Fix struts JAR locking issue (fixes other locking issues too)
+
+[4.1.32] #37150
+         Turn off directly listing by default
+
+[4.1.32] CGI Servlet
+         Align default settings in web.xml with default settings in servlet
+
+[4.1.32] #17970
+         Web applications with multi-level contexts no longer deploy twice
+
+[4.1.32] #13040
+         getContext() now allows retrieval of an external context that is a
+         sub-context of the current context
+
+[4.1.32] #38012
+         Allow CGI scripts to issue re-directs. More generally, allows scripts
+         to set response headers. Add support for the CGI specific status
+         header
+
+[4.1.32] #37854
+         Correct Extension-List validation in MANIFEST.MF files which was too
+         strict
+
+[4.1.32] #15570
+         Magic role "*" was incorrectly interpreted as all authenticated users
+         rather than as all roles defined in web.xml
+
+[4.1.32] #16185
+         Enable the DataSourceRealm to use a DataSource defined at the context
+         level
+
+[4.1.32] #23950
+         Context.listBindings() now returns Objects rather than References
+
+[4.1.32] CGI Servlet
+         Add environment variable support for Windows Server 2003
+
+[4.1.32] Server mbean
+         Expose serverInfo attribute via jmx
+
+[4.1.32] JNDI Realm
+         Add support for CLIENT-CERT authentication
 
 
 ----------------
