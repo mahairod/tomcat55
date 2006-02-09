@@ -223,6 +223,28 @@
 
    </subsection>
 
+  <subsection name="Transaction">
+
+    <p>You can declare the characteristics of the UserTransaction
+    to be returned for JNDI lookup for <code>java:comp/UserTransaction</code>. 
+    You <strong>MUST</strong> define an object factory class to instantiate
+    this object as well as the needed resource parameters as attributes of the 
+    <code>Transaction</code> 
+    element, and the properties used to configure that object factory.</p>
+
+    <p>The valid attributes for the <code>&lt;Transaction&gt;</code> element
+    are as follows:</p>
+
+    <attributes>
+
+      <attribute name="factory" required="true">
+        <p>The class name for the JNDI object factory.</p>
+      </attribute>
+
+    </attributes>
+
+  </subsection>
+
 </section>
 
 

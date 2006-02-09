@@ -121,6 +121,9 @@ following elements in the <code><strong>&lt;Context&gt;</strong></code> or
     the<a href="config/globalresources.html">&lt;GlobalNamingResources&gt;</a>
     child element of the <a href="config/server.html">&lt;Server&gt;</a>
     element.</li>
+<li><a href="config/context.html#Transaction">&lt;Transaction&gt;</a> -
+    Add a resource factory for instantiating the UserTransaction object 
+    instance that is available at <code>java:comp/UserTransaction</code>.</li>
 
 </ul>
 
