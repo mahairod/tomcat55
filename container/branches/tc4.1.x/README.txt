@@ -9,7 +9,7 @@ JSP 1.2 specifications from Java Software.  It includes the following contents:
   BUILDING.txt                Instructions for building from sources
   LICENSE                     Apache Software License for this release
   README.txt                  This document
-  RELEASE-NOTES-*.txt         Release Notes for this (and previous) releases
+  RELEASE-NOTES-4.1.txt       Release Notes for this (and previous) releases
                               of Tomcat 4.1
   RUNNING.txt                 Instructions for installing Tomcat, as well as
                               starting and stopping the server
@@ -17,12 +17,15 @@ JSP 1.2 specifications from Java Software.  It includes the following contents:
   common/                     Classes available to both Catalina internal
                               classes and web applications:
     classes/                  Unpacked common classes
+    endorsed/                 JARs over-riding standard APIs as per the
+                              "Endorsed Standards Override Mechanism"
     lib/                      Common classes in JAR files
   conf/                       Configuration files
   logs/                       Destination directory for log files
   server/                     Internal Catalina classes and their dependencies
     classes/                  Unpacked classes (internal only)
     lib/                      Classes packed in JAR files (internal only)
+    webapps/                  Web applications for administration of Tomcat
   shared/                     Classes shared by all web applications
     classes/                  Unpacked shared classes
     lib/                      Shared classes in JAR files
@@ -46,21 +49,17 @@ please consult the documentation in "RUNNING.txt".
 Nightly Builds
 --------------
 
-Nightly Builds of Tomcat 4.1 are built from the most recent CVS sources each
-evening (Pacific Time).  The filename of the downloadable file includes the
-date it was created (in YYYYMMDD format).  These builds are available at:
-
-Binary:  http://jakarta.apache.org/builds/jakarta-tomcat-4.0/nightly/
-Source:  http://jakarta.apache.org/builds/jakarta-tomcat-4.0/nightly/src/
+Nightly Builds of Tomcat 4.1 are no longer produced.
 
 
 Release Builds
 --------------
 
 Release Builds of Tomcat 4.1 are created and released periodically, and
-announced to the interested mailing lists.  Each release build resides in its
-own directories.  For example, the Tomcat 4.1.18 release is available at:
+announced to the interested mailing lists.  The current binary and source releases
+are avaialble from:
 
-Binary:  http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.1.18/bin/
-Source:  http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.1.18/src/
+http://tomcat.apache.org/download-41.cgi
 
+Previous releases may be found in the Apache archives, available via the above
+download page.
