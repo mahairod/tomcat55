@@ -16,9 +16,9 @@
 
 package org.apache.catalina.cluster.tcp;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.LinkedList;
 
 /**
  * Send cluster messages with a pool of sockets (25).

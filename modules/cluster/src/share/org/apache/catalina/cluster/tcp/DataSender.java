@@ -16,12 +16,15 @@
 
 package org.apache.catalina.cluster.tcp;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.SocketException;
 
-import org.apache.catalina.cluster.*;
-import org.apache.catalina.cluster.io.*;
-import org.apache.catalina.util.*;
+import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.io.XByteBuffer;
+import org.apache.catalina.util.StringManager;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
