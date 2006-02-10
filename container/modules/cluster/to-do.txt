@@ -18,6 +18,9 @@ Next actions
   10. Backup and primary crash -> death!
   11. Sequence 2. in: invalid hit counter 
   12. Sequence 4. in: invalid hit counter
+  13. Session expires
+  14. Sequence 3. then 13. on the old primary
+  
   Notes:
   Ability to add a custom "Session expired" redirect for global 
   redirects to never forward an invalid session into the server
