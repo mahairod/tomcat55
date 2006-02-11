@@ -166,12 +166,12 @@
       <param name="project-menu" expression="nomenu"/>
     </style>
 
-    <!-- Build Coyote JK2 documentation -->
-    <mkdir     dir="${webapps.build}/${webapp.name}/jk2"/>
-    <mkdir     dir="${webapps.build}/${webapp.name}/jk2/printer"/>
+    <!-- Build Coyote JK documentation -->
+    <mkdir     dir="${webapps.build}/${webapp.name}/jk"/>
+    <mkdir     dir="${webapps.build}/${webapp.name}/jk/printer"/>
     <ant dir="${tomcat-jk.home}/xdocs" >
        <property name="build.dir" value="${webapps.build}/${webapp.name}" />
-       <property name="dist.name" value="jk2" />
+       <property name="dist.name" value="jk" />
     </ant>
 
   </target>
