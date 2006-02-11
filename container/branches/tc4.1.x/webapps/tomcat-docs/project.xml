@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="Tomcat Documentation - Top Level Directory"
-        href="http://jakarta.apache.org/tomcat/">
+        href="http://tomcat.apache.org/">
 
-    <title>The Tomcat 4 Servlet/JSP Container</title>
+    <title>Apache Tomcat 4</title>
 
     <logo href="/images/tomcat.gif">
       The Tomcat Servlet/JSP Container
@@ -31,7 +31,7 @@
         <item name="Class Loader HOW-TO"   href="class-loader-howto.html"/>
         <item name="Connectors List"       href="config/connectors.html"/>
         <item name="HTML Manager App HOW-TO" href="html-manager-howto.html"/>
-        <item name="JK Documentation"      href="jk2/index.html"/>
+        <item name="JK Documentation"      href="jk/index.html"/>
         <item name="JNDI DataSource HOW-TO" 
               href="jndi-datasource-examples-howto.html"/>
         <item name="JNDI Resources HOW-TO" href="jndi-resources-howto.html"/>
@@ -57,9 +57,6 @@
     </menu>
 
     <menu name="Jasper Developers">
-<!--
-        <item name="Overall Requirements"  href="jasper-requirements.html"/>
--->
         <item name="Javadocs"              href="jasper/docs/api/index.html"/>
     </menu>
 
