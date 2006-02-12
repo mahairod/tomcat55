@@ -492,11 +492,11 @@ the servlet/JSP container.
 
 (29) Steps (30) to (32) Build the Windows Installer Distribution - OPTIONAL
 
-(30) NSIS
+(30) NSISant installer
 
-* Download the NSIS Installer version 2.0 from:
+* Download the NSIS Installer version 2.14 from:
 
-    http://prdownloads.sourceforge.net/nsis/nsis20.exe?download
+    http://prdownloads.sourceforge.net/nsis/nsis-2.14-setup.exe?download
 
 * Install the application into a convenient location so that it resides in its
   own subdirectory.
