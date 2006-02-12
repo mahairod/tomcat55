@@ -40,13 +40,13 @@
 <!-- Header -->
 <table width="100%">
     <tr>
-        <td align="left" width="130"><a href="http://jakarta.apache.org/tomcat/index.html"><img src="tomcat.gif" height="92" width="130" border="0" alt="The Mighty Tomcat - MEOW!"></td>
+        <td align="left" width="130"><a href="http://tomcat.apache.org/"><img src="tomcat.gif" height="92" width="130" border="0" alt="The Mighty Tomcat - MEOW!"></td>
         <td align="left" valign="top">
             <table>
                 <tr><td align="left" valign="top"><b><%= application.getServerInfo() %></b></td></tr>
             </table>
         </td>
-        <td align="right"><a href="http://jakarta.apache.org/"><img src="jakarta-banner.gif" height="48" width="505" border="0" alt="The Jakarta Project"></a></td>
+        <td align="right"><a href="http://www.apache.org/"><img src="asf-logo-wide.gif" height="51" width="537" border="0" alt="The Apache Software Foundation"></a></td>
     </tr>
 </table>
 
@@ -94,10 +94,10 @@
                 </tr>
                 <tr>
                     <td bgcolor="#FFDC75" bordercolor="#000000" nowrap>
-                        <a href="http://jakarta.apache.org/tomcat/">Home Page</a><br>
-                        <a href="http://jakarta.apache.org/tomcat/bugreport.html">Bug Database</a><br>
-                        <a href="http://www.mail-archive.com/tomcat-user%40jakarta.apache.org/">Users Mailing List</a><br>
-                        <a href="http://www.mail-archive.com/tomcat-dev%40jakarta.apache.org/">Developers Mailing List</a><br>
+                        <a href="http://tomcat.apache.org/">Home Page</a><br>
+                        <a href="http://tomcat.apache.org/bugreport.html">Bug Database</a><br>
+                        <a href="http://www.mail-archive.com/users%40tomcat.apache.org/">Users Mailing List</a><br>
+                        <a href="http://www.mail-archive.com/dev%40tomcat.apache.org/">Developers Mailing List</a><br>
                         <a href="irc://irc.freenode.net/#tomcat">IRC</a><br>
                         &nbsp;
                     </td>
@@ -157,11 +157,11 @@
 
             <p>Included with this release are a host of sample Servlets and JSPs (with associated source code), extensive documentation (including the Servlet 2.3 and JSP 1.2 API JavaDoc), and an introductory guide to developing web applications.</p>
 
-            <p>Tomcat mailing lists are available at the Jakarta project web site:</p>
+            <p>Tomcat mailing lists are available at the Apache Tomcat project web site:</p>
 
            <ul>
-               <li><b><a href="mailto:tomcat-user-subscribe@jakarta.apache.org">tomcat-user@jakarta.apache.org</a></b> for general questions related to configuring and using Tomcat</li>
-               <li><b><a href="mailto:tomcat-dev-subscribe@jakarta.apache.org">tomcat-dev@jakarta.apache.org</a></b> for developers working on Tomcat</li>
+               <li><b><a href="mailto:users@tomcat.apache.org">users@tomcat.apache.org</a></b> for general questions related to configuring and using Tomcat</li>
+               <li><b><a href="mailto:dev@tomcat.apache.org">dev@tomcat.apache.org</a></b> for developers working on Tomcat</li>
            </ul>
 
             <p>Thanks for using Tomcat!</p>
