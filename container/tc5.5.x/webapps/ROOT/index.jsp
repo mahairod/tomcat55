@@ -75,14 +75,14 @@
 <table id="banner" width="100%">
     <tr>
       <td align="left" style="width:130px">
-        <a href="http://jakarta.apache.org/tomcat/index.html">
+        <a href="http://tomcat.apache.org/">
 	  <img src="tomcat.gif" height="92" width="130" alt="The Mighty Tomcat - MEOW!"/>
 	</a>
       </td>
       <td align="left" valign="top"><b><%= application.getServerInfo() %></b></td>
       <td align="right">
         <a href="http://jakarta.apache.org/">
-	  <img src="jakarta-banner.gif" height="48" width="505" alt="The Jakarta Project"/>
+	  <img src="asf-logo-wide.gif" height="51" width="537" alt="The Apache Software Foundation"/>
 	</a>
        </td>
      </tr>
@@ -129,12 +129,12 @@
                 </tr>
                 <tr>
                   <td class="menu">
-                    <a href="http://jakarta.apache.org/tomcat/">Home&nbsp;Page</a><br/>
-		    <a href="http://jakarta.apache.org/tomcat/faq">FAQ</a><br/>
-                    <a href="http://jakarta.apache.org/tomcat/bugreport.html">Bug&nbsp;Database</a><br/>
+                    <a href="http://tomcat.apache.org/">Home&nbsp;Page</a><br/>
+		    <a href="http://tomcat.apache.org/faq/">FAQ</a><br/>
+                    <a href="http://tomcat.apache.org/bugreport.html">Bug&nbsp;Database</a><br/>
                     <a href="http://issues.apache.org/bugzilla/buglist.cgi?bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;bug_status=RESOLVED&amp;resolution=LATER&amp;resolution=REMIND&amp;resolution=---&amp;bugidtype=include&amp;product=Tomcat+5&amp;cmdtype=doit&amp;order=Importance">Open Bugs</a><br/>
-                    <a href="http://nagoya.apache.org/eyebrowse/SummarizeList?listId=88">Users&nbsp;Mailing&nbsp;List</a><br/>
-                    <a href="http://nagoya.apache.org/eyebrowse/SummarizeList?listId=46">Developers&nbsp;Mailing&nbsp;List</a><br/>
+                    <a href="http://mail-archives.apache.org/mod_mbox/tomcat-users/">Users&nbsp;Mailing&nbsp;List</a><br/>
+                    <a href="http://mail-archives.apache.org/mod_mbox/tomcat-dev/">Developers&nbsp;Mailing&nbsp;List</a><br/>
                     <a href="irc://irc.freenode.net/#tomcat">IRC</a><br/>
 		    &nbsp;
                   </td>
@@ -197,8 +197,8 @@
             <p>Tomcat mailing lists are available at the Tomcat project web site:</p>
 
            <ul>
-               <li><b><a href="mailto:users-subscribe@tomcat.apache.org">users@tomcat.apache.org</a></b> for general questions related to configuring and using Tomcat</li>
-               <li><b><a href="mailto:dev-subscribe@tomcat.apache.org">dev@tomcat.apache.org</a></b> for developers working on Tomcat</li>
+               <li><b><a href="mailto:users@tomcat.apache.org">users@tomcat.apache.org</a></b> for general questions related to configuring and using Tomcat</li>
+               <li><b><a href="mailto:dev@tomcat.apache.org">dev@tomcat.apache.org</a></b> for developers working on Tomcat</li>
            </ul>
 
             <p>Thanks for using Tomcat!</p>
