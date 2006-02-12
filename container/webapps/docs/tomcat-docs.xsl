@@ -18,6 +18,7 @@
   <xsl:param    name="home-href"        select="'http://tomcat.apache.org/'"/>
   <xsl:param    name="home-logo"        select="'/images/tomcat.gif'"/>
   <xsl:param    name="printer-logo"     select="'/images/printer.gif'"/>
+  <xsl:param    name="apache-logo"      select="'/images/asf-logo.gif'"/>
   <xsl:param    name="relative-path"    select="'.'"/>
   <xsl:param    name="void-image"       select="'/images/void.gif'"/>
   <xsl:param    name="project-menu"     select="'menu'"/>
@@ -39,6 +40,8 @@
 
   <!-- Process an entire document into an HTML page -->
   <xsl:template match="document">
+  <xsl:variable name="project"
+              select="document('project.xml')/project"/>
     <html>
     <head>
     <title><xsl:value-of select="project/title"/> - <xsl:value-of select="properties/title"/></title>
@@ -57,24 +60,11 @@
     <body bgcolor="{$body-bg}" text="{$body-fg}" link="{$body-link}"
           alink="{$body-link}" vlink="{$body-link}">
 
-    <table border="0" width="100%" cellspacing="4">
+    <table border="0" width="100%" cellspacing="0">
 
       <xsl:comment>PAGE HEADER</xsl:comment>
-      <tr><td colspan="2">
-
-        <xsl:comment>TOMCAT LOGO</xsl:comment>
-        <xsl:variable name="alt">
-          <xsl:value-of select="$home-name"/>
-        </xsl:variable>
-        <xsl:variable name="href">
-          <xsl:value-of select="$home-href"/>
-        </xsl:variable>
-        <xsl:variable name="src">
-          <xsl:value-of select="$relative-path"/><xsl:value-of select="$home-logo"/>
-        </xsl:variable>
-        <a href="{$href}">
-          <img src="{$src}" align="left" alt="{$alt}" border="0"/>
-        </a>
+      <tr>
+        <td>
         <xsl:if test="project/logo">
           <xsl:variable name="alt">
             <xsl:value-of select="project/logo"/>
@@ -91,8 +81,25 @@
             <img src="{$src}" align="right" alt="{$alt}" border="0"/>
           </a>
         </xsl:if>
+        </td>
+        <td>
+          <font face="arial,helvetica,sanserif">
+            <h1><xsl:value-of select="$project/title"/></h1>
+          </font>
+        </td>
+        <td>
+          <xsl:comment>APACHE LOGO</xsl:comment>
+          <xsl:variable name="src">
+            <xsl:value-of select="$relative-path"/><xsl:value-of select="$apache-logo"/>
+          </xsl:variable>
+          <a href="http://www.apache.org/">
+            <img src="{$src}" align="right" alt="Apache Logo" border="0"/>
+          </a>
+        </td>
+      </tr>
+    </table>
 
-      </td></tr>
+    <table border="0" width="100%" cellspacing="4">
 
       <xsl:comment>HEADER SEPARATOR</xsl:comment>
       <tr>
