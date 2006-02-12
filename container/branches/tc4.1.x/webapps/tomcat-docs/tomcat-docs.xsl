@@ -18,6 +18,7 @@
   <xsl:param    name="home-href"        select="'http://tomcat.apache.org/'"/>
   <xsl:param    name="home-logo"        select="'/images/tomcat.gif'"/>
   <xsl:param    name="printer-logo"     select="'/images/printer.gif'"/>
+  <xsl:param    name="apache-logo"     select="'/images/asf-logo.gif'"/>
   <xsl:param    name="relative-path"    select="'.'"/>
   <xsl:param    name="void-image"       select="'/images/void.gif'"/>
   <xsl:param    name="project-menu"     select="'menu'"/>
@@ -86,9 +87,11 @@
         </td>
         <td>
           <xsl:comment>APACHE LOGO</xsl:comment>
+          <xsl:variable name="src">
+            <xsl:value-of select="$relative-path"/><xsl:value-of select="$apache-logo"/>
+          </xsl:variable>
           <a href="http://www.apache.org/">
-            <img src="http://www.apache.org/images/asf-logo.gif"
-                 align="right" alt="Apache Logo" border="0"/>
+            <img src="{$src}" align="right" alt="Apache Logo" border="0"/>
           </a>
         </td>
       </tr>
