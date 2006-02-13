@@ -35,13 +35,14 @@ import org.apache.catalina.cluster.util.IDynamicProperty;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 import org.apache.tomcat.util.IntrospectionUtils;
+import org.apache.catalina.cluster.io.XByteBuffer;
 
 /**
- * Transmit message to ohter cluster members create sender from replicationMode
+ * Transmit message to other cluster members
+ * Actual senders are created based on the replicationMode
  * type 
  * FIXME i18n log messages
  * FIXME compress data depends on message type and size 
- * FIXME send very big messages at some block see FarmWarDeployer!
  * TODO pause and resume senders
  * 
  * @author Peter Rossbach
@@ -806,32 +807,9 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * @since 5.5.10
      */
     protected ClusterData serialize(ClusterMessage msg) throws IOException {
-        msg.setTimestamp(System.currentTimeMillis());
-        ByteArrayOutputStream outs = new ByteArrayOutputStream();
-        ObjectOutputStream out;
-        GZIPOutputStream gout = null;
-        ClusterData data = new ClusterData();
-        data.setType(msg.getClass().getName());
-        data.setUniqueId(msg.getUniqueId());
-        data.setTimestamp(msg.getTimestamp());
-        data.setCompress(msg.getCompress());
-        data.setResend(msg.getResend());
-        // FIXME add stats: How much comress and uncompress messages and bytes are transfered
-        if ((isCompress() && msg.getCompress() != ClusterMessage.FLAG_FORBIDDEN)
-                || msg.getCompress() == ClusterMessage.FLAG_ALLOWED) {
-            gout = new GZIPOutputStream(outs);
-            out = new ObjectOutputStream(gout);
-        } else {
-            out = new ObjectOutputStream(outs);
-        }
-        out.writeObject(msg);
-        // flush out the gzip stream to byte buffer
-        if(gout != null) {
-            gout.flush();
-            gout.close();
-        }
-        data.setMessage(outs.toByteArray());
-        return data;
+        boolean compress = ((isCompress() && msg.getCompress() != ClusterMessage.FLAG_FORBIDDEN)
+                             || msg.getCompress() == ClusterMessage.FLAG_ALLOWED);
+        return XByteBuffer.serialize(msg,compress);
     }
  
 

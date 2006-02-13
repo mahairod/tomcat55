@@ -865,9 +865,8 @@ public class DataSender implements IDataSender {
             isMessageTransferStarted = true ;
         }
         try {
-            byte[] message = data.getMessage();
             OutputStream out = socket.getOutputStream();
-            out.write(XByteBuffer.createDataPackage(message,data.getCompress()));
+            out.write(XByteBuffer.createDataPackage(data));
             out.flush();
             if (isWaitForAck())
                 waitForAck(ackTimeout);

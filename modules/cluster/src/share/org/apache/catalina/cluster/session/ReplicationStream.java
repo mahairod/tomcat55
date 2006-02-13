@@ -73,11 +73,11 @@ public final class ReplicationStream extends ObjectInputStream {
             try
             {
                 if ( tryRepFirst ) return findReplicationClass(name);
-                else return findWebappClass(name);
+                else return findExternalClass(name);
             }
             catch ( Exception x )
             {
-                if ( tryRepFirst ) return findWebappClass(name);
+                if ( tryRepFirst ) return findExternalClass(name);
                 else return findReplicationClass(name);
             }
         } catch (ClassNotFoundException e) {
@@ -90,7 +90,7 @@ public final class ReplicationStream extends ObjectInputStream {
         return Class.forName(name, false, getClass().getClassLoader());
     }
 
-    public Class findWebappClass(String name)
+    public Class findExternalClass(String name)
         throws ClassNotFoundException, IOException {
         return Class.forName(name, false, classLoader);
     }

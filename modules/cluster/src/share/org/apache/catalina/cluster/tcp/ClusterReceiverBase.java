@@ -34,6 +34,7 @@ import org.apache.catalina.cluster.session.ClusterSessionListener;
 import org.apache.catalina.cluster.session.ReplicationStream;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.cluster.io.XByteBuffer;
 
 /**
 * FIXME i18n log messages
@@ -438,32 +439,16 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
     //protected ClusterMessage deserialize(byte[] data)
     protected ClusterMessage deserialize(ClusterData data)
             throws IOException, ClassNotFoundException {
-        Object message = null;
+        boolean compress = isCompress() || data.getCompress() == ClusterMessage.FLAG_ALLOWED;
+        ClusterMessage message = null;
         if (data != null) {
-            InputStream instream;
-            if (isCompress() || data.getCompress() == ClusterMessage.FLAG_ALLOWED ) {
-                instream = new GZIPInputStream(new ByteArrayInputStream(data.getMessage()));
-            } else {
-                instream = new ByteArrayInputStream(data.getMessage());
-            }
-            ReplicationStream stream = new ReplicationStream(instream,
-                    getClass().getClassLoader());
-            message = stream.readObject();
+            message = XByteBuffer.deserialize(data, compress);
             // calc stats really received bytes
             totalReceivedBytes += data.getMessage().length;
             //totalReceivedBytes += data.length;
             nrOfMsgsReceived++;
-            instream.close();
         }
-        if (message instanceof ClusterMessage)
-            return (ClusterMessage) message;
-        else {
-            if (log.isDebugEnabled())
-                log.debug("Message " + message.toString() + " from type "
-                        + message.getClass().getName()
-                        + " transfered but is not a cluster message");
-            return null;
-        }
+        return message;
     }
     
     // --------------------------------------------- Performance Stats
