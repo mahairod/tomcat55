@@ -70,7 +70,14 @@ public class TcpReplicationThread extends WorkerThread {
             } catch (Exception e) {
                 //this is common, since the sockets on the other
                 //end expire after a certain time.
-                log.warn ("TCP Worker thread in cluster caught '" + e + "' closing channel", e);
+                if ( e instanceof IOException ) {
+                    //dont spew out stack traces for IO exceptions unless debug is enabled.
+                    if (log.isDebugEnabled()) log.debug ("IOException in replication worker, unable to drain channel. Probable cause: Keep alive socket closed.", e);
+                    else log.warn ("IOException in replication worker, unable to drain channel. Probable cause: Keep alive socket closed.");
+                } else if ( log.isErrorEnabled() ) {
+                    //this is a real error, log it.
+                    log.error("Exception caught in TcpReplicationThread.drainChannel.",e);
+                } 
 
                 // close channel and nudge selector
                 try {
