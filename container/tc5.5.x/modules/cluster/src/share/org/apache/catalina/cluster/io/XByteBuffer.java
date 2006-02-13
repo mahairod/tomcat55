@@ -18,6 +18,14 @@ package org.apache.catalina.cluster.io;
 
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.tcp.ClusterData;
+import java.io.ObjectOutputStream;
+import java.util.zip.GZIPOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.zip.GZIPInputStream;
+import org.apache.catalina.cluster.session.ReplicationStream;
 
 /**
  * The XByteBuffer provides a dual functionality.
@@ -337,10 +345,10 @@ public class XByteBuffer
      * @return - a full package (header,compress,size,data,footer)
      * 
      */
-    public static byte[] createDataPackage(byte[] indata, int compressed)
+    public static byte[] createDataPackage(ClusterData cdata)
             throws java.io.IOException {
-        byte[] data = indata;
-        byte[] comprdata = XByteBuffer.toBytes(compressed);
+        byte[] data = cdata.getMessage();
+        byte[] comprdata = XByteBuffer.toBytes(cdata.getCompress());
         int length = 
             START_DATA.length + //header length
             4 + //compression flag
@@ -355,4 +363,63 @@ public class XByteBuffer
         System.arraycopy(END_DATA, 0, result, START_DATA.length + 8 + data.length, END_DATA.length);
         return result;
     }
+    
+    public static ClusterMessage deserialize(ClusterData data, boolean compress) 
+        throws IOException, ClassNotFoundException, ClassCastException {
+        Object message = null;
+        if (data != null) {
+            InputStream instream;
+            if (compress ) {
+                instream = new GZIPInputStream(new ByteArrayInputStream(data.getMessage()));
+            } else {
+                instream = new ByteArrayInputStream(data.getMessage());
+            }
+            ReplicationStream stream = new ReplicationStream(instream,XByteBuffer.class.getClassLoader());
+            message = stream.readObject();
+            instream.close();
+        }
+        if ( message == null ) {
+            return null;
+        } else if (message instanceof ClusterMessage)
+            return (ClusterMessage) message;
+        else {
+            throw new ClassCastException("Message has the wrong class. It should implement ClusterMessage, instead it is:"+message.getClass().getName());
+        }
+    }
+
+    /**
+     * Serializes a message into cluster data
+     * @param msg ClusterMessage
+     * @param compress boolean
+     * @return ClusterData
+     * @throws IOException
+     */
+    public static ClusterData serialize(ClusterMessage msg, boolean compress) throws IOException {
+        msg.setTimestamp(System.currentTimeMillis());
+        ByteArrayOutputStream outs = new ByteArrayOutputStream();
+        ObjectOutputStream out;
+        GZIPOutputStream gout = null;
+        ClusterData data = new ClusterData();
+        data.setType(msg.getClass().getName());
+        data.setUniqueId(msg.getUniqueId());
+        data.setTimestamp(msg.getTimestamp());
+        data.setCompress(msg.getCompress());
+        data.setResend(msg.getResend());
+        if (compress) {
+            gout = new GZIPOutputStream(outs);
+            out = new ObjectOutputStream(gout);
+        } else {
+            out = new ObjectOutputStream(outs);
+        }
+        out.writeObject(msg);
+        // flush out the gzip stream to byte buffer
+        if(gout != null) {
+            gout.flush();
+            gout.close();
+        }
+        data.setMessage(outs.toByteArray());
+        return data;
+    }
+
+    
 }
