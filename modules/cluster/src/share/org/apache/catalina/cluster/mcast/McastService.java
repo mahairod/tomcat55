@@ -258,7 +258,7 @@ public class McastService implements MembershipService,MembershipListener {
      */
     public void start() throws java.lang.Exception {
         start(MembershipService.MBR_RX);
-        start(MembershipService.MBR_RX);
+        start(MembershipService.MBR_TX);
         registerMBean();
     }
     
