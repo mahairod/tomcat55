@@ -415,11 +415,9 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     
     /**
      * Send data to one member
-     * FIXME set filtering messages
      * @see org.apache.catalina.cluster.ClusterSender#sendMessage(org.apache.catalina.cluster.ClusterMessage, org.apache.catalina.cluster.Member)
      */
-    public void sendMessage(ClusterMessage message, Member member)
-            throws java.io.IOException {       
+    public void sendMessage(ClusterMessage message, Member member) throws IOException {       
         long time = 0 ;
         if(doTransmitterProcessingStats) {
             time = System.currentTimeMillis();
@@ -440,47 +438,21 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * Send to all senders at same cluster domain as message from address
      * @param message Cluster message to send
      * @since 5.5.10
-     * FIXME Refactor with sendMessage get a sender list from
      */
-    public void sendMessageClusterDomain(ClusterMessage message) 
-         throws java.io.IOException {
-        long time = 0;
-        if (doTransmitterProcessingStats) {
-            time = System.currentTimeMillis();
-        }
-        try {
-            String domain = message.getAddress().getDomain();
-            if(domain == null)
-                throw new RuntimeException("Domain at member not set");
-            ClusterData data = serialize(message);
-            IDataSender[] senders = getSenders();
-            for (int i = 0; i < senders.length; i++) {
-
-                IDataSender sender = senders[i];
-                if(domain.equals(sender.getDomain())) {
-                    try {
-                        boolean success = sendMessageData(data, sender);
-                    } catch (Exception x) {
-                        //THIS WILL NEVER HAPPEN, as sendMessageData swallows the error
-                    }
-                }
-            }
-        } finally {
-            // FIXME better exception handling
-            if (doTransmitterProcessingStats) {
-                addProcessingStats(time);
-            }
-        }
+    public void sendMessageClusterDomain(ClusterMessage message) throws IOException {
+        sendMessage(message,true);
     
+    }
+
+    public void sendMessage(ClusterMessage message) throws IOException {
+        sendMessage(message,false);
     }
 
     /**
      * send message to all senders (broadcast)
      * @see org.apache.catalina.cluster.ClusterSender#sendMessage(org.apache.catalina.cluster.ClusterMessage)
-     * FIXME Refactor with sendMessageClusterDomain!
      */
-    public void sendMessage(ClusterMessage message)
-            throws java.io.IOException {
+    public void sendMessage(ClusterMessage message, boolean domainOnly) throws IOException {
         long time = 0;
         if (doTransmitterProcessingStats) {
             time = System.currentTimeMillis();
@@ -491,19 +463,19 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
             for (int i = 0; i < senders.length; i++) {
 
                 IDataSender sender = senders[i];
-                try {
-                    sendMessageData(data, sender);
-                } catch (Exception x) {
-                    // FIXME remember exception and send it at finally
-                }
+                //domain filter
+                String domain = message.getAddress().getDomain();
+                if ( domainOnly && !(domain.equals(sender.getDomain())) ) continue;
+                sendMessageData(data, sender);
             }
         } finally {
-            // FIXME better exception handling
             if (doTransmitterProcessingStats) {
                 addProcessingStats(time);
             }
         }
     }
+        
+    
 
     /**
      * start the sender and register transmitter mbean
@@ -828,9 +800,9 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * @throws java.io.IOException If an error occurs
      */
     protected boolean sendMessageData(ClusterData data,
-                                   IDataSender sender) throws java.io.IOException {
+                                      IDataSender sender) {
         if (sender == null)
-            throw new java.io.IOException("Sender not available. Make sure sender information is available to the ReplicationTransmitter.");
+            throw new RuntimeException("Sender not available. Make sure sender information is available to the ReplicationTransmitter.");
         try {
             // deprecated not needed DataSender#pushMessage can handle connection
             if (autoConnect) {

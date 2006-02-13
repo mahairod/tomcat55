@@ -1005,29 +1005,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         clusterLog = null ;
    }
 
-    /**
-     * send message to all cluster members same cluster domain
-     * 
-     * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage)
-     */
-    public void sendClusterDomain(ClusterMessage msg) {
-        long start = 0;
-        if (doClusterLog)
-            start = System.currentTimeMillis();
-        try {
-            msg.setAddress(membershipService.getLocalMember());
-            clusterSender.sendMessageClusterDomain(msg);
-        } catch (Exception x) {
-            if (notifyLifecycleListenerOnFailure) {
-                // Notify our interested LifecycleListeners
-                lifecycle.fireLifecycleEvent(SEND_MESSAGE_FAILURE_EVENT,
-                        new SendMessageData(msg, null, x));
-            }
-            log.error("Unable to send message through cluster sender.", x);
-        }
-        if (doClusterLog)
-            logSendMessage(msg, start, null);
-    } 
+    
 
 
     /**
@@ -1057,6 +1035,31 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
             log.error("sendToMember: member " + dest + " not found!");
         }        
     }
+    
+    /**
+     * send message to all cluster members same cluster domain
+     * 
+     * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage)
+     */
+    public void sendClusterDomain(ClusterMessage msg) {
+        long start = 0;
+        if (doClusterLog)
+            start = System.currentTimeMillis();
+        try {
+            msg.setAddress(membershipService.getLocalMember());
+            clusterSender.sendMessageClusterDomain(msg);
+        } catch (Exception x) {
+            if (notifyLifecycleListenerOnFailure) {
+                // Notify our interested LifecycleListeners
+                lifecycle.fireLifecycleEvent(SEND_MESSAGE_FAILURE_EVENT,
+                        new SendMessageData(msg, null, x));
+            }
+            log.error("Unable to send message through cluster sender.", x);
+        }
+        if (doClusterLog)
+            logSendMessage(msg, start, null);
+    } 
+
     
     /**
      * send a cluster message to one member
