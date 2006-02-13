@@ -28,7 +28,10 @@ import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
 
 
 public interface MembershipService {
-
+    
+    public static final int MBR_RX = 1;
+    public static final int MBR_TX = 2;
+    
     /**
      * Sets the properties for the membership service. This must be called before
      * the <code>start()</code> method is called.

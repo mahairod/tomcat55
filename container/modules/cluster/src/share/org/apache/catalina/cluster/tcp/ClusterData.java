@@ -19,11 +19,15 @@ import org.apache.catalina.cluster.ClusterMessage;
 
 
 /**
+ * The cluster data class is used to transport around the byte array from
+ * a ClusterMessage object. This is just a utility class to avoid having to 
+ * serialize and deserialize the ClusterMessage more than once. 
  * @author Peter Rossbach
+ * @author Filip Hanik
  * @version $Revision$ $Date$
  * @since 5.5.10
  */
-public class ClusterData {
+public class ClusterData  {
 
     private int resend = ClusterMessage.FLAG_DEFAULT ;
     private int compress = ClusterMessage.FLAG_DEFAULT ;

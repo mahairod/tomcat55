@@ -24,4 +24,53 @@ package org.apache.catalina.cluster;
  */
 public interface ClusterChannel {
     
+    /**
+     * Start and stop sequences can be controlled by these constants
+     */
+    public static final int DEFAULT = 15;
+    public static final int MBR_RX_SEQ = 1;
+    public static final int SND_TX_SEQ = 2;
+    public static final int SND_RX_SEQ = 4;
+    public static final int MBR_TX_SEQ = 8;
+    
+    /**
+     * Starts up the channel. This can be called multiple times for individual services to start
+     * The svc parameter can be the logical or value of any constants
+     * @param svc int value of <BR>
+     * DEFAULT - will start all services <BR>
+     * MBR_RX_SEQ - starts the membership receiver <BR>
+     * MBR_TX_SEQ - starts the membership broadcaster <BR>
+     * SND_TX_SEQ - starts the replication transmitter<BR>
+     * SND_RX_SEQ - starts the replication receiver<BR>
+     * @throws ChannelException if a startup error occurs or the service is already started.
+     */
+    public void start(int svc) throws ChannelException;
+
+    /**
+     * Shuts down the channel. This can be called multiple times for individual services to shutdown
+     * The svc parameter can be the logical or value of any constants
+     * @param svc int value of <BR>
+     * DEFAULT - will shutdown all services <BR>
+     * MBR_RX_SEQ - starts the membership receiver <BR>
+     * MBR_TX_SEQ - starts the membership broadcaster <BR>
+     * SND_TX_SEQ - starts the replication transmitter<BR>
+     * SND_RX_SEQ - starts the replication receiver<BR>
+     * @throws ChannelException if a startup error occurs or the service is already started.
+     */
+    public void stop(int svc) throws ChannelException;    
+    
+    /**
+     * Send a message to one or more members in the cluster
+     * @param destination Member[] - the destinations, null or zero length means all
+     * @param msg ClusterMessage - the message to send
+     * @param options int - sender options, see class documentation
+     * @return ClusterMessage[] - the replies from the members, if any. 
+     */
+    public ClusterMessage[] send(Member[] destination, ClusterMessage msg, int options);
+
+    
+    public void setClusterSender(ClusterSender sender);
+    public void setClusterReceiver(ClusterReceiver receiver);
+    public void setMembershipService(MembershipService service);
+    
 }

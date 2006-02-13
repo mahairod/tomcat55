@@ -18,7 +18,9 @@ package org.apache.catalina.cluster;
 import java.io.Serializable;
 
 /**
+ * @author Filip Hanik
  * @author Peter Rossbach
+ * 
  */
 public interface ClusterMessage extends Serializable {
     
