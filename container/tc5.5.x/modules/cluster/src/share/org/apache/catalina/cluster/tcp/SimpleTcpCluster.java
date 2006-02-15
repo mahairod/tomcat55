@@ -50,7 +50,7 @@ import org.apache.catalina.cluster.ClusterValve;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MembershipService;
-import org.apache.catalina.cluster.MessageListener;
+import org.apache.catalina.cluster.session.ClusterListener;
 import org.apache.catalina.cluster.mcast.McastService;
 import org.apache.catalina.cluster.session.ClusterSessionListener;
 import org.apache.catalina.cluster.session.DeltaManager;
@@ -357,14 +357,13 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * Get the cluster listeners associated with this cluster. If this Array has
      * no listeners registered, a zero-length array is returned.
      */
-    public MessageListener[] findClusterListeners() {
+    public ClusterListener[] findClusterListeners() {
         if (clusterListeners.size() > 0) {
-            MessageListener[] listener = new MessageListener[clusterListeners
-                    .size()];
+            ClusterListener[] listener = new ClusterListener[clusterListeners.size()];
             clusterListeners.toArray(listener);
             return listener;
         } else
-            return new MessageListener[0];
+            return new ClusterListener[0];
 
     }
 
@@ -373,7 +372,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * 
      * @see org.apache.catalina.cluster.CatalinaCluster#addClusterListener(org.apache.catalina.cluster.MessageListener)
      */
-    public void addClusterListener(MessageListener listener) {
+    public void addClusterListener(ClusterListener listener) {
         if (listener != null && !clusterListeners.contains(listener)) {
             clusterListeners.add(listener);
             listener.setCluster(this);
@@ -385,7 +384,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * 
      * @see org.apache.catalina.cluster.CatalinaCluster#removeClusterListener(org.apache.catalina.cluster.MessageListener)
      */
-    public void removeClusterListener(MessageListener listener) {
+    public void removeClusterListener(ClusterListener listener) {
         if (listener != null) {
             clusterListeners.remove(listener);
             listener.setCluster(null);
@@ -1160,7 +1159,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         boolean accepted = false;
         if (message != null) {
             for (Iterator iter = clusterListeners.iterator(); iter.hasNext();) {
-                MessageListener listener = (MessageListener) iter.next();
+                ClusterListener listener = (ClusterListener) iter.next();
                 if (listener.accept(message)) {
                     accepted = true;
                     listener.messageReceived(message);
