@@ -92,11 +92,6 @@ public final class HostForm extends ActionForm {
     private String unpackWARs = "true";
     
     /**
-     * The text for the port. -- TBD
-     */
-    private String findAliases = null;
-    
-    /**
      * Set of valid values for debug level.
      */
     private List debugLvlVals = null;

@@ -290,58 +290,48 @@ public final class DataSourceForm extends BaseForm {
 
         errors = new ActionErrors();
 
-        String submit = request.getParameter("submit");
-
-        //if (submit != null) {
-
-            // url is a required field
-            if ((url == null) || (url.length() < 1)) {
-                errors.add("url",
-                           new ActionError("resources.error.url.required"));
-            }
-
-            // jndiName is a required field
-            if (( jndiName == null) || (jndiName.length() < 1)) {
-                errors.add("jndiName",
-                           new ActionError("resources.error.jndiName.required"));
-            }
-
-            // driverClass is a required field
-            if ((driverClass == null) || (driverClass.length() < 1)) {
-                errors.add("driverClass",
-                           new ActionError("resources.error.driverClass.required"));
-            }
+        // url is a required field
+        if ((url == null) || (url.length() < 1)) {
+            errors.add("url",
+                    new ActionError("resources.error.url.required"));
+        }
+        
+        // jndiName is a required field
+        if (( jndiName == null) || (jndiName.length() < 1)) {
+            errors.add("jndiName",
+                    new ActionError("resources.error.jndiName.required"));
+        }
+        
+        // driverClass is a required field
+        if ((driverClass == null) || (driverClass.length() < 1)) {
+            errors.add("driverClass",
+                    new ActionError("resources.error.driverClass.required"));
+        }
+        
+        // username is a required field
+        if ((username == null) || (username.length() < 1)) {
+            errors.add("username",
+                    new ActionError("users.error.username.required"));
+        }
             
-            // username is a required field
-            if ((username == null) || (username.length() < 1)) {
-                errors.add("username",
-                           new ActionError("users.error.username.required"));
-            }
             
-            // commented out password can be an empty string
-            // password is a required field
-            //if ((password == null) || (password.length() < 1)) {
-            //    errors.add("password",
-            //               new ActionError("error.userPassword.required"));
-            //
-            
-            // FIX ME -- need to do a range check
-            numberCheck("active", active , false, 0, 10000);
-            numberCheck("idle", idle , false, 0, 10000);
-            numberCheck("wait", wait , false, 0, 10000);
+        // FIX ME -- need to do a range check
+        numberCheck("active", active , false, 0, 10000);
+        numberCheck("idle", idle , false, 0, 10000);
+        numberCheck("wait", wait , false, 0, 10000);
+        
+        // Quotes not allowed in username
+        if ((username != null) && (username.indexOf('"') >= 0)) {
+            errors.add("username",
+                    new ActionError("users.error.quotes"));
+        }
+        
+        // Quotes not allowed in password
+        if ((password != null) && (password.indexOf('"') > 0)) {
+            errors.add("password",
+                    new ActionError("users.error.quotes"));
+        }
 
-            // Quotes not allowed in username
-            if ((username != null) && (username.indexOf('"') >= 0)) {
-                errors.add("username",
-                           new ActionError("users.error.quotes"));
-            }
-
-            // Quotes not allowed in password
-            if ((password != null) && (password.indexOf('"') > 0)) {
-                errors.add("password",
-                           new ActionError("users.error.quotes"));
-            }
-         //}
         return (errors);
     }
  

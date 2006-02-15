@@ -22,7 +22,8 @@ import java.util.Locale;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
-import org.apache.struts.action.Action;
+
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 
 
@@ -66,7 +67,7 @@ public final class SetLocaleForm
     public void valueBound(HttpSessionBindingEvent event) {
 
         HttpSession session = event.getSession();
-        Locale current = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        Locale current = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         if (current != null)
             locale = current.toString();
 

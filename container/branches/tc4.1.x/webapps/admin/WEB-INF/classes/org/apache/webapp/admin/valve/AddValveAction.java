@@ -18,12 +18,12 @@ package org.apache.webapp.admin.valve;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Locale;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -74,9 +74,8 @@ public class AddValveAction extends Action {
 
         // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         if (resources == null) {
-            resources = getServlet().getResources();
+            resources = getResources(request);
         }
         
         // Fill in the form values for display and editing

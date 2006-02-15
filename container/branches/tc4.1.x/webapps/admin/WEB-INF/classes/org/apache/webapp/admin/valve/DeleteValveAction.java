@@ -26,6 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -85,9 +87,9 @@ public class DeleteValveAction extends Action {
         
         // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         if (resources == null) {
-            resources = getServlet().getResources();
+            resources = getResources(request);
         }
         
         // Acquire a reference to the MBeanServer containing our MBeans
@@ -98,7 +100,6 @@ public class DeleteValveAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
-        String pattern = null;
         // Set up a form bean containing the currently selected
         // objects to be deleted
         ValvesForm valvesForm = new ValvesForm();
@@ -107,7 +108,6 @@ public class DeleteValveAction extends Action {
             String valves[] = new String[1];
             valves[0] = select;
             valvesForm.setValves(valves);
-            pattern = select;
         }
         request.setAttribute("valvesForm", valvesForm);
         

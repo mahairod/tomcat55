@@ -16,13 +16,12 @@
 
 package org.apache.webapp.admin.valve;
 
-import java.util.Locale;
 import java.io.IOException;
-import javax.management.MBeanServer;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -43,11 +42,6 @@ public final class SaveRequestDumperValveAction extends Action {
 
     // ----------------------------------------------------- Instance Variables
 
-    /**
-     * The MBeanServer we will be interacting with.
-     */
-    private MBeanServer mBServer = null;
-    
     /**
      * The MessageResources we will be retrieving messages from.
      */
@@ -79,17 +73,8 @@ public final class SaveRequestDumperValveAction extends Action {
         
         // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         if (resources == null) {
-            resources = getServlet().getResources();
-        }
-        
-        // Acquire a reference to the MBeanServer containing our MBeans
-        try {
-            mBServer = ((ApplicationServlet) getServlet()).getServer();
-        } catch (Throwable t) {
-            throw new ServletException
-            ("Cannot acquire MBeanServer reference", t);
+            resources = getResources(request);
         }
         
         // Identify the requested action

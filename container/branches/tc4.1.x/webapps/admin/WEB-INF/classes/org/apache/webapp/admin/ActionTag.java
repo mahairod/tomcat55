@@ -115,7 +115,7 @@ public class ActionTag extends BodyTagSupport {
         this.label = null;
 
         // Do no further processing for now
-        return (EVAL_BODY_TAG);
+        return (EVAL_BODY_BUFFERED);
 
     }
 

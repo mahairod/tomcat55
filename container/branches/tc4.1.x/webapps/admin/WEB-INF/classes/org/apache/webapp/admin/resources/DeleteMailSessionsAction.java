@@ -23,6 +23,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -89,10 +91,10 @@ public final class DeleteMailSessionsAction extends Action {
             mserver = ((ApplicationServlet) getServlet()).getServer();
         }
         if (resources == null) {
-            resources = getServlet().getResources();
+            resources = getResources(request);
         }
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
 
         // Has this transaction been cancelled?
         if (isCancelled(request)) {

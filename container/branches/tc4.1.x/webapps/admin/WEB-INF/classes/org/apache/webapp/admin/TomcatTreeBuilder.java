@@ -20,7 +20,8 @@ import java.util.Iterator;
 import java.net.URLEncoder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.Action;
+
+import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
@@ -68,7 +69,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             mBServer = servlet.getServer();
             TreeControlNode root = treeControl.getRoot();
             MessageResources resources = (MessageResources)
-            servlet.getServletContext().getAttribute(Action.MESSAGES_KEY);
+            servlet.getServletContext().getAttribute(Globals.MESSAGES_KEY);
             getServers(root, resources);
         } catch(Throwable t){
             t.printStackTrace(System.out);
@@ -103,7 +104,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
             Lists.getServers(mBServer).iterator();
         while (serverNames.hasNext()) {
             String serverName = (String) serverNames.next();
-            ObjectName objectName = new ObjectName(serverName);
             String nodeLabel = SERVER_LABEL;
             TreeControlNode serverNode =
                 new TreeControlNode(serverName,
@@ -295,7 +295,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
             Lists.getDefaultContexts(mBServer, containerName).iterator();
         while (defaultContextNames.hasNext()) {
             String defaultContextName = (String) defaultContextNames.next();
-            ObjectName objectName = new ObjectName(defaultContextName);
             String nodeLabel = "DefaultContext";
             TreeControlNode defaultContextNode =
                 new TreeControlNode(defaultContextName,
@@ -328,7 +327,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
             Lists.getLoggers(mBServer, containerName).iterator();
         while (loggerNames.hasNext()) {
             String loggerName = (String) loggerNames.next();
-            ObjectName objectName = new ObjectName(loggerName);
             String nodeLabel = "Logger for " + containerNode.getLabel();
             TreeControlNode loggerNode =
                 new TreeControlNode(loggerName,
@@ -361,7 +359,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
             Lists.getRealms(mBServer, containerName).iterator();
         while (realmNames.hasNext()) {
             String realmName = (String) realmNames.next();
-            ObjectName objectName = new ObjectName(realmName);
             String nodeLabel = "Realm for " + containerNode.getLabel();
             TreeControlNode realmNode =
                 new TreeControlNode(realmName,
@@ -482,7 +479,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
                 Lists.getValves(mBServer, containerName).iterator();        
         while (valveNames.hasNext()) {
             String valveName = (String) valveNames.next();
-            ObjectName objectName = new ObjectName(valveName);
             String nodeLabel = "Valve for " + containerNode.getLabel();
             TreeControlNode valveNode =
                 new TreeControlNode(valveName,

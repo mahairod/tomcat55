@@ -138,7 +138,7 @@ public class ActionsTag extends BodyTagSupport {
         this.selecteds.clear();
         this.urls.clear();
 
-        return (EVAL_BODY_TAG);
+        return (EVAL_BODY_BUFFERED);
        
     }
     

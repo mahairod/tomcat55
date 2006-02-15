@@ -22,6 +22,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -86,9 +88,9 @@ public class EditRealmAction extends Action {
         // Acquire the resources that we need
         session = request.getSession();
         this.request = request;
-        locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         if (resources == null) {
-            resources = getServlet().getResources();
+            resources = getResources(request);
         }
 
         // Acquire a reference to the MBeanServer containing our MBeans
@@ -101,7 +103,6 @@ public class EditRealmAction extends Action {
 
         // Set up the object names of the MBeans we are manipulating
         ObjectName rname = null;
-        StringBuffer sb = null;
         try {
             rname = new ObjectName(request.getParameter("select"));
         } catch (Exception e) {

@@ -260,47 +260,44 @@ public final class EnvEntryForm extends BaseForm {
 
         errors = new ActionErrors();
 
-        String submit = request.getParameter("submit");
-        //if (submit != null) {
+        // name is a required field
+        if ((name == null) || (name.length() < 1)) {
+            errors.add("name",
+                    new ActionError("resources.error.name.required"));
+        }
+        
+        // value is a required field
+        if ((value == null) || (value.length() < 1)) {
+            errors.add("value",
+                    new ActionError("resources.error.value.required"));
+        }
+        
+        // Quotes not allowed in name
+        if ((name != null) && (name.indexOf('"') >= 0)) {
+            errors.add("name",
+                    new ActionError("users.error.quotes"));
+        }
+        
+        // Quotes not allowed in value
+        if ((value != null) && (value.indexOf('"') > 0)) {
+            errors.add("value",
+                    new ActionError("users.error.quotes"));
+        }
+        
+        // Quotes not allowed in description
+        if ((description != null) && (description.indexOf('"') > 0)) {
+            errors.add("description",
+                    new ActionError("users.error.quotes"));
+        }
+        
+        // if checked, override will be sent as a request parameter
+        override = (request.getParameter("override") != null);
+        
+        if (validateType(entryType, value)) {
+            errors.add("value",
+                    new ActionError("resources.error.value.mismatch"));
+        }
 
-            // name is a required field
-            if ((name == null) || (name.length() < 1)) {
-                errors.add("name",
-                           new ActionError("resources.error.name.required"));
-            }
-
-            // value is a required field
-            if ((value == null) || (value.length() < 1)) {
-                errors.add("value",
-                           new ActionError("resources.error.value.required"));
-            }
-
-            // Quotes not allowed in name
-            if ((name != null) && (name.indexOf('"') >= 0)) {
-                errors.add("name",
-                           new ActionError("users.error.quotes"));
-            }
-
-            // Quotes not allowed in value
-            if ((value != null) && (value.indexOf('"') > 0)) {
-                errors.add("value",
-                           new ActionError("users.error.quotes"));
-            }
-
-            // Quotes not allowed in description
-            if ((description != null) && (description.indexOf('"') > 0)) {
-                errors.add("description",
-                           new ActionError("users.error.quotes"));
-            }
-            
-            // if cehcked, override will be sent as a request parameter
-            override = (request.getParameter("override") != null);
-            
-            if (validateType(entryType, value)) {
-                   errors.add("value",
-                           new ActionError("resources.error.value.mismatch"));
-            }
-        //}
         return (errors);
     }
 

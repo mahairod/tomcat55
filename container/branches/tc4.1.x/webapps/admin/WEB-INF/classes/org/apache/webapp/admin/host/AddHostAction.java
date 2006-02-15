@@ -17,11 +17,11 @@
 package org.apache.webapp.admin.host;
 
 import java.io.IOException;
-import java.util.Locale;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -69,9 +69,8 @@ public class AddHostAction extends Action {
         
         // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         if (resources == null) {
-            resources = getServlet().getResources();
+            resources = getResources(request);
         }
         
         // the service Name is needed to retrieve the engine mBean to

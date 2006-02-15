@@ -18,7 +18,6 @@
 package org.apache.webapp.admin;
 
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.Tag;
@@ -129,7 +128,7 @@ public class RowTag extends BodyTagSupport {
     public int doStartTag() throws JspException {
         
          // Do no further processing for now
-        return (EVAL_BODY_TAG);
+        return (EVAL_BODY_BUFFERED);
         
     }
     
@@ -165,8 +164,6 @@ public class RowTag extends BodyTagSupport {
         
         // Register the information for the row represented by
         // this row
-        HttpServletResponse response =
-        (HttpServletResponse) pageContext.getResponse();
         table.addRow(header, label, data, labelStyle, dataStyle, styleId);
         
         return (EVAL_PAGE);

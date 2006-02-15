@@ -18,7 +18,6 @@
 package org.apache.webapp.admin;
 
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.Tag;
@@ -63,7 +62,7 @@ public class DataTag extends BodyTagSupport {
         this.data = null;
 
         // Do no further processing for now
-        return (EVAL_BODY_TAG);
+        return (EVAL_BODY_BUFFERED);
 
     }
 
@@ -101,8 +100,6 @@ public class DataTag extends BodyTagSupport {
 
         // Register the information for the action represented by
         // this action
-        HttpServletResponse response =
-            (HttpServletResponse) pageContext.getResponse();
         row.setData(data);
         
         return (EVAL_PAGE);

@@ -44,12 +44,6 @@ public class ValveForm extends ActionForm {
     private String objectName = null;
 
     /**
-     * The text for the valve name, used to retrieve
-     * the corresponding valve mBean.
-     */
-    private String valveName = null;
-    
-    /**
      * The text for the valve type.
      */
     private String valveType = null;

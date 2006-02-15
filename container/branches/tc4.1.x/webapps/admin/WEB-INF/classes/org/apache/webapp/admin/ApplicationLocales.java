@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.util.MessageResources;
 
@@ -49,7 +51,8 @@ public final class ApplicationLocales {
 
         super();
         Locale list[] = Locale.getAvailableLocales();
-        MessageResources resources = servlet.getResources();
+        MessageResources resources = (MessageResources)
+            servlet.getServletContext().getAttribute(Globals.MESSAGES_KEY);
         if (resources == null)
             return;
         String config = resources.getConfig();

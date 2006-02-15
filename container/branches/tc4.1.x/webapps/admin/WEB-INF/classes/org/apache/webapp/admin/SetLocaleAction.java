@@ -25,6 +25,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -80,7 +82,7 @@ public final class SetLocaleAction extends Action {
                 currentLocale = (Locale) iterator.next();
                 if (requestedLocale.equals(currentLocale.toString())) {
                     HttpSession session = request.getSession();
-                    session.setAttribute(Action.LOCALE_KEY, currentLocale);
+                    session.setAttribute(Globals.LOCALE_KEY, currentLocale);
                     // Remove form bean so it will get recreated next time
                     session.removeAttribute(mapping.getAttribute());
                     break;

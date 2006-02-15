@@ -28,14 +28,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
-import org.apache.struts.action.Action;
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 import org.apache.webapp.admin.TreeControl;
 import org.apache.webapp.admin.TreeControlNode;
-import org.apache.webapp.admin.logger.DeleteLoggerAction;
 
 /**
  * A utility class that contains methods common across valves.
@@ -64,11 +63,12 @@ public final class ValveUtil {
     ActionMapping mapping, ApplicationServlet servlet)
     throws IOException, ServletException {
         
-        MessageResources resources = servlet.getResources();
+        MessageResources resources = (MessageResources)
+            servlet.getServletContext().getAttribute(Globals.MESSAGES_KEY);
         HttpSession session = request.getSession();
         
         MBeanServer mBServer = null;
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
             mBServer = servlet.getServer();
@@ -83,9 +83,6 @@ public final class ValveUtil {
         
         try {
             
-            String objectName = DeleteLoggerAction.getObjectName(parent,
-            TomcatTreeBuilder.VALVE_TYPE);
-                        
             String parentNodeName = parent;
             ObjectName pname = new ObjectName(parent);
             StringBuffer sb = new StringBuffer(pname.getDomain());

@@ -33,12 +33,6 @@ public final class JDBCRealmForm extends RealmForm {
     // ----------------------------------------------------- Instance Variables
     
     /**
-     * The text for the realm name, used to retrieve
-     * the corresponding realm mBean.
-     */
-    private String realmName = null;
-      
-    /**
      * The text for the digest.
      */
     private String digest = null;
