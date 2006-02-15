@@ -353,6 +353,15 @@ public final class ApplicationContextFacade
     }
 
        
+    public String getContextPath() {
+        if (SecurityUtil.isPackageProtectionEnabled()) {
+            return (String) doPrivileged("getContextPath", null);
+        } else {
+            return context.getContextPath();
+        }
+    }
+
+       
     /**
      * Use reflection to invoke the requested method. Cache the method object 
      * to speed up the process
