@@ -102,7 +102,7 @@ public interface MembershipService {
      * If you call this method twice, the last listener will be used.
      * @param listener The listener
      */
-    public void addMembershipListener(MembershipListener listener);
+    public void setMembershipListener(MembershipListener listener);
     
     /**
      * removes the membership listener.

@@ -66,12 +66,12 @@ public abstract class ChannelInterceptorBase implements MembershipListener, Mess
     
     public void memberAdded(Member member) {
         //notify upwards
-        getPrevious().memberAdded(member);
+        if ( getPrevious()!=null ) getPrevious().memberAdded(member);
     }
     
     public void memberDisappeared(Member member) {
         //notify upwards
-        getPrevious().memberDisappeared(member);
+        if ( getPrevious()!=null ) getPrevious().memberDisappeared(member);
     }
     
     

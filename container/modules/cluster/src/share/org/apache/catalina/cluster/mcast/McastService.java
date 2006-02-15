@@ -440,7 +440,7 @@ public class McastService implements MembershipService,MembershipListener {
      * so calling this method twice will result in only the second listener being active.
      * @param listener The listener
      */
-    public void addMembershipListener(MembershipListener listener) {
+    public void setMembershipListener(MembershipListener listener) {
         this.listener = listener;
     }
     /**

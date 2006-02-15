@@ -66,7 +66,7 @@ public interface ClusterChannel {
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any. 
      */
-    public ClusterMessage[] send(Member[] destination, ClusterMessage msg, int options);
+    public ClusterMessage[] send(Member[] destination, ClusterMessage msg, int options) throws ChannelException;
 
     
     public void setClusterSender(ClusterSender sender);

@@ -23,6 +23,7 @@ import org.apache.catalina.cluster.ClusterSender;
 import org.apache.catalina.cluster.MembershipService;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
+import java.util.ArrayList;
 
 /**
  * Channel interface
@@ -32,12 +33,35 @@ import org.apache.catalina.cluster.Member;
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
 public class GroupChannel implements ClusterChannel {
-    private ClusterReceiver clusterReceiver;
-    private ClusterSender clusterSender;
-    private MembershipService membershipService;
+    private ChannelCoordinator coordinator = new ChannelCoordinator();
+    private ChannelInterceptorBase interceptors = null;
 
     public GroupChannel() {
     }
+    
+    
+    /**
+     * Adds an interceptor to the stack for message processing
+     * @param interceptor ChannelInterceptorBase
+     */
+    public void addInterceptor(ChannelInterceptorBase interceptor) { 
+        if ( interceptors == null ) {
+            this.interceptors = interceptor;
+            this.interceptors.setNext(coordinator);
+            coordinator.setPrevious(this.interceptors);
+        } else {
+            ChannelInterceptorBase last = interceptors;
+            while ( last.getNext() != coordinator ) {
+                last = last.getNext();
+            }
+            last.setNext(interceptor);
+            interceptor.setNext(coordinator);
+            interceptor.setPrevious(last);
+            coordinator.setPrevious(interceptor);
+        }
+    }
+    
+    
     
     /**
      * Send a message to one or more members in the cluster
@@ -46,7 +70,7 @@ public class GroupChannel implements ClusterChannel {
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any.
      */
-    public ClusterMessage[] send(Member[] destination, ClusterMessage msg, int options) {
+    public ClusterMessage[] send(Member[] destination, ClusterMessage msg, int options) throws ChannelException {
         throw new UnsupportedOperationException("Method send not yet implemented.");
     }
     
@@ -62,14 +86,7 @@ public class GroupChannel implements ClusterChannel {
      * @throws ChannelException if a startup error occurs or the service is already started.
      */
     public void start(int svc) throws ChannelException {
-        try {
-            if ( (svc & MBR_RX_SEQ) == MBR_RX_SEQ) membershipService.start(membershipService.MBR_RX);
-            if ( (svc & SND_RX_SEQ) == SND_RX_SEQ) clusterReceiver.start();
-            if ( (svc & SND_TX_SEQ) == SND_TX_SEQ) clusterSender.start();
-            if ( (svc & MBR_TX_SEQ) == MBR_TX_SEQ) membershipService.start(membershipService.MBR_TX);
-        }catch ( Exception x ) {
-            throw new ChannelException(x);
-        }
+        coordinator.start(svc);
     }
 
     /**
@@ -84,39 +101,31 @@ public class GroupChannel implements ClusterChannel {
      * @throws ChannelException if a startup error occurs or the service is already started.
      */
     public void stop(int svc) throws ChannelException {
-        try {
-            if ( (svc & MBR_RX_SEQ) == MBR_RX_SEQ) membershipService.stop();
-            if ( (svc & SND_RX_SEQ) == SND_RX_SEQ) clusterReceiver.stop();
-            if ( (svc & SND_TX_SEQ) == SND_TX_SEQ) clusterSender.stop();
-            if ( (svc & MBR_TX_SEQ) == MBR_RX_SEQ) membershipService.stop();
-        }catch ( Exception x ) {
-            throw new ChannelException(x);
-        }
-
+        coordinator.stop(svc);
     }
 
     public ClusterReceiver getClusterReceiver() {
-        return clusterReceiver;
+        return coordinator.getClusterReceiver();
     }
 
     public ClusterSender getClusterSender() {
-        return clusterSender;
+        return coordinator.getClusterSender();
     }
 
     public MembershipService getMembershipService() {
-        return membershipService;
+        return coordinator.getMembershipService();
     }
 
     public void setClusterReceiver(ClusterReceiver clusterReceiver) {
-        this.clusterReceiver = clusterReceiver;
+        coordinator.setClusterReceiver(clusterReceiver);
     }
 
     public void setClusterSender(ClusterSender clusterSender) {
-        this.clusterSender = clusterSender;
+        coordinator.setClusterSender(clusterSender);
     }
 
     public void setMembershipService(MembershipService membershipService) {
-        this.membershipService = membershipService;
+        coordinator.setMembershipService(membershipService);
     }
 
 }
