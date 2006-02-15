@@ -240,6 +240,14 @@ public class ApplicationContext
         }
     }
 
+    
+    /**
+     * Return the main path associated with this context.
+     */
+    public String getContextPath() {
+        return context.getPath();
+    }
+    
 
     /**
      * Return the value of the specified initialization parameter, or
