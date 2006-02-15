@@ -103,4 +103,17 @@ public interface ClusterDeployer extends MessageListener {
      * call from container Background Process
      */
     public void backgroundProcess();
+    
+    /**
+     * Returns the cluster the cluster deployer is associated with
+     * @return CatalinaCluster
+     */
+    public CatalinaCluster getCluster();
+
+    /**
+     * Associates the cluster deployer with a cluster
+     * @param cluster CatalinaCluster
+     */
+    public void setCluster(CatalinaCluster cluster);
+
 }

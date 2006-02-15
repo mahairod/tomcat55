@@ -25,7 +25,7 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.cluster.CatalinaCluster;
-import org.apache.catalina.cluster.MessageListener;
+
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
@@ -70,7 +70,7 @@ public class JvmRouteSessionIDBinderLifecycleListener implements
 
     private Registry registry = null;
 
-    private MessageListener sessionMoverListener;
+    private ClusterListener sessionMoverListener;
 
     /*
      * start and stop cluster

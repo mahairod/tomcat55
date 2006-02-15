@@ -23,6 +23,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Valve;
 import org.apache.commons.logging.Log;
+import org.apache.catalina.cluster.session.ClusterListener;
 
 /**
  * A <b>CatalinaCluster</b> interface allows to plug in and out the 
@@ -120,9 +121,9 @@ public interface CatalinaCluster extends Cluster {
     
     public void addValve(Valve valve);
     
-    public void addClusterListener(MessageListener listener);
+    public void addClusterListener(ClusterListener listener);
     
-    public void removeClusterListener(MessageListener listener);
+    public void removeClusterListener(ClusterListener listener);
     
     public void setClusterDeployer(ClusterDeployer deployer);
     
