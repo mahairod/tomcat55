@@ -34,6 +34,7 @@ import org.apache.catalina.cluster.ClusterDeployer;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
 import org.apache.commons.modeler.Registry;
+import org.apache.catalina.cluster.session.ClusterListener;
 
 /**
  * <p>
@@ -54,7 +55,7 @@ import org.apache.commons.modeler.Registry;
  * @author Peter Rossbach
  * @version 1.1
  */
-public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
+public class FarmWarDeployer extends ClusterListener implements ClusterDeployer, FileChangeListener {
     /*--Static Variables----------------------------------------*/
     public static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
             .getLog(FarmWarDeployer.class);

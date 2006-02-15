@@ -30,8 +30,7 @@ import org.apache.catalina.util.StringManager;
  */
 public abstract class ClusterListener implements MessageListener {
 
-    public static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
-            .getLog(ClusterListener.class);
+    public static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ClusterListener.class);
 
 
     //--Instance Variables--------------------------------------

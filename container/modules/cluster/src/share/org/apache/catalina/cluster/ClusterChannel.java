@@ -51,10 +51,10 @@ public interface ClusterChannel {
      * The svc parameter can be the logical or value of any constants
      * @param svc int value of <BR>
      * DEFAULT - will shutdown all services <BR>
-     * MBR_RX_SEQ - starts the membership receiver <BR>
-     * MBR_TX_SEQ - starts the membership broadcaster <BR>
-     * SND_TX_SEQ - starts the replication transmitter<BR>
-     * SND_RX_SEQ - starts the replication receiver<BR>
+     * MBR_RX_SEQ - stops the membership receiver <BR>
+     * MBR_TX_SEQ - stops the membership broadcaster <BR>
+     * SND_TX_SEQ - stops the replication transmitter<BR>
+     * SND_RX_SEQ - stops the replication receiver<BR>
      * @throws ChannelException if a startup error occurs or the service is already started.
      */
     public void stop(int svc) throws ChannelException;    
