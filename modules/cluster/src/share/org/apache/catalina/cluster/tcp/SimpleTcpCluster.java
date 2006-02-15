@@ -761,9 +761,8 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
             }
             
             if(membershipService != null && clusterReceiver != null) {
-                membershipService.setLocalMemberProperties(clusterReceiver
-                    .getHost(), clusterReceiver.getPort());
-                membershipService.addMembershipListener(this);
+                membershipService.setLocalMemberProperties(clusterReceiver.getHost(), clusterReceiver.getPort());
+                membershipService.setMembershipListener(this);
                 membershipService.setCatalinaCluster(this);
                 membershipService.start();
                 // start the deployer.

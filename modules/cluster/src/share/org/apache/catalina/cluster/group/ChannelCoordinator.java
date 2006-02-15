@@ -15,6 +15,15 @@
  */
 package org.apache.catalina.cluster.group;
 
+import org.apache.catalina.cluster.MembershipService;
+import org.apache.catalina.cluster.Member;
+import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.ChannelException;
+import org.apache.catalina.cluster.ClusterSender;
+import org.apache.catalina.cluster.ClusterReceiver;
+import org.apache.catalina.cluster.ClusterChannel;
+
+
 /**
  * The channel coordinator object coordinates the membership service,
  * the sender and the receiver.
@@ -23,8 +32,95 @@ package org.apache.catalina.cluster.group;
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
 public class ChannelCoordinator extends ChannelInterceptorBase {
-    public ChannelCoordinator() {
-        super();
+    private ClusterReceiver clusterReceiver;
+    private ClusterSender clusterSender;
+    private MembershipService membershipService;
+
+    
+
+    /**
+     * Send a message to one or more members in the cluster
+     * @param destination Member[] - the destinations, null or zero length means all
+     * @param msg ClusterMessage - the message to send
+     * @param options int - sender options, see class documentation
+     * @return ClusterMessage[] - the replies from the members, if any.
+     */
+    public ClusterMessage[] sendMessage(Member[] destination, ClusterMessage msg, int options) {
+        throw new UnsupportedOperationException();
+        //implement sending and receiving logic.
+    }
+
+
+    /**
+     * Starts up the channel. This can be called multiple times for individual services to start
+     * The svc parameter can be the logical or value of any constants
+     * @param svc int value of <BR>
+     * DEFAULT - will start all services <BR>
+     * MBR_RX_SEQ - starts the membership receiver <BR>
+     * MBR_TX_SEQ - starts the membership broadcaster <BR>
+     * SND_TX_SEQ - starts the replication transmitter<BR>
+     * SND_RX_SEQ - starts the replication receiver<BR>
+     * @throws ChannelException if a startup error occurs or the service is already started.
+     */
+    public void start(int svc) throws ChannelException {
+        try {
+            if ( (svc & ClusterChannel.MBR_RX_SEQ) == ClusterChannel.MBR_RX_SEQ) membershipService.start(membershipService.MBR_RX);
+            if ( (svc & ClusterChannel.SND_RX_SEQ) == ClusterChannel.SND_RX_SEQ) clusterReceiver.start();
+            if ( (svc & ClusterChannel.SND_TX_SEQ) == ClusterChannel.SND_TX_SEQ) clusterSender.start();
+            if ( (svc & ClusterChannel.MBR_TX_SEQ) == ClusterChannel.MBR_TX_SEQ) membershipService.start(membershipService.MBR_TX);
+        }catch ( ChannelException cx ) {
+            throw cx;
+        }catch ( Exception x ) {
+            throw new ChannelException(x);
+        }
+    }
+
+    /**
+     * Shuts down the channel. This can be called multiple times for individual services to shutdown
+     * The svc parameter can be the logical or value of any constants
+     * @param svc int value of <BR>
+     * DEFAULT - will shutdown all services <BR>
+     * MBR_RX_SEQ - starts the membership receiver <BR>
+     * MBR_TX_SEQ - starts the membership broadcaster <BR>
+     * SND_TX_SEQ - starts the replication transmitter<BR>
+     * SND_RX_SEQ - starts the replication receiver<BR>
+     * @throws ChannelException if a startup error occurs or the service is already started.
+     */
+    public void stop(int svc) throws ChannelException {
+        try {
+            if ( (svc & ClusterChannel.MBR_RX_SEQ) == ClusterChannel.MBR_RX_SEQ) membershipService.stop();
+            if ( (svc & ClusterChannel.SND_RX_SEQ) == ClusterChannel.SND_RX_SEQ) clusterReceiver.stop();
+            if ( (svc & ClusterChannel.SND_TX_SEQ) == ClusterChannel.SND_TX_SEQ) clusterSender.stop();
+            if ( (svc & ClusterChannel.MBR_TX_SEQ) == ClusterChannel.MBR_RX_SEQ) membershipService.stop();
+        }catch ( Exception x ) {
+            throw new ChannelException(x);
+        }
+
+    }
+
+    public ClusterReceiver getClusterReceiver() {
+        return clusterReceiver;
+    }
+
+    public ClusterSender getClusterSender() {
+        return clusterSender;
+    }
+
+    public MembershipService getMembershipService() {
+        return membershipService;
+    }
+
+    public void setClusterReceiver(ClusterReceiver clusterReceiver) {
+        this.clusterReceiver = clusterReceiver;
+    }
+
+    public void setClusterSender(ClusterSender clusterSender) {
+        this.clusterSender = clusterSender;
+    }
+
+    public void setMembershipService(MembershipService membershipService) {
+        this.membershipService = membershipService;
+        this.membershipService.setMembershipListener(this);
     }
    
 }
