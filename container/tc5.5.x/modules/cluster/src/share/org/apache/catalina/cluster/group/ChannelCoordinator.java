@@ -1,5 +1,5 @@
 /*
- * Copyright 1999,2004-2005 The Apache Software Foundation.
+ * Copyright 1999,2004-2006 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,10 +64,10 @@ public class ChannelCoordinator extends ChannelInterceptorBase {
      */
     public void start(int svc) throws ChannelException {
         try {
-            if ( (svc & ClusterChannel.MBR_RX_SEQ) == ClusterChannel.MBR_RX_SEQ) membershipService.start(membershipService.MBR_RX);
+            if ( (svc & ClusterChannel.MBR_RX_SEQ) == ClusterChannel.MBR_RX_SEQ) membershipService.start(MembershipService.MBR_RX);
             if ( (svc & ClusterChannel.SND_RX_SEQ) == ClusterChannel.SND_RX_SEQ) clusterReceiver.start();
             if ( (svc & ClusterChannel.SND_TX_SEQ) == ClusterChannel.SND_TX_SEQ) clusterSender.start();
-            if ( (svc & ClusterChannel.MBR_TX_SEQ) == ClusterChannel.MBR_TX_SEQ) membershipService.start(membershipService.MBR_TX);
+            if ( (svc & ClusterChannel.MBR_TX_SEQ) == ClusterChannel.MBR_TX_SEQ) membershipService.start(MembershipService.MBR_TX);
         }catch ( ChannelException cx ) {
             throw cx;
         }catch ( Exception x ) {
