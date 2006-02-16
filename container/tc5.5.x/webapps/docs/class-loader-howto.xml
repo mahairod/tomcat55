@@ -204,16 +204,7 @@ instead of delegating before looking.  There are exceptions. Classes which are
 part of the JRE base classes cannot be overriden. For some classes (such as
 the XML parser components in J2SE 1.4+), the J2SE 1.4 endorsed feature can be 
 used  
-(see the common classloader definition above). In addition, for the following
-class patterns, the classloader will always delegate first 
-(and load the class itself if no parent classloader loads it):
-<ul>
-<li><em>javax.*</em></li>
-<li><em>org.xml.sax.*</em></li>
-<li><em>org.w3c.dom.*</em></li>
-<li><em>org.apache.xerces.*</em></li>
-<li><em>org.apache.xalan.*</em></li>
-</ul>
+(see the common classloader definition above).
 Last, any JAR containing servlet API classes will be ignored by the 
 classloader.
 All other class loaders in Tomcat 5 follow the usual delegation pattern.</p>
