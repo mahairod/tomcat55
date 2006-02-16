@@ -563,6 +563,11 @@ public class HostConfig
             synchronized (digester) {
                 try {
                     context = (Context) digester.parse(contextXml);
+                    if (context == null) {
+                        log.error(sm.getString("hostConfig.deployDescriptor.error",
+                                file));
+                        return;
+                    }
                 } finally {
                     digester.reset();
                 }
@@ -851,15 +856,6 @@ public class HostConfig
             File dir = new File(appBase, files[i]);
             if (dir.isDirectory()) {
 
-                // Make sure there is an application configuration directory
-                // This is needed if the Context appBase is the same as the
-                // web server document root to make sure only web applications
-                // are deployed and not directories for web space.
-                File webInf = new File(dir, "/WEB-INF");
-                if (!webInf.exists() || !webInf.isDirectory() ||
-                    !webInf.canRead())
-                    continue;
-
                 // Calculate the context path and make sure it is unique
                 String contextPath = "/" + files[i];
                 if (files[i].equals("ROOT"))
@@ -868,9 +864,7 @@ public class HostConfig
                 if (isServiced(contextPath))
                     continue;
 
-                String file = files[i];
-                
-                deployDirectory(contextPath, dir, file);
+                deployDirectory(contextPath, dir, files[i]);
             
             }
 
