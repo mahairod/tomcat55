@@ -50,7 +50,7 @@ import org.apache.catalina.cluster.ClusterValve;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MembershipService;
-import org.apache.catalina.cluster.session.ClusterListener;
+import org.apache.catalina.cluster.ClusterListener;
 import org.apache.catalina.cluster.mcast.McastService;
 import org.apache.catalina.cluster.session.ClusterSessionListener;
 import org.apache.catalina.cluster.session.DeltaManager;

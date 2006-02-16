@@ -139,7 +139,7 @@ public class ClusterRuleSet extends RuleSetBase {
         digester.addSetProperties(prefix + "ClusterListener");
         digester.addSetNext(prefix + "ClusterListener",
                             "addClusterListener",
-                            "org.apache.catalina.cluster.session.ClusterListener");
+                            "org.apache.catalina.cluster.ClusterListener");
         //Cluster configuration end
     }
 

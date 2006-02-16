@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package org.apache.catalina.cluster.session;
+package org.apache.catalina.cluster;
 
-import org.apache.catalina.cluster.CatalinaCluster;
-import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.MessageListener;
+
+
+
 import org.apache.catalina.util.StringManager;
+
 
 /**
  * Receive SessionID cluster change from other backup node after primary session
  * node is failed.
  * 
  * @author Peter Rossbach
+ * @author Filip Hanik
  * @version $Revision$ $Date$
  */
 public abstract class ClusterListener implements MessageListener {
@@ -56,11 +58,9 @@ public abstract class ClusterListener implements MessageListener {
     public void setCluster(CatalinaCluster cluster) {
         if (log.isDebugEnabled()) {
             if (cluster != null)
-                log.debug("add ClusterListener " + this.toString()
-                        + " to cluster" + cluster);
+                log.debug("add ClusterListener " + this.toString() + " to cluster" + cluster);
             else
-                log.debug("remove ClusterListener " + this.toString()
-                        + " from cluster");
+                log.debug("remove ClusterListener " + this.toString() + " from cluster");
         }
         this.cluster = cluster;
     }
