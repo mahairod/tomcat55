@@ -23,7 +23,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Valve;
 import org.apache.commons.logging.Log;
-import org.apache.catalina.cluster.session.ClusterListener;
+
 
 /**
  * A <b>CatalinaCluster</b> interface allows to plug in and out the 
