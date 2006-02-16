@@ -314,7 +314,9 @@ public class ContextConfig
             }
         }
         if (stream == null) {
-            log.info(sm.getString("contextConfig.applicationMissing") + " " + context);
+            if (log.isDebugEnabled()) {
+                log.debug(sm.getString("contextConfig.applicationMissing") + " " + context);
+            }
             return;
         }
         
