@@ -1543,10 +1543,10 @@ public class WebappClassLoader
                                   > (lastJarAccessed + 90000))) {
                         for (int i = 0; i < jarFiles.length; i++) {
                             try {
-                            	if (jarFiles[i] != null) {
-                            		jarFiles[i].close();
-                            		jarFiles[i] = null;
-                            	}
+                                if (jarFiles[i] != null) {
+                                    jarFiles[i].close();
+                                    jarFiles[i] = null;
+                                }
                             } catch (IOException e) {
                                 if (log.isDebugEnabled()) {
                                     log.debug("Failed to close JAR", e);
@@ -1657,10 +1657,25 @@ public class WebappClassLoader
                     // Doing something recursively is too risky
                     continue;
                 } else {
-                    field.set(instance, null);
-                    if (log.isDebugEnabled()) {
-                        log.debug("Set field " + field.getName() 
-                                + " to null in class " + instance.getClass().getName());
+                    Object value = field.get(instance);
+                    if (null != value) {
+                        Class valueClass = value.getClass();
+                        if (!loadedByThisOrChild(valueClass)) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Not setting field " + field.getName() +
+                                        " to null in object of class " + 
+                                        instance.getClass().getName() +
+                                        " because the referenced object was of type " +
+                                        valueClass.getName() + 
+                                        " which was not loaded by this WebappClassLoader.");
+                            }
+                        } else {
+                            field.set(instance, null);
+                            if (log.isDebugEnabled()) {
+                                log.debug("Set field " + field.getName() 
+                                        + " to null in class " + instance.getClass().getName());
+                            }
+                        }
                     }
                 }
             } catch (Throwable t) {
@@ -1672,7 +1687,25 @@ public class WebappClassLoader
             }
         }
     }
-    
+
+
+    /**
+     * Determine whether a class was loaded by this class loader or one of
+     * its child class loaders.
+     */
+    protected boolean loadedByThisOrChild(Class clazz)
+    {
+        boolean result = false;
+        for (ClassLoader classLoader = clazz.getClassLoader();
+                null != classLoader; classLoader = classLoader.getParent()) {
+            if (classLoader.equals(this)) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }    
+
 
     /**
      * Used to periodically signal to the classloader to release JAR resources.
@@ -1682,14 +1715,14 @@ public class WebappClassLoader
             lastJarAccessed = System.currentTimeMillis();
             if (jarFiles[0] == null) {
                 for (int i = 0; i < jarFiles.length; i++) {
-                	try {
+                    try {
                         jarFiles[i] = new JarFile(jarRealFiles[i]);
-                	} catch (IOException e) {
+                    } catch (IOException e) {
                         if (log.isDebugEnabled()) {
                             log.debug("Failed to open JAR", e);
                         }
                         return false;
-                	}
+                    }
                 }
             }
         }
@@ -1869,6 +1902,7 @@ public class WebappClassLoader
                 entry.lastModified = attributes.getLastModified();
 
                 if (resource != null) {
+
 
                     try {
                         binaryStream = resource.streamContent();
