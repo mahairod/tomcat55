@@ -34,7 +34,7 @@ import org.apache.catalina.cluster.ClusterDeployer;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
 import org.apache.commons.modeler.Registry;
-import org.apache.catalina.cluster.session.ClusterListener;
+import org.apache.catalina.cluster.ClusterListener;
 
 /**
  * <p>
