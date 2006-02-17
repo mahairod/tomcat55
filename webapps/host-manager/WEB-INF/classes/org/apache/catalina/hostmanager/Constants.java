@@ -106,11 +106,11 @@ public class Constants {
         "<table cellspacing=\"4\" width=\"100%\" border=\"0\">\n" +
         " <tr>\n" +
         "  <td colspan=\"2\">\n" +
-        "   <a href=\"http://jakarta.apache.org/\">\n" +
-        "    <img border=\"0\" alt=\"The Jakarta Project\" align=\"left\"\n" +
-        "         src=\"{0}/images/jakarta-logo.gif\">\n" +
+        "   <a href=\"http://www.apache.org/\">\n" +
+        "    <img border=\"0\" alt=\"The Apache Software Foundation\" align=\"left\"\n" +
+        "         src=\"{0}/images/asf-logo.gif\">\n" +
         "   </a>\n" +
-        "   <a href=\"http://jakarta.apache.org/tomcat/\">\n" +
+        "   <a href=\"http://tomcat.apache.org/\">\n" +
         "    <img border=\"0\" alt=\"The Tomcat Servlet/JSP Container\"\n" +
         "         align=\"right\" src=\"{0}/images/tomcat.gif\">\n" +
         "   </a>\n" +
