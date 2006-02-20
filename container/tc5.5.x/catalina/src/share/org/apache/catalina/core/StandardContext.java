@@ -81,6 +81,7 @@ import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.loader.WebappLoader;
+import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.TldConfig;
 import org.apache.catalina.util.CharsetMapper;
@@ -4116,6 +4117,20 @@ public class StandardContext
                 // Notify our interested LifecycleListeners
                 lifecycle.fireLifecycleEvent(START_EVENT, null);
 
+                // Configure default manager if none was specified
+                if (manager == null) {
+                    if ((cluster != null) && distributable) {
+                        try {
+                            setManager(cluster.createManager(getName()));
+                        } catch (Exception ex) {
+                            log.error("standardContext.clusterFail", ex);
+                            ok = false;
+                        }
+                    } else {
+                        setManager(new StandardManager());
+                    }
+                }
+                
                 // Start manager
                 if ((manager != null) && (manager instanceof Lifecycle)) {
                     ((Lifecycle) getManager()).start();
