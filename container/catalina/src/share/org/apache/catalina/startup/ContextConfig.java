@@ -388,28 +388,6 @@ public class ContextConfig
 
 
     /**
-     * Set up a manager.
-     */
-    protected synchronized void managerConfig() {
-
-        if (context.getManager() == null) {
-            if ((context.getCluster() != null) && context.getDistributable()) {
-                try {
-                    context.setManager(context.getCluster().createManager
-                                       (context.getName()));
-                } catch (Exception ex) {
-                    log.error("contextConfig.clusteringInit", ex);
-                    ok = false;
-                }
-            } else {
-                context.setManager(new StandardManager());
-            }
-        }
-
-    }
-
-
-    /**
      * Set up an Authenticator automatically if required, and one has not
      * already been configured.
      */
@@ -1062,10 +1040,6 @@ public class ContextConfig
         // Configure an authenticator if we need one
         if (ok)
             authenticatorConfig();
-
-        // Configure a manager
-        if (ok)
-            managerConfig();
 
         // Dump the contents of this pipeline if requested
         if ((log.isDebugEnabled()) && (context instanceof ContainerBase)) {
