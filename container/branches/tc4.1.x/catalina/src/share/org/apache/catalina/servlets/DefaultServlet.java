@@ -1431,12 +1431,13 @@ public class DefaultServlet
 
             // Render the directory entries within this directory
             DirContext directory = resourceInfo.directory;
-            NamingEnumeration enum =
+            NamingEnumeration enumeration =
                 resourceInfo.resources.list(resourceInfo.path);
             boolean shade = false;
-            while (enum.hasMoreElements()) {
+            while (enumeration.hasMoreElements()) {
 
-                NameClassPair ncPair = (NameClassPair) enum.nextElement();
+                NameClassPair ncPair =
+                    (NameClassPair) enumeration.nextElement();
                 String resourceName = ncPair.getName();
                 ResourceInfo childResourceInfo =
                     new ResourceInfo(resourceName, directory);

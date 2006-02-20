@@ -70,16 +70,16 @@ public class JndiServlet
         try {
             Context envCtx = (Context) ctx.lookup("java:/comp/env/");
             out.println("list() on /comp/env Context : ");
-            NamingEnumeration enum = ctx.list("java:/comp/env/");
-            while (enum.hasMoreElements()) {
+            NamingEnumeration enumeration = ctx.list("java:/comp/env/");
+            while (enumeration.hasMoreElements()) {
                 out.print("Binding : ");
-                out.println(enum.nextElement().toString());
+                out.println(enumeration.nextElement().toString());
             }
             out.println("listBindings() on /comp/env Context : ");
-            enum = ctx.listBindings("java:/comp/env/");
-            while (enum.hasMoreElements()) {
+            enumeration = ctx.listBindings("java:/comp/env/");
+            while (enumeration.hasMoreElements()) {
                 out.print("Binding : ");
-                out.println(enum.nextElement().toString());
+                out.println(enumeration.nextElement().toString());
             }
         } catch (NamingException e) {
             out.println("JNDI lookup failed : " + e);
