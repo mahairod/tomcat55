@@ -589,9 +589,10 @@ public class Validator {
         StringBuffer errMsg = null;
         ErrorDispatcher errDisp = compiler.getErrorDispatcher();
 
-        Enumeration enum = compiler.getPageInfo().getTagLibraries().elements();
-        while (enum.hasMoreElements()) {
-            TagLibraryInfo tli = (TagLibraryInfo) enum.nextElement();
+        Enumeration enumeration =
+            compiler.getPageInfo().getTagLibraries().elements();
+        while (enumeration.hasMoreElements()) {
+            TagLibraryInfo tli = (TagLibraryInfo) enumeration.nextElement();
             ValidationMessage[] errors
                 = ((TagLibraryInfoImpl) tli).validate(xmlView);
             if ((errors != null) && (errors.length != 0)) {

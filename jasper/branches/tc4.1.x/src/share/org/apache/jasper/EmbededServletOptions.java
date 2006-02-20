@@ -237,9 +237,9 @@ public final class EmbededServletOptions implements Options {
     public EmbededServletOptions(ServletConfig config,
                                  ServletContext context) {
 
-        Enumeration enum=config.getInitParameterNames();
-        while( enum.hasMoreElements() ) {
-            String k=(String)enum.nextElement();
+        Enumeration enumeration=config.getInitParameterNames();
+        while( enumeration.hasMoreElements() ) {
+            String k=(String)enumeration.nextElement();
             String v=config.getInitParameter( k );
 
             setProperty( k, v);
