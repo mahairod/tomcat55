@@ -1,4 +1,4 @@
-<project name="Jasper2" default="build-only" basedir=".">
+<project name="Jasper2" default="build-main" basedir=".">
 
 
   <!-- ===================== Initialize Property Values =================== -->
@@ -8,19 +8,14 @@
   <property file="${user.home}/build.properties"/>
   <property file="build.properties"/>
   <property file="build.properties.sample"/>
-  <property file="${catalina.home}/build.properties"/>
 
   <!-- Build Defaults -->
   <property name="jasper.build"      value="${basedir}/build"/>
-  <property name="catalina.home"     value="../../jakarta-tomcat-4.1/build"/>
-  <property name="jasper.deploy"     value="${catalina.home}"/>
   <property name="jasper.dist"       value="${basedir}/dist"/>
   <property name="test.failonerror"  value="true"/>
   <property name="test.runner"       value="junit.textui.TestRunner"/>
-  <property name="tools.jar"         value="${java.home}/lib/tools.jar"/>
   <property name="ant.jar"           value="${ant.home}/lib/ant.jar"/>
-  <property name="servlet-api.jar" value="${api.home}/jsr154/dist/lib/servlet-api.jar"/>
-  <property name="jsp-api.jar" value="${api.home}/jsr152/dist/lib/jsp-api.jar"/>
+  <property name="servlet-api.jar"   value="${api.home}/jsr154/dist/lib/servlet-api.jar"/>
   <property name="jasper-compiler-jdt.jar" value="${jdt.jar}"/>
 
 
@@ -28,10 +23,8 @@
   <path id="jasper.classpath">
     <pathelement location="${ant.jar}"/>
     <pathelement location="${servlet-api.jar}"/>
-    <pathelement location="${jsp-api.jar}"/>
     <pathelement location="${jdt.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
-    <pathelement location="${commons-el.jar}"/>
   </path>
 
   <!-- Construct unit tests classpath -->
@@ -39,8 +32,6 @@
     <pathelement location="${ant.jar}"/>
     <pathelement location="${junit.jar}"/>
     <pathelement location="${servlet-api.jar}"/>
-    <pathelement location="${jsp-api.jar}"/>
-    <pathelement location="${tools.jar}"/>
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xml-apis.jar}"/>
@@ -55,42 +46,17 @@
   <target name="build-prepare">
 
     <available classname="junit.framework.TestCase" property="junit.present" />
-    <available property="launcher.present"
-     classname="org.apache.commons.launcher.Launcher"
-     classpath="${commons-daemon-launcher.jar}"/>
-    <available property="launcher.bootstrap.present"
-     file="${commons-daemon-launcher-bootstrap.class}"/>
-
-    <condition property="copy.launcher.jars">
-      <and>
-        <equals arg1="${launcher.present}" arg2="true" />
-        <equals arg1="${launcher.bootstrap.present}" arg2="true" />
-      </and>
-    </condition>
 
     <mkdir dir="${jasper.build}"/>
     <mkdir dir="${jasper.build}/bin"/>
-    <mkdir dir="${jasper.build}/common/classes"/>
-    <mkdir dir="${jasper.build}/common/lib"/>
     <mkdir dir="${jasper.build}/shared/classes"/>
     <mkdir dir="${jasper.build}/shared/lib"/>
 
   </target>
 
 
-  <!-- =================== BUILD: Copy Launcher Files ===================== -->
-  <target name="copy-launcher.jars" if="copy.launcher.jars">
-    <!-- <copy todir="${jasper.build}/common/lib" file="${ant.jar}"/> -->
-    <copy todir="${jasper.build}/bin" file="${commons-daemon-launcher.jar}"/>
-    <copy todir="${jasper.build}/bin" file="${commons-daemon-launcher-bootstrap.class}"/>
-    <copy todir="${jasper.build}/bin">
-      <fileset dir="src/bin" includes="*-using-launcher.*,launcher.properties,jasper.xml" />
-    </copy>
-  </target>
-
-
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="build-prepare,copy-launcher.jars">
+  <target name="build-static" depends="build-prepare">
 
     <!-- Executable Commands -->
     <copy todir="${jasper.build}/bin">
@@ -105,8 +71,6 @@
 
   <!-- ================= BUILD: Compile Server Components ================= -->
   <target name="build-main" depends="build-static,build-only">
-    <!-- Extra operations: Supporting JAR Files -->
-    <copy todir="${jasper.build}/shared/lib" file="${commons-el.jar}"/>
   </target>
 
   <!-- Just build jasper -->
@@ -116,6 +80,7 @@
     <property name="jasper-runtime.jar" value="${jasper.build}/shared/lib/jasper-runtime.jar"/>
     <property name="jasper-el.jar" value="${jasper.build}/shared/lib/jasper-el.jar"/>
     <property name="el-api.jar" value="${jasper.build}/shared/lib/el-api.jar"/>
+    <property name="jsp-api.jar" value="${jasper.build}/shared/lib/jsp-api.jar"/>
 
     <!-- Compile internal server components -->
     <javac srcdir="src/share" destdir="${jasper.classes}"
@@ -157,6 +122,7 @@
         <include name="org/apache/jasper/Constants.class" />
         <include name="org/apache/jasper/JasperException.class" />
         <include name="org/apache/jasper/compiler/Localizer.class" />
+        <include name="org/apache/jasper/el/**" />
         <include name="org/apache/jasper/resources/**" />
         <include name="org/apache/jasper/runtime/**" />
         <include name="org/apache/jasper/security/**" />
@@ -165,6 +131,23 @@
         <exclude name="**/package.html" />
         <exclude name="**/LocalStrings_*" />
       </fileset>
+    </jar>
+
+    <!-- JSP 2.1 Implementation JAR File -->
+    <jar  jarfile="${jsp-api.jar}">
+      <fileset dir="${jasper.classes}">
+        <include name="javax/servlet/jsp/**" />
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
+      </fileset>
+      <zipfileset dir="src/etc/dtd" prefix="javax/servlet/jsp/resources">
+        <include name="*.xsd" />
+        <include name="*.dtd" />
+        <!-- Javadoc and i18n exclusions -->
+        <exclude name="**/package.html" />
+        <exclude name="**/LocalStrings_*" />
+      </zipfileset>
     </jar>
 
     <!-- Jasper EL Implementation JAR File -->
@@ -279,7 +262,6 @@
     <!-- Copy JARs -->
     <copy todir="${jasper.deploy}/common/lib" file="${jasper-compiler-jdt.jar}"/>
     <copy todir="${jasper.deploy}/common/lib" file="${jsp-api.jar}"/>
-    <copy todir="${jasper.deploy}/common/lib" file="${commons-el.jar}"/>
 
   </target>
 
