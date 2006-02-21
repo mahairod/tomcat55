@@ -22,7 +22,6 @@ import java.util.List;
 import javax.el.ArrayELResolver;
 import javax.el.BeanELResolver;
 import javax.el.CompositeELResolver;
-import javax.el.ELContext;
 import javax.el.ELContextEvent;
 import javax.el.ELContextListener;
 import javax.el.ELResolver;
@@ -35,11 +34,9 @@ import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspContext;
 import javax.servlet.jsp.el.ImplicitObjectELResolver;
 import javax.servlet.jsp.el.ScopedAttributeELResolver;
-import javax.servlet.jsp.el.VariableResolver;
 
 import org.apache.el.ExpressionFactoryImpl;
 import org.apache.jasper.el.ELContextImpl;
-import org.apache.jasper.el.ELResolverImpl;
 
 /**
  * Implementation of JspApplicationContext
