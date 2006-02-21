@@ -35,25 +35,7 @@ public interface ClusterReceiver {
      */
     public void stop();
 
-    /**
-     * set callback.
-     *
-     * @param cluster The cluster
-     */
-    public void setCatalinaCluster(CatalinaCluster cluster);
     
-    /**
-     * get Callback.
-     *
-     * @return The cluster
-     */
-    public CatalinaCluster getCatalinaCluster();
-    
-    /**
-     * Send Ack to sender or not.
-     *
-     * @return The flag value
-     */
     public boolean isSendAck();
     
     /**

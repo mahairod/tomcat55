@@ -175,7 +175,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     /**
      * Receiver to register call back with
      */
-    private org.apache.catalina.cluster.ClusterReceiver clusterReceiver;
+    private ClusterReceiverBase clusterReceiver;
 
     private List valves = new ArrayList();
 
@@ -319,11 +319,11 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         this.clusterSender = clusterSender;
     }
 
-    public ClusterReceiver getClusterReceiver() {
+    public ClusterReceiverBase getClusterReceiver() {
         return clusterReceiver;
     }
 
-    public void setClusterReceiver(ClusterReceiver clusterReceiver) {
+    public void setClusterReceiver(ClusterReceiverBase clusterReceiver) {
         this.clusterReceiver = clusterReceiver;
     }
 
@@ -1339,8 +1339,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     public ModelMBean getManagedBean(Object object) throws Exception {
         ModelMBean mbean = null;
         if (registry != null) {
-            ManagedBean managedBean = registry.findManagedBean(object
-                    .getClass().getName());
+            ManagedBean managedBean = registry.findManagedBean(object.getClass().getName());
             mbean = managedBean.createMBean(object);
         }
         return mbean;
