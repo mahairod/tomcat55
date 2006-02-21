@@ -44,15 +44,41 @@
         is doen by the regular deployer. (remm)
       </fix>
       <add>
-         Add JMX serverInfo attribute to Server MBean, that we can identify
-         the tomcat release remotely. (pero)
+        Add JMX serverInfo attribute to Server MBean, that we can identify
+        the tomcat release remotely. (pero)
       </add>
       <fix>
-         Fix the JMX MBeanFactory.createStandardHost signature at mbean-descriptors.xml (pero)
+        Fix the JMX MBeanFactory.createStandardHost signature at mbean-descriptors.xml (pero)
       </fix>
       <fix>
-         Fix some cases (for example with realm usage) where the container logger for a context
-         would be retrieved using the wrong classloader (remm)
+        Fix some cases (for example with realm usage) where the container logger for a context
+        would be retrieved using the wrong classloader (remm)
+      </fix>
+      <fix>
+        HttpSession.getId will no longer throw an ISE when the session is invalid (remm)
+      </fix>
+      <fix>
+         ore detailed errors for naming issues (remm)
+      </fix>
+      <docs>
+        Add documentation for the Transaction element (remm)
+      </docs>
+      <update>
+        Add getContextPath to the internal servlet context implementation (remm)
+      </update>
+      <fix>
+        Only null instances loaded by the webapp CL, submitted by Matt Jensen (remm)
+      </fix>
+      <update>
+        Deploy folders which don't have a WEB-INF, and return an error when a context
+        file does not contain a Context element (remm)
+      </update>
+      <fix>
+        <bug>38653</bug>: Fix property name (remm)
+      </fix>
+      <fix>
+        Slightly modify the timing of the manager start, so that it is not started by a
+        listener (remm)
       </fix>
     </changelog>
   </subsection>
@@ -72,6 +98,23 @@
       <update>
         Pass along more of the SSL related fields to OpenSSL (remm)
       </update>
+      <update>
+        CharChunk now implements CharSequence (remm)
+      </update>
+      <fix>
+        Fix coding error which could cause a rare crash when a poller error occurred and sockets
+        where pending being added to the keepalive poller (remm)
+      </fix>
+      <fix>
+        Fix potential sync issues when restarting a poller (remm)
+      </fix>
+      <fix>
+        Update APR error reports, including the error codes (remm)
+      </fix>
+      <fix>
+        <bug>38726</bug>: Remove duplicate request group field causing blank statistics for the
+        HTTP connector (remm) 
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
@@ -106,6 +149,9 @@
     <changelog>
       <fix>
         Fix some XSS issues in the JSP examples. (markt)
+      </fix>
+      <fix>
+        Fix logos in the manager webapp (remm)
       </fix>
     </changelog>
   </subsection>
