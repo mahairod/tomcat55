@@ -86,11 +86,11 @@
                  
   </mbean>
 
-  <mbean         name="ReplicationListener"
+  <mbean         name="ClusterReceiverBase"
            description="Tcp Cluster ReplicationListener implementation"
                domain="Catalina"
                 group="Cluster"
-                 type="org.apache.catalina.cluster.tcp.ReplicationListener">
+                 type="org.apache.catalina.cluster.tcp.ClusterReceiverBase">
     <attribute   name="info"
           description="Class version info"
                  type="java.lang.String"

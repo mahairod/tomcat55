@@ -294,7 +294,7 @@
                 mcastDropTime="3000"/>
 
             <Receiver 
-                className="org.apache.catalina.cluster.tcp.ReplicationListener"
+                className="org.apache.catalina.cluster.tcp.ClusterReceiverBase"
                 tcpListenAddress="auto"
                 tcpListenPort="4001"
                 tcpSelectorTimeout="100"
