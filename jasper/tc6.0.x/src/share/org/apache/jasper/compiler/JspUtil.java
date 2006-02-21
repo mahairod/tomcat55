@@ -25,14 +25,17 @@ import java.util.Vector;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import javax.el.FunctionMapper;
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.ELParseException;
-import javax.servlet.jsp.el.FunctionMapper;
+import javax.servlet.jsp.el.ExpressionEvaluator;
 
-import org.apache.commons.el.ExpressionEvaluatorImpl;
+
+import org.apache.el.ExpressionFactoryImpl;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
+import org.apache.jasper.el.ExpressionEvaluatorImpl;
 import org.xml.sax.Attributes;
 
 /** 
@@ -58,8 +61,13 @@ public class JspUtil {
     private static final String CLOSE_EXPR_XML = "%";
 
     private static int tempSequenceNumber = 0;
-    private static ExpressionEvaluatorImpl expressionEvaluator
-	= new ExpressionEvaluatorImpl();
+    
+    //private static ExpressionEvaluatorImpl expressionEvaluator
+	//= new ExpressionEvaluatorImpl();
+    
+    //tc6
+    private final static ExpressionEvaluator expressionEvaluator =
+        new ExpressionEvaluatorImpl(new ExpressionFactoryImpl());
 
     private static final String javaKeywords[] = {
         "abstract", "assert", "boolean", "break", "byte", "case",
@@ -576,6 +584,7 @@ public class JspUtil {
      * @param where the approximate location of the expressions in the JSP page
      * @param expressions a string containing zero or more "${}" expressions
      * @param err an error dispatcher to use
+     * @deprecated now delegated to the org.apache.el Package
      */
     public static void validateExpressions(Mark where,
                                            String expressions,
@@ -584,18 +593,19 @@ public class JspUtil {
                                            ErrorDispatcher err)
             throws JasperException {
 
-        try {
-            JspUtil.expressionEvaluator.parseExpression( expressions, 
-                expectedType, null );
-        }
-        catch( ELParseException e ) {
-            err.jspError(where, "jsp.error.invalid.expression", expressions,
-                e.toString() );
-        }
-        catch( ELException e ) {
-            err.jspError(where, "jsp.error.invalid.expression", expressions,
-                e.toString() );
-        }
+//        try {
+//            
+//            JspUtil.expressionEvaluator.parseExpression( expressions, 
+//                expectedType, functionMapper );
+//        }
+//        catch( ELParseException e ) {
+//            err.jspError(where, "jsp.error.invalid.expression", expressions,
+//                e.toString() );
+//        }
+//        catch( ELException e ) {
+//            err.jspError(where, "jsp.error.invalid.expression", expressions,
+//                e.toString() );
+//        }
     }
 
     /**

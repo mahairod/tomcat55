@@ -508,7 +508,7 @@ class JspDocumentParser
             int column = startMark.getColumnNumber();
 
             CharArrayWriter ttext = new CharArrayWriter();
-            int lastCh = 0;
+            int lastCh = 0, elType = 0;
             for (int i = 0; i < charBuffer.length(); i++) {
 
                 int ch = charBuffer.charAt(i);
@@ -518,7 +518,8 @@ class JspDocumentParser
                 } else {
                     column++;
                 }
-                if (lastCh == '$' && ch == '{') {
+                if ((lastCh == '$' || lastCh == '#') && ch == '{') {
+                    elType = lastCh;
                     if (ttext.size() > 0) {
                         new Node.TemplateText(
                             ttext.toString(),
@@ -526,10 +527,10 @@ class JspDocumentParser
                             current);
                         ttext = new CharArrayWriter();
                         //We subtract two from the column number to
-                        //account for the '${' that we've already parsed
+                        //account for the '[$,#]{' that we've already parsed
                         startMark = new Mark(ctxt, path, line, column - 2);
                     }
-                    // following "${" to first unquoted "}"
+                    // following "${" || "#{" to first unquoted "}"
                     i++;
                     boolean singleQ = false;
                     boolean doubleQ = false;
@@ -539,7 +540,7 @@ class JspDocumentParser
                             throw new SAXParseException(
                                 Localizer.getMessage(
                                     "jsp.error.unterminated",
-                                    "${"),
+                                    (char) elType + "{"),
                                 locator);
 
                         }
@@ -556,7 +557,7 @@ class JspDocumentParser
                             continue;
                         }
                         if (ch == '}') {
-                            new Node.ELExpression(
+                            new Node.ELExpression((char) elType,
                                 ttext.toString(),
                                 startMark,
                                 current);
@@ -572,20 +573,20 @@ class JspDocumentParser
                         ttext.write(ch);
                         lastCh = ch;
                     }
-                } else if (lastCh == '\\' && ch == '$') {
-                    ttext.write('$');
+                } else if (lastCh == '\\' && (ch == '$' || ch == '#')) {
+                    ttext.write(ch);
                     ch = 0;  // Not start of EL anymore
                 } else {
-                    if (lastCh == '$' || lastCh == '\\') {
+                    if (lastCh == '$' || lastCh == '#' || lastCh == '\\') {
                         ttext.write(lastCh);
                     }
-                    if (ch != '$' && ch != '\\') {
+                    if (ch != '$' && ch != '#' && ch != '\\') {
                         ttext.write(ch);
                     }
                 }
                 lastCh = ch;
             }
-            if (lastCh == '$' || lastCh == '\\') {
+            if (lastCh == '$' || lastCh == '#' || lastCh == '\\') {
                 ttext.write(lastCh);
             }
             if (ttext.size() > 0) {

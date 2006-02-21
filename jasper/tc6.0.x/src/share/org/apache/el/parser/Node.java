@@ -64,7 +64,7 @@ public interface Node {
   public void setValue(EvaluationContext ctx, Object value) throws ELException;
   public Class getType(EvaluationContext ctx) throws ELException;
   public boolean isReadOnly(EvaluationContext ctx) throws ELException;
-  public void accept(NodeVisitor visitor) throws ELException;
+  public void accept(NodeVisitor visitor) throws Exception;
   public MethodInfo getMethodInfo(EvaluationContext ctx, Class[] paramTypes) throws ELException;
   public Object invoke(EvaluationContext ctx, Class[] paramTypes, Object[] paramValues) throws ELException;
 }

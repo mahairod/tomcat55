@@ -125,7 +125,7 @@ public abstract class SimpleNode extends ELSupport implements Node {
         throw new PropertyNotWritableException(MessageFactory.get("error.syntax.set"));
     }
 
-    public void accept(NodeVisitor visitor) throws ELException {
+    public void accept(NodeVisitor visitor) throws Exception {
         visitor.visit(this);
         if (this.children != null && this.children.length > 0) {
             for (int i = 0; i < this.children.length; i++) {

@@ -19,8 +19,10 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.JspEngineInfo;
 import javax.servlet.jsp.PageContext;
@@ -40,10 +42,9 @@ public class JspFactoryImpl extends JspFactory {
     private Log log = LogFactory.getLog(JspFactoryImpl.class);
 
     private static final String SPEC_VERSION = "2.0";
-    private static final boolean USE_POOL = 
-        Boolean.valueOf(System.getProperty("org.apache.jasper.runtime.JspFactoryImpl.USE_POOL", "true")).booleanValue();
+    private static final boolean USE_POOL = true;
 
-    private SimplePool pool = new SimplePool(100);
+    private SimplePool pool = new SimplePool( 100 );
     
     public PageContext getPageContext(Servlet servlet,
 				      ServletRequest request,
@@ -52,6 +53,7 @@ public class JspFactoryImpl extends JspFactory {
                                       boolean needsSession,
 				      int bufferSize,
                                       boolean autoflush) {
+
 	if( System.getSecurityManager() != null ) {
 	    PrivilegedGetPageContext dp = new PrivilegedGetPageContext(
 		(JspFactoryImpl)this, servlet, request, response, errorPageURL,
@@ -174,4 +176,15 @@ public class JspFactoryImpl extends JspFactory {
 	    return null;
         }
     }
+    
+    private final static String APP_CONTEXT_VARIABLE = JspApplicationContextImpl.class.getName();
+
+	public JspApplicationContext getJspApplicationContext(ServletContext context) {
+        JspApplicationContext appContext = (JspApplicationContext) context.getAttribute(APP_CONTEXT_VARIABLE);
+		if (appContext == null) {
+            appContext = new JspApplicationContextImpl();
+            context.setAttribute(APP_CONTEXT_VARIABLE, appContext);
+        }
+        return appContext;
+	}
 }

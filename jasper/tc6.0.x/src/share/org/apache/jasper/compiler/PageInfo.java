@@ -22,8 +22,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.el.ExpressionFactoryImpl;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
+
+import javax.el.ExpressionFactory;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 
 /**
@@ -63,8 +66,17 @@ class PageInfo {
 
     private boolean scriptless = false;
     private boolean scriptingInvalid = false;
+    
     private String isELIgnoredValue;
     private boolean isELIgnored = false;
+    
+    // JSP 2.1
+    private String deferredSyntaxAllowedAsLiteralValue;
+    private boolean deferredSyntaxAllowedAsLiteral = false;
+    private ExpressionFactory expressionFactory = new ExpressionFactoryImpl();
+    private String trimDirectiveWhitespacesValue;
+    private boolean trimDirectiveWhitespaces = false;
+    
     private String omitXmlDecl = null;
     private String doctypeName = null;
     private String doctypePublic = null;
@@ -605,6 +617,48 @@ class PageInfo {
 
         isELIgnoredValue = value;
     }
+    
+    /*
+     * deferredSyntaxAllowedAsLiteral
+     */
+    public void setDeferredSyntaxAllowedAsLiteral(String value, Node n, ErrorDispatcher err,
+                   boolean pagedir)
+        throws JasperException {
+
+        if ("true".equalsIgnoreCase(value))
+            deferredSyntaxAllowedAsLiteral = true;
+        else if ("false".equalsIgnoreCase(value))
+            deferredSyntaxAllowedAsLiteral = false;
+        else {
+            if (pagedir)
+                err.jspError(n, "jsp.error.page.invalid.deferredsyntaxallowedasliteral");
+            else
+                err.jspError(n, "jsp.error.tag.invalid.deferredsyntaxallowedasliteral");
+        }
+
+        deferredSyntaxAllowedAsLiteralValue = value;
+    }
+    
+    /*
+     * trimDirectiveWhitespaces
+     */
+    public void setTrimDirectiveWhitespaces(String value, Node n, ErrorDispatcher err,
+                   boolean pagedir)
+        throws JasperException {
+
+        if ("true".equalsIgnoreCase(value))
+            trimDirectiveWhitespaces = true;
+        else if ("false".equalsIgnoreCase(value))
+            trimDirectiveWhitespaces = false;
+        else {
+            if (pagedir)
+                err.jspError(n, "jsp.error.page.invalid.trimdirectivewhitespaces");
+            else
+                err.jspError(n, "jsp.error.tag.invalid.trimdirectivewhitespaces");
+        }
+
+        deferredSyntaxAllowedAsLiteralValue = value;
+    }
 
     public void setELIgnored(boolean s) {
         isELIgnored = s;
@@ -624,5 +678,33 @@ class PageInfo {
 
     public Mark getNonCustomTagPrefix(String prefix) {
         return (Mark) nonCustomTagPrefixMap.get(prefix);
+    }
+    
+    public String getDeferredSyntaxAllowedAsLiteral() {
+        return deferredSyntaxAllowedAsLiteralValue;
+    }
+
+    public boolean isDeferredSyntaxAllowedAsLiteral() {
+        return deferredSyntaxAllowedAsLiteral;
+    }
+
+    public void setDeferredSyntaxAllowedAsLiteral(boolean isELDeferred) {
+        this.deferredSyntaxAllowedAsLiteral = isELDeferred;
+    }
+
+    public ExpressionFactory getExpressionFactory() {
+        return expressionFactory;
+    }
+
+    public String getTrimDirectiveWhitespaces() {
+        return trimDirectiveWhitespacesValue;
+    }
+
+    public boolean isTrimDirectiveWhitespaces() {
+        return trimDirectiveWhitespaces;
+    }
+
+    public void setTrimDirectiveWhitespaces(boolean trimDirectiveWhitespaces) {
+        this.trimDirectiveWhitespaces = trimDirectiveWhitespaces;
     }
 }

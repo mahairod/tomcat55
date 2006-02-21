@@ -133,7 +133,11 @@ public final class ExpressionBuilder implements NodeVisitor {
 	}
 
 	private void prepare(Node node) throws ELException {
-		node.accept(this);
+        try {
+            node.accept(this);
+        } catch (Exception e) {
+            throw (ELException) e;
+        }
 		if (this.fnMapper instanceof FunctionMapperFactory) {
 			this.fnMapper = ((FunctionMapperFactory) this.fnMapper).create();
 		}
