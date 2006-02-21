@@ -24,8 +24,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Properties;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
@@ -50,7 +50,6 @@ import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
-import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.StringManager;
 import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomcat.util.digester.RuleSet;
