@@ -4119,9 +4119,9 @@ public class StandardContext
 
                 // Configure default manager if none was specified
                 if (manager == null) {
-                    if ((cluster != null) && distributable) {
+                    if ((getCluster() != null) && distributable) {
                         try {
-                            setManager(cluster.createManager(getName()));
+                            setManager(getCluster().createManager(getName()));
                         } catch (Exception ex) {
                             log.error("standardContext.clusterFail", ex);
                             ok = false;
