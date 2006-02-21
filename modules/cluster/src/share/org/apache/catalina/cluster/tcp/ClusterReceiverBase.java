@@ -16,33 +16,22 @@
 
 package org.apache.catalina.cluster.tcp;
 
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.ClusterReceiver;
-import org.apache.catalina.cluster.io.ListenCallback;
-import org.apache.catalina.cluster.session.ClusterSessionListener;
-import org.apache.catalina.cluster.session.ReplicationStream;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.cluster.io.XByteBuffer;
 
 /**
-* FIXME i18n log messages
+* @author Filip Hanik
 * @author Peter Rossbach
 * @version $Revision$ $Date$
 */
 
-public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,ListenCallback {
+public class ClusterReceiverBase extends ReplicationListener {
     
     protected static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( ClusterReceiverBase.class );
@@ -53,11 +42,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
     protected StringManager sm = StringManager.getManager(Constants.Package);
 
     private CatalinaCluster cluster;
-    private java.net.InetAddress bind;
-    private String tcpListenAddress;
-    private int tcpListenPort;
-    private boolean sendAck;
-    protected boolean doListen = false;
+    
 
     /**
      * total bytes to recevied
@@ -94,10 +79,6 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
     private long lastChecked = System.currentTimeMillis();
 
 
-    /**
-     * Compress message data bytes
-     */
-    private boolean compress = true ;
 
     /**
      * Transmitter Mbean name
@@ -111,34 +92,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
         return doListen;
     }
 
-    /**
-     * @return Returns the bind.
-     */
-    public java.net.InetAddress getBind() {
-        if (bind == null) {
-            try {
-                if ("auto".equals(tcpListenAddress)) {
-                    tcpListenAddress = java.net.InetAddress.getLocalHost()
-                            .getHostAddress();
-                }
-                if (log.isDebugEnabled())
-                    log.debug("Starting replication listener on address:"
-                            + tcpListenAddress);
-                bind = java.net.InetAddress.getByName(tcpListenAddress);
-            } catch (IOException ioe) {
-                log.error("Failed bind replication listener on address:"
-                        + tcpListenAddress, ioe);
-            }
-        }
-      return bind;
-    }
     
-    /**
-     * @param bind The bind to set.
-     */
-    public void setBind(java.net.InetAddress bind) {
-        this.bind = bind;
-    }
     public void setCatalinaCluster(CatalinaCluster cluster) {
         this.cluster = cluster;
     }
@@ -164,61 +118,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
         return objectName;
     }
     
-    /**
-     * @return Returns the compress.
-     */
-    public boolean isCompress() {
-        return compress;
-    }
     
-    /**
-     * @param compressMessageData The compress to set.
-     */
-    public void setCompress(boolean compressMessageData) {
-        this.compress = compressMessageData;
-    }
-    
-    /**
-     * Send ACK to sender
-     * 
-     * @return True if sending ACK
-     */
-    public boolean isSendAck() {
-        return sendAck;
-    }
-
-    /**
-     * set ack mode or not!
-     * 
-     * @param sendAck
-     */
-    public void setSendAck(boolean sendAck) {
-        this.sendAck = sendAck;
-    }
- 
-    public String getTcpListenAddress() {
-        return tcpListenAddress;
-    }
-    
-    public void setTcpListenAddress(String tcpListenAddress) {
-        this.tcpListenAddress = tcpListenAddress;
-    }
-    
-    public int getTcpListenPort() {
-        return tcpListenPort;
-    }
-    
-    public void setTcpListenPort(int tcpListenPort) {
-        this.tcpListenPort = tcpListenPort;
-    }
-  
-    public String getHost() {
-        return getTcpListenAddress();
-    }
-
-    public int getPort() {
-        return getTcpListenPort();
-    }
     // ------------------------------------------------------------- stats
 
     /**
@@ -299,14 +199,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
      * @see org.apache.catalina.cluster.ClusterReceiver#start()
      */
     public void start() {
-        try {
-            getBind();
-            Thread t = new Thread(this, "ClusterReceiver");
-            t.setDaemon(true);
-            t.start();
-        } catch (Exception x) {
-            log.fatal("Unable to start cluster receiver", x);
-        }
+        super.start();
         registerReceiverMBean();
     }
 
@@ -318,7 +211,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
      * @see #stopListening()
      */
     public void stop() {
-        stopListening();
+        super.stop();
         unregisterRecevierMBean();
      
     }
@@ -347,10 +240,9 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
                     return;
                 }
                 setObjectName(receiverName);
-                mserver.registerMBean(scluster.getManagedBean(this),
-                        getObjectName());
+                mserver.registerMBean(scluster.getManagedBean(this),getObjectName());
             } catch (Exception e) {
-                log.warn(e);
+                log.warn("Unable to register JMX bean ClusterReceiverBase",e);
             }
         }
     }
@@ -372,33 +264,8 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
         }
     }
 
-    /**
-     * stop Listener sockets
-     */
-    protected abstract void stopListening() ;
-
-    /**
-     * Start Listener
-     * @throws Exception
-     */
-    protected abstract void listen ()
-       throws Exception ;
-
     
-    /**
-     * Start thread and listen
-     */
-    public void run()
-    {
-        try
-        {
-            listen();
-        }
-        catch ( Exception x )
-        {
-            log.error("Unable to start cluster listener.",x);
-        }
-    }
+    
 
     // --------------------------------------------------------- receiver messages
 
@@ -416,6 +283,10 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
         }
         try {
             ClusterMessage message = deserialize(data);
+            // calc stats really received bytes
+            totalReceivedBytes += data.getMessage().length;
+            //totalReceivedBytes += data.length;
+            nrOfMsgsReceived++;
             cluster.receive(message);
         } catch (Exception x) {
             log
@@ -429,27 +300,7 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
         }
     }
 
-    /**
-     * deserialize the receieve cluster message
-     * @param data uncompress data
-     * @return The message
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    //protected ClusterMessage deserialize(byte[] data)
-    protected ClusterMessage deserialize(ClusterData data)
-            throws IOException, ClassNotFoundException {
-        boolean compress = isCompress() || data.getCompress() == ClusterMessage.FLAG_ALLOWED;
-        ClusterMessage message = null;
-        if (data != null) {
-            message = XByteBuffer.deserialize(data, compress);
-            // calc stats really received bytes
-            totalReceivedBytes += data.getMessage().length;
-            //totalReceivedBytes += data.length;
-            nrOfMsgsReceived++;
-        }
-        return message;
-    }
+    
     
     // --------------------------------------------- Performance Stats
 
@@ -490,11 +341,6 @@ public abstract class ClusterReceiverBase implements Runnable, ClusterReceiver,L
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.catalina.cluster.io.ListenCallback#sendAck()
-     */
-    public void sendAck() throws IOException {
-        // do nothing
-    }
+    
 
 }
