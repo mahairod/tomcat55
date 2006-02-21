@@ -18,7 +18,8 @@ package org.apache.webapp.admin.resources;
 
 import java.net.URLEncoder;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.Action;
+
+import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TreeBuilder;
@@ -58,7 +59,7 @@ public class ResourcesTreeBuilder implements TreeBuilder {
                           HttpServletRequest request) {
 
         MessageResources resources = (MessageResources)
-            servlet.getServletContext().getAttribute(Action.MESSAGES_KEY);
+            servlet.getServletContext().getAttribute(Globals.MESSAGES_KEY);
         addSubtree(treeControl.getRoot(), resources);
 
     }
