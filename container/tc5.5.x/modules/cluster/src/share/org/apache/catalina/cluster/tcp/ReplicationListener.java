@@ -16,6 +16,7 @@
 
 package org.apache.catalina.cluster.tcp;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.nio.channels.SelectableChannel;
@@ -25,13 +26,14 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
-import org.apache.catalina.cluster.io.ObjectReader;
-import org.apache.catalina.cluster.io.ListenCallback;
-import org.apache.catalina.cluster.ClusterReceiver;
-import org.apache.catalina.util.StringManager;
-import java.io.IOException;
 import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.ClusterReceiver;
+import org.apache.catalina.cluster.group.ChannelInterceptorBase;
+import org.apache.catalina.cluster.io.ListenCallback;
+import org.apache.catalina.cluster.io.ObjectReader;
 import org.apache.catalina.cluster.io.XByteBuffer;
+import org.apache.catalina.util.StringManager;
+import org.apache.catalina.cluster.MessageListener;
 
 /**
  * @author Filip Hanik
@@ -70,7 +72,7 @@ public class ReplicationListener
 
 
     private Object interestOpsMutex = new Object();
-
+    private MessageListener listener = null;
     public ReplicationListener() {
     }
 
@@ -309,7 +311,20 @@ public class ReplicationListener
     }
 
     public void messageDataReceived(ClusterData data) {
-        //nothing to do yet
+        if ( this.listener != null ) {
+            try {
+                ClusterMessage msg = deserialize(data);
+                listener.messageReceived(msg);
+            }catch ( java.io.IOException x ) {
+                if ( log.isErrorEnabled() ) {
+                    log.error("Unable to receive and deserialize cluster data. IOException.",x);
+                }
+            }catch ( java.lang.ClassNotFoundException cx ) {
+                if ( log.isErrorEnabled() ) {
+                    log.error("Unable to receive and deserialize cluster data. ClassNotFoundException.",cx);
+                }
+            }
+        }
     }
 
     /**
@@ -385,8 +400,16 @@ public class ReplicationListener
         return tcpListenPort;
     }
 
+    public MessageListener getMessageListener() {
+        return listener;
+    }
+
     public void setTcpListenPort(int tcpListenPort) {
         this.tcpListenPort = tcpListenPort;
+    }
+
+    public void setMessageListener(MessageListener listener) {
+        this.listener = listener;
     }
 
     public String getHost() {
