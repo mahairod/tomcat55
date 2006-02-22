@@ -26,8 +26,9 @@ import org.apache.catalina.cluster.Member;
 
 
 /**
- * Channel interface
- * A channel is an object that manages a group of members.
+ * The GroupChannel manages the replication channel. It coordinates
+ * message being sent and received with membership announcements.
+ * The channel has an chain of interceptors that can modify the message or perform other logic.
  * It manages a complete cluster group, both membership and replication.
  * @author Filip Hanik
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
