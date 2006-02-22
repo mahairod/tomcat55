@@ -19,6 +19,7 @@ import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MessageListener;
+import java.io.IOException;
 
 /**
  * Abstract class for the interceptor base class.
@@ -51,7 +52,7 @@ public abstract class ChannelInterceptorBase implements MembershipListener, Mess
         return previous;
     }
 
-    public ClusterMessage[] sendMessage(Member[] destination, ClusterMessage msg, int options) {
+    public ClusterMessage[] sendMessage(Member[] destination, ClusterMessage msg, int options) throws IOException {
         return getNext().sendMessage(destination, msg,options);
     }
     
