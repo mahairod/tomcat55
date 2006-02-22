@@ -714,7 +714,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                 mserver.unregisterMBean(getSenderObjectName(sender));
             }
         } catch (Exception e) {
-            log.warn(e);
+            if ( log.isDebugEnabled() ) log.debug("'ReplicationTransmitter' Unable to to deregister IDataSender",e);
         }
     }
 
@@ -738,7 +738,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                 mserver.registerMBean(cluster.getManagedBean(sender),
                         senderName);
             } catch (Exception e) {
-                log.warn(e);
+                if ( log.isDebugEnabled() ) log.debug("'ReplicationTransmitter' Unable to register sender bean",e);
             }
         }
     }
@@ -764,7 +764,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                     + sender.getAddress().getHostAddress() + ",senderPort="
                     + sender.getPort());
         } catch (Exception e) {
-            log.warn(e);
+            if ( log.isDebugEnabled() ) log.debug("'ReplicationTransmitter' Unable to retrieve sender name",e);
         }
         return senderName;
     }
