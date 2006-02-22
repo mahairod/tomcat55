@@ -237,7 +237,7 @@ should be completed:</p>
    Receiver    Sender   Membership  \
      \                               -- Valve
      -- SocketReplicationListener    |      \
-     -- ReplicationListener          |       -- ReplicationValve
+     -- ClusterReceiverBase          |       -- ReplicationValve
                                      |       -- JvmRouteBinderValve 
                                      |
                                      -- LifecycleListener 
@@ -436,7 +436,7 @@ See default mode configuration description as simple host cluster example before
 <section name="Complex Cluster Configuration">
 <p>
 <br/><b>Example</b> Configure cluster with complete sub elements. Activate this node
-as master farm delopyer. Message receiver is NIO based <em>ReplicationListener</em> with six parallel
+as master farm delopyer. Message receiver is NIO based <em>ClusterReceiverBase</em> with six parallel
 worker threads.
 <br/>
 <source>
@@ -483,7 +483,7 @@ worker threads.
                                      mcastFrequency="1000"
                                       mcastDropTime="30000"/&gt;
                   &lt;Receiver 
-                                           className="org.apache.catalina.cluster.tcp.ReplicationListener"
+                                           className="org.apache.catalina.cluster.tcp.ClusterReceiverBase"
                                     tcpListenAddress="auto"
                                        tcpListenPort="9015"
                                   tcpSelectorTimeout="100"

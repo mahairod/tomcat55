@@ -130,6 +130,17 @@
   </subsection>
   <subsection name="Cluster">
     <changelog>
+      <update>
+        server.xml configuration change. The &lt;Receiver&gt; element
+        now contains the ClusterReceiverBase instead of ReplictionListener.
+        The ReplicationListener is separated out as a listener component, 
+        and how no clue about session replication.
+      </update>
+      <update>
+          Resurrected the &quot;suspect&quot; property so that the logs don't fill
+          up with errors when member disappears or a connection is lost.
+      </update>
+
       <add>
        <bug>35710</bug>: Add session replication for cross context session changes.
        The portlet api need this support, see refactored ReplicationValve. (pero)
