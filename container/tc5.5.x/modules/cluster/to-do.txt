@@ -1,6 +1,8 @@
 ==============================
 Next actions
 ==============================
+
+- Membership coordinator logic and membership view Id.
  
 - Implement primary/secondary replication logic (fhanik)
   Idea for implementation: Cookie stores info primary/backup node and hit counter.
