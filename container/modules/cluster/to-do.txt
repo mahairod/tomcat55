@@ -108,7 +108,7 @@ Next actions
 	Need help (pero)
 - implement fragmentation of large replication objects
   (note this will be done in the Group object, see top.)
-	Compress at message level 
+	Compress at message level - this will go away! instead there will be a GZip interceptor
 	Splitting Messages ala FarmDeployer war handling
 - add a message type to the message header.
     - filtering at receiver that drop message before build Object
