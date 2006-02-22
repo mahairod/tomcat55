@@ -18,7 +18,7 @@
 package org.apache.webapp.admin.context;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
@@ -790,17 +790,17 @@ public final class ContextForm extends ActionForm {
             
             // docBase cannot be null
             if ((docBase == null) || (docBase.length() < 1)) {
-                errors.add("docBase", new ActionError("error.docBase.required"));
+                errors.add("docBase", new ActionMessage("error.docBase.required"));
             }
             
             // if path is empty, it's root context
             // validate context starting with "/" only at the time of context creation.
             if ("Create".equalsIgnoreCase(adminAction) && !path.startsWith("/")) {
-                errors.add("path", new ActionError("error.path.prefix"));                
+                errors.add("path", new ActionMessage("error.path.prefix"));                
             }
                         
             //if ((workDir == null) || (workDir.length() < 1)) {
-            //    errors.add("workDir", new ActionError("error.workDir.required"));
+            //    errors.add("workDir", new ActionMessage("error.workDir.required"));
             //}
             
             // loader properties
@@ -812,7 +812,7 @@ public final class ContextForm extends ActionForm {
             numberCheck("mgrMaxSessions",  mgrMaxSessions, false, -1, 100);
             
             //if ((mgrSessionIDInit == null) || (mgrSessionIDInit.length() < 1)) {
-            //    errors.add("mgrSessionIDInit", new ActionError("error.mgrSessionIDInit.required"));
+            //    errors.add("mgrSessionIDInit", new ActionMessage("error.mgrSessionIDInit.required"));
             //}
         }
         
@@ -837,7 +837,7 @@ public final class ContextForm extends ActionForm {
         
         // Check for 'is required'
         if ((numText == null) || (numText.length() < 1)) {
-            errors.add(field, new ActionError("error."+field+".required"));
+            errors.add(field, new ActionMessage("error."+field+".required"));
         } else {
             
             // check for 'must be a number' in the 'valid range'
@@ -847,11 +847,11 @@ public final class ContextForm extends ActionForm {
                 if (rangeCheck) {
                     if ((num < min) || (num > max ))
                         errors.add( field,
-                        new ActionError("error."+ field +".range"));
+                        new ActionMessage("error."+ field +".range"));
                 }
             } catch (NumberFormatException e) {
                 errors.add(field,
-                new ActionError("error."+ field + ".format"));
+                new ActionMessage("error."+ field + ".format"));
             }
         }
     }

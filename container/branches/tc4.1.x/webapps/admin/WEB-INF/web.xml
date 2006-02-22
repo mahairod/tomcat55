@@ -43,30 +43,12 @@
       org.apache.webapp.admin.ApplicationServlet
     </servlet-class>
     <init-param>
-      <param-name>application</param-name>
-      <param-value>
-        org.apache.webapp.admin.ApplicationResources
-      </param-value>
-    </init-param>
-    <init-param>
       <param-name>config</param-name>
       <param-value>/WEB-INF/struts-config.xml</param-value>
     </init-param>
     <init-param>
-      <param-name>debug</param-name>
-      <param-value>0</param-value>
-    </init-param>
-    <init-param>
       <param-name>detail</param-name>
       <param-value>0</param-value>
-    </init-param>
-    <init-param>
-      <param-name>locale</param-name>
-      <param-value>true</param-value>
-    </init-param>
-    <init-param>
-      <param-name>nocache</param-name>
-      <param-value>true</param-value>
     </init-param>
     <init-param>
       <param-name>validate</param-name>

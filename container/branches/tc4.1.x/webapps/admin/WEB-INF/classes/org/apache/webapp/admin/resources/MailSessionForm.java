@@ -17,7 +17,7 @@
 package org.apache.webapp.admin.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
@@ -194,7 +194,7 @@ public final class MailSessionForm extends BaseForm {
             // mailSmtpHost is a required field
             if ((mailhost == null) || (mailhost.length() < 1)) {
                 errors.add("mailhost",
-                      new ActionError("resources.error.mailhost.required"));
+                      new ActionMessage("resources.error.mailhost.required"));
             }
          //}
         

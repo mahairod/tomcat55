@@ -30,8 +30,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -107,7 +107,7 @@ public final class SaveDefaultContextAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -163,9 +163,9 @@ public final class SaveDefaultContextAction extends Action {
             // Perform a "Create DefaultContext" transaction (if requested)
             if ("Create".equals(adminAction)) {
                 if (mBServer.isRegistered(oname)) {
-                    ActionErrors errors = new ActionErrors();
+                    ActionMessages errors = new ActionMessages();
                     errors.add("contextName",
-                               new ActionError("error.defaultcontextName.exists"));
+                               new ActionMessage("error.defaultcontextName.exists"));
                     saveErrors(request, errors);
                     return (new ActionForward(mapping.getInput()));
                 }

@@ -18,7 +18,7 @@ package org.apache.webapp.admin.users;
 
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
@@ -107,19 +107,19 @@ public final class RoleForm extends BaseForm {
             // rolename is a required field
             if ((rolename == null) || (rolename.length() < 1)) {
                 errors.add("rolename",
-                           new ActionError("users.error.rolename.required"));
+                           new ActionMessage("users.error.rolename.required"));
             }
 
             // Quotes not allowed in rolename
             if ((rolename != null) && (rolename.indexOf('"') >= 0)) {
                 errors.add("rolename",
-                           new ActionError("users.error.quotes"));
+                           new ActionMessage("users.error.quotes"));
             }
 
             // Quotes not allowed in description
             if ((description != null) && (description.indexOf('"') > 0)) {
                 errors.add("description",
-                           new ActionError("users.error.quotes"));
+                           new ActionMessage("users.error.quotes"));
             }
 
         //}

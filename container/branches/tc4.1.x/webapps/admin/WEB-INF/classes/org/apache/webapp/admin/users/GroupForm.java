@@ -19,7 +19,7 @@ package org.apache.webapp.admin.users;
 import java.net.URLDecoder;
 import javax.management.MBeanServer;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.webapp.admin.ApplicationServlet;
@@ -147,19 +147,19 @@ public final class GroupForm extends BaseForm {
             // groupname is a required field
             if ((groupname == null) || (groupname.length() < 1)) {
                 errors.add("groupname",
-                           new ActionError("users.error.groupname.required"));
+                           new ActionMessage("users.error.groupname.required"));
             }
 
             // Quotes not allowed in groupname
             if ((groupname != null) && (groupname.indexOf('"') >= 0)) {
                 errors.add("groupname",
-                           new ActionError("users.error.quotes"));
+                           new ActionMessage("users.error.quotes"));
             }
 
             // Quotes not allowed in description
             if ((description != null) && (description.indexOf('"') > 0)) {
                 errors.add("description",
-                           new ActionError("users.error.quotes"));
+                           new ActionMessage("users.error.quotes"));
             }
 
         //}

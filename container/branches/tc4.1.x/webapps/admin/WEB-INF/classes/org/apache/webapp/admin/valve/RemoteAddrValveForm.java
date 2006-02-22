@@ -19,7 +19,7 @@ package org.apache.webapp.admin.valve;
 import java.lang.IllegalArgumentException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.regexp.RE;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
@@ -159,7 +159,7 @@ public final class RemoteAddrValveForm extends ValveForm {
             if ((allow == null) || (allow.length() < 1)) {
                 if ((deny == null) || (deny.length() < 1)) {
                     errors.add("allow",
-                    new ActionError("error.allow.deny.required"));
+                    new ActionMessage("error.allow.deny.required"));
                 }
             }                
         }
@@ -167,14 +167,14 @@ public final class RemoteAddrValveForm extends ValveForm {
         try {
             allows = ValveUtil.precalculate(allow);            
         } catch (IllegalArgumentException e) {
-            errors.add("allow", new ActionError("error.syntax"));
+            errors.add("allow", new ActionMessage("error.syntax"));
             return errors;
         }
          
         try {   
             denies = ValveUtil.precalculate(deny);
         } catch (IllegalArgumentException e) {
-            errors.add("allow", new ActionError("error.syntax"));
+            errors.add("allow", new ActionMessage("error.syntax"));
             return errors;
         }
         
@@ -188,12 +188,12 @@ public final class RemoteAddrValveForm extends ValveForm {
             if (denies[i].match(ip)) {
                 if (allows.length < 1) {
                     errors.add("deny",
-                        new ActionError("error.denyIP"));
+                        new ActionMessage("error.denyIP"));
                 }
                 for (int j = 0; j < allows.length; j++) {
                     if (!allows[j].match(ip)) { 
                         errors.add("deny",
-                        new ActionError("error.denyIP"));
+                        new ActionMessage("error.denyIP"));
                     }
                 }
             }    
@@ -209,7 +209,7 @@ public final class RemoteAddrValveForm extends ValveForm {
             }
         }       
         if (!allowMatch) {
-            errors.add("allow", new ActionError("error.allowIP"));
+            errors.add("allow", new ActionMessage("error.allowIP"));
         }
         
         return errors;

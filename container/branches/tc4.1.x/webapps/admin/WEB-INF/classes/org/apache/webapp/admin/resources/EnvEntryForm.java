@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.webapp.admin.LabelValueBean;
@@ -263,31 +263,31 @@ public final class EnvEntryForm extends BaseForm {
         // name is a required field
         if ((name == null) || (name.length() < 1)) {
             errors.add("name",
-                    new ActionError("resources.error.name.required"));
+                    new ActionMessage("resources.error.name.required"));
         }
         
         // value is a required field
         if ((value == null) || (value.length() < 1)) {
             errors.add("value",
-                    new ActionError("resources.error.value.required"));
+                    new ActionMessage("resources.error.value.required"));
         }
         
         // Quotes not allowed in name
         if ((name != null) && (name.indexOf('"') >= 0)) {
             errors.add("name",
-                    new ActionError("users.error.quotes"));
+                    new ActionMessage("users.error.quotes"));
         }
         
         // Quotes not allowed in value
         if ((value != null) && (value.indexOf('"') > 0)) {
             errors.add("value",
-                    new ActionError("users.error.quotes"));
+                    new ActionMessage("users.error.quotes"));
         }
         
         // Quotes not allowed in description
         if ((description != null) && (description.indexOf('"') > 0)) {
             errors.add("description",
-                    new ActionError("users.error.quotes"));
+                    new ActionMessage("users.error.quotes"));
         }
         
         // if checked, override will be sent as a request parameter
@@ -295,7 +295,7 @@ public final class EnvEntryForm extends BaseForm {
         
         if (validateType(entryType, value)) {
             errors.add("value",
-                    new ActionError("resources.error.value.mismatch"));
+                    new ActionMessage("resources.error.value.mismatch"));
         }
 
         return (errors);
@@ -341,12 +341,12 @@ public final class EnvEntryForm extends BaseForm {
             } else {
                 // validation for other types not implemented yet
                errors.add("entryType",
-                       new ActionError("resources.error.entryType.notimpl"));
+                       new ActionMessage("resources.error.entryType.notimpl"));
             }
         } catch (ClassNotFoundException cnfe) {
             // entry type has an invalid entry
            errors.add("entryType",
-                       new ActionError("resources.error.entryType.invalid"));
+                       new ActionMessage("resources.error.entryType.invalid"));
          }        
         return mismatch;
     }

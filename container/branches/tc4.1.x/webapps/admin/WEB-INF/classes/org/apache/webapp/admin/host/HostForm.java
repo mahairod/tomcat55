@@ -18,7 +18,7 @@
 package org.apache.webapp.admin.host;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
@@ -447,12 +447,12 @@ public final class HostForm extends ActionForm {
             
             // hostName cannot be null
             if ((hostName== null) || (hostName.length() < 1)) {
-                errors.add("hostName", new ActionError("error.hostName.required"));
+                errors.add("hostName", new ActionMessage("error.hostName.required"));
             }
             
             // appBase cannot be null
             if ((appBase == null) || (appBase.length() < 1)) {
-                errors.add("appBase", new ActionError("error.appBase.required"));
+                errors.add("appBase", new ActionMessage("error.appBase.required"));
             }
             
         }        

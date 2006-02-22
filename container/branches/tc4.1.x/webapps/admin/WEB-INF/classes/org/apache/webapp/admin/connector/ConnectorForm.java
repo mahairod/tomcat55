@@ -18,7 +18,7 @@
 package org.apache.webapp.admin.connector;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
@@ -791,7 +791,7 @@ public final class ConnectorForm extends ActionForm {
                 try {
                     InetAddress.getByName(address);
                 } catch (Exception e) {
-                    errors.add("address", new ActionError("error.address.invalid"));
+                    errors.add("address", new ActionMessage("error.address.invalid"));
                 }
             } else {
                 address = " ";
@@ -817,7 +817,7 @@ public final class ConnectorForm extends ActionForm {
                 try {
                     InetAddress.getByName(proxyName);
                 } catch (Exception e) {
-                    errors.add("proxyName", new ActionError("error.proxyName.invalid"));
+                    errors.add("proxyName", new ActionMessage("error.proxyName.invalid"));
                 }
             }   
             
@@ -847,7 +847,7 @@ public final class ConnectorForm extends ActionForm {
         
         /* Check for 'is required' */
         if ((numText == null) || (numText.length() < 1)) {
-            errors.add(field, new ActionError("error."+field+".required"));
+            errors.add(field, new ActionMessage("error."+field+".required"));
         } else {
             
         /*check for 'must be a number' in the 'valid range'*/
@@ -857,11 +857,11 @@ public final class ConnectorForm extends ActionForm {
                 if (rangeCheck) {
                     if ((num < min) || (num > max ))
                         errors.add( field,
-                        new ActionError("error."+ field +".range"));
+                        new ActionMessage("error."+ field +".range"));
                 }
             } catch (NumberFormatException e) {
                 errors.add(field,
-                new ActionError("error."+ field + ".format"));
+                new ActionMessage("error."+ field + ".format"));
             }
         }
     }

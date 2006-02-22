@@ -17,7 +17,7 @@
 package org.apache.webapp.admin.realm;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import java.util.List;
@@ -510,7 +510,7 @@ public final class JNDIRealmForm extends RealmForm {
 
             if ((connectionURL == null) || (connectionURL.length() < 1)) {
                 errors.add("connectionURL",
-                new ActionError("error.connURL.required"));
+                new ActionMessage("error.connURL.required"));
             }
 
             // Either userPattern or userSearch should be specified not both
@@ -526,67 +526,67 @@ public final class JNDIRealmForm extends RealmForm {
 
             if (isUserPatternSpecified && isUserSearchSpecified) {
                 errors.add("userPattern" ,
-                new ActionError("error.userPattern.userSearch.defined"));
+                new ActionMessage("error.userPattern.userSearch.defined"));
             }
 
             /*if ((digest == null) || (digest.length() < 1)) {
                 errors.add("digest",
-                new ActionError("error.digest.required"));
+                new ActionMessage("error.digest.required"));
             } */
 
             /*if ((roleName == null) || (roleName.length() < 1)) {
                 errors.add("roleName",
-                new ActionError("error.roleName.required"));
+                new ActionMessage("error.roleName.required"));
             }
 
             if ((userRoleName == null) || (userRoleName.length() < 1)) {
                 errors.add("userRoleName",
-                new ActionError("error.userRoleName.required"));
+                new ActionMessage("error.userRoleName.required"));
             }
 
             if ((rolePattern == null) || (rolePattern.length() < 1)) {
                 errors.add("rolePattern",
-                new ActionError("error.rolePattern.required"));
+                new ActionMessage("error.rolePattern.required"));
             }
 
             if ((roleBase == null) || (roleBase.length() < 1)) {
                 errors.add("roleBase",
-                new ActionError("error.roleBase.required"));
+                new ActionMessage("error.roleBase.required"));
             }
 
             if ((userBase == null) || (userBase.length() < 1)) {
                 errors.add("userBase",
-                new ActionError("error.userBase.required"));
+                new ActionMessage("error.userBase.required"));
             }
 
             if ((userPassword == null) || (userPassword.length() < 1)) {
                 errors.add("userPassword",
-                new ActionError("error.userPassword.required"));
+                new ActionMessage("error.userPassword.required"));
             }
 
             if ((userPattern == null) || (userPattern.length() < 1)) {
                 errors.add("userPattern",
-                new ActionError("error.userPattern.required"));
+                new ActionMessage("error.userPattern.required"));
             }
 
             if ((userSearch == null) || (userSearch.length() < 1)) {
                 errors.add("userSearch",
-                new ActionError("error.userSearch.required"));
+                new ActionMessage("error.userSearch.required"));
             }
 
             if ((connectionName == null) || (connectionName.length() < 1)) {
                 errors.add("connectionName",
-                new ActionError("error.connName.required"));
+                new ActionMessage("error.connName.required"));
             }
 
             if ((connectionPassword == null) || (connectionPassword.length() < 1)) {
                 errors.add("connectionPassword",
-                new ActionError("error.connPassword.required"));
+                new ActionMessage("error.connPassword.required"));
             }
 
             if ((contextFactory == null) || (contextFactory.length() < 1)) {
                 errors.add("contextFactory",
-                new ActionError("error.contextFactory.required"));
+                new ActionMessage("error.contextFactory.required"));
             } */
         }
 

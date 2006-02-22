@@ -28,8 +28,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -88,7 +88,7 @@ public final class SaveAliasAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
@@ -124,9 +124,9 @@ public final class SaveAliasAction extends Action {
         // validate if this alias already exists.
         List aliasVals = aform.getAliasVals();
         if (aliasVals.contains(values[0])) {
-           ActionErrors errors = new ActionErrors();
+           ActionMessages errors = new ActionMessages();
             errors.add("aliasName",
-                       new ActionError("error.aliasName.exists"));
+                       new ActionMessage("error.aliasName.exists"));
             saveErrors(request, errors);
             return (new ActionForward(mapping.getInput()));
         }

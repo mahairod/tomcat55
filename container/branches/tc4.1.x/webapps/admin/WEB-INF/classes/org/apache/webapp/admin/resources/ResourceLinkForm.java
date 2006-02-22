@@ -17,7 +17,7 @@
 package org.apache.webapp.admin.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
@@ -194,19 +194,19 @@ public final class ResourceLinkForm extends BaseForm {
             // name is a required field
             if ((name == null) || (name.length() < 1)) {
                 errors.add("name",
-                           new ActionError("resources.error.name.required"));
+                           new ActionMessage("resources.error.name.required"));
             }
 
             // global is a required field
             if (( global == null) || (global.length() < 1)) {
                 errors.add("global",
-                           new ActionError("resources.error.global.required"));
+                           new ActionMessage("resources.error.global.required"));
             }
             
             // type is a required field
             if ((type == null) || (type.length() < 1)) {
                 errors.add("type",
-                           new ActionError("resources.error.type.required"));
+                           new ActionMessage("resources.error.type.required"));
             }
             
          //}

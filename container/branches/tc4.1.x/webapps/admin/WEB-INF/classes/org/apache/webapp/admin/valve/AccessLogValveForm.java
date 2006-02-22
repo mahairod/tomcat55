@@ -17,7 +17,7 @@
 package org.apache.webapp.admin.valve;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import java.util.List;
@@ -331,7 +331,7 @@ public final class AccessLogValveForm extends ValveForm {
 
             if ((pattern == null) || (pattern.length() < 1)) {
                 errors.add("pattern",
-                new ActionError("error.pattern.required"));
+                new ActionMessage("error.pattern.required"));
             }         
         }
                  

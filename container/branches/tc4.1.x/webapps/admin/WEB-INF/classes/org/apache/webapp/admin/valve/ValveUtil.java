@@ -112,7 +112,7 @@ public final class ValveUtil {
             if (mBServer.isRegistered(oname)) {
                 ActionErrors errors = new ActionErrors();
                 errors.add("valveName",
-                    new ActionError("error.valveName.exists"));
+                    new ActionMessage("error.valveName.exists"));
                 String message =
                     resources.getMessage("error.valveName.exists", sb.toString());
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);                

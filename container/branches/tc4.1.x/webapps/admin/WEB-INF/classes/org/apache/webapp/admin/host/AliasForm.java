@@ -18,7 +18,7 @@
 package org.apache.webapp.admin.host;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
@@ -156,7 +156,7 @@ public final class AliasForm extends ActionForm {
             
             // hostName cannot be null
             if ((aliasName== null) || (aliasName.length() < 1)) {
-                errors.add("aliasName", new ActionError("error.aliasName.required"));
+                errors.add("aliasName", new ActionMessage("error.aliasName.required"));
             }
                         
         }        

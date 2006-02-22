@@ -17,7 +17,7 @@
 package org.apache.webapp.admin.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
@@ -293,25 +293,25 @@ public final class DataSourceForm extends BaseForm {
         // url is a required field
         if ((url == null) || (url.length() < 1)) {
             errors.add("url",
-                    new ActionError("resources.error.url.required"));
+                    new ActionMessage("resources.error.url.required"));
         }
         
         // jndiName is a required field
         if (( jndiName == null) || (jndiName.length() < 1)) {
             errors.add("jndiName",
-                    new ActionError("resources.error.jndiName.required"));
+                    new ActionMessage("resources.error.jndiName.required"));
         }
         
         // driverClass is a required field
         if ((driverClass == null) || (driverClass.length() < 1)) {
             errors.add("driverClass",
-                    new ActionError("resources.error.driverClass.required"));
+                    new ActionMessage("resources.error.driverClass.required"));
         }
         
         // username is a required field
         if ((username == null) || (username.length() < 1)) {
             errors.add("username",
-                    new ActionError("users.error.username.required"));
+                    new ActionMessage("users.error.username.required"));
         }
             
             
@@ -323,13 +323,13 @@ public final class DataSourceForm extends BaseForm {
         // Quotes not allowed in username
         if ((username != null) && (username.indexOf('"') >= 0)) {
             errors.add("username",
-                    new ActionError("users.error.quotes"));
+                    new ActionMessage("users.error.quotes"));
         }
         
         // Quotes not allowed in password
         if ((password != null) && (password.indexOf('"') > 0)) {
             errors.add("password",
-                    new ActionError("users.error.quotes"));
+                    new ActionMessage("users.error.quotes"));
         }
 
         return (errors);
@@ -353,7 +353,7 @@ public final class DataSourceForm extends BaseForm {
         
         // Check for 'is required'
         if ((numText == null) || (numText.length() < 1)) {
-            errors.add(field, new ActionError("resources.error."+field+".required"));
+            errors.add(field, new ActionMessage("resources.error."+field+".required"));
         } else {
             
             // check for 'must be a number' in the 'valid range'
@@ -363,11 +363,11 @@ public final class DataSourceForm extends BaseForm {
                 if (rangeCheck) {
                     if ((num < min) || (num > max ))
                         errors.add( field,
-                        new ActionError("resources.error."+ field +".range"));
+                        new ActionMessage("resources.error."+ field +".range"));
                 }
             } catch (NumberFormatException e) {
                 errors.add(field,
-                new ActionError("resources.integer.error"));
+                new ActionMessage("resources.integer.error"));
             }
         }
     }

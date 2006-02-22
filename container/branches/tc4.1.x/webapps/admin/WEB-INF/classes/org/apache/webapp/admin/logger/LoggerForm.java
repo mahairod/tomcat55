@@ -17,7 +17,7 @@
 package org.apache.webapp.admin.logger;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
@@ -448,17 +448,17 @@ public final class LoggerForm extends ActionForm {
              
             if ((directory == null) || (directory.length() < 1)) {
                 errors.add("directory",
-                new ActionError("error.directory.required"));
+                new ActionMessage("error.directory.required"));
             }
                          
             if ((prefix == null) || (prefix.length() < 1)) {
                 errors.add("prefix",
-                new ActionError("error.prefix.required"));
+                new ActionMessage("error.prefix.required"));
             }
                          
             if ((suffix == null) || (suffix.length() < 1)) {
                 errors.add("suffix",
-                new ActionError("error.suffix.required"));
+                new ActionMessage("error.suffix.required"));
             }            
         }
         

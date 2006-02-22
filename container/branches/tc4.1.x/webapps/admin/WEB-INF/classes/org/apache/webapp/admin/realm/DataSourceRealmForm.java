@@ -19,7 +19,7 @@ package org.apache.webapp.admin.realm;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
@@ -321,33 +321,33 @@ public final class DataSourceRealmForm extends RealmForm {
         ActionErrors errors = new ActionErrors();
 
         if ((dataSourceName == null) || (dataSourceName.length() < 1)) {
-            errors.add("dataSourceName", new ActionError(
+            errors.add("dataSourceName", new ActionMessage(
                     "error.dataSourceName.required"));
         }
 
         if ((roleNameCol == null) || (roleNameCol.length() < 1)) {
-            errors.add("roleNameCol", new ActionError(
+            errors.add("roleNameCol", new ActionMessage(
                     "error.roleNameCol.required"));
         }
 
         if ((userCredCol == null) || (userCredCol.length() < 1)) {
-            errors.add("userCredCol", new ActionError(
+            errors.add("userCredCol", new ActionMessage(
                     "error.userCredCol.required"));
         }
 
         if ((userNameCol == null) || (userNameCol.length() < 1)) {
-            errors.add("userNameCol", new ActionError(
+            errors.add("userNameCol", new ActionMessage(
                     "error.userNameCol.required"));
         }
 
         if ((userRoleTable == null) || (userRoleTable.length() < 1)) {
-            errors.add("userRoleTable", new ActionError(
+            errors.add("userRoleTable", new ActionMessage(
                     "error.userRoleTable.required"));
         }
 
         if ((userTable == null) || (userTable.length() < 1)) {
             errors
-                    .add("userTable", new ActionError(
+                    .add("userTable", new ActionMessage(
                             "error.userTable.required"));
         }
 

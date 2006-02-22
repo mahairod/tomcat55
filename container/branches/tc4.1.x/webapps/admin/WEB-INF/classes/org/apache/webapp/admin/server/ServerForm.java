@@ -18,7 +18,7 @@ package org.apache.webapp.admin.server;
 
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
@@ -189,16 +189,16 @@ public final class ServerForm extends ActionForm {
             
             if ((portNumberText == null) || (portNumberText.length() < 1)) {
                 errors.add("portNumberText",
-                new ActionError("error.portNumber.required"));
+                new ActionMessage("error.portNumber.required"));
             } else {
                 try {
                     int port = Integer.parseInt(portNumberText);
                     if ((port <= 0) || (port >65535 ))
                         errors.add("portNumberText", 
-                            new ActionError("error.portNumber.range"));
+                            new ActionMessage("error.portNumber.range"));
                 } catch (NumberFormatException e) {
                     errors.add("portNumberText", 
-                        new ActionError("error.portNumber.format"));
+                        new ActionMessage("error.portNumber.format"));
                 }
             }
         
@@ -206,7 +206,7 @@ public final class ServerForm extends ActionForm {
             
             if ((shutdownText == null) || (shutdownText.length() < 7))
                 errors.add("shutdownText",
-                new ActionError("error.shutdownText.length"));
+                new ActionMessage("error.shutdownText.length"));
             
         }
         

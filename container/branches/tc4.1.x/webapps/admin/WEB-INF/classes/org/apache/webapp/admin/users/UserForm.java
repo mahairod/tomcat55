@@ -20,7 +20,7 @@ package org.apache.webapp.admin.users;
 import java.net.URLDecoder;
 import javax.management.MBeanServer;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.webapp.admin.ApplicationServlet;
@@ -183,31 +183,31 @@ public final class UserForm extends BaseForm {
             // username is a required field
             if ((username == null) || (username.length() < 1)) {
                 errors.add("username",
-                           new ActionError("users.error.username.required"));
+                           new ActionMessage("users.error.username.required"));
             }
 
             // uassword is a required field
             if ((password == null) || (username.length() < 1)) {
                 errors.add("password",
-                           new ActionError("users.error.password.required"));
+                           new ActionMessage("users.error.password.required"));
             }
 
             // Quotes not allowed in username
             if ((username != null) && (username.indexOf('"') >= 0)) {
                 errors.add("username",
-                           new ActionError("users.error.quotes"));
+                           new ActionMessage("users.error.quotes"));
             }
 
             // Quotes not allowed in password
             if ((password != null) && (password.indexOf('"') > 0)) {
                 errors.add("description",
-                           new ActionError("users.error.quotes"));
+                           new ActionMessage("users.error.quotes"));
             }
 
             // Quotes not allowed in fullName
             if ((fullName != null) && (fullName.indexOf('"') > 0)) {
                 errors.add("fullName",
-                           new ActionError("users.error.quotes"));
+                           new ActionMessage("users.error.quotes"));
             }
 
         //}

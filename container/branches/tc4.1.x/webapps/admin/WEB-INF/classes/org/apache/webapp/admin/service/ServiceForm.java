@@ -18,7 +18,7 @@
 package org.apache.webapp.admin.service;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
@@ -369,12 +369,12 @@ public final class ServiceForm extends ActionForm {
 
             if ((serviceName == null) || (serviceName.length() < 1)) {
                 errors.add("serviceName",
-                           new ActionError("error.serviceName.required"));
+                           new ActionMessage("error.serviceName.required"));
             }
             
             if ((engineName == null) || (engineName.length() < 1)) {
                 errors.add("engineName",
-                           new ActionError("error.engineName.required"));
+                           new ActionMessage("error.engineName.required"));
             }
 
         }

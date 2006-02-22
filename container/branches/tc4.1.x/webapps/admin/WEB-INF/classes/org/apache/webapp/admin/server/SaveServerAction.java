@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -75,7 +75,7 @@ public final class SaveServerAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
+    public ActionForward execute(ActionMapping mapping,
     ActionForm form,
     HttpServletRequest request,
     HttpServletResponse response)
@@ -96,7 +96,7 @@ public final class SaveServerAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
-        ActionErrors errors = new ActionErrors();
+        ActionMessages errors = new ActionMessages();
         
         // Report any errors we have discovered back to the original form
         if (!errors.isEmpty()) {

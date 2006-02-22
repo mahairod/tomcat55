@@ -17,7 +17,7 @@
 package org.apache.webapp.admin.realm;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
@@ -114,7 +114,7 @@ public final class MemoryRealmForm extends RealmForm {
         if (submit != null) {
             if ((pathName == null) || (pathName.length()<1)) {
                 errors.add("pathName",
-                new ActionError("error.pathName.required"));
+                new ActionMessage("error.pathName.required"));
             }
         }        
         return errors;

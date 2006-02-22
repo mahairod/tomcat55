@@ -17,7 +17,7 @@
 package org.apache.webapp.admin.realm;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
@@ -115,7 +115,7 @@ public final class UserDatabaseRealmForm extends RealmForm {
         if (submit != null) {
             if ((resource == null) || (resource.length() < 1)) {
                 errors.add("resource",
-                new ActionError("error.resource.required"));
+                new ActionMessage("error.resource.required"));
             }
         }
         return errors;

@@ -17,7 +17,7 @@
 package org.apache.webapp.admin.realm;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
@@ -356,47 +356,47 @@ public final class JDBCRealmForm extends RealmForm {
             
             if ((driver == null) || (driver.length() < 1)) {
                 errors.add("driver",
-                new ActionError("error.driver.required"));
+                new ActionMessage("error.driver.required"));
             }
          
             if ((roleNameCol == null) || (roleNameCol.length() < 1)) {
                 errors.add("roleNameCol",
-                new ActionError("error.roleNameCol.required"));
+                new ActionMessage("error.roleNameCol.required"));
             }
 
             if ((userNameCol == null) || (userNameCol.length() < 1)) {
                 errors.add("userNameCol",
-                new ActionError("error.userNameCol.required"));
+                new ActionMessage("error.userNameCol.required"));
             }
 
              if ((passwordCol == null) || (passwordCol.length() < 1)) {
                 errors.add("passwordCol",
-                new ActionError("error.passwordCol.required"));
+                new ActionMessage("error.passwordCol.required"));
             }
             
             if ((userTable == null) || (userTable.length() < 1)) {
                 errors.add("userTable",
-                new ActionError("error.userTable.required"));
+                new ActionMessage("error.userTable.required"));
             }
             
             if ((roleTable == null) || (roleTable.length() < 1)) {
                 errors.add("roleTable",
-                new ActionError("error.roleTable.required"));
+                new ActionMessage("error.roleTable.required"));
             }
             
             if ((connectionName == null) || (connectionName.length() < 1)) {
                 errors.add("connectionName",
-                new ActionError("error.connectionName.required"));
+                new ActionMessage("error.connectionName.required"));
             }
             
             if ((connectionPassword == null) || (connectionPassword.length() < 1)) {
                 errors.add("connectionPassword",
-                new ActionError("error.connectionPassword.required"));
+                new ActionMessage("error.connectionPassword.required"));
             }
             
              if ((connectionURL == null) || (connectionURL.length() < 1)) {
                 errors.add("connectionURL",
-                new ActionError("error.connectionURL.required"));
+                new ActionMessage("error.connectionURL.required"));
             }
         }
                  

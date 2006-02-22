@@ -29,8 +29,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -98,7 +98,7 @@ public final class SaveDataSourceRealmAction extends Action {
      * @exception ServletException
      *                if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping, ActionForm form,
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
@@ -158,8 +158,8 @@ public final class SaveDataSourceRealmAction extends Action {
                 // Ensure that the requested user database name is unique
                 ObjectName oname = new ObjectName(objectName);
                 if (mBServer.isRegistered(oname)) {
-                    ActionErrors errors = new ActionErrors();
-                    errors.add("realmName", new ActionError(
+                    ActionMessages errors = new ActionMessages();
+                    errors.add("realmName", new ActionMessage(
                             "error.realmName.exists"));
                     saveErrors(request, errors);
                     return (new ActionForward(mapping.getInput()));

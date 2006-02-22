@@ -17,7 +17,7 @@
 package org.apache.webapp.admin.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
@@ -146,31 +146,31 @@ public final class UserDatabaseForm extends BaseForm {
             // name is a required field
             if ((name == null) || (name.length() < 1)) {
                 errors.add("name",
-                           new ActionError("resources.error.name.required"));
+                           new ActionMessage("resources.error.name.required"));
             }
 
             // path is a required field
             if ((path == null) || (path.length() < 1)) {
                 errors.add("path",
-                           new ActionError("resources.error.path.required"));
+                           new ActionMessage("resources.error.path.required"));
             }
 
             // Quotes not allowed in name
             if ((name != null) && (name.indexOf('"') >= 0)) {
                 errors.add("name",
-                           new ActionError("users.error.quotes"));
+                           new ActionMessage("users.error.quotes"));
             }
 
             // Quotes not allowed in path
             if ((path != null) && (path.indexOf('"') > 0)) {
                 errors.add("path",
-                           new ActionError("users.error.quotes"));
+                           new ActionMessage("users.error.quotes"));
             }
 
             // Quotes not allowed in description
             if ((description != null) && (description.indexOf('"') > 0)) {
                 errors.add("description",
-                           new ActionError("users.error.quotes"));
+                           new ActionMessage("users.error.quotes"));
             }
         //}
         return (errors);

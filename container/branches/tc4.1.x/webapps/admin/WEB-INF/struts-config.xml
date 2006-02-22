@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!DOCTYPE struts-config PUBLIC
-          "-//Apache Software Foundation//DTD Struts Configuration 1.0//EN"
-          "http://jakarta.apache.org/struts/dtds/struts-config_1_0.dtd"> 
-
+          "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+          "http://struts.apache.org/dtds/struts-config_1_2.dtd">
 
 <struts-config>
-
 
   <!-- ========== Data Source Configuration =============================== -->
 
@@ -1047,5 +1045,10 @@
 
 
   </action-mappings>  
+
+  <!-- ========== Controller Configuration ================================ -->
+  <controller locale="true" nocache="true"/>
+  
+  <message-resources parameter="org.apache.webapp.admin.ApplicationResources"/>
     
 </struts-config>
