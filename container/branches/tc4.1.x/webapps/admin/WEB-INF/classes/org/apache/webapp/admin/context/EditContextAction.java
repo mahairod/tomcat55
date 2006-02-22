@@ -206,7 +206,7 @@ public class EditContextAction extends Action {
             contextFm.setOverride
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
             attribute = "privileged";
-            contextFm.setOverride
+            contextFm.setPrivileged
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
             attribute = "antiJARLocking";
             contextFm.setAntiJarLocking
