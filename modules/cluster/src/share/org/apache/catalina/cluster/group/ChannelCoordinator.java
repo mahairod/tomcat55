@@ -22,6 +22,7 @@ import org.apache.catalina.cluster.ChannelException;
 import org.apache.catalina.cluster.ClusterSender;
 import org.apache.catalina.cluster.ClusterReceiver;
 import org.apache.catalina.cluster.ClusterChannel;
+import java.io.IOException;
 
 
 /**
@@ -36,8 +37,19 @@ public class ChannelCoordinator extends ChannelInterceptorBase {
     private ClusterSender clusterSender;
     private MembershipService membershipService;
 
+    public ChannelCoordinator() {
+        
+    }
     
-
+    public ChannelCoordinator(ClusterReceiver receiver,
+                              ClusterSender sender,
+                              MembershipService service) {
+        this();
+        this.setClusterReceiver(receiver);
+        this.setClusterSender(sender);
+        this.setMembershipService(service);
+    }
+    
     /**
      * Send a message to one or more members in the cluster
      * @param destination Member[] - the destinations, null or zero length means all
@@ -45,9 +57,12 @@ public class ChannelCoordinator extends ChannelInterceptorBase {
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any.
      */
-    public ClusterMessage[] sendMessage(Member[] destination, ClusterMessage msg, int options) {
-        throw new UnsupportedOperationException();
-        //implement sending and receiving logic.
+    public ClusterMessage[] sendMessage(Member[] destination, ClusterMessage msg, int options) throws IOException {
+        if ( destination == null ) destination = membershipService.getMembers();
+        for ( int i=0; i<destination.length; i++ ) {
+            clusterSender.sendMessage(msg,destination[i]);
+        }
+        return null;
     }
 
 
@@ -97,6 +112,17 @@ public class ChannelCoordinator extends ChannelInterceptorBase {
         }
 
     }
+    
+    public void memberAdded(Member member){
+        if ( clusterSender!=null ) clusterSender.add(member);
+        super.memberAdded(member);
+    }
+    
+    public void memberDisappeared(Member member){
+        if ( clusterSender!=null ) clusterSender.remove(member);
+        super.memberDisappeared(member);
+    }
+
 
     public ClusterReceiver getClusterReceiver() {
         return clusterReceiver;
@@ -111,7 +137,13 @@ public class ChannelCoordinator extends ChannelInterceptorBase {
     }
 
     public void setClusterReceiver(ClusterReceiver clusterReceiver) {
-        this.clusterReceiver = clusterReceiver;
+        if ( clusterReceiver != null ) {
+            this.clusterReceiver = clusterReceiver;
+            this.clusterReceiver.setMessageListener(this);
+        } else {
+            if  (this.clusterReceiver!=null ) this.clusterReceiver.setMessageListener(null);
+            this.clusterReceiver = null;
+        }
     }
 
     public void setClusterSender(ClusterSender clusterSender) {

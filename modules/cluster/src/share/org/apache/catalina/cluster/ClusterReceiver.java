@@ -59,5 +59,8 @@ public interface ClusterReceiver {
      * @return The port
      */
     public int getPort();
+    
+    public void setMessageListener(MessageListener listener);
+    public MessageListener getMessageListener();
 
 }

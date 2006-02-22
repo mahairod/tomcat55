@@ -71,7 +71,17 @@ public class GroupChannel implements ClusterChannel {
      * @return ClusterMessage[] - the replies from the members, if any.
      */
     public ClusterMessage[] send(Member[] destination, ClusterMessage msg, int options) throws ChannelException {
-        throw new UnsupportedOperationException("Method send not yet implemented.");
+        if ( msg == null ) return null;
+        msg.setAddress(getMembershipService().getLocalMember());
+        msg.setCompress(msg.FLAG_ALLOWED);
+        msg.setTimestamp(System.currentTimeMillis());
+        msg.setResend(msg.FLAG_FORBIDDEN);
+        try {
+            if (interceptors != null)return interceptors.sendMessage(destination, msg, options);
+            else return this.coordinator.sendMessage(destination, msg, options);
+        }catch ( Exception x ) {
+            throw new ChannelException(x);
+        }
     }
     
     /**
