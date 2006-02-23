@@ -20,11 +20,10 @@ import java.util.Map;
 
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.*;
 
 /**
  * Receive replicated SessionMessage form other cluster node.
- * @author Filip Hanik
+ * 
  * @author Peter Rossbach
  * @version $Revision$ $Date$
  */

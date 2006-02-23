@@ -23,8 +23,6 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Valve;
 import org.apache.commons.logging.Log;
-import org.apache.catalina.cluster.tcp.ClusterReceiverBase;
-
 
 /**
  * A <b>CatalinaCluster</b> interface allows to plug in and out the 
@@ -112,9 +110,9 @@ public interface CatalinaCluster extends Cluster {
     
     public ClusterSender getClusterSender();
     
-    public void setClusterReceiver(ClusterReceiverBase receiver);
+    public void setClusterReceiver(ClusterReceiver receiver);
     
-    public ClusterReceiverBase getClusterReceiver();
+    public ClusterReceiver getClusterReceiver();
     
     public void setMembershipService(MembershipService service);
     
@@ -122,9 +120,9 @@ public interface CatalinaCluster extends Cluster {
     
     public void addValve(Valve valve);
     
-    public void addClusterListener(ClusterListener listener);
+    public void addClusterListener(MessageListener listener);
     
-    public void removeClusterListener(ClusterListener listener);
+    public void removeClusterListener(MessageListener listener);
     
     public void setClusterDeployer(ClusterDeployer deployer);
     

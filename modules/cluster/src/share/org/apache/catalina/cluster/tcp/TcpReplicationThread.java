@@ -140,7 +140,6 @@ public class TcpReplicationThread extends WorkerThread {
         if (log.isTraceEnabled()) {
             log.trace("sending " + pkgcnt + " ack packages to " + channel.socket().getLocalPort() );
         }
-
         
         if (sendAck) {
             while ( pkgcnt > 0 ) {

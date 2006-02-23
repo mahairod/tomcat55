@@ -25,14 +25,13 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.cluster.CatalinaCluster;
-
+import org.apache.catalina.cluster.MessageListener;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
-import org.apache.catalina.cluster.*;
 
 /**
  * Register new JvmRouteSessionIDBinderListener to receive Session ID changes.
@@ -71,7 +70,7 @@ public class JvmRouteSessionIDBinderLifecycleListener implements
 
     private Registry registry = null;
 
-    private ClusterListener sessionMoverListener;
+    private MessageListener sessionMoverListener;
 
     /*
      * start and stop cluster
