@@ -500,7 +500,7 @@ SSL communications, and what to do about them.</p>
     keystore file.  To fix this, you can either go back and
     <a href="#Prepare the Certificate Keystore">recreate the keystore
     file</a>, or you can add or update the <code>keystorePass</code>
-    attribute on the <code>&lt;Factory&gt;</code> element in the
+    attribute on the <code>&lt;Connector&gt;</code> element in the
     <a href="#Edit the Tomcat Configuration File">Tomcat configuration
     file</a>.  <strong>REMINDER</strong> - Passwords are case sensitive!</p>
     </blockquote></li>
