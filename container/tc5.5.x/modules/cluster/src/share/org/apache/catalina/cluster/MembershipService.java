@@ -28,10 +28,7 @@ import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
 
 
 public interface MembershipService {
-    
-    public static final int MBR_RX = 1;
-    public static final int MBR_TX = 2;
-    
+
     /**
      * Sets the properties for the membership service. This must be called before
      * the <code>start()</code> method is called.
@@ -102,7 +99,7 @@ public interface MembershipService {
      * If you call this method twice, the last listener will be used.
      * @param listener The listener
      */
-    public void setMembershipListener(MembershipListener listener);
+    public void addMembershipListener(MembershipListener listener);
     
     /**
      * removes the membership listener.

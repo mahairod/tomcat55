@@ -50,7 +50,7 @@ import org.apache.catalina.cluster.ClusterValve;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MembershipService;
-import org.apache.catalina.cluster.ClusterListener;
+import org.apache.catalina.cluster.MessageListener;
 import org.apache.catalina.cluster.mcast.McastService;
 import org.apache.catalina.cluster.session.ClusterSessionListener;
 import org.apache.catalina.cluster.session.DeltaManager;
@@ -175,7 +175,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     /**
      * Receiver to register call back with
      */
-    private ClusterReceiverBase clusterReceiver;
+    private org.apache.catalina.cluster.ClusterReceiver clusterReceiver;
 
     private List valves = new ArrayList();
 
@@ -319,11 +319,11 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         this.clusterSender = clusterSender;
     }
 
-    public ClusterReceiverBase getClusterReceiver() {
+    public ClusterReceiver getClusterReceiver() {
         return clusterReceiver;
     }
 
-    public void setClusterReceiver(ClusterReceiverBase clusterReceiver) {
+    public void setClusterReceiver(ClusterReceiver clusterReceiver) {
         this.clusterReceiver = clusterReceiver;
     }
 
@@ -357,13 +357,14 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * Get the cluster listeners associated with this cluster. If this Array has
      * no listeners registered, a zero-length array is returned.
      */
-    public ClusterListener[] findClusterListeners() {
+    public MessageListener[] findClusterListeners() {
         if (clusterListeners.size() > 0) {
-            ClusterListener[] listener = new ClusterListener[clusterListeners.size()];
+            MessageListener[] listener = new MessageListener[clusterListeners
+                    .size()];
             clusterListeners.toArray(listener);
             return listener;
         } else
-            return new ClusterListener[0];
+            return new MessageListener[0];
 
     }
 
@@ -372,7 +373,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * 
      * @see org.apache.catalina.cluster.CatalinaCluster#addClusterListener(org.apache.catalina.cluster.MessageListener)
      */
-    public void addClusterListener(ClusterListener listener) {
+    public void addClusterListener(MessageListener listener) {
         if (listener != null && !clusterListeners.contains(listener)) {
             clusterListeners.add(listener);
             listener.setCluster(this);
@@ -384,7 +385,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * 
      * @see org.apache.catalina.cluster.CatalinaCluster#removeClusterListener(org.apache.catalina.cluster.MessageListener)
      */
-    public void removeClusterListener(ClusterListener listener) {
+    public void removeClusterListener(MessageListener listener) {
         if (listener != null) {
             clusterListeners.remove(listener);
             listener.setCluster(null);
@@ -761,8 +762,9 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
             }
             
             if(membershipService != null && clusterReceiver != null) {
-                membershipService.setLocalMemberProperties(clusterReceiver.getHost(), clusterReceiver.getPort());
-                membershipService.setMembershipListener(this);
+                membershipService.setLocalMemberProperties(clusterReceiver
+                    .getHost(), clusterReceiver.getPort());
+                membershipService.addMembershipListener(this);
                 membershipService.setCatalinaCluster(this);
                 membershipService.start();
                 // start the deployer.
@@ -1003,7 +1005,29 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         clusterLog = null ;
    }
 
-    
+    /**
+     * send message to all cluster members same cluster domain
+     * 
+     * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage)
+     */
+    public void sendClusterDomain(ClusterMessage msg) {
+        long start = 0;
+        if (doClusterLog)
+            start = System.currentTimeMillis();
+        try {
+            msg.setAddress(membershipService.getLocalMember());
+            clusterSender.sendMessageClusterDomain(msg);
+        } catch (Exception x) {
+            if (notifyLifecycleListenerOnFailure) {
+                // Notify our interested LifecycleListeners
+                lifecycle.fireLifecycleEvent(SEND_MESSAGE_FAILURE_EVENT,
+                        new SendMessageData(msg, null, x));
+            }
+            log.error("Unable to send message through cluster sender.", x);
+        }
+        if (doClusterLog)
+            logSendMessage(msg, start, null);
+    } 
 
 
     /**
@@ -1033,31 +1057,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
             log.error("sendToMember: member " + dest + " not found!");
         }        
     }
-    
-    /**
-     * send message to all cluster members same cluster domain
-     * 
-     * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage)
-     */
-    public void sendClusterDomain(ClusterMessage msg) {
-        long start = 0;
-        if (doClusterLog)
-            start = System.currentTimeMillis();
-        try {
-            msg.setAddress(membershipService.getLocalMember());
-            clusterSender.sendMessageClusterDomain(msg);
-        } catch (Exception x) {
-            if (notifyLifecycleListenerOnFailure) {
-                // Notify our interested LifecycleListeners
-                lifecycle.fireLifecycleEvent(SEND_MESSAGE_FAILURE_EVENT,
-                        new SendMessageData(msg, null, x));
-            }
-            log.error("Unable to send message through cluster sender.", x);
-        }
-        if (doClusterLog)
-            logSendMessage(msg, start, null);
-    } 
-
     
     /**
      * send a cluster message to one member
@@ -1158,7 +1157,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         boolean accepted = false;
         if (message != null) {
             for (Iterator iter = clusterListeners.iterator(); iter.hasNext();) {
-                ClusterListener listener = (ClusterListener) iter.next();
+                MessageListener listener = (MessageListener) iter.next();
                 if (listener.accept(message)) {
                     accepted = true;
                     listener.messageReceived(message);
@@ -1339,7 +1338,8 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     public ModelMBean getManagedBean(Object object) throws Exception {
         ModelMBean mbean = null;
         if (registry != null) {
-            ManagedBean managedBean = registry.findManagedBean(object.getClass().getName());
+            ManagedBean managedBean = registry.findManagedBean(object
+                    .getClass().getName());
             mbean = managedBean.createMBean(object);
         }
         return mbean;

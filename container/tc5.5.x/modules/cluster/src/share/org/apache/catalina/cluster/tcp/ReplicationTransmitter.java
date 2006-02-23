@@ -35,14 +35,13 @@ import org.apache.catalina.cluster.util.IDynamicProperty;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 import org.apache.tomcat.util.IntrospectionUtils;
-import org.apache.catalina.cluster.io.XByteBuffer;
 
 /**
- * Transmit message to other cluster members
- * Actual senders are created based on the replicationMode
+ * Transmit message to ohter cluster members create sender from replicationMode
  * type 
  * FIXME i18n log messages
  * FIXME compress data depends on message type and size 
+ * FIXME send very big messages at some block see FarmWarDeployer!
  * TODO pause and resume senders
  * 
  * @author Peter Rossbach
@@ -415,9 +414,11 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
     
     /**
      * Send data to one member
+     * FIXME set filtering messages
      * @see org.apache.catalina.cluster.ClusterSender#sendMessage(org.apache.catalina.cluster.ClusterMessage, org.apache.catalina.cluster.Member)
      */
-    public void sendMessage(ClusterMessage message, Member member) throws IOException {       
+    public void sendMessage(ClusterMessage message, Member member)
+            throws java.io.IOException {       
         long time = 0 ;
         if(doTransmitterProcessingStats) {
             time = System.currentTimeMillis();
@@ -438,21 +439,47 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * Send to all senders at same cluster domain as message from address
      * @param message Cluster message to send
      * @since 5.5.10
+     * FIXME Refactor with sendMessage get a sender list from
      */
-    public void sendMessageClusterDomain(ClusterMessage message) throws IOException {
-        sendMessage(message,true);
-    
-    }
+    public void sendMessageClusterDomain(ClusterMessage message) 
+         throws java.io.IOException {
+        long time = 0;
+        if (doTransmitterProcessingStats) {
+            time = System.currentTimeMillis();
+        }
+        try {
+            String domain = message.getAddress().getDomain();
+            if(domain == null)
+                throw new RuntimeException("Domain at member not set");
+            ClusterData data = serialize(message);
+            IDataSender[] senders = getSenders();
+            for (int i = 0; i < senders.length; i++) {
 
-    public void sendMessage(ClusterMessage message) throws IOException {
-        sendMessage(message,false);
+                IDataSender sender = senders[i];
+                if(domain.equals(sender.getDomain())) {
+                    try {
+                        boolean success = sendMessageData(data, sender);
+                    } catch (Exception x) {
+                        //THIS WILL NEVER HAPPEN, as sendMessageData swallows the error
+                    }
+                }
+            }
+        } finally {
+            // FIXME better exception handling
+            if (doTransmitterProcessingStats) {
+                addProcessingStats(time);
+            }
+        }
+    
     }
 
     /**
      * send message to all senders (broadcast)
      * @see org.apache.catalina.cluster.ClusterSender#sendMessage(org.apache.catalina.cluster.ClusterMessage)
+     * FIXME Refactor with sendMessageClusterDomain!
      */
-    public void sendMessage(ClusterMessage message, boolean domainOnly) throws IOException {
+    public void sendMessage(ClusterMessage message)
+            throws java.io.IOException {
         long time = 0;
         if (doTransmitterProcessingStats) {
             time = System.currentTimeMillis();
@@ -463,19 +490,19 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
             for (int i = 0; i < senders.length; i++) {
 
                 IDataSender sender = senders[i];
-                //domain filter
-                String domain = message.getAddress().getDomain();
-                if ( domainOnly && !(domain.equals(sender.getDomain())) ) continue;
-                sendMessageData(data, sender);
+                try {
+                    sendMessageData(data, sender);
+                } catch (Exception x) {
+                    // FIXME remember exception and send it at finally
+                }
             }
         } finally {
+            // FIXME better exception handling
             if (doTransmitterProcessingStats) {
                 addProcessingStats(time);
             }
         }
     }
-        
-    
 
     /**
      * start the sender and register transmitter mbean
@@ -714,7 +741,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                 mserver.unregisterMBean(getSenderObjectName(sender));
             }
         } catch (Exception e) {
-            if ( log.isDebugEnabled() ) log.debug("'ReplicationTransmitter' Unable to to deregister IDataSender",e);
+            log.warn(e);
         }
     }
 
@@ -738,7 +765,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                 mserver.registerMBean(cluster.getManagedBean(sender),
                         senderName);
             } catch (Exception e) {
-                if ( log.isDebugEnabled() ) log.debug("'ReplicationTransmitter' Unable to register sender bean",e);
+                log.warn(e);
             }
         }
     }
@@ -764,7 +791,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
                     + sender.getAddress().getHostAddress() + ",senderPort="
                     + sender.getPort());
         } catch (Exception e) {
-            if ( log.isDebugEnabled() ) log.debug("'ReplicationTransmitter' Unable to retrieve sender name",e);
+            log.warn(e);
         }
         return senderName;
     }
@@ -779,9 +806,32 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * @since 5.5.10
      */
     protected ClusterData serialize(ClusterMessage msg) throws IOException {
-        boolean compress = ((isCompress() && msg.getCompress() != ClusterMessage.FLAG_FORBIDDEN)
-                             || msg.getCompress() == ClusterMessage.FLAG_ALLOWED);
-        return XByteBuffer.serialize(msg,compress);
+        msg.setTimestamp(System.currentTimeMillis());
+        ByteArrayOutputStream outs = new ByteArrayOutputStream();
+        ObjectOutputStream out;
+        GZIPOutputStream gout = null;
+        ClusterData data = new ClusterData();
+        data.setType(msg.getClass().getName());
+        data.setUniqueId(msg.getUniqueId());
+        data.setTimestamp(msg.getTimestamp());
+        data.setCompress(msg.getCompress());
+        data.setResend(msg.getResend());
+        // FIXME add stats: How much comress and uncompress messages and bytes are transfered
+        if ((isCompress() && msg.getCompress() != ClusterMessage.FLAG_FORBIDDEN)
+                || msg.getCompress() == ClusterMessage.FLAG_ALLOWED) {
+            gout = new GZIPOutputStream(outs);
+            out = new ObjectOutputStream(gout);
+        } else {
+            out = new ObjectOutputStream(outs);
+        }
+        out.writeObject(msg);
+        // flush out the gzip stream to byte buffer
+        if(gout != null) {
+            gout.flush();
+            gout.close();
+        }
+        data.setMessage(outs.toByteArray());
+        return data;
     }
  
 
@@ -800,9 +850,9 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * @throws java.io.IOException If an error occurs
      */
     protected boolean sendMessageData(ClusterData data,
-                                      IDataSender sender) {
+                                   IDataSender sender) throws java.io.IOException {
         if (sender == null)
-            throw new RuntimeException("Sender not available. Make sure sender information is available to the ReplicationTransmitter.");
+            throw new java.io.IOException("Sender not available. Make sure sender information is available to the ReplicationTransmitter.");
         try {
             // deprecated not needed DataSender#pushMessage can handle connection
             if (autoConnect) {

@@ -15,7 +15,7 @@
  */
 
 
-package org.apache.catalina.startup;
+package org.apache.catalina.cluster;
 
 
 import org.apache.tomcat.util.digester.Digester;
