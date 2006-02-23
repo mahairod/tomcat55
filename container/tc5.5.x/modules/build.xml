@@ -9,6 +9,8 @@
   <property file="../build.properties"/>
   <property file="${user.home}/build.properties"/-->
 
+  <property file="build.properties"/>
+
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
     <available property="jdk1.4.present" classname="java.nio.Buffer" />
@@ -18,17 +20,30 @@
   <!-- =================== BUILD: Compile Subprojects ===================== -->
   <!-- Add a new target for each module subproject -->
 
-  <target name="cluster" if="jdk1.4.present">
+  <target name="cluster" if="jdk1.4.present" unless="cluster-ha">
     <ant dir="${basedir}/cluster" target="dist"/>
   </target>
 
+  <target name="groupcom" if="cluster-ha" >
+    <ant dir="${basedir}/groupcom" target="dist">
+        <property name="groupcom.dist" value="${cluster.dist}"/>
+    </ant>
+  </target>
+
+  <target name="ha" if="cluster-ha" >
+    <ant dir="${basedir}/ha" target="dist">
+        <property name="ha.dist" value="${cluster.dist}"/>
+    </ant>
+  </target>
+  
+  
   <target name="config" >
     <ant dir="${basedir}/storeconfig" target="dist"/>
   </target>
 
   <!-- ================= BUILD: Compile Server Components ================= -->
   <!-- Update the depends list for each subproject -->
-  <target name="build" depends="build-prepare,cluster,config"/>
+  <target name="build" depends="build-prepare,cluster,groupcom,ha,config"/>
 
 
   <!-- ======================= BUILD: Clean Directory ===================== -->

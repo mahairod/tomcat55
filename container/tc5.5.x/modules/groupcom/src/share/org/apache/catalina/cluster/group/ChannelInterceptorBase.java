@@ -20,6 +20,7 @@ import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MessageListener;
 import java.io.IOException;
+import org.apache.catalina.cluster.ChannelInterceptor;
 
 /**
  * Abstract class for the interceptor base class.
@@ -27,28 +28,28 @@ import java.io.IOException;
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
 
-public abstract class ChannelInterceptorBase implements MembershipListener, MessageListener {
+public abstract class ChannelInterceptorBase implements ChannelInterceptor{
     
-    private ChannelInterceptorBase next;
-    private ChannelInterceptorBase previous;
+    private ChannelInterceptor next;
+    private ChannelInterceptor previous;
     
     public ChannelInterceptorBase() {
         
     }
     
-    protected final void setNext(ChannelInterceptorBase next) {
+    public final void setNext(ChannelInterceptor next) {
         this.next = next;
     }
     
-    public final ChannelInterceptorBase getNext() {
+    public final ChannelInterceptor getNext() {
         return next;
     }
     
-    protected final void setPrevious(ChannelInterceptorBase previous) {
+    public final void setPrevious(ChannelInterceptor previous) {
         this.previous = previous;
     }
 
-    public final ChannelInterceptorBase getPrevious() {
+    public final ChannelInterceptor getPrevious() {
         return previous;
     }
 

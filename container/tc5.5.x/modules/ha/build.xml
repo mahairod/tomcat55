@@ -19,6 +19,7 @@
   <path id="ha.classpath">
     <pathelement location="${catalina.build}/server/lib/catalina.jar"/>
     <pathelement location="${catalina.build}/server/lib/tomcat-util.jar"/>
+    <pathelement location="${catalina.build}/server/lib/catalina-groups.jar"/>
     <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${jmx.jar}"/>
