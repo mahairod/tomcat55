@@ -16,21 +16,28 @@
   <property name="project"               value="apache-tomcat" />
   <property name="final.name"            value="${project}-${version}" />
   <property name="final-src.name"        value="${project}-${version}-src" />
-  <property name="jtc.project"           value="apache-tomcat-connectors" />
-  <property name="jtc.final.name"        value="${jtc.project}-${version}" />
-  <property name="jtc.final-src.name"    value="${jtc.project}-${version}-src" />
+
+  <!-- Sub-projects -->
+  <property name="api.project"           value="servletapi" />
   <property name="servlet.doc"           value="${servlet.home}/docs/api" />
+  <property name="catalina.project"      value="container" />
+  <property name="jtc.project"           value="connectors" />
+  <property name="jtc.final.name"        value="${project}-${jtc.project}-${version}" />
+  <property name="jtc.final-src.name"    value="${jtc.final.name}-src" />
+  <property name="jasper.project"        value="jasper" />
 
   <!-- Source dependencies -->
-  <property name="jasper.home"      value="${basedir}/../jasper"/>
-  <property name="jtc.home"         value="${basedir}/../connectors"/>
+  <property name="api.home"         value="${basedir}/../${api.project}"/>
+  <property name="catalina.home"    value="${basedir}"/>
+  <property name="jasper.home"      value="${basedir}/../${jasper.project}"/>
+  <property name="jtc.home"         value="${basedir}/../${jtc.project}"/>
 
   <!-- Build Defaults -->
   <property name="catalina.build"   value="${basedir}/catalina/build"/>
   <property name="jasper.build"     value="${jasper.home}/build"/>
   <property name="javaservice.home" value="../javaservice"/>
   <property name="nsis.home"        value="c:\program files\nsis"/>
-  <property name="servlet.home"     value="${basedir}/../servletapi/dist"/>
+  <property name="servlet.home"     value="${api.home}/dist"/>
   <property name="tomcat.build"     value="${basedir}/build"/>
   <property name="tomcat.dist"      value="${basedir}/dist"/>
   <property name="webapps.build"    value="${basedir}/webapps/build"/>
@@ -218,22 +225,29 @@
 
   <!-- ====================== DIST: Create Sources ======================== -->
   <target name="dist-source">
+
+    <!-- Create directory structure expected by the build script -->
     <mkdir  dir="${tomcat.dist}/src"/>
-    <copy todir="${tomcat.dist}/src">
+    <mkdir  dir="${tomcat.dist}/src/${api.project}"/>
+    <mkdir  dir="${tomcat.dist}/src/${catalina.project}"/>
+    <mkdir  dir="${tomcat.dist}/src/${jtc.project}"/>
+    <mkdir  dir="${tomcat.dist}/src/${jasper.project}"/>
+
+    <copy todir="${tomcat.dist}/src/${catalina.project}">
       <fileset dir="${basedir}">
         <exclude name="**/build/**"/>
         <exclude name="**/dist/**"/>
         <exclude name="build.properties"/>
       </fileset>
     </copy>
-    <mkdir  dir="${tomcat.dist}/src/jasper"/>
-    <copy todir="${tomcat.dist}/src/jasper">
+
+    <copy todir="${tomcat.dist}/src/${jasper.project}">
       <fileset dir="${jasper.home}">
         <exclude name="**/build/**"/>
       </fileset>
     </copy>
-    <mkdir  dir="${tomcat.dist}/jtc-src"/>
-    <copy todir="${tomcat.dist}/jtc-src">
+
+    <copy todir="${tomcat.dist}/src/${jtc.project}">
       <fileset dir="${jtc.home}">
         <exclude name="coyote/build/**"/>
         <exclude name="http11/build/**"/>
@@ -243,8 +257,17 @@
         <exclude name="build.properties"/>
       </fileset>
     </copy>
-  </target>
 
+    <copy todir="${tomcat.dist}/src/${api.project}">
+      <fileset dir="${api.home}">
+        <exclude name="build/**"/>
+        <exclude name="dist/**"/>
+        <exclude name="lib/**"/>
+        <exclude name="build.properties"/>
+      </fileset>
+    </copy>
+
+  </target>
 
   <!-- ====================== DIST: Create Archives ======================= -->
   <target name="dist" depends="deploy,dist-static,dist-javadoc"
@@ -379,11 +402,6 @@
     <zip zipfile="${tomcat.dist}/${final-src.name}.zip">
       <zipfileset dir="${tomcat.dist}/src" prefix="${final-src.name}" />
     </zip>
-    <!-- Package JTC Source -->
-    <zip zipfile="${tomcat.dist}/${jtc.final-src.name}.zip">
-      <zipfileset dir="${tomcat.dist}/jtc-src" 
-               prefix="${jtc.final-src.name}" />
-    </zip>
   </target>
 
   <target name="package-src-tgz">
@@ -397,55 +415,30 @@
     <fixcrlf srcdir="${tomcat.dist}/${final-src.name}" 
      excludes="**/*.jar,**/*.gif,**/*.bmp,**/*.jpg,**/*.ico" eol="lf"/>
     <tar longfile="gnu" tarfile="${tomcat.dist}/${final-src.name}.tar">
+      <tarfileset dir="${tomcat.dist}" mode="755">
+        <include name="${final-src.name}/${jtc.project}/jk/native/buildconf.sh" />
+        <include name="${final-src.name}/${jtc.project}/jk/native/apache-1.3/build-hpux-cc.sh" />
+        <include name="${final-src.name}/${jtc.project}/jk/native/apache-1.3/build-solaris.sh" />
+        <include name="${final-src.name}/${jtc.project}/jk/native/apache-1.3/build-unix.sh" />
+        <include name="${final-src.name}/${jtc.project}/jk/native/apache-2.0/build-unix.sh" />
+        <include name="${final-src.name}/${jtc.project}/jk/native/apache-2.0/install-unix.sh" />
+        <include name="${final-src.name}/${jtc.project}/jk/native/domino/mkini.sh" />
+      </tarfileset>
       <tarfileset dir="${tomcat.dist}">
         <include name="${final-src.name}/**" />
+        <exclude name="${final-src.name}/${jtc.project}/jk/native/buildconf.sh" />
+        <exclude name="${final-src.name}/${jtc.project}/jk/native/apache-1.3/build-hpux-cc.sh" />
+        <exclude name="${final-src.name}/${jtc.project}/jk/native/apache-1.3/build-solaris.sh" />
+        <exclude name="${final-src.name}/${jtc.project}/jk/native/apache-1.3/build-unix.sh" />
+        <exclude name="${final-src.name}/${jtc.project}/jk/native/apache-2.0/build-unix.sh" />
+        <exclude name="${final-src.name}/${jtc.project}/jk/native/apache-2.0/install-unix.sh" />
+        <exclude name="${final-src.name}/${jtc.project}/jk/native/domino/mkini.sh" />
       </tarfileset>
     </tar>
     <delete dir="${tomcat.dist}/${final-src.name}" />
     <gzip zipfile="${tomcat.dist}/${final-src.name}.tar.gz"
      src="${tomcat.dist}/${final-src.name}.tar"/>
     <delete file="${tomcat.dist}/${final-src.name}.tar" />
-    <!-- Package JTC Source -->
-    <mkdir dir="${tomcat.dist}/${jtc.final-src.name}" />
-    <copy todir="${tomcat.dist}/${jtc.final-src.name}">
-      <fileset dir="${tomcat.dist}/jtc-src">
-        <include name="**" />
-      </fileset>
-    </copy>
-    <!-- Note: Will break with Ant 1.4.1; Works with 1.5 Alpha -->
-    <fixcrlf srcdir="${tomcat.dist}/${jtc.final-src.name}" 
-     excludes="**/*.jar,**/*.gif,**/*.bmp,**/*.jpg,**/*.ico" eol="lf"/>
-    <tar longfile="gnu" tarfile="${tomcat.dist}/${jtc.final-src.name}.tar">
-      <tarfileset dir="${tomcat.dist}" mode="755">
-        <include name="${jtc.final-src.name}/jk/native/buildconf.sh" />
-        <include name="${jtc.final-src.name}/jk/native/apache-1.3/build-hpux-cc.sh" />
-        <include name="${jtc.final-src.name}/jk/native/apache-1.3/build-solaris.sh" />
-        <include name="${jtc.final-src.name}/jk/native/apache-1.3/build-unix.sh" />
-        <include name="${jtc.final-src.name}/jk/native/apache-2.0/build-unix.sh" />
-        <include name="${jtc.final-src.name}/jk/native/apache-2.0/install-unix.sh" />
-        <include name="${jtc.final-src.name}/jk/native/domino/mkini.sh" />
-        <include name="${jtc.final-src.name}/webapp/support/buildconf.sh" />
-        <include name="${jtc.final-src.name}/webapp/support/install.sh" />
-        <include name="${jtc.final-src.name}/webapp/support/mkinstalldirs.sh" />
-      </tarfileset>
-      <tarfileset dir="${tomcat.dist}">
-        <include name="${jtc.final-src.name}/**" />
-        <exclude name="${jtc.final-src.name}/jk/native/buildconf.sh" />
-        <exclude name="${jtc.final-src.name}/jk/native/apache-1.3/build-hpux-cc.sh" />
-        <exclude name="${jtc.final-src.name}/jk/native/apache-1.3/build-solaris.sh" />
-        <exclude name="${jtc.final-src.name}/jk/native/apache-1.3/build-unix.sh" />
-        <exclude name="${jtc.final-src.name}/jk/native/apache-2.0/build-unix.sh" />
-        <exclude name="${jtc.final-src.name}/jk/native/apache-2.0/install-unix.sh" />
-        <exclude name="${jtc.final-src.name}/jk/native/domino/mkini.sh" />
-        <exclude name="${jtc.final-src.name}/webapp/support/buildconf.sh" />
-        <exclude name="${jtc.final-src.name}/webapp/support/install.sh" />
-        <exclude name="${jtc.final-src.name}/webapp/support/mkinstalldirs.sh" />
-      </tarfileset>
-    </tar>
-    <delete dir="${tomcat.dist}/${jtc.final-src.name}" />
-    <gzip zipfile="${tomcat.dist}/${jtc.final-src.name}.tar.gz"
-     src="${tomcat.dist}/${jtc.final-src.name}.tar"/>
-    <delete file="${tomcat.dist}/${jtc.final-src.name}.tar" />
   </target>
 
   <target name="download" depends="proxyflags">

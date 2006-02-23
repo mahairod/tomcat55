@@ -131,7 +131,11 @@ and installed and do the following:
 (6) Download and Install the Servlet 2.3 API Binary Distribution
 
 * The Servlet 2.3 APi source is included in the source obtained in step
-  5.
+  5. To build the Servlet APi from source, open a command line shell and
+  issue the following commands:
+
+    - cd ${tomcat.source}/servletapi
+    - ant dist
 
   NOTE 1:  Alternatively, you can use the binary distribution that is
   incldued with binary distributions of Tomcat 4.x.
