@@ -1069,29 +1069,29 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      * @param session cross context session
      */
     protected void registerSessionAtReplicationValve(DeltaSession session) {
-	    	if(replicationValve == null) {
-	    		if(container instanceof StandardContext
-	    				&& ((StandardContext)container).getCrossContext()) {
-	    			Cluster cluster = getCluster() ;
-	    			if(cluster != null && cluster instanceof CatalinaCluster) {
-	    				Valve[] valves = ((CatalinaCluster)cluster).getValves();
-	    				if(valves != null && valves.length > 0) {
-	    					for(int i=0; replicationValve == null && i < valves.length ; i++ ){
-	    						if(valves[i] instanceof ReplicationValve)
-	    							replicationValve = (ReplicationValve)valves[i] ;
-	    					}
-	    					
-	    					if(replicationValve == null && log.isDebugEnabled()) {
-	    						log.debug("no ReplicationValve found for CrossContext Support");
-	    					}
-	    				}
-	    			}
-	    		}
-	    	}
-	    	if(replicationValve != null) {
-	    		replicationValve.registerReplicationSession(session);
-	    	}
-    	}
+        if(replicationValve == null) {
+            if(container instanceof StandardContext
+                    && ((StandardContext)container).getCrossContext()) {
+                Cluster cluster = getCluster() ;
+                if(cluster != null && cluster instanceof CatalinaCluster) {
+                    Valve[] valves = ((CatalinaCluster)cluster).getValves();
+                    if(valves != null && valves.length > 0) {
+                        for(int i=0; replicationValve == null && i < valves.length ; i++ ){
+                            if(valves[i] instanceof ReplicationValve)
+                                replicationValve = (ReplicationValve)valves[i] ;
+                        }
+
+                        if(replicationValve == null && log.isDebugEnabled()) {
+                            log.debug("no ReplicationValve found for CrossContext Support");
+                        }
+                    }
+                }
+            }
+        }
+        if(replicationValve != null) {
+            replicationValve.registerReplicationSession(session);
+        }
+    }
     
     /**
      * Find the master of the session state
