@@ -794,7 +794,7 @@ public class SimpleTcpCluster extends ChannelInterceptorBase
      * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage)
      */
     public void sendClusterDomain(ClusterMessage msg) {
-        throw new UnsupportedOperationException();
+        send(msg,null);
     } 
 
     
