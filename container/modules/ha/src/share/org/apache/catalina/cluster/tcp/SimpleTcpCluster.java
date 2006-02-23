@@ -20,16 +20,10 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.ObjectName;
-import javax.management.modelmbean.ModelMBean;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -42,27 +36,23 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Valve;
 import org.apache.catalina.cluster.CatalinaCluster;
+import org.apache.catalina.cluster.ClusterChannel;
+import org.apache.catalina.cluster.ClusterListener;
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.ClusterReceiver;
 import org.apache.catalina.cluster.ClusterSender;
 import org.apache.catalina.cluster.ClusterValve;
 import org.apache.catalina.cluster.Member;
-import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MembershipService;
-import org.apache.catalina.cluster.ClusterListener;
-import org.apache.catalina.cluster.mcast.McastService;
-import org.apache.catalina.cluster.session.ClusterSessionListener;
+import org.apache.catalina.cluster.group.ChannelInterceptorBase;
+import org.apache.catalina.cluster.group.GroupChannel;
 import org.apache.catalina.cluster.session.DeltaManager;
 import org.apache.catalina.cluster.util.IDynamicProperty;
-import org.apache.catalina.core.StandardEngine;
-import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.modeler.ManagedBean;
-import org.apache.commons.modeler.Registry;
 import org.apache.tomcat.util.IntrospectionUtils;
 
 /**
@@ -78,8 +68,8 @@ import org.apache.tomcat.util.IntrospectionUtils;
  * @author Peter Rossbach
  * @version $Revision: 379550 $, $Date: 2006-02-21 12:06:35 -0600 (Tue, 21 Feb 2006) $
  */
-public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
-        MembershipListener, LifecycleListener, IDynamicProperty {
+public class SimpleTcpCluster extends ChannelInterceptorBase 
+    implements CatalinaCluster, Lifecycle, LifecycleListener, IDynamicProperty {
 
     public static Log log = LogFactory.getLog(SimpleTcpCluster.class);
 
@@ -109,11 +99,12 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     public static final String SEND_MESSAGE_FAILURE_EVENT = "send_message_failure";
 
     public static final String RECEIVE_MESSAGE_FAILURE_EVENT = "receive_message_failure";
-
+    
     /**
-     * the service that provides the membership
+     * Group channel.
      */
-    protected MembershipService membershipService = null;
+    protected ClusterChannel channel = new GroupChannel();
+
 
     /**
      * Name for logging purpose
@@ -141,16 +132,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     protected LifecycleSupport lifecycle = new LifecycleSupport(this);
 
     /**
-     * Globale MBean Server
-     */
-    private MBeanServer mserver = null;
-
-    /**
-     * Current Catalina Registry
-     */
-    private Registry registry = null;
-
-    /**
      * Has this component been started?
      */
     protected boolean started = false;
@@ -167,22 +148,11 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
 
     private String managerClassName = "org.apache.catalina.cluster.session.DeltaManager";
 
-    /**
-     * Sender to send data with
-     */
-    private org.apache.catalina.cluster.ClusterSender clusterSender;
-
-    /**
-     * Receiver to register call back with
-     */
-    private ClusterReceiverBase clusterReceiver;
 
     private List valves = new ArrayList();
 
     private org.apache.catalina.cluster.ClusterDeployer clusterDeployer;
 
-    private boolean defaultMode = true ;
-    
     /**
      * Listeners of messages
      */
@@ -193,8 +163,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      */
     private boolean notifyLifecycleListenerOnFailure = false;
 
-    private ObjectName objectName = null;
-
     /**
      * dynamic sender <code>properties</code>
      */
@@ -204,10 +172,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * The cluster log device name to log at level info
      */
     private String clusterLogName = "org.apache.catalina.cluster.tcp.SimpleTcpCluster";
-
-    private boolean doClusterLog = false;
-
-    private Log clusterLog = null;
 
     // ------------------------------------------------------------- Properties
 
@@ -287,20 +251,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
                 this.notifyLifecycleListenerOnFailure);
     }
 
-    /**
-     * @return Returns the defaultMode.
-     */
-    public boolean isDefaultMode() {
-        return defaultMode;
-    }
-    
-    /**
-     * @param defaultMode The defaultMode to set.
-     */
-    public void setDefaultMode(boolean defaultMode) {
-        this.defaultMode = defaultMode;
-    }
-    
     public String getManagerClassName() {
         if(managerClassName != null)
             return managerClassName;
@@ -311,28 +261,20 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         this.managerClassName = managerClassName;
     }
 
-    public ClusterSender getClusterSender() {
-        return clusterSender;
-    }
-
     public void setClusterSender(ClusterSender clusterSender) {
-        this.clusterSender = clusterSender;
+        this.channel.setClusterSender(clusterSender);
     }
 
-    public ClusterReceiverBase getClusterReceiver() {
-        return clusterReceiver;
-    }
-
-    public void setClusterReceiver(ClusterReceiverBase clusterReceiver) {
-        this.clusterReceiver = clusterReceiver;
-    }
-
-    public MembershipService getMembershipService() {
-        return membershipService;
+    public void setClusterReceiver(ClusterReceiver clusterReceiver) {
+        this.channel.setClusterReceiver(clusterReceiver);
     }
 
     public void setMembershipService(MembershipService membershipService) {
-        this.membershipService = membershipService;
+        this.channel.setMembershipService(membershipService);
+    }
+    
+    public MembershipService getMembershipService() {
+        return ((GroupChannel)channel).getMembershipService();
     }
 
     /**
@@ -410,7 +352,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * has members
      */
     public boolean hasMembers() {
-        return membershipService.hasMembers();
+        return getMembershipService().hasMembers();
     }
     
     /**
@@ -418,7 +360,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * @return all members or empty array 
      */
     public Member[] getMembers() {
-        return membershipService.getMembers();
+        return getMembershipService().getMembers();
     }
 
     /**
@@ -427,7 +369,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * @return Member
      */
     public Member getLocalMember() {
-        return membershipService.getLocalMember();
+        return getMembershipService().getLocalMember();
     }
 
     // ------------------------------------------------------------- dynamic
@@ -653,8 +595,8 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     public void backgroundProcess() {
         if (clusterDeployer != null)
             clusterDeployer.backgroundProcess();
-        if (clusterSender != null)
-            clusterSender.backgroundProcess();
+//        if (this.channel.getClusterSender() != null)
+//            this.channel.getClusterSender().backgroundProcess();
     }
 
     /**
@@ -718,63 +660,14 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     public void start() throws LifecycleException {
         if (started)
             throw new LifecycleException(sm.getString("cluster.alreadyStarted"));
-        if (log.isInfoEnabled())
-            log.info("Cluster is about to start");
-        getClusterLog();
+        if (log.isInfoEnabled()) log.info("Cluster is about to start");
+
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, this);
         try {
-            if(isDefaultMode() && valves.size() == 0) {
-                createDefaultClusterValves() ;
-            }
-            registerClusterValve();
-            registerMBeans();
-            // setup the default cluster session listener (DeltaManager support)
-            if(isDefaultMode() && clusterListeners.size() == 0) {
-                createDefaultClusterListener();
-            }
-            // setup the default cluster Receiver
-            if(isDefaultMode() && clusterReceiver == null) {
-                createDefaultClusterReceiver();
-            }
-            // setup the default cluster sender
-            if(isDefaultMode() && clusterSender == null) {
-                createDefaultClusterSender();
-            }
-            // start the receiver.
-            if(clusterReceiver != null) {
-                clusterReceiver.setSendAck(clusterSender.isWaitForAck());
-                clusterReceiver.setCompress(clusterSender.isCompress());
-                clusterReceiver.setCatalinaCluster(this);
-                clusterReceiver.start();
-            }
-     
-            // start the sender.
-            if(clusterSender != null && clusterReceiver != null) {
-                clusterSender.setCatalinaCluster(this);
-                clusterSender.start();
-            }
-            
-            // start the membership service.
-            if(isDefaultMode() && membershipService == null) {
-                createDefaultMembershipService();
-            }
-            
-            if(membershipService != null && clusterReceiver != null) {
-                membershipService.setLocalMemberProperties(clusterReceiver.getHost(), clusterReceiver.getPort());
-                membershipService.setMembershipListener(this);
-                membershipService.setCatalinaCluster(this);
-                membershipService.start();
-                // start the deployer.
-                try {
-                    if (clusterDeployer != null) {
-                        clusterDeployer.setCluster(this);
-                        clusterDeployer.start();
-                    }
-                } catch (Throwable x) {
-                    log.fatal("Unable to retrieve the container deployer. Cluster deployment disabled.",x);
-                }
-            }
+            this.registerClusterValve();
+            channel.addInterceptor(this);
+            channel.start(channel.DEFAULT);
             this.started = true;
             // Notify our interested LifecycleListeners
             lifecycle.fireLifecycleEvent(AFTER_START_EVENT, this);
@@ -782,128 +675,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
             log.error("Unable to start cluster.", x);
             throw new LifecycleException(x);
         }
-    }
-
-    /**
-     * Create default membership service:
-     * <pre>
-     * &lt;Membership 
-     *             className="org.apache.catalina.cluster.mcast.McastService"
-     *             mcastAddr="228.0.0.4"
-     *             mcastPort="8012"
-     *             mcastFrequency="1000"
-     *             mcastDropTime="30000"/&gt;
-     * </pre>
-     */
-    protected void createDefaultMembershipService() {
-        if (log.isInfoEnabled()) {
-            log.info(sm.getString(
-                    "SimpleTcpCluster.default.addMembershipService",
-                    getClusterName()));
-        }
-        
-        McastService mService= new McastService();
-        mService.setMcastAddr("228.0.0.4");
-        mService.setMcastPort(8012);
-        mService.setMcastFrequency(1000);
-        mService.setMcastDropTime(30000);
-        transferProperty("service",mService);        
-        setMembershipService(mService);          
-    }
-
-    
-    /**
-     * Create default cluster sender
-     * <pre>
-     *  &lt;Sender
-     *     className="org.apache.catalina.cluster.tcp.ReplicationTransmitter"
-     *     replicationMode="fastasyncqueue"
-     *     doTransmitterProcessingStats="true"
-     *     doProcessingStats="true"/&gt;
-     *  </pre>
-     */
-    protected void createDefaultClusterSender() {
-        if (log.isInfoEnabled()) {
-            log.info(sm.getString(
-                    "SimpleTcpCluster.default.addClusterSender",
-                    getClusterName()));
-        }        
-        ReplicationTransmitter sender= new ReplicationTransmitter();
-        sender.setReplicationMode("fastasyncqueue");
-        sender.setDoTransmitterProcessingStats(true);
-        sender.setProperty("doProcessingStats", "true");
-        transferProperty("sender",sender);
-        setClusterSender(sender);          
-    }
-
-    /**
-     * Create default receiver:
-     * <pre>
-     *   &lt;Receiver 
-     *     className="org.apache.catalina.cluster.tcp.SocketReplicationListener"
-     *     tcpListenAddress="auto"
-     *     tcpListenPort="8015"
-     *     tcpListenMaxPort="8019"
-     *     doReceivedProcessingStats="true"
-     *   /&gt;
-     * </pre>
-     */
-    protected void createDefaultClusterReceiver() {
-        if (log.isInfoEnabled()) {
-            log.info(sm.getString(
-                    "SimpleTcpCluster.default.addClusterReceiver",
-                    getClusterName()));
-        }
-        SocketReplicationListener receiver= new SocketReplicationListener();
-        receiver.setTcpListenAddress("auto");
-        receiver.setDoReceivedProcessingStats(true);
-        receiver.setTcpListenPort(8015);
-        receiver.setTcpListenMaxPort(8019);
-        transferProperty("receiver",receiver);
-        setClusterReceiver(receiver);          
-        
-    }
-
-    /**
-     * Create default session cluster listener:
-     *  <pre>
-     * &lt;ClusterListener 
-     *   className="org.apache.catalina.cluster.session.ClusterSessionListener" /&gt;
-     * </pre>
-     */
-    protected void createDefaultClusterListener() {
-        if (log.isInfoEnabled()) {
-            log.info(sm.getString(
-                    "SimpleTcpCluster.default.addClusterListener",
-                    getClusterName()));
-        }
-        ClusterSessionListener listener = new ClusterSessionListener();
-        transferProperty("listener",listener);
-        addClusterListener(listener);
-        
-    }
-
-    /**
-     * Create default ReplicationValve
-     * <pre>
-     * &lt;Valve 
-     *    className="org.apache.catalina.cluster.tcp.ReplicationValve"
-     *    filter=".*\.gif;.*\.js;.*\.css;.*\.png;.*\.jpeg;.*\.jpg;.*\.htm;.*\.html;.*\.txt;"
-     *    primaryIndicator="true" /&gt;
-     * </pre>
-     */
-    protected void createDefaultClusterValves() {
-        if (log.isInfoEnabled()) {
-            log.info(sm.getString(
-                    "SimpleTcpCluster.default.addClusterValves",
-                    getClusterName()));
-        }
-        ReplicationValve valve= new ReplicationValve() ;
-        valve.setFilter(".*\\.gif;.*\\.js;.*\\.css;.*\\.png;.*\\.jpeg;.*\\.jpg;.*\\.htm;.*\\.html;.*\\.txt;");
-        valve.setPrimaryIndicator(true);
-        transferProperty("valve",valve);
-        addValve(valve);
-        
     }
 
     /**
@@ -971,36 +742,16 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         if (clusterDeployer != null) {
             clusterDeployer.stop();
         }
-        // FIXME remove registered managers!!
-        if(membershipService != null) {
-            membershipService.stop();
-            membershipService.removeMembershipListener();
-        }
-        if(clusterSender != null) {
-            try {
-                clusterSender.stop();
-            } catch (Exception x) {
-                log.error("Unable to stop cluster sender.", x);
-            }
-        }
-        if(clusterReceiver != null ){
-            try {
-                clusterReceiver.stop();
-                clusterReceiver.setCatalinaCluster(null);
-            } catch (Exception x) {
-                log.error("Unable to stop cluster receiver.", x);
-            }
-        }
-        unregisterMBeans();
+        this.managers.clear();
         try {
-            unregisterClusterValve();
+            channel.stop(ClusterChannel.DEFAULT);
+            this.unregisterClusterValve();
         } catch (Exception x) {
             log.error("Unable to stop cluster valve.", x);
         }
         started = false;
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, this);
-        clusterLog = null ;
    }
 
     
@@ -1040,22 +791,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage)
      */
     public void sendClusterDomain(ClusterMessage msg) {
-        long start = 0;
-        if (doClusterLog)
-            start = System.currentTimeMillis();
-        try {
-            msg.setAddress(membershipService.getLocalMember());
-            clusterSender.sendMessageClusterDomain(msg);
-        } catch (Exception x) {
-            if (notifyLifecycleListenerOnFailure) {
-                // Notify our interested LifecycleListeners
-                lifecycle.fireLifecycleEvent(SEND_MESSAGE_FAILURE_EVENT,
-                        new SendMessageData(msg, null, x));
-            }
-            log.error("Unable to send message through cluster sender.", x);
-        }
-        if (doClusterLog)
-            logSendMessage(msg, start, null);
+        throw new UnsupportedOperationException();
     } 
 
     
@@ -1068,29 +804,19 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      *      org.apache.catalina.cluster.Member)
      */
     public void send(ClusterMessage msg, Member dest) {
-        long start = 0;
-        if (doClusterLog)
-            start = System.currentTimeMillis();
         try {
-            msg.setAddress(membershipService.getLocalMember());
+            msg.setAddress(getMembershipService().getLocalMember());
             if (dest != null) {
-                if (!membershipService.getLocalMember().equals(dest)) {
-                    clusterSender.sendMessage(msg, dest);
+                if (!getMembershipService().getLocalMember().equals(dest)) {
+                    channel.send(new Member[] {dest}, msg, 0);
                 } else
                     log.error("Unable to send message to local member " + msg);
             } else {
-                clusterSender.sendMessage(msg);
+                channel.send(null,msg,0);
             }
         } catch (Exception x) {
-            if (notifyLifecycleListenerOnFailure) {
-                // Notify our interested LifecycleListeners
-                lifecycle.fireLifecycleEvent(SEND_MESSAGE_FAILURE_EVENT,
-                        new SendMessageData(msg, dest, x));
-            }
             log.error("Unable to send message through cluster sender.", x);
         }
-        if (doClusterLog)
-            logSendMessage(msg, start, dest);
     }
 
     /**
@@ -1100,11 +826,9 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      */
     public void memberAdded(Member member) {
         try {
-            if (log.isInfoEnabled())
-                log.info("Replication member added:" + member);
+            if (log.isInfoEnabled()) log.info("Replication member added:" + member);
             // Notify our interested LifecycleListeners
             lifecycle.fireLifecycleEvent(BEFORE_MEMBERREGISTER_EVENT, member);
-            clusterSender.add(member);
             // Notify our interested LifecycleListeners
             lifecycle.fireLifecycleEvent(AFTER_MEMBERREGISTER_EVENT, member);
         } catch (Exception x) {
@@ -1119,12 +843,10 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * @see org.apache.catalina.cluster.MembershipListener#memberDisappeared(org.apache.catalina.cluster.Member)
      */
     public void memberDisappeared(Member member) {
-        if (log.isInfoEnabled())
-            log.info("Received member disappeared:" + member);
+        if (log.isInfoEnabled()) log.info("Received member disappeared:" + member);
         try {
             // Notify our interested LifecycleListeners
             lifecycle.fireLifecycleEvent(BEFORE_MEMBERUNREGISTER_EVENT, member);
-            clusterSender.remove(member);
             // Notify our interested LifecycleListeners
             lifecycle.fireLifecycleEvent(AFTER_MEMBERUNREGISTER_EVENT, member);
         } catch (Exception x) {
@@ -1143,11 +865,9 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * @param message
      *            receveived Message
      */
-    public void receive(ClusterMessage message) {
+    public void messageReceived(ClusterMessage message) {
 
         long start = 0;
-        if (doClusterLog)
-            start = System.currentTimeMillis();
         if (log.isDebugEnabled() && message != null)
             log.debug("Assuming clocks are synched: Replication for "
                     + message.getUniqueId() + " took="
@@ -1176,183 +896,17 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
                     + message.getClass().getName()
                     + " transfered but no listener registered");
         }
-        if (doClusterLog)
-            logReceiveMessage(message, start, accepted);
     }
 
     // --------------------------------------------------------- Logger
 
-    /**
-     * @return Returns the clusterLogName.
-     */
-    public String getClusterLogName() {
-        return clusterLogName;
-    }
-    
-    /**
-     * @param clusterLogName The clusterLogName to set.
-     */
-    public void setClusterLogName(String clusterLogName) {
-        this.clusterLogName = clusterLogName;
-    }
-    
-    /**
-     * @return Returns the doClusterLog.
-     */
-    public boolean isDoClusterLog() {
-        return doClusterLog;
-    }
-    
-    /**
-     * @param doClusterLog The doClusterLog to set.
-     */
-    public void setDoClusterLog(boolean doClusterLog) {
-        this.doClusterLog = doClusterLog;
-    }    
     public Log getLogger() {
         return log;
     }
 
-    public Log getClusterLog() {
-        if (clusterLog == null && clusterLogName != null
-                && !"".equals(clusterLogName))
-            clusterLog = LogFactory.getLog(clusterLogName);
 
-        return clusterLog;
-    }
 
-    /**
-     * log received message to cluster transfer log
-     * @param message
-     * @param start
-     * @param accepted
-     */
-    protected void logReceiveMessage(ClusterMessage message, long start,
-            boolean accepted) {
-        if (clusterLog != null && clusterLog.isInfoEnabled()) {
-            clusterLog.info(sm.getString("SimpleTcpCluster.log.receive", new Object[] {
-                    new Date(start),
-                    new Long(System.currentTimeMillis() - start),
-                    message.getAddress().getHost(),
-                    new Integer(message.getAddress().getPort()),
-                    message.getUniqueId(), new Boolean(accepted) }));
-        }
-    }
-
-    /**
-     * log sended message to cluster transfer log
-     * @param message
-     * @param start
-     * @param dest
-     */
-    protected void logSendMessage(ClusterMessage message, long start,
-            Member dest) {
-        if (clusterLog != null && clusterLog.isInfoEnabled()) {
-            if (dest != null) {
-                clusterLog.info(sm.getString("SimpleTcpCluster.log.send",
-                        new Object[] { new Date(start),
-                                new Long(System.currentTimeMillis() - start),
-                                dest.getHost(), new Integer(dest.getPort()),
-                                message.getUniqueId() }));
-            } else {
-                clusterLog.info(sm.getString("SimpleTcpCluster.log.send.all",
-                        new Object[] { new Date(start),
-                                new Long(System.currentTimeMillis() - start),
-                                message.getUniqueId() }));
-            }
-        }
-    }
-
-    // --------------------------------------------- JMX MBeans
-
-    /**
-     * register Means at cluster.
-     */
-    protected void registerMBeans() {
-        try {
-            getMBeanServer();
-            String domain = mserver.getDefaultDomain();
-            String name = ":type=Cluster";
-            if (container instanceof StandardHost) {
-                domain = ((StandardHost) container).getDomain();
-                name += ",host=" + container.getName();
-            } else {
-                if (container instanceof StandardEngine) {
-                    domain = ((StandardEngine) container).getDomain();
-                }
-            }
-            ObjectName clusterName = new ObjectName(domain + name);
-
-            if (mserver.isRegistered(clusterName)) {
-                if (log.isWarnEnabled())
-                    log.warn(sm.getString("cluster.mbean.register.already",
-                            clusterName));
-                return;
-            }
-            setObjectName(clusterName);
-            mserver.registerMBean(getManagedBean(this), getObjectName());
-        } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
-        }
-    }
-
-    protected void unregisterMBeans() {
-        if (mserver != null) {
-            try {
-                mserver.unregisterMBean(getObjectName());
-            } catch (Exception e) {
-                log.error(e);
-            }
-        }
-    }
-
-    /**
-     * Get current Catalina MBean Server and load mbean registry
-     * 
-     * @return The server
-     * @throws Exception
-     */
-    public MBeanServer getMBeanServer() throws Exception {
-        if (mserver == null) {
-            if (MBeanServerFactory.findMBeanServer(null).size() > 0) {
-                mserver = (MBeanServer) MBeanServerFactory
-                        .findMBeanServer(null).get(0);
-            } else {
-                mserver = MBeanServerFactory.createMBeanServer();
-            }
-            registry = Registry.getRegistry(null, null);
-            registry.loadMetadata(this.getClass().getResourceAsStream(
-                    "mbeans-descriptors.xml"));
-        }
-        return (mserver);
-    }
-
-    /**
-     * Returns the ModelMBean
-     * 
-     * @param object
-     *            The Object to get the ModelMBean for
-     * @return The ModelMBean
-     * @throws Exception
-     *             If an error occurs this constructors throws this exception
-     */
-    public ModelMBean getManagedBean(Object object) throws Exception {
-        ModelMBean mbean = null;
-        if (registry != null) {
-            ManagedBean managedBean = registry.findManagedBean(object.getClass().getName());
-            mbean = managedBean.createMBean(object);
-        }
-        return mbean;
-    }
-
-    public void setObjectName(ObjectName name) {
-        objectName = name;
-    }
-
-    public ObjectName getObjectName() {
-        return objectName;
-    }
-
+    
     // ------------------------------------------------------------- deprecated
 
     /**

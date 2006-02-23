@@ -79,6 +79,7 @@ public class ChannelCoordinator extends ChannelInterceptorBase {
      */
     public void start(int svc) throws ChannelException {
         try {
+            membershipService.setLocalMemberProperties(getClusterReceiver().getHost(), getClusterReceiver().getPort());
             if ( (svc & ClusterChannel.MBR_RX_SEQ) == ClusterChannel.MBR_RX_SEQ) membershipService.start(MembershipService.MBR_RX);
             if ( (svc & ClusterChannel.SND_RX_SEQ) == ClusterChannel.SND_RX_SEQ) clusterReceiver.start();
             if ( (svc & ClusterChannel.SND_TX_SEQ) == ClusterChannel.SND_TX_SEQ) clusterSender.start();

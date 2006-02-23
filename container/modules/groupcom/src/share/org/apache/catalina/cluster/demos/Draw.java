@@ -79,8 +79,7 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
         service.setMcastFrequency(500);
         service.setMcastDropTime(5000);
         service.setMcastPort(45565);
-        service.setLocalMemberProperties(rl.getHost(),port);
-        
+
         channel = new GroupChannel();
         channel.setClusterReceiver(rl);
         channel.setClusterSender(ps);
