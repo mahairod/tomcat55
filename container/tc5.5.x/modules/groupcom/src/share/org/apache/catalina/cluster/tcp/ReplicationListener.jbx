@@ -1,0 +1,24 @@
+[PropertyInfo]
+bind,java.net.InetAddress,false,false, , ,true,<default>
+compress,boolean,false,false, , ,true,<default>
+coordinator,org.apache.catalina.cluster.MessageListener,false,false, , ,true,<default>
+coordinator,org.apache.catalina.cluster.group.ChannelInterceptorBase,false,false,coordinator,coordinator,true,<default>
+doListen,boolean,false,false, , ,false,<default>
+host,String,false,false, , ,true,<default>
+info,String,false,false, , ,true,<default>
+interestOpsMutex,Object,false,false, , ,true,<default>
+log,org.apache.commons.logging.Log,false,false, , ,false,<default>
+pool,org.apache.catalina.cluster.tcp.ThreadPool,false,false, , ,false,<default>
+port,int,false,false, , ,true,<default>
+selector,java.nio.channels.Selector,false,false, , ,false,<default>
+sendAck,boolean,false,false, , ,true,<default>
+sm,org.apache.catalina.util.StringManager,false,false, , ,false,<default>
+tcpListenAddress,String,false,false, , ,true,<default>
+tcpListenPort,int,false,false, , ,true,<default>
+tcpSelectorTimeout,long,false,false, , ,true,<default>
+tcpThreadCount,int,false,false, , ,true,<default>
+[IconNames]
+
+
+
+
