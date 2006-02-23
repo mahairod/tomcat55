@@ -168,11 +168,6 @@ public class SimpleTcpCluster extends ChannelInterceptorBase
      */
     private Map properties = new HashMap();
 
-    /**
-     * The cluster log device name to log at level info
-     */
-    private String clusterLogName = "org.apache.catalina.cluster.tcp.SimpleTcpCluster";
-
     // ------------------------------------------------------------- Properties
 
     public SimpleTcpCluster() {
@@ -264,9 +259,17 @@ public class SimpleTcpCluster extends ChannelInterceptorBase
     public void setClusterSender(ClusterSender clusterSender) {
         this.channel.setClusterSender(clusterSender);
     }
+    
+    public ClusterSender getClusterSender() {
+        return null;
+    }
 
     public void setClusterReceiver(ClusterReceiver clusterReceiver) {
         this.channel.setClusterReceiver(clusterReceiver);
+    }
+
+    public ClusterReceiver getClusterReceiver() {
+        return null;
     }
 
     public void setMembershipService(MembershipService membershipService) {
