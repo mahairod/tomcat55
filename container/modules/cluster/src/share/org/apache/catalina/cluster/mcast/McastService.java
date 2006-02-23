@@ -257,8 +257,8 @@ public class McastService implements MembershipService,MembershipListener {
      * @throws java.lang.Exception if a IO error occurs
      */
     public void start() throws java.lang.Exception {
-        start(MembershipService.MBR_RX);
-        start(MembershipService.MBR_TX);
+        start(1);
+        start(2);
         registerMBean();
     }
     
@@ -440,7 +440,7 @@ public class McastService implements MembershipService,MembershipListener {
      * so calling this method twice will result in only the second listener being active.
      * @param listener The listener
      */
-    public void setMembershipListener(MembershipListener listener) {
+    public void addMembershipListener(MembershipListener listener) {
         this.listener = listener;
     }
     /**

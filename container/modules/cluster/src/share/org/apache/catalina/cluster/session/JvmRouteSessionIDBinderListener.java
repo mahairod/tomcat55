@@ -25,7 +25,6 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Session;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.core.StandardEngine;
-import org.apache.catalina.cluster.*;
 
 /**
  * Receive SessionID cluster change from other backup node after primary session
