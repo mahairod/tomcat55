@@ -34,6 +34,12 @@ public interface ClusterChannel {
     public static final int MBR_TX_SEQ = 8;
     
     /**
+     * Adds an interceptor to the channel message chain.
+     * @param interceptor ChannelInterceptor
+     */
+    public void addInterceptor(ChannelInterceptor interceptor);
+    
+    /**
      * Starts up the channel. This can be called multiple times for individual services to start
      * The svc parameter can be the logical or value of any constants
      * @param svc int value of <BR>

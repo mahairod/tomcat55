@@ -413,6 +413,7 @@ public class ReplicationListener
     }
 
     public String getHost() {
+        getBind();
         return getTcpListenAddress();
     }
 

@@ -23,6 +23,7 @@ import org.apache.catalina.cluster.ClusterSender;
 import org.apache.catalina.cluster.MembershipService;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
+import org.apache.catalina.cluster.ChannelInterceptor;
 
 
 /**
@@ -35,7 +36,7 @@ import org.apache.catalina.cluster.Member;
  */
 public class GroupChannel implements ClusterChannel {
     private ChannelCoordinator coordinator = new ChannelCoordinator();
-    private ChannelInterceptorBase interceptors = null;
+    private ChannelInterceptor interceptors = null;
 
     public GroupChannel() {
     }
@@ -45,13 +46,13 @@ public class GroupChannel implements ClusterChannel {
      * Adds an interceptor to the stack for message processing
      * @param interceptor ChannelInterceptorBase
      */
-    public void addInterceptor(ChannelInterceptorBase interceptor) { 
+    public void addInterceptor(ChannelInterceptor interceptor) { 
         if ( interceptors == null ) {
             this.interceptors = interceptor;
             this.interceptors.setNext(coordinator);
             coordinator.setPrevious(this.interceptors);
         } else {
-            ChannelInterceptorBase last = interceptors;
+            ChannelInterceptor last = interceptors;
             while ( last.getNext() != coordinator ) {
                 last = last.getNext();
             }

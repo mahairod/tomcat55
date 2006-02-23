@@ -23,7 +23,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Valve;
 import org.apache.commons.logging.Log;
-import org.apache.catalina.cluster.tcp.ClusterReceiverBase;
+
 
 
 /**
@@ -61,13 +61,6 @@ public interface CatalinaCluster extends Cluster {
      */
     public Log getLogger();
     
-    /**
-     * receive a message to all the members in the cluster.
-     *
-     * @param msg ClusterMessage
-     */
-    public void receive(ClusterMessage msg);
- 
     /**
      * Sends a message to all the members in the cluster
      * @param msg ClusterMessage
@@ -110,15 +103,11 @@ public interface CatalinaCluster extends Cluster {
     
     public void setClusterSender(ClusterSender sender);
     
-    public ClusterSender getClusterSender();
-    
-    public void setClusterReceiver(ClusterReceiverBase receiver);
-    
-    public ClusterReceiverBase getClusterReceiver();
-    
-    public void setMembershipService(MembershipService service);
+    public void setClusterReceiver(ClusterReceiver receiver);
     
     public MembershipService getMembershipService();
+
+    public void setMembershipService(MembershipService service);
     
     public void addValve(Valve valve);
     
