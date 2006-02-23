@@ -79,7 +79,12 @@ public class ChannelCoordinator extends ChannelInterceptorBase {
      */
     public void start(int svc) throws ChannelException {
         try {
+            //synchronize, big time FIXME
             membershipService.setLocalMemberProperties(getClusterReceiver().getHost(), getClusterReceiver().getPort());
+            clusterReceiver.setSendAck(clusterSender.isWaitForAck());
+            clusterReceiver.setCompress(clusterSender.isCompress());
+            //end FIXME
+            
             if ( (svc & ClusterChannel.MBR_RX_SEQ) == ClusterChannel.MBR_RX_SEQ) membershipService.start(MembershipService.MBR_RX);
             if ( (svc & ClusterChannel.SND_RX_SEQ) == ClusterChannel.SND_RX_SEQ) clusterReceiver.start();
             if ( (svc & ClusterChannel.SND_TX_SEQ) == ClusterChannel.SND_TX_SEQ) clusterSender.start();
