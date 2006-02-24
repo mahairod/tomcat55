@@ -79,4 +79,12 @@ public interface ClusterChannel {
     public void setClusterReceiver(ClusterReceiver receiver);
     public void setMembershipService(MembershipService service);
     
+    /**
+     * Sends a heart beat through the interceptor stacks
+     */
+    public void heartbeat();
+    
+    public void setMembershipListener(MembershipListener listener);
+    public void setMessageListener(MessageListener listener);
+    
 }

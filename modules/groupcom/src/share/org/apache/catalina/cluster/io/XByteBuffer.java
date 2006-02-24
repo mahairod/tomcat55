@@ -17,7 +17,7 @@
 package org.apache.catalina.cluster.io;
 
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.tcp.ClusterData;
+
 import java.io.ObjectOutputStream;
 import java.util.zip.GZIPOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -204,13 +204,13 @@ public class XByteBuffer
             throws java.io.IOException {
         int psize = countPackages();
         if (psize == 0) throw new java.lang.IllegalStateException("No package exists in XByteBuffer");
-        int compress = toInt(buf, START_DATA.length);
+        int options = toInt(buf, START_DATA.length);
         int size = toInt(buf, START_DATA.length +4);
         byte[] data = new byte[size];
         System.arraycopy(buf, START_DATA.length + 8, data, 0, size);
         ClusterData cdata = new ClusterData() ;
         cdata.setMessage(data);
-        cdata.setCompress(compress);
+        cdata.setOptions(options);
         if (clearFromBuffer) {
             int totalsize = START_DATA.length + 8 + size + END_DATA.length;
             bufSize = bufSize - totalsize;
@@ -348,16 +348,16 @@ public class XByteBuffer
     public static byte[] createDataPackage(ClusterData cdata)
             throws java.io.IOException {
         byte[] data = cdata.getMessage();
-        byte[] comprdata = XByteBuffer.toBytes(cdata.getCompress());
+        byte[] options = XByteBuffer.toBytes(cdata.getOptions());
         int length = 
             START_DATA.length + //header length
-            4 + //compression flag
+            4 + //options flag
             4 + //data length indicator
             data.length + //actual data length
             END_DATA.length; //footer length
         byte[] result = new byte[length];
         System.arraycopy(START_DATA, 0, result, 0, START_DATA.length);
-        System.arraycopy(comprdata, 0, result, START_DATA.length, 4);
+        System.arraycopy(options, 0, result, START_DATA.length, 4);
         System.arraycopy(toBytes(data.length), 0, result, START_DATA.length + 4, 4);
         System.arraycopy(data, 0, result, START_DATA.length + 8, data.length);
         System.arraycopy(END_DATA, 0, result, START_DATA.length + 8 + data.length, END_DATA.length);
@@ -394,7 +394,7 @@ public class XByteBuffer
      * @return ClusterData
      * @throws IOException
      */
-    public static ClusterData serialize(ClusterMessage msg, boolean compress) throws IOException {
+    public static ClusterData serialize(ClusterMessage msg, int options, boolean compress) throws IOException {
         msg.setTimestamp(System.currentTimeMillis());
         ByteArrayOutputStream outs = new ByteArrayOutputStream();
         ObjectOutputStream out;
@@ -403,8 +403,9 @@ public class XByteBuffer
         data.setType(msg.getClass().getName());
         data.setUniqueId(msg.getUniqueId());
         data.setTimestamp(msg.getTimestamp());
-        data.setCompress(msg.getCompress());
-        data.setResend(msg.getResend());
+        data.setOptions(options);
+        data.setResend(data.RESEND_DEFAULT);
+        data.setAddress(msg.getAddress());
         if (compress) {
             gout = new GZIPOutputStream(outs);
             out = new ObjectOutputStream(gout);

@@ -24,9 +24,9 @@ import java.io.Serializable;
  */
 public interface ClusterMessage extends Serializable {
     
-    public final static int FLAG_FORBIDDEN = 0 ;
-    public final static int FLAG_ALLOWED = 1 ;
-    public final static int FLAG_DEFAULT = 2 ;
+    public final static int RESEND_FORBIDDEN = 0 ;
+    public final static int RESEND_ALLOWED = 1 ;
+    public final static int RESEND_DEFAULT = 2 ;
     
     /**
      * Get the address that this message originated from.  This would be set
@@ -66,35 +66,6 @@ public interface ClusterMessage extends Serializable {
      */
     public String getUniqueId();
 
-    /**
-     * Each message can made the desicion that resend is allowed or not or handle by default.
-     * @return 0 Forbidden, 1 allowed, 2 default
-     * @since 5.5.10
-     */
-    public int getResend();
     
-    /**
-     * set desicion that resend is allowed or not or handle by default.
-     *
-     * @param resend 0 Forbidden, 1 allowed, 2 default
-     * @since 5.5.10
-     */
-    public void setResend(int resend) ;
-
-    /**
-     * Each message can made the desicion that compress is allowed or not or handle by default.
-     *
-     * @return 0 Forbidden, 1 allowed, 2 default
-     * @since 5.5.10
-     */
-    public int getCompress();
-    
-    /**
-     * set desicion that compress is allowed or not or handle by default.
-     *
-     * @param compress 0 Forbidden, 1 allowed, 2 default
-     * @since 5.5.10
-     */
-    public void setCompress(int compress) ;
 
 }

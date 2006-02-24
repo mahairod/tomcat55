@@ -25,6 +25,7 @@ import java.net.SocketException;
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.io.XByteBuffer;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.cluster.io.*;
 
 /**
  * Send cluster messages with only one socket. Ack and keep Alive Handling is
@@ -809,8 +810,8 @@ public class DataSender implements IDataSender {
              writeData(data);
              messageTransfered = true ;
         } catch (java.io.IOException x) {
-            if(data.getResend() == ClusterMessage.FLAG_ALLOWED || 
-                    (data.getResend() == ClusterMessage.FLAG_DEFAULT && isResend() )) {
+            if(data.getResend() == ClusterMessage.RESEND_ALLOWED || 
+                    (data.getResend() == ClusterMessage.RESEND_DEFAULT && isResend() )) {
                 // second try with fresh connection
                 dataResendCounter++;
                 if (log.isTraceEnabled())

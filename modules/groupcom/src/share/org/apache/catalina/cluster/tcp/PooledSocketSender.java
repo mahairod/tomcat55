@@ -19,6 +19,7 @@ package org.apache.catalina.cluster.tcp;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.LinkedList;
+import org.apache.catalina.cluster.io.*;
 
 /**
  * Send cluster messages with a pool of sockets (25).

@@ -16,6 +16,8 @@
 
 package org.apache.catalina.cluster;
 
+import org.apache.catalina.cluster.io.ClusterData;
+
 /**
  * 
  * @author Filip Hanik
@@ -35,11 +37,11 @@ public interface ClusterSender
 
     public void heartbeat() ;
 
-    public void sendMessage(ClusterMessage message, Member member) throws java.io.IOException;
+    public void sendMessage(ClusterData message, Member member) throws java.io.IOException;
 
-    public void sendMessage(ClusterMessage message) throws java.io.IOException;
+    public void sendMessage(ClusterData message) throws java.io.IOException;
     
-    public void sendMessageClusterDomain(ClusterMessage message) throws java.io.IOException;
+    public void sendMessageClusterDomain(ClusterData message) throws java.io.IOException;
 
     public boolean isWaitForAck();
     public void setWaitForAck(boolean isWaitForAck);

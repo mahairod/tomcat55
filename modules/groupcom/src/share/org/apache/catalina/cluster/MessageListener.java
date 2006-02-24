@@ -15,11 +15,20 @@
  */
 package org.apache.catalina.cluster;
 
+import org.apache.catalina.cluster.io.ClusterData;
+
 public interface MessageListener {
     
-    public void messageReceived(ClusterMessage msg);
+    /**
+     * Receive a message from the cluster.
+     * @param msg ClusterMessage
+     * @return ClusterMessage - response to the message sent. <br>
+     * The response object may be ignored and is not required for the 
+     * implementation to send back to the sender.
+     */
+    public void messageReceived(ClusterData msg);
     
-    public boolean accept(ClusterMessage msg);
+    public boolean accept(ClusterData msg);
     
     public boolean equals(Object listener);
     

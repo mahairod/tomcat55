@@ -20,6 +20,7 @@ import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MessageListener;
 import java.io.IOException;
+import org.apache.catalina.cluster.io.ClusterData;
 
 /**
  * Abstract class for the interceptor base class.
@@ -27,7 +28,7 @@ import java.io.IOException;
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
 
-public interface ChannelInterceptor extends MembershipListener, MessageListener {
+public interface ChannelInterceptor extends MembershipListener {
 
     public void setNext(ChannelInterceptor next) ;
 
@@ -37,7 +38,9 @@ public interface ChannelInterceptor extends MembershipListener, MessageListener 
 
     public ChannelInterceptor getPrevious();
 
-    public ClusterMessage[] sendMessage(Member[] destination, ClusterMessage msg, int options) throws IOException;
+    public ClusterMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException;
+    
+    public void messageReceived(ClusterData data);
     
     public void heartbeat();
 }

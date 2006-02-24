@@ -57,6 +57,9 @@ import org.apache.tomcat.util.IntrospectionUtils;
 import org.apache.catalina.cluster.io.ReplicationStream;
 import java.io.ByteArrayInputStream;
 import org.apache.catalina.Loader;
+import org.apache.catalina.cluster.group.interceptors.GzipInterceptor;
+import org.apache.catalina.cluster.MembershipListener;
+import org.apache.catalina.cluster.MessageListener;
 
 /**
  * A <b>Cluster </b> implementation using simple multicast. Responsible for
@@ -71,8 +74,9 @@ import org.apache.catalina.Loader;
  * @author Peter Rossbach
  * @version $Revision: 379550 $, $Date: 2006-02-21 12:06:35 -0600 (Tue, 21 Feb 2006) $
  */
-public class SimpleTcpCluster extends ChannelInterceptorBase 
-    implements CatalinaCluster, Lifecycle, LifecycleListener, IDynamicProperty {
+public class SimpleTcpCluster 
+    implements CatalinaCluster, Lifecycle, LifecycleListener, IDynamicProperty,
+               MembershipListener, MessageListener{
 
     public static Log log = LogFactory.getLog(SimpleTcpCluster.class);
 
@@ -599,7 +603,7 @@ public class SimpleTcpCluster extends ChannelInterceptorBase
     public void backgroundProcess() {
         if (clusterDeployer != null) clusterDeployer.backgroundProcess();
         //send a heartbeat through the channel
-        heartbeat();
+        if ( channel !=null ) channel.heartbeat();
     }
 
     /**
@@ -670,7 +674,9 @@ public class SimpleTcpCluster extends ChannelInterceptorBase
         try {
             if ( clusterDeployer != null ) clusterDeployer.setCluster(this);
             this.registerClusterValve();
-            channel.addInterceptor(this);
+            channel.setMembershipListener(this);
+            channel.setMessageListener(this);
+            channel.addInterceptor(new GzipInterceptor());
             channel.start(channel.DEFAULT);
             if (clusterDeployer != null) clusterDeployer.start();
 
@@ -817,7 +823,7 @@ public class SimpleTcpCluster extends ChannelInterceptorBase
                 } else
                     log.error("Unable to send message to local member " + msg);
             } else {
-                channel.send(null,msg,0);
+                channel.send(null,msg, 0);
             }
         } catch (Exception x) {
             log.error("Unable to send message through cluster sender.", x);
@@ -870,6 +876,10 @@ public class SimpleTcpCluster extends ChannelInterceptorBase
      * @param message
      *            receveived Message
      */
+    public boolean accept(ClusterMessage message) {
+        return true;
+    }
+    
     public void messageReceived(ClusterMessage message) {
 
         long start = 0;
@@ -901,6 +911,7 @@ public class SimpleTcpCluster extends ChannelInterceptorBase
                     + message.getClass().getName()
                     + " transfered but no listener registered");
         }
+        return;
     }
 
     // --------------------------------------------------------- Logger

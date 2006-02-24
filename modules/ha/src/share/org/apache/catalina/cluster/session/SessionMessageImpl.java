@@ -45,8 +45,8 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
     private long serializationTimestamp;
     private boolean timestampSet = false ;
     private String uniqueId;
-    private int resend = ClusterMessage.FLAG_DEFAULT ;
-    private int compress = ClusterMessage.FLAG_DEFAULT ;
+    private int resend = ClusterMessage.RESEND_DEFAULT ;
+    private int options = 0;
 
 
     private SessionMessageImpl( String contextName,
@@ -179,15 +179,17 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
      * @return Returns the compress.
      * @since 5.5.10 
      */
-    public int getCompress() {
-        return compress;
+    public int getOptions() {
+
+        return options;
     }
     /**
      * @param compress The compress to set.
      * @since 5.5.10
      */
-    public void setCompress(int compress) {
-        this.compress = compress;
+    public void setOptions(int options) {
+
+        this.options = options;
     }
     /**
      * @return Returns the resend.

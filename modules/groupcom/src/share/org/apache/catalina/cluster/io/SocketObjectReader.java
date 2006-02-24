@@ -19,7 +19,7 @@ package org.apache.catalina.cluster.io;
 
 import java.net.Socket;
 
-import org.apache.catalina.cluster.tcp.ClusterData;
+
 
 /**
  * The object reader object is an object used in conjunction with
