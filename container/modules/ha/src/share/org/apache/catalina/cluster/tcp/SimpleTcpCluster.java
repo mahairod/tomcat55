@@ -54,6 +54,9 @@ import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.IntrospectionUtils;
+import org.apache.catalina.cluster.io.ReplicationStream;
+import java.io.ByteArrayInputStream;
+import org.apache.catalina.Loader;
 
 /**
  * A <b>Cluster </b> implementation using simple multicast. Responsible for
@@ -489,8 +492,7 @@ public class SimpleTcpCluster extends ChannelInterceptorBase
                     + " using class " + getManagerClassName());
         Manager manager = null;
         try {
-            manager = (Manager) getClass().getClassLoader().loadClass(
-                    getManagerClassName()).newInstance();
+            manager = (Manager) getClass().getClassLoader().loadClass(getManagerClassName()).newInstance();
         } catch (Exception x) {
             log.error("Unable to load class for replication manager", x);
             manager = new org.apache.catalina.cluster.session.DeltaManager();
@@ -584,8 +586,7 @@ public class SimpleTcpCluster extends ChannelInterceptorBase
     public Manager getManager(String name) {
         return (Manager) managers.get(name);
     }
-
- 
+    
     // ------------------------------------------------------ Lifecycle Methods
 
     /**
@@ -596,10 +597,9 @@ public class SimpleTcpCluster extends ChannelInterceptorBase
      * @see ReplicationTransmitter#backgroundProcess()
      */
     public void backgroundProcess() {
-        if (clusterDeployer != null)
-            clusterDeployer.backgroundProcess();
-//        if (this.channel.getClusterSender() != null)
-//            this.channel.getClusterSender().backgroundProcess();
+        if (clusterDeployer != null) clusterDeployer.backgroundProcess();
+        //send a heartbeat through the channel
+        heartbeat();
     }
 
     /**
@@ -668,9 +668,12 @@ public class SimpleTcpCluster extends ChannelInterceptorBase
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, this);
         try {
+            if ( clusterDeployer != null ) clusterDeployer.setCluster(this);
             this.registerClusterValve();
             channel.addInterceptor(this);
             channel.start(channel.DEFAULT);
+            if (clusterDeployer != null) clusterDeployer.start();
+
             this.started = true;
             // Notify our interested LifecycleListeners
             lifecycle.fireLifecycleEvent(AFTER_START_EVENT, this);
@@ -742,11 +745,10 @@ public class SimpleTcpCluster extends ChannelInterceptorBase
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, this);
 
-        if (clusterDeployer != null) {
-            clusterDeployer.stop();
-        }
+        if (clusterDeployer != null) clusterDeployer.stop();
         this.managers.clear();
         try {
+            if ( clusterDeployer != null ) clusterDeployer.setCluster(null);
             channel.stop(ClusterChannel.DEFAULT);
             this.unregisterClusterValve();
         } catch (Exception x) {

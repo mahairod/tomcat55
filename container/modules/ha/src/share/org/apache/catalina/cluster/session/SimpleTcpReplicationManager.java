@@ -25,6 +25,9 @@ import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.session.StandardManager;
+import org.apache.catalina.cluster.io.ReplicationStream;
+import java.io.ByteArrayInputStream;
+import org.apache.catalina.Loader;
 
 /**
  * Title:        Tomcat Session Replication for Tomcat 4.0 <BR>
@@ -359,6 +362,41 @@ implements ClusterManager
         }
         return null;
     }
+    
+    /**
+     * Open Stream and use correct ClassLoader (Container) Switch
+     * ThreadClassLoader
+     * 
+     * @param data
+     * @return The object input stream
+     * @throws IOException
+     */
+    public ReplicationStream getReplicationStream(byte[] data) throws IOException {
+        ByteArrayInputStream fis =null;
+        ReplicationStream ois = null;
+        Loader loader = null;
+        ClassLoader classLoader = null;
+        //fix to be able to run the DeltaManager
+        //stand alone without a container.
+        //use the Threads context class loader
+        if (container != null)
+            loader = container.getLoader();
+        if (loader != null)
+            classLoader = loader.getClassLoader();
+        else
+            classLoader = Thread.currentThread().getContextClassLoader();
+        //end fix
+        fis = new ByteArrayInputStream(data);
+        if ( classLoader == Thread.currentThread().getContextClassLoader() ) {
+            ois = new ReplicationStream(fis, new ClassLoader[] {classLoader});
+        } else {
+            ois = new ReplicationStream(fis, new ClassLoader[] {classLoader,Thread.currentThread().getContextClassLoader()});
+        }
+        return ois;
+    }    
+
+
+    
 
     /**
      * Reinstantiates a serialized session from the data passed in.
@@ -373,8 +411,7 @@ implements ClusterManager
     {
         try
         {
-            java.io.ByteArrayInputStream session_data = new java.io.ByteArrayInputStream(data);
-            ReplicationStream session_in = new ReplicationStream(session_data,container.getLoader().getClassLoader());
+            ReplicationStream session_in = getReplicationStream(data);
 
             Session session = sessionId!=null?this.findSession(sessionId):null;
             boolean isNew = (session==null);

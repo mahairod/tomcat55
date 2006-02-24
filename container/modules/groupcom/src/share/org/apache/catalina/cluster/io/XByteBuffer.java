@@ -374,7 +374,7 @@ public class XByteBuffer
             } else {
                 instream = new ByteArrayInputStream(data.getMessage());
             }
-            ReplicationStream stream = new ReplicationStream(instream,XByteBuffer.class.getClassLoader());
+            ReplicationStream stream = new ReplicationStream(instream,new ClassLoader[] {XByteBuffer.class.getClassLoader()});
             message = stream.readObject();
             instream.close();
         }
