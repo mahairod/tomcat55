@@ -78,7 +78,9 @@ public abstract class ChannelInterceptorBase implements ChannelInterceptor{
     
     
 
-    
+    public void heartbeat() {
+        if ( getNext() != null ) getNext().heartbeat();
+    }
     
 
     

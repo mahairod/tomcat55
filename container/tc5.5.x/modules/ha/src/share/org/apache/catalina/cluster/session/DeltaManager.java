@@ -50,6 +50,7 @@ import org.apache.catalina.util.CustomObjectInputStream;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.cluster.io.ReplicationStream;
 
 /**
  * The DeltaManager manages replicated sessions by only replicating the deltas
@@ -70,8 +71,7 @@ import org.apache.catalina.core.StandardContext;
  * @version $Revision: 380100 $ $Date: 2006-02-23 06:08:14 -0600 (Thu, 23 Feb 2006) $
  */
 
-public class DeltaManager extends ManagerBase implements Lifecycle,
-        PropertyChangeListener, ClusterManager {
+public class DeltaManager extends ClusterManagerBase{
 
     // ---------------------------------------------------- Security Classes
 
@@ -676,22 +676,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
      */
     protected DeltaRequest loadDeltaRequest(DeltaSession session, byte[] data)
             throws ClassNotFoundException, IOException {
-        ByteArrayInputStream fis = null;
-        ReplicationStream ois = null;
-        Loader loader = null;
-        ClassLoader classLoader = null;
-        //fix to be able to run the DeltaManager
-        //stand alone without a container.
-        //use the Threads context class loader
-        if (container != null)
-            loader = container.getLoader();
-        if (loader != null)
-            classLoader = loader.getClassLoader();
-        else
-            classLoader = Thread.currentThread().getContextClassLoader();
-        //end fix
-        fis = new ByteArrayInputStream(data);
-        ois = new ReplicationStream(fis, classLoader);
+        ReplicationStream ois = getReplicationStream(data);
         session.getDeltaRequest().readExternal(ois);
         ois.close();
         return session.getDeltaRequest();
@@ -730,12 +715,11 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         // Initialize our internal data structures
         //sessions.clear(); //should not do this
         // Open an input stream to the specified pathname, if any
-        ClassLoader originalLoader = Thread.currentThread()
-                .getContextClassLoader();
+        ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
         ObjectInputStream ois = null;
         // Load the previously unloaded active sessions
         try {
-            ois = openDeserializeObjectStream(data);
+            ois = getReplicationStream(data);
             Integer count = (Integer) ois.readObject();
             int n = count.intValue();
             for (int i = 0; i < n; i++) {
@@ -788,54 +772,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
 
     }
 
-    /**
-     * Open Stream and use correct ClassLoader (Container) Switch
-     * ThreadClassLoader
-     * 
-     * @param data
-     * @return The object input stream
-     * @throws IOException
-     */
-    protected ObjectInputStream openDeserializeObjectStream(byte[] data) throws IOException {
-        ObjectInputStream ois = null;
-        ByteArrayInputStream fis = null;
-        try {
-            Loader loader = null;
-            ClassLoader classLoader = null;
-            fis = new ByteArrayInputStream(data);
-            BufferedInputStream bis = new BufferedInputStream(fis);
-            if (container != null)
-                loader = container.getLoader();
-            if (loader != null)
-                classLoader = loader.getClassLoader();
-            if (classLoader != null) {
-                if (log.isTraceEnabled())
-                    log.trace(sm.getString(
-                            "deltaManager.loading.withContextClassLoader",
-                            getName()));
-                ois = new CustomObjectInputStream(bis, classLoader);
-                Thread.currentThread().setContextClassLoader(classLoader);
-            } else {
-                if (log.isTraceEnabled())
-                    log.trace(sm.getString(
-                            "deltaManager.loading.withoutClassLoader",
-                            getName()));
-                ois = new ObjectInputStream(bis);
-            }
-        } catch (IOException e) {
-            log.error(sm.getString("deltaManager.loading.ioe", e), e);
-            if (ois != null) {
-                try {
-                    ois.close();
-                } catch (IOException f) {
-                    ;
-                }
-                ois = null;
-            }
-            throw e;
-        }
-        return ois;
-    }
+    
 
     /**
      * Save any currently active sessions in the appropriate persistence

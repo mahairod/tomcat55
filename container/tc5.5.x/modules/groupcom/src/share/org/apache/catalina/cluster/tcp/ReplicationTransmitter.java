@@ -495,7 +495,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * 
      * @see SimpleTcpCluster#backgroundProcess()
      */
-    public void backgroundProcess() {
+    public void heartbeat() {
         count = (count + 1) % processSenderFrequency;
         if (count == 0) {
             checkKeepAlive();

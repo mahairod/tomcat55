@@ -38,5 +38,6 @@ public interface ChannelInterceptor extends MembershipListener, MessageListener 
     public ChannelInterceptor getPrevious();
 
     public ClusterMessage[] sendMessage(Member[] destination, ClusterMessage msg, int options) throws IOException;
-
+    
+    public void heartbeat();
 }
