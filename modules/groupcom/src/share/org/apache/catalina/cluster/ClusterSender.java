@@ -33,7 +33,7 @@ public interface ClusterSender
 
     public void stop();
 
-    public void backgroundProcess() ;
+    public void heartbeat() ;
 
     public void sendMessage(ClusterMessage message, Member member) throws java.io.IOException;
 

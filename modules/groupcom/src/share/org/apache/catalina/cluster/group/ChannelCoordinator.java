@@ -160,5 +160,10 @@ public class ChannelCoordinator extends ChannelInterceptorBase {
         this.membershipService = membershipService;
         this.membershipService.setMembershipListener(this);
     }
+    
+    public void hearbeat() {
+        if ( clusterSender!=null ) clusterSender.heartbeat();
+        super.heartbeat();
+    }
    
 }

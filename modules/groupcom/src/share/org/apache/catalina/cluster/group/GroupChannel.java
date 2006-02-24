@@ -63,7 +63,9 @@ public class GroupChannel implements ClusterChannel {
         }
     }
     
-    
+    public void heartbeat() {
+        getFirstInterceptor().heartbeat();
+    }
     
     /**
      * Send a message to one or more members in the cluster
@@ -79,11 +81,15 @@ public class GroupChannel implements ClusterChannel {
         msg.setTimestamp(System.currentTimeMillis());
         msg.setResend(msg.FLAG_FORBIDDEN);
         try {
-            if (interceptors != null)return interceptors.sendMessage(destination, msg, options);
-            else return this.coordinator.sendMessage(destination, msg, options);
+            return getFirstInterceptor().sendMessage(destination, msg, options);
         }catch ( Exception x ) {
             throw new ChannelException(x);
         }
+    }
+    
+    public ChannelInterceptor getFirstInterceptor() {
+        if (interceptors != null) return interceptors;
+        else return coordinator;
     }
     
     /**
