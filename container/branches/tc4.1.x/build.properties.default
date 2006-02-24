@@ -170,11 +170,6 @@ commons-pool.jar=${commons-pool.lib}/commons-pool-1.2.jar
 commons-pool.loc=${base-jakarta.loc}/commons/pool/binaries/commons-pool-1.2.tar.gz
 
 
-# ----- JavaService, version 1.2.0 or later -----
-javaservice.home=${base.path}/javaservice
-javaservice.loc=http://www.alexandriasc.com/software/JavaService/JavaService-bin-1.2.0.zip
-
-
 # ----- Java Database Connectivity (JDBC) Optional Package, version 2.0 -----
 jdbc20ext.home=${base.path}/jdbc2_0-stdext
 jdbc20ext.lib=${jdbc20ext.home}

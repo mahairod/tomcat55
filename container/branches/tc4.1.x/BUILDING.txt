@@ -1,3 +1,4 @@
+
 $Id$
 
 
@@ -506,17 +507,7 @@ the servlet/JSP container.
   own subdirectory.
 
 
-(31) JavaService
-
-* Download the JavaService package (version 1.2.0 or later) from:
-
-    http://www.alexandriasc.com/software/JavaService/JavaService-bin-1.2.0.zip
-
-* Install the application into a convenient location so that it resides in its
-  own subdirectory.
-
-
-(32) Run Ant
+(31) Run Ant
 
 Open a command line shell, and issue the following commands:
 
@@ -525,10 +516,9 @@ Open a command line shell, and issue the following commands:
 
 
 
-(33) Build the release distribution - OPTIONAL
+(32) Build the release distribution - OPTIONAL
 
 Open a command line shell, and issue the following commands:
 
   cd ${tomcat.source}/container
   ant release
-

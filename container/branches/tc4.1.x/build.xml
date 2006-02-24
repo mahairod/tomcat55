@@ -35,7 +35,6 @@
   <!-- Build Defaults -->
   <property name="catalina.build"   value="${basedir}/catalina/build"/>
   <property name="jasper.build"     value="${jasper.home}/build"/>
-  <property name="javaservice.home" value="../javaservice"/>
   <property name="nsis.home"        value="c:\program files\nsis"/>
   <property name="servlet.home"     value="${api.home}/dist"/>
   <property name="tomcat.build"     value="${basedir}/build"/>
@@ -285,8 +284,11 @@
     </copy>
     <copy file="${nsis.home}/Plugins/InstallOptions.dll" 
      todir="${tomcat.dist}" />
-    <copy file="${javaservice.home}/bin/JavaService.exe" 
-     tofile="${tomcat.dist}/bin/tomcat.exe" />
+    <copy file="${jtc.home}/procrun/bin/tomcat5.exe"
+        tofile="${tomcat.dist}/bin/tomcat4.exe" />
+    <copy file="${jtc.home}/procrun/bin/tomcat5w.exe"
+        tofile="${tomcat.dist}/bin/tomcat4w.exe" />
+
     <filter token="VERSION" value="${version}"/>
     <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" 
      filtering="true"/>
@@ -339,7 +341,6 @@
     <condition property="execute.installer">
       <and>
         <os family="windows" />
-        <available file="${javaservice.home}/bin/JavaService.exe" />
         <available file="${nsis.home}/makensis.exe" />
       </and>
     </condition>
@@ -505,11 +506,6 @@
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-modeler.loc}"/>
       <param name="destfile" value="${commons-modeler.jar}"/>
-    </antcall>
-    <antcall target="downloadzip">
-      <param name="sourcefile" value="${javaservice.loc}"/>
-      <param name="destfile" value="${javaservice.home}/bin/JavaService.exe"/>
-      <param name="destdir" value="${javaservice.home}"/>
     </antcall>
     <antcall target="downloadgz">
       <param name="sourcefile" value="${jmx.loc}"/>

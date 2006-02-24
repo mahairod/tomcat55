@@ -7,13 +7,15 @@ Name "Apache Tomcat 4.1"
 OutFile tomcat4.exe
 CRCCheck on
 SetCompress force
-SetCompressor lzma
+SetCompressor /SOLID lzma
 SetDatablockOptimize on
 
 !include "StrFunc.nsh"
 ${StrRep}
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
+!define MUI_ICON tomcat.ico
+!define MUI_UNICON tomcat.ico
 
 !insertmacro MUI_PAGE_LICENSE "INSTALLLICENSE"
 
@@ -40,8 +42,8 @@ ShowInstDetails show
 SetOverwrite on
 SetDateSave on
 
-InstallDir "$PROGRAMFILES\Apache Group\Tomcat 4.1"
-InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\4.1" ""
+InstallDir "$PROGRAMFILES\Apache Software Foundation\Tomcat 4.1"
+InstallDirRegKey HKLM "SOFTWARE\Apache Software Foundation\Tomcat\4.1" ""
 
 ReserveFile "config.ini"
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
@@ -55,8 +57,7 @@ SubSection /e "Main" Section1
     SetOutPath $INSTDIR
     File tomcat.ico
     File LICENSE
-    File /r bin
-    Delete "$INSTDIR\bin\tomcat.exe"
+    File /r /x *.exe bin
     File /r common
     File /nonfatal /r shared
     File /nonfatal /r logs
@@ -84,10 +85,20 @@ SubSection /e "Main" Section1
     Pop $2
 
     SetOutPath $INSTDIR\bin
-    File /oname=tomcat.exe bin\tomcat.exe
-  
-    ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Apache Tomcat 4.1" "$2" -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Dcatalina.home="$INSTDIR" -Djava.endorsed.dirs="$INSTDIR\common\endorsed" -Dsun.io.useCanonCaches=false -start org.apache.catalina.startup.BootstrapService -params start -stop org.apache.catalina.startup.BootstrapService -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
-  
+    File /oname=tomcat4.exe bin\tomcat4.exe
+    File /oname=tomcat4w.exe bin\tomcat4w.exe
+
+    ExecWait '"$INSTDIR\bin\tomcat4.exe" //IS//Tomcat4 --DisplayName "Apache Tomcat" --Description "Apache Tomcat @VERSION@ Server - http://tomcat.apache.org/" --LogPath "$INSTDIR\logs" --Install "$INSTDIR\bin\tomcat4.exe" --Jvm "$2" --StartPath "$INSTDIR" --StopPath "$INSTDIR"'
+
+    ExecWait '"$INSTDIR\bin\tomcat4.exe" //US//Tomcat4 --Startup auto'
+
+    ExecWait '"$INSTDIR\bin\tomcat4.exe" //US//Tomcat4 --Classpath "$INSTDIR\bin\bootstrap.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop  --StartMode jvm --StopMode jvm'
+    ExecWait '"$INSTDIR\bin\tomcat4.exe" //US//Tomcat4 --JvmOptions "-Dcatalina.home=$INSTDIR#-Dcatalina.base=$INSTDIR#-Djava.endorsed.dirs=$INSTDIR\common\endorsed#-Djava.io.tmpdir=$INSTDIR\temp --StdOutput auto --StdError auto'
+    
+    ; Behave like Apache Httpd (put the icon in try on login)
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Run" "ApacheTomcatMonitor" '"$INSTDIR\bin\tomcat4w.exe" //MS//Tomcat4'
+    Exec '"$INSTDIR\bin\tomcat4w.exe" //MS//Tomcat4'
+
     ClearErrors
 
   SectionEnd
@@ -129,15 +140,9 @@ SubSection /e "Main" Section1
     CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Tomcat 4.1 Program Directory.lnk" \
                    "$INSTDIR"
 
-    CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Start Tomcat.lnk" \
-                   "$2\bin\java.exe" \
-                   '-jar -Duser.dir="$INSTDIR" -Djava.endorsed.dirs="$INSTDIR\common\endorsed" "$INSTDIR\bin\bootstrap.jar" start' \
+    CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Configure Tomcat.lnk" \
+                   "$INSTDIR\bin\tomcat4w.exe" "" \
                    "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
-
-    CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Stop Tomcat.lnk" \
-                   "$2\bin\java.exe" \
-                   '-jar -Duser.dir="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" stop' \
-                   "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
 
   SectionEnd
 SubSectionEnd
@@ -396,7 +401,7 @@ Function configure
 
   Call startService
 
-  WriteRegStr HKLM "SOFTWARE\Apache Group\Tomcat\4.1" "" $INSTDIR
+  WriteRegStr HKLM "SOFTWARE\Apache Software Foundation\Tomcat\4.1" "" $INSTDIR
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1" \
                    "DisplayName" "Apache Tomcat 4.1 (remove only)"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1" \
@@ -457,7 +462,7 @@ FunctionEnd
 ;
 Function startService
 
-  IfFileExists "$INSTDIR\bin\tomcat.exe" 0 NoService
+  IfFileExists "$INSTDIR\bin\tomcat4.exe" 0 NoService
   ExecWait 'net start "Apache Tomcat 4.1"'
   Sleep 4000
 
@@ -473,10 +478,13 @@ FunctionEnd
 ; Stop Tomcat NT Service
 ;
 Function un.stopService
-
-  IfFileExists "$INSTDIR\bin\tomcat.exe" 0 NoService
-  ExecWait 'net stop "Apache Tomcat 4.1"'
-  Sleep 2000
+  IfFileExists "$INSTDIR\bin\tomcat4.exe" 0 NoService
+  
+  ; Stop Tomcat service monitor if running
+  Execwait '"$INSTDIR\bin\tomcat4w.exe" //MQ//Tomcat4'
+  ; Delete Tomcat service
+  Execwait '"$INSTDIR\bin\tomcat4.exe" //DS//Tomcat4'
+  ClearErrors
 
  NoService:
 
@@ -509,7 +517,8 @@ Section Uninstall
 
   DeleteRegKey HKCR "JSPFile"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1"
-  DeleteRegKey HKLM "SOFTWARE\Apache Group\Tomcat\4.1"
+  DeleteRegKey HKLM "SOFTWARE\Apache Software Foundation\Tomcat\4.1"
+  DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Run" "ApacheTomcatMonitor"
   RMDir /r "$SMPROGRAMS\Apache Tomcat 4.1"
   Delete "$INSTDIR\tomcat.ico"
   Delete "$INSTDIR\LICENSE"
