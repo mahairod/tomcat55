@@ -17,11 +17,11 @@ package org.apache.catalina.cluster.group;
 
 import org.apache.catalina.cluster.MembershipService;
 import org.apache.catalina.cluster.Member;
-import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.ChannelMessage;
 import org.apache.catalina.cluster.ChannelException;
-import org.apache.catalina.cluster.ClusterSender;
-import org.apache.catalina.cluster.ClusterReceiver;
-import org.apache.catalina.cluster.ClusterChannel;
+import org.apache.catalina.cluster.ChannelSender;
+import org.apache.catalina.cluster.ChannelReceiver;
+import org.apache.catalina.cluster.Channel;
 import java.io.IOException;
 import org.apache.catalina.cluster.InterceptorPayload;
 import org.apache.catalina.cluster.io.ClusterData;
@@ -36,16 +36,16 @@ import org.apache.catalina.cluster.MessageListener;
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
 public class ChannelCoordinator extends ChannelInterceptorBase implements MessageListener {
-    private ClusterReceiver clusterReceiver;
-    private ClusterSender clusterSender;
+    private ChannelReceiver clusterReceiver;
+    private ChannelSender clusterSender;
     private MembershipService membershipService;
 
     public ChannelCoordinator() {
         
     }
     
-    public ChannelCoordinator(ClusterReceiver receiver,
-                              ClusterSender sender,
+    public ChannelCoordinator(ChannelReceiver receiver,
+                              ChannelSender sender,
                               MembershipService service) {
         this();
         this.setClusterReceiver(receiver);
@@ -60,7 +60,7 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any.
      */
-    public ClusterMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException {
+    public ChannelMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException {
         if ( destination == null ) destination = membershipService.getMembers();
         for ( int i=0; i<destination.length; i++ ) {
             clusterSender.sendMessage(msg,destination[i]);
@@ -88,10 +88,10 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
             clusterReceiver.setCompress(clusterSender.isCompress());
             //end FIXME
             
-            if ( (svc & ClusterChannel.MBR_RX_SEQ) == ClusterChannel.MBR_RX_SEQ) membershipService.start(MembershipService.MBR_RX);
-            if ( (svc & ClusterChannel.SND_RX_SEQ) == ClusterChannel.SND_RX_SEQ) clusterReceiver.start();
-            if ( (svc & ClusterChannel.SND_TX_SEQ) == ClusterChannel.SND_TX_SEQ) clusterSender.start();
-            if ( (svc & ClusterChannel.MBR_TX_SEQ) == ClusterChannel.MBR_TX_SEQ) membershipService.start(MembershipService.MBR_TX);
+            if ( (svc & Channel.MBR_RX_SEQ) == Channel.MBR_RX_SEQ) membershipService.start(MembershipService.MBR_RX);
+            if ( (svc & Channel.SND_RX_SEQ) == Channel.SND_RX_SEQ) clusterReceiver.start();
+            if ( (svc & Channel.SND_TX_SEQ) == Channel.SND_TX_SEQ) clusterSender.start();
+            if ( (svc & Channel.MBR_TX_SEQ) == Channel.MBR_TX_SEQ) membershipService.start(MembershipService.MBR_TX);
         }catch ( ChannelException cx ) {
             throw cx;
         }catch ( Exception x ) {
@@ -112,10 +112,10 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
      */
     public void stop(int svc) throws ChannelException {
         try {
-            if ( (svc & ClusterChannel.MBR_RX_SEQ) == ClusterChannel.MBR_RX_SEQ) membershipService.stop();
-            if ( (svc & ClusterChannel.SND_RX_SEQ) == ClusterChannel.SND_RX_SEQ) clusterReceiver.stop();
-            if ( (svc & ClusterChannel.SND_TX_SEQ) == ClusterChannel.SND_TX_SEQ) clusterSender.stop();
-            if ( (svc & ClusterChannel.MBR_TX_SEQ) == ClusterChannel.MBR_RX_SEQ) membershipService.stop();
+            if ( (svc & Channel.MBR_RX_SEQ) == Channel.MBR_RX_SEQ) membershipService.stop();
+            if ( (svc & Channel.SND_RX_SEQ) == Channel.SND_RX_SEQ) clusterReceiver.stop();
+            if ( (svc & Channel.SND_TX_SEQ) == Channel.SND_TX_SEQ) clusterSender.stop();
+            if ( (svc & Channel.MBR_TX_SEQ) == Channel.MBR_RX_SEQ) membershipService.stop();
         }catch ( Exception x ) {
             throw new ChannelException(x);
         }
@@ -132,16 +132,16 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
         super.memberDisappeared(member);
     }
     
-    public void messageReceived(ClusterMessage msg) {
+    public void messageReceived(ChannelMessage msg) {
         if ( msg instanceof ClusterData ) this.messageReceived((ClusterData)msg);
     }
 
 
-    public ClusterReceiver getClusterReceiver() {
+    public ChannelReceiver getClusterReceiver() {
         return clusterReceiver;
     }
 
-    public ClusterSender getClusterSender() {
+    public ChannelSender getClusterSender() {
         return clusterSender;
     }
 
@@ -149,7 +149,7 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
         return membershipService;
     }
 
-    public void setClusterReceiver(ClusterReceiver clusterReceiver) {
+    public void setClusterReceiver(ChannelReceiver clusterReceiver) {
         if ( clusterReceiver != null ) {
             this.clusterReceiver = clusterReceiver;
             this.clusterReceiver.setMessageListener(this);
@@ -159,7 +159,7 @@ public class ChannelCoordinator extends ChannelInterceptorBase implements Messag
         }
     }
 
-    public void setClusterSender(ClusterSender clusterSender) {
+    public void setClusterSender(ChannelSender clusterSender) {
         this.clusterSender = clusterSender;
     }
 

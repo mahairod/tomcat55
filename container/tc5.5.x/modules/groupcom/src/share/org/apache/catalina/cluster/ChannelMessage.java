@@ -19,10 +19,9 @@ import java.io.Serializable;
 
 /**
  * @author Filip Hanik
- * @author Peter Rossbach
  * 
  */
-public interface ClusterMessage extends Serializable {
+public interface ChannelMessage extends Serializable {
     
     public final static int RESEND_FORBIDDEN = 0 ;
     public final static int RESEND_ALLOWED = 1 ;

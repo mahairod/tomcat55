@@ -99,7 +99,7 @@ public class ClusterRuleSet extends RuleSetBase {
         digester.addSetProperties(prefix + "Sender");
         digester.addSetNext(prefix + "Sender",
                             "setClusterSender",
-                            "org.apache.catalina.cluster.ClusterSender");
+                            "org.apache.catalina.cluster.ChannelSender");
 
         digester.addObjectCreate(prefix + "Receiver",
                                  null, // MUST be specified in the element

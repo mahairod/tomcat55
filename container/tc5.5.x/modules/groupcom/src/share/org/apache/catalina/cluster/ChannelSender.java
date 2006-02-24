@@ -24,7 +24,7 @@ import org.apache.catalina.cluster.io.ClusterData;
  * @version $Revision: 303950 $, $Date: 2005-06-09 15:38:30 -0500 (Thu, 09 Jun 2005) $
  *
  */
-public interface ClusterSender
+public interface ChannelSender
 {
 
     public void add(Member member);
@@ -37,11 +37,11 @@ public interface ClusterSender
 
     public void heartbeat() ;
 
-    public void sendMessage(ClusterData message, Member member) throws java.io.IOException;
+    public void sendMessage(ChannelMessage message, Member member) throws java.io.IOException;
 
-    public void sendMessage(ClusterData message) throws java.io.IOException;
+    public void sendMessage(ChannelMessage message) throws java.io.IOException;
     
-    public void sendMessageClusterDomain(ClusterData message) throws java.io.IOException;
+    public void sendMessageClusterDomain(ChannelMessage message) throws java.io.IOException;
 
     public boolean isWaitForAck();
     public void setWaitForAck(boolean isWaitForAck);

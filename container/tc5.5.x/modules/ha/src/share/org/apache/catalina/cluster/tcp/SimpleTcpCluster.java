@@ -36,16 +36,13 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Valve;
 import org.apache.catalina.cluster.CatalinaCluster;
-import org.apache.catalina.cluster.ClusterChannel;
 import org.apache.catalina.cluster.ClusterListener;
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.ClusterReceiver;
-import org.apache.catalina.cluster.ClusterSender;
+import org.apache.catalina.cluster.ChannelSender;
 import org.apache.catalina.cluster.ClusterValve;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipService;
-import org.apache.catalina.cluster.group.ChannelInterceptorBase;
 import org.apache.catalina.cluster.group.GroupChannel;
 import org.apache.catalina.cluster.session.DeltaManager;
 import org.apache.catalina.cluster.util.IDynamicProperty;
@@ -54,12 +51,11 @@ import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.IntrospectionUtils;
-import org.apache.catalina.cluster.io.ReplicationStream;
-import java.io.ByteArrayInputStream;
-import org.apache.catalina.Loader;
 import org.apache.catalina.cluster.group.interceptors.GzipInterceptor;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MessageListener;
+import org.apache.catalina.cluster.Channel;
+import org.apache.catalina.cluster.ChannelMessage;
 
 /**
  * A <b>Cluster </b> implementation using simple multicast. Responsible for
@@ -110,7 +106,7 @@ public class SimpleTcpCluster
     /**
      * Group channel.
      */
-    protected ClusterChannel channel = new GroupChannel();
+    protected Channel channel = new GroupChannel();
 
 
     /**
@@ -263,30 +259,6 @@ public class SimpleTcpCluster
         this.managerClassName = managerClassName;
     }
 
-    public void setClusterSender(ClusterSender clusterSender) {
-        this.channel.setClusterSender(clusterSender);
-    }
-    
-    public ClusterSender getClusterSender() {
-        return null;
-    }
-
-    public void setClusterReceiver(ClusterReceiver clusterReceiver) {
-        this.channel.setClusterReceiver(clusterReceiver);
-    }
-
-    public ClusterReceiver getClusterReceiver() {
-        return null;
-    }
-
-    public void setMembershipService(MembershipService membershipService) {
-        this.channel.setMembershipService(membershipService);
-    }
-    
-    public MembershipService getMembershipService() {
-        return ((GroupChannel)channel).getMembershipService();
-    }
-
     /**
      * Add cluster valve 
      * Cluster Valves are only add to container when cluster is started!
@@ -362,7 +334,7 @@ public class SimpleTcpCluster
      * has members
      */
     public boolean hasMembers() {
-        return getMembershipService().hasMembers();
+        return channel.hasMembers();
     }
     
     /**
@@ -370,7 +342,7 @@ public class SimpleTcpCluster
      * @return all members or empty array 
      */
     public Member[] getMembers() {
-        return getMembershipService().getMembers();
+        return channel.getMembers();
     }
 
     /**
@@ -379,7 +351,7 @@ public class SimpleTcpCluster
      * @return Member
      */
     public Member getLocalMember() {
-        return getMembershipService().getLocalMember();
+        return channel.getLocalMember();
     }
 
     // ------------------------------------------------------------- dynamic
@@ -755,7 +727,7 @@ public class SimpleTcpCluster
         this.managers.clear();
         try {
             if ( clusterDeployer != null ) clusterDeployer.setCluster(null);
-            channel.stop(ClusterChannel.DEFAULT);
+            channel.stop(Channel.DEFAULT);
             this.unregisterClusterValve();
         } catch (Exception x) {
             log.error("Unable to stop cluster valve.", x);
@@ -779,24 +751,6 @@ public class SimpleTcpCluster
     }
 
     /**
-     * send a cluster message to one member (very usefull JMX method for remote scripting)
-     * 
-     * @param msg message to transfer
-     * @param dest Receiver member with name
-     * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage,
-     *      org.apache.catalina.cluster.Member)
-     * @see McastService#findMemberByName(String)
-     */
-    public void sendToMember(ClusterMessage msg, String dest) {
-        Member member = getMembershipService().findMemberByName(dest);
-        if (member != null) {
-            send(msg, member);
-        } else {
-            log.error("sendToMember: member " + dest + " not found!");
-        }        
-    }
-    
-    /**
      * send message to all cluster members same cluster domain
      * 
      * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage)
@@ -816,9 +770,9 @@ public class SimpleTcpCluster
      */
     public void send(ClusterMessage msg, Member dest) {
         try {
-            msg.setAddress(getMembershipService().getLocalMember());
+            msg.setAddress(getLocalMember());
             if (dest != null) {
-                if (!getMembershipService().getLocalMember().equals(dest)) {
+                if (!getLocalMember().equals(dest)) {
                     channel.send(new Member[] {dest}, msg, 0);
                 } else
                     log.error("Unable to send message to local member " + msg);
@@ -876,10 +830,15 @@ public class SimpleTcpCluster
      * @param message
      *            receveived Message
      */
-    public boolean accept(ClusterMessage message) {
-        return true;
+    public boolean accept(ChannelMessage msg) {
+        return (msg instanceof ClusterMessage);
     }
     
+    
+    public void messageReceived(ChannelMessage message) {
+        messageReceived((ClusterMessage)message);
+    }
+
     public void messageReceived(ClusterMessage message) {
 
         long start = 0;
