@@ -19,6 +19,7 @@ package org.apache.catalina.cluster.tcp;
 import java.net.InetAddress;
 
 import org.apache.catalina.cluster.util.SmartQueue;
+import org.apache.catalina.cluster.io.*;
 
 /**
  * Send cluster messages from a Message queue with only one socket. Ack and keep

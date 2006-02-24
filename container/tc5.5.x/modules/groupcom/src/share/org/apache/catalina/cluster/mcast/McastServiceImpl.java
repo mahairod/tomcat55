@@ -231,7 +231,7 @@ public class McastServiceImpl
         member.inc();
         if(log.isDebugEnabled())
             log.debug("Mcast send ping from member " + member);
-        byte[] data = member.getData(this.serviceStartTime);
+        byte[] data = member.getData();
         DatagramPacket p = new DatagramPacket(data,data.length);
         p.setAddress(address);
         p.setPort(port);

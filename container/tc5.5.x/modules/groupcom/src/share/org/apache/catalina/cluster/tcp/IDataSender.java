@@ -16,6 +16,8 @@
 
 package org.apache.catalina.cluster.tcp;
 
+import org.apache.catalina.cluster.io.*;
+
 /**
  * @author Peter Rossbach
  * @version $Revision: 303993 $ $Date: 2005-07-16 16:05:54 -0500 (Sat, 16 Jul 2005) $

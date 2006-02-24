@@ -243,16 +243,16 @@ public class McastService implements MembershipService,MembershipListener {
         String host = getProperties().getProperty("tcpListenHost");
         String domain = getProperties().getProperty("mcastClusterDomain");
         int port = Integer.parseInt(getProperties().getProperty("tcpListenPort"));
-        String name = "tcp://"+host+":"+port;
+        
         if ( localMember == null ) {
-            localMember = new McastMember(name, domain, host, port, 100);
+            localMember = new McastMember(domain, host, port, 100);
         } else {
-            localMember.setName(name);
             localMember.setDomain(domain);
             localMember.setHost(host);
             localMember.setPort(port);
             localMember.setMemberAliveTime(100);
         }
+        localMember.setServiceStartTime(System.currentTimeMillis());
         java.net.InetAddress bind = null;
         if ( properties.getProperty("mcastBindAddress")!= null ) {
             bind = java.net.InetAddress.getByName(properties.getProperty("mcastBindAddress"));
@@ -282,7 +282,7 @@ public class McastService implements MembershipService,MembershipListener {
                                     ttl,
                                     soTimeout,
                                     this);
-
+        
         impl.start(level);
 		long memberwait = (Long.parseLong(properties.getProperty("msgFrequency"))*4);
         if(log.isInfoEnabled())

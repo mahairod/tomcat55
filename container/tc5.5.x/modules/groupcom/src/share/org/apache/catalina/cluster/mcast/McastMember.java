@@ -16,6 +16,10 @@
 
 package org.apache.catalina.cluster.mcast;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.io.XByteBuffer;
 
@@ -28,7 +32,7 @@ import org.apache.catalina.cluster.io.XByteBuffer;
  * @author Peter Rossbach
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
-public class McastMember implements Member, java.io.Serializable {
+public class McastMember implements Member, java.io.Externalizable {
 
     /**
      * Digits, used for "superfast" de-serialization of an
@@ -54,10 +58,6 @@ public class McastMember implements Member, java.io.Serializable {
      * The tcp listen port for this member
      */
     protected int port;
-    /**
-     * The name for this member, has be be unique within the cluster.
-     */
-    private String name;
 
     /**
      * The name of the cluster domain from this node
@@ -73,7 +73,18 @@ public class McastMember implements Member, java.io.Serializable {
      * created, is kept track of using the start time
      */
     protected long memberAliveTime = 0;
+    
+    /**
+     * For the local member only
+     */
+    protected transient long serviceStartTime;
 
+    /**
+     * Empty constructor for serialization
+     */
+    public McastMember() {
+        
+    }
 
     /**
      * Construct a new member object
@@ -82,14 +93,12 @@ public class McastMember implements Member, java.io.Serializable {
      * @param host - the tcp listen host
      * @param port - the tcp listen port
      */
-    public McastMember(String name,
-                       String domain,
+    public McastMember(String domain,
                        String host,
                        int port,
                        long aliveTime) {
         this.host = host;
         this.port = port;
-        this.name = name;
         this.domain = domain;
         this.memberAliveTime=aliveTime;
     }
@@ -105,7 +114,7 @@ public class McastMember implements Member, java.io.Serializable {
         java.util.HashMap map = new java.util.HashMap(2);
         map.put(McastMember.TCP_LISTEN_HOST,this.host);
         map.put(McastMember.TCP_LISTEN_PORT,String.valueOf(this.port));
-        map.put(McastMember.MEMBER_NAME,name);
+        map.put(McastMember.MEMBER_NAME,getName());
         map.put(McastMember.MEMBER_DOMAIN,domain);
         return map;
     }
@@ -123,27 +132,22 @@ public class McastMember implements Member, java.io.Serializable {
      * @return - the bytes for this member deserialized
      * @throws Exception
      */
-    protected byte[] getData(long startTime) throws Exception {
+    protected byte[] getData() throws IOException {
         //package looks like
         //alive - 8 bytes
         //port - 4 bytes
         //host - 4 bytes
-        //nlen - 4 bytes
-        //name - nlen bytes
         //dlen - 4 bytes
         //domain - dlen bytes
-        byte[] named = getName().getBytes();
         byte[] domaind = getDomain().getBytes();
         byte[] addr = java.net.InetAddress.getByName(host).getAddress();
-        byte[] data = new byte[8+4+addr.length+4+named.length+4+domaind.length];
-        long alive=System.currentTimeMillis()-startTime;
+        byte[] data = new byte[8+4+addr.length+4+domaind.length];
+        long alive=System.currentTimeMillis()-getServiceStartTime();
         System.arraycopy(XByteBuffer.toBytes((long)alive),0,data,0,8);
         System.arraycopy(XByteBuffer.toBytes(port),0,data,8,4);
         System.arraycopy(addr,0,data,12,addr.length);
-        System.arraycopy(XByteBuffer.toBytes(named.length),0,data,16,4);
-        System.arraycopy(named,0,data,20,named.length);
-        System.arraycopy(XByteBuffer.toBytes(domaind.length),0,data,named.length+20,4);
-        System.arraycopy(domaind,0,data,named.length+24,domaind.length);
+        System.arraycopy(XByteBuffer.toBytes(domaind.length),0,data,16,4);
+        System.arraycopy(domaind,0,data,20,domaind.length);
         return data;
     }
     /**
@@ -151,13 +155,11 @@ public class McastMember implements Member, java.io.Serializable {
      * @param data - the bytes received
      * @return a member object.
      */
-    protected static McastMember getMember(byte[] data) {
+    protected static McastMember getMember(byte[] data, McastMember member) {
        //package looks like
        //alive - 8 bytes
        //port - 4 bytes
        //host - 4 bytes
-       //nlen - 4 bytes
-       //name - nlen bytes
        //dlen - 4 bytes
        //domain - dlen bytes
        byte[] alived = new byte[8];
@@ -167,22 +169,21 @@ public class McastMember implements Member, java.io.Serializable {
        byte[] addr = new byte[4];
        System.arraycopy(data, 12, addr, 0, 4);
        //FIXME control the nlen
-       byte[] nlend = new byte[4];
-       System.arraycopy(data, 16, nlend, 0, 4);
-       int nlen = XByteBuffer.toInt(nlend, 0);
-       byte[] named = new byte[nlen];
-       System.arraycopy(data, 20, named, 0, named.length);
        //FIXME control the dlen
        byte[] dlend = new byte[4];
-       System.arraycopy(data, nlen + 20, dlend, 0, 4);
+       System.arraycopy(data, 16, dlend, 0, 4);
        int dlen = XByteBuffer.toInt(dlend, 0);
        byte[] domaind = new byte[dlen];
-       System.arraycopy(data, nlen + 24, domaind, 0, domaind.length);
-       return new McastMember(new String(named),
-                              new String(domaind),
-                              addressToString(addr),
-                              XByteBuffer.toInt(portd, 0),
-                              XByteBuffer.toLong(alived, 0));
+       System.arraycopy(data, 20, domaind, 0, domaind.length);
+       member.setDomain(new String(domaind));
+       member.setHost(addressToString(addr));
+       member.setPort(XByteBuffer.toInt(portd, 0));
+       member.setMemberAliveTime(XByteBuffer.toLong(alived, 0));
+       return member;
+    }
+
+    protected static McastMember getMember(byte[] data) {
+       return getMember(data,new McastMember());
     }
 
     /**
@@ -190,7 +191,7 @@ public class McastMember implements Member, java.io.Serializable {
      * @return a unique name to the cluster
      */
     public String getName() {
-        return name;
+        return "tcp://"+host+":"+port;
     }
     
     /**
@@ -227,6 +228,10 @@ public class McastMember implements Member, java.io.Serializable {
        return memberAliveTime;
     }
 
+    public long getServiceStartTime() {
+        return serviceStartTime;
+    }
+
     public void setMemberAliveTime(long time) {
        memberAliveTime=time;
     }
@@ -237,7 +242,7 @@ public class McastMember implements Member, java.io.Serializable {
      * String representation of this object
      */
     public String toString()  {
-        return "org.apache.catalina.cluster.mcast.McastMember["+name+","+domain+","+host+","+port+", alive="+memberAliveTime+"]";
+        return "org.apache.catalina.cluster.mcast.McastMember["+getName()+","+domain+","+host+","+port+", alive="+memberAliveTime+"]";
     }
 
     /**
@@ -245,7 +250,7 @@ public class McastMember implements Member, java.io.Serializable {
      * @return The hash code
      */
     public int hashCode() {
-        return this.name.hashCode();
+        return this.getName().hashCode();
     }
 
     /**
@@ -254,7 +259,7 @@ public class McastMember implements Member, java.io.Serializable {
      */
     public boolean equals(Object o) {
         if ( o instanceof McastMember )    {
-            return this.name.equals(((McastMember)o).getName());
+            return this.getName().equals(((McastMember)o).getName());
         }
         else
             return false;
@@ -326,13 +331,30 @@ public class McastMember implements Member, java.io.Serializable {
     public void setMsgCount(int msgCount) {
         this.msgCount = msgCount;
     }
-    public void setName(String name) {
-        this.name = name;
-    }
+
     public void setDomain(String domain) {
         this.domain = domain;
     }
     public void setPort(int port) {
         this.port = port;
     }
+
+    public void setServiceStartTime(long serviceStartTime) {
+        this.serviceStartTime = serviceStartTime;
+    }
+
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        int length = in.readInt();
+        byte[] message = new byte[length];
+        in.read(message);
+        getMember(message,this);
+        
+    }
+
+    public void writeExternal(ObjectOutput out) throws IOException {
+        byte[] data = this.getData();
+        out.writeInt(data.length);
+        out.write(data);
+    }
+
 }

@@ -28,12 +28,12 @@ import java.util.Iterator;
 
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.ClusterReceiver;
-import org.apache.catalina.cluster.group.ChannelInterceptorBase;
+import org.apache.catalina.cluster.MessageListener;
+import org.apache.catalina.cluster.io.ClusterData;
 import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.io.ObjectReader;
 import org.apache.catalina.cluster.io.XByteBuffer;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.cluster.MessageListener;
 
 /**
  * @author Filip Hanik
@@ -249,7 +249,7 @@ public class ReplicationListener
      */
     //protected ClusterMessage deserialize(byte[] data)
     protected ClusterMessage deserialize(ClusterData data) throws IOException, ClassNotFoundException {
-        boolean compress = isCompress() || data.getCompress() == ClusterMessage.FLAG_ALLOWED;
+        boolean compress = false;
         ClusterMessage message = null;
         if (data != null) {
             message = XByteBuffer.deserialize(data, compress);

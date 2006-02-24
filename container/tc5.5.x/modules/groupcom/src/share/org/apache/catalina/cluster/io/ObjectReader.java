@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
-import org.apache.catalina.cluster.tcp.ClusterData;
+
 
 /**
  * The object reader object is an object used in conjunction with

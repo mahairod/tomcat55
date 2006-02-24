@@ -16,7 +16,7 @@
 
 package org.apache.catalina.cluster.io;
 
-import org.apache.catalina.cluster.tcp.ClusterData ;
+
 
 /**
  * The listen callback interface is used by the replication system

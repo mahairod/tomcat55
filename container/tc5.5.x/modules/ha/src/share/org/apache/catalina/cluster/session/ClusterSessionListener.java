@@ -88,6 +88,7 @@ public class ClusterSessionListener extends ClusterListener {
                     log.warn("Context manager doesn't exist:" + ctxname);
             }
         }
+        return;
     }
 
     /**

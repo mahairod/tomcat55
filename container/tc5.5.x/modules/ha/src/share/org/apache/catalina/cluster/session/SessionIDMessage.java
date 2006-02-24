@@ -38,8 +38,8 @@ public class SessionIDMessage implements ClusterMessage {
 
 	private String host ;
 	private String contextPath;
-    private int resend = ClusterMessage.FLAG_DEFAULT ;
-    private int compress = ClusterMessage.FLAG_DEFAULT ;
+    private int resend = ClusterMessage.RESEND_DEFAULT ;
+    private int options = ClusterMessage.RESEND_DEFAULT ;
 
 	public org.apache.catalina.cluster.Member getAddress() {
 		return address;
@@ -62,19 +62,19 @@ public class SessionIDMessage implements ClusterMessage {
 		return result.toString();
 	}
 
-	/**
-         * @return Returns the host.
-         */
-        public String getHost() {
-             return host;
-        }
-    
-        /**
-         * @param host The host to set.
-         */
-         public void setHost(String host) {
-             this.host = host;
-        }
+    /**
+     * @return Returns the host.
+     */
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * @param host The host to set.
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
     
 	/**
 	 * @return Returns the contextPath.
@@ -152,15 +152,17 @@ public class SessionIDMessage implements ClusterMessage {
      * @return Returns the compress.
      * @since 5.5.10 
      */
-    public int getCompress() {
-        return compress;
+    public int getOptions() {
+
+        return options;
     }
     /**
      * @param compress The compress to set.
      * @since 5.5.10
      */
-    public void setCompress(int compress) {
-        this.compress = compress;
+    public void setOptions(int options) {
+
+        this.options = options;
     }
     /**
      * @return Returns the resend.
