@@ -26,8 +26,8 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
-import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.ClusterReceiver;
+import org.apache.catalina.cluster.ChannelMessage;
+import org.apache.catalina.cluster.ChannelReceiver;
 import org.apache.catalina.cluster.MessageListener;
 import org.apache.catalina.cluster.io.ClusterData;
 import org.apache.catalina.cluster.io.ListenCallback;
@@ -41,7 +41,7 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision: 379904 $ $Date: 2006-02-22 15:16:25 -0600 (Wed, 22 Feb 2006) $
  */
 public class ReplicationListener
-    implements Runnable, ClusterReceiver, ListenCallback {
+    implements Runnable, ChannelReceiver, ListenCallback {
     protected static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog(ReplicationListener.class);
 
@@ -248,9 +248,9 @@ public class ReplicationListener
      * @throws ClassNotFoundException
      */
     //protected ClusterMessage deserialize(byte[] data)
-    protected ClusterMessage deserialize(ClusterData data) throws IOException, ClassNotFoundException {
+    protected ChannelMessage deserialize(ClusterData data) throws IOException, ClassNotFoundException {
         boolean compress = false;
-        ClusterMessage message = null;
+        ChannelMessage message = null;
         if (data != null) {
             message = XByteBuffer.deserialize(data, compress);
         }
@@ -313,7 +313,7 @@ public class ReplicationListener
     public void messageDataReceived(ClusterData data) {
         if ( this.listener != null ) {
             try {
-                ClusterMessage msg = deserialize(data);
+                ChannelMessage msg = deserialize(data);
                 listener.messageReceived(msg);
             }catch ( java.io.IOException x ) {
                 if ( log.isErrorEnabled() ) {

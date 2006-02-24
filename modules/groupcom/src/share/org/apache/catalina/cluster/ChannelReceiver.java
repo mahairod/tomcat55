@@ -23,7 +23,7 @@ package org.apache.catalina.cluster;
  * @author Peter Rossbach
  * @version $Revision: 379904 $, $Date: 2006-02-22 15:16:25 -0600 (Wed, 22 Feb 2006) $
  */
-public interface ClusterReceiver {
+public interface ChannelReceiver {
     /**
      * Start message listing
      * @throws java.io.IOException

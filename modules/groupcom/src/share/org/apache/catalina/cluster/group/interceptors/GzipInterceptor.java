@@ -19,7 +19,7 @@ import org.apache.catalina.cluster.group.ChannelInterceptorBase;
 import org.apache.catalina.cluster.InterceptorPayload;
 import org.apache.catalina.cluster.Member;
 import java.io.IOException;
-import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.ChannelMessage;
 import org.apache.catalina.cluster.io.ClusterData;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
@@ -36,7 +36,7 @@ import java.util.zip.GZIPOutputStream;
  */
 public class GzipInterceptor extends ChannelInterceptorBase {
    
-    public ClusterMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException {
+    public ChannelMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException {
         try {
             msg.setMessage(compress(msg.getMessage()));
             return getNext().sendMessage(destination, msg, payload);

@@ -74,6 +74,14 @@ public abstract class ClusterListener implements MessageListener {
     }
 
     //--Logic---------------------------------------------------
+    public final void messageReceived(ChannelMessage msg) {
+        if ( msg instanceof ClusterMessage ) messageReceived((ClusterMessage)msg);
+    }
+
+    public final boolean accept(ChannelMessage msg) {
+        if ( msg instanceof ClusterMessage ) return true;
+        return false;
+    }
 
 
     /**

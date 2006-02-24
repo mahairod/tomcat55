@@ -26,9 +26,9 @@ public interface MessageListener {
      * The response object may be ignored and is not required for the 
      * implementation to send back to the sender.
      */
-    public void messageReceived(ClusterData msg);
+    public void messageReceived(ChannelMessage msg);
     
-    public boolean accept(ClusterData msg);
+    public boolean accept(ChannelMessage msg);
     
     public boolean equals(Object listener);
     

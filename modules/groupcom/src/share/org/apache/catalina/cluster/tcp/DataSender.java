@@ -22,7 +22,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
-import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.ChannelMessage;
 import org.apache.catalina.cluster.io.XByteBuffer;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.cluster.io.*;
@@ -810,8 +810,8 @@ public class DataSender implements IDataSender {
              writeData(data);
              messageTransfered = true ;
         } catch (java.io.IOException x) {
-            if(data.getResend() == ClusterMessage.RESEND_ALLOWED || 
-                    (data.getResend() == ClusterMessage.RESEND_DEFAULT && isResend() )) {
+            if(data.getResend() == ChannelMessage.RESEND_ALLOWED || 
+                    (data.getResend() == ChannelMessage.RESEND_DEFAULT && isResend() )) {
                 // second try with fresh connection
                 dataResendCounter++;
                 if (log.isTraceEnabled())

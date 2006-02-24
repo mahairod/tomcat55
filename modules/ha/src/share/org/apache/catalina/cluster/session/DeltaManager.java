@@ -1034,7 +1034,7 @@ public class DeltaManager extends ClusterManagerBase{
     protected Member findSessionMasterMember() {
         Member mbr = null;
         Member mbrs[] = cluster.getMembers();
-        String localMemberDomain = cluster.getMembershipService().getLocalMember().getDomain();
+        String localMemberDomain = cluster.getLocalMember().getDomain();
         if(isSendClusterDomainOnly()) {
             for (int i = 0; mbr == null && i < mbrs.length; i++) {
                 Member member = mbrs[i];
@@ -1388,7 +1388,7 @@ public class DeltaManager extends ClusterManagerBase{
      * Test that sender and local domain is the same
      */
     protected boolean checkSenderDomain(SessionMessage msg,Member sender) {
-        String localMemberDomain = cluster.getMembershipService().getLocalMember().getDomain();
+        String localMemberDomain = cluster.getLocalMember().getDomain();
         boolean sameDomain= localMemberDomain.equals(sender.getDomain());
         if (!sameDomain && log.isWarnEnabled()) {
                 log.warn(sm.getString("deltaManager.receiveMessage.fromWrongDomain",
