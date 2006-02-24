@@ -605,7 +605,6 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
         }
 
         DeltaSession session = (DeltaSession) super.createSession(sessionId) ;
-        session.resetDeltaRequest();
         if (distribute) {
             sendCreateSession(session.getId(), session);
         }
@@ -633,7 +632,6 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
             counterSend_EVT_SESSION_CREATED++;
             send(msg);
         }
-        session.resetDeltaRequest();
     }
     
     /**
