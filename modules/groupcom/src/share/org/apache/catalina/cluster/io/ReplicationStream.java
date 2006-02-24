@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
+import java.util.HashMap;
 
 /**
  * Custom subclass of <code>ObjectInputStream</code> that loads from the
@@ -35,11 +36,12 @@ import java.io.ObjectStreamClass;
 
 public final class ReplicationStream extends ObjectInputStream {
 
-
+    
     /**
      * The class loader we will use to resolve classes.
      */
     private ClassLoader[] classLoaders = null;
+    
 
     /**
      * Construct a new instance of CustomObjectInputStream
@@ -88,7 +90,8 @@ public final class ReplicationStream extends ObjectInputStream {
     
     public Class findReplicationClass(String name)
         throws ClassNotFoundException, IOException {
-        return Class.forName(name, false, getClass().getClassLoader());
+        Class clazz = Class.forName(name, false, getClass().getClassLoader());
+        return clazz;
     }
 
     public Class findExternalClass(String name)
@@ -97,7 +100,8 @@ public final class ReplicationStream extends ObjectInputStream {
         ClassNotFoundException cnfe = null;
         for (int i=0; i<classLoaders.length; i++ ) {
             try {
-                return Class.forName(name, false, classLoaders[i]);
+                Class clazz = Class.forName(name, false, classLoaders[i]);
+                return clazz;
             } catch ( ClassNotFoundException x ) {
                 cnfe = x;
             } 
