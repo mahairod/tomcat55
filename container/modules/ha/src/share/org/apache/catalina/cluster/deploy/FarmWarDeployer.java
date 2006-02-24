@@ -186,6 +186,8 @@ public class FarmWarDeployer extends ClusterListener implements ClusterDeployer,
      * @param msg
      *            ClusterMessage - the message received from the cluster
      */
+    
+    
     public void messageReceived(ClusterMessage msg) {
         try {
             if (msg instanceof FileMessage && msg != null) {
@@ -254,6 +256,7 @@ public class FarmWarDeployer extends ClusterListener implements ClusterDeployer,
         } catch (java.io.IOException x) {
             log.error("Unable to read farm deploy file message.", x);
         }
+        return;
     }
 
     /**

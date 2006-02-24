@@ -16,17 +16,18 @@
 
 package org.apache.catalina.cluster.deploy;
 
+import java.io.Serializable;
+
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
-import java.io.Serializable;
 public class UndeployMessage implements ClusterMessage,Serializable {
     private Member address;
     private long timestamp;
     private String uniqueId;
     private String contextPath;
     private boolean undeploy;
-    private int resend = ClusterMessage.FLAG_DEFAULT ;
-    private int compress = ClusterMessage.FLAG_DEFAULT ;
+    private int resend = ClusterMessage.RESEND_DEFAULT ;
+    private int options = ClusterMessage.RESEND_DEFAULT ;
 
     public UndeployMessage() {} //for serialization
     public UndeployMessage(Member address,
@@ -85,15 +86,17 @@ public class UndeployMessage implements ClusterMessage,Serializable {
      * @return Returns the compress.
      * @since 5.5.10 
      */
-    public int getCompress() {
-        return compress;
+    public int getOptions() {
+
+        return options;
     }
     /**
      * @param compress The compress to set.
      * @since 5.5.10
      */
-    public void setCompress(int compress) {
-        this.compress = compress;
+    public void setOptions(int options) {
+
+        this.options = options;
     }
     /**
      * @return Returns the resend.

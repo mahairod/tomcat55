@@ -29,6 +29,7 @@ import org.apache.catalina.cluster.mcast.McastService;
 import org.apache.catalina.cluster.tcp.ReplicationListener;
 import org.apache.catalina.cluster.tcp.ReplicationTransmitter;
 import org.apache.commons.logging.impl.LogFactoryImpl;
+import org.apache.catalina.cluster.ClusterChannel;
 /**
  * Shared whiteboard, each new instance joins the same group. Each instance chooses a random color,
  * mouse moves are broadcast to all group members, which then apply them to their canvas<p>
@@ -40,7 +41,7 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
     
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
     String groupname = "DrawGroupDemo";
-    private GroupChannel channel = null;
+    private ClusterChannel channel = null;
     private int member_size = 1;
     final boolean first = true;
     final boolean cummulative = true;
@@ -208,9 +209,9 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
         if (title != null) {
             mainFrame.setTitle(title);
         } else {
-            if (channel.getMembershipService().getLocalMember() != null)
-                tmp += channel.getMembershipService().getLocalMember().getName();
-            tmp += " (" + channel.getMembershipService().getMembers().length + ")";
+            if (((GroupChannel)channel).getMembershipService().getLocalMember() != null)
+                tmp += ((GroupChannel)channel).getMembershipService().getLocalMember().getName();
+            tmp += " (" + ((GroupChannel)channel).getMembershipService().getMembers().length + ")";
             mainFrame.setTitle(tmp);
         }
     }
@@ -232,9 +233,9 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
     
     public DrawMessage getEmptyMessage() {
         DrawMessage msg = new DrawMessage();
-        msg.setAddress(channel.getMembershipService().getLocalMember());
+        msg.setAddress(((GroupChannel)channel).getMembershipService().getLocalMember());
         msg.setTimestamp(System.currentTimeMillis());
-        msg.setCompress(0);
+        msg.setOptions(0);
         return msg;
     }
 
@@ -313,6 +314,7 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
         } else {
             System.out.println("Invalid message="+msg);
         }
+        return;
     }
     
     
@@ -321,7 +323,7 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
         private long timestamp;
         private String id;
         private int resend;
-        private int compress;
+        private int options;
         private DrawCommand comm;
         public Member getAddress() { return address;}
         public void setAddress(Member member) { address = member;}
@@ -330,8 +332,8 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
         public String getUniqueId() {return id;}
         public int getResend() { return resend;}
         public void setResend(int resend) {this.resend = resend;}
-        public int getCompress() {return compress;}
-        public void setCompress(int compress) {this.compress = compress;}
+        public int getOptions() {return options;}
+        public void setOptions(int options) {this.options = options;}
         public DrawCommand getDrawCommand(){return comm;}
         public void setDrawCommand(DrawCommand command) {this.comm = command;}
 

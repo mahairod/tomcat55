@@ -21,6 +21,8 @@ import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MessageListener;
 import java.io.IOException;
 import org.apache.catalina.cluster.ChannelInterceptor;
+import org.apache.catalina.cluster.InterceptorPayload;
+import org.apache.catalina.cluster.io.ClusterData;
 
 /**
  * Abstract class for the interceptor base class.
@@ -29,6 +31,8 @@ import org.apache.catalina.cluster.ChannelInterceptor;
  */
 
 public abstract class ChannelInterceptorBase implements ChannelInterceptor{
+    
+    protected static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory.getLog(ChannelInterceptorBase.class);
     
     private ChannelInterceptor next;
     private ChannelInterceptor previous;
@@ -53,11 +57,11 @@ public abstract class ChannelInterceptorBase implements ChannelInterceptor{
         return previous;
     }
 
-    public ClusterMessage[] sendMessage(Member[] destination, ClusterMessage msg, int options) throws IOException {
-        return getNext().sendMessage(destination, msg,options);
+    public ClusterMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException {
+        return getNext().sendMessage(destination, msg,payload);
     }
     
-    public void messageReceived(ClusterMessage msg) {
+    public void messageReceived(ClusterData msg) {
         getPrevious().messageReceived(msg);
     }
 

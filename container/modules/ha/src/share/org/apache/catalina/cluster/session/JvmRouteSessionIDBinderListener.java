@@ -147,6 +147,7 @@ public class JvmRouteSessionIDBinderListener extends ClusterListener {
             } else if (log.isErrorEnabled())
                 log.error(sm.getString("jvmRoute.hostNotFound", sessionmsg.getContextPath()));
         }
+        return;
     }
 
     /**

@@ -23,6 +23,9 @@ import org.apache.catalina.cluster.ClusterSender;
 import org.apache.catalina.cluster.ClusterReceiver;
 import org.apache.catalina.cluster.ClusterChannel;
 import java.io.IOException;
+import org.apache.catalina.cluster.InterceptorPayload;
+import org.apache.catalina.cluster.io.ClusterData;
+import org.apache.catalina.cluster.MessageListener;
 
 
 /**
@@ -32,7 +35,7 @@ import java.io.IOException;
  * @author Filip Hanik
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
-public class ChannelCoordinator extends ChannelInterceptorBase {
+public class ChannelCoordinator extends ChannelInterceptorBase implements MessageListener {
     private ClusterReceiver clusterReceiver;
     private ClusterSender clusterSender;
     private MembershipService membershipService;
@@ -57,7 +60,7 @@ public class ChannelCoordinator extends ChannelInterceptorBase {
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any.
      */
-    public ClusterMessage[] sendMessage(Member[] destination, ClusterMessage msg, int options) throws IOException {
+    public ClusterMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException {
         if ( destination == null ) destination = membershipService.getMembers();
         for ( int i=0; i<destination.length; i++ ) {
             clusterSender.sendMessage(msg,destination[i]);
@@ -127,6 +130,10 @@ public class ChannelCoordinator extends ChannelInterceptorBase {
     public void memberDisappeared(Member member){
         if ( clusterSender!=null ) clusterSender.remove(member);
         super.memberDisappeared(member);
+    }
+    
+    public void messageReceived(ClusterMessage msg) {
+        if ( msg instanceof ClusterData ) this.messageReceived((ClusterData)msg);
     }
 
 

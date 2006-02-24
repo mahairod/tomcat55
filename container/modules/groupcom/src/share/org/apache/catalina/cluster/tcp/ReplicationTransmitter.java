@@ -36,6 +36,7 @@ import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 import org.apache.tomcat.util.IntrospectionUtils;
 import org.apache.catalina.cluster.io.XByteBuffer;
+import org.apache.catalina.cluster.io.*;
 
 /**
  * Transmit message to other cluster members
@@ -410,7 +411,9 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
             time = System.currentTimeMillis();
         }
         try {
-            ClusterData data = serialize(message);
+            ClusterData data = null;
+            if ( message instanceof ClusterData ) data = (ClusterData)message;
+            else data = serialize(message);
             String key = getKey(member);
             IDataSender sender = (IDataSender) map.get(key);
             sendMessageData(data, sender);
@@ -638,9 +641,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * @since 5.5.10
      */
     protected ClusterData serialize(ClusterMessage msg) throws IOException {
-        boolean compress = ((isCompress() && msg.getCompress() != ClusterMessage.FLAG_FORBIDDEN)
-                             || msg.getCompress() == ClusterMessage.FLAG_ALLOWED);
-        return XByteBuffer.serialize(msg,compress);
+        return XByteBuffer.serialize(msg, 0, false);
     }
  
 

@@ -17,14 +17,17 @@ package org.apache.catalina.cluster.group;
 
 
 import org.apache.catalina.cluster.ChannelException;
+import org.apache.catalina.cluster.ChannelInterceptor;
 import org.apache.catalina.cluster.ClusterChannel;
+import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.ClusterReceiver;
 import org.apache.catalina.cluster.ClusterSender;
-import org.apache.catalina.cluster.MembershipService;
-import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
-import org.apache.catalina.cluster.ChannelInterceptor;
-
+import org.apache.catalina.cluster.MembershipListener;
+import org.apache.catalina.cluster.MembershipService;
+import org.apache.catalina.cluster.MessageListener;
+import org.apache.catalina.cluster.io.ClusterData;
+import org.apache.catalina.cluster.io.XByteBuffer;
 
 /**
  * The GroupChannel manages the replication channel. It coordinates
@@ -34,11 +37,14 @@ import org.apache.catalina.cluster.ChannelInterceptor;
  * @author Filip Hanik
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
-public class GroupChannel implements ClusterChannel {
+public class GroupChannel extends ChannelInterceptorBase implements ClusterChannel {
     private ChannelCoordinator coordinator = new ChannelCoordinator();
     private ChannelInterceptor interceptors = null;
+    private MembershipListener membershipListener;
+    private MessageListener messageListener;
 
     public GroupChannel() {
+        addInterceptor(this);
     }
     
     
@@ -50,7 +56,7 @@ public class GroupChannel implements ClusterChannel {
         if ( interceptors == null ) {
             this.interceptors = interceptor;
             this.interceptors.setNext(coordinator);
-            coordinator.setPrevious(this.interceptors);
+            this.interceptors.setPrevious(null);
         } else {
             ChannelInterceptor last = interceptors;
             while ( last.getNext() != coordinator ) {
@@ -64,7 +70,7 @@ public class GroupChannel implements ClusterChannel {
     }
     
     public void heartbeat() {
-        getFirstInterceptor().heartbeat();
+        super.heartbeat();
     }
     
     /**
@@ -77,15 +83,38 @@ public class GroupChannel implements ClusterChannel {
     public ClusterMessage[] send(Member[] destination, ClusterMessage msg, int options) throws ChannelException {
         if ( msg == null ) return null;
         msg.setAddress(getMembershipService().getLocalMember());
-        msg.setCompress(msg.FLAG_ALLOWED);
         msg.setTimestamp(System.currentTimeMillis());
-        msg.setResend(msg.FLAG_FORBIDDEN);
         try {
-            return getFirstInterceptor().sendMessage(destination, msg, options);
+            ClusterData data = XByteBuffer.serialize(msg, options,false);
+            return getFirstInterceptor().sendMessage(destination, data, null);
         }catch ( Exception x ) {
             throw new ChannelException(x);
         }
     }
+    
+    public void messageReceived(ClusterMessage msg) {
+        if ( msg == null ) return;
+        else if ( msg instanceof ClusterData ) {
+            try {
+                ClusterMessage fwd = XByteBuffer.deserialize( (ClusterData) msg, false);
+                if ( messageListener != null ) messageListener.messageReceived(fwd);
+            }catch ( Exception x ) {
+                log.error("Unable to deserialize channel message.",x);
+            }
+        } else {
+            log.error("Recieved a message that is not a ClusterData instance. class="+msg.getClass().getName()+ " obj="+msg);
+        }
+    }
+    
+    public void memberAdded(Member member) {
+        //notify upwards
+        if (membershipListener != null) membershipListener.memberAdded(member);
+    }
+    
+    public void memberDisappeared(Member member) {
+        //notify upwards
+        if (membershipListener != null) membershipListener.memberDisappeared(member);
+    }    
     
     public ChannelInterceptor getFirstInterceptor() {
         if (interceptors != null) return interceptors;
@@ -144,6 +173,22 @@ public class GroupChannel implements ClusterChannel {
 
     public void setMembershipService(MembershipService membershipService) {
         coordinator.setMembershipService(membershipService);
+    }
+
+    public void setMembershipListener(MembershipListener membershipListener) {
+        this.membershipListener = membershipListener;
+    }
+
+    public void setMessageListener(MessageListener messageListener) {
+        this.messageListener = messageListener;
+    }
+
+    public MembershipListener getMembershipListener() {
+        return membershipListener;
+    }
+
+    public MessageListener getMessageListener() {
+        return messageListener;
     }
 
 }

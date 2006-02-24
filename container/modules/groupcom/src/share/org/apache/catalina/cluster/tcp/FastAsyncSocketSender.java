@@ -18,9 +18,10 @@ package org.apache.catalina.cluster.tcp;
 
 import java.net.InetAddress;
 
+import org.apache.catalina.cluster.io.ClusterData;
 import org.apache.catalina.cluster.util.FastQueue;
-import org.apache.catalina.cluster.util.LinkObject;
 import org.apache.catalina.cluster.util.IQueue;
+import org.apache.catalina.cluster.util.LinkObject;
 
 /**
  * Send cluster messages from a Message queue with only one socket. Ack and keep
