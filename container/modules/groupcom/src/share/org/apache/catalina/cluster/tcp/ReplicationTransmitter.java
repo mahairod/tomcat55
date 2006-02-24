@@ -28,8 +28,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.catalina.Container;
-import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.ClusterSender;
+import org.apache.catalina.cluster.ChannelMessage;
+import org.apache.catalina.cluster.ChannelSender;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.util.IDynamicProperty;
 import org.apache.catalina.core.StandardHost;
@@ -50,7 +50,7 @@ import org.apache.catalina.cluster.io.*;
  * @author Filip Hanik
  * @version $Revision: 379956 $ $Date: 2006-02-22 16:57:35 -0600 (Wed, 22 Feb 2006) $
  */
-public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
+public class ReplicationTransmitter implements ChannelSender,IDynamicProperty {
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
             .getLog(ReplicationTransmitter.class);
 
@@ -405,7 +405,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * Send data to one member
      * @see org.apache.catalina.cluster.ClusterSender#sendMessage(org.apache.catalina.cluster.ClusterMessage, org.apache.catalina.cluster.Member)
      */
-    public void sendMessage(ClusterMessage message, Member member) throws IOException {       
+    public void sendMessage(ChannelMessage message, Member member) throws IOException {       
         long time = 0 ;
         if(doTransmitterProcessingStats) {
             time = System.currentTimeMillis();
@@ -429,12 +429,12 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * @param message Cluster message to send
      * @since 5.5.10
      */
-    public void sendMessageClusterDomain(ClusterMessage message) throws IOException {
+    public void sendMessageClusterDomain(ChannelMessage message) throws IOException {
         sendMessage(message,true);
     
     }
 
-    public void sendMessage(ClusterMessage message) throws IOException {
+    public void sendMessage(ChannelMessage message) throws IOException {
         sendMessage(message,false);
     }
 
@@ -442,7 +442,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * send message to all senders (broadcast)
      * @see org.apache.catalina.cluster.ClusterSender#sendMessage(org.apache.catalina.cluster.ClusterMessage)
      */
-    public void sendMessage(ClusterMessage message, boolean domainOnly) throws IOException {
+    public void sendMessage(ChannelMessage message, boolean domainOnly) throws IOException {
         long time = 0;
         if (doTransmitterProcessingStats) {
             time = System.currentTimeMillis();
@@ -640,7 +640,7 @@ public class ReplicationTransmitter implements ClusterSender,IDynamicProperty {
      * @throws IOException
      * @since 5.5.10
      */
-    protected ClusterData serialize(ClusterMessage msg) throws IOException {
+    protected ClusterData serialize(ChannelMessage msg) throws IOException {
         return XByteBuffer.serialize(msg, 0, false);
     }
  

@@ -22,7 +22,7 @@ package org.apache.catalina.cluster;
  * @author Filip Hanik
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
-public interface ClusterChannel {
+public interface Channel {
     
     /**
      * Start and stop sequences can be controlled by these constants
@@ -72,11 +72,11 @@ public interface ClusterChannel {
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any. 
      */
-    public ClusterMessage[] send(Member[] destination, ClusterMessage msg, int options) throws ChannelException;
+    public ChannelMessage[] send(Member[] destination, ChannelMessage msg, int options) throws ChannelException;
 
     
-    public void setClusterSender(ClusterSender sender);
-    public void setClusterReceiver(ClusterReceiver receiver);
+    public void setClusterSender(ChannelSender sender);
+    public void setClusterReceiver(ChannelReceiver receiver);
     public void setMembershipService(MembershipService service);
     
     /**
@@ -86,5 +86,24 @@ public interface ClusterChannel {
     
     public void setMembershipListener(MembershipListener listener);
     public void setMessageListener(MessageListener listener);
+    
+    /**
+     * has members
+     */
+    public boolean hasMembers() ;
+
+    /**
+     * Get all current cluster members
+     * @return all members or empty array 
+     */
+    public Member[] getMembers() ;
+
+    /**
+     * Return the member that represents this node.
+     * 
+     * @return Member
+     */
+    public Member getLocalMember() ;
+
     
 }

@@ -15,7 +15,7 @@
  */
 package org.apache.catalina.cluster;
 
-import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.ChannelMessage;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MessageListener;
@@ -38,7 +38,7 @@ public interface ChannelInterceptor extends MembershipListener {
 
     public ChannelInterceptor getPrevious();
 
-    public ClusterMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException;
+    public ChannelMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException;
     
     public void messageReceived(ClusterData data);
     

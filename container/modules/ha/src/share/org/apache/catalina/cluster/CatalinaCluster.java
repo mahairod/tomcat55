@@ -103,18 +103,6 @@ public interface CatalinaCluster extends Cluster {
      */
     public Member getLocalMember();
     
-    public void setClusterSender(ClusterSender sender);
-    
-    public ClusterSender getClusterSender();
-    
-    public void setClusterReceiver(ClusterReceiver receiver);
-    
-    public ClusterReceiver getClusterReceiver();
-    
-    public MembershipService getMembershipService();
-
-    public void setMembershipService(MembershipService service);
-    
     public void addValve(Valve valve);
     
     public void addClusterListener(ClusterListener listener);

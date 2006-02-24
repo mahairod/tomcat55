@@ -15,7 +15,7 @@
  */
 package org.apache.catalina.cluster.group;
 
-import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.ChannelMessage;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MessageListener;
@@ -57,7 +57,7 @@ public abstract class ChannelInterceptorBase implements ChannelInterceptor{
         return previous;
     }
 
-    public ClusterMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException {
+    public ChannelMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException {
         return getNext().sendMessage(destination, msg,payload);
     }
     
@@ -65,7 +65,7 @@ public abstract class ChannelInterceptorBase implements ChannelInterceptor{
         getPrevious().messageReceived(msg);
     }
 
-    public boolean accept(ClusterMessage msg) {
+    public boolean accept(ChannelMessage msg) {
         return true;
     }
 

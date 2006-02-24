@@ -21,7 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.ChannelMessage;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.group.ChannelInterceptorBase;
 import org.apache.catalina.cluster.group.GroupChannel;
@@ -29,7 +29,7 @@ import org.apache.catalina.cluster.mcast.McastService;
 import org.apache.catalina.cluster.tcp.ReplicationListener;
 import org.apache.catalina.cluster.tcp.ReplicationTransmitter;
 import org.apache.commons.logging.impl.LogFactoryImpl;
-import org.apache.catalina.cluster.ClusterChannel;
+import org.apache.catalina.cluster.Channel;
 /**
  * Shared whiteboard, each new instance joins the same group. Each instance chooses a random color,
  * mouse moves are broadcast to all group members, which then apply them to their canvas<p>
@@ -41,7 +41,7 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
     
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
     String groupname = "DrawGroupDemo";
-    private ClusterChannel channel = null;
+    private Channel channel = null;
     private int member_size = 1;
     final boolean first = true;
     final boolean cummulative = true;
@@ -295,7 +295,7 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
         setTitle();
     }
     
-    public void messageReceived(ClusterMessage msg) { 
+    public void messageReceived(ChannelMessage msg) { 
         if ( msg instanceof DrawMessage ) {
             DrawMessage dmsg = (DrawMessage)msg;
             DrawCommand comm = dmsg.getDrawCommand();
@@ -318,7 +318,7 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
     }
     
     
-    public static class DrawMessage implements ClusterMessage {
+    public static class DrawMessage implements ChannelMessage {
         private Member address;
         private long timestamp;
         private String id;

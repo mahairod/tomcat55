@@ -16,7 +16,7 @@
 
 package org.apache.catalina.cluster.io;
 
-import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.ChannelMessage;
 
 import java.io.ObjectOutputStream;
 import java.util.zip.GZIPOutputStream;
@@ -364,7 +364,7 @@ public class XByteBuffer
         return result;
     }
     
-    public static ClusterMessage deserialize(ClusterData data, boolean compress) 
+    public static ChannelMessage deserialize(ClusterData data, boolean compress) 
         throws IOException, ClassNotFoundException, ClassCastException {
         Object message = null;
         if (data != null) {
@@ -380,8 +380,8 @@ public class XByteBuffer
         }
         if ( message == null ) {
             return null;
-        } else if (message instanceof ClusterMessage)
-            return (ClusterMessage) message;
+        } else if (message instanceof ChannelMessage)
+            return (ChannelMessage) message;
         else {
             throw new ClassCastException("Message has the wrong class. It should implement ClusterMessage, instead it is:"+message.getClass().getName());
         }
@@ -394,7 +394,7 @@ public class XByteBuffer
      * @return ClusterData
      * @throws IOException
      */
-    public static ClusterData serialize(ClusterMessage msg, int options, boolean compress) throws IOException {
+    public static ClusterData serialize(ChannelMessage msg, int options, boolean compress) throws IOException {
         msg.setTimestamp(System.currentTimeMillis());
         ByteArrayOutputStream outs = new ByteArrayOutputStream();
         ObjectOutputStream out;

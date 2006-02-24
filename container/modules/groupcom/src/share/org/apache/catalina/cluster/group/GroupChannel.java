@@ -18,10 +18,10 @@ package org.apache.catalina.cluster.group;
 
 import org.apache.catalina.cluster.ChannelException;
 import org.apache.catalina.cluster.ChannelInterceptor;
-import org.apache.catalina.cluster.ClusterChannel;
-import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.ClusterReceiver;
-import org.apache.catalina.cluster.ClusterSender;
+import org.apache.catalina.cluster.Channel;
+import org.apache.catalina.cluster.ChannelMessage;
+import org.apache.catalina.cluster.ChannelReceiver;
+import org.apache.catalina.cluster.ChannelSender;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MembershipService;
@@ -37,7 +37,7 @@ import org.apache.catalina.cluster.io.XByteBuffer;
  * @author Filip Hanik
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
-public class GroupChannel extends ChannelInterceptorBase implements ClusterChannel {
+public class GroupChannel extends ChannelInterceptorBase implements Channel {
     private ChannelCoordinator coordinator = new ChannelCoordinator();
     private ChannelInterceptor interceptors = null;
     private MembershipListener membershipListener;
@@ -80,7 +80,7 @@ public class GroupChannel extends ChannelInterceptorBase implements ClusterChann
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any.
      */
-    public ClusterMessage[] send(Member[] destination, ClusterMessage msg, int options) throws ChannelException {
+    public ChannelMessage[] send(Member[] destination, ChannelMessage msg, int options) throws ChannelException {
         if ( msg == null ) return null;
         msg.setAddress(getMembershipService().getLocalMember());
         msg.setTimestamp(System.currentTimeMillis());
@@ -92,11 +92,11 @@ public class GroupChannel extends ChannelInterceptorBase implements ClusterChann
         }
     }
     
-    public void messageReceived(ClusterMessage msg) {
+    public void messageReceived(ChannelMessage msg) {
         if ( msg == null ) return;
         else if ( msg instanceof ClusterData ) {
             try {
-                ClusterMessage fwd = XByteBuffer.deserialize( (ClusterData) msg, false);
+                ChannelMessage fwd = XByteBuffer.deserialize( (ClusterData) msg, false);
                 if ( messageListener != null ) messageListener.messageReceived(fwd);
             }catch ( Exception x ) {
                 log.error("Unable to deserialize channel message.",x);
@@ -151,11 +151,11 @@ public class GroupChannel extends ChannelInterceptorBase implements ClusterChann
         coordinator.stop(svc);
     }
 
-    public ClusterReceiver getClusterReceiver() {
+    public ChannelReceiver getClusterReceiver() {
         return coordinator.getClusterReceiver();
     }
 
-    public ClusterSender getClusterSender() {
+    public ChannelSender getClusterSender() {
         return coordinator.getClusterSender();
     }
 
@@ -163,11 +163,11 @@ public class GroupChannel extends ChannelInterceptorBase implements ClusterChann
         return coordinator.getMembershipService();
     }
 
-    public void setClusterReceiver(ClusterReceiver clusterReceiver) {
+    public void setClusterReceiver(ChannelReceiver clusterReceiver) {
         coordinator.setClusterReceiver(clusterReceiver);
     }
 
-    public void setClusterSender(ClusterSender clusterSender) {
+    public void setClusterSender(ChannelSender clusterSender) {
         coordinator.setClusterSender(clusterSender);
     }
 
@@ -189,6 +189,30 @@ public class GroupChannel extends ChannelInterceptorBase implements ClusterChann
 
     public MessageListener getMessageListener() {
         return messageListener;
+    }
+
+    /**
+     * has members
+     */
+    public boolean hasMembers() {
+        return coordinator.getMembershipService().hasMembers();
+    }
+
+    /**
+     * Get all current cluster members
+     * @return all members or empty array
+     */
+    public Member[] getMembers() {
+        return coordinator.getMembershipService().getMembers();
+    }
+
+    /**
+     * Return the member that represents this node.
+     *
+     * @return Member
+     */
+    public Member getLocalMember() {
+        return coordinator.getMembershipService().getLocalMember();
     }
 
 }
