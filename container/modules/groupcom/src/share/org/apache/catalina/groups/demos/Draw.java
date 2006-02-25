@@ -32,12 +32,13 @@ import org.apache.commons.logging.impl.LogFactoryImpl;
 import org.apache.catalina.groups.Channel;
 import org.apache.catalina.groups.ManagedChannel;
 import org.apache.catalina.groups.ChannelListener;
+import org.apache.catalina.groups.MembershipListener;
 /**
  * Shared whiteboard, each new instance joins the same group. Each instance chooses a random color,
  * mouse moves are broadcast to all group members, which then apply them to their canvas<p>
  * @author Bela Ban, Oct 17 2001
  */
-public class Draw implements ActionListener, ChannelListener {
+public class Draw implements ActionListener, ChannelListener,MembershipListener {
     static LogFactoryImpl dependencyhack = new LogFactoryImpl();
     static org.apache.commons.logging.impl.SimpleLog depHack2 = new org.apache.commons.logging.impl.SimpleLog("test");
     
@@ -58,14 +59,15 @@ public class Draw implements ActionListener, ChannelListener {
     boolean no_channel = false;
     boolean jmx;
 
-    public Draw(int port, boolean debug, boolean cummulative, boolean no_channel, boolean jmx) throws Exception {
+    public Draw(int port, boolean debug, boolean cummulative, boolean no_channel, boolean jmx,
+                String bind) throws Exception {
         this.no_channel = no_channel;
         this.jmx = jmx;
         if (no_channel)
             return;
 
         ReplicationListener rl = new ReplicationListener();
-        rl.setTcpListenAddress("auto");
+        rl.setTcpListenAddress(bind);
         rl.setTcpListenPort(port);
         rl.setTcpSelectorTimeout(100);
         rl.setTcpThreadCount(4);
@@ -79,6 +81,7 @@ public class Draw implements ActionListener, ChannelListener {
         
         McastService service = new McastService();
         service.setMcastAddr("228.0.0.5");
+        //service.setMcastBindAddress("0.0.0.0");
         service.setMcastFrequency(500);
         service.setMcastDropTime(5000);
         service.setMcastPort(45565);
@@ -90,6 +93,7 @@ public class Draw implements ActionListener, ChannelListener {
         channel.start(channel.DEFAULT);
         
         channel.setChannelListener(this);
+        channel.setMembershipListener(this);
 
         if (debug) {
         }
@@ -112,6 +116,7 @@ public class Draw implements ActionListener, ChannelListener {
         boolean no_channel = false;
         boolean jmx = false;
         String group_name = null;
+        String bind = "auto";
 
         for (int i = 0; i < args.length; i++) {
             if ("-help".equals(args[i])) {
@@ -142,13 +147,19 @@ public class Draw implements ActionListener, ChannelListener {
                 group_name = args[++i];
                 continue;
             }
+            
+            if ("-bind".equals(args[i])) {
+                bind = args[++i];
+                continue;
+            }
+
 
             help();
             return;
         }
 
         try {
-            draw = new Draw(port, debug, cummulative, no_channel, jmx);
+            draw = new Draw(port, debug, cummulative, no_channel, jmx,bind);
             if (group_name != null)
                 draw.setGroupName(group_name);
             draw.go();
