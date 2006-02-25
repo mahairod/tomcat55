@@ -23,10 +23,10 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Valve;
 import org.apache.commons.logging.Log;
-import org.apache.catalina.groups.io.ReplicationStream;
+import org.apache.catalina.tribes.io.ReplicationStream;
 import java.io.IOException;
-import org.apache.catalina.groups.Channel;
-import org.apache.catalina.groups.Member;
+import org.apache.catalina.tribes.Channel;
+import org.apache.catalina.tribes.Member;
 
 
 
