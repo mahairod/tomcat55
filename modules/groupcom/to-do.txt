@@ -1,0 +1,9 @@
+waitForAck - should only mean, we received the message, not for the message to get processesed.
+This should improve throughput, and an interceptor can do waitForCompletion
+
+Interceptors to create
+OrderInterceptor - guarantees the order of messages
+WaitForCompletionInterceptor - waits for the message to get processed by all receivers before returning
+FragmentationInterceptor - splits up messages that are larger than X bytes.
+CoordinatorInterceptor - manages the selection of a cluster coordinator
+
