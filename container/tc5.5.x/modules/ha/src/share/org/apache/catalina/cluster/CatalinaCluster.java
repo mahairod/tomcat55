@@ -122,5 +122,7 @@ public interface CatalinaCluster extends Cluster {
     public void removeManager(String name,Manager manager);
     public void addManager(String name,Manager manager);
     public Valve[] getValves();
+    
+    public void setChannel(Channel channel);
 
 }

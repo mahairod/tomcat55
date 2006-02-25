@@ -34,6 +34,7 @@ import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.io.ObjectReader;
 import org.apache.catalina.cluster.io.XByteBuffer;
 import org.apache.catalina.util.StringManager;
+import java.io.Serializable;
 
 /**
  * @author Filip Hanik
@@ -248,11 +249,11 @@ public class ReplicationListener
      * @throws ClassNotFoundException
      */
     //protected ClusterMessage deserialize(byte[] data)
-    protected ChannelMessage deserialize(ClusterData data) throws IOException, ClassNotFoundException {
+    protected Serializable deserialize(ClusterData data) throws IOException, ClassNotFoundException {
         boolean compress = false;
-        ChannelMessage message = null;
+        Serializable message = null;
         if (data != null) {
-            message = XByteBuffer.deserialize(data, compress);
+            message = XByteBuffer.deserialize(data);
         }
         return message;
     }
@@ -313,8 +314,8 @@ public class ReplicationListener
     public void messageDataReceived(ClusterData data) {
         if ( this.listener != null ) {
             try {
-                ChannelMessage msg = deserialize(data);
-                listener.messageReceived(msg);
+                Serializable msg = deserialize(data);
+                listener.messageReceived((ChannelMessage)msg);
             }catch ( java.io.IOException x ) {
                 if ( log.isErrorEnabled() ) {
                     log.error("Unable to receive and deserialize cluster data. IOException.",x);

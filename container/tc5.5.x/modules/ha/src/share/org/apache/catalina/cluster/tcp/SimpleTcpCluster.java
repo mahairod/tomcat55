@@ -18,6 +18,7 @@ package org.apache.catalina.cluster.tcp;
 
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,14 +37,16 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Valve;
 import org.apache.catalina.cluster.CatalinaCluster;
+import org.apache.catalina.cluster.Channel;
+import org.apache.catalina.cluster.ChannelListener;
 import org.apache.catalina.cluster.ClusterListener;
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.ChannelSender;
 import org.apache.catalina.cluster.ClusterValve;
 import org.apache.catalina.cluster.Member;
-import org.apache.catalina.cluster.MembershipService;
+import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.group.GroupChannel;
+import org.apache.catalina.cluster.group.interceptors.GzipInterceptor;
 import org.apache.catalina.cluster.session.DeltaManager;
 import org.apache.catalina.cluster.util.IDynamicProperty;
 import org.apache.catalina.util.LifecycleSupport;
@@ -51,11 +54,6 @@ import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.IntrospectionUtils;
-import org.apache.catalina.cluster.group.interceptors.GzipInterceptor;
-import org.apache.catalina.cluster.MembershipListener;
-import org.apache.catalina.cluster.MessageListener;
-import org.apache.catalina.cluster.Channel;
-import org.apache.catalina.cluster.ChannelMessage;
 
 /**
  * A <b>Cluster </b> implementation using simple multicast. Responsible for
@@ -72,7 +70,7 @@ import org.apache.catalina.cluster.ChannelMessage;
  */
 public class SimpleTcpCluster 
     implements CatalinaCluster, Lifecycle, LifecycleListener, IDynamicProperty,
-               MembershipListener, MessageListener{
+               MembershipListener, ChannelListener{
 
     public static Log log = LogFactory.getLog(SimpleTcpCluster.class);
 
@@ -330,6 +328,10 @@ public class SimpleTcpCluster
         this.clusterDeployer = clusterDeployer;
     }
 
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
     /**
      * has members
      */
@@ -451,6 +453,10 @@ public class SimpleTcpCluster
      */
     public Map getManagers() {
         return managers;
+    }
+
+    public Channel getChannel() {
+        return channel;
     }
 
     /**
@@ -647,11 +653,9 @@ public class SimpleTcpCluster
             if ( clusterDeployer != null ) clusterDeployer.setCluster(this);
             this.registerClusterValve();
             channel.setMembershipListener(this);
-            channel.setMessageListener(this);
-            channel.addInterceptor(new GzipInterceptor());
+            channel.setChannelListener(this);
             channel.start(channel.DEFAULT);
             if (clusterDeployer != null) clusterDeployer.start();
-
             this.started = true;
             // Notify our interested LifecycleListeners
             lifecycle.fireLifecycleEvent(AFTER_START_EVENT, this);
@@ -830,13 +834,15 @@ public class SimpleTcpCluster
      * @param message
      *            receveived Message
      */
-    public boolean accept(ChannelMessage msg) {
+    public boolean accept(Serializable msg, Member sender) {
         return (msg instanceof ClusterMessage);
     }
     
     
-    public void messageReceived(ChannelMessage message) {
-        messageReceived((ClusterMessage)message);
+    public void messageReceived(Serializable message, Member sender) {
+        ClusterMessage fwd = (ClusterMessage)message;
+        fwd.setAddress(sender);
+        messageReceived(fwd);
     }
 
     public void messageReceived(ClusterMessage message) {

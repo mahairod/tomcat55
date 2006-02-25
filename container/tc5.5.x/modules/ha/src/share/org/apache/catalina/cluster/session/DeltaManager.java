@@ -942,7 +942,6 @@ public class DeltaManager extends ClusterManagerBase{
                     SessionMessage.EVT_GET_ALL_SESSIONS, null, "GET-ALL",
                     "GET-ALL-" + getName());
             // set reference time
-            msg.setTimestamp(beforeSendTime);
             stateTransferCreateSendTime = beforeSendTime ;
             // request session state
             counterSend_EVT_GET_ALL_SESSIONS++;
