@@ -23,7 +23,7 @@ import org.apache.catalina.session.ManagerBase;
 import org.apache.catalina.Loader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import org.apache.catalina.groups.io.ReplicationStream;
+import org.apache.catalina.tribes.io.ReplicationStream;
 
 /**
  * 

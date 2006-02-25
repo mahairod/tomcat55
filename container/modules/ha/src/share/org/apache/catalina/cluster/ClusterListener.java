@@ -20,8 +20,8 @@ package org.apache.catalina.cluster;
 
 
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.groups.MessageListener;
-import org.apache.catalina.groups.ChannelMessage;
+import org.apache.catalina.tribes.MessageListener;
+import org.apache.catalina.tribes.ChannelMessage;
 
 
 /**

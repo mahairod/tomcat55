@@ -32,7 +32,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterDeployer;
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.groups.Member;
+import org.apache.catalina.tribes.Member;
 import org.apache.commons.modeler.Registry;
 import org.apache.catalina.cluster.ClusterListener;
 
