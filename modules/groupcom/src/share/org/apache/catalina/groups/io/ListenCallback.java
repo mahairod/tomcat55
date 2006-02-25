@@ -16,6 +16,8 @@
 
 package org.apache.catalina.groups.io;
 
+import org.apache.catalina.groups.ChannelMessage;
+
 
 
 /**
@@ -33,7 +35,7 @@ public interface ListenCallback
      * been received from one of the cluster nodes.
      * @param data - the message bytes received from the cluster/replication system
      */
-     public void messageDataReceived(ClusterData data);
+     public void messageDataReceived(ChannelMessage data);
      
     /** receiver must be send ack
       */

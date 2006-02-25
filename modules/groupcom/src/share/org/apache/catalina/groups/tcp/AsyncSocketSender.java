@@ -20,6 +20,7 @@ import java.net.InetAddress;
 
 import org.apache.catalina.groups.util.SmartQueue;
 import org.apache.catalina.groups.io.*;
+import org.apache.catalina.groups.ChannelMessage;
 
 /**
  * Send cluster messages from a Message queue with only one socket. Ack and keep
@@ -136,7 +137,7 @@ public class AsyncSocketSender extends DataSender {
     /*
      * Connect to socket and start background thread to ppush queued messages
      * 
-     * @see org.apache.catalina.cluster.tcp.IDataSender#connect()
+     * @see org.apache.catalina.groups.tcp.IDataSender#connect()
      */
     public void connect() throws java.io.IOException {
         super.connect();
@@ -146,7 +147,7 @@ public class AsyncSocketSender extends DataSender {
     /**
      * Disconnect socket ad stop queue thread
      * 
-     * @see org.apache.catalina.cluster.tcp.IDataSender#disconnect()
+     * @see org.apache.catalina.groups.tcp.IDataSender#disconnect()
      */
     public void disconnect() {
         stopThread();
@@ -156,9 +157,9 @@ public class AsyncSocketSender extends DataSender {
     /**
      * Send message to queue for later sending
      * 
-     * @see org.apache.catalina.cluster.tcp.DataSender#pushMessage(ClusterData)
+     * @see org.apache.catalina.groups.tcp.DataSender#pushMessage(ChannelMessage)
      */
-    public void sendMessage(ClusterData data)
+    public void sendMessage(ChannelMessage data)
             throws java.io.IOException {
         SmartQueue.SmartEntry entry = new SmartQueue.SmartEntry(data.getUniqueId(), data);
         queue.add(entry);
@@ -266,7 +267,7 @@ public class AsyncSocketSender extends DataSender {
                 if (entry != null) {
                     int messagesize = 0;
                     try {
-                        ClusterData data = (ClusterData) entry.getValue();
+                        ChannelMessage data = (ChannelMessage) entry.getValue();
                         messagesize = data.getMessage().length;
                         sender.pushMessage(data);
                     } catch (Exception x) {

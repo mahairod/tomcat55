@@ -84,18 +84,18 @@
     	>
         <classpath refid="groupcom.classpath" />
     </javac>
-    <copy file="${basedir}/src/share/org/apache/catalina/cluster/LocalStrings.properties"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/LocalStrings.properties"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/cluster/tcp/LocalStrings.properties"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/tcp/LocalStrings.properties"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/cluster/tcp/DataSenders.properties"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/tcp/DataSenders.properties"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/cluster/tcp/mbeans-descriptors.xml"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/tcp/mbeans-descriptors.xml"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/cluster/mcast/LocalStrings.properties"
-    	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/mcast/LocalStrings.properties"/>
-    <copy file="${basedir}/src/share/org/apache/catalina/cluster/mcast/mbeans-descriptors.xml"
-     	  tofile="${catalina.build}/classes/org/apache/catalina/cluster/mcast/mbeans-descriptors.xml"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/groups/LocalStrings.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/groups/LocalStrings.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/groups/tcp/LocalStrings.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/groups/tcp/LocalStrings.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/groups/tcp/DataSenders.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/groups/tcp/DataSenders.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/groups/tcp/mbeans-descriptors.xml"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/groups/tcp/mbeans-descriptors.xml"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/groups/mcast/LocalStrings.properties"
+    	  tofile="${catalina.build}/classes/org/apache/catalina/groups/mcast/LocalStrings.properties"/>
+    <copy file="${basedir}/src/share/org/apache/catalina/groups/mcast/mbeans-descriptors.xml"
+     	  tofile="${catalina.build}/classes/org/apache/catalina/groups/mcast/mbeans-descriptors.xml"/>
    </target>
 
 
@@ -132,7 +132,7 @@
     
     <jar destfile="${groupcom.dist}/catalina-groups.jar"
          basedir="${catalina.build}/classes">
-       <include name="org/apache/catalina/cluster/**" />
+       <include name="org/apache/catalina/groups/**" />
        <exclude name="**/package.html" />
        <exclude name="**/LocalStrings_*" />
     </jar>

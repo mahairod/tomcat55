@@ -30,18 +30,20 @@ import org.apache.catalina.groups.tcp.ReplicationListener;
 import org.apache.catalina.groups.tcp.ReplicationTransmitter;
 import org.apache.commons.logging.impl.LogFactoryImpl;
 import org.apache.catalina.groups.Channel;
+import org.apache.catalina.groups.ManagedChannel;
+import org.apache.catalina.groups.ChannelListener;
 /**
  * Shared whiteboard, each new instance joins the same group. Each instance chooses a random color,
  * mouse moves are broadcast to all group members, which then apply them to their canvas<p>
  * @author Bela Ban, Oct 17 2001
  */
-public class Draw extends ChannelInterceptorBase implements ActionListener {
+public class Draw implements ActionListener, ChannelListener {
     static LogFactoryImpl dependencyhack = new LogFactoryImpl();
     static org.apache.commons.logging.impl.SimpleLog depHack2 = new org.apache.commons.logging.impl.SimpleLog("test");
     
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
     String groupname = "DrawGroupDemo";
-    private Channel channel = null;
+    private ManagedChannel channel = null;
     private int member_size = 1;
     final boolean first = true;
     final boolean cummulative = true;
@@ -87,7 +89,7 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
         channel.setMembershipService(service);
         channel.start(channel.DEFAULT);
         
-        channel.addInterceptor(this);
+        channel.setChannelListener(this);
 
         if (debug) {
         }
@@ -254,7 +256,7 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
             msg.setDrawCommand(comm);
             channel.send(null,msg,0);
             //draw on the local picture
-            messageReceived(msg);
+            messageReceived(msg,null);
         } catch (Exception ex) {
             System.err.println(ex);
         }
@@ -295,7 +297,11 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
         setTitle();
     }
     
-    public void messageReceived(ChannelMessage msg) { 
+    public boolean accept(Serializable msg, Member sender) {
+        return true;
+    }
+    
+    public void messageReceived(Serializable msg, Member sender) {
         if ( msg instanceof DrawMessage ) {
             DrawMessage dmsg = (DrawMessage)msg;
             DrawCommand comm = dmsg.getDrawCommand();
@@ -336,6 +342,8 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
         public void setOptions(int options) {this.options = options;}
         public DrawCommand getDrawCommand(){return comm;}
         public void setDrawCommand(DrawCommand command) {this.comm = command;}
+        public void setMessage(byte[] b){}
+        public byte[] getMessage() {return null;}
 
     }
     /* --------------------------- End of ChannelListener interface ---------------------- */
@@ -394,7 +402,7 @@ public class Draw extends ChannelInterceptorBase implements ActionListener {
                 DrawMessage msg = parent.getEmptyMessage();
                 msg.setDrawCommand(comm);
                 channel.send(null,msg,0);
-                parent.messageReceived(msg);
+                parent.messageReceived(msg,null);
                 Thread.yield(); // gives the repainter some breath
             } catch (Exception ex) {
                 System.err.println(ex);

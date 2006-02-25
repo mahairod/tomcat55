@@ -16,7 +16,6 @@
 
 package org.apache.catalina.groups;
 
-import org.apache.catalina.groups.io.ClusterData;
 
 /**
  * 
@@ -41,8 +40,6 @@ public interface ChannelSender
 
     public void sendMessage(ChannelMessage message) throws java.io.IOException;
     
-    public void sendMessageClusterDomain(ChannelMessage message) throws java.io.IOException;
-
     public boolean isWaitForAck();
     public void setWaitForAck(boolean isWaitForAck);
 

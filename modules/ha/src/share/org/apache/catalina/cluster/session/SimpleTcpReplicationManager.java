@@ -22,10 +22,10 @@ import org.apache.catalina.Session;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.Member;
+import org.apache.catalina.groups.Member;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.session.StandardManager;
-import org.apache.catalina.cluster.io.ReplicationStream;
+import org.apache.catalina.groups.io.ReplicationStream;
 import java.io.ByteArrayInputStream;
 import org.apache.catalina.Loader;
 

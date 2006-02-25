@@ -57,12 +57,12 @@ public abstract class ChannelInterceptorBase implements ChannelInterceptor{
         return previous;
     }
 
-    public ChannelMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException {
-        return getNext().sendMessage(destination, msg,payload);
+    public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws IOException {
+        if ( getNext() != null ) getNext().sendMessage(destination, msg, payload);
     }
     
-    public void messageReceived(ClusterData msg) {
-        getPrevious().messageReceived(msg);
+    public void messageReceived(ChannelMessage msg) {
+        if ( getPrevious() != null ) getPrevious().messageReceived(msg);
     }
 
     public boolean accept(ChannelMessage msg) {

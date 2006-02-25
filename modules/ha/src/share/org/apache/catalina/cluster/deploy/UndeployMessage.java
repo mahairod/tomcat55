@@ -19,21 +19,19 @@ package org.apache.catalina.cluster.deploy;
 import java.io.Serializable;
 
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.Member;
-public class UndeployMessage implements ClusterMessage,Serializable {
-    private Member address;
+import org.apache.catalina.cluster.ClusterMessageBase;
+
+public class UndeployMessage extends ClusterMessageBase implements ClusterMessage,Serializable {
     private long timestamp;
     private String uniqueId;
     private String contextPath;
     private boolean undeploy;
 
     public UndeployMessage() {} //for serialization
-    public UndeployMessage(Member address,
-                           long timestamp,
+    public UndeployMessage(long timestamp,
                            String uniqueId,
                            String contextPath,
                            boolean undeploy) {
-        this.address  = address;
         this.timestamp= timestamp;
         this.undeploy = undeploy;
         this.uniqueId = uniqueId;
@@ -41,13 +39,6 @@ public class UndeployMessage implements ClusterMessage,Serializable {
         this.contextPath = contextPath;
     }
 
-    public Member getAddress() {
-        return address;
-    }
-
-    public void setAddress(Member address) {
-        this.address = address;
-    }
 
     public long getTimestamp() {
         return timestamp;

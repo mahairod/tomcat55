@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.LinkedList;
 import org.apache.catalina.groups.io.*;
+import org.apache.catalina.groups.ChannelMessage;
 
 /**
  * Send cluster messages with a pool of sockets (25).
@@ -111,7 +112,7 @@ public class PooledSocketSender extends DataSender {
      * @param data Message data
      * @throws java.io.IOException
      */
-    public void sendMessage(ClusterData data) throws IOException {
+    public void sendMessage(ChannelMessage data) throws IOException {
         //get a socket sender from the pool
         if(!isConnected()) {
             synchronized(this) {

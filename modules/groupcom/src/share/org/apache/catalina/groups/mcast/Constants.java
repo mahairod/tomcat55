@@ -18,7 +18,7 @@
 package org.apache.catalina.groups.mcast;
 
 /**
- * Manifest constants for the <code>org.apache.catalina.cluster.mcast</code>
+ * Manifest constants for the <code>org.apache.catalina.groups.mcast</code>
  * package.
  *
  * @author Peter Rossbach
@@ -27,6 +27,6 @@ package org.apache.catalina.groups.mcast;
 
 public class Constants {
 
-    public static final String Package = "org.apache.catalina.cluster.mcast";
+    public static final String Package = "org.apache.catalina.groups.mcast";
 
 }

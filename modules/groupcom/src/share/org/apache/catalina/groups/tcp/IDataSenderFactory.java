@@ -28,7 +28,7 @@ import org.apache.catalina.util.StringManager;
 
 /**
  * Create DataSender for different modes. DataSender factory load mode list from 
- * <code>org/apache/catalina/cluster/tcp/DataSenders.properties</code> resource.
+ * <code>org/apache/catalina/groups/tcp/DataSenders.properties</code> resource.
  * 
  * @author Peter Rossbach
  * @version $Revision: 304032 $ $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
@@ -39,7 +39,7 @@ public class IDataSenderFactory {
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
             .getLog(IDataSenderFactory.class);
     
-    private static final String DATASENDERS_PROPERTIES = "org/apache/catalina/cluster/tcp/DataSenders.properties";
+    private static final String DATASENDERS_PROPERTIES = "org/apache/catalina/groups/tcp/DataSenders.properties";
     public static final String SYNC_MODE = "synchronous";
     public static final String ASYNC_MODE = "asynchronous";
     public static final String POOLED_SYNC_MODE = "pooled";
