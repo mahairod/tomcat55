@@ -85,29 +85,50 @@ public class ClusterRuleSet extends RuleSetBase {
      */
     public void addRuleInstances(Digester digester) {
         //Cluster configuration start
-        digester.addObjectCreate(prefix + "Membership",
-                                 null, // MUST be specified in the element
-                                 "className");
-        digester.addSetProperties(prefix + "Membership");
-        digester.addSetNext(prefix + "Membership",
-                            "setMembershipService",
-                            "org.apache.catalina.cluster.MembershipService");
         
-        digester.addObjectCreate(prefix + "Sender",
+        digester.addObjectCreate(prefix + "Channel",
                                  null, // MUST be specified in the element
                                  "className");
-        digester.addSetProperties(prefix + "Sender");
-        digester.addSetNext(prefix + "Sender",
-                            "setClusterSender",
-                            "org.apache.catalina.cluster.ChannelSender");
+        digester.addSetProperties(prefix + "Channel");
+        digester.addSetNext(prefix + "Channel",
+                            "setChannel",
+                            "org.apache.catalina.cluster.Channel");
 
-        digester.addObjectCreate(prefix + "Receiver",
-                                 null, // MUST be specified in the element
-                                 "className");
-        digester.addSetProperties(prefix + "Receiver");
-        digester.addSetNext(prefix + "Receiver",
-                            "setClusterReceiver",
-                            "org.apache.catalina.cluster.ClusterReceiver");
+
+        String channelPrefix = prefix + "Channel/";
+        { //channel properties
+            digester.addObjectCreate(channelPrefix + "Membership",
+                                     null, // MUST be specified in the element
+                                     "className");
+            digester.addSetProperties(channelPrefix + "Membership");
+            digester.addSetNext(channelPrefix + "Membership",
+                                "setMembershipService",
+                                "org.apache.catalina.cluster.MembershipService");
+
+            digester.addObjectCreate(channelPrefix + "Sender",
+                                     null, // MUST be specified in the element
+                                     "className");
+            digester.addSetProperties(channelPrefix + "Sender");
+            digester.addSetNext(channelPrefix + "Sender",
+                                "setClusterSender",
+                                "org.apache.catalina.cluster.ChannelSender");
+
+            digester.addObjectCreate(channelPrefix + "Receiver",
+                                     null, // MUST be specified in the element
+                                     "className");
+            digester.addSetProperties(channelPrefix + "Receiver");
+            digester.addSetNext(channelPrefix + "Receiver",
+                                "setClusterReceiver",
+                                "org.apache.catalina.cluster.ChannelReceiver");
+
+            digester.addObjectCreate(channelPrefix + "Interceptor",
+                                     null, // MUST be specified in the element
+                                     "className");
+            digester.addSetProperties(channelPrefix + "Interceptor");
+            digester.addSetNext(channelPrefix + "Interceptor",
+                                "addInterceptor",
+                                "org.apache.catalina.cluster.ChannelInterceptor");
+        }
 
         digester.addObjectCreate(prefix + "Valve",
                                  null, // MUST be specified in the element

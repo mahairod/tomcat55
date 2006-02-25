@@ -26,6 +26,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 import org.apache.catalina.cluster.io.ReplicationStream;
+import java.io.Serializable;
+import org.apache.catalina.cluster.Member;
+import java.util.UUID;
 
 /**
  * The XByteBuffer provides a dual functionality.
@@ -364,26 +367,21 @@ public class XByteBuffer
         return result;
     }
     
-    public static ChannelMessage deserialize(ClusterData data, boolean compress) 
+    public static Serializable deserialize(ClusterData data) 
         throws IOException, ClassNotFoundException, ClassCastException {
         Object message = null;
         if (data != null) {
-            InputStream instream;
-            if (compress ) {
-                instream = new GZIPInputStream(new ByteArrayInputStream(data.getMessage()));
-            } else {
-                instream = new ByteArrayInputStream(data.getMessage());
-            }
+            InputStream  instream = new ByteArrayInputStream(data.getMessage());
             ReplicationStream stream = new ReplicationStream(instream,new ClassLoader[] {XByteBuffer.class.getClassLoader()});
             message = stream.readObject();
             instream.close();
         }
         if ( message == null ) {
             return null;
-        } else if (message instanceof ChannelMessage)
-            return (ChannelMessage) message;
+        } else if (message instanceof Serializable)
+            return (Serializable) message;
         else {
-            throw new ClassCastException("Message has the wrong class. It should implement ClusterMessage, instead it is:"+message.getClass().getName());
+            throw new ClassCastException("Message has the wrong class. It should implement Serializable, instead it is:"+message.getClass().getName());
         }
     }
 
@@ -394,29 +392,20 @@ public class XByteBuffer
      * @return ClusterData
      * @throws IOException
      */
-    public static ClusterData serialize(ChannelMessage msg, int options, boolean compress) throws IOException {
-        msg.setTimestamp(System.currentTimeMillis());
-        ByteArrayOutputStream outs = new ByteArrayOutputStream();
-        ObjectOutputStream out;
-        GZIPOutputStream gout = null;
+    public static ClusterData serialize(Serializable msg, int options, Member local) throws IOException {
         ClusterData data = new ClusterData();
+        data.setAddress(local);
         data.setType(msg.getClass().getName());
-        data.setUniqueId(msg.getUniqueId());
-        data.setTimestamp(msg.getTimestamp());
+        data.setUniqueId(UUID.randomUUID().toString());
+        data.setTimestamp(System.currentTimeMillis());
         data.setOptions(options);
-        data.setResend(data.RESEND_DEFAULT);
-        data.setAddress(msg.getAddress());
-        if (compress) {
-            gout = new GZIPOutputStream(outs);
-            out = new ObjectOutputStream(gout);
-        } else {
-            out = new ObjectOutputStream(outs);
-        }
+        ByteArrayOutputStream outs = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(outs);
         out.writeObject(msg);
         // flush out the gzip stream to byte buffer
-        if(gout != null) {
-            gout.flush();
-            gout.close();
+        if(out != null) {
+            out.flush();
+            out.close();
         }
         data.setMessage(outs.toByteArray());
         return data;

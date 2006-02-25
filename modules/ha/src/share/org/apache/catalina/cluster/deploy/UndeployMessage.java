@@ -26,8 +26,6 @@ public class UndeployMessage implements ClusterMessage,Serializable {
     private String uniqueId;
     private String contextPath;
     private boolean undeploy;
-    private int resend = ClusterMessage.RESEND_DEFAULT ;
-    private int options = ClusterMessage.RESEND_DEFAULT ;
 
     public UndeployMessage() {} //for serialization
     public UndeployMessage(Member address,
@@ -82,35 +80,4 @@ public class UndeployMessage implements ClusterMessage,Serializable {
     public void setUndeploy(boolean undeploy) {
         this.undeploy = undeploy;
     }
-    /**
-     * @return Returns the compress.
-     * @since 5.5.10 
-     */
-    public int getOptions() {
-
-        return options;
-    }
-    /**
-     * @param compress The compress to set.
-     * @since 5.5.10
-     */
-    public void setOptions(int options) {
-
-        this.options = options;
-    }
-    /**
-     * @return Returns the resend.
-     * @since 5.5.10
-     */
-    public int getResend() {
-        return resend;
-    }
-    /**
-     * @param resend The resend to set.
-     * @since 5.5.10
-     */
-    public void setResend(int resend) {
-        this.resend = resend;
-    }
-
 }

@@ -17,8 +17,8 @@ package org.apache.catalina.cluster;
 
 import java.io.Serializable;
 
-public interface MessageListener {
-    
+public interface ChannelListener {
+
     /**
      * Receive a message from the cluster.
      * @param msg ClusterMessage
@@ -26,12 +26,12 @@ public interface MessageListener {
      * The response object may be ignored and is not required for the 
      * implementation to send back to the sender.
      */
-    public void messageReceived(ChannelMessage msg);
-    
-    public boolean accept(ChannelMessage msg);
-    
+    public void messageReceived(Serializable msg, Member sender);
+
+    public boolean accept(Serializable msg, Member sender);
+
     public boolean equals(Object listener);
-    
+
     public int hashCode();
 
 }

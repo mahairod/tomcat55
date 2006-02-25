@@ -810,25 +810,26 @@ public class DataSender implements IDataSender {
              writeData(data);
              messageTransfered = true ;
         } catch (java.io.IOException x) {
-            if(data.getResend() == ChannelMessage.RESEND_ALLOWED || 
-                    (data.getResend() == ChannelMessage.RESEND_DEFAULT && isResend() )) {
-                // second try with fresh connection
-                dataResendCounter++;
-                if (log.isTraceEnabled())
-                    log.trace(sm.getString("IDataSender.send.again", address.getHostAddress(),
-                            new Integer(port)),x);
-                synchronized(this) {
-                    closeSocket();
-                    openSocket();
-                }
-                try {
-                    writeData(data);
-                    messageTransfered = true;
-                } catch (IOException xx) {
-                    exception = xx;
-                    throw xx ;
-                }
-            } else {
+//            if(data.getResend() == ChannelMessage.RESEND_ALLOWED || 
+//                    (data.getResend() == ChannelMessage.RESEND_DEFAULT && isResend() )) {
+//                // second try with fresh connection
+//                dataResendCounter++;
+//                if (log.isTraceEnabled())
+//                    log.trace(sm.getString("IDataSender.send.again", address.getHostAddress(),
+//                            new Integer(port)),x);
+//                synchronized(this) {
+//                    closeSocket();
+//                    openSocket();
+//                }
+//                try {
+//                    writeData(data);
+//                    messageTransfered = true;
+//                } catch (IOException xx) {
+//                    exception = xx;
+//                    throw xx ;
+//                }
+//            } else 
+            {
                 synchronized(this) {
                     closeSocket();
                 }

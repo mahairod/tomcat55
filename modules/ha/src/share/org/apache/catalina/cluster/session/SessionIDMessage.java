@@ -16,6 +16,7 @@
 package org.apache.catalina.cluster.session;
 
 import org.apache.catalina.cluster.ClusterMessage;
+import org.apache.catalina.cluster.ClusterMessageBase;
 
 /**
  * Session id change cluster message
@@ -24,13 +25,9 @@ import org.apache.catalina.cluster.ClusterMessage;
  * 
  * @version $Revision: 326110 $ $Date: 2005-10-18 09:08:36 -0500 (Tue, 18 Oct 2005) $
  */
-public class SessionIDMessage implements ClusterMessage {
-
-	private org.apache.catalina.cluster.Member address;
+public class SessionIDMessage extends ClusterMessageBase implements ClusterMessage {
 
 	private int messageNumber;
-
-	private long timestamp;
 
 	private String orignalSessionID;
 
@@ -38,8 +35,6 @@ public class SessionIDMessage implements ClusterMessage {
 
 	private String host ;
 	private String contextPath;
-    private int resend = ClusterMessage.RESEND_DEFAULT ;
-    private int options = ClusterMessage.RESEND_DEFAULT ;
 
 	public org.apache.catalina.cluster.Member getAddress() {
 		return address;
@@ -103,21 +98,7 @@ public class SessionIDMessage implements ClusterMessage {
 		this.messageNumber = messageNumber;
 	}
 
-	/**
-	 * @return Returns the timestamp.
-	 */
-	public long getTimestamp() {
-		return timestamp;
-	}
-
-	/**
-	 * @param timestamp
-	 *            The timestamp to set.
-	 */
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
-	}
-
+	
 	/**
 	 * @return Returns the backupSessionID.
 	 */
@@ -148,36 +129,7 @@ public class SessionIDMessage implements ClusterMessage {
 		this.orignalSessionID = orignalSessionID;
 	}
 
-    /**
-     * @return Returns the compress.
-     * @since 5.5.10 
-     */
-    public int getOptions() {
-
-        return options;
-    }
-    /**
-     * @param compress The compress to set.
-     * @since 5.5.10
-     */
-    public void setOptions(int options) {
-
-        this.options = options;
-    }
-    /**
-     * @return Returns the resend.
-     * @since 5.5.10
-     */
-    public int getResend() {
-        return resend;
-    }
-    /**
-     * @param resend The resend to set.
-     * @since 5.5.10
-     */
-    public void setResend(int resend) {
-        this.resend = resend;
-    }
+    
 
 
 }

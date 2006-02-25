@@ -15,6 +15,8 @@
  */
 package org.apache.catalina.cluster;
 
+import java.io.Serializable;
+
 /**
  * Channel interface
  * A channel is an object that manages a group of members.
@@ -72,7 +74,7 @@ public interface Channel {
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any. 
      */
-    public ChannelMessage[] send(Member[] destination, ChannelMessage msg, int options) throws ChannelException;
+    public ChannelMessage[] send(Member[] destination, Serializable msg, int options) throws ChannelException;
 
     
     public void setClusterSender(ChannelSender sender);
@@ -85,7 +87,7 @@ public interface Channel {
     public void heartbeat();
     
     public void setMembershipListener(MembershipListener listener);
-    public void setMessageListener(MessageListener listener);
+    public void setChannelListener(ChannelListener listener);
     
     /**
      * has members
