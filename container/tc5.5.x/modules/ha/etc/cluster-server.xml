@@ -285,29 +285,29 @@
                  useDirtyFlag="true"
                  notifyListenersOnReplication="true">
 
-            <Channel className="org.apache.catalina.groups.group.GroupChannel">
+            <Channel className="org.apache.catalina.tribes.group.GroupChannel">
                 <Membership 
-                    className="org.apache.catalina.groups.mcast.McastService"
+                    className="org.apache.catalina.tribes.mcast.McastService"
                     mcastAddr="228.0.0.4"
                     mcastPort="45564"
                     mcastFrequency="500"
                     mcastDropTime="3000"/>
 
                 <Receiver 
-                    className="org.apache.catalina.groups.tcp.ReplicationListener"
+                    className="org.apache.catalina.tribes.tcp.ReplicationListener"
                     tcpListenAddress="auto"
                     tcpListenPort="4002"
                     tcpSelectorTimeout="100"
                     tcpThreadCount="6"/>
 
                 <Sender
-                    className="org.apache.catalina.groups.tcp.ReplicationTransmitter"
+                    className="org.apache.catalina.tribes.tcp.ReplicationTransmitter"
                     replicationMode="pooled"
                     ackTimeout="150000"
                     waitForAck="true"
                     compress="true"/>
                     
-                <Interceptor className="org.apache.catalina.groups.group.interceptors.GzipInterceptor"/>
+                <Interceptor className="org.apache.catalina.tribes.group.interceptors.GzipInterceptor"/>
             </Channel>
             
             <Valve className="org.apache.catalina.cluster.tcp.ReplicationValve"
