@@ -17,7 +17,7 @@ package org.apache.catalina.cluster.session;
 
 
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.Member;
+import org.apache.catalina.groups.Member;
 import org.apache.catalina.cluster.ClusterMessageBase;
 
 /**

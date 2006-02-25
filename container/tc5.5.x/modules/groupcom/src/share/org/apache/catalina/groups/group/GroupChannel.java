@@ -30,6 +30,9 @@ import org.apache.catalina.groups.io.ClusterData;
 import org.apache.catalina.groups.io.XByteBuffer;
 import java.io.Serializable;
 import org.apache.catalina.groups.ChannelListener;
+import org.apache.catalina.groups.ManagedChannel;
+import java.util.Iterator;
+import java.util.UUID;
 
 /**
  * The GroupChannel manages the replication channel. It coordinates
@@ -39,7 +42,7 @@ import org.apache.catalina.groups.ChannelListener;
  * @author Filip Hanik
  * @version $Revision: 304032 $, $Date: 2005-07-27 10:11:55 -0500 (Wed, 27 Jul 2005) $
  */
-public class GroupChannel extends ChannelInterceptorBase implements Channel {
+public class GroupChannel extends ChannelInterceptorBase implements ManagedChannel {
     private ChannelCoordinator coordinator = new ChannelCoordinator();
     private ChannelInterceptor interceptors = null;
     private MembershipListener membershipListener;
@@ -56,9 +59,10 @@ public class GroupChannel extends ChannelInterceptorBase implements Channel {
      */
     public void addInterceptor(ChannelInterceptor interceptor) { 
         if ( interceptors == null ) {
-            this.interceptors = interceptor;
-            this.interceptors.setNext(coordinator);
-            this.interceptors.setPrevious(null);
+            interceptors = interceptor;
+            interceptors.setNext(coordinator);
+            interceptors.setPrevious(null);
+            coordinator.setPrevious(interceptors);
         } else {
             ChannelInterceptor last = interceptors;
             while ( last.getNext() != coordinator ) {
@@ -82,11 +86,17 @@ public class GroupChannel extends ChannelInterceptorBase implements Channel {
      * @param options int - sender options, see class documentation
      * @return ClusterMessage[] - the replies from the members, if any.
      */
-    public ChannelMessage[] send(Member[] destination, Serializable msg, int options) throws ChannelException {
-        if ( msg == null ) return null;
+    public void send(Member[] destination, Serializable msg, int options) throws ChannelException {
+        if ( msg == null ) return;
         try {
-            ClusterData data = XByteBuffer.serialize(msg, options,getMembershipService().getLocalMember());
-            return getFirstInterceptor().sendMessage(destination, data, null);
+            ClusterData data = new ClusterData();
+            data.setAddress(getLocalMember());
+            data.setUniqueId(UUID.randomUUID().toString());
+            data.setTimestamp(System.currentTimeMillis());
+            data.setOptions(options);
+            byte[] b = XByteBuffer.serialize(msg);
+            data.setMessage(b);
+            getFirstInterceptor().sendMessage(destination, data, null);
         }catch ( Exception x ) {
             throw new ChannelException(x);
         }
@@ -94,15 +104,11 @@ public class GroupChannel extends ChannelInterceptorBase implements Channel {
     
     public void messageReceived(ChannelMessage msg) {
         if ( msg == null ) return;
-        else if ( msg instanceof ClusterData ) {
-            try {
-                Serializable fwd = XByteBuffer.deserialize( (ClusterData) msg);
-                if ( channelListener != null ) channelListener.messageReceived(fwd,msg.getAddress());
-            }catch ( Exception x ) {
-                log.error("Unable to deserialize channel message.",x);
-            }
-        } else {
-            log.error("Recieved a message that is not a ClusterData instance. class="+msg.getClass().getName()+ " obj="+msg);
+        try {
+            Serializable fwd = XByteBuffer.deserialize(msg.getMessage());
+            if ( channelListener != null ) channelListener.messageReceived(fwd,msg.getAddress());
+        }catch ( Exception x ) {
+            log.error("Unable to deserialize channel message.",x);
         }
     }
     
@@ -151,18 +157,18 @@ public class GroupChannel extends ChannelInterceptorBase implements Channel {
         coordinator.stop(svc);
     }
 
-    public ChannelReceiver getClusterReceiver() {
+    public ChannelReceiver getChannelReceiver() {
         return coordinator.getClusterReceiver();
     }
 
-    public ChannelSender getClusterSender() {
+    public ChannelSender getChannelSender() {
         return coordinator.getClusterSender();
     }
 
     public MembershipService getMembershipService() {
         return coordinator.getMembershipService();
     }
-
+    
     public void setChannelReceiver(ChannelReceiver clusterReceiver) {
         coordinator.setClusterReceiver(clusterReceiver);
     }
@@ -186,6 +192,10 @@ public class GroupChannel extends ChannelInterceptorBase implements Channel {
 
     public MembershipListener getMembershipListener() {
         return membershipListener;
+    }
+    
+    public Iterator getInterceptors() { 
+        return new InterceptorIterator(this.getNext(),this.coordinator);
     }
 
     public ChannelListener getChannelListener() {
@@ -215,6 +225,32 @@ public class GroupChannel extends ChannelInterceptorBase implements Channel {
      */
     public Member getLocalMember() {
         return coordinator.getMembershipService().getLocalMember();
+    }
+    
+    public static class InterceptorIterator implements Iterator {
+        private ChannelInterceptor end;
+        private ChannelInterceptor start;
+        public InterceptorIterator(ChannelInterceptor start, ChannelInterceptor end) {
+            this.end = end;
+            this.start = start;
+        }
+        
+        public boolean hasNext() {
+            return start!=null && start != end;
+        }
+        
+        public Object next() {
+            Object result = null;
+            if ( hasNext() ) {
+                result = start;
+                start = start.getNext();
+            }
+            return result;
+        }
+        
+        public void remove() {
+            //empty operation
+        }
     }
 
 }

@@ -36,24 +36,23 @@ import java.util.zip.GZIPOutputStream;
  */
 public class GzipInterceptor extends ChannelInterceptorBase {
    
-    public ChannelMessage[] sendMessage(Member[] destination, ClusterData msg, InterceptorPayload payload) throws IOException {
+    public void sendMessage(Member[] destination, ChannelMessage msg, InterceptorPayload payload) throws IOException {
         try {
             msg.setMessage(compress(msg.getMessage()));
-            return getNext().sendMessage(destination, msg, payload);
+            getNext().sendMessage(destination, msg, payload);
         } catch ( IOException x ) {
             log.error("Unable to compress byte contents");
             throw x;
         }
     }
 
-    public void messageReceived(ClusterData msg) {
+    public void messageReceived(ChannelMessage msg) {
         try {
             msg.setMessage(decompress(msg.getMessage()));
             getPrevious().messageReceived(msg);
         } catch ( IOException x ) {
-            log.error("Unable to decompress byte contents");
+            log.error("Unable to decompress byte contents",x);
         }
-
     }
     
     public byte[] compress(byte[] data) throws IOException {

@@ -43,14 +43,13 @@ import org.apache.catalina.Session;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.Member;
+import org.apache.catalina.groups.Member;
 import org.apache.catalina.session.ManagerBase;
 import org.apache.catalina.cluster.tcp.ReplicationValve;
-import org.apache.catalina.util.CustomObjectInputStream;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.cluster.io.ReplicationStream;
+import org.apache.catalina.groups.io.ReplicationStream;
 
 /**
  * The DeltaManager manages replicated sessions by only replicating the deltas

@@ -36,14 +36,6 @@ public class SessionIDMessage extends ClusterMessageBase implements ClusterMessa
 	private String host ;
 	private String contextPath;
 
-	public org.apache.catalina.cluster.Member getAddress() {
-		return address;
-	}
-
-	public void setAddress(org.apache.catalina.cluster.Member address) {
-		this.address = address;
-	}
-
 	public String getUniqueId() {
 		StringBuffer result = new StringBuffer(getOrignalSessionID());
 		result.append("#-#");

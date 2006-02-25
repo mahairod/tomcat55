@@ -26,6 +26,7 @@ package org.apache.catalina.cluster;
 import org.apache.catalina.LifecycleException;
 import java.io.IOException;
 import java.net.URL;
+import org.apache.catalina.groups.MessageListener;
 
 public interface ClusterDeployer extends MessageListener {
     /**

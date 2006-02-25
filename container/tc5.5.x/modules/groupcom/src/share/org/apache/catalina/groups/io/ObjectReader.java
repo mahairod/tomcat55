@@ -18,6 +18,7 @@ package org.apache.catalina.groups.io;
 import java.nio.ByteBuffer;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import org.apache.catalina.groups.ChannelMessage;
 
 
 
@@ -89,7 +90,7 @@ public class ObjectReader {
      * Send buffer to cluster listener (callback).
      * Is message complete receiver send message to callback?
      *
-     * @see org.apache.catalina.cluster.tcp.ClusterReceiverBase#messageDataReceived(ClusterData)
+     * @see org.apache.catalina.groups.tcp.ClusterReceiverBase#messageDataReceived(ChannelMessage)
      * @see XByteBuffer#doesPackageExist()
      * @see XByteBuffer#extractPackage(boolean)
      *
@@ -100,7 +101,7 @@ public class ObjectReader {
         int pkgCnt = 0;
         boolean pkgExists = buffer.doesPackageExist();
         while ( pkgExists ) {
-            ClusterData data = buffer.extractPackage(true);
+            ChannelMessage data = buffer.extractPackage(true);
             getCallback().messageDataReceived(data);
             pkgCnt++;
             pkgExists = buffer.doesPackageExist();

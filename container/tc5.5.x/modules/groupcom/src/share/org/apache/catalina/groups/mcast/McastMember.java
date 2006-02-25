@@ -132,7 +132,7 @@ public class McastMember implements Member, java.io.Externalizable {
      * @return - the bytes for this member deserialized
      * @throws Exception
      */
-    protected byte[] getData() throws IOException {
+    public byte[] getData() throws IOException {
         //package looks like
         //alive - 8 bytes
         //port - 4 bytes
@@ -155,7 +155,7 @@ public class McastMember implements Member, java.io.Externalizable {
      * @param data - the bytes received
      * @return a member object.
      */
-    protected static McastMember getMember(byte[] data, McastMember member) {
+    public static McastMember getMember(byte[] data, McastMember member) {
        //package looks like
        //alive - 8 bytes
        //port - 4 bytes
@@ -182,7 +182,7 @@ public class McastMember implements Member, java.io.Externalizable {
        return member;
     }
 
-    protected static McastMember getMember(byte[] data) {
+    public static McastMember getMember(byte[] data) {
        return getMember(data,new McastMember());
     }
 
@@ -242,7 +242,7 @@ public class McastMember implements Member, java.io.Externalizable {
      * String representation of this object
      */
     public String toString()  {
-        return "org.apache.catalina.cluster.mcast.McastMember["+getName()+","+domain+","+host+","+port+", alive="+memberAliveTime+"]";
+        return "org.apache.catalina.groups.mcast.McastMember["+getName()+","+domain+","+host+","+port+", alive="+memberAliveTime+"]";
     }
 
     /**

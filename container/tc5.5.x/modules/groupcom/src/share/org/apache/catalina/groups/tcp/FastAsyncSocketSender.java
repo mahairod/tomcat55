@@ -18,7 +18,7 @@ package org.apache.catalina.groups.tcp;
 
 import java.net.InetAddress;
 
-import org.apache.catalina.groups.io.ClusterData;
+import org.apache.catalina.groups.ChannelMessage;
 import org.apache.catalina.groups.util.FastQueue;
 import org.apache.catalina.groups.util.IQueue;
 import org.apache.catalina.groups.util.LinkObject;
@@ -277,7 +277,7 @@ public class FastAsyncSocketSender extends DataSender {
     /**
      * Connect to socket and start background thread to push queued messages
      * 
-     * @see org.apache.catalina.cluster.tcp.IDataSender#connect()
+     * @see org.apache.catalina.groups.tcp.IDataSender#connect()
      */
     public void connect() throws java.io.IOException {
         super.connect();
@@ -289,7 +289,7 @@ public class FastAsyncSocketSender extends DataSender {
     /**
      * Disconnect socket ad stop queue thread
      * 
-     * @see org.apache.catalina.cluster.tcp.IDataSender#disconnect()
+     * @see org.apache.catalina.groups.tcp.IDataSender#disconnect()
      */
     public void disconnect() {
         stopThread();
@@ -304,9 +304,9 @@ public class FastAsyncSocketSender extends DataSender {
     /**
      * Send message to queue for later sending.
      * 
-     * @see org.apache.catalina.cluster.tcp.DataSender#pushMessage(ClusterData)
+     * @see org.apache.catalina.groups.tcp.DataSender#pushMessage(ChannelMessage)
      */
-    public void sendMessage(ClusterData data)
+    public void sendMessage(ChannelMessage data)
             throws java.io.IOException {
         queue.add(data.getUniqueId(), data);
         synchronized (this) {
@@ -472,7 +472,7 @@ public class FastAsyncSocketSender extends DataSender {
             do {
                 int messagesize = 0;
                 try {
-                    ClusterData data = (ClusterData) entry.data();
+                    ChannelMessage data = (ChannelMessage) entry.data();
                     messagesize = data.getMessage().length;
                     sender.pushMessage(data);
                 } catch (Exception x) {

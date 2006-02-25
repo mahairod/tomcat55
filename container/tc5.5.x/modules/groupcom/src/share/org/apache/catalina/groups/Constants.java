@@ -18,7 +18,7 @@
 package org.apache.catalina.groups;
 
 /**
- * Manifest constants for the <code>org.apache.catalina.cluster</code>
+ * Manifest constants for the <code>org.apache.catalina.groups</code>
  * package.
  *
  * @author Bip Thelin
@@ -26,5 +26,5 @@ package org.apache.catalina.groups;
  */
 
 public final class Constants {
-    public static final String Package = "org.apache.catalina.cluster";
+    public static final String Package = "org.apache.catalina.groups";
 }
