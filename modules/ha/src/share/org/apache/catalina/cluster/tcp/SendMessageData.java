@@ -16,7 +16,7 @@
 
 package org.apache.catalina.cluster.tcp;
 
-import org.apache.catalina.groups.Member;
+import org.apache.catalina.tribes.Member;
 
 /**
  * @author Peter Rossbach

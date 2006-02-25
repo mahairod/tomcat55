@@ -92,7 +92,7 @@ public class ClusterRuleSet extends RuleSetBase {
         digester.addSetProperties(prefix + "Channel");
         digester.addSetNext(prefix + "Channel",
                             "setChannel",
-                            "org.apache.catalina.groups.Channel");
+                            "org.apache.catalina.tribes.Channel");
 
 
         String channelPrefix = prefix + "Channel/";
@@ -103,7 +103,7 @@ public class ClusterRuleSet extends RuleSetBase {
             digester.addSetProperties(channelPrefix + "Membership");
             digester.addSetNext(channelPrefix + "Membership",
                                 "setMembershipService",
-                                "org.apache.catalina.groups.MembershipService");
+                                "org.apache.catalina.tribes.MembershipService");
 
             digester.addObjectCreate(channelPrefix + "Sender",
                                      null, // MUST be specified in the element
@@ -111,7 +111,7 @@ public class ClusterRuleSet extends RuleSetBase {
             digester.addSetProperties(channelPrefix + "Sender");
             digester.addSetNext(channelPrefix + "Sender",
                                 "setChannelSender",
-                                "org.apache.catalina.groups.ChannelSender");
+                                "org.apache.catalina.tribes.ChannelSender");
 
             digester.addObjectCreate(channelPrefix + "Receiver",
                                      null, // MUST be specified in the element
@@ -119,7 +119,7 @@ public class ClusterRuleSet extends RuleSetBase {
             digester.addSetProperties(channelPrefix + "Receiver");
             digester.addSetNext(channelPrefix + "Receiver",
                                 "setChannelReceiver",
-                                "org.apache.catalina.groups.ChannelReceiver");
+                                "org.apache.catalina.tribes.ChannelReceiver");
 
             digester.addObjectCreate(channelPrefix + "Interceptor",
                                      null, // MUST be specified in the element
@@ -127,7 +127,7 @@ public class ClusterRuleSet extends RuleSetBase {
             digester.addSetProperties(channelPrefix + "Interceptor");
             digester.addSetNext(channelPrefix + "Interceptor",
                                 "addInterceptor",
-                                "org.apache.catalina.groups.ChannelInterceptor");
+                                "org.apache.catalina.tribes.ChannelInterceptor");
         }
 
         digester.addObjectCreate(prefix + "Valve",

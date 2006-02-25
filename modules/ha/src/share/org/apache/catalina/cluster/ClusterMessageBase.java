@@ -1,6 +1,6 @@
 package org.apache.catalina.cluster;
 
-import org.apache.catalina.groups.Member;
+import org.apache.catalina.tribes.Member;
 
 
 /**

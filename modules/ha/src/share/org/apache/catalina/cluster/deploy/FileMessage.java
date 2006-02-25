@@ -19,7 +19,7 @@ package org.apache.catalina.cluster.deploy;
 import java.io.Serializable;
 
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.groups.Member;
+import org.apache.catalina.tribes.Member;
 import org.apache.catalina.cluster.ClusterMessageBase;
 
 /**
